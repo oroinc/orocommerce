@@ -1,0 +1,191 @@
+oro_menu_config:
+    templates:
+        frontend_dots_menu:
+            template: 'OroNavigationBundle:Menu:dots_menu.html.twig'
+        frontend_favorite:
+            template: 'OroNavigationBundle:Menu:favorites.html.twig'
+        frontend_pinbar:
+            template: 'OroNavigationBundle:Menu:pinbar.html.twig'
+        frontend_history:
+            template: 'OroNavigationBundle:Menu:history.html.twig'
+            rootClass: 'extra-list'
+            currentAsLink: false
+        frontend_mostviewed:
+            template: 'OroNavigationBundle:Menu:mostviewed.html.twig'
+            rootClass: 'extra-list'
+
+    items:
+        frontend_favorite:
+            label: 'oro.navigation.menu.favorite.label'
+            extras:
+                icon: 'icon-star-empty'
+            uri: '#'
+        frontend_pinbar:
+            label: 'oro.navigation.menu.pinbar.label'
+            extras:
+                icon: 'icon-folder-close'
+                maxItems: 10
+            uri: '#'
+        frontend_history:
+            label: 'oro.navigation.menu.history.label'
+            extras:
+                icon: 'icon-time'
+                activeIfFirstIsEmpty: true
+            uri: '#'
+        frontend_mostviewed:
+            label: 'oro.navigation.menu.mostviewed.label'
+            extras:
+                icon: 'icon-flag'
+            uri: '#'
+        account_tab:
+            label:           'orob2b.account.menu.account_tab.label'
+            uri:             '#'
+            extras:
+                icon:        icon-user
+                position:    40
+
+        account_list:
+            label:           'orob2b.account.entity_plural_label'
+            route:           'orob2b_account_index'
+            extras:
+                position:    10
+                routes:
+                    - 'orob2b_account_index'
+                    - 'orob2b_account_view'
+                    - 'orob2b_account_create'
+                    - 'orob2b_account_update'
+                description: 'orob2b.account.menu.account_list.description'
+
+        account_group_list:
+            label:           'orob2b.account.accountgroup.entity_plural_label'
+            route:           'orob2b_account_group_index'
+            extras:
+                position:    20
+                routes:
+                    - 'orob2b_account_group_index'
+                    - 'orob2b_account_group_view'
+                    - 'orob2b_account_group_create'
+                    - 'orob2b_account_group_update'
+                description: 'orob2b.account.menu.account_group_list.description'
+
+        shortcut_account_list:
+            label:           'orob2b.account.entity_plural_label'
+            route:           'orob2b_account_index'
+            extras:
+                description: 'orob2b.account.menu.shortcut_account_list.description'
+
+        shortcut_account_group_list:
+            label:           'orob2b.account.accountgroup.entity_plural_label'
+            route:           'orob2b_account_group_index'
+            extras:
+                description: 'orob2b.account.menu.shortcut_account_list.description'
+
+        account_users:
+            label: 'orob2b.account.accountuser.entity_plural_label'
+            route: 'orob2b_account_account_user_index'
+            extras:
+                position: 30
+                routes: ['/^orob2b_account_account_user/']
+                description: 'orob2b.account.menu.account_users.description'
+
+        shortcut_new_account_user:
+            label: 'orob2b.account.menu.shortcut_new_account_user.label'
+            route: 'orob2b_account_account_user_create'
+            extras:
+                description: 'orob2b.account.menu.shortcut_new_account_user.description'
+
+        shortcut_list_account_users:
+            label: 'orob2b.account.menu.shortcut_list_account_users.label'
+            route: 'orob2b_account_account_user_index'
+            extras:
+                description: 'orob2b.account.menu.shortcut_list_account_users.description'
+
+        account_user_roles:
+            label: 'orob2b.account.accountuserrole.entity_plural_label'
+            route: 'orob2b_account_account_user_role_index'
+            extras:
+                position: 40
+                routes: ['/^orob2b_account_account_user_role/']
+                description: 'orob2b.account.menu.account_user_roles.description'
+
+        shortcut_new_account_user_role:
+            label: 'orob2b.account.menu.shortcut_new_account_user_role.label'
+            route: 'orob2b_account_account_user_role_create'
+            extras:
+                description: 'orob2b.account.menu.shortcut_new_account_user_role.description'
+
+        shortcut_list_account_user_groups:
+            label: 'orob2b.account.menu.shortcut_list_account_user_roles.label'
+            route: 'orob2b_account_account_user_role_index'
+            extras:
+                description: 'orob2b.account.menu.shortcut_list_account_user_roles.description'
+
+        orob2b_account_frontend_account_user_profile:
+            label: 'orob2b.account.menu.account_user_profile.label'
+            route: 'orob2b_account_frontend_account_user_profile'
+            extras:
+                position: 10
+
+    tree:
+        application_menu:
+            children:
+                account_tab:
+                    children:
+                        account_list: ~
+                        account_group_list: ~
+                        account_users: ~
+                        account_user_roles: ~
+
+        frontend_menu:
+            type: application_menu
+
+        frontend_dots_menu:
+            type: dots_menu
+            children:
+                frontend_history: ~
+                frontend_favorite: ~
+                frontend_mostviewed: ~
+
+        account_usermenu:
+            children:
+                orob2b_account_frontend_account_user_profile: ~
+
+        shortcuts:
+            children:
+                shortcut_account_list: ~
+                shortcut_account_group_list: ~
+                shortcut_new_account_user: ~
+                shortcut_list_account_users: ~
+                shortcut_new_account_user_role: ~
+                shortcut_list_account_user_groups: ~
+
+oro_titles:
+    orob2b_account_pinbar_help: 'How To Use Pinbar'
+
+    orob2b_account_index: ~
+    orob2b_account_view:  '%%title%%'
+    orob2b_account_update: %%accountName%% - oro.ui.edit
+    orob2b_account_create: oro.ui.create_entity
+
+    orob2b_account_group_index: ~
+    orob2b_account_group_view:  '%%title%%'
+    orob2b_account_group_update: %%accountGroupName%% - oro.ui.edit
+    orob2b_account_group_create: oro.ui.create_entity
+
+    orob2b_account_account_user_index:   ~
+    orob2b_account_account_user_view:    '%%username%%'
+    orob2b_account_account_user_update:  '%%username%% - Edit'
+    orob2b_account_account_user_create:  oro.ui.create_entity
+
+    orob2b_account_account_user_role_index:   ~
+    orob2b_account_account_user_role_update:  '%%label%% - Edit'
+    orob2b_account_account_user_role_create:  oro.ui.create_entity
+
+    orob2b_account_frontend_account_user_profile: '%%username%%'
+    orob2b_account_frontend_account_user_profile_update: orob2b.account.accountuser.profile.edit
+
+    orob2b_account_account_user_security_login: orob2b.account.accountuser.profile.login
+    orob2b_account_frontend_account_user_register: orob2b.account.accountuser.profile.registration.title
+    orob2b_account_frontend_account_user_reset_request: orob2b.account.accountuser.profile.forgot_password
+    orob2b_account_frontend_account_user_reset_check_email: orob2b.account.accountuser.profile.check_email.title
+    orob2b_account_frontend_account_user_password_reset: orob2b.account.accountuser.profile.reset_password.title

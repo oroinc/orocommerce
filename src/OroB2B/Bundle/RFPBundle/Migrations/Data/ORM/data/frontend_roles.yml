@@ -1,0 +1,3 @@
+BUYER:
+    permissions:
+        entity|OroB2B\Bundle\RFPBundle\Entity\Request: [VIEW_BASIC, CREATE_BASIC, EDIT_BASIC]

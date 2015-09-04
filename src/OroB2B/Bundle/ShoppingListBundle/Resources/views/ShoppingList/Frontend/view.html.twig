@@ -1,4 +1,5 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 
 {% oro_title_set({params : {"%label%": entity.label }}) %}
 
@@ -13,11 +14,27 @@
 {% endblock pageHeader %}
 
 {% block navButtons %}
+    {% if resource_granted('orob2b_shopping_list_frontend_create_rfp') %}
+        {% set formCreateRfpAction = path('orob2b_shopping_list_frontend_create_rfp', { 'id': entity.id }) %}
+        <form id="{{ formCreateRfp.vars.id }}" class="pull-left" name="{{ formCreateRfp.vars.name }}" action="{{ formCreateRfpAction }}" method="post">
+            {{ form_widget(formCreateRfp) }}
+            <button type="submit" class="no-hash btn">
+                <i class="icon-edit hide-text"></i>{{ 'orob2b.frontend.shoppinglist.btn.request_quote_create_rfp'|trans }}
+            </button>
+        </form>
+    {% endif %}
     {% if resource_granted('EDIT', entity) %}
         {{ UI.editButton({
             'path' : path('orob2b_shopping_list_frontend_update', { 'id': entity.id }),
             'entity_label': 'orob2b.shoppinglist.entity_label'|trans
         }) }}
+        {% if not entity.current %}
+            {{ UI.editButton({
+                'path' : path('orob2b_shopping_list_frontend_set_current', { 'id': entity.id }),
+                'entity_label': 'orob2b.shoppinglist.entity_label'|trans,
+                'label': 'orob2b.shoppinglist.actions.set_current'|trans
+            }) }}
+        {% endif %}
     {% endif %}
     {% if resource_granted('DELETE', entity) %}
         {{ UI.deleteButton({
@@ -49,6 +66,19 @@
             'subblocks': generalSectionBlocks
         }
     ] %}
+
+    {% set dataBlocks = dataBlocks|merge([
+        {
+            'title' : 'orob2b.shoppinglist.lineitem.entity_plural_label'|trans,
+            'subblocks': [
+                {
+                    'title' : '',
+                    'useSpan': false,
+                    'data' : [dataGrid.renderGrid('frontend-shopping-list-line-items-grid', {shopping_list_id: entity.id}, { cssClass: 'inner-grid' })]
+                }
+            ]
+        }
+    ]) %}
 
     {% set id = 'shopping-list-frontend-view' %}
     {% set data = {'dataBlocks': dataBlocks} %}

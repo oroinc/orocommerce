@@ -10,9 +10,6 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use OroB2B\Bundle\OrderBundle\Model\ExtendOrderLineItem;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
-use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
 /**
  * @ORM\Table(name="orob2b_order_line_item")
@@ -29,10 +26,9 @@ use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
  *          }
  *      }
  * )
- * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class OrderLineItem extends ExtendOrderLineItem implements ProductHolderInterface, ProductUnitHolderInterface
+class OrderLineItem extends ExtendOrderLineItem
 {
     const PRICE_TYPE_UNIT = 10;
     const PRICE_TYPE_BUNDLED = 20;
@@ -65,7 +61,7 @@ class OrderLineItem extends ExtendOrderLineItem implements ProductHolderInterfac
     /**
      * @var string
      *
-     * @ORM\Column(name="product_sku", type="string", length=255)
+     * @ORM\Column(name="product_sku", type="string", length=255, nullable=true)
      */
     protected $productSku;
 
@@ -94,7 +90,7 @@ class OrderLineItem extends ExtendOrderLineItem implements ProductHolderInterfac
     /**
      * @var string
      *
-     * @ORM\Column(name="product_unit_code", type="string", length=255)
+     * @ORM\Column(name="product_unit_code", type="string", length=255, nullable=true)
      */
     protected $productUnitCode;
 
@@ -122,7 +118,7 @@ class OrderLineItem extends ExtendOrderLineItem implements ProductHolderInterfac
      *
      * @ORM\Column(name="price_type", type="integer")
      */
-    protected $priceType;
+    protected $priceType = self::PRICE_TYPE_UNIT;
 
     /**
      * @var \DateTime
@@ -146,21 +142,9 @@ class OrderLineItem extends ExtendOrderLineItem implements ProductHolderInterfac
     protected $comment;
 
     /**
-     * @todo remove this as it lead to circular dependency
-     * @var QuoteProductOffer
-     *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer")
-     * @ORM\JoinColumn(name="quote_product_offer_id", referencedColumnName="id", onDelete="CASCADE")
+     * @var bool
      */
-    protected $quoteProductOffer;
-
-    public static function getPriceTypes()
-    {
-        return [
-            self::PRICE_TYPE_UNIT => 'unit',
-            self::PRICE_TYPE_BUNDLED => 'bundled',
-        ];
-    }
+    protected $requirePriceRecalculation = false;
 
     /**
      * Get id
@@ -170,14 +154,6 @@ class OrderLineItem extends ExtendOrderLineItem implements ProductHolderInterfac
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getEntityIdentifier()
-    {
-        return $this->getId();
     }
 
     /**
@@ -211,10 +187,11 @@ class OrderLineItem extends ExtendOrderLineItem implements ProductHolderInterfac
      */
     public function setProduct(Product $product = null)
     {
-        $this->product = $product;
-        if ($product) {
-            $this->productSku = $product->getSku();
+        if ($product && (!$this->product || $product->getId() !== $this->product->getId())) {
+            $this->requirePriceRecalculation = true;
         }
+
+        $this->product = $product;
 
         return $this;
     }
@@ -253,14 +230,6 @@ class OrderLineItem extends ExtendOrderLineItem implements ProductHolderInterfac
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function getProductHolder()
-    {
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getFreeFormProduct()
@@ -287,6 +256,10 @@ class OrderLineItem extends ExtendOrderLineItem implements ProductHolderInterfac
      */
     public function setQuantity($quantity)
     {
+        if ($quantity !== $this->quantity) {
+            $this->requirePriceRecalculation = true;
+        }
+
         $this->quantity = $quantity;
 
         return $this;
@@ -310,10 +283,11 @@ class OrderLineItem extends ExtendOrderLineItem implements ProductHolderInterfac
      */
     public function setProductUnit(ProductUnit $productUnit = null)
     {
-        $this->productUnit = $productUnit;
-        if ($productUnit) {
-            $this->productUnitCode = $productUnit->getCode();
+        if ($productUnit && (!$this->productUnit || $productUnit->getCode() !== $this->productUnit->getCode())) {
+            $this->requirePriceRecalculation = true;
         }
+
+        $this->productUnit = $productUnit;
 
         return $this;
     }
@@ -414,7 +388,6 @@ class OrderLineItem extends ExtendOrderLineItem implements ProductHolderInterfac
     public function setCurrency($currency)
     {
         $this->currency = $currency;
-        $this->getPrice()->setCurrency($currency);
 
         return $this;
     }
@@ -453,7 +426,6 @@ class OrderLineItem extends ExtendOrderLineItem implements ProductHolderInterfac
     public function setValue($value)
     {
         $this->value = $value;
-        $this->getPrice()->setValue($this->value);
 
         return $this;
     }
@@ -501,24 +473,11 @@ class OrderLineItem extends ExtendOrderLineItem implements ProductHolderInterfac
     }
 
     /**
-     * @todo remove this as it lead to circular dependency
-     * @param QuoteProductOffer $quoteProductOffer
-     * @return $this
+     * @return bool
      */
-    public function setQuoteProductOffer(QuoteProductOffer $quoteProductOffer = null)
+    public function isRequirePriceRecalculation()
     {
-        $this->quoteProductOffer = $quoteProductOffer;
-
-        return $this;
-    }
-
-    /**
-     * @todo remove this as it lead to circular dependency
-     * @return QuoteProductOffer
-     */
-    public function getQuoteProductOffer()
-    {
-        return $this->quoteProductOffer;
+        return $this->requirePriceRecalculation;
     }
 
     /**
@@ -533,18 +492,28 @@ class OrderLineItem extends ExtendOrderLineItem implements ProductHolderInterfac
 
     /**
      * @ORM\PrePersist
-     */
-    public function prePersist()
-    {
-        $this->updatePrice();
-    }
-
-    /**
      * @ORM\PreUpdate
      */
+    public function preSave()
+    {
+        $this->updatePrice();
+        $this->updateItemInformation();
+    }
+
     public function updatePrice()
     {
         $this->value = $this->price ? $this->price->getValue() : null;
         $this->currency = $this->price ? $this->price->getCurrency() : null;
+    }
+
+    protected function updateItemInformation()
+    {
+        if ($this->getProduct()) {
+            $this->productSku = $this->getProduct()->getSku();
+        }
+
+        if ($this->getProductUnit()) {
+            $this->productUnitCode = $this->getProductUnit()->getCode();
+        }
     }
 }

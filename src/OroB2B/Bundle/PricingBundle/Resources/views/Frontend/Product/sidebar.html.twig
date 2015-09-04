@@ -1,0 +1,15 @@
+{% extends 'OroB2BProductBundle:Sidebar:grid-sidebar.html.twig' %}
+
+{% set pageComponentOptions = {
+    'currenciesSelector': '#' ~ currencies.vars.id,
+    'showTierPricesSelector': '#' ~ showTierPrices.vars.id
+} %}
+{% block sidebar_content %}
+    <div
+        data-page-component-module="orob2bpricing/js/app/components/frontend-product-sidebar-component"
+        data-page-component-options="{{ pageComponentOptions|json_encode }}"
+    >
+        <div class="sidebar-item currencies" {{ currencies.vars.choices|length <= 1 ? 'style="display:none;"' }}>{{ form_row(currencies) }}</div>
+        <div class="sidebar-item show-tier-prices-choice">{{ form_row(showTierPrices) }}</div>
+    </div>
+{% endblock sidebar_content %}

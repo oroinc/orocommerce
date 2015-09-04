@@ -6,8 +6,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
@@ -36,18 +37,25 @@ class AjaxLineItemController extends Controller
      * )
      * @ParamConverter("shoppingList", class="OroB2BShoppingListBundle:ShoppingList", options={"id" = "shoppingListId"})
      *
+     * @param Request $request
      * @param ShoppingList $shoppingList
      *
      * @return array|RedirectResponse
      */
-    public function createAction(ShoppingList $shoppingList)
+    public function createAction(Request $request, ShoppingList $shoppingList)
     {
-        $lineItem = new LineItem();
-        $lineItem->setShoppingList($shoppingList);
+        $lineItem = (new LineItem())
+            ->setShoppingList($shoppingList)
+            ->setAccountUser($shoppingList->getAccountUser())
+            ->setOrganization($shoppingList->getOrganization());
 
-        $request = $this->getRequest();
         $form = $this->createForm(LineItemType::NAME, $lineItem);
-        $handler = new LineItemHandler($form, $request, $this->getDoctrine());
+        $handler = new LineItemHandler(
+            $form,
+            $request,
+            $this->getDoctrine(),
+            $this->get('orob2b_shopping_list.shopping_list.manager')
+        );
 
         $result = $this->get('oro_form.model.update_handler')
             ->handleUpdate($lineItem, $form, null, null, null, $handler);

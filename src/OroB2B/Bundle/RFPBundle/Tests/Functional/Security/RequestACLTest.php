@@ -13,8 +13,8 @@ use Oro\Bundle\SecurityBundle\Model\AclPrivilegeIdentity;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
-use OroB2B\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadAccountUsersData;
 
@@ -42,23 +42,24 @@ class RequestACLTest extends WebTestCase
      * @dataProvider permissionsDataProvider
      * @param int $level
      * @param array $permissions
+     * @param int $expectedCode
      */
-    public function testRFPPermissions($level, $permissions)
+    public function testRFPPermissions($level, $permissions, $expectedCode)
     {
         $this->setRolePermissions($level);
         $this->login(LoadAccountUsersData::USER_EMAIL, LoadAccountUsersData::USER_PASSWORD);
 
         /** @var AccountUser $user */
         $user = $this->getContainer()->get('oro_security.security_facade')->getLoggedUser();
-        $this->assertInstanceOf('OroB2B\Bundle\CustomerBundle\Entity\AccountUser', $user);
+        $this->assertInstanceOf('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $user);
         $this->assertEquals(LoadAccountUsersData::USER_EMAIL, $user->getUsername());
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_frontend_request_create'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         /** @var Form $form */
-        $form = $crawler->selectButton('Submit Request For Proposal')->form();
+        $form = $crawler->selectButton('Save and Close')->form();
         $form['orob2b_rfp_frontend_request_type[firstName]'] = LoadAccountUsersData::USER_NAME;
         $form['orob2b_rfp_frontend_request_type[lastName]']  = LoadAccountUsersData::USER_LAST_NAME;
         $form['orob2b_rfp_frontend_request_type[email]']     = LoadAccountUsersData::USER_EMAIL;
@@ -71,32 +72,33 @@ class RequestACLTest extends WebTestCase
         $this->client->submit($form);
 
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertHtmlResponseStatusCodeEquals($result, $expectedCode);
 
         // Check isset RFP request with first user ownership
+        /** @var Request $request */
         $request = $this->getContainer()->get('doctrine')->getRepository('OroB2BRFPBundle:Request')
             ->findOneBy(['email' => LoadAccountUsersData::USER_EMAIL]);
 
-        $this->assertInstanceOf('OroB2B\Bundle\CustomerBundle\Entity\AccountUser', $request->getFrontendOwner());
-        $this->assertEquals($user->getId(), $request->getFrontendOwner()->getId());
+        $this->assertInstanceOf('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $request->getAccountUser());
+        $this->assertEquals($user->getId(), $request->getAccountUser()->getId());
 
         // Check owner access
         $this->assertIsGranted($permissions['owner'], $request);
 
-        // Login another user in same customer
-        $this->login(LoadAccountUsersData::SAME_CUSTOMER_USER_EMAIL, LoadAccountUsersData::SAME_CUSTOMER_USER_PASSWORD);
-        $this->assertIsGranted($permissions['sameCustomerUser'], $request);
+        // Login another user in same account
+        $this->login(LoadAccountUsersData::SAME_ACCOUNT_USER_EMAIL, LoadAccountUsersData::SAME_ACCOUNT_USER_PASSWORD);
+        $this->assertIsGranted($permissions['sameAccountUser'], $request);
 
-        // Login another user in sub customer
-        $this->login(LoadAccountUsersData::SUB_CUSTOMER_USER_EMAIL, LoadAccountUsersData::SUB_CUSTOMER_USER_PASSWORD);
-        $this->assertIsGranted($permissions['subCustomerUser'], $request);
+        // Login another user in sub account
+        $this->login(LoadAccountUsersData::SUB_ACCOUNT_USER_EMAIL, LoadAccountUsersData::SUB_ACCOUNT_USER_PASSWORD);
+        $this->assertIsGranted($permissions['subAccountUser'], $request);
 
-        // Login another user in another customer
+        // Login another user in another account
         $this->login(
-            LoadAccountUsersData::NOT_SAME_CUSTOMER_USER_EMAIL,
-            LoadAccountUsersData::NOT_SAME_CUSTOMER_USER_PASSWORD
+            LoadAccountUsersData::NOT_SAME_ACCOUNT_USER_EMAIL,
+            LoadAccountUsersData::NOT_SAME_ACCOUNT_USER_PASSWORD
         );
-        $this->assertIsGranted($permissions['notSameCustomerUser'], $request);
+        $this->assertIsGranted($permissions['notSameAccountUser'], $request);
     }
 
     /**
@@ -109,29 +111,32 @@ class RequestACLTest extends WebTestCase
                 'level' => AccessLevel::NONE_LEVEL,
                 'permissions' => [
                     'owner' => false,
-                    'sameCustomerUser' => false,
-                    'subCustomerUser' => false,
-                    'notSameCustomerUser' => false
-                ]
+                    'sameAccountUser' => false,
+                    'subAccountUser' => false,
+                    'notSameAccountUser' => false,
+                ],
+                'expectedCode' => 200,
             ],
             'account user' => [
                 'level' => AccessLevel::BASIC_LEVEL,
                 'permissions' => [
                     'owner' => true,
-                    'sameCustomerUser' => false,
-                    'subCustomerUser' => false,
-                    'notSameCustomerUser' => false
-                ]
+                    'sameAccountUser' => false,
+                    'subAccountUser' => false,
+                    'notSameAccountUser' => false,
+                ],
+                'expectedCode' => 200,
             ],
-            'customer' => [
+            'account' => [
                 'level' => AccessLevel::LOCAL_LEVEL,
                 'permissions' => [
                     'owner' => true,
-                    'sameCustomerUser' => true,
-                    'subCustomerUser' => false,
-                    'notSameCustomerUser' => false
-                ]
-            ]
+                    'sameAccountUser' => true,
+                    'subAccountUser' => false,
+                    'notSameAccountUser' => false,
+                ],
+                'expectedCode' => 200,
+            ],
         ];
     }
 
@@ -145,8 +150,8 @@ class RequestACLTest extends WebTestCase
 
         $role = $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroB2BCustomerBundle:AccountUserRole')
-            ->getRepository('OroB2BCustomerBundle:AccountUserRole')
+            ->getManagerForClass('OroB2BAccountBundle:AccountUserRole')
+            ->getRepository('OroB2BAccountBundle:AccountUserRole')
             ->findOneBy(['role' => LoadAccountUsersData::BUYER]);
 
         $aclPrivilege = new AclPrivilege();
@@ -183,7 +188,7 @@ class RequestACLTest extends WebTestCase
     protected function login($email, $password)
     {
         // Logout previous user
-        $this->client->request('GET', $this->getUrl('orob2b_customer_account_user_security_logout'));
+        $this->client->request('GET', $this->getUrl('orob2b_account_account_user_security_logout'));
 
         // Login first user
         $this->initClient(

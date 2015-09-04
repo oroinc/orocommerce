@@ -15,8 +15,8 @@ use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct as RFPRequestProduct;
@@ -51,8 +51,8 @@ class LoadQuoteDemoData extends AbstractFixture implements
         return [
             'Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData',
             'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
-            'OroB2B\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
-            'OroB2B\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerDemoData',
+            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
+            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
             'OroB2B\Bundle\RFPBundle\Migrations\Data\Demo\ORM\LoadRequestDemoData',
         ];
     }
@@ -68,13 +68,14 @@ class LoadQuoteDemoData extends AbstractFixture implements
         $accounts = $this->getAccounts($manager);
 
         for ($i = 0; $i < 20; $i++) {
-            /* @var $account Customer */
+            /* @var $account Account */
             $account = $accounts[rand(0, count($accounts) - 1)];
 
             if (!$account) {
                 $accountUser = null;
             } else {
                 $accountUsers = array_merge([null], $account->getUsers()->getValues());
+                /* @var $accountUser AccountUser */
                 $accountUser = $accountUsers[rand(0, count($accountUsers) - 1)];
             }
 
@@ -89,7 +90,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
                 ->setValidUntil($validUntil)
                 ->setAccountUser($accountUser)
                 ->setAccount($account)
-            ;
+                ->setLocked(rand(0, 1));
 
             if (1 === rand(1, 3)) {
                 $quote->setRequest($requests[rand(1, count($requests) - 1)]);
@@ -105,11 +106,11 @@ class LoadQuoteDemoData extends AbstractFixture implements
 
     /**
      * @param ObjectManager $manager
-     * @return Collection|Customer[]
+     * @return Collection|Account[]
      */
     protected function getAccounts(ObjectManager $manager)
     {
-        return array_merge([null], $manager->getRepository('OroB2BCustomerBundle:Customer')->findBy([], null, 10));
+        return array_merge([null], $manager->getRepository('OroB2BAccountBundle:Account')->findBy([], null, 10));
     }
 
     /**
@@ -136,7 +137,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
      */
     protected function processQuoteProducts(Quote $quote, ObjectManager $manager)
     {
-        $products   = $this->getProducts($manager);
+        $products = $this->getProducts($manager);
         $currencies = $this->getCurrencies();
 
         $types = [
@@ -185,8 +186,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
                     ->setQuantity(rand(1, 100))
                     ->setProductUnit($productUnit)
                     ->setPriceType($priceType)
-                    ->setAllowIncrements((bool)rand(0, 1))
-                ;
+                    ->setAllowIncrements((bool)rand(0, 1));
 
                 if ($quoteProduct->isTypeNotAvailable()) {
                     $productReplacement = $products[rand(1, count($products) - 1)];
@@ -217,8 +217,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
             ->setProduct($product)
             ->setType($type)
             ->setComment(sprintf('Seller Notes %s', $index + 1))
-            ->setCommentCustomer(sprintf('Customer Notes %s', $index + 1))
-        ;
+            ->setCommentAccount(sprintf('Account Notes %s', $index + 1));
 
         return $quoteProduct;
     }
@@ -234,8 +233,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
             $quoteProductRequest
                 ->setPrice($requestProductItem->getPrice())
                 ->setQuantity($requestProductItem->getQuantity())
-                ->setProductUnit($requestProductItem->getProductUnit())
-            ;
+                ->setProductUnit($requestProductItem->getProductUnit());
             $quoteProduct->addQuoteProductRequest($quoteProductRequest);
         }
     }

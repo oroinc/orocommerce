@@ -2,17 +2,20 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class LoadShoppingLists extends AbstractFixture implements DependentFixtureInterface
 {
+    const SHOPPING_LIST_1 = 'shopping_list_1';
+    const SHOPPING_LIST_2 = 'shopping_list_2';
+    const SHOPPING_LIST_3 = 'shopping_list_3';
+
     /**
      * {@inheritdoc}
      */
@@ -29,7 +32,11 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     public function load(ObjectManager $manager)
     {
         $accountUser = $this->getAccountUser($manager);
-        $this->createShoppingList($manager, $accountUser, 'shopping_list');
+        $lists = $this->getData();
+        foreach ($lists as $listLabel) {
+            $isCurrent = $listLabel === self::SHOPPING_LIST_2;
+            $this->createShoppingList($manager, $accountUser, $listLabel, $isCurrent);
+        }
 
         $manager->flush();
     }
@@ -38,18 +45,19 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
      * @param ObjectManager $manager
      * @param string        $name
      * @param AccountUser   $accountUser
+     * @param bool          $isCurrent
      *
      * @return ShoppingList
      */
-    protected function createShoppingList(ObjectManager $manager, AccountUser $accountUser, $name)
+    protected function createShoppingList(ObjectManager $manager, AccountUser $accountUser, $name, $isCurrent = false)
     {
         $shoppingList = new ShoppingList();
-        $shoppingList->setOwner($accountUser);
         $shoppingList->setOrganization($accountUser->getOrganization());
         $shoppingList->setAccountUser($accountUser);
-        $shoppingList->setAccount($accountUser->getCustomer());
+        $shoppingList->setAccount($accountUser->getAccount());
         $shoppingList->setLabel($name . '_label');
         $shoppingList->setNotes($name . '_notes');
+        $shoppingList->setCurrent($isCurrent);
 
         $manager->persist($shoppingList);
         $this->addReference($name, $shoppingList);
@@ -65,7 +73,7 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
      */
     protected function getAccountUser(ObjectManager $manager)
     {
-        $accountUser = $manager->getRepository('OroB2BCustomerBundle:AccountUser')
+        $accountUser = $manager->getRepository('OroB2BAccountBundle:AccountUser')
             ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
 
         if (!$accountUser) {
@@ -73,5 +81,13 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
         }
 
         return $accountUser;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getData()
+    {
+        return [self::SHOPPING_LIST_1, self::SHOPPING_LIST_2, self::SHOPPING_LIST_3];
     }
 }

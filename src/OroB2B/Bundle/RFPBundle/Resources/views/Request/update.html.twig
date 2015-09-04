@@ -18,7 +18,7 @@
 {% block navButtons %}
     {{ UI.cancelButton(path('orob2b_rfp_request_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or resource_granted('orob2b_rfp_request_create') %}
+    {% if entity.id or resource_granted('orob2b_rfp_frontend_request_create') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
@@ -35,7 +35,16 @@
             'subblocks': [{
                 'title': '',
                 'data': [
-                    include('OroB2BRFPBundle:Request:block/infoRequest.html.twig'),
+                    form_row(form.firstName),
+                    form_row(form.lastName),
+                    form_row(form.email),
+                    form_row(form.phone),
+                    form_row(form.company),
+                    form_row(form.role),
+                    form_row(form.account),
+                    form_row(form.accountUser),
+                    form_row(form.status),
+                    form_row(form.body),
                 ]
             }]
         },
@@ -61,5 +70,7 @@
         'dataBlocks': dataBlocks
     }%}
 
-    {{ parent() }}
+    <div class="rfp-request-widget" data-page-component-module="orob2baccount/js/app/components/account-selection-component">
+        {{ parent() }}
+    </div>
 {% endblock content_data %}

@@ -1,0 +1,26 @@
+{% extends commerce.layout %}
+
+{% block breadcrumb %}
+    <ul class="breadcrumb">
+        <li>{{ 'orob2b.account.entity_plural_label'|trans }}<span class="divider">/</span></li>
+        <li>{{ 'orob2b.account.accountuser.entity_plural_label'|trans }}</li>
+    </ul>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <form action="" class="form-signin">
+        <div class="title-box">
+            <h1 class="oro-title">{{ oro_config_value('oro_ui.product_caption') }}</h1>
+            <span class="divider-vertical"></span>
+            <h2 class="title">{{ 'orob2b.account.accountuser.profile.check_email.title'|trans }}</h2>
+        </div>
+        <fieldset>
+            <div class="alert alert-success">
+                {{ 'orob2b.account.accountuser.profile.check_email.message'|trans({ '%email%': email }) }}
+            </div>
+            <a href="{{ path('orob2b_account_account_user_security_login') }}" class="btn btn-link">&laquo; {{ 'orob2b.account.accountuser.profile.return_to_login'|trans }}</a>
+        </fieldset>
+    </form>
+</div>
+{% endblock %}

@@ -10,8 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
-use OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -79,36 +79,36 @@ class PriceList
     protected $currencies;
 
     /**
-     * @var Customer[]|Collection
+     * @var Account[]|Collection
      *
-     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\Customer")
+     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
      * @ORM\JoinTable(
-     *      name="orob2b_price_list_to_customer",
+     *      name="orob2b_price_list_to_account",
      *      joinColumns={
      *          @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
      *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="customer_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *          @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
      *      }
      * )
      */
-    protected $customers;
+    protected $accounts;
 
     /**
-     * @var CustomerGroup[]|Collection
+     * @var AccountGroup[]|Collection
      *
-     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\CustomerGroup")
+     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountGroup")
      * @ORM\JoinTable(
      *      name="orob2b_price_list_to_c_group",
      *      joinColumns={
      *          @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
      *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="customer_group_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *          @ORM\JoinColumn(name="account_group_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
      *      }
      * )
      */
-    protected $customerGroups;
+    protected $accountGroups;
 
     /**
      * @var Website[]|Collection
@@ -176,8 +176,8 @@ class PriceList
     public function __construct()
     {
         $this->currencies = new ArrayCollection();
-        $this->customers = new ArrayCollection();
-        $this->customerGroups = new ArrayCollection();
+        $this->accounts = new ArrayCollection();
+        $this->accountGroups = new ArrayCollection();
         $this->websites = new ArrayCollection();
         $this->prices = new ArrayCollection();
     }
@@ -325,79 +325,79 @@ class PriceList
     }
 
     /**
-     * @param Customer $customer
+     * @param Account $account
      *
      * @return PriceList
      */
-    public function addCustomer(Customer $customer)
+    public function addAccount(Account $account)
     {
-        if (!$this->customers->contains($customer)) {
-            $this->customers->add($customer);
+        if (!$this->accounts->contains($account)) {
+            $this->accounts->add($account);
         }
 
         return $this;
     }
 
     /**
-     * @param Customer $customer
+     * @param Account $account
      *
      * @return PriceList
      */
-    public function removeCustomer(Customer $customer)
+    public function removeAccount(Account $account)
     {
-        if ($this->customers->contains($customer)) {
-            $this->customers->removeElement($customer);
+        if ($this->accounts->contains($account)) {
+            $this->accounts->removeElement($account);
         }
 
         return $this;
     }
 
     /**
-     * Get customers
+     * Get accounts
      *
-     * @return Collection|Customer[]
+     * @return Collection|Account[]
      */
-    public function getCustomers()
+    public function getAccounts()
     {
-        return $this->customers;
+        return $this->accounts;
     }
 
     /**
-     * @param CustomerGroup $customerGroup
+     * @param AccountGroup $accountGroup
      *
      * @return PriceList
      */
-    public function addCustomerGroup(CustomerGroup $customerGroup)
+    public function addAccountGroup(AccountGroup $accountGroup)
     {
-        if (!$this->customerGroups->contains($customerGroup)) {
-            $this->customerGroups->add($customerGroup);
+        if (!$this->accountGroups->contains($accountGroup)) {
+            $this->accountGroups->add($accountGroup);
         }
 
         return $this;
     }
 
     /**
-     * @param CustomerGroup $customerGroup
+     * @param AccountGroup $accountGroup
      *
      * @return PriceList
      */
-    public function removeCustomerGroup(CustomerGroup $customerGroup)
+    public function removeAccountGroup(AccountGroup $accountGroup)
     {
-        if ($this->customerGroups->contains($customerGroup)) {
-            $this->customerGroups->removeElement($customerGroup);
+        if ($this->accountGroups->contains($accountGroup)) {
+            $this->accountGroups->removeElement($accountGroup);
         }
 
         return $this;
     }
 
     /**
-     * Get customer groups
+     * Get account groups
      *
-     * @return Collection|CustomerGroup[]
+     * @return Collection|AccountGroup[]
      */
-    public function getCustomerGroups()
+    public function getAccountGroups()
     {
-        return $this->customerGroups;
+        return $this->accountGroups;
     }
 
     /**

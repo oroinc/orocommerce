@@ -1,0 +1,33 @@
+{% extends 'OroUIBundle:actions:index.html.twig' %}
+
+{% set pageTitle = 'orob2b.product.entity_plural_label'|trans %}
+
+{% block navButtons %}
+    {% placeholder frontend_products_navButtons %}
+{% endblock %}
+
+{% block content_datagrid %}
+    <div class="product-container">
+        {% set componentOptions = {
+            sidebarAlias: 'frontend-products-sidebar',
+            widgetAlias: 'frontend-products-grid-widget',
+            widgetContainer: '.product-index-content',
+            widgetRoute: 'orob2b_frontend_datagrid_widget',
+            widgetRouteParameters: widgetRouteParameters
+        } %}
+        <div class="grid-sidebar"
+             data-page-component-module="orob2bproduct/js/app/components/grid-sidebar-component"
+             data-page-component-options="{{ componentOptions|json_encode }}"
+        >
+            {% placeholder frontend_product_index_sidebar %}
+        </div>
+        <div class="product-index-content">
+            {{ oro_widget_render({
+                'widgetType': 'block',
+                'url': path('orob2b_frontend_datagrid_widget', widgetRouteParameters),
+                'title': '',
+                'alias': componentOptions.widgetAlias
+            }) }}
+        </div>
+    </div>
+{% endblock content_datagrid %}

@@ -1,0 +1,105 @@
+orob2b_account:
+    resource:     "@OroB2BAccountBundle/Controller/AccountController.php"
+    type:         annotation
+    prefix:       /account
+
+orob2b_account_address:
+    resource:     "@OroB2BAccountBundle/Controller/AccountAddressController.php"
+    type:         annotation
+    prefix:       /account/address
+
+orob2b_account_account_user_address:
+    resource:     "@OroB2BAccountBundle/Controller/AccountUserAddressController.php"
+    type:         annotation
+    prefix:       /account/user/address
+
+orob2b_account_group:
+    resource:     "@OroB2BAccountBundle/Controller/AccountGroupController.php"
+    type:         annotation
+    prefix:       /account/group
+
+orob2b_account_account_user:
+    resource: "@OroB2BAccountBundle/Controller/AccountUserController.php"
+    type: annotation
+    prefix: /account/user
+
+orob2b_account_account_user_ajax:
+    resource: "@OroB2BAccountBundle/Controller/AjaxAccountUserController.php"
+    type: annotation
+    prefix: /account/user
+
+orob2b_account_account_user_role:
+    resource: "@OroB2BAccountBundle/Controller/AccountUserRoleController.php"
+    type: annotation
+    prefix: /account/user/role
+
+orob2b_account_acl_permission:
+    resource: "@OroB2BAccountBundle/Controller/AclPermissionController.php"
+    type: annotation
+    prefix: /account/acl
+
+orob2b_account_frontend_account_user:
+    resource: "@OroB2BAccountBundle/Controller/Frontend/AccountUserController.php"
+    type: annotation
+    prefix: /account/user
+    options:
+        frontend: true
+
+orob2b_account_user_security:
+    resource: "@OroB2BAccountBundle/Controller/SecurityController.php"
+    type: annotation
+    prefix: /account/user
+    options:
+        frontend: true
+
+orob2b_account_user_password_reset:
+    resource: "@OroB2BAccountBundle/Controller/Frontend/ResetController.php"
+    type: annotation
+    prefix: /account/user
+    options:
+        frontend: true
+
+orob2b_account_bundle_api:
+    resource:     "@OroB2BAccountBundle/Resources/config/oro/routing_api.yml"
+    prefix:       api/rest/{version}/
+    requirements:
+        version:  latest|v1
+        _format:  json
+    defaults:
+        version:  latest
+
+orob2b_account_pinbar_help:
+    pattern: /pinbar/help
+    defaults: { _controller: FrameworkBundle:Template:template, template: "OroNavigationBundle:Pinbar:help.html.twig" }
+    options:
+        frontend: true
+
+orob2b_frontend_autocomplete_search:
+    pattern: /autocomplete/search
+    defaults: { _controller: OroFormBundle:Autocomplete:search }
+    options:
+        frontend: true
+
+orob2b_account_frontend_entity_pagination_first:
+    pattern: /entity-pagination/first/{_entityName}/{_scope}/{_routeName}"
+    defaults: { _controller: OroEntityPaginationBundle:EntityPagination:first }
+    options:
+        frontend: true
+
+orob2b_account_frontend_entity_pagination_previous:
+    pattern: /entity-pagination/previous/{_entityName}/{_scope}/{_routeName}"
+    defaults: { _controller: OroEntityPaginationBundle:EntityPagination:previous }
+    options:
+        frontend: true
+
+orob2b_account_frontend_entity_pagination_next:
+    pattern: /entity-pagination/next/{_entityName}/{_scope}/{_routeName}"
+    defaults: { _controller: OroEntityPaginationBundle:EntityPagination:next }
+    options:
+        frontend: true
+
+orob2b_account_frontend_entity_pagination_last:
+    pattern: /entity-pagination/last/{_entityName}/{_scope}/{_routeName}"
+    defaults: { _controller: OroEntityPaginationBundle:EntityPagination:last }
+    options:
+        frontend: true

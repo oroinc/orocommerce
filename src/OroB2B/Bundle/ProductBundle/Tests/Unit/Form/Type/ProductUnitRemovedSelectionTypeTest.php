@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -13,6 +12,7 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
@@ -50,7 +50,7 @@ class ProductUnitRemovedSelectionTypeTest extends FormIntegrationTestCase
 
         $this->formType = new ProductUnitRemovedSelectionType();
         $this->formType->setEntityClass('OroB2B\Bundle\ProductBundle\Entity\ProductUnit');
-        $this->formType ->setTranslator($this->translator);
+        $this->formType->setTranslator($this->translator);
 
         parent::setUp();
     }

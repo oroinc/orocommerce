@@ -242,7 +242,7 @@ class QuoteProductTypeTest extends AbstractTest
                     'product'   => 2,
                     'type'      => self::QP_TYPE1,
                     'comment'   => 'comment1',
-                    'commentCustomer' => 'comment2',
+                    'commentAccount' => 'comment2',
                     'quoteProductOffers' => [
                         [
                             'quantity'      => 10,
@@ -272,7 +272,7 @@ class QuoteProductTypeTest extends AbstractTest
                 'submittedData' => [
                     'type'      => self::QP_TYPE1,
                     'comment'   => 'comment1',
-                    'commentCustomer' => 'comment2',
+                    'commentAccount' => 'comment2',
                     'quoteProductOffers' => [
                         [
                             'quantity'      => 10,
@@ -302,7 +302,7 @@ class QuoteProductTypeTest extends AbstractTest
                 'submittedData' => [
                     'product'   => 2,
                     'comment'   => 'comment1',
-                    'commentCustomer' => 'comment2',
+                    'commentAccount' => 'comment2',
                     'quoteProductOffers' => [
                         [
                             'quantity'      => 10,
@@ -332,7 +332,7 @@ class QuoteProductTypeTest extends AbstractTest
                 'submittedData' => [
                     'product'   => 2,
                     'comment'   => 'comment1',
-                    'commentCustomer' => 'comment2',
+                    'commentAccount' => 'comment2',
                 ],
                 'expectedData'  => $this->getQuoteProduct(2, null, 'comment1', 'comment2', [], []),
                 'inputData'     => $this->getQuoteProduct(2)->setProduct(null),
@@ -343,7 +343,7 @@ class QuoteProductTypeTest extends AbstractTest
                     'product'   => 2,
                     'type'      => self::QP_TYPE1,
                     'comment'   => 'comment1',
-                    'commentCustomer' => 'comment2',
+                    'commentAccount' => 'comment2',
                     'quoteProductOffers' => [
                         [
                             'quantity'      => 10,

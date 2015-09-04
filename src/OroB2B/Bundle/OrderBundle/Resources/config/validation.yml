@@ -2,24 +2,34 @@ OroB2B\Bundle\OrderBundle\Entity\Order:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: identifier
     properties:
-        identifier:
-            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Alphanumeric: ~
         owner:
             - NotBlank: ~
         organization:
             - NotBlank: ~
+        poNumber:
+            - Length:
+                max: 255
+        shipUntil:
+            - Date: ~
+        currency:
+            - Currency: ~
+#        subtotal:
+#            - Type:
+#                type: float
+        account:
+            - NotBlank: ~
         lineItems:
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Count:
+                min: 1
+                minMessage: 'orob2b.order.orderlineitem.count'
             - Valid: ~
 
 OroB2B\Bundle\OrderBundle\Entity\OrderLineItem:
     constraints:
-        - OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductUnitHolder: ~
+        - OroB2B\Bundle\OrderBundle\Validator\Constraints\LineItemProduct: ~
     properties:
         order:
             - NotBlank: ~
-        product:
-            - NotBlank:
-                message: 'orob2b.order.orderlineitem.product.blank'
         productSku:
             - NotBlank:
                 groups: [ Import ]

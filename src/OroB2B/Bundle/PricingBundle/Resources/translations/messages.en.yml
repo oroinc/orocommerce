@@ -11,8 +11,8 @@ orob2b.pricing:
         set_default:
             label: Set default
             message: The "{{ priceListName }}" has been made default
-        customer_groups.label: Customer Groups
-        customers.label: Customers
+        account_groups.label: Account Groups
+        accounts.label: Accounts
         websites.label: Websites
         prices.label: Prices
     quantity.label: Quantity
@@ -27,6 +27,7 @@ orob2b.pricing:
         id.label: ID
         product.label: Product
         product_sku.label: Product SKU
+        product_name.label: Product name
         price_list.label: Proce List
         currency.label: Currency
         quantity.label: Quantity

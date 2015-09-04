@@ -1,14 +1,19 @@
 parameters:
     orob2b_order.entity.order.class: OroB2B\Bundle\OrderBundle\Entity\Order
+    orob2b_order.entity.order_address.class: OroB2B\Bundle\OrderBundle\Entity\OrderAddress
     orob2b_order.entity.order_line_item.class: OroB2B\Bundle\OrderBundle\Entity\OrderLineItem
 
     orob2b_order.order.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_order.order.listener.order_listener.class: OroB2B\Bundle\OrderBundle\EventListener\OrderListener
     orob2b_order.order.entity.id_generator.class: OroB2B\Bundle\OrderBundle\Doctrine\ORM\Id\SimpleEntityAwareGenerator
-    #Formatters
-    orob2b_order.formatter.order_line_item.class: OroB2B\Bundle\OrderBundle\Formatter\OrderLineItemFormatter
-    #Twig extensions
-    orob2b_order.twig.order.class: OroB2B\Bundle\OrderBundle\Twig\OrderExtension
+    orob2b_order.provider.subtotals.class: OroB2B\Bundle\OrderBundle\Provider\SubtotalsProvider
+
+    orob2b_order.order.provider.order_address.class: OroB2B\Bundle\OrderBundle\Provider\OrderAddressProvider
+    orob2b_order.order.provider.order_address_security.class: OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider
+
+    orob2b_order.manager.order_address.class: OroB2B\Bundle\OrderBundle\Model\OrderAddressManager
+    orob2b_order.model.order_request_handler.class: OroB2B\Bundle\OrderBundle\Model\OrderRequestHandler
+    orob2b_order.model.order_currency_handler.class: OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler
 
 services:
     orob2b_order.order.manager.api:
@@ -27,17 +32,48 @@ services:
         tags:
             - { name: doctrine.event_listener, event: postPersist }
 
-    orob2b_order.twig.order:
-        class: %orob2b_order.twig.order.class%
-        arguments:
-            - @orob2b_order.formatter.order_line_item
-        tags:
-            - { name: twig.extension }
+    orob2b_order.provider.subtotals:
+            class: %orob2b_order.provider.subtotals.class%
+            arguments:
+                - @translator
 
-    orob2b_order.formatter.order_line_item:
-        class: %orob2b_order.formatter.order_line_item.class%
+    orob2b_order.order.provider.order_address:
+        class: %orob2b_order.order.provider.order_address.class%
         arguments:
-            - @translator
-            - @oro_locale.formatter.number
-            - @orob2b_product.formatter.product_unit_value
-            - @orob2b_product.formatter.product_unit_label
+            - @oro_security.security_facade
+            - @doctrine
+            - @oro_security.acl_helper
+            - %orob2b_account.entity.account_address.class%
+            - %orob2b_account.entity.account_user_address.class%
+
+    orob2b_order.order.provider.order_address_security:
+        class: %orob2b_order.order.provider.order_address_security.class%
+        arguments:
+            - @oro_security.security_facade
+            - @orob2b_order.order.provider.order_address
+            - %orob2b_account.entity.account_address.class%
+            - %orob2b_account.entity.account_user_address.class%
+
+    orob2b_order.manager.order_address:
+        class: %orob2b_order.manager.order_address.class%
+        arguments:
+            - @orob2b_order.order.provider.order_address
+            - @doctrine
+            - %orob2b_order.entity.order_address.class%
+        calls:
+            - [addEntity, ['a', %orob2b_account.entity.account_address.class%]]
+            - [addEntity, ['au', %orob2b_account.entity.account_user_address.class%]]
+
+    orob2b_order.model.order_request_handler:
+        class: %orob2b_order.model.order_request_handler.class%
+        arguments:
+            - @doctrine
+            - %orob2b_account.entity.account.class%
+            - %orob2b_account.entity.account_user.class%
+        calls:
+            - [setRequest, ["@?request="]]
+
+    orob2b_order.model.order_currency_handler:
+        class: %orob2b_order.model.order_currency_handler.class%
+        arguments:
+            - @oro_locale.settings

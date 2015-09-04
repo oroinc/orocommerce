@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 
-use Oro\Bundle\SecurityBundle\Acl\Extension\EntityAclExtension;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -46,7 +45,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
                 'acls'  => ['VIEW_BASIC'],
             ],
             [
-                'class' => 'orob2b_customer.entity.account_user.class',
+                'class' => 'orob2b_account.entity.account_user.class',
                 'acls'  => [],
             ],
         ],
@@ -56,7 +55,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
                 'acls'  => ['VIEW_LOCAL'],
             ],
             [
-                'class' => 'orob2b_customer.entity.account_user.class',
+                'class' => 'orob2b_account.entity.account_user.class',
                 'acls'  => [],
             ],
         ],
@@ -66,7 +65,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
                 'acls'  => ['VIEW_LOCAL'],
             ],
             [
-                'class' => 'orob2b_customer.entity.account_user.class',
+                'class' => 'orob2b_account.entity.account_user.class',
                 'acls'  => ['VIEW_LOCAL'],
             ],
         ],
@@ -241,7 +240,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
 
             $accountUser
                 ->setEmail($item['email'])
-                ->setCustomer($this->getReference($item['account']))
+                ->setAccount($this->getReference($item['account']))
                 ->setFirstName($item['firstname'])
                 ->setLastName($item['lastname'])
                 ->setConfirmed(true)
@@ -312,21 +311,17 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
 
         if ($aclManager->isAclEnabled()) {
             $sid = $aclManager->getSid($role);
+            $oid = $aclManager->getOid('entity:' . $className);
+            $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
 
-            foreach ($aclManager->getAllExtensions() as $extension) {
-                if ($extension instanceof EntityAclExtension) {
-                    $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
-                    $oid = $aclManager->getOid('entity:' . $className);
-                    $builder = $aclManager->getMaskBuilder($oid);
-                    $mask = $builder->reset()->get();
-                    foreach ($allowedAcls as $acl) {
-                        $mask = $builder->add($acl)->get();
-                    }
-                    $aclManager->setPermission($sid, $oid, $mask);
-
-                    $chainMetadataProvider->stopProviderEmulation();
-                }
+            $builder = $aclManager->getMaskBuilder($oid);
+            $mask = $builder->reset()->get();
+            foreach ($allowedAcls as $acl) {
+                $mask = $builder->add($acl)->get();
             }
+            $aclManager->setPermission($sid, $oid, $mask);
+
+            $chainMetadataProvider->stopProviderEmulation();
         }
     }
 }

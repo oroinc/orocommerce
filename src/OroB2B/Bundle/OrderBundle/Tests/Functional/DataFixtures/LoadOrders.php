@@ -3,65 +3,42 @@
 namespace OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
+use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 
 class LoadOrders extends AbstractFixture implements DependentFixtureInterface
 {
-    const ORDER1 = 'order1';
-    const ORDER2 = 'order2';
-    const ORDER3 = 'order3';
-    const ORDER4 = 'order4';
-    const ORDER5 = 'order5';
-    const ORDER6 = 'order6';
+    const ORDER_1 = 'simple_order';
+    const MY_ORDER = 'my_order';
 
     /**
      * @var array
      */
-    protected $items = [
-        [
-            'identifier'    => 'simple_order',
-            'owner'         => 'order.simple_user',
-            'account'       => null,
-            'accountUser'   => null,
+    protected $orders = [
+        self::ORDER_1 => [
+            'user' => LoadOrderUsers::ORDER_USER_1,
+            'accountUser' => 'grzegorz.brzeczyszczykiewicz@example.com',
+            'poNumber' => '1234567890',
+            'customerNotes' => 'Test account user notes',
+            'currency' => 'USD',
+            'subtotal' => '15000',
+            'paymentTerm' => LoadPaymentTermData::PAYMENT_TERM_NET_10
         ],
-        [
-            'identifier'    => self::ORDER1,
-            'owner'         => LoadOrderUsers::USER1,
-            'account'       => LoadOrderUsers::ACCOUNT1,
-            'accountUser'   => null,
-        ],
-        [
-            'identifier'    => self::ORDER2,
-            'owner'         => LoadOrderUsers::USER1,
-            'account'       => LoadOrderUsers::ACCOUNT1,
-            'accountUser'   => LoadOrderUsers::ACCOUNT1_USER1,
-        ],
-        [
-            'identifier'    => self::ORDER3,
-            'owner'         => LoadOrderUsers::USER1,
-            'account'       => LoadOrderUsers::ACCOUNT1,
-            'accountUser'   => LoadOrderUsers::ACCOUNT1_USER2,
-        ],
-        [
-            'identifier'    => self::ORDER4,
-            'owner'         => LoadOrderUsers::USER1,
-            'account'       => LoadOrderUsers::ACCOUNT1,
-            'accountUser'   => LoadOrderUsers::ACCOUNT1_USER3,
-        ],
-        [
-            'identifier'    => self::ORDER5,
-            'owner'         => LoadOrderUsers::USER1,
-            'account'       => LoadOrderUsers::ACCOUNT2,
-        ],
-        [
-            'identifier'    => self::ORDER6,
-            'owner'         => LoadOrderUsers::USER1,
-            'account'       => LoadOrderUsers::ACCOUNT2,
-            'accountUser'   => LoadOrderUsers::ACCOUNT2_USER1,
+        self::MY_ORDER => [
+            'user' => LoadOrderUsers::ORDER_USER_1,
+            'accountUser' => LoadAccountUserData::AUTH_USER,
+            'poNumber' => 'PO_NUM',
+            'customerNotes' => 'Test account user notes',
+            'currency' => 'EUR',
+            'subtotal' => '1500',
+            'paymentTerm' => LoadPaymentTermData::PAYMENT_TERM_NET_10
         ],
     ];
 
@@ -71,7 +48,9 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface
     public function getDependencies()
     {
         return [
+            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
             'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderUsers',
+            'OroB2B\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadPaymentTermData',
         ];
     }
 
@@ -80,33 +59,46 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface
      */
     public function load(ObjectManager $manager)
     {
-        foreach ($this->items as $item) {
-            /* @var $owner User */
-            $owner = $this->getReference($item['owner']);
-
-            $order = new Order();
-            $order
-                ->setOwner($owner)
-                ->setOrganization($owner->getOrganization())
-            ;
-
-            if (isset($item['account'])) {
-                $order->setAccount($this->getReference($item['account']));
-            }
-
-            if (isset($item['accountUser'])) {
-                $order->setAccountUser($this->getReference($item['accountUser']));
-            }
-
-            $manager->persist($order);
-            // flush to override auto generated identifier
-            $manager->flush();
-
-            $order->setIdentifier($item['identifier']);
-
-            $this->addReference($item['identifier'], $order);
+        foreach ($this->orders as $name => $order) {
+            $this->createOrder($manager, $name, $order);
         }
 
         $manager->flush();
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @param string $name
+     * @param array $orderData
+     * @return Order
+     */
+    protected function createOrder(ObjectManager $manager, $name, array $orderData)
+    {
+        /** @var User $user */
+        $user = $this->getReference($orderData['user']);
+        /** @var AccountUser $accountUser */
+        $accountUser = $manager->getRepository('OroB2BAccountBundle:AccountUser')
+            ->findOneBy(['username' => $orderData['accountUser']]);
+
+        /** @var PaymentTerm $paymentTerm */
+        $paymentTerm = $this->getReference($orderData['paymentTerm']);
+
+        $order = new Order();
+        $order
+            ->setIdentifier($name)
+            ->setOwner($user)
+            ->setOrganization($user->getOrganization())
+            ->setPaymentTerm($paymentTerm)
+            ->setShipUntil(new \DateTime())
+            ->setCurrency($orderData['currency'])
+            ->setPoNumber($orderData['poNumber'])
+            ->setSubtotal($orderData['subtotal'])
+            ->setAccount($accountUser->getAccount())
+            ->setAccountUser($accountUser);
+
+        $manager->persist($order);
+        $this->addReference($name, $order);
+
+        return $order;
     }
 }

@@ -7,11 +7,14 @@ parameters:
     orob2b_rfp.form.type.request_status_translation.class: OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusTranslationType
     orob2b_rfp.form.type.request_status_with_deleted_select.class: OroB2B\Bundle\RFPBundle\Form\Type\RequestStatusWithDeletedSelectType
     orob2b_rfp.form.type.request.class: OroB2B\Bundle\RFPBundle\Form\Type\RequestType
-    orob2b_rfp.form.type.frontend_request.class: OroB2B\Bundle\RFPBundle\Form\Type\FrontendRequestType
     orob2b_rfp.form.type.request_product.class: OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType
     orob2b_rfp.form.type.request_product_item.class: OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemType
     orob2b_rfp.form.type.request_product_collection.class: OroB2B\Bundle\RFPBundle\Form\Type\RequestProductCollectionType
     orob2b_rfp.form.type.request_product_item_collection.class: OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType
+
+    orob2b_rfp.form.type.frontend_request.class: OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestType
+    orob2b_rfp.form.type.frontend_request_product.class: OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType
+    orob2b_rfp.form.type.frontend_request_product_collection.class: OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductCollectionType
 
 services:
     orob2b_rfp.form.type.default_request_status:
@@ -106,3 +109,15 @@ services:
             - [setRequestStatusClass, [%orob2b_rfp.entity.request.status.class%]]
         tags:
             - { name: form.type, alias: orob2b_rfp_frontend_request_type }
+
+    orob2b_rfp.form.type.frontend_request_product:
+        class: %orob2b_rfp.form.type.frontend_request_product.class%
+        calls:
+            - [setDataClass, [%orob2b_rfp.entity.request_product.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_rfp_frontend_request_product }
+
+    orob2b_rfp.form.type.frontend_request_product_collection:
+        class: %orob2b_rfp.form.type.frontend_request_product_collection.class%
+        tags:
+            - { name: form.type, alias: orob2b_rfp_frontend_request_product_collection }

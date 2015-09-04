@@ -1,78 +1,106 @@
-{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% extends 'OroB2BFrontendBundle:actions:view.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
 
-{% oro_title_set({params : {'%identifier%': entity.__toString }}) %}
+{% oro_title_set({params : {"%identifier%": entity.identifier }}) %}
 
 {% block pageHeader %}
     {% set breadcrumbs = {
         'entity': entity,
         'indexPath': path('orob2b_order_frontend_index'),
-        'indexLabel': 'orob2b.frontend.order.entity_plural_label'|trans,
-        'entityTitle': entity.__toString|default('N/A'|trans)
+        'indexLabel': 'orob2b.order.entity_plural_label'|trans,
+        'entityTitle': entity.identifier|default('N/A'|trans)
     } %}
     {{ parent() }}
 {% endblock pageHeader %}
 
+{% block navButtons %}
+    {% if resource_granted('EDIT', entity) %}
+        {{ UI.editButton({
+            'path' : path('orob2b_order_frontend_update', { 'id': entity.id }),
+            'entity_label': 'orob2b.order.entity_label'|trans
+        }) }}
+    {% endif %}
+    {% if resource_granted('DELETE', entity) %}
+        {{ UI.deleteButton({
+            'dataUrl': path('orob2b_api_frontend_delete_order', {'id': entity.id}),
+            'dataRedirect': path('orob2b_order_frontend_index'),
+            'aCss': 'no-hash remove-button',
+            'dataId': entity.id,
+            'id': 'btn-remove-account',
+            'entity_label': 'orob2b.order.entity_label'|trans
+        }) }}
+    {% endif %}
+{% endblock navButtons %}
+
+{% block ownerLink %}
+    {# Backend owner must be hidden on frontend  #}
+{% endblock ownerLink %}
+
 {% block content_data %}
-    {% set informationWidget %}
+    {% set orderInformationWidget %}
         {{ oro_widget_render({
             'widgetType': 'block',
-            'title': 'orob2b.frontend.order.widgets.order_information'|trans,
-            'url': path('orob2b_order_frontend_info', {'id': entity.id})
+            'title': 'orob2b.order.widgets.order_information'|trans,
+            'url': path('orob2b_order_frontend_info', {id: entity.id})
         }) }}
     {% endset %}
-    {% set lineItems %}
-        <div class="order-orderproducts-info control-group">
-            <table class="order-orderproduct-collection-table order-orderproduct-collection-table-view">
-                <thead>
-                    <tr>
-                        <th>{{ 'orob2b.frontend.order.orderlineitem.column.product'|trans }}</th>
-                        <th>{{ 'orob2b.frontend.order.orderlineitem.quantity.label'|trans }}</th>
-                        <th>{{ 'orob2b.frontend.order.orderlineitem.price.label'|trans }}</th>
-                        <th>{{ 'orob2b.frontend.order.orderlineitem.column_summary'|trans }}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for lineItem in entity.lineItems %}
-                    <tr>
-                        <td>
-                            <div>
-                                {{ lineItem.productSku }}
-                            </div>
-                        </td>
-                        <td>{{ lineItem.quantity|orob2b_format_product_unit_value(lineItem.productUnit) }}</td>
-                        <td>{{ lineItem.price|oro_format_price }}</td>
-                        <td>
-                            {{ lineItem|orob2b_format_order_line_item }}
 
-                            {% if lineItem.comment is not empty %}
-                            {{ UI.renderProperty('orob2b.frontend.order.orderlineitem.comment.label'|trans, lineItem.comment) }}
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    {% endset %}
+    {% set generalSectionBlocks = [{'data' : [orderInformationWidget]}]%}
+
+    {% set dataBlocks = [
+        {
+            'title': 'orob2b.order.sections.general'|trans,
+            'class': 'active',
+            'subblocks': generalSectionBlocks
+        }
+    ] %}
+
+    {% if entity.lineItems|length %}
+        {% set lineItems %}
+            <div class="order-orderproducts-info grid-container">
+                <table class="grid table-hover table table-bordered table-condensed order-orderproduct-collection-table order-orderproduct-collection-table-view order-line-items">
+                    <thead>
+                        <tr>
+                            <th class="order-line-item-sku"><span>{{ 'orob2b.product.sku.label'|trans }}</span></th>
+                            <th class="order-line-item-type"><span>{{ 'orob2b.product.entity_label'|trans }}</span></th>
+                            <th class="order-line-item-quantity"><span>{{ 'orob2b.order.orderlineitem.quantity.label'|trans }}</span></th>
+                            <th class="order-line-item-price"><span>{{ 'orob2b.order.orderlineitem.price.label'|trans }}</span></th>
+                            <th class="order-line-item-ship_by"><span>{{ 'orob2b.order.orderlineitem.ship_by.label'|trans }}</span></th>
+                            <th class="order-line-item-comment"><span>{{ 'orob2b.order.orderlineitem.comment.label'|trans }}</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for lineItem in entity.lineItems %}
+                        {% set isFreeFormProduct = lineItem.product is empty and lineItem.freeFormProduct is not empty %}
+
+                        <tr>
+                            <td>{{ lineItem.productSku }}</td>
+                            <td>
+                                {% if isFreeFormProduct %}
+                                    {{ lineItem.freeFormProduct }}
+                                {% else %}
+                                    {{ lineItem.product }}
+                                {% endif %}
+                            </td>
+                            <td>{{ lineItem.quantity|orob2b_format_product_unit_value(lineItem.productUnit) }}</td>
+                            <td>{{ lineItem.price|oro_format_price }}</td>
+                            <td>{{ lineItem.shipBy|oro_format_date|default('N/A'|trans) }}</td>
+                            <td>{{ lineItem.comment|default('N/A'|trans) }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endset %}
+
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': 'orob2b.order.sections.order_line_items'|trans,
+            'subblocks': [{'data' : [lineItems]}]
+        }]) %}
+    {% endif %}
 
     {% set id = 'frontend-order-view' %}
-
-    {% set generalBlock = {
-        'title': 'orob2b.frontend.order.sections.general'|trans,
-        'class': 'active',
-        'subblocks': [{'data' : [informationWidget]}]
-    } %}
-
-    {% set lineItemsBlock = {
-        'title': 'orob2b.frontend.order.sections.line_items'|trans,
-        'subblocks': [{'data' : [lineItems]}]
-    } %}
-
-    {% if entity.lineItems | length %}
-        {% set data = {'dataBlocks': [generalBlock, lineItemsBlock]} %}
-    {% else %}
-        {% set data = {'dataBlocks': [generalBlock]} %}
-    {% endif %}
+    {% set data = {'dataBlocks': dataBlocks} %}
 
     {{ parent() }}
 {% endblock content_data %}

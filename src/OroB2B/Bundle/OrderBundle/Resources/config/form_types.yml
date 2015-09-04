@@ -1,24 +1,63 @@
 parameters:
     orob2b_order.form.type.order.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderType
+    orob2b_order.form.type.frontend.order.class: OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType
+    orob2b_order.form.type.order_address.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderAddressType
+    orob2b_order.form.type.price_type_selector.class: OroB2B\Bundle\OrderBundle\Form\Type\PriceTypeSelectorType
     orob2b_order.form.type.order_line_item.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemType
     orob2b_order.form.type.order_line_item_collection.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemsCollectionType
+    orob2b_order.form.type.frontend.order_line_item.class: OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderLineItemType
 
 services:
-    # Order form types
     orob2b_order.form.type.order:
         class: %orob2b_order.form.type.order.class%
+        arguments:
+            - @oro_security.security_facade
+            - @orob2b_order.order.provider.order_address_security
+            - @orob2b_payment.provider.payment_term
+            - @orob2b_order.model.order_currency_handler
+        tags:
+            - { name: form.type, alias: orob2b_order_type }
         calls:
             - [setDataClass, [%orob2b_order.entity.order.class%]]
+
+    orob2b_order.form.type.frontend.order:
+        class: %orob2b_order.form.type.frontend.order.class%
+        arguments:
+            - @orob2b_order.order.provider.order_address_security
+            - @oro_security.security_facade
+            - @orob2b_payment.provider.payment_term
+            - @orob2b_pricing.provider.product_price
+            - @orob2b_order.model.order_currency_handler
         tags:
-            - { name: form.type, alias: orob2b_order_order }
+            - { name: form.type, alias: orob2b_order_frontend_type }
+        calls:
+            - [setDataClass, [%orob2b_order.entity.order.class%]]
+
+    orob2b_order.form.type.order_address:
+        class: %orob2b_order.form.type.order_address.class%
+        arguments:
+            - @oro_locale.formatter.address
+            - @orob2b_order.manager.order_address
+            - @orob2b_order.order.provider.order_address_security
+            - @oro_importexport.serializer
+        tags:
+            - { name: form.type, alias: orob2b_order_address_type }
+        calls:
+            - [setDataClass, [%orob2b_order.entity.order_address.class%]]
+
+    orob2b_order.form.type.price_type_selector:
+        class: %orob2b_order.form.type.price_type_selector.class%
+        tags:
+            - { name: form.type, alias: "orob2b_order_price_type" }
 
     orob2b_order.form.type.order_line_item:
         class: %orob2b_order.form.type.order_line_item.class%
         arguments:
-            - @orob2b_order.formatter.order_line_item
+            - @doctrine
             - @orob2b_product.formatter.product_unit_label
         calls:
             - [setDataClass, [%orob2b_order.entity.order_line_item.class%]]
+            - [setProductUnitClass, [%orob2b_product.product_unit.class%]]
         tags:
             - { name: form.type, alias: "orob2b_order_line_item" }
 
@@ -26,3 +65,14 @@ services:
         class: %orob2b_order.form.type.order_line_item_collection.class%
         tags:
             - { name: form.type, alias: "orob2b_order_line_items_collection" }
+
+    orob2b_order.form.type.frontend.order_line_item:
+        class: %orob2b_order.form.type.frontend.order_line_item.class%
+        arguments:
+            - @doctrine
+            - @orob2b_pricing.model.frontend.price_list_request_handler
+            - %orob2b_pricing.entity.product_price.class%
+        calls:
+            - [setDataClass, [%orob2b_order.entity.order_line_item.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_order_line_item_frontend }

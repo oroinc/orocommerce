@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Frontend\Controller;
+namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Controller\Frontend;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -12,6 +12,8 @@ use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 
 /**
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+ *
  * @dbIsolation
  */
 class QuoteControllerTest extends WebTestCase
@@ -42,7 +44,7 @@ class QuoteControllerTest extends WebTestCase
             ['HTTP_X-CSRF-Header' => 1]
         ));
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_sale_frontend_quote_index'));
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_frontend_index'));
 
         static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertContains('frontend-quotes-grid', $crawler->html());
@@ -93,7 +95,7 @@ class QuoteControllerTest extends WebTestCase
         $quote = $this->getReference($inputData['qid']);
 
         $crawler = $this->client->request('GET', $this->getUrl(
-            'orob2b_sale_frontend_quote_view',
+            'orob2b_sale_quote_frontend_view',
             ['id' => $quote->getId()]
         ));
 
@@ -187,6 +189,9 @@ class QuoteControllerTest extends WebTestCase
                 'expected' => [
                     'data' => [
                         [
+                            'qid' => LoadQuoteData::QUOTE2,
+                        ],
+                        [
                             'qid' => LoadQuoteData::QUOTE3,
                         ],
                         [
@@ -212,6 +217,9 @@ class QuoteControllerTest extends WebTestCase
                 ],
                 'expected' => [
                     'data' => [
+                        [
+                            'qid' => LoadQuoteData::QUOTE2,
+                        ],
                         [
                             'qid' => LoadQuoteData::QUOTE3,
                         ],

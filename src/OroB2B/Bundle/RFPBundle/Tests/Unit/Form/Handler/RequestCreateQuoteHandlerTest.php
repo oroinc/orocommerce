@@ -121,7 +121,7 @@ class RequestCreateQuoteHandlerTest extends FormHandlerTestCase
         ;
         $quoteProduct = (new QuoteProduct())
             ->setProduct($product)
-            ->setCommentCustomer('comment1')
+            ->setCommentAccount('comment1')
             ->setType(QuoteProduct::TYPE_REQUESTED)
             ->addQuoteProductRequest($quoteProductRequest)
         ;

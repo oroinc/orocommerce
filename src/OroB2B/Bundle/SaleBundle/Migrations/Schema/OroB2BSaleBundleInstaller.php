@@ -67,7 +67,7 @@ class OroB2BSaleBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_2';
+        return 'v1_4';
     }
 
     /**
@@ -110,6 +110,7 @@ class OroB2BSaleBundleInstaller implements
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->addColumn('valid_until', 'datetime', ['notnull' => false]);
+        $table->addColumn('locked', 'boolean');
         $table->setPrimaryKey(['id']);
     }
 
@@ -178,7 +179,7 @@ class OroB2BSaleBundleInstaller implements
         $table->addColumn('product_replacement_sku', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('type', 'smallint', ['notnull' => false]);
         $table->addColumn('comment', 'text', ['notnull' => false]);
-        $table->addColumn('comment_customer', 'text', ['notnull' => false]);
+        $table->addColumn('comment_account', 'text', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
     }
 
@@ -209,7 +210,7 @@ class OroB2BSaleBundleInstaller implements
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_customer'),
+            $schema->getTable('orob2b_account'),
             ['account_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
@@ -347,5 +348,6 @@ class OroB2BSaleBundleInstaller implements
     protected function addActivityAssociations(Schema $schema, ActivityExtension $activityExtension)
     {
         $activityExtension->addActivityAssociation($schema, 'oro_calendar_event', 'orob2b_sale_quote');
+        $activityExtension->addActivityAssociation($schema, 'oro_email', 'orob2b_sale_quote', true);
     }
 }

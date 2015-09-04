@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
@@ -14,10 +15,9 @@ use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
+use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
 use OroB2B\Bundle\OrderBundle\Model\ExtendOrder;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
 
 /**
  * @ORM\Table(name="orob2b_order",indexes={@ORM\Index(name="orob2b_order_created_at_index", columns={"created_at"})})
@@ -37,7 +37,7 @@ use OroB2B\Bundle\SaleBundle\Entity\Quote;
  *              "organization_column_name"="organization_id",
  *              "frontend_owner_type"="FRONTEND_USER",
  *              "frontend_owner_field_name"="accountUser",
- *              "frontend_owner_column_name"="account_user_id"
+ *              "frontend_owner_column_name"="account_user_id",
  *          },
  *          "dataaudit"={
  *              "auditable"=true
@@ -49,10 +49,13 @@ use OroB2B\Bundle\SaleBundle\Entity\Quote;
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class Order extends ExtendOrder implements OrganizationAwareInterface, AccountOwnerAwareInterface
+class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHolderInterface
 {
     /**
+     * @var integer
+     *
      * @ORM\Id
      * @ORM\Column(name="id", type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -74,7 +77,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, AccountOw
     protected $identifier;
 
     /**
-     * @var \DateTime $createdAt
+     * @var \DateTime
      *
      * @ORM\Column(name="created_at", type="datetime")
      * @ConfigField(
@@ -88,7 +91,7 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, AccountOw
     protected $createdAt;
 
     /**
-     * @var \DateTime $updatedAt
+     * @var \DateTime
      *
      * @ORM\Column(name="updated_at", type="datetime")
      * @ConfigField(
@@ -117,22 +120,6 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, AccountOw
     protected $owner;
 
     /**
-     * @var AccountUser
-     *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
-     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="SET NULL")
-     */
-    protected $accountUser;
-
-    /**
-     * @var Account
-     *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account"),
-     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
-     **/
-    protected $account;
-
-    /**
      * @var OrganizationInterface
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
@@ -141,13 +128,120 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, AccountOw
     protected $organization;
 
     /**
-     * @todo remove this as it lead to circular dependency
-     * @var Quote
+     * @var OrderAddress
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\SaleBundle\Entity\Quote")
-     * @ORM\JoinColumn(name="quote_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\OneToOne(targetEntity="OrderAddress", cascade={"persist"})
+     * @ORM\JoinColumn(name="billing_address_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
-    protected $quote;
+    protected $billingAddress;
+
+    /**
+     * @var OrderAddress
+     *
+     * @ORM\OneToOne(targetEntity="OrderAddress", cascade={"persist"})
+     * @ORM\JoinColumn(name="shipping_address_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $shippingAddress;
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="po_number", type="string", length=255, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $poNumber;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="customer_notes", type="text", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $customerNotes;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="ship_until", type="date", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $shipUntil;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="currency", type="string", length=3, nullable=true)
+     */
+    protected $currency;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="subtotal", type="money", nullable=true)
+     */
+    protected $subtotal;
+
+    /**
+     * @var PaymentTerm
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm")
+     * @ORM\JoinColumn(name="payment_term_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $paymentTerm;
+
+    /**
+     * @var Account
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
+     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     */
+    protected $account;
+
+    /**
+     * @var AccountUser
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
+     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     */
+    protected $accountUser;
 
     /**
      * @var Collection|OrderLineItem[]
@@ -174,35 +268,6 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, AccountOw
         parent::__construct();
 
         $this->lineItems = new ArrayCollection();
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return (string)$this->getId();
-    }
-
-    /**
-     * Pre persist event handler
-     *
-     * @ORM\PrePersist
-     */
-    public function prePersist()
-    {
-        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-    }
-
-    /**
-     * Pre update event handler
-     *
-     * @ORM\PreUpdate
-     */
-    public function preUpdate()
-    {
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 
     /**
@@ -294,44 +359,6 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, AccountOw
     }
 
     /**
-     * @return AccountUser
-     */
-    public function getAccountUser()
-    {
-        return $this->accountUser;
-    }
-
-    /**
-     * @param AccountUser $accountUser
-     * @return Order
-     */
-    public function setAccountUser(AccountUser $accountUser = null)
-    {
-        $this->accountUser = $accountUser;
-
-        return $this;
-    }
-
-    /**
-     * @return Account
-     */
-    public function getAccount()
-    {
-        return $this->account;
-    }
-
-    /**
-     * @param Account $account
-     * @return Order
-     */
-    public function setAccount(Account $account = null)
-    {
-        $this->account = $account;
-
-        return $this;
-    }
-
-    /**
      * @param OrganizationInterface $organization
      *
      * @return Order
@@ -352,6 +379,253 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, AccountOw
     }
 
     /**
+     * @return OrderAddress|null
+     */
+    public function getBillingAddress()
+    {
+        return $this->billingAddress;
+    }
+
+    /**
+     * @param OrderAddress|null $billingAddress
+     * @return Order
+     */
+    public function setBillingAddress(OrderAddress $billingAddress = null)
+    {
+        $this->billingAddress = $billingAddress;
+
+        return $this;
+    }
+
+    /**
+     * @return OrderAddress|null
+     */
+    public function getShippingAddress()
+    {
+        return $this->shippingAddress;
+    }
+
+    /**
+     * @param OrderAddress|null $shippingAddress
+     * @return Order
+     */
+    public function setShippingAddress(OrderAddress $shippingAddress = null)
+    {
+        $this->shippingAddress = $shippingAddress;
+
+        return $this;
+    }
+
+    /**
+     * Pre persist event handler
+     *
+     * @ORM\PrePersist
+     */
+    public function prePersist()
+    {
+        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+    }
+
+    /**
+     * Pre update event handler
+     *
+     * @ORM\PreUpdate
+     */
+    public function preUpdate()
+    {
+        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+    }
+
+    /**
+     * Set poNumber
+     *
+     * @param string $poNumber
+     *
+     * @return Order
+     */
+    public function setPoNumber($poNumber)
+    {
+        $this->poNumber = $poNumber;
+
+        return $this;
+    }
+
+    /**
+     * Get poNumber
+     *
+     * @return string
+     */
+    public function getPoNumber()
+    {
+        return $this->poNumber;
+    }
+
+    /**
+     * Set customerNotes
+     *
+     * @param string $customerNotes
+     *
+     * @return Order
+     */
+    public function setCustomerNotes($customerNotes)
+    {
+        $this->customerNotes = $customerNotes;
+
+        return $this;
+    }
+
+    /**
+     * Get customerNotes
+     *
+     * @return string
+     */
+    public function getCustomerNotes()
+    {
+        return $this->customerNotes;
+    }
+
+    /**
+     * Set shipUntil
+     *
+     * @param \DateTime $shipUntil
+     *
+     * @return Order
+     */
+    public function setShipUntil($shipUntil)
+    {
+        $this->shipUntil = $shipUntil;
+
+        return $this;
+    }
+
+    /**
+     * Get shipUntil
+     *
+     * @return \DateTime
+     */
+    public function getShipUntil()
+    {
+        return $this->shipUntil;
+    }
+
+    /**
+     * Set currency
+     *
+     * @param string $currency
+     *
+     * @return Order
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
+
+        return $this;
+    }
+
+    /**
+     * Get currency
+     *
+     * @return string
+     */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * Set subtotal
+     *
+     * @param float $subtotal
+     *
+     * @return Order
+     */
+    public function setSubtotal($subtotal)
+    {
+        $this->subtotal = $subtotal;
+
+        return $this;
+    }
+
+    /**
+     * Get subtotal
+     *
+     * @return float
+     */
+    public function getSubtotal()
+    {
+        return $this->subtotal;
+    }
+
+    /**
+     * Set paymentTerm
+     *
+     * @param PaymentTerm|null $paymentTerm
+     *
+     * @return Order
+     */
+    public function setPaymentTerm(PaymentTerm $paymentTerm = null)
+    {
+        $this->paymentTerm = $paymentTerm;
+
+        return $this;
+    }
+
+    /**
+     * Get paymentTerm
+     *
+     * @return PaymentTerm|null
+     */
+    public function getPaymentTerm()
+    {
+        return $this->paymentTerm;
+    }
+
+    /**
+     * @return AccountUser
+     */
+    public function getAccountUser()
+    {
+        return $this->accountUser;
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     *
+     * @return Order
+     */
+    public function setAccountUser(AccountUser $accountUser = null)
+    {
+        $this->accountUser = $accountUser;
+
+        if ($accountUser && $accountUser->getAccount() && !$this->getAccount()) {
+            $this->setAccount($accountUser->getAccount());
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Account
+     */
+    public function getAccount()
+    {
+        return $this->account;
+    }
+
+    /**
+     * @param Account $account
+     * @return Order
+     */
+    public function setAccount($account)
+    {
+        $this->account = $account;
+
+        return $this;
+    }
+
+    /**
+<<<<<<< HEAD
      * @param OrderLineItem $lineItem
      * @return bool
      */
@@ -402,29 +676,6 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, AccountOw
     }
 
     /**
-     * Set quote
-     *
-     * @param Quote $quote
-     * @return Order
-     */
-    public function setQuote(Quote $quote = null)
-    {
-        $this->quote = $quote;
-
-        return $this;
-    }
-
-    /**
-     * Get quote
-     *
-     * @return Quote
-     */
-    public function getQuote()
-    {
-        return $this->quote;
-    }
-
-    /**
      * @return PriceList
      */
     public function getPriceList()
@@ -441,5 +692,17 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, AccountOw
         $this->priceList = $priceList;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmail()
+    {
+        if (null !== $this->getAccountUser()) {
+            return $this->getAccountUser()->getEmail();
+        }
+
+        return '';
     }
 }

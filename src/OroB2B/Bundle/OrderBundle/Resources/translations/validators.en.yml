@@ -1,11 +1,10 @@
 orob2b:
     order:
-        orderproduct:
+        orderlineitem:
+            count: 'Please add at least one Line Item'
             product:
-                blank: 'Please choose existing Product.'
-            order_product_items:
-                blank: 'Please add one or more items.'
-
-        orderproductitem:
+                blank: 'Please choose Product.'
             product_unit:
                 blank: 'Please choose existing Unit.'
+            product_price:
+                blank: 'No matching price found.'

@@ -17,7 +17,7 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductUnitHolder;
 use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductUnitHolderValidator;
-
+use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemType;
@@ -171,6 +171,35 @@ abstract class AbstractTest extends FormIntegrationTestCase
     }
 
     /**
+     * @param int $id
+     * @param RequestProduct $product
+     * @param string $productSku
+     * @return \PHPUnit_Framework_MockObject_MockObject|RequestProduct
+     */
+    protected function createRequestProduct($id, $product, $productSku)
+    {
+        /* @var $requestProduct \PHPUnit_Framework_MockObject_MockObject|RequestProduct */
+        $requestProduct = $this->getMock('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
+        $requestProduct
+            ->expects(static::any())
+            ->method('getId')
+            ->will(static::returnValue($id))
+        ;
+        $requestProduct
+            ->expects(static::any())
+            ->method('getProduct')
+            ->will(static::returnValue($product))
+        ;
+        $requestProduct
+            ->expects(static::any())
+            ->method('getProductSku')
+            ->will(static::returnValue($productSku))
+        ;
+
+        return $requestProduct;
+    }
+
+    /**
      * @param string $className
      * @param int $id
      * @param string $primaryKey
@@ -259,5 +288,39 @@ abstract class AbstractTest extends FormIntegrationTestCase
         }
 
         return $requestProductItem;
+    }
+
+    /**
+     * @param string $firstName
+     * @param string $lastName
+     * @param string $email
+     * @param string $body
+     * @param string $company
+     * @param string $role
+     * @param string $phone
+     * @return Request
+     */
+    protected function getRequest(
+        $firstName = null,
+        $lastName = null,
+        $email = null,
+        $body = null,
+        $company = null,
+        $role = null,
+        $phone = null
+    ) {
+        $request = new Request();
+
+        $request
+            ->setFirstName($firstName)
+            ->setLastName($lastName)
+            ->setEmail($email)
+            ->setBody($body)
+            ->setCompany($company)
+            ->setRole($role)
+            ->setPhone($phone)
+        ;
+
+        return $request;
     }
 }

@@ -5,9 +5,10 @@ parameters:
     orob2b_pricing.form.type.product_price.class: OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceType
     orob2b_pricing.form.type.price_list_product_price.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceListProductPriceType
     orob2b_pricing.form.type.product_price_filter.class: OroB2B\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType
+    orob2b_pricing.form.type.product_price_list_aware_select.class: OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceListAwareSelectType
 
-    orob2b_pricing.form.extension.customer_type.class: OroB2B\Bundle\PricingBundle\Form\Extension\CustomerFormExtension
-    orob2b_pricing.form.extension.customer_group_type.class: OroB2B\Bundle\PricingBundle\Form\Extension\CustomerGroupFormExtension
+    orob2b_pricing.form.extension.account_type.class: OroB2B\Bundle\PricingBundle\Form\Extension\AccountFormExtension
+    orob2b_pricing.form.extension.account_group_type.class: OroB2B\Bundle\PricingBundle\Form\Extension\AccountGroupFormExtension
     orob2b_pricing.form.extension.product_type.class: OroB2B\Bundle\PricingBundle\Form\Extension\ProductFormExtension
 
 services:
@@ -15,8 +16,8 @@ services:
         class: %orob2b_pricing.form.type.price_list.class%
         calls:
             - [setDataClass, [%orob2b_pricing.entity.price_list.class%]]
-            - [setCustomerClass, [%orob2b_customer.entity.customer.class%]]
-            - [setCustomerGroupClass, [%orob2b_customer.entity.customer_group.class%]]
+            - [setAccountClass, [%orob2b_account.entity.account.class%]]
+            - [setAccountGroupClass, [%orob2b_account.entity.account_group.class%]]
             - [setWebsiteClass, [%orob2b_website.website.class%]]
         tags:
             - { name: form.type, alias: orob2b_pricing_price_list }
@@ -63,19 +64,24 @@ services:
         tags:
             - { name: form.type, alias: orob2b_pricing_product_price_filter }
 
-    orob2b_pricing.form.extension.customer_type:
-        class: %orob2b_pricing.form.extension.customer_type.class%
-        arguments:
-            - @doctrine
+    orob2b_pricing.form.type.product_price_list_aware_select:
+        class: %orob2b_pricing.form.type.product_price_list_aware_select.class%
         tags:
-            - { name: form.type_extension, alias: orob2b_customer_type }
+            - { name: form.type, alias: orob2b_pricing_product_price_list_aware_select }
 
-    orob2b_pricing.form.extension.customer_group_type:
-        class: %orob2b_pricing.form.extension.customer_group_type.class%
+    orob2b_pricing.form.extension.account_type:
+        class: %orob2b_pricing.form.extension.account_type.class%
         arguments:
             - @doctrine
         tags:
-            - { name: form.type_extension, alias: orob2b_customer_group_type }
+            - { name: form.type_extension, alias: orob2b_account_type }
+
+    orob2b_pricing.form.extension.account_group_type:
+        class: %orob2b_pricing.form.extension.account_group_type.class%
+        arguments:
+            - @doctrine
+        tags:
+            - { name: form.type_extension, alias: orob2b_account_group_type }
 
     orob2b_pricing.form.extension.product_type:
         class: %orob2b_pricing.form.extension.product_type.class%

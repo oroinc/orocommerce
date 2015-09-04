@@ -9,7 +9,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
@@ -32,7 +32,7 @@ class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtu
     {
         return [
             'Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData',
-            'OroB2B\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData'
+            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData'
         ];
     }
 
@@ -41,7 +41,7 @@ class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtu
      */
     public function load(ObjectManager $manager)
     {
-        $accountUser = $manager->getRepository('OroB2BCustomerBundle:AccountUser')->findOneBy([]);
+        $accountUser = $manager->getRepository('OroB2BAccountBundle:AccountUser')->findOneBy([]);
 
         $locator = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroB2BShoppingListBundle/Migrations/Data/Demo/ORM/data/shopping_lists.csv');
@@ -53,9 +53,11 @@ class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtu
         $handler = fopen($filePath, 'r');
         $headers = fgetcsv($handler, 1000, ',');
 
+        $first = true;
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
-            $this->createShoppingList($manager, $accountUser, $row['label']);
+            $this->createShoppingList($manager, $accountUser, $row['label'], $first);
+            $first = false;
         }
 
         fclose($handler);
@@ -67,17 +69,18 @@ class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtu
      * @param ObjectManager $manager
      * @param AccountUser   $accountUser
      * @param string        $label
+     * @param boolean       $current
      *
      * @return ShoppingList
      */
-    protected function createShoppingList(ObjectManager $manager, AccountUser $accountUser, $label)
+    protected function createShoppingList(ObjectManager $manager, AccountUser $accountUser, $label, $current)
     {
         $shoppingList = new ShoppingList();
-        $shoppingList->setOwner($accountUser);
         $shoppingList->setOrganization($accountUser->getOrganization());
         $shoppingList->setAccountUser($accountUser);
-        $shoppingList->setAccount($accountUser->getCustomer());
+        $shoppingList->setAccount($accountUser->getAccount());
         $shoppingList->setNotes('Some notes for ' . $label);
+        $shoppingList->setCurrent($current);
         $shoppingList->setLabel($label);
 
         $manager->persist($shoppingList);

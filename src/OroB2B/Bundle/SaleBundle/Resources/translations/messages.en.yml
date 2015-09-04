@@ -15,6 +15,8 @@ orob2b:
             request.label: 'Request'
             account.label: 'Account'
             account_user.label: 'Account User'
+            locked.label: 'Locked'
+            not_locked.label: 'Not Locked'
 
             sections:
                 general: 'General'
@@ -25,6 +27,12 @@ orob2b:
 
             column:
                 assigned_to: 'Assigned to'
+
+            notify_customer:
+                label: 'Notify Customer'
+                by_email:
+                    link.text: 'Notify by Email'
+                    notify_and_lock_warning: 'Once you click on "Notify and Lock" this email will be sent to the customer and the quote will be locked for further edits.'
 
         quoteproduct:
             entity_label: 'Quote Product'
@@ -40,7 +48,9 @@ orob2b:
             quote_product_requests.label: 'Quote Product Requests'
             request_product_item.label: 'Requested Item'
             comment.label: 'Seller Notes'
-            comment_customer.label: 'Customer Notes'
+            comment_account.label: 'Account Notes'
+            product.removed: '{title} - removed'
+            product_replacement.removed: '{title} - removed'
             type:
                 label: 'Type'
                 requested: 'Requested'
@@ -71,6 +81,7 @@ orob2b:
                 bundled: 'bundled offer'
                 unit: 'at unit price of'
 
+            product_unit.removed: '{title} - removed'
             product_unit.empty: 'Choose Unit...'
             column_summary: 'Summary'
 
@@ -88,6 +99,7 @@ orob2b:
             currency.label: 'Price Currency'
             quote_product.label: 'Quote Product'
             request_product_item.label: 'Request Product Item'
+            product_unit.removed: '{title} - removed'
             product_unit.empty: 'Choose Unit...'
             column_summary: 'Summary'
 
@@ -98,11 +110,10 @@ orob2b:
         btn:
             add_seller_notes: 'Add Notes'
             remove_seller_notes: 'Remove Seller Notes'
+            notify_and_lock: 'Notify and Lock'
 
     frontend:
         sale:
-            menu:
-                label: 'Sales'
             quote:
                 entity_plural_label: Quotes
                 qid.label: 'ID'
@@ -116,7 +127,7 @@ orob2b:
 
             quoteproduct:
                 comment.label: 'Seller Notes'
-                comment_customer.label: 'Customer Notes'
+                comment_account.label: 'Account Notes'
                 product_replacement.label: 'Suggested Replacement:'
                 column:
                     product: 'Product'
@@ -132,10 +143,3 @@ orob2b:
                 quantity.label: 'Requested Qty'
                 price.label: 'Requested Price'
                 column_summary: 'Summary'
-
-            btn:
-                accept_quote_create_order: 'Accept and Submit to Order'
-
-            message:
-                quote.create_order.success: 'Your sales order was submitted successfully'
-                quote.create_order.error: 'Can not create new Order'

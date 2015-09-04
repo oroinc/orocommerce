@@ -61,7 +61,7 @@ services:
         parent: oro_form.autocomplete.search_handler
         arguments:
             - %orob2b_product.product.class%
-            - ["sku"]
+            - ["sku", "defaultName.string"]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_product, acl_resource: orob2b_product_view }
         lazy: true

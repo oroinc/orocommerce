@@ -35,15 +35,15 @@ class FallbackValueTransformerTest extends \PHPUnit_Framework_TestCase
         return [
             'null' => [
                 'input'    => null,
-                'expected' => ['value' => null, 'fallback' => null],
+                'expected' => ['value' => null, 'use_fallback' => false, 'fallback' => null],
             ],
             'scalar' => [
                 'input'    => 'string',
-                'expected' => ['value' => 'string', 'fallback' => null],
+                'expected' => ['value' => 'string', 'use_fallback' => false, 'fallback' => null],
             ],
             'fallback' => [
                 'input'    => new FallbackType(FallbackType::SYSTEM),
-                'expected' => ['value' => null, 'fallback' => FallbackType::SYSTEM],
+                'expected' => ['value' => null, 'use_fallback' => true, 'fallback' => FallbackType::SYSTEM],
             ],
         ];
     }

@@ -1,0 +1,6 @@
+"One of addresses must be set as primary.": "One of addresses must be set as primary."
+
+orob2b:
+    account:
+          message:
+              password_mismatch: 'The password fields must match.'

@@ -6,13 +6,15 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
 
@@ -45,7 +47,7 @@ use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
  *      }
  * )
  */
-class Quote extends ExtendQuote
+class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHolderInterface
 {
     /**
      * @var int
@@ -79,17 +81,17 @@ class Quote extends ExtendQuote
     protected $owner;
 
     /**
-     * @var AccountUser|null
+     * @var AccountUser
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\AccountUser")
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
      * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $accountUser;
 
     /**
-     * @var Customer
+     * @var Account
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\Customer"),
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account"),
      * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
      **/
     protected $account;
@@ -151,6 +153,13 @@ class Quote extends ExtendQuote
      * @ORM\OneToMany(targetEntity="QuoteProduct", mappedBy="quote", cascade={"ALL"}, orphanRemoval=true)
      */
     protected $quoteProducts;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="boolean")
+     */
+    protected $locked = false;
 
     /**
      * Constructor
@@ -369,7 +378,7 @@ class Quote extends ExtendQuote
     }
 
     /**
-     * @return Customer
+     * @return Account
      */
     public function getAccount()
     {
@@ -377,10 +386,10 @@ class Quote extends ExtendQuote
     }
 
     /**
-     * @param Customer $account
+     * @param Account $account
      * @return Quote
      */
-    public function setAccount(Customer $account = null)
+    public function setAccount(Account $account = null)
     {
         $this->account = $account;
 
@@ -431,5 +440,45 @@ class Quote extends ExtendQuote
     public function getRequest()
     {
         return $this->request;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isLocked()
+    {
+        return $this->locked;
+    }
+
+    /**
+     * @param bool $locked
+     *
+     * @return Quote
+     */
+    public function setLocked($locked)
+    {
+        $this->locked = (bool)$locked;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmail()
+    {
+        if (null !== $this->getAccountUser()) {
+            return (string)$this->getAccountUser()->getEmail();
+        }
+
+        return null;
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Oro\Component\Testing\Unit\Form\Type\Stub;
 
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EnumSelectType extends EntityType
 {
@@ -17,9 +17,9 @@ class EnumSelectType extends EntityType
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
             [

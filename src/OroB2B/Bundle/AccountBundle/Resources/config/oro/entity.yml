@@ -1,0 +1,20 @@
+oro_entity:
+    entity_aliases:
+        OroB2B\Bundle\AccountBundle\Entity\Audit:
+            alias:        account_user_audit
+            plural_alias: account_user_audits
+        OroB2B\Bundle\AccountBundle\Entity\AuditField:
+            alias:        account_user_audit_field
+            plural_alias: account_user_audit_fields
+        OroB2B\Bundle\AccountBundle\Entity\NavigationHistoryItem:
+            alias:        account_user_navigation_history_item
+            plural_alias: account_user_navigation_history_items
+        OroB2B\Bundle\AccountBundle\Entity\NavigationItem:
+            alias:        account_user_navigation_item
+            plural_alias: account_user_navigation_items
+        OroB2B\Bundle\AccountBundle\Entity\PinbarTab:
+            alias:        account_user_pinbar_tab
+            plural_alias: account_user_pinbar_tabs
+        OroB2B\Bundle\AccountBundle\Entity\PageState:
+            alias:        account_user_page_state
+            plural_alias: account_user_page_states

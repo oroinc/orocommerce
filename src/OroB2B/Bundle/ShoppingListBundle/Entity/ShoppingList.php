@@ -11,8 +11,8 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 
-use OroB2B\Bundle\CustomerBundle\Entity\AccountUser;
-use OroB2B\Bundle\CustomerBundle\Entity\Customer;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
 
 /**
@@ -22,7 +22,7 @@ use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
  *          @ORM\Index(name="orob2b_shop_lst_created_at_idx", columns={"created_at"})
  *      }
  * )
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository")
  * @Config(
  *      routeName="orob2b_shopping_list_index",
  *      routeView="orob2b_shopping_list_view",
@@ -32,8 +32,8 @@ use OroB2B\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
  *          },
  *          "ownership"={
  *              "frontend_owner_type"="FRONTEND_USER",
- *              "frontend_owner_field_name"="owner",
- *              "frontend_owner_column_name"="account_user_owner_id",
+ *              "frontend_owner_field_name"="accountUser",
+ *              "frontend_owner_column_name"="account_user_id",
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id"
  *          },
@@ -116,21 +116,6 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     protected $updatedAt;
 
     /**
-     * @var AccountUser
-     *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\AccountUser")
-     * @ORM\JoinColumn(name="account_user_owner_id", referencedColumnName="id", onDelete="SET NULL")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $owner;
-
-    /**
      * @var Organization
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
@@ -141,15 +126,15 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     /**
      * @var AccountUser
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\AccountUser")
-     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
+     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $accountUser;
 
     /**
-     * @var Customer
+     * @var Account
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CustomerBundle\Entity\Customer")
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
      * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $account;
@@ -166,9 +151,20 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
      **/
     protected $lineItems;
 
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_current", type="boolean", options={"default"=false})
+     */
+    protected $current = false;
+
+    /**
+     * {@inheritdoc}
+     */
     public function __construct()
     {
         parent::__construct();
+
         $this->lineItems = new ArrayCollection();
     }
 
@@ -287,26 +283,6 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     }
 
     /**
-     * @return AccountUser
-     */
-    public function getOwner()
-    {
-        return $this->owner;
-    }
-
-    /**
-     * @param AccountUser $owningUser
-     *
-     * @return $this
-     */
-    public function setOwner(AccountUser $owningUser)
-    {
-        $this->owner = $owningUser;
-
-        return $this;
-    }
-
-    /**
      * @param LineItem $item
      *
      * @return $this
@@ -344,6 +320,26 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     }
 
     /**
+     * @return bool
+     */
+    public function isCurrent()
+    {
+        return $this->current;
+    }
+
+    /**
+     * @param bool $current
+     *
+     * @return $this
+     */
+    public function setCurrent($current)
+    {
+        $this->current = (bool) $current;
+
+        return $this;
+    }
+
+    /**
      * Pre persist event handler
      *
      * @ORM\PrePersist
@@ -365,7 +361,7 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     }
 
     /**
-     * @return Customer
+     * @return Account
      */
     public function getAccount()
     {
@@ -373,11 +369,11 @@ class ShoppingList extends ExtendShoppingList implements OrganizationAwareInterf
     }
 
     /**
-     * @param Customer $account
+     * @param Account $account
      *
      * @return $this
      */
-    public function setAccount(Customer $account)
+    public function setAccount(Account $account)
     {
         $this->account = $account;
 

@@ -1,0 +1,13 @@
+ADMINISTRATOR:
+    label: Administrator
+    max_permissions: true
+
+BUYER:
+    label: Buyer
+    website_default_role: true
+    max_permissions: true
+    permissions:
+        entity|OroB2B\Bundle\AccountBundle\Entity\Account: [VIEW_SYSTEM]
+        entity|OroB2B\Bundle\AccountBundle\Entity\AccountAddress: [VIEW_LOCAL]
+        entity|OroB2B\Bundle\AccountBundle\Entity\AccountUser: [VIEW_LOCAL]
+        entity|OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress: [VIEW_BASIC]

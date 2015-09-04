@@ -28,17 +28,6 @@ class AccountTest extends \PHPUnit_Framework_TestCase
         ]);
     }
 
-    public function testToString()
-    {
-        $account = new Account();
-        
-        $this->assertSame('', (string)$account);
-
-        $account->setName(123);
-
-        $this->assertSame('123', (string)$account);
-    }
-
     /**
      * Test children
      */

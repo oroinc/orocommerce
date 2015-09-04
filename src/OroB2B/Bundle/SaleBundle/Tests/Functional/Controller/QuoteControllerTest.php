@@ -61,6 +61,8 @@ class QuoteControllerTest extends WebTestCase
         $crawler    = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_create'));
         $owner      = $this->getUser(LoadUserData::USER1);
 
+        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+
         /* @var $form Form */
         $form = $crawler->selectButton('Save and Close')->form();
         $form['orob2b_sale_quote[owner]']      = $owner->getId();
@@ -162,6 +164,30 @@ class QuoteControllerTest extends WebTestCase
         static::assertHtmlResponseStatusCodeEquals($result, 200);
 
         return $id;
+    }
+
+    /**
+     * @depends testView
+     * @param int $id
+     */
+    public function testLockedFieldAndBadge($id)
+    {
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_view', ['id' => $id]));
+
+        $this->assertContains('Not Locked', $crawler->html(), 'By default Quote shouldn\'t be locked');
+
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_update', ['id' => $id]));
+
+        /* @var $form Form */
+        $form = $crawler->selectButton('Save and Close')->form();
+        $form['orob2b_sale_quote[locked]'] = true;
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->submit($form);
+
+        $result = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('Locked', $crawler->html());
     }
 
     /**

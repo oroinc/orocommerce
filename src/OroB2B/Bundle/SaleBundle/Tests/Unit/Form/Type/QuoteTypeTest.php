@@ -6,23 +6,16 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
-use OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
-use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
-
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductRemovedSelectType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
@@ -79,24 +72,26 @@ class QuoteTypeTest extends AbstractTest
      * @param int $accountUserId
      * @param int $accountId
      * @param QuoteProduct[] $items
+     * @param bool $locked
      * @return Quote
      */
-    protected function getQuote($ownerId, $accountUserId = null, $accountId = null, array $items = [])
+    protected function getQuote($ownerId, $accountUserId = null, $accountId = null, array $items = [], $locked = false)
     {
         $quote = new Quote();
         $quote->setOwner($this->getEntity('Oro\Bundle\UserBundle\Entity\User', $ownerId));
 
         if (null !== $accountUserId) {
-            $quote->setAccountUser($this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\AccountUser', $accountUserId));
+            $quote->setAccountUser($this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $accountUserId));
         }
 
         if (null !== $accountId) {
-            $quote->setAccount($this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', $accountId));
+            $quote->setAccount($this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', $accountId));
         }
 
         foreach ($items as $item) {
             $quote->addQuoteProduct($item);
         }
+        $quote->setLocked($locked);
 
         return $quote;
     }
@@ -122,12 +117,13 @@ class QuoteTypeTest extends AbstractTest
                     'owner' => 1,
                     'accountUser' => 1,
                     'account' => 2,
+                    'locked' => false,
                     'quoteProducts' => [
                         [
                             'product'   => 2,
                             'type'      => self::QP_TYPE1,
                             'comment'   => 'comment1',
-                            'commentCustomer' => 'comment2',
+                            'commentAccount' => 'comment2',
                             'quoteProductOffers' => [
                                 [
                                     'quantity'      => 33,
@@ -142,7 +138,7 @@ class QuoteTypeTest extends AbstractTest
                         ],
                     ],
                 ],
-                'expectedData'  => $this->getQuote(1, 1, 2, [$quoteProduct]),
+                'expectedData'  => $this->getQuote(1, 1, 2, [$quoteProduct], false),
             ],
         ];
     }
@@ -173,27 +169,30 @@ class QuoteTypeTest extends AbstractTest
             'oro_user_select'
         );
 
-        $customerSelectType = new StubEntityType(
+        $accountSelectType = new StubEntityType(
             [
-                1 => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 1),
-                2 => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\Customer', 2),
+                1 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 1),
+                2 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2),
             ],
-            CustomerSelectType::NAME
+            AccountSelectType::NAME
         );
 
         $accountUserSelectType = new StubEntityType(
             [
-                1 => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\AccountUser', 1),
-                2 => $this->getEntity('OroB2B\Bundle\CustomerBundle\Entity\AccountUser', 2),
+                1 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', 1),
+                2 => $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', 2),
             ],
             AccountUserSelectType::NAME
         );
 
         $priceType                  = $this->preparePriceType();
         $entityType                 = $this->prepareProductEntityType();
+        $productSelectType          = new ProductSelectTypeStub();
+        $currencySelectionType      = new CurrencySelectionTypeStub();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
-        $quoteProductOfferType      = $this->prepareQuoteProductOfferType();
-        $quoteProductRequestType    = $this->prepareQuoteProductRequestType();
+
+        $quoteProductOfferType      = $this->prepareQuoteProductOfferType($translator);
+        $quoteProductRequestType    = $this->prepareQuoteProductRequestType($translator);
 
         $quoteProductType = new QuoteProductType(
             $translator,
@@ -208,23 +207,22 @@ class QuoteTypeTest extends AbstractTest
                     OroDateTimeType::NAME                       => new OroDateTimeType(),
                     CollectionType::NAME                        => new CollectionType(),
                     QuoteProductOfferType::NAME                 => new QuoteProductOfferType(
+                        $translator,
                         $this->quoteProductOfferFormatter
                     ),
                     QuoteProductCollectionType::NAME            => new QuoteProductCollectionType(),
                     QuoteProductOfferCollectionType::NAME       => new QuoteProductOfferCollectionType(),
                     QuoteProductRequestCollectionType::NAME     => new QuoteProductRequestCollectionType(),
-                    ProductRemovedSelectType::NAME              => new StubProductRemovedSelectType(),
-                    ProductUnitRemovedSelectionType::NAME       => new StubProductUnitRemovedSelectionType(),
-                    ProductSelectType::NAME                     => new ProductSelectTypeStub(),
-                    CurrencySelectionType::NAME                 => new CurrencySelectionTypeStub(),
                     $priceType->getName()                       => $priceType,
                     $entityType->getName()                      => $entityType,
                     $userSelectType->getName()                  => $userSelectType,
                     $quoteProductType->getName()                => $quoteProductType,
+                    $productSelectType->getName()               => $productSelectType,
+                    $currencySelectionType->getName()           => $currencySelectionType,
                     $quoteProductOfferType->getName()           => $quoteProductOfferType,
                     $quoteProductRequestType->getName()         => $quoteProductRequestType,
                     $productUnitSelectionType->getName()        => $productUnitSelectionType,
-                    $customerSelectType->getName()              => $customerSelectType,
+                    $accountSelectType->getName()               => $accountSelectType,
                     $accountUserSelectType->getName()           => $accountUserSelectType,
                 ],
                 []

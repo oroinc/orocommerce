@@ -272,7 +272,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
      * @param int $productId
      * @param int $type
      * @param string $comment
-     * @param string $commentCustomer
+     * @param string $commentAccount
      * @param QuoteProductRequest[] $requests
      * @param QuoteProductOffer[] $offers
      * @return QuoteProduct
@@ -281,7 +281,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
         $productId = null,
         $type = null,
         $comment = null,
-        $commentCustomer = null,
+        $commentAccount = null,
         array $requests = [],
         array $offers = []
     ) {
@@ -301,7 +301,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
             ->setProduct($product)
             ->setType($type)
             ->setComment($comment)
-            ->setCommentCustomer($commentCustomer)
+            ->setCommentAccount($commentAccount)
         ;
 
         foreach ($requests as $request) {

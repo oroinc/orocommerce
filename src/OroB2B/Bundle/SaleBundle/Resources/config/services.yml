@@ -13,24 +13,12 @@ parameters:
     orob2b_sale.twig.quote.class: OroB2B\Bundle\SaleBundle\Twig\QuoteExtension
     #Listeners
     orob2b_sale.event_listener.entity_subscriber.class: OroB2B\Bundle\SaleBundle\EventListener\EntitySubscriber
-    orob2b_sale.event_listener.datagrid.class: OroB2B\Bundle\SaleBundle\EventListener\DatagridListener
-    #Handlers
-    oro_form.autocomplete.account_user.search_handler.class: OroB2B\Bundle\SaleBundle\Autocomplete\SearchHandler
 
 services:
     orob2b_sale.event_listener.entity_subscriber:
         class: %orob2b_sale.event_listener.entity_subscriber.class%
         tags:
             - { name: doctrine.event_subscriber }
-
-    orob2b_sale.event_listener.datagrid:
-        class: %orob2b_sale.event_listener.datagrid.class%
-        arguments:
-            - %orob2b_sale.entity.quote.class%
-            - %orob2b_customer.entity.account_user.class%
-            - @oro_security.security_facade
-        tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-quotes-grid, method: onBuildBeforeFrontendQuotes }
 
     orob2b_sale.quote.manager.api:
         class: %orob2b_sale.quote.manager.api.class%
@@ -63,11 +51,3 @@ services:
         class: %orob2b_sale.formatter.quote_product_offer.class%
         arguments:
             - @translator
-
-    oro_form.autocomplete.account_user.search_handler:
-        class: %oro_form.autocomplete.account_user.search_handler.class%
-        abstract: true
-        calls:
-            - [initSearchIndexer, ["@oro_search.index", %oro_search.entities_config%]]
-            - [initDoctrinePropertiesByManagerRegistry, ["@doctrine"]]
-            - [setAclHelper,["@oro_security.acl_helper"]]

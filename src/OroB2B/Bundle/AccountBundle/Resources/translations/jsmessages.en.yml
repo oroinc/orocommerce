@@ -1,0 +1,5 @@
+orob2b.account.address:
+    edit: 'Edit'
+    remove: 'Remove'
+    primary: 'Primary'
+    default_type: 'Default {{ type_name }}'

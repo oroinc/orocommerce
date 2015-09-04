@@ -2,34 +2,40 @@
 
 namespace OroB2B\Bundle\OrderBundle\Migrations\Data\Demo\ORM;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
+use Oro\Bundle\AddressBundle\Entity\Country;
+use Oro\Bundle\AddressBundle\Entity\Region;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderProduct;
-use OroB2B\Bundle\OrderBundle\Entity\OrderProductItem;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use OroB2B\Bundle\OrderBundle\Entity\OrderAddress;
+use OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
-class LoadOrderDemoData extends AbstractFixture implements
-    FixtureInterface,
-    ContainerAwareInterface,
-    DependentFixtureInterface
+class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
-    /**
-     * @var ContainerInterface
-     */
+    /** @var array */
+    protected $countries = [];
+
+    /** @var array */
+    protected $regions = [];
+
+    /** @var array */
+    protected $paymentTerms = [];
+
+    /** @var array */
+    protected $priceLists = [];
+
+    /** @var ContainerInterface */
     protected $container;
 
     /**
@@ -46,188 +52,170 @@ class LoadOrderDemoData extends AbstractFixture implements
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData',
-            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
-            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
             'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
-            'OroB2B\Bundle\SaleBundle\Migrations\Data\Demo\ORM\LoadQuoteDemoData',
+            'OroB2B\Bundle\PaymentBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData',
+            'OroB2B\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData'
         ];
     }
 
     /**
+     * @param EntityManager $manager
      * {@inheritdoc}
      */
     public function load(ObjectManager $manager)
     {
-        $user = $this->getUser($manager);
-        $quotes = $this->getQuotes($manager);
-        $organization = $user->getOrganization();
-        $accountUsers = $this->getAccountUsers($manager);
-        for ($i = 0; $i < 20; $i++) {
-            $fromQuote = (1 === rand(1, 3));
-            $accountUser = $accountUsers[rand(0, count($accountUsers) - 1)];
+        $locator = $this->container->get('file_locator');
+        $filePath = $locator->locate('@OroB2BOrderBundle/Migrations/Data/Demo/ORM/data/orders.csv');
+        if (is_array($filePath)) {
+            $filePath = current($filePath);
+        }
+
+        $handler = fopen($filePath, 'r');
+        $headers = fgetcsv($handler, 1000, ',');
+
+        /** @var EntityRepository $userRepository */
+        $userRepository = $manager->getRepository('OroUserBundle:User');
+
+        /** @var User $user */
+        $user = $userRepository->findOneBy([]);
+
+        $accountUser = $this->getAccountUser($manager);
+
+        while (($data = fgetcsv($handler, 1000, ',')) !== false) {
+            $row = array_combine($headers, array_values($data));
+
             $order = new Order();
+
+            $billingAddress = [
+                'label' => $row['billingAddressLabel'],
+                'country' => $row['billingAddressCountry'],
+                'city' => $row['billingAddressCity'],
+                'region' => $row['billingAddressRegion'],
+                'street' => $row['billingAddressStreet'],
+                'postalCode' => $row['billingAddressPostalCode']
+            ];
+
+            $shippingAddress = [
+                'label' => $row['shippingAddressLabel'],
+                'country' => $row['shippingAddressCountry'],
+                'city' => $row['shippingAddressCity'],
+                'region' => $row['shippingAddressRegion'],
+                'street' => $row['shippingAddressStreet'],
+                'postalCode' => $row['shippingAddressPostalCode']
+            ];
+
             $order
-                ->setIdentifier($i + 1)
                 ->setOwner($user)
-                ->setOrganization($organization)
+                ->setAccount($accountUser->getAccount())
+                ->setIdentifier($row['identifier'])
                 ->setAccountUser($accountUser)
-                ->setAccount($accountUser ? $accountUser->getAccount() : null)
-            ;
+                ->setOrganization($user->getOrganization())
+                ->setBillingAddress($this->createOrderAddress($manager, $billingAddress))
+                ->setShippingAddress($this->createOrderAddress($manager, $shippingAddress))
+                ->setPaymentTerm($this->getPaymentTerm($manager, $row['paymentTerm']))
+                ->setPriceList($this->getPriceList($manager, $row['priceListName']))
+                ->setShipUntil(new \DateTime())
+                ->setCurrency($row['currency'])
+                ->setPoNumber($row['poNumber'])
+                ->setSubtotal($row['subtotal']);
 
-            if ($fromQuote) {
-                $order->setQuote($quotes[rand(0, count($quotes) - 1)]);
+            if (!empty($row['customerNotes'])) {
+                $order->setCustomerNotes($row['customerNotes']);
             }
-
-            $this->processOrderProducts($order, $manager);
 
             $manager->persist($order);
         }
+
+        fclose($handler);
 
         $manager->flush();
     }
 
     /**
-     * @param ObjectManager $manager
-     * @return Collection|AccountUser[]
+     * @param EntityManager $manager
+     * @param array $address
+     * @return OrderAddress
      */
-    protected function getAccountUsers(ObjectManager $manager)
+    protected function createOrderAddress(EntityManager $manager, array $address)
     {
-        return array_merge([null], $manager->getRepository('OroB2BAccountBundle:AccountUser')->findBy([], null, 10));
-    }
+        $orderAddress = new OrderAddress();
+        $orderAddress
+            ->setLabel($address['label'])
+            ->setCountry($this->getCountryByIso2Code($manager, $address['country']))
+            ->setCity($address['city'])
+            ->setRegion($this->getRegionByIso2Code($manager, $address['region']))
+            ->setStreet($address['street'])
+            ->setPostalCode($address['postalCode']);
 
-    /**
-     * @return array
-     */
-    protected function getCurrencies()
-    {
-        $currencies = $this->container->get('oro_config.manager')->get('oro_currency.allowed_currencies');
+        $manager->persist($orderAddress);
 
-        if (!$currencies) {
-            $currencies = (array)$this->container->get('oro_locale.settings')->getCurrency();
-        }
-
-        if (!$currencies) {
-            throw new \LogicException('There are no currencies in system');
-        }
-
-        return $currencies;
-    }
-
-    /**
-     * @param Order $order
-     * @param ObjectManager $manager
-     */
-    protected function processOrderProducts(Order $order, ObjectManager $manager)
-    {
-        $products   = $this->getProducts($manager);
-        $currencies = $this->getCurrencies();
-
-        $priceTypes = [
-            OrderProductItem::PRICE_TYPE_UNIT,
-            OrderProductItem::PRICE_TYPE_BUNDLED,
-        ];
-
-        for ($i = 0; $i < rand(1, 3); $i++) {
-            $orderProduct = $this->createOrderProduct($products[rand(1, count($products) - 1)]);
-            $unitPrecisions = $orderProduct->getProduct()->getUnitPrecisions();
-
-            for ($j = 0; $j < rand(1, 3); $j++) {
-                if (!count($unitPrecisions)) {
-                    continue;
-                }
-                $productUnit = $unitPrecisions[rand(0, count($unitPrecisions) - 1)]->getUnit();
-
-                $currency = $currencies[rand(0, count($currencies) - 1)];
-                $priceType = $priceTypes[rand(0, count($priceTypes) - 1)];
-
-                $orderProductItem = new OrderProductItem();
-                $orderProductItem
-                    ->setPrice(Price::create(rand(1, 100), $currency))
-                    ->setQuantity(rand(1, 100))
-                    ->setProductUnit($productUnit)
-                    ->setPriceType($priceType)
-                ;
-                $orderProductItem->setFromQuote(null !== $order->getQuote());
-
-                $orderProduct->addOrderProductItem($orderProductItem);
-                $order->addOrderProduct($orderProduct);
-            }
-        }
-    }
-
-    /**
-     * @param Product $product
-     * @return OrderProduct
-     */
-    protected function createOrderProduct(Product $product)
-    {
-        static $index = 0;
-
-        $index++;
-
-        $orderProduct = new OrderProduct();
-        $orderProduct
-            ->setProduct($product)
-            ->setComment(sprintf('Seller Notes %s', $index + 1))
-        ;
-
-        return $orderProduct;
+        return $orderAddress;
     }
 
     /**
      * @param ObjectManager $manager
-     * @return Product[]
+     * @return AccountUser|null
      */
-    protected function getProducts(ObjectManager $manager)
+    protected function getAccountUser(ObjectManager $manager)
     {
-        $products = $manager->getRepository('OroB2BProductBundle:Product')->findBy([], null, 10);
-
-        if (!count($products)) {
-            throw new \LogicException('There are no Products in system');
-        }
-
-        return $products;
+        return $manager->getRepository('OroB2BAccountBundle:AccountUser')->findOneBy([]);
     }
 
     /**
-     * @param ObjectManager $manager
-     * @return Quote[]
+     * @param EntityManager $manager
+     * @param string $iso2Code
+     * @return Country|null
      */
-    protected function getQuotes(ObjectManager $manager)
+    protected function getCountryByIso2Code(EntityManager $manager, $iso2Code)
     {
-        $quotes = $manager->getRepository('OroB2BSaleBundle:Quote')->findBy([], null, 10);
-
-        if (!count($quotes)) {
-            throw new \LogicException('There are no Quotes in system');
+        if (!array_key_exists($iso2Code, $this->countries)) {
+            $this->countries[$iso2Code] = $manager->getReference('OroAddressBundle:Country', $iso2Code);
         }
 
-        return $quotes;
+        return $this->countries[$iso2Code];
     }
 
     /**
-     * @param ObjectManager $manager
-     * @return User
+     * @param EntityManager $manager
+     * @param string $code
+     * @return Region|null
      */
-    protected function getUser(ObjectManager $manager)
+    protected function getRegionByIso2Code(EntityManager $manager, $code)
     {
-        $role = $manager
-            ->getRepository('OroUserBundle:Role')
-            ->findOneBy(['role' => LoadRolesData::ROLE_ADMINISTRATOR])
-        ;
-
-        if (!$role) {
-            throw new \RuntimeException(sprintf('%s role should exist.', LoadRolesData::ROLE_ADMINISTRATOR));
+        if (!array_key_exists($code, $this->regions)) {
+            $this->regions[$code] = $manager->getReference('OroAddressBundle:Region', $code);
         }
 
-        $user = $manager->getRepository('OroUserBundle:Role')->getFirstMatchedUser($role);
+        return $this->regions[$code];
+    }
 
-        if (!$user) {
-            throw new \RuntimeException(
-                sprintf('At least one user with role %s should exist.', LoadRolesData::ROLE_ADMINISTRATOR)
-            );
+    /**
+     * @param EntityManager $manager
+     * @param string $label
+     * @return PaymentTerm
+     */
+    protected function getPaymentTerm(EntityManager $manager, $label)
+    {
+        if (!array_key_exists($label, $this->paymentTerms)) {
+            $this->paymentTerms[$label] = $manager->getRepository('OroB2BPaymentBundle:PaymentTerm')
+                ->findOneBy(['label' => $label]);
         }
 
-        return $user;
+        return $this->paymentTerms[$label];
+    }
+
+    /**
+     * @param EntityManager $manager
+     * @param string $name
+     * @return PriceList
+     */
+    protected function getPriceList(EntityManager $manager, $name)
+    {
+        if (!array_key_exists($name, $this->priceLists)) {
+            $this->priceLists[$name] = $manager->getRepository('OroB2BPricingBundle:PriceList')
+                ->findOneBy(['name' => $name]);
+        }
+
+        return $this->priceLists[$name];
     }
 }

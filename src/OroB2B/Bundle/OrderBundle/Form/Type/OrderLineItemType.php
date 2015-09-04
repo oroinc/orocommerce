@@ -2,95 +2,71 @@
 
 namespace OroB2B\Bundle\OrderBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\OrderBundle\Formatter\OrderLineItemFormatter;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
-class OrderLineItemType extends AbstractType
+class OrderLineItemType extends AbstractOrderLineItemType
 {
     const NAME = 'orob2b_order_line_item';
 
     /**
-     * @var OrderLineItemFormatter
+     * @var ManagerRegistry
      */
-    protected $orderLineItemFormatter;
-
-    /**
-     * @var ProductUnitLabelFormatter
-     */
-    protected $productUnitLabelFormatter;
+    protected $registry;
 
     /**
      * @var string
      */
-    protected $dataClass;
+    protected $productUnitClass;
 
     /**
-     * @param OrderLineItemFormatter $orderLineItemFormatter
-     * @param ProductUnitLabelFormatter $productUnitLabelFormatter
+     * @var ProductUnitLabelFormatter
      */
-    public function __construct(
-        OrderLineItemFormatter $orderLineItemFormatter,
-        ProductUnitLabelFormatter $productUnitLabelFormatter
-    ) {
-        $this->orderLineItemFormatter = $orderLineItemFormatter;
-        $this->productUnitLabelFormatter = $productUnitLabelFormatter;
+    protected $productUnitFormatter;
+
+    /**
+     * @param ManagerRegistry $registry
+     * @param ProductUnitLabelFormatter $productUnitFormatter
+     */
+    public function __construct(ManagerRegistry $registry, ProductUnitLabelFormatter $productUnitFormatter)
+    {
+        $this->registry = $registry;
+        $this->productUnitFormatter = $productUnitFormatter;
     }
 
     /**
-     * @param string $dataClass
+     * @param string $productUnitClass
      */
-    public function setDataClass($dataClass)
+    public function setProductUnitClass($productUnitClass)
     {
-        $this->dataClass = $dataClass;
+        $this->productUnitClass = $productUnitClass;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        $units = [];
+        parent::configureOptions($resolver);
 
-        /* @var $products Product[] */
-        $products = [];
-
-        if ($view->vars['value']) {
-            /* @var OrderLineItem $lineItem */
-            $lineItem = $view->vars['value'];
-
-            if ($lineItem->getProduct()) {
-                $product = $lineItem->getProduct();
-                $products[$product->getId()] = $product;
-            }
-        }
-
-        foreach ($products as $product) {
-            $units[$product->getId()] = [];
-
-            foreach ($product->getAvailableUnitCodes() as $unitCode) {
-                $units[$product->getId()][$unitCode] = $this->productUnitLabelFormatter->format($unitCode);
-            }
-        }
-
-        $componentOptions = ['units' => $units];
-
-        if (array_key_exists('componentOptions', $view->vars)) {
-            $componentOptions = array_merge($view->vars['componentOptions'], $componentOptions);
-        }
-
-        $view->vars['componentOptions'] = $componentOptions;
+        $resolver->setDefault(
+            'page_component_options',
+            [
+                'view' => 'orob2border/js/app/views/line-item-view',
+                'freeFormUnits' => $this->getFreeFormUnits(),
+            ]
+        );
     }
 
     /**
@@ -98,10 +74,12 @@ class OrderLineItemType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        parent::buildForm($builder, $options);
+
         $builder
             ->add(
                 'product',
-                ProductRemovedSelectType::NAME,
+                ProductSelectType::NAME,
                 [
                     'required' => true,
                     'label' => 'orob2b.product.entity_label',
@@ -113,7 +91,7 @@ class OrderLineItemType extends AbstractType
                 'text',
                 [
                     'required' => false,
-                    'label' => 'orob2b.product.sku.label'
+                    'label' => 'orob2b.product.sku.label',
                 ]
             )
             ->add(
@@ -125,70 +103,24 @@ class OrderLineItemType extends AbstractType
                 ]
             )
             ->add(
-                'quantity',
-                'integer',
-                [
-                    'required' => true,
-                    'label' => 'orob2b.order.orderlineitem.quantity.label',
-                ]
-            )
-            ->add(
-                'productUnit',
-                ProductUnitSelectionType::NAME,
-                [
-                    'label' => 'orob2b.product.productunit.entity_label',
-                    'required' => true,
-                ]
-            )
-            ->add(
                 'price',
                 PriceType::NAME,
                 [
                     'error_bubbling' => false,
                     'required' => true,
                     'label' => 'orob2b.order.orderlineitem.price.label',
+                    'hide_currency' => true,
+                    'default_currency' => $options['currency']
                 ]
             )
             ->add(
                 'priceType',
-                'choice',
+                PriceTypeSelectorType::NAME,
                 [
                     'label' => 'orob2b.order.orderlineitem.price_type.label',
-                    'choices' => $this->orderLineItemFormatter->formatPriceTypeLabels(OrderLineItem::getPriceTypes()),
                     'required' => true,
-                    'expanded' => true,
-                ]
-            )
-            ->add(
-                'shipBy',
-                'oro_date',
-                [
-                    'required' => false,
-                    'label' => 'orob2b.order.orderlineitem.ship_by.label',
-                ]
-            )
-            ->add(
-                'comment',
-                'textarea',
-                [
-                    'required' => false,
-                    'label' => 'orob2b.order.orderlineitem.comment.label',
                 ]
             );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults(
-            [
-                'data_class' => $this->dataClass,
-                'intention' => 'order_line_item',
-                'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
-            ]
-        );
     }
 
     /**
@@ -197,5 +129,37 @@ class OrderLineItemType extends AbstractType
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function updateAvailableUnits(FormInterface $form)
+    {
+        /** @var OrderLineItem $item */
+        $item = $form->getData();
+        if (!$item->getProduct()) {
+            return;
+        }
+
+        $form->remove('productUnit');
+        $form->add(
+            'productUnit',
+            ProductUnitSelectionType::NAME,
+            [
+                'label' => 'orob2b.product.productunit.entity_label',
+                'required' => true,
+                'query_builder' => function (ProductUnitRepository $er) use ($item) {
+                    return $er->getProductUnitsQueryBuilder($item->getProduct());
+                }
+            ]
+        );
+    }
+
+    protected function getFreeFormUnits()
+    {
+        $units = $this->registry->getRepository($this->productUnitClass)->findBy([], ['code' => 'ASC']);
+        $units = $this->productUnitFormatter->formatChoices($units);
+        return $units;
     }
 }

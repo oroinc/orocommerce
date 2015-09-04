@@ -14,6 +14,7 @@ use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\UserBundle\Entity\User;
 
+use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class LoadProductDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
@@ -67,13 +68,21 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
+            $name = new LocalizedFallbackValue();
+            $name->setString($row['productName']);
+
+            $description = new LocalizedFallbackValue();
+            $description->setText(nl2br($row['productDescription']));
+
             $product = new Product();
             $product->setOwner($businessUnit)
                 ->setOrganization($organization)
                 ->setSku($row['productCode'])
                 ->setInventoryStatus($inventoryStatuses[array_rand($inventoryStatuses)])
                 ->setVisibility($visibilities[array_rand($visibilities)])
-                ->setStatus($statuses[array_rand($statuses)]);
+                ->setStatus($statuses[array_rand($statuses)])
+                ->addName($name)
+                ->addDescription($description);
 
             $manager->persist($product);
         }
@@ -102,21 +111,6 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         }
 
         return $user;
-    }
-
-    /**
-     * @param EntityManager $manager
-     * @param string $title
-     * @return Category|null
-     */
-    protected function getCategoryByDefaultTitle(EntityManager $manager, $title)
-    {
-        if (!array_key_exists($title, $this->categories)) {
-            $this->categories[$title] =
-                $manager->getRepository('OroB2BCatalogBundle:Category')->findOneByDefaultTitle($title);
-        }
-
-        return $this->categories[$title];
     }
 
     /**

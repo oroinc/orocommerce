@@ -8,9 +8,8 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 
-use OroB2B\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
-use OroB2B\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
-use OroB2B\Bundle\SaleBundle\Autocomplete\SearchHandler;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
 
 class QuoteType extends AbstractType
 {
@@ -43,17 +42,17 @@ class QuoteType extends AbstractType
             ->add('accountUser', AccountUserSelectType::NAME, [
                 'label'     => 'orob2b.sale.quote.account_user.label',
                 'required'  => false,
-                'configs'   => [
-                    'component' => 'account-user-autocomplete',
-                    'delimiter' => SearchHandler::DELIMITER,
-                ],
             ])
-            ->add('account', CustomerSelectType::NAME, [
+            ->add('account', AccountSelectType::NAME, [
                 'label'     => 'orob2b.sale.quote.account.label',
                 'required'  => false,
             ])
             ->add('validUntil', OroDateTimeType::NAME, [
                 'label'     => 'orob2b.sale.quote.valid_until.label',
+                'required'  => false,
+            ])
+            ->add('locked', 'checkbox', [
+                'label' => 'orob2b.sale.quote.locked.label',
                 'required'  => false,
             ])
             ->add(
