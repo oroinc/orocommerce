@@ -9,8 +9,6 @@ use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 /**
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
- *
  * @dbIsolation
  */
 class RequestControllerTest extends WebTestCase

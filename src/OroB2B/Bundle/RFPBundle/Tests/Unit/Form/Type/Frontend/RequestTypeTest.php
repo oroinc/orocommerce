@@ -2,12 +2,13 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type\Frontend;
 
-use Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\Common\Persistence\ObjectManager;
+
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\ConstraintViolationList;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
@@ -43,6 +44,7 @@ class RequestTypeTest extends AbstractTest
         $requestStatus = new RequestStatus();
         $requestStatus->setName(RequestStatus::OPEN);
 
+        /* @var $repository ObjectRepository|\PHPUnit_Framework_MockObject_MockObject */
         $repository = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectRepository')
             ->disableOriginalConstructor()
             ->getMock();
@@ -52,6 +54,7 @@ class RequestTypeTest extends AbstractTest
             ->with(['name' => RequestStatus::OPEN])
             ->willReturn($requestStatus);
 
+        /* @var $manager ObjectManager|\PHPUnit_Framework_MockObject_MockObject */
         $manager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
             ->disableOriginalConstructor()
             ->getMock();
@@ -61,18 +64,7 @@ class RequestTypeTest extends AbstractTest
             ->with(self::REQUEST_STATUS_CLASS)
             ->willReturn($repository);
 
-        /**
-         * @var \Doctrine\Common\Persistence\ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $registry
-         */
-        $registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $registry->expects(static::any())
-            ->method('getManagerForClass')
-            ->with('OroUserBundle:User')
-            ->willReturn($manager);
-
+        /* @var $registry ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
         $registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
             ->disableOriginalConstructor()
             ->getMock();
@@ -82,7 +74,7 @@ class RequestTypeTest extends AbstractTest
             ->with(self::REQUEST_STATUS_CLASS)
             ->willReturn($manager);
 
-        /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject $configManager */
+        /* @var $configManager ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
         $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
             ->getMock();
@@ -91,20 +83,6 @@ class RequestTypeTest extends AbstractTest
             ->method('get')
             ->with('oro_b2b_rfp.default_request_status')
             ->willReturn(RequestStatus::OPEN);
-
-        /**
-         * @var \Symfony\Component\Validator\ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject $validator
-         */
-        $validator = $this->getMock('\Symfony\Component\Validator\ValidatorInterface');
-
-        $validator->expects(static::any())
-            ->method('validate')
-            ->will(static::returnValue(new ConstraintViolationList()));
-
-        $this->factory = Forms::createFormFactoryBuilder()
-            ->addExtensions($this->getExtensions())
-            ->addTypeExtension(new FormTypeValidatorExtension($validator))
-            ->getFormFactory();
 
         $this->formType = new RequestType($configManager, $registry);
         $this->formType->setDataClass(self::DATA_CLASS);
@@ -118,9 +96,7 @@ class RequestTypeTest extends AbstractTest
      */
     public function testConfigureOptions()
     {
-        /**
-         * @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver
-         */
+        /* @var $resolver OptionsResolver|\PHPUnit_Framework_MockObject_MockObject */
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
 
         $resolver->expects(static::once())

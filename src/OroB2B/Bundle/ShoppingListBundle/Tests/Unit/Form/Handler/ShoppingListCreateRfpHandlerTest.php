@@ -30,7 +30,7 @@ class ShoppingListCreateRfpHandlerTest extends FormHandlerTestCase
     protected $entity;
 
     /**
-     * @var User
+     * @var AccountUser
      */
     protected static $user;
 
@@ -52,21 +52,12 @@ class ShoppingListCreateRfpHandlerTest extends FormHandlerTestCase
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * Replaced by testProcessValidShoppingList
-     */
-    public function testProcessValidData()
-    {
-    }
-
-    /**
      * @param ShoppingList $inputData
      * @param Request $expectedData
      *
      * @dataProvider processValidDataProvider
      */
-    public function testProcessValidShoppingList(ShoppingList $inputData, Request $expectedData)
+    public function testProcessValidData(ShoppingList $inputData, Request $expectedData)
     {
         $this->form->expects(static::once())
             ->method('setData')

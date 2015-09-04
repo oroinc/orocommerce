@@ -233,20 +233,6 @@ class ShoppingListController extends Controller
     }
 
     /**
-     * @return LoggerInterface
-     */
-    protected function getLogger()
-    {
-        return $this->get('logger');
-    }
-    /**
-     * @return TranslatorInterface
-     */
-    protected function getTranslator()
-    {
-        return $this->get('translator');
-    }
-    /**
      * @param ShoppingList $shoppingList
      * @return Form
      */
@@ -305,5 +291,21 @@ class ShoppingListController extends Controller
             ->getRepository($requestStatusClass)
             ->findOneBy(['name' => RequestStatus::DRAFT])
         ;
+    }
+
+    /**
+     * @return LoggerInterface
+     */
+    protected function getLogger()
+    {
+        return $this->get('logger');
+    }
+
+    /**
+     * @return TranslatorInterface
+     */
+    protected function getTranslator()
+    {
+        return $this->get('translator');
     }
 }

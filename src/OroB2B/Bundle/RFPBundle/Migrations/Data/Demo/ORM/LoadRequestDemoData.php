@@ -80,7 +80,8 @@ class LoadRequestDemoData extends AbstractFixture implements
             $accountUser = $accountUsers[rand(0, count($accountUsers) - 1)];
 
             $request = new Request();
-            $request->setFirstName($row['first_name'])
+            $request
+                ->setFirstName($row['first_name'])
                 ->setLastName($row['last_name'])
                 ->setEmail($row['email'])
                 ->setPhone($row['phone'])
@@ -107,8 +108,7 @@ class LoadRequestDemoData extends AbstractFixture implements
 
     /**
      * @param ObjectManager $manager
-     * @return Collection|Product[]
-     * @throws \LogicException
+     * @return Product[]
      */
     protected function getProducts(ObjectManager $manager)
     {
@@ -123,7 +123,6 @@ class LoadRequestDemoData extends AbstractFixture implements
 
     /**
      * @return array
-     * @throws \LogicException
      */
     protected function getCurrencies()
     {
@@ -142,7 +141,7 @@ class LoadRequestDemoData extends AbstractFixture implements
 
     /**
      * @param ObjectManager $manager
-     * @return Collection|AccountUser[]
+     * @return AccountUser[]
      */
     protected function getAccountUsers(ObjectManager $manager)
     {

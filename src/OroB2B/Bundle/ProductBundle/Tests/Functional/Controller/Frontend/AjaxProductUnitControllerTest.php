@@ -12,6 +12,9 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
  */
 class AjaxProductUnitControllerTest extends WebTestCase
 {
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->initClient();
@@ -51,16 +54,19 @@ class AjaxProductUnitControllerTest extends WebTestCase
         return [
             [
                 'product.1',
-                ['bottle' => 'orob2b.product_unit.bottle.label.full', 'liter' => 'orob2b.product_unit.liter.label.full']
+                [
+                    'bottle' => 'orob2b.product_unit.bottle.label.full',
+                    'liter' => 'orob2b.product_unit.liter.label.full',
+                ],
             ],
             [
                 'product.2',
                 [
                     'bottle' => 'orob2b.product_unit.bottle.label.full',
                     'box' => 'orob2b.product_unit.box.label.full',
-                    'liter' => 'orob2b.product_unit.liter.label.full'
-                ]
-            ]
+                    'liter' => 'orob2b.product_unit.liter.label.full',
+                ],
+            ],
         ];
     }
 

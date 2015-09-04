@@ -35,6 +35,7 @@ class RequestFrontendDatagridListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @param array $sourceResults
      * @param array $expectedResults
+     *
      * @dataProvider onResultAfterDataProvider
      */
     public function testOnResultAfter(array $sourceResults = [], array $expectedResults = [])
