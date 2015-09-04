@@ -143,12 +143,12 @@ class AccountAddressControllerTest extends WebTestCase
         $this->assertEquals([
 
             [
-                'name' => AddressType::TYPE_SHIPPING,
-                'label' => ucfirst(AddressType::TYPE_SHIPPING)
-            ],
-            [
                 'name' => AddressType::TYPE_BILLING,
                 'label' => ucfirst(AddressType::TYPE_BILLING)
+            ],
+            [
+                'name' => AddressType::TYPE_SHIPPING,
+                'label' => ucfirst(AddressType::TYPE_SHIPPING)
             ]
         ], $result['types']);
 

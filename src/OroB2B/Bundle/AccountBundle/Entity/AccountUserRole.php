@@ -83,6 +83,7 @@ class AccountUserRole extends AbstractRole
      * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $organization;
+    
     /**
      * @var string
      *
