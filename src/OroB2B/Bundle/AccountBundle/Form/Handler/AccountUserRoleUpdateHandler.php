@@ -10,6 +10,7 @@ use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
 use Oro\Bundle\UserBundle\Entity\AbstractRole;
 use Oro\Bundle\UserBundle\Form\Handler\AclRoleHandler;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
@@ -34,9 +35,9 @@ class AccountUserRoleUpdateHandler extends AclRoleHandler
     protected $doctrineHelper;
 
     /**
-     * @var AccountUserRole
+     * @var Account
      */
-    protected $originalRole;
+    protected $originalAccount;
 
     /**
      * @param ConfigProviderInterface $provider
@@ -170,7 +171,7 @@ class AccountUserRoleUpdateHandler extends AclRoleHandler
      */
     public function process(AbstractRole $role)
     {
-        $this->originalRole = clone $role;
+        $this->originalAccount = $role->getAccount();
 
         return parent::process($role);
     }
@@ -187,9 +188,9 @@ class AccountUserRoleUpdateHandler extends AclRoleHandler
 
         // Role moved to another account OR account added
         if ($role->getId() && (
-                ($this->originalRole->getAccount() !== $role->getAccount() &&
-                    $this->originalRole->getAccount() !== null && $role->getAccount() !== null) ||
-                ($this->originalRole->getAccount() === null && $role->getAccount() !== null)
+                ($this->originalAccount !== $role->getAccount() &&
+                    $this->originalAccount !== null && $role->getAccount() !== null) ||
+                ($this->originalAccount === null && $role->getAccount() !== null)
             )
         ) {
             // Remove assigned users

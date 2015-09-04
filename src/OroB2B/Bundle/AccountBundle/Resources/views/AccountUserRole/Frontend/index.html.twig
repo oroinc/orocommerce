@@ -4,3 +4,12 @@
 
 {% set gridName = 'frontend-account-account-user-roles-grid' %}
 {% set pageTitle = 'orob2b.account.accountuserrole.entity_plural_label'|trans %}
+
+{% block navButtons %}
+    {% if resource_granted('orob2b_account_account_user_role_frontend_create') %}
+        {{ UI.addButton({
+            'path': path('orob2b_account_account_user_role_frontend_create'),
+            'entity_label': 'orob2b.account.accountuserrole.entity_label'|trans
+        }) }}
+    {% endif %}
+{% endblock %}
