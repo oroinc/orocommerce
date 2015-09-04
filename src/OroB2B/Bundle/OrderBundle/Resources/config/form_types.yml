@@ -83,7 +83,8 @@ services:
         class: %orob2b_order.form.type.extension.frontend_order.class%
         arguments:
             - @orob2b_product.service.product_data_storage
-            - @orob2b_product.converter.product_data
+            - @doctrine
+            - %orob2b_product.product.class%
         calls:
             - [setRequest, ["@?request="]]
         tags:

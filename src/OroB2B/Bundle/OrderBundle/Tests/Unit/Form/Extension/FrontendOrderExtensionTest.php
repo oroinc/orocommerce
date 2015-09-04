@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -12,7 +14,6 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Model\DataStorageAwareProcessor;
-use OroB2B\Bundle\ProductBundle\Model\ProductDataConverter;
 use OroB2B\Bundle\ProductBundle\Model\QuickAddProductInformation;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
@@ -22,11 +23,6 @@ class FrontendOrderExtensionTest extends \PHPUnit_Framework_TestCase
      * @var \PHPUnit_Framework_MockObject_MockObject|ProductDataStorage
      */
     protected $storage;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ProductDataConverter
-     */
-    protected $converter;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|Request
@@ -39,6 +35,16 @@ class FrontendOrderExtensionTest extends \PHPUnit_Framework_TestCase
     protected $extension;
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
+     */
+    protected $registry;
+
+    /**
+     * @var string
+     */
+    protected $productClass;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -46,14 +52,13 @@ class FrontendOrderExtensionTest extends \PHPUnit_Framework_TestCase
         $this->storage = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->converter = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Model\ProductDataConverter')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
         $this->request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
             ->disableOriginalConstructor()
             ->getMock();
+        $this->productClass = 'stdClass';
 
-        $this->extension = new FrontendOrderExtension($this->storage, $this->converter);
+        $this->extension = new FrontendOrderExtension($this->storage, $this->registry, $this->productClass);
         $this->extension->setRequest($this->request);
     }
 
@@ -109,7 +114,7 @@ class FrontendOrderExtensionTest extends \PHPUnit_Framework_TestCase
         $this->storage->expects($this->once())
             ->method('remove');
 
-        $this->converter->expects($this->never())
+        $this->registry->expects($this->never())
             ->method($this->anything());
 
         $this->extension->buildForm($builder, ['data' => new Order()]);
@@ -119,7 +124,9 @@ class FrontendOrderExtensionTest extends \PHPUnit_Framework_TestCase
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface $builder */
         $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
-        $data = [[ProductDataConverter::PRODUCT_KEY => 1, ProductDataConverter::QUANTITY_KEY => 3]];
+        $sku = 'TEST';
+        $qty = 3;
+        $data = [['sku' => $sku, 'qty' => $qty]];
         $order = new Order();
         $product = new Product();
         $product->setSku('TEST');
@@ -130,7 +137,7 @@ class FrontendOrderExtensionTest extends \PHPUnit_Framework_TestCase
         $product->addUnitPrecision($productUnitPrecision);
         $info = new QuickAddProductInformation();
         $info->setProduct($product)
-            ->setQuantity(3);
+            ->setQuantity($qty);
 
         $this->request->expects($this->once())
             ->method('get')
@@ -143,10 +150,24 @@ class FrontendOrderExtensionTest extends \PHPUnit_Framework_TestCase
         $this->storage->expects($this->once())
             ->method('remove');
 
-        $this->converter->expects($this->once())
-            ->method('getProductsInfoByStoredData')
-            ->with($data)
-            ->will($this->returnValue([$info]));
+        $repo = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $repo->expects($this->once())
+            ->method('findOneBySku')
+            ->with($sku)
+            ->will($this->returnValue($product));
+        $em = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $em->expects($this->once())
+            ->method('getRepository')
+            ->with($this->productClass)
+            ->will($this->returnValue($repo));
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with($this->productClass)
+            ->will($this->returnValue($em));
 
         $this->extension->buildForm($builder, ['data' => $order]);
 

@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\OrderBundle\Form\Extension;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -10,8 +12,8 @@ use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ProductBundle\Model\DataStorageAwareProcessor;
-use OroB2B\Bundle\ProductBundle\Model\ProductDataConverter;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class FrontendOrderExtension extends AbstractTypeExtension
@@ -27,18 +29,20 @@ class FrontendOrderExtension extends AbstractTypeExtension
     protected $storage;
 
     /**
-     * @var ProductDataConverter
+     * @var string
      */
-    protected $converter;
+    protected $productClass;
 
     /**
      * @param ProductDataStorage $storage
-     * @param $converter
+     * @param ManagerRegistry $registry
+     * @param string $productClass
      */
-    public function __construct(ProductDataStorage $storage, ProductDataConverter $converter)
+    public function __construct(ProductDataStorage $storage, ManagerRegistry $registry, $productClass)
     {
         $this->storage = $storage;
-        $this->converter = $converter;
+        $this->registry = $registry;
+        $this->productClass = $productClass;
     }
 
     /**
@@ -86,9 +90,15 @@ class FrontendOrderExtension extends AbstractTypeExtension
             return;
         }
 
-        $productInformation = $this->converter->getProductsInfoByStoredData($data);
-        foreach ($productInformation as $informationRow) {
-            $product = $informationRow->getProduct();
+        $repository = $this->getProductRepository();
+        foreach ($data as $dataRow) {
+            if (!array_key_exists('sku', $dataRow) || !array_key_exists('qty', $dataRow)) {
+                continue;
+            }
+            $product = $repository->findOneBySku($dataRow['sku']);
+            if (!$product) {
+                continue;
+            }
             /** @var ProductUnit $unit */
             $unit = $product->getUnitPrecisions()->first()->getUnit();
             $lineItem = new OrderLineItem();
@@ -96,8 +106,17 @@ class FrontendOrderExtension extends AbstractTypeExtension
                 ->setProductSku($product->getSku())
                 ->setProductUnit($unit)
                 ->setProductUnitCode($unit->getCode())
-                ->setQuantity($informationRow->getQuantity());
+                ->setQuantity((float)$dataRow['qty']);
             $order->addLineItem($lineItem);
         }
+    }
+
+    /**
+     * @return ProductRepository
+     */
+    protected function getProductRepository()
+    {
+        return $this->registry->getManagerForClass($this->productClass)
+            ->getRepository($this->productClass);
     }
 }
