@@ -625,7 +625,6 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
     }
 
     /**
-<<<<<<< HEAD
      * @param OrderLineItem $lineItem
      * @return bool
      */
