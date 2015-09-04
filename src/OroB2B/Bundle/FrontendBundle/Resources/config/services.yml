@@ -1,6 +1,6 @@
 parameters:
     orob2b_frontend.listener.route_collection.class: OroB2B\Bundle\FrontendBundle\EventListener\RouteCollectionListener
-
+    orob2b_frontend.menu.breadcrumb_manager.class: OroB2B\Bundle\FrontendBundle\Menu\BreadcrumbManager
 services:
     orob2b_frontend.listener.route_collection:
         class: %orob2b_frontend.listener.route_collection.class%
@@ -9,3 +9,8 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_distribution.route_collection.autoload, method: onCollectionAutoload, priority: 120 }
         lazy: true
+    orob2b_frontend.menu.breadcrumb_manager:
+        class: %orob2b_frontend.menu.breadcrumb_manager.class%
+        parent: oro_navigation.breadcrumb_manager
+        tags:
+            - {name: oro_breadcrumbs.provider}
