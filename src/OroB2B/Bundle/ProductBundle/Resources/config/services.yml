@@ -12,6 +12,7 @@ parameters:
     orob2b_product.service.duplicator.class: OroB2B\Bundle\ProductBundle\Duplicator\ProductDuplicator
     orob2b_product.service.sku_incrementor.class: OroB2B\Bundle\ProductBundle\Duplicator\SkuIncrementor
     orob2b_product.service.product_update_handler.class: OroB2B\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler
+    orob2b_product.validator.product_by_sku.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator
 
 services:
     orob2b_product.form.product:
@@ -93,3 +94,10 @@ services:
         calls:
             - [setUrlGenerator, [@router]]
             - [setTranslator, [@translator]]
+
+    orob2b_product.validator.product_by_sku:
+            class: %orob2b_product.validator.product_by_sku.class%
+            arguments:
+                - @doctrine
+            tags:
+                - { name: validator.constraint_validator, alias: orob2b_product_product_by_sku_validator }

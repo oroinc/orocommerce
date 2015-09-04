@@ -1,0 +1,4 @@
+orob2b:
+    product:
+        product_by_sku:
+            not_found: Product with SKU not found
