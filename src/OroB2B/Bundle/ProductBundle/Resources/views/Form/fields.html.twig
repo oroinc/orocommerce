@@ -24,3 +24,85 @@
         {{ block('oro_collection_widget') }}
     </div>
 {% endblock %}
+
+{% macro orob2b_product_row_collection_item_prototype(widget) %}
+    {% if 'collection' in widget.vars.block_prefixes %}
+        {% set form = widget.vars.prototype %}
+        {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
+        {% set disabled = widget.vars.disabled %}
+        {% set allow_delete = widget.vars.allow_delete %}
+    {% else %}
+        {% if widget.vars.disallow_delete is defined and widget.vars.disallow_delete %}
+            {% set allow_delete = false %}
+        {% else %}
+            {% set allow_delete = widget.parent.vars.allow_delete %}
+        {% endif %}
+        {% set form = widget %}
+        {% set name = widget.vars.full_name %}
+        {% set disabled = widget.parent.vars.disabled %}
+    {% endif %}
+
+    <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
+        data-layout="separate">
+        {{ form_widget(form) }}
+
+        {% if allow_delete %}
+            <td>
+                <button type="button" class="removeRow btn icons-holder"></button>
+            </td>
+        {% elseif widget.parent.vars.allow_delete %}
+            <td></td>
+        {% endif %}
+    </tr>
+{% endmacro %}
+
+{% block orob2b_product_row_widget %}
+    <td class="fields-row">
+        {{ form_widget(form.productSku) }}
+    </td>
+    <td class="fields-row">
+        {{ form_widget(form.productQuantity) }}
+    </td>
+{% endblock %}
+
+{% block orob2b_product_row_collection_widget %}
+    {% spaceless %}
+        {% if prototype is defined %}
+            {% set prototype_html = _self.orob2b_product_row_collection_item_prototype(form) %}
+        {% endif %}
+        {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
+        {% set id = id ~ '_collection' %}
+        {% set row_count = form.vars.row_count %}
+        <div class="row-oro add-products">
+            {% set prototype_name = form.vars.prototype_name %}
+            <div {{ block('widget_container_attributes') }}>
+                <table class="grid table-hover table table-bordered table-condensed">
+                    <thead>
+                        <tr>
+                            <th><span>{{ 'orob2b.product.sku.label'|trans }}</span></th>
+                            <th><span>{{ 'orob2b.product.quantity.label'|trans }}</span></th>
+                            {% if form.vars.allow_delete %}
+                                <th></th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
+                    {% if form.children|length %}
+                        {% for child in form.children %}
+                            {{ _self.orob2b_product_row_collection_item_prototype(child) }}
+                        {% endfor %}
+                    {% elseif show_form_when_empty and prototype_html is defined %}
+                        {% for i in 0..(row_count-1) %}
+                            {{ prototype_html|replace({(prototype_name): i})|raw }}
+                        {% endfor %}
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if allow_add %}
+                <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
+            {% endif %}
+        </div>
+    {% endspaceless %}
+{% endblock %}
