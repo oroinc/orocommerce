@@ -19,7 +19,6 @@ class AccountUserRoleVoter extends AbstractEntityVoter
     const ATTRIBUTE_DELETE = 'DELETE';
     const ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_UPDATE = 'FRONTEND_ACCOUNT_ROLE_UPDATE';
     const ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_VIEW = 'FRONTEND_ACCOUNT_ROLE_VIEW';
-    const ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_DELETE = 'FRONTEND_ACCOUNT_ROLE_DELETE';
 
     const VIEW = 'view';
     const UPDATE = 'update';
@@ -30,8 +29,7 @@ class AccountUserRoleVoter extends AbstractEntityVoter
     protected $supportedAttributes = [
         self::ATTRIBUTE_DELETE,
         self::ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_UPDATE,
-        self::ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_VIEW,
-        self::ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_DELETE,
+        self::ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_VIEW
     ];
 
     /**
@@ -85,8 +83,6 @@ class AccountUserRoleVoter extends AbstractEntityVoter
                 return $this->getPermissionForAccountRole(self::VIEW);
             case static::ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_UPDATE:
                 return $this->getPermissionForAccountRole(self::UPDATE);
-            case static::ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_DELETE:
-                return $this->getFrontendPermissionForDelete();
             default:
                 return self::ACCESS_ABSTAIN;
         }
@@ -131,7 +127,7 @@ class AccountUserRoleVoter extends AbstractEntityVoter
                 $isGranted = $this->getAccountUserRoleProvider()->isGrantedViewAccountUserRole();
                 break;
             case self::UPDATE:
-                $isGranted = $this->getAccountUserRoleProvider()->isGrantedUpdateAccountUserRole($this->object);
+                $isGranted = $this->getAccountUserRoleProvider()->isGrantedUpdateAccountUserRole();
                 break;
             default:
                 $isGranted = false;
@@ -142,19 +138,6 @@ class AccountUserRoleVoter extends AbstractEntityVoter
         }
 
         return self::ACCESS_ABSTAIN;
-    }
-
-    /**
-     * @return int
-     */
-    protected function getFrontendPermissionForDelete()
-    {
-        if ($this->object->isPredefined()) {
-            return self::ACCESS_DENIED;
-        }
-
-        return $this->getAccountUserRoleProvider()
-            ->isGrantedDeleteAccountUserRole($this->object) ? self::ACCESS_GRANTED : self::ACCESS_DENIED;
     }
 
     /**
