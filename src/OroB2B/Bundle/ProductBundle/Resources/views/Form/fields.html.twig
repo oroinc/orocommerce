@@ -32,14 +32,10 @@
         {% set disabled = widget.vars.disabled %}
         {% set allow_delete = widget.vars.allow_delete %}
     {% else %}
-        {% if widget.vars.disallow_delete is defined and widget.vars.disallow_delete %}
-            {% set allow_delete = false %}
-        {% else %}
-            {% set allow_delete = widget.parent.vars.allow_delete %}
-        {% endif %}
         {% set form = widget %}
         {% set name = widget.vars.full_name %}
         {% set disabled = widget.parent.vars.disabled %}
+        {% set allow_delete = widget.parent.vars.allow_delete %}
     {% endif %}
 
     <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
