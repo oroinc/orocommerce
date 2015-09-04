@@ -42,13 +42,11 @@
         data-layout="separate">
         {{ form_widget(form) }}
 
-        {% if allow_delete %}
-            <td>
+        <td>
+            {% if allow_delete %}
                 <button type="button" class="removeRow btn icons-holder"></button>
-            </td>
-        {% elseif widget.parent.vars.allow_delete %}
-            <td></td>
-        {% endif %}
+            {% endif %}
+        </td>
     </tr>
 {% endmacro %}
 
