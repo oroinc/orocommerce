@@ -17,8 +17,8 @@ class QuickAddType extends AbstractType
         $builder
             ->add(
                 'products',
-                'orob2b_order_line_items_collection', // TODO: replace this with real collection BB-1054
-                ['required' => true, 'label' => 'orob2b.product.form.products.label']
+                ProductRowCollectionType::NAME,
+                ['required' => false, 'label' => 'orob2b.product.form.products.label']
             )
             ->add(
                 'component',
