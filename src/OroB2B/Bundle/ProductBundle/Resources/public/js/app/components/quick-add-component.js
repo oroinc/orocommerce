@@ -1,10 +1,9 @@
-/*jslint nomen:true*/
-/*global define*/
-define(function (require) {
+define(function(require) {
     'use strict';
 
     var QuickAddComponent;
     var _ = require('underscore');
+    var $ = require('jquery');
     var BaseComponent = require('oroui/js/app/components/base/component');
 
     QuickAddComponent = BaseComponent.extend({
@@ -20,14 +19,14 @@ define(function (require) {
         /**
          * @inheritDoc
          */
-        initialize: function (options) {
+        initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
             this.options._sourceElement
                 .on('click', this.options.componentButtonSelector, _.bind(this.fillComponentData, this));
         },
 
-        fillComponentData: function (e) {
+        fillComponentData: function(e) {
             var $element = $(e.target);
 
             var component = $element.data('component-name');
