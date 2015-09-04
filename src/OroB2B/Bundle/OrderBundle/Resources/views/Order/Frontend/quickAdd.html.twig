@@ -1,3 +1,10 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 
-{{  UI.saveAndCloseButton('orob2b.order.btn.add_to_order'|trans) }}
+{{  UI.buttonType({
+        type: 'submit',
+        label: 'orob2b.order.btn.add_to_order'|trans,
+        data: {
+            'component-name': 'orob2b_order_quick_add_processor'
+        }
+    })
+}}
