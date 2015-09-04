@@ -1,15 +1,38 @@
 {% extends bap.layout %}
 
-{% block content_data %}
-    {% set id = 'product-edit' %}
+{% block content %}
+    <div class="container-fluid page-title">
+        <div class="navigation clearfix navbar-extra navbar-extra-right">
+            <div class="row">
+                <div class="pull-left pull-left-extra">
+                    <div class="pull-left">
+                        <h1 class="oro-subtitle">{{ 'orob2b.product.frontend.quick_add.title'|trans }}</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ formAction }}" {{ form_enctype(form) }}
-        method="{{ form.vars.method }}">
-                form_row(form.products),
-                form_row(form.component),
-                form_row(form.additional),
-            ]
-        }
-    } %}
-    </form>
-{% endblock content_data %}
+    <div class="layout-content">
+        <div class="container-fluid form-container">
+            <div class="responsive-section responsive-section-no-blocks">
+                <div class="row-fluid">
+                    <div class="responsive-cell responsive-cell-no-blocks">
+                        <form id="{{ form.vars.id }}" name="{{ form.vars.name }}"
+                            action="{{ path('orob2b_product_frontend_quick_add') }}" {{ form_enctype(form) }}
+                            method="{{ form.vars.method }}">
+
+                            <fieldset class="form-horizontal">
+                                {{ form_widget(form.products) }}
+                                {{ form_row(form.component) }}
+                                {{ form_row(form.additional) }}
+
+                                {% placeholder orob2b_product_quick_add_buttons with {'form': form} %}
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
