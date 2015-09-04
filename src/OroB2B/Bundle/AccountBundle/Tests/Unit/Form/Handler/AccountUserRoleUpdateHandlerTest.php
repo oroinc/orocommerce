@@ -22,7 +22,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleHandler;
+use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateHandler;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
 use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
@@ -69,7 +69,7 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
     protected $roleRepository;
 
     /**
-     * @var AccountUserRoleHandler
+     * @var AccountUserRoleUpdateHandler
      */
     protected $handler;
 
@@ -127,7 +127,7 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getEntityRepository')
             ->willReturn($this->roleRepository);
 
-        $this->handler = new AccountUserRoleHandler($this->formFactory, $this->privilegeConfig);
+        $this->handler = new AccountUserRoleUpdateHandler($this->formFactory, $this->privilegeConfig);
         $this->handler->setAclManager($this->aclManager);
         $this->handler->setAclPrivilegeRepository($this->privilegeRepository);
         $this->handler->setChainMetadataProvider($this->chainMetadataProvider);
@@ -365,7 +365,7 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
         $this->chainMetadataProvider->expects($this->once())
             ->method('stopProviderEmulation');
 
-        $handler = new AccountUserRoleHandler($this->formFactory, $this->privilegeConfig);
+        $handler = new AccountUserRoleUpdateHandler($this->formFactory, $this->privilegeConfig);
         $handler->setManagerRegistry($this->managerRegistry);
         $handler->setAclPrivilegeRepository($this->privilegeRepository);
         $handler->setAclManager($this->aclManager);
@@ -461,8 +461,8 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
             ->with($role)
             ->willReturn($assignedUsers);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|AccountUserRoleHandler $handler */
-        $handler = $this->getMockBuilder('\OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleHandler')
+        /** @var \PHPUnit_Framework_MockObject_MockObject|AccountUserRoleUpdateHandler $handler */
+        $handler = $this->getMockBuilder('\OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateHandler')
             ->setMethods(['processPrivileges'])
             ->setConstructorArgs([$this->formFactory, $this->privilegeConfig])
             ->getMock();

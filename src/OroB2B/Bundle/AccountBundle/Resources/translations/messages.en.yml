@@ -148,6 +148,8 @@ orob2b.account:
         addresses: 'Addresses'
         accountgroup:
             accounts: 'Accounts'
+        accountuserrole:
+            users: 'Users'
         roles:   'Frontend Capabilities'
         password: 'Password'
 
