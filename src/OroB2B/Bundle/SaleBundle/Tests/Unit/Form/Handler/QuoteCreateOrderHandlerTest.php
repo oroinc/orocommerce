@@ -11,6 +11,7 @@ use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
+use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
@@ -127,23 +128,16 @@ class QuoteCreateOrderHandlerTest extends FormHandlerTestCase
             ->addQuoteProduct($quoteProduct)
         ;
 
-        $orderProductItem = (new OrderProductItem())
+        $orderProductItem = (new OrderLineItem())
             ->setQuantity(10)
             ->setPrice(OptionalPrice::create(20, 'USD'))
             ->setProductUnit($productUnit)
-            ->setQuoteProductOffer($quoteProductOffer)
             ->setFromQuote(true)
         ;
-        $orderProduct = (new OrderProduct())
-            ->setProduct($product)
-            ->setComment('comment1')
-            ->addOrderProductItem($orderProductItem)
-        ;
         $order = (new Order())
-            ->setQuote($quote)
             ->setOwner($this->getAdminUser())
             ->setAccountUser($this->getFrontendUser())
-            ->addOrderProduct($orderProduct)
+            ->addLineItem($orderProductItem)
         ;
         $newQuote = (new Quote())->setOwner($this->getAdminUser());
 
@@ -151,7 +145,6 @@ class QuoteCreateOrderHandlerTest extends FormHandlerTestCase
             'empty quote' => [
                 'input'     => $newQuote,
                 'expected'  => (new Order)
-                    ->setQuote($newQuote)
                     ->setOwner($this->getAdminUser())
                     ->setAccountUser($this->getFrontendUser()),
             ],
