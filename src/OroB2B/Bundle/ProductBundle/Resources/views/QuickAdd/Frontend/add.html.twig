@@ -1,6 +1,11 @@
 {% extends bap.layout %}
 
 {% block content %}
+    {% set pageComponentOptions = {
+        'componentSelector': '#' ~ form.component.vars.id,
+        'additionalSelector': '#' ~ form.additional.vars.id
+    } %}
+
     <div class="container-fluid page-title">
         <div class="navigation clearfix navbar-extra navbar-extra-right">
             <div class="row">
@@ -20,7 +25,10 @@
                     <div class="responsive-cell responsive-cell-no-blocks">
                         <form id="{{ form.vars.id }}" name="{{ form.vars.name }}"
                             action="{{ path('orob2b_product_frontend_quick_add') }}" {{ form_enctype(form) }}
-                            method="{{ form.vars.method }}">
+                            method="{{ form.vars.method }}"
+                            data-page-component-module="orob2bproduct/js/app/components/quick-add-component"
+                            data-page-component-options="{{ pageComponentOptions|json_encode }}"
+                            >
 
                             <fieldset class="form-horizontal">
                                 {{ form_widget(form.products) }}
