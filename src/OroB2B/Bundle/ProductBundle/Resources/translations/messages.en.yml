@@ -86,6 +86,9 @@ orob2b:
             duplicate: Duplicate
             save_and_duplicate: Save And Duplicate
 
+        frontend:
+            quick_add.title: Quick Add
+
     product_unit.kg:
         label:
             full: kilogram
