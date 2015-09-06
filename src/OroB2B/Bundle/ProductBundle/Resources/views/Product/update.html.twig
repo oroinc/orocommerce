@@ -115,14 +115,15 @@
     {% endif %}
 
     {% if entity.hasVariants %}
+        {% set variantLinksForm = form.variantLinks %}
         {% set dataBlocks = dataBlocks|merge([{
             'title' : 'orob2b.product.sections.productVariants'|trans,
             'subblocks': [{
                 'title' : null,
                 'useSpan': false,
                 'data' : [
-                    form_widget(form.appendVariants, {'id': 'productAppendVariants'}),
-                    form_widget(form.removeVariants, {'id': 'productRemoveVariants'}),
+                    form_widget(variantLinksForm.appendVariants, {'id': 'productAppendVariants'}),
+                    form_widget(variantLinksForm.removeVariants, {'id': 'productRemoveVariants'}),
                     dataGrid.renderGrid('product-variants-select-grid', {'parentProduct': entity.id}, { cssClass: 'inner-grid' })
                 ]
             }]

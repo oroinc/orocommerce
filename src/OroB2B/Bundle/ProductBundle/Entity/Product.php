@@ -583,6 +583,8 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      */
     public function addVariantLink(ProductVariantLink $variantLink)
     {
+        $variantLink->setParentProduct($this);
+
         if (!$this->variantLinks->contains($variantLink)) {
             $this->variantLinks->add($variantLink);
         }
