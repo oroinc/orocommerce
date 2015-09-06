@@ -49,9 +49,9 @@ class FormViewListener
             return;
         }
 
-        $accountId = $this->request->get('id');
+        $accountUserId = $this->request->get('id');
         /** @var AccountUser $accountUser */
-        $accountUser = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:AccountUser', $accountId);
+        $accountUser = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:AccountUser', $accountUserId);
 
         $template = $event->getEnvironment()->render(
             'OroB2BOrderBundle:AccountUser:orders_view.html.twig',
