@@ -238,3 +238,100 @@ datagrid:
                 acl_resource:  orob2b_order_update
             delete:
                 acl_resource:  orob2b_order_delete
+    embed-orders-grid:
+        extended_entity_name: %orob2b_order.entity.order.class%
+        options:
+            entityHint:        order
+            entity_pagination: true
+        source:
+            type:         orm
+            acl_resource: orob2b_order_view
+            query:
+                select:
+                    - order1.id
+                    - order1.identifier
+                    - order1.subtotal
+                    - COUNT(lineItems.id) as lineItemsCount
+                    - order1.createdAt
+                    - order1.updatedAt
+                from:
+                    - { table: %orob2b_order.entity.order.class%, alias: order1 }
+                join:
+                    left:
+                        - { join: order1.lineItems, alias: lineItems}
+        columns:
+            identifier:
+                label:         orob2b.order.identifier.label
+            subtotal:
+                label:         orob2b.order.subtotal.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BOrderBundle:Order:Datagrid/subtotal.html.twig
+            lineItemsCount:
+                label:         orob2b.order.line_items_count.label
+                type: field
+                frontend_type: integer
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
+        sorters:
+            columns:
+                identifier:
+                    data_name: order1.identifier
+                subtotal:
+                    data_name: order1.subtotal
+                lineItemsCount:
+                    data_name: lineItemsCount
+                createdAt:
+                    data_name: order1.createdAt
+                updatedAt:
+                    data_name: order1.updatedAt
+            default:
+                createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+        filters:
+            columns:
+                identifier:
+                    type:      string
+                    data_name: order1.id
+                subtotal:
+                    type:      number
+                    data_name: order1.subtotal
+                lineItemsCount:
+                    type:      number
+                    data_name: lineItemsCount
+                    filter_by_having: true
+                createdAt:
+                    type: datetime
+                    data_name: order1.createdAt
+                updatedAt:
+                    type: datetime
+                    data_name: order1.updatedAt
+        properties:
+            id: ~
+            view_link:
+                route: orob2b_order_view
+                type:  url
+                params: [ id ]
+        actions:
+            view:
+                acl_resource:  orob2b_order_view
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                rowAction:     true
+    account-user-orders-grid:
+        extends: embed-orders-grid
+        source:
+            query:
+                join:
+                    left:
+                        - { join: order1.accountUser, alias: accountUser }
+                where:
+                    and:
+                        - order1.accountUser = :account_user_id
+            bind_parameters:
+                - account_user_id
