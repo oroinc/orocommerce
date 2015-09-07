@@ -85,7 +85,7 @@ class FrontendOrderExtension extends AbstractTypeExtension
     protected function fillItems(Order $order)
     {
         $data = $this->storage->get();
-        //$this->storage->remove();
+        $this->storage->remove();
 
         if (!$data) {
             return;
