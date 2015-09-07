@@ -4,8 +4,16 @@ items:
         action: OroB2BShoppingListBundle:Frontend/AjaxLineItem:getProductsAddBtn
         applicable: @orob2b_shopping_list.placeholder.filter->userCanCreateLineItem()
 
+    shopping_list_quick_add:
+        action: OroB2BShoppingListBundle:Frontend/AjaxLineItem:getQuickAddBtn
+        acl: orob2b_shopping_list_frontend_create
+
 placeholders:
     frontend_products_navButtons:
         items:
             add-products-btn:
                 order: 100
+
+    orob2b_product_quick_add_buttons:
+        items:
+            shopping_list_quick_add: ~

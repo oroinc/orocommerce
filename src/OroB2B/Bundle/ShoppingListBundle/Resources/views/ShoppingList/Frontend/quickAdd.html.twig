@@ -1,0 +1,19 @@
+{% import 'OroB2BShoppingListBundle:ShoppingList/Frontend:buttons.html.twig' as buttons %}
+
+{% set commonOptions = {
+    dataUrl: false,
+    dataAttributes: {}
+} %}
+
+{% set options = {
+    new: commonOptions,
+    current: commonOptions,
+    existing: commonOptions,
+    shoppingLists: shoppingLists,
+    currentShoppingList: currentShoppingList
+} %}
+
+<div class="mass-action-controls btn-group"
+     data-page-component-module="orob2bshoppinglist/js/app/components/quick-add-button-component">
+    {{ buttons.createAddToShoppingListButton(options) }}
+</div>
