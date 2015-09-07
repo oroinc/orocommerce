@@ -14,7 +14,6 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Model\DataStorageAwareProcessor;
-use OroB2B\Bundle\ProductBundle\Model\QuickAddProductInformation;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class FrontendOrderExtensionTest extends \PHPUnit_Framework_TestCase
@@ -135,9 +134,6 @@ class FrontendOrderExtensionTest extends \PHPUnit_Framework_TestCase
         $productUnitPrecision = new ProductUnitPrecision();
         $productUnitPrecision->setUnit($productUnit);
         $product->addUnitPrecision($productUnitPrecision);
-        $info = new QuickAddProductInformation();
-        $info->setProduct($product)
-            ->setQuantity($qty);
 
         $this->request->expects($this->once())
             ->method('get')
@@ -179,6 +175,6 @@ class FrontendOrderExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($product->getSku(), $lineItem->getProductSku());
         $this->assertEquals($productUnit, $lineItem->getProductUnit());
         $this->assertEquals($productUnit->getCode(), $lineItem->getProductUnitCode());
-        $this->assertEquals($info->getQuantity(), $lineItem->getQuantity());
+        $this->assertEquals($qty, $lineItem->getQuantity());
     }
 }

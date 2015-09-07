@@ -13,6 +13,7 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductRowType;
 use OroB2B\Bundle\ProductBundle\Model\DataStorageAwareProcessor;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
@@ -84,7 +85,7 @@ class FrontendOrderExtension extends AbstractTypeExtension
     protected function fillItems(Order $order)
     {
         $data = $this->storage->get();
-        $this->storage->remove();
+        //$this->storage->remove();
 
         if (!$data) {
             return;
@@ -92,10 +93,12 @@ class FrontendOrderExtension extends AbstractTypeExtension
 
         $repository = $this->getProductRepository();
         foreach ($data as $dataRow) {
-            if (!array_key_exists('sku', $dataRow) || !array_key_exists('qty', $dataRow)) {
+            if (!array_key_exists(ProductRowType::PRODUCT_SKU_FIELD_NAME, $dataRow) ||
+                !array_key_exists(ProductRowType::PRODUCT_QUANTITY_FIELD_NAME, $dataRow)
+            ) {
                 continue;
             }
-            $product = $repository->findOneBySku($dataRow['sku']);
+            $product = $repository->findOneBySku($dataRow[ProductRowType::PRODUCT_SKU_FIELD_NAME]);
             if (!$product) {
                 continue;
             }
@@ -106,7 +109,7 @@ class FrontendOrderExtension extends AbstractTypeExtension
                 ->setProductSku($product->getSku())
                 ->setProductUnit($unit)
                 ->setProductUnitCode($unit->getCode())
-                ->setQuantity((float)$dataRow['qty']);
+                ->setQuantity((float)$dataRow[ProductRowType::PRODUCT_QUANTITY_FIELD_NAME]);
             $order->addLineItem($lineItem);
         }
     }
