@@ -12,5 +12,5 @@ items:
         template: OroB2BOrderBundle:Js:line_item_templates.js.twig
 
     order_quick_add:
-        template: OroB2BOrderBundle:Order:Frontend/quickAdd.html.twig
+        template: OroB2BOrderBundle:Product:Frontend/quickAdd.html.twig
         acl: orob2b_order_frontend_create
