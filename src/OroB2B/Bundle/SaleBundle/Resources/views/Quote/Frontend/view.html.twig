@@ -14,8 +14,8 @@
 {% endblock pageHeader %}
 
 {% block navButtons %}
-    {% if resource_granted('orob2b_sale_quote_frontend_create_order') %}
-        {% set formCreateOrderAction = path('orob2b_sale_quote_frontend_create_order', { 'id': entity.id }) %}
+    {% if resource_granted('orob2b_sale_frontend_quote_create_order') %}
+        {% set formCreateOrderAction = path('orob2b_sale_frontend_quote_create_order', { 'id': entity.id }) %}
         <form id="{{ formCreateOrder.vars.id }}" name="{{ formCreateOrder.vars.name }}" action="{{ formCreateOrderAction }}" method="post">
             {{ form_widget(formCreateOrder) }}
             <button type="submit" class="no-hash btn">
