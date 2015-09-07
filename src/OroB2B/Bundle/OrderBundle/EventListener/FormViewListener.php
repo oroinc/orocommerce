@@ -79,7 +79,7 @@ class FormViewListener
         );
         $this->addSalesOrdersBlock($event->getScrollData(), $template);
     }
-    
+
     /**
      * @param Request $request
      */
