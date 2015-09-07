@@ -24,6 +24,9 @@ class DataStorageAwareProcessor implements ComponentProcessorInterface
     /** @var string */
     protected $redirectRouteName;
 
+    /** @var bool */
+    protected $validationRequired = false;
+
     /**
      * @param UrlGeneratorInterface $router
      * @param ProductDataStorage $storage
@@ -36,10 +39,13 @@ class DataStorageAwareProcessor implements ComponentProcessorInterface
 
     /**
      * @param string $name
+     * @return ComponentProcessorInterface
      */
     public function setName($name)
     {
         $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -56,6 +62,25 @@ class DataStorageAwareProcessor implements ComponentProcessorInterface
     public function setRedirectRouteName($redirectRouteName)
     {
         $this->redirectRouteName = $redirectRouteName;
+    }
+
+    /**
+     * @param bool $validationRequired
+     * @return ComponentProcessorInterface
+     */
+    public function setValidationRequired($validationRequired)
+    {
+        $this->validationRequired = (bool)$validationRequired;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isValidationRequired()
+    {
+        return $this->validationRequired;
     }
 
     /**

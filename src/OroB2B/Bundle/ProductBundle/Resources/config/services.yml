@@ -18,8 +18,6 @@ parameters:
     orob2b_product.component_processor.registry.class: OroB2B\Bundle\ProductBundle\Model\ComponentProcessorRegistry
     orob2b_product.processor.data_storage_aware.class: OroB2B\Bundle\ProductBundle\Model\DataStorageAwareProcessor
 
-    orob2b_product.converter.product_data.class: OroB2B\Bundle\ProductBundle\Model\ProductDataConverter
-
 services:
     orob2b_product.form.product:
         class: Symfony\Component\Form\Form
@@ -109,7 +107,7 @@ services:
     orob2b_product.validator.product_by_sku:
             class: %orob2b_product.validator.product_by_sku.class%
             arguments:
-                - @orob2b_product.converter.product_data
+                - @doctrine
             tags:
                 - { name: validator.constraint_validator, alias: orob2b_product_product_by_sku_validator }
 
@@ -122,10 +120,3 @@ services:
             - @router
             - @orob2b_product.service.product_data_storage
         abstract: true
-
-    orob2b_product.converter.product_data:
-        class: %orob2b_product.converter.product_data.class%
-        arguments:
-            - @doctrine
-        calls:
-            - [setDataClass, [%orob2b_product.product.class%]]

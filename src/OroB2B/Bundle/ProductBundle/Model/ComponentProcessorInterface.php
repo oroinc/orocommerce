@@ -18,4 +18,9 @@ interface ComponentProcessorInterface
      * @return string
      */
     public function getName();
+
+    /**
+     * @return bool
+     */
+    public function isValidationRequired();
 }

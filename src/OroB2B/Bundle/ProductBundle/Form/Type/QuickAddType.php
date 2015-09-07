@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class QuickAddType extends AbstractType
 {
@@ -18,7 +19,13 @@ class QuickAddType extends AbstractType
             ->add(
                 'products',
                 ProductRowCollectionType::NAME,
-                ['required' => false, 'label' => 'orob2b.product.form.products.label']
+                [
+                    'required' => false,
+                    'label' => 'orob2b.product.form.products.label',
+                    'options' => [
+                        'validation_required' => $options['validation_required']
+                    ]
+                ]
             )
             ->add(
                 'component',
@@ -28,6 +35,19 @@ class QuickAddType extends AbstractType
                 'additional',
                 'hidden'
             );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(
+            [
+                'validation_required' => false
+            ]
+        );
+        $resolver->setAllowedTypes('validation_required', 'bool');
     }
 
     /**

@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductBySku;
 
@@ -16,18 +17,23 @@ class ProductRowType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add(
-                'productSku',
-                'text',
+        $productSkuOptions = [
+            'required' => true,
+            'label' => 'orob2b.product.sku.label'
+        ];
+        if ($options['validation_required']) {
+            $productSkuOptions = array_merge(
+                $productSkuOptions,
                 [
-                    'required' => true,
-                    'label' => 'orob2b.product.sku.label',
                     'constraints' => [
                         new ProductBySku()
                     ]
                 ]
-            )
+            );
+        }
+
+        $builder
+            ->add('productSku', 'text', $productSkuOptions)
             ->add(
                 'productQuantity',
                 'number',
@@ -37,6 +43,19 @@ class ProductRowType extends AbstractType
                 ]
             )
         ;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(
+            [
+                'validation_required' => false
+            ]
+        );
+        $resolver->setAllowedTypes('validation_required', 'bool');
     }
 
     /**
