@@ -107,7 +107,7 @@ class FrontendAccountUserProfileType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
-                'intention' => 'account_user',
+                'intention' => 'frontend_account_user',
             ]
         );
     }

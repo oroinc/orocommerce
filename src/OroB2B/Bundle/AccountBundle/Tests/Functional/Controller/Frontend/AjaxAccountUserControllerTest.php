@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\Frontend;
 
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\ObjectRepository;
 use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -49,7 +51,7 @@ class AjaxAccountUserControllerTest extends WebTestCase
 
     public function testEnableAndDisable()
     {
-        /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUser $user */
+        /** @var AccountUser $user */
         $user = $this->getUserRepository()->findOneBy(['email' => 'account.user2@test.com']);
         $id = $user->getId();
 
@@ -81,7 +83,7 @@ class AjaxAccountUserControllerTest extends WebTestCase
 
     public function testConfirm()
     {
-        /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUser $user */
+        /** @var AccountUser $user */
         $user = $this->getUserRepository()->findOneBy(['email' => 'account.user2@test.com']);
         $this->assertNotNull($user);
 
@@ -179,7 +181,7 @@ class AjaxAccountUserControllerTest extends WebTestCase
     }
 
     /**
-     * @return \Doctrine\Common\Persistence\ObjectManager
+     * @return ObjectManager
      */
     protected function getObjectManager()
     {
@@ -187,7 +189,7 @@ class AjaxAccountUserControllerTest extends WebTestCase
     }
 
     /**
-     * @return \Doctrine\Common\Persistence\ObjectRepository
+     * @return ObjectRepository
      */
     protected function getUserRepository()
     {

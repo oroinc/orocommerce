@@ -18,7 +18,7 @@ class FrontendAccountUserRoleSelectType extends AbstractType
 {
     const NAME = 'orob2b_account_frontend_account_user_role_select';
 
-    /** @var   SecurityFacade */
+    /** @var SecurityFacade */
     protected $securityFacade;
 
     /** @var ManagerRegistry */
@@ -64,7 +64,7 @@ class FrontendAccountUserRoleSelectType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         if (!$this->securityFacade->getLoggedUser()) {
-            return false;
+            return;
         }
         $resolver->setNormalizer('loader', function () {
             /** @var $repo AccountUserRoleRepository */

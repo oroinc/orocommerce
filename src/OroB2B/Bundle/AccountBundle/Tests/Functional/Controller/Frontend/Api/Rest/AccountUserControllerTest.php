@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\Frontend\Api\R
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData as LoadLoginAccountUserData;
 
 /**

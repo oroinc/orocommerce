@@ -1,4 +1,5 @@
 <?php
+
 namespace OroB2B\Bundle\AccountBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;

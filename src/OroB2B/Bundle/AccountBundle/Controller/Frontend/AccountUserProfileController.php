@@ -141,6 +141,7 @@ class AccountUserProfileController extends Controller
     /**
      * @Route("/profile", name="orob2b_account_frontend_account_user_profile")
      * @Template("OroB2BAccountBundle:AccountUser/Frontend:viewProfile.html.twig")
+     * @AclAncestor("orob2b_account_frontend_account_user_view")
      *
      * @return array
      */

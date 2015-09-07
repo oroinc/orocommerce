@@ -108,7 +108,7 @@ class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
         /** @var $resolver OptionsResolver | \PHPUnit_Framework_MockObject_MockObject */
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $roleFormType=new FrontendAccountUserRoleSelectType($securityFacade, $this->registry);
-        $this->assertFalse($roleFormType->configureOptions($resolver));
+        $this->assertNull($roleFormType->configureOptions($resolver));
 
     }
 
