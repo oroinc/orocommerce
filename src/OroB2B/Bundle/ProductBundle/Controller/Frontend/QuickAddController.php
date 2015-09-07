@@ -25,27 +25,12 @@ class QuickAddController extends Controller
      */
     public function addAction(Request $request)
     {
-        $form = null;
         $response = null;
+        $formOptions = [];
 
-        $formData = $request->get(QuickAddType::NAME);
-
-        $processor = $this->getProcessor(isset($formData['component']) ? $formData['component'] : null);
-        if (!$processor) {
-            $form = $this->createForm(
-                QuickAddType::NAME,
-                null,
-                ['validation_required' => $processor->isValidationRequired()]
-            );
-
-            if ($request->isMethod(Request::METHOD_POST)) {
-                $form->submit($request);
-
-                if ($form->isValid()) {
-                    $products = $form->get('products')->getData();
-                    $response = $processor->process(is_array($products) ? $products : [], $request);
-                }
-            }
+        $processor = $this->getProcessor($this->getComponentName($request));
+        if ($processor) {
+            $formOptions = ['validation_required' => $processor->isValidationRequired()];
         } else {
             $this->get('session')->getFlashBag()->add(
                 'error',
@@ -53,17 +38,34 @@ class QuickAddController extends Controller
             );
         }
 
+        $form = $this->createForm(QuickAddType::NAME, null, $formOptions);
+        if ($request->isMethod(Request::METHOD_POST)) {
+            $form->submit($request);
+
+            if ($form->isValid() && $processor) {
+                $products = $form->get('products')->getData();
+                $response = $processor->process(is_array($products) ? $products : [], $request);
+            }
+        }
+
         if ($response) {
             return $response;
+        } else {
+            return [
+                'form' => $form->createView()
+            ];
         }
+    }
 
-        if (!$form) {
-            $form = $this->createForm(QuickAddType::NAME);
-        }
+    /**
+     * @param Request $request
+     * @return null|string
+     */
+    protected function getComponentName(Request $request)
+    {
+        $formData = $request->get(QuickAddType::NAME);
 
-        return [
-            'form' => $form->createView()
-        ];
+        return isset($formData['component']) ? $formData['component'] : null;
     }
 
     /**
