@@ -31,16 +31,18 @@ class QuickAddController extends Controller
         $processor = $this->getProcessor($this->getComponentName($request));
         if ($processor) {
             $formOptions = ['validation_required' => $processor->isValidationRequired()];
-        } else {
-            $this->get('session')->getFlashBag()->add(
-                'error',
-                $this->get('translator')->trans('orob2b.product.frontend.component_not_found.message')
-            );
         }
 
         $form = $this->createForm(QuickAddType::NAME, null, $formOptions);
         if ($request->isMethod(Request::METHOD_POST)) {
             $form->submit($request);
+            
+            if (!$processor) {
+                $this->get('session')->getFlashBag()->add(
+                    'error',
+                    $this->get('translator')->trans('orob2b.product.frontend.component_not_found.message')
+                );
+            }
 
             if ($form->isValid() && $processor) {
                 $products = $form->get('products')->getData();
