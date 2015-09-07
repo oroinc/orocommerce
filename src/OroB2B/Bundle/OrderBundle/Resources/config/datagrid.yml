@@ -238,8 +238,6 @@ datagrid:
                 acl_resource:  orob2b_order_update
             delete:
                 acl_resource:  orob2b_order_delete
-<<<<<<< Updated upstream
-=======
 
     embed-orders-grid:
         extended_entity_name: %orob2b_order.entity.order.class%
@@ -368,4 +366,3 @@ datagrid:
                 accountUserName:
                     type:      string
                     data_name: accountUserName
->>>>>>> Stashed changes
