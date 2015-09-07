@@ -52,12 +52,16 @@
 
 {% block orob2b_product_row_widget %}
     <td class="fields-row">
-        {{ form_widget(form.productSku) }}
-        {{ form_errors(form.productSku) }}
+        <div>
+            {{ form_widget(form.productSku) }}
+            {{ form_errors(form.productSku) }}
+        </div>
     </td>
     <td class="fields-row">
-        {{ form_widget(form.productQuantity) }}
-        {{ form_errors(form.productQuantity) }}
+        <div>
+            {{ form_widget(form.productQuantity) }}
+            {{ form_errors(form.productQuantity) }}
+        </div>
     </td>
 {% endblock %}
 

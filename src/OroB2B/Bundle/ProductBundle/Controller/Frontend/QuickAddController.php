@@ -41,6 +41,7 @@ class QuickAddController extends Controller
                 if ($form->isValid()) {
                     $products = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getData();
                     $response = $processor->process(is_array($products) ? $products : [], $request);
+                    $form = $this->createForm(QuickAddType::NAME, null, $formOptions);
                 }
             } else {
                 $this->get('session')->getFlashBag()->add(

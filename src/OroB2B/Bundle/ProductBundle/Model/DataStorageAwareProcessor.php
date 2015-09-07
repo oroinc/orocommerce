@@ -25,7 +25,7 @@ class DataStorageAwareProcessor implements ComponentProcessorInterface
     protected $redirectRouteName;
 
     /** @var bool */
-    protected $validationRequired = false;
+    protected $validationRequired = true;
 
     /**
      * @param UrlGeneratorInterface $router

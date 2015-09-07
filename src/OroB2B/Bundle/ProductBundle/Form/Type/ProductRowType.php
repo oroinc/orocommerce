@@ -5,8 +5,10 @@ namespace OroB2B\Bundle\ProductBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductBySku;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 
 class ProductRowType extends AbstractType
 {
@@ -21,18 +23,12 @@ class ProductRowType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $productSkuOptions = [
-            'required' => true,
-            'label' => 'orob2b.product.sku.label'
+            'required' => false,
+            'label' => 'orob2b.product.sku.label',
+            'constraints' => [new NotBlank()]
         ];
         if ($options['validation_required']) {
-            $productSkuOptions = array_merge(
-                $productSkuOptions,
-                [
-                    'constraints' => [
-                        new ProductBySku()
-                    ]
-                ]
-            );
+            $productSkuOptions['constraints'][] = new ProductBySku();
         }
 
         $builder
@@ -41,8 +37,9 @@ class ProductRowType extends AbstractType
                 self::PRODUCT_QUANTITY_FIELD_NAME,
                 'number',
                 [
-                    'required' => true,
+                    'required' => false,
                     'label' => 'orob2b.product.quantity.label',
+                    'constraints' => [new Decimal()]
                 ]
             )
         ;
