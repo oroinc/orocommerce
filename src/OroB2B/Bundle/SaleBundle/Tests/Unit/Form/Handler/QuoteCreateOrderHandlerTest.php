@@ -21,8 +21,6 @@ use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Form\Handler\QuoteCreateOrderHandler;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderProduct;
-use OroB2B\Bundle\OrderBundle\Entity\OrderProductItem;
 
 class QuoteCreateOrderHandlerTest extends FormHandlerTestCase
 {
@@ -129,7 +127,7 @@ class QuoteCreateOrderHandlerTest extends FormHandlerTestCase
             ->addQuoteProduct($quoteProduct)
         ;
 
-        $orderProductItem = (new OrderLineItem())
+        $orderLineItem = (new OrderLineItem())
             ->setQuantity(10)
             ->setPrice(OptionalPrice::create(20, 'USD'))
             ->setProductUnit($productUnit)
@@ -141,7 +139,7 @@ class QuoteCreateOrderHandlerTest extends FormHandlerTestCase
         $order = (new Order())
             ->setOwner($this->getAdminUser())
             ->setAccountUser($this->getFrontendUser())
-            ->addLineItem($orderProductItem)
+            ->addLineItem($orderLineItem)
         ;
         $newQuote = (new Quote())->setOwner($this->getAdminUser());
 
