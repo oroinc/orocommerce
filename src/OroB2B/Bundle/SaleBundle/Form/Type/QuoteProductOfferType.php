@@ -8,8 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
-//use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType as ProductUnitRemovedSelectionType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter;
 

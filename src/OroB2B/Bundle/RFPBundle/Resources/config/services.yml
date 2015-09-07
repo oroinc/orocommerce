@@ -4,6 +4,7 @@ parameters:
     orob2b_rfp.entity.request_product_item.class: OroB2B\Bundle\RFPBundle\Entity\RequestProductItem
     orob2b_rfp.entity.request.status.class: OroB2B\Bundle\RFPBundle\Entity\RequestStatus
     orob2b_rfp.datagrid.action_permission_provider.class: OroB2B\Bundle\RFPBundle\Datagrid\ActionPermissionProvider
+
     orob2b_rfp.mailer.processor.class: OroB2B\Bundle\RFPBundle\Mailer\Processor
 
     orob2b_rfp.event_listener.request_frontend_datagrid.class: OroB2B\Bundle\RFPBundle\EventListener\RequestFrontendDatagridListener

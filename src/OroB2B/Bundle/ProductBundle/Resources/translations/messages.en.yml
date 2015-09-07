@@ -16,8 +16,6 @@ orob2b:
         descriptions.label: Description
         removed: '{title} - removed'
 
-        removed: '{title} - removed'
-
         visibility:
             visible.label: Yes
             not_visible.label: No
