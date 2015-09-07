@@ -76,6 +76,19 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onAccountUserView($event);
     }
 
+    public function testOnAccountUserViewWithEmptyRequest()
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|BeforeListRenderEvent $event */
+        $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $event->expects($this->never())
+            ->method('getScrollData');
+
+        $this->listener->onAccountUserView($event);
+    }
+
     public function testOnAccountView()
     {
         $request = $this->getRequest();

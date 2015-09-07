@@ -296,7 +296,7 @@ datagrid:
             columns:
                 identifier:
                     type:      string
-                    data_name: order1.id
+                    data_name: order1.identifier
                 subtotal:
                     type:      number
                     data_name: order1.subtotal
