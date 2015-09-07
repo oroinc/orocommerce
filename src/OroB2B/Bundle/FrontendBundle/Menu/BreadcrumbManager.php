@@ -23,7 +23,6 @@ class BreadcrumbManager extends BaseBreadcrumbManager implements BreadcrumbProvi
         }
 
         return $this->isRouteFrontend($route);
-
     }
 
     /**

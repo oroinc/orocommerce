@@ -124,7 +124,6 @@ class BreadcrumbManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetBreadcrumbLabels($expected, $menu, $route)
     {
-
         $this->provider->expects($this->any())
             ->method('get')
             ->will(
@@ -182,7 +181,6 @@ class BreadcrumbManagerTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-
     /**
      * @return array
      */
@@ -201,7 +199,6 @@ class BreadcrumbManagerTest extends \PHPUnit_Framework_TestCase
             ]
         ];
     }
-
 
     /**
      * @dataProvider isRouteFrontendDataProvider
