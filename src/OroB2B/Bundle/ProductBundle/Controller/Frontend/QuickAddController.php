@@ -35,28 +35,22 @@ class QuickAddController extends Controller
 
         $form = $this->createForm(QuickAddType::NAME, null, $formOptions);
         if ($request->isMethod(Request::METHOD_POST)) {
-            $form->submit($request);
-            
-            if (!$processor) {
+            if ($processor) {
+                $form->submit($request);
+
+                if ($form->isValid()) {
+                    $products = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getData();
+                    $response = $processor->process(is_array($products) ? $products : [], $request);
+                }
+            } else {
                 $this->get('session')->getFlashBag()->add(
                     'error',
                     $this->get('translator')->trans('orob2b.product.frontend.component_not_found.message')
                 );
             }
-
-            if ($form->isValid() && $processor) {
-                $products = $form->get('products')->getData();
-                $response = $processor->process(is_array($products) ? $products : [], $request);
-            }
         }
 
-        if ($response) {
-            return $response;
-        } else {
-            return [
-                'form' => $form->createView()
-            ];
-        }
+        return $response ?: ['form' => $form->createView()];
     }
 
     /**
@@ -67,7 +61,12 @@ class QuickAddController extends Controller
     {
         $formData = $request->get(QuickAddType::NAME);
 
-        return isset($formData['component']) ? $formData['component'] : null;
+        $name = null;
+        if (isset($formData[QuickAddType::COMPONENT_FIELD_NAME])) {
+            $name = $formData[QuickAddType::COMPONENT_FIELD_NAME];
+        }
+
+        return $name;
     }
 
     /**

@@ -12,6 +12,9 @@ class ProductRowType extends AbstractType
 {
     const NAME = 'orob2b_product_row';
 
+    const PRODUCT_SKU_FIELD_NAME = 'productSku';
+    const PRODUCT_QUANTITY_FIELD_NAME = 'productQuantity';
+
     /**
      * {@inheritdoc}
      */
@@ -33,9 +36,9 @@ class ProductRowType extends AbstractType
         }
 
         $builder
-            ->add('productSku', 'text', $productSkuOptions)
+            ->add(self::PRODUCT_SKU_FIELD_NAME, 'text', $productSkuOptions)
             ->add(
-                'productQuantity',
+                self::PRODUCT_QUANTITY_FIELD_NAME,
                 'number',
                 [
                     'required' => true,

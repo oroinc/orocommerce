@@ -10,6 +10,10 @@ class QuickAddType extends AbstractType
 {
     const NAME = 'oro_product_quick_add';
 
+    const PRODUCTS_FIELD_NAME = 'products';
+    const COMPONENT_FIELD_NAME = 'component';
+    const ADDITIONAL_FIELD_NAME = 'additional';
+
     /**
      * {@inheritdoc}
      */
@@ -17,7 +21,7 @@ class QuickAddType extends AbstractType
     {
         $builder
             ->add(
-                'products',
+                self::PRODUCTS_FIELD_NAME,
                 ProductRowCollectionType::NAME,
                 [
                     'required' => false,
@@ -28,11 +32,11 @@ class QuickAddType extends AbstractType
                 ]
             )
             ->add(
-                'component',
+                self::COMPONENT_FIELD_NAME,
                 'hidden'
             )
             ->add(
-                'additional',
+                self::ADDITIONAL_FIELD_NAME,
                 'hidden'
             );
     }
