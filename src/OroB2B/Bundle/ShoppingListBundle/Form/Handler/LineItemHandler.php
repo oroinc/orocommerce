@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
+use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 
@@ -22,22 +23,28 @@ class LineItemHandler
     /** @var Registry */
     protected $registry;
 
+    /** @var ShoppingListManager */
+    protected $shoppingListManager;
+
     /** @var int */
     protected $savedId;
 
     /**
      * @param FormInterface $form
-     * @param Request       $request
-     * @param Registry      $registry
+     * @param Request $request
+     * @param Registry $registry
+     * @param ShoppingListManager $shoppingListManager
      */
     public function __construct(
         FormInterface $form,
         Request $request,
-        Registry $registry
+        Registry $registry,
+        ShoppingListManager $shoppingListManager
     ) {
         $this->form = $form;
         $this->request = $request;
         $this->registry = $registry;
+        $this->shoppingListManager = $shoppingListManager;
     }
 
     /**
@@ -50,14 +57,25 @@ class LineItemHandler
         if (in_array($this->request->getMethod(), ['POST', 'PUT'], true)) {
             /** @var EntityManagerInterface $manager */
             $manager = $this->registry->getManagerForClass('OroB2BShoppingListBundle:LineItem');
+
             $manager->beginTransaction();
+
+            // handle case for new shopping list creation
+            $formName = $this->form->getName();
+            $formData = $this->request->request->get($formName, []);
+            if (empty($formData['shoppingList']) && !empty($formData['shoppingListLabel'])) {
+                $shoppingList = $this->shoppingListManager->createCurrent($formData['shoppingListLabel']);
+                $formData['shoppingList'] = $shoppingList->getId();
+                $this->request->request->set($formName, $formData);
+            }
+
             $this->form->submit($this->request);
             if ($this->form->isValid()) {
                 /** @var LineItemRepository $lineItemRepository */
                 $lineItemRepository = $manager->getRepository('OroB2BShoppingListBundle:LineItem');
                 $existingLineItem = $lineItemRepository->findDuplicate($lineItem);
 
-                if ($existingLineItem instanceof LineItem) {
+                if ($existingLineItem) {
                     $this->updateExistingLineItem($lineItem, $existingLineItem);
                 } else {
                     $manager->persist($lineItem);

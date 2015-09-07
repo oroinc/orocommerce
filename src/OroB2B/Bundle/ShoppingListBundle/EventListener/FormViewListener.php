@@ -131,7 +131,12 @@ class FormViewListener
             return null;
         }
 
-        return $token->getUser();
+        $user = $token->getUser();
+        if (!is_object($user)) {
+            return null;
+        }
+
+        return $user;
     }
 
     /**

@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\OrderBundle\Controller\AbstractAjaxOrderController;
+use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType;
 
 class AjaxOrderController extends AbstractAjaxOrderController
 {
@@ -23,5 +24,13 @@ class AjaxOrderController extends AbstractAjaxOrderController
     public function subtotalsAction(Request $request)
     {
         return parent::subtotalsAction($request);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getOrderFormTypeName()
+    {
+        return FrontendOrderType::NAME;
     }
 }

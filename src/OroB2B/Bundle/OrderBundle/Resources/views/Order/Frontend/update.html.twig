@@ -53,7 +53,34 @@
         } only %}
     {% endset %}
 
-    {% set dataBlocks = [] %}
+    {% set lineItems %}
+        <div class="order-line-items"
+             data-page-component-module="oroui/js/app/components/view-component"
+             data-page-component-options="{{ {
+                 view: 'orob2border/js/app/views/line-items-view',
+                 tierPrices: tierPrices|default({}),
+                 matchedPrices: matchedPrices|default({}),
+                 tierPricesRoute: 'orob2b_pricing_frontend_price_by_pricelist',
+                 matchedPricesRoute: 'orob2b_pricing_frontend_mathing_price',
+                 currency: form.vars.value.currency
+             }|json_encode }}"
+             data-layout="separate">
+            {{ form_widget(form.lineItems) }}
+            {{ form_errors(form.lineItems) }}
+        </div>
+    {% endset %}
+
+    {% set dataBlocks = [
+        {
+            'title': 'orob2b.order.sections.order_line_items'|trans,
+            'subblocks': [{
+            'title': '',
+                'data': [
+                    lineItems
+                ]
+            }]
+        }
+    ] %}
 
     {% if isBillingAddressGranted %}
         {% set billingAddress %}

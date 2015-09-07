@@ -50,6 +50,50 @@
         }
     ] %}
 
+    {% if entity.lineItems|length %}
+        {% set lineItems %}
+            <div class="order-orderproducts-info grid-container">
+                <table class="grid table-hover table table-bordered table-condensed order-orderproduct-collection-table order-orderproduct-collection-table-view order-line-items">
+                    <thead>
+                        <tr>
+                            <th class="order-line-item-sku"><span>{{ 'orob2b.product.sku.label'|trans }}</span></th>
+                            <th class="order-line-item-type"><span>{{ 'orob2b.product.entity_label'|trans }}</span></th>
+                            <th class="order-line-item-quantity"><span>{{ 'orob2b.order.orderlineitem.quantity.label'|trans }}</span></th>
+                            <th class="order-line-item-price"><span>{{ 'orob2b.order.orderlineitem.price.label'|trans }}</span></th>
+                            <th class="order-line-item-ship_by"><span>{{ 'orob2b.order.orderlineitem.ship_by.label'|trans }}</span></th>
+                            <th class="order-line-item-comment"><span>{{ 'orob2b.order.orderlineitem.comment.label'|trans }}</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for lineItem in entity.lineItems %}
+                        {% set isFreeFormProduct = lineItem.product is empty and lineItem.freeFormProduct is not empty %}
+
+                        <tr>
+                            <td>{{ lineItem.productSku }}</td>
+                            <td>
+                                {% if isFreeFormProduct %}
+                                    {{ lineItem.freeFormProduct }}
+                                {% else %}
+                                    {{ lineItem.product }}
+                                {% endif %}
+                            </td>
+                            <td>{{ lineItem.quantity|orob2b_format_product_unit_value(lineItem.productUnit) }}</td>
+                            <td>{{ lineItem.price|oro_format_price }}</td>
+                            <td>{{ lineItem.shipBy|oro_format_date|default('N/A'|trans) }}</td>
+                            <td>{{ lineItem.comment|default('N/A'|trans) }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endset %}
+
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': 'orob2b.order.sections.order_line_items'|trans,
+            'subblocks': [{'data' : [lineItems]}]
+        }]) %}
+    {% endif %}
+
     {% set id = 'order-view' %}
     {% set data = {'dataBlocks': dataBlocks} %}
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace OroB2B\Bundle\OrderBundle\EventListener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;

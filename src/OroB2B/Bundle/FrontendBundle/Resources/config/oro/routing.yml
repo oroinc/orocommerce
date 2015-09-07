@@ -3,3 +3,19 @@ _frontend:
     type:         annotation
     options:
         frontend: true
+
+orob2b_frontend_datagrid_index:
+    path: /datagrid/{gridName}
+    defaults: { _controller: OroDataGridBundle:Grid:get }
+    requirements:
+        gridName: '[\w\:-]+'
+    options:
+        frontend: true
+
+orob2b_frontend_datagrid_widget:
+    path: /datagrid/widget/{gridName}
+    defaults: { _controller: OroDataGridBundle:Grid:widget }
+    requirements:
+        gridName: '[\w\:-]+'
+    options:
+        frontend: true
