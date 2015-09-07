@@ -61,6 +61,26 @@ class FormViewListener
     }
 
     /**
+     * @param BeforeListRenderEvent $event
+     */
+    public function onAccountView(BeforeListRenderEvent $event)
+    {
+        if (!$this->request) {
+            return;
+        }
+
+        $accountId = $this->request->get('id');
+        /** @var AccountUser $accountUser */
+        $accountUser = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:Account', $accountId);
+
+        $template = $event->getEnvironment()->render(
+            'OroB2BOrderBundle:Account:orders_view.html.twig',
+            ['entity' => $accountUser]
+        );
+        $this->addSalesOrdersBlock($event->getScrollData(), $template);
+    }
+
+    /**
      * @param Request $request
      */
     public function setRequest($request)

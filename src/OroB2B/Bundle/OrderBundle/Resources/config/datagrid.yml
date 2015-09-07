@@ -337,3 +337,32 @@ datagrid:
                         - order1.accountUser = :account_user_id
             bind_parameters:
                 - account_user_id
+
+    account-orders-grid:
+        extends: embed-orders-grid
+        source:
+            query:
+            query:
+                select:
+                    - CONCAT(accountUser.firstName, ' ', accountUser.lastName) as accountUserName
+                join:
+                    left:
+                        - { join: order1.account, alias: account }
+                        - { join: order1.accountUser, alias: accountUser }
+                where:
+                    and:
+                        - order1.account = :account_id
+            bind_parameters:
+                - account_id
+        columns:
+            accountUserName:
+                label:         orob2b.order.account_user.label
+        sorters:
+            columns:
+                accountUserName:
+                    data_name: accountUserName
+        filters:
+            columns:
+                accountUserName:
+                    type:      string
+                    data_name: accountUserName

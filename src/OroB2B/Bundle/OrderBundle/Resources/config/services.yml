@@ -87,3 +87,4 @@ services:
             - [setRequest, ["@?request="]]
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-user-view, method: onAccountUserView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onAccountView }
