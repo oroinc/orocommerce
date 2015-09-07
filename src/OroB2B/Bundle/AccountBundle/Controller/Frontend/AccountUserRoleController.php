@@ -10,6 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
@@ -38,36 +39,34 @@ class AccountUserRoleController extends Controller
     /**
      * @Route("/view/{id}", name="orob2b_account_account_user_role_frontend_view", requirements={"id"="\d+"})
      * @Template("OroB2BAccountBundle:AccountUserRole/Frontend:view.html.twig")
-     * TODO: Add @ to Acl after merge BB-867
-     * Acl(
-     *      id="orob2b_account_account_user_role_frontend_view",
+     * @Acl(
+     *      id="orob2b_account_account_user_role_frontend_view_action",
      *      type="entity",
      *      class="OroB2BAccountBundle:AccountUserRole",
      *      permission="FRONTEND_ACCOUNT_ROLE_VIEW",
      *      group_name="commerce"
      * )
      *
-     * @param AccountUserRole $accountUserRole
+     * @param AccountUserRole $role
      *
      * @return array
      */
-    public function viewAction(AccountUserRole $accountUserRole)
+    public function viewAction(AccountUserRole $role)
     {
+        $handler = $this->get('orob2b_account.form.handler.view_account_user_role');
+        $handler->createForm($role);
+        $handler->process($role);
+
         return [
-            'entity' => $accountUserRole
+            'entity' => $role,
+            'form'   => $handler->createView()
         ];
     }
 
     /**
-     * @Route("/info/{id}", name="orob2b_account_account_user_role_info", requirements={"id"="\d+"})
-     * @Template("OroB2BAccountBundle:AccountUserRole/widget:info.html.twig")
-     * @Acl(
-     *      id="orob2b_account_account_user_role_frontend_view",
-     *      type="entity",
-     *      class="OroB2BAccountBundle:AccountUserRole",
-     *      permission="VIEW",
-     *      group_name="commerce"
-     * )
+     * @Route("/info/{id}", name="orob2b_account_account_user_role_frontend_info", requirements={"id"="\d+"})
+     * @Template("OroB2BAccountBundle:AccountUserRole/Frontend/widget:info.html.twig")
+     * @AclAncestor("orob2b_account_account_user_role_frontend_view_action")
      * @param AccountUserRole $role
      * @return array
      */

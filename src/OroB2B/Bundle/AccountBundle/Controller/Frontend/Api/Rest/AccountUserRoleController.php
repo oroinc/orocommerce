@@ -16,8 +16,6 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-
 /**
  * @NamePrefix("orob2b_api_frontend_account_")
  * @RouteResource("accountuserrole")

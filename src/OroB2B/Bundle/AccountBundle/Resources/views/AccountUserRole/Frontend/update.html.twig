@@ -8,7 +8,7 @@
 {% oro_title_set({params : {"%label%": entity.label|default('N/A'|trans), '%entityName%': 'orob2b.account.accountuserrole.entity_label'|trans} }) %}
 
 {% block navButtons %}
-    {% if entity.id and resource_granted('DELETE', entity) and not entity.isPredefined %}
+    {% if entity.id and resource_granted('orob2b_account_account_user_role_frontend_delete', entity) and not entity.isPredefined %}
         {{ UI.deleteButton({
             'dataUrl': path('orob2b_api_frontend_account_delete_accountuserrole', {'id': entity.id}),
             'dataRedirect': path('orob2b_account_account_user_role_frontend_index'),
