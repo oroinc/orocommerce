@@ -129,7 +129,6 @@ class OrderController extends AbstractOrderController
         }
 
         $form = $this->createForm(OrderType::NAME, $order);
-
         $handler = new OrderHandler(
             $form,
             $request,
@@ -139,7 +138,7 @@ class OrderController extends AbstractOrderController
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $order,
-            $this->createForm(OrderType::NAME, $order),
+            $form,
             function (Order $order) {
                 return [
                     'route' => 'orob2b_order_update',

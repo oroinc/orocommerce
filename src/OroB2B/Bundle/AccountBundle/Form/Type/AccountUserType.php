@@ -145,7 +145,6 @@ class AccountUserType extends AbstractType
                 [
                     'required' => false,
                     'label' => 'orob2b.account.accountuser.enabled.label',
-                    'data' => true
                 ]
             )
             ->add(

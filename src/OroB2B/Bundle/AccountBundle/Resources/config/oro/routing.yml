@@ -82,22 +82,6 @@ orob2b_account_bundle_api:
     defaults:
         version:  latest
 
-orob2b_account_frontend_datagrid_index:
-    path: /datagrid/{gridName}
-    defaults: { _controller: OroDataGridBundle:Grid:get }
-    requirements:
-        gridName: '[\w\:-]+'
-    options:
-        frontend: true
-
-orob2b_account_frontend_datagrid_widget:
-    path: /datagrid/widget/{gridName}
-    defaults: { _controller: OroDataGridBundle:Grid:widget }
-    requirements:
-        gridName: '[\w\:-]+'
-    options:
-        frontend: true
-
 orob2b_account_pinbar_help:
     pattern: /pinbar/help
     defaults: { _controller: FrameworkBundle:Template:template, template: "OroNavigationBundle:Pinbar:help.html.twig" }
@@ -107,5 +91,29 @@ orob2b_account_pinbar_help:
 orob2b_frontend_autocomplete_search:
     pattern: /autocomplete/search
     defaults: { _controller: OroFormBundle:Autocomplete:search }
+    options:
+        frontend: true
+
+orob2b_account_frontend_entity_pagination_first:
+    pattern: /entity-pagination/first/{_entityName}/{_scope}/{_routeName}"
+    defaults: { _controller: OroEntityPaginationBundle:EntityPagination:first }
+    options:
+        frontend: true
+
+orob2b_account_frontend_entity_pagination_previous:
+    pattern: /entity-pagination/previous/{_entityName}/{_scope}/{_routeName}"
+    defaults: { _controller: OroEntityPaginationBundle:EntityPagination:previous }
+    options:
+        frontend: true
+
+orob2b_account_frontend_entity_pagination_next:
+    pattern: /entity-pagination/next/{_entityName}/{_scope}/{_routeName}"
+    defaults: { _controller: OroEntityPaginationBundle:EntityPagination:next }
+    options:
+        frontend: true
+
+orob2b_account_frontend_entity_pagination_last:
+    pattern: /entity-pagination/last/{_entityName}/{_scope}/{_routeName}"
+    defaults: { _controller: OroEntityPaginationBundle:EntityPagination:last }
     options:
         frontend: true

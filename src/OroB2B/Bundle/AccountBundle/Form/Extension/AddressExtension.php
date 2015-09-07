@@ -1,15 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Form\Extension;
+namespace OroB2B\Bundle\AccountBundle\Form\Extension;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
-class FrontendProductSelectExtension extends AbstractTypeExtension
+class AddressExtension extends AbstractTypeExtension
 {
     /**
      * @var TokenStorageInterface
@@ -29,9 +28,8 @@ class FrontendProductSelectExtension extends AbstractTypeExtension
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $token = $this->tokenStorage->getToken();
-        if ($token && $token->getUser() instanceof AccountUser) {
-            $resolver->setDefault('grid_name', 'products-select-grid-frontend');
+        if ($this->isFrontend()) {
+            $resolver->setDefault('region_route', 'orob2b_api_frontend_country_get_regions');
         }
     }
 
@@ -40,6 +38,16 @@ class FrontendProductSelectExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return ProductSelectType::NAME;
+        return 'oro_address';
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isFrontend()
+    {
+        $token = $this->tokenStorage->getToken();
+
+        return $token && $token->getUser() instanceof AccountUser;
     }
 }
