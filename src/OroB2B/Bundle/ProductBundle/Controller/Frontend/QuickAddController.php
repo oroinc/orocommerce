@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
+use OroB2B\Bundle\ProductBundle\Model\ComponentProcessorInterface;
 
 class QuickAddController extends Controller
 {
@@ -24,21 +25,62 @@ class QuickAddController extends Controller
      */
     public function addAction(Request $request)
     {
-        $form = $this->createForm(QuickAddType::NAME);
-
         $response = null;
+        $formOptions = [];
+
+        $processor = $this->getProcessor($this->getComponentName($request));
+        if ($processor) {
+            $formOptions = ['validation_required' => $processor->isValidationRequired()];
+        }
+
+        $form = $this->createForm(QuickAddType::NAME, null, $formOptions);
         if ($request->isMethod(Request::METHOD_POST)) {
-            $form->submit($request);
+            if ($processor) {
+                $form->submit($request);
 
-            // TODO: Add handler call here BB-1058
+                if ($form->isValid()) {
+                    $products = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getData();
+                    $response = $processor->process(is_array($products) ? $products : [], $request);
+                    if (!$response) {
+                        // reset form
+                        $form = $this->createForm(QuickAddType::NAME, null, $formOptions);
+                    }
+                }
+            } else {
+                $this->get('session')->getFlashBag()->add(
+                    'error',
+                    $this->get('translator')->trans('orob2b.product.frontend.component_not_found.message')
+                );
+            }
         }
 
-        if ($response) {
-            return $response;
-        } else {
-            return [
-                'form' => $form->createView()
-            ];
+        return $response ?: ['form' => $form->createView()];
+    }
+
+    /**
+     * @param Request $request
+     * @return null|string
+     */
+    protected function getComponentName(Request $request)
+    {
+        $formData = $request->get(QuickAddType::NAME);
+
+        $name = null;
+        if (isset($formData[QuickAddType::COMPONENT_FIELD_NAME])) {
+            $name = $formData[QuickAddType::COMPONENT_FIELD_NAME];
         }
+
+        return $name;
+    }
+
+    /**
+     * @param string $name
+     * @return null|ComponentProcessorInterface
+     */
+    protected function getProcessor($name)
+    {
+        $processorsRegistry = $this->get('orob2b_product.component_processor.registry');
+
+        return $processorsRegistry->getProcessorByName($name);
     }
 }
