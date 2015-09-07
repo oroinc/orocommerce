@@ -26,3 +26,7 @@
 .product-container .grid-sidebar.grid-sidebar-maximized {
     width: 313px;
 }
+
+.row-oro.add-products .add-list-item {
+    margin-top: 10px;
+}
