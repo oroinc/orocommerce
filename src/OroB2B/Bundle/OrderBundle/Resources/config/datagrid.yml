@@ -238,6 +238,7 @@ datagrid:
                 acl_resource:  orob2b_order_update
             delete:
                 acl_resource:  orob2b_order_delete
+
     embed-orders-grid:
         extended_entity_name: %orob2b_order.entity.order.class%
         options:
@@ -323,6 +324,7 @@ datagrid:
                 link:          view_link
                 icon:          eye-open
                 rowAction:     true
+
     account-user-orders-grid:
         extends: embed-orders-grid
         source:
