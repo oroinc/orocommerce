@@ -64,7 +64,7 @@ class FrontendAccountUserRoleSelectType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         if (!$this->securityFacade->getLoggedUser()) {
-            return;
+            return false;
         }
         $resolver->setNormalizer('loader', function () {
             /** @var $repo AccountUserRoleRepository */

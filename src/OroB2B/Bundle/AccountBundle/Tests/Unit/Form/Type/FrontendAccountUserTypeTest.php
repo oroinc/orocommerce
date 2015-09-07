@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Validator\Validation;
@@ -27,6 +29,10 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
      * @var FrontendAccountUserType
      */
     protected $formType;
+
+    /** @var  SecurityFacade | \PHPUnit_Framework_MockObject_MockObject */
+    protected $securityFacade;
+
 
     /**
      * {@inheritdoc}
@@ -95,7 +101,8 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
         array $submittedData,
         AccountUser $expectedData,
         $roleGranted = true
-    ) {
+    )
+    {
         $form = $this->factory->create($this->formType, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
@@ -185,5 +192,24 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
     public function testGetName()
     {
         $this->assertEquals(FrontendAccountUserType::NAME, $this->formType->getName());
+    }
+
+    /**
+     * @depends testSubmit
+     */
+    public function testOnPreSetData()
+    {
+        /** @var SecurityFacade | \PHPUnit_Framework_MockObject_MockObject */
+        $securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+            ->disableOriginalConstructor()
+            ->getMock();
+        /** @var FrontendAccountUserType $formType */
+        $formType = new FrontendAccountUserType($securityFacade);
+        /** @var $event FormEvent | \PHPUnit_Framework_MockObject_MockObject */
+        $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $securityFacade->expects($this->any())->method('getLoggedUser')->willReturn(null);
+        $this->assertFalse($formType->onPreSetData($event));
     }
 }

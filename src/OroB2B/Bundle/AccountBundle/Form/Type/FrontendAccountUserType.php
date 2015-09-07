@@ -45,13 +45,14 @@ class FrontendAccountUserType extends AbstractType
 
     /**
      * @param FormEvent $event
+     * @return bool
      */
     public function onPreSetData(FormEvent $event)
     {
         /** @var $user AccountUser */
         $user = $this->securityFacade->getLoggedUser();
         if (!($user instanceof AccountUser)) {
-            return;
+            return false;
         }
         /** @var $account Account */
         $account = $user->getAccount();
@@ -81,8 +82,8 @@ class FrontendAccountUserType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'data_class' => 'OroB2B\Bundle\AccountBundle\Entity\AccountUser',
-        ));
+        ]);
     }
 }

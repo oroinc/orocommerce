@@ -98,6 +98,20 @@ class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
         $this->formType->configureOptions($resolver);
     }
 
+    public function testNullUser()
+    {
+        /** @var $securityFacade SecurityFacade | \PHPUnit_Framework_MockObject_MockObject */
+        $securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $securityFacade->expects($this->once())->method('getLoggedUser')->willReturn(null);
+        /** @var $resolver OptionsResolver | \PHPUnit_Framework_MockObject_MockObject */
+        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $roleFormType=new FrontendAccountUserRoleSelectType($securityFacade, $this->registry);
+        $this->assertFalse($roleFormType->configureOptions($resolver));
+
+    }
+
     /**
      * @param int $id
      * @param string $name
