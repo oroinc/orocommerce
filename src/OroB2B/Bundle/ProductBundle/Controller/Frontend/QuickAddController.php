@@ -35,7 +35,7 @@ class QuickAddController extends Controller
             $form = $this->createForm(
                 QuickAddType::NAME,
                 null,
-                ['validation_required' => true/*$processor->isValidationRequired()*/]
+                ['validation_required' => $processor->isValidationRequired()]
             );
 
             if ($request->isMethod(Request::METHOD_POST)) {

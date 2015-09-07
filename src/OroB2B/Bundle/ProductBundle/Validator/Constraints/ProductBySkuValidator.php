@@ -2,22 +2,24 @@
 
 namespace OroB2B\Bundle\ProductBundle\Validator\Constraints;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-use OroB2B\Bundle\ProductBundle\Model\ProductDataConverter;
-
 class ProductBySkuValidator extends ConstraintValidator
 {
-    /** @var $converter */
-    protected $converter;
+    /**
+     * @var ManagerRegistry
+     */
+    protected $registry;
 
     /**
-     * @param ProductDataConverter $converter
+     * @param ManagerRegistry $registry
      */
-    public function __construct(ProductDataConverter $converter)
+    public function __construct(ManagerRegistry $registry)
     {
-        $this->converter = $converter;
+        $this->registry = $registry;
     }
 
     /**
@@ -29,8 +31,8 @@ class ProductBySkuValidator extends ConstraintValidator
     public function validate($value, Constraint $constraint)
     {
         if ($value) {
-            $product = $this->converter->convertSkuToProduct($value);
-            if (!$product) {
+            $products = $this->registry->getRepository('OroB2BProductBundle:Product')->findOneBySku($value);
+            if (empty($products)) {
                 $this->context->addViolation($constraint->message);
             }
         }

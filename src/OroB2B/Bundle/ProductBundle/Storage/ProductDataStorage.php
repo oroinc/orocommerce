@@ -8,9 +8,6 @@ class ProductDataStorage
 {
     const PRODUCT_DATA_KEY = 'orob2b_product_quick_add_data';
 
-    const PRODUCT_KEY = 'id';
-    const QUANTITY_KEY = 'qty';
-
     /** @var SessionInterface */
     protected $session;
 
