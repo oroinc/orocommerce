@@ -2,9 +2,11 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\Validator\Validation;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
@@ -40,7 +42,8 @@ class ProductRowCollectionTypeTest extends FormIntegrationTestCase
                     ProductRowType::NAME => new ProductRowType()
                 ],
                 []
-            )
+            ),
+            new ValidatorExtension(Validation::createValidator())
         ];
     }
 
@@ -94,7 +97,7 @@ class ProductRowCollectionTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     [
                         'productSku' => 'SKU_001',
-                        'productQuantity' => '10'
+                        'productQuantity' => ''
                     ],
                     [
                         'productSku' => 'SKU_002',
@@ -104,7 +107,7 @@ class ProductRowCollectionTypeTest extends FormIntegrationTestCase
                 'expectedData' => [
                     [
                         'productSku' => 'SKU_001',
-                        'productQuantity' => '10'
+                        'productQuantity' => '1'
                     ],
                     [
                         'productSku' => 'SKU_002',
@@ -132,7 +135,15 @@ class ProductRowCollectionTypeTest extends FormIntegrationTestCase
                     [
                         'productSku' => 'SKU_005',
                         'productQuantity' => '50'
-                    ]
+                    ],
+                    [
+                        'productSku' => '',
+                        'productQuantity' => ''
+                    ],
+                    [
+                        'productSku' => '',
+                        'productQuantity' => ''
+                    ],
                 ],
                 'expectedData' => [
                     [
@@ -149,7 +160,7 @@ class ProductRowCollectionTypeTest extends FormIntegrationTestCase
                     ]
                 ],
                 'options' => [
-                    'row_count' => 3
+                    'row_count' => 5
                 ]
             ]
         ];

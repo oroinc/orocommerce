@@ -126,4 +126,13 @@ class DataStorageAwareProcessorTest extends \PHPUnit_Framework_TestCase
             ['success', true],
         ];
     }
+
+    public function testValidationRequired()
+    {
+        $this->assertTrue($this->processor->isValidationRequired());
+
+        $this->processor->setValidationRequired(false);
+
+        $this->assertFalse($this->processor->isValidationRequired());
+    }
 }
