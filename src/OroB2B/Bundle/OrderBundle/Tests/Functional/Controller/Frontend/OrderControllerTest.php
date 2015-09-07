@@ -20,6 +20,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 class OrderControllerTest extends WebTestCase
 {
     const ORDER_PO_NUMBER = 'PO-NUMBER';
+    const QUICK_ADD_ORDER_PO_NUMBER = 'QUICK-ADD-PO-NUMBER';
     const ORDER_PO_NUMBER_UPDATED = 'PO-NUMBER-UP';
 
     /**
@@ -60,10 +61,7 @@ class OrderControllerTest extends WebTestCase
      */
     public function testCreate()
     {
-        /** @var PriceList $defaultPriceList */
-        $defaultPriceList = $this->getReference('price_list_1');
-        $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BPricingBundle:PriceList')
-            ->getRepository('OroB2BPricingBundle:PriceList')->setDefault($defaultPriceList);
+        $this->setDefaultPriceList('price_list_1');
 
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_order_frontend_create'));
         $result = $this->client->getResponse();
@@ -125,6 +123,69 @@ class OrderControllerTest extends WebTestCase
         ];
 
         $this->assertEquals($expectedLineItems, $actualLineItems);
+    }
+
+    public function testQuickAdd()
+    {
+        $this->setDefaultPriceList('price_list_1');
+
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_frontend_quick_add'));
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+
+        $form = $crawler->selectButton('Add To Order')->form();
+
+        /** @var Product $product */
+        $product = $this->getReference('product.3');
+
+        $products = [
+            [
+                'productSku' => $product->getSku(),
+                'productQuantity' => 15
+            ]
+        ];
+
+        $processor = $this->getContainer()->get('orob2b_order.processor.quick_add');
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->request(
+            $form->getMethod(),
+            $form->getUri(),
+            [
+                'orob2b_product_quick_add' => [
+                    '_token' => $form['orob2b_product_quick_add[_token]']->getValue(),
+                    'products' => $products,
+                    'component' => $processor->getName()
+                ]
+            ]
+        );
+
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+
+        $form = $crawler->selectButton('Save')->form();
+        $form['input_action'] = 'save_and_stay';
+        $form['orob2b_order_frontend_type[poNumber]'] = self::QUICK_ADD_ORDER_PO_NUMBER;
+
+        $crawler = $this->client->submit($form);
+
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $this->assertContains('Order has been saved', $crawler->html());
+
+        $this->assertViewPage($crawler, [self::QUICK_ADD_ORDER_PO_NUMBER]);
+
+        /** @var ProductPrice $productPrice */
+        $productPrice = $this->getReference('product_price.9');
+
+        $expectedLineItems = [
+            [
+                'product' => $product->getId(),
+                'quantity' => 15,
+                'productUnit' => 'orob2b.product_unit.liter.label.full',
+                'price' => $productPrice->getPrice()->getValue(),
+                'shipBy' => null
+            ]
+        ];
+
+        $this->assertEquals($expectedLineItems, $this->getActualLineItems($crawler, count($products)));
     }
 
     /**
@@ -279,19 +340,35 @@ class OrderControllerTest extends WebTestCase
 
         for ($i = 0; $i < $count; $i++) {
             $result[] = [
-                'product' => $crawler->filter('input[name="orob2b_order_frontend_type[lineItems][0][product]"]')
+                'product' => $crawler->filter('input[name="orob2b_order_frontend_type[lineItems]['.$i.'][product]"]')
                     ->extract('value')[0],
-                'quantity' => $crawler->filter('input[name="orob2b_order_frontend_type[lineItems][0][quantity]"]')
+                'quantity' => $crawler->filter('input[name="orob2b_order_frontend_type[lineItems]['.$i.'][quantity]"]')
                     ->extract('value')[0],
                 'productUnit' => $crawler
-                    ->filter('select[name="orob2b_order_frontend_type[lineItems][0][productUnit]"] :selected')
+                    ->filter('select[name="orob2b_order_frontend_type[lineItems]['.$i.'][productUnit]"] :selected')
                     ->html(),
-                'price' => trim($crawler->filter('.order-line-item-price-value')->html()),
-                'shipBy' => $crawler->filter('input[name="orob2b_order_frontend_type[lineItems][0][shipBy]"]')
+                'price' => trim(
+                    $crawler->filter(
+                        'tr[data-content="orob2b_order_frontend_type[lineItems]['.$i.']"] .order-line-item-price-value'
+                    )
+                        ->html()
+                ),
+                'shipBy' => $crawler->filter('input[name="orob2b_order_frontend_type[lineItems]['.$i.'][shipBy]"]')
                     ->extract('value')[0],
             ];
         }
 
         return $result;
+    }
+
+    /**
+     * @param $name
+     */
+    protected function setDefaultPriceList($name)
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference($name);
+        $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BPricingBundle:PriceList')
+            ->getRepository('OroB2BPricingBundle:PriceList')->setDefault($priceList);
     }
 }
