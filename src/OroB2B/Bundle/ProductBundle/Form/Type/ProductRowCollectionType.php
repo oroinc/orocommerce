@@ -49,14 +49,17 @@ class ProductRowCollectionType extends AbstractType
                     $formType = $rowFormConfig->getType()->getName();
                     $formOptions = $rowFormConfig->getOptions();
                     $formOptions['validation_groups'] = false;
-
                     $form->remove($key);
                     $form->add($key, $formType, $formOptions);
+                } elseif ($product[ProductRowType::PRODUCT_QUANTITY_FIELD_NAME] === '') {
+                    // default quantity
+                    $products[$key][ProductRowType::PRODUCT_QUANTITY_FIELD_NAME] = '1';
                 }
             }
             $event->setData($products);
         });
 
+        // remove empty rows from data
         $builder->addModelTransformer(new ProductCollectionTransformer());
     }
 

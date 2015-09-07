@@ -44,6 +44,6 @@ class ProductCollectionTransformer implements DataTransformerInterface
      */
     protected function isFieldEmpty(array $data, $field)
     {
-        return $data[$field] === null || $data[$field] === '';
+        return !array_key_exists($field, $data) || $data[$field] === null || $data[$field] === '';
     }
 }

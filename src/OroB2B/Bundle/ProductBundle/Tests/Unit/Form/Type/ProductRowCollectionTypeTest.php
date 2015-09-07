@@ -97,7 +97,7 @@ class ProductRowCollectionTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     [
                         'productSku' => 'SKU_001',
-                        'productQuantity' => '10'
+                        'productQuantity' => ''
                     ],
                     [
                         'productSku' => 'SKU_002',
@@ -107,7 +107,7 @@ class ProductRowCollectionTypeTest extends FormIntegrationTestCase
                 'expectedData' => [
                     [
                         'productSku' => 'SKU_001',
-                        'productQuantity' => '10'
+                        'productQuantity' => '1'
                     ],
                     [
                         'productSku' => 'SKU_002',
