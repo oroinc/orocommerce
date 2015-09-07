@@ -77,3 +77,11 @@ services:
         class: %orob2b_order.model.order_currency_handler.class%
         arguments:
             - @oro_locale.settings
+
+    orob2b_order.processor.quick_add:
+        parent: orob2b_product.processor.data_storage_aware
+        calls:
+            - [setName, ['orob2b_order_quick_add_processor']]
+            - [setRedirectRouteName, ['orob2b_order_frontend_create']]
+        tags:
+            - { name: orob2b_product.quick_add_processor }

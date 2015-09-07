@@ -85,6 +85,7 @@ orob2b:
         btn:
             add_seller_notes: 'Add Notes'
             remove_seller_notes: 'Remove Seller Notes'
+            add_to_order: 'Add To Order'
 
         menu:
             sales_tab.label: Sales
@@ -92,6 +93,8 @@ orob2b:
             shortcut_new_order.label: Create new order
             shortcut_new_order.description: Create new order item
             shortcut_orders_list.description: Show list of existing orders
+            order_quick_add.label: Order Quick Add
+            order_quick_add.description: Quick add products to order, RFQ or shopping cart
 
         widgets:
             order_information: Order Information

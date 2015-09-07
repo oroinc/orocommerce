@@ -10,6 +10,11 @@ use Symfony\Component\Validator\ConstraintValidator;
 class ProductBySkuValidator extends ConstraintValidator
 {
     /**
+     * @var ManagerRegistry
+     */
+    protected $registry;
+
+    /**
      * @param ManagerRegistry $registry
      */
     public function __construct(ManagerRegistry $registry)
@@ -26,8 +31,8 @@ class ProductBySkuValidator extends ConstraintValidator
     public function validate($value, Constraint $constraint)
     {
         if ($value) {
-            $products = $this->registry->getRepository('OroB2BProductBundle:Product')->findOneBySku($value);
-            if (empty($products)) {
+            $product = $this->registry->getRepository('OroB2BProductBundle:Product')->findOneBySku($value);
+            if (empty($product)) {
                 $this->context->addViolation($constraint->message);
             }
         }
