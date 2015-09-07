@@ -37,22 +37,22 @@ class BaseQuoteProductItemTest extends \PHPUnit_Framework_TestCase
 
         $item = new BaseQuoteProductItem();
         $item->setPrice($price);
-        $this->assertSame($price, $item->getPrice());
+        static::assertSame($price, $item->getPrice());
 
         $item->postLoad();
 
-        $this->assertNotSame($price, $item->getPrice());
-        $this->assertEquals($price, $item->getPrice());
+        static::assertNotSame($price, $item->getPrice());
+        static::assertEquals($price, $item->getPrice());
 
         $item->updatePrice();
 
         $reflection = new \ReflectionProperty(get_class($item), 'value');
         $reflection->setAccessible(true);
-        $this->assertEquals($value, $reflection->getValue($item));
+        static::assertEquals($value, $reflection->getValue($item));
 
         $reflection = new \ReflectionProperty(get_class($item), 'currency');
         $reflection->setAccessible(true);
-        $this->assertEquals($currency, $reflection->getValue($item));
+        static::assertEquals($currency, $reflection->getValue($item));
     }
 
     public function testGetEntityIdentifier()
@@ -64,7 +64,7 @@ class BaseQuoteProductItemTest extends \PHPUnit_Framework_TestCase
         $reflection->setAccessible(true);
         $reflection->setValue($item, $value);
 
-        $this->assertEquals($value, $item->getEntityIdentifier());
+        static::assertEquals($value, $item->getEntityIdentifier());
     }
 
     public function testGetProductHolder()
@@ -72,6 +72,6 @@ class BaseQuoteProductItemTest extends \PHPUnit_Framework_TestCase
         $item = new BaseQuoteProductItem();
         $value = new QuoteProduct();
         $item->setQuoteProduct($value);
-        $this->assertSame($value, $item->getProductHolder());
+        static::assertSame($value, $item->getProductHolder());
     }
 }
