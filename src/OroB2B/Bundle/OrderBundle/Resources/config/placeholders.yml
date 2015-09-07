@@ -3,6 +3,14 @@ placeholders:
         items:
             line_item_templates: ~
 
+    orob2b_product_quick_add_buttons:
+        items:
+            order_quick_add: ~
+
 items:
     line_item_templates:
         template: OroB2BOrderBundle:Js:line_item_templates.js.twig
+
+    order_quick_add:
+        template: OroB2BOrderBundle:Product:Frontend/quickAdd.html.twig
+        acl: orob2b_order_frontend_create
