@@ -2,26 +2,15 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Datagrid\Extension\MassAction;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\ORM\AbstractQuery;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\QueryBuilder;
-
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
-
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction\AddProductsMassAction;
 use OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction\AddProductsMassActionHandler;
+use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use OroB2B\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
+use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -31,64 +20,62 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var  MassActionHandlerArgs */
     protected $args;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade */
-    protected $securityFacade;
-
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingListManager  */
-    protected $shoppingListManager;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingListLineItemHandler */
+    protected $shoppingListItemHandler;
 
     protected function setUp()
     {
-        $this->securityFacade = $this->getSecurityFacade();
-        $this->shoppingListManager = $this->getShoppingListManager();
+        $this->shoppingListItemHandler = $this->getShoppingListItemHandler();
 
         $this->handler = new AddProductsMassActionHandler(
-            $this->getManagerRegistry(),
-            $this->shoppingListManager,
+            $this->shoppingListItemHandler,
             $this->getTranslator(),
-            $this->securityFacade,
             $this->getRouter()
         );
     }
 
-    public function testHandle()
+    public function testHandleMissingShoppingList()
     {
-        $shoppingList = $this->shoppingListManager->getForCurrentUser();
-
-        $this->securityFacade->expects($this->at(0))
-            ->method('isGranted')
-            ->with('EDIT', $shoppingList)
-            ->willReturn(true);
-
-        $this->securityFacade->expects($this->at(1))
-            ->method('isGranted')
-            ->with('orob2b_shopping_list_line_item_frontend_add')
-            ->willReturn(true);
-
         $args = $this->getMassActionArgs();
         $args->expects($this->any())
             ->method('getData')
             ->willReturn(['shoppingList' => null]);
-
+        $this->shoppingListItemHandler->expects($this->once())->method('getShoppingList')->willReturn(null);
         $response = $this->handler->handle($args);
-        $this->assertTrue($response->isSuccessful());
-        $this->assertEquals(2, $response->getOptions()['count']);
+        $this->assertFalse($response->isSuccessful());
+        $this->assertEquals(0, $response->getOptions()['count']);
     }
 
-    public function testHandleNoPermissions()
+    public function testHandleAccessDenied()
     {
-        $this->securityFacade->expects($this->once())
-            ->method('isGranted')
-            ->willReturn(false);
-
         $args = $this->getMassActionArgs();
         $args->expects($this->any())
             ->method('getData')
             ->willReturn(['shoppingList' => 1]);
+        $this->shoppingListItemHandler->expects($this->once())->method('getShoppingList')
+            ->willReturn(new ShoppingList());
+        $this->shoppingListItemHandler->expects($this->once())->method('createForShoppingList')
+            ->willThrowException(new AccessDeniedException());
 
         $response = $this->handler->handle($args);
         $this->assertFalse($response->isSuccessful());
         $this->assertEquals(0, $response->getOptions()['count']);
+    }
+
+    public function testHandle()
+    {
+        $args = $this->getMassActionArgs();
+        $args->expects($this->any())
+            ->method('getData')
+            ->willReturn(['shoppingList' => 1]);
+        $this->shoppingListItemHandler->expects($this->once())->method('getShoppingList')
+            ->willReturn($this->getEntity('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', 1));
+        $this->shoppingListItemHandler->expects($this->once())->method('createForShoppingList')->willReturn(2);
+
+        $response = $this->handler->handle($args);
+        $this->assertTrue($response->isSuccessful());
+        $this->assertEquals(2, $response->getOptions()['count']);
+        $this->assertContains('href', $response->getMessage());
     }
 
     /**
@@ -115,17 +102,19 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $translator->expects($this->any())
             ->method('transChoice')
-            ->willReturnCallback(function ($string) {
-                return $string;
-            });
+            ->willReturnCallback(
+                function ($string) {
+                    return $string;
+                }
+            );
 
         return $translator;
     }
 
     /**
-     * @return ShoppingListManager|\PHPUnit_Framework_MockObject_MockObject
+     * @return ShoppingListLineItemHandler|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function getShoppingListManager()
+    protected function getShoppingListItemHandler()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingList $shoppingList */
         $shoppingList = $this->getMock('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList');
@@ -137,35 +126,28 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getAccountUser')
             ->willReturn(new AccountUser());
 
-        $shoppingListManager = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager')
+        $shoppingListItemHandler = $this
+            ->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $shoppingListManager->expects($this->any())
+        $shoppingListItemHandler->expects($this->any())
             ->method('createCurrent')
             ->willReturn($shoppingList);
 
-        $shoppingListManager->expects($this->any())
+        $shoppingListItemHandler->expects($this->any())
             ->method('getForCurrentUser')
             ->willReturn($shoppingList);
 
-        $shoppingListManager->expects($this->any())
+        $shoppingListItemHandler->expects($this->any())
             ->method('bulkAddLineItems')
-            ->willReturnCallback(function (array $lineItems) {
-                return count($lineItems);
-            });
+            ->willReturnCallback(
+                function (array $lineItems) {
+                    return count($lineItems);
+                }
+            );
 
-        return $shoppingListManager;
-    }
-
-    /**
-     * @return SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getSecurityFacade()
-    {
-        return $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
-            ->disableOriginalConstructor()
-            ->getMock();
+        return $shoppingListItemHandler;
     }
 
     /**
@@ -177,69 +159,19 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return Registry|\PHPUnit_Framework_MockObject_MockObject
+     * @param string $className
+     * @param int $id
+     * @return object
      */
-    protected function getManagerRegistry()
+    protected function getEntity($className, $id)
     {
-        /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
+        $entity = new $className;
 
-        /** @var AbstractQuery|\PHPUnit_Framework_MockObject_MockObject $query */
-        $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
-            ->disableOriginalConstructor()
-            ->setMethods(['iterate'])
-            ->getMockForAbstractClass();
+        $reflectionClass = new \ReflectionClass($className);
+        $method = $reflectionClass->getProperty('id');
+        $method->setAccessible(true);
+        $method->setValue($entity, $id);
 
-        $product = (new Product())
-            ->addUnitPrecision(
-                (new ProductUnitPrecision())->setUnit(new ProductUnit())
-            );
-
-        $iterableResult = [[$product], [clone $product]];
-        $query->expects($this->any())
-            ->method('iterate')
-            ->willReturn($iterableResult);
-
-        /** @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject $queryBuilder */
-        $queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $queryBuilder->expects($this->any())
-            ->method('getQuery')
-            ->willReturn($query);
-
-        /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject $productRepository */
-        $productRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->setMethods(['getProductsQueryBuilder'])
-            ->getMock();
-
-        $productRepository->expects($this->any())
-            ->method('getProductsQueryBuilder')
-            ->willReturn($queryBuilder);
-
-        /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject $shoppingListRepository */
-        $shoppingListRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $em->expects($this->any())
-            ->method('getRepository')
-            ->will($this->returnValueMap([
-                ['OroB2BShoppingListBundle:ShoppingList', $shoppingListRepository],
-                ['OroB2BProductBundle:Product', $productRepository]
-            ]));
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Registry $managerRegistry */
-        $managerRegistry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $managerRegistry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
-
-        return $managerRegistry;
+        return $entity;
     }
 }
