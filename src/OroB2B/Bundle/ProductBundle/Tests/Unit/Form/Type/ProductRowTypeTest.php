@@ -120,40 +120,40 @@ class ProductRowTypeTest extends FormIntegrationTestCase
             'without default data' => [
                 'defaultData' => null,
                 'submittedData' => [
-                    'productSku' => 'SKU_001',
-                    'productQuantity' => '10'
+                    ProductRowType::PRODUCT_SKU_FIELD_NAME => 'SKU_001',
+                    ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => '10'
                 ],
                 'expectedData' => [
-                    'productSku' => 'SKU_001',
-                    'productQuantity' => '10'
+                    ProductRowType::PRODUCT_SKU_FIELD_NAME => 'SKU_001',
+                    ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => '10'
                 ]
             ],
             'with default data' => [
                 'defaultData' => [
-                    'productSku' => 'SKU_001',
-                    'productQuantity' => '10'
+                    ProductRowType::PRODUCT_SKU_FIELD_NAME => 'SKU_001',
+                    ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => '10'
                 ],
                 'submittedData' => [
-                    'productSku' => 'SKU_002',
-                    'productQuantity' => '20'
+                    ProductRowType::PRODUCT_SKU_FIELD_NAME => 'SKU_002',
+                    ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => '20'
                 ],
                 'expectedData' => [
-                    'productSku' => 'SKU_002',
-                    'productQuantity' => '20'
+                    ProductRowType::PRODUCT_SKU_FIELD_NAME => 'SKU_002',
+                    ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => '20'
                 ]
             ],
             'with default data and validation' => [
                 'defaultData' => [
-                    'productSku' => 'SKU_001',
-                    'productQuantity' => '10'
+                    ProductRowType::PRODUCT_SKU_FIELD_NAME => 'SKU_001',
+                    ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => '10'
                 ],
                 'submittedData' => [
-                    'productSku' => 'SKU_002',
-                    'productQuantity' => '20'
+                    ProductRowType::PRODUCT_SKU_FIELD_NAME => 'SKU_002',
+                    ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => '20'
                 ],
                 'expectedData' => [
-                    'productSku' => 'SKU_002',
-                    'productQuantity' => '20'
+                    ProductRowType::PRODUCT_SKU_FIELD_NAME => 'SKU_002',
+                    ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => '20'
                 ],
                 'options' => [
                     'validation_required' => true
