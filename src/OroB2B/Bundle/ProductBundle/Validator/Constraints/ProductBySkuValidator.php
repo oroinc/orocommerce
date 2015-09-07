@@ -31,8 +31,8 @@ class ProductBySkuValidator extends ConstraintValidator
     public function validate($value, Constraint $constraint)
     {
         if ($value) {
-            $products = $this->registry->getRepository('OroB2BProductBundle:Product')->findOneBySku($value);
-            if (empty($products)) {
+            $product = $this->registry->getRepository('OroB2BProductBundle:Product')->findOneBySku($value);
+            if (empty($product)) {
                 $this->context->addViolation($constraint->message);
             }
         }
