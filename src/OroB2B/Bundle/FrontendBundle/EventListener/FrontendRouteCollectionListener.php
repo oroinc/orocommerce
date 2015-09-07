@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\FrontendBundle\EventListener;
 
-use Symfony\Component\Routing\Route;
-
 use Oro\Bundle\DistributionBundle\Event\RouteCollectionEvent;
 
 class FrontendRouteCollectionListener
@@ -16,7 +14,7 @@ class FrontendRouteCollectionListener
     /**
      * @param array $routeNames
      */
-    public function __construct($routeNames = [])
+    public function __construct(array $routeNames = [])
     {
         $this->routeNames = $routeNames;
     }
@@ -30,9 +28,10 @@ class FrontendRouteCollectionListener
             return;
         }
 
-        /** @var Route $route */
-        foreach ($event->getCollection()->getIterator() as $name => $route) {
-            if (in_array($name, $this->routeNames, true)) {
+        $collection = $event->getCollection();
+        foreach ($this->routeNames as $routeName) {
+            $route = $collection->get($routeName);
+            if ($route) {
                 $route->setOption(RouteCollectionListener::OPTION_FRONTEND, true);
             }
         }
