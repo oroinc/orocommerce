@@ -18,4 +18,9 @@ interface ComponentProcessorInterface
      * @return string
      */
     public function getName();
+
+    /**
+     * @return boolean
+     */
+    public function isAllowed();
 }
