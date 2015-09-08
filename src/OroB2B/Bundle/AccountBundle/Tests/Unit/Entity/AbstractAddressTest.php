@@ -12,6 +12,9 @@ use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use OroB2B\Bundle\AccountBundle\Entity\AbstractAddressToAddressType;
 use OroB2B\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 abstract class AbstractAddressTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
