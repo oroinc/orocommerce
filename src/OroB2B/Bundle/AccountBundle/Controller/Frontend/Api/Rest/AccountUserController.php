@@ -68,6 +68,6 @@ class AccountUserController extends RestController implements ClassResourceInter
      */
     protected function getDeleteHandler()
     {
-        return $this->get('oro_user.handler.delete');
+        return $this->get('orob2b_account.account_delete_handler');
     }
 }

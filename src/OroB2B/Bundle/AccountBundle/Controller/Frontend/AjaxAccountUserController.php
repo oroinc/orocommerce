@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\AccountBundle\Controller\Frontend;
 
 use Symfony\Component\Routing\Annotation\Route;
 
+use Oro\Bundle\SecurityBundle\Exception\ForbiddenException;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\AccountBundle\Controller\AbstractAjaxAccountUserController;
@@ -69,8 +70,9 @@ class AjaxAccountUserController extends AbstractAjaxAccountUserController
         /** @var $user AccountUser */
         $user = $this->getUser();
         if ($user->getId() == $accountUser->getId()) {
-            return $this->renderDisableYourselfError();
+            throw new ForbiddenException('self disable');
         }
+
         return parent::disableAction($accountUser);
     }
 

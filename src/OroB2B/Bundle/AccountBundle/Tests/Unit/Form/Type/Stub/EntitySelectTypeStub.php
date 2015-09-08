@@ -2,9 +2,10 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub;
 
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 
 class EntitySelectTypeStub extends EntityTypeStub
 {

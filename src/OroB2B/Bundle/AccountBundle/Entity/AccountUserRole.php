@@ -15,14 +15,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository")
- * @ORM\Table(name="orob2b_account_user_role",
- *      uniqueConstraints={
- *          @ORM\UniqueConstraint(name="orob2b_account_user_role_account_id_label_idx", columns={
- *              "account_id",
- *              "label"
- *          })
- *      }
- * )
+ * @ORM\Table(name="orob2b_account_user_role")
  * @Config(
  *      defaultValues={
  *          "entity"={

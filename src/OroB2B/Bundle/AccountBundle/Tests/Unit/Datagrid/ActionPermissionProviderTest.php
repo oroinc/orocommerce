@@ -3,8 +3,11 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Datagrid\ActionPermissionProvider;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -29,27 +32,35 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
         'delete'
     ];
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject| SecurityFacade */
+    protected $securityFacade;
+
     /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
         $this->record = $this->getMock('Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface');
-        $this->actionPermissionProvider = new ActionPermissionProvider();
+        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->actionPermissionProvider = new ActionPermissionProvider($this->securityFacade);
     }
 
     /**
      * @param boolean $isRecordEnabled
      * @param array $expected
+     * @param $user
      * @dataProvider recordConditions
      */
-    public function testGetRequestStatusDefinitionPermissions($isRecordEnabled, array $expected)
+    public function testGetRequestStatusDefinitionPermissions($isRecordEnabled, array $expected, $user)
     {
-        $this->record->expects($this->once())
+        $this->record->expects($this->any())
             ->method('getValue')
-            ->with('enabled')
+            ->with($this->isType('string'))
             ->willReturn($isRecordEnabled);
 
+        $this->securityFacade->expects($this->once())->method('getLoggedUser')->willReturn($user);
         $result = $this->actionPermissionProvider->getUserPermissions($this->record);
 
         $this->assertCount(count($this->actionsList), $result);
@@ -74,7 +85,8 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
                     'view' => true,
                     'update' => true,
                     'delete' => true
-                ]
+                ],
+                'user' => new AccountUser()
             ],
             'disabled record' => [
                 'isRecordEnabled' => false,
@@ -84,7 +96,8 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
                     'view' => true,
                     'update' => true,
                     'delete' => true
-                ]
+                ],
+                'user' => new User()
             ]
         ];
     }

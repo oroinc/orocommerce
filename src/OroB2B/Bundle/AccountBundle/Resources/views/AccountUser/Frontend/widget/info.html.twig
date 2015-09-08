@@ -20,7 +20,7 @@
             {% set birthday_string %}
                 {{ entity.birthday is empty ? 'N/A'|trans : entity.birthday|oro_format_date }}
                 {% if entity.birthday is not empty %}
-                    ({{ entity.birthday }})
+                    ({{ entity.birthday|oro_format_date }})
                 {% endif %}
             {% endset %}
             {{ UI.renderProperty('orob2b.account.accountuser.birthday.label'|trans, birthday_string) }}

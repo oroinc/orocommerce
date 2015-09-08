@@ -21,11 +21,24 @@ class FrontendAccountUserType extends AbstractType
     protected $securityFacade;
 
     /**
+     * @var string
+     */
+    protected $accountUserClass;
+
+    /**
      * @param SecurityFacade $securityFacade
      */
     public function __construct(SecurityFacade $securityFacade)
     {
         $this->securityFacade = $securityFacade;
+    }
+
+    /**
+     * @param string $class
+     */
+    public function setAccountUserClass($class)
+    {
+        $this->accountUserClass = $class;
     }
 
     /**
@@ -52,7 +65,7 @@ class FrontendAccountUserType extends AbstractType
         /** @var $user AccountUser */
         $user = $this->securityFacade->getLoggedUser();
         if (!($user instanceof AccountUser)) {
-            return false;
+            return;
         }
         /** @var $account Account */
         $account = $user->getAccount();
@@ -83,7 +96,7 @@ class FrontendAccountUserType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => 'OroB2B\Bundle\AccountBundle\Entity\AccountUser',
+            'data_class' => $this->accountUserClass,
         ]);
     }
 }

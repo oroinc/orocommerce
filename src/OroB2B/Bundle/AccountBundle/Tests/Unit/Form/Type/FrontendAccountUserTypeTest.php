@@ -25,6 +25,8 @@ use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeS
 
 class FrontendAccountUserTypeTest extends AccountUserTypeTest
 {
+    const DATA_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountUser';
+
     /**
      * @var FrontendAccountUserType
      */
@@ -44,7 +46,7 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
             ->getMock();
 
         $this->formType = new FrontendAccountUserType($this->securityFacade);
-
+        $this->formType->setAccountUserClass(self::DATA_CLASS);
         $this->factory = Forms::createFormFactoryBuilder()
             ->addExtensions($this->getExtensions())
             ->getFormFactory();
@@ -101,8 +103,7 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
         array $submittedData,
         AccountUser $expectedData,
         $roleGranted = true
-    )
-    {
+    ) {
         $form = $this->factory->create($this->formType, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
@@ -149,7 +150,7 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
                 'user without submitted data' => [
                     'defaultData' => $newAccountUser,
                     'submittedData' => [],
-                    'expectedData' => $newAccountUser
+                    'expectedData' => $newAccountUser,
                 ],
                 'altered existing user' => [
                     'defaultData' => $existingAccountUser,
@@ -157,9 +158,9 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
                         'firstName' => 'John',
                         'lastName' => 'Doe',
                         'email' => 'johndoe@example.com',
-                        'account' => 2
+                        'account' => 2,
                     ],
-                    'expectedData' => $alteredExistingAccountUser
+                    'expectedData' => $alteredExistingAccountUser,
                 ],
                 'altered existing user with roles' => [
                     'defaultData' => $existingAccountUser,
@@ -168,10 +169,9 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
                         'lastName' => 'Doe',
                         'email' => 'johndoe@example.com',
                         'account' => 2,
-                        'roles' => [2]
+                        'roles' => [2],
                     ],
                     'expectedData' => $alteredExistingAccountUserWithRole,
-
                     'altered existing user with addresses' => [
                         'defaultData' => $existingAccountUser,
                         'submittedData' => [
@@ -179,11 +179,12 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
                             'lastName' => 'Doe',
                             'email' => 'johndoe@example.com',
                             'account' => 2,
-                            'addresses' => [1, 2]
+                            'addresses' => [1, 2],
                         ],
                         'expectedData' => $alteredExistingAccountUserWithAddresses,
-                    ]
-                ]];
+                    ],
+                ],
+            ];
     }
 
     /**
@@ -210,6 +211,6 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
             ->disableOriginalConstructor()
             ->getMock();
         $securityFacade->expects($this->any())->method('getLoggedUser')->willReturn(null);
-        $this->assertFalse($formType->onPreSetData($event));
+        $formType->onPreSetData($event);
     }
 }

@@ -34,10 +34,10 @@ class AccountUserProfileController extends Controller
      */
     public function registerAction(Request $request)
     {
-        $checkPermissions = $this->checkPermissions();
-        if ($checkPermissions instanceof RedirectResponse) {
-            return $checkPermissions;
+        if ($this->getUser()) {
+            return $this->redirect($this->generateUrl('orob2b_account_frontend_account_user_profile'));
         }
+        $this->checkPermissions();
         $accountUser = new AccountUser();
         $this->setUserData($accountUser);
         return $this->handleForm($accountUser, $request);
@@ -48,14 +48,10 @@ class AccountUserProfileController extends Controller
      */
     private function checkPermissions()
     {
-        if ($this->getUser()) {
-            return $this->redirect($this->generateUrl('orob2b_account_frontend_account_user_profile'));
-        }
         $isRegistrationAllowed = $this->get('oro_config.manager')->get('oro_b2b_account.registration_allowed');
         if (!$isRegistrationAllowed) {
             throw new AccessDeniedException();
         }
-        return true;
     }
 
     /**

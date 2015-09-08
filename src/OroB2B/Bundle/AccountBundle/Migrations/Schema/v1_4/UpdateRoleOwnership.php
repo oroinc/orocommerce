@@ -18,7 +18,6 @@ class UpdateRoleOwnership implements Migration
         $table = $schema->getTable(OroB2BAccountBundleInstaller::ORO_B2B_ACCOUNT_USER_ROLE_TABLE_NAME);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
-        $table->addUniqueIndex(['account_id', 'label'], 'orob2b_acc_role_idx');
         $table = $schema->getTable(OroB2BAccountBundleInstaller::ORO_B2B_ACCOUNT_USER_ROLE_TABLE_NAME);
         $table->addForeignKeyConstraint(
             $schema->getTable(OroB2BAccountBundleInstaller::ORO_ORGANIZATION_TABLE_NAME),
