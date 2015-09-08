@@ -4,11 +4,12 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Handler;
 
 use Doctrine\DBAL\DBALException;
 
-use Oro\Component\Testing\Unit\FormHandlerTestCase;
-use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
+use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Component\Testing\Unit\FormHandlerTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -16,7 +17,6 @@ use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Form\Handler\QuoteCreateOrderHandler;
-use OroB2B\Bundle\OrderBundle\Entity\Order;
 
 class QuoteCreateOrderHandlerTest extends FormHandlerTestCase
 {
@@ -47,9 +47,9 @@ class QuoteCreateOrderHandlerTest extends FormHandlerTestCase
     {
         parent::setUp();
 
-        $this->entity   = new Quote();
+        $this->entity = new Quote();
         $this->entity->setOwner($this->getAdminUser());
-        $this->handler  = new QuoteCreateOrderHandler(
+        $this->handler = new QuoteCreateOrderHandler(
             $this->form,
             $this->request,
             $this->manager,
@@ -57,8 +57,14 @@ class QuoteCreateOrderHandlerTest extends FormHandlerTestCase
         );
     }
 
+    /**
+     * {@inheritdoc}
+     *
+     * Replaced by testProcessValidQuote
+     */
     public function testProcessValidData()
     {
+        // nothing
     }
 
     /**

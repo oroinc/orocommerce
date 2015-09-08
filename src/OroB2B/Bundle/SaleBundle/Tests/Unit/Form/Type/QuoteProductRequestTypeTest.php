@@ -5,8 +5,8 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
+use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
 
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
