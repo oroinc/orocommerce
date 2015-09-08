@@ -72,7 +72,7 @@ class ProductRepository extends EntityRepository
     {
         $productsQueryBuilder = $this
             ->createQueryBuilder('p')
-            ->select('p.id');
+            ->select('p.id, p.sku');
 
         if ($productSkus) {
             $productsQueryBuilder
@@ -80,6 +80,17 @@ class ProductRepository extends EntityRepository
                 ->setParameter('product_skus', $productSkus);
         }
 
-        return $productsQueryBuilder->getQuery()->getScalarResult();
+        $productsData = $productsQueryBuilder
+            ->orderBy($productsQueryBuilder->expr()->asc('p.id'))
+            ->getQuery()
+            ->getArrayResult();
+
+        $productsIdsToSku = [];
+        foreach ($productsData as $key => $productData) {
+            $productsIdsToSku[$productData['sku']] = $productData['id'];
+            unset($productsData[$key]);
+        }
+
+        return $productsIdsToSku;
     }
 }

@@ -9,6 +9,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Oro\Bundle\UIBundle\Tools\ArrayUtils;
 
+use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ProductBundle\Model\ComponentProcessorInterface;
 use OroB2B\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
@@ -43,15 +44,24 @@ class QuickAddProcessor implements ComponentProcessorInterface
             return;
         }
 
-        $shoppingListId = (int)$request->get('additional');
+        $shoppingListId = (int)$request->get(
+            sprintf('%s[%s]', QuickAddType::NAME, QuickAddType::ADDITIONAL_FIELD_NAME),
+            null,
+            true
+        );
         $shoppingList = $this->shoppingListLineItemHandler->getShoppingList($shoppingListId);
 
         $productSkus = ArrayUtils::arrayColumn($data, 'productSku');
         $productIds = $this->getProductRepository()->getProductsIdsBySku($productSkus);
-        $productQuantities = array_combine($productIds, ArrayUtils::arrayColumn($data, 'productQuantity'));
+        $productSkuQuantities = array_combine($productSkus, ArrayUtils::arrayColumn($data, 'productQuantity'));
+        $productIdsQuantities = array_combine($productIds, $productSkuQuantities);
 
         try {
-            $this->shoppingListLineItemHandler->createForShoppingList($shoppingList, $productIds, $productQuantities);
+            $this->shoppingListLineItemHandler->createForShoppingList(
+                $shoppingList,
+                array_values($productIds),
+                $productIdsQuantities
+            );
         } catch (AccessDeniedException $e) {
         }
     }
@@ -83,6 +93,6 @@ class QuickAddProcessor implements ComponentProcessorInterface
     /** {@inheritdoc} */
     public function isAllowed()
     {
-        return true;
+        return $this->shoppingListLineItemHandler->isAllowed();
     }
 }

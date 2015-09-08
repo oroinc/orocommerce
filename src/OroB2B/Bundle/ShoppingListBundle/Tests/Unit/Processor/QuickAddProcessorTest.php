@@ -108,8 +108,17 @@ class QuickAddProcessorTest extends \PHPUnit_Framework_TestCase
                     ['productSku' => 'sku1', 'productQuantity' => 2],
                     ['productSku' => 'sku2', 'productQuantity' => 3],
                 ],
-                new Request(['additional' => 1]),
+                new Request(['oro_product_quick_add' => ['additional' => 1]]),
                 [1, 2],
+                [1 => 2, 2 => 3],
+            ],
+            'ids sorting' => [
+                [
+                    ['productSku' => 'sku2', 'productQuantity' => 3],
+                    ['productSku' => 'sku1', 'productQuantity' => 2],
+                ],
+                new Request(['oro_product_quick_add' => ['additional' => 1]]),
+                [2, 1],
                 [1 => 2, 2 => 3],
             ],
         ];
@@ -132,5 +141,20 @@ class QuickAddProcessorTest extends \PHPUnit_Framework_TestCase
         }
 
         return $entity;
+    }
+
+    public function testIsValidationRequired()
+    {
+        $this->assertInternalType('bool', $this->processor->isValidationRequired());
+        $this->assertTrue($this->processor->isValidationRequired());
+    }
+
+    public function testIsAllowed()
+    {
+        $this->handler->expects($this->once())->method('isAllowed')->willReturn(true);
+
+        $result = $this->processor->isAllowed();
+        $this->assertInternalType('bool', $result);
+        $this->assertTrue($result);
     }
 }

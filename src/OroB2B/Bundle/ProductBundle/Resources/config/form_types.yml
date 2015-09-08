@@ -70,4 +70,4 @@ services:
     orob2b_product.form.type.quick_add:
         class: %orob2b_product.form.type.quick_add.class%
         tags:
-            - { name: form.type, alias: 'oro_product_quick_add' }
+            - { name: form.type, alias: 'orob2b_product_quick_add' }
