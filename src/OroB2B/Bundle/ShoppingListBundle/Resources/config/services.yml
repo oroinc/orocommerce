@@ -6,6 +6,8 @@ parameters:
     orob2b_shopping_list.shopping_list.manager.class: OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager
     orob2b_shopping_list.line_item.manager.class: OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager
     orob2b_shopping_list.validator.line_item.class: OroB2B\Bundle\ShoppingListBundle\Validator\Constraints\LineItemValidator
+    orob2b_shopping_list.handler.shopping_list_line_item.class: OroB2B\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler
+    orob2b_shopping_list.processor.quick_add.class:  OroB2B\Bundle\ShoppingListBundle\Processor\QuickAddProcessor
 
 services:
     orob2b_shopping_list.validator.line_item:
@@ -45,3 +47,23 @@ services:
         class: %orob2b_shopping_list.placeholder.filter.class%
         arguments:
             - @oro_security.security_facade
+
+    orob2b_shopping_list.handler.shopping_list_line_item:
+        class: %orob2b_shopping_list.handler.shopping_list_line_item.class%
+        arguments:
+            - @doctrine
+            - @orob2b_shopping_list.shopping_list.manager
+            - @oro_security.security_facade
+        calls:
+            - [setProductClass, [%orob2b_product.product.class%]]
+            - [setShoppingListClass, [%orob2b_shopping_list.entity.shopping_list.class%]]
+
+    orob2b_shopping_list.processor.quick_add:
+        class: %orob2b_shopping_list.processor.quick_add.class%
+        arguments:
+            - @orob2b_shopping_list.handler.shopping_list_line_item
+            - @doctrine
+        calls:
+            - [setProductClass, [%orob2b_product.product.class%]]
+        tags:
+            - { name: orob2b_product.quick_add_processor }
