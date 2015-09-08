@@ -25,7 +25,7 @@ define(function(require) {
          */
         selectShoppingList: function(shoppingListId) {
             QuickAddButtonComponent.__super__.selectShoppingList.apply(this, arguments);
-            mediator.trigger('quick-add:submit', 'shopping_list', shoppingListId);
+            mediator.trigger('quick-add:submit', 'orob2b_shopping_list_quick_add_processor', shoppingListId);
         },
 
         triggerWidget: function() {

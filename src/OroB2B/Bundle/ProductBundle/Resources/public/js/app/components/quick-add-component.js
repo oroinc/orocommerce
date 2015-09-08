@@ -18,13 +18,19 @@ define(function(require) {
         },
 
         /**
+         * @property {jQuery}
+         */
+        $form: null,
+
+        /**
          * @inheritDoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
-            this.options._sourceElement
-                .on('click', this.options.componentButtonSelector, _.bind(this.fillComponentData, this));
+            this.$form = this.options._sourceElement;
+
+            this.$form.on('click', this.options.componentButtonSelector, _.bind(this.fillComponentData, this));
 
             mediator.on('quick-add:submit', this.submit, this);
         },
@@ -39,8 +45,9 @@ define(function(require) {
          * @param {String} additional
          */
         submit: function(component, additional) {
-            this.options._sourceElement.find(this.options.componentSelector).val(component);
-            this.options._sourceElement.find(this.options.additionalSelector).val(additional);
+            this.$form.find(this.options.componentSelector).val(component);
+            this.$form.find(this.options.additionalSelector).val(additional);
+            this.$form.submit();
         },
 
         /**

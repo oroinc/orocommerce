@@ -16,4 +16,4 @@ items:
 
     shopping_list_quick_add:
         action: OroB2BShoppingListBundle:Frontend/AjaxLineItem:getQuickAddBtn
-        acl: orob2b_shopping_list_frontend_create
+        applicable: @orob2b_shopping_list.processor.quick_add->isAllowed()
