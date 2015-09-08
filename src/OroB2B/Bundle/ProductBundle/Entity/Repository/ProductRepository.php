@@ -80,18 +80,17 @@ class ProductRepository extends EntityRepository
                 ->setParameter('product_skus', $productSkus);
         }
 
-        $productsQueryBuilder->orderBy($productsQueryBuilder->expr()->asc('p.id'));
-
         $productsData = $productsQueryBuilder
             ->orderBy($productsQueryBuilder->expr()->asc('p.id'))
             ->getQuery()
             ->getArrayResult();
 
+        $productsIdsToSku = [];
         foreach ($productsData as $key => $productData) {
-            $productsData[$productData['sku']] = $productData['id'];
+            $productsIdsToSku[$productData['sku']] = $productData['id'];
             unset($productsData[$key]);
         }
 
-        return $productsData;
+        return $productsIdsToSku;
     }
 }
