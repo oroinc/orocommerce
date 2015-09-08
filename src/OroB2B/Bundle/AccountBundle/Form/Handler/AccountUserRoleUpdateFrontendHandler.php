@@ -13,7 +13,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
 
-class AccountUserRoleFrontendHandler extends AccountUserRoleHandler
+class AccountUserRoleUpdateFrontendHandler extends AccountUserRoleUpdateHandler
 {
     /**
      * @var AccountUserRole

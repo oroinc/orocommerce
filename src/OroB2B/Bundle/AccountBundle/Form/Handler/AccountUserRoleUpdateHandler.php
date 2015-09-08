@@ -17,7 +17,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType;
 use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
-class AccountUserRoleHandler extends AclRoleHandler
+class AccountUserRoleUpdateHandler extends AclRoleHandler
 {
     /**
      * @var ConfigProviderInterface

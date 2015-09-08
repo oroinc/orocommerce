@@ -1,0 +1,85 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
+{% oro_title_set({params : {"%label%": entity.label }}) %}
+
+{% set gridName = 'frontend-account-account-users-grid-view' %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('orob2b_account_account_user_role_frontend_index'),
+        'indexLabel': 'orob2b.account.accountuserrole.entity_plural_label'|trans,
+        'entityTitle': entity.label|default('N/A'|trans)
+    } %}
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block navButtons %}
+    {% if (entity.predefined and resource_granted('orob2b_account_account_user_role_frontend_create')) or
+        (not entity.predefined and resource_granted('FRONTEND_ACCOUNT_ROLE_UPDATE', entity)) %}
+        {{ UI.editButton({
+            'path' : path('orob2b_account_account_user_role_frontend_update', { 'id': entity.id }),
+            'entity_label': 'orob2b.account.accountuserrole.entity_label'|trans
+        }) }}
+    {% endif %}
+    {% if resource_granted('orob2b_account_account_user_role_frontend_delete', entity) %}
+        {{ UI.deleteButton({
+            'dataUrl': path('orob2b_api_frontend_account_delete_accountuserrole', {'id': entity.id}),
+            'dataRedirect': path('orob2b_account_account_user_role_frontend_index'),
+            'aCss': 'no-hash remove-button',
+            'dataId': entity.id,
+            'id': 'btn-remove-attribute',
+            'entity_label': 'orob2b.account.accountuserrole.entity_label'|trans,
+        }) }}
+    {% endif %}
+{% endblock navButtons %}
+
+{% block content_data %}
+    {% set accountUserRoleInfo %}
+        {{ oro_widget_render({
+            'widgetType': 'block',
+            'url': path('orob2b_account_account_user_role_frontend_info', {id: entity.id}),
+            'alias': 'account-user-role-info-widget'
+        }) }}
+    {% endset %}
+
+    {% set dataBlocks = [
+        {
+            'title': 'orob2b.account.sections.general'|trans,
+            'class': 'active',
+            'subblocks': [{'data' : [accountUserRoleInfo]}]
+        }
+    ] %}
+
+    {% for name, config in form.vars.privilegeConfig %}
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': config.label|trans,
+            'subblocks': [
+                {
+                    'title': '',
+                    'useSpan': false,
+                    'data': [
+                        form_widget(form.children[name])
+                    ]
+                }
+            ]
+        }]) %}
+    {% endfor %}
+
+    {% set accountUsersGrid = dataGrid.renderGrid(gridName, {role: entity.id}, { cssClass: 'inner-grid' }) %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'orob2b.account.sections.accountuserrole.users'|trans,
+        'subblocks': [{'data' : [accountUsersGrid]}]
+    }]) %}
+
+    {% set id = 'account-account-user-role-view' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ parent() }}
+{% endblock content_data %}
+
+{% block stats %}
+    {# Must be empty, because parent view uses this block to render dates, which are not implemented in this entity #}
+{% endblock stats %}

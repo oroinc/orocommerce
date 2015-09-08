@@ -9,8 +9,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
@@ -20,7 +20,13 @@ class AccountUserRoleController extends Controller
     /**
      * @Route("/", name="orob2b_account_account_user_role_frontend_index")
      * @Template("OroB2BAccountBundle:AccountUserRole/Frontend:index.html.twig")
-     * @AclAncestor("orob2b_account_account_user_role_frontend_view")
+     * @Acl(
+     *      id="orob2b_account_account_user_role_frontend_index",
+     *      type="entity",
+     *      class="OroB2BAccountBundle:AccountUserRole",
+     *      permission="VIEW",
+     *      group_name="commerce"
+     * )
      * @return array
      */
     public function indexAction()
@@ -31,25 +37,43 @@ class AccountUserRoleController extends Controller
     }
 
     /**
-     * @Route("/view/{id}", name="orob2b_count_account_user_role_frontend_view", requirements={"id"="\d+"})
-     * @Template
+     * @Route("/view/{id}", name="orob2b_account_account_user_role_frontend_view", requirements={"id"="\d+"})
+     * @Template("OroB2BAccountBundle:AccountUserRole/Frontend:view.html.twig")
      * @Acl(
-     *      id="orob2b_account_account_user_role_frontend_view",
+     *      id="orob2b_account_account_user_role_frontend_view_action",
      *      type="entity",
      *      class="OroB2BAccountBundle:AccountUserRole",
-     *      permission="VIEW",
+     *      permission="FRONTEND_ACCOUNT_ROLE_VIEW",
      *      group_name="commerce"
      * )
      *
-     * @param AccountUserRole $accountUserRole
+     * @param AccountUserRole $role
      *
      * @return array
      */
-    public function viewAction(AccountUserRole $accountUserRole)
+    public function viewAction(AccountUserRole $role)
     {
-        // TODO: Add template for view page
+        $handler = $this->get('orob2b_account.form.handler.view_account_user_role');
+        $handler->createForm($role);
+        $handler->process($role);
+
         return [
-            'entity' => $accountUserRole
+            'entity' => $role,
+            'form'   => $handler->createView()
+        ];
+    }
+
+    /**
+     * @Route("/info/{id}", name="orob2b_account_account_user_role_frontend_info", requirements={"id"="\d+"})
+     * @Template("OroB2BAccountBundle:AccountUserRole/Frontend/widget:info.html.twig")
+     * @AclAncestor("orob2b_account_account_user_role_frontend_view_action")
+     * @param AccountUserRole $role
+     * @return array
+     */
+    public function infoAction(AccountUserRole $role)
+    {
+        return [
+            'entity' => $role
         ];
     }
 
@@ -109,7 +133,7 @@ class AccountUserRoleController extends Controller
      */
     protected function update(AccountUserRole $role)
     {
-        $handler = $this->get('orob2b_account.form.handler.account_user_role_frontend');
+        $handler = $this->get('orob2b_account.form.handler.update_account_user_role_frontend');
         if ($role->isPredefined()) {
             $newRole = $this->createNewRole($role);
         } else {

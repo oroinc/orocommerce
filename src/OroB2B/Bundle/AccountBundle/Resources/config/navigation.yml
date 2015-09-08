@@ -190,6 +190,7 @@ oro_titles:
     orob2b_account_account_user_create:  oro.ui.create_entity
 
     orob2b_account_account_user_role_index:   ~
+    orob2b_account_account_user_role_view:  '%%label%% - View'
     orob2b_account_account_user_role_update:  '%%label%% - Edit'
     orob2b_account_account_user_role_create:  oro.ui.create_entity
 

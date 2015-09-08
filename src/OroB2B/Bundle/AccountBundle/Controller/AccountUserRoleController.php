@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
@@ -17,12 +18,7 @@ class AccountUserRoleController extends Controller
     /**
      * @Route("/", name="orob2b_account_account_user_role_index")
      * @Template
-     * @Acl(
-     *      id="orob2b_account_account_user_role_view",
-     *      type="entity",
-     *      class="OroB2BAccountBundle:AccountUserRole",
-     *      permission="VIEW"
-     * )
+     * @AclAncestor("orob2b_account_account_user_role_view")
      *
      * @return array
      */
@@ -30,6 +26,31 @@ class AccountUserRoleController extends Controller
     {
         return [
             'entity_class' => $this->container->getParameter('orob2b_account.entity.account_user_role.class')
+        ];
+    }
+
+    /**
+     * @Route("/view/{id}", name="orob2b_account_account_user_role_view", requirements={"id"="\d+"})
+     * @Template
+     * @Acl(
+     *      id="orob2b_account_account_user_role_view",
+     *      type="entity",
+     *      class="OroB2BAccountBundle:AccountUserRole",
+     *      permission="VIEW"
+     * )
+     *
+     * @param AccountUserRole $role
+     * @return array
+     */
+    public function viewAction(AccountUserRole $role)
+    {
+        $handler = $this->get('orob2b_account.form.handler.view_account_user_role');
+        $handler->createForm($role);
+        $handler->process($role);
+
+        return [
+            'entity' => $role,
+            'form'   => $handler->createView()
         ];
     }
 
@@ -76,7 +97,7 @@ class AccountUserRoleController extends Controller
      */
     protected function update(AccountUserRole $role)
     {
-        $handler = $this->get('orob2b_account.form.handler.account_user_role');
+        $handler = $this->get('orob2b_account.form.handler.update_account_user_role');
         $form = $handler->createForm($role);
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
@@ -84,7 +105,7 @@ class AccountUserRoleController extends Controller
             $form,
             function (AccountUserRole $role) {
                 return [
-                    'route' => 'orob2b_account_account_user_role_update',
+                    'route'      => 'orob2b_account_account_user_role_update',
                     'parameters' => ['id' => $role->getId()]
                 ];
             },
@@ -96,5 +117,20 @@ class AccountUserRoleController extends Controller
             $this->get('translator')->trans('orob2b.account.controller.accountuserrole.saved.message'),
             $handler
         );
+    }
+
+    /**
+     * @Route("/info/{id}", name="orob2b_account_account_user_role_info", requirements={"id"="\d+"})
+     * @Template("OroB2BAccountBundle:AccountUserRole/widget:info.html.twig")
+     * @AclAncestor("orob2b_account_account_user_role_view")
+     *
+     * @param AccountUserRole $role
+     * @return array
+     */
+    public function infoAction(AccountUserRole $role)
+    {
+        return [
+            'entity' => $role
+        ];
     }
 }
