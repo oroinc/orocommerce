@@ -178,6 +178,23 @@ class AjaxLineItemController extends Controller
      */
     public function getProductsAddBtnAction()
     {
+        return $this->getAddBtn('OroB2BShoppingListBundle:ShoppingList/Frontend:add_products_btn.html.twig');
+    }
+
+    /**
+     * @return Response
+     */
+    public function getQuickAddBtnAction()
+    {
+        return $this->getAddBtn('OroB2BShoppingListBundle:ShoppingList/Frontend:quickAdd.html.twig');
+    }
+
+    /**
+     * @param string $template
+     * @return Response
+     */
+    protected function getAddBtn($template)
+    {
         /** @var AccountUser $accountUser */
         $accountUser = $this->getUser();
         $repository = $this->getDoctrine()->getRepository('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList');
@@ -185,7 +202,7 @@ class AjaxLineItemController extends Controller
         $currentShoppingList = $repository->findCurrentForAccountUser($accountUser);
 
         return $this->render(
-            'OroB2BShoppingListBundle:ShoppingList/Frontend:add_products_btn.html.twig',
+            $template,
             [
                 'shoppingLists' => $shoppingLists,
                 'currentShoppingList' => $currentShoppingList

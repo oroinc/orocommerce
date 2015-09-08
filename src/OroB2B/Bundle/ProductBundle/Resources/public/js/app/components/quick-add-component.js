@@ -4,6 +4,7 @@ define(function(require) {
     var QuickAddComponent;
     var _ = require('underscore');
     var $ = require('jquery');
+    var mediator = require('oroui/js/mediator');
     var BaseComponent = require('oroui/js/app/components/base/component');
 
     QuickAddComponent = BaseComponent.extend({
@@ -17,27 +18,48 @@ define(function(require) {
         },
 
         /**
+         * @property {jQuery}
+         */
+        $form: null,
+
+        /**
          * @inheritDoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
-            this.options._sourceElement
-                .on('click', this.options.componentButtonSelector, _.bind(this.fillComponentData, this));
+            this.$form = this.options._sourceElement;
+
+            this.$form.on('click', this.options.componentButtonSelector, _.bind(this.fillComponentData, this));
+
+            mediator.on('quick-add:submit', this.submit, this);
         },
 
         fillComponentData: function(e) {
             var $element = $(e.target);
+            this.submit($element.data('component-name'), $element.data('component-additional'));
+        },
 
-            var component = $element.data('component-name');
-            if (component) {
-                this.options._sourceElement.find(this.options.componentSelector).val(component);
+        /**
+         * @param {String} component
+         * @param {String} additional
+         */
+        submit: function(component, additional) {
+            this.$form.find(this.options.componentSelector).val(component);
+            this.$form.find(this.options.additionalSelector).val(additional);
+            this.$form.submit();
+        },
+
+        /**
+         * @inheritDoc
+         */
+        dispose: function() {
+            if (this.disposed) {
+                return;
             }
 
-            var additional = $element.data('component-additional');
-            if (additional) {
-                this.options._sourceElement.find(this.options.additionalSelector).val(additional);
-            }
+            mediator.off('quick-add:submit', this.submit, this);
+            QuickAddComponent.__super__.dispose.call(this);
         }
     });
 
