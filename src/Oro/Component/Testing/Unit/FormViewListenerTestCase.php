@@ -2,9 +2,12 @@
 
 namespace Oro\Component\Testing\Unit;
 
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\UIBundle\View\ScrollData;
+use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
 class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
 {
@@ -37,5 +40,54 @@ class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         unset($this->doctrineHelper, $this->listener);
+    }
+
+    /**
+     * @return BeforeListRenderEvent|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getBeforeListRenderEvent()
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|BeforeListRenderEvent $event */
+        $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $event->expects($this->once())
+            ->method('getScrollData')
+            ->willReturn($this->getScrollData());
+
+        return $event;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|ScrollData
+     */
+    protected function getScrollData()
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ScrollData $scrollData */
+        $scrollData = $this->getMock('Oro\Bundle\UIBundle\View\ScrollData');
+
+        $scrollData->expects($this->once())
+            ->method('addBlock');
+
+        $scrollData->expects($this->once())
+            ->method('addSubBlock');
+
+        $scrollData->expects($this->once())
+            ->method('addSubBlockData');
+
+        return $scrollData;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|Request
+     */
+    protected function getRequest()
+    {
+        $request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        return $request;
     }
 }

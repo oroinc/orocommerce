@@ -2,42 +2,29 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Oro\Bundle\UIBundle\View\ScrollData;
 
 use OroB2B\Bundle\OrderBundle\EventListener\FormViewListener;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 
-class FormViewListenerTest extends \PHPUnit_Framework_TestCase
+class FormViewListenerTest extends FormViewListenerTestCase
 {
     /**
      * @var FormViewListener
      */
     protected $listener;
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper
-     */
-    protected $doctrineHelper;
 
     /**
      * {@inheritdoc}
      */
     public function setUp()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface $translator */
-        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        parent::setUp();
 
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $listener = new FormViewListener($translator, $this->doctrineHelper);
+        $listener = new FormViewListener($this->translator, $this->doctrineHelper);
         $this->listener = $listener;
     }
 
@@ -135,54 +122,5 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getScrollData');
 
         $this->listener->onAccountView($event);
-    }
-
-    /**
-     * @return BeforeListRenderEvent|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getBeforeListRenderEvent()
-    {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|BeforeListRenderEvent $event */
-        $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $event->expects($this->once())
-            ->method('getScrollData')
-            ->willReturn($this->getScrollData());
-
-        return $event;
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ScrollData
-     */
-    protected function getScrollData()
-    {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ScrollData $scrollData */
-        $scrollData = $this->getMock('Oro\Bundle\UIBundle\View\ScrollData');
-
-        $scrollData->expects($this->once())
-            ->method('addBlock');
-
-        $scrollData->expects($this->once())
-            ->method('addSubBlock');
-
-        $scrollData->expects($this->once())
-            ->method('addSubBlockData');
-
-        return $scrollData;
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Request
-     */
-    protected function getRequest()
-    {
-        $request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        return $request;
     }
 }
