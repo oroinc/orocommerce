@@ -28,7 +28,7 @@ class AccountUserRoleUpdateFrontendHandler extends AccountUserRoleUpdateHandler
     /**
      * @var array
      */
-    protected $appendUsers;
+    protected $appendUsers = [];
 
     /**
      * @var AccountUser
@@ -44,8 +44,9 @@ class AccountUserRoleUpdateFrontendHandler extends AccountUserRoleUpdateHandler
             /** @var AccountUserRoleRepository $roleRepository */
             $roleRepository = $this->doctrineHelper->getEntityRepository($role);
             $this->appendUsers = $roleRepository->getAssignedUsers($role);
-            $this->loggedAccountUser = $this->securityFacade->getLoggedUser();
         }
+
+        $this->loggedAccountUser = $this->securityFacade->getLoggedUser();
 
         /** @var OroEntityManager $manager */
         $manager = $this->managerRegistry->getManagerForClass(ClassUtils::getClass($this->loggedAccountUser));
@@ -67,7 +68,7 @@ class AccountUserRoleUpdateFrontendHandler extends AccountUserRoleUpdateHandler
         array $appendUsers,
         array $removeUsers
     ) {
-        if ($role->getId() && $role->getId() === $this->newRole->getId()) {
+        if (!$role->getId() || $role->getId() === $this->newRole->getId()) {
             return;
         }
 
@@ -90,11 +91,11 @@ class AccountUserRoleUpdateFrontendHandler extends AccountUserRoleUpdateHandler
     {
         // TODO: When task BB-1046 will be done, instead off method removeRole add method setRoles([$this->newRole])
         // and remove flush. Also need to remove method addNewRoleToUsers
-        if ($role->getId() && $role->getId() === $this->newRole->getId()) {
+        if (!$role->getId() || $role->getId() === $this->newRole->getId()) {
             return;
         }
             array_map(function (AccountUser $accountUser) use ($role, $manager) {
-                if ($accountUser->getAccount()->getId() == $this->loggedAccountUser->getId()) {
+                if ($accountUser->getAccount()->getId() == $this->loggedAccountUser->getAccount()->getId()) {
                     $accountUser->removeRole($role);
                     $manager->persist($accountUser);
                 }
