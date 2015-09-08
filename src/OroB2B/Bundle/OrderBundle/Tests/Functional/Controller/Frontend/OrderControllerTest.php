@@ -13,6 +13,7 @@ use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Model\DataStorageAwareProcessor;
 
 /**
  * @dbIsolation
@@ -144,6 +145,7 @@ class OrderControllerTest extends WebTestCase
             ]
         ];
 
+        /** @var DataStorageAwareProcessor $processor */
         $processor = $this->getContainer()->get('orob2b_order.processor.quick_add');
 
         $this->client->followRedirects(true);
@@ -160,6 +162,15 @@ class OrderControllerTest extends WebTestCase
         );
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+
+        $expectedQuickAddLineItems = [
+            [
+                'product' => $product->getId(),
+                'quantity' => 15,
+            ]
+        ];
+
+        $this->assertEquals($expectedQuickAddLineItems, $this->getActualLineItems($crawler, count($products), true));
 
         $form = $crawler->selectButton('Save')->form();
         $form['input_action'] = 'save_and_stay';
@@ -332,30 +343,46 @@ class OrderControllerTest extends WebTestCase
     /**
      * @param Crawler $crawler
      * @param int $count
+     * @param null $quickAdd
      * @return array
      */
-    protected function getActualLineItems(Crawler $crawler, $count)
+    protected function getActualLineItems(Crawler $crawler, $count, $quickAdd = null)
     {
         $result = [];
 
         for ($i = 0; $i < $count; $i++) {
-            $result[] = [
+            $data = [
                 'product' => $crawler->filter('input[name="orob2b_order_frontend_type[lineItems]['.$i.'][product]"]')
                     ->extract('value')[0],
                 'quantity' => $crawler->filter('input[name="orob2b_order_frontend_type[lineItems]['.$i.'][quantity]"]')
-                    ->extract('value')[0],
-                'productUnit' => $crawler
-                    ->filter('select[name="orob2b_order_frontend_type[lineItems]['.$i.'][productUnit]"] :selected')
-                    ->html(),
-                'price' => trim(
-                    $crawler->filter(
-                        'tr[data-content="orob2b_order_frontend_type[lineItems]['.$i.']"] .order-line-item-price-value'
-                    )
-                        ->html()
-                ),
-                'shipBy' => $crawler->filter('input[name="orob2b_order_frontend_type[lineItems]['.$i.'][shipBy]"]')
-                    ->extract('value')[0],
+                    ->extract('value')[0]
             ];
+
+            if ($quickAdd) {
+                $result[] = $data;
+            } else {
+                $result[] = array_merge(
+                    $data,
+                    [
+                        'productUnit' => $crawler
+                            ->filter(
+                                'select[name="orob2b_order_frontend_type[lineItems]['.$i.'][productUnit]"] :selected'
+                            )
+                            ->html(),
+                        'price' => trim(
+                            $crawler->filter(
+                                'tr[data-content="orob2b_order_frontend_type[lineItems]['
+                                .$i.']"] .order-line-item-price-value'
+                            )
+                                ->html()
+                        ),
+                        'shipBy' => $crawler->filter(
+                            'input[name="orob2b_order_frontend_type[lineItems]['.$i.'][shipBy]"]'
+                        )
+                            ->extract('value')[0]
+                    ]
+                );
+            }
         }
 
         return $result;
