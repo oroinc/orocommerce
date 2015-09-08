@@ -15,6 +15,7 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Model\DataStorageAwareProcessor;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductRowType;
 
 class FrontendOrderExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -125,7 +126,7 @@ class FrontendOrderExtensionTest extends \PHPUnit_Framework_TestCase
         $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
         $sku = 'TEST';
         $qty = 3;
-        $data = [['sku' => $sku, 'qty' => $qty]];
+        $data = [[ProductRowType::PRODUCT_SKU_FIELD_NAME => $sku, ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => $qty]];
         $order = new Order();
         $product = new Product();
         $product->setSku('TEST');
