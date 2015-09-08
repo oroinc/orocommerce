@@ -1,11 +1,18 @@
-#frontend-products-navButtons
-items:
-    add-products-btn:
-        action: OroB2BShoppingListBundle:Frontend/AjaxLineItem:getProductsAddBtn
-        applicable: @orob2b_shopping_list.placeholder.filter->userCanCreateLineItem()
-
 placeholders:
     frontend_products_navButtons:
         items:
             add-products-btn:
                 order: 100
+
+    orob2b_product_quick_add_buttons:
+        items:
+            shopping_list_quick_add: ~
+
+items:
+    add-products-btn:
+        action: OroB2BShoppingListBundle:Frontend/AjaxLineItem:getProductsAddBtn
+        applicable: @orob2b_shopping_list.placeholder.filter->userCanCreateLineItem()
+
+    shopping_list_quick_add:
+        action: OroB2BShoppingListBundle:Frontend/AjaxLineItem:getProductsAddBtn
+        acl: orob2b_shopping_list_frontend_create
