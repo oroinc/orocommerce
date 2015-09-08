@@ -27,19 +27,18 @@ class ActionPermissionProvider
      */
     public function getUserPermissions(ResultRecordInterface $record)
     {
-        $enabled = $record->getValue('enabled');
+        $disabled = $enabled = $record->getValue('enabled');
         $user = $this->securityFacade->getLoggedUser();
-        $disable = $enabled;
         $delete = true;
         if ($user instanceof AccountUser) {
-            $thatUser = $user->getId() == $record->getValue('id');
-            $disable = $thatUser ? false : $enabled;
-            $delete = !$thatUser;
+            $isCurrentUser = $user->getId() == $record->getValue('id');
+            $disabled = $isCurrentUser ? false : $enabled;
+            $delete = !$isCurrentUser;
         }
 
         return [
             'enable' => !$enabled,
-            'disable' => $disable,
+            'disable' => $disabled,
             'view' => true,
             'update' => true,
             'delete' => $delete

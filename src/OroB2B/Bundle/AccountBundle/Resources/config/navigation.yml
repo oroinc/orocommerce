@@ -190,8 +190,8 @@ oro_titles:
     orob2b_account_group_create: oro.ui.create_entity
 
     orob2b_account_account_user_index:   ~
-    orob2b_account_account_user_view:    '%%username%%'
-    orob2b_account_account_user_update:  %%username%% - oro.ui.edit
+    orob2b_account_account_user_view:    '%%email%%'
+    orob2b_account_account_user_update:  %%email%% - oro.ui.edit
     orob2b_account_account_user_create:  oro.ui.create_entity
 
     orob2b_account_frontend_account_user_index:   orob2b.account.accountuser.entity_plural_label
@@ -203,7 +203,7 @@ oro_titles:
     orob2b_account_account_user_role_update:    '%%label%% - oro.ui.edit'
     orob2b_account_account_user_role_create:    oro.ui.create_entity
 
-    orob2b_account_frontend_account_user_profile: '%%username%%'
+    orob2b_account_frontend_account_user_profile: '%%email%%'
     orob2b_account_frontend_account_user_profile_update: orob2b.account.accountuser.profile.edit
 
     orob2b_account_account_user_security_login: orob2b.account.accountuser.profile.login

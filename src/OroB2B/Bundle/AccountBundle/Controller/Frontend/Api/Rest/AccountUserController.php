@@ -52,7 +52,7 @@ class AccountUserController extends RestController implements ClassResourceInter
      */
     public function getForm()
     {
-        throw new \LogicException('This method should not be called');
+        throw new \BadMethodCallException('This method should not be called');
     }
 
     /**
@@ -60,7 +60,7 @@ class AccountUserController extends RestController implements ClassResourceInter
      */
     public function getFormHandler()
     {
-        throw new \LogicException('This method should not be called');
+        throw new \BadMethodCallException('This method should not be called');
     }
 
     /**

@@ -26,10 +26,10 @@ class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
-    /** @var SecurityFacade | \PHPUnit_Framework_MockObject_MockObject */
+    /** @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject */
     protected $securityFacade;
 
-    /** @var $registry Registry | \PHPUnit_Framework_MockObject_MockObject */
+    /** @var $registry Registry|\PHPUnit_Framework_MockObject_MockObject */
     protected $registry;
 
     /** @var QueryBuilder */
@@ -50,7 +50,7 @@ class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
         $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
             ->disableOriginalConstructor()
             ->getMock();
-        /** @var $repo AccountUserRoleRepository | \PHPUnit_Framework_MockObject_MockObject */
+        /** @var $repo AccountUserRoleRepository|\PHPUnit_Framework_MockObject_MockObject */
         $repo = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository')
             ->disableOriginalConstructor()
             ->getMock();
@@ -58,14 +58,16 @@ class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
             ->method('getAvailableRolesByAccountUserQueryBuilder')
             ->with($user)
             ->willReturn($this->qb);
-        /** @var $em ObjectManager | \PHPUnit_Framework_MockObject_MockObject */
+        /** @var $em ObjectManager|\PHPUnit_Framework_MockObject_MockObject */
         $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
         $em->expects($this->any())
             ->method('getRepository')
-            ->with('OroB2BAccountBundle:AccountUserRole')
+            ->with('OroB2B\Bundle\AccountBundle\Entity\AccountUserRole')
             ->willReturn($repo);
         $this->registry->expects($this->any())->method('getManagerForClass')->willReturn($em);
         $this->formType = new FrontendAccountUserRoleSelectType($this->securityFacade, $this->registry);
+        $this->formType->setRoleClass('OroB2B\Bundle\AccountBundle\Entity\AccountUserRole');
+
         parent::setUp();
     }
 
@@ -86,28 +88,30 @@ class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /** @var $resolver OptionsResolver | \PHPUnit_Framework_MockObject_MockObject */
+        /** @var $resolver OptionsResolver|\PHPUnit_Framework_MockObject_MockObject */
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setNormalizer')
             ->with($this->isType('string'), $this->isInstanceOf('\Closure'))
-            ->willReturnCallback(function ($type, $closure) {
-                $this->assertEquals('loader', $type);
-                $this->assertEquals($closure(), new ORMQueryBuilderLoader($this->qb));
-            });
+            ->willReturnCallback(
+                function ($type, $closure) {
+                    $this->assertEquals('loader', $type);
+                    $this->assertEquals($closure(), new ORMQueryBuilderLoader($this->qb));
+                }
+            );
         $this->formType->configureOptions($resolver);
     }
 
-    public function testNullUser()
+    public function testEmptyUser()
     {
-        /** @var $securityFacade SecurityFacade | \PHPUnit_Framework_MockObject_MockObject */
+        /** @var $securityFacade SecurityFacade|\PHPUnit_Framework_MockObject_MockObject */
         $securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
             ->disableOriginalConstructor()
             ->getMock();
         $securityFacade->expects($this->once())->method('getLoggedUser')->willReturn(null);
-        /** @var $resolver OptionsResolver | \PHPUnit_Framework_MockObject_MockObject */
+        /** @var $resolver OptionsResolver|\PHPUnit_Framework_MockObject_MockObject */
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
-        $roleFormType=new FrontendAccountUserRoleSelectType($securityFacade, $this->registry);
+        $roleFormType = new FrontendAccountUserRoleSelectType($securityFacade, $this->registry);
         $roleFormType->configureOptions($resolver);
     }
 
@@ -136,7 +140,7 @@ class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
     {
         return [
             1 => $this->getRole(1, 'test01'),
-            2 => $this->getRole(2, 'test02')
+            2 => $this->getRole(2, 'test02'),
         ];
     }
 

@@ -37,7 +37,6 @@ class AccountUserRoleSelectType extends AbstractType
     {
         $resolver->setDefaults([
             'class' => $this->roleClass,
-            'property' => 'label',
             'multiple' => true,
             'expanded' => true,
             'required' => true

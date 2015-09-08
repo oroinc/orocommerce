@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\PreloadedExtension;
@@ -11,8 +10,10 @@ use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 
 use Doctrine\ORM\Query;
 
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as AccountSelectTypeStub;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as AccountSelectTypeStub;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityType;
@@ -32,9 +33,8 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
      */
     protected $formType;
 
-    /** @var  SecurityFacade | \PHPUnit_Framework_MockObject_MockObject */
+    /** @var  SecurityFacade|\PHPUnit_Framework_MockObject_MockObject */
     protected $securityFacade;
-
 
     /**
      * {@inheritdoc}
@@ -200,13 +200,13 @@ class FrontendAccountUserTypeTest extends AccountUserTypeTest
      */
     public function testOnPreSetData()
     {
-        /** @var SecurityFacade | \PHPUnit_Framework_MockObject_MockObject */
+        /** @var $securityFacade SecurityFacade|\PHPUnit_Framework_MockObject_MockObject */
         $securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
             ->disableOriginalConstructor()
             ->getMock();
         /** @var FrontendAccountUserType $formType */
         $formType = new FrontendAccountUserType($securityFacade);
-        /** @var $event FormEvent | \PHPUnit_Framework_MockObject_MockObject */
+        /** @var $event FormEvent|\PHPUnit_Framework_MockObject_MockObject */
         $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')
             ->disableOriginalConstructor()
             ->getMock();

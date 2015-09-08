@@ -9,17 +9,18 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as EntityTypeStub;
 
 class EntitySelectTypeStub extends EntityTypeStub
 {
-    /** @var AbstractType | null */
+    /** @var AbstractType|null */
     protected $formType;
 
     /**
      * @param array $choices
      * @param string $name
-     * @param AbstractType | null $formType
+     * @param AbstractType|null $formType
      */
     public function __construct(array $choices, $name, $formType = null)
     {
         parent::__construct($choices, $name);
+
         $this->formType = $formType;
     }
 
@@ -29,6 +30,7 @@ class EntitySelectTypeStub extends EntityTypeStub
     public function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);
+
         if ($this->formType) {
             $this->formType->configureOptions($resolver);
         }

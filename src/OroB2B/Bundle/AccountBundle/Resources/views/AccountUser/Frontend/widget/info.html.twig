@@ -5,23 +5,14 @@
 <div class="widget-content">
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
-            {% if  entity.namePrefix|default('N/A'|trans) %}
-                {{ UI.renderProperty('orob2b.account.accountuser.name_prefix.label'|trans, entity.namePrefix) }}
-            {% endif %}
-            {{ UI.renderProperty('orob2b.account.accountuser.first_name.label'|trans, entity.firstName) }}
-            {% if  entity.middleName is defined %}
-                {{ UI.renderProperty('orob2b.account.accountuser.middle_name.label'|trans, entity.middleName) }}
-            {% endif %}
-            {{ UI.renderProperty('orob2b.account.accountuser.last_name.label'|trans, entity.lastName) }}
-            {% if  entity.nameSuffix is defined %}
-                {{ UI.renderProperty('orob2b.account.accountuser.name_suffix.label'|trans, entity.nameSuffix) }}
-            {% endif %}
+            {{ UI.renderProperty('orob2b.account.accountuser.name_prefix.label'|trans, entity.namePrefix|default('N/A'|trans)) }}
+            {{ UI.renderProperty('orob2b.account.accountuser.first_name.label'|trans, entity.firstName|default('N/A'|trans)) }}
+            {{ UI.renderProperty('orob2b.account.accountuser.middle_name.label'|trans, entity.middleName|default('N/A'|trans)) }}
+            {{ UI.renderProperty('orob2b.account.accountuser.last_name.label'|trans, entity.lastName|default('N/A'|trans)) }}
+            {{ UI.renderProperty('orob2b.account.accountuser.name_suffix.label'|trans, entity.nameSuffix|default('N/A'|trans)) }}
 
             {% set birthday_string %}
                 {{ entity.birthday is empty ? 'N/A'|trans : entity.birthday|oro_format_date }}
-                {% if entity.birthday is not empty %}
-                    ({{ entity.birthday|oro_format_date }})
-                {% endif %}
             {% endset %}
             {{ UI.renderProperty('orob2b.account.accountuser.birthday.label'|trans, birthday_string) }}
             {{ UI.renderHtmlProperty('orob2b.account.accountuser.email.label'|trans, Email.email_address_simple(entity.email)) }}

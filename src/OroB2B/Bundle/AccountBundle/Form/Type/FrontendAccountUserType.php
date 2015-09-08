@@ -10,7 +10,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 class FrontendAccountUserType extends AbstractType
@@ -64,10 +63,9 @@ class FrontendAccountUserType extends AbstractType
     {
         /** @var $user AccountUser */
         $user = $this->securityFacade->getLoggedUser();
-        if (!($user instanceof AccountUser)) {
+        if (!$user instanceof AccountUser) {
             return;
         }
-        /** @var $account Account */
         $account = $user->getAccount();
         /** @var AccountUser $data */
         $data = $event->getData();

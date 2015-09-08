@@ -215,7 +215,6 @@ orob2b.account:
             saved.message:     'Account User has been saved'
             enabled.message:   'Account User has been enabled'
             disabled.message:  'Account User has been disabled'
-            disable_yourself_denied.message: "You can't disable yourself"
             confirmed.message:  'Account User has been confirmed'
             not_found.message: 'Account User not found'
             profile_updated.message: 'Account User profile updated'

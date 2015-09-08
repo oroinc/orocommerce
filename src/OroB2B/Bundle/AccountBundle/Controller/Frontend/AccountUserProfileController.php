@@ -10,8 +10,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserManager;
@@ -19,7 +20,6 @@ use OroB2B\Bundle\AccountBundle\Form\Handler\FrontendAccountUserHandler;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserProfileType;
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
 
 class AccountUserProfileController extends Controller
 {
@@ -38,15 +38,11 @@ class AccountUserProfileController extends Controller
             return $this->redirect($this->generateUrl('orob2b_account_frontend_account_user_profile'));
         }
         $this->checkPermissions();
-        $accountUser = new AccountUser();
-        $this->setUserData($accountUser);
-        return $this->handleForm($accountUser, $request);
+
+        return $this->handleForm($this->getAccountUser(), $request);
     }
 
-    /**
-     * @return bool|RedirectResponse
-     */
-    private function checkPermissions()
+    protected function checkPermissions()
     {
         $isRegistrationAllowed = $this->get('oro_config.manager')->get('oro_b2b_account.registration_allowed');
         if (!$isRegistrationAllowed) {
@@ -55,13 +51,16 @@ class AccountUserProfileController extends Controller
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @return AccountUser
      */
-    private function setUserData(AccountUser $accountUser)
+    protected function getAccountUser()
     {
+        $accountUser = new AccountUser();
+
         /** @var WebsiteManager $websiteManager */
         $websiteManager = $this->get('orob2b_website.manager');
         $website = $websiteManager->getCurrentWebsite();
+        /** @var Organization|OrganizationInterface $websiteOrganization */
         $websiteOrganization = $website->getOrganization();
         if (!$websiteOrganization) {
             throw new \RuntimeException('Website organization is empty');
@@ -77,6 +76,8 @@ class AccountUserProfileController extends Controller
             ->addOrganization($websiteOrganization)
             ->setOrganization($websiteOrganization)
             ->addRole($defaultRole);
+
+        return $accountUser;
     }
 
     /**
@@ -84,7 +85,7 @@ class AccountUserProfileController extends Controller
      * @param Request $request
      * @return array|RedirectResponse
      */
-    private function handleForm(AccountUser $accountUser, Request $request)
+    protected function handleForm(AccountUser $accountUser, Request $request)
     {
         /** @var $userManager AccountUserManager */
         $userManager = $this->get('orob2b_account_user.manager');
@@ -121,15 +122,16 @@ class AccountUserProfileController extends Controller
                 $this->get('translator')->trans('orob2b.account.controller.accountuser.confirmation_error.message')
             );
         }
+
+        $messageType = 'warn';
+        $message = 'orob2b.account.controller.accountuser.already_confirmed.message';
         if (!$accountUser->isConfirmed()) {
             $userManager->confirmRegistration($accountUser);
             $userManager->updateUser($accountUser);
             $messageType = 'success';
             $message = 'orob2b.account.controller.accountuser.confirmed.message';
-        } else {
-            $messageType = 'warn';
-            $message = 'orob2b.account.controller.accountuser.already_confirmed.message';
         }
+
         $this->get('session')->getFlashBag()->add($messageType, $message);
         return $this->redirect($this->generateUrl('orob2b_account_account_user_security_login'));
     }

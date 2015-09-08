@@ -2,6 +2,9 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\Frontend\Api\Rest;
 
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\ObjectRepository;
+
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use Oro\Component\Testing\Fixtures\LoadAccountUserData as LoadLoginAccountUserData;
@@ -52,7 +55,7 @@ class AccountUserControllerTest extends WebTestCase
     }
 
     /**
-     * @return \Doctrine\Common\Persistence\ObjectManager
+     * @return ObjectManager
      */
     protected function getObjectManager()
     {
@@ -60,7 +63,7 @@ class AccountUserControllerTest extends WebTestCase
     }
 
     /**
-     * @return \Doctrine\Common\Persistence\ObjectRepository
+     * @return ObjectRepository
      */
     protected function getUserRepository()
     {

@@ -33,7 +33,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var SecurityFacade| \PHPUnit_Framework_MockObject_MockObject
+     * @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $securityFacade;
 
@@ -115,8 +115,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
 
         $this->assertEquals($defaultData, $form->getData());
         $form->submit($submittedData);
-        $result = $form->isValid();
-        $this->assertTrue($result);
+        $this->assertTrue($form->isValid());
         $this->assertEquals($expectedData, $form->getData());
     }
 

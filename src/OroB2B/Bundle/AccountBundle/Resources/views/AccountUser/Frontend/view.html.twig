@@ -51,7 +51,7 @@
                         'path':  path('orob2b_account_frontend_account_user_disable', {'id': entity.id}),
                         'title': 'orob2b.account.action.account_user.disable'|trans
                     }) }}
-                {% else %}
+                {% elseif (entity.id != app.user.id) %}
                     {{ UI.button({
                         'aCss':  'no-hash',
                         'iCss':  'icon-ok',

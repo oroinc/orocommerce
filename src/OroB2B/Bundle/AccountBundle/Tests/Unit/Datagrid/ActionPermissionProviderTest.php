@@ -32,7 +32,7 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
         'delete'
     ];
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject| SecurityFacade */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade */
     protected $securityFacade;
 
     /**
