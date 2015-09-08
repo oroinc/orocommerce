@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
 
+use OroB2B\src\OroB2B\Bundle\AccountBundle\EventListener\DatagridListenerFrontend;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -12,7 +13,7 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\src\OroB2B\Bundle\AccountBundle\EventListener\FrontendDatagridListener;
 
-class FrontendDatagridListenerTest extends \PHPUnit_Framework_TestCase
+class DatagridListenerFrontendTest extends \PHPUnit_Framework_TestCase
 {
     const USER_ID = 1;
 
@@ -62,7 +63,7 @@ class FrontendDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new FrontendDatagridListener($this->tokenStorage, $this->securityFacade);
+        $this->listener = new DatagridListenerFrontend($this->tokenStorage, $this->securityFacade);
     }
 
     protected function tearDown()
