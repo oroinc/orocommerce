@@ -122,7 +122,7 @@ class ProductUnitRemovedSelectionType extends AbstractType
     {
         $form = $event->getForm()->getParent();
         if ($form) {
-            $event->getForm()->getParent()->add(
+            $form->add(
                 'productUnit',
                 ProductUnitSelectionType::NAME,
                 [
