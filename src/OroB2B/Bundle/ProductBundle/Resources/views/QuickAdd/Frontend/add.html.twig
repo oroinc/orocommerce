@@ -34,10 +34,12 @@
                                 {{ form_widget(form.products) }}
                                 {{ form_row(form.component) }}
                                 {{ form_row(form.additional) }}
+                                {{ form_rest(form) }}
 
                                 {% placeholder orob2b_product_quick_add_buttons with {'form': form} %}
                             </fieldset>
                         </form>
+                        {{ oro_form_js_validation(form) }}
                     </div>
                 </div>
             </div>

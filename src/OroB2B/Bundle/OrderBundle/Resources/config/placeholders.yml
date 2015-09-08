@@ -13,4 +13,4 @@ items:
 
     order_quick_add:
         template: OroB2BOrderBundle:Product:Frontend/quickAdd.html.twig
-        acl: orob2b_order_frontend_create
+        applicable: @orob2b_order.processor.quick_add->isAllowed()

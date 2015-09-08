@@ -88,6 +88,8 @@ orob2b:
 
         frontend:
             quick_add.title: Quick Add
+            component_not_found.message: Can't process request, component not found
+            component_not_allowed.message: Can't process request, component is not allowed to use
 
     product_unit.kg:
         label:

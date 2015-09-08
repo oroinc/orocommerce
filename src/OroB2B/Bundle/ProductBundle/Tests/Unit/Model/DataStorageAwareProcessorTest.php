@@ -6,6 +6,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+
 use OroB2B\Bundle\ProductBundle\Model\DataStorageAwareProcessor;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
@@ -26,6 +28,11 @@ class DataStorageAwareProcessorTest extends \PHPUnit_Framework_TestCase
      */
     protected $processor;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade
+     */
+    private $securityFacade;
+
     protected function setUp()
     {
         $this->router = $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
@@ -33,7 +40,11 @@ class DataStorageAwareProcessorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->processor = new DataStorageAwareProcessor($this->router, $this->storage);
+        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->processor = new DataStorageAwareProcessor($this->router, $this->storage, $this->securityFacade);
     }
 
     protected function tearDown()
@@ -89,5 +100,40 @@ class DataStorageAwareProcessorTest extends \PHPUnit_Framework_TestCase
         $this->processor->setName($name);
 
         $this->assertEquals($name, $this->processor->getName());
+    }
+
+    /**
+     * @param {String|null} $acl
+     * @param {bool|null} $isGranted
+     *
+     * @dataProvider processorIsAllowedProvider
+     */
+    public function testProcessorIsAllowed($acl, $isGranted)
+    {
+        if (null !== $acl) {
+            $this->securityFacade->expects($this->any())->method('isGranted')
+                ->with($acl)->willReturn($isGranted);
+        }
+
+        $this->processor->setAcl($acl);
+        $this->assertEquals($isGranted, $this->processor->isAllowed());
+    }
+
+    public function processorIsAllowedProvider()
+    {
+        return [
+            [null, true],
+            ['fail', false],
+            ['success', true],
+        ];
+    }
+
+    public function testValidationRequired()
+    {
+        $this->assertTrue($this->processor->isValidationRequired());
+
+        $this->processor->setValidationRequired(false);
+
+        $this->assertFalse($this->processor->isValidationRequired());
     }
 }
