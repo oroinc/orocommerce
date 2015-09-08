@@ -28,13 +28,13 @@ class AjaxProductUnitControllerTest extends WebTestCase
      *
      * @dataProvider productUnitsDataProvider
      */
-    public function testGetProductUnitsAction($productReference, array $expectedData)
+    public function testProductUnitsAction($productReference, array $expectedData)
     {
         $product = $this->getProduct($productReference);
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_product_frontend_unit_product_units', ['id' => $product->getId()])
+            $this->getUrl('orob2b_product_frontend_ajaxproductunit_productunits', ['id' => $product->getId()])
         );
 
         $result = $this->client->getResponse();

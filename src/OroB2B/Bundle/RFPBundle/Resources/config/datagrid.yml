@@ -284,7 +284,7 @@ datagrid:
                 select:
                     - request.id
                     - request.createdAt
-                    - requestAccountUser.username as accountUserName
+                    - CONCAT(requestAccountUser.firstName, ' ', requestAccountUser.lastName) as accountUserName
                     - requestStatus.name as statusName
                 from:
                     - { table: %orob2b_rfp.entity.request.class%, alias: request }
@@ -325,12 +325,8 @@ datagrid:
         filters:
             columns:
                 accountUserName:
-                    type:      entity
-                    data_name: request.accountUser
-                    options:
-                        field_options:
-                            class:      %orob2b_account.entity.account_user.class%
-                            multiple:   false
+                    type:      string
+                    data_name: accountUserName
                 createdAt:
                     type:      datetime
                     data_name: request.createdAt
@@ -346,5 +342,4 @@ datagrid:
                 label:         oro.grid.action.update
                 link:          update_link
                 icon:          edit
-                acl_resource:  orob2b_rfp_request_frontend_update
                 rowAction:     true

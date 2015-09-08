@@ -109,7 +109,7 @@ class RequestController extends Controller
      *      id="orob2b_rfp_request_frontend_update",
      *      type="entity",
      *      class="OroB2BRFPBundle:Request",
-     *      permission="EDIT",
+     *      permission="ACCOUNT_EDIT",
      *      group_name="commerce"
      * )
      *
@@ -141,8 +141,8 @@ class RequestController extends Controller
             $rfpRequest,
             $this->createForm(RequestType::NAME, $rfpRequest),
             function (RFPRequest $rfpRequest) use ($securityFacade) {
-                if ($securityFacade->isGranted('VIEW', $rfpRequest)) {
-                    $route = $this->getSecurityFacade()->isGranted('EDIT', $rfpRequest)
+                if ($securityFacade->isGranted('ACCOUNT_VIEW', $rfpRequest)) {
+                    $route = $securityFacade->isGranted('ACCOUNT_EDIT', $rfpRequest)
                         ? 'orob2b_rfp_frontend_request_update'
                         : 'orob2b_rfp_frontend_request_view'
                     ;
@@ -160,7 +160,7 @@ class RequestController extends Controller
 
             },
             function (RFPRequest $rfpRequest) use ($securityFacade) {
-                if ($securityFacade->isGranted('VIEW', $rfpRequest)) {
+                if ($securityFacade->isGranted('ACCOUNT_VIEW', $rfpRequest)) {
                     return [
                         'route'         => 'orob2b_rfp_frontend_request_view',
                         'parameters'    => ['id' => $rfpRequest->getId()],

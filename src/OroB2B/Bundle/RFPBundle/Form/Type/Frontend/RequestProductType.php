@@ -37,7 +37,7 @@ class RequestProductType extends AbstractType
                 'label' => 'orob2b.product.entity_label',
                 'create_enabled' => false,
                 'grid_name' => 'products-select-grid-frontend',
-                'grid_widget_route' => 'orob2b_account_frontend_datagrid_widget',
+                'grid_widget_route' => 'orob2b_frontend_datagrid_widget',
                 'configs' => [
                     'route_name' => 'orob2b_frontend_autocomplete_search'
                 ]
