@@ -62,5 +62,8 @@ services:
         class: %orob2b_shopping_list.processor.quick_add.class%
         arguments:
             - @orob2b_shopping_list.handler.shopping_list_line_item
+            - @doctrine
+        calls:
+            - [setProductClass, [%orob2b_product.product.class%]]
         tags:
             - { name: orob2b_product.quick_add_processor }

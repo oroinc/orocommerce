@@ -2,10 +2,13 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Processor;
 
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Doctrine\Common\Persistence\ManagerRegistry;
+
+use Symfony\Component\HttpFoundation\Request;
+
+use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 use OroB2B\Bundle\ShoppingListBundle\Processor\QuickAddProcessor;
-use Symfony\Component\HttpFoundation\Request;
 
 class QuickAddProcessorTest extends \PHPUnit_Framework_TestCase
 {
@@ -15,13 +18,32 @@ class QuickAddProcessorTest extends \PHPUnit_Framework_TestCase
     /** @var QuickAddProcessor */
     protected $processor;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry */
+    protected $registry;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ProductRepository */
+    protected $productRepository;
+
     protected function setUp()
     {
         $this->handler = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->processor = new QuickAddProcessor($this->handler);
+        $this->productRepository = $this
+            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+
+        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
+
+        $this->registry->expects($this->any())->method('getManagerForClass')->willReturn($em);
+        $em->expects($this->any())->method('getRepository')->willReturn($this->productRepository);
+
+        $this->processor = new QuickAddProcessor($this->handler, $this->registry);
+        $this->processor->setProductClass('OroB2B\Bundle\ProductBundle\Entity\Product');
     }
 
     protected function tearDown()
@@ -37,42 +59,78 @@ class QuickAddProcessorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param array $data
-     * @param mixed $shoppingList
-     * @param bool $expects
+     * @param Request $request
+     * @param array $productIds
+     * @param array $productQuantities
      * @dataProvider processDataProvider
      */
-    public function testProcess(array $data, $shoppingList = null, $expects = false)
+    public function testProcess(array $data, Request $request, array $productIds = [], array $productQuantities = [])
     {
-        $this->handler->expects($this->any())->method('getShoppingList')->willReturn($shoppingList);
-        $this->handler->expects($expects ? $this->once() : $this->never())
-            ->method('createForShoppingList')
-            ->with(
-                $shoppingList,
-                $this->callback(
-                    function (array $productIds) use ($data) {
-                        $this->assertArrayHasKey('productIds', $data);
-                        $this->assertEquals($data['productIds'], $productIds);
-
-                        return true;
+        $this->handler->expects($this->any())->method('getShoppingList')->will(
+            $this->returnCallback(
+                function ($shoppingListId) {
+                    if (!$shoppingListId) {
+                        return $this->getEntity('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList');
                     }
-                )
-            );
 
-        $this->processor->process($data, new Request());
+                    return $this->getEntity('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', $shoppingListId);
+                }
+            )
+        );
+
+        $this->productRepository->expects($this->any())->method('getProductsIdsBySku')->willReturn($productIds);
+
+        $this->handler->expects($data ? $this->once() : $this->never())->method('createForShoppingList')->with(
+            $this->isInstanceOf('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList'),
+            $productIds,
+            $productQuantities
+        );
+
+        $this->processor->process($data, $request);
     }
 
     /** @return array */
     public function processDataProvider()
     {
         return [
-            'empty' => [[]],
-            'shopping list' => [['shoppingList' => 1]],
-            'product ids' => [['productIds' => [1]]],
-            'invalid data' => [['productIds' => [], 'shoppingList' => 0]],
-            'invalid data 2' => [['productIds' => [], 'shoppingList' => 'a']],
-            'invalid data 3' => [['productIds' => 'a', 'shoppingList' => 1]],
-            'valid data shopping list not found' => [['productIds' => [1], 'shoppingList' => '1']],
-            'valid data' => [['productIds' => [1], 'shoppingList' => '1'], new ShoppingList(), true],
+            'empty' => [[], new Request()],
+            'new shopping list' => [
+                [
+                    ['productSku' => 'sku1', 'productQuantity' => 2],
+                    ['productSku' => 'sku2', 'productQuantity' => 3],
+                ],
+                new Request(),
+                [1, 2],
+                [1 => 2, 2 => 3],
+            ],
+            'existing shopping list' => [
+                [
+                    ['productSku' => 'sku1', 'productQuantity' => 2],
+                    ['productSku' => 'sku2', 'productQuantity' => 3],
+                ],
+                new Request(['additional' => 1]),
+                [1, 2],
+                [1 => 2, 2 => 3],
+            ],
         ];
+    }
+
+    /**
+     * @param string $className
+     * @param int $id
+     * @return object
+     */
+    protected function getEntity($className, $id = null)
+    {
+        $entity = new $className;
+
+        if ($id) {
+            $reflectionClass = new \ReflectionClass($className);
+            $method = $reflectionClass->getProperty('id');
+            $method->setAccessible(true);
+            $method->setValue($entity, $id);
+        }
+
+        return $entity;
     }
 }

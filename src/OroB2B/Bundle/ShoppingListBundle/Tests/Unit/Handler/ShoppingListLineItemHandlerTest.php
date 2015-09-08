@@ -8,11 +8,13 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
+
 use Oro\Bundle\SecurityBundle\SecurityFacade;
+
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
@@ -49,33 +51,22 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Wrong ShoppingList id
-     *
-     * @dataProvider invalidIdDataProvider
+     * @dataProvider idDataProvider
      * @param mixed $id
      */
-    public function testGetShoppingListInvalidIdNumeric($id)
+    public function testGetShoppingList($id)
     {
-        $this->handler->getShoppingList($id);
+        $shoppingList = new ShoppingList();
+        $this->manager->expects($this->once())->method('getForCurrentUser')->willReturn($shoppingList);
+        $this->assertSame($shoppingList, $this->handler->getShoppingList($id));
     }
 
     /**
      * @return array
      */
-    public function invalidIdDataProvider()
+    public function idDataProvider()
     {
-        return [[0], ['a'], [-1], ['0']];
-    }
-
-    public function testGetShoppingList()
-    {
-        $id = 1;
-
-        $entity = $this->handler->getShoppingList($id);
-
-        $this->assertInstanceOf('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList', $entity);
-        $this->assertEquals($id, $entity->getId());
+        return [[1], [null]];
     }
 
     /**
@@ -90,17 +81,29 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
         $this->handler->createForShoppingList(new ShoppingList());
     }
 
-    public function testCreateForShoppingList()
-    {
+    /**
+     * @param array $productIds
+     * @param array $productQuantities
+     * @param array $expectedLineItems
+     *
+     * @dataProvider itemDataProvider
+     */
+    public function testCreateForShoppingList(
+        array $productIds = [],
+        array $productQuantities = [],
+        array $expectedLineItems = []
+    ) {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingList $shoppingList */
         $shoppingList = $this->getMock('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList');
         $shoppingList->expects($this->any())
             ->method('getId')
             ->willReturn(1);
 
+        $accountUser = new AccountUser();
+
         $shoppingList->expects($this->any())
             ->method('getAccountUser')
-            ->willReturn(new AccountUser());
+            ->willReturn($accountUser);
 
         $this->securityFacade->expects($this->at(0))
             ->method('isGranted')
@@ -112,7 +115,45 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->with('orob2b_shopping_list_line_item_frontend_add')
             ->willReturn(true);
 
-        $this->handler->createForShoppingList($shoppingList, [1]);
+        $this->manager->expects($this->once())->method('bulkAddLineItems')->with(
+            $this->callback(
+                function (array $lineItems) use ($expectedLineItems, $accountUser) {
+                    /** @var LineItem $lineItem */
+                    foreach ($lineItems as $key => $lineItem) {
+                        /** @var LineItem $expectedLineItem */
+                        $expectedLineItem = $expectedLineItems[$key];
+
+                        $this->assertEquals($expectedLineItem->getQuantity(), $lineItem->getQuantity());
+                        $this->assertEquals($accountUser, $lineItem->getAccountUser());
+                        $this->assertInstanceOf('OroB2B\Bundle\ProductBundle\Entity\Product', $lineItem->getProduct());
+                        $this->assertInstanceOf(
+                            'OroB2B\Bundle\ProductBundle\Entity\ProductUnit',
+                            $lineItem->getUnit()
+                        );
+                    }
+
+                    return true;
+                }
+            ),
+            $shoppingList,
+            $this->isType('integer')
+        );
+
+        $this->handler->createForShoppingList($shoppingList, $productIds, $productQuantities);
+    }
+
+    /**
+     * @return array
+     */
+    public function itemDataProvider()
+    {
+        return [
+            [
+                [1, 2],
+                [1 => 5],
+                [(new LineItem())->setQuantity(5), (new LineItem())->setQuantity(1)],
+            ],
+        ];
     }
 
     /**
@@ -129,12 +170,17 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->setMethods(['iterate'])
             ->getMockForAbstractClass();
 
-        $product = (new Product())
+        $product1 = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 1)
             ->addUnitPrecision(
                 (new ProductUnitPrecision())->setUnit(new ProductUnit())
             );
 
-        $iterableResult = [[$product], [clone $product]];
+        $product2 = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 2)
+            ->addUnitPrecision(
+                (new ProductUnitPrecision())->setUnit(new ProductUnit())
+            );
+
+        $iterableResult = [[$product1], [$product2]];
         $query->expects($this->any())
             ->method('iterate')
             ->willReturn($iterableResult);

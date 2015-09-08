@@ -3,15 +3,17 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Handler;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManager;
+
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+
 use Oro\Bundle\SecurityBundle\SecurityFacade;
+
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class ShoppingListLineItemHandler
 {
@@ -50,12 +52,14 @@ class ShoppingListLineItemHandler
     /**
      * @param ShoppingList $shoppingList
      * @param array $productIds
+     * @param array $productQuantities
      * @return int Added entities count
-     *
-     * @throws AccessDeniedException If action is not granted
      */
-    public function createForShoppingList(ShoppingList $shoppingList, array $productIds = [])
-    {
+    public function createForShoppingList(
+        ShoppingList $shoppingList,
+        array $productIds = [],
+        array $productQuantities = []
+    ) {
         if (!$this->securityFacade->isGranted('EDIT', $shoppingList)
             || !$this->securityFacade->isGranted('orob2b_shopping_list_line_item_frontend_add')
         ) {
@@ -69,17 +73,23 @@ class ShoppingListLineItemHandler
         $iterableResult = $productsRepo->getProductsQueryBuilder($productIds)->getQuery()->iterate();
         $lineItems = [];
         foreach ($iterableResult as $entityArray) {
-            /** @var Product $entity */
-            $entity = $entityArray[0];
+            /** @var Product $product */
+            $product = reset($entityArray);
             /** @var ProductUnitPrecision $unitPrecision */
-            $unitPrecision = $entity->getUnitPrecisions()->first();
+            $unitPrecision = $product->getUnitPrecisions()->first();
 
-            $lineItems[] = (new LineItem())
+            $lineItem = (new LineItem())
                 ->setAccountUser($shoppingList->getAccountUser())
                 ->setOrganization($shoppingList->getOrganization())
-                ->setProduct($entity)
-                ->setQuantity(1)
+                ->setProduct($product)
                 ->setUnit($unitPrecision->getUnit());
+
+            $productId = $product->getId();
+            if (array_key_exists($productId, $productQuantities)) {
+                $lineItem->setQuantity($productQuantities[$productId]);
+            }
+
+            $lineItems[] = $lineItem;
         }
 
         return $this->shoppingListManager->bulkAddLineItems($lineItems, $shoppingList, self::FLUSH_BATCH_SIZE);
@@ -89,20 +99,9 @@ class ShoppingListLineItemHandler
      * @param mixed $shoppingListId
      * @return ShoppingList
      */
-    public function getShoppingList($shoppingListId)
+    public function getShoppingList($shoppingListId = null)
     {
-        if (!filter_var($shoppingListId, FILTER_VALIDATE_INT)) {
-            throw new \InvalidArgumentException('Wrong ShoppingList id');
-        }
-
-        if (!$shoppingListId || $shoppingListId < 0) {
-            throw new \InvalidArgumentException('Wrong ShoppingList id');
-        }
-
-        /** @var EntityManager $em */
-        $em = $this->managerRegistry->getManagerForClass($this->shoppingListClass);
-
-        return $em->getReference($this->shoppingListClass, $shoppingListId);
+        return $this->shoppingListManager->getForCurrentUser($shoppingListId);
     }
 
     /**
