@@ -23,4 +23,10 @@ interface ComponentProcessorInterface
      * @return bool
      */
     public function isValidationRequired();
+
+
+    /**
+     * @return boolean
+     */
+    public function isAllowed();
 }

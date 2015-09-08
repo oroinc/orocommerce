@@ -119,4 +119,5 @@ services:
         arguments:
             - @router
             - @orob2b_product.service.product_data_storage
+            - @oro_security.security_facade
         abstract: true
