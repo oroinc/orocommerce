@@ -1,3 +1,4 @@
+#frontend-products-navButtons
 placeholders:
     frontend_products_navButtons:
         items:
@@ -14,5 +15,5 @@ items:
         applicable: @orob2b_shopping_list.placeholder.filter->userCanCreateLineItem()
 
     shopping_list_quick_add:
-        action: OroB2BShoppingListBundle:Frontend/AjaxLineItem:getProductsAddBtn
-        acl: orob2b_shopping_list_frontend_create
+        action: OroB2BShoppingListBundle:Frontend/AjaxLineItem:getQuickAddBtn
+        applicable: @orob2b_shopping_list.processor.quick_add->isAllowed()
