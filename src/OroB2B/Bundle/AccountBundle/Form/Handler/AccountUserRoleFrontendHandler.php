@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Form\Handler;
 
-use Symfony\Component\Form\FormInterface;
-
 use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
@@ -113,10 +111,7 @@ class AccountUserRoleFrontendHandler extends AccountUserRoleHandler
     }
 
     /**
-     * Create form for role manipulation
-     *
-     * @param AbstractRole $role
-     * @return FormInterface
+     * {@inheritdoc}
      */
     public function createForm(AbstractRole $role)
     {
@@ -131,6 +126,4 @@ class AccountUserRoleFrontendHandler extends AccountUserRoleHandler
     {
         parent::processPrivileges($this->newRole);
     }
-
-
 }

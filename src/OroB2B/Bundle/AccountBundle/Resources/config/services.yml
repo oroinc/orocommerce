@@ -45,7 +45,7 @@ parameters:
     orob2b_account.acl.group_provider.class: OroB2B\Bundle\AccountBundle\Acl\Group\AclGroupProvider
     orob2b_account.account_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_account.account_user_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
-    orob2b_account.event_listener.frontend_datagrid.class: OroB2B\src\OroB2B\Bundle\AccountBundle\EventListener\FrontendDatagridListener
+    orob2b_account.event_listener.frontend_datagrid.class: OroB2B\src\OroB2B\Bundle\AccountBundle\EventListener\DatagridListenerFrontend
     #Twig
     orob2b_account.twig.account_extension.class: OroB2B\Bundle\AccountBundle\Twig\AccountExtension
     #Voters

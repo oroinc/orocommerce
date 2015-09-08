@@ -10,7 +10,7 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 
-class FrontendDatagridListener
+class DatagridListenerFrontend
 {
     /**
      * @var TokenStorageInterface

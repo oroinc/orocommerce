@@ -144,7 +144,7 @@ class AccountUserRoleTypeTest extends FormIntegrationTestCase
         $existingRoleBefore->setLabel($roleLabel);
         $existingRoleBefore->setRole($roleLabel);
 
-        $existingRoleAfter = clone $existingRoleBefore;
+        $existingRoleAfter = unserialize(serialize($existingRoleBefore));
         $existingRoleAfter->setLabel($alteredRoleLabel);
 
         return [

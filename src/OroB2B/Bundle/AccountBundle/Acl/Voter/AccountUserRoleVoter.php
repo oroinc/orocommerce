@@ -122,6 +122,8 @@ class AccountUserRoleVoter extends AbstractEntityVoter
             return self::ACCESS_ABSTAIN;
         }
 
+        $isGranted = false;
+
         switch ($type) {
             case self::VIEW:
                 $isGranted = $this->getAccountUserRoleProvider()->isGrantedViewAccountUserRole();
@@ -129,8 +131,6 @@ class AccountUserRoleVoter extends AbstractEntityVoter
             case self::UPDATE:
                 $isGranted = $this->getAccountUserRoleProvider()->isGrantedUpdateAccountUserRole();
                 break;
-            default:
-                $isGranted = false;
         }
 
         if ($isGranted && (!$account || $account->getId() === $user->getAccount()->getId())) {
