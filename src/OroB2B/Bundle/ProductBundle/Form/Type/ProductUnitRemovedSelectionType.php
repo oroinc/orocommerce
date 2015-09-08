@@ -84,7 +84,7 @@ class ProductUnitRemovedSelectionType extends AbstractType
         $this->options = $options;
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmit']);
+        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetData']);
     }
 
     /**
@@ -118,15 +118,18 @@ class ProductUnitRemovedSelectionType extends AbstractType
     /**
      * @param FormEvent $event
      */
-    public function preSubmit(FormEvent $event)
+    public function postSetData(FormEvent $event)
     {
-        $event->getForm()->getParent()->add(
-            'productUnit',
-            ProductUnitSelectionType::NAME,
-            [
-                'label' => $this->options['label'],
-            ]
-        );
+        $form = $event->getForm()->getParent();
+        if ($form) {
+            $event->getForm()->getParent()->add(
+                'productUnit',
+                ProductUnitSelectionType::NAME,
+                [
+                    'label' => $this->options['label'],
+                ]
+            );
+        }
     }
 
     /**
