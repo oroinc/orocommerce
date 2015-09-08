@@ -3,13 +3,11 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\DomCrawler\Form;
 
 use Oro\Component\Testing\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Model\ComponentProcessorInterface;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
@@ -150,10 +148,7 @@ class ShoppingListControllerTest extends WebTestCase
             'productQuantity' => 15
         ]];
 
-        $form = $crawler->filter('form[name="oro_product_quick_add"]')->form();
-        $processor = $this->getContainer()->get('orob2b_shopping_list.processor.quick_add');
-
-        $this->assertQuickAddFormSubmitted($form, $products, $processor);
+        $this->assertQuickAddFormSubmitted($crawler, $products);
 
         $response = $this->requestFrontendGrid([
             'gridName' => 'frontend-shopping-list-grid',
@@ -163,29 +158,31 @@ class ShoppingListControllerTest extends WebTestCase
         $result = $this->getJsonResponseContent($response, 200);
         $this->assertCount($shoppingListsCount + 1, $result['data']);
 
+        // Get last added shopping list
         $data = reset($result['data']);
         $shoppingListId = $data['id'];
 
         $this->assertShoppingListItemSaved($shoppingListId, $product->getSku(), 15);
 
-        $this->assertQuickAddFormSubmitted($form, $products, $processor, $shoppingListId);
+        $this->assertQuickAddFormSubmitted($crawler, $products, $shoppingListId);
 
         $this->assertShoppingListItemSaved($shoppingListId, $product->getSku(), 30);
     }
 
     /**
-     * @param Form $form
+     * @param Crawler $crawler
      * @param array $products
-     * @param ComponentProcessorInterface $processor
      * @param int|null $shippingListId
      * @return Crawler
      */
     protected function assertQuickAddFormSubmitted(
-        Form $form,
+        Crawler $crawler,
         array $products,
-        ComponentProcessorInterface $processor,
         $shippingListId = null
     ) {
+        $form = $crawler->filter('form[name="oro_product_quick_add"]')->form();
+        $processor = $this->getContainer()->get('orob2b_shopping_list.processor.quick_add');
+
         $this->client->followRedirects(true);
 
         $crawler = $this->client->request(
