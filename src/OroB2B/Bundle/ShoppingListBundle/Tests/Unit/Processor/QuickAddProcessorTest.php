@@ -133,4 +133,19 @@ class QuickAddProcessorTest extends \PHPUnit_Framework_TestCase
 
         return $entity;
     }
+
+    public function testIsValidationRequired()
+    {
+        $this->assertInternalType('bool', $this->processor->isValidationRequired());
+        $this->assertTrue($this->processor->isValidationRequired());
+    }
+
+    public function testIsAllowed()
+    {
+        $this->handler->expects($this->once())->method('isAllowed')->willReturn(true);
+
+        $result = $this->processor->isAllowed();
+        $this->assertInternalType('bool', $result);
+        $this->assertTrue($result);
+    }
 }

@@ -83,6 +83,6 @@ class QuickAddProcessor implements ComponentProcessorInterface
     /** {@inheritdoc} */
     public function isAllowed()
     {
-        return true;
+        return $this->shoppingListLineItemHandler->isAllowed();
     }
 }
