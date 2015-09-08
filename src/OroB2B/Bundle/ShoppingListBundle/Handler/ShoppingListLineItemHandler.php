@@ -60,9 +60,7 @@ class ShoppingListLineItemHandler
         array $productIds = [],
         array $productQuantities = []
     ) {
-        if (!$this->securityFacade->isGranted('EDIT', $shoppingList)
-            || !$this->securityFacade->isGranted('orob2b_shopping_list_line_item_frontend_add')
-        ) {
+        if (!$this->isAllowed($shoppingList)) {
             throw new AccessDeniedException();
         }
 
@@ -93,6 +91,21 @@ class ShoppingListLineItemHandler
         }
 
         return $this->shoppingListManager->bulkAddLineItems($lineItems, $shoppingList, self::FLUSH_BATCH_SIZE);
+    }
+
+    /**
+     * @param ShoppingList|null $shoppingList
+     * @return bool
+     */
+    public function isAllowed(ShoppingList $shoppingList = null)
+    {
+        $isAllowed = $this->securityFacade->isGranted('orob2b_shopping_list_line_item_frontend_add');
+
+        if (!$shoppingList) {
+            return $isAllowed;
+        }
+
+        return $isAllowed && $this->securityFacade->isGranted('EDIT', $shoppingList);
     }
 
     /**

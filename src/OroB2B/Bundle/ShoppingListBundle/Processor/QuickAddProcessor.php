@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ShoppingListBundle\Processor;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Oro\Bundle\UIBundle\Tools\ArrayUtils;
 
@@ -49,7 +50,10 @@ class QuickAddProcessor implements ComponentProcessorInterface
         $productIds = $this->getProductRepository()->getProductsIdsBySku($productSkus);
         $productQuantities = array_combine($productIds, ArrayUtils::arrayColumn($data, 'productQuantity'));
 
-        $this->shoppingListLineItemHandler->createForShoppingList($shoppingList, $productIds, $productQuantities);
+        try {
+            $this->shoppingListLineItemHandler->createForShoppingList($shoppingList, $productIds, $productQuantities);
+        } catch (AccessDeniedException $e) {
+        }
     }
 
     /** {@inheritdoc} */
@@ -70,11 +74,15 @@ class QuickAddProcessor implements ComponentProcessorInterface
         return $this->registry->getManagerForClass($this->productClass)->getRepository($this->productClass);
     }
 
-    /**
-     * @param string $productClass
-     */
+    /** @param string $productClass */
     public function setProductClass($productClass)
     {
         $this->productClass = $productClass;
+    }
+
+    /** {@inheritdoc} */
+    public function isAllowed()
+    {
+        return true;
     }
 }

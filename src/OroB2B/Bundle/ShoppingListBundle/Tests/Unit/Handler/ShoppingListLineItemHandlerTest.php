@@ -82,6 +82,44 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param bool $isGrantedAdd
+     * @param bool $expected
+     * @param bool $isGrantedEdit
+     * @param ShoppingList|null $shoppingList
+     *
+     * @dataProvider isAllowedDataProvider
+     */
+    public function testIsAllowed($isGrantedAdd, $expected, ShoppingList $shoppingList = null, $isGrantedEdit = false)
+    {
+        $this->securityFacade->expects($this->at(0))->method('isGranted')
+            ->with('orob2b_shopping_list_line_item_frontend_add')
+            ->willReturn($isGrantedAdd);
+
+        if ($shoppingList && $isGrantedAdd) {
+            $this->securityFacade
+                ->expects($this->at(1))
+                ->method('isGranted')
+                ->with('EDIT', $shoppingList)
+                ->willReturn($isGrantedEdit);
+        }
+
+        $this->assertEquals($expected, $this->handler->isAllowed($shoppingList));
+    }
+
+    /** @return array */
+    public function isAllowedDataProvider()
+    {
+        return [
+            [false, false],
+            [true, true],
+            [false, false, new ShoppingList(), false],
+            [false, false, new ShoppingList(), true],
+            [true, false, new ShoppingList(), false],
+            [true, true, new ShoppingList(), true],
+        ];
+    }
+
+    /**
      * @param array $productIds
      * @param array $productQuantities
      * @param array $expectedLineItems
@@ -105,15 +143,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getAccountUser')
             ->willReturn($accountUser);
 
-        $this->securityFacade->expects($this->at(0))
-            ->method('isGranted')
-            ->with('EDIT', $shoppingList)
-            ->willReturn(true);
-
-        $this->securityFacade->expects($this->at(1))
-            ->method('isGranted')
-            ->with('orob2b_shopping_list_line_item_frontend_add')
-            ->willReturn(true);
+        $this->securityFacade->expects($this->any())->method('isGranted')->willReturn(true);
 
         $this->manager->expects($this->once())->method('bulkAddLineItems')->with(
             $this->callback(
