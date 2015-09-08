@@ -51,6 +51,9 @@ class FormViewListener
         }
 
         $accountUserId = (int)$this->request->get('id');
+        if (!$accountUserId) {
+            return;
+        }
         /** @var AccountUser $accountUser */
         $accountUser = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:AccountUser', $accountUserId);
         if (!$accountUser) {
@@ -73,6 +76,9 @@ class FormViewListener
         }
 
         $accountId = (int)$this->request->get('id');
+        if (!$accountId) {
+            return;
+        }
         /** @var Account $account */
         $account = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:Account', $accountId);
         if (!$account) {
