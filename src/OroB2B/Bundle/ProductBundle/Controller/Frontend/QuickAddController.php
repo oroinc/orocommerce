@@ -27,6 +27,7 @@ class QuickAddController extends Controller
     {
         $response = null;
         $formOptions = [];
+        $flashBag = $this->get('session')->getFlashBag();
 
         $processor = $this->getProcessor($this->getComponentName($request));
         if ($processor) {
@@ -37,17 +38,23 @@ class QuickAddController extends Controller
         if ($request->isMethod(Request::METHOD_POST)) {
             if ($processor) {
                 $form->submit($request);
-
-                if ($form->isValid()) {
-                    $products = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getData();
-                    $response = $processor->process(is_array($products) ? $products : [], $request);
-                    if (!$response) {
-                        // reset form
-                        $form = $this->createForm(QuickAddType::NAME, null, $formOptions);
+                if ($processor->isAllowed()) {
+                    if ($form->isValid()) {
+                        $products = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getData();
+                        $response = $processor->process(is_array($products) ? $products : [], $request);
+                        if (!$response) {
+                            // reset form
+                            $form = $this->createForm(QuickAddType::NAME, null, $formOptions);
+                        }
                     }
+                } else {
+                    $flashBag->add(
+                        'error',
+                        $this->get('translator')->trans('orob2b.product.frontend.component_not_allowed.message')
+                    );
                 }
             } else {
-                $this->get('session')->getFlashBag()->add(
+                $flashBag->add(
                     'error',
                     $this->get('translator')->trans('orob2b.product.frontend.component_not_found.message')
                 );
