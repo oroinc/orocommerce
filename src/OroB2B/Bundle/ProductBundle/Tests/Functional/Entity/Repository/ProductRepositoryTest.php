@@ -97,8 +97,18 @@ class ProductRepositoryTest extends WebTestCase
         $product3 = $this->getProduct(ProductFixture::PRODUCT_3);
 
         $this->assertEquals(
-            [$product3->getId(), $product1->getId(), $product2->getId()],
-            $this->getRepository()->getProductsIdsBySku([$product3->getSku(), $product1->getSku(), $product2->getSku()])
+            [
+                $product1->getSku() => $product1->getId(),
+                $product2->getSku() => $product2->getId(),
+                $product3->getSku() => $product3->getId(),
+            ],
+            $this->getRepository()->getProductsIdsBySku(
+                [
+                    $product3->getSku(),
+                    $product1->getSku(),
+                    $product2->getSku(),
+                ]
+            )
         );
     }
 }

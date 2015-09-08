@@ -100,7 +100,7 @@ class QuickAddProcessorTest extends \PHPUnit_Framework_TestCase
                     ['productSku' => 'sku2', 'productQuantity' => 3],
                 ],
                 new Request(),
-                [1, 2],
+                ['sku1' => 1, 'sku2' => 2],
                 [1 => 2, 2 => 3],
             ],
             'existing shopping list' => [
@@ -109,7 +109,16 @@ class QuickAddProcessorTest extends \PHPUnit_Framework_TestCase
                     ['productSku' => 'sku2', 'productQuantity' => 3],
                 ],
                 new Request(['additional' => 1]),
-                [1, 2],
+                ['sku1' => 1, 'sku2' => 2],
+                [1 => 2, 2 => 3],
+            ],
+            'ids sorting' => [
+                [
+                    ['productSku' => 'sku2', 'productQuantity' => 3],
+                    ['productSku' => 'sku1', 'productQuantity' => 2],
+                ],
+                new Request(['additional' => 1]),
+                ['sku2' => 2, 'sku1' => 1],
                 [1 => 2, 2 => 3],
             ],
         ];

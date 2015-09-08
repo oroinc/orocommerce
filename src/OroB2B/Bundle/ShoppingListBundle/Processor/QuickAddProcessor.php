@@ -48,10 +48,15 @@ class QuickAddProcessor implements ComponentProcessorInterface
 
         $productSkus = ArrayUtils::arrayColumn($data, 'productSku');
         $productIds = $this->getProductRepository()->getProductsIdsBySku($productSkus);
-        $productQuantities = array_combine($productIds, ArrayUtils::arrayColumn($data, 'productQuantity'));
+        $productSkuQuantities = array_combine($productSkus, ArrayUtils::arrayColumn($data, 'productQuantity'));
+        $productIdsQuantities = array_combine($productIds, $productSkuQuantities);
 
         try {
-            $this->shoppingListLineItemHandler->createForShoppingList($shoppingList, $productIds, $productQuantities);
+            $this->shoppingListLineItemHandler->createForShoppingList(
+                $shoppingList,
+                $productIds,
+                $productIdsQuantities
+            );
         } catch (AccessDeniedException $e) {
         }
     }
