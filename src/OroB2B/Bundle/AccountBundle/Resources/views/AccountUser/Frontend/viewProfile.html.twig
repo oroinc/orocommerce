@@ -20,7 +20,7 @@
 {% endblock stats %}
 
 {% block navButtons %}
-    {% if editRoute is defined %}
+    {% if editRoute is defined and resource_granted('EDIT', entity) %}
         {{ UI.editButton({
             'path': path(editRoute),
             'entity_label': 'orob2b.account.accountuser.profile.label'|trans
