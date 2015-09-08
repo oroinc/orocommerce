@@ -17,6 +17,7 @@ parameters:
 
     orob2b_product.component_processor.registry.class: OroB2B\Bundle\ProductBundle\Model\ComponentProcessorRegistry
     orob2b_product.processor.data_storage_aware.class: OroB2B\Bundle\ProductBundle\Model\DataStorageAwareProcessor
+    orob2b_product.form_handler.quick_add.class: OroB2B\Bundle\ProductBundle\Form\Handler\QuickAddHandler
 
 services:
     orob2b_product.form.product:
@@ -121,3 +122,10 @@ services:
             - @orob2b_product.service.product_data_storage
             - @oro_security.security_facade
         abstract: true
+
+    orob2b_product.form_handler.quick_add:
+        class: %orob2b_product.form_handler.quick_add.class%
+        arguments:
+            - @translator
+            - @form.factory
+            - @orob2b_product.component_processor.registry
