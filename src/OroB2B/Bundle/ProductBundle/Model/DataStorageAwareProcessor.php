@@ -6,6 +6,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class DataStorageAwareProcessor implements ComponentProcessorInterface
@@ -80,6 +82,10 @@ class DataStorageAwareProcessor implements ComponentProcessorInterface
      */
     public function isAllowed()
     {
+        if (!$this->acl) {
+            return true;
+        }
+
         return $this->securityFacade->isGranted($this->acl);
     }
 

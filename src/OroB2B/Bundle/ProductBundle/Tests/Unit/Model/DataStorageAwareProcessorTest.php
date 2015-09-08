@@ -110,8 +110,10 @@ class DataStorageAwareProcessorTest extends \PHPUnit_Framework_TestCase
      */
     public function testProcessorIsAllowed($acl, $isGranted)
     {
-        $this->securityFacade->expects($this->any())->method('isGranted')
-            ->with($acl)->willReturn($isGranted);
+        if (null !== $acl) {
+            $this->securityFacade->expects($this->any())->method('isGranted')
+                ->with($acl)->willReturn($isGranted);
+        }
 
         $this->processor->setAcl($acl);
         $this->assertEquals($isGranted, $this->processor->isAllowed());
@@ -120,8 +122,7 @@ class DataStorageAwareProcessorTest extends \PHPUnit_Framework_TestCase
     public function processorIsAllowedProvider()
     {
         return [
-            [null, null],
-            ['undefined', null],
+            [null, true],
             ['fail', false],
             ['success', true],
         ];
