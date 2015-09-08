@@ -54,7 +54,7 @@ class QuickAddProcessor implements ComponentProcessorInterface
         try {
             $this->shoppingListLineItemHandler->createForShoppingList(
                 $shoppingList,
-                $productIds,
+                array_values($productIds),
                 $productIdsQuantities
             );
         } catch (AccessDeniedException $e) {
