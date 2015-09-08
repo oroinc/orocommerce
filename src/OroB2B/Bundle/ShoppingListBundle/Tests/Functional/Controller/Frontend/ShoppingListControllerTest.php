@@ -3,10 +3,13 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Form;
 
 use Oro\Component\Testing\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Model\ComponentProcessorInterface;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
@@ -129,5 +132,100 @@ class ShoppingListControllerTest extends WebTestCase
         $html = $crawler->html();
 
         $this->assertContains('Shopping List has been saved', $html);
+    }
+
+    public function testQuickAdd()
+    {
+        $response = $this->requestFrontendGrid('frontend-shopping-list-grid');
+        $result = $this->getJsonResponseContent($response, 200);
+        $shoppingListsCount = count($result['data']);
+
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_frontend_quick_add'));
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+
+        /** @var Product $product */
+        $product = $this->getReference('product.3');
+        $products = [[
+            'productSku' => $product->getSku(),
+            'productQuantity' => 15
+        ]];
+
+        $form = $crawler->filter('form[name="oro_product_quick_add"]')->form();
+        $processor = $this->getContainer()->get('orob2b_shopping_list.processor.quick_add');
+
+        $this->assertQuickAddFormSubmitted($form, $products, $processor);
+
+        $response = $this->requestFrontendGrid([
+            'gridName' => 'frontend-shopping-list-grid',
+            'frontend-shopping-list-grid[_sort_by][createdAt]' => 'DESC',
+        ]);
+
+        $result = $this->getJsonResponseContent($response, 200);
+        $this->assertCount($shoppingListsCount + 1, $result['data']);
+
+        $data = reset($result['data']);
+        $shoppingListId = $data['id'];
+
+        $this->assertShoppingListItemSaved($shoppingListId, $product->getSku(), 15);
+
+        $this->assertQuickAddFormSubmitted($form, $products, $processor, $shoppingListId);
+
+        $this->assertShoppingListItemSaved($shoppingListId, $product->getSku(), 30);
+    }
+
+    /**
+     * @param Form $form
+     * @param array $products
+     * @param ComponentProcessorInterface $processor
+     * @param int|null $shippingListId
+     * @return Crawler
+     */
+    protected function assertQuickAddFormSubmitted(
+        Form $form,
+        array $products,
+        ComponentProcessorInterface $processor,
+        $shippingListId = null
+    ) {
+        $this->client->followRedirects(true);
+
+        $crawler = $this->client->request(
+            $form->getMethod(),
+            $form->getUri(),
+            [
+                'oro_product_quick_add' => [
+                    '_token' => $form['oro_product_quick_add[_token]']->getValue(),
+                    'products' => $products,
+                    'component' => $processor->getName(),
+                    'additional' => $shippingListId
+                ]
+            ]
+        );
+
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+
+        return $crawler;
+    }
+
+    /**
+     * @param int $shoppingListId
+     * @param string $sku
+     * @param int $quantity
+     */
+    protected function assertShoppingListItemSaved($shoppingListId, $sku, $quantity)
+    {
+        $response = $this->requestFrontendGrid(
+            [
+                'gridName' => 'frontend-shopping-list-line-items-grid',
+                'frontend-shopping-list-line-items-grid[shopping_list_id]' => $shoppingListId,
+            ]
+        );
+
+        $result = $this->getJsonResponseContent($response, 200);
+        $this->assertCount(1, $result['data']);
+
+        $data = reset($result['data']);
+
+        $this->assertEquals($sku, $data['productSku']);
+        $this->assertEquals($quantity, $data['quantity']);
     }
 }
