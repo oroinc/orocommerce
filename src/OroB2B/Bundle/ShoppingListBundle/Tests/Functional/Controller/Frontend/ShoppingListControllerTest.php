@@ -180,7 +180,7 @@ class ShoppingListControllerTest extends WebTestCase
         array $products,
         $shippingListId = null
     ) {
-        $form = $crawler->filter('form[name="oro_product_quick_add"]')->form();
+        $form = $crawler->filter('form[name="orob2b_product_quick_add"]')->form();
         $processor = $this->getContainer()->get('orob2b_shopping_list.processor.quick_add');
 
         $this->client->followRedirects(true);
@@ -189,8 +189,8 @@ class ShoppingListControllerTest extends WebTestCase
             $form->getMethod(),
             $form->getUri(),
             [
-                'oro_product_quick_add' => [
-                    '_token' => $form['oro_product_quick_add[_token]']->getValue(),
+                'orob2b_product_quick_add' => [
+                    '_token' => $form['orob2b_product_quick_add[_token]']->getValue(),
                     'products' => $products,
                     'component' => $processor->getName(),
                     'additional' => $shippingListId
