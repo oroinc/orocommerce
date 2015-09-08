@@ -5,9 +5,9 @@ namespace OroB2B\Bundle\FrontendBundle\Menu;
 use Symfony\Component\Routing\Route;
 
 use Oro\Bundle\NavigationBundle\Menu\BreadcrumbManager as BaseBreadcrumbManager;
-use Oro\Bundle\NavigationBundle\Menu\BreadcrumbProviderInterface;
+use Oro\Bundle\NavigationBundle\Menu\BreadcrumbManagerInterface;
 
-class BreadcrumbManager extends BaseBreadcrumbManager implements BreadcrumbProviderInterface
+class BreadcrumbManager extends BaseBreadcrumbManager implements BreadcrumbManagerInterface
 {
     const FRONTEND_MENU = 'frontend_menu';
     const FRONTEND_OPTION = 'frontend';
@@ -25,11 +25,7 @@ class BreadcrumbManager extends BaseBreadcrumbManager implements BreadcrumbProvi
         return $this->isRouteFrontend($route);
     }
 
-    /**
-     * @param \Knp\Menu\ItemInterface|string $menu
-     * @param string $routeName
-     * @return array
-     */
+    /** {@inheritdoc} */
     public function getBreadcrumbLabels($menu, $routeName)
     {
         $route = $this->router->getRouteCollection()->get($routeName);

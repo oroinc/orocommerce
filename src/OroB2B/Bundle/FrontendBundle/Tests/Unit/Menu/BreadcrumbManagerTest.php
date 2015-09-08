@@ -2,10 +2,15 @@
 
 namespace OroB2B\Bundle\FrontendBundle\Tests\Unit\Menu;
 
+use Knp\Menu\FactoryInterface;
+use Knp\Menu\Matcher\Matcher;
 use Knp\Menu\MenuItem;
 
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\Router;
+
+use Oro\Bundle\NavigationBundle\Provider\BuilderChainProvider;
 
 use OroB2B\Bundle\FrontendBundle\Menu\BreadcrumbManager;
 
@@ -17,22 +22,22 @@ class BreadcrumbManagerTest extends \PHPUnit_Framework_TestCase
     protected $manager;
 
     /**
-     * @var \Oro\Bundle\NavigationBundle\Provider\BuilderChainProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var BuilderChainProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $provider;
 
     /**
-     * @var \Knp\Menu\Matcher\Matcher|\PHPUnit_Framework_MockObject_MockObject
+     * @var Matcher|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $matcher;
 
     /**
-     * @var \Symfony\Component\Routing\Router|\PHPUnit_Framework_MockObject_MockObject
+     * @var Router|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $router;
 
     /**
-     * @var \Knp\Menu\FactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var FactoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $factory;
 
