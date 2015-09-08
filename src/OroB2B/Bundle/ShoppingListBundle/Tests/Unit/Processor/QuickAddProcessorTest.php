@@ -100,7 +100,7 @@ class QuickAddProcessorTest extends \PHPUnit_Framework_TestCase
                     ['productSku' => 'sku2', 'productQuantity' => 3],
                 ],
                 new Request(),
-                ['sku1' => 1, 'sku2' => 2],
+                [1, 2],
                 [1 => 2, 2 => 3],
             ],
             'existing shopping list' => [
@@ -108,8 +108,8 @@ class QuickAddProcessorTest extends \PHPUnit_Framework_TestCase
                     ['productSku' => 'sku1', 'productQuantity' => 2],
                     ['productSku' => 'sku2', 'productQuantity' => 3],
                 ],
-                new Request(['additional' => 1]),
-                ['sku1' => 1, 'sku2' => 2],
+                new Request(['oro_product_quick_add' => ['additional' => 1]]),
+                [1, 2],
                 [1 => 2, 2 => 3],
             ],
             'ids sorting' => [
@@ -117,8 +117,8 @@ class QuickAddProcessorTest extends \PHPUnit_Framework_TestCase
                     ['productSku' => 'sku2', 'productQuantity' => 3],
                     ['productSku' => 'sku1', 'productQuantity' => 2],
                 ],
-                new Request(['additional' => 1]),
-                ['sku2' => 2, 'sku1' => 1],
+                new Request(['oro_product_quick_add' => ['additional' => 1]]),
+                [2, 1],
                 [1 => 2, 2 => 3],
             ],
         ];

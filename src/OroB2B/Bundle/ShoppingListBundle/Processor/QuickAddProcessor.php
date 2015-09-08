@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\ShoppingListBundle\Processor;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -43,7 +44,11 @@ class QuickAddProcessor implements ComponentProcessorInterface
             return;
         }
 
-        $shoppingListId = (int)$request->get('additional');
+        $shoppingListId = (int)$request->get(
+            sprintf('%s[%s]', QuickAddType::NAME, QuickAddType::ADDITIONAL_FIELD_NAME),
+            null,
+            true
+        );
         $shoppingList = $this->shoppingListLineItemHandler->getShoppingList($shoppingListId);
 
         $productSkus = ArrayUtils::arrayColumn($data, 'productSku');
