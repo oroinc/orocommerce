@@ -25,13 +25,6 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  *              "type"="ACL",
  *              "group_name"="commerce"
  *          },
- *          "ownership"={
- *              "frontend_owner_type"="FRONTEND_ACCOUNT",
- *              "frontend_owner_field_name"="account",
- *              "frontend_owner_column_name"="account_id",
- *              "organization_field_name"="organization",
- *              "organization_column_name"="organization_id"
- *          },
  *          "dataaudit"={
  *              "auditable"=true
  *          },
