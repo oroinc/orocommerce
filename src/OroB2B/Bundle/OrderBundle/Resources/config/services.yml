@@ -14,7 +14,7 @@ parameters:
     orob2b_order.manager.order_address.class: OroB2B\Bundle\OrderBundle\Model\OrderAddressManager
     orob2b_order.model.order_request_handler.class: OroB2B\Bundle\OrderBundle\Model\OrderRequestHandler
     orob2b_order.model.order_currency_handler.class: OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler
-
+    orob2b_order.event_listener.form_view.class: OroB2B\Bundle\OrderBundle\EventListener\FormViewListener
 services:
     orob2b_order.order.manager.api:
         class: %orob2b_order.order.manager.api.class%
@@ -77,3 +77,14 @@ services:
         class: %orob2b_order.model.order_currency_handler.class%
         arguments:
             - @oro_locale.settings
+
+    orob2b_order.event_listener.form_view:
+        class: %orob2b_order.event_listener.form_view.class%
+        arguments:
+            - @translator
+            - @oro_entity.doctrine_helper
+        calls:
+            - [setRequest, ["@?request="]]
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-user-view, method: onAccountUserView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onAccountView }
