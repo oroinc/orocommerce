@@ -101,8 +101,15 @@
             </div>
 
             {% if allow_add %}
-                <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
+            <div class="btn-group pull-left">
+                <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);">
+                    <i class="icon-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}
+                </a>
+            </div>
             {% endif %}
+            <div class="btn-group pull-right add-buttons">
+                {% placeholder orob2b_product_quick_add_buttons with {'form': form} %}
+            </div>
         </div>
     {% endspaceless %}
 {% endblock %}
