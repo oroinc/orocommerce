@@ -31,6 +31,7 @@
                             >
 
                             <fieldset class="form-horizontal">
+                                {{ form_errors(form) }}
                                 {{ form_widget(form.products) }}
                                 {{ form_row(form.component) }}
                                 {{ form_row(form.additional) }}

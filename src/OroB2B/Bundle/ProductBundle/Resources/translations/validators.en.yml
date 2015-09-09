@@ -2,3 +2,4 @@ orob2b:
     product:
         product_by_sku:
             not_found: Product with SKU not found
+        at_least_one_item: Please add at least one item
