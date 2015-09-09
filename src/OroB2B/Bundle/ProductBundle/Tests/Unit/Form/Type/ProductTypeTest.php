@@ -23,6 +23,7 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductVariantLinksType;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductCustomFieldsChoiceType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
@@ -104,7 +105,8 @@ class ProductTypeTest extends FormIntegrationTestCase
                     ProductCustomFieldsChoiceType::NAME => new StubProductCustomFieldsChoiceType(
                         $this->exampleCustomFields
                     ),
-                    EntityIdentifierType::NAME => new StubEntityIdentifierType([])
+                    EntityIdentifierType::NAME => new StubEntityIdentifierType([]),
+                    ProductVariantLinksType::NAME => new ProductVariantLinksType()
                 ],
                 [
                     'form' => [

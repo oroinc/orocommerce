@@ -19,18 +19,13 @@ class ProductVariantLinksTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var string
-     */
-    protected $productClass = 'stdClass';
-
-    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
         parent::setUp();
 
-        $this->formType = new ProductVariantLinksType($this->productClass, $this->getTransformerMock());
+        $this->formType = new ProductVariantLinksType();
     }
 
     /**
@@ -51,13 +46,5 @@ class ProductVariantLinksTypeTest extends FormIntegrationTestCase
                 EntityIdentifierType::NAME => new StubEntityIdentifierType([]),
             ], [])
         ];
-    }
-
-    /**
-     * @return ProductVariantLinksDataTransformer|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private function getTransformerMock()
-    {
-        return $this->getMock('OroB2B\Bundle\ProductBundle\Form\DataTransformer\ProductVariantLinksDataTransformer');
     }
 }

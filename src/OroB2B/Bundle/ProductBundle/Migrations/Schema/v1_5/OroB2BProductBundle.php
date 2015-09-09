@@ -33,8 +33,6 @@ class OroB2BProductBundle implements Migration
         $table->addColumn('parent_product_id', 'integer', ['notnull' => true]);
         $table->addColumn('linked', 'boolean', ['default' => true]);
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['product_id'], 'uniq_22accd774584665a');
-        $table->addIndex(['parent_product_id'], 'idx_22accd772c7e20a');
     }
 
     /**

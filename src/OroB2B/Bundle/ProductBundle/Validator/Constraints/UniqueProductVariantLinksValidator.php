@@ -25,7 +25,7 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
 
     /**
      * @param Product $value
-     * @param UniqueProductVariantLinks $constraint
+     * @param UniqueProductVariantLinks|Constraint $constraint
      */
     public function validate($value, Constraint $constraint)
     {

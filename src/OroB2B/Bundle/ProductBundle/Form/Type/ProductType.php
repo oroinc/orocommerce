@@ -131,14 +131,9 @@ class ProductType extends AbstractType
                     'tooltip'  => 'orob2b.product.form.tooltip.unit_precision',
                     'required' => false
                 ]
-            )
-            ->add(
-                'variantLinks',
-                new ProductVariantLinksType($this->dataClass),
-                [
-                    'by_reference' => false
-                ]
             );
+
+        $this->addVariantLinks($builder);
     }
 
     /**
@@ -159,5 +154,20 @@ class ProductType extends AbstractType
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
+     */
+    private function addVariantLinks(FormBuilderInterface $builder)
+    {
+        $builder->add(
+            'variantLinks',
+            ProductVariantLinksType::NAME,
+            [
+                'product_class' => $this->dataClass,
+                'by_reference' => false
+            ]
+        );
     }
 }

@@ -39,7 +39,7 @@ class ProductVariantLinksDataTransformer implements DataTransformerInterface
     public function reverseTransform($value)
     {
         if (!$value) {
-            return;
+            return null;
         }
 
         $appendVariants = $value['appendVariants'];

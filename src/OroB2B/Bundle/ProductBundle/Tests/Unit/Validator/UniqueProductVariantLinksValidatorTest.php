@@ -2,9 +2,10 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Validator;
 
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
+
 use OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks;
 use OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator;
@@ -79,15 +80,12 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
         $product->setVariants(true);
         $product->setVariantFields(array_keys($variantLinkFields[0]));
 
-        $variantLinks = [];
-
         foreach ($variantLinkFields as $fields) {
             $variantProduct = new StubProduct();
             $variantProduct->setSize($fields[self::VARIANT_FIELD_KEY_SIZE]);
             $variantProduct->setColor($fields[self::VARIANT_FIELD_KEY_COLOR]);
 
             $variantLink =  new ProductVariantLink($product, $variantProduct);
-            $variantLinks[] = $variantLink;
             $product->addVariantLink($variantLink);
         }
 

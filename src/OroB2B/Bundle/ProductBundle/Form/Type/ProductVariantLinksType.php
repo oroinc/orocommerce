@@ -4,27 +4,13 @@ namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use OroB2B\Bundle\ProductBundle\Form\DataTransformer\ProductVariantLinksDataTransformer;
 
 class ProductVariantLinksType extends AbstractType
 {
     const NAME = 'orob2b_product_variant_links';
-
-    /**
-     * @var string
-     */
-    private $dataClass;
-
-    /**
-     * @param string $dataClass
-     * @param ProductVariantLinksDataTransformer $transformer
-     */
-    public function __construct($dataClass, ProductVariantLinksDataTransformer $transformer = null)
-    {
-        $this->dataClass = $dataClass;
-        $this->transformer = $transformer ?: new ProductVariantLinksDataTransformer();
-    }
 
     /**
      * @param FormBuilderInterface $builder
@@ -37,7 +23,7 @@ class ProductVariantLinksType extends AbstractType
                 'appendVariants',
                 'oro_entity_identifier',
                 [
-                    'class'    => $this->dataClass,
+                    'class'    => $options['product_class'],
                     'required' => false,
                     'mapped'   => true,
                     'multiple' => true
@@ -47,14 +33,14 @@ class ProductVariantLinksType extends AbstractType
                 'removeVariants',
                 'oro_entity_identifier',
                 [
-                    'class'    => $this->dataClass,
+                    'class'    => $options['product_class'],
                     'required' => false,
                     'mapped'   => true,
                     'multiple' => true
                 ]
             );
 
-        $builder->addModelTransformer($this->transformer);
+        $builder->addModelTransformer(new ProductVariantLinksDataTransformer());
     }
 
     /**
@@ -63,5 +49,15 @@ class ProductVariantLinksType extends AbstractType
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * @param OptionsResolverInterface $resolver
+     */
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults([
+            'product_class' => null
+        ]);
     }
 }

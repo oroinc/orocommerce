@@ -55,6 +55,7 @@ use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
  * @ORM\HasLifecycleCallbacks()
  *
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Product extends ExtendProduct implements OrganizationAwareInterface
 {

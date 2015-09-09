@@ -15,7 +15,7 @@ class ProductCustomFieldsChoiceTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var CustomFieldProvider
+     * @var CustomFieldProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $customFieldProvider;
 

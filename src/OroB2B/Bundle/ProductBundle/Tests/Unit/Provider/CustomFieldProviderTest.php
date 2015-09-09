@@ -56,12 +56,12 @@ class CustomFieldProviderTest extends \PHPUnit_Framework_TestCase
 
         $extendsConfigs = [];
         foreach ($allFields as $fieldName => $fieldData) {
-            $extendsConfigs[$fieldName] = $this->createExtendConfig($fieldName, $fieldData);
+            $extendsConfigs[$fieldName] = $this->createConfigByScope('extend', $fieldName, $fieldData);
         }
 
         $entityConfigs = [];
         foreach ($allFields as $fieldName => $fieldData) {
-            $entityConfigs[$fieldName] =  $this->createEntityConfig($fieldName, $fieldData);
+            $entityConfigs[$fieldName] =  $this->createConfigByScope('entity', $fieldName, $fieldData);
         }
 
         $this->extendConfigProvider
@@ -108,20 +108,11 @@ class CustomFieldProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $fieldName
      * @param array $fieldData
+     * @param string $scope
      * @return Config
      */
-    private function createEntityConfig($fieldName, $fieldData)
+    private function createConfigByScope($scope, $fieldName, $fieldData)
     {
-        return $this->createConfig('entity', $fieldName, $fieldData['type'], $fieldData);
-    }
-
-    /**
-     * @param string $fieldName
-     * @param array $fieldData
-     * @return Config
-     */
-    private function createExtendConfig($fieldName, $fieldData)
-    {
-        return $this->createConfig('extend', $fieldName, $fieldData['type'], $fieldData);
+        return $this->createConfig($scope, $fieldName, $fieldData['type'], $fieldData);
     }
 }

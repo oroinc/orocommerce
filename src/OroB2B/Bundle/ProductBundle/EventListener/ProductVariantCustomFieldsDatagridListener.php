@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\ProductBundle\EventListener;
 
+use Doctrine\ORM\EntityRepository;
+
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
@@ -55,10 +57,13 @@ class ProductVariantCustomFieldsDatagridListener
     public function onBuildBefore(BuildBefore $event)
     {
         $config = $event->getConfig();
-        $parentProduct = $this->getProductById($event->getDatagrid()->getParameters()->get('parentProduct'));
+
+        $productRepository = $this->getProductRepository();
+        /** @var Product $parentProduct */
+        $parentProduct = $productRepository->find($event->getDatagrid()->getParameters()->get('parentProduct'));
 
         foreach ($this->getActualVariantField($parentProduct) as $customField) {
-            $columnName = $this->buildColumnName($customField['name']);
+            $columnName = $customField['name'];
             $column = ['label' => $customField['label']];
 
             $config->offsetSetByPath(sprintf('[columns][%s]', $columnName), $column);
@@ -73,38 +78,30 @@ class ProductVariantCustomFieldsDatagridListener
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
 
-        $parentProduct = $this->getProductById($event->getDatagrid()->getParameters()->get('parentProduct'));
+        $productRepository = $this->getProductRepository();
+        /** @var Product $parentProduct */
+        $parentProduct = $productRepository->find($event->getDatagrid()->getParameters()->get('parentProduct'));
         $customFields = $this->getActualVariantField($parentProduct);
 
         foreach ($records as $record) {
             $productId = $record->getValue('id');
-            $product = $this->getProductById($productId);
+            $product = $productRepository->find($productId);
 
             $data = [];
             foreach ($customFields as $customField) {
                 $fieldName = $customField['name'];
-                $data[$this->buildColumnName($fieldName)] = $this->accessor->getValue($product, $fieldName);
+                $data[$fieldName] = $this->accessor->getValue($product, $fieldName);
             }
             $record->addData($data);
         }
     }
 
     /**
-     * @param string $fieldName
-     * @return string
+     * @return EntityRepository
      */
-    protected function buildColumnName($fieldName)
+    private function getProductRepository()
     {
-        return $fieldName;
-    }
-
-    /**
-     * @param int $productId
-     * @return null|Product
-     */
-    private function getProductById($productId)
-    {
-        return $this->doctrineHelper->getEntityRepository($this->productClass)->find($productId);
+        return $this->doctrineHelper->getEntityRepository($this->productClass);
     }
 
     /**
