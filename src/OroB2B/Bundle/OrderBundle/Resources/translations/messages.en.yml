@@ -20,6 +20,7 @@ orob2b:
         shipping_address.label: Shipping Address
         price_list.label: 'Price List'
         line_items.label: Line Items
+        line_items_count.label: '# Line Items'
 
         orderaddress:
             entity_label: Order Address
@@ -126,3 +127,4 @@ orob2b:
 
         subtotals:
             subtotal: Subtotal
+        sales_orders.label: 'Sales Orders'
