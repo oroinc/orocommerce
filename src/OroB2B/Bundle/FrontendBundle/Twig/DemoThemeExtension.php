@@ -11,6 +11,9 @@ class DemoThemeExtension extends \Twig_Extension
 {
     const NAME = 'orob2b_frontend_theme';
 
+    const TAG_NAME = 'orob2b_css';
+    const PARSER_OUTPUT = 'css/*.css';
+
     /**
      * @var AssetsConfiguration
      */
@@ -51,8 +54,8 @@ class DemoThemeExtension extends \Twig_Extension
                 $this->assetsConfiguration,
                 $this->assetFactory,
                 $this->themeRegistry,
-                'orob2b_css',
-                'css/*.css'
+                self::TAG_NAME,
+                self::PARSER_OUTPUT
             )
         ];
     }
