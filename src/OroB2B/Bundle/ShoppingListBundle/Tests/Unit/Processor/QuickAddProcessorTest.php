@@ -5,8 +5,11 @@ namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Processor;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use OroB2B\Bundle\ShoppingListBundle\Generator\MessageGenerator;
 use OroB2B\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 use OroB2B\Bundle\ShoppingListBundle\Processor\QuickAddProcessor;
 
@@ -20,6 +23,9 @@ class QuickAddProcessorTest extends \PHPUnit_Framework_TestCase
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry */
     protected $registry;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|MessageGenerator */
+    protected $messageGenerator;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|ProductRepository */
     protected $productRepository;
@@ -37,18 +43,22 @@ class QuickAddProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
 
+        $this->messageGenerator = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Generator\MessageGenerator')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
 
         $this->registry->expects($this->any())->method('getManagerForClass')->willReturn($em);
         $em->expects($this->any())->method('getRepository')->willReturn($this->productRepository);
 
-        $this->processor = new QuickAddProcessor($this->handler, $this->registry);
+        $this->processor = new QuickAddProcessor($this->handler, $this->registry, $this->messageGenerator);
         $this->processor->setProductClass('OroB2B\Bundle\ProductBundle\Entity\Product');
     }
 
     protected function tearDown()
     {
-        unset($this->handler, $this->processor);
+        unset($this->handler, $this->processor, $this->registry, $this->messageGenerator);
     }
 
     public function testGetName()
@@ -62,10 +72,18 @@ class QuickAddProcessorTest extends \PHPUnit_Framework_TestCase
      * @param Request $request
      * @param array $productIds
      * @param array $productQuantities
+     * @param bool $failed
      * @dataProvider processDataProvider
      */
-    public function testProcess(array $data, Request $request, array $productIds = [], array $productQuantities = [])
-    {
+    public function testProcess(
+        array $data,
+        Request $request,
+        array $productIds = [],
+        array $productQuantities = [],
+        $failed = false
+    ) {
+        $entitiesCount = count($data);
+
         $this->handler->expects($this->any())->method('getShoppingList')->will(
             $this->returnCallback(
                 function ($shoppingListId) {
@@ -80,13 +98,57 @@ class QuickAddProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->productRepository->expects($this->any())->method('getProductsIdsBySku')->willReturn($productIds);
 
-        $this->handler->expects($data ? $this->once() : $this->never())->method('createForShoppingList')->with(
-            $this->isInstanceOf('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList'),
-            $productIds,
-            $productQuantities
-        );
+        if ($failed) {
+            $this->handler->expects($this->once())
+                ->method('createForShoppingList')
+                ->willThrowException(new AccessDeniedException());
+        } else {
+            $this->handler->expects($data ? $this->once() : $this->never())
+                ->method('createForShoppingList')
+                ->with(
+                    $this->isInstanceOf('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList'),
+                    $productIds,
+                    $productQuantities
+                )
+                ->willReturn($entitiesCount);
+        }
+
+        if ($failed) {
+            $this->assertFlashMessage($request, true);
+        } elseif ($entitiesCount) {
+            $this->assertFlashMessage($request);
+        }
 
         $this->processor->process($data, $request);
+    }
+
+    /**
+     * @param Request $request
+     * @param bool $isFailedMessage
+     */
+    protected function assertFlashMessage(Request $request, $isFailedMessage = false)
+    {
+        $message = 'test message';
+
+        $this->messageGenerator->expects($this->once())
+            ->method($isFailedMessage ? 'getFailedMessage' : 'getSuccessMessage')
+            ->willReturn($message);
+
+        $flashBag = $this->getMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface');
+        $flashBag->expects($this->once())
+            ->method('add')
+            ->with($isFailedMessage ? 'error' : 'success', $message)
+            ->willReturn($flashBag);
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Session $session */
+        $session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $session->expects($this->once())
+            ->method('getFlashBag')
+            ->willReturn($flashBag);
+
+        $request->setSession($session);
     }
 
     /** @return array */
@@ -120,6 +182,16 @@ class QuickAddProcessorTest extends \PHPUnit_Framework_TestCase
                 new Request(['oro_product_quick_add' => ['additional' => 1]]),
                 [2, 1],
                 [1 => 2, 2 => 3],
+            ],
+            'process failed' => [
+                [
+                    ['productSku' => 'sku1', 'productQuantity' => 2],
+                    ['productSku' => 'sku2', 'productQuantity' => 3],
+                ],
+                new Request(),
+                [1, 2],
+                [1 => 2, 2 => 3],
+                true
             ],
         ];
     }
