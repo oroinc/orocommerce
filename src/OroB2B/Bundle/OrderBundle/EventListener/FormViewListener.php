@@ -46,24 +46,15 @@ class FormViewListener
      */
     public function onAccountUserView(BeforeListRenderEvent $event)
     {
-        if (!$this->request) {
-            return;
-        }
-
-        $accountUserId = (int)$this->request->get('id');
-        if (!$accountUserId) {
-            return;
-        }
         /** @var AccountUser $accountUser */
-        $accountUser = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:AccountUser', $accountUserId);
-        if (!$accountUser) {
-            return;
+        $accountUser = $this->getEntityFromRequestId('OroB2BAccountBundle:AccountUser');
+        if ($accountUser) {
+            $template = $event->getEnvironment()->render(
+                'OroB2BOrderBundle:AccountUser:orders_view.html.twig',
+                ['entity' => $accountUser]
+            );
+            $this->addSalesOrdersBlock($event->getScrollData(), $template);
         }
-        $template = $event->getEnvironment()->render(
-            'OroB2BOrderBundle:AccountUser:orders_view.html.twig',
-            ['entity' => $accountUser]
-        );
-        $this->addSalesOrdersBlock($event->getScrollData(), $template);
     }
 
     /**
@@ -71,24 +62,38 @@ class FormViewListener
      */
     public function onAccountView(BeforeListRenderEvent $event)
     {
+        /** @var Account $account */
+        $account = $this->getEntityFromRequestId('OroB2BAccountBundle:Account');
+        if ($account) {
+            $template = $event->getEnvironment()->render(
+                'OroB2BOrderBundle:Account:orders_view.html.twig',
+                ['entity' => $account]
+            );
+            $this->addSalesOrdersBlock($event->getScrollData(), $template);
+        }
+    }
+
+    /**
+     * @param $className
+     * @return null|object
+     */
+    protected function getEntityFromRequestId($className)
+    {
         if (!$this->request) {
-            return;
+            return null;
         }
 
-        $accountId = (int)$this->request->get('id');
-        if (!$accountId) {
-            return;
+        $entityId = (int)$this->request->get('id');
+        if (!$entityId) {
+            return null;
         }
-        /** @var Account $account */
-        $account = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:Account', $accountId);
-        if (!$account) {
-            return;
+
+        $entity = $this->doctrineHelper->getEntityReference($className, $entityId);
+        if (!$entity) {
+            return null;
         }
-        $template = $event->getEnvironment()->render(
-            'OroB2BOrderBundle:Account:orders_view.html.twig',
-            ['entity' => $account]
-        );
-        $this->addSalesOrdersBlock($event->getScrollData(), $template);
+
+        return $entity;
     }
 
     /**

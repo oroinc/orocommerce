@@ -16,7 +16,6 @@ class FormViewListenerTest extends FormViewListenerTestCase
      */
     protected $listener;
 
-
     /**
      * {@inheritdoc}
      */
@@ -79,11 +78,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
     public function testOnAccountView()
     {
         $request = $this->getRequest();
-        $request
-            ->expects($this->any())
-            ->method('get')
-            ->with('id')
-            ->willReturn(1);
+        $request->expects($this->any())->method('get')->with('id')->willReturn(1);
 
         $this->listener->setRequest($request);
 
@@ -107,6 +102,50 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $event->expects($this->once())
             ->method('getEnvironment')
             ->willReturn($env);
+
+        $this->listener->onAccountView($event);
+    }
+
+    public function testOnAccountViewWithoutId()
+    {
+        $request = $this->getRequest();
+        $request->expects($this->any())->method('get')->with('id')->willReturn(null);
+
+        $this->listener->setRequest($request);
+
+        $account = new Account();
+
+        $this->doctrineHelper
+            ->expects($this->never())
+            ->method('getEntityReference')
+            ->willReturn($account);
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|BeforeListRenderEvent $event */
+        $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $event->expects($this->never())->method('getScrollData');
+
+        $this->listener->onAccountView($event);
+    }
+
+    public function testOnAccountViewWithoutEntity()
+    {
+        $request = $this->getRequest();
+        $request->expects($this->any())->method('get')->with('id')->willReturn(1);
+
+        $this->listener->setRequest($request);
+
+        $this->doctrineHelper
+            ->expects($this->once())
+            ->method('getEntityReference')
+            ->willReturn(null);
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|BeforeListRenderEvent $event */
+        $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $event->expects($this->never())->method('getScrollData');
 
         $this->listener->onAccountView($event);
     }
