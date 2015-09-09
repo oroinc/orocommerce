@@ -37,6 +37,6 @@ abstract class AbstractAccountControllerTest extends WebTestCase
     protected function checkDatagridResponse(Response $response)
     {
         $result = $this->getJsonResponseContent($response, 200);
-        $this->assertContains(sprintf('$%s.00', LoadOrders::SUBTOTAL), $result['data'][0]['subtotal']);
+        $this->assertContains(sprintf('$%.2F', LoadOrders::SUBTOTAL), $result['data'][0]['subtotal']);
     }
 }
