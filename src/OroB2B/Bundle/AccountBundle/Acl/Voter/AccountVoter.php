@@ -142,7 +142,7 @@ class AccountVoter extends AbstractEntityVoter
      * @param string $class
      * @return bool
      */
-    protected function isGranedClassPermission($attribute, $class)
+    protected function isGrantedClassPermission($attribute, $class)
     {
         /* @var $securityFacade SecurityFacade */
         $securityFacade = $this->container->get('oro_security.security_facade');
