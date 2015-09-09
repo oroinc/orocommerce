@@ -34,6 +34,9 @@ abstract class AbstractAccountControllerTest extends WebTestCase
         );
     }
 
+    /**
+     * @param Response $response
+     */
     protected function checkDatagridResponse(Response $response)
     {
         $result = $this->getJsonResponseContent($response, 200);
