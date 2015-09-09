@@ -1,0 +1,5 @@
+orob2b:
+    product:
+        productunitholder:
+            product_unit:
+                blank: 'Please choose existing Unit.'

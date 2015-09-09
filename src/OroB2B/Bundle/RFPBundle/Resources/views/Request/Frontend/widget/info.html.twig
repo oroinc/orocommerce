@@ -11,8 +11,8 @@
             {{ UI.renderProperty('orob2b.rfp.request.phone.label'|trans, entity.phone) }}
             {{ UI.renderProperty('orob2b.rfp.request.company.label'|trans, entity.company|default('N/A')) }}
             {{ UI.renderProperty('orob2b.rfp.request.role.label'|trans, entity.role|default('N/A')) }}
-            {% if is_granted_view_account_user(entity) %}
-                {{ UI.renderHtmlProperty('orob2b.frontend.rfp.request.submitted_to.label'|trans, entity.accountUser) }}
+            {% if is_granted_view_account_user(entity) and entity.accountUser %}
+                {{ UI.renderHtmlProperty('orob2b.frontend.rfp.request.submitted_to.label'|trans, entity.accountUser.firstName ~ ' ' ~ entity.accountUser.lastName) }}
             {% endif %}
             {{ UI.renderProperty('orob2b.rfp.request.status.label'|trans, entity.status.label) }}
         </div>

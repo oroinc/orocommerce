@@ -26,7 +26,7 @@ class RequestController extends Controller
      * @Route("/view/{id}", name="orob2b_rfp_frontend_request_view", requirements={"id"="\d+"})
      * @Template("OroB2BRFPBundle:Request/Frontend:view.html.twig")
      * @Acl(
-     *      id="orob2b_rfp_request_frontend_view",
+     *      id="orob2b_rfp_frontend_request_view",
      *      type="entity",
      *      class="OroB2BRFPBundle:Request",
      *      permission="ACCOUNT_VIEW",
@@ -66,7 +66,7 @@ class RequestController extends Controller
     /**
      * @Route("/info/{id}", name="orob2b_rfp_frontend_request_info", requirements={"id"="\d+"})
      * @Template("OroB2BRFPBundle:Request/Frontend/widget:info.html.twig")
-     * @AclAncestor("orob2b_rfp_request_frontend_view")
+     * @AclAncestor("orob2b_rfp_frontend_request_view")
      *
      * @param RFPRequest $request
      * @return array
@@ -106,7 +106,7 @@ class RequestController extends Controller
      * @Route("/update/{id}", name="orob2b_rfp_frontend_request_update", requirements={"id"="\d+"})
      * @Template("OroB2BRFPBundle:Request/Frontend:update.html.twig")
      * @Acl(
-     *      id="orob2b_rfp_request_frontend_update",
+     *      id="orob2b_rfp_frontend_request_update",
      *      type="entity",
      *      class="OroB2BRFPBundle:Request",
      *      permission="ACCOUNT_EDIT",
