@@ -10,6 +10,7 @@ use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 
 class FormViewListener
 {
@@ -49,10 +50,15 @@ class FormViewListener
             return;
         }
 
-        $accountUserId = $this->request->get('id');
+        $accountUserId = (int)$this->request->get('id');
+        if (!$accountUserId) {
+            return;
+        }
         /** @var AccountUser $accountUser */
         $accountUser = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:AccountUser', $accountUserId);
-
+        if (!$accountUser) {
+            return;
+        }
         $template = $event->getEnvironment()->render(
             'OroB2BOrderBundle:AccountUser:orders_view.html.twig',
             ['entity' => $accountUser]
@@ -69,13 +75,18 @@ class FormViewListener
             return;
         }
 
-        $accountId = $this->request->get('id');
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:Account', $accountId);
-
+        $accountId = (int)$this->request->get('id');
+        if (!$accountId) {
+            return;
+        }
+        /** @var Account $account */
+        $account = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:Account', $accountId);
+        if (!$account) {
+            return;
+        }
         $template = $event->getEnvironment()->render(
             'OroB2BOrderBundle:Account:orders_view.html.twig',
-            ['entity' => $accountUser]
+            ['entity' => $account]
         );
         $this->addSalesOrdersBlock($event->getScrollData(), $template);
     }
