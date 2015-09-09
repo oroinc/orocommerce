@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
 
 /**
  * @ORM\Table(name="orob2b_rfp_request_product")
@@ -25,7 +26,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
  *      }
  * )
  */
-class RequestProduct
+class RequestProduct implements ProductHolderInterface
 {
     /**
      * @var int
@@ -79,6 +80,14 @@ class RequestProduct
     public function __construct()
     {
         $this->requestProductItems = new ArrayCollection();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityIdentifier()
+    {
+        return $this->getId();
     }
 
     /**

@@ -15,6 +15,7 @@ orob2b:
         image.label: Image
         names.label: Name
         descriptions.label: Description
+        removed: '{title} - removed'
 
         visibility:
             visible.label: Yes
@@ -30,6 +31,7 @@ orob2b:
             code.label: Code
             default_precision.label: Default Precision
             form.choose: 'Choose Unit...'
+            removed: '{title} - removed'
 
         productunitprecision:
             entity_label: Product Unit Precision

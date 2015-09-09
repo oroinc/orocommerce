@@ -1,0 +1,121 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{% oro_title_set({params : {"%title%": entity.__toString()}}) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+            'indexPath': path('orob2b_rfp_frontend_request_index'),
+        'indexLabel': 'orob2b.frontend.rfp.request.entity_plural_label'|trans,
+        'entityTitle': entity.__toString()|default('N/A'|trans)
+    } %}
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block navButtonContainer %}
+    {% placeholder view_navButtons_before with {entity: entity} %}
+    {% if resource_granted('EDIT', entity) %}
+        {{ UI.editButton({
+            'path' : path('orob2b_rfp_frontend_request_update', { 'id': entity.id }),
+            'entity_label': 'orob2b.frontend.rfp.request.entity_label'|trans
+        }) }}
+    {% endif %}
+{% endblock navButtonContainer%}
+
+{% block content_data %}
+    {% set requestInfo %}
+        {{ oro_widget_render({
+            'widgetType': 'block',
+            'url': path('orob2b_rfp_frontend_request_info', {id: entity.id}),
+            'alias': 'request-info-widget'
+        }) }}
+    {% endset %}
+
+    {% set requestContent %}
+        <div class="row-fluid form-horizontal">
+            <div class="responsive-block">
+                {{ entity.body|nl2br }}
+            </div>
+        </div>
+    {% endset %}
+
+    {% set requestProducts %}
+        <div class="rfp-requestproducts-info control-group">
+            <table>
+                {% for requestProduct in entity.requestProducts %}
+                    <tr>
+                        <td class="rfp-requestproduct-product">
+                            <label class="control-label">{{ 'orob2b.product.entity_label'|trans }}</label>
+                        </td>
+                        <td class="rfp-requestproduct-info control-group">
+                            {% if requestProduct.product %}
+                                <a href="{{ path('orob2b_product_view', { id: requestProduct.product.id }) }}">{{ requestProduct.product }}</a>
+                            {% else %}
+                                <label class="control-label">{{ requestProduct.productSku }}</label>
+                            {% endif %}
+                        </td>
+                        <td class="rfp-requestproductitems-info">
+                            <table>
+                                <tr>
+                                    <th>{{ 'orob2b.rfp.requestproductitem.quantity.label'|trans }}</th>
+                                    <th>{{ 'orob2b.rfp.requestproductitem.price.label'|trans }}</th>
+                                </tr>
+                                {% for requestProductItem in requestProduct.requestProductItems %}
+                                    {% set quantity = requestProductItem.quantity %}
+                                    {% set price = requestProductItem.price %}
+                                    <tr>
+                                        <td>
+                                            {{ quantity ? quantity|orob2b_format_product_unit_value(requestProductItem.productUnit) : 'N/A' }}
+                                        </td>
+                                        <td>
+                                            {{ price ? price|oro_format_price : 'N/A' }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </table>
+                        </td>
+                    </tr>
+                    {% if requestProduct.comment %}
+                        <tr class="rfp-requestproduct-comment">
+                            <td>&nbsp;</td>
+                            <td class="rfp-requestproduct-info control-group">
+                                <label class="control-label">{{ 'orob2b.rfp.requestproduct.comment.label'|trans }}</label>
+                            </td>
+                            <td class="rfp-requestproductitems-info">
+                                <label>{{ requestProduct.comment|nl2br }}</label>
+                            </td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </table>
+        </div>
+    {% endset %}
+
+    {% set generalBlock = {
+        'title': 'orob2b.rfp.sections.general'|trans,
+        'class': 'active',
+        'subblocks': [{'data' : [requestInfo]}]
+    } %}
+
+    {% set lineItemsBlock = {
+        'title': 'orob2b.rfp.sections.request_products'|trans,
+        'subblocks': [{'data' : [requestProducts]}]
+    } %}
+
+    {% set bodyBlock = {
+        'title': 'orob2b.rfp.sections.body'|trans,
+        'class': 'active',
+        'subblocks': [{'data' : [requestContent]}]
+    } %}
+
+    {% if entity.requestProducts | length %}
+        {% set data = {'dataBlocks': [generalBlock, lineItemsBlock, bodyBlock]} %}
+    {% else %}
+        {% set data = {'dataBlocks': [generalBlock, bodyBlock]} %}
+    {% endif %}
+
+    {% set id = 'request-view' %}
+
+    {{ UI.scrollData(id, data) }}
+{% endblock content_data %}

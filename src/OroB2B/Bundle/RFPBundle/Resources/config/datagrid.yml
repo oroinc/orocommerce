@@ -10,6 +10,8 @@ datagrid:
             query:
                 select:
                     - request.id
+                    - requestAccount.name as accountName
+                    - CONCAT(requestAccountUser.firstName, ' ', requestAccountUser.lastName) as accountUserName
                     - request.firstName
                     - request.lastName
                     - request.email
@@ -25,6 +27,8 @@ datagrid:
                 join:
                     left:
                         - { join: request.status, alias: status }
+                        - { join: request.account, alias: requestAccount }
+                        - { join: request.accountUser, alias: requestAccountUser }
             hints:
                 - { name: HINT_CUSTOM_OUTPUT_WALKER, value: %oro_translation.translation_walker.class%}
         columns:
@@ -40,6 +44,10 @@ datagrid:
                 label:         orob2b.rfp.request.company.label
             role:
                 label:         orob2b.rfp.request.role.label
+            accountUserName:
+                label:         orob2b.rfp.request.account_user.label
+            accountName:
+                label:         orob2b.rfp.request.account.label
             status_label:
                 label:         orob2b.rfp.request.status.label
             createdAt:
@@ -76,6 +84,10 @@ datagrid:
                     data_name: request.company
                 role:
                     data_name: request.role
+                accountUserName:
+                    data_name: accountUserName
+                accountName:
+                    data_name: accountName
                 status_label:
                     data_name: status_order
                 createdAt:
@@ -104,6 +116,12 @@ datagrid:
                 role:
                     type:      string
                     data_name: request.role
+                accountUserName:
+                    type:      string
+                    data_name: accountUserName
+                accountName:
+                    type:      string
+                    data_name: accountName
                 status_label:
                     type:      entity
                     data_name: status.id
@@ -252,3 +270,81 @@ datagrid:
                 icon:          trash
                 link:          delete_link
         action_configuration: [@orob2b_rfp.datagrid.action_permission_provider, "getRequestStatusDefinitionPermissions"]
+
+    frontend-requests-grid:
+        extended_entity_name: %orob2b_rfp.entity.request.class%
+        options:
+            entityHint:        request
+            entity_pagination: true
+            accountUserOwner:
+                accountUserColumn: accountUserName
+        source:
+            type: orm
+            query:
+                select:
+                    - request.id
+                    - request.createdAt
+                    - requestAccountUser.username as accountUserName
+                    - requestStatus.name as statusName
+                from:
+                    - { table: %orob2b_rfp.entity.request.class%, alias: request }
+                join:
+                    left:
+                        - { join: request.accountUser, alias: requestAccountUser }
+                        - { join: request.status, alias: requestStatus }
+
+        columns:
+            id:
+                label:         orob2b.rfp.request.id.label
+            isDraft:
+                label:         orob2b.frontend.rfp.request.is_draft.label
+                frontend_type: boolean
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            accountUserName:
+                label:         orob2b.frontend.rfp.request.submitted_to.label
+        properties:
+            id: ~
+            view_link:
+                type:  url
+                route: orob2b_rfp_frontend_request_view
+                params: [ id ]
+            update_link:
+                type:   url
+                route:  orob2b_rfp_frontend_request_update
+                params: [ id ]
+        sorters:
+            columns:
+                accountUserName:
+                    data_name: accountUserName
+                createdAt:
+                    data_name: request.createdAt
+            default:
+                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                accountUserName:
+                    type:      entity
+                    data_name: request.accountUser
+                    options:
+                        field_options:
+                            class:      %orob2b_account.entity.account_user.class%
+                            multiple:   false
+                createdAt:
+                    type:      datetime
+                    data_name: request.createdAt
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                rowAction:     true
+            update:
+                type:          navigate
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          edit
+                acl_resource:  orob2b_rfp_request_frontend_update
+                rowAction:     true
