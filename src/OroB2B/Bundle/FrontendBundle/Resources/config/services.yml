@@ -1,5 +1,6 @@
 parameters:
     orob2b_frontend.listener.route_collection.class: OroB2B\Bundle\FrontendBundle\EventListener\RouteCollectionListener
+    orob2b_frontend.twig_extension.demo_frontend_theme.class: OroB2B\Bundle\FrontendBundle\Twig\DemoThemeExtension
 
 services:
     orob2b_frontend.listener.route_collection:
@@ -9,3 +10,12 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_distribution.route_collection.autoload, method: onCollectionAutoload, priority: 120 }
         lazy: true
+
+    orob2b_frontend.twig_extension.demo_frontend_theme:
+        class: %orob2b_frontend.twig_extension.demo_frontend_theme.class%
+        arguments:
+            - @assetic.asset_factory
+            - @oro_assetic.configuration
+            - @oro_theme.registry
+        tags:
+            - { name: twig.extension }
