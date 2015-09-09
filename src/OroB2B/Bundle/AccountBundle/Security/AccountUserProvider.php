@@ -76,6 +76,24 @@ class AccountUserProvider
      * @param string $class
      * @return boolean
      */
+    public function isGrantedEditBasic($class)
+    {
+        return $this->isGrantedEntityMask($class, EntityMaskBuilder::MASK_EDIT_BASIC);
+    }
+
+    /**
+     * @param string $class
+     * @return boolean
+     */
+    public function isGrantedEditLocal($class)
+    {
+        return $this->isGrantedEntityMask($class, EntityMaskBuilder::MASK_EDIT_LOCAL);
+    }
+
+    /**
+     * @param string $class
+     * @return boolean
+     */
     public function isGrantedViewAccountUser($class)
     {
         $descriptor = sprintf('entity:%s@%s', AccountUser::SECURITY_GROUP, $this->accountUserClass);
