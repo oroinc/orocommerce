@@ -90,14 +90,14 @@ class ProductUnitRemovedSelectionTypeTest extends FormIntegrationTestCase
         $this->formType->configureOptions($resolver);
     }
 
-    public function testPreSubmit()
+    public function testPostSetData()
     {
         $formParent = $this->factory->create(new StubProductUnitHolderType(), $this->createProductUnitHolder(1, 'pc'));
 
         $form = $this->factory->create($this->formType);
         $form->setParent($formParent);
 
-        $this->formType->preSubmit(new FormEvent($form, null));
+        $this->formType->postSetData(new FormEvent($form, null));
 
         static::assertTrue($formParent->has('productUnit'));
 
