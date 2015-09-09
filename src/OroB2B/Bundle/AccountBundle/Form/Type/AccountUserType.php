@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\AccountBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Form\Type\AddressCollectionType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
@@ -19,11 +19,6 @@ class AccountUserType extends AbstractType
      * @var string
      */
     protected $dataClass;
-
-    /**
-     * @var string
-     */
-    protected $roleClass;
 
     /**
      * @var string
@@ -47,14 +42,6 @@ class AccountUserType extends AbstractType
     }
 
     /**
-     * @param string $roleClass
-     */
-    public function setRoleClass($roleClass)
-    {
-        $this->roleClass = $roleClass;
-    }
-
-    /**
      * @param string $addressClass
      */
     public function setAddressClass($addressClass)
@@ -69,14 +56,13 @@ class AccountUserType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $this->addEntityFields($builder);
-
         $data = $builder->getData();
 
         $passwordOptions = [
-            'type'            => 'password',
-            'required'        => false,
-            'first_options'   => ['label' => 'orob2b.account.accountuser.password.label'],
-            'second_options'  => ['label' => 'orob2b.account.accountuser.password_confirmation.label'],
+            'type' => 'password',
+            'required' => false,
+            'first_options' => ['label' => 'orob2b.account.accountuser.password.label'],
+            'second_options' => ['label' => 'orob2b.account.accountuser.password_confirmation.label'],
             'invalid_message' => 'orob2b.account.message.password_mismatch',
         ];
 
@@ -173,29 +159,22 @@ class AccountUserType extends AbstractType
                 'addresses',
                 AddressCollectionType::NAME,
                 [
-                    'label'    => 'orob2b.account.accountuser.addresses.label',
-                    'type'     => AccountUserTypedAddressType::NAME,
+                    'label' => 'orob2b.account.accountuser.addresses.label',
+                    'type' => AccountUserTypedAddressType::NAME,
                     'required' => false,
-                    'options'  => [
-                        'data_class'  => $this->addressClass,
+                    'options' => [
+                        'data_class' => $this->addressClass,
                         'single_form' => false
                     ]
                 ]
-            )
-        ;
+            );
 
         if ($this->securityFacade->isGranted('orob2b_account_account_user_role_view')) {
             $builder->add(
                 'roles',
-                'entity',
+                AccountUserRoleSelectType::NAME,
                 [
-                    'property_path' => 'roles',
-                    'label' => 'orob2b.account.accountuser.roles.label',
-                    'class' => $this->roleClass,
-                    'property' => 'label',
-                    'multiple' => true,
-                    'expanded' => true,
-                    'required' => true
+                    'label' => 'orob2b.account.accountuser.roles.label'
                 ]
             );
         }
@@ -212,8 +191,8 @@ class AccountUserType extends AbstractType
                 'checkbox',
                 [
                     'required' => false,
-                    'label'    => 'orob2b.account.accountuser.password_generate.label',
-                    'mapped'   => false
+                    'label' => 'orob2b.account.accountuser.password_generate.label',
+                    'mapped' => false
                 ]
             )
             ->add(
@@ -221,8 +200,8 @@ class AccountUserType extends AbstractType
                 'checkbox',
                 [
                     'required' => false,
-                    'label'    => 'orob2b.account.accountuser.send_email.label',
-                    'mapped'   => false
+                    'label' => 'orob2b.account.accountuser.send_email.label',
+                    'mapped' => false
                 ]
             );
     }
@@ -230,16 +209,16 @@ class AccountUserType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired(['data']);
 
         $resolver->setDefaults([
-            'cascade_validation'   => true,
-            'data_class'           => $this->dataClass,
-            'intention'            => 'account_user',
+            'cascade_validation' => true,
+            'data_class' => $this->dataClass,
+            'intention' => 'account_user',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
-            'ownership_disabled'   => true
+            'ownership_disabled' => true,
         ]);
     }
 
