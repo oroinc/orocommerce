@@ -106,10 +106,8 @@ class AccountUserProvider
 
         $descriptor = sprintf('entity:%s', ClassUtils::getRealClass($class));
         $oid = $this->aclManager->getOid($descriptor);
-        $rootOid = $this->aclManager->getRootOid($oid);
 
-        return $this->isGrantedOidMask($oid, $class, $mask) ||
-            $this->isGrantedOidMask($rootOid, $class, EntityMaskBuilder::GROUP_SYSTEM);
+        return $this->isGrantedOidMask($oid, $class, $mask);
     }
 
     /**
@@ -119,6 +117,8 @@ class AccountUserProvider
      * @return bool
      *
      * @see \Oro\Bundle\SecurityBundle\Acl\Domain\PermissionGrantingStrategy::isAceApplicable
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     private function isGrantedOidMask(ObjectIdentity $oid, $class, $requiredMask)
     {
@@ -130,6 +130,12 @@ class AccountUserProvider
         foreach ($loggedUser->getRoles() as $role) {
             $sid = $this->aclManager->getSid($role);
             $aces = $this->aclManager->getAces($sid, $oid);
+            if (!$aces && $oid->getType() !== ObjectIdentityFactory::ROOT_IDENTITY_TYPE) {
+                $rootOid = $this->aclManager->getRootOid($oid);
+
+                return $this->isGrantedOidMask($rootOid, $class, EntityMaskBuilder::GROUP_SYSTEM);
+            }
+
             foreach ($aces as $ace) {
                 if ($ace->getAcl()->getObjectIdentity()->getIdentifier() !== $extension->getExtensionKey()) {
                     continue;
@@ -147,32 +153,16 @@ class AccountUserProvider
                 $requiredMask = $extension->removeServiceBits($requiredMask);
                 $aceMask = $extension->removeServiceBits($aceMask);
                 $strategy = $ace->getStrategy();
-                $decision = $this->decide($strategy, $requiredMask, $aceMask);
-                if (null !== $decision) {
-                    return $decision;
+                if (PermissionGrantingStrategy::ALL === $strategy) {
+                    return $requiredMask === ($aceMask & $requiredMask);
+                } elseif (PermissionGrantingStrategy::ANY === $strategy) {
+                    return 0 !== ($aceMask & $requiredMask);
+                } elseif (PermissionGrantingStrategy::EQUAL === $strategy) {
+                    return $requiredMask === $aceMask;
                 }
             }
         }
 
         return false;
-    }
-
-    /**
-     * @param string $strategy
-     * @param int $requiredMask
-     * @param int $aceMask
-     * @return bool|null
-     */
-    private function decide($strategy, $requiredMask, $aceMask)
-    {
-        if (PermissionGrantingStrategy::ALL === $strategy) {
-            return $requiredMask === ($aceMask & $requiredMask);
-        } elseif (PermissionGrantingStrategy::ANY === $strategy) {
-            return 0 !== ($aceMask & $requiredMask);
-        } elseif (PermissionGrantingStrategy::EQUAL === $strategy) {
-            return $requiredMask === $aceMask;
-        }
-
-        return null;
     }
 }
