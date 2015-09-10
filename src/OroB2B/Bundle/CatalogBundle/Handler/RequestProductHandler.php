@@ -11,7 +11,10 @@ class RequestProductHandler
     /** @var  Request|null */
     protected $request;
 
-    public function setRequest($request)
+    /**
+     * @param Request|null $request
+     */
+    public function setRequest(Request $request=null)
     {
         $this->request = $request;
     }
