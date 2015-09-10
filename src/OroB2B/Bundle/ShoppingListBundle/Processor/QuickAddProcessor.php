@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ShoppingListBundle\Processor;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Oro\Bundle\UIBundle\Tools\ArrayUtils;
@@ -12,6 +13,7 @@ use Oro\Bundle\UIBundle\Tools\ArrayUtils;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ProductBundle\Model\ComponentProcessorInterface;
+use OroB2B\Bundle\ShoppingListBundle\Generator\MessageGenerator;
 use OroB2B\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 
 class QuickAddProcessor implements ComponentProcessorInterface
@@ -24,17 +26,25 @@ class QuickAddProcessor implements ComponentProcessorInterface
     /** @var ManagerRegistry */
     protected $registry;
 
+    /** @var MessageGenerator */
+    protected $messageGenerator;
+
     /** @var string */
     protected $productClass;
 
     /**
      * @param ShoppingListLineItemHandler $shoppingListLineItemHandler
      * @param ManagerRegistry $registry
+     * @param MessageGenerator $messageGenerator
      */
-    public function __construct(ShoppingListLineItemHandler $shoppingListLineItemHandler, ManagerRegistry $registry)
-    {
+    public function __construct(
+        ShoppingListLineItemHandler $shoppingListLineItemHandler,
+        ManagerRegistry $registry,
+        MessageGenerator $messageGenerator
+    ) {
         $this->shoppingListLineItemHandler = $shoppingListLineItemHandler;
         $this->registry = $registry;
+        $this->messageGenerator = $messageGenerator;
     }
 
     /** {@inheritdoc} */
@@ -56,13 +66,20 @@ class QuickAddProcessor implements ComponentProcessorInterface
         $productSkuQuantities = array_combine($productSkus, ArrayUtils::arrayColumn($data, 'productQuantity'));
         $productIdsQuantities = array_combine($productIds, $productSkuQuantities);
 
+        /** @var Session $session */
+        $session = $request->getSession();
+        $flashBag = $session->getFlashBag();
+
         try {
-            $this->shoppingListLineItemHandler->createForShoppingList(
+            $entitiesCount = $this->shoppingListLineItemHandler->createForShoppingList(
                 $shoppingList,
                 array_values($productIds),
                 $productIdsQuantities
             );
+
+            $flashBag->add('success', $this->messageGenerator->getSuccessMessage($shoppingListId, $entitiesCount));
         } catch (AccessDeniedException $e) {
+            $flashBag->add('error', $this->messageGenerator->getFailedMessage());
         }
     }
 

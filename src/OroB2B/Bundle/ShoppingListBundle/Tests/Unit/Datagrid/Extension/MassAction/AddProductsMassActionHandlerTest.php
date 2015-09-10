@@ -2,9 +2,7 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Datagrid\Extension\MassAction;
 
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 
@@ -12,10 +10,13 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction\AddProductsMassAction;
 use OroB2B\Bundle\ShoppingListBundle\DataGrid\Extension\MassAction\AddProductsMassActionHandler;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use OroB2B\Bundle\ShoppingListBundle\Generator\MessageGenerator;
 use OroB2B\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 
 class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
 {
+    const MESSAGE = 'test message';
+
     /** @var AddProductsMassActionHandler */
     protected $handler;
 
@@ -29,11 +30,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $this->shoppingListItemHandler = $this->getShoppingListItemHandler();
 
-        $this->handler = new AddProductsMassActionHandler(
-            $this->shoppingListItemHandler,
-            $this->getTranslator(),
-            $this->getRouter()
-        );
+        $this->handler = new AddProductsMassActionHandler($this->shoppingListItemHandler, $this->getMessageGenerator());
     }
 
     public function testHandleMissingShoppingList()
@@ -77,7 +74,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
         $response = $this->handler->handle($args);
         $this->assertTrue($response->isSuccessful());
         $this->assertEquals(2, $response->getOptions()['count']);
-        $this->assertContains('href', $response->getMessage());
+        $this->assertEquals(self::MESSAGE, $response->getMessage());
     }
 
     /**
@@ -96,19 +93,16 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return MessageGenerator|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function getTranslator()
+    protected function getMessageGenerator()
     {
-        $translator = $this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')
+        $translator = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Generator\MessageGenerator')
+            ->disableOriginalConstructor()
             ->getMock();
         $translator->expects($this->any())
-            ->method('transChoice')
-            ->willReturnCallback(
-                function ($string) {
-                    return $string;
-                }
-            );
+            ->method('getSuccessMessage')
+            ->willReturn(self::MESSAGE);
 
         return $translator;
     }
@@ -150,14 +144,6 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
             );
 
         return $shoppingListItemHandler;
-    }
-
-    /**
-     * @return RouterInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getRouter()
-    {
-        return $this->getMock('Symfony\Component\Routing\RouterInterface');
     }
 
     /**

@@ -62,7 +62,7 @@ class FormViewListener
             return;
         }
 
-        $accountId = $this->request->get('id');
+        $accountId = (int)$this->request->get('id');
         /** @var Account $account */
         $account = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:Account', $accountId);
         $priceList = $this->getPriceListRepository()->getPriceListByAccount($account);
@@ -85,7 +85,7 @@ class FormViewListener
             return;
         }
 
-        $groupId = $this->request->get('id');
+        $groupId = (int)$this->request->get('id');
         /** @var AccountGroup $group */
         $group = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:AccountGroup', $groupId);
         $priceList = $this->getPriceListRepository()->getPriceListByAccountGroup($group);
@@ -120,7 +120,7 @@ class FormViewListener
             return;
         }
 
-        $productId = $this->request->get('id');
+        $productId = (int)$this->request->get('id');
         /** @var Product $product */
         $product = $this->doctrineHelper->getEntityReference('OroB2BProductBundle:Product', $productId);
 
@@ -140,7 +140,7 @@ class FormViewListener
             return;
         }
 
-        $productId = $this->request->get('id');
+        $productId = (int)$this->request->get('id');
 
         /** @var Product $product */
         $product = $this->doctrineHelper->getEntityReference('OroB2BProductBundle:Product', $productId);

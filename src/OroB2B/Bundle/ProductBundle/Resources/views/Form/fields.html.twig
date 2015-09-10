@@ -113,3 +113,20 @@
         </div>
     {% endspaceless %}
 {% endblock %}
+
+{% block orob2b_product_quick_add_errors %}
+    {% spaceless %}
+        {% if errors|length > 0 %}
+            <div class="customer-info-actions container-fluid well-small alert-wrap">
+                <div class="alert alert-error">
+                    <button class="close" type="button" data-dismiss="alert" data-target=".alert-wrap">×</button>
+                    <ul>
+                    {% for error in errors %}
+                        <li>{{ error.message }}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
+    {% endspaceless %}
+{% endblock %}
