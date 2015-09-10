@@ -44,7 +44,7 @@
 
         <td>
             {% if allow_delete %}
-                <button type="button" class="removeRow btn icons-holder"></button>
+                <button type="button" class="removeRow btn icons-holder pull-right"></button>
             {% endif %}
         </td>
     </tr>
@@ -101,8 +101,32 @@
             </div>
 
             {% if allow_add %}
-                <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
+            <div class="btn-group pull-left">
+                <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);">
+                    <i class="icon-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}
+                </a>
+            </div>
             {% endif %}
+            <div class="btn-group pull-right add-buttons">
+                {% placeholder orob2b_product_quick_add_buttons with {'form': form} %}
+            </div>
         </div>
+    {% endspaceless %}
+{% endblock %}
+
+{% block orob2b_product_quick_add_errors %}
+    {% spaceless %}
+        {% if errors|length > 0 %}
+            <div class="customer-info-actions container-fluid well-small alert-wrap">
+                <div class="alert alert-error">
+                    <button class="close" type="button" data-dismiss="alert" data-target=".alert-wrap">×</button>
+                    <ul>
+                    {% for error in errors %}
+                        <li>{{ error.message }}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endif %}
     {% endspaceless %}
 {% endblock %}

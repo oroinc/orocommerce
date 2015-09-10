@@ -69,7 +69,8 @@ class LoadAccountUserRoles extends AbstractFixture implements DependentFixtureIn
             if (!empty($roleConfigData['website_default_role'])) {
                 $this->setWebsiteDefaultRoles($role);
             }
-
+            $organization = $manager->getRepository('OroOrganizationBundle:Organization')->findOneBy([]);
+            $role->setOrganization($organization);
             $manager->persist($role);
 
             if (!$aclManager->isAclEnabled()) {
@@ -172,7 +173,6 @@ class LoadAccountUserRoles extends AbstractFixture implements DependentFixtureIn
     {
         $role = new AccountUserRole(AccountUserRole::PREFIX_ROLE . $name);
         $role->setLabel($label);
-
         return $role;
     }
 
