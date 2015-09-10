@@ -5,21 +5,21 @@ oro_menu_config:
             uri:             '#'
             extras:
                 icon:        icon-briefcase
-                position:    10
+                position:    100
 
-        products_list:
+        product_list:
             label:           'orob2b.product.entity_plural_label'
             route:           'orob2b_product_index'
             extras:
-                position:    10
+                position:    200
                 routes:      ['/^orob2b_product/']
-                description: 'orob2b.product.menu.products_list.description'
+                description: 'orob2b.product.menu.product_list.description'
 
-        shortcut_products_list:
+        shortcut_product_list:
             label:           'orob2b.product.entity_plural_label'
             route:           'orob2b_product_index'
             extras:
-                description: 'orob2b.product.menu.shortcut_products_list.description'
+                description: 'orob2b.product.menu.shortcut_product_list.description'
 
         shortcut_new_product:
             label:           'orob2b.product.menu.shortcut_new_product.label'
@@ -28,11 +28,11 @@ oro_menu_config:
                 description:    'orob2b.product.menu.shortcut_new_product.description'
                 isCustomAction: true
 
-        frontend_products_list:
+        frontend_product_list:
             label:           'orob2b.product.entity_plural_label'
             route:           'orob2b_product_frontend_product_index'
             extras:
-                position:    10
+                position:    100
                 routes:      ['/^orob2b_product_frontend_product/']
 
     tree:
@@ -40,14 +40,14 @@ oro_menu_config:
             children:
                 products_tab:
                     children:
-                        products_list: ~
+                        product_list: ~
         shortcuts:
             children:
-                shortcut_products_list: ~
+                shortcut_product_list: ~
                 shortcut_new_product:   ~
         frontend_menu:
             children:
-                frontend_products_list: ~
+                frontend_product_list: ~
 
 oro_titles:
     orob2b_product_index: ~

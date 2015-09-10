@@ -51,35 +51,35 @@ class PagesTest extends Selenium2TestCase
 
         // create root level page
         $pages->createPage()
-            ->assertTitle('Create Page - Pages - CMS')
+            ->assertTitle('Create Page - Landing Pages - CMS')
             ->setTitle(self::$firstPage)
             ->waitForApiCall()
             ->savePage();
 
         // assert root level page created
-        $pages->assertTitle(self::$firstPage . ' - Pages - CMS')
+        $pages->assertTitle(self::$firstPage . ' - Landing Pages - CMS')
             ->assertMessage('Page has been saved')
             ->assertPageExists(self::$firstPage);
 
         // create child page
         $pages->openPage(self::$firstPage)
             ->assertCurrentSlugUrl([self::$firstPageSlug])
-            ->assertTitle(self::$firstPage . ' - Pages - CMS')
+            ->assertTitle(self::$firstPage . ' - Landing Pages - CMS')
             ->createChildPage()
-            ->assertTitle('Create Page - Pages - CMS')
+            ->assertTitle('Create Page - Landing Pages - CMS')
             ->setTitle(self::$secondPage)
             ->waitForApiCall()
             ->savePage();
 
         // assert child page created
-        $pages->assertTitle(self::$secondPage . ' - Pages - CMS')
+        $pages->assertTitle(self::$secondPage . ' - Landing Pages - CMS')
             ->assertMessage('Page has been saved')
             ->openTreeChildPages(self::$firstPage)
             ->assertPageExists(self::$secondPage)
             ->assertContainsChildPage(self::$firstPage, self::$secondPage)
             ->openPage(self::$secondPage)
             ->assertCurrentSlugUrl([self::$firstPageSlug, self::$secondPageSlug])
-            ->assertTitle(self::$secondPage . ' - Pages - CMS');
+            ->assertTitle(self::$secondPage . ' - Landing Pages - CMS');
     }
 
     /**
@@ -212,7 +212,7 @@ class PagesTest extends Selenium2TestCase
             ->deletePage();
 
         // assert Pages removed
-        $pages->assertTitle('Pages - CMS')
+        $pages->assertTitle('Landing Pages - CMS')
             ->assertMessage('Page deleted')
             ->assertPageNotExist(self::$firstPage)
             ->assertPageNotExist(self::$secondPage);
