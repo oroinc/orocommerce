@@ -8,10 +8,10 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 use Oro\Bundle\ThemeBundle\Model\ThemeRegistry;
 
-use OroB2B\Bundle\FrontendBundle\Twig\FrontendAsseticTokenParser;
-
 class ThemeListener
 {
+    const FRONTEND_THEME = 'demo';
+
     /**
      * @var RouterInterface
      */
@@ -58,7 +58,7 @@ class ThemeListener
         $route = $this->router->getRouteCollection()->get($routeName);
 
         if ($route->getOption(RouteCollectionListener::OPTION_FRONTEND)) {
-            $this->themeRegistry->setActiveTheme(FrontendAsseticTokenParser::FRONTEND_THEME);
+            $this->themeRegistry->setActiveTheme(self::FRONTEND_THEME);
         }
     }
 }

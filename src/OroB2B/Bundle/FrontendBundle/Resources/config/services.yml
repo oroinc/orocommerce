@@ -43,5 +43,3 @@ services:
             - @router
         calls:
             - [setRequest, ["@?request="]]
-
-

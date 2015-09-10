@@ -10,6 +10,7 @@ use Oro\Bundle\AsseticBundle\AssetsConfiguration;
 use Oro\Bundle\AsseticBundle\Twig\AsseticTokenParser;
 use Oro\Bundle\ThemeBundle\Model\ThemeRegistry;
 
+use OroB2B\Bundle\FrontendBundle\EventListener\ThemeListener;
 use OroB2B\Bundle\FrontendBundle\Twig\FrontendAsseticTokenParser;
 
 class FrontendAsseticTokenParserTest extends \PHPUnit_Framework_TestCase
@@ -38,7 +39,7 @@ class FrontendAsseticTokenParserTest extends \PHPUnit_Framework_TestCase
      */
     protected $themes = [
         self::ACTIVE_THEME => [],
-        FrontendAsseticTokenParser::FRONTEND_THEME => [],
+        ThemeListener::FRONTEND_THEME => [],
     ];
 
     /**
@@ -116,7 +117,7 @@ class FrontendAsseticTokenParserTest extends \PHPUnit_Framework_TestCase
                 function () {
                     // frontend theme during assets compilation
                     $this->assertEquals(
-                        FrontendAsseticTokenParser::FRONTEND_THEME,
+                        ThemeListener::FRONTEND_THEME,
                         $this->themeRegistry->getActiveTheme()->getName()
                     );
 
