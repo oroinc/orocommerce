@@ -25,6 +25,7 @@ parameters:
     orob2b_account.account_user.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_account.account_user_role.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_account.datagrid.action_permission_provider.class: OroB2B\Bundle\AccountBundle\Datagrid\ActionPermissionProvider
+    orob2b_account.datagrid.account_action_permission_provider.class: OroB2B\Bundle\AccountBundle\Datagrid\AccountActionPermissionProvider
     orob2b_account.datagrid.extension.accoun_user.class: OroB2B\Bundle\AccountBundle\Datagrid\Extension\AccountUserExtension
     orob2b_account.datagrid.extension.accoun_user_by_account.class: OroB2B\Bundle\AccountBundle\Datagrid\Extension\AccountUserByAccountExtension
     orob2b_account.mailer.processor.class: OroB2B\Bundle\AccountBundle\Mailer\Processor
@@ -84,6 +85,7 @@ services:
         class: %orob2b_account.event_listener.account_datagrid.class%
         arguments:
             - @orob2b_account.security.account_user_provider
+            - [@orob2b_account.datagrid.account_action_permission_provider, "getUserPermissions"]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before, method: onBuildBeforeFrontendItems }
 
@@ -161,6 +163,13 @@ services:
 
     orob2b_account.datagrid.action_permission_provider:
         class: %orob2b_account.datagrid.action_permission_provider.class%
+
+    orob2b_account.datagrid.account_action_permission_provider:
+        class: %orob2b_account.datagrid.account_action_permission_provider.class%
+        arguments:
+            - @oro_security.security_facade
+            - @oro_security.acl.annotation_provider
+            - @doctrine
 
     orob2b_account.datagrid.extension.accoun_user:
         class: %orob2b_account.datagrid.extension.accoun_user.class%
