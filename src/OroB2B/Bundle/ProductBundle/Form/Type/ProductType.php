@@ -122,17 +122,9 @@ class ProductType extends AbstractType
                         'allowClear' => false,
                     ]
                 ]
-            )
-            ->add(
-                'unitPrecisions',
-                ProductUnitPrecisionCollectionType::NAME,
-                [
-                    'label'    => 'orob2b.product.unit_precisions.label',
-                    'tooltip'  => 'orob2b.product.form.tooltip.unit_precision',
-                    'required' => false
-                ]
             );
 
+        $this->addUnitPrecisions($builder);
         $this->addVariantLinks($builder);
     }
 
@@ -167,6 +159,22 @@ class ProductType extends AbstractType
             [
                 'product_class' => $this->dataClass,
                 'by_reference' => false
+            ]
+        );
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
+     */
+    private function addUnitPrecisions(FormBuilderInterface $builder)
+    {
+        $builder->add(
+            'unitPrecisions',
+            ProductUnitPrecisionCollectionType::NAME,
+            [
+                'label'    => 'orob2b.product.unit_precisions.label',
+                'tooltip'  => 'orob2b.product.form.tooltip.unit_precision',
+                'required' => false
             ]
         );
     }
