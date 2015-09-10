@@ -98,11 +98,6 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             ->willReturn($inputData['objectId']);
 
         $this->securityProvider->expects($this->any())
-            ->method('getLoggedUser')
-            ->willReturn($inputData['user'])
-        ;
-
-        $this->securityProvider->expects($this->any())
             ->method('isGrantedViewBasic')
             ->with($class)
             ->willReturn($inputData['grantedViewBasic'])
@@ -114,13 +109,30 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             ->willReturn($inputData['grantedViewLocal'])
         ;
 
+        $this->securityProvider->expects($this->any())
+            ->method('isGrantedEditBasic')
+            ->with($class)
+            ->willReturn($inputData['grantedEditBasic'])
+        ;
+
+        $this->securityProvider->expects($this->any())
+            ->method('isGrantedEditLocal')
+            ->with($class)
+            ->willReturn($inputData['grantedEditLocal'])
+        ;
+
         $this->voter->setClassName($class);
 
         /* @var $token TokenInterface|\PHPUnit_Framework_MockObject_MockObject */
         $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token->expects($this->any())
+            ->method('getUser')
+            ->willReturn($inputData['user'])
+        ;
+
         $this->assertEquals(
             $expectedResult,
-            $this->voter->vote($token, $object, ['ACCOUNT_VIEW'])
+            $this->voter->vote($token, $object, $inputData['attributes'])
         );
     }
 
@@ -168,8 +180,11 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                     'objectId'      => 1,
                     'object'        => new \stdClass(),
                     'user'          => null,
+                    'attributes'    => [],
                     'grantedViewBasic' => null,
                     'grantedViewLocal' => null,
+                    'grantedEditBasic' => null,
+                    'grantedEditLocal' => null,
                 ],
                 'expected' => AccountVoter::ACCESS_ABSTAIN,
             ],
@@ -178,8 +193,11 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                     'objectId'      => 2,
                     'object'        => $this->getObject(2),
                     'user'          => new \stdClass(),
+                    'attributes'    => [],
                     'grantedViewBasic' => null,
                     'grantedViewLocal' => null,
+                    'grantedEditBasic' => null,
+                    'grantedEditLocal' => null,
                 ],
                 'expected' => AccountVoter::ACCESS_ABSTAIN,
             ],
@@ -188,8 +206,11 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                     'objectId'      => 1,
                     'object'        => $this->getObject(1, 1),
                     'user'          => $this->getAccountUser(2),
+                    'attributes'    => ['ACCOUNT_VIEW'],
                     'grantedViewBasic' => true,
                     'grantedViewLocal' => false,
+                    'grantedEditBasic' => null,
+                    'grantedEditLocal' => null,
                 ],
                 'expected' => AccountVoter::ACCESS_ABSTAIN,
             ],
@@ -198,8 +219,11 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                     'objectId'      => 2,
                     'object'        => $this->getObject(2, 3),
                     'user'          => $this->getAccountUser(3),
+                    'attributes'    => ['ACCOUNT_VIEW'],
                     'grantedViewBasic' => true,
                     'grantedViewLocal' => false,
+                    'grantedEditBasic' => null,
+                    'grantedEditLocal' => null,
                 ],
                 'expected' => AccountVoter::ACCESS_GRANTED,
             ],
@@ -208,8 +232,11 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                     'objectId'      => 4,
                     'object'        => $this->getObject(4, 5, 6),
                     'user'          => $this->getAccountUser(7, 8),
+                    'attributes'    => ['ACCOUNT_VIEW'],
                     'grantedViewBasic' => false,
                     'grantedViewLocal' => true,
+                    'grantedEditBasic' => null,
+                    'grantedEditLocal' => null,
                 ],
                 'expected' => AccountVoter::ACCESS_ABSTAIN,
             ],
@@ -218,8 +245,11 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                     'objectId'      => 9,
                     'object'        => $this->getObject(9, 10, 11),
                     'user'          => $this->getAccountUser(12, 11),
+                    'attributes'    => ['ACCOUNT_VIEW'],
                     'grantedViewBasic' => false,
                     'grantedViewLocal' => true,
+                    'grantedEditBasic' => null,
+                    'grantedEditLocal' => null,
                 ],
                 'expected' => AccountVoter::ACCESS_GRANTED,
             ],
@@ -228,8 +258,76 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                     'objectId'      => 13,
                     'object'        => $this->getObject(13, 14, 15),
                     'user'          => $this->getAccountUser(14, 17),
+                    'attributes'    => ['ACCOUNT_VIEW'],
                     'grantedViewBasic' => false,
                     'grantedViewLocal' => true,
+                    'grantedEditBasic' => null,
+                    'grantedEditLocal' => null,
+                ],
+                'expected' => AccountVoter::ACCESS_GRANTED,
+            ],
+            'Entity::EDIT_BASIC and different users' => [
+                'input' => [
+                    'objectId'      => 21,
+                    'object'        => $this->getObject(21, 21),
+                    'user'          => $this->getAccountUser(22),
+                    'attributes'    => ['ACCOUNT_EDIT'],
+                    'grantedViewBasic' => null,
+                    'grantedViewLocal' => null,
+                    'grantedEditBasic' => true,
+                    'grantedEditLocal' => false,
+                ],
+                'expected' => AccountVoter::ACCESS_ABSTAIN,
+            ],
+            'Entity::EDIT_BASIC and equal users' => [
+                'input' => [
+                    'objectId'      => 22,
+                    'object'        => $this->getObject(22, 23),
+                    'user'          => $this->getAccountUser(23),
+                    'attributes'    => ['ACCOUNT_EDIT'],
+                    'grantedViewBasic' => null,
+                    'grantedViewLocal' => null,
+                    'grantedEditBasic' => true,
+                    'grantedEditLocal' => false,
+                ],
+                'expected' => AccountVoter::ACCESS_GRANTED,
+            ],
+            'Entity::EDIT_LOCAL, different accounts and different users' => [
+                'input' => [
+                    'objectId'      => 24,
+                    'object'        => $this->getObject(24, 25, 26),
+                    'user'          => $this->getAccountUser(27, 28),
+                    'attributes'    => ['ACCOUNT_EDIT'],
+                    'grantedViewBasic' => null,
+                    'grantedViewLocal' => null,
+                    'grantedEditBasic' => false,
+                    'grantedEditLocal' => true,
+                ],
+                'expected' => AccountVoter::ACCESS_ABSTAIN,
+            ],
+            'Entity::EDIT_LOCAL, equal accounts and different users' => [
+                'input' => [
+                    'objectId'      => 29,
+                    'object'        => $this->getObject(29, 30, 31),
+                    'user'          => $this->getAccountUser(32, 31),
+                    'attributes'    => ['ACCOUNT_EDIT'],
+                    'grantedViewBasic' => null,
+                    'grantedViewLocal' => null,
+                    'grantedEditBasic' => false,
+                    'grantedEditLocal' => true,
+                ],
+                'expected' => AccountVoter::ACCESS_GRANTED,
+            ],
+            'Entity::EDIT_LOCAL, different accounts and equal users' => [
+                'input' => [
+                    'objectId'      => 33,
+                    'object'        => $this->getObject(33, 34, 35),
+                    'user'          => $this->getAccountUser(34, 37),
+                    'attributes'    => ['ACCOUNT_EDIT'],
+                    'grantedViewBasic' => null,
+                    'grantedViewLocal' => null,
+                    'grantedEditBasic' => false,
+                    'grantedEditLocal' => true,
                 ],
                 'expected' => AccountVoter::ACCESS_GRANTED,
             ],
