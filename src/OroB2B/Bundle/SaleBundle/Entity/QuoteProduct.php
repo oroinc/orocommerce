@@ -231,6 +231,7 @@ class QuoteProduct implements ProductHolderInterface
         $this->product = $product;
         if ($product) {
             $this->productSku = $product->getSku();
+            $this->freeFormProduct = (string) $product;
         }
 
         return $this;
@@ -299,6 +300,7 @@ class QuoteProduct implements ProductHolderInterface
         $this->productReplacement = $productReplacement;
         if ($productReplacement) {
             $this->productReplacementSku = $productReplacement->getSku();
+            $this->freeFormProduct = (string) $productReplacement;
         }
 
         return $this;
