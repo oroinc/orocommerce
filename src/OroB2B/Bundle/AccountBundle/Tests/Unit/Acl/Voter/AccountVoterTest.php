@@ -148,6 +148,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'ACCOUNT_VIEW'  => ['ACCOUNT_VIEW', true],
+            'ACCOUNT_EDIT'  => ['ACCOUNT_EDIT', true],
             'VIEW'          => ['VIEW', false],
             'CREATE'        => ['CREATE', false],
             'EDIT'          => ['EDIT', false],

@@ -26,7 +26,7 @@ class RequestController extends Controller
      * @Route("/view/{id}", name="orob2b_rfp_frontend_request_view", requirements={"id"="\d+"})
      * @Template("OroB2BRFPBundle:Request/Frontend:view.html.twig")
      * @Acl(
-     *      id="orob2b_rfp_request_frontend_view",
+     *      id="orob2b_rfp_frontend_request_view",
      *      type="entity",
      *      class="OroB2BRFPBundle:Request",
      *      permission="ACCOUNT_VIEW",
@@ -66,7 +66,7 @@ class RequestController extends Controller
     /**
      * @Route("/info/{id}", name="orob2b_rfp_frontend_request_info", requirements={"id"="\d+"})
      * @Template("OroB2BRFPBundle:Request/Frontend/widget:info.html.twig")
-     * @AclAncestor("orob2b_rfp_request_frontend_view")
+     * @AclAncestor("orob2b_rfp_frontend_request_view")
      *
      * @param RFPRequest $request
      * @return array
@@ -106,10 +106,10 @@ class RequestController extends Controller
      * @Route("/update/{id}", name="orob2b_rfp_frontend_request_update", requirements={"id"="\d+"})
      * @Template("OroB2BRFPBundle:Request/Frontend:update.html.twig")
      * @Acl(
-     *      id="orob2b_rfp_request_frontend_update",
+     *      id="orob2b_rfp_frontend_request_update",
      *      type="entity",
      *      class="OroB2BRFPBundle:Request",
-     *      permission="EDIT",
+     *      permission="ACCOUNT_EDIT",
      *      group_name="commerce"
      * )
      *
@@ -141,8 +141,8 @@ class RequestController extends Controller
             $rfpRequest,
             $this->createForm(RequestType::NAME, $rfpRequest),
             function (RFPRequest $rfpRequest) use ($securityFacade) {
-                if ($securityFacade->isGranted('VIEW', $rfpRequest)) {
-                    $route = $this->getSecurityFacade()->isGranted('EDIT', $rfpRequest)
+                if ($securityFacade->isGranted('ACCOUNT_VIEW', $rfpRequest)) {
+                    $route = $securityFacade->isGranted('ACCOUNT_EDIT', $rfpRequest)
                         ? 'orob2b_rfp_frontend_request_update'
                         : 'orob2b_rfp_frontend_request_view'
                     ;
@@ -160,7 +160,7 @@ class RequestController extends Controller
 
             },
             function (RFPRequest $rfpRequest) use ($securityFacade) {
-                if ($securityFacade->isGranted('VIEW', $rfpRequest)) {
+                if ($securityFacade->isGranted('ACCOUNT_VIEW', $rfpRequest)) {
                     return [
                         'route'         => 'orob2b_rfp_frontend_request_view',
                         'parameters'    => ['id' => $rfpRequest->getId()],
