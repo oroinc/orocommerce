@@ -2,6 +2,7 @@ parameters:
     orob2b_frontend.listener.route_collection.class: OroB2B\Bundle\FrontendBundle\EventListener\RouteCollectionListener
     orob2b_frontend.twig_extension.demo_frontend_theme.class: OroB2B\Bundle\FrontendBundle\Twig\DemoThemeExtension
     orob2b_frontend.listener.theme.class: OroB2B\Bundle\FrontendBundle\EventListener\ThemeListener
+    orob2b_frontend.placeholder.filter.class: OroB2B\Bundle\FrontendBundle\Placeholder\FrontendFilter
 
 services:
     orob2b_frontend.listener.route_collection:
@@ -21,11 +22,26 @@ services:
         tags:
             - {name: kernel.event_listener, event: kernel.request, method: onKernelRequest}
 
+    orob2b_frontend.assetic.configuration:
+        class: %oro_assetic.configuration.class%
+        arguments:
+            - @event_dispatcher
+            - %oro_assetic.raw_configuration%
+
     orob2b_frontend.twig_extension.demo_frontend_theme:
         class: %orob2b_frontend.twig_extension.demo_frontend_theme.class%
         arguments:
             - @assetic.asset_factory
-            - @oro_assetic.configuration
+            - @orob2b_frontend.assetic.configuration
             - @oro_theme.registry
         tags:
             - { name: twig.extension }
+
+    orob2b_frontend.placeholder.filter:
+        class: %orob2b_frontend.placeholder.filter.class%
+        arguments:
+            - @router
+        calls:
+            - [setRequest, ["@?request="]]
+
+
