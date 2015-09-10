@@ -101,25 +101,25 @@ class ThemeListenerTest extends \PHPUnit_Framework_TestCase
                 'installed' => false,
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'route' => 'frontend',
-                'oro'
+                'expectedTheme' => 'oro'
             ],
             'not master request' => [
                 'installed' => false,
                 'requestType' => HttpKernelInterface::SUB_REQUEST,
                 'route' => 'frontend',
-                'oro'
+                'expectedTheme' => 'oro'
             ],
             'frontend' => [
                 'installed' => true,
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'route' => 'frontend',
-                'demo'
+                'expectedTheme' => 'demo'
             ],
             'backend' => [
                 'installed' => true,
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'route' => 'backend',
-                'oro'
+                'expectedTheme' => 'oro'
             ],
         ];
     }

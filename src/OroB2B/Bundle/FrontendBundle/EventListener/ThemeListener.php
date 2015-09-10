@@ -53,9 +53,15 @@ class ThemeListener
         }
 
         $request = $event->getRequest();
-
         $routeName = $request->attributes->get('_route');
+        if (!$routeName) {
+            return;
+        }
+
         $route = $this->router->getRouteCollection()->get($routeName);
+        if (!$route) {
+            return;
+        }
 
         if ($route->getOption(RouteCollectionListener::OPTION_FRONTEND)) {
             $this->themeRegistry->setActiveTheme(self::FRONTEND_THEME);
