@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
- * @outputBuffering enabled
  * @dbIsolation
  */
 class RequestStatusControllerTest extends WebTestCase
