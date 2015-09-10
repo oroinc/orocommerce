@@ -4,25 +4,40 @@ namespace OroB2B\Bundle\AccountBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Oro\Bundle\UserBundle\Form\Type\ChangePasswordType;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 class FrontendAccountUserType extends AbstractType
 {
     const NAME = 'orob2b_account_frontend_account_user';
 
+    /** @var  SecurityFacade */
+    protected $securityFacade;
+
     /**
      * @var string
      */
-    protected $dataClass;
+    protected $accountUserClass;
 
     /**
-     * @param string $dataClass
+     * @param SecurityFacade $securityFacade
      */
-    public function setDataClass($dataClass)
+    public function __construct(SecurityFacade $securityFacade)
     {
-        $this->dataClass = $dataClass;
+        $this->securityFacade = $securityFacade;
+    }
+
+    /**
+     * @param string $class
+     */
+    public function setAccountUserClass($class)
+    {
+        $this->accountUserClass = $class;
     }
 
     /**
@@ -30,93 +45,56 @@ class FrontendAccountUserType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add(
-                'namePrefix',
-                'text',
-                [
-                    'required' => false,
-                    'label' => 'orob2b.account.accountuser.name_prefix.label'
-                ]
-            )
-            ->add(
-                'firstName',
-                'text',
-                [
-                    'required' => true,
-                    'label' => 'orob2b.account.accountuser.first_name.label'
-                ]
-            )
-            ->add(
-                'middleName',
-                'text',
-                [
-                    'required' => false,
-                    'label' => 'orob2b.account.accountuser.middle_name.label'
-                ]
-            )
-            ->add(
-                'lastName',
-                'text',
-                [
-                    'required' => true,
-                    'label' => 'orob2b.account.accountuser.last_name.label'
-                ]
-            )
-            ->add(
-                'nameSuffix',
-                'text',
-                [
-                    'required' => false,
-                    'label' => 'orob2b.account.accountuser.name_suffix.label'
-                ]
-            )
-            ->add(
-                'birthday',
-                'oro_date',
-                [
-                    'required' => false,
-                    'label' => 'orob2b.account.accountuser.birthday.label'
-                ]
-            )
-            ->add(
-                'email',
-                'email',
-                [
-                    'required' => true,
-                    'label' => 'orob2b.account.accountuser.email.label'
-                ]
-            )
-            ->add(
-                'changePassword',
-                ChangePasswordType::NAME,
-                [
-                    'current_password_label' => 'orob2b.account.accountuser.current_password.label',
-                    'plain_password_invalid_message' => 'orob2b.account.message.password_mismatch',
-                    'first_options_label' => 'orob2b.account.accountuser.new_password.label',
-                    'second_options_label' => 'orob2b.account.accountuser.password_confirmation.label'
-                ]
-            );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
-    {
-        $resolver->setDefaults(
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
+        $builder->add(
+            'roles',
+            FrontendAccountUserRoleSelectType::NAME,
             [
-                'data_class' => $this->dataClass,
-                'intention' => 'account_user',
+                'label' => 'orob2b.account.accountuser.roles.label'
             ]
         );
     }
 
     /**
-     * @return string
+     * @param FormEvent $event
+     * @return bool
+     */
+    public function onPreSetData(FormEvent $event)
+    {
+        /** @var $user AccountUser */
+        $user = $this->securityFacade->getLoggedUser();
+        if (!$user instanceof AccountUser) {
+            return;
+        }
+        $account = $user->getAccount();
+        /** @var AccountUser $data */
+        $data = $event->getData();
+        $data->setAccount($account);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getParent()
+    {
+        return AccountUserType::NAME;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'data_class' => $this->accountUserClass,
+        ]);
     }
 }

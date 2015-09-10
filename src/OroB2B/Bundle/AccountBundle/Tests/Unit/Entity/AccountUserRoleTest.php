@@ -2,6 +2,9 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -11,10 +14,20 @@ class AccountUserRoleTest extends \PHPUnit_Framework_TestCase
     {
         $name = 'test role#$%';
         $role = new AccountUserRole();
+        $account = new Account();
+        $organization = new Organization();
 
         $this->assertEmpty($role->getId());
         $this->assertEmpty($role->getLabel());
         $this->assertEmpty($role->getRole());
+        $this->assertEmpty($role->getOrganization());
+        $this->assertEmpty($role->getAccount());
+
+        $role->setAccount($account);
+        $role->setOrganization($organization);
+
+        $this->assertEquals($organization, $role->getOrganization());
+        $this->assertEquals($account, $role->getAccount());
 
         $role->setLabel($name);
         $this->assertEquals($name, $role->getLabel());

@@ -1,0 +1,3 @@
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
+{{ dataGrid.renderGrid('account-user-orders-grid', {account_user_id: entity.id}) }}
