@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class RequestProductHandler
 {
-    const CATEGORY_ID_KEY = 'category_id';
+    const CATEGORY_ID_KEY = 'categoryId';
 
     /** @var  Request|null */
     protected $request;
