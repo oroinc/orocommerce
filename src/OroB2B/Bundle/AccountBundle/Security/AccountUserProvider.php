@@ -108,7 +108,8 @@ class AccountUserProvider
         $oid = $this->aclManager->getOid($descriptor);
         $rootOid = $this->aclManager->getRootOid($oid);
 
-        return $this->isGrantedOidMask($oid, $class, $mask) || $this->isGrantedOidMask($rootOid, $class, $mask);
+        return $this->isGrantedOidMask($oid, $class, $mask) ||
+            $this->isGrantedOidMask($rootOid, $class, EntityMaskBuilder::GROUP_SYSTEM);
     }
 
     /**
