@@ -12,7 +12,11 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 class AjaxProductUnitController extends AbstractAjaxProductUnitController
 {
     /**
-     * @Route("/product-units/{id}", name="orob2b_product_frontend_ajaxproductunit_productunits", requirements={"id"="\d+"})
+     * @Route(
+     *      "/product-units/{id}",
+     *      name="orob2b_product_frontend_ajaxproductunit_productunits",
+     *      requirements={"id"="\d+"}
+     * )
      *
      * @param Product $product
      * @return JsonResponse
