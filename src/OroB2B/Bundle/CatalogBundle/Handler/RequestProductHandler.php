@@ -6,12 +6,15 @@ use Symfony\Component\HttpFoundation\Request;
 
 class RequestProductHandler
 {
-    const CATEGORY_ID_KEY = 'category_id';
+    const CATEGORY_ID_KEY = 'categoryId';
 
     /** @var  Request|null */
     protected $request;
 
-    public function setRequest($request)
+    /**
+     * @param Request|null $request
+     */
+    public function setRequest(Request $request=null)
     {
         $this->request = $request;
     }
