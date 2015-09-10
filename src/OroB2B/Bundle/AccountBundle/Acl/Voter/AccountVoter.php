@@ -15,12 +15,14 @@ use OroB2B\Bundle\AccountBundle\Security\AccountUserProvider;
 class AccountVoter extends AbstractEntityVoter
 {
     const ATTRIBUTE_VIEW = 'ACCOUNT_VIEW';
+    const ATTRIBUTE_EDIT = 'ACCOUNT_EDIT';
 
     /**
      * @var array
      */
     protected $supportedAttributes = [
         self::ATTRIBUTE_VIEW,
+        self::ATTRIBUTE_EDIT,
     ];
 
     /**
