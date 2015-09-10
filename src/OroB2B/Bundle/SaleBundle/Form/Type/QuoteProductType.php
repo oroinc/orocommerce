@@ -124,6 +124,14 @@ class QuoteProductType extends AbstractType
                 'label' => 'orob2b.sale.quoteproduct.product_replacement.label',
                 'create_enabled' => false,
             ])
+            ->add('freeFormProduct', 'text', [
+                'required' => false,
+                'label' => 'orob2b.product.entity_label',
+            ])
+            ->add('freeFormProductReplacement', 'text', [
+                'required' => false,
+                'label' => 'orob2b.sale.quoteproduct.product_replacement.label',
+            ])
             ->add('quoteProductRequests', QuoteProductRequestCollectionType::NAME, [
             ])
             ->add('quoteProductOffers', QuoteProductOfferCollectionType::NAME, [
