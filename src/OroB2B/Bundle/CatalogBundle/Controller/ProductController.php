@@ -24,17 +24,11 @@ class ProductController extends Controller
         if ($request->query->has('categoryId')) {
             $defaultCategoryId = $request->query->get('categoryId');
         } else {
-            $defaultCategoryId = $this->getMasterRootCategory()->getId();
+            /** @var Category $rootCategory */
+            $rootCategory = $this->getDoctrine()->getRepository('OroB2BCatalogBundle:Category')->getMasterCatalogRoot();
+            $defaultCategoryId = $rootCategory->getId();
         }
 
         return ['defaultCategoryId' => $defaultCategoryId];
-    }
-
-    /**
-     * @return Category
-     */
-    protected function getMasterRootCategory()
-    {
-        return $this->getDoctrine()->getRepository('OroB2BCatalogBundle:Category')->getMasterCatalogRoot();
     }
 }
