@@ -2,23 +2,25 @@
 
 namespace OroB2B\Bundle\FrontendBundle\EventListener;
 
-use Symfony\Bundle\FrameworkBundle\Routing\Router;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 use Oro\Bundle\ThemeBundle\Model\ThemeRegistry;
 
+use OroB2B\Bundle\FrontendBundle\Twig\FrontendAsseticTokenParser;
+
 class ThemeListener
 {
     /**
-     * @var Router
+     * @var RouterInterface
      */
     protected $router;
 
     /**
      * @var ThemeRegistry
      */
-    protected $oroThemeRegistry;
+    protected $themeRegistry;
 
     /**
      * @var bool
@@ -26,14 +28,14 @@ class ThemeListener
     protected $installed;
 
     /**
-     * @param Router $router
-     * @param ThemeRegistry $oroThemeRegistry
+     * @param RouterInterface $router
+     * @param ThemeRegistry $themeRegistry
      * @param boolean $installed
      */
-    public function __construct(Router $router, ThemeRegistry $oroThemeRegistry, $installed)
+    public function __construct(RouterInterface $router, ThemeRegistry $themeRegistry, $installed)
     {
         $this->router = $router;
-        $this->oroThemeRegistry = $oroThemeRegistry;
+        $this->themeRegistry = $themeRegistry;
         $this->installed = $installed;
     }
 
@@ -55,8 +57,8 @@ class ThemeListener
         $routeName = $request->attributes->get('_route');
         $route = $this->router->getRouteCollection()->get($routeName);
 
-        if ($route->getOption('frontend')) {
-            $this->oroThemeRegistry->setActiveTheme('demo');
+        if ($route->getOption(RouteCollectionListener::OPTION_FRONTEND)) {
+            $this->themeRegistry->setActiveTheme(FrontendAsseticTokenParser::FRONTEND_THEME);
         }
     }
 }
