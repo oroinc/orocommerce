@@ -133,7 +133,7 @@ class OrderControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_frontend_quick_add'));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        $form = $crawler->selectButton('Add To Order')->form();
+        $form = $crawler->filter('form[name="orob2b_product_quick_add"]')->form();
 
         /** @var Product $product */
         $product = $this->getReference('product.3');
