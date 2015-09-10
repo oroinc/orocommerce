@@ -54,8 +54,8 @@ class ThemeListenerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($routeCollection));
 
         $this->themeRegistry = new ThemeRegistry([
-            'oro' => array(),
-            'demo' => array(),
+            'oro' => [],
+            'demo' => [],
         ]);
 
         $this->kernel = $this->getMock('Symfony\Component\HttpKernel\HttpKernelInterface');
