@@ -11,6 +11,7 @@ parameters:
     orob2b_product.form.type.quick_add.class: OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType
     orob2b_product.form.type.product_row.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductRowType
     orob2b_product.form.type.product_row_collection.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductRowCollectionType
+    orob2b_product.form.type.extension.post_quick_add.abstract.class: OroB2B\Bundle\ProductBundle\Form\Extension\AbstractPostQuickAddTypeExtension
 
 services:
     # Product form types
@@ -88,3 +89,13 @@ services:
         class: %orob2b_product.form.type.quick_add.class%
         tags:
             - { name: form.type, alias: 'orob2b_product_quick_add' }
+
+    orob2b_product.form.type.extension.post_quick_add.abstract:
+        class: %orob2b_product.form.type.extension.post_quick_add.abstract.class%
+        abstract: true
+        arguments:
+            - @orob2b_product.service.product_data_storage
+            - @doctrine
+            - %orob2b_product.product.class%
+        calls:
+            - [setRequest, ["@?request="]]

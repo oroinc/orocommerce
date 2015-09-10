@@ -1,14 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Extension;
+namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
+use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
+use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
+use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
+use OroB2B\Bundle\RFPBundle\Form\Extension\FrontendRequestExtension;
 use OroB2B\Bundle\OrderBundle\Form\Extension\FrontendOrderExtension;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -17,7 +19,7 @@ use OroB2B\Bundle\ProductBundle\Model\DataStorageAwareProcessor;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductRowType;
 
-class FrontendOrderExtensionTest extends \PHPUnit_Framework_TestCase
+class FrontendRequestExtensionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ProductDataStorage
@@ -58,9 +60,9 @@ class FrontendOrderExtensionTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $this->productClass = 'stdClass';
 
-        $this->extension = new FrontendOrderExtension($this->storage, $this->registry, $this->productClass);
+        $this->extension = new FrontendRequestExtension($this->storage, $this->registry, $this->productClass);
         $this->extension->setRequest($this->request);
-        $this->extension->setDataClass('OroB2B\Bundle\OrderBundle\Entity\Order');
+        $this->extension->setDataClass('OroB2B\Bundle\RFPBundle\Entity\Request');
     }
 
     public function testBuildFormNoRequestParameter()
@@ -75,14 +77,14 @@ class FrontendOrderExtensionTest extends \PHPUnit_Framework_TestCase
         $this->storage->expects($this->never())
             ->method($this->anything());
 
-        $this->extension->buildForm($builder, ['data' => new Order()]);
+        $this->extension->buildForm($builder, ['data' => new Request()]);
     }
 
     public function testBuildFormExistingOrder()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface $builder */
         $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
-        $order = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Entity\Order')
+        $order = $this->getMockBuilder('OroB2B\Bundle\RFPBundle\Entity\Request')
             ->disableOriginalConstructor()
             ->getMock();
         $order->expects($this->once())
@@ -118,7 +120,7 @@ class FrontendOrderExtensionTest extends \PHPUnit_Framework_TestCase
         $this->registry->expects($this->never())
             ->method($this->anything());
 
-        $this->extension->buildForm($builder, ['data' => new Order()]);
+        $this->extension->buildForm($builder, ['data' => new RFPRequest()]);
     }
 
     public function testBuild()
@@ -128,7 +130,7 @@ class FrontendOrderExtensionTest extends \PHPUnit_Framework_TestCase
         $sku = 'TEST';
         $qty = 3;
         $data = [[ProductRowType::PRODUCT_SKU_FIELD_NAME => $sku, ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => $qty]];
-        $order = new Order();
+        $request = new RFPRequest();
         $product = new Product();
         $product->setSku('TEST');
         $productUnit = new ProductUnit();
@@ -167,16 +169,21 @@ class FrontendOrderExtensionTest extends \PHPUnit_Framework_TestCase
             ->with($this->productClass)
             ->will($this->returnValue($em));
 
-        $this->extension->buildForm($builder, ['data' => $order]);
+        $this->extension->buildForm($builder, ['data' => $request]);
 
-        $this->assertCount(1, $order->getLineItems());
-        /** @var OrderLineItem $lineItem */
-        $lineItem = $order->getLineItems()->first();
+        $this->assertCount(1, $request->getRequestProducts());
+        /** @var RequestProduct $requestProduct */
+        $requestProduct = $request->getRequestProducts()->first();
 
-        $this->assertEquals($product, $lineItem->getProduct());
-        $this->assertEquals($product->getSku(), $lineItem->getProductSku());
-        $this->assertEquals($productUnit, $lineItem->getProductUnit());
-        $this->assertEquals($productUnit->getCode(), $lineItem->getProductUnitCode());
-        $this->assertEquals($qty, $lineItem->getQuantity());
+        $this->assertEquals($product, $requestProduct->getProduct());
+        $this->assertEquals($product->getSku(), $requestProduct->getProductSku());
+
+        $this->assertCount(1, $requestProduct->getRequestProductItems());
+        /** @var RequestProductItem $requestProductItem */
+        $requestProductItem = $requestProduct->getRequestProductItems()->first();
+
+        $this->assertEquals($productUnit, $requestProductItem->getProductUnit());
+        $this->assertEquals($productUnit->getCode(), $requestProductItem->getProductUnitCode());
+        $this->assertEquals($qty, $requestProductItem->getQuantity());
     }
 }
