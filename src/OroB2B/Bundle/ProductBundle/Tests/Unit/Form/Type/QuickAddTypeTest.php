@@ -63,14 +63,6 @@ class QuickAddTypeTest extends FormIntegrationTestCase
     public function submitDataProvider()
     {
         return [
-            'empty' => [
-                'submittedData' => [],
-                'expectedData' => [
-                    QuickAddType::PRODUCTS_FIELD_NAME => [],
-                    QuickAddType::COMPONENT_FIELD_NAME => null,
-                    QuickAddType::ADDITIONAL_FIELD_NAME => null,
-                ],
-            ],
             'valid data' => [
                 'submittedData' => [
                     QuickAddType::PRODUCTS_FIELD_NAME => [
@@ -94,6 +86,13 @@ class QuickAddTypeTest extends FormIntegrationTestCase
                 ],
             ],
         ];
+    }
+
+    public function testInvalidSubmit()
+    {
+        $form = $this->factory->create($this->formType);
+        $form->submit([]);
+        $this->assertFalse($form->isValid());
     }
 
     public function testGetName()

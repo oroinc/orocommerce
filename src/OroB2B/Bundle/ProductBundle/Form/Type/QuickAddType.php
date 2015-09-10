@@ -26,12 +26,12 @@ class QuickAddType extends AbstractType
                 ProductRowCollectionType::NAME,
                 [
                     'required' => false,
-                    'label' => 'orob2b.product.form.products.label',
                     'options' => [
                         'validation_required' => $options['validation_required']
                     ],
                     'error_bubbling' => true,
-                    'constraints' => [new NotBlank(['message' => 'orob2b.product.at_least_one_item'])]
+                    'constraints' => [new NotBlank(['message' => 'orob2b.product.at_least_one_item'])],
+                    'add_label' => 'orob2b.product.form.add_row'
                 ]
             )
             ->add(

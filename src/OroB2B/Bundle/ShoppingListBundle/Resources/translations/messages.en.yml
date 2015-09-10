@@ -37,7 +37,7 @@ orob2b:
             shopping_list.description: Shopping Lists
             shortcut_shopping_list.description: Shows content of shopping lists of the account users
             order_quick_add:
-                label: Order Quick Add
+                label: Quick Order Form
                 description: Quick add products to order, RFQ or shopping cart
 
         acl:
