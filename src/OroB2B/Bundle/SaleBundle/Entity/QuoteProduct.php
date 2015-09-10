@@ -60,6 +60,13 @@ class QuoteProduct implements ProductHolderInterface
     /**
      * @var string
      *
+     * @ORM\Column(name="free_form_product", type="string", length=255, nullable=true)
+     */
+    protected $freeFormProduct;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="product_sku", type="string", length=255)
      */
     protected $productSku;
@@ -71,6 +78,13 @@ class QuoteProduct implements ProductHolderInterface
      * @ORM\JoinColumn(name="product_replacement_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $productReplacement;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="free_form_product_replacement", type="string", length=255, nullable=true)
+     */
+    protected $freeFormProductReplacement;
 
     /**
      * @var string
@@ -233,6 +247,25 @@ class QuoteProduct implements ProductHolderInterface
     }
 
     /**
+     * @param string $freeFormProduct
+     * @return QuoteProduct
+     */
+    public function setFreeFormProduct($freeFormProduct)
+    {
+        $this->freeFormProduct = $freeFormProduct;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFreeFormProduct()
+    {
+        return $this->freeFormProduct;
+    }
+
+    /**
      * Set productSku
      *
      * @param string $productSku
@@ -279,6 +312,25 @@ class QuoteProduct implements ProductHolderInterface
     public function getProductReplacement()
     {
         return $this->productReplacement;
+    }
+
+    /**
+     * @param string $freeFormProductReplacement
+     * @return QuoteProduct
+     */
+    public function setFreeFormProductReplacement($freeFormProductReplacement)
+    {
+        $this->freeFormProductReplacement = $freeFormProductReplacement;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFreeFormProductReplacement()
+    {
+        return $this->freeFormProductReplacement;
     }
 
     /**
