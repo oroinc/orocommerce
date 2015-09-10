@@ -15,5 +15,4 @@ services:
         class: %orob2b_shopping_list.mass_action.add_products_handler.class%
         arguments:
             - @orob2b_shopping_list.handler.shopping_list_line_item
-            - @translator
-            - @router
+            - @orob2b_shopping_list.service.message_generator
