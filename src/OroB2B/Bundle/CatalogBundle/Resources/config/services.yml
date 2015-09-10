@@ -2,10 +2,12 @@ parameters:
     orob2b_catalog.category.class: OroB2B\Bundle\CatalogBundle\Entity\Category
     orob2b_catalog.category_tree_handler.class: OroB2B\Bundle\CatalogBundle\JsTree\CategoryTreeHandler
     orob2b_catalog.category.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    orob2b_catalog.handler.request_product.class: OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler
 
     orob2b_catalog.event_listener.form_view.class: OroB2B\Bundle\CatalogBundle\EventListener\FormViewListener
     orob2b_catalog.event_listener.datagrid.class: OroB2B\Bundle\CatalogBundle\EventListener\DatagridListener
     orob2b_catalog.event_listener.product_duplicate.class: OroB2B\Bundle\CatalogBundle\EventListener\ProductDuplicateListener
+    orob2b_catalog.event_listener.product_datagrid.class: OroB2B\Bundle\CatalogBundle\EventListener\ProductDatagridListener
 
 services:
     orob2b_catalog.category_tree_handler:
@@ -44,3 +46,18 @@ services:
             - [setDoctrineHelper, [@oro_entity.doctrine_helper]]
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product.duplicate.after, method: onDuplicateAfter }
+
+    orob2b_catalog.handler.request_product:
+        class: %orob2b_catalog.handler.request_product.class%
+        calls:
+            - [setRequest, ["@?request="]]
+
+    orob2b_catalog.event_listener.product_datagrid:
+        class: %orob2b_catalog.event_listener.product_datagrid.class%
+        calls:
+            - [setDataClass, [%orob2b_catalog.category.class%]]
+        arguments:
+            - @doctrine
+            - @orob2b_catalog.handler.request_product
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.products-grid, method: onPreBuild }
