@@ -4,6 +4,19 @@ placeholders:
             logo:
                 order: 100
 
+    head_style:
+        items:
+            assets_css:
+                order: 100
+            frontend_assets_css:
+                order: 100
+
 items:
     logo:
         template: OroB2BFrontendBundle:Organization:logo.html.twig
+    assets_css:
+        template: OroAsseticBundle:Assets:oro_css.html.twig
+        applicable: @orob2b_frontend.placeholder.theme_filter->isActiveTheme(oro)
+    frontend_assets_css:
+        template: OroB2BFrontendBundle:Assets:demo_css.html.twig
+        applicable: @orob2b_frontend.placeholder.theme_filter->isActiveTheme(demo)

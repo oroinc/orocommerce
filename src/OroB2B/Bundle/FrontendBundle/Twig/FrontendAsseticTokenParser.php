@@ -8,10 +8,10 @@ use Oro\Bundle\AsseticBundle\AssetsConfiguration;
 use Oro\Bundle\AsseticBundle\Twig\AsseticTokenParser;
 use Oro\Bundle\ThemeBundle\Model\ThemeRegistry;
 
+use OroB2B\Bundle\FrontendBundle\EventListener\ThemeListener;
+
 class FrontendAsseticTokenParser extends AsseticTokenParser
 {
-    const FRONTEND_THEME = 'demo';
-
     /**
      * @var ThemeRegistry
      */
@@ -46,7 +46,7 @@ class FrontendAsseticTokenParser extends AsseticTokenParser
         $lineno
     ) {
         $currentTheme = $this->themeRegistry->getActiveTheme()->getName();
-        $this->themeRegistry->setActiveTheme(self::FRONTEND_THEME);
+        $this->themeRegistry->setActiveTheme(ThemeListener::FRONTEND_THEME);
 
         $node = parent::createAsseticNode($body, $filters, $attributes, $lineno);
 
@@ -65,7 +65,7 @@ class FrontendAsseticTokenParser extends AsseticTokenParser
         $lineno
     ) {
         $currentTheme = $this->themeRegistry->getActiveTheme()->getName();
-        $this->themeRegistry->setActiveTheme(self::FRONTEND_THEME);
+        $this->themeRegistry->setActiveTheme(ThemeListener::FRONTEND_THEME);
 
         $node = parent::createDebugAsseticNode($body, $filters, $attributes, $lineno);
 
