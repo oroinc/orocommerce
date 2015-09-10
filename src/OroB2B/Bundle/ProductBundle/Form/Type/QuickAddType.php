@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ProductBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class QuickAddType extends AbstractType
 {
@@ -25,10 +26,12 @@ class QuickAddType extends AbstractType
                 ProductRowCollectionType::NAME,
                 [
                     'required' => false,
-                    'label' => 'orob2b.product.form.products.label',
                     'options' => [
                         'validation_required' => $options['validation_required']
-                    ]
+                    ],
+                    'error_bubbling' => true,
+                    'constraints' => [new NotBlank(['message' => 'orob2b.product.at_least_one_item'])],
+                    'add_label' => 'orob2b.product.form.add_row'
                 ]
             )
             ->add(

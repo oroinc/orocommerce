@@ -5,11 +5,16 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\AccountBundle\Entity\AbstractAddressToAddressType;
 use OroB2B\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 abstract class AbstractAddressTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
@@ -30,7 +35,7 @@ abstract class AbstractAddressTest extends \PHPUnit_Framework_TestCase
      * Constructs a test case with the given name.
      *
      * @param string $name
-     * @param array  $data
+     * @param array $data
      * @param string $dataName
      */
     public function __construct($name = null, array $data = array(), $dataName = '')
@@ -85,6 +90,20 @@ abstract class AbstractAddressTest extends \PHPUnit_Framework_TestCase
         $types = new ArrayCollection([$this->billingType, $this->shippingType]);
         $this->address->setTypes($types);
         $this->assertEquals($types, $this->address->getTypes());
+    }
+
+    public function testOwner()
+    {
+        $owner = new User();
+        $this->address->setOwner($owner);
+        $this->assertEquals($owner, $this->address->getOwner());
+    }
+
+    public function testSystemOrganization()
+    {
+        $organization = new Organization();
+        $this->address->setOrganization($organization);
+        $this->assertEquals($organization, $this->address->getOrganization());
     }
 
     public function testRemoveTypes()

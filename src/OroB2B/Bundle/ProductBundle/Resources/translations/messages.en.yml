@@ -23,6 +23,7 @@ orob2b:
             as_defined_in_system_config.label: As Defined in System Configuration
 
         form.choose: 'Choose Product...'
+        form.add_row: 'Add row'
 
         productunit:
             entity_label: Product Unit
@@ -89,7 +90,7 @@ orob2b:
             save_and_duplicate: Save And Duplicate
 
         frontend:
-            quick_add.title: Quick Add
+            quick_add.title: Quick Order Form
             component_not_accessible.message: Can't process request, component not accessible
 
     product_unit.kg:

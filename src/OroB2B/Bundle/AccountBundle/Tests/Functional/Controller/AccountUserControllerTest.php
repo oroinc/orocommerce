@@ -2,21 +2,19 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller;
 
-use Symfony\Bridge\Swiftmailer\DataCollector\MessageDataCollector;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
 
 /**
  * @dbIsolation
  */
-class AccountUserControllerTest extends WebTestCase
+class AccountUserControllerTest extends AbstractUserControllerTest
 {
     const NAME_PREFIX = 'NamePrefix';
     const MIDDLE_NAME = 'MiddleName';
     const NAME_SUFFIX = 'NameSuffix';
-    const EMAIL       = 'first@example.com';
-    const FIRST_NAME  = 'John';
-    const LAST_NAME   = 'Doe';
+    const EMAIL = 'first@example.com';
+    const FIRST_NAME = 'John';
+    const LAST_NAME = 'Doe';
 
     const UPDATED_NAME_PREFIX = 'UNamePrefix';
     const UPDATED_FIRST_NAME = 'UFirstName';
@@ -62,20 +60,20 @@ class AccountUserControllerTest extends WebTestCase
         $this->assertNotNull($role);
 
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['orob2b_account_account_user[enabled]']               = true;
-        $form['orob2b_account_account_user[namePrefix]']            = self::NAME_PREFIX;
-        $form['orob2b_account_account_user[firstName]']             = self::FIRST_NAME;
-        $form['orob2b_account_account_user[middleName]']            = self::MIDDLE_NAME;
-        $form['orob2b_account_account_user[lastName]']              = self::LAST_NAME;
-        $form['orob2b_account_account_user[nameSuffix]']            = self::NAME_SUFFIX;
-        $form['orob2b_account_account_user[email]']                 = $email;
-        $form['orob2b_account_account_user[birthday]']              = date('Y-m-d');
-        $form['orob2b_account_account_user[plainPassword][first]']  = $password;
+        $form['orob2b_account_account_user[enabled]'] = true;
+        $form['orob2b_account_account_user[namePrefix]'] = self::NAME_PREFIX;
+        $form['orob2b_account_account_user[firstName]'] = self::FIRST_NAME;
+        $form['orob2b_account_account_user[middleName]'] = self::MIDDLE_NAME;
+        $form['orob2b_account_account_user[lastName]'] = self::LAST_NAME;
+        $form['orob2b_account_account_user[nameSuffix]'] = self::NAME_SUFFIX;
+        $form['orob2b_account_account_user[email]'] = $email;
+        $form['orob2b_account_account_user[birthday]'] = date('Y-m-d');
+        $form['orob2b_account_account_user[plainPassword][first]'] = $password;
         $form['orob2b_account_account_user[plainPassword][second]'] = $password;
-        $form['orob2b_account_account_user[account]']               = $account->getId();
-        $form['orob2b_account_account_user[passwordGenerate]']      = $isPasswordGenerate;
-        $form['orob2b_account_account_user[sendEmail]']             = $isSendEmail;
-        $form['orob2b_account_account_user[roles]']                 = [$role->getId()];
+        $form['orob2b_account_account_user[account]'] = $account->getId();
+        $form['orob2b_account_account_user[passwordGenerate]'] = $isPasswordGenerate;
+        $form['orob2b_account_account_user[sendEmail]'] = $isSendEmail;
+        $form['orob2b_account_account_user[roles]'] = [$role->getId()];
 
         $this->client->submit($form);
 
@@ -96,90 +94,6 @@ class AccountUserControllerTest extends WebTestCase
         $this->assertContains('Account User has been saved', $crawler->html());
     }
 
-    /**
-     * @return array
-     */
-    public function createDataProvider()
-    {
-        return [
-            'simple create' => [
-                'email' => self::EMAIL,
-                'password' => '123456',
-                'isPasswordGenerate' => false,
-                'isSendEmail' => false,
-                'emailsCount' => 0
-            ],
-            'create with email and without password generator' => [
-                'email' => 'second@example.com',
-                'password' => '123456',
-                'isPasswordGenerate' => false,
-                'isSendEmail' => true,
-                'emailsCount' => 1
-            ],
-            'create with email and password generator' => [
-                'email' => 'third@example.com',
-                'password' => '',
-                'isPasswordGenerate' => true,
-                'isSendEmail' => true,
-                'emailsCount' => 1
-            ]
-        ];
-    }
-
-    /**
-     * @param string $email
-     * @param \Swift_Message $message
-     */
-    protected function assertMessage($email, \Swift_Message $message)
-    {
-        /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUser $user */
-        $user = $this->getUserRepository()->findOneBy(['email' => $email]);
-
-        $this->assertNotNull($user);
-
-        $this->assertInstanceOf('\Swift_Message', $message);
-
-        $this->assertEquals($email, key($message->getTo()));
-        $this->assertEquals(
-            $this->getContainer()->get('oro_config.manager')->get('oro_notification.email_notification_sender_email'),
-            key($message->getFrom())
-        );
-
-        $this->assertContains($email, $message->getSubject());
-        $this->assertContains($email, $message->getBody());
-    }
-
-    /**
-     * @return \Doctrine\Common\Persistence\ObjectManager
-     */
-    protected function getObjectManager()
-    {
-        return $this->getContainer()->get('doctrine')->getManager();
-    }
-
-    /**
-     * @return \Doctrine\Common\Persistence\ObjectRepository
-     */
-    protected function getUserRepository()
-    {
-        return $this->getObjectManager()->getRepository('OroB2BAccountBundle:AccountUser');
-    }
-
-    /**
-     * @return \Doctrine\Common\Persistence\ObjectRepository
-     */
-    protected function getUserRoleRepository()
-    {
-        return $this->getObjectManager()->getRepository('OroB2BAccountBundle:AccountUserRole');
-    }
-
-    /**
-     * @return \Doctrine\Common\Persistence\ObjectRepository
-     */
-    protected function getAccountRepository()
-    {
-        return $this->getObjectManager()->getRepository('OroB2BAccountBundle:Account');
-    }
 
     /**
      * @depends testCreate
@@ -218,13 +132,13 @@ class AccountUserControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_account_user_update', ['id' => $id]));
 
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['orob2b_account_account_user[enabled]']    = false;
+        $form['orob2b_account_account_user[enabled]'] = false;
         $form['orob2b_account_account_user[namePrefix]'] = self::UPDATED_NAME_PREFIX;
-        $form['orob2b_account_account_user[firstName]']  = self::UPDATED_FIRST_NAME;
+        $form['orob2b_account_account_user[firstName]'] = self::UPDATED_FIRST_NAME;
         $form['orob2b_account_account_user[middleName]'] = self::UPDATED_MIDDLE_NAME;
-        $form['orob2b_account_account_user[lastName]']   = self::UPDATED_LAST_NAME;
+        $form['orob2b_account_account_user[lastName]'] = self::UPDATED_LAST_NAME;
         $form['orob2b_account_account_user[nameSuffix]'] = self::UPDATED_NAME_SUFFIX;
-        $form['orob2b_account_account_user[email]']      = self::UPDATED_EMAIL;
+        $form['orob2b_account_account_user[email]'] = self::UPDATED_EMAIL;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -246,7 +160,6 @@ class AccountUserControllerTest extends WebTestCase
         $this->client->request('GET', $this->getUrl('orob2b_account_account_user_view', ['id' => $id]));
 
         $result = $this->client->getResponse();
-
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $content = $result->getContent();
 
@@ -293,5 +206,13 @@ class AccountUserControllerTest extends WebTestCase
         $this->assertContains(self::UPDATED_EMAIL, $result->getContent());
         $this->assertContains($user->getAccount()->getName(), $result->getContent());
         $this->assertContains($role->getLabel(), $result->getContent());
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getEmail()
+    {
+        return self::EMAIL;
     }
 }

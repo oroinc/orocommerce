@@ -8,6 +8,7 @@ parameters:
     orob2b_shopping_list.validator.line_item.class: OroB2B\Bundle\ShoppingListBundle\Validator\Constraints\LineItemValidator
     orob2b_shopping_list.handler.shopping_list_line_item.class: OroB2B\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler
     orob2b_shopping_list.processor.quick_add.class:  OroB2B\Bundle\ShoppingListBundle\Processor\QuickAddProcessor
+    orob2b_shopping_list.service.message_generator.class: OroB2B\Bundle\ShoppingListBundle\Generator\MessageGenerator
 
 services:
     orob2b_shopping_list.validator.line_item:
@@ -58,11 +59,18 @@ services:
             - [setProductClass, [%orob2b_product.product.class%]]
             - [setShoppingListClass, [%orob2b_shopping_list.entity.shopping_list.class%]]
 
+    orob2b_shopping_list.service.message_generator:
+        class: %orob2b_shopping_list.service.message_generator.class%
+        arguments:
+            - @translator
+            - @router
+
     orob2b_shopping_list.processor.quick_add:
         class: %orob2b_shopping_list.processor.quick_add.class%
         arguments:
             - @orob2b_shopping_list.handler.shopping_list_line_item
             - @doctrine
+            - @orob2b_shopping_list.service.message_generator
         calls:
             - [setProductClass, [%orob2b_product.product.class%]]
         tags:

@@ -2,8 +2,8 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Handler;
 
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Security\Core\SecurityContextInterface;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Component\Testing\Unit\FormHandlerTestCase;
@@ -29,9 +29,9 @@ class AccountUserHandlerTest extends FormHandlerTestCase
     protected $sendEmailForm;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|SecurityContextInterface
+     * @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade
      */
-    protected $securityContext;
+    protected $securityFacade;
 
     /**
      * @var AccountUser
@@ -59,13 +59,15 @@ class AccountUserHandlerTest extends FormHandlerTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->securityContext = $this->getMock('Symfony\Component\Security\Core\SecurityContextInterface');
+        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->handler = new AccountUserHandler(
             $this->form,
             $this->request,
             $this->userManager,
-            $this->securityContext
+            $this->securityFacade
         );
     }
 
@@ -96,7 +98,7 @@ class AccountUserHandlerTest extends FormHandlerTestCase
                 ->method('getOrganizationContext')
                 ->willReturn($organization);
 
-            $this->securityContext->expects($this->any())
+            $this->securityFacade->expects($this->any())
                 ->method('getToken')
                 ->willReturn($organizationToken);
 
