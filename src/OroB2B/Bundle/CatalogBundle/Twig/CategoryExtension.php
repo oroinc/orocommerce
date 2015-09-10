@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Twig;
 
+use Symfony\Component\Translation\TranslatorInterface;
+
 use OroB2B\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;
 
 class CategoryExtension extends \Twig_Extension
@@ -14,11 +16,18 @@ class CategoryExtension extends \Twig_Extension
     protected $categoryTreeHandler;
 
     /**
-     * @param CategoryTreeHandler $categoryTreeHandler
+     * @var TranslatorInterface
      */
-    public function __construct(CategoryTreeHandler $categoryTreeHandler)
+    protected $translator;
+
+    /**
+     * @param CategoryTreeHandler $categoryTreeHandler
+     * @param TranslatorInterface $translator
+     */
+    public function __construct(CategoryTreeHandler $categoryTreeHandler, TranslatorInterface $translator)
     {
         $this->categoryTreeHandler = $categoryTreeHandler;
+        $this->translator = $translator;
     }
 
     /**
@@ -36,6 +45,7 @@ class CategoryExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFunction('orob2b_category_list', [$this, 'getCategoryList']),
+            new \Twig_SimpleFunction('orob2b_frontend_category_list', [$this, 'getFrontendCategoryList']),
         ];
     }
 
@@ -45,5 +55,16 @@ class CategoryExtension extends \Twig_Extension
     public function getCategoryList()
     {
         return $this->categoryTreeHandler->createTree();
+    }
+
+    /**
+     * @return array
+     */
+    public function getFrontendCategoryList()
+    {
+        $tree = $this->getCategoryList();
+        $tree[0]['text'] = $this->translator->trans('orob2b.catalog.frontend.category.master_category.label');
+
+        return $tree;
     }
 }

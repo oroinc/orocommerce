@@ -31,3 +31,5 @@ orob2b:
 
         template:
             select_existing_or_create_new: 'Please select a category on the left or create new one.'
+        frontend:
+            category.master_category.label: 'Product Catalog'
