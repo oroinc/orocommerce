@@ -136,7 +136,8 @@ class SlugTypeTest extends FormIntegrationTestCase
             'update current slug only old' => [
                 'options' => [
                     'type' => 'update',
-                    'current_slug' => 'existing_slug'
+                    'current_slug' => 'existing_slug',
+                    'parent_slug' => 'parent_slug',
                 ],
                 'defaultData' => [
                     'mode' => 'old',

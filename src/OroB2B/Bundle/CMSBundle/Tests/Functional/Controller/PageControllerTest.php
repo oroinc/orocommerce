@@ -142,7 +142,7 @@ class PageControllerTest extends WebTestCase
 
         return $this->assertEdit(
             self::DEFAULT_SUBPAGE_TITLE,
-            self::DEFAULT_SUBPAGE_SLUG_TEXT,
+            self::DEFAULT_PAGE_SLUG_TEXT . '/' . self::DEFAULT_SUBPAGE_SLUG_TEXT,
             self::UPDATED_DEFAULT_SUBPAGE_TITLE,
             self::UPDATED_DEFAULT_SUBPAGE_SLUG_TEXT,
             self::SLUG_MODE_NEW,
@@ -230,7 +230,7 @@ class PageControllerTest extends WebTestCase
         );
 
         $this->assertContains(
-            "Redirect visitors from " . $slug,
+            "Redirect visitors from /" . $slug,
             $crawler->filter('.sub-item')->html()
         );
 
@@ -269,7 +269,7 @@ class PageControllerTest extends WebTestCase
         );
 
         $this->assertContains(
-            "Redirect visitors from " . $newSlug,
+            "Redirect visitors from /" . $newSlug,
             $crawler->filter('.sub-item')->html()
         );
 
