@@ -1,13 +1,9 @@
-define(function (require) {
+define(function(require) {
     'use strict';
 
     var TreeViewComponent;
-    var $ = require('jquery');
     var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
     var mediator = require('oroui/js/mediator');
-    var routing = require('routing');
-    var tools = require('oroui/js/tools');
     var BasicTreeComponent = require('orob2bcatalog/js/app/components/basic-tree-component');
 
     /**
@@ -51,7 +47,7 @@ define(function (require) {
         customizeTreeConfig: function(options, config) {
             if (options.updateAllowed) {
                 config.plugins.push('dnd');
-                config['dnd'] = {
+                config.dnd = {
                     'is_draggable': false
                 };
             }
@@ -82,8 +78,8 @@ define(function (require) {
             };
 
             mediator.trigger(
-              'grid-sidebar:change:' + this.options.sidebarAlias,
-              {widgetReload: Boolean(true), params: params}
+                'grid-sidebar:change:' + this.options.sidebarAlias,
+                {widgetReload: Boolean(true), params: params}
             );
         }
     });

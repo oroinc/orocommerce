@@ -1,15 +1,14 @@
-define(function (require) {
+define(function(require) {
     'use strict';
 
-    var TreeManageComponent,
-        $ = require('jquery'),
-        _ = require('underscore'),
-        __ = require('orotranslation/js/translator'),
-        mediator = require('oroui/js/mediator'),
-        layout = require('oroui/js/layout'),
-        messenger = require('oroui/js/messenger'),
-        routing = require('routing'),
-        BasicTreeComponent = require('orob2bcatalog/js/app/components/basic-tree-component');
+    var TreeManageComponent;
+    var $ = require('jquery');
+    var _ = require('underscore');
+    var __ = require('orotranslation/js/translator');
+    var mediator = require('oroui/js/mediator');
+    var messenger = require('oroui/js/messenger');
+    var routing = require('routing');
+    var BasicTreeComponent = require('orob2bcatalog/js/app/components/basic-tree-component');
 
     /**
      * @export orob2bcatalog/js/app/components/tree-manage-component
@@ -20,17 +19,17 @@ define(function (require) {
         /**
          * @property {Boolean}
          */
-        updateAllowed : false,
+        updateAllowed: false,
 
         /**
          * @property {Boolean}
          */
-        moveTriggered : false,
+        moveTriggered: false,
 
         /**
          * @param {Object} options
          */
-        initialize: function (options) {
+        initialize: function(options) {
             TreeManageComponent.__super__.initialize.call(this, options);
             if (!this.$tree) {
                 return;
@@ -52,8 +51,8 @@ define(function (require) {
         customizeTreeConfig: function(options, config) {
             if (options.updateAllowed) {
                 config.plugins.push('dnd');
-                config['dnd'] = {
-                    'copy' : false
+                config.dnd = {
+                    'copy': false
                 };
             }
 
@@ -74,7 +73,7 @@ define(function (require) {
             var url = routing.generate('orob2b_catalog_category_update', {id: selected.node.id});
             mediator.execute('redirectTo', {url: url});
         },
-        
+
         /**
          * Triggers after category move
          *
@@ -88,7 +87,7 @@ define(function (require) {
 
             if (data.parent == '#') {
                 this.rollback(data);
-                messenger.notificationFlashMessage('warning', __("orob2b.catalog.add_new_root_warning"));
+                messenger.notificationFlashMessage('warning', __('orob2b.catalog.add_new_root_warning'));
                 return;
             }
 
@@ -102,12 +101,12 @@ define(function (require) {
                     parent: data.parent,
                     position: data.position
                 },
-                success: function (result) {
+                success: function(result) {
                     if (!result.status) {
                         self.rollback(data);
                         messenger.notificationFlashMessage(
                             'error',
-                            __("orob2b.catalog.move_category_error", {nodeText: data.node.text})
+                            __('orob2b.catalog.move_category_error', {nodeText: data.node.text})
                         );
                     }
                 }
