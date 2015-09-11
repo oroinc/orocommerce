@@ -54,10 +54,10 @@ services:
 
     orob2b_catalog.event_listener.product_datagrid:
         class: %orob2b_catalog.event_listener.product_datagrid.class%
-        calls:
-            - [setDataClass, [%orob2b_catalog.category.class%]]
         arguments:
             - @doctrine
             - @orob2b_catalog.handler.request_product
+        calls:
+            - [setDataClass, [%orob2b_catalog.category.class%]]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.products-grid, method: onPreBuild }

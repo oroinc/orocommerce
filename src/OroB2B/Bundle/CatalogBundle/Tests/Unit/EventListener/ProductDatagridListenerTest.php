@@ -7,6 +7,7 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
+use Oro\Bundle\DataGridBundle\EventListener\DatasourceBindParametersListener;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
@@ -17,7 +18,6 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
     const DATA_CLASS = 'OroB2B\Bundle\CatalogBundle\Entity\Category';
     const QUERY_AND_PATH = '[source][query][where][and]';
-    const BIND_PARAMS_PATH = '[source][bind_parameters]';
     const CATEGORY_ID_ALIAS = 'productCategoryIds';
 
     /** @var  Registry|\PHPUnit_Framework_MockObject_MockObject */
@@ -47,10 +47,14 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->productDatagridListener->setDataClass(self::DATA_CLASS);
     }
 
-    public function testOnPreBuild()
+    /**
+     * @dataProvider childrenIdsDataProvider
+     *
+     * @param array $childrenIds
+     */
+    public function testOnPreBuild(array $childrenIds)
     {
         $catId = 1;
-        $childrenIds = [2, 3];
         $category = new Category();
         $this->requestProductHandler->expects($this->once())->method('getCategoryId')->willReturn($catId);
 
@@ -79,13 +83,35 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->with(self::QUERY_AND_PATH, [sprintf('productCategory.id IN (:%s)', self::CATEGORY_ID_ALIAS)]);
         $config->expects($this->at(1))
             ->method('offsetSetByPath')
-            ->with(self::BIND_PARAMS_PATH, [self::CATEGORY_ID_ALIAS]);
+            ->with(DatasourceBindParametersListener::DATASOURCE_BIND_PARAMETERS_PATH, [self::CATEGORY_ID_ALIAS]);
+        $this->productDatagridListener->onPreBuild($this->event);
+    }
+
+    public function childrenIdsDataProvider()
+    {
+        return [
+            ['withChildren' => [2, 3]],
+            ['withoutChildren' => []],
+        ];
+    }
+
+    public function testOnPreBuildWithoutExistingCategory()
+    {
+        $catId = 1;
+        $this->requestProductHandler->expects($this->once())->method('getCategoryId')->willReturn($catId);
+        /** @var CategoryRepository|\PHPUnit_Framework_MockObject_MockObject $repo */
+        $repo = $this->getMockBuilder('OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $repo->expects($this->once())->method('find')->with($catId)->willReturn(null);
+        $this->doctrine->expects($this->once())->method('getRepository')->with(self::DATA_CLASS)->willReturn($repo);
+        $repo->expects($this->never())->method('getChildrenIds');
         $this->productDatagridListener->onPreBuild($this->event);
     }
 
     public function testOnPreBuildWithoutCategoryId()
     {
-        $this->requestProductHandler->expects($this->once())->method('getCategoryId')->willReturn(null);
+        $this->requestProductHandler->expects($this->once())->method('getCategoryId')->willReturn(false);
         $this->doctrine->expects($this->never())->method('getRepository');
         $this->productDatagridListener->onPreBuild($this->event);
     }

@@ -19,21 +19,61 @@ class RequestProductHandlerTest extends \PHPUnit_Framework_TestCase
         $this->requestProductHandler = new RequestProductHandler();
     }
 
-    public function testGetCategoryId()
+    /**
+     * @dataProvider getCategoryIdDataProvider
+     *
+     * @param $value
+     * @param $expected
+     */
+    public function testGetCategoryId($value, $expected)
     {
-        $id = 1;
         $this->requestProductHandler->setRequest($this->request);
         $this->request->expects($this->once())
             ->method('get')
             ->with(RequestProductHandler::CATEGORY_ID_KEY)
-            ->willReturn($id);
+            ->willReturn($value);
         $result = $this->requestProductHandler->getCategoryId();
-        $this->assertEquals($id, $result);
+        $this->assertEquals($result, $expected);
     }
 
     public function testGetCategoryIdWithoutRequest()
     {
         $this->requestProductHandler->setRequest(null);
         $this->assertFalse($this->requestProductHandler->getCategoryId());
+    }
+
+
+    public function getCategoryIdDataProvider()
+    {
+        return [
+            [
+                'value' => null,
+                'expected' => false,
+            ],
+            [
+                'value' => '1',
+                'expected' => 1,
+            ],
+            [
+                'value' => false,
+                'expected' => false,
+            ],
+            [
+                'value' => 'true',
+                'expected' => false,
+            ],
+            [
+                'value' => 'false',
+                'expected' => false,
+            ],
+            [
+                'value' => 1,
+                'expected' => 1,
+            ],
+            [
+                'value' => 0,
+                'expected' => false,
+            ],
+        ];
     }
 }
