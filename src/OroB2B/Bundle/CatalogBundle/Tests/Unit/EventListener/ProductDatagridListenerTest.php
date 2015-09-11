@@ -47,10 +47,14 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->productDatagridListener->setDataClass(self::DATA_CLASS);
     }
 
-    public function testOnPreBuild()
+    /**
+     * @dataProvider childrenIdsDataProvider
+     *
+     * @param array $childrenIds
+     */
+    public function testOnPreBuild(array $childrenIds)
     {
         $catId = 1;
-        $childrenIds = [2, 3];
         $category = new Category();
         $this->requestProductHandler->expects($this->once())->method('getCategoryId')->willReturn($catId);
 
@@ -83,9 +87,31 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->productDatagridListener->onPreBuild($this->event);
     }
 
+    public function childrenIdsDataProvider()
+    {
+        return [
+            ['withChildren' => [2, 3]],
+            ['withoutChildren' => []],
+        ];
+    }
+
+    public function testOnPreBuildWithoutExistingCategory()
+    {
+        $catId = 1;
+        $this->requestProductHandler->expects($this->once())->method('getCategoryId')->willReturn($catId);
+        /** @var CategoryRepository|\PHPUnit_Framework_MockObject_MockObject $repo */
+        $repo = $this->getMockBuilder('OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $repo->expects($this->once())->method('find')->with($catId)->willReturn(null);
+        $this->doctrine->expects($this->once())->method('getRepository')->with(self::DATA_CLASS)->willReturn($repo);
+        $repo->expects($this->never())->method('getChildrenIds');
+        $this->productDatagridListener->onPreBuild($this->event);
+    }
+
     public function testOnPreBuildWithoutCategoryId()
     {
-        $this->requestProductHandler->expects($this->once())->method('getCategoryId')->willReturn(null);
+        $this->requestProductHandler->expects($this->once())->method('getCategoryId')->willReturn(false);
         $this->doctrine->expects($this->never())->method('getRepository');
         $this->productDatagridListener->onPreBuild($this->event);
     }

@@ -45,6 +45,9 @@ class ProductDatagridListener
         $repo = $this->doctrine->getRepository($this->dataClass);
         /** @var Category $category */
         $category = $repo->find($categoryId);
+        if (!$category) {
+            return;
+        }
         $productCategoryIds = array_merge($repo->getChildrenIds($category), [$categoryId]);
         $this->filterDatagridByCategoryIds($event, $productCategoryIds);
     }
