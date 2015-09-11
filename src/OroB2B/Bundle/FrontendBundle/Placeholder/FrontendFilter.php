@@ -30,7 +30,7 @@ class FrontendFilter
     /**
      * @param Request|null $request
      */
-    public function setRequest($request)
+    public function setRequest(Request $request = null)
     {
         $this->request = $request;
     }
