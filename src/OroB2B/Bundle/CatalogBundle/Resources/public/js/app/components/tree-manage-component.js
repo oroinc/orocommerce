@@ -122,6 +122,17 @@ define(function(require) {
             this.moveTriggered = true;
             this.$tree.jstree('move_node', data.node, data.old_parent, data.old_position);
             this.moveTriggered = false;
+        },
+        
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+            this.$tree
+                .off('select_node.jstree')
+                .off('move_node.jstree');
+
+            TreeManageComponent.__super__.dispose.call(this);
         }
     });
 
