@@ -22,8 +22,10 @@ services:
             - @translator
             - @orob2b_product.formatter.product_unit_label
             - @orob2b_sale.formatter.quote_product
+            - @doctrine
         calls:
             - [setDataClass, [%orob2b_sale.entity.quote_product.class%]]
+            - [setProductUnitClass, [%orob2b_product.product_unit.class%]]
         tags:
             - { name: form.type, alias: orob2b_sale_quote_product }
 

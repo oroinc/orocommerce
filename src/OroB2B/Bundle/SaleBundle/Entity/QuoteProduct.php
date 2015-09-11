@@ -14,6 +14,7 @@ use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
 /**
  * @ORM\Table(name="orob2b_sale_quote_product")
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks()
  * @Config(
  *      defaultValues={
  *          "entity"={
@@ -138,6 +139,22 @@ class QuoteProduct implements ProductHolderInterface
     }
 
     /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function updateProducts()
+    {
+        if ($this->product) {
+            $this->productSku = $this->product->getSku();
+            $this->freeFormProduct = (string) $this->product;
+        }
+        if ($this->productReplacement) {
+            $this->productReplacementSku = $this->productReplacement->getSku();
+            $this->freeFormProductReplacement = (string) $this->productReplacement;
+        }
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function getEntityIdentifier()
@@ -229,10 +246,7 @@ class QuoteProduct implements ProductHolderInterface
     public function setProduct(Product $product = null)
     {
         $this->product = $product;
-        if ($product) {
-            $this->productSku = $product->getSku();
-            $this->freeFormProduct = (string) $product;
-        }
+        $this->updateProducts();
 
         return $this;
     }
@@ -298,10 +312,7 @@ class QuoteProduct implements ProductHolderInterface
     public function setProductReplacement(Product $productReplacement = null)
     {
         $this->productReplacement = $productReplacement;
-        if ($productReplacement) {
-            $this->productReplacementSku = $productReplacement->getSku();
-            $this->freeFormProduct = (string) $productReplacement;
-        }
+        $this->updateProducts();
 
         return $this;
     }
