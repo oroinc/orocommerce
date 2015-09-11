@@ -305,18 +305,13 @@ datagrid:
                 join:
                     left:
                         -
-                            join: product.parentProductVariantLink
+                            join: product.parentProductVariantLinks
                             alias: parentProductVariantLink
                             conditionType: WITH
                             condition: parentProductVariantLink.parentProduct = :parentProduct
-                        -
-                            join: product.parentProductVariantLink
-                            alias: parentProductVariantLink2
                 where:
                     and:
                         - product.id <> :parentProduct
-                        - parentProductVariantLink2.parentProduct = :parentProduct OR parentProductVariantLink2.id IS NULL
-                        - product.variantLinks IS EMPTY
         columns:
             isVariant:
                 label: orob2b.product.is_variant.label

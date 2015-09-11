@@ -30,7 +30,7 @@ class ProductVariantLink
 
     /**
      * @var Product
-     * @ORM\OneToOne(targetEntity="Product", inversedBy="parentProductVariantLink")
+     * @ORM\ManyToOne(targetEntity="Product", inversedBy="parentProductVariantLinks")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
      */
     protected $product;
