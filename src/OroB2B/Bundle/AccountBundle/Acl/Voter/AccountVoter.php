@@ -152,10 +152,12 @@ class AccountVoter extends AbstractEntityVoter
         switch ($attribute) {
             case self::ATTRIBUTE_VIEW:
                 $isGranted = $securityFacade->isGranted(BasicPermissionMap::PERMISSION_VIEW, $descriptor);
-            break;
+                break;
+
             case self::ATTRIBUTE_EDIT:
                 $isGranted = $securityFacade->isGranted(BasicPermissionMap::PERMISSION_EDIT, $descriptor);
-            break;
+                break;
+
             default:
                 $isGranted = false;
         }
@@ -175,10 +177,12 @@ class AccountVoter extends AbstractEntityVoter
         switch ($attribute) {
             case self::ATTRIBUTE_VIEW:
                 $isGranted = $securityProvider->isGrantedViewBasic($class);
-            break;
+                break;
+
             case self::ATTRIBUTE_EDIT:
                 $isGranted = $securityProvider->isGrantedEditBasic($class);
-            break;
+                break;
+
             default:
                 $isGranted = false;
         }
@@ -198,10 +202,12 @@ class AccountVoter extends AbstractEntityVoter
         switch ($attribute) {
             case self::ATTRIBUTE_VIEW:
                 $isGranted = $securityProvider->isGrantedViewLocal($class);
-            break;
+                break;
+
             case self::ATTRIBUTE_EDIT:
                 $isGranted = $securityProvider->isGrantedEditLocal($class);
-            break;
+                break;
+
             default:
                 $isGranted = false;
         }
