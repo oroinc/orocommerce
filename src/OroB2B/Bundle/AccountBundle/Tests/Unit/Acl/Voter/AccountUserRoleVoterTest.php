@@ -14,6 +14,9 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Security\AccountUserRoleProvider;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class AccountUserRoleVoterTest extends \PHPUnit_Framework_TestCase
 {
     /**

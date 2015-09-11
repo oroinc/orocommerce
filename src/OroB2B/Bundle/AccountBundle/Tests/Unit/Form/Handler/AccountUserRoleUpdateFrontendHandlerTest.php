@@ -39,6 +39,9 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
      * @param array           $expectedUsers
      * @param array           $expectedUsersWithoutRole
      * @dataProvider onSuccessDataProvider
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function testOnSuccess(
         AccountUserRole $role,

@@ -236,7 +236,7 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     /**
      * {@inheritdoc}
      */
-    public function setOrganization(OrganizationInterface $organization)
+    public function setOrganization(OrganizationInterface $organization = null)
     {
         $this->organization = $organization;
 

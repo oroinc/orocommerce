@@ -23,7 +23,6 @@ class OroB2BAccountBundle implements Migration
 
         /** Foreign keys generation **/
         $this->addOroB2BAccountUserRoleForeignKeys($schema);
-
     }
 
     /**

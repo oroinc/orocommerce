@@ -330,6 +330,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
             ->willReturnCallback(
                 function () use ($role, $newAccount) {
                     $role->setAccount($newAccount);
+                    $role->setOrganization($newAccount->getOrganization());
                 }
             );
         $form->expects($this->once())
