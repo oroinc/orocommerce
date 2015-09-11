@@ -154,7 +154,7 @@ class ShoppingListControllerTest extends WebTestCase
         $shoppingList = $this->getReference($inputData['shoppingList']);
         $this->client->request(
             'POST',
-            $this->getUrl('orob2b_shopping_list_frontend_create_rfp', ['id' => $shoppingList->getId()])
+            $this->getUrl('orob2b_shoppinglist_frontend_shoppinglist_createrfp', ['id' => $shoppingList->getId()])
         );
         $this->client->followRedirects(true);
         $result = $this->client->getResponse();
