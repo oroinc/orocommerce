@@ -29,9 +29,9 @@ class ParentAccountSelectTypeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('oro_jqueryselect2_hidden', $this->type->getParent());
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
+        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with($this->isType('array'))
@@ -50,7 +50,7 @@ class ParentAccountSelectTypeTest extends \PHPUnit_Framework_TestCase
                 }
             );
 
-        $this->type->setDefaultOptions($resolver);
+        $this->type->configureOptions($resolver);
     }
 
     /**

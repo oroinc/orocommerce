@@ -30,3 +30,10 @@ orob2b_product_frontend_unit_ajax:
     prefix:       /product-unit
     options:
         frontend: true
+
+orob2b_product_frontend_quick_add:
+    resource:     "@OroB2BProductBundle/Controller/Frontend/QuickAddController.php"
+    type:         annotation
+    prefix:       /product/quick-add
+    options:
+        frontend: true

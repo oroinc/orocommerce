@@ -1,0 +1,56 @@
+{% extends 'OroB2BFrontendBundle:actions:view.html.twig' %}
+
+{% oro_title_set({params : {"%email%": entity.email }}) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('orob2b_account_account_user_index'),
+        'indexLabel': 'orob2b.account.accountuser.entity_plural_label'|trans,
+        'entityTitle': entity.username|default('N/A'|trans)
+    } %}
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block stats %}
+    <li>{{ 'oro.ui.created_at'|trans }}: {{ entity.createdAt ? entity.createdAt|oro_format_datetime : 'N/A' }}</li>
+    <li>{{ 'oro.ui.updated_at'|trans }}: {{ entity.updatedAt ? entity.updatedAt|oro_format_datetime : 'N/A' }}</li>
+    <li>{{ 'oro.user.last_login.label'|trans }}: {{ entity.lastLogin ? entity.lastLogin|oro_format_datetime : 'N/A' }}</li>
+    <li>{{ 'oro.user.login_count.label'|trans }}: {{ entity.loginCount|default(0) }}</li>
+{% endblock stats %}
+
+{% block navButtons %}
+    {% if editRoute is defined and resource_granted('EDIT', entity) %}
+        {{ UI.editButton({
+            'path': path(editRoute),
+            'entity_label': 'orob2b.account.accountuser.profile.label'|trans
+        }) }}
+    {% endif %}
+{% endblock navButtons %}
+
+{% block ownerLink %}
+    {# Backend owner must be hidden on frontend  #}
+{% endblock ownerLink %}
+
+{% block content_data %}
+    {% set accountUserInformationWidget %}
+        {% include '@OroB2BAccount/AccountUser/Frontend/widget/info.html.twig' %}
+    {% endset %}
+
+    {% set dataBlocks = [
+        {
+            'title': 'orob2b.account.sections.general'|trans,
+            'class': 'active',
+            'subblocks': [
+                {'data' : [accountUserInformationWidget]}
+            ]
+        }
+    ] %}
+
+    {% set id = 'frontend-account-user-view' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ UI.scrollData(id, data) }}
+    {% block pageActions %}
+    {% endblock %}
+{% endblock content_data %}
