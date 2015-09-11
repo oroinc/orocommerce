@@ -9,6 +9,9 @@ use Symfony\Component\HttpFoundation\Request;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var PriceListRequestHandler */
