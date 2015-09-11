@@ -11,6 +11,8 @@ use OroB2B\Bundle\AccountBundle\Migrations\Data\ORM\LoadAccountUserRoles;
 
 /**
  * @dbIsolation
+ *
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class AccountUserProviderTest extends WebTestCase
 {
