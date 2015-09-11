@@ -75,9 +75,10 @@ class PageControllerTest extends WebTestCase
 
         return $this->assertEdit(
             self::DEFAULT_PAGE_TITLE,
-            self::DEFAULT_PAGE_SLUG_TEXT,
+            self::DEFAULT_PAGE_SLUG_URL,
             self::UPDATED_DEFAULT_PAGE_TITLE,
             self::UPDATED_DEFAULT_PAGE_SLUG_TEXT,
+            self::UPDATED_DEFAULT_PAGE_SLUG_URL,
             self::SLUG_MODE_NEW,
             $id
         );
@@ -94,9 +95,10 @@ class PageControllerTest extends WebTestCase
 
         return $this->assertEdit(
             self::UPDATED_DEFAULT_PAGE_TITLE,
-            self::UPDATED_DEFAULT_PAGE_SLUG_TEXT,
+            self::UPDATED_DEFAULT_PAGE_SLUG_URL,
             self::DEFAULT_PAGE_TITLE,
             self::UPDATED_DEFAULT_PAGE_SLUG_TEXT,
+            self::UPDATED_DEFAULT_PAGE_SLUG_URL,
             self::SLUG_MODE_OLD,
             $id
         );
@@ -113,9 +115,10 @@ class PageControllerTest extends WebTestCase
 
         return $this->assertEdit(
             self::DEFAULT_PAGE_TITLE,
-            self::UPDATED_DEFAULT_PAGE_SLUG_TEXT,
+            self::UPDATED_DEFAULT_PAGE_SLUG_URL,
             self::DEFAULT_PAGE_TITLE,
             self::DEFAULT_PAGE_SLUG_TEXT,
+            self::DEFAULT_PAGE_SLUG_URL,
             self::SLUG_MODE_REDIRECT,
             $id
         );
@@ -142,9 +145,10 @@ class PageControllerTest extends WebTestCase
 
         return $this->assertEdit(
             self::DEFAULT_SUBPAGE_TITLE,
-            self::DEFAULT_PAGE_SLUG_TEXT . '/' . self::DEFAULT_SUBPAGE_SLUG_TEXT,
+            self::DEFAULT_SUBPAGE_SLUG_URL,
             self::UPDATED_DEFAULT_SUBPAGE_TITLE,
             self::UPDATED_DEFAULT_SUBPAGE_SLUG_TEXT,
+            self::UPDATED_DEFAULT_SUBPAGE_SLUG_URL,
             self::SLUG_MODE_NEW,
             $id
         );
@@ -211,14 +215,15 @@ class PageControllerTest extends WebTestCase
 
     /**
      * @param string $title
-     * @param string $slug
+     * @param string $url
      * @param string $newTitle
      * @param string $newSlug
+     * @param string $newUrl
      * @param string $slugMode
      * @param int $id
      * @return int
      */
-    protected function assertEdit($title, $slug, $newTitle, $newSlug, $slugMode, $id)
+    protected function assertEdit($title, $url, $newTitle, $newSlug, $newUrl, $slugMode, $id)
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_cms_page_update', ['id' => $id]));
         $form = $crawler->selectButton('Save and Close')->form();
@@ -230,7 +235,7 @@ class PageControllerTest extends WebTestCase
         );
 
         $this->assertContains(
-            "Redirect visitors from /" . $slug,
+            "Redirect visitors from " . $url,
             $crawler->filter('.sub-item')->html()
         );
 
@@ -269,7 +274,7 @@ class PageControllerTest extends WebTestCase
         );
 
         $this->assertContains(
-            "Redirect visitors from /" . $newSlug,
+            "Redirect visitors from " . $newUrl,
             $crawler->filter('.sub-item')->html()
         );
 
