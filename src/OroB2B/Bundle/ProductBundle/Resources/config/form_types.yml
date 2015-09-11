@@ -95,7 +95,7 @@ services:
         abstract: true
         arguments:
             - @orob2b_product.service.product_data_storage
-            - @doctrine
+            - @oro_entity.doctrine_helper
             - %orob2b_product.product.class%
         calls:
             - [setRequest, ["@?request="]]

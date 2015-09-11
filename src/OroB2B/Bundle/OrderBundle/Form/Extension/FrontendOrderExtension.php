@@ -7,6 +7,7 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Extension\AbstractPostQuickAddTypeExtension;
 
 class FrontendOrderExtension extends AbstractPostQuickAddTypeExtension
@@ -28,8 +29,17 @@ class FrontendOrderExtension extends AbstractPostQuickAddTypeExtension
             return;
         }
 
+        /** @var ProductUnitPrecision $unitPrecision */
+        $unitPrecision = $product->getUnitPrecisions()->first();
+        if (!$unitPrecision) {
+            return;
+        }
+
         /** @var ProductUnit $unit */
-        $unit = $product->getUnitPrecisions()->first()->getUnit();
+        $unit = $unitPrecision->getUnit();
+        if (!$unit) {
+            return;
+        }
 
         $lineItem = new OrderLineItem();
         $lineItem

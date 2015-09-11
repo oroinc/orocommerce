@@ -22,7 +22,7 @@ class FrontendRequestExtensionTest extends AbstractPostQuickAddTypeExtensionTest
     {
         parent::setUp();
 
-        $this->extension = new FrontendRequestExtension($this->storage, $this->registry, $this->productClass);
+        $this->extension = new FrontendRequestExtension($this->storage, $this->doctrineHelper, $this->productClass);
         $this->extension->setRequest($this->request);
         $this->extension->setDataClass('OroB2B\Bundle\RFPBundle\Entity\Request');
 
@@ -68,5 +68,25 @@ class FrontendRequestExtensionTest extends AbstractPostQuickAddTypeExtensionTest
         $this->assertEquals($productUnit, $requestProductItem->getProductUnit());
         $this->assertEquals($productUnit->getCode(), $requestProductItem->getProductUnitCode());
         $this->assertEquals($qty, $requestProductItem->getQuantity());
+    }
+
+    public function testBuildWithoutUnit()
+    {
+        $sku = 'TEST';
+        $qty = 3;
+        $data = [[ProductRowType::PRODUCT_SKU_FIELD_NAME => $sku, ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => $qty]];
+        $request = new RFPRequest();
+
+        $product = $this->getProductEntity($sku);
+
+        $this->assertRequestGetCalled();
+        $this->assertStorageCalled($data);
+        $this->assertProductRepositoryCalled($product);
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface $builder */
+        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
+        $this->extension->buildForm($builder, ['data' => $request]);
+
+        $this->assertEmpty($request->getRequestProducts());
     }
 }

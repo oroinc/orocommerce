@@ -2,15 +2,13 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Extension;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use Oro\Component\Testing\Unit\Entity\Stub\StubEntity;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductRowType;
 use OroB2B\Bundle\ProductBundle\Model\DataStorageAwareProcessor;
@@ -22,8 +20,8 @@ class AbstractPostQuickAddTypeExtensionTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|ProductDataStorage */
     protected $storage;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry */
-    protected $registry;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
+    protected $doctrineHelper;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|Request */
     protected $request;
@@ -35,7 +33,7 @@ class AbstractPostQuickAddTypeExtensionTest extends \PHPUnit_Framework_TestCase
     protected $productClass = 'stdClass';
 
     /** @var string */
-    protected $dataClass = 'Oro\Component\Testing\Unit\Entity\Stub\StubEntity';
+    protected $dataClass = '\stdClass';
 
     /** @var object */
     protected $entity;
@@ -48,16 +46,22 @@ class AbstractPostQuickAddTypeExtensionTest extends \PHPUnit_Framework_TestCase
         $this->storage = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->extension = new PostQuickAddTypeExtensionStub($this->storage, $this->registry, $this->productClass);
+        $this->extension = new PostQuickAddTypeExtensionStub(
+            $this->storage,
+            $this->doctrineHelper,
+            $this->productClass
+        );
         $this->extension->setRequest($this->request);
         $this->extension->setDataClass($this->dataClass);
 
-        $this->entity = new StubEntity();
+        $this->entity = new \stdClass();
     }
 
     protected function tearDown()
@@ -70,26 +74,27 @@ class AbstractPostQuickAddTypeExtensionTest extends \PHPUnit_Framework_TestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface $builder */
         $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
 
-        $this->assertRequestGetCalled();
+        $this->assertRequestGetCalled(false);
 
         $this->storage->expects($this->never())
             ->method($this->anything());
 
-        $this->extension->buildForm($builder, ['data' => new \stdClass()]);
+        $this->extension->buildForm($builder, ['data' => $this->entity]);
     }
 
     public function testBuildFormExistingEntity()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface $builder */
         $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
-        $entity = new StubEntity(1);
+
+        $this->doctrineHelper->expects($this->any())->method('getSingleEntityIdentifier')->willReturn(1);
 
         $this->assertRequestGetCalled();
 
         $this->storage->expects($this->never())
             ->method($this->anything());
 
-        $this->extension->buildForm($builder, ['data' => $entity]);
+        $this->extension->buildForm($builder, ['data' => $this->entity]);
     }
 
     public function testBuildFormNoData()
@@ -97,11 +102,11 @@ class AbstractPostQuickAddTypeExtensionTest extends \PHPUnit_Framework_TestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface $builder */
         $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
 
+        $this->doctrineHelper->expects($this->once())->method('getSingleEntityIdentifier')->willReturn(null);
+        $this->doctrineHelper->expects($this->never())->method('getEntityRepository');
+
         $this->assertRequestGetCalled();
         $this->assertStorageCalled([]);
-
-        $this->registry->expects($this->never())
-            ->method($this->anything());
 
         $this->extension->buildForm($builder, ['data' => $this->entity]);
     }
@@ -120,7 +125,7 @@ class AbstractPostQuickAddTypeExtensionTest extends \PHPUnit_Framework_TestCase
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface $builder */
         $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
-        $this->extension->buildForm($builder, ['data' => new StubEntity()]);
+        $this->extension->buildForm($builder, ['data' => $this->entity]);
 
         $this->assertTrue($this->extension->isAddProductToEntityCalled());
     }
@@ -145,12 +150,15 @@ class AbstractPostQuickAddTypeExtensionTest extends \PHPUnit_Framework_TestCase
         return $product;
     }
 
-    protected function assertRequestGetCalled()
+    /**
+     * @param bool $result
+     */
+    protected function assertRequestGetCalled($result = true)
     {
         $this->request->expects($this->once())
             ->method('get')
             ->with(DataStorageAwareProcessor::QUICK_ADD_PARAM)
-            ->willReturn(1);
+            ->willReturn($result);
     }
 
     /**
@@ -178,17 +186,9 @@ class AbstractPostQuickAddTypeExtensionTest extends \PHPUnit_Framework_TestCase
             ->with($product->getSku())
             ->willReturn($product);
 
-        $em = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $em->expects($this->once())
-            ->method('getRepository')
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityRepository')
             ->with($this->productClass)
             ->willReturn($repo);
-
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with($this->productClass)
-            ->willReturn($em);
     }
 }

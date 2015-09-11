@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\RFPBundle\Form\Extension;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Extension\AbstractPostQuickAddTypeExtension;
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
@@ -29,8 +30,17 @@ class FrontendRequestExtension extends AbstractPostQuickAddTypeExtension
             return;
         }
 
+        /** @var ProductUnitPrecision $unitPrecision */
+        $unitPrecision = $product->getUnitPrecisions()->first();
+        if (!$unitPrecision) {
+            return;
+        }
+
         /** @var ProductUnit $unit */
-        $unit = $product->getUnitPrecisions()->first()->getUnit();
+        $unit = $unitPrecision->getUnit();
+        if (!$unit) {
+            return;
+        }
 
         $requestProductItem = new RequestProductItem();
         $requestProductItem

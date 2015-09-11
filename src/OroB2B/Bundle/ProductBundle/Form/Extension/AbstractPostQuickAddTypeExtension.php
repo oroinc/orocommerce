@@ -2,11 +2,11 @@
 
 namespace OroB2B\Bundle\ProductBundle\Form\Extension;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Request;
+
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -28,15 +28,18 @@ abstract class AbstractPostQuickAddTypeExtension extends AbstractTypeExtension
     /** @var string */
     protected $dataClass;
 
+    /** @var DoctrineHelper */
+    protected $doctrineHelper;
+
     /**
      * @param ProductDataStorage $storage
-     * @param ManagerRegistry $registry
+     * @param DoctrineHelper $doctrineHelper
      * @param string $productClass
      */
-    public function __construct(ProductDataStorage $storage, ManagerRegistry $registry, $productClass)
+    public function __construct(ProductDataStorage $storage, DoctrineHelper $doctrineHelper, $productClass)
     {
         $this->storage = $storage;
-        $this->registry = $registry;
+        $this->doctrineHelper = $doctrineHelper;
         $this->productClass = $productClass;
     }
 
@@ -69,8 +72,7 @@ abstract class AbstractPostQuickAddTypeExtension extends AbstractTypeExtension
     {
         if ($this->request->get(DataStorageAwareProcessor::QUICK_ADD_PARAM)) {
             $entity = isset($options['data']) ? $options['data'] : null;
-
-            if ($entity instanceof $this->dataClass && !$entity->getId()) {
+            if ($entity instanceof $this->dataClass && !$this->doctrineHelper->getSingleEntityIdentifier($entity)) {
                 $this->fillItems($entity);
             }
         }
@@ -117,7 +119,6 @@ abstract class AbstractPostQuickAddTypeExtension extends AbstractTypeExtension
      */
     protected function getProductRepository()
     {
-        return $this->registry->getManagerForClass($this->productClass)
-            ->getRepository($this->productClass);
+        return $this->doctrineHelper->getEntityRepository($this->productClass);
     }
 }

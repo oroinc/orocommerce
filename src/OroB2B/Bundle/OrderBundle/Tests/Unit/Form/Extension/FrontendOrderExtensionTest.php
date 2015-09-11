@@ -21,7 +21,7 @@ class FrontendOrderExtensionTest extends AbstractPostQuickAddTypeExtensionTest
     {
         parent::setUp();
 
-        $this->extension = new FrontendOrderExtension($this->storage, $this->registry, $this->productClass);
+        $this->extension = new FrontendOrderExtension($this->storage, $this->doctrineHelper, $this->productClass);
         $this->extension->setRequest($this->request);
         $this->extension->setDataClass('OroB2B\Bundle\OrderBundle\Entity\Order');
 
@@ -62,5 +62,25 @@ class FrontendOrderExtensionTest extends AbstractPostQuickAddTypeExtensionTest
         $this->assertEquals($productUnit, $lineItem->getProductUnit());
         $this->assertEquals($productUnit->getCode(), $lineItem->getProductUnitCode());
         $this->assertEquals($qty, $lineItem->getQuantity());
+    }
+
+    public function testBuildWithoutUnit()
+    {
+        $sku = 'TEST';
+        $qty = 3;
+        $data = [[ProductRowType::PRODUCT_SKU_FIELD_NAME => $sku, ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => $qty]];
+        $order = new Order();
+
+        $product = $this->getProductEntity($sku);
+
+        $this->assertRequestGetCalled();
+        $this->assertStorageCalled($data);
+        $this->assertProductRepositoryCalled($product);
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface $builder */
+        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
+        $this->extension->buildForm($builder, ['data' => $order]);
+
+        $this->assertEmpty($order->getLineItems());
     }
 }
