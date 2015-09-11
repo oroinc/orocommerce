@@ -97,4 +97,11 @@ class ProductVariantLinksDataTransformerTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(self::PRODUCT_VARIANT_LINK_CLASS, $links->first());
         $this->assertInstanceOf(self::PRODUCT_VARIANT_LINK_CLASS, $links->next());
     }
+
+    public function testInvalidValues()
+    {
+        $this->assertNull($this->transformer->transform(null));
+        $this->assertNull($this->transformer->reverseTransform(null));
+        $this->assertNull($this->transformer->reverseTransform([]));
+    }
 }
