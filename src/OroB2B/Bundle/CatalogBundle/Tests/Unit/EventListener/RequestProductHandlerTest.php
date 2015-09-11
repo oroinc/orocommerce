@@ -39,7 +39,7 @@ class RequestProductHandlerTest extends \PHPUnit_Framework_TestCase
     public function testGetCategoryIdWithoutRequest()
     {
         $this->requestProductHandler->setRequest(null);
-        $this->assertNull($this->requestProductHandler->getCategoryId());
+        $this->assertFalse($this->requestProductHandler->getCategoryId());
     }
 
 
