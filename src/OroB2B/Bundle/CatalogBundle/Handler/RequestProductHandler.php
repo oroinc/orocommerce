@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 class RequestProductHandler
 {
     const CATEGORY_ID_KEY = 'categoryId';
+    const INCLUDE_SUBCATEGORIES_KEY = 'includeSubcategories';
 
     /** @var  Request|null */
     protected $request;
@@ -29,5 +30,17 @@ class RequestProductHandler
         }
 
         return filter_var($this->request->get(self::CATEGORY_ID_KEY), FILTER_VALIDATE_INT);
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIncludeSubcategoriesChoice()
+    {
+        if (!$this->request) {
+            return false;
+        }
+
+        return filter_var($this->request->get(self::INCLUDE_SUBCATEGORIES_KEY), FILTER_VALIDATE_BOOLEAN);
     }
 }
