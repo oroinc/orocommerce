@@ -15,6 +15,8 @@ class LoadAccountUserRoleData extends AbstractFixture implements DependentFixtur
     const ROLE_WITH_ACCOUNT_USER = 'Role with account user';
     const ROLE_WITH_WEBSITE = 'Role with website';
     const ROLE_WITHOUT_USER_AND_WEBSITE = 'Role without user and website';
+    const ROLE_PREDEFINED = 'Predefined role';
+    const ROLE_CUSTOMIZED = 'Customized role';
 
     /**
      * {@inheritdoc}
@@ -23,7 +25,8 @@ class LoadAccountUserRoleData extends AbstractFixture implements DependentFixtur
     {
         return [
             'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData'
+            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
+            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts'
         ];
     }
 
@@ -39,6 +42,8 @@ class LoadAccountUserRoleData extends AbstractFixture implements DependentFixtur
         );
         $this->loadRoleWithWebsite($manager, self::ROLE_WITH_WEBSITE, 'Canada');
         $this->loadRoleWithoutUserAndWebsite($manager, self::ROLE_WITHOUT_USER_AND_WEBSITE);
+        $this->loadRoleWithoutAccount($manager, self::ROLE_PREDEFINED);
+        $this->loadRoleWithAccount($manager, self::ROLE_CUSTOMIZED);
 
         $manager->flush();
     }
@@ -91,6 +96,31 @@ class LoadAccountUserRoleData extends AbstractFixture implements DependentFixtur
         $entity->setLabel($roleLabel);
 
         $this->setReference($entity->getLabel(), $entity);
+
+        $manager->persist($entity);
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @param string $roleLabel
+     */
+    protected function loadRoleWithoutAccount(ObjectManager $manager, $roleLabel)
+    {
+        $entity = new AccountUserRole();
+        $entity->setLabel($roleLabel);
+
+        $manager->persist($entity);
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @param string $roleLabel
+     */
+    protected function loadRoleWithAccount(ObjectManager $manager, $roleLabel)
+    {
+        $entity = new AccountUserRole();
+        $entity->setLabel($roleLabel);
+        $entity->setAccount($this->getReference('account.orphan'));
 
         $manager->persist($entity);
     }
