@@ -2,10 +2,8 @@
     'currenciesSelector': '#' ~ currencies.vars.id,
     'showTierPricesSelector': '#' ~ showTierPrices.vars.id
 } %}
-<div
-    data-page-component-module="orob2bpricing/js/app/components/frontend-product-sidebar-component"
-    data-page-component-options="{{ pageComponentOptions|json_encode }}"
->
-    <div class="sidebar-item currencies" {{ currencies.vars.choices|length <= 1 ? 'style="display:none;"' }}>{{ form_row(currencies) }}</div>
+<div data-page-component-module="orob2bpricing/js/app/components/frontend-product-sidebar-component"
+     data-page-component-options="{{ pageComponentOptions|json_encode }}">
+    <div class="sidebar-item currencies {{ currencies.vars.choices|length <= 1 ? ' hidden' }}">{{ form_row(currencies) }}</div>
     <div class="sidebar-item show-tier-prices-choice">{{ form_row(showTierPrices) }}</div>
 </div>

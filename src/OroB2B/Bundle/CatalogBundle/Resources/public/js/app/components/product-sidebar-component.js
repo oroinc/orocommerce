@@ -56,7 +56,7 @@ define(function(require) {
         customizeTreeConfig: function(options, config) {
             if (options.updateAllowed) {
                 config.plugins.push('dnd');
-                config['dnd'] = {
+                config.dnd = {
                     'is_draggable': false
                 };
             }
