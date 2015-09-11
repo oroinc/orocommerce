@@ -3,9 +3,12 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Acl\Voter;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Acl\Permission\BasicPermissionMap;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\AccountBundle\Acl\Voter\AccountVoter;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
@@ -31,6 +34,11 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
     protected $securityProvider;
 
     /**
+     * @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $securityFacade;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -43,12 +51,22 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $services = [
+            'orob2b_account.security.account_user_provider' => $this->securityProvider,
+            'oro_security.security_facade' => $this->securityFacade,
+        ];
+
         /* @var $container ContainerInterface|\PHPUnit_Framework_MockObject_MockObject */
         $container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
         $container->expects($this->any())
             ->method('get')
-            ->with('orob2b_account.security.account_user_provider')
-            ->willReturn($this->securityProvider)
+            ->willReturnCallback(function ($id) use ($services) {
+                return $services[$id];
+            })
         ;
 
         $this->voter = new AccountVoter($this->doctrineHelper, $container);
@@ -96,6 +114,12 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             ->method('getSingleEntityIdentifier')
             ->with($object, false)
             ->willReturn($inputData['objectId']);
+
+        $this->securityFacade->expects($this->any())
+            ->method('isGranted')
+            ->with($inputData['isGrantedAttr'], $inputData['isGrantedDescr'])
+            ->willReturn($inputData['isGranted'])
+        ;
 
         $this->securityProvider->expects($this->any())
             ->method('isGrantedViewBasic')
@@ -185,6 +209,9 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                     'grantedViewLocal' => null,
                     'grantedEditBasic' => null,
                     'grantedEditLocal' => null,
+                    'isGranted'        => null,
+                    'isGrantedAttr'    => null,
+                    'isGrantedDescr'   => null,
                 ],
                 'expected' => AccountVoter::ACCESS_ABSTAIN,
             ],
@@ -198,6 +225,9 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                     'grantedViewLocal' => null,
                     'grantedEditBasic' => null,
                     'grantedEditLocal' => null,
+                    'isGranted'        => null,
+                    'isGrantedAttr'    => null,
+                    'isGrantedDescr'   => null,
                 ],
                 'expected' => AccountVoter::ACCESS_ABSTAIN,
             ],
@@ -211,6 +241,9 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                     'grantedViewLocal' => false,
                     'grantedEditBasic' => null,
                     'grantedEditLocal' => null,
+                    'isGranted'        => null,
+                    'isGrantedAttr'    => null,
+                    'isGrantedDescr'   => null,
                 ],
                 'expected' => AccountVoter::ACCESS_ABSTAIN,
             ],
@@ -224,6 +257,9 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                     'grantedViewLocal' => false,
                     'grantedEditBasic' => null,
                     'grantedEditLocal' => null,
+                    'isGranted'        => null,
+                    'isGrantedAttr'    => null,
+                    'isGrantedDescr'   => null,
                 ],
                 'expected' => AccountVoter::ACCESS_GRANTED,
             ],
@@ -237,6 +273,9 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                     'grantedViewLocal' => true,
                     'grantedEditBasic' => null,
                     'grantedEditLocal' => null,
+                    'isGranted'        => null,
+                    'isGrantedAttr'    => null,
+                    'isGrantedDescr'   => null,
                 ],
                 'expected' => AccountVoter::ACCESS_ABSTAIN,
             ],
@@ -250,6 +289,9 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                     'grantedViewLocal' => true,
                     'grantedEditBasic' => null,
                     'grantedEditLocal' => null,
+                    'isGranted'        => null,
+                    'isGrantedAttr'    => null,
+                    'isGrantedDescr'   => null,
                 ],
                 'expected' => AccountVoter::ACCESS_GRANTED,
             ],
@@ -263,6 +305,9 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                     'grantedViewLocal' => true,
                     'grantedEditBasic' => null,
                     'grantedEditLocal' => null,
+                    'isGranted'        => null,
+                    'isGrantedAttr'    => null,
+                    'isGrantedDescr'   => null,
                 ],
                 'expected' => AccountVoter::ACCESS_GRANTED,
             ],
@@ -276,6 +321,9 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                     'grantedViewLocal' => null,
                     'grantedEditBasic' => true,
                     'grantedEditLocal' => false,
+                    'isGranted'        => null,
+                    'isGrantedAttr'    => null,
+                    'isGrantedDescr'   => null,
                 ],
                 'expected' => AccountVoter::ACCESS_ABSTAIN,
             ],
@@ -289,6 +337,9 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                     'grantedViewLocal' => null,
                     'grantedEditBasic' => true,
                     'grantedEditLocal' => false,
+                    'isGranted'        => null,
+                    'isGrantedAttr'    => null,
+                    'isGrantedDescr'   => null,
                 ],
                 'expected' => AccountVoter::ACCESS_GRANTED,
             ],
@@ -302,6 +353,9 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                     'grantedViewLocal' => null,
                     'grantedEditBasic' => false,
                     'grantedEditLocal' => true,
+                    'isGranted'        => null,
+                    'isGrantedAttr'    => null,
+                    'isGrantedDescr'   => null,
                 ],
                 'expected' => AccountVoter::ACCESS_ABSTAIN,
             ],
@@ -315,6 +369,9 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                     'grantedViewLocal' => null,
                     'grantedEditBasic' => false,
                     'grantedEditLocal' => true,
+                    'isGranted'        => null,
+                    'isGrantedAttr'    => null,
+                    'isGrantedDescr'   => null,
                 ],
                 'expected' => AccountVoter::ACCESS_GRANTED,
             ],
@@ -328,10 +385,97 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                     'grantedViewLocal' => null,
                     'grantedEditBasic' => false,
                     'grantedEditLocal' => true,
+                    'isGranted'        => null,
+                    'isGrantedAttr'    => null,
+                    'isGrantedDescr'   => null,
+                ],
+                'expected' => AccountVoter::ACCESS_GRANTED,
+            ],
+            '!ident and !Entity:ACCOUNT_VIEW' => [
+                'input' => [
+                    'objectId'      => null,
+                    'object'        => $this->getIdent(),
+                    'user'          => $this->getAccountUser(38, 39),
+                    'attributes'    => ['ACCOUNT_VIEW'],
+                    'grantedViewBasic' => null,
+                    'grantedViewLocal' => null,
+                    'grantedEditBasic' => false,
+                    'grantedEditLocal' => true,
+                    'isGranted'        => false,
+                    'isGrantedAttr'    => BasicPermissionMap::PERMISSION_VIEW,
+                    'isGrantedDescr'   => $this->getDescriptor(),
+                ],
+                'expected' => AccountVoter::ACCESS_ABSTAIN,
+            ],
+            '!ident and !Entity:ACCOUNT_EDIT' => [
+                'input' => [
+                    'objectId'      => null,
+                    'object'        => $this->getIdent(),
+                    'user'          => $this->getAccountUser(40, 41),
+                    'attributes'    => ['ACCOUNT_EDIT'],
+                    'grantedViewBasic' => null,
+                    'grantedViewLocal' => null,
+                    'grantedEditBasic' => false,
+                    'grantedEditLocal' => true,
+                    'isGranted'        => false,
+                    'isGrantedAttr'    => BasicPermissionMap::PERMISSION_EDIT,
+                    'isGrantedDescr'   => $this->getDescriptor(),
+                ],
+                'expected' => AccountVoter::ACCESS_ABSTAIN,
+            ],
+            '!ident and Entity:ACCOUNT_VIEW' => [
+                'input' => [
+                    'objectId'      => null,
+                    'object'        => $this->getIdent(),
+                    'user'          => $this->getAccountUser(42, 43),
+                    'attributes'    => ['ACCOUNT_VIEW'],
+                    'grantedViewBasic' => null,
+                    'grantedViewLocal' => null,
+                    'grantedEditBasic' => false,
+                    'grantedEditLocal' => true,
+                    'isGranted'        => true,
+                    'isGrantedAttr'    => BasicPermissionMap::PERMISSION_VIEW,
+                    'isGrantedDescr'   => $this->getDescriptor(),
+                ],
+                'expected' => AccountVoter::ACCESS_GRANTED,
+            ],
+            '!ident and Entity:ACCOUNT_EDIT' => [
+                'input' => [
+                    'objectId'      => null,
+                    'object'        => $this->getIdent(),
+                    'user'          => $this->getAccountUser(44, 45),
+                    'attributes'    => ['ACCOUNT_EDIT'],
+                    'grantedViewBasic' => null,
+                    'grantedViewLocal' => null,
+                    'grantedEditBasic' => false,
+                    'grantedEditLocal' => true,
+                    'isGranted'        => true,
+                    'isGrantedAttr'    => BasicPermissionMap::PERMISSION_EDIT,
+                    'isGrantedDescr'   => $this->getDescriptor(),
                 ],
                 'expected' => AccountVoter::ACCESS_GRANTED,
             ],
         ];
+    }
+
+    /**
+     * @return ObjectIdentity
+     */
+    protected function getIdent()
+    {
+        return new ObjectIdentity('entity', 'OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface');
+    }
+
+    /**
+     * @return string
+     */
+    protected function getDescriptor()
+    {
+        return sprintf(
+            'entity:%s@%s',
+            AccountUser::SECURITY_GROUP,
+            'OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface'
+        );
     }
 
     /**
