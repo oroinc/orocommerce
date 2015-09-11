@@ -3,9 +3,23 @@
 namespace OroB2B\Bundle\AccountBundle\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 class ActionPermissionProvider
 {
+    /** @var SecurityFacade */
+    protected $securityFacade;
+
+    /**
+     * @param SecurityFacade $securityFacade
+     */
+    public function __construct(SecurityFacade $securityFacade)
+    {
+        $this->securityFacade = $securityFacade;
+    }
+
     /**
      * @param ResultRecordInterface $record
      *
@@ -13,14 +27,21 @@ class ActionPermissionProvider
      */
     public function getUserPermissions(ResultRecordInterface $record)
     {
-        $enabled = $record->getValue('enabled');
+        $disabled = $enabled = $record->getValue('enabled');
+        $user = $this->securityFacade->getLoggedUser();
+        $delete = true;
+        if ($user instanceof AccountUser) {
+            $isCurrentUser = $user->getId() == $record->getValue('id');
+            $disabled = $isCurrentUser ? false : $enabled;
+            $delete = !$isCurrentUser;
+        }
 
         return [
-            'enable'  => !$enabled,
-            'disable' => $enabled,
-            'view'    => true,
-            'update'  => true,
-            'delete'  => true
+            'enable' => !$enabled,
+            'disable' => $disabled,
+            'view' => true,
+            'update' => true,
+            'delete' => $delete
         ];
     }
 }

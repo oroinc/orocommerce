@@ -28,6 +28,13 @@ orob2b_account_account_user_ajax:
     type: annotation
     prefix: /account/user
 
+orob2b_account_frontend_account_user_ajax:
+    resource: "@OroB2BAccountBundle/Controller/Frontend/AjaxAccountUserController.php"
+    type: annotation
+    prefix: /account/user
+    options:
+        frontend: true
+
 orob2b_account_account_user_role:
     resource: "@OroB2BAccountBundle/Controller/AccountUserRoleController.php"
     type: annotation
@@ -37,6 +44,13 @@ orob2b_account_acl_permission:
     resource: "@OroB2BAccountBundle/Controller/AclPermissionController.php"
     type: annotation
     prefix: /account/acl
+
+orob2b_account_frontend_account_user_profile:
+    resource: "@OroB2BAccountBundle/Controller/Frontend/AccountUserProfileController.php"
+    type: annotation
+    prefix: /account/user
+    options:
+        frontend: true
 
 orob2b_account_frontend_account_user:
     resource: "@OroB2BAccountBundle/Controller/Frontend/AccountUserController.php"

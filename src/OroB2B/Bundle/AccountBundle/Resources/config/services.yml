@@ -17,6 +17,7 @@ parameters:
     orob2b_account.entity.page_state.class: OroB2B\Bundle\AccountBundle\Entity\PageState
 
     orob2b_account.account_tree_handler.class: OroB2B\Bundle\AccountBundle\JsTree\AccountTreeHandler
+    orob2b_account.account_delete_handler.class: OroB2B\Bundle\AccountBundle\Handler\UserDeleteHandler
     orob2b_account.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
     orob2b_account.form.autocomplete.parent_account.search_handler.class: OroB2B\Bundle\AccountBundle\Autocomplete\ParentAccountSearchHandler
@@ -163,6 +164,8 @@ services:
 
     orob2b_account.datagrid.action_permission_provider:
         class: %orob2b_account.datagrid.action_permission_provider.class%
+        arguments:
+            - @oro_security.security_facade
 
     orob2b_account.datagrid.account_action_permission_provider:
         class: %orob2b_account.datagrid.account_action_permission_provider.class%
@@ -421,3 +424,8 @@ services:
             - "frontend_mostviewed"
         tags:
             - { name: oro_ui.content_provider }
+
+    orob2b_account.account_delete_handler:
+        class: %orob2b_account.account_delete_handler.class%
+        arguments:
+            - @oro_security.security_facade

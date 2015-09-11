@@ -5,6 +5,7 @@ orob2b:
         entity_description: Represents product information
         id.label: Id
         sku.label: SKU
+        quantity.label: Quantity
         inventory_status.label: Inventory Status
         visibility.label: Visible to Accounts
         status.label: Status
@@ -22,6 +23,7 @@ orob2b:
             as_defined_in_system_config.label: As Defined in System Configuration
 
         form.choose: 'Choose Product...'
+        form.add_row: 'Add row'
 
         productunit:
             entity_label: Product Unit
@@ -86,6 +88,10 @@ orob2b:
         ui:
             duplicate: Duplicate
             save_and_duplicate: Save And Duplicate
+
+        frontend:
+            quick_add.title: Quick Order Form
+            component_not_accessible.message: Can't process request, component not accessible
 
     product_unit.kg:
         label:
