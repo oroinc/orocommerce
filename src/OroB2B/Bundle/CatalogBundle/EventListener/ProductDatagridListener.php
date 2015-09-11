@@ -6,6 +6,7 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 
+use Oro\Bundle\DataGridBundle\EventListener\DatasourceBindParametersListener;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler;
@@ -55,9 +56,11 @@ class ProductDatagridListener
     protected function filterDatagridByCategoryIds(PreBuild $event, $productCategoryIds)
     {
         $config = $event->getConfig();
-        $and = 'productCategory.id IN (:productCategoryIds)';
-        $config->offsetSetByPath('[source][query][where][and]', [$and]);
-        $config->offsetSetByPath('[source][bind_parameters]', ['productCategoryIds']);
+        $config->offsetSetByPath('[source][query][where][and]', ['productCategory.id IN (:productCategoryIds)']);
+        $config->offsetSetByPath(
+            DatasourceBindParametersListener::DATASOURCE_BIND_PARAMETERS_PATH,
+            ['productCategoryIds']
+        );
         $parameters = $event->getParameters();
         $parameters->set('productCategoryIds', $productCategoryIds);
     }

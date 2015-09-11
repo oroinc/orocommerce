@@ -14,7 +14,7 @@ class RequestProductHandler
     /**
      * @param Request|null $request
      */
-    public function setRequest(Request $request=null)
+    public function setRequest(Request $request = null)
     {
         $this->request = $request;
     }
@@ -28,8 +28,6 @@ class RequestProductHandler
             return false;
         }
 
-        $value = $this->request->get(self::CATEGORY_ID_KEY);
-
-        return $value ? (int)$value : false;
+        return filter_var($this->request->get(self::CATEGORY_ID_KEY), FILTER_VALIDATE_INT);
     }
 }

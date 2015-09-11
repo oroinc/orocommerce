@@ -7,6 +7,7 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
+use Oro\Bundle\DataGridBundle\EventListener\DatasourceBindParametersListener;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
@@ -17,7 +18,6 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
     const DATA_CLASS = 'OroB2B\Bundle\CatalogBundle\Entity\Category';
     const QUERY_AND_PATH = '[source][query][where][and]';
-    const BIND_PARAMS_PATH = '[source][bind_parameters]';
     const CATEGORY_ID_ALIAS = 'productCategoryIds';
 
     /** @var  Registry|\PHPUnit_Framework_MockObject_MockObject */
@@ -79,7 +79,7 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->with(self::QUERY_AND_PATH, [sprintf('productCategory.id IN (:%s)', self::CATEGORY_ID_ALIAS)]);
         $config->expects($this->at(1))
             ->method('offsetSetByPath')
-            ->with(self::BIND_PARAMS_PATH, [self::CATEGORY_ID_ALIAS]);
+            ->with(DatasourceBindParametersListener::DATASOURCE_BIND_PARAMETERS_PATH, [self::CATEGORY_ID_ALIAS]);
         $this->productDatagridListener->onPreBuild($this->event);
     }
 
