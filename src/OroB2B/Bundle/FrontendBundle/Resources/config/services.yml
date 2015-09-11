@@ -5,6 +5,8 @@ parameters:
     orob2b_frontend.twig_extension.demo_frontend_theme.class: OroB2B\Bundle\FrontendBundle\Twig\DemoThemeExtension
     orob2b_frontend.listener.theme.class: OroB2B\Bundle\FrontendBundle\EventListener\ThemeListener
     orob2b_frontend.placeholder.theme_filter.class: OroB2B\Bundle\FrontendBundle\Placeholder\ThemeFilter
+    orob2b_frontend.placeholder.filter.class: OroB2B\Bundle\FrontendBundle\Placeholder\FrontendFilter
+
 services:
     orob2b_frontend.listener.frontend_route_collection:
         class: %orob2b_frontend.listener.frontend_route_collection.class%
@@ -59,3 +61,10 @@ services:
         class: %orob2b_frontend.placeholder.theme_filter.class%
         arguments:
             - @oro_theme.registry
+
+    orob2b_frontend.placeholder.filter:
+        class: %orob2b_frontend.placeholder.filter.class%
+        arguments:
+            - @router
+        calls:
+            - [setRequest, ["@?request="]]
