@@ -12,6 +12,7 @@ orob2b:
             child_categories.label: 'Child categories'
             parent_category.label:  'Parent category'
             products.label:         'Products'
+            include_subcategories.label: 'Include Sub-Categories'
 
         subcategory:
             entity_label:   'Subcategory'

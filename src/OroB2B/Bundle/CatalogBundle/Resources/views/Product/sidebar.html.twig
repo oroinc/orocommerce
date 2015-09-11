@@ -5,7 +5,8 @@
     } %}
     <label>Categories</label>
     <div
-            data-page-component-module="orob2bcatalog/js/app/components/tree-view-component"
+            data-page-component-module="orob2bcatalog/js/app/components/product-sidebar-component"
             data-page-component-options="{{ treeOptions|json_encode }}"
             ></div>
+    <div class="sidebar-item include-sub-categories-choice">{{ form_row(includeSubcategoriesForm) }}</div>
 </div>

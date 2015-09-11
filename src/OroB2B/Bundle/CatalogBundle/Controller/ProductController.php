@@ -29,6 +29,28 @@ class ProductController extends Controller
             $defaultCategoryId = $rootCategory->getId();
         }
 
-        return ['defaultCategoryId' => $defaultCategoryId];
+        return [
+            'defaultCategoryId' => $defaultCategoryId,
+            'includeSubcategoriesForm' => $this->createIncludeSubcategoriesForm($request)->createView()
+        ];
+    }
+
+    /**
+     * @param Request $request
+     * @return \Symfony\Component\Form\Form
+     */
+    protected function createIncludeSubcategoriesForm(Request $request)
+    {
+        $includeSubcategories = (bool)$request->query->get('include_subcategories', false);
+
+        return $this->createForm(
+            'checkbox',
+            null,
+            [
+                'label' => 'orob2b.catalog.category.include_subcategories.label',
+                'required' => false,
+                'data' => $includeSubcategories,
+            ]
+        );
     }
 }
