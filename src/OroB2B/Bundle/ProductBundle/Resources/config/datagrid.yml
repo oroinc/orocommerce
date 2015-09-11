@@ -296,7 +296,7 @@ datagrid:
                 select:
                     - >
                          (CASE
-                               WHEN (parentProductVariantLink.id IS NOT NULL OR product.id IN (:data_in)) AND product.id NOT IN (:data_not_in)
+                               WHEN (currentVariantLink.id IS NOT NULL OR product.id IN (:data_in)) AND product.id NOT IN (:data_not_in)
                                THEN true
                                ELSE false
                           END) as isVariant
@@ -305,10 +305,10 @@ datagrid:
                 join:
                     left:
                         -
-                            join: product.parentProductVariantLinks
-                            alias: parentProductVariantLink
+                            join: %orob2b_product.product_variant_link.class%
+                            alias: currentVariantLink
                             conditionType: WITH
-                            condition: parentProductVariantLink.parentProduct = :parentProduct
+                            condition: currentVariantLink.product = product.id AND currentVariantLink.parentProduct = :parentProduct
                 where:
                     and:
                         - product.id <> :parentProduct

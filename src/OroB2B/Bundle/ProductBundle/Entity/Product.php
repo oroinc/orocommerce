@@ -213,13 +213,6 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      */
     protected $variantLinks;
 
-    /**
-     * @var ProductVariantLink
-     *
-     * @ORM\OneToMany(targetEntity="ProductVariantLink", mappedBy="product", cascade={"ALL"}, orphanRemoval=true)
-     */
-    protected $parentProductVariantLinks;
-
     public function __construct()
     {
         parent::__construct();
