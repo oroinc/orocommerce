@@ -60,6 +60,6 @@ class AccountActionPermissionProvider
      */
     protected function findObject($class, $id)
     {
-        return $this->doctrine->getManagerForClass($class)->getRepository($class)->find($id);
+        return $this->doctrine->getManagerForClass($class)->getReference($class, $id);
     }
 }
