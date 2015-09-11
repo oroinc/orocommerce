@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\FrontendBundle\Placeholder;
 
 use Oro\Bundle\ThemeBundle\Model\ThemeRegistry;
 
+use OroB2B\Bundle\FrontendBundle\EventListener\ThemeListener;
+
 class ThemeFilter
 {
     /**
@@ -20,12 +22,19 @@ class ThemeFilter
     }
 
     /**
-     * @param string $theme
      * @return bool
      */
-    public function isActiveTheme($theme)
+    public function isDemoTheme()
     {
         $activeTheme = $this->themeRegistry->getActiveTheme();
-        return $activeTheme ? $activeTheme->getName() === $theme : false;
+        return $activeTheme ? $activeTheme->getName() === ThemeListener::FRONTEND_THEME : false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDefaultTheme()
+    {
+        return !$this->isDemoTheme();
     }
 }

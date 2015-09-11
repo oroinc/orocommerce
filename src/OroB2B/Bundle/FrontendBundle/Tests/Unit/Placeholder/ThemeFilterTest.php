@@ -34,49 +34,43 @@ class ThemeFilterTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $theme
-     * @param bool $isActiveTheme
-     * @param bool $isOroTheme
+     * @param bool $isDefaultTheme
      * @param bool $isDemoTheme
      *
-     * @dataProvider isActiveThemeDataProvider
+     * @dataProvider isThemeDataProvider
      */
-    public function testIsActiveTheme($theme, $isActiveTheme, $isOroTheme, $isDemoTheme)
+    public function testIsTheme($theme, $isDefaultTheme, $isDemoTheme)
     {
         $this->themeRegistry->setActiveTheme($theme);
 
-        $this->assertEquals($isActiveTheme, $this->filter->isActiveTheme($theme));
-        $this->assertEquals($isOroTheme, $this->filter->isActiveTheme('oro'));
-        $this->assertEquals($isDemoTheme, $this->filter->isActiveTheme('demo'));
+        $this->assertEquals($isDefaultTheme, $this->filter->isDefaultTheme());
+        $this->assertEquals($isDemoTheme, $this->filter->isDemoTheme());
     }
 
     /**
      * @return array
      */
-    public function isActiveThemeDataProvider()
+    public function isThemeDataProvider()
     {
         return [
             'no active theme' => [
                 'them' => null,
-                'isActiveTheme' => false,
-                'isOroTheme' => false,
+                'isDefaultTheme' => true,
                 'isDemoTheme' => false,
             ],
             'unknown theme  ' => [
                 'them' => 'default',
-                'isActiveTheme' => true,
-                'isOroTheme' => false,
+                'isDefaultTheme' => true,
                 'isDemoTheme' => false,
             ],
             'oro theme' => [
                 'them' => 'oro',
-                'isActiveTheme' => true,
-                'isOroTheme' => true,
+                'isDefaultTheme' => true,
                 'isDemoTheme' => false,
             ],
             'demo theme' => [
                 'them' => 'demo',
-                'isActiveTheme' => true,
-                'isOroTheme' => false,
+                'isDefaultTheme' => false,
                 'isDemoTheme' => true,
             ],
         ];
