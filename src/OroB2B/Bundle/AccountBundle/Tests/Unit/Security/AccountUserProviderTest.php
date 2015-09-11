@@ -79,9 +79,9 @@ class AccountUserProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @param array $inputData
      *
-     * @dataProvider isGrantedViewBasicAndViewLocalWithFalseResultProvider
+     * @dataProvider isGrantedBasicAndLocalWithFalseResultProvider
      */
-    public function testIsGrantedViewBasicAndViewLocalWithFalseResult(array $inputData)
+    public function testIsGrantedBasicAndLocalWithFalseResult(array $inputData)
     {
         $this->securityFacade->expects($this->any())
             ->method('getLoggedUser')
@@ -106,6 +106,14 @@ class AccountUserProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse(
             $this->provider->isGrantedViewLocal($inputData['class'])
+        );
+
+        $this->assertFalse(
+            $this->provider->isGrantedEditBasic($inputData['class'])
+        );
+
+        $this->assertFalse(
+            $this->provider->isGrantedEditLocal($inputData['class'])
         );
     }
 
@@ -189,6 +197,82 @@ class AccountUserProviderTest extends \PHPUnit_Framework_TestCase
      * @param array $inputData
      * @param array $expectedData
      *
+     * @dataProvider isGrantedEditBasicProvider
+     */
+    public function testIsGrantedEditBasic(array $inputData, array $expectedData)
+    {
+        $this->securityFacade->expects($this->any())
+            ->method('getLoggedUser')
+            ->willReturn($this->user)
+        ;
+        $this->user->expects($this->once())
+            ->method('getRoles')
+            ->willReturn([$inputData['role']])
+        ;
+        $this->aclManager->expects($this->once())
+            ->method('getOid')
+            ->with($this->identicalTo($inputData['descriptor']))
+            ->willReturn($inputData['oid'])
+        ;
+        $this->aclManager->expects($this->once())
+            ->method('getSid')
+            ->with($this->identicalTo($inputData['role']))
+            ->willReturn($inputData['sid'])
+        ;
+        $this->aclManager->expects($this->once())
+            ->method('getAces')
+            ->with($this->identicalTo($inputData['sid']), $this->identicalTo($inputData['oid']))
+            ->willReturn($inputData['aces'])
+        ;
+
+        $this->assertSame(
+            $expectedData['isGranted'],
+            $this->provider->isGrantedEditBasic($inputData['class'])
+        );
+    }
+
+    /**
+     * @param array $inputData
+     * @param array $expectedData
+     *
+     * @dataProvider isGrantedEditLocalProvider
+     */
+    public function testIsGrantedEditLocal(array $inputData, array $expectedData)
+    {
+        $this->securityFacade->expects($this->any())
+            ->method('getLoggedUser')
+            ->willReturn($this->user)
+        ;
+        $this->user->expects($this->once())
+            ->method('getRoles')
+            ->willReturn([$inputData['role']])
+        ;
+        $this->aclManager->expects($this->once())
+            ->method('getOid')
+            ->with($this->identicalTo($inputData['descriptor']))
+            ->willReturn($inputData['oid'])
+        ;
+        $this->aclManager->expects($this->once())
+            ->method('getSid')
+            ->with($this->identicalTo($inputData['role']))
+            ->willReturn($inputData['sid'])
+        ;
+        $this->aclManager->expects($this->once())
+            ->method('getAces')
+            ->with($this->identicalTo($inputData['sid']), $this->identicalTo($inputData['oid']))
+            ->willReturn($inputData['aces'])
+        ;
+
+        $this->assertSame(
+            $expectedData['isGranted'],
+            $this->provider->isGrantedEditLocal($inputData['class'])
+        );
+    }
+
+    /**
+     * @param array $inputData
+     * @param array $expectedData
+     *
      * @dataProvider isGrantedViewAccountUserProvider
      */
     public function testIsGrantedViewAccountUser(array $inputData, array $expectedData)
@@ -229,7 +313,7 @@ class AccountUserProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function isGrantedViewBasicAndViewLocalWithFalseResultProvider()
+    public function isGrantedBasicAndLocalWithFalseResultProvider()
     {
         return [
             'empty class' => [
@@ -374,6 +458,142 @@ class AccountUserProviderTest extends \PHPUnit_Framework_TestCase
                     'aces'  => [
                         $this->getEntry(EntityMaskBuilder::MASK_VIEW_DEEP, $this->once()),
                         $this->getEntry(EntityMaskBuilder::MASK_VIEW_LOCAL, $this->once()),
+                    ],
+                ],
+                'expected' => [
+                    'isGranted' => true,
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function isGrantedEditBasicProvider()
+    {
+        return [
+            'no access to class' => [
+                'input' => [
+                    'class' => 'TestClass1',
+                    'role'  => 'ROLE1',
+                    'descriptor' => 'entity:TestClass1',
+                    'oid'   => new ObjectIdentity('entity', 'TestClass1'),
+                    'sid'   => $this->getMock('Symfony\Component\Security\Acl\Model\SecurityIdentityInterface'),
+                    'aces'  => [],
+                ],
+                'expected' => [
+                    'isGranted' => false,
+                    'oid'       => new ObjectIdentity('entity', 'TestClass1'),
+                ],
+            ],
+            'granted access to class' => [
+                'input' => [
+                    'class' => 'TestClass2',
+                    'role'  => 'ROLE2',
+                    'descriptor' => 'entity:TestClass2',
+                    'oid'       => new ObjectIdentity('entity', 'TestClass2'),
+                    'sid'   => $this->getMock('Symfony\Component\Security\Acl\Model\SecurityIdentityInterface'),
+                    'aces'  => [
+                        $this->getEntry(EntityMaskBuilder::MASK_EDIT_DEEP, $this->once()),
+                        $this->getEntry(EntityMaskBuilder::MASK_EDIT_BASIC, $this->once()),
+                    ],
+                ],
+                'expected' => [
+                    'isGranted' => true,
+                ],
+            ],
+            'no access to object' => [
+                'input' => [
+                    'class' => new \stdClass(),
+                    'role'  => 'ROLE3',
+                    'descriptor' => 'entity:stdClass',
+                    'oid'       => new ObjectIdentity('entity', 'stdClass'),
+                    'sid'   => $this->getMock('Symfony\Component\Security\Acl\Model\SecurityIdentityInterface'),
+                    'aces'  => [],
+                ],
+                'expected' => [
+                    'isGranted' => false,
+                ],
+            ],
+            'granted access to object' => [
+                'input' => [
+                    'class' => new \stdClass(),
+                    'role'  => 'ROLE4',
+                    'descriptor' => 'entity:stdClass',
+                    'oid'   => new ObjectIdentity('entity', 'stdClass'),
+                    'sid'   => $this->getMock('Symfony\Component\Security\Acl\Model\SecurityIdentityInterface'),
+                    'aces'  => [
+                        $this->getEntry(EntityMaskBuilder::MASK_EDIT_DEEP, $this->once()),
+                        $this->getEntry(EntityMaskBuilder::MASK_EDIT_BASIC, $this->once()),
+                    ],
+                ],
+                'expected' => [
+                    'isGranted' => true,
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function isGrantedEditLocalProvider()
+    {
+        return [
+            'no access to class' => [
+                'input' => [
+                    'class' => 'TestClass1',
+                    'role'  => 'ROLE1',
+                    'descriptor' => 'entity:TestClass1',
+                    'oid'   => new ObjectIdentity('entity', 'TestClass1'),
+                    'sid'   => $this->getMock('Symfony\Component\Security\Acl\Model\SecurityIdentityInterface'),
+                    'aces'  => [],
+                ],
+                'expected' => [
+                    'isGranted' => false,
+                    'oid'       => new ObjectIdentity('entity', 'TestClass1'),
+                ],
+            ],
+            'granted access to class' => [
+                'input' => [
+                    'class' => 'TestClass2',
+                    'role'  => 'ROLE2',
+                    'descriptor' => 'entity:TestClass2',
+                    'oid'       => new ObjectIdentity('entity', 'TestClass2'),
+                    'sid'   => $this->getMock('Symfony\Component\Security\Acl\Model\SecurityIdentityInterface'),
+                    'aces'  => [
+                        $this->getEntry(EntityMaskBuilder::MASK_EDIT_DEEP, $this->once()),
+                        $this->getEntry(EntityMaskBuilder::MASK_EDIT_LOCAL, $this->once()),
+                    ],
+                ],
+                'expected' => [
+                    'isGranted' => true,
+                ],
+            ],
+            'no access to object' => [
+                'input' => [
+                    'class' => new \stdClass(),
+                    'role'  => 'ROLE3',
+                    'descriptor' => 'entity:stdClass',
+                    'oid'       => new ObjectIdentity('entity', 'stdClass'),
+                    'sid'   => $this->getMock('Symfony\Component\Security\Acl\Model\SecurityIdentityInterface'),
+                    'aces'  => [],
+                ],
+                'expected' => [
+                    'isGranted' => false,
+                ],
+            ],
+            'granted access to object' => [
+                'input' => [
+                    'class' => new \stdClass(),
+                    'role'  => 'ROLE4',
+                    'descriptor' => 'entity:stdClass',
+                    'oid'   => new ObjectIdentity('entity', 'stdClass'),
+                    'sid'   => $this->getMock('Symfony\Component\Security\Acl\Model\SecurityIdentityInterface'),
+                    'aces'  => [
+                        $this->getEntry(EntityMaskBuilder::MASK_EDIT_DEEP, $this->once()),
+                        $this->getEntry(EntityMaskBuilder::MASK_EDIT_LOCAL, $this->once()),
                     ],
                 ],
                 'expected' => [
