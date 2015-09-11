@@ -14,6 +14,8 @@ use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 /**
  * @dbIsolation
+ *
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class ShoppingListControllerTest extends WebTestCase
 {
