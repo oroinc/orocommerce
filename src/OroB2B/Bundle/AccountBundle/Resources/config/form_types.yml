@@ -9,6 +9,7 @@ parameters:
 
     orob2b_account.form.type.account_user.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserType
     orob2b_account.form.type.account_user_role.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType
+    orob2b_account.form.type.account_user_role_frontend.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleFrontendType
 
     orob2b_account.form.type.frontend.account_user.class: OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType
     orob2b_account.form.type.frontend.account_user.register.class: OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType
@@ -78,6 +79,15 @@ services:
             - [setDataClass, [%orob2b_account.entity.account_user_role.class%]]
         tags:
             - { name: form.type, alias: orob2b_account_account_user_role }
+
+    orob2b_account.form.type.account_user_role_frontend:
+        class: %orob2b_account.form.type.account_user_role_frontend.class%
+        calls:
+            - [setDataClass, [%orob2b_account.entity.account_user_role.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_account_account_user_role_frontend }
+
+
 
     orob2b_account.form.type.frontend.account_user:
         class: %orob2b_account.form.type.frontend.account_user.class%
