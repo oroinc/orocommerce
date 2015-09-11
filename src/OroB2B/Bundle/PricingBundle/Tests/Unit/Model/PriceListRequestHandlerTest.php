@@ -174,4 +174,37 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
 
         return $priceList;
     }
+
+    /**
+     * @param mixed $value
+     * @param bool|int $expected
+     *
+     * @dataProvider priceListIdDataProvider
+     */
+    public function testGetPriceListId($value, $expected)
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Request $request */
+        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $request->expects($this->atLeastOnce())->method('get')->willReturn($value);
+
+        $this->handler->setRequest($request);
+        $this->assertEquals($expected, $this->handler->getPriceListId());
+    }
+
+    /**
+     * @return array
+     */
+    public function priceListIdDataProvider()
+    {
+        return [
+            [true, false],
+            [false, false],
+            ['true', false],
+            ['false', false],
+            [2, true],
+            [1, true],
+            [0, false],
+            [-1, false],
+        ];
+    }
 }
