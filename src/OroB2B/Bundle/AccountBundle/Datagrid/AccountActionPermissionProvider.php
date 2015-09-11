@@ -3,13 +3,8 @@
 namespace OroB2B\Bundle\AccountBundle\Datagrid;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
-use Oro\Bundle\DataGridBundle\Extension\Action\Actions\ActionInterface;
-
-use Oro\Bundle\SecurityBundle\Annotation\Acl as AclAnnotation;
-use Oro\Bundle\SecurityBundle\Metadata\AclAnnotationProvider;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 class AccountActionPermissionProvider
@@ -20,27 +15,17 @@ class AccountActionPermissionProvider
     protected $securityFacade;
 
     /**
-     * @var AclAnnotationProvider
-     */
-    protected $objectIdentityFactory;
-
-    /**
      * @var Registry
      */
     protected $doctrine;
 
     /**
      * @param SecurityFacade $securityFacade
-     * @param AclAnnotationProvider $annotationProvider
      * @param Registry $doctrine
      */
-    public function __construct(
-        SecurityFacade $securityFacade,
-        AclAnnotationProvider $annotationProvider,
-        Registry $doctrine
-    ) {
+    public function __construct(SecurityFacade $securityFacade, Registry $doctrine)
+    {
         $this->securityFacade = $securityFacade;
-        $this->annotationProvider = $annotationProvider;
         $this->doctrine = $doctrine;
     }
 
@@ -49,19 +34,20 @@ class AccountActionPermissionProvider
      * @param array $config
      * @return array
      */
-    public function getUserPermissions(ResultRecordInterface $record, array $config)
+    public function getActions(ResultRecordInterface $record, array $config)
     {
         $actions = [];
 
         foreach ($config as $action => $options) {
             $isGranted = true;
 
-            if (null !== ($annotation = $this->getAnnotation($options))) {
+            if (isset($options['acl_permission']) && isset($options['acl_class'])) {
 
-                $object = $this->findObject($annotation->getClass(), $record->getValue('id'));
+                $object = $this->findObject($options['acl_class'], $record->getValue('id'));
 
-                $isGranted = $this->securityFacade->isGranted($annotation->getPermission(), $object);
+                $isGranted = $this->securityFacade->isGranted($options['acl_permission'], $object);
             }
+
             $actions[$action] = $isGranted;
         }
 
@@ -69,33 +55,12 @@ class AccountActionPermissionProvider
     }
 
     /**
+     * @param string $class
      * @param mixed $id
      * @return object
      */
     protected function findObject($class, $id)
     {
         return $this->doctrine->getManagerForClass($class)->getRepository($class)->find($id);
-    }
-
-    /**
-     * @param string $class
-     * @return EntityRepository
-     */
-    protected function getRepository($class)
-    {
-        return $this->doctrine->getManagerForClass($class)->getRepository($class);
-    }
-
-    /**
-     * @param array $options
-     * @return null|AclAnnotation
-     */
-    protected function getAnnotation($options)
-    {
-        if (!isset($options[ActionInterface::ACL_KEY])) {
-            return null;
-        }
-
-        return $this->annotationProvider->findAnnotationById($options[ActionInterface::ACL_KEY]);
     }
 }
