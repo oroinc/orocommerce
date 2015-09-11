@@ -15,7 +15,7 @@ class ParentAccountSearchHandler extends SearchHandler
      */
     protected function searchEntities($search, $firstResult, $maxResults)
     {
-        if (strpos($search, ';') === false) {
+        if (strpos($search, self::DELIMITER) === false) {
             return [];
         }
         list($searchTerm, $accountId) = $this->explodeSearchTerm($search);
