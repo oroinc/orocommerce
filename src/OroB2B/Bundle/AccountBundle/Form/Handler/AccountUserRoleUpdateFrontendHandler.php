@@ -170,5 +170,4 @@ class AccountUserRoleUpdateFrontendHandler extends AccountUserRoleUpdateHandler
             ['privilege_config' => $privilegeConfig]
         );
     }
-
 }

@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AccountBundle\Form\Type;
 
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AccountUserRoleType extends AbstractAccountUserRoleType
 {
@@ -22,6 +23,15 @@ class AccountUserRoleType extends AbstractAccountUserRoleType
                 'label' => 'orob2b.account.accountuserrole.account.label'
             ]
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setRequired(['privilege_config']);
+        $resolver->setDefaults(['data_class' => $this->dataClass]);
     }
 
     /**

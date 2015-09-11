@@ -22,7 +22,10 @@ define(function(require) {
             unitSelector: '.product-unit select',
             routeName: 'orob2b_product_unit_product_units',
             routingParams: {},
-            errorMessage: 'Sorry, unexpected error was occurred'
+            errorMessage: 'Sorry, unexpected error was occurred',
+            loadingMaskEnabled: true,
+            dropQuantityOnLoad: true,
+            defaultValues: null
         },
 
         /**
@@ -51,7 +54,7 @@ define(function(require) {
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
-            this.loadingMaskView = new LoadingMaskView({container: this.options._sourceElement});
+            this.initializeLoadingMask(options);
 
             this.options._sourceElement
                 .on('change', this.options.productSelector, _.bind(this.onProductChange, this));
@@ -64,10 +67,17 @@ define(function(require) {
             }
         },
 
+        initializeLoadingMask: function(options) {
+            if (options.loadingMaskEnabled) {
+                this.loadingMaskView = new LoadingMaskView({container: this.options._sourceElement});
+            }
+        },
+
         /**
          * @param {jQuery.Event} e
          */
         onProductChange: function(e) {
+            this.unitSelector.trigger('value:changing');
             var value = e.target.value;
             var self = this;
 
@@ -83,9 +93,10 @@ define(function(require) {
                 beforeSend: $.proxy(this._beforeSend, this),
                 success: $.proxy(this._success, this),
                 complete: $.proxy(this._complete, this),
-                error: function(jqXHR) {
+                error: $.proxy(function(jqXHR) {
+                    this._dropValues();
                     messenger.showErrorMessage(__(self.options.errorMessage), jqXHR.responseJSON);
-                }
+                }, this)
             });
         },
 
@@ -93,16 +104,19 @@ define(function(require) {
          * @private
          */
         _beforeSend: function() {
-            this.loadingMaskView.show();
-            this._dropValues();
+            if (this.loadingMaskView) {
+                this.loadingMaskView.show();
+            }
         },
 
         /**
          * @private
          */
         _dropValues: function() {
-            this.handleQuantityState(true);
-            this.handleUnitsState(true, null);
+            if (this.options.dropQuantityOnLoad) {
+                this.handleQuantityState(true);
+            }
+            this.handleUnitsState(this.options.defaultValues);
         },
 
         /**
@@ -112,29 +126,34 @@ define(function(require) {
          */
         _success: function(data) {
             this.handleQuantityState(false);
-            this.handleUnitsState(false, data.units);
+            this.handleUnitsState(data.units);
         },
 
         /**
          * @private
          */
         _complete: function() {
-            this.loadingMaskView.hide();
+            if (this.loadingMaskView) {
+                this.loadingMaskView.hide();
+            }
         },
 
         /**
          * @param {Boolean} disabled
          */
         handleQuantityState: function(disabled) {
-            this.quantitySelector.prop('disabled', disabled).val(null);
+            this.quantitySelector.prop('disabled', disabled);
+            if (this.options.dropQuantityOnLoad) {
+                this.quantitySelector.val(null);
+            }
         },
 
         /**
-         * @param {Boolean} disabled
          * @param {Object} units
          */
-        handleUnitsState: function(disabled, units) {
+        handleUnitsState: function(units) {
             var self = this;
+            var disabled = _.isEmpty(units);
 
             this.unitSelector
                 .prop('disabled', disabled)
@@ -160,6 +179,7 @@ define(function(require) {
             } else {
                 this.unitSelector.parent('.selector').removeClass('disabled');
             }
+            this.unitSelector.trigger('value:changed');
         },
 
         dispose: function() {

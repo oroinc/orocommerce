@@ -4,9 +4,9 @@ namespace OroB2B\Bundle\AccountBundle\Form\Handler;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\SecurityContextInterface;
 
 use Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationContextTokenInterface;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserManager;
@@ -22,25 +22,25 @@ class AccountUserHandler
     /** @var AccountUserManager */
     protected $userManager;
 
-    /** @var SecurityContextInterface */
-    protected $securityContext;
+    /** @var SecurityFacade */
+    protected $securityFacade;
 
     /**
      * @param FormInterface $form
      * @param Request $request
      * @param AccountUserManager $userManager
-     * @param SecurityContextInterface $securityContext
+     * @param SecurityFacade $securityFacade
      */
     public function __construct(
         FormInterface $form,
         Request $request,
         AccountUserManager $userManager,
-        SecurityContextInterface $securityContext
+        SecurityFacade $securityFacade
     ) {
         $this->form = $form;
         $this->request = $request;
         $this->userManager = $userManager;
-        $this->securityContext = $securityContext;
+        $this->securityFacade = $securityFacade;
     }
 
     /**
@@ -66,7 +66,7 @@ class AccountUserHandler
                     }
                 }
 
-                $token = $this->securityContext->getToken();
+                $token = $this->securityFacade->getToken();
                 if ($token instanceof OrganizationContextTokenInterface) {
                     $organization = $token->getOrganizationContext();
                     $accountUser->setOrganization($organization)

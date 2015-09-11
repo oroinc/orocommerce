@@ -1,11 +1,61 @@
 parameters:
+    orob2b_frontend.listener.frontend_route_collection.class: OroB2B\Bundle\FrontendBundle\EventListener\FrontendRouteCollectionListener
     orob2b_frontend.listener.route_collection.class: OroB2B\Bundle\FrontendBundle\EventListener\RouteCollectionListener
-
+    orob2b_frontend.menu.breadcrumb_manager.class: OroB2B\Bundle\FrontendBundle\Menu\BreadcrumbManager
+    orob2b_frontend.twig_extension.demo_frontend_theme.class: OroB2B\Bundle\FrontendBundle\Twig\DemoThemeExtension
+    orob2b_frontend.listener.theme.class: OroB2B\Bundle\FrontendBundle\EventListener\ThemeListener
+    orob2b_frontend.placeholder.theme_filter.class: OroB2B\Bundle\FrontendBundle\Placeholder\ThemeFilter
 services:
+    orob2b_frontend.listener.frontend_route_collection:
+        class: %orob2b_frontend.listener.frontend_route_collection.class%
+        arguments:
+            -
+                - oro_translation_jstranslation
+        tags:
+            - { name: kernel.event_listener, event: oro_distribution.route_collection.expose, method: onCollectionAutoload, priority: 130 }
+            - { name: kernel.event_listener, event: oro_distribution.route_collection.autoload, method: onCollectionAutoload, priority: 130 }
+        lazy: true
+
     orob2b_frontend.listener.route_collection:
         class: %orob2b_frontend.listener.route_collection.class%
         arguments:
             - %backend_prefix%
         tags:
+            - { name: kernel.event_listener, event: oro_distribution.route_collection.expose, method: onCollectionAutoload, priority: 120 }
             - { name: kernel.event_listener, event: oro_distribution.route_collection.autoload, method: onCollectionAutoload, priority: 120 }
         lazy: true
+
+    orob2b_frontend.menu.breadcrumb_manager:
+        class: %orob2b_frontend.menu.breadcrumb_manager.class%
+        parent: oro_navigation.breadcrumb_manager
+        tags:
+            - {name: oro_breadcrumbs.provider}
+
+    orob2b_frontend.listener.theme:
+        class: %orob2b_frontend.listener.theme.class%
+        arguments:
+            - @router
+            - @oro_theme.registry
+            - %installed%
+        tags:
+            - {name: kernel.event_listener, event: kernel.request, method: onKernelRequest}
+
+    orob2b_frontend.assetic.configuration:
+        class: %oro_assetic.configuration.class%
+        arguments:
+            - @event_dispatcher
+            - %oro_assetic.raw_configuration%
+
+    orob2b_frontend.twig_extension.demo_frontend_theme:
+        class: %orob2b_frontend.twig_extension.demo_frontend_theme.class%
+        arguments:
+            - @assetic.asset_factory
+            - @orob2b_frontend.assetic.configuration
+            - @oro_theme.registry
+        tags:
+            - { name: twig.extension }
+
+    orob2b_frontend.placeholder.theme_filter:
+        class: %orob2b_frontend.placeholder.theme_filter.class%
+        arguments:
+            - @oro_theme.registry

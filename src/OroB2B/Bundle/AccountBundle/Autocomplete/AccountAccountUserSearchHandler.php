@@ -16,7 +16,7 @@ class AccountAccountUserSearchHandler extends BaseSearchHandler
         if (false === strpos($search, static::DELIMITER)) {
             return [];
         }
-        list($accountId, $searchTerm) = explode(static::DELIMITER, $search, 2);
+        list($searchTerm, $accountId) = explode(static::DELIMITER, $search, 2);
         $entityIds = $this->searchIds($searchTerm, $firstResult, $maxResults);
         if (!count($entityIds)) {
             return [];
@@ -24,18 +24,33 @@ class AccountAccountUserSearchHandler extends BaseSearchHandler
         $queryBuilder = $this->entityRepository->createQueryBuilder('e');
         $queryBuilder
             ->where($queryBuilder->expr()->in('e.' . $this->idFieldName, $entityIds))
-            ->addOrderBy($queryBuilder->expr()->asc('e.email'))
-        ;
+            ->addOrderBy($queryBuilder->expr()->asc('e.email'));
 
         if ($accountId) {
             $queryBuilder
                 ->andWhere('e.account = :account')
-                ->setParameter('account', $accountId)
-            ;
+                ->setParameter('account', $accountId);
         }
 
         $query = $this->aclHelper->apply($queryBuilder, 'VIEW');
 
         return $query->getResult();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function findById($query)
+    {
+        $parts = explode(self::DELIMITER, $query);
+        $id = $parts[0];
+        $accountId = !empty($parts[1]) ? $parts[1] : false;
+
+        $criteria = [$this->idFieldName => $id];
+        if (false !== $accountId) {
+            $criteria['account'] = $accountId;
+        }
+
+        return [$this->entityRepository->findOneBy($criteria, null)];
     }
 }

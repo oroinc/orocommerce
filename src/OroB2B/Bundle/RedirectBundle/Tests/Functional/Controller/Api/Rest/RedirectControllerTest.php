@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\RedirectBundle\Tests\Functional\Controller\Api\Rest;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
-use FOS\RestBundle\Util\Codes;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
@@ -30,7 +30,7 @@ class RedirectControllerTest extends WebTestCase
             $this->getUrl('orob2b_api_slugify_slug', ['string' => $string])
         );
 
-        $result = $this->getJsonResponseContent($this->client->getResponse(), Codes::HTTP_OK);
+        $result = $this->getJsonResponseContent($this->client->getResponse(), Response::HTTP_OK);
 
         $this->assertNotEmpty($result);
         $this->assertEquals($slug, $result['slug']);

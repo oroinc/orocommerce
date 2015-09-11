@@ -724,3 +724,63 @@ datagrid:
                 route: orob2b_account_account_user_role_frontend_update
             delete_link:
                 route: orob2b_api_frontend_account_delete_accountuserrole
+
+    frontend-account-account-user-grid:
+        extends: account-account-user-grid-base
+        source:
+            acl_resource: orob2b_account_frontend_account_user_view
+        properties:
+            id: ~
+            view_link:
+                type:   url
+                route:  orob2b_account_frontend_account_user_view
+                params: [ id ]
+            update_link:
+                type:   url
+                route:  orob2b_account_frontend_account_user_update
+                params: [ id ]
+            delete_link:
+                type:   url
+                route:  orob2b_api_account_frontend_delete_account_user
+                params: [ id ]
+            enable_link:
+                type:   url
+                route:  orob2b_account_frontend_account_user_enable
+                params: [ id ]
+            disable_link:
+                type:   url
+                route:  orob2b_account_frontend_account_user_disable
+                params: [ id ]
+        actions:
+            enable:
+                type:          ajax
+                label:         orob2b.account.action.account_user.enable
+                icon:          ok
+                link:          enable_link
+                acl_resource:  orob2b_account_frontend_account_user_update
+            disable:
+                type:          ajax
+                label:         orob2b.account.action.account_user.disable
+                icon:          remove
+                link:          disable_link
+                acl_resource:  orob2b_account_frontend_account_user_update
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  orob2b_account_frontend_account_user_view
+                rowAction:     true
+            update:
+                type:          navigate
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          edit
+                acl_resource:  orob2b_account_frontend_account_user_update
+            delete:
+                type:          delete
+                label:         oro.grid.action.delete
+                link:          delete_link
+                icon:          trash
+                acl_resource:  orob2b_account_frontend_account_user_delete
+        action_configuration: [@orob2b_account.datagrid.action_permission_provider, "getUserPermissions"]

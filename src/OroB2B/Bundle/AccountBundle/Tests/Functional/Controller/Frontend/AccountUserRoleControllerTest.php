@@ -263,7 +263,7 @@ class AccountUserRoleControllerTest extends WebTestCase
     protected function getPredefinedRole()
     {
         return $this->getUserRoleRepository()
-            ->findOneBy(['label' => LoadAccountUserRoleData::ROLE_PREDEFINED]);
+            ->findOneBy(['label' => LoadAccountUserRoleData::ROLE_WITHOUT_ACCOUNT]);
     }
 
     /**

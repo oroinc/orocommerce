@@ -90,7 +90,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
                 ->setValidUntil($validUntil)
                 ->setAccountUser($accountUser)
                 ->setAccount($account)
-            ;
+                ->setLocked(rand(0, 1));
 
             if (1 === rand(1, 3)) {
                 $quote->setRequest($requests[rand(1, count($requests) - 1)]);
@@ -137,7 +137,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
      */
     protected function processQuoteProducts(Quote $quote, ObjectManager $manager)
     {
-        $products   = $this->getProducts($manager);
+        $products = $this->getProducts($manager);
         $currencies = $this->getCurrencies();
 
         $types = [
@@ -186,8 +186,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
                     ->setQuantity(rand(1, 100))
                     ->setProductUnit($productUnit)
                     ->setPriceType($priceType)
-                    ->setAllowIncrements((bool)rand(0, 1))
-                ;
+                    ->setAllowIncrements((bool)rand(0, 1));
 
                 if ($quoteProduct->isTypeNotAvailable()) {
                     $productReplacement = $products[rand(1, count($products) - 1)];
@@ -218,8 +217,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
             ->setProduct($product)
             ->setType($type)
             ->setComment(sprintf('Seller Notes %s', $index + 1))
-            ->setCommentAccount(sprintf('Account Notes %s', $index + 1))
-        ;
+            ->setCommentAccount(sprintf('Account Notes %s', $index + 1));
 
         return $quoteProduct;
     }
@@ -235,8 +233,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
             $quoteProductRequest
                 ->setPrice($requestProductItem->getPrice())
                 ->setQuantity($requestProductItem->getQuantity())
-                ->setProductUnit($requestProductItem->getProductUnit())
-            ;
+                ->setProductUnit($requestProductItem->getProductUnit());
             $quoteProduct->addQuoteProductRequest($quoteProductRequest);
         }
     }

@@ -54,6 +54,7 @@ define(function(require) {
                 .on('change', this.options.accountSelect, _.bind(this.onAccountChanged, this))
                 .on('change', this.options.accountUserSelect, _.bind(this.onAccountUserChanged, this))
             ;
+            this.$accountUserSelect.data('select2_query_additional_params', {'account_id': this.$accountSelect.val()});
         },
 
         /**
@@ -63,6 +64,7 @@ define(function(require) {
          */
         onAccountChanged: function(e) {
             this.$accountUserSelect.select2('val', '');
+            this.$accountUserSelect.data('select2_query_additional_params', {'account_id': this.$accountSelect.val()});
 
             mediator.trigger('account-account-user:change', {
                 accountId: this.$accountSelect.val(),
@@ -94,6 +96,7 @@ define(function(require) {
                 },
                 success: function(response) {
                     self.$accountSelect.select2('val', response.accountId || '');
+                    self.$accountUserSelect.data('select2_query_additional_params', {'account_id': response.accountId});
 
                     mediator.trigger('account-account-user:change', {
                         accountId: self.$accountSelect.val(),

@@ -4,12 +4,14 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Handler;
 
 use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\SecurityBundle\Model\AclPrivilege;
 use Oro\Bundle\SecurityBundle\Model\AclPrivilegeIdentity;
+use Oro\Bundle\SecurityBundle\Acl\Extension\EntityMaskBuilder;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -96,8 +98,11 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
         $entityForm->expects($this->once())
             ->method('setData')
             ->willReturnCallback(
-                function (ArrayCollection $actualPrivileges) use ($firstEntityPrivilege) {
-                    $this->assertEquals([$firstEntityPrivilege], array_values($actualPrivileges->toArray()));
+                function (ArrayCollection $actualPrivileges) use ($firstEntityPrivilege, $secondEntityPrivilege) {
+                    $this->assertEquals(
+                        [$firstEntityPrivilege, $secondEntityPrivilege],
+                        array_values($actualPrivileges->toArray())
+                    );
                 }
             );
 
@@ -167,6 +172,9 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
         $this->handler->process($role);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testProcessPrivileges()
     {
         $request = new Request();
@@ -174,6 +182,8 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
 
         $role = new AccountUserRole('TEST');
         $roleSecurityIdentity = new RoleSecurityIdentity($role);
+
+        $productObjectIdentity = new ObjectIdentity('entity', 'OroB2B\Bundle\ProductBundle\Entity\Product');
 
         $appendForm = $this->getMock('Symfony\Component\Form\FormInterface');
         $appendForm->expects($this->once())
@@ -250,6 +260,15 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
             ->method('getSid')
             ->with($role)
             ->willReturn($roleSecurityIdentity);
+
+        $this->aclManager->expects($this->any())
+            ->method('getOid')
+            ->with($productObjectIdentity->getIdentifier() . ':' . $productObjectIdentity->getType())
+            ->willReturn($productObjectIdentity);
+
+        $this->aclManager->expects($this->once())
+            ->method('setPermission')
+            ->with($roleSecurityIdentity, $productObjectIdentity, EntityMaskBuilder::MASK_VIEW_SYSTEM);
 
         $this->chainMetadataProvider->expects($this->once())
             ->method('startProviderEmulation')

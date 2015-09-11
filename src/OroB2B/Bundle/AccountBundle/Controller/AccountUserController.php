@@ -6,6 +6,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
@@ -77,11 +78,12 @@ class AccountUserController extends Controller
      *      class="OroB2BAccountBundle:AccountUser",
      *      permission="CREATE"
      * )
+     * @param Request $request
      * @return array|RedirectResponse
      */
-    public function createAction()
+    public function createAction(Request $request)
     {
-        return $this->update(new AccountUser());
+        return $this->update(new AccountUser(), $request);
     }
 
     /**
@@ -96,25 +98,27 @@ class AccountUserController extends Controller
      *      permission="EDIT"
      * )
      * @param AccountUser $accountUser
+     * @param Request $request
      * @return array|RedirectResponse
      */
-    public function updateAction(AccountUser $accountUser)
+    public function updateAction(AccountUser $accountUser, Request $request)
     {
-        return $this->update($accountUser);
+        return $this->update($accountUser, $request);
     }
 
     /**
      * @param AccountUser $accountUser
+     * @param Request $request
      * @return array|RedirectResponse
      */
-    protected function update(AccountUser $accountUser)
+    protected function update(AccountUser $accountUser, Request $request)
     {
         $form = $this->createForm(AccountUserType::NAME, $accountUser);
         $handler = new AccountUserHandler(
             $form,
-            $this->getRequest(),
+            $request,
             $this->get('orob2b_account_user.manager'),
-            $this->get('security.context')
+            $this->get('oro_security.security_facade')
         );
 
         $result = $this->get('oro_form.model.update_handler')->handleUpdate(
