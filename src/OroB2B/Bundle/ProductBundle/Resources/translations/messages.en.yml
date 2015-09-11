@@ -18,7 +18,7 @@ orob2b:
         descriptions.label: Description
         is_variant.label: Is variant?
         variant_links.label: Product Variant Links
-        parent_product_variant_link.label: Parent Product Variant Link
+        parent_product_variant_links.label: Parent Product Variant Links
 
         visibility:
             visible.label: Yes
