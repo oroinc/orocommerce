@@ -205,6 +205,10 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
             [1, true],
             [0, false],
             [-1, false],
+            ['2', true],
+            ['1', true],
+            ['0', false],
+            ['-1', false],
         ];
     }
 }
