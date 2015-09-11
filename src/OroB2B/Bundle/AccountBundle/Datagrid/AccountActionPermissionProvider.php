@@ -42,7 +42,6 @@ class AccountActionPermissionProvider
             $isGranted = true;
 
             if (isset($options['acl_permission']) && isset($options['acl_class'])) {
-
                 $object = $this->findObject($options['acl_class'], $record->getValue('id'));
 
                 $isGranted = $this->securityFacade->isGranted($options['acl_permission'], $object);

@@ -14,7 +14,7 @@ use OroB2B\Bundle\AccountBundle\Datagrid\AccountActionPermissionProvider;
 class AccountActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ActionPermissionProvider
+     * @var AccountActionPermissionProvider
      */
     protected $actionPermissionProvider;
 
