@@ -16,7 +16,7 @@ items:
         template: OroB2BFrontendBundle:Organization:logo.html.twig
     assets_css:
         template: OroAsseticBundle:Assets:oro_css.html.twig
-        applicable: @orob2b_frontend.placeholder.theme_filter->isActiveTheme(oro)
+        applicable: @orob2b_frontend.placeholder.theme_filter->isDefaultTheme()
     frontend_assets_css:
         template: OroB2BFrontendBundle:Assets:demo_css.html.twig
-        applicable: @orob2b_frontend.placeholder.theme_filter->isActiveTheme(demo)
+        applicable: @orob2b_frontend.placeholder.theme_filter->isDemoTheme()
