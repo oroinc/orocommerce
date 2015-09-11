@@ -3,8 +3,7 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Datagrid;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
@@ -14,7 +13,7 @@ use OroB2B\Bundle\AccountBundle\Datagrid\AccountActionPermissionProvider;
 class AccountActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ActionPermissionProvider
+     * @var AccountActionPermissionProvider
      */
     protected $actionPermissionProvider;
 
@@ -34,14 +33,9 @@ class AccountActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
     protected $doctrine;
 
     /**
-     * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var EntityManager|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $manager;
-
-    /**
-     * @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $repository;
 
     /**
      * {@inheritdoc}
@@ -58,11 +52,7 @@ class AccountActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->manager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+        $this->manager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -89,14 +79,8 @@ class AccountActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
         ;
 
         $this->manager->expects($this->any())
-            ->method('getRepository')
-            ->with($expectedData['class'])
-            ->willReturn($this->repository)
-        ;
-
-        $this->repository->expects($this->any())
-            ->method('find')
-            ->with($expectedData['id'])
+            ->method('getReference')
+            ->with($expectedData['class'], $expectedData['id'])
             ->willReturn($inputData['object'])
         ;
 
