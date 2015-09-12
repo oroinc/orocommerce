@@ -1,0 +1,27 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroEmailBundle::actions.html.twig' as EmailActions %}
+{% import 'OroEmailBundle::macros.html.twig' as Email %}
+
+<div class="widget-content">
+    <div class="row-fluid form-horizontal">
+        <div class="responsive-block">
+            {{ UI.renderProperty('orob2b.account.accountuser.name_prefix.label'|trans, entity.namePrefix|default('N/A'|trans)) }}
+            {{ UI.renderProperty('orob2b.account.accountuser.first_name.label'|trans, entity.firstName|default('N/A'|trans)) }}
+            {{ UI.renderProperty('orob2b.account.accountuser.middle_name.label'|trans, entity.middleName|default('N/A'|trans)) }}
+            {{ UI.renderProperty('orob2b.account.accountuser.last_name.label'|trans, entity.lastName|default('N/A'|trans)) }}
+            {{ UI.renderProperty('orob2b.account.accountuser.name_suffix.label'|trans, entity.nameSuffix|default('N/A'|trans)) }}
+
+            {% set birthday_string %}
+                {{ entity.birthday is empty ? 'N/A'|trans : entity.birthday|oro_format_date }}
+            {% endset %}
+            {{ UI.renderProperty('orob2b.account.accountuser.birthday.label'|trans, birthday_string) }}
+            {{ UI.renderHtmlProperty('orob2b.account.accountuser.email.label'|trans, Email.email_address_simple(entity.email)) }}
+
+            {% set roles = [] %}
+            {% for entityRole in entity.roles %}
+                {% set roles = roles|merge([entityRole.label]) %}
+            {% endfor %}
+            {{ UI.renderHtmlProperty('orob2b.account.accountuser.roles.label'|trans, roles|join('<br />')) }}
+        </div>
+    </div>
+</div>

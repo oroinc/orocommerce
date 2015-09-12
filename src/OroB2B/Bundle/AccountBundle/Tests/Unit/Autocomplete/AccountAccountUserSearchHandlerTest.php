@@ -136,7 +136,7 @@ class AccountAccountUserSearchHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $page = 1;
         $perPage = 15;
-        $queryString = self::DELIMITER . $search;
+        $queryString = $search . self::DELIMITER;
 
         $foundElements = [
             $this->getSearchItem(1),
@@ -171,7 +171,7 @@ class AccountAccountUserSearchHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $page = 1;
         $perPage = 15;
-        $queryString = sprintf('%d%s%s', $accountId, self::DELIMITER, $search);
+        $queryString = sprintf('%s%s%d', $search, self::DELIMITER, $accountId);
 
         $foundElements = [
             $this->getSearchItem($accountId)
@@ -340,5 +340,27 @@ class AccountAccountUserSearchHandlerTest extends \PHPUnit_Framework_TestCase
         $result->email = $email;
 
         return $result;
+    }
+
+    public function testFindById()
+    {
+        $accountId = 1;
+        $search = 'test';
+        $foundElement = $this->getResultStub($accountId, $search);
+        $expectedResultData = [
+            ['id' => $accountId, 'email' => $search],
+        ];
+        $queryString = sprintf('%s%s%d', $search, self::DELIMITER, $accountId);
+
+        $this->entityRepository->expects($this->once())
+            ->method('findOneBy')
+            ->will($this->returnValue($foundElement));
+
+        $searchResult = $this->searchHandler->search($queryString, 1, 10, true);
+
+        $this->assertInternalType('array', $searchResult);
+        $this->assertArrayHasKey('more', $searchResult);
+        $this->assertArrayHasKey('results', $searchResult);
+        $this->assertEquals($expectedResultData, $searchResult['results']);
     }
 }

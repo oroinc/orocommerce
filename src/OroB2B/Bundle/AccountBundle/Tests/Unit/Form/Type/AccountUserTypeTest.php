@@ -7,6 +7,7 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as AccountSelectTypeStub;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 
@@ -14,10 +15,12 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserType;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityType ;
+use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityType;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType;
+use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntitySelectTypeStub;
 
 class AccountUserTypeTest extends FormIntegrationTestCase
 {
@@ -31,9 +34,9 @@ class AccountUserTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var \Oro\Bundle\SecurityBundle\SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
+     * @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $securityFacade;
+    protected $securityFacade;
 
     /**
      * @var Account[]
@@ -57,7 +60,6 @@ class AccountUserTypeTest extends FormIntegrationTestCase
 
         $this->formType = new AccountUserType($this->securityFacade);
         $this->formType->setDataClass(self::DATA_CLASS);
-        $this->formType->setRoleClass(self::ROLE_CLASS);
         $this->formType->setAddressClass(self::ADDRESS_CLASS);
     }
 
@@ -66,13 +68,11 @@ class AccountUserTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $rolesEntity = new EntityType(
-            [
-                1 => $this->getRole(1, 'test01'),
-                2 => $this->getRole(2, 'test02')
-            ]
+        $accountUserRoleSelectType = new EntitySelectTypeStub(
+            $this->getRoles(),
+            AccountUserRoleSelectType::NAME,
+            new AccountUserRoleSelectType()
         );
-
         $addressEntityType = new EntityType($this->getAddresses(), 'test_address_entity');
         $accountSelectType = new AccountSelectTypeStub($this->getAccounts(), AccountSelectType::NAME);
 
@@ -80,7 +80,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     OroDateType::NAME => new OroDateType(),
-                    'entity' => $rolesEntity,
+                    AccountUserRoleSelectType::NAME => $accountUserRoleSelectType,
                     $accountSelectType->getName() => $accountSelectType,
                     AddressCollectionTypeStub::NAME => new AddressCollectionTypeStub(),
                     $addressEntityType->getName() => $addressEntityType,
@@ -130,20 +130,20 @@ class AccountUserTypeTest extends FormIntegrationTestCase
         $existingAccountUser = new AccountUser();
 
         $class = new \ReflectionClass($existingAccountUser);
-        $prop  = $class->getProperty('id');
+        $prop = $class->getProperty('id');
         $prop->setAccessible(true);
         $prop->setValue($existingAccountUser, 42);
 
-        $existingAccountUser->setFirstName('John');
+        $existingAccountUser->setFirstName('Mary');
         $existingAccountUser->setLastName('Doe');
-        $existingAccountUser->setEmail('johndoe@example.com');
+        $existingAccountUser->setEmail('john@example.com');
         $existingAccountUser->setPassword('123456');
         $existingAccountUser->setAccount($this->getAccount(1));
         $existingAccountUser->addAddress($this->getAddresses()[1]);
 
         $alteredExistingAccountUser = clone $existingAccountUser;
-        $alteredExistingAccountUser->setEnabled(false);
         $alteredExistingAccountUser->setAccount($this->getAccount(2));
+        $alteredExistingAccountUser->setEnabled(false);
 
         $alteredExistingAccountUserWithRole = clone $alteredExistingAccountUser;
         $alteredExistingAccountUserWithRole->setRoles([$this->getRole(2, 'test02')]);
@@ -151,46 +151,47 @@ class AccountUserTypeTest extends FormIntegrationTestCase
         $alteredExistingAccountUserWithAddresses = clone $alteredExistingAccountUser;
         $alteredExistingAccountUserWithAddresses->addAddress($this->getAddresses()[2]);
 
-        return [
-            'user without submitted data' => [
-                'defaultData' => $newAccountUser,
-                'submittedData' => [],
-                'expectedData' => $newAccountUser
-            ],
-            'altered existing user' => [
-                'defaultData' => $existingAccountUser,
-                'submittedData' => [
-                    'firstName' => 'John',
-                    'lastName' => 'Doe',
-                    'email' => 'johndoe@example.com',
-                    'account' => 2
+        return
+            [
+                'user without submitted data' => [
+                    'defaultData' => $newAccountUser,
+                    'submittedData' => [],
+                    'expectedData' => $newAccountUser
                 ],
-                'expectedData' => $alteredExistingAccountUser
-            ],
-            'altered existing user with roles' => [
-                'defaultData' => $existingAccountUser,
-                'submittedData' => [
-                    'firstName' => 'John',
-                    'lastName' => 'Doe',
-                    'email' => 'johndoe@example.com',
-                    'account' => 2,
-                    'roles' => [2]
+                'altered existing user' => [
+                    'defaultData' => $existingAccountUser,
+                    'submittedData' => [
+                        'firstName' => 'Mary',
+                        'lastName' => 'Doe',
+                        'email' => 'john@example.com',
+                        'account' => 2
+                    ],
+                    'expectedData' => $alteredExistingAccountUser
                 ],
-                'expectedData' => $alteredExistingAccountUserWithRole,
-                'rolesGranted' => true
-            ],
-            'altered existing user with addresses' => [
-                'defaultData' => $existingAccountUser,
-                'submittedData' => [
-                    'firstName' => 'John',
-                    'lastName' => 'Doe',
-                    'email' => 'johndoe@example.com',
-                    'account' => 2,
-                    'addresses' => [1, 2]
+                'altered existing user with roles' => [
+                    'defaultData' => $existingAccountUser,
+                    'submittedData' => [
+                        'firstName' => 'Mary',
+                        'lastName' => 'Doe',
+                        'email' => 'john@example.com',
+                        'account' => 2,
+                        'roles' => [2]
+                    ],
+                    'expectedData' => $alteredExistingAccountUserWithRole,
+                    'rolesGranted' => true
                 ],
-                'expectedData' => $alteredExistingAccountUserWithAddresses,
-            ]
-        ];
+                'altered existing user with addresses' => [
+                    'defaultData' => $existingAccountUser,
+                    'submittedData' => [
+                        'firstName' => 'Mary',
+                        'lastName' => 'Doe',
+                        'email' => 'john@example.com',
+                        'account' => 2,
+                        'addresses' => [1, 2]
+                    ],
+                    'expectedData' => $alteredExistingAccountUserWithAddresses,
+                ]
+            ];
     }
 
     /**
@@ -214,6 +215,17 @@ class AccountUserTypeTest extends FormIntegrationTestCase
         }
 
         return self::$addresses;
+    }
+
+    /**
+     * @return AccountUserRole[]
+     */
+    protected function getRoles()
+    {
+        return [
+            1 => $this->getRole(1, 'test01'),
+            2 => $this->getRole(2, 'test02')
+        ];
     }
 
     /**

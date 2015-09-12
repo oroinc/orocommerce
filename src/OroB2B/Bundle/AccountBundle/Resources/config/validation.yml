@@ -52,8 +52,6 @@ OroB2B\Bundle\AccountBundle\Entity\AccountUser:
             - Length:
                 min: 3
                 max: 255
-        enabled:
-            - NotNull: ~
         roles:
             - Count:
                 min: 1

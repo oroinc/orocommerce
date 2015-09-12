@@ -43,7 +43,10 @@ class FrontendOwnershipMetadata extends OwnershipMetadata
     public function getAccessLevelNames()
     {
         if (!$this->hasOwner()) {
-            return [AccessLevel::NONE_LEVEL => AccessLevel::NONE_LEVEL_NAME];
+            return [
+                AccessLevel::NONE_LEVEL => AccessLevel::NONE_LEVEL_NAME,
+                AccessLevel::SYSTEM_LEVEL => AccessLevel::getAccessLevelName(AccessLevel::SYSTEM_LEVEL),
+            ];
         }
 
         if ($this->isBasicLevelOwned()) {

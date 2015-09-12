@@ -18,3 +18,36 @@ OroB2B\Bundle\OrderBundle\Entity\Order:
 #                type: float
         account:
             - NotBlank: ~
+        lineItems:
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Count:
+                min: 1
+                minMessage: 'orob2b.order.orderlineitem.count'
+            - Valid: ~
+
+OroB2B\Bundle\OrderBundle\Entity\OrderLineItem:
+    constraints:
+        - OroB2B\Bundle\OrderBundle\Validator\Constraints\LineItemProduct: ~
+    properties:
+        order:
+            - NotBlank: ~
+        productSku:
+            - NotBlank:
+                groups: [ Import ]
+            - Length:
+                max: 255
+                groups: [ Import ]
+        quantity:
+            - NotBlank: ~
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+        priceType:
+            - NotBlank: ~
+        productUnit:
+            - NotBlank:
+                message: 'orob2b.order.orderlineitem.product_unit.blank'
+        productUnitCode:
+            - NotBlank:
+                groups: [ Import ]
+        price:
+            - NotBlank: ~
+            - Valid: ~

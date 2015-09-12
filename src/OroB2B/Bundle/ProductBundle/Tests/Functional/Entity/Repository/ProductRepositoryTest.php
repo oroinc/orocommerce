@@ -89,4 +89,26 @@ class ProductRepositoryTest extends WebTestCase
             $this->getContainer()->getParameter('orob2b_product.product.class')
         );
     }
+
+    public function testGetProductsIdsBySku()
+    {
+        $product1 = $this->getProduct(ProductFixture::PRODUCT_1);
+        $product2 = $this->getProduct(ProductFixture::PRODUCT_2);
+        $product3 = $this->getProduct(ProductFixture::PRODUCT_3);
+
+        $this->assertEquals(
+            [
+                $product1->getSku() => $product1->getId(),
+                $product2->getSku() => $product2->getId(),
+                $product3->getSku() => $product3->getId(),
+            ],
+            $this->getRepository()->getProductsIdsBySku(
+                [
+                    $product3->getSku(),
+                    $product1->getSku(),
+                    $product2->getSku(),
+                ]
+            )
+        );
+    }
 }

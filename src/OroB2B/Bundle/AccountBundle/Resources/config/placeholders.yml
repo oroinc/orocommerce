@@ -35,6 +35,16 @@ placeholders:
             page_state_routes:
                 order: 100
 
+    view_before_content_addition:
+        items:
+            entity_pagination_frontend_view:
+                order: 100
+
+    update_before_content_addition:
+        items:
+            entity_pagination_frontend_edit:
+                order: 100
+
 items:
     frontend_menu:
         template: OroB2BAccountBundle:Menu:frontendMenu.html.twig
@@ -59,4 +69,10 @@ items:
         applicable: @orob2b_account.placeholder.filter->isUserApplicable()
     page_state_routes:
         template: OroB2BAccountBundle:Pagestate:pagestate.html.twig
+        applicable: @orob2b_account.placeholder.filter->isUserApplicable()
+    entity_pagination_frontend_view:
+        template: OroB2BAccountBundle:EntityPagination:viewPagination.html.twig
+        applicable: @orob2b_account.placeholder.filter->isUserApplicable()
+    entity_pagination_frontend_edit:
+        template: OroB2BAccountBundle:EntityPagination:editPagination.html.twig
         applicable: @orob2b_account.placeholder.filter->isUserApplicable()

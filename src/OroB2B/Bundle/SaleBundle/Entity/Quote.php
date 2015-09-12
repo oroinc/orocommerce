@@ -6,9 +6,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 
@@ -47,7 +47,7 @@ use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
  *      }
  * )
  */
-class Quote extends ExtendQuote implements AccountOwnerAwareInterface
+class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHolderInterface
 {
     /**
      * @var int
@@ -153,6 +153,13 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface
      * @ORM\OneToMany(targetEntity="QuoteProduct", mappedBy="quote", cascade={"ALL"}, orphanRemoval=true)
      */
     protected $quoteProducts;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="boolean")
+     */
+    protected $locked = false;
 
     /**
      * Constructor
@@ -433,5 +440,45 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface
     public function getRequest()
     {
         return $this->request;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isLocked()
+    {
+        return $this->locked;
+    }
+
+    /**
+     * @param bool $locked
+     *
+     * @return Quote
+     */
+    public function setLocked($locked)
+    {
+        $this->locked = (bool)$locked;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmail()
+    {
+        if (null !== $this->getAccountUser()) {
+            return (string)$this->getAccountUser()->getEmail();
+        }
+
+        return null;
     }
 }

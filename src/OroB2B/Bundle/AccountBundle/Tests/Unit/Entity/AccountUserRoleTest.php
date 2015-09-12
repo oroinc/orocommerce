@@ -17,10 +17,20 @@ class AccountUserRoleTest extends \PHPUnit_Framework_TestCase
     {
         $name = 'test role#$%';
         $role = new AccountUserRole();
+        $account = new Account();
+        $organization = new Organization();
 
         $this->assertEmpty($role->getId());
         $this->assertEmpty($role->getLabel());
         $this->assertEmpty($role->getRole());
+        $this->assertEmpty($role->getOrganization());
+        $this->assertEmpty($role->getAccount());
+
+        $role->setAccount($account);
+        $role->setOrganization($organization);
+
+        $this->assertEquals($organization, $role->getOrganization());
+        $this->assertEquals($account, $role->getAccount());
 
         $role->setLabel($name);
         $this->assertEquals($name, $role->getLabel());

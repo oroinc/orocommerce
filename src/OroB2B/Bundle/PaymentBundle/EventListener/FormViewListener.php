@@ -55,7 +55,7 @@ class FormViewListener
             return;
         }
 
-        $accountId = $this->request->get('id');
+        $accountId = (int)$this->request->get('id');
         /** @var Account $account */
         $account = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:Account', $accountId);
 
@@ -119,7 +119,7 @@ class FormViewListener
             return;
         }
 
-        $groupId = $this->request->get('id');
+        $groupId = (int)$this->request->get('id');
         /** @var AccountGroup $group */
         $group = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:AccountGroup', $groupId);
         $paymentTermRepository = $this->getPaymentTermRepository();

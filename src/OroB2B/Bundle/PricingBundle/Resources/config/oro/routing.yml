@@ -26,3 +26,10 @@ orob2b_product_price_product:
     resource:     "@OroB2BPricingBundle/Controller/ProductController.php"
     type:         annotation
     prefix:       /productprice/product
+
+orob2b_product_price_frontend_ajax:
+    resource:     "@OroB2BPricingBundle/Controller/Frontend/AjaxProductPriceController.php"
+    type:         annotation
+    prefix:       /productprice
+    options:
+        frontend: true
