@@ -90,6 +90,7 @@ class AccountUserRoleRepository extends EntityRepository
 
         return $findResult;
     }
+
     /**
      * @param AccountUser $accountUser
      * @return QueryBuilder

@@ -99,22 +99,6 @@ class AccountUserRoleUpdateHandler extends AclRoleHandler
     }
 
     /**
-     * @param string $className
-     * @return bool
-     */
-    protected function hasFrontendOwnership($className)
-    {
-        if ($this->ownershipConfigProvider->hasConfig($className)) {
-            $config = $this->ownershipConfigProvider->getConfig($className);
-            if ($config->has('frontend_owner_type')) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * {@inheritdoc}
      */
     protected function getRolePrivileges(AbstractRole $role)
