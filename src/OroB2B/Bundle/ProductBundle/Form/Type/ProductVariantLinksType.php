@@ -13,6 +13,14 @@ class ProductVariantLinksType extends AbstractType
     const NAME = 'orob2b_product_variant_links';
 
     /**
+     * @param ProductVariantLinksDataTransformer $transformer
+     */
+    public function __construct(ProductVariantLinksDataTransformer $transformer = null)
+    {
+        $this->transformer = $transformer ?: new ProductVariantLinksDataTransformer();
+    }
+
+    /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
@@ -40,7 +48,7 @@ class ProductVariantLinksType extends AbstractType
                 ]
             );
 
-        $builder->addModelTransformer(new ProductVariantLinksDataTransformer());
+        $builder->addModelTransformer($this->transformer);
     }
 
     /**
