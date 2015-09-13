@@ -49,9 +49,11 @@ services:
 
     orob2b_product.form.type.product_unit_removed_selection:
         class: %orob2b_product.form.type.product_unit_removed_selection.class%
+        arguments:
+            - @orob2b_product.formatter.product_unit_label
+            - @translator
         calls:
             - [setEntityClass, [%orob2b_product.product_unit.class%]]
-            - [setTranslator, [@translator]]
         tags:
             - { name: form.type, alias: orob2b_product_unit_removed_selection }
 

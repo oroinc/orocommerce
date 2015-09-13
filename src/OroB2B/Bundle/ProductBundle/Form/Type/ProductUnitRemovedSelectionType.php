@@ -3,12 +3,14 @@
 namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
+use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
 class ProductUnitRemovedSelectionType extends AbstractType
@@ -31,6 +33,11 @@ class ProductUnitRemovedSelectionType extends AbstractType
     protected $entityClass;
 
     /**
+     * @var ProductUnitLabelFormatter
+     */
+    protected $productUnitFormatter;
+
+    /**
      * @param string $entityClass
      */
     public function setEntityClass($entityClass)
@@ -39,10 +46,11 @@ class ProductUnitRemovedSelectionType extends AbstractType
     }
 
     /**
-     * @param TranslatorInterface $translator
+     * @param ProductUnitLabelFormatter $productUnitFormatter
      */
-    public function setTranslator(TranslatorInterface $translator)
+    public function __construct(ProductUnitLabelFormatter $productUnitFormatter, TranslatorInterface $translator)
     {
+        $this->productUnitFormatter = $productUnitFormatter;
         $this->translator = $translator;
     }
 
@@ -82,17 +90,14 @@ class ProductUnitRemovedSelectionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $this->options = $options;
-
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
-        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetData']);
     }
 
     /**
-     * @param FormEvent $event
+     * {@inheritDoc}
      */
-    public function preSetData(FormEvent $event)
+    public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        $form = $event->getForm()->getParent();
+        $form = $form->getParent();
         if (!$form) {
             return;
         }
@@ -100,44 +105,6 @@ class ProductUnitRemovedSelectionType extends AbstractType
         /* @var $productUnitHolder ProductUnitHolderInterface */
         $productUnitHolder = $form ? $form->getData() : null;
 
-        $productUnitOptions = [
-            'required' => $this->options['required'],
-            'label' => $this->options['label'],
-            'compact' => $this->options['compact'],
-        ];
-
-        $this->addOptions($productUnitHolder, $productUnitOptions);
-
-        $form->add(
-            'productUnit',
-            $this->getParent(),
-            $productUnitOptions
-        );
-    }
-
-    /**
-     * @param FormEvent $event
-     */
-    public function postSetData(FormEvent $event)
-    {
-        $form = $event->getForm()->getParent();
-        if ($form) {
-            $form->add(
-                'productUnit',
-                ProductUnitSelectionType::NAME,
-                [
-                    'label' => $this->options['label'],
-                ]
-            );
-        }
-    }
-
-    /**
-     * @param ProductUnitHolderInterface $productUnitHolder
-     * @param array $productUnitOptions
-     */
-    protected function addOptions(ProductUnitHolderInterface $productUnitHolder = null, array &$productUnitOptions = [])
-    {
         if (!$productUnitHolder || !$productUnitHolder->getEntityIdentifier()) {
             return;
         }
@@ -156,9 +123,14 @@ class ProductUnitRemovedSelectionType extends AbstractType
             $emptyValueTitle = $this->translator->trans($this->options['empty_label'], [
                 '{title}' => $productUnitHolder->getProductUnitCode(),
             ]);
-            $productUnitOptions['empty_value'] =  $emptyValueTitle;
+            $view->vars['empty_value'] =  $emptyValueTitle;
+        }
+        $choices = $this->productUnitFormatter->formatChoices($choices);
+        $choicesViews = [];
+        foreach ($choices as $key => $value) {
+            $choicesViews[] = new ChoiceView($value, $key, $value);
         }
 
-        $productUnitOptions['choices'] = $choices;
+        $view->vars['choices'] = $choicesViews;
     }
 }
