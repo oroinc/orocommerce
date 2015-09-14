@@ -2,17 +2,14 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
-use OroB2B\src\OroB2B\Bundle\AccountBundle\EventListener\DatagridListenerFrontend;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\EventListener\DatagridListenerFrontend;
 
 class DatagridListenerFrontendTest extends \PHPUnit_Framework_TestCase
 {
@@ -25,19 +22,9 @@ class DatagridListenerFrontendTest extends \PHPUnit_Framework_TestCase
     protected $listener;
 
     /**
-     * @var TokenStorageInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $tokenStorage;
-
-    /**
      * @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $securityFacade;
-
-    /**
-     * @var TokenInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $tokenInterface;
 
     /**
      * @var array
@@ -56,21 +43,16 @@ class DatagridListenerFrontendTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->tokenStorage =
-            $this->getMock('\Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
-
-        $this->tokenInterface = $this->getMock('\Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
-
         $this->securityFacade = $this->getMockBuilder('\Oro\Bundle\SecurityBundle\SecurityFacade')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new DatagridListenerFrontend($this->tokenStorage, $this->securityFacade);
+        $this->listener = new DatagridListenerFrontend($this->securityFacade);
     }
 
     protected function tearDown()
     {
-        unset($this->listener, $this->tokenStorage, $this->tokenInterface, $this->securityFacade);
+        unset($this->listener, $this->securityFacade);
     }
 
     /**
@@ -86,10 +68,12 @@ class DatagridListenerFrontendTest extends \PHPUnit_Framework_TestCase
         $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $config = DatagridConfiguration::create([]);
 
-        $this->securityFacade->expects($this->once())
-            ->method('isGranted')
-            ->with('orob2b_account_frontend_account_user_role_view')
-            ->willReturn($isGranted);
+        if ($user) {
+            $this->securityFacade->expects($this->once())
+                ->method('isGranted')
+                ->with('orob2b_account_frontend_account_user_role_view')
+                ->willReturn($isGranted);
+        }
 
         if ($hasAccount) {
             $this->mockUser($user);

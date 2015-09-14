@@ -231,11 +231,7 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
         ];
     }
 
-    /**
-     * @dataProvider dataProviderRollBackWhenErrorHappened
-     * @param int $throwExceptionAt
-     */
-    public function testRollBackWhenErrorHappened($throwExceptionAt)
+    public function testRollBackWhenErrorHappened()
     {
         $request = new Request();
         $request->setMethod('POST');
@@ -292,12 +288,12 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
 
         $manager->expects($this->any())
             ->method('getConnection')
-            ->will($this->returnValue($connection));
+            ->willReturn($connection);
 
         $connection->expects($this->any())
             ->method('beginTransaction');
 
-        $connection->expects($this->at($throwExceptionAt))
+        $connection->expects($this->any())
             ->method('commit')
             ->willThrowException(new \Exception('test message'));
 
@@ -313,17 +309,6 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
 
         $handler->createForm(clone $role);
         $handler->process($role);
-    }
-
-    /**
-     * @return array
-     */
-    public function dataProviderRollBackWhenErrorHappened()
-    {
-        return [
-            ['throwExceptionAt' => 1],
-            ['throwExceptionAt' => 3],
-        ];
     }
 
     /**

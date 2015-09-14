@@ -7,12 +7,12 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\AccountBundle\Acl\Voter\AccountUserRoleVoter;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\Security\AccountUserRoleProvider;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -42,7 +42,8 @@ class AccountUserRoleVoterTest extends \PHPUnit_Framework_TestCase
 
         $this->container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
 
-        $this->voter = new AccountUserRoleVoter($this->doctrineHelper, $this->container);
+        $this->voter = new AccountUserRoleVoter($this->doctrineHelper);
+        $this->voter->setContainer($this->container);
     }
 
     protected function tearDown()
@@ -201,7 +202,7 @@ class AccountUserRoleVoterTest extends \PHPUnit_Framework_TestCase
         $this->getMocksForVote($accountUserRole);
 
         if (!$failAccountUserRole) {
-            $this->getMockForUpdateAndView($accountUser, $isGranted, 'isGrantedUpdateAccountUserRole');
+            $this->getMockForUpdateAndView($accountUser, $isGranted, 'EDIT');
         }
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $token */
@@ -250,7 +251,7 @@ class AccountUserRoleVoterTest extends \PHPUnit_Framework_TestCase
         $this->getMocksForVote($accountUserRole);
 
         if (!$failAccountUserRole) {
-            $this->getMockForUpdateAndView($accountUser, $isGranted, 'isGrantedViewAccountUserRole');
+            $this->getMockForUpdateAndView($accountUser, $isGranted, 'VIEW');
         }
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $token */
@@ -348,26 +349,27 @@ class AccountUserRoleVoterTest extends \PHPUnit_Framework_TestCase
     /**
      * @param AccountUser|null $accountUser
      * @param bool             $isGranted
-     * @param string           $method
+     * @param string           $attribute
      */
-    protected function getMockForUpdateAndView($accountUser, $isGranted, $method)
+    protected function getMockForUpdateAndView($accountUser, $isGranted, $attribute)
     {
-        /** @var AccountUserRoleProvider|\PHPUnit_Framework_MockObject_MockObject $userRoleProvider */
-        $userRoleProvider = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Security\AccountUserRoleProvider')
+        /** @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject $securityFacade */
+        $securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->container->expects($this->once())
+        $this->container->expects($this->any())
             ->method('get')
-            ->with('orob2b_account.security.account_user_role_provider')
-            ->willReturn($userRoleProvider);
+            ->with('oro_security.security_facade')
+            ->willReturn($securityFacade);
 
-        $userRoleProvider->expects($this->once())
+        $securityFacade->expects($this->once())
             ->method('getLoggedUser')
             ->willReturn($accountUser);
 
-        $userRoleProvider->expects($accountUser ? $this->once() : $this->never())
-            ->method($method)
+        $securityFacade->expects($accountUser ? $this->once() : $this->never())
+            ->method('isGranted')
+            ->with($attribute, 'entity:commerce@OroB2B\Bundle\AccountBundle\Entity\AccountUserRole')
             ->willReturn($isGranted);
     }
 }

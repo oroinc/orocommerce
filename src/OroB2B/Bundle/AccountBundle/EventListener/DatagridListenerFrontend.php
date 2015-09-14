@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\src\OroB2B\Bundle\AccountBundle\EventListener;
+namespace OroB2B\Bundle\AccountBundle\EventListener;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 class DatagridListenerFrontend
 {
@@ -29,12 +29,13 @@ class DatagridListenerFrontend
     public function onBuildBefore(BuildBefore $event)
     {
         $config = $event->getConfig();
+        $user = $this->securityFacade->getLoggedUser();
 
-        /** @var Account $account */
-        $account = $this->securityFacade->getLoggedUser() ? $this->securityFacade->getLoggedUser()->getAccount() : null;
-
-        if ($this->securityFacade->isGranted('orob2b_account_frontend_account_user_role_view') && $account) {
-            $andWhere = 'role.account IN (' . $account->getId() . ')';
+        if ($user instanceof AccountUser &&
+            $user->getAccount() &&
+            $this->securityFacade->isGranted('orob2b_account_frontend_account_user_role_view')
+        ) {
+            $andWhere = 'role.account IN (' . $user->getAccount()->getId() . ')';
             $this->addConfigElement($config, '[source][query][where][and]', $andWhere);
 
             $orWhere = 'role.account IS NULL';

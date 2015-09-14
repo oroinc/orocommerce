@@ -39,6 +39,7 @@ class AccountUserRoleUpdateFrontendHandler extends AccountUserRoleUpdateHandler
 
     /**
      * {@inheritDoc}
+     * @throws \Doctrine\DBAL\ConnectionException
      */
     protected function onSuccess(AbstractRole $role, array $appendUsers, array $removeUsers)
     {
@@ -57,9 +58,21 @@ class AccountUserRoleUpdateFrontendHandler extends AccountUserRoleUpdateHandler
         /** @var OroEntityManager $manager */
         $manager = $this->managerRegistry->getManagerForClass(ClassUtils::getClass($this->loggedAccountUser));
 
-        $this->removeOriginalRoleFromUsers($role, $manager);
-        AclRoleHandler::onSuccess($this->newRole, $appendUsers, $removeUsers);
-        $this->addNewRoleToUsers($role, $manager, $appendUsers, $removeUsers);
+        $connection = $manager->getConnection();
+        $connection->setTransactionIsolation(Connection::TRANSACTION_REPEATABLE_READ);
+        $connection->beginTransaction();
+
+        try {
+            $this->removeOriginalRoleFromUsers($role, $manager);
+            AclRoleHandler::onSuccess($this->newRole, $appendUsers, $removeUsers);
+            $this->addNewRoleToUsers($role, $manager, $appendUsers, $removeUsers);
+
+            $manager->flush();
+            $connection->commit();
+        } catch (\Exception $e) {
+            $connection->rollBack();
+            throw $e;
+        }
     }
 
     /**
@@ -67,9 +80,6 @@ class AccountUserRoleUpdateFrontendHandler extends AccountUserRoleUpdateHandler
      * @param OroEntityManager             $manager
      * @param array                        $appendUsers
      * @param array                        $removeUsers
-     *
-     * @throws \Doctrine\DBAL\ConnectionException
-     * @throws \Exception
      */
     protected function addNewRoleToUsers(
         AccountUserRole $role,
@@ -81,35 +91,22 @@ class AccountUserRoleUpdateFrontendHandler extends AccountUserRoleUpdateHandler
             return;
         }
 
-        $connection = $manager->getConnection();
-        $connection->setTransactionIsolation(Connection::TRANSACTION_REPEATABLE_READ);
-        $connection->beginTransaction();
-        try {
-            $accountRolesToAdd = array_diff($this->appendUsers, $removeUsers);
-            $accountRolesToAdd = array_merge($accountRolesToAdd, $appendUsers);
-            array_map(
-                function (AccountUser $accountUser) use ($role, $manager) {
-                    if ($accountUser->getAccount()->getId() == $this->loggedAccountUser->getAccount()->getId()) {
-                        $accountUser->addRole($this->newRole);
-                        $manager->persist($accountUser);
-                    }
-                },
-                $accountRolesToAdd
-            );
-            $manager->flush();
-            $connection->commit();
-        } catch (\Exception $e) {
-            $connection->rollBack();
-            throw $e;
-        }
+        $accountRolesToAdd = array_diff($this->appendUsers, $removeUsers);
+        $accountRolesToAdd = array_merge($accountRolesToAdd, $appendUsers);
+        array_map(
+            function (AccountUser $accountUser) use ($role, $manager) {
+                if ($accountUser->getAccount()->getId() == $this->loggedAccountUser->getAccount()->getId()) {
+                    $accountUser->addRole($this->newRole);
+                    $manager->persist($accountUser);
+                }
+            },
+            $accountRolesToAdd
+        );
     }
 
     /**
      * @param AccountUserRole|AbstractRole $role
      * @param OroEntityManager             $manager
-     *
-     * @throws \Doctrine\DBAL\ConnectionException
-     * @throws \Exception
      */
     protected function removeOriginalRoleFromUsers(AccountUserRole $role, OroEntityManager $manager)
     {
@@ -117,26 +114,15 @@ class AccountUserRoleUpdateFrontendHandler extends AccountUserRoleUpdateHandler
             return;
         }
 
-        $connection = $manager->getConnection();
-        $connection->setTransactionIsolation(Connection::TRANSACTION_REPEATABLE_READ);
-        $connection->beginTransaction();
-        try {
-            array_map(
-                function (AccountUser $accountUser) use ($role, $manager) {
-                    if ($accountUser->getAccount()->getId() === $this->loggedAccountUser->getAccount()->getId()) {
-                        $accountUser->removeRole($role);
-                        $manager->persist($accountUser);
-                    }
-                },
-                $this->appendUsers
-            );
-
-            $manager->flush();
-            $connection->commit();
-        } catch (\Exception $e) {
-            $connection->rollBack();
-            throw $e;
-        }
+        array_map(
+            function (AccountUser $accountUser) use ($role, $manager) {
+                if ($accountUser->getAccount()->getId() === $this->loggedAccountUser->getAccount()->getId()) {
+                    $accountUser->removeRole($role);
+                    $manager->persist($accountUser);
+                }
+            },
+            $this->appendUsers
+        );
     }
 
     /**
