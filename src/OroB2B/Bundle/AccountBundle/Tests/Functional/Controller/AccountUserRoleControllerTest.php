@@ -59,6 +59,7 @@ class AccountUserRoleControllerTest extends WebTestCase
 
     /**
      * @depend testCreate
+     * @return int
      */
     public function testUpdate()
     {
@@ -90,8 +91,8 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Save and Close')->form();
 
-        $token = $this->getContainer()->get('form.csrf_provider')
-            ->generateCsrfToken('orob2b_account_account_user_role');
+        $token = $this->getContainer()->get('security.csrf.token_manager')
+            ->getToken('orob2b_account_account_user_role')->getValue();
         $this->client->followRedirects(true);
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), [
             'input_action'        => '',
@@ -121,7 +122,44 @@ class AccountUserRoleControllerTest extends WebTestCase
         $user = $this->getUserRepository()->findOneBy(['email' => LoadAccountUserData::EMAIL]);
 
         $this->assertNotNull($user);
-        $this->assertNotNull($user->getRole($role->getRole()));
+        $this->assertEquals($user->getRole($role->getRole()), $role);
+
+        return $id;
+    }
+
+    /**
+     * @depends testUpdate
+     * @param $id
+     */
+    public function testView($id)
+    {
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_account_account_user_role_view', ['id' => $id])
+        );
+
+        $this->assertResponseStatusCodeEquals($this->client->getResponse(), 200);
+
+        // Check datagrid
+        $response = $this->client->requestGrid(
+            'account-account-users-grid-view',
+            [
+                'account-account-users-grid-view[role]' => $id,
+                'account-account-users-grid-view[_filter][email][value]' => LoadAccountUserData::EMAIL
+            ]
+        );
+
+        $result = $this->getJsonResponseContent($response, 200);
+        $this->assertCount(1, $result['data']);
+
+        /** @var AccountUser $accountUser */
+        $accountUser = $this->getUserRepository()->findOneBy(['email' => LoadAccountUserData::EMAIL]);
+        $result = reset($result['data']);
+
+        $this->assertEquals($accountUser->getId(), $result['id']);
+        $this->assertEquals($accountUser->getFirstName(), $result['firstName']);
+        $this->assertEquals($accountUser->getLastName(), $result['lastName']);
+        $this->assertEquals($accountUser->getEmail(), $result['email']);
     }
 
     /**

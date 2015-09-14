@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleFrontendType;
 
-class AccountUserRoleTypeTest extends AbstractAccountUserRoleTypeTest
+class AccountUserRoleFrontendTypeTest extends AbstractAccountUserRoleTypeTest
 {
     /**
      * @inheritdoc
@@ -22,7 +22,7 @@ class AccountUserRoleTypeTest extends AbstractAccountUserRoleTypeTest
 
         $this->assertTrue($form->has('appendUsers'));
         $this->assertTrue($form->has('removeUsers'));
-        $this->assertTrue($form->has('account'));
+        $this->assertFalse($form->has('account'));
 
         $formConfig = $form->getConfig();
         $this->assertEquals(self::DATA_CLASS, $formConfig->getOption('data_class'));
@@ -54,15 +54,15 @@ class AccountUserRoleTypeTest extends AbstractAccountUserRoleTypeTest
      */
     public function testGetName()
     {
-        $this->assertEquals(AccountUserRoleType::NAME, $this->formType->getName());
+        $this->assertEquals(AccountUserRoleFrontendType::NAME, $this->formType->getName());
     }
 
     /**
-     * Create form type
+     * @inheritdoc
      */
     protected function createAccountUserRoleFormTypeAndSetDataClass()
     {
-        $this->formType = new AccountUserRoleType();
-        $this->formType->setDataClass(static::DATA_CLASS);
+        $this->formType = new AccountUserRoleFrontendType();
+        $this->formType->setDataClass(self::DATA_CLASS);
     }
 }

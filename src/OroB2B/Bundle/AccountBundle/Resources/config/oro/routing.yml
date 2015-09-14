@@ -88,7 +88,6 @@ orob2b_account_pinbar_help:
     options:
         frontend: true
 
-
 orob2b_account_account_user_role_frontend:
     resource: "@OroB2BAccountBundle/Controller/Frontend/AccountUserRoleController.php"
     type:     annotation

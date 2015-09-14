@@ -103,6 +103,7 @@ orob2b.account:
         type.label:                      'Type'
         type.predefined.label:           'Predefined'
         type.customizable.label:         'Customizable'
+        frontend.edit-predifined-role.message:   'Predefined roles cannot be edited directly. We copied all the original data so that you can save it as a new user role for your organization. All users will be moved from the original role to this new role after you click on "Save".'
 
     accountuseraddress:
         city.label:                 City
@@ -148,6 +149,8 @@ orob2b.account:
         addresses: 'Addresses'
         accountgroup:
             accounts: 'Accounts'
+        accountuserrole:
+            users: 'Users'
         roles:   'Frontend Capabilities'
         password: 'Password'
 

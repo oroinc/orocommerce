@@ -11,13 +11,14 @@ use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
 use Oro\Bundle\UserBundle\Entity\AbstractRole;
 use Oro\Bundle\UserBundle\Form\Handler\AclRoleHandler;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType;
 use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
-class AccountUserRoleHandler extends AclRoleHandler
+class AccountUserRoleUpdateHandler extends AclRoleHandler
 {
     /**
      * @var ConfigProviderInterface
@@ -35,9 +36,9 @@ class AccountUserRoleHandler extends AclRoleHandler
     protected $doctrineHelper;
 
     /**
-     * @var AccountUserRole
+     * @var Account
      */
-    protected $originalRole;
+    protected $originalAccount;
 
     /**
      * @param ConfigProviderInterface $provider
@@ -164,7 +165,7 @@ class AccountUserRoleHandler extends AclRoleHandler
      */
     public function process(AbstractRole $role)
     {
-        $this->originalRole = clone $role;
+        $this->originalAccount = $role->getAccount();
 
         return parent::process($role);
     }
@@ -181,9 +182,9 @@ class AccountUserRoleHandler extends AclRoleHandler
 
         // Role moved to another account OR account added
         if ($role->getId() && (
-                ($this->originalRole->getAccount() !== $role->getAccount() &&
-                    $this->originalRole->getAccount() !== null && $role->getAccount() !== null) ||
-                ($this->originalRole->getAccount() === null && $role->getAccount() !== null)
+                ($this->originalAccount !== $role->getAccount() &&
+                    $this->originalAccount !== null && $role->getAccount() !== null) ||
+                ($this->originalAccount === null && $role->getAccount() !== null)
             )
         ) {
             // Remove assigned users

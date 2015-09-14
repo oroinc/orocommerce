@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
@@ -10,14 +12,15 @@ use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
-use OroB2B\src\OroB2B\Bundle\AccountBundle\EventListener\FrontendDatagridListener;
+use OroB2B\src\OroB2B\Bundle\AccountBundle\EventListener\DatagridListenerFrontend;
 
-class FrontendDatagridListenerTest extends \PHPUnit_Framework_TestCase
+class DatagridListenerFrontendTest extends \PHPUnit_Framework_TestCase
 {
     const USER_ID = 1;
+    const ACCOUNT_ID = 1;
 
     /**
-     * @var FrontendDatagridListener
+     * @var DatagridListenerFrontend
      */
     protected $listener;
 
@@ -62,7 +65,7 @@ class FrontendDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new FrontendDatagridListener($this->tokenStorage, $this->securityFacade);
+        $this->listener = new DatagridListenerFrontend($this->tokenStorage, $this->securityFacade);
     }
 
     protected function tearDown()
@@ -73,11 +76,11 @@ class FrontendDatagridListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @param bool     $isGranted
      * @param null|int $user
-     * @param bool     $hasToken
+     * @param bool     $hasAccount
      * @param array    $expected
      * @dataProvider   onBuildBeforeProvider
      */
-    public function testOnBuildBefore($isGranted = false, $user = null, $hasToken = true, array $expected = [])
+    public function testOnBuildBefore($isGranted = false, $user = null, $hasAccount = true, array $expected = [])
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
         $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
@@ -88,10 +91,7 @@ class FrontendDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->with('orob2b_account_account_user_role_frontend_view')
             ->willReturn($isGranted);
 
-        if ($hasToken) {
-            $this->tokenStorage->expects($this->once())
-                ->method('getToken')
-                ->willReturn($this->tokenInterface);
+        if ($hasAccount) {
             $this->mockUser($user);
         }
 
@@ -110,7 +110,7 @@ class FrontendDatagridListenerTest extends \PHPUnit_Framework_TestCase
             'when user have permissions' => [
                 'isGranted' => true,
                 'user' => static::USER_ID,
-                'hasToken' => true,
+                'hasAccount' => true,
                 'expected' => [
                     'source' => [
                         'query' => [
@@ -129,19 +129,19 @@ class FrontendDatagridListenerTest extends \PHPUnit_Framework_TestCase
             'when user have not permissions' => [
                 'isGranted' => false,
                 'user' => static::USER_ID,
-                'hasToken' => true,
+                'hasAccount' => true,
                 'expected' => $this->expectedDataForWorse
             ],
             'when user not logged' => [
                 'isGranted' => false,
                 'user' => false,
-                'hasToken' => true,
+                'hasAccount' => true,
                 'expected' => $this->expectedDataForWorse
             ],
             'when user not logged and have no token' => [
                 'isGranted' => true,
                 'user' => false,
-                'hasToken' => false,
+                'hasAccount' => false,
                 'expected' => $this->expectedDataForWorse
             ]
         ];
@@ -167,14 +167,15 @@ class FrontendDatagridListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected function mockUser($userId)
     {
-        if ($userId) {
-            $this->tokenInterface->expects($this->once())
-                ->method('getUser')
-                ->willReturn($this->getEntity('\OroB2B\Bundle\AccountBundle\Entity\AccountUser', $userId));
-        } else {
-            $this->tokenInterface->expects($this->once())
-                ->method('getUser')
-                ->willReturn(null);
-        }
+        /** @var AccountUser $user */
+        $user = $this->getEntity('\OroB2B\Bundle\AccountBundle\Entity\AccountUser', $userId);
+
+        /** @var Account $account */
+        $account = $this->getEntity('\OroB2B\Bundle\AccountBundle\Entity\Account', static::ACCOUNT_ID);
+        $user->setAccount($account);
+
+        $this->securityFacade->expects($this->any())
+            ->method('getLoggedUser')
+            ->willReturn($userId ? $user : null);
     }
 }
