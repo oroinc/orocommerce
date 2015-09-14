@@ -3,6 +3,12 @@ placeholders:
         items:
             product_sidebar_category_selector:
                 order: 100
+    frontend_product_index_sidebar:
+        items:
+            frontend_product_sidebar_category_selector:
+                order: 100
 items:
     product_sidebar_category_selector:
         action: OroB2BCatalogBundle:Product:sidebar
+    frontend_product_sidebar_category_selector:
+        action: OroB2BCatalogBundle:Frontend/Product:sidebar

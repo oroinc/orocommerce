@@ -36,26 +36,6 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
                 ]
             ],
         ],
-        'columns' => [
-            DatagridListener::CATEGORY_COLUMN => [
-                'label' => 'orob2b.catalog.category.entity_label'
-            ]
-        ],
-        'sorters' => [
-            'columns' => [
-                DatagridListener::CATEGORY_COLUMN => [
-                    'data_name' => DatagridListener::CATEGORY_COLUMN
-                ]
-            ],
-        ],
-        'filters' => [
-            'columns' => [
-                DatagridListener::CATEGORY_COLUMN => [
-                    'type' => 'string',
-                    'data_name' => 'categoryTitle.string'
-                ]
-            ],
-        ]
     ];
 
     public function testOnBuildBeforeProductsSelect()

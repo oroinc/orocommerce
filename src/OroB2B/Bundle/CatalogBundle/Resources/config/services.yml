@@ -37,7 +37,8 @@ services:
     orob2b_catalog.event_listener.datagrid:
         class: %orob2b_catalog.event_listener.datagrid.class%
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-select-grid, method: onBuildBeforeProductsSelect }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-products-grid, method: onBuildBefore }
 
     orob2b_catalog.event_listener.product_duplicate:
         class: %orob2b_catalog.event_listener.product_duplicate.class%
@@ -61,3 +62,4 @@ services:
             - [setDataClass, [%orob2b_catalog.category.class%]]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.products-grid, method: onPreBuild }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-products-grid, method: onPreBuild }
