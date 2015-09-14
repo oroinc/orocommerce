@@ -23,9 +23,7 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
     /** @var  Registry|\PHPUnit_Framework_MockObject_MockObject */
     protected $doctrine;
 
-    /**
-     * @var RequestProductHandler|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var RequestProductHandler|\PHPUnit_Framework_MockObject_MockObject */
     protected $requestProductHandler;
 
     /** @var PreBuild|\PHPUnit_Framework_MockObject_MockObject */
@@ -87,6 +85,9 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->productDatagridListener->onPreBuild($this->event);
     }
 
+    /**
+     * @return array
+     */
     public function childrenIdsDataProvider()
     {
         return [

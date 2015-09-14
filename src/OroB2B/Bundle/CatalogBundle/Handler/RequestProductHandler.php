@@ -28,6 +28,17 @@ class RequestProductHandler
             return false;
         }
 
-        return filter_var($this->request->get(self::CATEGORY_ID_KEY), FILTER_VALIDATE_INT);
+        $value = $this->request->get(self::CATEGORY_ID_KEY);
+
+        if (is_bool($value)) {
+            return false;
+        }
+
+        $value = filter_var($value, FILTER_VALIDATE_INT);
+        if ($value > 0) {
+            return $value;
+        }
+
+        return false;
     }
 }
