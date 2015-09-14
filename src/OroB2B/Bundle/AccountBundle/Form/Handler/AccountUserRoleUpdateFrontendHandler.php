@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AccountBundle\Form\Handler;
 
 use Doctrine\Common\Util\ClassUtils;
+use Doctrine\DBAL\Connection;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Form\Handler\AclRoleHandler;
@@ -12,7 +13,7 @@ use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleFrontendType;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountFrontendUserRoleType;
 
 class AccountUserRoleUpdateFrontendHandler extends AccountUserRoleUpdateHandler
 {
@@ -44,6 +45,7 @@ class AccountUserRoleUpdateFrontendHandler extends AccountUserRoleUpdateHandler
         // TODO: When task BB-1046 will be done, remove method removeOriginalRoleFromUsers.
         // In method addNewRoleToUsers before addRole add method removeRole($role). Also needs delete flush;
 
+        /** @var AccountUserRole $role */
         if ($role->getId()) {
             /** @var AccountUserRoleRepository $roleRepository */
             $roleRepository = $this->doctrineHelper->getEntityRepository($role);
@@ -79,7 +81,9 @@ class AccountUserRoleUpdateFrontendHandler extends AccountUserRoleUpdateHandler
             return;
         }
 
-        $manager->getConnection()->beginTransaction();
+        $connection = $manager->getConnection();
+        $connection->setTransactionIsolation(Connection::TRANSACTION_REPEATABLE_READ);
+        $connection->beginTransaction();
         try {
             $accountRolesToAdd = array_diff($this->appendUsers, $removeUsers);
             $accountRolesToAdd = array_merge($accountRolesToAdd, $appendUsers);
@@ -93,9 +97,9 @@ class AccountUserRoleUpdateFrontendHandler extends AccountUserRoleUpdateHandler
                 $accountRolesToAdd
             );
             $manager->flush();
-            $manager->getConnection()->commit();
+            $connection->commit();
         } catch (\Exception $e) {
-            $manager->getConnection()->rollBack();
+            $connection->rollBack();
             throw $e;
         }
     }
@@ -113,11 +117,13 @@ class AccountUserRoleUpdateFrontendHandler extends AccountUserRoleUpdateHandler
             return;
         }
 
-        $manager->getConnection()->beginTransaction();
+        $connection = $manager->getConnection();
+        $connection->setTransactionIsolation(Connection::TRANSACTION_REPEATABLE_READ);
+        $connection->beginTransaction();
         try {
             array_map(
                 function (AccountUser $accountUser) use ($role, $manager) {
-                    if ($accountUser->getAccount()->getId() == $this->loggedAccountUser->getAccount()->getId()) {
+                    if ($accountUser->getAccount()->getId() === $this->loggedAccountUser->getAccount()->getId()) {
                         $accountUser->removeRole($role);
                         $manager->persist($accountUser);
                     }
@@ -126,9 +132,9 @@ class AccountUserRoleUpdateFrontendHandler extends AccountUserRoleUpdateHandler
             );
 
             $manager->flush();
-            $manager->getConnection()->commit();
+            $connection->commit();
         } catch (\Exception $e) {
-            $manager->getConnection()->rollBack();
+            $connection->rollBack();
             throw $e;
         }
     }
@@ -165,7 +171,7 @@ class AccountUserRoleUpdateFrontendHandler extends AccountUserRoleUpdateHandler
     protected function createRoleFormInstance(AbstractRole $role, array $privilegeConfig)
     {
         return $this->formFactory->create(
-            AccountUserRoleFrontendType::NAME,
+            FrontendAccountUserRoleType::NAME,
             $role,
             ['privilege_config' => $privilegeConfig]
         );

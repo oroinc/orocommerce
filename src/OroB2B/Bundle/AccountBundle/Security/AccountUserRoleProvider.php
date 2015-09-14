@@ -67,7 +67,7 @@ class AccountUserRoleProvider
      */
     protected function isGrantedAccountUserRole($permissionMap)
     {
-        $descriptor = sprintf('entity:%s@%s', AccountUserRole::SECURITY_GROUP, $this->accountUserRoleClass);
+        $descriptor = sprintf('entity:%s@%s', AccountUser::SECURITY_GROUP, $this->accountUserRoleClass);
         if (!$this->securityFacade->isGranted($permissionMap, $descriptor)) {
             return false;
         }

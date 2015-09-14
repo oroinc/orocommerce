@@ -9,11 +9,11 @@ parameters:
 
     orob2b_account.form.type.account_user.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserType
     orob2b_account.form.type.account_user_role.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType
-    orob2b_account.form.type.account_user_role_frontend.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleFrontendType
     orob2b_account.form.type.account_user_role_select.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType
 
     orob2b_account.form.type.frontend.account_user_profile.class: OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserProfileType
     orob2b_account.form.type.frontend.account_user.class: OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType
+    orob2b_account.form.type.frontend.account_user_role.class: OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleType
     orob2b_account.form.type.frontend.account_user_role_select.class: OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleSelectType
     orob2b_account.form.type.frontend.account_user.register.class: OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType
     orob2b_account.form.type.frontend.account_user.password_request.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserPasswordRequestType
@@ -92,12 +92,12 @@ services:
         tags:
             - { name: form.type, alias: orob2b_account_account_user_role }
 
-    orob2b_account.form.type.account_user_role_frontend:
-        class: %orob2b_account.form.type.account_user_role_frontend.class%
+    orob2b_account.form.type.frontend.account_user_role:
+        class: %orob2b_account.form.type.frontend.account_user_role.class%
         calls:
             - [setDataClass, [%orob2b_account.entity.account_user_role.class%]]
         tags:
-            - { name: form.type, alias: orob2b_account_account_user_role_frontend }
+            - { name: form.type, alias: orob2b_account_frontend_account_user_role }
 
     orob2b_account.form.type.frontend.account_user_profile:
         class: %orob2b_account.form.type.frontend.account_user_profile.class%

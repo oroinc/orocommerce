@@ -282,7 +282,6 @@ services:
     orob2b_account.event_listener.frontend_datagrid:
         class: %orob2b_account.event_listener.frontend_datagrid.class%
         arguments:
-            - @security.token_storage
             - @oro_security.security_facade
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-account-account-user-roles-grid, method: onBuildBefore }

@@ -208,7 +208,7 @@ orob2b.account:
         account_user_logout.label: Logout
 
         frontend_configuration_tab: Configuration
-        frontend_account_user_roles.label: Account User Roles
+        frontend_account_user_roles.label: Roles
 
     controller:
         account:

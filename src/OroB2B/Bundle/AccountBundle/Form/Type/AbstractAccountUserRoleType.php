@@ -116,9 +116,4 @@ abstract class AbstractAccountUserRoleType extends AbstractType
     {
         $view->vars['privilegeConfig'] = $options['privilege_config'];
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    abstract public function getName();
 }

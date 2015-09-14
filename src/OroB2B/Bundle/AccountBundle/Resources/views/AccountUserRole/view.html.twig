@@ -1,5 +1,6 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
 {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
 
 {% oro_title_set({params : {"%label%": entity.label }}) %}
 
@@ -35,21 +36,16 @@
 {% endblock navButtons %}
 
 {% block content_data %}
-    {% set accountUserRoleInfo %}
-        {{ oro_widget_render({
-            'widgetType': 'block',
-            'url': path('orob2b_account_account_user_role_info', {id: entity.id}),
-            'alias': 'account-user-role-info-widget'
-        }) }}
-    {% endset %}
-
-    {% set accountUsersGrid = dataGrid.renderGrid(gridName, {role: entity.id}, { cssClass: 'inner-grid' }) %}
-
     {% set dataBlocks = [
         {
             'title': 'orob2b.account.sections.general'|trans,
             'class': 'active',
-            'subblocks': [{'data' : [accountUserRoleInfo]}]
+            'subblocks': [
+                {'data' : [
+                    UI.renderProperty('orob2b.account.accountuserrole.label.label'|trans, entity.label),
+                    UI.renderProperty('orob2b.account.accountuserrole.account.label'|trans, entity.account)
+                ]}
+            ]
         }
     ] %}
 
@@ -70,7 +66,7 @@
 
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'orob2b.account.sections.accountuserrole.users'|trans,
-        'subblocks': [{'data' : [accountUsersGrid]}]
+        'subblocks': [{'data' : [dataGrid.renderGrid(gridName, {role: entity.id}, { cssClass: 'inner-grid' })]}]
     }]) %}
 
     {% set id = 'account-account-user-role-view' %}

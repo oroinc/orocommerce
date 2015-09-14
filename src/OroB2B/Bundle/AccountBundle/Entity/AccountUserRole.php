@@ -53,7 +53,6 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
 {
     const PREFIX_ROLE = 'ROLE_FRONTEND_';
-    const SECURITY_GROUP = 'commerce';
 
     /**
      * @var int

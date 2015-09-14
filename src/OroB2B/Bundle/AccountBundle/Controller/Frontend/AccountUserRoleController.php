@@ -64,20 +64,6 @@ class AccountUserRoleController extends Controller
     }
 
     /**
-     * @Route("/info/{id}", name="orob2b_account_account_user_role_frontend_info", requirements={"id"="\d+"})
-     * @Template("OroB2BAccountBundle:AccountUserRole/Frontend/widget:info.html.twig")
-     * @AclAncestor("orob2b_account_account_user_role_frontend_view_action")
-     * @param AccountUserRole $role
-     * @return array
-     */
-    public function infoAction(AccountUserRole $role)
-    {
-        return [
-            'entity' => $role
-        ];
-    }
-
-    /**
      * @Route("/create", name="orob2b_account_account_user_role_frontend_create")
      * @Template("OroB2BAccountBundle:AccountUserRole/Frontend:update.html.twig")
      * @Acl(

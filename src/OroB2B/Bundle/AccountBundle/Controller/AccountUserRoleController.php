@@ -118,19 +118,4 @@ class AccountUserRoleController extends Controller
             $handler
         );
     }
-
-    /**
-     * @Route("/info/{id}", name="orob2b_account_account_user_role_info", requirements={"id"="\d+"})
-     * @Template("OroB2BAccountBundle:AccountUserRole/widget:info.html.twig")
-     * @AclAncestor("orob2b_account_account_user_role_view")
-     *
-     * @param AccountUserRole $role
-     * @return array
-     */
-    public function infoAction(AccountUserRole $role)
-    {
-        return [
-            'entity' => $role
-        ];
-    }
 }

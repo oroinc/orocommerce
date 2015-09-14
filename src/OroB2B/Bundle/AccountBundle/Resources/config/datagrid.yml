@@ -560,45 +560,6 @@ datagrid:
             delete:
                 acl_resource:  orob2b_account_account_user_role_frontend_delete
 
-    account-account-users-grid-view:
-        extends: account-account-users-grid-basic
-        source:
-            query:
-                where:
-                    and:
-                        - :role MEMBER OF user.roles
-            bind_parameters:
-                -
-                    name: role
-                    default: NULL
-        columns:
-            firstName:
-                label: orob2b.account.accountuser.first_name.label
-            lastName:
-                label: orob2b.account.accountuser.last_name.label
-            email:
-                label: orob2b.account.accountuser.email.label
-
-    frontend-account-account-users-grid-view:
-        extends: account-account-users-grid-basic
-        source:
-            acl_resource: orob2b_account_account_user_frontend_view
-            query:
-                where:
-                    and:
-                        - :role MEMBER OF user.roles
-            bind_parameters:
-                -
-                    name: role
-                    default: NULL
-        columns:
-            firstName:
-                label: orob2b.account.accountuser.first_name.label
-            lastName:
-                label: orob2b.account.accountuser.last_name.label
-            email:
-                label: orob2b.account.accountuser.email.label
-
     account-account-users-grid-update-basic:
         extends: account-account-users-grid-basic
         source:
@@ -670,7 +631,6 @@ datagrid:
                     included: '#roleAppendUsers'
                     excluded: '#roleRemoveUsers'
 
-
     account-account-users-grid-basic:
         source:
             type: orm
@@ -681,10 +641,24 @@ datagrid:
                     - user.firstName
                     - user.lastName
                     - user.email
+                where:
+                    and:
+                        - :role MEMBER OF user.roles
                 from:
                     - { table: %orob2b_account.entity.account_user.class%, alias: user }
+            bind_parameters:
+                -
+                    name: role
+                    default: NULL
         properties:
             id: ~
+        columns:
+            firstName:
+                label: orob2b.account.accountuser.first_name.label
+            lastName:
+                label: orob2b.account.accountuser.last_name.label
+            email:
+                label: orob2b.account.accountuser.email.label
         filters:
             columns:
                 firstName:
@@ -704,6 +678,16 @@ datagrid:
                     data_name: user.lastName
                 email:
                     data_name: user.email
+
+    account-account-users-grid-view:
+        extends: account-account-users-grid-basic
+        source:
+            acl_resource: orob2b_account_account_user_view
+
+    frontend-account-account-users-grid-view:
+        extends: account-account-users-grid-basic
+        source:
+            acl_resource: orob2b_account_account_user_frontend_view
 
     account-account-users-grid-update:
         extends: account-account-users-grid-update-basic

@@ -111,7 +111,11 @@ oro_menu_config:
             route: 'orob2b_account_account_user_role_index'
             extras:
                 position: 40
-                routes: ['/^orob2b_account_account_user_role/']
+                routes:
+                    - 'orob2b_account_account_user_role_index'
+                    - 'orob2b_account_account_user_role_view'
+                    - 'orob2b_account_account_user_role_update'
+                    - 'orob2b_account_account_user_role_create'
                 description: 'orob2b.account.menu.account_user_roles.description'
 
         shortcut_new_account_user_role:
@@ -139,6 +143,9 @@ oro_menu_config:
         frontend_account_user_roles:
              label: 'orob2b.account.menu.frontend_account_user_roles.label'
              route: 'orob2b_account_account_user_role_frontend_index'
+             extras:
+                 position: 10
+                 routes: ['/^orob2b_account_account_user_role_frontend/']
 
         frontend_account_users:
             label: 'orob2b.account.accountuser.entity_plural_label'
@@ -224,4 +231,7 @@ oro_titles:
     orob2b_account_frontend_account_user_reset_check_email: orob2b.account.accountuser.profile.check_email.title
     orob2b_account_frontend_account_user_password_reset: orob2b.account.accountuser.profile.reset_password.title
 
-    orob2b_account_account_user_role_frontend_index: ~
+    orob2b_account_account_user_role_frontend_index:  ~
+    orob2b_account_account_user_role_frontend_view:   '%%label%% - oro.ui.view'
+    orob2b_account_account_user_role_frontend_update: '%%email%% - oro.ui.edit'
+    orob2b_account_account_user_role_frontend_create: oro.ui.create_entity

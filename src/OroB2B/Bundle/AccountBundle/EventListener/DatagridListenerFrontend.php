@@ -2,8 +2,6 @@
 
 namespace OroB2B\src\OroB2B\Bundle\AccountBundle\EventListener;
 
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
@@ -13,22 +11,15 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 class DatagridListenerFrontend
 {
     /**
-     * @var TokenStorageInterface
-     */
-    protected $securityTokenStorage;
-
-    /**
      * @var SecurityFacade
      */
     protected $securityFacade;
 
     /**
-     * @param TokenStorageInterface $tokenStorage
-     * @param SecurityFacade        $securityFacade
+     * @param SecurityFacade $securityFacade
      */
-    public function __construct(TokenStorageInterface $tokenStorage, SecurityFacade $securityFacade)
+    public function __construct(SecurityFacade $securityFacade)
     {
-        $this->securityTokenStorage = $tokenStorage;
         $this->securityFacade = $securityFacade;
     }
 
