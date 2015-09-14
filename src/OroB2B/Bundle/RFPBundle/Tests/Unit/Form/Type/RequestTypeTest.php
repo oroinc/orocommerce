@@ -18,6 +18,7 @@ use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeS
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductRemovedSelectType;
 
+use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductCollectionType;
@@ -103,22 +104,15 @@ class RequestTypeTest extends AbstractTest
 
                     ],
                 ],
-                'expectedData'  => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role')
+                'expectedData'  => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', '123')
                     ->addRequestProduct($requestProduct),
-                'defaultData'   => $this->getRequest(),
+                'defaultData'   => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', '123'),
             ],
             'valid data empty items' => [
                 'isValid'       => true,
-                'submittedData' => [
-                    'firstName' => 'FirstName',
-                    'lastName'  => 'LastName',
-                    'email'     => $email,
-                    'body'      => 'body',
-                    'role'      => 'role',
-                    'company'   => 'company',
-                ],
-                'expectedData'  => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role'),
-                'defaultData'   => $this->getRequest(),
+                'submittedData' => [],
+                'expectedData'  => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', '123'),
+                'defaultData'   => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', '123'),
             ],
             'empty first name' => [
                 'isValid'       => false,
@@ -247,6 +241,40 @@ class RequestTypeTest extends AbstractTest
                 'defaultData'   => $this->getRequest(),
             ],
         ];
+    }
+
+    /**
+     * @param string $firstName
+     * @param string $lastName
+     * @param string $email
+     * @param string $body
+     * @param string $company
+     * @param string $role
+     * @param string $phone
+     * @return Request
+     */
+    protected function getRequest(
+        $firstName = null,
+        $lastName = null,
+        $email = null,
+        $body = null,
+        $company = null,
+        $role = null,
+        $phone = null
+    ) {
+        $request = new Request();
+
+        $request
+            ->setFirstName($firstName)
+            ->setLastName($lastName)
+            ->setEmail($email)
+            ->setBody($body)
+            ->setCompany($company)
+            ->setRole($role)
+            ->setPhone($phone)
+        ;
+
+        return $request;
     }
 
     /**
