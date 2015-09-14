@@ -34,13 +34,7 @@ abstract class AbstractPriceListRequestHandler
             return false;
         }
 
-        $value = $this->request->get(self::TIER_PRICES_KEY);
-
-        if (is_string($value)) {
-            return filter_var($value, FILTER_VALIDATE_BOOLEAN);
-        }
-
-        return (bool) $value;
+        return filter_var($this->request->get(self::TIER_PRICES_KEY), FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
