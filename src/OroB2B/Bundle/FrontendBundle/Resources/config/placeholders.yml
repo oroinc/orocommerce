@@ -3,6 +3,8 @@ placeholders:
         items:
             logo:
                 order: 100
+            logo_frontend:
+                order: 110
 
     head_style:
         items:
@@ -14,6 +16,10 @@ placeholders:
 items:
     logo:
         template: OroB2BFrontendBundle:Organization:logo.html.twig
+        applicable: @orob2b_frontend.placeholder.filter->isBackendRoute()
+    logo_frontend:
+        template: OroB2BFrontendBundle:Organization:logo_frontend.html.twig
+        applicable: @orob2b_frontend.placeholder.filter->isFrontendRoute()
     assets_css:
         template: OroAsseticBundle:Assets:oro_css.html.twig
         applicable: @orob2b_frontend.placeholder.theme_filter->isDefaultTheme()
