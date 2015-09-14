@@ -164,6 +164,35 @@ class ShoppingListControllerTest extends WebTestCase
         static::assertHtmlResponseStatusCodeEquals($result, $expectedData['statusCode']);
     }
 
+    /**
+     * @return array
+     */
+    public function createRfpProvider()
+    {
+        return [
+            'account1 user1 (Order:NONE)' => [
+                'input' => [
+                    'shoppingList' => LoadShoppingLists::SHOPPING_LIST_1,
+                    'login' => LoadUserData::ACCOUNT1_USER1,
+                    'password' => LoadUserData::ACCOUNT1_USER1,
+                ],
+                'expected' => [
+                    'statusCode' => 403,
+                ],
+            ],
+            'account1 user2 (Order:CREATE_BASIC)' => [
+                'input' => [
+                    'shoppingList' => LoadShoppingLists::SHOPPING_LIST_1,
+                    'login' => LoadUserData::ACCOUNT1_USER2,
+                    'password' => LoadUserData::ACCOUNT1_USER2,
+                ],
+                'expected' => [
+                    'statusCode' => 200,
+                ],
+            ],
+        ];
+    }
+
     public function testQuickAdd()
     {
         $response = $this->requestFrontendGrid('frontend-shopping-list-grid');
@@ -256,34 +285,5 @@ class ShoppingListControllerTest extends WebTestCase
 
         $this->assertEquals($sku, $data['productSku']);
         $this->assertEquals($quantity, $data['quantity']);
-    }
-
-    /**
-     * @return array
-     */
-    public function createRfpProvider()
-    {
-        return [
-            'account1 user1 (Order:NONE)' => [
-                'input' => [
-                    'shoppingList' => LoadShoppingLists::SHOPPING_LIST_1,
-                    'login' => LoadUserData::ACCOUNT1_USER1,
-                    'password' => LoadUserData::ACCOUNT1_USER1,
-                ],
-                'expected' => [
-                    'statusCode' => 403,
-                ],
-            ],
-            'account1 user2 (Order:CREATE_BASIC)' => [
-                'input' => [
-                    'shoppingList' => LoadShoppingLists::SHOPPING_LIST_1,
-                    'login' => LoadUserData::ACCOUNT1_USER2,
-                    'password' => LoadUserData::ACCOUNT1_USER2,
-                ],
-                'expected' => [
-                    'statusCode' => 200,
-                ],
-            ],
-        ];
     }
 }

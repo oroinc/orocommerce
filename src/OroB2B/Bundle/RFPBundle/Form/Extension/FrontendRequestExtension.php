@@ -1,23 +1,24 @@
 <?php
 
-namespace OroB2B\Bundle\OrderBundle\Form\Extension;
+namespace OroB2B\Bundle\RFPBundle\Form\Extension;
 
-use OroB2B\Bundle\OrderBundle\Entity\Order;
-use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Extension\AbstractPostQuickAddTypeExtension;
+use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
+use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
+use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
+use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 
-class FrontendOrderExtension extends AbstractPostQuickAddTypeExtension
+class FrontendRequestExtension extends AbstractPostQuickAddTypeExtension
 {
     /**
      * {@inheritdoc}
      */
     public function getExtendedType()
     {
-        return FrontendOrderType::NAME;
+        return RequestType::NAME;
     }
 
     /**
@@ -25,7 +26,7 @@ class FrontendOrderExtension extends AbstractPostQuickAddTypeExtension
      */
     protected function addProductToEntity(Product $product, $entity, $quantity)
     {
-        if (!$entity instanceof Order) {
+        if (!$entity instanceof RFPRequest) {
             return;
         }
 
@@ -41,14 +42,16 @@ class FrontendOrderExtension extends AbstractPostQuickAddTypeExtension
             return;
         }
 
-        $lineItem = new OrderLineItem();
-        $lineItem
-            ->setProduct($product)
-            ->setProductSku($product->getSku())
+        $requestProductItem = new RequestProductItem();
+        $requestProductItem
             ->setProductUnit($unit)
-            ->setProductUnitCode($unit->getCode())
             ->setQuantity($quantity);
 
-        $entity->addLineItem($lineItem);
+        $requestProduct = new RequestProduct();
+        $requestProduct
+            ->setProduct($product)
+            ->addRequestProductItem($requestProductItem);
+
+        $entity->addRequestProduct($requestProduct);
     }
 }
