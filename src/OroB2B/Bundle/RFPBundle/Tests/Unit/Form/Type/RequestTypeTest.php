@@ -91,15 +91,15 @@ class RequestTypeTest extends AbstractTest
 
                     ],
                 ],
-                'expectedData'  => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role')
+                'expectedData'  => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', '123')
                     ->addRequestProduct($requestProduct),
-                'defaultData'   => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role'),
+                'defaultData'   => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', '123'),
             ],
             'valid data empty items' => [
                 'isValid'       => true,
                 'submittedData' => [],
-                'expectedData'  => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role'),
-                'defaultData'   => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role'),
+                'expectedData'  => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', '123'),
+                'defaultData'   => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', '123'),
             ],
             'empty first name' => [
                 'isValid'       => false,
@@ -171,6 +171,7 @@ class RequestTypeTest extends AbstractTest
      * @param string $body
      * @param string $company
      * @param string $role
+     * @param string $phone
      * @return Request
      */
     protected function getRequest(
@@ -179,7 +180,8 @@ class RequestTypeTest extends AbstractTest
         $email = null,
         $body = null,
         $company = null,
-        $role = null
+        $role = null,
+        $phone = null
     ) {
         $request = new Request();
 
@@ -190,6 +192,7 @@ class RequestTypeTest extends AbstractTest
             ->setBody($body)
             ->setCompany($company)
             ->setRole($role)
+            ->setPhone($phone)
         ;
 
         return $request;
