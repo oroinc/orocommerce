@@ -37,4 +37,21 @@ class ProductControllerTest extends WebTestCase
             $this->assertEquals($data['productName'], LoadCategoryProductData::getRelations()[$data['category_name']]);
         }
     }
+
+    public function testSidebarAction()
+    {
+        $categoryId = 2;
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl(
+                'orob2b_catalog_category_product_sidebar',
+                [RequestProductHandler::CATEGORY_ID_KEY => $categoryId]
+            )
+        );
+        $json = $crawler->filterXPath('//*[@data-page-component-options]')->attr('data-page-component-options');
+        $this->assertJson($json);
+        $arr = json_decode($json, true);
+        $this->assertEquals($arr['defaultCategoryId'], $categoryId);
+        $this->assertCount(5, $arr['data']);
+    }
 }
