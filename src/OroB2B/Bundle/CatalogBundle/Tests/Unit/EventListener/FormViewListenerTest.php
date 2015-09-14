@@ -72,10 +72,11 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->disableOriginalConstructor()
             ->setMethods(['findOneByProduct'])
             ->getMock();
+        $category = new Category();
         $repository
             ->expects($this->once())
             ->method('findOneByProduct')
-            ->willReturn(new Category());
+            ->willReturn($category);
 
         $this->doctrineHelper
             ->expects($this->once())
@@ -92,7 +93,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->getMock();
         $env->expects($this->once())
             ->method('render')
-            ->with('OroB2BCatalogBundle:Product:category_view.html.twig', ['entity' => new Category()])
+            ->with('OroB2BCatalogBundle:Product:category_view.html.twig', ['entity' => $category])
             ->willReturn('');
 
         $event = $this->getBeforeListRenderEvent();

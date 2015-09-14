@@ -123,7 +123,7 @@ define(function(require) {
             _.each(data, function(value, key) {
                 html[index] = template({
                     value: key,
-                    text: value,
+                    text: key,
                     ftid: index,
                     uid: _.uniqueId('ocs')
                 });
