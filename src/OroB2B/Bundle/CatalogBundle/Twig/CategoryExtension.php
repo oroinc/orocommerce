@@ -45,25 +45,19 @@ class CategoryExtension extends \Twig_Extension
     {
         return [
             new \Twig_SimpleFunction('orob2b_category_list', [$this, 'getCategoryList']),
-            new \Twig_SimpleFunction('orob2b_frontend_category_list', [$this, 'getFrontendCategoryList']),
         ];
     }
 
     /**
+     * @param string|null $rootLabel
      * @return array
      */
-    public function getCategoryList()
+    public function getCategoryList($rootLabel = null)
     {
-        return $this->categoryTreeHandler->createTree();
-    }
-
-    /**
-     * @return array
-     */
-    public function getFrontendCategoryList()
-    {
-        $tree = $this->getCategoryList();
-        $tree[0]['text'] = $this->translator->trans('orob2b.catalog.frontend.category.master_category.label');
+        $tree = $this->categoryTreeHandler->createTree();
+        if ($rootLabel && array_key_exists(0, $tree)) {
+            $tree[0]['text'] = $this->translator->trans($rootLabel);
+        }
 
         return $tree;
     }

@@ -46,30 +46,26 @@ class CategoryExtensionTest extends \PHPUnit_Framework_TestCase
     public function testGetFunctions()
     {
         $functions = $this->extension->getFunctions();
-        $this->assertCount(2, $functions);
+        $this->assertCount(1, $functions);
 
         /** @var \Twig_SimpleFunction $function */
         $function = $functions[0];
         $this->assertInstanceOf('\Twig_SimpleFunction', $function);
         $this->assertEquals('orob2b_category_list', $function->getName());
         $this->assertEquals([$this->extension, 'getCategoryList'], $function->getCallable());
-
-        /** @var \Twig_SimpleFunction $function */
-        $function = $functions[1];
-        $this->assertInstanceOf('\Twig_SimpleFunction', $function);
-        $this->assertEquals('orob2b_frontend_category_list', $function->getName());
-        $this->assertEquals([$this->extension, 'getFrontendCategoryList'], $function->getCallable());
     }
 
     public function testGetCategoryList()
     {
         $tree = [
-            'id' => 1,
-            'parent' => '#',
-            'text' => 'Master catalog',
-            'state' => [
-                'opened' => true
-            ]
+            [
+                'id' => 1,
+                'parent' => '#',
+                'text' => 'Master catalog',
+                'state' => [
+                    'opened' => true,
+                ],
+            ],
         ];
 
         $this->categoryTreeHandler->expects($this->once())
@@ -77,6 +73,27 @@ class CategoryExtensionTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($tree));
 
         $result = $this->extension->getCategoryList();
+        $this->assertEquals($tree, $result);
+    }
+
+    public function testGetCategoryListWithRootLabel()
+    {
+        $tree = [
+            [
+                'id' => 1,
+                'parent' => '#',
+                'text' => '[trans]orob2b.catalog.frontend.category.master_category.label[/trans]',
+                'state' => [
+                    'opened' => true,
+                ],
+            ],
+        ];
+
+        $this->categoryTreeHandler->expects($this->once())
+            ->method('createTree')
+            ->will($this->returnValue($tree));
+
+        $result = $this->extension->getCategoryList('orob2b.catalog.frontend.category.master_category.label');
         $this->assertEquals($tree, $result);
     }
 }
