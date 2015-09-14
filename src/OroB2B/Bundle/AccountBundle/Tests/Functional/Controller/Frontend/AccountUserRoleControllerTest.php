@@ -88,7 +88,7 @@ class AccountUserRoleControllerTest extends WebTestCase
     }
 
     /**
-     * @depend testCreate
+     * @depends testCreate
      * @return int
      */
     public function testUpdate()
