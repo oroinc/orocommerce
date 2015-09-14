@@ -88,6 +88,7 @@ class RequestTypeTest extends AbstractTest
                     'email'         => $email,
                     'body'          => 'body',
                     'role'          => 'role',
+                    'phone'         => '123',
                     'company'       => 'company',
                     'requestProducts' => [
                         [
@@ -110,7 +111,15 @@ class RequestTypeTest extends AbstractTest
             ],
             'valid data empty items' => [
                 'isValid'       => true,
-                'submittedData' => [],
+                'submittedData' => [
+                    'firstName'     => 'FirstName',
+                    'lastName'      => 'LastName',
+                    'email'         => $email,
+                    'body'          => 'body',
+                    'role'          => 'role',
+                    'phone'         => '123',
+                    'company'       => 'company',
+                ],
                 'expectedData'  => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', '123'),
                 'defaultData'   => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', '123'),
             ],
