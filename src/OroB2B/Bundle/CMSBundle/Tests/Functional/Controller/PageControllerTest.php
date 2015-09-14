@@ -11,7 +11,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\CMSBundle\Entity\Page;
 
 /**
- * @outputBuffering enabled
  * @dbIsolation
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */

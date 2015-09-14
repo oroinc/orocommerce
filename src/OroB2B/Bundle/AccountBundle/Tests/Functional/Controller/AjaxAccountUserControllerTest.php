@@ -55,7 +55,7 @@ class AjaxAccountUserControllerTest extends WebTestCase
             'GET',
             $this->getUrl('orob2b_account_account_user_disable', ['id' => $id])
         );
-        $this->assertEquals($this->client->getResponse()->getStatusCode(), 200);
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
 
         $this->getObjectManager()->clear();
 
@@ -66,7 +66,7 @@ class AjaxAccountUserControllerTest extends WebTestCase
             'GET',
             $this->getUrl('orob2b_account_account_user_enable', ['id' => $id])
         );
-        $this->assertEquals($this->client->getResponse()->getStatusCode(), 200);
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
 
         $this->getObjectManager()->clear();
 

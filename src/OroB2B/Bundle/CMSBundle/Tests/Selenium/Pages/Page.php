@@ -187,7 +187,7 @@ class Page extends AbstractPageEntity
 
     public function waitForApiCall()
     {
-        sleep(1);
+        sleep(2);
         $this->waitForAjax();
         sleep(1);
 

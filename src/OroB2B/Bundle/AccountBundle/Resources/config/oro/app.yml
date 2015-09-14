@@ -8,8 +8,8 @@ security:
 
     firewalls:
         frontend_secure:
-            # secure everything started with /account/ except basic user and rfp operations
-            pattern:                        ^/account/(?!(user/login|user/reset-request|user/send-email|user/check-email|user/register|user/confirm-email|user/reset|rfp/|rfp/create)$).*$
+            # secure everything started with /account/ except basic user operations
+            pattern:                        ^/account/(?!(user/login|user/reset-request|user/send-email|user/check-email|user/register|user/confirm-email|user/reset)$).*$
             provider:                       b2b_frontend_user
             context:                        account_identity
             organization-form-login:

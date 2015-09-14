@@ -8,6 +8,9 @@ parameters:
     orob2b_product.form.type.product_unit_precision_collection.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType
     orob2b_product.form.type.product_select.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType
     orob2b_product.form.type.product_removed_select.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType
+    orob2b_product.form.type.product_row.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductRowType
+    orob2b_product.form.type.product_row_collection.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductRowCollectionType
+    orob2b_product.form.type.quick_add.class: OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType
 
 services:
     # Product form types
@@ -17,6 +20,16 @@ services:
             - [setDataClass, [%orob2b_product.product.class%]]
         tags:
             - { name: form.type, alias: orob2b_product }
+
+    orob2b_product.form.type.product_row:
+        class: %orob2b_product.form.type.product_row.class%
+        tags:
+            - { name: form.type, alias: orob2b_product_row }
+
+    orob2b_product.form.type.product_row_collection:
+        class: %orob2b_product.form.type.product_row_collection.class%
+        tags:
+            - { name: form.type, alias: orob2b_product_row_collection }
 
     orob2b_product.form.type.product_unit_rounding_type:
         class: %orob2b_product.form.type.product_unit_rounding_type.class%
@@ -36,9 +49,11 @@ services:
 
     orob2b_product.form.type.product_unit_removed_selection:
         class: %orob2b_product.form.type.product_unit_removed_selection.class%
+        arguments:
+            - @orob2b_product.formatter.product_unit_label
+            - @translator
         calls:
             - [setEntityClass, [%orob2b_product.product_unit.class%]]
-            - [setTranslator, [@translator]]
         tags:
             - { name: form.type, alias: orob2b_product_unit_removed_selection }
 
@@ -70,3 +85,8 @@ services:
         class: %orob2b_product.form.type.product_default_visibility_type.class%
         tags:
             - { name: form.type, alias: orob2b_product_default_visibility }
+
+    orob2b_product.form.type.quick_add:
+        class: %orob2b_product.form.type.quick_add.class%
+        tags:
+            - { name: form.type, alias: 'orob2b_product_quick_add' }

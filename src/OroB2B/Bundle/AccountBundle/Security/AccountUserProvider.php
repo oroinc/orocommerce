@@ -2,9 +2,12 @@
 
 namespace OroB2B\Bundle\AccountBundle\Security;
 
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Acl\Domain\PermissionGrantingStrategy;
 use Symfony\Component\Security\Acl\Permission\BasicPermissionMap;
 use Symfony\Component\Security\Core\Util\ClassUtils;
 
+use Oro\Bundle\SecurityBundle\Acl\Domain\ObjectIdentityFactory;
 use Oro\Bundle\SecurityBundle\Acl\Extension\EntityMaskBuilder;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
@@ -76,6 +79,24 @@ class AccountUserProvider
      * @param string $class
      * @return boolean
      */
+    public function isGrantedEditBasic($class)
+    {
+        return $this->isGrantedEntityMask($class, EntityMaskBuilder::MASK_EDIT_BASIC);
+    }
+
+    /**
+     * @param string $class
+     * @return boolean
+     */
+    public function isGrantedEditLocal($class)
+    {
+        return $this->isGrantedEntityMask($class, EntityMaskBuilder::MASK_EDIT_LOCAL);
+    }
+
+    /**
+     * @param string $class
+     * @return boolean
+     */
     public function isGrantedViewAccountUser($class)
     {
         $descriptor = sprintf('entity:%s@%s', AccountUser::SECURITY_GROUP, $this->accountUserClass);
@@ -101,18 +122,61 @@ class AccountUserProvider
             return false;
         }
 
+        $descriptor = sprintf('entity:%s', ClassUtils::getRealClass($class));
+        $oid = $this->aclManager->getOid($descriptor);
+
+        return $this->isGrantedOidMask($oid, $class, $mask);
+    }
+
+    /**
+     * @param ObjectIdentity $oid
+     * @param string $class
+     * @param int $requiredMask
+     * @return bool
+     *
+     * @see \Oro\Bundle\SecurityBundle\Acl\Domain\PermissionGrantingStrategy::isAceApplicable
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     */
+    private function isGrantedOidMask(ObjectIdentity $oid, $class, $requiredMask)
+    {
         if (null === ($loggedUser = $this->getLoggedUser())) {
             return false;
         }
 
-        $descriptor = sprintf('entity:%s', ClassUtils::getRealClass($class));
-        $oid = $this->aclManager->getOid($descriptor);
-
+        $extension = $this->aclManager->getExtensionSelector()->select($oid);
         foreach ($loggedUser->getRoles() as $role) {
-            $aces = $this->aclManager->getAces($this->aclManager->getSid($role), $oid);
+            $sid = $this->aclManager->getSid($role);
+            $aces = $this->aclManager->getAces($sid, $oid);
+            if (!$aces && $oid->getType() !== ObjectIdentityFactory::ROOT_IDENTITY_TYPE) {
+                $rootOid = $this->aclManager->getRootOid($oid);
+
+                return $this->isGrantedOidMask($rootOid, $class, EntityMaskBuilder::GROUP_SYSTEM);
+            }
+
             foreach ($aces as $ace) {
-                if ($ace->getMask() & $mask) {
-                    return true;
+                if ($ace->getAcl()->getObjectIdentity()->getIdentifier() !== $extension->getExtensionKey()) {
+                    continue;
+                }
+
+                $aceMask = $ace->getMask();
+                if ($oid->getType() === ObjectIdentityFactory::ROOT_IDENTITY_TYPE) {
+                    $aceMask = $extension->adaptRootMask($aceMask, new $class);
+                }
+
+                if ($extension->getServiceBits($requiredMask) !== $extension->getServiceBits($aceMask)) {
+                    continue;
+                }
+
+                $requiredMask = $extension->removeServiceBits($requiredMask);
+                $aceMask = $extension->removeServiceBits($aceMask);
+                $strategy = $ace->getStrategy();
+                if (PermissionGrantingStrategy::ALL === $strategy) {
+                    return $requiredMask === ($aceMask & $requiredMask);
+                } elseif (PermissionGrantingStrategy::ANY === $strategy) {
+                    return 0 !== ($aceMask & $requiredMask);
+                } elseif (PermissionGrantingStrategy::EQUAL === $strategy) {
+                    return $requiredMask === $aceMask;
                 }
             }
         }

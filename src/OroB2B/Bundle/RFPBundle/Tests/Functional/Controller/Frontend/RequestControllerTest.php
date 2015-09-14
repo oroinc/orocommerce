@@ -120,6 +120,8 @@ class RequestControllerTest extends WebTestCase
 
     /**
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function indexProvider()
     {
@@ -150,6 +152,7 @@ class RequestControllerTest extends WebTestCase
                         'createdAt',
                         'update_link',
                         'view_link',
+                        'action_configuration',
                     ],
                 ],
             ],
@@ -174,6 +177,7 @@ class RequestControllerTest extends WebTestCase
                         'accountUserName',
                         'update_link',
                         'view_link',
+                        'action_configuration',
                     ],
                 ],
             ],
@@ -193,6 +197,7 @@ class RequestControllerTest extends WebTestCase
                         'createdAt',
                         'update_link',
                         'view_link',
+                        'action_configuration',
                     ],
                 ],
             ],
@@ -213,6 +218,7 @@ class RequestControllerTest extends WebTestCase
                         'createdAt',
                         'update_link',
                         'view_link',
+                        'action_configuration',
                     ],
                 ],
             ],

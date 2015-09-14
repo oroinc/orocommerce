@@ -14,8 +14,8 @@
 {% endblock pageHeader %}
 
 {% block navButtons %}
-    {% if resource_granted('orob2b_shopping_list_frontend_create_rfp') %}
-        {% set formCreateRfpAction = path('orob2b_shopping_list_frontend_create_rfp', { 'id': entity.id }) %}
+    {% if resource_granted('orob2b_shoppinglist_frontend_shoppinglist_createrfp') %}
+        {% set formCreateRfpAction = path('orob2b_shoppinglist_frontend_shoppinglist_createrfp', { 'id': entity.id }) %}
         <form id="{{ formCreateRfp.vars.id }}" class="pull-left" name="{{ formCreateRfp.vars.name }}" action="{{ formCreateRfpAction }}" method="post">
             {{ form_widget(formCreateRfp) }}
             <button type="submit" class="no-hash btn">
