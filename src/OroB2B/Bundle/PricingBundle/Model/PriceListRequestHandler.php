@@ -46,7 +46,7 @@ class PriceListRequestHandler extends AbstractPriceListRequestHandler
             return $this->getDefaultPriceList();
         }
 
-        $priceListId = (int)$this->request->get(self::PRICE_LIST_KEY);
+        $priceListId = $this->getPriceListId();
         if ($priceListId) {
             if (array_key_exists($priceListId, $this->priceLists)) {
                 return $this->priceLists[$priceListId];
@@ -61,6 +61,25 @@ class PriceListRequestHandler extends AbstractPriceListRequestHandler
         }
 
         return $this->getDefaultPriceList();
+    }
+
+    /**
+     * @return int|bool
+     */
+    public function getPriceListId()
+    {
+        $value = $this->request->get(self::PRICE_LIST_KEY);
+
+        if (is_bool($value)) {
+            return false;
+        }
+
+        $value = filter_var($value, FILTER_VALIDATE_INT);
+        if ($value > 0) {
+            return $value;
+        }
+
+        return false;
     }
 
     /**

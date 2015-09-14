@@ -12,6 +12,8 @@
     {{ parent() }}
 {% endblock pageHeader %}
 
+{% block ownerLink %}{% endblock ownerLink %}
+
 {% block content_data %}
     {% set productInformationWidget %}
         {{ oro_widget_render({
