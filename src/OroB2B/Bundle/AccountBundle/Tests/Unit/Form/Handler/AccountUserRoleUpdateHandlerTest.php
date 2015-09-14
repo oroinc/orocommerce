@@ -419,7 +419,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
         $newAccount5 = new Account();
         $role5 = $this->createAccountUserRole('test role5');
         $role5->setAccount(new Account());
-        $users5 = $this->createUsersWithRole($role5, 6, $newAccount4);
+        $users5 = $this->createUsersWithRole($role5, 6, $newAccount5);
 
         return [
             'set account for role without account (assigned users should be removed except appendUsers)'      => [

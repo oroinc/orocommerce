@@ -59,15 +59,6 @@
         }
     ] %}
 
-    <span data-page-component-module="orob2baccount/js/app/components/account-user-role-component"
-          data-page-component-options="{{ {
-              accountFieldId: 'roleAccount',
-              appendFieldId: 'roleAppendUsers',
-              removeFieldId: 'roleRemoveUsers',
-              datagridName: 'account-account-users-grid-frontend-update',
-              role: entity.id
-          }|json_encode }}"></span>"
-
     {% for name, config in form.vars.privilegeConfig %}
         {% set dataBlocks = dataBlocks|merge([{
             'title': config.label|trans,
