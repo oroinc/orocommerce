@@ -94,14 +94,23 @@ class ProductUnitRemovedSelectionTypeTest extends FormIntegrationTestCase
     /**
      * @param ProductUnitHolderInterface $productUnitHolder
      * @param array $expectedData
+     * @param boolean $withParent
      *
      * @dataProvider finishViewDataProvider
      */
-    public function testFinishView(ProductUnitHolderInterface $productUnitHolder = null, array $expectedData = [])
-    {
-        $formParent = $this->factory->create(new StubProductUnitHolderType(), $productUnitHolder);
-
+    public function testFinishView(
+        ProductUnitHolderInterface $productUnitHolder = null,
+        array $expectedData = [],
+        $withParent = true
+    ) {
         $form = $this->factory->create($this->formType);
+
+        if ($withParent) {
+            $formParent = $this->factory->create(new StubProductUnitHolderType(), $productUnitHolder);
+        } else {
+            $formParent = null;
+        }
+
         $form->setParent($formParent);
 
         $view = new FormView();
@@ -140,6 +149,19 @@ class ProductUnitRemovedSelectionTypeTest extends FormIntegrationTestCase
                     'empty_value' => null,
                     'choices' => null,
                 ],
+            ],
+            'without parent form' => [
+                'productHolder' => $this->createProductUnitHolder(
+                    1,
+                    'sku',
+                    new ProductUnit(),
+                    $this->createProductHolder(1, 'sku', null)
+                ),
+                'expectedData' => [
+                    'empty_value' => null,
+                    'choices' => null
+                ],
+                false
             ],
             'filled item' => [
                 'productHolder' => $this->createProductUnitHolder(

@@ -107,7 +107,7 @@ class ProductUnitRemovedSelectionType extends AbstractType
         /* @var $productUnitHolder ProductUnitHolderInterface */
         $productUnitHolder = $formParent->getData();
 
-        if (!$productUnitHolder || !$productUnitHolder->getEntityIdentifier()) {
+        if (!$productUnitHolder) {
             return;
         }
 
