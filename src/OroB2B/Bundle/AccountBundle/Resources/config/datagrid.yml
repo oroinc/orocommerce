@@ -641,24 +641,10 @@ datagrid:
                     - user.firstName
                     - user.lastName
                     - user.email
-                where:
-                    and:
-                        - :role MEMBER OF user.roles
                 from:
                     - { table: %orob2b_account.entity.account_user.class%, alias: user }
-            bind_parameters:
-                -
-                    name: role
-                    default: NULL
         properties:
             id: ~
-        columns:
-            firstName:
-                label: orob2b.account.accountuser.first_name.label
-            lastName:
-                label: orob2b.account.accountuser.last_name.label
-            email:
-                label: orob2b.account.accountuser.email.label
         filters:
             columns:
                 firstName:
@@ -679,13 +665,32 @@ datagrid:
                 email:
                     data_name: user.email
 
-    account-account-users-grid-view:
+    account-account-users-grid-view-basic:
         extends: account-account-users-grid-basic
+        source:
+            query:
+                where:
+                    and:
+                        - :role MEMBER OF user.roles
+            bind_parameters:
+                -
+                    name: role
+                    default: NULL
+        columns:
+            firstName:
+                label: orob2b.account.accountuser.first_name.label
+            lastName:
+                label: orob2b.account.accountuser.last_name.label
+            email:
+                label: orob2b.account.accountuser.email.label
+
+    account-account-users-grid-view:
+        extends: account-account-users-grid-view-basic
         source:
             acl_resource: orob2b_account_account_user_view
 
     frontend-account-account-users-grid-view:
-        extends: account-account-users-grid-basic
+        extends: account-account-users-grid-view-basic
         source:
             acl_resource: orob2b_account_account_user_frontend_view
 
