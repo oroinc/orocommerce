@@ -10,6 +10,7 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
@@ -110,14 +111,9 @@ class ProductUnitRemovedSelectionType extends AbstractType
             return;
         }
 
-        $choices = [];
-
         $product = $productUnitHolder->getProductHolder()->getProduct();
-        if ($product) {
-            foreach ($product->getUnitPrecisions() as $unitPrecision) {
-                $choices[] = $unitPrecision->getUnit();
-            }
-        }
+
+        $choices = $this->getProductUnits($product);
 
         $productUnit = $productUnitHolder->getProductUnit();
         if (!$productUnit || ($product && !in_array($productUnit, $choices, true))) {
@@ -133,5 +129,22 @@ class ProductUnitRemovedSelectionType extends AbstractType
         }
 
         $view->vars['choices'] = $choicesViews;
+    }
+
+    /**
+     * @param Product $product
+     * @return array
+     */
+    protected function getProductUnits(Product $product = null)
+    {
+        $choices = [];
+
+        if ($product) {
+            foreach ($product->getUnitPrecisions() as $unitPrecision) {
+                $choices[] = $unitPrecision->getUnit();
+            }
+        }
+
+        return $choices;
     }
 }
