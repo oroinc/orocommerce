@@ -693,7 +693,7 @@ datagrid:
     frontend-account-account-users-grid-view:
         extends: account-account-users-grid-view-basic
         source:
-            acl_resource: orob2b_account_account_user_frontend_view
+            acl_resource: orob2b_account_frontend_account_user_view
 
     account-account-users-grid-update:
         extends: account-account-users-grid-update-basic
