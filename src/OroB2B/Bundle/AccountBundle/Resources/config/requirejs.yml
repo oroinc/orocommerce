@@ -8,6 +8,7 @@ config:
         'orob2baccount/js/app/components/account-user-role-component': 'bundles/orob2baccount/js/app/components/account-user-role-component.js'
         'orob2baccount/js/app/components/account-selection-component': 'bundles/orob2baccount/js/app/components/account-selection-component.js'
         'oro/select2-autocomplete-accountuser-component': 'bundles/orob2baccount/js/app/components/select2-autocomplete-accountuser-component.js'
+        'oro/select2-autocomplete-account-parent-component': 'bundles/orob2baccount/js/app/components/select2-autocomplete-account-parent-component.js'
         'orob2baccount/js/app/modules/views-module': 'bundles/orob2baccount/js/app/modules/views-module.js'
     appmodules:
         - orob2baccount/js/app/modules/views-module

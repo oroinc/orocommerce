@@ -27,7 +27,7 @@ orob2b.rfp:
         submit.label: 'Submit Request For Proposal'
 
         message:
-            request_saved: 'Your Request For Proposal successfully saved!'
+            request_saved: 'Your Request For Proposal successfully saved'
 
     requestproduct:
         entity_label: 'Request Product'
@@ -103,6 +103,7 @@ orob2b.rfp:
         restore: 'Restore'
         change_status: 'Change Status'
         create_quote: 'Create Quote'
+        create_rfp: 'Create RFP'
 
     widget:
         change_status_title: 'Change Request For Proposal Status'
