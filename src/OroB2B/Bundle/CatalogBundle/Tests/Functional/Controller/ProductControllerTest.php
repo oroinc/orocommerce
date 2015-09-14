@@ -20,7 +20,13 @@ class ProductControllerTest extends WebTestCase
         $this->loadFixtures(['OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData']);
     }
 
-    public function testView()
+    /**
+     * @dataProvider viewDataProvider
+     *
+     * @param $includeSubcategories
+     * @param $expectedCount
+     */
+    public function testView($includeSubcategories, $expectedCount)
     {
         /** @var Category $secondLevelCategory */
         $secondLevelCategory = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
@@ -29,13 +35,33 @@ class ProductControllerTest extends WebTestCase
             [
                 'gridName' => 'products-grid',
                 RequestProductHandler::CATEGORY_ID_KEY => $secondLevelCategory->getId(),
+                RequestProductHandler::INCLUDE_SUBCATEGORIES_KEY => $includeSubcategories,
             ]
         );
         $result = $this->getJsonResponseContent($response, 200);
-        $this->assertCount(3, $result['data']);
+        $this->assertCount($expectedCount, $result['data']);
         foreach ($result['data'] as $data) {
             $this->assertEquals($data['productName'], LoadCategoryProductData::getRelations()[$data['category_name']]);
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function viewDataProvider()
+    {
+        return [
+            'includeSubcategories' =>
+                [
+                    'includeSubcategories' => true,
+                    'expectedCount' => 3,
+                ],
+            'excludeSubcategories' =>
+                [
+                    'includeSubcategories' => false,
+                    'expectedCount' => 1,
+                ],
+        ];
     }
 
     public function testSidebarAction()
