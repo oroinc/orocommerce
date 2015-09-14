@@ -116,7 +116,7 @@ class RequestController extends Controller
      * @param RFPRequest $rfpRequest
      * @return array|RedirectResponse
      */
-    protected function updateAction(RFPRequest $rfpRequest)
+    public function updateAction(RFPRequest $rfpRequest)
     {
         return $this->update($rfpRequest);
     }
