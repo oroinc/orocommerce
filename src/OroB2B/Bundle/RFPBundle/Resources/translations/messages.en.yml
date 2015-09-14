@@ -28,9 +28,6 @@ orob2b:
 
             submit.label: 'Submit Request For Proposal'
 
-        message:
-            request_saved: 'Your Request For Proposal successfully saved'
-
         requestproduct:
             entity_label: 'Request Product'
             entity_plural_label: 'Request Products'
@@ -99,19 +96,19 @@ orob2b:
         datagrid:
             action_restore: 'Restore'
 
-    btn:
-        delete: 'Delete'
-        restore: 'Restore'
-        change_status: 'Change Status'
-        create_quote: 'Create Quote'
-        create_rfp: 'Create RFP'
-
-        widget:
-            change_status_title: 'Change Request For Proposal Status'
-
         controller:
             request:
                 saved.message: 'Request has been saved'
+
+        btn:
+            delete: 'Delete'
+            restore: 'Restore'
+            change_status: 'Change Status'
+            create_quote: 'Create Quote'
+            create_rfp: 'Create RFP'
+
+        widget:
+            change_status_title: 'Change Request For Proposal Status'
 
     frontend:
         rfp:

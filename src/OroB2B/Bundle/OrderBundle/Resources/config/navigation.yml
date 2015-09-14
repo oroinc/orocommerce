@@ -32,6 +32,7 @@ oro_menu_config:
         frontend_order_quick_add:
             label:           'orob2b.order.menu.order_quick_add.label'
             route:           'orob2b_product_frontend_quick_add'
+            aclResourceId:   'orob2b_order_frontend_create'
             extras:
                 description: 'orob2b.order.menu.order_quick_add.description'
 
