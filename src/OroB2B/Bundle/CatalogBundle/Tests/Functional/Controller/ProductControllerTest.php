@@ -51,16 +51,14 @@ class ProductControllerTest extends WebTestCase
     public function viewDataProvider()
     {
         return [
-            'includeSubcategories' =>
-                [
-                    'includeSubcategories' => true,
-                    'expectedCount' => 3,
-                ],
-            'excludeSubcategories' =>
-                [
-                    'includeSubcategories' => false,
-                    'expectedCount' => 1,
-                ],
+            'includeSubcategories' => [
+                'includeSubcategories' => true,
+                'expectedCount' => 3,
+            ],
+            'excludeSubcategories' => [
+                'includeSubcategories' => false,
+                'expectedCount' => 1,
+            ],
         ];
     }
 
