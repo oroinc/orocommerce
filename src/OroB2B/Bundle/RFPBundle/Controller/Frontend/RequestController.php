@@ -116,7 +116,7 @@ class RequestController extends Controller
      * @param RFPRequest $rfpRequest
      * @return array|RedirectResponse
      */
-    public function updateAction(RFPRequest $rfpRequest)
+    protected function createCreateForm(RFPRequest $rfpRequest)
     {
         return $this->update($rfpRequest);
     }
@@ -181,7 +181,7 @@ class RequestController extends Controller
      *
      * @return \HTMLPurifier
      */
-    public function getPurifier()
+    protected function getPurifier()
     {
         $purifierConfig = \HTMLPurifier_Config::createDefault();
         $purifierConfig->set('HTML.Allowed', '');

@@ -39,7 +39,7 @@ class ProductRemovedSelectType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'autocomplete_alias' => 'orob2b_product',
+            'autocomplete_alias' => 'orob2b_pricing_price_list_aware_products_list',
             'create_form_route' => 'orob2b_product_create',
             'empty_label' => 'orob2b.product.removed',
             'required' => true,
