@@ -23,9 +23,7 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
     /** @var  Registry|\PHPUnit_Framework_MockObject_MockObject */
     protected $doctrine;
 
-    /**
-     * @var RequestProductHandler|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var RequestProductHandler|\PHPUnit_Framework_MockObject_MockObject */
     protected $requestProductHandler;
 
     /** @var PreBuild|\PHPUnit_Framework_MockObject_MockObject */
