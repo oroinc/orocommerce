@@ -1,11 +1,16 @@
 {% macro addToShoppingListButton(options) -%}
     {% import _self as buttons %}
 
+    {% set dataAttributes = options.dataAttributes %}
+    {% if options.dataUrl %}
+        {% set dataAttributes = dataAttributes|merge({
+            urlOptions: (options.dataUrlOptions|merge({shoppingListId: options.shoppingList.id}))|json_encode
+        }) %}
+    {% endif %}
+
     {% set btnOptions = {
         dataUrl: options.dataUrl,
-        dataAttributes: options.dataAttributes|merge({
-            urlOptions: (options.dataUrlOptions|merge({shoppingListId: options.shoppingList.id}))|json_encode
-        }),
+        dataAttributes: dataAttributes,
         btnLabel: options.shoppingList.label,
         btnId: options.shoppingList.id,
         dataId: options.shoppingList.id,
@@ -17,12 +22,19 @@
 
 {% macro addToNewShoppingListButton(options) %}
     {% import _self as buttons %}
+
+    {% set dataAttributes = options.dataAttributes|merge({
+        intention: 'new',
+    }) %}
+    {% if options.dataUrl %}
+        {% set dataAttributes = dataAttributes|merge({
+            urlOptions: options.dataUrlOptions|json_encode
+        }) %}
+    {% endif %}
+
     {% set btnOptions = {
         dataUrl: options.dataUrl,
-        dataAttributes: options.dataAttributes|merge({
-            intention: 'new',
-            urlOptions: options.dataUrlOptions|json_encode
-        }),
+        dataAttributes: dataAttributes,
         btnLabel: 'orob2b.shoppinglist.actions.add_to_new_shopping_list'|trans,
         dataId: null,
         actionLabel: null
@@ -33,13 +45,21 @@
 
 {% macro addToCurrentShoppingListButton(options) %}
     {% import _self as buttons %}
+
     {% set shoppingListId = options.shoppingList ? options.shoppingList.id : null %}
+
+    {% set dataAttributes = options.dataAttributes|merge({
+        intention: 'current'
+    }) %}
+    {% if options.dataUrl %}
+        {% set dataAttributes = dataAttributes|merge({
+            urlOptions: (options.dataUrlOptions|merge({shoppingListId: shoppingListId}))|json_encode
+        }) %}
+    {% endif %}
+
     {% set btnOptions = {
         dataUrl: options.dataUrl,
-        dataAttributes: options.dataAttributes|merge({
-            intention: 'current',
-            urlOptions: (options.dataUrlOptions|merge({shoppingListId: shoppingListId}))|json_encode
-        }),
+        dataAttributes: dataAttributes,
         btnLabel: 'orob2b.shoppinglist.entity_label'|trans,
         dataId: shoppingListId,
         actionLabel: 'orob2b.shoppinglist.actions.add_to_shopping_list'|trans
@@ -50,14 +70,19 @@
 
 {% macro getButton(options) %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {{ UI.clientButton({
-        'dataUrl': options.dataUrl,
+    {% set buttonOptions = {
         'dataAttributes': options.dataAttributes,
         'aCss': 'no-hash grid-control',
         'iCss': 'icon-shopping-cart hide-text',
         'dataId': options.dataId,
         'label' : options.actionLabel ~ ' ' ~ options.btnLabel
-    }) }}
+    } %}
+    {% if options.dataUrl %}
+        {% set buttonOptions = buttonOptions|merge({
+            'dataUrl': options.dataUrl,
+        }) %}
+    {% endif %}
+    {{ UI.clientButton(buttonOptions) }}
 {% endmacro %}
 
 {% macro createAddToShoppingListButton(options) %}
