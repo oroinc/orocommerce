@@ -92,6 +92,17 @@ define(function(require) {
                 'grid-sidebar:change:' + this.options.sidebarAlias,
                 {params: params}
             );
+        },
+
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+            this.$tree
+                .off('select_node.jstree')
+                .off('ready.jstree');
+
+            ProductSidebarComponent.__super__.dispose.call(this);
         }
     });
 
