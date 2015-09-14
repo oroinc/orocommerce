@@ -12,7 +12,7 @@ class DatagridListener
     /**
      * @param BuildBefore $event
      */
-    public function onBuildBefore(BuildBefore $event)
+    public function onBuildBeforeProductsSelect(BuildBefore $event)
     {
         $this->addCategoryRelation($event->getConfig());
     }
@@ -45,6 +45,20 @@ class DatagridListener
         $where = 'categoryTitle.locale IS NULL';
         $this->addConfigElement($config, '[source][query][where][and]', $where);
 
+        // columns
+        $categoryColumn = ['label' => 'orob2b.catalog.category.entity_label'];
+        $this->addConfigElement($config, '[columns]', $categoryColumn, self::CATEGORY_COLUMN);
+
+        // sorter
+        $categorySorter = ['data_name' => self::CATEGORY_COLUMN];
+        $this->addConfigElement($config, '[sorters][columns]', $categorySorter, self::CATEGORY_COLUMN);
+
+        // filter
+        $categoryFilter = [
+            'type' => 'string',
+            'data_name' => 'categoryTitle.string'
+        ];
+        $this->addConfigElement($config, '[filters][columns]', $categoryFilter, self::CATEGORY_COLUMN);
     }
 
     /**
