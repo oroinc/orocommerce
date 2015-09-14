@@ -1,20 +1,20 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Validator\Constraints;
+namespace OroB2B\Bundle\ProductBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-class RequestProductItem extends Constraint
+class ProductUnitHolder extends Constraint
 {
     /**
      * @var string
      */
-    public $message = 'orob2b.rfp.requestproductitem.unit.blank';
+    public $message = 'orob2b.product.productunitholder.product_unit.blank';
 
     /**
      * @var string
      */
-    public $service = 'orob2b_rfp.validator.request_product_item';
+    public $service = 'orob2b_product.validator.product_unit_holder';
 
     /**
      * {@inheritdoc}

@@ -1,60 +1,67 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Validator\Constraints;
+namespace OroB2B\Bundle\ProductBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
-use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem as RequestProductItemEntity;
+use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
-class RequestProductItemValidator extends ConstraintValidator
+class ProductUnitHolderValidator extends ConstraintValidator
 {
     /**
      * {@inheritdoc}
      *
-     * @param RequestProductItemEntity $requestProductItem
-     * @param Constraint|RequestProductItem $constraint
+     * @param ProductUnitHolderInterface $productUnitHolder
+     * @param ProductUnitHolder $constraint
      */
-    public function validate($requestProductItem, Constraint $constraint)
+    public function validate($productUnitHolder, Constraint $constraint)
     {
-        if (!$requestProductItem instanceof RequestProductItemEntity) {
+        if (!$productUnitHolder instanceof ProductUnitHolderInterface) {
             throw new UnexpectedTypeException(
-                $requestProductItem,
-                'OroB2B\Bundle\RFPBundle\Entity\RequestProductItem'
+                $productUnitHolder,
+                'OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface'
             );
         }
 
-        if (null === ($requestProduct = $requestProductItem->getRequestProduct())) {
+        if (null === ($productHolder = $productUnitHolder->getProductHolder())) {
             $this->addViolation($constraint);
+
             return;
         }
 
-        if (null === ($product = $requestProduct->getProduct())) {
+        $product = $productHolder->getProduct();
+
+        if (null === $product) {
             $this->addViolation($constraint);
+
             return;
         }
 
         if ([] === ($allowedUnits = $product->getAvailableUnitCodes())) {
             $this->addViolation($constraint);
+
             return;
         }
 
-        if (null === ($productUnit = $requestProductItem->getProductUnit())) {
+        if (null === ($productUnit = $productUnitHolder->getProductUnit())) {
             $this->addViolation($constraint);
+
             return;
         }
 
         if (!in_array($productUnit->getCode(), $allowedUnits, true)) {
             $this->addViolation($constraint);
+
             return;
         }
     }
 
     /**
-     * @param RequestProductItem $constraint
+     * @param ProductUnitHolder $constraint
      */
-    protected function addViolation(RequestProductItem $constraint)
+    protected function addViolation(ProductUnitHolder $constraint)
     {
         $this->context->addViolationAt('productUnit', $constraint->message);
     }

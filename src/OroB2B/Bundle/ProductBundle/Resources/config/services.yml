@@ -13,6 +13,7 @@ parameters:
     orob2b_product.service.sku_incrementor.class: OroB2B\Bundle\ProductBundle\Duplicator\SkuIncrementor
     orob2b_product.service.product_update_handler.class: OroB2B\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler
     orob2b_product.service.product_data_storage.class: OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage
+    orob2b_product.validator.product_unit_holder.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductUnitHolderValidator
     orob2b_product.validator.product_by_sku.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator
 
     orob2b_product.component_processor.registry.class: OroB2B\Bundle\ProductBundle\Model\ComponentProcessorRegistry
@@ -106,6 +107,11 @@ services:
         class: %orob2b_product.service.product_data_storage.class%
         arguments:
             - @session
+
+    orob2b_product.validator.product_unit_holder:
+        class: %orob2b_product.validator.product_unit_holder.class%
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_product.validator.product_unit_holder }
 
     orob2b_product.validator.product_by_sku:
             class: %orob2b_product.validator.product_by_sku.class%

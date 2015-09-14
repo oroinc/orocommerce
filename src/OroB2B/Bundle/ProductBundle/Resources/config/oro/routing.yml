@@ -24,6 +24,13 @@ orob2b_product_frontend_product:
     options:
         frontend: true
 
+orob2b_product_frontend_unit_ajax:
+    resource:     "@OroB2BProductBundle/Controller/Frontend/AjaxProductUnitController.php"
+    type:         annotation
+    prefix:       /product-unit
+    options:
+        frontend: true
+
 orob2b_product_frontend_quick_add:
     resource:     "@OroB2BProductBundle/Controller/Frontend/QuickAddController.php"
     type:         annotation

@@ -2,19 +2,16 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
-use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
-
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
-
-use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductRemovedSelectType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
 
@@ -43,10 +40,10 @@ class RequestProductTypeTest extends AbstractTest
         parent::setUp();
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolverInterface */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
+        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
+        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
@@ -56,80 +53,12 @@ class RequestProductTypeTest extends AbstractTest
             ])
         ;
 
-        $this->formType->setDefaultOptions($resolver);
+        $this->formType->configureOptions($resolver);
     }
 
     public function testGetName()
     {
         $this->assertEquals(RequestProductType::NAME, $this->formType->getName());
-    }
-
-    /**
-     * @param RequestProduct $inputData
-     * @param array $expectedData
-     *
-     * @dataProvider preSetDataProvider
-     */
-    public function testPreSetData(RequestProduct $inputData = null, array $expectedData = [])
-    {
-        $productSku = $inputData ? $inputData->getProductSku() : '';
-
-        $placeholder = $expectedData['configs']['placeholder'];
-
-        $this->translator
-            ->expects($placeholder ? $this->once() : $this->never())
-            ->method('trans')
-            ->with($placeholder, [
-                '{title}' => $productSku,
-            ])
-            ->will($this->returnValue($placeholder))
-        ;
-
-        $form = $this->factory->create($this->formType);
-
-        $this->formType->preSetData(new FormEvent($form, $inputData));
-
-        $this->assertTrue($form->has('product'));
-
-        $config = $form->get('product')->getConfig();
-
-        $this->assertEquals(ProductSelectType::NAME, $config->getType()->getName());
-
-        $options = $form->get('product')->getConfig()->getOptions();
-
-        foreach ($expectedData as $key => $value) {
-            $this->assertEquals($value, $options[$key], $key);
-        }
-    }
-
-    /**
-     * @return array
-     */
-    public function preSetDataProvider()
-    {
-        return [
-            'empty item' => [
-                'inputData'     => null,
-                'expectedData'  => [
-                    'configs'   => [
-                        'placeholder'   => null,
-                    ],
-                    'required'          => true,
-                    'create_enabled'    => false,
-                    'label'             => 'orob2b.product.entity_label',
-                ],
-            ],
-            'deleted product' => [
-                'inputData'     => $this->createRequestProduct(1, null, 'sku'),
-                'expectedData'  => [
-                    'configs'   => [
-                        'placeholder' => 'orob2b.rfp.message.requestproductitem.unit.removed',
-                    ],
-                    'required'  => true,
-                    'label'     => 'orob2b.product.entity_label',
-                ],
-            ],
-        ];
     }
 
     /**
@@ -204,35 +133,6 @@ class RequestProductTypeTest extends AbstractTest
     }
 
     /**
-     * @param int $id
-     * @param RequestProduct $product
-     * @param string $productSku
-     * @return \PHPUnit_Framework_MockObject_MockObject|RequestProduct
-     */
-    protected function createRequestProduct($id, $product, $productSku)
-    {
-        /* @var $requestProduct \PHPUnit_Framework_MockObject_MockObject|RequestProduct */
-        $requestProduct = $this->getMock('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
-        $requestProduct
-            ->expects($this->any())
-            ->method('getId')
-            ->will($this->returnValue($id))
-        ;
-        $requestProduct
-            ->expects($this->any())
-            ->method('getProduct')
-            ->will($this->returnValue($product))
-        ;
-        $requestProduct
-            ->expects($this->any())
-            ->method('getProductSku')
-            ->will($this->returnValue($productSku))
-        ;
-
-        return $requestProduct;
-    }
-
-    /**
      * {@inheritdoc}
      */
     protected function getExtensions()
@@ -240,9 +140,9 @@ class RequestProductTypeTest extends AbstractTest
         $priceType                  = $this->preparePriceType();
         $entityType                 = $this->prepareProductEntityType();
         $optionalPriceType          = $this->prepareOptionalPriceType();
-        $productSelectType          = new ProductSelectTypeStub();
+        $productRemovedSelectType   = new StubProductRemovedSelectType();
         $currencySelectionType      = new CurrencySelectionTypeStub();
-        $requestProductItemType     = $this->prepareRequestProductItemType($this->translator);
+        $requestProductItemType     = $this->prepareRequestProductItemType();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
 
         return [
@@ -250,10 +150,11 @@ class RequestProductTypeTest extends AbstractTest
                 [
                     CollectionType::NAME                    => new CollectionType(),
                     RequestProductItemCollectionType::NAME  => new RequestProductItemCollectionType(),
+                    ProductUnitRemovedSelectionType::NAME   => new StubProductUnitRemovedSelectionType(),
                     $priceType->getName()                   => $priceType,
                     $entityType->getName()                  => $entityType,
                     $optionalPriceType->getName()           => $optionalPriceType,
-                    $productSelectType->getName()           => $productSelectType,
+                    $productRemovedSelectType->getName()    => $productRemovedSelectType,
                     $requestProductItemType->getName()      => $requestProductItemType,
                     $currencySelectionType->getName()       => $currencySelectionType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,

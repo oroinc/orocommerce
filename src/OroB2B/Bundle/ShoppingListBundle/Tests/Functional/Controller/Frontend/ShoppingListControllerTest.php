@@ -10,9 +10,12 @@ use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 /**
  * @dbIsolation
+ *
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class ShoppingListControllerTest extends WebTestCase
 {
@@ -32,7 +35,9 @@ class ShoppingListControllerTest extends WebTestCase
         $this->loadFixtures(
             [
                 'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
-                'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists'
+                'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData',
+                'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists',
+                'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadUserData',
             ]
         );
     }
@@ -88,6 +93,10 @@ class ShoppingListControllerTest extends WebTestCase
 
         $html = $crawler->html();
         $this->assertContains($shoppingList->getLabel(), $html);
+
+        $createRfpButton = (bool)$crawler->selectButton('Request a Quote')->count();
+
+        $this->assertTrue($createRfpButton);
     }
 
     public function testSetCurrent()
@@ -130,6 +139,29 @@ class ShoppingListControllerTest extends WebTestCase
         $html = $crawler->html();
 
         $this->assertContains('Shopping List has been saved', $html);
+    }
+
+    /**
+     * @param array $inputData
+     * @param array $expectedData
+     *
+     * @dataProvider createRfpProvider
+     */
+    public function testCreateRfp(array $inputData, array $expectedData)
+    {
+        $this->initClient([], array_merge(
+            $this->generateBasicAuthHeader($inputData['login'], $inputData['password']),
+            ['HTTP_X-CSRF-Header' => 1]
+        ));
+        /* @var $shoppingList ShoppingList */
+        $shoppingList = $this->getReference($inputData['shoppingList']);
+        $this->client->request(
+            'POST',
+            $this->getUrl('orob2b_shoppinglist_frontend_shoppinglist_createrfp', ['id' => $shoppingList->getId()])
+        );
+        $this->client->followRedirects(true);
+        $result = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($result, $expectedData['statusCode']);
     }
 
     public function testQuickAdd()
@@ -224,5 +256,34 @@ class ShoppingListControllerTest extends WebTestCase
 
         $this->assertEquals($sku, $data['productSku']);
         $this->assertEquals($quantity, $data['quantity']);
+    }
+
+    /**
+     * @return array
+     */
+    public function createRfpProvider()
+    {
+        return [
+            'account1 user1 (Order:NONE)' => [
+                'input' => [
+                    'shoppingList' => LoadShoppingLists::SHOPPING_LIST_1,
+                    'login' => LoadUserData::ACCOUNT1_USER1,
+                    'password' => LoadUserData::ACCOUNT1_USER1,
+                ],
+                'expected' => [
+                    'statusCode' => 403,
+                ],
+            ],
+            'account1 user2 (Order:CREATE_BASIC)' => [
+                'input' => [
+                    'shoppingList' => LoadShoppingLists::SHOPPING_LIST_1,
+                    'login' => LoadUserData::ACCOUNT1_USER2,
+                    'password' => LoadUserData::ACCOUNT1_USER2,
+                ],
+                'expected' => [
+                    'statusCode' => 200,
+                ],
+            ],
+        ];
     }
 }
