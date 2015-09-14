@@ -17,6 +17,7 @@ parameters:
     orob2b_account.entity.page_state.class: OroB2B\Bundle\AccountBundle\Entity\PageState
 
     orob2b_account.account_tree_handler.class: OroB2B\Bundle\AccountBundle\JsTree\AccountTreeHandler
+    orob2b_account.account_delete_handler.class: OroB2B\Bundle\AccountBundle\Handler\UserDeleteHandler
     orob2b_account.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
     orob2b_account.form.autocomplete.parent_account.search_handler.class: OroB2B\Bundle\AccountBundle\Autocomplete\ParentAccountSearchHandler
@@ -26,6 +27,7 @@ parameters:
     orob2b_account.account_user_role.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_account.datagrid.action_permission_provider.class: OroB2B\Bundle\AccountBundle\Datagrid\ActionPermissionProvider
     orob2b_account.datagrid.extension.accoun_user.class: OroB2B\Bundle\AccountBundle\Datagrid\Extension\AccountUserExtension
+    orob2b_account.datagrid.extension.accoun_user_by_account.class: OroB2B\Bundle\AccountBundle\Datagrid\Extension\AccountUserByAccountExtension
     orob2b_account.mailer.processor.class: OroB2B\Bundle\AccountBundle\Mailer\Processor
     orob2b_account_user.manager.class: OroB2B\Bundle\AccountBundle\Entity\AccountUserManager
 
@@ -160,11 +162,20 @@ services:
 
     orob2b_account.datagrid.action_permission_provider:
         class: %orob2b_account.datagrid.action_permission_provider.class%
+        arguments:
+            - @oro_security.security_facade
 
     orob2b_account.datagrid.extension.accoun_user:
         class: %orob2b_account.datagrid.extension.accoun_user.class%
         calls:
             - [setContainer, [@service_container]]
+        tags:
+            - { name: oro_datagrid.extension }
+
+    orob2b_account.datagrid.extension.accoun_user_by_account:
+        class: %orob2b_account.datagrid.extension.accoun_user_by_account.class%
+        calls:
+            - [setRequest, ["@?request="]]
         tags:
             - { name: oro_datagrid.extension }
 
@@ -405,3 +416,8 @@ services:
             - "frontend_mostviewed"
         tags:
             - { name: oro_ui.content_provider }
+
+    orob2b_account.account_delete_handler:
+        class: %orob2b_account.account_delete_handler.class%
+        arguments:
+            - @oro_security.security_facade

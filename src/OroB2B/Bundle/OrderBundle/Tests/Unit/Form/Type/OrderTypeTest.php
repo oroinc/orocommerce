@@ -6,8 +6,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
+use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
+use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
 
 class OrderTypeTest extends \PHPUnit_Framework_TestCase
@@ -24,6 +26,9 @@ class OrderTypeTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade */
     protected $securityFacade;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject|OrderCurrencyHandler */
+    protected $orderCurrencyHandler;
+
     protected function setUp()
     {
         $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
@@ -38,7 +43,23 @@ class OrderTypeTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->type = new OrderType($this->securityFacade, $this->provider, $this->paymentTermProvider);
+        $this->orderCurrencyHandler = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->orderCurrencyHandler->expects($this->any())
+            ->method('setOrderCurrency')
+            ->will($this->returnCallback(function ($order) {
+                if ($order instanceof Order) {
+                    $order->setCurrency('USD');
+                }
+            }));
+
+        $this->type = new OrderType(
+            $this->securityFacade,
+            $this->provider,
+            $this->paymentTermProvider,
+            $this->orderCurrencyHandler
+        );
     }
 
     public function testConfigureOptions()
@@ -50,6 +71,7 @@ class OrderTypeTest extends \PHPUnit_Framework_TestCase
             ->with(
                 [
                     'data_class' => 'Order',
+                    'intention' => 'order',
                 ]
             );
 

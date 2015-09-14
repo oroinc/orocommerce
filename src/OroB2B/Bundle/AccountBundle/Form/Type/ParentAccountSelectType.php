@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\AccountBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 
@@ -16,13 +16,13 @@ class ParentAccountSelectType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
             [
                 'autocomplete_alias' => 'orob2b_account_parent',
                 'configs' => [
-                    'extra_config' => 'parent_aware',
+                    'component' => 'autocomplete-account-parent',
                     'placeholder' => 'orob2b.account.form.choose_parent'
                 ]
             ]
@@ -35,11 +35,11 @@ class ParentAccountSelectType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $parentData = $form->getParent()->getData();
-        $parentId = null;
+        $accountId = null;
         if ($parentData instanceof Account) {
-            $parentId = $parentData->getId();
+            $accountId = $parentData->getId();
         }
-        $view->vars['parent_id'] = $parentId;
+        $view->vars['configs']['accountId'] = $accountId;
     }
 
     /**

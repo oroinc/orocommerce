@@ -9,7 +9,6 @@ use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Routing\ClassResourceInterface;
-use FOS\RestBundle\Util\Codes;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
@@ -50,7 +49,7 @@ class RequestStatusController extends FOSRestController implements ClassResource
 
         if (null === $requestStatus) {
             return $this->handleView(
-                $this->view(['successful' => false], Codes::HTTP_NOT_FOUND)
+                $this->view(['successful' => false], Response::HTTP_NOT_FOUND)
             );
         }
 
@@ -58,7 +57,7 @@ class RequestStatusController extends FOSRestController implements ClassResource
 
         if ($defaultRequestStatusName === $requestStatus->getName()) {
             return $this->handleView(
-                $this->view(['successful' => false], Codes::HTTP_FORBIDDEN)
+                $this->view(['successful' => false], Response::HTTP_FORBIDDEN)
             );
         }
 
@@ -71,7 +70,7 @@ class RequestStatusController extends FOSRestController implements ClassResource
                     'successful' => true,
                     'message' => $this->get('translator')->trans('orob2b.rfp.message.request_status_deleted')
                 ],
-                Codes::HTTP_OK
+                Response::HTTP_OK
             )
         );
     }
@@ -96,7 +95,7 @@ class RequestStatusController extends FOSRestController implements ClassResource
         if (null === $requestStatus) {
             return new JsonResponse(
                 $this->get('translator')->trans('orob2b.rfp.message.request_status_not_found'),
-                Codes::HTTP_NOT_FOUND
+                Response::HTTP_NOT_FOUND
             );
         }
 
@@ -109,7 +108,7 @@ class RequestStatusController extends FOSRestController implements ClassResource
                     'successful' => true,
                     'message' => $this->get('translator')->trans('orob2b.rfp.message.request_status_restored')
                 ],
-                Codes::HTTP_OK
+                Response::HTTP_OK
             )
         );
     }

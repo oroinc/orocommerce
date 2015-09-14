@@ -1,5 +1,8 @@
 orob2b:
     product:
-          validators:
-              product_variant_links:
-                  unique_variants_combination.message: 'Cannot save product variants. Variant field value combinations should be unique.'
+        validators:
+            product_variant_links:
+                unique_variants_combination.message: 'Cannot save product variants. Variant field value combinations should be unique.'
+        product_by_sku:
+            not_found: SKU not found
+        at_least_one_item: Please add at least one item

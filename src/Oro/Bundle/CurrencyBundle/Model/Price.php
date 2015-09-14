@@ -39,10 +39,6 @@ class Price
      */
     public function setValue($value)
     {
-        if (null === $value) {
-            throw new \InvalidArgumentException('Price value can not be empty');
-        }
-
         $this->value = $value;
 
         return $this;
@@ -62,10 +58,6 @@ class Price
      */
     public function setCurrency($currency)
     {
-        if (empty($currency)) {
-            throw new \InvalidArgumentException('Price currency can not be empty');
-        }
-
         $this->currency = $currency;
 
         return $this;

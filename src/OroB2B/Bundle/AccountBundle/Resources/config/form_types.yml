@@ -9,8 +9,11 @@ parameters:
 
     orob2b_account.form.type.account_user.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserType
     orob2b_account.form.type.account_user_role.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType
+    orob2b_account.form.type.account_user_role_select.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType
 
+    orob2b_account.form.type.frontend.account_user_profile.class: OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserProfileType
     orob2b_account.form.type.frontend.account_user.class: OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType
+    orob2b_account.form.type.frontend.account_user_role_select.class: OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleSelectType
     orob2b_account.form.type.frontend.account_user.register.class: OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType
     orob2b_account.form.type.frontend.account_user.password_request.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserPasswordRequestType
     orob2b_account.form.type.frontend.account_user.password_reset.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserPasswordResetType
@@ -21,6 +24,9 @@ parameters:
     orob2b_account.form.type.typed_address.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountTypedAddressType
     orob2b_account.form.type.typed_address_with_default.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountTypedAddressWithDefaultType
     orob2b_account.form.extension.oro_acl_access_level_selector.class: OroB2B\Bundle\AccountBundle\Form\Extension\AclAccessLevelSelectorExtension
+    orob2b_account.form.extension.select_or_create_inline.class: OroB2B\Bundle\AccountBundle\Form\Extension\OroEntitySelectOrCreateInlineExtension
+    orob2b_account.form.extension.frontend_product_select.class: OroB2B\Bundle\AccountBundle\Form\Extension\FrontendProductSelectExtension
+    orob2b_account.form.extension.address.class: OroB2B\Bundle\AccountBundle\Form\Extension\AddressExtension
 
 services:
     orob2b_account.form.type.account:
@@ -64,10 +70,16 @@ services:
             - @oro_security.security_facade
         calls:
             - [setDataClass, [%orob2b_account.entity.account_user.class%]]
-            - [setRoleClass, [%orob2b_account.entity.account_user_role.class%]]
             - [setAddressClass, [%orob2b_account.entity.account_user_address.class%]]
         tags:
             - { name: form.type, alias: orob2b_account_account_user }
+
+    orob2b_account.form.type.account_user_role_select:
+        class: %orob2b_account.form.type.account_user_role_select.class%
+        calls:
+            - [setRoleClass, [%orob2b_account.entity.account_user_role.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_account_account_user_role_select }
 
     orob2b_account.form.type.account_user_role:
         class: %orob2b_account.form.type.account_user_role.class%
@@ -76,12 +88,31 @@ services:
         tags:
             - { name: form.type, alias: orob2b_account_account_user_role }
 
-    orob2b_account.form.type.frontend.account_user:
-        class: %orob2b_account.form.type.frontend.account_user.class%
+    orob2b_account.form.type.frontend.account_user_profile:
+        class: %orob2b_account.form.type.frontend.account_user_profile.class%
         calls:
             - [setDataClass, [%orob2b_account.entity.account_user.class%]]
         tags:
+            - { name: form.type, alias: orob2b_account_frontend_account_user_profile }
+
+    orob2b_account.form.type.frontend.account_user:
+        class: %orob2b_account.form.type.frontend.account_user.class%
+        arguments:
+            - @oro_security.security_facade
+        calls:
+            - [setAccountUserClass, [%orob2b_account.entity.account_user.class%]]
+        tags:
             - { name: form.type, alias: orob2b_account_frontend_account_user }
+
+    orob2b_account.form.type.frontend.account_user_role_select:
+        class: %orob2b_account.form.type.frontend.account_user_role_select.class%
+        arguments:
+            - @oro_security.security_facade
+            - @doctrine
+        calls:
+            - [setRoleClass, [%orob2b_account.entity.account_user_role.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_account_frontend_account_user_role_select }
 
     orob2b_account.form.type.frontend.account_user.register:
         class: %orob2b_account.form.type.frontend.account_user.register.class%
@@ -144,3 +175,24 @@ services:
         class: %orob2b_account.form.extension.oro_acl_access_level_selector.class%
         tags:
             - { name: form.type_extension, alias: oro_acl_access_level_selector }
+
+    orob2b_account.form.extension.select_or_create_inline:
+        class: %orob2b_account.form.extension.select_or_create_inline.class%
+        arguments:
+            - @security.token_storage
+        tags:
+            - { name: form.type_extension, alias: "oro_entity_create_or_select_inline" }
+
+    orob2b_account.form.extension.frontend_product_select:
+        class: %orob2b_account.form.extension.frontend_product_select.class%
+        arguments:
+            - @security.token_storage
+        tags:
+            - { name: form.type_extension, alias: orob2b_product_select }
+
+    orob2b_account.form.extension.address:
+        class: %orob2b_account.form.extension.address.class%
+        arguments:
+            - @security.token_storage
+        tags:
+            - { name: form.type_extension, alias: "oro_address" }

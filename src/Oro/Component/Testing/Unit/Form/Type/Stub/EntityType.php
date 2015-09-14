@@ -9,10 +9,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EntityType extends AbstractType
 {
-    /** @var ChoiceList  */
+    /** @var ChoiceList */
     protected $choiceList = [];
 
-    /** @var string  */
+    /** @var string */
     protected $name;
 
     /**
@@ -51,7 +51,9 @@ class EntityType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(['choice_list' => $this->choiceList, 'query_builder' => null, 'class' => null]);
+        $resolver->setDefaults(
+            ['choice_list' => $this->choiceList, 'query_builder' => null, 'create_enabled' => false, 'class' => null]
+        );
     }
 
     /**

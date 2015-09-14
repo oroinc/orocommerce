@@ -57,3 +57,4 @@ oro_titles:
 
     orob2b_product_frontend_product_index: ~
     orob2b_product_frontend_product_view: '%%name%%'
+    orob2b_product_frontend_quick_add: 'orob2b.product.frontend.quick_add.title'

@@ -44,6 +44,7 @@ class LineItemSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $registry = $this->getRegistry();
         $lineItemSubscriber = new LineItemSubscriber($lineItemManager, $registry);
+        $lineItemSubscriber->setProductClass(self::PRODUCT_CLASS);
 
         $event->expects($this->any())
             ->method('getData')
@@ -73,6 +74,7 @@ class LineItemSubscriberTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->getProductEntityWithPrecision('item', 3));
 
         $lineItemSubscriber = new LineItemSubscriber($lineItemManager, $registry);
+        $lineItemSubscriber->setProductClass(self::PRODUCT_CLASS);
         $event->expects($this->any())
             ->method('getData')
             ->willReturn([
@@ -100,6 +102,7 @@ class LineItemSubscriberTest extends \PHPUnit_Framework_TestCase
         $registry = $this->getRegistry();
 
         $lineItemSubscriber = new LineItemSubscriber($lineItemManager, $registry);
+        $lineItemSubscriber->setProductClass(self::PRODUCT_CLASS);
         $event->expects($this->any())
             ->method('getData')
             ->willReturn([
@@ -137,6 +140,7 @@ class LineItemSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $manager->expects($this->any())
             ->method('getRepository')
+            ->with(self::PRODUCT_CLASS)
             ->willReturn($repository);
 
         $registry = $this->getMockBuilder('Symfony\Bridge\Doctrine\ManagerRegistry')
@@ -145,6 +149,7 @@ class LineItemSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $registry->expects($this->any())
             ->method('getManagerForClass')
+            ->with(self::PRODUCT_CLASS)
             ->willReturn($manager);
 
         return $registry;

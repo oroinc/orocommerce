@@ -8,6 +8,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Tests\Unit\Entity\AbstractUserTest;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
@@ -72,6 +73,12 @@ class AccountUserTest extends AbstractUserTest
             ->setLastName('Doe')
             ->setOwner(new User());
         $this->assertEmpty($user->getAccount());
+        $address = new AccountAddress();
+        $user->addAddress($address);
+        $this->assertContains($address, $user->getAddresses());
+        $backendUser = new User();
+        $user->setOwner($backendUser);
+        $this->assertEquals($user->getOwner(), $backendUser);
 
         // createAccount is triggered on prePersist event
         $user->createAccount();

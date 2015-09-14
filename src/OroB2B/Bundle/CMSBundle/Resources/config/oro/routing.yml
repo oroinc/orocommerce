@@ -3,6 +3,13 @@ orob2b_cms_page:
     type:         annotation
     prefix:       /cms/page
 
+orob2b_cms_frontend_page:
+    resource:     "@OroB2BCMSBundle/Controller/Frontend/PageController.php"
+    type:         annotation
+    prefix:       /cms/page
+    options:
+        frontend: true
+
 orob2b_cms_ajax:
     resource:     "@OroB2BCMSBundle/Controller/AjaxPageController.php"
     type:         annotation

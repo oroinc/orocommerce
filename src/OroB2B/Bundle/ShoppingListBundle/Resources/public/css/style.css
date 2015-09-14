@@ -1,3 +1,15 @@
 .add-product-widget fieldset .hidden {
     display: none;
 }
+.shopping-list-dialog > .ui-dialog-content {
+    padding: 10px 10px 30px 10px;
+}
+.form-inline .add-product-table .control-label {
+    width: 50px;
+}
+.form-inline .add-product-table .control-group .controls {
+    margin-left: 60px;
+}
+.add-products-btn-holder {
+    margin-left: 15px;
+}
