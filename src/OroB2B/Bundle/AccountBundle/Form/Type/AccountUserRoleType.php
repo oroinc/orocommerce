@@ -28,15 +28,6 @@ class AccountUserRoleType extends AbstractAccountUserRoleType
     /**
      * {@inheritdoc}
      */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setRequired(['privilege_config']);
-        $resolver->setDefaults(['data_class' => $this->dataClass]);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return self::NAME;

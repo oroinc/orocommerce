@@ -171,7 +171,6 @@ services:
         calls:
             - [setSecurityFacade, [@oro_security.security_facade]]
 
-
     orob2b_account.form.type.typed_address:
         class: %orob2b_account.form.type.typed_address.class%
         calls:

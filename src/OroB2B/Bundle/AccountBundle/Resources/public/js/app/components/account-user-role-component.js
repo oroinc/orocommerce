@@ -3,13 +3,13 @@
 define(function(require) {
     'use strict';
 
-    var AccountUserRole,
-        BaseComponent = require('oroui/js/app/components/base/component'),
-        $ = require('jquery'),
-        mediator = require('oroui/js/mediator'),
-        _ = require('underscore'),
-        __ = require('orotranslation/js/translator'),
-        Modal = require('oroui/js/modal');
+    var AccountUserRole;
+    var BaseComponent = require('oroui/js/app/components/base/component');
+    var $ = require('jquery');
+    var mediator = require('oroui/js/mediator');
+    var _ = require('underscore');
+    var __ = require('orotranslation/js/translator');
+    var Modal = require('oroui/js/modal');
 
     AccountUserRole = BaseComponent.extend({
         /**
@@ -95,7 +95,7 @@ define(function(require) {
          * Change account action
          *
          * @param {String} value
-         * @param {bool} showRoles
+         * @param {Boolean} showRoles
          * @private
          */
         _changeAccountAction: function(value, showRoles) {
@@ -148,7 +148,7 @@ define(function(require) {
          * Update account user grid
          *
          * @param {String} value
-         * @param {bool} showRoles
+         * @param {Boolean} showRoles
          * @private
          */
         _updateAccountUserGrid: function(value, showRoles) {

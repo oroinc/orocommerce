@@ -95,14 +95,6 @@ orob2b_account_account_user_role_frontend:
     options:
         frontend: true
 
-orob2b_account_frontend_account_user_datagrid_widget:
-    path: /datagrid/widget/{gridName}
-    defaults: { _controller: OroDataGridBundle:Grid:widget }
-    requirements:
-        gridName: '[\w\:-]+'
-    options:
-        frontend: true
-
 orob2b_frontend_autocomplete_search:
     pattern: /autocomplete/search
     defaults: { _controller: OroFormBundle:Autocomplete:search }

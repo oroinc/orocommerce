@@ -137,8 +137,10 @@ oro_menu_config:
                 position: 10
 
         frontend_configuration_tab:
-            label:           'orob2b.account.menu.frontend_configuration_tab'
-            uri:             '#'
+            label: 'orob2b.account.menu.frontend_configuration_tab'
+            uri: '#'
+            extras:
+                position: 200
 
         frontend_account_user_roles:
              label: 'orob2b.account.menu.frontend_account_user_roles.label'
