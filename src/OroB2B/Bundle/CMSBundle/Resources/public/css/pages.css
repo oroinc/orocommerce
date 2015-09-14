@@ -26,3 +26,7 @@
     list-style: none;
     margin: auto;
 }
+
+.frontend-page-container {
+    padding: 0 20px;
+}

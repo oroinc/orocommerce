@@ -9,6 +9,9 @@ use Symfony\Component\HttpFoundation\Request;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var PriceListRequestHandler */
@@ -173,5 +176,42 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
         $priceList->setCurrencies($currencies);
 
         return $priceList;
+    }
+
+    /**
+     * @param mixed $value
+     * @param bool|int $expected
+     *
+     * @dataProvider priceListIdDataProvider
+     */
+    public function testGetPriceListId($value, $expected)
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Request $request */
+        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $request->expects($this->atLeastOnce())->method('get')->willReturn($value);
+
+        $this->handler->setRequest($request);
+        $this->assertEquals($expected, $this->handler->getPriceListId());
+    }
+
+    /**
+     * @return array
+     */
+    public function priceListIdDataProvider()
+    {
+        return [
+            [true, false],
+            [false, false],
+            ['true', false],
+            ['false', false],
+            [2, true],
+            [1, true],
+            [0, false],
+            [-1, false],
+            ['2', true],
+            ['1', true],
+            ['0', false],
+            ['-1', false],
+        ];
     }
 }

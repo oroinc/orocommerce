@@ -12,7 +12,6 @@ use OroB2B\Bundle\CMSBundle\Entity\Page;
 
 class LoadPageDemoData extends AbstractFixture implements ContainerAwareInterface
 {
-
     /**
      * @var ContainerInterface
      */

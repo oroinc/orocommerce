@@ -1,0 +1,21 @@
+{% extends 'OroB2BFrontendBundle:actions:view.html.twig' %}
+
+{% oro_title_set({params : {"%title%": entity.title}}) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'entityTitle': entity.title
+    } %}
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block stats %}{% endblock stats %}
+
+{% block ownerLink %}{% endblock ownerLink %}
+
+{% block content_data %}
+    <div class="frontend-page-container">
+        {{ entity.content|raw }}
+    </div>
+{% endblock content_data %}
