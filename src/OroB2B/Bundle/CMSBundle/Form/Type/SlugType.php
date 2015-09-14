@@ -11,7 +11,6 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 class SlugType extends AbstractType
 {
@@ -31,7 +30,7 @@ class SlugType extends AbstractType
                 'text',
                 [
                     'label' => 'orob2b.redirect.slug.entity_label',
-                    'constraints' => [new UrlSafe(), new NotBlank()]
+                    'constraints' => [new UrlSafe()]
                 ]
             );
 
@@ -96,7 +95,8 @@ class SlugType extends AbstractType
             'data_class' => null,
             'options' => [],
             'type' => 'create',
-            'current_slug' => ''
+            'current_slug' => '',
+            'parent_slug' => '',
         ]);
     }
 
@@ -107,5 +107,6 @@ class SlugType extends AbstractType
     {
         $view->vars['type'] = $options['type'];
         $view->vars['current_slug'] = $options['current_slug'];
+        $view->vars['parent_slug'] = $options['parent_slug'];
     }
 }

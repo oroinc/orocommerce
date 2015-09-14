@@ -106,7 +106,7 @@ class RequestController extends Controller
      *
      * @return \Symfony\Component\Form\Form
      */
-    public function createCreateForm(RFPRequest $rfpRequest)
+    protected function createCreateForm(RFPRequest $rfpRequest)
     {
         $form = $this->createForm(
             FrontendRequestType::NAME,
@@ -124,7 +124,7 @@ class RequestController extends Controller
      *
      * @return \HTMLPurifier
      */
-    public function getPurifier()
+    protected function getPurifier()
     {
         $purifierConfig = \HTMLPurifier_Config::createDefault();
         $purifierConfig->set('HTML.Allowed', '');
