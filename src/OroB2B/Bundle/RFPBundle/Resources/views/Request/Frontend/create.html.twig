@@ -5,7 +5,7 @@
 {% set formAction = path('orob2b_rfp_request_process') %}
 
 {% block navButtons %}
-    {% set html = UI.saveAndCloseButton() %}
+    {% set html = UI.saveAndCloseButton('orob2b.rfp.btn.create_rfp'|trans) %}
     {{ UI.dropdownSaveButton({'html': html}) }}
 {% endblock navButtons %}
 
