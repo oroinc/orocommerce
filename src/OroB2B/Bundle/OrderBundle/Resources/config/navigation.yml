@@ -29,6 +29,12 @@ oro_menu_config:
                 description:    'orob2b.order.menu.shortcut_new_order.description'
                 isCustomAction: true
 
+        frontend_order_quick_add:
+            label:           'orob2b.order.menu.order_quick_add.label'
+            route:           'orob2b_product_frontend_quick_add'
+            extras:
+                description: 'orob2b.order.menu.order_quick_add.description'
+
     tree:
         application_menu:
             children:
@@ -38,6 +44,7 @@ oro_menu_config:
         frontend_menu:
             children:
                 frontend_orders_list: ~
+                frontend_order_quick_add: ~
 
         shortcuts:
             children:
