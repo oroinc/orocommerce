@@ -1,6 +1,5 @@
 parameters:
     orob2b_account.security.account_user_provider.class: OroB2B\Bundle\AccountBundle\Security\AccountUserProvider
-    orob2b_account.security.account_user_role_provider.class: OroB2B\Bundle\AccountBundle\Security\AccountUserRoleProvider
 
     orob2b_account.entity.account.class: OroB2B\Bundle\AccountBundle\Entity\Account
     orob2b_account.entity.account_address.class: OroB2B\Bundle\AccountBundle\Entity\AccountAddress
@@ -247,8 +246,8 @@ services:
         class: %orob2b_account.acl.voter.account_user_role.class%
         arguments:
             - @oro_entity.doctrine_helper
-            - @service_container
         calls:
+            - [setContainer, [@service_container]]
             - [setClassName, [%orob2b_account.entity.account_user_role.class%]]
         tags:
             - { name: security.voter, priority: 10 }
@@ -426,12 +425,6 @@ services:
             - "frontend_mostviewed"
         tags:
             - { name: oro_ui.content_provider }
-
-    orob2b_account.security.account_user_role_provider:
-        class: %orob2b_account.security.account_user_role_provider.class%
-        arguments: [ @oro_security.security_facade ]
-        calls:
-            - [ setAccountUserRoleClass, [ %orob2b_account.entity.account_user_role.class% ]]
 
     orob2b_account.account_delete_handler:
         class: %orob2b_account.account_delete_handler.class%

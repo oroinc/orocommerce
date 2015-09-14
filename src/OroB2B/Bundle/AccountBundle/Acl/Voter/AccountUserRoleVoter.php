@@ -3,16 +3,16 @@
 namespace OroB2B\Bundle\AccountBundle\Acl\Voter;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Security\Acl\Permission\BasicPermissionMap;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Security\AccountUserRoleProvider;
 
 class AccountUserRoleVoter extends AbstractEntityVoter
 {
@@ -43,17 +43,10 @@ class AccountUserRoleVoter extends AbstractEntityVoter
     protected $container;
 
     /**
-     * @var AccountUserRoleProvider
-     */
-    protected $accountUserRoleProvider;
-
-    /**
-     * @param DoctrineHelper     $doctrineHelper
      * @param ContainerInterface $container
      */
-    public function __construct(DoctrineHelper $doctrineHelper, ContainerInterface $container)
+    public function setContainer(ContainerInterface $container)
     {
-        parent::__construct($doctrineHelper);
         $this->container = $container;
     }
 
@@ -113,7 +106,7 @@ class AccountUserRoleVoter extends AbstractEntityVoter
     protected function getPermissionForAccountRole($type)
     {
         /* @var $user AccountUser */
-        $user = $this->getAccountUserRoleProvider()->getLoggedUser();
+        $user = $this->getLoggedUser();
 
         /** @var Account $account */
         $account = $this->object->getAccount();
@@ -126,10 +119,10 @@ class AccountUserRoleVoter extends AbstractEntityVoter
 
         switch ($type) {
             case self::VIEW:
-                $isGranted = $this->getAccountUserRoleProvider()->isGrantedViewAccountUserRole();
+                $isGranted = $this->isGrantedViewAccountUserRole();
                 break;
             case self::UPDATE:
-                $isGranted = $this->getAccountUserRoleProvider()->isGrantedUpdateAccountUserRole();
+                $isGranted = $this->isGrantedUpdateAccountUserRole();
                 break;
         }
 
@@ -141,15 +134,48 @@ class AccountUserRoleVoter extends AbstractEntityVoter
     }
 
     /**
-     * @return AccountUserRoleProvider
+     * @return SecurityFacade
      */
-    protected function getAccountUserRoleProvider()
+    protected function getSecurityFacade()
     {
-        if (!$this->accountUserRoleProvider) {
-            $this->accountUserRoleProvider = $this->container
-                ->get('orob2b_account.security.account_user_role_provider');
+        return $this->container->get('oro_security.security_facade');
+    }
+
+    /**
+     * @return AccountUser|null
+     */
+    protected function getLoggedUser()
+    {
+        return $this->getSecurityFacade()->getLoggedUser();
+    }
+
+    /**
+     * @return boolean
+     */
+    protected function isGrantedUpdateAccountUserRole()
+    {
+        return $this->isGrantedAccountUserRole(BasicPermissionMap::PERMISSION_EDIT);
+    }
+
+    /**
+     * @return boolean
+     */
+    protected function isGrantedViewAccountUserRole()
+    {
+        return $this->isGrantedAccountUserRole(BasicPermissionMap::PERMISSION_VIEW);
+    }
+
+    /**
+     * @param $permissionMap
+     * @return bool
+     */
+    protected function isGrantedAccountUserRole($permissionMap)
+    {
+        $descriptor = sprintf('entity:%s@%s', AccountUser::SECURITY_GROUP, $this->className);
+        if (!$this->getSecurityFacade()->isGranted($permissionMap, $descriptor)) {
+            return false;
         }
 
-        return $this->accountUserRoleProvider;
+        return true;
     }
 }
