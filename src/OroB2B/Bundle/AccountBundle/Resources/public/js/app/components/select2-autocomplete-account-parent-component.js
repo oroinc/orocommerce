@@ -1,11 +1,11 @@
 define(function(require) {
     'use strict';
 
-    var Select2AutocompleteParentComponent;
+    var Select2AutocompleteAccountParentComponent;
     var _ = require('underscore');
     var Select2AutocompleteComponent = require('oro/select2-autocomplete-component');
 
-    Select2AutocompleteParentComponent = Select2AutocompleteComponent.extend({
+    Select2AutocompleteAccountParentComponent = Select2AutocompleteComponent.extend({
         /**
          * @property {Object}
          */
@@ -18,7 +18,7 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-            Select2AutocompleteParentComponent.__super__.initialize.call(this, options);
+            Select2AutocompleteAccountParentComponent.__super__.initialize.call(this, options);
         },
 
         /**
@@ -29,5 +29,5 @@ define(function(require) {
         }
     });
 
-    return Select2AutocompleteParentComponent;
+    return Select2AutocompleteAccountParentComponent;
 });

@@ -22,7 +22,7 @@ class ParentAccountSelectType extends AbstractType
             [
                 'autocomplete_alias' => 'orob2b_account_parent',
                 'configs' => [
-                    'component' => 'autocomplete-parent',
+                    'component' => 'autocomplete-account-parent',
                     'placeholder' => 'orob2b.account.form.choose_parent'
                 ]
             ]
