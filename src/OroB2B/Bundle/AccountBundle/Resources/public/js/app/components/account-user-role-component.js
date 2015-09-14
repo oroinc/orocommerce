@@ -7,6 +7,7 @@ define(function(require) {
         BaseComponent = require('oroui/js/app/components/base/component'),
         $ = require('jquery'),
         mediator = require('oroui/js/mediator'),
+        _ = require('underscore'),
         __ = require('orotranslation/js/translator'),
         Modal = require('oroui/js/modal');
 
@@ -43,6 +44,9 @@ define(function(require) {
          */
         originalValue: null,
 
+        /**
+         * @inheritDoc
+         */
         initialize: function(options) {
             this.targetElement = $('#' + options.accountFieldId);
             this.appendElement = $('#' + options.appendFieldId);
@@ -58,7 +62,7 @@ define(function(require) {
                     return;
                 }
 
-                var showRoles = !value || self.originalValue == value;
+                var showRoles = !value || self.originalValue === value;
 
                 if (!self.accountChangeConfirmationShown && !showRoles) {
                     setTimeout(function() {
@@ -87,6 +91,13 @@ define(function(require) {
             AccountUserRole.__super__.dispose.call(this);
         },
 
+        /**
+         * Change account action
+         *
+         * @param {String} value
+         * @param {bool} showRoles
+         * @private
+         */
         _changeAccountAction: function(value, showRoles) {
 
             if (this.accountChangeConfirmationShown || showRoles) {
@@ -102,6 +113,12 @@ define(function(require) {
             }
         },
 
+        /**
+         * Show account confirmation dialog
+         *
+         * @param {function()} okCallback
+         * @private
+         */
         _getAccountConfirmDialog: function(okCallback) {
             if (!this.changeAccountConfirmDialog) {
                 this.changeAccountConfirmDialog = this._createChangeAccountConfirmationDialog();
@@ -110,6 +127,12 @@ define(function(require) {
             this.changeAccountConfirmDialog.open();
         },
 
+        /**
+         * Create change account confirmation dialog
+         *
+         * @returns {Modal}
+         * @private
+         */
         _createChangeAccountConfirmationDialog: function() {
             return new Modal({
                 title: __('orob2b.account.account_user_role.change_account_confirmation_title'),
@@ -121,6 +144,13 @@ define(function(require) {
             });
         },
 
+        /**
+         * Update account user grid
+         *
+         * @param {String} value
+         * @param {bool} showRoles
+         * @private
+         */
         _updateAccountUserGrid: function(value, showRoles) {
             if (value) {
                 mediator.trigger('datagrid:setParam:' + this.datagridName, 'newAccount', value);

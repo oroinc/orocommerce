@@ -101,6 +101,7 @@
         'dataBlocks': dataBlocks
     }%}
 
-    {{ parent() }}
+    {% set data = oro_form_process(data, form) %}
+    {{ UI.scrollData(id, data, form) }}
 
 {% endblock content_data %}

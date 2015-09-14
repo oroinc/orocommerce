@@ -60,8 +60,7 @@ class LoadAccountUserRoleData extends AbstractFixture implements DependentFixtur
     {
         $entity = new AccountUserRole();
         $entity->setLabel($roleLabel);
-        $organization = $manager->getRepository('OroOrganizationBundle:Organization')->findOneBy([]);
-        $entity->setOrganization($organization);
+        $entity->setOrganization($this->getDefaultOrganization($manager));
         /** @var Website $website */
         $website = $this->getReference($websiteName);
         $entity->addWebsite($website);
