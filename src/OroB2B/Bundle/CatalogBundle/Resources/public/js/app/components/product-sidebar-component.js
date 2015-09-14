@@ -19,15 +19,21 @@ define(function(require) {
         /**
          * @property {Object}
          */
-        selectedCategoryId: 1,
+        selectedCategoryId: null,
 
         /**
          * @property {Object}
          */
         options: {
+            defaultCategoryId: null,
             sidebarAlias: 'products-sidebar',
             includeSubcategoriesSelector: '.include-sub-categories-choice input[type=checkbox]'
         },
+
+        /**
+         * @property {jQuery.Element}
+         */
+        subcategoriesSelector: null,
 
         /**
          * @param {Object} options
@@ -43,7 +49,8 @@ define(function(require) {
                 this.$tree.on('select_node.jstree', _.bind(this.onCategorySelect, this));
             }, this));
 
-            $(this.options.includeSubcategoriesSelector).on('change', _.bind(this.onIncludeSubcategoriesChange, this))
+            this.subcategoriesSelector = $(this.options.includeSubcategoriesSelector);
+            this.subcategoriesSelector.on('change', _.bind(this.onIncludeSubcategoriesChange, this));
 
             this._fixContainerHeight();
         },
@@ -85,7 +92,7 @@ define(function(require) {
         triggerSidebarChanged: function() {
             var params = {
                 categoryId: this.selectedCategoryId,
-                includeSubcategories: $(this.options.includeSubcategoriesSelector).prop('checked')
+                includeSubcategories: this.subcategoriesSelector.prop('checked')
             };
 
             mediator.trigger(
@@ -101,6 +108,8 @@ define(function(require) {
             this.$tree
                 .off('select_node.jstree')
                 .off('ready.jstree');
+
+            this.subcategoriesSelector.off('change');
 
             ProductSidebarComponent.__super__.dispose.call(this);
         }

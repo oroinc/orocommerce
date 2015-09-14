@@ -4,9 +4,7 @@ namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Handler;
 
 use Symfony\Component\HttpFoundation\Request;
 
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler;
-use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 
 class RequestProductHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -59,11 +57,11 @@ class RequestProductHandlerTest extends \PHPUnit_Framework_TestCase
                 'expected' => false,
             ],
             [
-                'value' => '1',
-                'expected' => 1,
+                'value' => false,
+                'expected' => false,
             ],
             [
-                'value' => false,
+                'value' => true,
                 'expected' => false,
             ],
             [
@@ -80,6 +78,22 @@ class RequestProductHandlerTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'value' => 0,
+                'expected' => false,
+            ],
+            [
+                'value' => -1,
+                'expected' => false,
+            ],
+            [
+                'value' => '1',
+                'expected' => true,
+            ],
+            [
+                'value' => '0',
+                'expected' => false,
+            ],
+            [
+                'value' => '-1',
                 'expected' => false,
             ],
         ];
@@ -133,12 +147,20 @@ class RequestProductHandlerTest extends \PHPUnit_Framework_TestCase
                 'expected' => false,
             ],
             [
+                'value' => -1,
+                'expected' => RequestProductHandler::INCLUDE_SUBCATEGORIES_DEFAULT_VALUE,
+            ],
+            [
                 'value' => '1',
                 'expected' => true,
             ],
             [
                 'value' => '0',
                 'expected' => false,
+            ],
+            [
+                'value' => '-1',
+                'expected' => RequestProductHandler::INCLUDE_SUBCATEGORIES_DEFAULT_VALUE,
             ],
             [
                 'value' => null,

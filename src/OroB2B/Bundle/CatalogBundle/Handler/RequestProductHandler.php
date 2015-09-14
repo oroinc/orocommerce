@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Handler;
 
-use Doctrine\Common\Persistence\ObjectManager;
-
 use Symfony\Component\HttpFoundation\Request;
 
 class RequestProductHandler
@@ -12,7 +10,7 @@ class RequestProductHandler
     const INCLUDE_SUBCATEGORIES_KEY = 'includeSubcategories';
     const INCLUDE_SUBCATEGORIES_DEFAULT_VALUE = true;
 
-    /** @var  Request|null */
+    /** @var Request|null */
     protected $request;
 
     /**
@@ -60,6 +58,7 @@ class RequestProductHandler
             FILTER_VALIDATE_BOOLEAN,
             FILTER_NULL_ON_FAILURE
         );
+
         if (null === $value) {
             return self::INCLUDE_SUBCATEGORIES_DEFAULT_VALUE;
         }
