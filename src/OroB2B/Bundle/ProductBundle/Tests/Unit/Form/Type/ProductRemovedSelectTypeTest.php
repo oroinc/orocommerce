@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -73,7 +72,10 @@ class ProductRemovedSelectTypeTest extends FormIntegrationTestCase
                     static::assertArrayHasKey('autocomplete_alias', $options);
                     static::assertArrayHasKey('create_form_route', $options);
                     static::assertArrayHasKey('configs', $options);
-                    static::assertEquals('orob2b_pricing_price_list_aware_products_list', $options['autocomplete_alias']);
+                    static::assertEquals(
+                        'orob2b_pricing_price_list_aware_products_list',
+                        $options['autocomplete_alias']
+                    );
                     static::assertEquals('orob2b_product_create', $options['create_form_route']);
                     static::assertEquals(
                         ['placeholder' => 'orob2b.product.form.choose'],
