@@ -120,6 +120,8 @@ class RequestControllerTest extends WebTestCase
 
     /**
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function indexProvider()
     {
