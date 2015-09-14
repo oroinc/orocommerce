@@ -7,6 +7,7 @@ use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Permission\BasicPermissionMap;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
+use Oro\Bundle\EntityBundle\Exception\NotManageableEntityException;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
@@ -94,6 +95,28 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $this->voter->supportsAttribute($attribute));
     }
 
+    public function testNotManageableEntityException()
+    {
+        $object = new \stdClass();
+        $class = get_class($object);
+
+        /* @var $token TokenInterface|\PHPUnit_Framework_MockObject_MockObject */
+        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token->expects($this->any())
+            ->method('getUser')
+            ->willReturn($this->getAccountUser(1))
+        ;
+
+        $this->doctrineHelper->expects($this->any())
+            ->method('getSingleEntityIdentifier')
+            ->will($this->throwException(new NotManageableEntityException($class)));
+
+        $this->assertEquals(
+            AccountVoter::ACCESS_ABSTAIN,
+            $this->voter->vote($token, $object, [])
+        );
+    }
+
     /**
      * @param array $inputData
      * @param int $expectedResult
@@ -103,7 +126,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
     public function testVote(array $inputData, $expectedResult)
     {
         $object = $inputData['object'];
-        $class  = get_class($object);
+        $class  = is_object($object) ? get_class($object) : null;
 
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityClass')
@@ -201,11 +224,11 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
     public function voteProvider()
     {
         return [
-            '!Entity' => [
+            '!AccountUser' => [
                 'input' => [
-                    'objectId'      => 1,
-                    'object'        => new \stdClass(),
-                    'user'          => null,
+                    'objectId'      => 2,
+                    'object'        => $this->getObject(2),
+                    'user'          => new \stdClass(),
                     'attributes'    => [],
                     'grantedViewBasic' => null,
                     'grantedViewLocal' => null,
@@ -217,11 +240,27 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
                 ],
                 'expected' => AccountVoter::ACCESS_ABSTAIN,
             ],
-            '!AccountUser' => [
+            '!Entity' => [
                 'input' => [
-                    'objectId'      => 2,
-                    'object'        => $this->getObject(2),
-                    'user'          => new \stdClass(),
+                    'objectId'      => null,
+                    'object'        => null,
+                    'user'          => $this->getAccountUser(1),
+                    'attributes'    => [],
+                    'grantedViewBasic' => null,
+                    'grantedViewLocal' => null,
+                    'grantedEditBasic' => null,
+                    'grantedEditLocal' => null,
+                    'isGranted'        => null,
+                    'isGrantedAttr'    => null,
+                    'isGrantedDescr'   => null,
+                ],
+                'expected' => AccountVoter::ACCESS_ABSTAIN,
+            ],
+            'Entity is !object' => [
+                'input' => [
+                    'objectId'      => null,
+                    'object'        => 'string',
+                    'user'          => $this->getAccountUser(1),
                     'attributes'    => [],
                     'grantedViewBasic' => null,
                     'grantedViewLocal' => null,
