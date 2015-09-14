@@ -68,6 +68,7 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $repo->expects($this->once())->method('find')->with($catId)->willReturn($category);
+        $repo->expects($this->any())->method('getChildrenIds')->with($category)->willReturn($childrenIds);
         $this->doctrine->expects($this->once())->method('getRepository')->with(self::DATA_CLASS)->willReturn($repo);
 
         /** @var $config DatagridConfiguration|\PHPUnit_Framework_MockObject_MockObject */
@@ -89,7 +90,6 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('offsetSetByPath')
             ->with(DatasourceBindParametersListener::DATASOURCE_BIND_PARAMETERS_PATH, [self::CATEGORY_ID_ALIAS]);
 
-//        $repo->expects($this->once())->method('getChildrenIds')->with($category)->willReturn($childrenIds);
 
         $this->productDatagridListener->onPreBuild($this->event);
     }
