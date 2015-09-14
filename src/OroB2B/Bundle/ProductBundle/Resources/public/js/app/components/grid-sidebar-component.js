@@ -89,7 +89,10 @@ define(function(require) {
          */
         onSidebarChange: function(data) {
             var params = _.extend(this._getQueryParamsFromUrl(location.search), data.params);
-            var widgetParams = _.extend(this.options.widgetRouteParameters, params);
+            var widgetParams = _.extend(
+                _.omit(this.options.widgetRouteParameters, this.options.gridParam),
+                params
+            );
             var self = this;
 
             this._pushState(params);
