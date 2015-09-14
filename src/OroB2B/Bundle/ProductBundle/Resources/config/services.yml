@@ -20,6 +20,8 @@ parameters:
     orob2b_product.processor.data_storage_aware.class: OroB2B\Bundle\ProductBundle\Model\DataStorageAwareProcessor
     orob2b_product.form_handler.quick_add.class: OroB2B\Bundle\ProductBundle\Form\Handler\QuickAddHandler
 
+    orob2b_product.event_listener.product_grid_widget.class: OroB2B\Bundle\ProductBundle\EventListener\ProductGridWidgetRenderEventListener
+
 services:
     orob2b_product.form.product:
         class: Symfony\Component\Form\Form
@@ -135,3 +137,10 @@ services:
             - @translator
             - @form.factory
             - @orob2b_product.component_processor.registry
+
+    orob2b_product.event_listener.product_grid_widget:
+        class: %orob2b_product.event_listener.product_grid_widget.class%
+        arguments:
+            - @oro_datagrid.datagrid.request_parameters_factory
+        tags:
+            - { name: kernel.event_listener, event: product_grid.render, method: onWidgetRender }
