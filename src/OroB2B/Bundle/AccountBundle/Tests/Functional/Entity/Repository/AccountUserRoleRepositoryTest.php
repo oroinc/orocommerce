@@ -120,7 +120,8 @@ class AccountUserRoleRepositoryTest extends WebTestCase
                     LoadAccountUserRoleData::ROLE_WITH_ACCOUNT,
                     LoadAccountUserRoleData::ROLE_WITH_ACCOUNT_USER,
                     LoadAccountUserRoleData::ROLE_WITH_WEBSITE,
-                    LoadAccountUserRoleData::ROLE_WITHOUT_USER_AND_WEBSITE
+                    LoadAccountUserRoleData::ROLE_WITHOUT_USER_AND_WEBSITE,
+                    LoadAccountUserRoleData::ROLE_WITHOUT_ACCOUNT
                 ]
             ],
             'user from account without custom roles' => [
@@ -128,7 +129,8 @@ class AccountUserRoleRepositoryTest extends WebTestCase
                 [
                     LoadAccountUserRoleData::ROLE_WITH_ACCOUNT_USER,
                     LoadAccountUserRoleData::ROLE_WITH_WEBSITE,
-                    LoadAccountUserRoleData::ROLE_WITHOUT_USER_AND_WEBSITE
+                    LoadAccountUserRoleData::ROLE_WITHOUT_USER_AND_WEBSITE,
+                    LoadAccountUserRoleData::ROLE_WITHOUT_ACCOUNT
                 ]
             ]
         ];
