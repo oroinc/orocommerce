@@ -6,6 +6,8 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
@@ -78,8 +80,7 @@ class LoadAccountUserRoleData extends AbstractFixture implements DependentFixtur
     {
         $entity = new AccountUserRole();
         $entity->setLabel($roleLabel);
-        $organization = $manager->getRepository('OroOrganizationBundle:Organization')->findOneBy([]);
-        $entity->setOrganization($organization);
+        $entity->setOrganization($this->getDefaultOrganization($manager));
         /** @var AccountUser $accountUser */
         $accountUser = $this->getReference($accountUser);
         $accountUser->addRole($entity);
@@ -116,9 +117,8 @@ class LoadAccountUserRoleData extends AbstractFixture implements DependentFixtur
     protected function loadRoleWithoutUserAndWebsite(ObjectManager $manager, $roleLabel)
     {
         $entity = new AccountUserRole();
-        $organization = $manager->getRepository('OroOrganizationBundle:Organization')->findOneBy([]);
         $entity->setLabel($roleLabel);
-        $entity->setOrganization($organization);
+        $entity->setOrganization($this->getDefaultOrganization($manager));
         $this->setReference($entity->getLabel(), $entity);
 
         $manager->persist($entity);
@@ -132,7 +132,16 @@ class LoadAccountUserRoleData extends AbstractFixture implements DependentFixtur
     {
         $entity = new AccountUserRole();
         $entity->setLabel($roleLabel);
-
+        $entity->setOrganization($this->getDefaultOrganization($manager));
         $manager->persist($entity);
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @return Organization|null
+     */
+    protected function getDefaultOrganization($manager)
+    {
+        return $manager->getRepository('OroOrganizationBundle:Organization')->findOneBy([]);
     }
 }
