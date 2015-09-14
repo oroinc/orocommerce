@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -15,6 +14,7 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
 use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitHolderType;
@@ -48,9 +48,22 @@ class ProductUnitRemovedSelectionTypeTest extends FormIntegrationTestCase
             })
         ;
 
-        $this->formType = new ProductUnitRemovedSelectionType();
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter $productUnitLabelFormatter */
+        $productUnitLabelFormatter = $this->getMockBuilder(
+            'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
+        )
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+        $productUnitLabelFormatter
+            ->expects(static::any())
+            ->method('formatChoices')
+            ->willReturnCallback(function ($choices) {
+                return $choices;
+            })
+        ;
+        $this->formType = new ProductUnitRemovedSelectionType($productUnitLabelFormatter, $this->translator);
         $this->formType->setEntityClass('OroB2B\Bundle\ProductBundle\Entity\ProductUnit');
-        $this->formType->setTranslator($this->translator);
 
         parent::setUp();
     }
@@ -90,44 +103,24 @@ class ProductUnitRemovedSelectionTypeTest extends FormIntegrationTestCase
         $this->formType->configureOptions($resolver);
     }
 
-    public function testPostSetData()
-    {
-        $formParent = $this->factory->create(new StubProductUnitHolderType(), $this->createProductUnitHolder(1, 'pc'));
-
-        $form = $this->factory->create($this->formType);
-        $form->setParent($formParent);
-
-        $this->formType->postSetData(new FormEvent($form, null));
-
-        static::assertTrue($formParent->has('productUnit'));
-
-        $config = $formParent->get('productUnit')->getConfig();
-
-        static::assertEquals(ProductUnitSelectionType::NAME, $config->getType()->getName());
-        $options = $config->getOptions();
-
-        static::assertEquals(false, $options['disabled']);
-        static::assertEquals(false, $options['compact']);
-    }
-
     /**
      * @param ProductUnitHolderInterface $productUnitHolder
      * @param array $expectedData
      *
      * @dataProvider preSetDataProvider
      */
-    public function testPreSetData(ProductUnitHolderInterface $productUnitHolder = null, array $expectedData = [])
+    public function testFinishView(ProductUnitHolderInterface $productUnitHolder = null, array $expectedData = [])
     {
         $formParent = $this->factory->create(new StubProductUnitHolderType(), $productUnitHolder);
 
         $form = $this->factory->create($this->formType);
         $form->setParent($formParent);
 
-        $this->formType->preSetData(new FormEvent($form, $productUnitHolder));
-        $options = $formParent->get('productUnit')->getConfig()->getOptions();
+        $view = $form->createView();
+        $this->formType->finishView($view, $form, $form->getConfig()->getOptions());
 
         foreach ($expectedData as $field => $value) {
-            static::assertEquals($value, $options[$field]);
+            static::assertEquals($value, $view->vars[$field]);
         }
     }
 
@@ -171,7 +164,6 @@ class ProductUnitRemovedSelectionTypeTest extends FormIntegrationTestCase
                 'expectedData' => [
                     'empty_value' => 'orob2b.product.productunit.removed:sku',
                     'required' => true,
-                    'choices' => ['code']
                 ],
             ],
             'deleted product' => [

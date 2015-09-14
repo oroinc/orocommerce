@@ -47,6 +47,7 @@ class ProductUnitRemovedSelectionType extends AbstractType
 
     /**
      * @param ProductUnitLabelFormatter $productUnitFormatter
+     * @param TranslatorInterface $translator
      */
     public function __construct(ProductUnitLabelFormatter $productUnitFormatter, TranslatorInterface $translator)
     {
@@ -97,13 +98,13 @@ class ProductUnitRemovedSelectionType extends AbstractType
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        $form = $form->getParent();
-        if (!$form) {
+        $formParent = $form->getParent();
+        if (!$formParent) {
             return;
         }
 
         /* @var $productUnitHolder ProductUnitHolderInterface */
-        $productUnitHolder = $form ? $form->getData() : null;
+        $productUnitHolder = $formParent->getData();
 
         if (!$productUnitHolder || !$productUnitHolder->getEntityIdentifier()) {
             return;
