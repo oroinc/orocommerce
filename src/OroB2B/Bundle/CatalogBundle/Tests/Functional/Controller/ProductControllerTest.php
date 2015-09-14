@@ -23,8 +23,8 @@ class ProductControllerTest extends WebTestCase
     /**
      * @dataProvider viewDataProvider
      *
-     * @param $includeSubcategories
-     * @param $expectedCount
+     * @param bool $includeSubcategories
+     * @param int $expectedCount
      */
     public function testView($includeSubcategories, $expectedCount)
     {
