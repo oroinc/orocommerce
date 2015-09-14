@@ -13,12 +13,16 @@ OroB2B\Bundle\RFPBundle\Entity\Request:
             - Email: ~
             - Length:
                 max: 255
+        phone:
+            - NotBlank: ~
         body:
             - NotBlank: ~
         company:
+            - NotBlank: ~
             - Length:
                 max: 255
         role:
+            - NotBlank: ~
             - Length:
                 max: 255
         requestProducts:
