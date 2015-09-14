@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\AccountBundle\Form\Type;
 
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class AccountUserRoleType extends AbstractAccountUserRoleType
 {

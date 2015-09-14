@@ -8,6 +8,7 @@ use Symfony\Component\Form\FormView;
 
 use Oro\Bundle\SecurityBundle\Form\Type\AclAccessLevelSelectorType;
 
+use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType;
 
 class AclAccessLevelSelectorExtension extends AbstractTypeExtension
@@ -50,7 +51,10 @@ class AclAccessLevelSelectorExtension extends AbstractTypeExtension
             return;
         }
 
-        if ($roleForm->getConfig()->getType()->getName() === AccountUserRoleType::NAME) {
+        if (in_array(
+            $roleForm->getConfig()->getType()->getName(),
+            [AccountUserRoleType::NAME, FrontendAccountUserRoleType::NAME]
+        )) {
             $view->vars['translation_prefix'] = 'orob2b.account.security.access-level.';
         }
     }
