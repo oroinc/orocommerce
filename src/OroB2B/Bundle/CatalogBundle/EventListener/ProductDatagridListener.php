@@ -41,7 +41,6 @@ class ProductDatagridListener
         if (!$categoryId) {
             return;
         }
-        $includeSubcategoriesChoice = $this->requestProductHandler->getIncludeSubcategoriesChoice();
 
         /** @var CategoryRepository $repo */
         $repo = $this->doctrine->getRepository($this->dataClass);
@@ -50,27 +49,24 @@ class ProductDatagridListener
         if (!$category) {
             return;
         }
+
+        $includeSubcategoriesChoice = $this->requestProductHandler->getIncludeSubcategoriesChoice();
+        $productCategoryIds = [$categoryId];
         if ($includeSubcategoriesChoice) {
-            $productCategoryIds = array_merge($repo->getChildrenIds($category), [$categoryId]);
-        } else {
-            $productCategoryIds = $categoryId;
+            $productCategoryIds = array_merge($repo->getChildrenIds($category), $productCategoryIds);
         }
         $this->filterDatagridByCategoryIds($event, $productCategoryIds);
     }
 
     /**
      * @param PreBuild $event
-     * @param array|int $productCategoryIds
+     * @param array $productCategoryIds
      */
     protected function filterDatagridByCategoryIds(PreBuild $event, $productCategoryIds)
     {
         $config = $event->getConfig();
-        if (is_array($productCategoryIds)) {
-            $where = 'productCategory.id = :productCategoryIds';
-        } else {
-            $where = 'productCategory.id IN (:productCategoryIds)';
-        }
-        $config->offsetSetByPath('[source][query][where][and]', [$where]);
+
+        $config->offsetSetByPath('[source][query][where][and]', ['productCategory.id IN (:productCategoryIds)']);
         $config->offsetSetByPath(
             DatasourceBindParametersListener::DATASOURCE_BIND_PARAMETERS_PATH,
             ['productCategoryIds']

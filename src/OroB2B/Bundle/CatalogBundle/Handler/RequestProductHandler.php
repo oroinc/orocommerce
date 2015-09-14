@@ -2,12 +2,18 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Handler;
 
+use Doctrine\Common\Persistence\ObjectManager;
+
 use Symfony\Component\HttpFoundation\Request;
+
+use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class RequestProductHandler
 {
     const CATEGORY_ID_KEY = 'categoryId';
     const INCLUDE_SUBCATEGORIES_KEY = 'includeSubcategories';
+    const INCLUDE_SUBCATEGORIES_DEFAULT_VALUE = true;
 
     /** @var  Request|null */
     protected $request;
@@ -38,9 +44,18 @@ class RequestProductHandler
     public function getIncludeSubcategoriesChoice()
     {
         if (!$this->request) {
-            return false;
+            return self::INCLUDE_SUBCATEGORIES_DEFAULT_VALUE;
         }
 
-        return filter_var($this->request->get(self::INCLUDE_SUBCATEGORIES_KEY), FILTER_VALIDATE_BOOLEAN);
+        $value = filter_var(
+            $this->request->get(self::INCLUDE_SUBCATEGORIES_KEY, self::INCLUDE_SUBCATEGORIES_DEFAULT_VALUE),
+            FILTER_VALIDATE_BOOLEAN,
+            FILTER_NULL_ON_FAILURE
+        );
+        if (null === $value) {
+            return self::INCLUDE_SUBCATEGORIES_DEFAULT_VALUE;
+        }
+
+        return $value;
     }
 }

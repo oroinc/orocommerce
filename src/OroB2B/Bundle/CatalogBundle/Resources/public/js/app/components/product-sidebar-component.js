@@ -85,7 +85,7 @@ define(function(require) {
         triggerSidebarChanged: function() {
             var params = {
                 categoryId: this.selectedCategoryId,
-                includeSubCategories: $(this.options.includeSubcategoriesSelector).val()
+                includeSubcategories: $(this.options.includeSubcategoriesSelector).prop('checked')
             };
 
             mediator.trigger(
