@@ -79,7 +79,7 @@ define(function(require) {
 
             mediator.trigger(
                 'grid-sidebar:change:' + this.options.sidebarAlias,
-                {widgetReload: Boolean(true), params: params}
+                {params: params}
             );
         },
 
