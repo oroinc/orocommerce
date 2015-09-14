@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Twig;
 
+use Symfony\Bridge\Twig\Tests\Extension\Fixtures\StubTranslator;
+
 use OroB2B\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;
 use OroB2B\Bundle\CatalogBundle\Twig\CategoryExtension;
 
@@ -13,6 +15,11 @@ class CategoryExtensionTest extends \PHPUnit_Framework_TestCase
     protected $categoryTreeHandler;
 
     /**
+     * @var StubTranslator
+     */
+    protected $translator;
+
+    /**
      * @var CategoryExtension
      */
     protected $extension;
@@ -22,7 +29,10 @@ class CategoryExtensionTest extends \PHPUnit_Framework_TestCase
         $this->categoryTreeHandler = $this->getMockBuilder('OroB2B\Bundle\CatalogBundle\JsTree\CategoryTreeHandler')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->extension = new CategoryExtension($this->categoryTreeHandler);
+
+        $this->translator = new StubTranslator();
+
+        $this->extension = new CategoryExtension($this->categoryTreeHandler, $this->translator);
     }
 
     public function testGetName()
@@ -48,12 +58,14 @@ class CategoryExtensionTest extends \PHPUnit_Framework_TestCase
     public function testGetCategoryList()
     {
         $tree = [
-            'id' => 1,
-            'parent' => '#',
-            'text' => 'Master catalog',
-            'state' => [
-                'opened' => true
-            ]
+            [
+                'id' => 1,
+                'parent' => '#',
+                'text' => 'Master catalog',
+                'state' => [
+                    'opened' => true,
+                ],
+            ],
         ];
 
         $this->categoryTreeHandler->expects($this->once())
@@ -61,6 +73,27 @@ class CategoryExtensionTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($tree));
 
         $result = $this->extension->getCategoryList();
+        $this->assertEquals($tree, $result);
+    }
+
+    public function testGetCategoryListWithRootLabel()
+    {
+        $tree = [
+            [
+                'id' => 1,
+                'parent' => '#',
+                'text' => '[trans]orob2b.catalog.frontend.category.master_category.label[/trans]',
+                'state' => [
+                    'opened' => true,
+                ],
+            ],
+        ];
+
+        $this->categoryTreeHandler->expects($this->once())
+            ->method('createTree')
+            ->will($this->returnValue($tree));
+
+        $result = $this->extension->getCategoryList('orob2b.catalog.frontend.category.master_category.label');
         $this->assertEquals($tree, $result);
     }
 }

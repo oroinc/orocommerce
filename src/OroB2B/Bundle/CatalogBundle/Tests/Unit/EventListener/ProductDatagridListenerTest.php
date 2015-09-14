@@ -48,20 +48,31 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider childrenIdsDataProvider
      *
+     * @param int $catId
+     * @param boolean $includeSubcategoriesChoice
      * @param array $childrenIds
+     * @param array $expectedParameters
      */
-    public function testOnPreBuild(array $childrenIds)
-    {
-        $catId = 1;
+    public function testOnPreBuild(
+        $catId,
+        $includeSubcategoriesChoice,
+        array $childrenIds,
+        array $expectedParameters = []
+    ) {
         $category = new Category();
         $this->requestProductHandler->expects($this->once())->method('getCategoryId')->willReturn($catId);
+        $this->requestProductHandler
+            ->expects($this->once())
+            ->method('getIncludeSubcategoriesChoice')
+            ->willReturn($includeSubcategoriesChoice);
 
         /** @var CategoryRepository|\PHPUnit_Framework_MockObject_MockObject $repo */
         $repo = $this->getMockBuilder('OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $repo->expects($this->once())->method('find')->with($catId)->willReturn($category);
-        $repo->expects($this->once())->method('getChildrenIds')->with($category)->willReturn($childrenIds);
+        $repo->expects($includeSubcategoriesChoice ? $this->once() : $this->never())
+            ->method('getChildrenIds')->with($category)->willReturn($childrenIds);
         $this->doctrine->expects($this->once())->method('getRepository')->with(self::DATA_CLASS)->willReturn($repo);
 
         /** @var $config DatagridConfiguration|\PHPUnit_Framework_MockObject_MockObject */
@@ -69,11 +80,8 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->event->expects($this->once())->method('getConfig')->willReturn($config);
-        /** @var ParameterBag|\PHPUnit_Framework_MockObject_MockObject $params */
-        $params = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\ParameterBag');
-        $params->expects($this->once())
-            ->method('set')
-            ->with('productCategoryIds', array_merge($childrenIds, [$catId]));
+
+        $params = new ParameterBag();
         $this->event->expects($this->once())->method('getParameters')->willReturn($params);
 
         $config->expects($this->at(0))
@@ -82,7 +90,10 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $config->expects($this->at(1))
             ->method('offsetSetByPath')
             ->with(DatasourceBindParametersListener::DATASOURCE_BIND_PARAMETERS_PATH, [self::CATEGORY_ID_ALIAS]);
+
+
         $this->productDatagridListener->onPreBuild($this->event);
+        $this->assertEquals($expectedParameters, $params->all());
     }
 
     /**
@@ -91,8 +102,24 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
     public function childrenIdsDataProvider()
     {
         return [
-            ['withChildren' => [2, 3]],
-            ['withoutChildren' => []],
+            [
+                'catId' => 1,
+                'includeSubcategories' => true,
+                'childrenIds' => [2, 3],
+                'expectedParameters' => ['productCategoryIds' => [2, 3, 1]]
+            ],
+            [
+                'catId' => 1,
+                'includeSubcategories' => true,
+                'childrenIds' => [],
+                'expectedParameters' => ['productCategoryIds' => [1]]
+            ],
+            [
+                'catId' => 1,
+                'includeSubcategories' => false,
+                'childrenIds' => [],
+                'expectedParameters' => ['productCategoryIds' => [1]]
+            ],
         ];
     }
 

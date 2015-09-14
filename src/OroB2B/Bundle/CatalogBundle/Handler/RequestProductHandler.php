@@ -7,8 +7,10 @@ use Symfony\Component\HttpFoundation\Request;
 class RequestProductHandler
 {
     const CATEGORY_ID_KEY = 'categoryId';
+    const INCLUDE_SUBCATEGORIES_KEY = 'includeSubcategories';
+    const INCLUDE_SUBCATEGORIES_DEFAULT_VALUE = true;
 
-    /** @var  Request|null */
+    /** @var Request|null */
     protected $request;
 
     /**
@@ -40,5 +42,27 @@ class RequestProductHandler
         }
 
         return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIncludeSubcategoriesChoice()
+    {
+        if (!$this->request) {
+            return self::INCLUDE_SUBCATEGORIES_DEFAULT_VALUE;
+        }
+
+        $value = filter_var(
+            $this->request->get(self::INCLUDE_SUBCATEGORIES_KEY, self::INCLUDE_SUBCATEGORIES_DEFAULT_VALUE),
+            FILTER_VALIDATE_BOOLEAN,
+            FILTER_NULL_ON_FAILURE
+        );
+
+        if (null === $value) {
+            return self::INCLUDE_SUBCATEGORIES_DEFAULT_VALUE;
+        }
+
+        return $value;
     }
 }

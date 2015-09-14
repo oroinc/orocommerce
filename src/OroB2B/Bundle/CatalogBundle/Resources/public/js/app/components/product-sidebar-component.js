@@ -1,7 +1,8 @@
 define(function(require) {
     'use strict';
 
-    var TreeViewComponent;
+    var ProductSidebarComponent;
+    var $ = require('jquery');
     var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
     var BasicTreeComponent = require('orob2bcatalog/js/app/components/basic-tree-component');
@@ -12,29 +13,44 @@ define(function(require) {
      *
      * @export orob2bcatalog/js/app/components/tree-manage-component
      * @extends orob2bcatalog.app.components.BasicTreeComponent
-     * @class orob2bcatalog.app.components.TreeViewComponent
+     * @class orob2bcatalog.app.components.ProductSidebarComponent
      */
-    TreeViewComponent = BasicTreeComponent.extend({
+    ProductSidebarComponent = BasicTreeComponent.extend({
+        /**
+         * @property {Object}
+         */
+        selectedCategoryId: null,
+
         /**
          * @property {Object}
          */
         options: {
-            sidebarAlias: 'products-sidebar'
+            defaultCategoryId: null,
+            sidebarAlias: 'products-sidebar',
+            includeSubcategoriesSelector: '.include-sub-categories-choice input[type=checkbox]'
         },
+
+        /**
+         * @property {jQuery.Element}
+         */
+        subcategoriesSelector: null,
 
         /**
          * @param {Object} options
          */
         initialize: function(options) {
-            TreeViewComponent.__super__.initialize.call(this, options);
+            ProductSidebarComponent.__super__.initialize.call(this, options);
             if (!this.$tree) {
                 return;
             }
 
             this.$tree.on('ready.jstree', _.bind(function() {
                 this.$tree.jstree('select_node', Number(options.defaultCategoryId));
-                this.$tree.on('select_node.jstree', _.bind(this.onSelect, this));
+                this.$tree.on('select_node.jstree', _.bind(this.onCategorySelect, this));
             }, this));
+
+            this.subcategoriesSelector = $(this.options.includeSubcategoriesSelector);
+            this.subcategoriesSelector.on('change', _.bind(this.onIncludeSubcategoriesChange, this));
 
             this._fixContainerHeight();
         },
@@ -61,20 +77,22 @@ define(function(require) {
          * @param {Object} node
          * @param {Object} selected
          */
-        onSelect: function(node, selected) {
+        onCategorySelect: function(node, selected) {
             if (this.initialization) {
                 return;
             }
-
-            this.triggerSidebarChanged(selected);
+            this.selectedCategoryId = selected.node.id;
+            this.triggerSidebarChanged();
         },
 
-        /**
-         * @param {Object} selected
-         */
-        triggerSidebarChanged: function(selected) {
+        onIncludeSubcategoriesChange: function() {
+            this.triggerSidebarChanged();
+        },
+
+        triggerSidebarChanged: function() {
             var params = {
-                categoryId: selected.node.id
+                categoryId: this.selectedCategoryId,
+                includeSubcategories: this.subcategoriesSelector.prop('checked')
             };
 
             mediator.trigger(
@@ -91,9 +109,11 @@ define(function(require) {
                 .off('select_node.jstree')
                 .off('ready.jstree');
 
-            TreeViewComponent.__super__.dispose.call(this);
+            this.subcategoriesSelector.off('change');
+
+            ProductSidebarComponent.__super__.dispose.call(this);
         }
     });
 
-    return TreeViewComponent;
+    return ProductSidebarComponent;
 });

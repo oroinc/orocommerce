@@ -4,7 +4,8 @@
         'defaultCategoryId': defaultCategoryId
     } %}
     <label>{{ 'orob2b.catalog.category.entity_plural_label'|trans }}</label>
-
-    <div data-page-component-module="orob2bcatalog/js/app/components/tree-view-component"
+    
+    <div data-page-component-module="orob2bcatalog/js/app/components/product-sidebar-component"
          data-page-component-options="{{ treeOptions|json_encode }}"></div>
+    <div class="sidebar-item include-sub-categories-choice">{{ form_row(includeSubcategoriesForm) }}</div>
 </div>
