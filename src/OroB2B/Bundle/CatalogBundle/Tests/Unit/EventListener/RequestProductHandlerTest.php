@@ -43,37 +43,24 @@ class RequestProductHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
 
+    /**
+     * @return array
+     */
     public function getCategoryIdDataProvider()
     {
         return [
-            [
-                'value' => null,
-                'expected' => false,
-            ],
-            [
-                'value' => '1',
-                'expected' => 1,
-            ],
-            [
-                'value' => false,
-                'expected' => false,
-            ],
-            [
-                'value' => 'true',
-                'expected' => false,
-            ],
-            [
-                'value' => 'false',
-                'expected' => false,
-            ],
-            [
-                'value' => 1,
-                'expected' => 1,
-            ],
-            [
-                'value' => 0,
-                'expected' => false,
-            ],
+            [true, false],
+            [false, false],
+            ['true', false],
+            ['false', false],
+            [2, true],
+            [1, true],
+            [0, false],
+            [-1, false],
+            ['2', true],
+            ['1', true],
+            ['0', false],
+            ['-1', false],
         ];
     }
 }

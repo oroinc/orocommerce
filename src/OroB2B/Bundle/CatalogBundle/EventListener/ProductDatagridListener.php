@@ -5,14 +5,16 @@ namespace OroB2B\Bundle\CatalogBundle\EventListener;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
-
 use Oro\Bundle\DataGridBundle\EventListener\DatasourceBindParametersListener;
+
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler;
 
 class ProductDatagridListener
 {
+    const SOURCE_QUERY_WHERE_AND = '[source][query][where][and]';
+
     /** @var Registry */
     protected $doctrine;
 
@@ -59,7 +61,7 @@ class ProductDatagridListener
     protected function filterDatagridByCategoryIds(PreBuild $event, $productCategoryIds)
     {
         $config = $event->getConfig();
-        $config->offsetSetByPath('[source][query][where][and]', ['productCategory.id IN (:productCategoryIds)']);
+        $config->offsetSetByPath(self::SOURCE_QUERY_WHERE_AND, ['productCategory.id IN (:productCategoryIds)']);
         $config->offsetSetByPath(
             DatasourceBindParametersListener::DATASOURCE_BIND_PARAMETERS_PATH,
             ['productCategoryIds']
