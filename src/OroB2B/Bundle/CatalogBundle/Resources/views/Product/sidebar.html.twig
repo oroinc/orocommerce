@@ -1,0 +1,10 @@
+<div class="category b2b-tree">
+    {% set treeOptions = {
+        'data' : orob2b_category_list(),
+        'defaultCategoryId': defaultCategoryId
+    } %}
+    <label>{{ 'orob2b.catalog.category.entity_plural_label'|trans }}</label>
+
+    <div data-page-component-module="orob2bcatalog/js/app/components/tree-view-component"
+         data-page-component-options="{{ treeOptions|json_encode }}"></div>
+</div>
