@@ -547,18 +547,19 @@ datagrid:
             skip_acl_check: true
         properties:
             view_link:
-                route:  orob2b_account_account_user_role_frontend_view
+                route:  orob2b_account_frontend_account_user_role_view
             update_link:
-                route: orob2b_account_account_user_role_frontend_update
+                route: orob2b_account_frontend_account_user_role_update
             delete_link:
                 route: orob2b_api_frontend_account_delete_accountuserrole
         actions:
             view:
-                acl_resource:  orob2b_account_account_user_role_frontend_view
+                acl_resource:  orob2b_account_frontend_account_user_role_view
             update:
-                acl_resource:  orob2b_account_account_user_role_frontend_update
+                acl_resource:  orob2b_account_frontend_account_user_role_update
             delete:
-                acl_resource:  orob2b_account_account_user_role_frontend_delete
+                acl_resource:  orob2b_account_frontend_account_user_role_delete
+        action_configuration: [@orob2b_account.datagrid.action_permission_provider, "getAccountUserRolePermission"]
 
     account-account-users-grid-update-basic:
         extends: account-account-users-grid-basic
@@ -707,10 +708,10 @@ datagrid:
     account-account-users-grid-frontend-update:
         extends: account-account-users-grid-update-basic
         source:
-            acl_resource: orob2b_account_account_user_frontend_view
+            acl_resource: orob2b_account_frontend_account_user_view
         properties:
             update_link:
-                route: orob2b_account_account_user_role_frontend_update
+                route: orob2b_account_frontend_account_user_role_update
             delete_link:
                 route: orob2b_api_frontend_account_delete_accountuserrole
 

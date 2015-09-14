@@ -10,7 +10,7 @@
                 translation_prefix ~ 'NONE' :
                 translation_prefix ~ level_label
                 %}
-                {{ label|trans({}, translation_domain) }}
+                {{ label|trans }}
             {% set type = type|default('hidden') %}
             {{ block('form_widget_simple') }}
         </div>

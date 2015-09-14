@@ -18,10 +18,10 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 class AccountUserRoleController extends Controller
 {
     /**
-     * @Route("/", name="orob2b_account_account_user_role_frontend_index")
+     * @Route("/", name="orob2b_account_frontend_account_user_role_index")
      * @Template("OroB2BAccountBundle:AccountUserRole/Frontend:index.html.twig")
      * @Acl(
-     *      id="orob2b_account_account_user_role_frontend_index",
+     *      id="orob2b_account_frontend_account_user_role_index",
      *      type="entity",
      *      class="OroB2BAccountBundle:AccountUserRole",
      *      permission="VIEW",
@@ -37,10 +37,10 @@ class AccountUserRoleController extends Controller
     }
 
     /**
-     * @Route("/view/{id}", name="orob2b_account_account_user_role_frontend_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="orob2b_account_frontend_account_user_role_view", requirements={"id"="\d+"})
      * @Template("OroB2BAccountBundle:AccountUserRole/Frontend:view.html.twig")
      * @Acl(
-     *      id="orob2b_account_account_user_role_frontend_view_action",
+     *      id="orob2b_account_frontend_account_user_role_view_action",
      *      type="entity",
      *      class="OroB2BAccountBundle:AccountUserRole",
      *      permission="FRONTEND_ACCOUNT_ROLE_VIEW",
@@ -64,10 +64,10 @@ class AccountUserRoleController extends Controller
     }
 
     /**
-     * @Route("/create", name="orob2b_account_account_user_role_frontend_create")
+     * @Route("/create", name="orob2b_account_frontend_account_user_role_create")
      * @Template("OroB2BAccountBundle:AccountUserRole/Frontend:update.html.twig")
      * @Acl(
-     *      id="orob2b_account_account_user_role_frontend_create",
+     *      id="orob2b_account_frontend_account_user_role_create",
      *      type="entity",
      *      class="OroB2BAccountBundle:AccountUserRole",
      *      permission="CREATE",
@@ -84,7 +84,7 @@ class AccountUserRoleController extends Controller
     }
 
     /**
-     * @Route("/update/{id}", name="orob2b_account_account_user_role_frontend_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="orob2b_account_frontend_account_user_role_update", requirements={"id"="\d+"})
      * @Template("OroB2BAccountBundle:AccountUserRole/Frontend:update.html.twig")
      * @param AccountUserRole $role
      * @return array
@@ -101,7 +101,7 @@ class AccountUserRoleController extends Controller
                         ->trans('orob2b.account.accountuserrole.frontend.edit-predifined-role.message')
                 );
             }
-            $isGranted = $securityFacade->isGranted('orob2b_account_account_user_role_frontend_create');
+            $isGranted = $securityFacade->isGranted('orob2b_account_frontend_account_user_role_create');
         } else {
             $isGranted = $securityFacade->isGranted('FRONTEND_ACCOUNT_ROLE_UPDATE', $role);
         }
@@ -132,13 +132,14 @@ class AccountUserRoleController extends Controller
             $form,
             function (AccountUserRole $role) {
                 return [
-                    'route' => 'orob2b_account_account_user_role_frontend_update',
+                    'route' => 'orob2b_account_frontend_account_user_role_update',
                     'parameters' => ['id' => $role->getId()]
                 ];
             },
-            function () {
+            function (AccountUserRole $role) {
                 return [
-                    'route' => 'orob2b_account_account_user_role_frontend_index',
+                    'route' => 'orob2b_account_frontend_account_user_role_view',
+                    'parameters' => ['id' => $role->getId()]
                 ];
             },
             $this->get('translator')->trans('orob2b.account.controller.accountuserrole.saved.message'),

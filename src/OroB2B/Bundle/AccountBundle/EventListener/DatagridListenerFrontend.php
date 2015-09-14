@@ -33,7 +33,7 @@ class DatagridListenerFrontend
         /** @var Account $account */
         $account = $this->securityFacade->getLoggedUser() ? $this->securityFacade->getLoggedUser()->getAccount() : null;
 
-        if ($this->securityFacade->isGranted('orob2b_account_account_user_role_frontend_view') && $account) {
+        if ($this->securityFacade->isGranted('orob2b_account_frontend_account_user_role_view') && $account) {
             $andWhere = 'role.account IN (' . $account->getId() . ')';
             $this->addConfigElement($config, '[source][query][where][and]', $andWhere);
 

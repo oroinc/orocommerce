@@ -52,10 +52,10 @@ class AccountUserRoleControllerTest extends WebTestCase
 
     public function testCreate()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_account_user_role_frontend_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_frontend_account_user_role_create'));
 
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['orob2b_account_account_user_role_frontend[label]'] = self::ACCOUNT_ROLE;
+        $form['orob2b_account_frontend_account_user_role[label]'] = self::ACCOUNT_ROLE;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -70,7 +70,7 @@ class AccountUserRoleControllerTest extends WebTestCase
      */
     public function testIndex()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_account_account_user_role_frontend_index'));
+        $this->client->request('GET', $this->getUrl('orob2b_account_frontend_account_user_role_index'));
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -107,17 +107,17 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_account_user_role_frontend_update', ['id' => $id])
+            $this->getUrl('orob2b_account_frontend_account_user_role_update', ['id' => $id])
         );
 
         $form = $crawler->selectButton('Save and Close')->form();
 
         $token = $this->getContainer()->get('security.csrf.token_manager')
-            ->getToken('orob2b_account_account_user_role_frontend')->getValue();
+            ->getToken('orob2b_account_frontend_account_user_role')->getValue();
         $this->client->followRedirects(true);
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), [
             'input_action'        => '',
-            'orob2b_account_account_user_role_frontend' => [
+            'orob2b_account_frontend_account_user_role' => [
                 '_token' => $token,
                 'label' => self::ACCOUNT_UPDATED_ROLE,
                 'appendUsers' => $this->currentUser->getId(),
@@ -154,7 +154,7 @@ class AccountUserRoleControllerTest extends WebTestCase
     {
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_account_user_role_frontend_view', ['id' => $id])
+            $this->getUrl('orob2b_account_frontend_account_user_role_view', ['id' => $id])
         );
 
         $this->assertResponseStatusCodeEquals($this->client->getResponse(), 200);
@@ -184,17 +184,17 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_account_user_role_frontend_update', ['id' => $oldRoleId])
+            $this->getUrl('orob2b_account_frontend_account_user_role_update', ['id' => $oldRoleId])
         );
 
         $form = $crawler->selectButton('Save and Close')->form();
         $token = $this->getContainer()->get('security.csrf.token_manager')
-            ->getToken('orob2b_account_account_user_role_frontend')->getValue();
+            ->getToken('orob2b_account_frontend_account_user_role')->getValue();
 
         $this->client->followRedirects(true);
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), [
             'input_action'        => '',
-            'orob2b_account_account_user_role_frontend' => [
+            'orob2b_account_frontend_account_user_role' => [
                 '_token' => $token,
                 'label' => self::CUSTOMIZED_ROLE,
                 'appendUsers' => $this->currentUser->getId(),

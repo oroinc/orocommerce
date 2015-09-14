@@ -1,17 +1,17 @@
-orob2b_account_account_user_frontend_view:
+orob2b_account_frontend_account_user_view:
     type: entity
     permission: VIEW
     class: OroB2BAccountBundle:AccountUser
     group_name: "commerce"
 
-orob2b_account_account_user_role_frontend_view:
+orob2b_account_frontend_account_user_role_view:
     type: entity
     permission: VIEW
     class: OroB2BAccountBundle:AccountUserRole
     group_name: "commerce"
 
-orob2b_account_account_user_role_frontend_update:
+orob2b_account_frontend_account_user_role_update:
     type: entity
     class: OroB2BAccountBundle:AccountUserRole
-    permission: FRONTEND_ACCOUNT_ROLE_UPDATE
+    permission: EDIT
     group_name: "commerce"

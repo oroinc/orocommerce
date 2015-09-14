@@ -88,7 +88,7 @@ class DatagridListenerFrontendTest extends \PHPUnit_Framework_TestCase
 
         $this->securityFacade->expects($this->once())
             ->method('isGranted')
-            ->with('orob2b_account_account_user_role_frontend_view')
+            ->with('orob2b_account_frontend_account_user_role_view')
             ->willReturn($isGranted);
 
         if ($hasAccount) {

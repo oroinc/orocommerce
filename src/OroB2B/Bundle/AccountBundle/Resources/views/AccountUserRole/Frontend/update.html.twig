@@ -3,15 +3,15 @@
 
 {% form_theme form with 'OroFormBundle:Form:fields.html.twig' %}
 
-{% set formAction = entity.id ? path('orob2b_account_account_user_role_frontend_update', {id: entity.id}) : path('orob2b_account_account_user_role_frontend_create') %}
+{% set formAction = entity.id ? path('orob2b_account_frontend_account_user_role_update', {id: entity.id}) : path('orob2b_account_frontend_account_user_role_create') %}
 
 {% oro_title_set({params : {"%label%": entity.label|default('N/A'|trans), '%entityName%': 'orob2b.account.accountuserrole.entity_label'|trans} }) %}
 
 {% block navButtons %}
-    {% if entity.id and resource_granted('orob2b_account_account_user_role_frontend_delete', entity) and not entity.isPredefined %}
+    {% if entity.id and resource_granted('orob2b_account_frontend_account_user_role_delete', entity) and not entity.isPredefined %}
         {{ UI.deleteButton({
             'dataUrl': path('orob2b_api_frontend_account_delete_accountuserrole', {'id': entity.id}),
-            'dataRedirect': path('orob2b_account_account_user_role_frontend_index'),
+            'dataRedirect': path('orob2b_account_frontend_account_user_role_index'),
             'aCss': 'no-hash remove-button',
             'dataId': entity.id,
             'id': 'btn-remove-attribute',
@@ -19,9 +19,9 @@
         }) }}
         {{ UI.buttonSeparator() }}
     {% endif %}
-    {{ UI.cancelButton(path('orob2b_account_account_user_role_frontend_index')) }}
+    {{ UI.cancelButton(path('orob2b_account_frontend_account_user_role_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or resource_granted('orob2b_account_account_user_role_frontend_update') %}
+    {% if entity.id or resource_granted('orob2b_account_frontend_account_user_role_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
@@ -31,7 +31,7 @@
     {% if entity.id %}
         {% set breadcrumbs = {
             'entity':      entity,
-            'indexPath':   path('orob2b_account_account_user_role_frontend_index'),
+            'indexPath':   path('orob2b_account_frontend_account_user_role_index'),
             'indexLabel': 'orob2b.account.accountuserrole.entity_plural_label'|trans,
             'entityTitle': entity.label|default('N/A'|trans)
         } %}

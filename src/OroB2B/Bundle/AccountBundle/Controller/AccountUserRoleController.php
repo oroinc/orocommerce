@@ -109,9 +109,10 @@ class AccountUserRoleController extends Controller
                     'parameters' => ['id' => $role->getId()]
                 ];
             },
-            function () {
+            function (AccountUserRole $role) {
                 return [
-                    'route' => 'orob2b_account_account_user_role_index',
+                    'route' => 'orob2b_account_account_user_role_view',
+                    'parameters' => ['id' => $role->getId()]
                 ];
             },
             $this->get('translator')->trans('orob2b.account.controller.accountuserrole.saved.message'),

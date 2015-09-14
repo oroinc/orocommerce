@@ -6,9 +6,9 @@
 {% set pageTitle = 'orob2b.account.accountuserrole.entity_plural_label'|trans %}
 
 {% block navButtons %}
-    {% if resource_granted('orob2b_account_account_user_role_frontend_create') %}
+    {% if resource_granted('orob2b_account_frontend_account_user_role_create') %}
         {{ UI.addButton({
-            'path': path('orob2b_account_account_user_role_frontend_create'),
+            'path': path('orob2b_account_frontend_account_user_role_create'),
             'entity_label': 'orob2b.account.accountuserrole.entity_label'|trans
         }) }}
     {% endif %}
