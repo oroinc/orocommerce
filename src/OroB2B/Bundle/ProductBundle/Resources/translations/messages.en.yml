@@ -5,7 +5,7 @@ orob2b:
         entity_description: Represents product information
         id.label: Id
         sku.label: SKU
-        variants.label: Has Variants
+        has_variants.label: Has Variants
         variant_fields.label: Variant Fields
         inventory_status.label: Inventory Status
         visibility.label: Visible to Accounts

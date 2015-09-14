@@ -29,7 +29,7 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
-        if (!$value->hasVariants()) {
+        if (!$value->getHasVariants()) {
             return;
         }
 

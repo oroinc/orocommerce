@@ -54,10 +54,10 @@
 
     {% set generalData = [
         form_row(form.sku),
-        form_row(form.variants)
+        form_row(form.hasVariants)
     ] %}
 
-    {% if entity.hasVariants %}
+    {% if entity.getHasVariants %}
         {% set generalData = generalData|merge([form_row(form.variantFields)]) %}
     {% endif %}
 
@@ -114,7 +114,7 @@
         }] ) %}
     {% endif %}
 
-    {% if entity.hasVariants %}
+    {% if entity.getHasVariants %}
         {% set variantLinksForm = form.variantLinks %}
         {% set dataBlocks = dataBlocks|merge([{
             'title' : 'orob2b.product.sections.productVariants'|trans,

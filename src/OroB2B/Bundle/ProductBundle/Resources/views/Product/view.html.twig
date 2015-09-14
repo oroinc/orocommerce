@@ -81,7 +81,7 @@
         },
     ] %}
 
-    {% if entity.hasVariants %}
+    {% if entity.getHasVariants %}
         {% set dataBlocks = dataBlocks|merge([{
             'title' : 'orob2b.product.sections.productVariants'|trans,
             'subblocks': [{

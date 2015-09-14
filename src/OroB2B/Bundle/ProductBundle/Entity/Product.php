@@ -99,7 +99,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *
      * @ORM\Column(name="has_variants", type="boolean", nullable=false, options={"default"=false})
      */
-    protected $variants = false;
+    protected $hasVariants = false;
 
     /**
      * @var array
@@ -265,18 +265,18 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     /**
      * @return bool
      */
-    public function hasVariants()
+    public function getHasVariants()
     {
-        return $this->variants;
+        return $this->hasVariants;
     }
 
     /**
-     * @param bool $variants
+     * @param bool $hasVariants
      * @return Product
      */
-    public function setVariants($variants)
+    public function setHasVariants($hasVariants)
     {
-        $this->variants = $variants;
+        $this->hasVariants = $hasVariants;
 
         return $this;
     }
@@ -619,7 +619,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
 
-        if (false === $this->variants) {
+        if (false === $this->hasVariants) {
             $this->variantLinks->clear();
             $this->variantFields = [];
         }

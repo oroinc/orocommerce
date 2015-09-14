@@ -37,11 +37,11 @@ class ProductType extends AbstractType
         $builder
             ->add('sku', 'text', ['required' => true, 'label' => 'orob2b.product.sku.label'])
             ->add(
-                'variants',
+                'hasVariants',
                 'checkbox',
                 [
-                    'label' => 'orob2b.product.variants.label',
-                    'tooltip'  => 'orob2b.product.form.tooltip.variants'
+                    'label' => 'orob2b.product.has_variants.label',
+                    'tooltip'  => 'orob2b.product.form.tooltip.has_variants'
                 ]
             )
             ->add(

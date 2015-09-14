@@ -166,7 +166,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
-                    'variants' => true,
+                    'hasVariants' => true,
                     'variantFields' => array_keys($this->exampleCustomFields)
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(),
@@ -185,7 +185,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
-                    'variants' => true,
+                    'hasVariants' => true,
                     'variantFields' => array_keys($this->exampleCustomFields)
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(true),
@@ -207,7 +207,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                         ['text' => 'first description'],
                         ['text' => 'second description'],
                     ],
-                    'variants' => true,
+                    'hasVariants' => true,
                     'variantFields' => array_keys($this->exampleCustomFields)
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(false, true),
@@ -226,7 +226,7 @@ class ProductTypeTest extends FormIntegrationTestCase
         $withNamesAndDescriptions = false
     ) {
         $expectedProduct = new StubProduct();
-        $expectedProduct->setVariants(true);
+        $expectedProduct->setHasVariants(true);
         $expectedProduct->setVariantFields(array_keys($this->exampleCustomFields));
 
         $productUnit = new ProductUnit();

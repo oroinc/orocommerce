@@ -77,7 +77,7 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
     private function prepareProduct(array $variantLinkFields)
     {
         $product = new StubProduct();
-        $product->setVariants(true);
+        $product->setHasVariants(true);
         $product->setVariantFields(array_keys($variantLinkFields[0]));
 
         foreach ($variantLinkFields as $fields) {
