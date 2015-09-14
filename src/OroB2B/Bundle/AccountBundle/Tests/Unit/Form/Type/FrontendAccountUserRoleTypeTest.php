@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleFrontendType;
+use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleType;
 
-class AccountUserRoleFrontendTypeTest extends AbstractAccountUserRoleTypeTest
+class FrontendAccountUserRoleTypeTest extends AbstractAccountUserRoleTypeTest
 {
     /**
      * @inheritdoc
@@ -54,7 +54,7 @@ class AccountUserRoleFrontendTypeTest extends AbstractAccountUserRoleTypeTest
      */
     public function testGetName()
     {
-        $this->assertEquals(AccountUserRoleFrontendType::NAME, $this->formType->getName());
+        $this->assertEquals(FrontendAccountUserRoleType::NAME, $this->formType->getName());
     }
 
     /**
@@ -62,7 +62,7 @@ class AccountUserRoleFrontendTypeTest extends AbstractAccountUserRoleTypeTest
      */
     protected function createAccountUserRoleFormTypeAndSetDataClass()
     {
-        $this->formType = new AccountUserRoleFrontendType();
+        $this->formType = new FrontendAccountUserRoleType();
         $this->formType->setDataClass(self::DATA_CLASS);
     }
 }
