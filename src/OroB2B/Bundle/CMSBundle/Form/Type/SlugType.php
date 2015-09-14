@@ -11,7 +11,6 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 class SlugType extends AbstractType
 {
