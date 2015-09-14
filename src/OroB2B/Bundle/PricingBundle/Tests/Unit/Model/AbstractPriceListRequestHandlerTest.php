@@ -63,6 +63,10 @@ class AbstractPriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
                 'expected' => false
             ],
             [
+                'value' => true,
+                'expected' => true
+            ],
+            [
                 'value' => 'true',
                 'expected' => true
             ],
@@ -76,6 +80,22 @@ class AbstractPriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'value' => 0,
+                'expected' => false
+            ],
+            [
+                'value' => -1,
+                'expected' => false
+            ],
+            [
+                'value' => '1',
+                'expected' => true
+            ],
+            [
+                'value' => '0',
+                'expected' => false
+            ],
+            [
+                'value' => '-1',
                 'expected' => false
             ]
         ];

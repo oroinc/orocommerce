@@ -53,7 +53,7 @@ class PageSlugListener
             return;
         }
 
-        $expectedRoute = 'orob2b_cms_page_view';
+        $expectedRoute = 'orob2b_cms_frontend_page_view';
         $expectedParameters = ['id' => $page->getId()];
 
         foreach ($page->getSlugs() as $slug) {

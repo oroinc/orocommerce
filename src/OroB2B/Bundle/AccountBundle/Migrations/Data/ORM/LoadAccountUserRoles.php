@@ -92,8 +92,8 @@ class LoadAccountUserRoles extends AbstractFixture implements DependentFixtureIn
 
         $chainMetadataProvider->stopProviderEmulation();
 
-        $aclManager->flush();
         $manager->flush();
+        $aclManager->flush();
     }
 
     /**

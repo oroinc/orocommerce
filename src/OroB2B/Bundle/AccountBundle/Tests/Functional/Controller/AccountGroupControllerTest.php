@@ -11,7 +11,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 
 /**
- * @outputBuffering enabled
  * @dbIsolation
  */
 class AccountGroupControllerTest extends WebTestCase

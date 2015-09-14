@@ -17,6 +17,8 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface
 {
     const ORDER_1 = 'simple_order';
     const MY_ORDER = 'my_order';
+    const ACCOUNT_USER = 'grzegorz.brzeczyszczykiewicz@example.com';
+    const SUBTOTAL = '789';
 
     /**
      * @var array
@@ -24,12 +26,12 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface
     protected $orders = [
         self::ORDER_1 => [
             'user' => LoadOrderUsers::ORDER_USER_1,
-            'accountUser' => 'grzegorz.brzeczyszczykiewicz@example.com',
+            'accountUser' => self::ACCOUNT_USER,
             'poNumber' => '1234567890',
             'customerNotes' => 'Test account user notes',
             'currency' => 'USD',
-            'subtotal' => '15000',
-            'paymentTerm' => LoadPaymentTermData::PAYMENT_TERM_NET_10
+            'subtotal' => self::SUBTOTAL,
+            'paymentTerm' => LoadPaymentTermData::PAYMENT_TERM_NET_10,
         ],
         self::MY_ORDER => [
             'user' => LoadOrderUsers::ORDER_USER_1,
@@ -38,7 +40,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface
             'customerNotes' => 'Test account user notes',
             'currency' => 'EUR',
             'subtotal' => '1500',
-            'paymentTerm' => LoadPaymentTermData::PAYMENT_TERM_NET_10
+            'paymentTerm' => LoadPaymentTermData::PAYMENT_TERM_NET_10,
         ],
     ];
 
@@ -76,6 +78,9 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface
     {
         /** @var User $user */
         $user = $this->getReference($orderData['user']);
+        if (!$user->getOrganization()) {
+            $user->setOrganization($manager->getRepository('OroOrganizationBundle:Organization')->findOneBy([]));
+        }
         /** @var AccountUser $accountUser */
         $accountUser = $manager->getRepository('OroB2BAccountBundle:AccountUser')
             ->findOneBy(['username' => $orderData['accountUser']]);
