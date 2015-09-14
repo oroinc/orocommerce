@@ -43,6 +43,7 @@ class ProductDatagridListener
         if (!$categoryId) {
             return;
         }
+
         /** @var CategoryRepository $repo */
         $repo = $this->doctrine->getRepository($this->dataClass);
         /** @var Category $category */
@@ -50,7 +51,12 @@ class ProductDatagridListener
         if (!$category) {
             return;
         }
-        $productCategoryIds = array_merge($repo->getChildrenIds($category), [$categoryId]);
+
+        $includeSubcategoriesChoice = $this->requestProductHandler->getIncludeSubcategoriesChoice();
+        $productCategoryIds = [$categoryId];
+        if ($includeSubcategoriesChoice) {
+            $productCategoryIds = array_merge($repo->getChildrenIds($category), $productCategoryIds);
+        }
         $this->filterDatagridByCategoryIds($event, $productCategoryIds);
     }
 

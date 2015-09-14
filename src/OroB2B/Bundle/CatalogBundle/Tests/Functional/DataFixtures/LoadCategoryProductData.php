@@ -10,6 +10,9 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class LoadCategoryProductData extends AbstractFixture implements DependentFixtureInterface
 {
+    /**
+     * @var array
+     */
     protected static $relations = [
         LoadCategoryData::FIRST_LEVEL => LoadProductData::TEST_PRODUCT_01,
         LoadCategoryData::SECOND_LEVEL1 => LoadProductData::TEST_PRODUCT_02,
@@ -25,6 +28,7 @@ class LoadCategoryProductData extends AbstractFixture implements DependentFixtur
         return self::$relations;
     }
 
+    /** {@inheritdoc} */
     public function getDependencies()
     {
         return [
@@ -59,7 +63,7 @@ class LoadCategoryProductData extends AbstractFixture implements DependentFixtur
     protected function findCategoryByTitle($categories, $title)
     {
         foreach ($categories as $category) {
-            if ($category->getDefaultTitle()->getString() == $title) {
+            if ($category->getDefaultTitle()->getString() === $title) {
                 return $category;
             }
         }

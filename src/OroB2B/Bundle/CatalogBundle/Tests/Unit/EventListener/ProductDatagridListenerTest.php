@@ -48,20 +48,25 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider childrenIdsDataProvider
      *
+     * @param int $catId
+     * @param boolean $includeSubcategoriesChoice
      * @param array $childrenIds
      */
-    public function testOnPreBuild(array $childrenIds)
+    public function testOnPreBuild($catId, $includeSubcategoriesChoice, array $childrenIds)
     {
-        $catId = 1;
         $category = new Category();
         $this->requestProductHandler->expects($this->once())->method('getCategoryId')->willReturn($catId);
+        $this->requestProductHandler
+            ->expects($this->once())
+            ->method('getIncludeSubcategoriesChoice')
+            ->willReturn($includeSubcategoriesChoice);
 
         /** @var CategoryRepository|\PHPUnit_Framework_MockObject_MockObject $repo */
         $repo = $this->getMockBuilder('OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $repo->expects($this->once())->method('find')->with($catId)->willReturn($category);
-        $repo->expects($this->once())->method('getChildrenIds')->with($category)->willReturn($childrenIds);
+        $repo->expects($this->any())->method('getChildrenIds')->with($category)->willReturn($childrenIds);
         $this->doctrine->expects($this->once())->method('getRepository')->with(self::DATA_CLASS)->willReturn($repo);
 
         /** @var $config DatagridConfiguration|\PHPUnit_Framework_MockObject_MockObject */
@@ -82,6 +87,8 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $config->expects($this->at(1))
             ->method('offsetSetByPath')
             ->with(DatasourceBindParametersListener::DATASOURCE_BIND_PARAMETERS_PATH, [self::CATEGORY_ID_ALIAS]);
+
+
         $this->productDatagridListener->onPreBuild($this->event);
     }
 
@@ -91,8 +98,17 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
     public function childrenIdsDataProvider()
     {
         return [
-            ['withChildren' => [2, 3]],
-            ['withoutChildren' => []],
+            [
+                'catId' => 1,
+                'includeSubcategories' => true,
+                'childrenIds' => [2, 3]
+            ],
+            [
+                'catId' => 1,
+                'includeSubcategories' => true,
+                'childrenIds' => []
+
+            ],
         ];
     }
 

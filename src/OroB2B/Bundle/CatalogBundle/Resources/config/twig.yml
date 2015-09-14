@@ -7,5 +7,6 @@ services:
         class: %orob2b_catalog.twig.category_extension.class%
         arguments:
             - @orob2b_catalog.category_tree_handler
+            - @translator
         tags:
             - { name: twig.extension }

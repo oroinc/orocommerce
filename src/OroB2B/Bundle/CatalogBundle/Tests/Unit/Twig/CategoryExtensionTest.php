@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Twig;
 
+use Symfony\Bridge\Twig\Tests\Extension\Fixtures\StubTranslator;
+
 use OroB2B\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;
 use OroB2B\Bundle\CatalogBundle\Twig\CategoryExtension;
 
@@ -13,6 +15,11 @@ class CategoryExtensionTest extends \PHPUnit_Framework_TestCase
     protected $categoryTreeHandler;
 
     /**
+     * @var StubTranslator
+     */
+    protected $translator;
+
+    /**
      * @var CategoryExtension
      */
     protected $extension;
@@ -22,7 +29,10 @@ class CategoryExtensionTest extends \PHPUnit_Framework_TestCase
         $this->categoryTreeHandler = $this->getMockBuilder('OroB2B\Bundle\CatalogBundle\JsTree\CategoryTreeHandler')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->extension = new CategoryExtension($this->categoryTreeHandler);
+
+        $this->translator = new StubTranslator();
+
+        $this->extension = new CategoryExtension($this->categoryTreeHandler, $this->translator);
     }
 
     public function testGetName()
@@ -36,13 +46,19 @@ class CategoryExtensionTest extends \PHPUnit_Framework_TestCase
     public function testGetFunctions()
     {
         $functions = $this->extension->getFunctions();
-        $this->assertCount(1, $functions);
+        $this->assertCount(2, $functions);
 
         /** @var \Twig_SimpleFunction $function */
         $function = $functions[0];
         $this->assertInstanceOf('\Twig_SimpleFunction', $function);
         $this->assertEquals('orob2b_category_list', $function->getName());
         $this->assertEquals([$this->extension, 'getCategoryList'], $function->getCallable());
+
+        /** @var \Twig_SimpleFunction $function */
+        $function = $functions[1];
+        $this->assertInstanceOf('\Twig_SimpleFunction', $function);
+        $this->assertEquals('orob2b_frontend_category_list', $function->getName());
+        $this->assertEquals([$this->extension, 'getFrontendCategoryList'], $function->getCallable());
     }
 
     public function testGetCategoryList()
