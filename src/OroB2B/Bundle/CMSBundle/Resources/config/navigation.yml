@@ -35,3 +35,5 @@ oro_titles:
     orob2b_cms_page_view:   '%%title%%'
     orob2b_cms_page_update: '%%title%% - Edit'
     orob2b_cms_page_create: 'Create Page'
+
+    orob2b_cms_frontend_page_view: '%%title%%'
