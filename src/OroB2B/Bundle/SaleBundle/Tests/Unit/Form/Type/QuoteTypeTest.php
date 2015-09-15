@@ -194,8 +194,8 @@ class QuoteTypeTest extends AbstractTest
         $productSelectType          = new ProductSelectTypeStub();
         $currencySelectionType      = new CurrencySelectionTypeStub();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
-        $quoteProductOfferType      = $this->prepareQuoteProductOfferType($translator);
-        $quoteProductRequestType    = $this->prepareQuoteProductRequestType($translator);
+        $quoteProductOfferType      = $this->prepareQuoteProductOfferType();
+        $quoteProductRequestType    = $this->prepareQuoteProductRequestType();
 
         $quoteProductType = new QuoteProductType(
             $translator,
