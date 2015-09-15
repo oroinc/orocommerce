@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AttributeBundle\Form\Extension;
+namespace OroB2B\Bundle\ProductBundle\Form\Extension;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class IntegerExtension extends AbstractTypeExtension
 {
@@ -20,7 +20,7 @@ class IntegerExtension extends AbstractTypeExtension
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(['type' => null]);
     }
