@@ -15,6 +15,18 @@ oro_menu_config:
             rootClass: 'extra-list'
 
     items:
+
+        # TODO move to an appropriate "distrubution" bundle
+        activities_tab:
+            extras:
+                position: 2000
+        reports_tab:
+            extras:
+                position: 3000
+        system_tab:
+            extras:
+                position: 4000
+
         frontend_favorite:
             label: 'oro.navigation.menu.favorite.label'
             extras:

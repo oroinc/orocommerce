@@ -4,7 +4,7 @@ oro_menu_config:
             label:           'orob2b.website.entity_plural_label'
             route:           'orob2b_website_index'
             extras:
-                position:    10
+                position:    1000
                 routes:      ['/^orob2b_website/']
                 description: 'orob2b.website.menu.websites_list.description'
 
@@ -17,7 +17,7 @@ oro_menu_config:
     tree:
         application_menu:
             children:
-                products_tab:
+                system_tab:
                     children:
                         websites_list: ~
         shortcuts:

@@ -20,6 +20,9 @@ class StubEnumSelectType extends AbstractType
         ]);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getName()
     {
         return self::NAME;

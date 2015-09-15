@@ -51,7 +51,7 @@ class OroB2BRFPBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_2';
+        return 'v1_3';
     }
 
     /**
@@ -86,7 +86,8 @@ class OroB2BRFPBundleInstaller implements
         $table = $schema->createTable('orob2b_rfp_request');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
-        $table->addColumn('frontend_owner_id', 'integer', ['notnull' => false]);
+        $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
+        $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('status_id', 'integer', ['notnull' => false]);
         $table->addColumn('first_name', 'string', ['length' => 255]);
         $table->addColumn('last_name', 'string', ['length' => 255]);
@@ -193,9 +194,15 @@ class OroB2BRFPBundleInstaller implements
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_account_user'),
-            ['frontend_owner_id'],
+            ['account_user_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account'),
+            ['account_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_rfp_status'),

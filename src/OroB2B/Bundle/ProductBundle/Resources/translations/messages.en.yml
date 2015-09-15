@@ -15,6 +15,7 @@ orob2b:
         image.label: Image
         names.label: Name
         descriptions.label: Description
+        removed: '{title} - removed'
 
         visibility:
             visible.label: Yes
@@ -31,6 +32,7 @@ orob2b:
             code.label: Code
             default_precision.label: Default Precision
             form.choose: 'Choose Unit...'
+            removed: '{title} - removed'
 
         productunitprecision:
             entity_label: Product Unit Precision
@@ -41,11 +43,11 @@ orob2b:
             representation: "{{ label }} with precision {{ precision }} decimal places"
 
         menu:
-            products_tab.label: Product management
-            products_list.description: List of existing products
+            products_tab.label: Products
+            product_list.description: List of existing products
             shortcut_new_product.label: Create new product
             shortcut_new_product.description: Create new product item
-            shortcut_products_list.description: Show list of existing products
+            shortcut_product_list.description: Show list of existing products
 
         acl:
             view_products.label: View products

@@ -45,7 +45,7 @@ OroB2B\Bundle\RFPBundle\Entity\RequestProduct:
 
 OroB2B\Bundle\RFPBundle\Entity\RequestProductItem:
     constraints:
-        - OroB2B\Bundle\RFPBundle\Validator\Constraints\RequestProductItem: ~
+        - OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductUnitHolder: ~
     properties:
         requestProduct:
             - NotBlank: ~

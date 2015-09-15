@@ -1,21 +1,21 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Form\Type;
+namespace OroB2B\Bundle\RFPBundle\Form\Type\Frontend;
 
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
-use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
+use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 
-class FrontendRequestType extends AbstractType
+class RequestType extends AbstractType
 {
     const NAME = 'orob2b_rfp_frontend_request_type';
 
@@ -92,6 +92,10 @@ class FrontendRequestType extends AbstractType
             ->add('body', 'textarea', [
                 'label' => 'orob2b.rfp.request.body.label'
             ])
+            ->add('requestProducts', RequestProductCollectionType::NAME, [
+                'label'     => 'orob2b.rfp.requestproduct.entity_plural_label',
+                'add_label' => 'orob2b.rfp.requestproduct.add_label',
+            ])
         ;
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'postSubmit']);
@@ -104,7 +108,10 @@ class FrontendRequestType extends AbstractType
     {
         /** @var Request $request */
         $request = $event->getData();
-        $request->setStatus($this->getDefaultRequestStatus());
+        $defaultStatus = $this->getDefaultRequestStatus();
+        if ($defaultStatus && !$request->getStatus()) {
+            $request->setStatus($defaultStatus);
+        }
     }
 
     /**
@@ -123,7 +130,7 @@ class FrontendRequestType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => $this->dataClass

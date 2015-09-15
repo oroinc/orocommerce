@@ -1,0 +1,13 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+<div class="btn-group">
+    {{ UI.link({
+        path: 'javascript: void(0);',
+        iCss: 'icon-file-text',
+        label: 'orob2b.rfp.btn.add_to_rfp'|trans,
+        class: 'btn component-button',
+        data: {
+            'component-name': 'orob2b_rfp_quick_add_processor'
+        }
+    }) }}
+</div>

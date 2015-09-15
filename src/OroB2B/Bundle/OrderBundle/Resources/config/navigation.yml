@@ -1,26 +1,26 @@
 oro_menu_config:
     items:
-        orders_list:
+        order_list:
             label:           'orob2b.order.entity_plural_label'
             route:           'orob2b_order_index'
             extras:
-                position:    10
+                position:    400
                 routes:      ['orob2b_order_index', 'orob2b_order_view', 'orob2b_order_update', 'orob2b_order_create']
-                description: 'orob2b.order.menu.orders_list.description'
+                description: 'orob2b.order.menu.order_list.description'
 
-        frontend_orders_list:
+        frontend_order_list:
             label:           'orob2b.order.entity_plural_label'
             route:           'orob2b_order_frontend_index'
             extras:
-                position:    20
+                position:    600
                 routes:      ['/^orob2b_order_frontend_/']
-                description: 'orob2b.order.menu.orders_list.description'
+                description: 'orob2b.order.menu.order_list.description'
 
-        shortcut_orders_list:
+        shortcut_order_list:
             label:           'orob2b.order.entity_plural_label'
             route:           'orob2b_order_index'
             extras:
-                description: 'orob2b.order.menu.shortcut_orders_list.description'
+                description: 'orob2b.order.menu.shortcut_order_list.description'
 
         shortcut_new_order:
             label:           'orob2b.order.menu.shortcut_new_order.label'
@@ -32,23 +32,25 @@ oro_menu_config:
         frontend_order_quick_add:
             label:           'orob2b.order.menu.order_quick_add.label'
             route:           'orob2b_product_frontend_quick_add'
+            aclResourceId:   'orob2b_order_frontend_create'
             extras:
+                position:   500
                 description: 'orob2b.order.menu.order_quick_add.description'
 
     tree:
         application_menu:
             children:
-                sale_tab:
+                sales_tab:
                     children:
-                        orders_list: ~
+                        order_list: ~
         frontend_menu:
             children:
-                frontend_orders_list: ~
+                frontend_order_list: ~
                 frontend_order_quick_add: ~
 
         shortcuts:
             children:
-                shortcut_orders_list: ~
+                shortcut_order_list: ~
                 shortcut_new_order:   ~
 
 oro_titles:
