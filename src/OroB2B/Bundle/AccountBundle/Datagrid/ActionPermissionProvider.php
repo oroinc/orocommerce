@@ -60,6 +60,7 @@ class ActionPermissionProvider
         }
 
         return [
+            'view' => true,
             'update' => $isGranted,
             'delete' => $delete
         ];
