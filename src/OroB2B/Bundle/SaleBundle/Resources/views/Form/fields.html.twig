@@ -18,6 +18,8 @@
 
     {% set commentAccount = form.vars.value.commentAccount|default(null) %}
     {% set commentSeller = form.vars.value.comment|default(null) %}
+    {% set isProductFreeForm = form.vars.value.isProductFreeForm()|default(false) %}
+    {% set isProductReplacementFreeForm = form.vars.value.isProductReplacementFreeForm()|default(false) %}
 
     <table class="sale-quoteproduct-collection-table" {{ block('widget_container_attributes') }}
            data-page-component-options="{{ componentOptions|json_encode }}"
