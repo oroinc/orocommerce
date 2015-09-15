@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Handler;
 
-use Oro\Bundle\UserBundle\Form\Handler\AclRoleHandler;
 use Symfony\Component\Form\FormFactory;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -12,6 +11,7 @@ use Oro\Bundle\EntityConfigBundle\Provider\ConfigProviderInterface;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclPrivilegeRepository;
+use Oro\Bundle\UserBundle\Form\Handler\AclRoleHandler;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
