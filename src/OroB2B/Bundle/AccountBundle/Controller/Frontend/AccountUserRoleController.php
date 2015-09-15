@@ -129,10 +129,10 @@ class AccountUserRoleController extends Controller
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $role,
             $form,
-            function (AccountUserRole $role) {
+            function () use ($newRole) {
                 return [
                     'route' => 'orob2b_account_frontend_account_user_role_update',
-                    'parameters' => ['id' => $role->getId()]
+                    'parameters' => ['id' => $newRole->getId()]
                 ];
             },
             function () use ($newRole) {
