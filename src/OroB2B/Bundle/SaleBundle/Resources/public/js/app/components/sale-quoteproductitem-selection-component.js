@@ -17,6 +17,7 @@ define(function(require) {
          * @property {Object}
          */
         options: {
+            classQuoteProductBlockActive: 'sale-quoteproduct-block-active',
             classNotesSellerActive: 'sale-quoteproduct-notes-seller-active',
             productSelect: '.sale-quoteproduct-product-select input[type="hidden"]',
             productReplacementSelect: '.sale-quoteproduct-product-replacement-select input[type="hidden"]',
@@ -27,6 +28,9 @@ define(function(require) {
             addNotesButton: '.sale-quoteproduct-add-notes-btn',
             productSelectLink: '.sale-quoteproduct-product-select-link',
             freeFormLink: '.sale-quoteproduct-free-form-link',
+            productFormContainer: '.sale-quoteproduct-product-form',
+            freeFormContainer: '.sale-quoteproduct-product-free-form',
+            fieldsRowContainer: '.fields-row',
             removeNotesButton: '.sale-quoteproduct-remove-notes-btn',
             itemsCollectionContainer: '.sale-quoteproductitem-collection',
             itemsContainer: '.sale-quoteproductitem-collection .oro-item-collection',
@@ -303,24 +307,24 @@ define(function(require) {
          */
         onFreeFormLinkClick: function(e) {
             e.preventDefault();
-            var $rowElem = $(e.target).closest('.fields-row');
-            $rowElem.find('.sale-quoteproduct-product-form')
-                .hide()
+            var $rowElem = $(e.target).closest(this.options.fieldsRowContainer);
+            $rowElem.find(this.options.productFormContainer)
+                .removeClass(this.options.classQuoteProductBlockActive)
                 .find('input').val('').change()
             ;
-            $rowElem.find('.sale-quoteproduct-product-free-form').show();
+            $rowElem.find(this.options.freeFormContainer).addClass(this.options.classQuoteProductBlockActive);
         },
 
         /**
-         * Handle Free Form for Product click
+         * Handle Product Form click
          *
          * @param {jQuery.Event} e
          */
         onProductSelectLinkClick: function(e) {
             e.preventDefault();
-            var $rowElem = $(e.target).closest('.fields-row');
-            $rowElem.find('.sale-quoteproduct-product-form').show();
-            $rowElem.find('.sale-quoteproduct-product-free-form').hide();
+            var $rowElem = $(e.target).closest(this.options.fieldsRowContainer);
+            $rowElem.find(this.options.productFormContainer).addClass(this.options.classQuoteProductBlockActive);
+            $rowElem.find(this.options.freeFormContainer).removeClass(this.options.classQuoteProductBlockActive);
         },
 
         /**

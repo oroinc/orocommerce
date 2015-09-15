@@ -98,6 +98,12 @@ class QuoteProductType extends AbstractType
         /* @var $products Product[] */
         $products = [];
 
+        /** @var boolean $isProductFreeForm */
+        $isProductFreeForm = false;
+
+        /** @var boolean $isProductReplacementFreeForm */
+        $isProductReplacementFreeForm = false;
+
         if ($view->vars['value']) {
             /* @var $quoteProduct QuoteProduct */
             $quoteProduct = $view->vars['value'];
@@ -111,6 +117,9 @@ class QuoteProductType extends AbstractType
                 $product = $quoteProduct->getProductReplacement();
                 $products[$product->getId()] = $product;
             }
+
+            $isProductFreeForm = $quoteProduct->isProductFreeForm();
+            $isProductReplacementFreeForm = $quoteProduct->isProductReplacementFreeForm();
         }
 
         foreach ($products as $product) {
@@ -121,14 +130,14 @@ class QuoteProductType extends AbstractType
             }
         }
 
-        $componentOptions = [
+        $view->vars['isProductFreeForm'] = $isProductFreeForm;
+        $view->vars['isProductReplacementFreeForm'] = $isProductReplacementFreeForm;
+        $view->vars['componentOptions'] = [
             'units' => $units,
             'allUnits' => $this->getAllUnits(),
             'typeOffer' => QuoteProduct::TYPE_OFFER,
             'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
         ];
-
-        $view->vars['componentOptions'] = $componentOptions;
     }
 
     /**
@@ -138,7 +147,7 @@ class QuoteProductType extends AbstractType
     {
         $builder
             ->add('product', ProductRemovedSelectType::NAME, [
-                'required' => true,
+                'required' => false,
                 'label' => 'orob2b.product.entity_label',
                 'create_enabled' => false,
             ])
@@ -246,7 +255,8 @@ class QuoteProductType extends AbstractType
      */
     protected function getAllUnits()
     {
-        $units = $this->registry->getRepository($this->productUnitClass)->findBy([], ['code' => 'ASC']);
+        $units = $this->registry->getManagerForClass($this->productUnitClass)->getRepository($this->productUnitClass)
+            ->findBy([], ['code' => 'ASC']);
         $units = $this->labelFormatter->formatChoices($units);
 
         return $units;

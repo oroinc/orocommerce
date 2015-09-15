@@ -205,6 +205,26 @@ class QuoteProduct implements ProductHolderInterface
     }
 
     /**
+     * Check that free form used for product
+     *
+     * @return boolean
+     */
+    public function isProductFreeForm()
+    {
+        return !$this->product && $this->productSku;
+    }
+
+    /**
+     * Check that free form used for productReplacement
+     *
+     * @return boolean
+     */
+    public function isProductReplacementFreeForm()
+    {
+        return !$this->productReplacement && $this->productReplacementSku;
+    }
+
+    /**
      * Get id
      *
      * @return integer
