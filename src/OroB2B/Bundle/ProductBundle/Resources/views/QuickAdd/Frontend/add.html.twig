@@ -1,0 +1,47 @@
+{% extends bap.layout %}
+
+{% block content %}
+    {% set pageComponentOptions = {
+        'componentSelector': '#' ~ form.component.vars.id,
+        'additionalSelector': '#' ~ form.additional.vars.id
+    } %}
+
+    <div class="container-fluid page-title">
+        <div class="navigation clearfix navbar-extra navbar-extra-right">
+            <div class="row">
+                <div class="pull-left pull-left-extra">
+                    <div class="pull-left">
+                        <h1 class="oro-subtitle">{{ 'orob2b.product.frontend.quick_add.title'|trans }}</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="layout-content">
+        <div class="container-fluid form-container">
+            <div class="responsive-section responsive-section-no-blocks">
+                <div class="row-fluid">
+                    <div class="responsive-cell responsive-cell-no-blocks">
+                        <form id="{{ form.vars.id }}" name="{{ form.vars.name }}"
+                            action="{{ path('orob2b_product_frontend_quick_add') }}" {{ form_enctype(form) }}
+                            method="{{ form.vars.method }}"
+                            data-page-component-module="orob2bproduct/js/app/components/quick-add-component"
+                            data-page-component-options="{{ pageComponentOptions|json_encode }}"
+                            >
+
+                            <fieldset class="form-horizontal">
+                                {{ form_errors(form) }}
+                                {{ form_widget(form.products) }}
+                                {{ form_row(form.component) }}
+                                {{ form_row(form.additional) }}
+                                {{ form_rest(form) }}
+                            </fieldset>
+                        </form>
+                        {{ oro_form_js_validation(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

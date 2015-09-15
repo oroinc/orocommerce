@@ -9,6 +9,8 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Security\AccountUserProvider;
 
+use Oro\Bundle\DataGridBundle\Extension\Action\ActionExtension;
+
 class AccountDatagridListener
 {
     const ROOT_OPTIONS = '[options][accountUserOwner]';
@@ -30,11 +32,18 @@ class AccountDatagridListener
     protected $securityProvider;
 
     /**
-     * @param AccountUserProvider $securityProvider
+     * @var array
      */
-    public function __construct(AccountUserProvider $securityProvider)
+    protected $actionCallback;
+
+    /**
+     * @param AccountUserProvider $securityProvider
+     * @param array $actionCallback
+     */
+    public function __construct(AccountUserProvider $securityProvider, array $actionCallback = null)
     {
         $this->securityProvider = $securityProvider;
+        $this->actionCallback = $actionCallback;
     }
 
     /**
@@ -54,6 +63,10 @@ class AccountDatagridListener
 
         if ([] === ($from = $config->offsetGetByPath('[source][query][from]', []))) {
             return;
+        }
+
+        if (!$config->offsetGetByPath(ActionExtension::ACTION_CONFIGURATION_KEY)) {
+            $config->offsetSetByPath(ActionExtension::ACTION_CONFIGURATION_KEY, $this->actionCallback);
         }
 
         $fromFirst = reset($from);

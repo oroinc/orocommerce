@@ -46,20 +46,3 @@
     {{ block('oro_collection_widget') }}
     </span>
 {% endblock %}
-
-{% block oro_combobox_dataconfig_parent_aware %}
-    {{ block('oro_combobox_dataconfig_autocomplete') }}
-
-    select2Config.ajax.data = function (query, page) {
-        var getQueryString = function (searchString) {
-            return [searchString, {{ parent_id|json_encode|raw }}].join(';');
-        };
-
-        return {
-            page: page,
-            per_page: {{ configs.per_page|default(10)|json_encode|raw }},
-            name: {{ configs.autocomplete_alias|json_encode|raw }},
-            query: getQueryString(query)
-        };
-    };
-{% endblock %}

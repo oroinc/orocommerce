@@ -11,7 +11,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 
 /**
- * @outputBuffering enabled
  * @dbIsolation
  */
 class AccountAddressControllerTest extends WebTestCase
@@ -50,7 +49,7 @@ class AccountAddressControllerTest extends WebTestCase
     public function testCreateAddress()
     {
         $account = $this->account;
-        $crawler  = $this->client->request(
+        $crawler = $this->client->request(
             'GET',
             $this->getUrl(
                 'orob2b_account_address_create',
@@ -62,7 +61,7 @@ class AccountAddressControllerTest extends WebTestCase
         $this->assertEquals(200, $result->getStatusCode());
 
         /** @var Form $form */
-        $form     = $crawler->selectButton('Save')->form();
+        $form = $crawler->selectButton('Save')->form();
         $this->fillFormForCreateTest($form);
 
         $this->client->followRedirects(true);
@@ -81,14 +80,14 @@ class AccountAddressControllerTest extends WebTestCase
         $this->assertEquals('Badakhshān', $result['region']);
         $this->assertEquals([
             [
-                'name'  => AddressType::TYPE_BILLING,
+                'name' => AddressType::TYPE_BILLING,
                 'label' => ucfirst(AddressType::TYPE_BILLING)
             ]
         ], $result['types']);
 
         $this->assertEquals([
             [
-                'name'  => AddressType::TYPE_BILLING,
+                'name' => AddressType::TYPE_BILLING,
                 'label' => ucfirst(AddressType::TYPE_BILLING)
             ]
         ], $result['defaults']);
@@ -123,7 +122,7 @@ class AccountAddressControllerTest extends WebTestCase
         $this->assertEquals(200, $result->getStatusCode());
 
         /** @var Form $form */
-        $form     = $crawler->selectButton('Save')->form();
+        $form = $crawler->selectButton('Save')->form();
         $form = $this->fillFormForUpdateTest($form);
 
         $this->client->followRedirects(true);
@@ -141,19 +140,20 @@ class AccountAddressControllerTest extends WebTestCase
 
         $this->assertEquals('Manicaland', $result['region']);
         $this->assertEquals([
+
             [
-                'name'  => AddressType::TYPE_BILLING,
+                'name' => AddressType::TYPE_BILLING,
                 'label' => ucfirst(AddressType::TYPE_BILLING)
             ],
             [
-                'name'  => AddressType::TYPE_SHIPPING,
+                'name' => AddressType::TYPE_SHIPPING,
                 'label' => ucfirst(AddressType::TYPE_SHIPPING)
             ]
         ], $result['types']);
 
         $this->assertEquals([
             [
-                'name'  => AddressType::TYPE_SHIPPING,
+                'name' => AddressType::TYPE_SHIPPING,
                 'label' => ucfirst(AddressType::TYPE_SHIPPING)
             ]
         ], $result['defaults']);
@@ -201,10 +201,10 @@ class AccountAddressControllerTest extends WebTestCase
         $formNode = $form->getNode();
         $formNode->setAttribute('action', $formNode->getAttribute('action') . '?_widgetContainer=dialog');
 
-        $form['orob2b_account_typed_address[street]']            = 'Street';
-        $form['orob2b_account_typed_address[city]']              = 'City';
-        $form['orob2b_account_typed_address[postalCode]']        = 'Zip code';
-        $form['orob2b_account_typed_address[types]']             = [AddressType::TYPE_BILLING];
+        $form['orob2b_account_typed_address[street]'] = 'Street';
+        $form['orob2b_account_typed_address[city]'] = 'City';
+        $form['orob2b_account_typed_address[postalCode]'] = 'Zip code';
+        $form['orob2b_account_typed_address[types]'] = [AddressType::TYPE_BILLING];
         $form['orob2b_account_typed_address[defaults][default]'] = [AddressType::TYPE_BILLING];
 
         $doc = new \DOMDocument("1.0");

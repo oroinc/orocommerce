@@ -237,6 +237,7 @@ class AccountDatagridListenerTest extends WebTestCase
             'filters' => [
                 'columns' => [],
             ],
+            'action_configuration' => null,
         ];
 
         if ($accountUserOwner) {

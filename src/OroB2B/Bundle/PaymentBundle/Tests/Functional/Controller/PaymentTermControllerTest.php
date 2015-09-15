@@ -9,7 +9,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 
 /**
- * @outputBuffering enabled
  * @dbIsolation
  */
 class PaymentTermControllerTest extends WebTestCase

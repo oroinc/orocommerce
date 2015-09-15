@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\AbstractRole;
 
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -22,7 +23,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"=""
+ *              "group_name"="commerce"
  *          },
  *          "dataaudit"={
  *              "auditable"=true
@@ -53,6 +54,22 @@ class AccountUserRole extends AbstractRole
      */
     protected $role;
 
+    /**
+     * @var Account
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
+     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $account;
+
+    /**
+     * @var Organization
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
+     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $organization;
+    
     /**
      * @var string
      *
@@ -170,5 +187,41 @@ class AccountUserRole extends AbstractRole
     public function getWebsites()
     {
         return $this->websites;
+    }
+
+    /**
+     * @return Account
+     */
+    public function getAccount()
+    {
+        return $this->account;
+    }
+
+    /**
+     * @param Account|null $account
+     * @return AccountUserRole
+     */
+    public function setAccount(Account $account = null)
+    {
+        $this->account = $account;
+        return $this;
+    }
+
+    /**
+     * @return Organization
+     */
+    public function getOrganization()
+    {
+        return $this->organization;
+    }
+
+    /**
+     * @param Organization $organization
+     * @return AccountUserRole
+     */
+    public function setOrganization($organization)
+    {
+        $this->organization = $organization;
+        return $this;
     }
 }

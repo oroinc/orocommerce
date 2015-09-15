@@ -16,6 +16,8 @@ parameters:
     orob2b_rfp.form.type.frontend_request_product.class: OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType
     orob2b_rfp.form.type.frontend_request_product_collection.class: OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductCollectionType
 
+    orob2b_rfp.form.type.extension.frontend_request.class: OroB2B\Bundle\RFPBundle\Form\Extension\FrontendRequestExtension
+
 services:
     orob2b_rfp.form.type.default_request_status:
         class: %orob2b_rfp.form.type.default_request_status.class%
@@ -121,3 +123,11 @@ services:
         class: %orob2b_rfp.form.type.frontend_request_product_collection.class%
         tags:
             - { name: form.type, alias: orob2b_rfp_frontend_request_product_collection }
+
+    orob2b_rfp.form.type.extension.frontend_order:
+        class: %orob2b_rfp.form.type.extension.frontend_request.class%
+        parent: orob2b_product.form.type.extension.post_quick_add.abstract
+        calls:
+            - [setDataClass, [%orob2b_rfp.entity.request.class%]]
+        tags:
+            - { name: form.type_extension, alias: orob2b_rfp_frontend_request_type }

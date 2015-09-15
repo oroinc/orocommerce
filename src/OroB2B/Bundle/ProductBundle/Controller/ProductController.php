@@ -75,7 +75,7 @@ class ProductController extends Controller
         /** @var ProductGridWidgetRenderEvent $event */
         $event = $this->get('event_dispatcher')->dispatch(
             ProductGridWidgetRenderEvent::NAME,
-            new ProductGridWidgetRenderEvent(array_merge($widgetRouteParameters, $this->getRequest()->query->all()))
+            new ProductGridWidgetRenderEvent($widgetRouteParameters)
         );
 
         return [
