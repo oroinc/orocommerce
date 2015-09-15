@@ -72,6 +72,18 @@ class AccountUserRoleRepositoryTest extends WebTestCase
         $this->assertTrue($hasAssignedUsers);
     }
 
+    public function testGetAssignedUsers()
+    {
+        /** @var AccountUserRole $role */
+        $role = $this->getReference(LoadAccountUserRoleData::ROLE_WITH_ACCOUNT_USER);
+        $assignedUsers = $this->repository->getAssignedUsers($role);
+        $expectedUsers = [
+            $this->getReference(LoadAccountUserData::EMAIL)
+        ];
+
+        $this->assertEquals($expectedUsers, $assignedUsers);
+    }
+
     public function testRoleWithoutUserAndWebsite()
     {
         /** @var AccountUserRole $role */
