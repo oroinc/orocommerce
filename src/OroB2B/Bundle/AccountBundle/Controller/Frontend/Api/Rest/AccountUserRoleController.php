@@ -29,7 +29,7 @@ class AccountUserRoleController extends RestController implements ClassResourceI
      *      resource=true
      * )
      * @Acl(
-     *      id="orob2b_account_frontend_account_user_role_delete",
+     *      id="orob2b_account_frontend_account_user_role_delete_action",
      *      type="entity",
      *      class="OroB2BAccountBundle:AccountUserRole",
      *      permission="FRONTEND_ACCOUNT_ROLE_DELETE",
