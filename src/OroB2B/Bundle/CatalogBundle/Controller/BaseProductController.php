@@ -2,12 +2,15 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Controller;
 
+use OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
 
 class BaseProductController extends Controller
 {
     /**
-     * @return \Symfony\Component\Form\Form
+     * @return Form
      */
     protected function createIncludeSubcategoriesForm()
     {
@@ -23,7 +26,7 @@ class BaseProductController extends Controller
     }
 
     /**
-     * @return \OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler
+     * @return RequestProductHandler
      */
     protected function getCatalogRequestHandler()
     {

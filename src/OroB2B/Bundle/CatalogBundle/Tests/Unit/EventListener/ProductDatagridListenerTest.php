@@ -51,9 +51,14 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
      * @param int $catId
      * @param boolean $includeSubcategoriesChoice
      * @param array $childrenIds
+     * @param array $expectedParameters
      */
-    public function testOnPreBuild($catId, $includeSubcategoriesChoice, array $childrenIds)
-    {
+    public function testOnPreBuild(
+        $catId,
+        $includeSubcategoriesChoice,
+        array $childrenIds,
+        array $expectedParameters = []
+    ) {
         $category = new Category();
         $this->requestProductHandler->expects($this->once())->method('getCategoryId')->willReturn($catId);
         $this->requestProductHandler
@@ -66,7 +71,8 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $repo->expects($this->once())->method('find')->with($catId)->willReturn($category);
-        $repo->expects($this->any())->method('getChildrenIds')->with($category)->willReturn($childrenIds);
+        $repo->expects($includeSubcategoriesChoice ? $this->once() : $this->never())
+            ->method('getChildrenIds')->with($category)->willReturn($childrenIds);
         $this->doctrine->expects($this->once())->method('getRepository')->with(self::DATA_CLASS)->willReturn($repo);
 
         /** @var $config DatagridConfiguration|\PHPUnit_Framework_MockObject_MockObject */
@@ -74,11 +80,8 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->event->expects($this->once())->method('getConfig')->willReturn($config);
-        /** @var ParameterBag|\PHPUnit_Framework_MockObject_MockObject $params */
-        $params = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\ParameterBag');
-        $params->expects($this->once())
-            ->method('set')
-            ->with('productCategoryIds', array_merge($childrenIds, [$catId]));
+
+        $params = new ParameterBag();
         $this->event->expects($this->once())->method('getParameters')->willReturn($params);
 
         $config->expects($this->at(0))
@@ -90,6 +93,7 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
 
         $this->productDatagridListener->onPreBuild($this->event);
+        $this->assertEquals($expectedParameters, $params->all());
     }
 
     /**
@@ -101,13 +105,20 @@ class ProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             [
                 'catId' => 1,
                 'includeSubcategories' => true,
-                'childrenIds' => [2, 3]
+                'childrenIds' => [2, 3],
+                'expectedParameters' => ['productCategoryIds' => [2, 3, 1]]
             ],
             [
                 'catId' => 1,
                 'includeSubcategories' => true,
-                'childrenIds' => []
-
+                'childrenIds' => [],
+                'expectedParameters' => ['productCategoryIds' => [1]]
+            ],
+            [
+                'catId' => 1,
+                'includeSubcategories' => false,
+                'childrenIds' => [],
+                'expectedParameters' => ['productCategoryIds' => [1]]
             ],
         ];
     }
