@@ -139,12 +139,9 @@ define(function(require) {
          * @param {Object} params
          */
         _pushState: function(params) {
-            _.each(params, _.bind(function(value, key) {
-                if (key === 'saveState' || key === this.options.gridParam) {
-                    value = null;
-                }
-                mediator.execute('pageCache:state:save', key, value, value);
-            }, this));
+            var paramsString = this._urlParamsToString(_.omit(params, ['saveState']));
+            var current = mediator.execute('pageCache:getCurrent');
+            mediator.execute('changeUrl', current.path + '?' + paramsString);
         },
 
         minimize: function() {
@@ -170,7 +167,7 @@ define(function(require) {
                 this.$container.addClass('grid-sidebar-maximized').removeClass('grid-sidebar-minimized');
                 this.$widgetContainer.addClass('grid-sidebar-maximized').removeClass('grid-sidebar-minimized');
 
-                params.sidebar = null;
+                delete params.sidebar;
             } else {
                 this.$container.addClass('grid-sidebar-minimized').removeClass('grid-sidebar-maximized');
                 this.$widgetContainer.addClass('grid-sidebar-minimized').removeClass('grid-sidebar-maximized');
