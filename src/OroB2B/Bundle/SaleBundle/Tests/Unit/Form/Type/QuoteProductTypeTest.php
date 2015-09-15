@@ -452,7 +452,7 @@ class QuoteProductTypeTest extends AbstractTest
                         'configs'   => [
                             'placeholder'   => null,
                         ],
-                        'required'          => true,
+                        'required'          => false,
                         'create_enabled'    => false,
                         'label'             => 'orob2b.product.entity_label',
                     ],
@@ -480,7 +480,7 @@ class QuoteProductTypeTest extends AbstractTest
                         'configs'   => [
                             'placeholder'   => null,
                         ],
-                        'required'          => true,
+                        'required'          => false,
                         'create_enabled'    => false,
                         'label'             => 'orob2b.product.entity_label',
                     ],
@@ -508,7 +508,7 @@ class QuoteProductTypeTest extends AbstractTest
                         'configs'   => [
                             'placeholder'   => null,
                         ],
-                        'required'          => true,
+                        'required'          => false,
                         'create_enabled'    => false,
                         'label'             => 'orob2b.product.entity_label',
                     ],

@@ -150,4 +150,71 @@ class QuoteProductTest extends AbstractTest
 
         $this->assertTrue($quoteProduct->isTypeNotAvailable());
     }
+
+    /**
+     * @dataProvider freeFormProvider
+     */
+    public function testIsProductFreeForm(array $inputData, $expectedResult)
+    {
+        $quoteProduct = new QuoteProduct();
+
+        $quoteProduct
+            ->setFreeFormProduct($inputData['title'])
+            ->setProduct($inputData['product'])
+        ;
+
+        $this->assertEquals($expectedResult, $quoteProduct->isProductFreeForm());
+    }
+
+    /**
+     * @dataProvider freeFormProvider
+     */
+    public function testIsProductReplacementFreeForm(array $inputData, $expectedResult)
+    {
+        $quoteProduct = new QuoteProduct();
+
+        $quoteProduct
+            ->setFreeFormProductReplacement($inputData['title'])
+            ->setProductReplacement($inputData['product'])
+        ;
+
+        $this->assertEquals($expectedResult, $quoteProduct->isProductReplacementFreeForm());
+    }
+
+    /**
+     * @return array
+     */
+    public function freeFormProvider()
+    {
+        return [
+            '!product & !product title' => [
+                'input' => [
+                    'product' => null,
+                    'title' => null,
+                ],
+                'expected' => false,
+            ],
+            '!product & product title' => [
+                'input' => [
+                    'product' => null,
+                    'title' => 'free form title',
+                ],
+                'expected' => true,
+            ],
+            'product & !product title' => [
+                'input' => [
+                    'product' => new Product(),
+                    'title' => null,
+                ],
+                'expected' => false,
+            ],
+            'product & product title' => [
+                'input' => [
+                    'product' => new Product(),
+                    'title' => 'free form title',
+                ],
+                'expected' => false,
+            ],
+        ];
+    }
 }
