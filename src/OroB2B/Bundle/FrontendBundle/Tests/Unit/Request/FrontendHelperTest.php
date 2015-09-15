@@ -35,6 +35,14 @@ class FrontendHelperTest extends \PHPUnit_Framework_TestCase
                 'path' => '/frontend',
                 'isFrontend' => true,
             ],
+            'frontend with backend part' => [
+                'path' => '/frontend' . self::BACKEND_PREFIX,
+                'isFrontend' => true,
+            ],
+            'frontend with backend part and slug' => [
+                'path' => '/frontend' . self::BACKEND_PREFIX . '/slug',
+                'isFrontend' => true,
+            ],
         ];
     }
 }
