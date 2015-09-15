@@ -1,35 +1,28 @@
 oro_menu_config:
     items:
-        catalog_tab:
-            label:           'orob2b.catalog.menu.catalog_tab.label'
-            uri:             '#'
-            extras:
-                icon:        icon-folder-close
-                position:    20
-
-        categories_tree:
-            label:           'orob2b.catalog.category.entity_plural_label'
+        master_catalog:
+            label:           'orob2b.catalog.menu.master_catalog.label'
             route:           'orob2b_catalog_category_index'
             extras:
                 position:    10
                 routes:      ['/^orob2b_catalog_category/']
-                description: 'orob2b.catalog.menu.categories_tree.description'
+                description: 'orob2b.catalog.menu.master_catalog.description'
 
-        shortcut_categories_tree:
-            label:           'orob2b.catalog.category.entity_plural_label'
+        shortcut_master_catalog:
+            label:           'orob2b.catalog.menu.master_catalog.label'
             route:           'orob2b_catalog_category_index'
             extras:
-                description: 'orob2b.catalog.menu.shortcut_categories_tree.description'
+                description: 'orob2b.catalog.menu.shortcut_master_catalog.description'
 
     tree:
         application_menu:
             children:
-                catalog_tab:
+                products_tab:
                     children:
-                        categories_tree: ~
+                        master_catalog: ~
         shortcuts:
             children:
-                shortcut_categories_tree: ~
+                shortcut_master_catalog: ~
 
 oro_titles:
     orob2b_catalog_category_index:  ~

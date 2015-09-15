@@ -88,6 +88,13 @@ orob2b_account_pinbar_help:
     options:
         frontend: true
 
+orob2b_account_frontend_account_user_role:
+    resource: "@OroB2BAccountBundle/Controller/Frontend/AccountUserRoleController.php"
+    type:     annotation
+    prefix:   /account/roles
+    options:
+        frontend: true
+
 orob2b_frontend_autocomplete_search:
     pattern: /autocomplete/search
     defaults: { _controller: OroFormBundle:Autocomplete:search }

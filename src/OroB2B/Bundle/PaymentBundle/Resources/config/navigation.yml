@@ -1,26 +1,19 @@
 oro_menu_config:
     items:
-        payments:
-            label: 'orob2b.payment.menu.payments.label'
-            uri: '#'
-            extras:
-                position: 80
-
         payment_terms:
             label: 'orob2b.payment.menu.payment_terms.label'
             route: 'orob2b_payment_term_index'
             extras:
+                position: 700
                 routes:      ['orob2b_payment_term*']
                 description: 'orob2b.payment.menu.payment_terms.description'
 
     tree:
         application_menu:
             children:
-                system_tab:
+                sales_tab:
                     children:
-                        payments:
-                            children:
-                                payment_terms: ~
+                        payment_terms: ~
 
 oro_titles:
     orob2b_payment_term_index: 'orob2b.payment.paymentterm.entity_plural_label'

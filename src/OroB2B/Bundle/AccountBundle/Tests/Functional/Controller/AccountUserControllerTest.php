@@ -164,7 +164,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $content = $result->getContent();
 
         $this->assertContains(
-            sprintf('%s - Account Users - Accounts', self::UPDATED_EMAIL),
+            sprintf('%s - Account Users - Customers', self::UPDATED_EMAIL),
             $content
         );
 

@@ -44,4 +44,25 @@ class ActionPermissionProvider
             'delete' => $delete
         ];
     }
+
+    /**
+     * @param ResultRecordInterface $record
+     *
+     * @return array
+     */
+    public function getAccountUserRolePermission(ResultRecordInterface $record)
+    {
+        $isGranted = true;
+        $delete = true;
+        if ($record->getValue('isRolePredefined')) {
+            $isGranted = $this->securityFacade->isGranted('orob2b_account_frontend_account_user_role_create');
+            $delete = false;
+        }
+
+        return [
+            'view' => true,
+            'update' => $isGranted,
+            'delete' => $delete
+        ];
+    }
 }

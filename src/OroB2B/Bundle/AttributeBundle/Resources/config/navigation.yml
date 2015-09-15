@@ -1,40 +1,40 @@
 oro_menu_config:
-    items:
-        orob2b_attribute_list:
-            label:  'orob2b.attribute.entity_plural_label'
-            route:  'orob2b_attribute_index'
-            extras:
-                position:       100
-                routes:         ['/^orob2b_attribute/']
-                description:    'orob2b.attribute.menu.attribute_list.description'
-
-        orob2b_shortcut_attribute_list:
-            label:  'orob2b.attribute.entity_plural_label'
-            route:  'orob2b_attribute_index'
-            extras:
-                description: 'orob2b.attribute.menu.shortcut_attribute_list.description'
-
-        orob2b_shortcut_new_attribute:
-            label:  'orob2b.attribute.menu.shortcut_new_attribute.label'
-            route:  'orob2b_attribute_init'
-            extras:
-                description:    'orob2b.attribute.menu.shortcut_new_attribute.description'
-                isCustomAction: true
-
-    tree:
-        application_menu:
-            children:
-                products_tab:
-                    children:
-                        orob2b_attribute_list: ~
-        shortcuts:
-            children:
-                orob2b_shortcut_attribute_list: ~
-                orob2b_shortcut_new_attribute:  ~
-
-oro_titles:
-    orob2b_attribute_index:  ~
-    orob2b_attribute_view:   '%%code%%'
-    orob2b_attribute_create: 'Create Attribute'
-    orob2b_attribute_init:   'Create Attribute'
-    orob2b_attribute_update: '%%code%% - Edit'
+#    items:
+#        orob2b_attribute_list:
+#            label:  'orob2b.attribute.entity_plural_label'
+#            route:  'orob2b_attribute_index'
+#            extras:
+#                position:       100
+#                routes:         ['/^orob2b_attribute/']
+#                description:    'orob2b.attribute.menu.attribute_list.description'
+#
+#        orob2b_shortcut_attribute_list:
+#            label:  'orob2b.attribute.entity_plural_label'
+#            route:  'orob2b_attribute_index'
+#            extras:
+#                description: 'orob2b.attribute.menu.shortcut_attribute_list.description'
+#
+#        orob2b_shortcut_new_attribute:
+#            label:  'orob2b.attribute.menu.shortcut_new_attribute.label'
+#            route:  'orob2b_attribute_init'
+#            extras:
+#                description:    'orob2b.attribute.menu.shortcut_new_attribute.description'
+#                isCustomAction: true
+#
+#    tree:
+#        application_menu:
+#            children:
+#                products_tab:
+#                    children:
+#                        orob2b_attribute_list: ~
+#        shortcuts:
+#            children:
+#                orob2b_shortcut_attribute_list: ~
+#                orob2b_shortcut_new_attribute:  ~
+#
+#oro_titles:
+#    orob2b_attribute_index:  ~
+#    orob2b_attribute_view:   '%%code%%'
+#    orob2b_attribute_create: 'Create Attribute'
+#    orob2b_attribute_init:   'Create Attribute'
+#    orob2b_attribute_update: '%%code%% - Edit'
