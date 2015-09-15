@@ -1,6 +1,6 @@
 <div class="category b2b-tree">
     {% set treeOptions = {
-        'data' : orob2b_frontend_category_list(),
+        'data' : orob2b_category_list('orob2b.catalog.frontend.category.master_category.label'|trans),
         'defaultCategoryId': defaultCategoryId
     } %}
     <label>{{ 'orob2b.catalog.category.entity_plural_label'|trans }}</label>
