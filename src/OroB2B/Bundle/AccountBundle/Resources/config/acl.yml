@@ -15,3 +15,9 @@ orob2b_account_frontend_account_user_role_update:
     class: OroB2BAccountBundle:AccountUserRole
     permission: EDIT
     group_name: "commerce"
+
+orob2b_account_frontend_account_user_role_delete:
+    type: entity
+    class: OroB2BAccountBundle:AccountUserRole
+    permission: DELETE
+    group_name: "commerce"
