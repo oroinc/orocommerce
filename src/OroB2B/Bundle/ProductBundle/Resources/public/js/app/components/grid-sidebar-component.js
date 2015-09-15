@@ -139,12 +139,12 @@ define(function(require) {
          * @param {Object} params
          */
         _pushState: function(params) {
-            var paramsString = this._urlParamsToString(_.omit(params, 'saveState'));
-            if (paramsString.length) {
-                paramsString = '?' + paramsString;
-            }
-
-            history.pushState({}, document.title, location.pathname + paramsString + location.hash);
+            _.each(params, _.bind(function(value, key) {
+                if (key === 'saveState' || key === this.options.gridParam) {
+                    value = null;
+                }
+                mediator.execute('pageCache:state:save', key, value, value);
+            }, this));
         },
 
         minimize: function() {
@@ -157,7 +157,7 @@ define(function(require) {
 
         /**
          * @private
-         * @param {string} state
+         * @param {String} state
          */
         _maximizeOrMaximize: function(state) {
             var params = this._getQueryParamsFromUrl(location.search);
@@ -170,7 +170,7 @@ define(function(require) {
                 this.$container.addClass('grid-sidebar-maximized').removeClass('grid-sidebar-minimized');
                 this.$widgetContainer.addClass('grid-sidebar-maximized').removeClass('grid-sidebar-minimized');
 
-                delete params.sidebar;
+                params.sidebar = null;
             } else {
                 this.$container.addClass('grid-sidebar-minimized').removeClass('grid-sidebar-maximized');
                 this.$widgetContainer.addClass('grid-sidebar-minimized').removeClass('grid-sidebar-maximized');
@@ -216,7 +216,7 @@ define(function(require) {
          * Decode state object from string, operation is invert for encodeStateData.
          *
          * @static
-         * @param {string} stateString
+         * @param {String} stateString
          * @return {Object}
          *
          * @see orodatagrid/js/pageable-collection
