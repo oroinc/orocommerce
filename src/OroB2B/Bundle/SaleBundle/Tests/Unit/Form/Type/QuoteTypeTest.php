@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -158,6 +160,9 @@ class QuoteTypeTest extends AbstractTest
             ->getMock()
         ;
 
+        /* @var $registry ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
+        $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+
         /* @var $productUnitLabelFormatter \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter */
         $productUnitLabelFormatter = $this->getMockBuilder(
             'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
@@ -200,7 +205,8 @@ class QuoteTypeTest extends AbstractTest
         $quoteProductType = new QuoteProductType(
             $translator,
             $productUnitLabelFormatter,
-            $this->quoteProductFormatter
+            $this->quoteProductFormatter,
+            $registry
         );
         $quoteProductType->setDataClass('OroB2B\Bundle\SaleBundle\Entity\QuoteProduct');
 

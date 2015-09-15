@@ -2,6 +2,10 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\ObjectRepository;
+
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
@@ -42,6 +46,21 @@ class QuoteProductTypeTest extends AbstractTest
     protected $translator;
 
     /**
+     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $registry;
+
+    /**
+     * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $manager;
+
+    /**
+     * @var ObjectRepository|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $repository;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -49,6 +68,20 @@ class QuoteProductTypeTest extends AbstractTest
         $this->translator = $this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')
             ->disableOriginalConstructor()
             ->getMock()
+        ;
+
+        $this->repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+
+        $this->manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $this->manager->expects($this->any())
+            ->method('getRepository')
+            ->willReturn($this->repository)
+        ;
+
+        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($this->manager)
         ;
 
         /* @var $productUnitLabelFormatter \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter */
@@ -64,13 +97,22 @@ class QuoteProductTypeTest extends AbstractTest
                 return $unitCode . '-formatted';
             }))
         ;
+        $productUnitLabelFormatter->expects($this->any())
+            ->method('formatChoices')
+            ->will($this->returnCallback(function ($units) {
+                return array_map(function ($unit) {
+                    return $unit . '-formatted2';
+                }, $units);
+            }))
+        ;
 
         parent::setUp();
 
         $this->formType = new QuoteProductType(
             $this->translator,
             $productUnitLabelFormatter,
-            $this->quoteProductFormatter
+            $this->quoteProductFormatter,
+            $this->registry
         );
         $this->formType->setDataClass('OroB2B\Bundle\SaleBundle\Entity\QuoteProduct');
     }
@@ -99,9 +141,14 @@ class QuoteProductTypeTest extends AbstractTest
      */
     public function testFinishView(array $inputData, array $expectedData)
     {
+        $this->repository->expects($this->once())
+            ->method('findBy')
+            ->willReturn($inputData['allUnits'])
+        ;
+
         $view = new FormView();
 
-        $view->vars = $inputData;
+        $view->vars = $inputData['vars'];
 
         /* @var $form \PHPUnit_Framework_MockObject_MockObject|FormInterface */
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
@@ -147,12 +194,16 @@ class QuoteProductTypeTest extends AbstractTest
         return [
             'empty quote product' => [
                 'input'     => [
-                    'value' => null,
+                    'vars' => [
+                        'value' => null,
+                    ],
+                    'allUnits' => [],
                 ],
                 'expected'  => [
                     'value' => null,
                     'componentOptions' => [
                         'units' => [],
+                        'allUnits'          => [],
                         'typeOffer'         => QuoteProduct::TYPE_OFFER,
                         'typeReplacement'   => QuoteProduct::TYPE_NOT_AVAILABLE,
                     ],
@@ -160,12 +211,20 @@ class QuoteProductTypeTest extends AbstractTest
             ],
             'empty product and replacement' => [
                 'input'     => [
-                    'value' => new QuoteProduct(),
+                    'vars' => [
+                        'value' => new QuoteProduct(),
+                    ],
+                    'allUnits' => [
+                        'unit10'
+                    ],
                 ],
                 'expected'  => [
                     'value' => new QuoteProduct(),
                     'componentOptions' => [
                         'units' => [],
+                        'allUnits' => [
+                            'unit10-formatted2',
+                        ],
                         'typeOffer'         => QuoteProduct::TYPE_OFFER,
                         'typeReplacement'   => QuoteProduct::TYPE_NOT_AVAILABLE,
                     ],
@@ -173,9 +232,15 @@ class QuoteProductTypeTest extends AbstractTest
             ],
             'existing product and replacement' => [
                 'input'     => [
-                    'value' => (new QuoteProduct())
-                        ->setProduct($this->createProduct(1, ['unit1', 'unit2']))
-                        ->setProductReplacement($this->createProduct(2, ['unit2', 'unit3'])),
+                    'vars' => [
+                        'value' => (new QuoteProduct())
+                            ->setProduct($this->createProduct(1, ['unit1', 'unit2']))
+                            ->setProductReplacement($this->createProduct(2, ['unit2', 'unit3'])),
+                    ],
+                    'allUnits' => [
+                        'unit20',
+                        'unit30',
+                    ],
                 ],
                 'expected'  => [
                     'value' => (new QuoteProduct())
@@ -191,6 +256,10 @@ class QuoteProductTypeTest extends AbstractTest
                                 'unit2' => 'unit2-formatted',
                                 'unit3' => 'unit3-formatted',
                             ],
+                        ],
+                        'allUnits' => [
+                            'unit20-formatted2',
+                            'unit30-formatted2',
                         ],
                         'typeOffer'         => QuoteProduct::TYPE_OFFER,
                         'typeReplacement'   => QuoteProduct::TYPE_NOT_AVAILABLE,
