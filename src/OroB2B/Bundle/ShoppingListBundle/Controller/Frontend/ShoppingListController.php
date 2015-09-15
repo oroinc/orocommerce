@@ -160,9 +160,9 @@ class ShoppingListController extends Controller
     }
 
     /**
-     * @Route("/create_rfp/{id}", name="orob2b_shopping_list_frontend_create_rfp", requirements={"id"="\d+"})
+     * @Route("/create_rfp/{id}", name="orob2b_shoppinglist_frontend_shoppinglist_createrfp", requirements={"id"="\d+"})
      * @Acl(
-     *      id="orob2b_shopping_list_frontend_create_rfp",
+     *      id="orob2b_shoppinglist_frontend_shoppinglist_createrfp",
      *      type="entity",
      *      class="OroB2BRFPBundle:Request",
      *      permission="CREATE",

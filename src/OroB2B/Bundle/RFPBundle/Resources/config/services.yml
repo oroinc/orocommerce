@@ -28,3 +28,11 @@ services:
         class: %orob2b_rfp.event_listener.request_frontend_datagrid.class%
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-requests-grid, method: onResultAfter }
+
+    orob2b_rfp.processor.quick_add:
+        parent: orob2b_product.processor.data_storage_aware
+        calls:
+            - [setName, ['orob2b_rfp_quick_add_processor']]
+            - [setRedirectRouteName, ['orob2b_rfp_frontend_request_create']]
+        tags:
+            - { name: orob2b_product.quick_add_processor }

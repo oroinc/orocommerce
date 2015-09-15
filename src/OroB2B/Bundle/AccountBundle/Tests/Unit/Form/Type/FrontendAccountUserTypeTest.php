@@ -2,118 +2,189 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+
+use Doctrine\ORM\Query;
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
-use Oro\Bundle\UserBundle\Tests\Unit\Stub\ChangePasswordTypeStub;
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as AccountSelectTypeStub;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityType;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserType;
+use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType;
-use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntitySelectTypeStub;
+use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\AddressCollectionTypeStub;
 
-class FrontendAccountUserTypeTest extends FormIntegrationTestCase
+class FrontendAccountUserTypeTest extends AccountUserTypeTest
 {
+    const DATA_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountUser';
+
     /**
      * @var FrontendAccountUserType
      */
     protected $formType;
 
-    /**
-     * @var Account[]
-     */
-    protected static $accounts = [];
+    /** @var  SecurityFacade|\PHPUnit_Framework_MockObject_MockObject */
+    protected $securityFacade;
 
     /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        parent::setUp();
+        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->formType = new FrontendAccountUserType();
-        $this->formType->setDataClass('OroB2B\Bundle\AccountBundle\Entity\AccountUser');
-    }
-
-    protected function tearDown()
-    {
-        parent::tearDown();
-
-        unset($this->formType);
-        self::$accounts = [];
+        $this->formType = new FrontendAccountUserType($this->securityFacade);
+        $this->formType->setAccountUserClass(self::DATA_CLASS);
+        $this->factory = Forms::createFormFactoryBuilder()
+            ->addExtensions($this->getExtensions())
+            ->getFormFactory();
     }
 
     /**
-     * {@inheritdoc}
+     * @return array
      */
     protected function getExtensions()
     {
+        $account = $this->getAccount(1);
+        $user = new AccountUser();
+        $user->setAccount($account);
+        $this->securityFacade->expects($this->any())->method('getLoggedUser')->willReturn($user);
+
+        $frontendUserRoleSelectType = new EntitySelectTypeStub(
+            $this->getRoles(),
+            FrontendAccountUserRoleSelectType::NAME,
+            new AccountUserRoleSelectType()
+        );
+        $addressEntityType = new EntityType($this->getAddresses(), 'test_address_entity');
+        $accountSelectType = new AccountSelectTypeStub($this->getAccounts(), 'orob2b_account_select');
+
+        $accountUserType = new AccountUserType($this->securityFacade);
+        $accountUserType->setDataClass(self::DATA_CLASS);
+        $accountUserType->setAddressClass(self::ADDRESS_CLASS);
+
         return [
             new PreloadedExtension(
                 [
                     OroDateType::NAME => new OroDateType(),
-                    ChangePasswordTypeStub::NAME => new ChangePasswordTypeStub()
+                    AccountUserType::NAME => $accountUserType,
+                    FrontendAccountUserRoleSelectType::NAME => $frontendUserRoleSelectType,
+                    $accountSelectType->getName() => $accountSelectType,
+                    AddressCollectionTypeStub::NAME => new AddressCollectionTypeStub(),
+                    $addressEntityType->getName() => $addressEntityType,
                 ],
                 []
             ),
-            new ValidatorExtension(Validation::createValidator())
+            new ValidatorExtension(Validation::createValidator()),
         ];
     }
 
     /**
+     * @dataProvider submitProvider
+     *
      * @param AccountUser $defaultData
      * @param array $submittedData
      * @param AccountUser $expectedData
-     * @dataProvider submitProvider
+     * @param bool $roleGranted
      */
-    public function testSubmit($defaultData, array $submittedData, $expectedData)
-    {
+    public function testSubmit(
+        AccountUser $defaultData,
+        array $submittedData,
+        AccountUser $expectedData,
+        $roleGranted = true
+    ) {
         $form = $this->factory->create($this->formType, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
         $form->submit($submittedData);
-        $this->assertTrue($form->isValid());
+        $result = $form->isValid();
+        $this->assertTrue($result);
         $this->assertEquals($expectedData, $form->getData());
     }
+
 
     /**
      * @return array
      */
     public function submitProvider()
     {
-        $entity = new AccountUser();
+        $newAccountUser = new AccountUser();
 
-        $existingEntity = new AccountUser();
-        $this->setPropertyValue($existingEntity, 'id', 42);
+        $existingAccountUser = new AccountUser();
 
-        $existingEntity->setFirstName('John');
-        $existingEntity->setLastName('Doe');
-        $existingEntity->setEmail('johndoe@example.com');
-        $existingEntity->setPassword('123456');
+        $class = new \ReflectionClass($existingAccountUser);
+        $prop = $class->getProperty('id');
+        $prop->setAccessible(true);
+        $prop->setValue($existingAccountUser, 42);
 
-        $updatedEntity = clone $existingEntity;
-        $updatedEntity->setFirstName('John UP');
-        $updatedEntity->setLastName('Doe UP');
-        $updatedEntity->setEmail('johndoe_up@example.com');
+        $existingAccountUser->setFirstName('John');
+        $existingAccountUser->setLastName('Doe');
+        $existingAccountUser->setEmail('johndoe@example.com');
+        $existingAccountUser->setPassword('123456');
+        $existingAccountUser->setAccount($this->getAccount(1));
+        $existingAccountUser->addAddress($this->getAddresses()[1]);
 
-        return [
-            'new user' => [
-                'defaultData' => $entity,
-                'submittedData' => [],
-                'expectedData' => $entity
-            ],
-            'updated user' => [
-                'defaultData' => $existingEntity,
-                'submittedData' => [
-                    'firstName' => $updatedEntity->getFirstName(),
-                    'lastName' => $updatedEntity->getLastName(),
-                    'email' => $updatedEntity->getEmail()
+        $alteredExistingAccountUser = clone $existingAccountUser;
+        $alteredExistingAccountUser->setEnabled(false);
+        $alteredExistingAccountUser->setAccount($this->getAccount(2));
+
+        $alteredExistingAccountUserWithRole = clone $alteredExistingAccountUser;
+        $alteredExistingAccountUserWithRole->setRoles([$this->getRole(2, 'test02')]);
+
+        $alteredExistingAccountUserWithAddresses = clone $alteredExistingAccountUser;
+        $alteredExistingAccountUserWithAddresses->addAddress($this->getAddresses()[2]);
+
+        return
+            [
+                'user without submitted data' => [
+                    'defaultData' => $newAccountUser,
+                    'submittedData' => [],
+                    'expectedData' => $newAccountUser,
                 ],
-                'expectedData' => $updatedEntity
-            ]
-        ];
+                'altered existing user' => [
+                    'defaultData' => $existingAccountUser,
+                    'submittedData' => [
+                        'firstName' => 'John',
+                        'lastName' => 'Doe',
+                        'email' => 'johndoe@example.com',
+                        'account' => 2,
+                    ],
+                    'expectedData' => $alteredExistingAccountUser,
+                ],
+                'altered existing user with roles' => [
+                    'defaultData' => $existingAccountUser,
+                    'submittedData' => [
+                        'firstName' => 'John',
+                        'lastName' => 'Doe',
+                        'email' => 'johndoe@example.com',
+                        'account' => 2,
+                        'roles' => [2],
+                    ],
+                    'expectedData' => $alteredExistingAccountUserWithRole,
+                    'altered existing user with addresses' => [
+                        'defaultData' => $existingAccountUser,
+                        'submittedData' => [
+                            'firstName' => 'John',
+                            'lastName' => 'Doe',
+                            'email' => 'johndoe@example.com',
+                            'account' => 2,
+                            'addresses' => [1, 2],
+                        ],
+                        'expectedData' => $alteredExistingAccountUserWithAddresses,
+                    ],
+                ],
+            ];
     }
 
     /**
@@ -125,15 +196,21 @@ class FrontendAccountUserTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param AccountUser $existingAccountUser
-     * @param string $property
-     * @param mixed $value
+     * @depends testSubmit
      */
-    protected function setPropertyValue(AccountUser $existingAccountUser, $property, $value)
+    public function testOnPreSetData()
     {
-        $class = new \ReflectionClass($existingAccountUser);
-        $prop = $class->getProperty($property);
-        $prop->setAccessible(true);
-        $prop->setValue($existingAccountUser, $value);
+        /** @var $securityFacade SecurityFacade|\PHPUnit_Framework_MockObject_MockObject */
+        $securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+            ->disableOriginalConstructor()
+            ->getMock();
+        /** @var FrontendAccountUserType $formType */
+        $formType = new FrontendAccountUserType($securityFacade);
+        /** @var $event FormEvent|\PHPUnit_Framework_MockObject_MockObject */
+        $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $securityFacade->expects($this->any())->method('getLoggedUser')->willReturn(null);
+        $formType->onPreSetData($event);
     }
 }

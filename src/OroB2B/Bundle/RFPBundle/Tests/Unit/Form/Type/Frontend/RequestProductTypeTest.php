@@ -8,14 +8,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
-use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceListAwareSelectType;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductRemovedSelectType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
 use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
 use OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type\AbstractTest;
-use OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type\Stub\StubProductPriceListAwareSelectType;
 
 class RequestProductTypeTest extends AbstractTest
 {
@@ -152,7 +152,7 @@ class RequestProductTypeTest extends AbstractTest
                     CollectionType::NAME                    => new CollectionType(),
                     RequestProductItemCollectionType::NAME  => new RequestProductItemCollectionType(),
                     ProductUnitRemovedSelectionType::NAME   => new StubProductUnitRemovedSelectionType(),
-                    ProductPriceListAwareSelectType::NAME   => new StubProductPriceListAwareSelectType(),
+                    ProductRemovedSelectType::NAME          => new StubProductRemovedSelectType(),
                     $priceType->getName()                   => $priceType,
                     $entityType->getName()                  => $entityType,
                     $optionalPriceType->getName()           => $optionalPriceType,

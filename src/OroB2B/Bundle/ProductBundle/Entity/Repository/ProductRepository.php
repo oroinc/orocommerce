@@ -62,4 +62,35 @@ class ProductRepository extends EntityRepository
 
         return $productsQueryBuilder;
     }
+
+    /**
+     * @param array $productSkus
+     *
+     * @return array Ids
+     */
+    public function getProductsIdsBySku(array $productSkus = [])
+    {
+        $productsQueryBuilder = $this
+            ->createQueryBuilder('p')
+            ->select('p.id, p.sku');
+
+        if ($productSkus) {
+            $productsQueryBuilder
+                ->where($productsQueryBuilder->expr()->in('p.sku', ':product_skus'))
+                ->setParameter('product_skus', $productSkus);
+        }
+
+        $productsData = $productsQueryBuilder
+            ->orderBy($productsQueryBuilder->expr()->asc('p.id'))
+            ->getQuery()
+            ->getArrayResult();
+
+        $productsIdsToSku = [];
+        foreach ($productsData as $key => $productData) {
+            $productsIdsToSku[$productData['sku']] = $productData['id'];
+            unset($productsData[$key]);
+        }
+
+        return $productsIdsToSku;
+    }
 }

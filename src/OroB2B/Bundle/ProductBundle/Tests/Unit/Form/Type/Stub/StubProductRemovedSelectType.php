@@ -26,6 +26,8 @@ class StubProductRemovedSelectType extends AbstractType
             'class' => 'OroB2B\Bundle\ProductBundle\Entity\Product',
             'property' => 'sku',
             'create_enabled' => true,
+            'grid_name' => 'stub_grid',
+            'grid_widget_route' => 'stub_route',
             'configs' => [
                 'placeholder' => null,
             ],
