@@ -1,9 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AttributeBundle\Tests\Unit\Form\Extension;
+namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Extension;
 
-use OroB2B\Bundle\AttributeBundle\Form\Extension\IntegerExtension;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use OroB2B\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 
 class IntegerExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -19,14 +22,15 @@ class IntegerExtensionTest extends \PHPUnit_Framework_TestCase
         $this->extension = new IntegerExtension();
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
+        /** @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver */
+        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(['type' => null]);
 
-        $this->extension->setDefaultOptions($resolver);
+        $this->extension->configureOptions($resolver);
     }
 
     public function testGetExtendedType()
@@ -41,6 +45,7 @@ class IntegerExtensionTest extends \PHPUnit_Framework_TestCase
      */
     public function testFinishView(FormView $view, array $options)
     {
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->getMockBuilder('Symfony\Component\Form\Form')
             ->disableOriginalConstructor()
             ->getMock();
