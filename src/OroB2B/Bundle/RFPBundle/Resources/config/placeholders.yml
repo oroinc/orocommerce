@@ -4,8 +4,16 @@ placeholders:
             rfp_view_buttons:
                 order: 200
 
+    orob2b_product_quick_add_buttons:
+        items:
+            rfp_quick_add: ~
+
 items:
     rfp_view_buttons:
         template: OroB2BRFPBundle:Request:block/viewButtons.html.twig
         applicable: @oro_ui.widget_provider.view_actions->supports($entity$)
         data: @oro_ui.widget_provider.view_actions->getWidgets($entity$)
+
+    rfp_quick_add:
+        template: OroB2BRFPBundle:Product:Frontend/quickAdd.html.twig
+        applicable: @orob2b_rfp.processor.quick_add->isAllowed()

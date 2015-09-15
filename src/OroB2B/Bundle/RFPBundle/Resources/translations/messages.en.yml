@@ -28,6 +28,9 @@ orob2b:
 
             submit.label: 'Submit Request For Proposal'
 
+            message:
+                request_saved: 'Your Request For Proposal successfully saved!'
+
         requestproduct:
             entity_label: 'Request Product'
             entity_plural_label: 'Request Products'
@@ -69,6 +72,9 @@ orob2b:
             request_statuses_list.description: 'List of Request Statuses'
             shortcut_requests_list.description: 'Shows list of existing Requests'
             shortcut_request_statuses_list.description: 'Shows list of existing Request Statuses'
+            order_quick_add:
+                label: Quick Order Form
+                description: Quick add products to order, RFQ or shopping cart
 
         sections:
             general:    'General'
@@ -105,6 +111,7 @@ orob2b:
             restore: 'Restore'
             change_status: 'Change Status'
             create_quote: 'Create Quote'
+            add_to_rfp: 'Add To Request For Proposal'
             create_rfp: 'Create RFP'
 
         widget:
