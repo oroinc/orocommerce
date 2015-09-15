@@ -99,7 +99,7 @@ class AccountControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
-        $this->assertContains(self::UPDATED_NAME . ' - Accounts - Accounts', $html);
+        $this->assertContains(self::UPDATED_NAME . ' - Accounts - Customers', $html);
         $this->assertContains('Add attachment', $html);
         $this->assertContains('Add note', $html);
         $this->assertContains('Address Book', $html);

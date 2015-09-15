@@ -4,7 +4,7 @@ oro_menu_config:
             label:           'orob2b.shoppinglist.entity_plural_label'
             route:           'orob2b_shopping_list_index'
             extras:
-                position:    10
+                position:    100
                 routes:      ['orob2b_shopping_list_index', 'orob2b_shopping_list_view']
                 description: 'orob2b.shoppinglist.menu.shopping_list.description'
 
@@ -18,7 +18,7 @@ oro_menu_config:
             label:           'orob2b.shoppinglist.entity_plural_label'
             route:           'orob2b_shopping_list_frontend_index'
             extras:
-                position:    20
+                position:    200
                 routes:      ['/^orob2b_shopping_list_frontend_/']
                 description: 'orob2b.shoppinglist.menu.shopping_list.description'
 
@@ -32,7 +32,7 @@ oro_menu_config:
     tree:
         application_menu:
             children:
-                sale_tab:
+                sales_tab:
                     children:
                         shopping_list: ~
         shortcuts:

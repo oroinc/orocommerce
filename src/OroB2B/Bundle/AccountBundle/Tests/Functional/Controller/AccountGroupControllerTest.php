@@ -102,7 +102,7 @@ class AccountGroupControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
-        $this->assertContains(self::UPDATED_NAME . ' - Account Groups - Accounts', $html);
+        $this->assertContains(self::UPDATED_NAME . ' - Account Groups - Customers', $html);
         $this->assertContains(self::ADD_NOTE_BUTTON, $html);
         $this->assertViewPage($html, self::UPDATED_NAME);
     }

@@ -155,7 +155,8 @@ class LoadRequestDemoData extends AbstractFixture implements
     {
         $products = $this->getProducts($manager);
         $currencies = $this->getCurrencies();
-        for ($i = 0; $i < rand(1, 10); $i++) {
+        $numLineItems = rand(1, 10);
+        for ($i = 0; $i < $numLineItems; $i++) {
             $product = $products[rand(0, count($products) - 1)];
             $unitPrecisions = $product->getUnitPrecisions();
 
@@ -166,7 +167,8 @@ class LoadRequestDemoData extends AbstractFixture implements
             $requestProduct = new RequestProduct();
             $requestProduct->setProduct($product);
             $requestProduct->setComment(sprintf('Notes %s', $i));
-            for ($j = 0; $j < rand(1, 10); $j++) {
+            $numProductItems = rand(1, 10);
+            for ($j = 0; $j < $numProductItems; $j++) {
                 $productUnit = $unitPrecisions[rand(0, count($unitPrecisions) - 1)]->getUnit();
 
                 $currency = $currencies[rand(0, count($currencies) - 1)];

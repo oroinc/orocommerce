@@ -181,7 +181,7 @@ orob2b.account:
         region_code.label:       State ISO code
 
     menu:
-        account_tab.label: 'Accounts'
+        customers_tab.label: 'Customers'
         account_list.description: 'List of Accounts'
         account_group_list.description: 'List of Account Groups'
         shortcut_account_list.description: 'List of Accounts'
@@ -200,6 +200,9 @@ orob2b.account:
         account_user_profile.label: My Profile
         account_user_login.label: Login
         account_user_logout.label: Logout
+
+        frontend_configuration_tab: Configuration
+        frontend_account_user_roles.label: Roles
 
     controller:
         account:

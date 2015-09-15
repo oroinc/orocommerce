@@ -16,10 +16,10 @@ class Page extends AbstractPageEntity
     protected $childPageButton = '//a[@title="Create Child page"]';
 
     /** @var string */
-    protected $editButton = '//a[@title="Edit Page"]';
+    protected $editButton = '//a[@title="Edit Landing Page"]';
 
     /** @var string */
-    protected $deleteButton = '//a[@title="Delete Page"]';
+    protected $deleteButton = '//a[@title="Delete Landing Page"]';
 
     /** @var string */
     protected $deleteConfirmButton = '//a[contains(., "Yes, Delete")]';
