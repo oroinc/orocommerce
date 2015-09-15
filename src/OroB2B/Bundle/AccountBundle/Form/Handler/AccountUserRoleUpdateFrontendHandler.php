@@ -4,18 +4,18 @@ namespace OroB2B\Bundle\AccountBundle\Form\Handler;
 
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Form\Handler\AclRoleHandler;
 use Oro\Bundle\UserBundle\Entity\AbstractRole;
-use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleType;
 
-class AccountUserRoleUpdateFrontendHandler extends AccountUserRoleUpdateHandler
+class AccountUserRoleUpdateFrontendHandler extends AbstractAccountUserRoleHandler
 {
     /**
      * @var AccountUserRole
@@ -55,7 +55,7 @@ class AccountUserRoleUpdateFrontendHandler extends AccountUserRoleUpdateHandler
 
         $this->loggedAccountUser = $this->securityFacade->getLoggedUser();
 
-        /** @var OroEntityManager $manager */
+        /** @var EntityManager $manager */
         $manager = $this->managerRegistry->getManagerForClass(ClassUtils::getClass($this->loggedAccountUser));
 
         $connection = $manager->getConnection();
@@ -77,13 +77,13 @@ class AccountUserRoleUpdateFrontendHandler extends AccountUserRoleUpdateHandler
 
     /**
      * @param AccountUserRole|AbstractRole $role
-     * @param OroEntityManager             $manager
+     * @param EntityManager             $manager
      * @param array                        $appendUsers
      * @param array                        $removeUsers
      */
     protected function addNewRoleToUsers(
         AccountUserRole $role,
-        OroEntityManager $manager,
+        EntityManager $manager,
         array $appendUsers,
         array $removeUsers
     ) {
@@ -95,7 +95,7 @@ class AccountUserRoleUpdateFrontendHandler extends AccountUserRoleUpdateHandler
         $accountRolesToAdd = array_merge($accountRolesToAdd, $appendUsers);
         array_map(
             function (AccountUser $accountUser) use ($role, $manager) {
-                if ($accountUser->getAccount()->getId() == $this->loggedAccountUser->getAccount()->getId()) {
+                if ($accountUser->getAccount()->getId() === $this->loggedAccountUser->getAccount()->getId()) {
                     $accountUser->addRole($this->newRole);
                     $manager->persist($accountUser);
                 }
@@ -106,9 +106,9 @@ class AccountUserRoleUpdateFrontendHandler extends AccountUserRoleUpdateHandler
 
     /**
      * @param AccountUserRole|AbstractRole $role
-     * @param OroEntityManager             $manager
+     * @param EntityManager                $manager
      */
-    protected function removeOriginalRoleFromUsers(AccountUserRole $role, OroEntityManager $manager)
+    protected function removeOriginalRoleFromUsers(AccountUserRole $role, EntityManager $manager)
     {
         if (!$role->getId() || $role->getId() === $this->newRole->getId()) {
             return;
