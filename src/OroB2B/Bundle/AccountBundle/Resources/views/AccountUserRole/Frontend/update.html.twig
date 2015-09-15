@@ -3,15 +3,15 @@
 
 {% form_theme form with 'OroFormBundle:Form:fields.html.twig' %}
 
-{% set formAction = entity.id ? path('orob2b_account_account_user_role_update', {id: entity.id}) : path('orob2b_account_account_user_role_create') %}
+{% set formAction = entity.id ? path('orob2b_account_frontend_account_user_role_update', {id: entity.id}) : path('orob2b_account_frontend_account_user_role_create') %}
 
 {% oro_title_set({params : {"%label%": entity.label|default('N/A'|trans), '%entityName%': 'orob2b.account.accountuserrole.entity_label'|trans} }) %}
 
 {% block navButtons %}
-    {% if entity.id and resource_granted('DELETE', entity) %}
+    {% if entity.id and resource_granted('orob2b_account_frontend_account_user_role_delete', entity) and not entity.isPredefined %}
         {{ UI.deleteButton({
-            'dataUrl': path('orob2b_api_account_delete_accountuserrole', {'id': entity.id}),
-            'dataRedirect': path('orob2b_account_account_user_role_index'),
+            'dataUrl': path('orob2b_api_frontend_account_delete_accountuserrole', {'id': entity.id}),
+            'dataRedirect': path('orob2b_account_frontend_account_user_role_index'),
             'aCss': 'no-hash remove-button',
             'dataId': entity.id,
             'id': 'btn-remove-attribute',
@@ -19,9 +19,9 @@
         }) }}
         {{ UI.buttonSeparator() }}
     {% endif %}
-    {{ UI.cancelButton(path('orob2b_account_account_user_role_index')) }}
+    {{ UI.cancelButton(path('orob2b_account_frontend_account_user_role_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or resource_granted('orob2b_account_account_user_role_update') %}
+    {% if entity.id or resource_granted('orob2b_account_frontend_account_user_role_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
@@ -31,7 +31,7 @@
     {% if entity.id %}
         {% set breadcrumbs = {
             'entity':      entity,
-            'indexPath':   path('orob2b_account_account_user_role_index'),
+            'indexPath':   path('orob2b_account_frontend_account_user_role_index'),
             'indexLabel': 'orob2b.account.accountuserrole.entity_plural_label'|trans,
             'entityTitle': entity.label|default('N/A'|trans)
         } %}
@@ -43,7 +43,7 @@
 {% endblock pageHeader %}
 
 {% block content_data %}
-    {% set id = 'account-user-role-edit' %}
+    {% set id = 'account-user-role-frontend-edit' %}
 
     {% set dataBlocks = [
         {
@@ -53,21 +53,11 @@
                 {
                     'data': [
                         form_row(form.label),
-                        form_row(form.account, {id: 'roleAccount'})
                     ]
                 }
             ]
         }
     ] %}
-
-    <span data-page-component-module="orob2baccount/js/app/components/account-user-role-component"
-          data-page-component-options="{{ {
-              accountFieldId: 'roleAccount',
-              appendFieldId: 'roleAppendUsers',
-              removeFieldId: 'roleRemoveUsers',
-              datagridName: 'account-account-users-grid-update',
-              role: entity.id
-          }|json_encode }}"></span>
 
     {% for name, config in form.vars.privilegeConfig %}
         {% set dataBlocks = dataBlocks|merge([{
@@ -92,7 +82,7 @@
             'data' : [
                 form_widget(form.appendUsers, {'id': 'roleAppendUsers'}),
                 form_widget(form.removeUsers, {'id': 'roleRemoveUsers'}),
-                dataGrid.renderGrid('account-account-users-grid-update', {role: entity.id, account: entity.account ? entity.account.id : null}, { cssClass: 'inner-grid' })
+                dataGrid.renderGrid('account-account-users-grid-frontend-update', {role: entity.id, account: entity.account }, { cssClass: 'inner-grid' })
             ]
         }]
     }] ) %}
@@ -102,5 +92,7 @@
         'dataBlocks': dataBlocks
     }%}
 
-    {{ parent() }}
+    {% set data = oro_form_process(data, form) %}
+    {{ UI.scrollData(id, data, form) }}
+
 {% endblock content_data %}
