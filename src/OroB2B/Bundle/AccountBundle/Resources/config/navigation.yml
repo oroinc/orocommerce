@@ -37,12 +37,13 @@ oro_menu_config:
             extras:
                 icon: 'icon-flag'
             uri: '#'
-        account_tab:
-            label:           'orob2b.account.menu.account_tab.label'
+
+        customers_tab:
+            label:           'orob2b.account.menu.customers_tab.label'
             uri:             '#'
             extras:
                 icon:        icon-user
-                position:    40
+                position:    200
 
         account_list:
             label:           'orob2b.account.entity_plural_label'
@@ -140,27 +141,27 @@ oro_menu_config:
             label: 'orob2b.account.menu.frontend_configuration_tab'
             uri: '#'
             extras:
-                position: 200
-
-        frontend_account_user_roles:
-             label: 'orob2b.account.menu.frontend_account_user_roles.label'
-             route: 'orob2b_account_frontend_account_user_role_index'
-             extras:
-                 position: 10
-                 routes: ['/^orob2b_account_frontend_account_user_role/']
+                position: 900
 
         frontend_account_users:
             label: 'orob2b.account.accountuser.entity_plural_label'
             route: 'orob2b_account_frontend_account_user_index'
             extras:
-                position: 10
+                position: 100
                 routes: ['/^orob2b_account_frontend_account_user/']
                 description: 'orob2b.account.menu.account_users.description'
+
+        frontend_account_user_roles:
+             label: 'orob2b.account.menu.frontend_account_user_roles.label'
+             route: 'orob2b_account_frontend_account_user_role_index'
+             extras:
+                 position: 200
+                 routes: ['/^orob2b_account_frontend_account_user_role/']
 
     tree:
         application_menu:
             children:
-                account_tab:
+                customers_tab:
                     children:
                         account_list: ~
                         account_group_list: ~
@@ -171,10 +172,8 @@ oro_menu_config:
             children:
                 frontend_configuration_tab:
                     children:
+                        frontend_account_users: ~
                         frontend_account_user_roles: ~
-                account_tab:
-                    children:
-                       frontend_account_users: ~
 
         frontend_dots_menu:
             type: dots_menu

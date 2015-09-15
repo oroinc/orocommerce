@@ -187,7 +187,7 @@ orob2b.account:
         region_code.label:       State ISO code
 
     menu:
-        account_tab.label: 'Accounts'
+        customers_tab.label: 'Customers'
         account_list.description: 'List of Accounts'
         account_group_list.description: 'List of Account Groups'
         shortcut_account_list.description: 'List of Accounts'
