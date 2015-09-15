@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\AccountBundle\Form\Handler;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProviderInterface;
+use Oro\Bundle\SecurityBundle\Acl\Extension\EntityMaskBuilder;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
 use Oro\Bundle\UserBundle\Entity\AbstractRole;
 use Oro\Bundle\UserBundle\Form\Handler\AclRoleHandler;
@@ -66,28 +67,13 @@ class AccountUserRoleHandler extends AclRoleHandler
             $oid = $privilege->getIdentity()->getId();
             if (strpos($oid, $entityPrefix) === 0) {
                 $className = substr($oid, strlen($entityPrefix));
-                if (!$this->hasFrontendOwnership($className)) {
+                if (!$this->ownershipConfigProvider->hasConfig($className)) {
                     unset($privileges[$key]);
                 }
             }
         }
 
         return $privileges;
-    }
-
-    /**
-     * @param string $className
-     * @return bool
-     */
-    protected function hasFrontendOwnership($className)
-    {
-        if ($this->ownershipConfigProvider->hasConfig($className)) {
-            $config = $this->ownershipConfigProvider->getConfig($className);
-            if ($config->has('frontend_owner_type')) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -108,7 +94,16 @@ class AccountUserRoleHandler extends AclRoleHandler
     protected function processPrivileges(AbstractRole $role)
     {
         $this->startFrontendProviderEmulation();
+
+        // product view always must be set
+        $this->aclManager->setPermission(
+            $this->aclManager->getSid($role),
+            $this->aclManager->getOid('entity:OroB2B\Bundle\ProductBundle\Entity\Product'),
+            EntityMaskBuilder::MASK_VIEW_SYSTEM
+        );
+
         parent::processPrivileges($role);
+
         $this->stopFrontendProviderEmulation();
     }
 

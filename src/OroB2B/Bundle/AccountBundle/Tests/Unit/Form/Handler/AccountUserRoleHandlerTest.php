@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Handler;
 
 use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -11,6 +12,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProviderInterface;
+use Oro\Bundle\SecurityBundle\Acl\Extension\EntityMaskBuilder;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 use Oro\Bundle\SecurityBundle\Model\AclPrivilege;
 use Oro\Bundle\SecurityBundle\Model\AclPrivilegeIdentity;
@@ -177,8 +179,11 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
         $entityForm->expects($this->once())
             ->method('setData')
             ->willReturnCallback(
-                function (ArrayCollection $actualPrivileges) use ($firstEntityPrivilege) {
-                    $this->assertEquals([$firstEntityPrivilege], array_values($actualPrivileges->toArray()));
+                function (ArrayCollection $actualPrivileges) use ($firstEntityPrivilege, $secondEntityPrivilege) {
+                    $this->assertEquals(
+                        [$firstEntityPrivilege, $secondEntityPrivilege],
+                        array_values($actualPrivileges->toArray())
+                    );
                 }
             );
 
@@ -240,6 +245,9 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
         $this->handler->process($role);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testProcessPrivileges()
     {
         $request = new Request();
@@ -247,6 +255,8 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
 
         $role = new AccountUserRole('TEST');
         $roleSecurityIdentity = new RoleSecurityIdentity($role);
+
+        $productObjectIdentity = new ObjectIdentity('entity', 'OroB2B\Bundle\ProductBundle\Entity\Product');
 
         $appendForm = $this->getMock('Symfony\Component\Form\FormInterface');
         $appendForm->expects($this->once())
@@ -321,6 +331,14 @@ class AccountUserRoleHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getSid')
             ->with($role)
             ->willReturn($roleSecurityIdentity);
+        $this->aclManager->expects($this->any())
+            ->method('getOid')
+            ->with($productObjectIdentity->getIdentifier() . ':' . $productObjectIdentity->getType())
+            ->willReturn($productObjectIdentity);
+
+        $this->aclManager->expects($this->once())
+            ->method('setPermission')
+            ->with($roleSecurityIdentity, $productObjectIdentity, EntityMaskBuilder::MASK_VIEW_SYSTEM);
 
         $this->chainMetadataProvider->expects($this->once())
             ->method('startProviderEmulation')

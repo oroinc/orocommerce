@@ -26,6 +26,14 @@ class RequestProductTest extends AbstractTest
         ]);
     }
 
+    public function testGetEntityIdentifier()
+    {
+        $request = new RequestProduct();
+
+        $this->setProperty($request, 'id', 321);
+        $this->assertEquals(321, $request->getEntityIdentifier());
+    }
+
     /**
      * @depends testProperties
      */

@@ -19,6 +19,19 @@ class AjaxProductUnitControllerTest extends WebTestCase
         $this->loadFixtures(['OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions']);
     }
 
+    public function testGetAllProductUnitsAction()
+    {
+        $this->client->request('GET', $this->getUrl('orob2b_product_unit_all_product_units'));
+
+        $result = $this->client->getResponse();
+        $this->assertJsonResponseStatusCodeEquals($result, 200);
+
+        $data = json_decode($result->getContent(), true);
+
+        $this->assertArrayHasKey('units', $data);
+        $this->assertEquals(['bottle', 'box', 'item', 'kg', 'liter'], array_keys($data['units']));
+    }
+
     /**
      * @param string $productReference
      * @param array $expectedData

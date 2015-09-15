@@ -41,6 +41,10 @@ class ProductUnitLabelExtensionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param string $unitCode
+     * @param bool $isShort
+     * @param string $expected
+     *
      * @dataProvider formatProvider
      */
     public function testFormat($unitCode, $isShort, $expected)
@@ -54,6 +58,9 @@ class ProductUnitLabelExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $this->extension->format($unitCode, $isShort));
     }
 
+    /**
+     * @return array
+     */
     public function formatProvider()
     {
         return [

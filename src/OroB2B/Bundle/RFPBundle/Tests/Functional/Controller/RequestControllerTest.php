@@ -2,14 +2,11 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller;
 
-use Doctrine\Common\Persistence\ObjectManager;
-
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ActivityListBundle\Entity\ActivityList;
 use Oro\Bundle\ActivityListBundle\Entity\Manager\ActivityListManager;
 
 use OroB2B\Bundle\RFPBundle\Entity\Request;
-use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
 /**

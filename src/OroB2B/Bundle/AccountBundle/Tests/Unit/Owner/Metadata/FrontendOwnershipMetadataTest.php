@@ -161,6 +161,7 @@ class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
                 'arguments' => [],
                 'levels' => [
                     0 => AccessLevel::NONE_LEVEL_NAME,
+                    5 => AccessLevel::getAccessLevelName(5),
                 ],
             ],
             'basic level owned' => [

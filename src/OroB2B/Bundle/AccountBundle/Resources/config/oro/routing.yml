@@ -28,6 +28,13 @@ orob2b_account_account_user_ajax:
     type: annotation
     prefix: /account/user
 
+orob2b_account_frontend_account_user_ajax:
+    resource: "@OroB2BAccountBundle/Controller/Frontend/AjaxAccountUserController.php"
+    type: annotation
+    prefix: /account/user
+    options:
+        frontend: true
+
 orob2b_account_account_user_role:
     resource: "@OroB2BAccountBundle/Controller/AccountUserRoleController.php"
     type: annotation
@@ -37,6 +44,13 @@ orob2b_account_acl_permission:
     resource: "@OroB2BAccountBundle/Controller/AclPermissionController.php"
     type: annotation
     prefix: /account/acl
+
+orob2b_account_frontend_account_user_profile:
+    resource: "@OroB2BAccountBundle/Controller/Frontend/AccountUserProfileController.php"
+    type: annotation
+    prefix: /account/user
+    options:
+        frontend: true
 
 orob2b_account_frontend_account_user:
     resource: "@OroB2BAccountBundle/Controller/Frontend/AccountUserController.php"
@@ -68,24 +82,38 @@ orob2b_account_bundle_api:
     defaults:
         version:  latest
 
-orob2b_account_frontend_account_user_datagrid_index:
-    path: /datagrid/{gridName}
-    defaults: { _controller: OroDataGridBundle:Grid:get }
-    requirements:
-        gridName: '[\w\:-]+'
-    options:
-        frontend: true
-
-orob2b_account_frontend_account_user_datagrid_widget:
-    path: /datagrid/widget/{gridName}
-    defaults: { _controller: OroDataGridBundle:Grid:widget }
-    requirements:
-        gridName: '[\w\:-]+'
-    options:
-        frontend: true
-
 orob2b_account_pinbar_help:
     pattern: /pinbar/help
     defaults: { _controller: FrameworkBundle:Template:template, template: "OroNavigationBundle:Pinbar:help.html.twig" }
+    options:
+        frontend: true
+
+orob2b_frontend_autocomplete_search:
+    pattern: /autocomplete/search
+    defaults: { _controller: OroFormBundle:Autocomplete:search }
+    options:
+        frontend: true
+
+orob2b_account_frontend_entity_pagination_first:
+    pattern: /entity-pagination/first/{_entityName}/{_scope}/{_routeName}"
+    defaults: { _controller: OroEntityPaginationBundle:EntityPagination:first }
+    options:
+        frontend: true
+
+orob2b_account_frontend_entity_pagination_previous:
+    pattern: /entity-pagination/previous/{_entityName}/{_scope}/{_routeName}"
+    defaults: { _controller: OroEntityPaginationBundle:EntityPagination:previous }
+    options:
+        frontend: true
+
+orob2b_account_frontend_entity_pagination_next:
+    pattern: /entity-pagination/next/{_entityName}/{_scope}/{_routeName}"
+    defaults: { _controller: OroEntityPaginationBundle:EntityPagination:next }
+    options:
+        frontend: true
+
+orob2b_account_frontend_entity_pagination_last:
+    pattern: /entity-pagination/last/{_entityName}/{_scope}/{_routeName}"
+    defaults: { _controller: OroEntityPaginationBundle:EntityPagination:last }
     options:
         frontend: true

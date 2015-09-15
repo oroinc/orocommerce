@@ -5,14 +5,13 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 
-use Oro\Bundle\SecurityBundle\Acl\Extension\EntityAclExtension;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserManager;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AcccountBundle\Entity\AccountUserManager;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserManager;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
@@ -283,21 +282,17 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
 
         if ($aclManager->isAclEnabled()) {
             $sid = $aclManager->getSid($role);
+            $oid = $aclManager->getOid('entity:' . $className);
+            $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
 
-            foreach ($aclManager->getAllExtensions() as $extension) {
-                if ($extension instanceof EntityAclExtension) {
-                    $chainMetadataProvider->startProviderEmulation(FrontendOwnershipMetadataProvider::ALIAS);
-                    $oid = $aclManager->getOid('entity:' . $className);
-                    $builder = $aclManager->getMaskBuilder($oid);
-                    $mask = $builder->reset()->get();
-                    foreach ($allowedAcls as $acl) {
-                        $mask = $builder->add($acl)->get();
-                    }
-                    $aclManager->setPermission($sid, $oid, $mask);
-
-                    $chainMetadataProvider->stopProviderEmulation();
-                }
+            $builder = $aclManager->getMaskBuilder($oid);
+            $mask = $builder->reset()->get();
+            foreach ($allowedAcls as $acl) {
+                $mask = $builder->add($acl)->get();
             }
+            $aclManager->setPermission($sid, $oid, $mask);
+
+            $chainMetadataProvider->stopProviderEmulation();
         }
     }
 }

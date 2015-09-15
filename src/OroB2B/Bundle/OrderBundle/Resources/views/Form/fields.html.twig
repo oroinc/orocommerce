@@ -9,3 +9,202 @@
         {{ block('oro_address_rows') }}
     {% endif %}
 {% endblock %}
+
+{% macro orob2b_order_line_items_collection_item_prototype(widget) %}
+    {% if 'collection' in widget.vars.block_prefixes %}
+        {% set form = widget.vars.prototype %}
+        {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
+        {% set disabled = widget.vars.disabled %}
+        {% set allow_delete = widget.vars.allow_delete %}
+    {% else %}
+        {% if widget.vars.disallow_delete is defined and widget.vars.disallow_delete %}
+            {% set allow_delete = false %}
+        {% else %}
+            {% set allow_delete = widget.parent.vars.allow_delete %}
+        {% endif %}
+        {% set form = widget %}
+        {% set name = widget.vars.full_name %}
+        {% set disabled = widget.parent.vars.disabled %}
+    {% endif %}
+
+    {% set page_component_options = form.vars.page_component_options|merge({
+        'disabled': not allow_delete
+    }) %}
+
+    <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
+        class="order-line-item"
+        data-page-component-module="{{ form.vars.page_component }}"
+        data-page-component-options="{{ page_component_options|json_encode }}"
+        data-layout="separate">
+        {{ form_widget(form) }}
+
+        {% if allow_delete %}
+            <td class="order-line-item-remove">
+                <button type="button" class="removeLineItem btn icons-holder"><i class="icon-remove"></i></button>
+            </td>
+        {% elseif widget.parent.vars.allow_delete %}
+            <td></td>
+        {% endif %}
+    </tr>
+{% endmacro %}
+
+{% block orob2b_order_line_items_collection_widget %}
+    {% spaceless %}
+        {% if prototype is defined %}
+            {% set prototype_html = _self.orob2b_order_line_items_collection_item_prototype(form) %}
+        {% endif %}
+        {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
+        {% set id = id ~ '_collection' %}
+        <div class="row-oro">
+            {% set prototype_name = form.vars.prototype_name %}
+            <div {{ block('widget_container_attributes') }}>
+                <table class="grid table-hover table table-bordered table-condensed">
+                    <thead>
+                    <tr>
+                        <th class="order-line-item-sku"><span>{{ 'orob2b.product.sku.label'|trans }}</span></th>
+                        <th class="order-line-item-type"><span>{{ 'orob2b.product.entity_label'|trans }}</span></th>
+                        <th class="order-line-item-quantity"><span>{{ 'orob2b.order.orderlineitem.quantity.label'|trans }}</span></th>
+                        <th class="order-line-item-price"><span>{{ 'orob2b.order.orderlineitem.price.label'|trans }}</span></th>
+                        <th class="order-line-item-ship_by"><span>{{ 'orob2b.order.orderlineitem.ship_by.label'|trans }}</span></th>
+                        <th class="order-line-item-comment"><span>{{ 'orob2b.order.orderlineitem.comment.label'|trans }}</span></th>
+                        {% if form.vars.allow_delete %}
+                            <th class="order-line-item-actions"></th>
+                        {% endif %}
+                    </tr>
+                    </thead>
+                    <tbody data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
+                    {% if form.children|length %}
+                        {% for child in form.children %}
+                            {{ _self.orob2b_order_line_items_collection_item_prototype(child) }}
+                        {% endfor %}
+                    {% elseif show_form_when_empty and prototype_html is defined %}
+                        {{ prototype_html|replace({(prototype_name): '0'})|raw }}
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if allow_add %}
+                <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
+            {% endif %}
+        </div>
+    {% endspaceless %}
+{% endblock %}
+
+{% block orob2b_order_line_item_widget %}
+    <td class="order-line-item-sku">
+        <div class="order-line-item-type-product">
+            {% if form.vars.value is not empty %}
+                {{ form.vars.value.productSku }}
+            {% endif %}
+        </div>
+        <div class="order-line-item-type-free-form" style="display: none;">
+            {{ form_widget(form.productSku) }}
+        </div>
+    </td>
+    <td class="order-line-item-type">
+        <div class="fields-row">
+            <div class="order-line-item-type-product">
+                {{ form_widget(form.product) }}
+                <a class="order-line-item-type-free-form" href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.select.free_form'|trans }}</a>
+            </div>
+            <div class="order-line-item-type-free-form" style="display: none;">
+                {{ form_widget(form.freeFormProduct) }}
+                <br/><a class="order-line-item-type-product" href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.select.product'|trans }}</a>
+            </div>
+        </div>
+        {{ form_errors(form.product) }}
+        {{ form_errors(form.freeFormProduct) }}
+    </td>
+    <td class="order-line-item-quantity">
+        <div class="fields-row">
+            {{ form_widget(form.quantity) }}
+            {{ form_widget(form.productUnit) }}
+        </div>
+        {{ form_errors(form.quantity) }}
+        {{ form_errors(form.productUnit) }}
+    </td>
+    <td class="order-line-item-price">
+        <div class="fields-row">
+            {% set priceOverriddenTooltip %}
+                <p>{{ 'orob2b.order.orderlineitem.price_is_overridden.label'|trans }}</p>
+                <p><a href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.reset_price.label'|trans }}</a></p>
+            {% endset %}
+
+            <div class="order-line-item-price-overridden" style="display: none;">
+                <i class="icon-exclamation-sign" data-toggle="popover" data-placement="bottom" data-close="false" data-content="{{ priceOverriddenTooltip|escape }}"></i>
+            </div>
+
+            {{ form_widget(form.price) }}
+
+            <div class="order-line-item-tier-prices">
+                <i class="icon-bars" data-toggle="popover" data-placement="bottom" data-close="false"></i>
+            </div>
+
+            {{ form_widget(form.priceType) }}
+        </div>
+        {{ form_errors(form.price) }}
+        {{ form_errors(form.priceType) }}
+    </td>
+    <td class="order-line-item-ship_by">
+        {{ form_widget(form.shipBy) }}
+        {{ form_errors(form.shipBy) }}
+    </td>
+    <td class="order-line-item-comment">
+        <div data-page-component-module="orob2border/js/app/components/notes-component" style="display: none;">
+            {{ form_widget(form.comment) }}
+        </div>
+    </td>
+{% endblock %}
+
+{% block orob2b_order_line_item_frontend_widget %}
+    {% set isFreeFormProduct = form.vars.value is not empty and form.vars.value.product is empty and form.vars.value.freeFormProduct is not empty %}
+
+    <td class="order-line-item-sku">
+        <div class="order-line-item-type-product">
+            {% if form.vars.value is not empty %}
+                {{ form.vars.value.productSku }}
+            {% endif %}
+        </div>
+    </td>
+    <td class="order-line-item-type">
+        <div class="order-line-item-type-product">
+            {% if isFreeFormProduct %}
+                {{ form.vars.value.freeFormProduct }}
+            {% else %}
+                {{ form_widget(form.product) }}
+                {{ form_errors(form.product) }}
+            {% endif %}
+        </div>
+    </td>
+    <td class="order-line-item-quantity">
+        <div class="fields-row">
+            {{ form_widget(form.quantity) }}
+            {{ form_widget(form.productUnit) }}
+        </div>
+        {{ form_errors(form.quantity) }}
+        {{ form_errors(form.productUnit) }}
+    </td>
+    <td class="order-line-item-price">
+        {% if form.vars.value.price is defined and form.vars.value.price is not null %}
+            {% set priceValue = form.vars.value.price.value %}
+        {% else %}
+            {% set priceValue = '' %}
+        {% endif %}
+        <div class="order-line-item-price-value" data-price="{{ priceValue }}">
+            {{ priceValue }}
+        </div>
+        <div class="order-line-item-tier-prices">
+            <i class="icon-bars" data-toggle="popover" data-placement="bottom" data-close="false"></i>
+        </div>
+    </td>
+    <td class="order-line-item-ship_by">
+        {{ form_widget(form.shipBy) }}
+        {{ form_errors(form.shipBy) }}
+    </td>
+    <td class="order-line-item-comment">
+        <div data-page-component-module="orob2border/js/app/components/notes-component" style="display:none;">
+            {{ form_widget(form.comment) }}
+        </div>
+    </td>
+{% endblock %}

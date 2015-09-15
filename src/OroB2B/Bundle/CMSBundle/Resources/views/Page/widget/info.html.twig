@@ -3,7 +3,11 @@
 {% set pageRelatedSlugs %}
     <ul class="without-markers">
         {% for slug in entity.relatedSlugs %}
-            <li>{{ slug.getUrl }}</li>
+            <li>
+                <a href="{{ app.request.getUriForPath(slug.getUrl) }}" target="_blank">
+                    {{ slug.getUrl }}
+                </a>
+            </li>
         {% endfor %}
     </ul>
 {% endset %}
@@ -12,7 +16,14 @@
     <div class="row-fluid form-horizontal">
         <div class="responsive-block">
             {{ UI.renderProperty('orob2b.cms.page.title.label'|trans, entity.title) }}
-            {{ UI.renderProperty('orob2b.cms.page.current_slug.label'|trans, entity.currentSlug.getUrl) }}
+
+            {% set slugUrl %}
+                <a href="{{ app.request.getUriForPath(entity.currentSlug.getUrl) }}" target="_blank">
+                    {{ entity.currentSlug.getUrl }}
+                </a>
+            {% endset %}
+            {{ UI.renderHtmlProperty('orob2b.cms.page.current_slug.label'|trans, slugUrl) }}
+
             {% if entity.relatedSlugs %}
                 {{ UI.renderHtmlProperty('orob2b.cms.page.related_slugs.label'|trans, pageRelatedSlugs) }}
             {% endif %}

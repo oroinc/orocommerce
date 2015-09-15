@@ -4,7 +4,9 @@ namespace Oro\Bundle\CurrencyBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\DataTransformer\PriceTransformer;
 
@@ -31,38 +33,53 @@ class PriceType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        if (empty($options['hide_currency'])) {
+            $currencyType = CurrencySelectionType::NAME;
+            $currencyOptions = [
+                'additional_currencies' => $options['additional_currencies'],
+                'currencies_list' => $options['currencies_list'],
+                'full_currency_list' => $options['full_currency_list'],
+                'compact' => $options['compact'],
+                'required' => true,
+                'empty_value' => 'oro.currency.currency.form.choose'
+            ];
+        } else {
+            $currencyType = 'hidden';
+            $currencyOptions = [
+                'data' => $options['default_currency']
+            ];
+        }
+
         $builder
             ->add('value', 'number', ['required' => true])
-            ->add(
-                'currency',
-                CurrencySelectionType::NAME,
-                [
-                    'additional_currencies' => $options['additional_currencies'],
-                    'currencies_list' => $options['currencies_list'],
-                    'full_currency_list' => $options['full_currency_list'],
-                    'compact' => $options['compact'],
-                    'required' => true,
-                    'empty_value' => 'oro.currency.currency.form.choose'
-                ]
-            )
-        ;
+            ->add('currency', $currencyType, $currencyOptions);
 
         $builder->addViewTransformer(new PriceTransformer());
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
+            'hide_currency' => false,
             'additional_currencies' => null,
             'cascade_validation' => true,
             'currencies_list' => null,
+            'default_currency' => null,
             'full_currency_list' => false,
             'compact' => false
         ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        $view->vars['hide_currency'] = $options['hide_currency'];
     }
 
     /**

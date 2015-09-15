@@ -63,11 +63,12 @@ class PriceTypeTest extends FormIntegrationTestCase
      * @param mixed $defaultData
      * @param array $submittedData
      * @param mixed $expectedData
+     * @param array $options
      * @dataProvider submitProvider
      */
-    public function testSubmit($isValid, $defaultData, $submittedData, $expectedData)
+    public function testSubmit($isValid, $defaultData, $submittedData, $expectedData, array $options = [])
     {
-        $form = $this->factory->create($this->formType, $defaultData, []);
+        $form = $this->factory->create($this->formType, $defaultData, $options);
 
         $this->assertEquals($defaultData, $form->getData());
         $form->submit($submittedData);
@@ -130,6 +131,19 @@ class PriceTypeTest extends FormIntegrationTestCase
                     'currency' => 'USD'
                 ],
                 'expectedData'  => (new Price())->setValue(100)->setCurrency('USD')
+            ],
+            'hidden price' => [
+                'isValid'       => true,
+                'defaultData'   => new Price(),
+                'submittedData' => [
+                    'value' => 100,
+                    'currency' => 'EUR'
+                ],
+                'expectedData'  => (new Price())->setValue(100)->setCurrency('EUR'),
+                [
+                    'hide_currency' => true,
+                    'default_currency' => 'USD'
+                ]
             ]
         ];
     }

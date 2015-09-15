@@ -5,13 +5,14 @@ namespace OroB2B\Bundle\RFPBundle\Migrations\Data\Demo\ORM;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\CurrencyBundle\Model\OptionalPrice as Price;
+
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
@@ -46,6 +47,7 @@ class LoadRequestDemoData extends AbstractFixture implements
     public function getDependencies()
     {
         return [
+            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
             'OroB2B\Bundle\RFPBundle\Migrations\Data\Demo\ORM\LoadRequestStatusDemoData',
             'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
         ];
@@ -60,6 +62,8 @@ class LoadRequestDemoData extends AbstractFixture implements
 
         $organization = $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
 
+        $accountUsers = $this->getAccountUsers($manager);
+
         $locator  = $this->container->get('file_locator');
         $filePath = $locator->locate('@OroB2BRFPBundle/Migrations/Data/Demo/ORM/data/requests.csv');
         if (is_array($filePath)) {
@@ -72,14 +76,20 @@ class LoadRequestDemoData extends AbstractFixture implements
         while (($data = fgetcsv($handler, 5000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
+            $accountUser = $accountUsers[rand(0, count($accountUsers) - 1)];
+
             $request = new Request();
-            $request->setFirstName($row['first_name']);
-            $request->setLastName($row['last_name']);
-            $request->setEmail($row['email']);
-            $request->setPhone($row['phone']);
-            $request->setCompany($row['company']);
-            $request->setRole($row['role']);
-            $request->setBody($row['body']);
+            $request
+                ->setFirstName($row['first_name'])
+                ->setLastName($row['last_name'])
+                ->setEmail($row['email'])
+                ->setPhone($row['phone'])
+                ->setCompany($row['company'])
+                ->setRole($row['role'])
+                ->setBody($row['body'])
+                ->setAccountUser($accountUser)
+                ->setAccount($accountUser ? $accountUser->getAccount() : null)
+            ;
 
             $status = $statuses[rand(0, count($statuses) - 1)];
             $request->setStatus($status);
@@ -97,8 +107,7 @@ class LoadRequestDemoData extends AbstractFixture implements
 
     /**
      * @param ObjectManager $manager
-     * @return Collection|Product[]
-     * @throws \LogicException
+     * @return Product[]
      */
     protected function getProducts(ObjectManager $manager)
     {
@@ -113,7 +122,6 @@ class LoadRequestDemoData extends AbstractFixture implements
 
     /**
      * @return array
-     * @throws \LogicException
      */
     protected function getCurrencies()
     {
@@ -131,6 +139,15 @@ class LoadRequestDemoData extends AbstractFixture implements
     }
 
     /**
+     * @param ObjectManager $manager
+     * @return AccountUser[]
+     */
+    protected function getAccountUsers(ObjectManager $manager)
+    {
+        return array_merge([null], $manager->getRepository('OroB2BAccountBundle:AccountUser')->findBy([], null, 10));
+    }
+
+    /**
      * @param Request $request
      * @param ObjectManager $manager
      */
@@ -138,7 +155,8 @@ class LoadRequestDemoData extends AbstractFixture implements
     {
         $products = $this->getProducts($manager);
         $currencies = $this->getCurrencies();
-        for ($i = 0; $i < rand(1, 10); $i++) {
+        $numLineItems = rand(1, 10);
+        for ($i = 0; $i < $numLineItems; $i++) {
             $product = $products[rand(0, count($products) - 1)];
             $unitPrecisions = $product->getUnitPrecisions();
 
@@ -149,7 +167,8 @@ class LoadRequestDemoData extends AbstractFixture implements
             $requestProduct = new RequestProduct();
             $requestProduct->setProduct($product);
             $requestProduct->setComment(sprintf('Notes %s', $i));
-            for ($j = 0; $j < rand(1, 10); $j++) {
+            $numProductItems = rand(1, 10);
+            for ($j = 0; $j < $numProductItems; $j++) {
                 $productUnit = $unitPrecisions[rand(0, count($unitPrecisions) - 1)]->getUnit();
 
                 $currency = $currencies[rand(0, count($currencies) - 1)];

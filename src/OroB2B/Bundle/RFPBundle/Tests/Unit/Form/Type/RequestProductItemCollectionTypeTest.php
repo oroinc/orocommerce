@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
@@ -27,10 +27,10 @@ class RequestProductItemCollectionTypeTest extends FormIntegrationTestCase
         $this->formType = new RequestProductItemCollectionType();
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolverInterface */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
+        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
+        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
@@ -41,7 +41,7 @@ class RequestProductItemCollectionTypeTest extends FormIntegrationTestCase
             ])
         ;
 
-        $this->formType->setDefaultOptions($resolver);
+        $this->formType->configureOptions($resolver);
     }
 
     public function testGetParent()
