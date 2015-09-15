@@ -6,12 +6,12 @@ placeholders:
             logo_frontend:
                 order: 110
 
-    head_style:
-        items:
-            assets_css:
-                order: 100
-            frontend_assets_css:
-                order: 100
+#    head_style:
+#        items:
+#            assets_css:
+#                order: 100
+#            frontend_assets_css:
+#                order: 100
 
 items:
     logo:
