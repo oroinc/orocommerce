@@ -211,7 +211,7 @@ class QuoteProduct implements ProductHolderInterface
      */
     public function isProductFreeForm()
     {
-        return !$this->product && $this->productSku;
+        return (!$this->product) && ('' !== trim($this->freeFormProduct));
     }
 
     /**
@@ -221,7 +221,7 @@ class QuoteProduct implements ProductHolderInterface
      */
     public function isProductReplacementFreeForm()
     {
-        return !$this->productReplacement && $this->productReplacementSku;
+        return (!$this->productReplacement) && ('' !== trim($this->freeFormProductReplacement));
     }
 
     /**

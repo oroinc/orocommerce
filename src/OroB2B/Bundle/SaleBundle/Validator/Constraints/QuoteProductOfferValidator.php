@@ -33,18 +33,10 @@ class QuoteProductOfferValidator extends ConstraintValidator
 
         if ($quoteProduct->isTypeNotAvailable()) {
             $product = $quoteProduct->getProductReplacement();
+            $isProductFreeForm = $quoteProduct->isProductReplacementFreeForm();
         } else {
             $product = $quoteProduct->getProduct();
-        }
-
-        if (null === $product) {
-            $this->addViolation($constraint);
-            return;
-        }
-
-        if ([] === ($allowedUnits = $product->getAvailableUnitCodes())) {
-            $this->addViolation($constraint);
-            return;
+            $isProductFreeForm = $quoteProduct->isProductFreeForm();
         }
 
         if (null === ($productUnit = $quoteProductOffer->getProductUnit())) {
@@ -52,9 +44,21 @@ class QuoteProductOfferValidator extends ConstraintValidator
             return;
         }
 
-        if (!in_array($productUnit->getCode(), $allowedUnits, true)) {
-            $this->addViolation($constraint);
-            return;
+        if (!$isProductFreeForm) {
+            if (null === $product) {
+                $this->addViolation($constraint);
+                return;
+            }
+
+            if ([] === ($allowedUnits = $product->getAvailableUnitCodes())) {
+                $this->addViolation($constraint);
+                return;
+            }
+
+            if (!$isProductFreeForm && !in_array($productUnit->getCode(), $allowedUnits, true)) {
+                $this->addViolation($constraint);
+                return;
+            }
         }
     }
 
