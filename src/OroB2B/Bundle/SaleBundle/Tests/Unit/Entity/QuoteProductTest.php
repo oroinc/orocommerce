@@ -16,8 +16,10 @@ class QuoteProductTest extends AbstractTest
             ['id', 123],
             ['quote', new Quote()],
             ['product', new Product()],
+            ['freeFormProduct', 'free form product'],
             ['productSku', 'sku'],
             ['productReplacement', new Product()],
+            ['freeFormProductReplacement', 'free form product replacement'],
             ['productReplacementSku', 'sku-replacement'],
             ['type', QuoteProduct::TYPE_OFFER],
             ['comment', 'Seller notes'],
@@ -40,26 +42,53 @@ class QuoteProductTest extends AbstractTest
         $this->assertEquals($value, $product->getEntityIdentifier());
     }
 
+    public function testUpdateProducts()
+    {
+        $product = (new Product())->setSku('product-sku');
+        $replacement = (new Product())->setSku('replacement-sku');
+
+        $quoteProduct = new QuoteProduct();
+
+        $this->assertNull($quoteProduct->getProductSku());
+        $this->assertNull($quoteProduct->getFreeFormProduct());
+        $this->assertNull($quoteProduct->getProductReplacementSku());
+        $this->assertNull($quoteProduct->getFreeFormProductReplacement());
+
+        $this->setProperty($quoteProduct, 'product', $product);
+        $this->setProperty($quoteProduct, 'productReplacement', $replacement);
+
+        $quoteProduct->updateProducts();
+
+        $this->assertSame('product-sku', $quoteProduct->getProductSku());
+        $this->assertSame((string)$product, $quoteProduct->getFreeFormProduct());
+        $this->assertSame('replacement-sku', $quoteProduct->getProductReplacementSku());
+        $this->assertSame((string)$replacement, $quoteProduct->getFreeFormProductReplacement());
+    }
+
     public function testSetProduct()
     {
         $product = new QuoteProduct();
 
         $this->assertNull($product->getProductSku());
+        $this->assertNull($product->getFreeFormProduct());
 
         $product->setProduct((new Product)->setSku('test-sku'));
 
         $this->assertEquals('test-sku', $product->getProductSku());
+        $this->assertEquals((string)(new Product)->setSku('test-sku'), $product->getFreeFormProduct());
     }
 
     public function testSetProductReplacement()
     {
         $product = new QuoteProduct();
 
-        $this->assertNull($product->getProductSku());
+        $this->assertNull($product->getProductReplacementSku());
+        $this->assertNull($product->getFreeFormProductReplacement());
 
         $product->setProductReplacement((new Product)->setSku('test-sku-replacement'));
 
         $this->assertEquals('test-sku-replacement', $product->getProductReplacementSku());
+        $this->assertEquals((string)(new Product)->setSku('test-sku-replacement'), $product->getFreeFormProductReplacement());
     }
 
     public function testAddQuoteProductOffer()

@@ -17,6 +17,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 
@@ -152,8 +153,8 @@ class QuoteProductType extends AbstractType
                 'create_enabled' => false,
             ])
             ->add('productSku', 'text', [
-                    'required' => false,
-                    'label' => 'orob2b.product.sku.label',
+                'required' => false,
+                'label' => 'orob2b.product.sku.label',
             ])
             ->add('productReplacement', ProductSelectType::NAME, [
                 'required' => false,
@@ -161,8 +162,8 @@ class QuoteProductType extends AbstractType
                 'create_enabled' => false,
             ])
             ->add('productReplacementSku', 'text', [
-                    'required' => false,
-                    'label' => 'orob2b.product.sku.label',
+                'required' => false,
+                'label' => 'orob2b.product.sku.label',
             ])
             ->add('freeFormProduct', 'text', [
                 'required' => false,
@@ -192,7 +193,6 @@ class QuoteProductType extends AbstractType
                 'required' => false,
                 'label' => 'orob2b.sale.quoteproduct.comment.label',
             ])
-
         ;
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
     }
@@ -255,10 +255,11 @@ class QuoteProductType extends AbstractType
      */
     protected function getAllUnits()
     {
-        $units = $this->registry->getManagerForClass($this->productUnitClass)->getRepository($this->productUnitClass)
-            ->findBy([], ['code' => 'ASC']);
-        $units = $this->labelFormatter->formatChoices($units);
+        $units = $this->registry->getManagerForClass($this->productUnitClass)
+            ->getRepository($this->productUnitClass)
+            ->findBy([], ['code' => 'ASC'])
+        ;
 
-        return $units;
+        return $this->labelFormatter->formatChoices($units);
     }
 }
