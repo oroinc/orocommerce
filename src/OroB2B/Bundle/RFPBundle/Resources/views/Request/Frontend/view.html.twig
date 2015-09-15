@@ -15,7 +15,7 @@
 
 {% block navButtonContainer %}
     {% placeholder view_navButtons_before with {entity: entity} %}
-    {% if resource_granted('EDIT', entity) %}
+    {% if resource_granted('ACCOUNT_EDIT', entity) %}
         {{ UI.editButton({
             'path' : path('orob2b_rfp_frontend_request_update', { 'id': entity.id }),
             'entity_label': 'orob2b.frontend.rfp.request.entity_label'|trans
@@ -49,8 +49,8 @@
                             <label class="control-label">{{ 'orob2b.product.entity_label'|trans }}</label>
                         </td>
                         <td class="rfp-requestproduct-info control-group">
-                            {% if requestProduct.product %}
-                                <a href="{{ path('orob2b_product_view', { id: requestProduct.product.id }) }}">{{ requestProduct.product }}</a>
+                            {% if requestProduct.product and resource_granted('VIEW', requestProduct.product) %}
+                                <a href="{{ path('orob2b_product_frontend_product_view', { id: requestProduct.product.id }) }}">{{ requestProduct.product }}</a>
                             {% else %}
                                 <label class="control-label">{{ requestProduct.productSku }}</label>
                             {% endif %}

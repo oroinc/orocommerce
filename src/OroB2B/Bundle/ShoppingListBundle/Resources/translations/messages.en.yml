@@ -31,11 +31,15 @@ orob2b:
             add_to_shopping_list: Add to
             add_to_new_shopping_list: Create New Shopping List
             add_success_message: "{0} No products were added|{1} 1 product was added|]1,Inf[ %count% products were added"
+            failed_mesage: "You can't add these products to shopping list"
 
         menu:
             sales_tab.label: Sales
             shopping_list.description: Shopping Lists
             shortcut_shopping_list.description: Shows content of shopping lists of the account users
+            order_quick_add:
+                label: Quick Order Form
+                description: Quick add products to order, RFQ or shopping cart
 
         acl:
             shoppinglist_add_product.label: Add Product To Shopping List

@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceListAwareSelectType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
 
 class RequestProductType extends AbstractType
@@ -32,12 +32,12 @@ class RequestProductType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('product', ProductPriceListAwareSelectType::NAME, [
+            ->add('product', ProductRemovedSelectType::NAME, [
                 'required' => true,
                 'label' => 'orob2b.product.entity_label',
                 'create_enabled' => false,
                 'grid_name' => 'products-select-grid-frontend',
-                'grid_widget_route' => 'orob2b_account_frontend_datagrid_widget',
+                'grid_widget_route' => 'orob2b_frontend_datagrid_widget',
                 'configs' => [
                     'route_name' => 'orob2b_frontend_autocomplete_search'
                 ]

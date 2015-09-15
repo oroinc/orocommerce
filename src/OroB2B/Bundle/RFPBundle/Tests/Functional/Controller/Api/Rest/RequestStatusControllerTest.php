@@ -9,7 +9,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestStatusData;
 
 /**
- * @outputBuffering enabled
  * @dbIsolation
  */
 class RequestStatusControllerTest extends WebTestCase

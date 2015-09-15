@@ -5,18 +5,15 @@ namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\EventListener;
 use Doctrine\ORM\EntityRepository;
 
 use Symfony\Component\Form\FormView;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Oro\Bundle\UIBundle\View\ScrollData;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\EventListener\FormViewListener;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
-class FormViewListenerTest extends \PHPUnit_Framework_TestCase
+class FormViewListenerTest extends FormViewListenerTestCase
 {
     /**
      * @var FormViewListener
@@ -24,24 +21,13 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
     protected $listener;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper
-     */
-    protected $doctrineHelper;
-
-    /**
      * {@inheritdoc}
      */
     public function setUp()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface $translator */
-        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        parent::setUp();
 
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $listener = new FormViewListener($translator, $this->doctrineHelper);
-        $this->listener = $listener;
+        $this->listener = new FormViewListener($this->translator, $this->doctrineHelper);
     }
 
     public function testOnProductEdit()
@@ -86,10 +72,11 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->setMethods(['findOneByProduct'])
             ->getMock();
+        $category = new Category();
         $repository
             ->expects($this->once())
             ->method('findOneByProduct')
-            ->willReturn(new Category());
+            ->willReturn($category);
 
         $this->doctrineHelper
             ->expects($this->once())
@@ -106,7 +93,7 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $env->expects($this->once())
             ->method('render')
-            ->with('OroB2BCatalogBundle:Product:category_view.html.twig', ['entity' => new Category()])
+            ->with('OroB2BCatalogBundle:Product:category_view.html.twig', ['entity' => $category])
             ->willReturn('');
 
         $event = $this->getBeforeListRenderEvent();
@@ -167,54 +154,5 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->listener->setRequest($request);
         $this->listener->onProductView($event);
-    }
-
-    /**
-     * @return BeforeListRenderEvent|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getBeforeListRenderEvent()
-    {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|BeforeListRenderEvent $event */
-        $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $event->expects($this->once())
-            ->method('getScrollData')
-            ->willReturn($this->getScrollData());
-
-        return $event;
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ScrollData
-     */
-    protected function getScrollData()
-    {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ScrollData $scrollData */
-        $scrollData = $this->getMock('Oro\Bundle\UIBundle\View\ScrollData');
-
-        $scrollData->expects($this->once())
-            ->method('addBlock');
-
-        $scrollData->expects($this->once())
-            ->method('addSubBlock');
-
-        $scrollData->expects($this->once())
-            ->method('addSubBlockData');
-
-        return $scrollData;
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|Request
-     */
-    protected function getRequest()
-    {
-        $request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        return $request;
     }
 }

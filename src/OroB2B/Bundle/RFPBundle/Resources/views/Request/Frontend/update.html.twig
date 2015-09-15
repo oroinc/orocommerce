@@ -6,13 +6,18 @@
 {% set formAction = entity.id ? path('orob2b_rfp_frontend_request_update', { 'id': entity.id }) : path('orob2b_rfp_frontend_request_create')  %}
 
 {% block pageHeader %}
-    {% set breadcrumbs = {
-        'entity':      entity,
-        'indexPath':   path('orob2b_rfp_frontend_request_index'),
-        'indexLabel':  'orob2b.frontend.rfp.request.entity_plural_label'|trans,
-        'entityTitle': entity|default('N/A'|trans)
-    } %}
-    {{ parent() }}
+    {% if entity.id %}
+        {% set breadcrumbs = {
+            'entity':      entity,
+            'indexPath':   path('orob2b_rfp_frontend_request_index'),
+            'indexLabel':  'orob2b.frontend.rfp.request.entity_plural_label'|trans,
+            'entityTitle': entity|default('N/A'|trans)
+        } %}
+        {{ parent() }}
+    {% else %}
+        {% set title = 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.rfp.request.entity_label'|trans}) %}
+        {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
+    {% endif %}
 {% endblock pageHeader %}
 
 {% block navButtons %}
