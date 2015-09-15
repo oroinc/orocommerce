@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Functional\EventListener;
+namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Entity\Listener;
 
 use Doctrine\ORM\EntityManager;
 
@@ -12,7 +12,7 @@ use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 /**
  * @dbIsolation
  */
-class EntitySubscriberTest extends WebTestCase
+class QuoteListenerTest extends WebTestCase
 {
     /**
      * {@inheritdoc}
@@ -25,6 +25,9 @@ class EntitySubscriberTest extends WebTestCase
         ]);
     }
 
+    /**
+     * @covers \OroB2B\Bundle\SaleBundle\Entity\Listener\QuoteListener::postPersist
+     */
     public function testPersistQuote()
     {
         /* @var $em EntityManager */
