@@ -206,6 +206,12 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnPreBuildWithoutCategoryId()
     {
         $event = $this->createPreBuildEvent();
+        /** @var $config DatagridConfiguration|\PHPUnit_Framework_MockObject_MockObject */
+        $config = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $event->expects($this->any())->method('getConfig')->willReturn($config);
+
         $this->requestProductHandler->expects($this->once())->method('getCategoryId')->willReturn(false);
         $this->doctrine->expects($this->never())->method('getRepository');
         $this->listener->onPreBuildProducts($event);
