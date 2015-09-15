@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Form\Type\CatalogVisibilityType;
 
 class CatalogVisibilityTypeTest extends FormIntegrationTestCase
@@ -29,8 +30,8 @@ class CatalogVisibilityTypeTest extends FormIntegrationTestCase
 
         $this->assertEquals(
             [
-                CatalogVisibilityType::VISIBILITY_VISIBLE => 'orob2b.account.catalog.visibility.visible.label',
-                CatalogVisibilityType::VISIBILITY_HIDDEN => 'orob2b.account.catalog.visibility.hidden.label',
+                CategoryVisibility::VISIBLE => 'orob2b.account.catalog.visibility.visible.label',
+                CategoryVisibility::HIDDEN => 'orob2b.account.catalog.visibility.hidden.label',
             ],
             $resolvedOptions['choices']
         );

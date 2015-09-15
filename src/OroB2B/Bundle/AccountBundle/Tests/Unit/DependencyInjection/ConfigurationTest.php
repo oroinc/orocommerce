@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Processor;
 
-use OroB2B\Bundle\AccountBundle\Form\Type\CatalogVisibilityType;
+use OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\DependencyInjection\Configuration;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
@@ -62,7 +62,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             'scope' => 'app'
                         ],
                         'category_visibility' => [
-                            'value' => CatalogVisibilityType::VISIBILITY_VISIBLE,
+                            'value' => CategoryVisibility::VISIBLE,
                             'scope' => 'app'
                         ]
                     ]
