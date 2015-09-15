@@ -85,7 +85,7 @@ class ThemeListenerTest extends \PHPUnit_Framework_TestCase
                 'expectedTheme' => 'oro'
             ],
             'not master request' => [
-                'installed' => false,
+                'installed' => true,
                 'requestType' => HttpKernelInterface::SUB_REQUEST,
                 'isFrontendRequest' => true,
                 'expectedTheme' => 'oro'
