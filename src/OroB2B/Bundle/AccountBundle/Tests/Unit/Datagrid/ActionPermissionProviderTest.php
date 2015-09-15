@@ -32,6 +32,15 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
         'delete'
     ];
 
+    /**
+     * @var array
+     */
+    protected $accountUserRoleActionList = [
+        'view',
+        'update',
+        'delete'
+    ];
+
     /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade */
     protected $securityFacade;
 
@@ -99,6 +108,72 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 'user' => new User()
             ]
+        ];
+    }
+
+    /**
+     * @param boolean  $isRolePredefined
+     * @param boolean  $isGranted
+     * @param array    $expected
+     *
+     * @dataProvider getAccountUserRolePermissionProvider
+     */
+    public function testGetAccountUserRolePermission($isRolePredefined, $isGranted, array $expected)
+    {
+        $this->record->expects($this->any())
+            ->method('getValue')
+            ->with($this->isType('string'))
+            ->willReturn($isRolePredefined);
+
+        $this->securityFacade->expects($isRolePredefined ? $this->once() : $this->never())
+            ->method('isGranted')
+            ->with($this->isType('string'))
+            ->willReturn($isGranted);
+
+        $result = $this->actionPermissionProvider->getAccountUserRolePermission($this->record);
+
+        $this->assertCount(count($this->accountUserRoleActionList), $result);
+
+        foreach ($this->accountUserRoleActionList as $action) {
+            $this->assertArrayHasKey($action, $result);
+        }
+
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @return array
+     */
+    public function getAccountUserRolePermissionProvider()
+    {
+        return [
+            'user have permission to create and role is predefined' => [
+                'isRolePredefined' => true,
+                'isGranted' => true,
+                'expected' => [
+                    'view' => true,
+                    'update' => true,
+                    'delete' => false
+                ]
+            ],
+            'user have no permission to create and role is predefined' => [
+                'isRolePredefined' => true,
+                'isGranted' => false,
+                'expected' => [
+                    'view' => true,
+                    'update' => false,
+                    'delete' => false
+                ]
+            ],
+            'user have no permission to create and role is no predefined' => [
+                'isRolePredefined' => false,
+                'isGranted' => false,
+                'expected' => [
+                    'view' => true,
+                    'update' => true,
+                    'delete' => true
+                ]
+            ],
         ];
     }
 }

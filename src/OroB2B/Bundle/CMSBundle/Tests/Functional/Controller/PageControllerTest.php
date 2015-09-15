@@ -49,7 +49,7 @@ class PageControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_cms_page_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertEquals("Pages", $crawler->filter('h1.oro-subtitle')->html());
+        $this->assertEquals("Landing Pages", $crawler->filter('h1.oro-subtitle')->html());
         $this->assertContains(
             "Please select a page on the left or create new one.",
             $crawler->filter('.content .text-center')->html()

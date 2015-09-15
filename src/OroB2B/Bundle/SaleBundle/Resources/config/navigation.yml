@@ -1,28 +1,29 @@
 oro_menu_config:
     items:
-        sale_tab:
-            label: 'orob2b.sale.menu.label'
+        sales_tab:
+            label: 'orob2b.menu.sales_tab.label'
             uri:   '#'
             extras:
-                position: 60
+                position: 300
 
         sale_quote_list:
             label: 'orob2b.frontend.sale.quote.entity_plural_label'
             route: 'orob2b_sale_quote_index'
             extras:
-                position: 61
+                position: 300
                 routes: ['/^orob2b_sale/']
 
         sale_quote_frontend_list:
             label: 'orob2b.frontend.sale.quote.entity_plural_label'
             route: 'orob2b_sale_quote_frontend_index'
             extras:
+                position: 400
                 routes: ['/^orob2b_sale_quote_frontend/']
 
     tree:
         application_menu:
             children:
-                sale_tab:
+                sales_tab:
                     children:
                         sale_quote_list: ~
         frontend_menu:

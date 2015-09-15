@@ -110,7 +110,9 @@ class QuoteController extends Controller
     protected function createOrder(Request $request, Quote $quote)
     {
         /** @var ObjectManager $em */
-        $em = $this->getDoctrine()->getManagerForClass('OroB2BSaleBundle:Quote');
+        $em = $this->getDoctrine()->getManagerForClass(
+            $this->getParameter('orob2b_sale.entity.quote.class')
+        );
         $form = $this->getCreateOrderForm($quote);
         $handler = new QuoteCreateOrderHandler($form, $request, $em, $this->getUser());
 

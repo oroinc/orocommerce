@@ -5,30 +5,23 @@ namespace OroB2B\Bundle\FrontendBundle\Tests\Unit\EventListener;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Routing\Route;
 
 use Oro\Bundle\ThemeBundle\Model\ThemeRegistry;
 
-use OroB2B\Bundle\FrontendBundle\EventListener\RouteCollectionListener;
 use OroB2B\Bundle\FrontendBundle\EventListener\ThemeListener;
+use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
 
 class ThemeListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|RouterInterface
-     */
-    protected $router;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|Route
-     */
-    protected $route;
-
-    /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ThemeRegistry
      */
     protected $themeRegistry;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|FrontendHelper
+     */
+    protected $helper;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|HttpKernelInterface
@@ -37,21 +30,9 @@ class ThemeListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->route = $this->getMockBuilder('Symfony\Component\Routing\Route')
+        $this->helper = $this->getMockBuilder('OroB2B\Bundle\FrontendBundle\Request\FrontendHelper')
             ->disableOriginalConstructor()
             ->getMock();
-
-        $routeCollection = $this->getMock('Symfony\Component\Routing\RouteCollection');
-        $routeCollection->expects($this->any())
-            ->method('get')
-            ->will($this->returnValue($this->route));
-
-        $this->router = $this->getMockBuilder('Symfony\Bundle\FrameworkBundle\Routing\Router')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->router->expects($this->any())
-            ->method('getRouteCollection')
-            ->will($this->returnValue($routeCollection));
 
         $this->themeRegistry = new ThemeRegistry([
             'oro' => [],
@@ -64,7 +45,7 @@ class ThemeListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @param boolean $installed
      * @param int $requestType
-     * @param string $route
+     * @param boolean $isFrontendRequest
      * @param string $expectedTheme
      *
      * @dataProvider onKernelRequestProvider
@@ -72,20 +53,20 @@ class ThemeListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnKernelRequest(
         $installed,
         $requestType,
-        $route,
+        $isFrontendRequest,
         $expectedTheme
     ) {
         $this->themeRegistry->setActiveTheme('oro');
 
-        $this->route->expects($this->any())
-            ->method('getOption')
-            ->with(RouteCollectionListener::OPTION_FRONTEND)
-            ->will($this->returnValue($route === RouteCollectionListener::OPTION_FRONTEND));
-
-        $request = new Request([], [], ['_route' => $route]);
+        $request = new Request();
         $event = new GetResponseEvent($this->kernel, $request, $requestType);
 
-        $listener = new ThemeListener($this->router, $this->themeRegistry, $installed);
+        $this->helper->expects($this->any())
+            ->method('isFrontendRequest')
+            ->with($request)
+            ->willReturn($isFrontendRequest);
+
+        $listener = new ThemeListener($this->themeRegistry, $this->helper, $installed);
         $listener->onKernelRequest($event);
 
         $this->assertEquals($expectedTheme, $this->themeRegistry->getActiveTheme()->getName());
@@ -100,25 +81,25 @@ class ThemeListenerTest extends \PHPUnit_Framework_TestCase
             'not installed application' => [
                 'installed' => false,
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
-                'route' => 'frontend',
+                'isFrontendRequest' => true,
                 'expectedTheme' => 'oro'
             ],
             'not master request' => [
-                'installed' => false,
+                'installed' => true,
                 'requestType' => HttpKernelInterface::SUB_REQUEST,
-                'route' => 'frontend',
+                'isFrontendRequest' => true,
                 'expectedTheme' => 'oro'
             ],
             'frontend' => [
                 'installed' => true,
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
-                'route' => 'frontend',
+                'isFrontendRequest' => true,
                 'expectedTheme' => 'demo'
             ],
             'backend' => [
                 'installed' => true,
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
-                'route' => 'backend',
+                'isFrontendRequest' => false,
                 'expectedTheme' => 'oro'
             ],
         ];
