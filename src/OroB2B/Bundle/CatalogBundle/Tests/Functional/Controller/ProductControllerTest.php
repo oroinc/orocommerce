@@ -7,7 +7,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
+use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
  * @dbIsolation
@@ -24,9 +24,9 @@ class ProductControllerTest extends WebTestCase
      * @dataProvider viewDataProvider
      *
      * @param bool $includeSubcategories
-     * @param int $expectedCount
+     * @param array $expected
      */
-    public function testView($includeSubcategories, $expectedCount)
+    public function testView($includeSubcategories, $expected)
     {
         /** @var Category $secondLevelCategory */
         $secondLevelCategory = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
@@ -39,9 +39,10 @@ class ProductControllerTest extends WebTestCase
             ]
         );
         $result = $this->getJsonResponseContent($response, 200);
-        $this->assertCount($expectedCount, $result['data']);
+        $count = count($expected);
+        $this->assertCount($count, $result['data']);
         foreach ($result['data'] as $data) {
-            $this->assertEquals($data['productName'], LoadCategoryProductData::getRelations()[$data['category_name']]);
+            $this->assertContains($data['productName'], $expected);
         }
     }
 
@@ -53,11 +54,17 @@ class ProductControllerTest extends WebTestCase
         return [
             'includeSubcategories' => [
                 'includeSubcategories' => true,
-                'expectedCount' => 3,
+                'expected' => [
+                    LoadProductData::TEST_PRODUCT_02,
+                    LoadProductData::TEST_PRODUCT_03,
+                    LoadProductData::TEST_PRODUCT_04,
+                ],
             ],
             'excludeSubcategories' => [
                 'includeSubcategories' => false,
-                'expectedCount' => 1,
+                'expected' => [
+                    LoadProductData::TEST_PRODUCT_02,
+                ],
             ],
         ];
     }
