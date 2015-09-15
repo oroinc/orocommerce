@@ -31,7 +31,7 @@ class RequestStatusControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Request For Proposal Statuses', $result->getContent());
+        $this->assertContains('RFQ Statuses', $result->getContent());
     }
 
     /**
