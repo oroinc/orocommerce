@@ -56,23 +56,33 @@ define(function(require) {
         },
 
         initTypeSwitcher: function() {
-            var $freeFormType = this.$el.find('a' + this.options.selectors.freeFormType).click(_.bind(function() {
+            var $product = this.$el.find('div' + this.options.selectors.productType);
+            var $freeForm = this.$el.find('div' + this.options.selectors.freeFormType);
+
+            var showFreeFormType = function() {
+                $product.hide();
+                $freeForm.show();
+            };
+
+            var showProductType = function() {
+                $freeForm.hide();
+                $product.show();
+            };
+
+            $freeForm.find('a').click(_.bind(function() {
+                showProductType();
                 this.fieldsByName.product.select2('val', '').change();
-                this.$el.find('div' + this.options.selectors.productType).hide();
-                this.$el.find('div' + this.options.selectors.freeFormType).show();
             }, this));
 
-            var $productType = this.$el.find('a' + this.options.selectors.productType).click(_.bind(function() {
-                var $freeFormTypeContainers = this.$el.find('div' + this.options.selectors.freeFormType);
-                $freeFormTypeContainers.find(':input').val('').change();
-                $freeFormTypeContainers.hide();
-                this.$el.find('div' + this.options.selectors.productType).show();
+            $product.find('a').click(_.bind(function() {
+                showFreeFormType();
+                this.fieldsByName.freeFormProduct.val('').change();
             }, this));
 
             if (this.fieldsByName.freeFormProduct.val() !== '') {
-                $freeFormType.click();
+                showFreeFormType();
             } else {
-                $productType.click();
+                showProductType();
             }
         },
 
