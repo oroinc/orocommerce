@@ -23,7 +23,7 @@ class PriceTransformer implements DataTransformerInterface
      */
     public function reverseTransform($price)
     {
-        if (!$price || !$price instanceof Price || !$price->getValue()) {
+        if (!$price || !$price instanceof Price || filter_var($price->getValue(), FILTER_VALIDATE_FLOAT) === false) {
             return null;
         }
 

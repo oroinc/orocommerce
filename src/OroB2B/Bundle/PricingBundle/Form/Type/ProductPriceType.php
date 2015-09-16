@@ -7,14 +7,13 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal;
-use OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
@@ -69,7 +68,7 @@ class ProductPriceType extends AbstractType
                 'number',
                 [
                     'required' => true,
-                    'constraints' => [new NotBlank(), new GreaterThanZero(), new Decimal()]
+                    'constraints' => [new NotBlank(), new Range(['min' => 0]), new Decimal()]
                 ]
             );
 
@@ -172,9 +171,9 @@ class ProductPriceType extends AbstractType
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * @param OptionsResolver $resolver
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => $this->dataClass
