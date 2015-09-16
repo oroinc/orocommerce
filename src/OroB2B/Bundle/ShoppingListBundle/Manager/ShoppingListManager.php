@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Manager;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -17,24 +17,24 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 class ShoppingListManager
 {
     /**
-     * @var ObjectManager
-     */
-    protected $shoppingListEm;
-
-    /**
-     * @var ObjectManager
-     */
-    protected $lineItemEm;
-
-    /**
      * @var AccountUser
      */
-    protected $accountUser;
+    private $accountUser;
 
     /**
      * @var TranslatorInterface
      */
     protected $translator;
+
+    /**
+     * @var ManagerRegistry
+     */
+    private $managerRegistry;
+
+    /**
+     * @var TokenStorageInterface
+     */
+    protected $tokenStorage;
 
     /**
      * @param ManagerRegistry       $managerRegistry
@@ -46,9 +46,8 @@ class ShoppingListManager
         TokenStorageInterface $tokenStorage,
         TranslatorInterface $translator
     ) {
-        $this->shoppingListEm = $managerRegistry->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
-        $this->lineItemEm = $managerRegistry->getManagerForClass('OroB2BShoppingListBundle:LineItem');
-        $this->accountUser = $tokenStorage->getToken()->getUser();
+        $this->managerRegistry = $managerRegistry;
+        $this->tokenStorage = $tokenStorage;
         $this->translator = $translator;
     }
 
@@ -65,12 +64,12 @@ class ShoppingListManager
 
         $shoppingList = new ShoppingList();
         $shoppingList
-            ->setOrganization($this->accountUser->getOrganization())
-            ->setAccount($this->accountUser->getAccount())
-            ->setAccountUser($this->accountUser)
+            ->setOrganization($this->getAccountUser()->getOrganization())
+            ->setAccount($this->getAccountUser()->getAccount())
+            ->setAccountUser($this->getAccountUser())
             ->setLabel($label);
 
-        $this->setCurrent($this->accountUser, $shoppingList);
+        $this->setCurrent($this->getAccountUser(), $shoppingList);
 
         return $shoppingList;
     }
@@ -81,8 +80,9 @@ class ShoppingListManager
      */
     public function setCurrent(AccountUser $accountUser, ShoppingList $shoppingList)
     {
+        $em = $this->managerRegistry->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
         /** @var ShoppingListRepository $shoppingListRepository */
-        $shoppingListRepository = $this->shoppingListEm->getRepository('OroB2BShoppingListBundle:ShoppingList');
+        $shoppingListRepository = $em->getRepository('OroB2BShoppingListBundle:ShoppingList');
         $currentList = $shoppingListRepository->findCurrentForAccountUser($accountUser);
 
         if ($currentList instanceof ShoppingList && $currentList->getId() !== $shoppingList->getId()) {
@@ -90,8 +90,8 @@ class ShoppingListManager
         }
         $shoppingList->setCurrent(true);
 
-        $this->shoppingListEm->persist($shoppingList);
-        $this->shoppingListEm->flush();
+        $em->persist($shoppingList);
+        $em->flush();
     }
 
     /**
@@ -101,19 +101,20 @@ class ShoppingListManager
      */
     public function addLineItem(LineItem $lineItem, ShoppingList $shoppingList, $flush = true)
     {
+        $em = $this->managerRegistry->getManagerForClass('OroB2BShoppingListBundle:LineItem');
         $lineItem->setShoppingList($shoppingList);
         /** @var LineItemRepository $repository */
-        $repository = $this->lineItemEm->getRepository('OroB2BShoppingListBundle:LineItem');
+        $repository = $em->getRepository('OroB2BShoppingListBundle:LineItem');
         $duplicate = $repository->findDuplicate($lineItem);
         if ($duplicate instanceof LineItem && $shoppingList->getId()) {
             $duplicate->setQuantity($duplicate->getQuantity() + $lineItem->getQuantity());
         } else {
             $shoppingList->addLineItem($lineItem);
-            $this->lineItemEm->persist($lineItem);
+            $em->persist($lineItem);
         }
 
         if ($flush) {
-            $this->lineItemEm->flush();
+            $em->flush();
         }
     }
 
@@ -142,16 +143,36 @@ class ShoppingListManager
      */
     public function getForCurrentUser($shoppingListId = null)
     {
+        $em = $this->managerRegistry->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
         /** @var ShoppingListRepository $repository */
-        $repository = $this->shoppingListEm->getRepository('OroB2BShoppingListBundle:ShoppingList');
+        $repository = $em->getRepository('OroB2BShoppingListBundle:ShoppingList');
         $shoppingList = null === $shoppingListId
-            ? $repository->findCurrentForAccountUser($this->accountUser)
-            : $repository->findByUserAndId($this->accountUser, $shoppingListId);
+            ? $repository->findCurrentForAccountUser($this->getAccountUser())
+            : $repository->findByUserAndId($this->getAccountUser(), $shoppingListId);
 
         if (!($shoppingList instanceof ShoppingList)) {
             $shoppingList = $this->createCurrent();
         }
 
         return $shoppingList;
+    }
+
+    /**
+     * @return string|AccountUser
+     */
+    protected function getAccountUser()
+    {
+        if (!$this->accountUser) {
+            $token = $this->tokenStorage->getToken();
+            if ($token) {
+                $this->accountUser = $token->getUser();
+            }
+        }
+
+        if (!$this->accountUser || !is_object($this->accountUser)) {
+            throw new AccessDeniedException();
+        }
+
+        return $this->accountUser;
     }
 }

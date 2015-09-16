@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
@@ -28,16 +29,15 @@ class FixAccountAddressesDefaultSubscriber implements EventSubscriberInterface
     protected $addressesProperty;
 
     /**
-     * @var PropertyAccess
+     * @var PropertyAccessor
      */
-    protected $addressAccess;
+    private $addressAccess;
 
     /**
-     * @param $addressesProperty
+     * @param string $addressesProperty
      */
     public function __construct($addressesProperty)
     {
-        $this->addressesAccess = PropertyAccess::createPropertyAccessor();
         $this->addressesProperty = $addressesProperty;
     }
 
@@ -52,6 +52,18 @@ class FixAccountAddressesDefaultSubscriber implements EventSubscriberInterface
     }
 
     /**
+     * @return PropertyAccessor
+     */
+    protected function getAddressesAccess()
+    {
+        if (!$this->addressAccess) {
+            $this->addressAccess = PropertyAccess::createPropertyAccessor();
+        }
+
+        return $this->addressAccess;
+    }
+
+    /**
      * @param FormEvent $event
      */
     public function postSubmit(FormEvent $event)
@@ -60,7 +72,7 @@ class FixAccountAddressesDefaultSubscriber implements EventSubscriberInterface
         $address = $event->getData();
 
         /** @var AccountAddress[] $allAddresses */
-        $allAddresses = $this->addressesAccess->getValue($address, $this->addressesProperty);
+        $allAddresses = $this->getAddressesAccess()->getValue($address, $this->addressesProperty);
 
         $this->handleDefaultType($address, $allAddresses);
     }

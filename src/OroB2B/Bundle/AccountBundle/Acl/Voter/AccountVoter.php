@@ -2,12 +2,12 @@
 
 namespace OroB2B\Bundle\AccountBundle\Acl\Voter;
 
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Security\Acl\Permission\BasicPermissionMap;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use Oro\Bundle\EntityBundle\Exception\NotManageableEntityException;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
@@ -15,7 +15,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Security\AccountUserProvider;
 
-class AccountVoter extends AbstractEntityVoter
+class AccountVoter extends AbstractEntityVoter implements ContainerAwareInterface
 {
     const ATTRIBUTE_VIEW = 'ACCOUNT_VIEW';
     const ATTRIBUTE_EDIT = 'ACCOUNT_EDIT';
@@ -31,7 +31,7 @@ class AccountVoter extends AbstractEntityVoter
     /**
      * @var ContainerInterface
      */
-    protected $container;
+    private $container;
 
     /**
      * @var AccountOwnerAwareInterface
@@ -43,15 +43,22 @@ class AccountVoter extends AbstractEntityVoter
      */
     protected $user;
 
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param ContainerInterface $container
-     */
-    public function __construct(DoctrineHelper $doctrineHelper, ContainerInterface $container = null)
+    /** {@inheritdoc} */
+    public function setContainer(ContainerInterface $container = null)
     {
-        parent::__construct($doctrineHelper);
-
         $this->container = $container;
+    }
+
+    /**
+     * @return ContainerInterface
+     */
+    public function getContainer()
+    {
+        if (!$this->container) {
+            throw new \InvalidArgumentException('ContainerInterface not injected');
+        }
+
+        return $this->container;
     }
 
     /**
@@ -128,7 +135,7 @@ class AccountVoter extends AbstractEntityVoter
         return $user->getAccount()->getId() === $object->getAccount()->getId();
     }
 
-   /**
+    /**
      * @param AccountUser $user
      * @param AccountOwnerAwareInterface $object
      * @return bool
@@ -146,7 +153,7 @@ class AccountVoter extends AbstractEntityVoter
     protected function isGrantedClassPermission($attribute, $class)
     {
         /* @var $securityFacade SecurityFacade */
-        $securityFacade = $this->container->get('oro_security.security_facade');
+        $securityFacade = $this->getContainer()->get('oro_security.security_facade');
 
         $descriptor = sprintf('entity:%s@%s', AccountUser::SECURITY_GROUP, $class);
 
@@ -221,6 +228,6 @@ class AccountVoter extends AbstractEntityVoter
      */
     protected function getSecurityProvider()
     {
-        return $this->container->get('orob2b_account.security.account_user_provider');
+        return $this->getContainer()->get('orob2b_account.security.account_user_provider');
     }
 }
