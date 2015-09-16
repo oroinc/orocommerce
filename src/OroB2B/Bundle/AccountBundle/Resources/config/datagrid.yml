@@ -12,6 +12,7 @@ datagrid:
                     - account_group.name as group_name
                     - parent.name as parent_name
                     - internalRating.name as internal_rating_name
+                    - internalRating.id as internal_rating_id
                 from:
                     - { table: %orob2b_account.entity.account.class%, alias: account }
                 join:
@@ -38,6 +39,8 @@ datagrid:
                     data_name: group_name
                 parent_name:
                     data_name: parent_name
+                internal_rating_name:
+                    data_name: internal_rating_name
             default:
                 name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
         filters:
@@ -56,6 +59,10 @@ datagrid:
                 parent_name:
                     type:      string
                     data_name: parent.name
+                internal_rating_name:
+                    type:      enum
+                    data_name: internal_rating_id
+                    enum_code: acc_internal_rating
 
     account-accounts-grid:
         extends: account-accounts-select-grid
