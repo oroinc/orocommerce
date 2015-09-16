@@ -31,7 +31,7 @@ class LocalizedFallbackValueCollectionTransformer implements DataTransformerInte
     /**
      * @var PropertyAccessor
      */
-    protected $propertyAccessor;
+    private $propertyAccessor;
 
     /**
      * @param ManagerRegistry $registry
@@ -41,7 +41,6 @@ class LocalizedFallbackValueCollectionTransformer implements DataTransformerInte
     {
         $this->registry = $registry;
         $this->field = $field;
-        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
     }
 
     /**
@@ -75,7 +74,7 @@ class LocalizedFallbackValueCollectionTransformer implements DataTransformerInte
             if ($fallback) {
                 $value = new FallbackType($fallback);
             } else {
-                $value = $this->propertyAccessor->getValue($localizedFallbackValue, $this->field);
+                $value = $this->getPropertyAccessor()->getValue($localizedFallbackValue, $this->field);
             }
 
             $result[LocalizedFallbackValueCollectionType::FIELD_VALUES][$key ?: null] = $value;
@@ -145,10 +144,10 @@ class LocalizedFallbackValueCollectionTransformer implements DataTransformerInte
 
         if ($fieldValue instanceof FallbackType) {
             $localizedFallbackValue->setFallback($fieldValue->getType());
-            $this->propertyAccessor->setValue($localizedFallbackValue, $this->field, null);
+            $this->getPropertyAccessor()->setValue($localizedFallbackValue, $this->field, null);
         } else {
             $localizedFallbackValue->setFallback(null);
-            $this->propertyAccessor->setValue($localizedFallbackValue, $this->field, $fieldValue);
+            $this->getPropertyAccessor()->setValue($localizedFallbackValue, $this->field, $fieldValue);
         }
 
         return $localizedFallbackValue;
@@ -176,5 +175,17 @@ class LocalizedFallbackValueCollectionTransformer implements DataTransformerInte
         }
 
         return $locale;
+    }
+
+    /**
+     * @return PropertyAccessor
+     */
+    public function getPropertyAccessor()
+    {
+        if (!$this->propertyAccessor) {
+            $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+        }
+
+        return $this->propertyAccessor;
     }
 }

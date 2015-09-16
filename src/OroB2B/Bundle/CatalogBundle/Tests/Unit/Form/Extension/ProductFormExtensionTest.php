@@ -2,6 +2,9 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Form\Extension;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
@@ -24,11 +27,25 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
     protected $categoryRepository;
 
     /**
+     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $registry;
+
+    /**
      * @var ProductFormExtension
      */
     protected $extension;
 
     protected function setUp()
+    {
+        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->extension = new ProductFormExtension($this->registry);
+    }
+
+    /**
+     * @param bool $expects
+     */
+    protected function prepareRegistry($expects = false)
     {
         $this->categoryRepository =
             $this->getMockBuilder('OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
@@ -36,18 +53,15 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
                 ->getMock();
 
         $entityManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
-        $entityManager->expects($this->once())
+        $entityManager->expects($expects ? $this->once() : $this->never())
             ->method('getRepository')
             ->with('OroB2BCatalogBundle:Category')
             ->willReturn($this->categoryRepository);
 
-        $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $registry->expects($this->once())
+        $this->registry->expects($expects ? $this->once() : $this->never())
             ->method('getManagerForClass')
             ->with('OroB2BCatalogBundle:Category')
             ->willReturn($entityManager);
-
-        $this->extension = new ProductFormExtension($registry);
     }
 
     public function testGetExtendedType()
@@ -57,6 +71,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildForm()
     {
+        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
         $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
         $builder->expects($this->once())
             ->method('add')
@@ -83,6 +98,8 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testOnPostSetDataNoProduct()
     {
+        $this->prepareRegistry();
+
         $event = $this->createEvent(null);
 
         $this->categoryRepository->expects($this->never())
@@ -93,6 +110,8 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testOnPostSetDataNewProduct()
     {
+        $this->prepareRegistry();
+
         $event = $this->createEvent($this->createProduct());
 
         $this->categoryRepository->expects($this->never())
@@ -103,6 +122,8 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testOnPostSetDataExistingProduct()
     {
+        $this->prepareRegistry(true);
+
         $product = $this->createProduct(1);
         $event = $this->createEvent($product);
 
@@ -152,6 +173,8 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testOnPostSubmitNewProduct()
     {
+        $this->prepareRegistry();
+
         $product = $this->createProduct();
         $event   = $this->createEvent($product);
 
@@ -168,6 +191,8 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testOnPostSubmitExistingProduct()
     {
+        $this->prepareRegistry(true);
+
         $product = $this->createProduct(1);
         $event   = $this->createEvent($product);
 

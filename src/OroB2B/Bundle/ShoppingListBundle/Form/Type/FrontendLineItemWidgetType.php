@@ -9,6 +9,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Validator\Constraints\Callback;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
@@ -28,12 +29,17 @@ class FrontendLineItemWidgetType extends AbstractType
     /**
      * @var AccountUser
      */
-    protected $accountUser;
+    private $accountUser;
 
     /**
      * @var string
      */
     protected $shoppingListClass;
+
+    /**
+     * @var TokenStorage
+     */
+    protected $tokenStorage;
 
     /**
      * @param ManagerRegistry $registry
@@ -42,7 +48,7 @@ class FrontendLineItemWidgetType extends AbstractType
     public function __construct(ManagerRegistry $registry, TokenStorage $tokenStorage)
     {
         $this->registry = $registry;
-        $this->accountUser = $tokenStorage->getToken()->getUser();
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -59,7 +65,7 @@ class FrontendLineItemWidgetType extends AbstractType
                     'label' => 'orob2b.shoppinglist.lineitem.shopping_list.label',
                     'class' => $this->shoppingListClass,
                     'query_builder' => function (ShoppingListRepository $repository) {
-                        return $repository->createFindForAccountUserQueryBuilder($this->accountUser);
+                        return $repository->createFindForAccountUserQueryBuilder($this->getAccountUser());
                     },
                     'empty_value' => 'orob2b.shoppinglist.lineitem.create_new_shopping_list',
                 ]
@@ -84,7 +90,7 @@ class FrontendLineItemWidgetType extends AbstractType
         $shoppingListRepository = $currentShoppingList = $this->registry
             ->getManagerForClass($this->shoppingListClass)
             ->getRepository($this->shoppingListClass);
-        $currentShoppingList = $shoppingListRepository->findCurrentForAccountUser($this->accountUser);
+        $currentShoppingList = $shoppingListRepository->findCurrentForAccountUser($this->getAccountUser());
 
         $view->children['shoppingList']->vars['currentShoppingList'] = $currentShoppingList;
     }
@@ -141,5 +147,24 @@ class FrontendLineItemWidgetType extends AbstractType
     public function setShoppingListClass($shoppingListClass)
     {
         $this->shoppingListClass = $shoppingListClass;
+    }
+
+    /**
+     * @return string|AccountUser
+     */
+    protected function getAccountUser()
+    {
+        if (!$this->accountUser) {
+            $token = $this->tokenStorage->getToken();
+            if ($token) {
+                $this->accountUser = $token->getUser();
+            }
+        }
+
+        if (!$this->accountUser || !is_object($this->accountUser)) {
+            throw new AccessDeniedException();
+        }
+
+        return $this->accountUser;
     }
 }
