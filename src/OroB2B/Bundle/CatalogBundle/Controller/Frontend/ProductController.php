@@ -10,7 +10,7 @@ use OroB2B\Bundle\CatalogBundle\Controller\BaseProductController;
 class ProductController extends BaseProductController
 {
     /**
-     * @Route("/sidebar", name="orob2b_catalog_category_product_sidebar")
+     * @Route("/sidebar", name="orob2b_catalog_frontend_category_product_sidebar")
      * @Template
      *
      * @return array
