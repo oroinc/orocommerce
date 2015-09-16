@@ -90,27 +90,27 @@ class QuoteProductValidatorTest extends \PHPUnit_Framework_TestCase
                 'valid'     => false,
             ],
             'empty product replacement & empty free form replacement' => [
-                'data'  => $item2,
-                'valid' => false,
+                'data'      => $item2,
+                'valid'     => false,
                 'fieldPath' => 'productReplacement',
             ],
             'empty product & filled free form' => [
-                'data'  => $item3,
-                'valid' => true,
+                'data'      => $item3,
+                'valid'     => true,
             ],
             'empty product replacement & filled free form replacement' => [
-                'data'  => $item4,
-                'valid' => true,
+                'data'      => $item4,
+                'valid'     => true,
                 'fieldPath' => 'product',
             ],
             'filled product' => [
-                'data'  => $item5,
-                'valid' => true,
+                'data'      => $item5,
+                'valid'     => true,
                 'fieldPath' => 'product',
             ],
             'filled product replacement' => [
-                'data'  => $item6,
-                'valid' => true,
+                'data'      => $item6,
+                'valid'     => true,
                 'fieldPath' => 'product',
             ],
         ];
