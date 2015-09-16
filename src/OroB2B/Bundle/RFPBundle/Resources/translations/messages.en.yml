@@ -108,7 +108,7 @@ orob2b:
             change_status: 'Change Status'
             create_quote: 'Create Quote'
             add_to_rfp: 'Add To Request For Quote'
-            create_rfp: 'Create RFP'
+            create_rfp: 'Submit'
 
         widget:
             change_status_title: 'Change RFQ Status'
