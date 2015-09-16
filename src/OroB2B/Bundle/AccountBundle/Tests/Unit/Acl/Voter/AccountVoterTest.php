@@ -70,7 +70,8 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             })
         ;
 
-        $this->voter = new AccountVoter($this->doctrineHelper, $container);
+        $this->voter = new AccountVoter($this->doctrineHelper);
+        $this->voter->setContainer($container);
     }
 
     /**
@@ -435,7 +436,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             '!ident and !Entity:ACCOUNT_VIEW' => [
                 'input' => [
                     'objectId'      => null,
-                    'object'        => $this->getIdent(),
+                    'object'        => $this->getIdentity(),
                     'user'          => $this->getAccountUser(38, 39),
                     'attributes'    => ['ACCOUNT_VIEW'],
                     'grantedViewBasic' => null,
@@ -451,7 +452,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             '!ident and !Entity:ACCOUNT_EDIT' => [
                 'input' => [
                     'objectId'      => null,
-                    'object'        => $this->getIdent(),
+                    'object'        => $this->getIdentity(),
                     'user'          => $this->getAccountUser(40, 41),
                     'attributes'    => ['ACCOUNT_EDIT'],
                     'grantedViewBasic' => null,
@@ -467,7 +468,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             '!ident and Entity:ACCOUNT_VIEW' => [
                 'input' => [
                     'objectId'      => null,
-                    'object'        => $this->getIdent(),
+                    'object'        => $this->getIdentity(),
                     'user'          => $this->getAccountUser(42, 43),
                     'attributes'    => ['ACCOUNT_VIEW'],
                     'grantedViewBasic' => null,
@@ -483,7 +484,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             '!ident and Entity:ACCOUNT_EDIT' => [
                 'input' => [
                     'objectId'      => null,
-                    'object'        => $this->getIdent(),
+                    'object'        => $this->getIdentity(),
                     'user'          => $this->getAccountUser(44, 45),
                     'attributes'    => ['ACCOUNT_EDIT'],
                     'grantedViewBasic' => null,
@@ -502,7 +503,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
     /**
      * @return ObjectIdentity
      */
-    protected function getIdent()
+    protected function getIdentity()
     {
         return new ObjectIdentity('entity', 'OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface');
     }
@@ -626,5 +627,34 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
         }
 
         return $entities[$className][$id];
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage ContainerInterface not injected
+     */
+    public function testWithoutContainer()
+    {
+        $voter = new AccountVoter($this->doctrineHelper);
+        $accountUser = $this->getAccountUser(1);
+        $object = $this->getObject(1);
+
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityClass')
+            ->with($object)
+            ->willReturn(get_class($object));
+
+        $this->doctrineHelper->expects($this->any())
+            ->method('getSingleEntityIdentifier')
+            ->with($object, false)
+            ->willReturn(1);
+
+        $voter->setClassName(get_class($object));
+
+        /* @var $token TokenInterface|\PHPUnit_Framework_MockObject_MockObject */
+        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token->expects($this->any())->method('getUser')->willReturn($accountUser);
+
+        $voter->vote($token, $object, [AccountVoter::ATTRIBUTE_VIEW]);
     }
 }

@@ -90,7 +90,9 @@ orob2b:
             save_and_duplicate: Save And Duplicate
 
         frontend:
-            quick_add.title: Quick Order Form
+            quick_add:
+                title: Quick Order Form
+                description: Quick add products to order, RFQ or shopping cart
             component_not_accessible.message: Can't process request, component not accessible
 
     product_unit.kg:

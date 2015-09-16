@@ -1,11 +1,11 @@
 /*jslint nomen:true*/
 /*global define*/
-define(function (require) {
+define(function(require) {
     'use strict';
 
-    var AccountAddressComponent,
-        BaseComponent = require('oroui/js/app/components/base/component'),
-        $ = require('jquery');
+    var AccountAddressComponent;
+    var BaseComponent = require('oroui/js/app/components/base/component');
+    var $ = require('jquery');
 
     AccountAddressComponent = BaseComponent.extend({
         /**
@@ -13,7 +13,7 @@ define(function (require) {
          */
         targetElement: null,
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.targetElement = $(options._sourceElement);
             if (options.disableDefaultWithoutType) {
                 this.disableDefaultWithoutType();
@@ -35,14 +35,14 @@ define(function (require) {
             AccountAddressComponent.__super__.dispose.call(this);
         },
 
-        disableDefaultWithoutType: function () {
+        disableDefaultWithoutType: function() {
             /**
              * Switch off default checkbox when type unselected
              */
             var self = this;
             this.targetElement.on('click', '[name$="[defaults][default][]"]', function() {
                 if (this.checked) {
-                    self.targetElement.find('[name$="[types][]"][value="' + this.value + '"]').each(function (idx, el) {
+                    self.targetElement.find('[name$="[types][]"][value="' + this.value + '"]').each(function(idx, el) {
                         el.checked = true;
                     });
                 }
@@ -50,9 +50,11 @@ define(function (require) {
 
             this.targetElement.on('click', '[name$="[types][]"]', function() {
                 var defaultTypeName = this.name.replace('[types][]', '[defaults][default][]');
-                var defaultCheckboxes = self.targetElement.find('[name$="' + defaultTypeName + '"][value="' + this.value + '"]');
+                var selector = '[name$="' + defaultTypeName + '"][value="' + this.value + '"]';
+                var defaultCheckboxes = self.targetElement.find(selector);
+
                 if (!this.checked) {
-                    defaultCheckboxes.each(function (idx, el) {
+                    defaultCheckboxes.each(function(idx, el) {
                         el.checked = false;
                     });
                 }
@@ -61,12 +63,13 @@ define(function (require) {
 
         disableRepeatedTypes: function() {
             /**
-             * Allow only 1 item with selected type
+             * Allow only 1 item with selected default type
              */
             var self = this;
             this.targetElement.on('click', '[name$="[defaults][default][]"]', function() {
                 if (this.checked) {
-                    self.find('[name$="[defaults][default][]"][value="' + this.value + '"]').each(function (idx, el) {
+                    var selector = '[name$="[defaults][default][]"][value="' + this.value + '"]';
+                    self.targetElement.find(selector).each(function(idx, el) {
                         el.checked = false;
                     });
                     this.checked = true;

@@ -46,4 +46,19 @@ class ComponentProcessorRegistry
     {
         return array_key_exists($name, $this->processors);
     }
+
+    /**
+     * @return bool
+     */
+    public function hasAllowedProcessor()
+    {
+        $hasAllowed = false;
+        foreach ($this->processors as $processor) {
+            if ($processor->isAllowed()) {
+                $hasAllowed = true;
+                break;
+            }
+        }
+        return $hasAllowed;
+    }
 }

@@ -79,7 +79,8 @@ services:
         class: %orob2b_account.acl.voter.account.class%
         arguments:
             - @oro_entity.doctrine_helper
-            - @service_container
+        calls:
+            - [setContainer, [@service_container]]
         tags:
             - { name: security.voter }
 
@@ -274,8 +275,8 @@ services:
 
     orob2b_account.acl.group_provider:
         class: %orob2b_account.acl.group_provider.class%
-        arguments:
-            - @service_container
+        calls:
+            - [setContainer, [@service_container]]
         tags:
             - { name: oro_security.acl.group_provider, alias: frontend_group }
 

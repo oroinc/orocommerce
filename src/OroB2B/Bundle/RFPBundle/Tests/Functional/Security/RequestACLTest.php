@@ -66,7 +66,7 @@ class RequestACLTest extends WebTestCase
         $form['orob2b_rfp_frontend_request_type[phone]']     = 123456789;
         $form['orob2b_rfp_frontend_request_type[company]']   = 'Company name';
         $form['orob2b_rfp_frontend_request_type[role]']      = 'Manager';
-        $form['orob2b_rfp_frontend_request_type[body]']      = 'This is test Request For Proposal';
+        $form['orob2b_rfp_frontend_request_type[body]']      = 'This is test Request For Quote';
 
         $this->client->followRedirects(true);
         $this->client->submit($form);

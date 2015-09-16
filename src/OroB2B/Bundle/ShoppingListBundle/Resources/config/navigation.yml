@@ -22,13 +22,6 @@ oro_menu_config:
                 routes:      ['/^orob2b_shopping_list_frontend_/']
                 description: 'orob2b.shoppinglist.menu.shopping_list.description'
 
-        frontend_order_quick_add:
-            label:           'orob2b.shoppinglist.menu.order_quick_add.label'
-            route:           'orob2b_product_frontend_quick_add'
-            aclResourceId:   'orob2b_shopping_list_line_item_frontend_add'
-            extras:
-                description: 'orob2b.shoppinglist.menu.order_quick_add.description'
-
     tree:
         application_menu:
             children:
@@ -41,7 +34,6 @@ oro_menu_config:
         frontend_menu:
             children:
                 frontend_shopping_list: ~
-                frontend_order_quick_add: ~
 
 oro_titles:
     orob2b_shopping_list_index: ~

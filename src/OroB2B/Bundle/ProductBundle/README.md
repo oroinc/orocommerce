@@ -12,7 +12,7 @@ Table of Contents
 Description:
 ------------
 
-The OroB2BProductBundle introduces the notion of products, which is the foundation of most commerce business cases and functionality, into the system. This bundle will also provide a UI for product management by utilizing functionality of other bundles. Or, with the exception of the OroB2BAttributeBundle dependency (which ideally should be a replaceable dependency), it would be better to say that other feature bundles will be providing their pieces of product management functionality and corresponding UI pieces for the product management UI, once installed in the system.
+The OroB2BProductBundle introduces the notion of products, which is the foundation of most commerce business cases and functionality, into the system. This bundle will also provide a UI for product management by utilizing functionality of other bundles. Or, with the exception of the OroB2BPricingBundle dependency (which ideally should be a replaceable dependency), it would be better to say that other feature bundles will be providing their pieces of product management functionality and corresponding UI pieces for the product management UI, once installed in the system.
 
 The OroB2BProductBundle is expected to be admin-heavy, so a matching bundle for non-admin applications will be introduced as well.
 
@@ -29,9 +29,6 @@ Doctrine\ORM\Mapping as ORM
 FOS\RestBundle\Controller\Annotations\NamePrefix
 FOS\RestBundle\Routing\ClassResourceInterface
 Nelmio\ApiDocBundle\Annotation\ApiDoc
-OroB2B\Bundle\AttributeBundle\AttributeType\String
-OroB2B\Bundle\AttributeBundle\Form\Extension\IntegerExtension
-OroB2B\Bundle\AttributeBundle\Migrations\Data\ORM\AbstractLoadAttributeData
 Oro\Bundle\ConfigBundle\Config\ConfigManager
 Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder
 Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config
