@@ -225,7 +225,7 @@ datagrid:
                     data_name: product.sku
                 name:
                     type:      string
-                    data_name: product.sku
+                    data_name: name
                 inventoryStatusName:
                     type:      enum
                     data_name: inventoryStatusId
