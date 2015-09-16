@@ -24,14 +24,13 @@ class UniqueAddressDefaultTypesValidatorTest extends \PHPUnit_Framework_TestCase
         $validator->validate(false, $constraint);
     }
 
-    //@codingStandardsIgnoreStart
-    /**
-     * @expectedException \Symfony\Component\Validator\Exception\ValidatorException
-     * @expectedExceptionMessage Expected argument of type "OroB2B\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress", "array" given
-     */
-    //@codingStandardsIgnoreEnd
     public function testValidateExceptionWhenInvalidArgumentElementType()
     {
+        $this->setExpectedException(
+            'Symfony\Component\Validator\Exception\ValidatorException',
+            'Expected argument of type "OroB2B\Bundle\AccountBundle\Entity\AbstractDefaultTypedAddress", "array" given'
+        );
+
         /** @var Constraint|\PHPUnit_Framework_MockObject_MockObject $constraint */
         $constraint = $this->getMock('Symfony\Component\Validator\Constraint');
         $validator = new UniqueAddressDefaultTypesValidator();
