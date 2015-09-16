@@ -13,6 +13,7 @@ class FrontendControllerTest extends WebTestCase
         $this->initClient();
         $this->client->request('GET', $this->getUrl('_frontend'));
         $crawler = $this->client->followRedirect();
+        $this->assertNotContains($this->getBackendPrefix(), $crawler->html());
         $this->assertEquals('Login', $crawler->filter('h2.title')->html());
     }
 
@@ -28,6 +29,15 @@ class FrontendControllerTest extends WebTestCase
 
         $this->client->request('GET', $this->getUrl('_frontend'));
         $crawler = $this->client->followRedirect();
+        $this->assertNotContains($this->getBackendPrefix(), $crawler->html());
         $this->assertEquals('Products', $crawler->filter('h1.oro-subtitle')->html());
+    }
+
+    /**
+     * @return string
+     */
+    protected function getBackendPrefix()
+    {
+        return $this->getContainer()->getParameter('backend_prefix');
     }
 }
