@@ -204,10 +204,24 @@ class QuoteProductTest extends AbstractTest
                 ],
                 'expected' => true,
             ],
+            '!product & product title2' => [
+                'input' => [
+                    'product' => null,
+                    'title' => '0',
+                ],
+                'expected' => true,
+            ],
             'product & !product title' => [
                 'input' => [
                     'product' => new Product(),
                     'title' => null,
+                ],
+                'expected' => false,
+            ],
+            'product & !product title2' => [
+                'input' => [
+                    'product' => new Product(),
+                    'title' => '',
                 ],
                 'expected' => false,
             ],
