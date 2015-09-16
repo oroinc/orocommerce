@@ -73,7 +73,7 @@ datagrid:
                 inCategory: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         filters:
             columns:
-                sku:
+                inCategory:
                     type:      boolean
                     data_name: inCategory
                 sku:
