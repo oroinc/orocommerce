@@ -48,7 +48,9 @@ class ShoppingListManager
     ) {
         $this->shoppingListEm = $managerRegistry->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
         $this->lineItemEm = $managerRegistry->getManagerForClass('OroB2BShoppingListBundle:LineItem');
-        $this->accountUser = $tokenStorage->getToken()->getUser();
+        if ($tokenStorage->getToken()) {
+            $this->accountUser = $tokenStorage->getToken()->getUser();
+        }
         $this->translator = $translator;
     }
 
