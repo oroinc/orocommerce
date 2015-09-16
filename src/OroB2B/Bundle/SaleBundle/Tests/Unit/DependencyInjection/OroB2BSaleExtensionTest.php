@@ -16,6 +16,7 @@ class OroB2BSaleExtensionTest extends ExtensionTestCase
             'orob2b_sale.quote.manager.api.class',
             'orob2b_sale.event_listener.entity_subscriber.class',
             // validators
+            'orob2b_sale.validator.quote_product.class',
             'orob2b_sale.validator.quote_product_unit.class',
             // form types
             'orob2b_sale.form.type.quote_product.class',
@@ -31,6 +32,7 @@ class OroB2BSaleExtensionTest extends ExtensionTestCase
             'orob2b_sale.quote.manager.api',
             'orob2b_sale.event_listener.entity_subscriber',
             // validators
+            'orob2b_sale.validator.quote_product',
             'orob2b_sale.validator.quote_product_unit',
             // form types
             'orob2b_sale.form.type.quote_product',

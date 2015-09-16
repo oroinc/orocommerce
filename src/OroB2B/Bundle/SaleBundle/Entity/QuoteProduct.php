@@ -68,7 +68,7 @@ class QuoteProduct implements ProductHolderInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="product_sku", type="string", length=255)
+     * @ORM\Column(name="product_sku", type="string", length=255, nullable=true)
      */
     protected $productSku;
 

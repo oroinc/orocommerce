@@ -20,6 +20,7 @@
     {% set commentSeller = form.vars.value.comment|default(null) %}
     {% set isProductFreeForm = form.vars.value.isProductFreeForm()|default(false) %}
     {% set isProductReplacementFreeForm = form.vars.value.isProductReplacementFreeForm()|default(false) %}
+    {% set isProductReplacement = form.vars.value.type|default(false) == componentOptions.typeReplacement %}
 
     <table class="sale-quoteproduct-collection-table" {{ block('widget_container_attributes') }}
            data-page-component-options="{{ componentOptions|json_encode }}"
@@ -42,7 +43,7 @@
                     <br/><a class="sale-quoteproduct-product-select-link" href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.select.product'|trans }}</a>
                 </div>
             </div>
-            <div class="fields-row sale-quoteproduct-product-replacement-row">
+            <div class="fields-row sale-quoteproduct-product-replacement-row{% if isProductReplacement %} sale-quoteproduct-block-active{% endif %}">
                 <div class="sale-quoteproduct-product-replacement-select sale-quoteproduct-product-form{% if not isProductReplacementFreeForm %} sale-quoteproduct-block-active{% endif %}">
                     {{ form_widget(form.productReplacement) }}
                     {{ form_errors(form.productReplacement) }}

@@ -36,7 +36,7 @@ define(function(require) {
             itemsContainer: '.sale-quoteproductitem-collection .oro-item-collection',
             itemWidget: '.sale-quoteproductitem-widget',
             syncClass: 'synchronized',
-            productReplacementContainer: '.sale-quoteproduct-product-replacement-select',
+            productReplacementContainer: '.sale-quoteproduct-product-replacement-row',
             sellerNotesContainer: '.sale-quoteproduct-notes-seller',
             requestsOnlyContainer: '.sale-quoteproductrequest-only',
             errorMessage: 'Sorry, unexpected error was occurred',
@@ -186,7 +186,9 @@ define(function(require) {
         onTypeChanged: function(e) {
             var typeValue = parseInt(this.$typeSelect.val());
 
-            this.$productReplacementContainer.toggle(this.typeReplacement === typeValue);
+            this.$productReplacementContainer.toggleClass(
+                this.options.classQuoteProductBlockActive, this.typeReplacement === typeValue
+            );
             this.$requestsOnlyContainer.toggle(this.typeOffer !== typeValue);
 
             this.$productSelect.trigger('change');
