@@ -11,8 +11,8 @@ datagrid:
                 select:
                     - quote.id
                     - quote.qid
-                    - quoteOwner.username as ownerName
-                    - quoteAccountUser.username as accountUserName
+                    - CONCAT(quoteOwner.firstName, ' ', quoteOwner.lastName) as ownerName
+                    - CONCAT(quoteAccountUser.firstName, ' ', quoteAccountUser.lastName) as accountUserName
                     - quoteAccount.name as accountName
                     - quote.createdAt
                     - quote.updatedAt
@@ -93,27 +93,14 @@ datagrid:
                     type:      string
                     data_name: quote.qid
                 ownerName:
-                    type:      entity
-                    data_name: quote.owner
-                    options:
-                        field_options:
-                            class:      %oro_user.entity.class%
-                            multiple:   true
+                    type:      string
+                    data_name: ownerName
                 accountUserName:
-                    type:      entity
-                    data_name: quote.accountUser
-                    options:
-                        field_options:
-                            class:      %orob2b_account.entity.account_user.class%
-                            multiple:   false
+                    type:      string
+                    data_name: accountUserName
                 accountName:
-                    type:      entity
-                    data_name: quote.account
-                    options:
-                        field_options:
-                            property:   name
-                            class:      %orob2b_account.entity.account.class%
-                            multiple:   false
+                    type:      string
+                    data_name: accountName
                 locked:
                     type: boolean
                     data_name: quote.locked
