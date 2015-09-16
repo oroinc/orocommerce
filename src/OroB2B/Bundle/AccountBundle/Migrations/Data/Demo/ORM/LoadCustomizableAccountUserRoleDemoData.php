@@ -86,7 +86,8 @@ class LoadCustomizableAccountUserRoleDemoData extends AbstractFixture implements
      */
     protected function createEntity($name, $label, Account $account)
     {
-        $role = new AccountUserRole(AccountUserRole::PREFIX_ROLE . $name);
+        $role = new AccountUserRole();
+        $role->setRole(AccountUserRole::PREFIX_ROLE . $name);
         $role->setLabel($label);
         $role->setAccount($account);
         $role->setOrganization($account->getOrganization());
