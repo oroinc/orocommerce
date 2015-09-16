@@ -17,6 +17,7 @@ define(function(require) {
          * @property {Object}
          */
         options: {
+            classQuoteProductBlockActive: 'sale-quoteproduct-block-active',
             classNotesSellerActive: 'sale-quoteproduct-notes-seller-active',
             productSelect: '.sale-quoteproduct-product-select input[type="hidden"]',
             productReplacementSelect: '.sale-quoteproduct-product-replacement-select input[type="hidden"]',
@@ -25,6 +26,11 @@ define(function(require) {
             unitsRoute: 'orob2b_product_unit_product_units',
             addItemButton: '.add-list-item',
             addNotesButton: '.sale-quoteproduct-add-notes-btn',
+            productSelectLink: '.sale-quoteproduct-product-select-link',
+            freeFormLink: '.sale-quoteproduct-free-form-link',
+            productFormContainer: '.sale-quoteproduct-product-form',
+            freeFormContainer: '.sale-quoteproduct-product-free-form',
+            fieldsRowContainer: '.fields-row',
             removeNotesButton: '.sale-quoteproduct-remove-notes-btn',
             itemsCollectionContainer: '.sale-quoteproductitem-collection',
             itemsContainer: '.sale-quoteproductitem-collection .oro-item-collection',
@@ -34,6 +40,7 @@ define(function(require) {
             sellerNotesContainer: '.sale-quoteproduct-notes-seller',
             requestsOnlyContainer: '.sale-quoteproductrequest-only',
             errorMessage: 'Sorry, unexpected error was occurred',
+            allUnits: {},
             units: {}
         },
 
@@ -51,6 +58,11 @@ define(function(require) {
          * @property {array}
          */
         units: {},
+
+        /**
+         * @property {array}
+         */
+        allUnits: {},
 
         /**
          * @property {Object}
@@ -113,6 +125,7 @@ define(function(require) {
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
             this.units = _.defaults(this.units, options.units);
+            this.allUnits = _.defaults(this.allUnits, options.allUnits);
 
             this.$el = options._sourceElement;
 
@@ -137,6 +150,8 @@ define(function(require) {
                 .on('change', this.options.typeSelect, _.bind(this.onTypeChanged, this))
                 .on('click', this.options.addNotesButton, _.bind(this.onAddNotesClick, this))
                 .on('click', this.options.removeNotesButton, _.bind(this.onRemoveNotesClick, this))
+                .on('click', this.options.freeFormLink, _.bind(this.onFreeFormLinkClick, this))
+                .on('click', this.options.productSelectLink, _.bind(this.onProductSelectLinkClick, this))
                 .on('content:changed', _.bind(this.onContentChanged, this))
             ;
 
@@ -191,7 +206,7 @@ define(function(require) {
          */
         updateContent: function(force) {
             var productId = this.getProductId();
-            var productUnits = this.units[productId];
+            var productUnits = productId ? this.units[productId] : this.allUnits;
 
             if (!productId || productUnits) {
                 this.updateProductUnits(productUnits, force || false);
@@ -283,6 +298,33 @@ define(function(require) {
 
             this.$itemsCollectionContainer.removeClass(this.options.classNotesSellerActive);
             this.$sellerNotesContainer.find('textarea').val('');
+        },
+
+        /**
+         * Handle Free Form for Product click
+         *
+         * @param {jQuery.Event} e
+         */
+        onFreeFormLinkClick: function(e) {
+            e.preventDefault();
+            var $rowElem = $(e.target).closest(this.options.fieldsRowContainer);
+            $rowElem.find(this.options.productFormContainer)
+                .removeClass(this.options.classQuoteProductBlockActive)
+                .find('input').val('').change()
+            ;
+            $rowElem.find(this.options.freeFormContainer).addClass(this.options.classQuoteProductBlockActive);
+        },
+
+        /**
+         * Handle Product Form click
+         *
+         * @param {jQuery.Event} e
+         */
+        onProductSelectLinkClick: function(e) {
+            e.preventDefault();
+            var $rowElem = $(e.target).closest(this.options.fieldsRowContainer);
+            $rowElem.find(this.options.productFormContainer).addClass(this.options.classQuoteProductBlockActive);
+            $rowElem.find(this.options.freeFormContainer).removeClass(this.options.classQuoteProductBlockActive);
         },
 
         /**

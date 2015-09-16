@@ -18,19 +18,45 @@
 
     {% set commentAccount = form.vars.value.commentAccount|default(null) %}
     {% set commentSeller = form.vars.value.comment|default(null) %}
+    {% set isProductFreeForm = form.vars.value.isProductFreeForm()|default(false) %}
+    {% set isProductReplacementFreeForm = form.vars.value.isProductReplacementFreeForm()|default(false) %}
 
     <table class="sale-quoteproduct-collection-table" {{ block('widget_container_attributes') }}
            data-page-component-options="{{ componentOptions|json_encode }}"
            data-page-component-module="orob2bsale/js/app/components/sale-quoteproductitem-selection-component">
     <tr>
         <td class="sale-quoteproduct-table-column-1">
-            <div class="sale-quoteproduct-product-select">
-                {{ form_widget(form.product) }}
-                {{ form_errors(form.product) }}
+            <div class="fields-row sale-quoteproduct-product-row">
+                <div class="sale-quoteproduct-product-select sale-quoteproduct-product-form{% if not isProductFreeForm %} sale-quoteproduct-block-active{% endif %}">
+                    {{ form_widget(form.product) }}
+                    {{ form_errors(form.product) }}
+                    <a class="sale-quoteproduct-free-form-link" href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.select.free_form'|trans }}</a>
+                </div>
+                <div class="sale-quoteproduct-product-free-form{% if isProductFreeForm %} sale-quoteproduct-block-active{% endif %}">
+                    {{ form_label(form.productSku) }}
+                    {{ form_widget(form.productSku) }}
+                    {{ form_errors(form.productSku) }}
+                    {{ form_label(form.freeFormProduct) }}
+                    {{ form_widget(form.freeFormProduct) }}
+                    {{ form_errors(form.freeFormProduct) }}
+                    <br/><a class="sale-quoteproduct-product-select-link" href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.select.product'|trans }}</a>
+                </div>
             </div>
-            <div class="sale-quoteproduct-product-replacement-select">
-                {{ form_row(form.productReplacement) }}
-                {{ form_errors(form.productReplacement) }}
+            <div class="fields-row sale-quoteproduct-product-replacement-row">
+                <div class="sale-quoteproduct-product-replacement-select sale-quoteproduct-product-form{% if not isProductReplacementFreeForm %} sale-quoteproduct-block-active{% endif %}">
+                    {{ form_widget(form.productReplacement) }}
+                    {{ form_errors(form.productReplacement) }}
+                    <a class="sale-quoteproduct-free-form-link" href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.select.free_form'|trans }}</a>
+                </div>
+                <div class="sale-quoteproduct-product-free-form{% if isProductReplacementFreeForm %} sale-quoteproduct-block-active{% endif %}">
+                    {{ form_label(form.productReplacementSku) }}
+                    {{ form_widget(form.productReplacementSku) }}
+                    {{ form_errors(form.productReplacementSku) }}
+                    {{ form_label(form.freeFormProductReplacement) }}
+                    {{ form_widget(form.freeFormProductReplacement) }}
+                    {{ form_errors(form.freeFormProductReplacement) }}
+                    <br/><a class="sale-quoteproduct-product-select-link" href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.select.product'|trans }}</a>
+                </div>
             </div>
         </td>
         <td class="sale-quoteproduct-table-column-2">

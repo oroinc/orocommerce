@@ -18,9 +18,6 @@ OroB2B\Bundle\SaleBundle\Entity\QuoteProduct:
     properties:
         quote:
             - NotBlank: ~
-        product:
-            - NotBlank:
-                message: 'orob2b.sale.quoteproduct.product.blank'
         productSku:
             - NotBlank:
                 groups: [ Import ]
