@@ -294,9 +294,6 @@ class ProductPrice
         if ($this->price) {
             $this->value    = $this->price->getValue();
             $this->currency = $this->price->getCurrency();
-        } else {
-            $this->value = null;
-            $this->currency = null;
         }
     }
 }
