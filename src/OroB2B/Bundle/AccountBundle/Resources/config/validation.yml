@@ -5,7 +5,7 @@ OroB2B\Bundle\AccountBundle\Entity\Account:
         addresses:
             - Oro\Bundle\FormBundle\Validator\Constraints\ContainsPrimary:
                 message: One of addresses must be set as primary.
-            - Oro\Bundle\AddressBundle\Validator\Constraints\UniqueAddressTypes: ~
+            - OroB2B\Bundle\AccountBundle\Validator\Constraints\UniqueAddressDefaultTypes: ~
 
 OroB2B\Bundle\AccountBundle\Entity\AccountAddress:
     properties:
@@ -63,7 +63,7 @@ OroB2B\Bundle\AccountBundle\Entity\AccountUser:
         addresses:
             - Oro\Bundle\FormBundle\Validator\Constraints\ContainsPrimary:
                 message: One of addresses must be set as primary.
-            - Oro\Bundle\AddressBundle\Validator\Constraints\UniqueAddressTypes: ~
+            - OroB2B\Bundle\AccountBundle\Validator\Constraints\UniqueAddressDefaultTypes: ~
 
 OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress:
     properties:
