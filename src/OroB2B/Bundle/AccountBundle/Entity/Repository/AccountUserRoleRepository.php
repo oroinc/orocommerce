@@ -71,6 +71,27 @@ class AccountUserRoleRepository extends EntityRepository
     }
 
     /**
+     * Return array of assigned users to the given role
+     *
+     * @param AccountUserRole $role
+     * @return AccountUser[]
+     */
+    public function getAssignedUsers(AccountUserRole $role)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $findResult = $qb
+            ->select('accountUser')
+            ->from('OroB2BAccountBundle:AccountUser', 'accountUser')
+            ->innerJoin('accountUser.roles', 'accountUserRole')
+            ->where($qb->expr()->eq('accountUserRole', ':accountUserRole'))
+            ->setParameter('accountUserRole', $role)
+            ->getQuery()
+            ->getResult();
+
+        return $findResult;
+    }
+
+    /**
      * @param AccountUser $accountUser
      * @return QueryBuilder
      */

@@ -161,7 +161,8 @@ class LoadQuoteDemoData extends AbstractFixture implements
                 $quote->addQuoteProduct($quoteProduct);
             }
         } else {
-            for ($i = 0; $i < rand(1, 3); $i++) {
+            $numProducts = rand(1, 3);
+            for ($i = 0; $i < $numProducts; $i++) {
                 $product = $products[rand(1, count($products) - 1)];
                 $quote->addQuoteProduct($this->createQuoteProduct($product, QuoteProduct::TYPE_OFFER));
             }
@@ -169,8 +170,8 @@ class LoadQuoteDemoData extends AbstractFixture implements
 
         foreach ($quote->getQuoteProducts() as $quoteProduct) {
             $unitPrecisions = $quoteProduct->getProduct()->getUnitPrecisions();
-
-            for ($j = 0; $j < rand(1, 3); $j++) {
+            $numProductOffers = rand(1, 3);
+            for ($j = 0; $j < $numProductOffers; $j++) {
                 if (!count($unitPrecisions)) {
                     continue;
                 }

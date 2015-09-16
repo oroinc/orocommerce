@@ -3,16 +3,15 @@
 namespace OroB2B\Bundle\FrontendBundle\Placeholder;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\RouterInterface;
 
-use OroB2B\Bundle\FrontendBundle\EventListener\RouteCollectionListener;
+use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
 
 class FrontendFilter
 {
     /**
-     * @var RouterInterface
+     * @var FrontendHelper
      */
-    protected $router;
+    protected $helper;
 
     /**
      * @var Request
@@ -20,11 +19,11 @@ class FrontendFilter
     protected $request;
 
     /**
-     * @param RouterInterface $router
+     * @param FrontendHelper $helper
      */
-    public function __construct(RouterInterface $router)
+    public function __construct(FrontendHelper $helper)
     {
-        $this->router = $router;
+        $this->helper = $helper;
     }
 
     /**
@@ -44,7 +43,7 @@ class FrontendFilter
             return false;
         }
 
-        return $this->isFrontendRequest($this->request);
+        return $this->helper->isFrontendRequest($this->request);
     }
 
     /**
@@ -56,26 +55,6 @@ class FrontendFilter
             return true;
         }
 
-        return !$this->isFrontendRequest($this->request);
-    }
-
-    /**
-     * @param Request $request
-     * @return bool
-     */
-    protected function isFrontendRequest(Request $request)
-    {
-        $routeName = $request->attributes->get('_route');
-        if (!$routeName) {
-            return false;
-        }
-
-        $route = $this->router->getRouteCollection()->get($routeName);
-        if (!$route) {
-            return false;
-        }
-
-        return $route->hasOption(RouteCollectionListener::OPTION_FRONTEND) &&
-            $route->getOption(RouteCollectionListener::OPTION_FRONTEND) === true;
+        return !$this->helper->isFrontendRequest($this->request);
     }
 }

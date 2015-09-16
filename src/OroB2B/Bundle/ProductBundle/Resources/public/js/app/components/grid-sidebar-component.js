@@ -139,12 +139,9 @@ define(function(require) {
          * @param {Object} params
          */
         _pushState: function(params) {
-            var paramsString = this._urlParamsToString(_.omit(params, 'saveState'));
-            if (paramsString.length) {
-                paramsString = '?' + paramsString;
-            }
-
-            history.pushState({}, document.title, location.pathname + paramsString + location.hash);
+            var paramsString = this._urlParamsToString(_.omit(params, ['saveState']));
+            var current = mediator.execute('pageCache:getCurrent');
+            mediator.execute('changeUrl', current.path + '?' + paramsString);
         },
 
         minimize: function() {
@@ -157,7 +154,7 @@ define(function(require) {
 
         /**
          * @private
-         * @param {string} state
+         * @param {String} state
          */
         _maximizeOrMaximize: function(state) {
             var params = this._getQueryParamsFromUrl(location.search);
@@ -216,7 +213,7 @@ define(function(require) {
          * Decode state object from string, operation is invert for encodeStateData.
          *
          * @static
-         * @param {string} stateString
+         * @param {String} stateString
          * @return {Object}
          *
          * @see orodatagrid/js/pageable-collection

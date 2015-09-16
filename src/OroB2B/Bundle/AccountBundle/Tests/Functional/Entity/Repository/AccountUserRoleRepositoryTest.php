@@ -7,6 +7,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
+use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserRoleData;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -72,6 +73,18 @@ class AccountUserRoleRepositoryTest extends WebTestCase
         $this->assertTrue($hasAssignedUsers);
     }
 
+    public function testGetAssignedUsers()
+    {
+        /** @var AccountUserRole $role */
+        $role = $this->getReference(LoadAccountUserRoleData::ROLE_WITH_ACCOUNT_USER);
+        $assignedUsers = $this->repository->getAssignedUsers($role);
+        $expectedUsers = [
+            $this->getReference(LoadAccountUserData::EMAIL)
+        ];
+
+        $this->assertEquals($expectedUsers, $assignedUsers);
+    }
+
     public function testRoleWithoutUserAndWebsite()
     {
         /** @var AccountUserRole $role */
@@ -120,7 +133,8 @@ class AccountUserRoleRepositoryTest extends WebTestCase
                     LoadAccountUserRoleData::ROLE_WITH_ACCOUNT,
                     LoadAccountUserRoleData::ROLE_WITH_ACCOUNT_USER,
                     LoadAccountUserRoleData::ROLE_WITH_WEBSITE,
-                    LoadAccountUserRoleData::ROLE_WITHOUT_USER_AND_WEBSITE
+                    LoadAccountUserRoleData::ROLE_WITHOUT_USER_AND_WEBSITE,
+                    LoadAccountUserRoleData::ROLE_WITHOUT_ACCOUNT
                 ]
             ],
             'user from account without custom roles' => [
@@ -128,7 +142,8 @@ class AccountUserRoleRepositoryTest extends WebTestCase
                 [
                     LoadAccountUserRoleData::ROLE_WITH_ACCOUNT_USER,
                     LoadAccountUserRoleData::ROLE_WITH_WEBSITE,
-                    LoadAccountUserRoleData::ROLE_WITHOUT_USER_AND_WEBSITE
+                    LoadAccountUserRoleData::ROLE_WITHOUT_USER_AND_WEBSITE,
+                    LoadAccountUserRoleData::ROLE_WITHOUT_ACCOUNT
                 ]
             ]
         ];

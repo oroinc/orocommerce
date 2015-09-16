@@ -9,6 +9,7 @@ use Oro\Bundle\SecurityBundle\Form\Type\AclAccessLevelSelectorType;
 
 use OroB2B\Bundle\AccountBundle\Form\Extension\AclAccessLevelSelectorExtension;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType;
+use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleType;
 
 class AclAccessLevelSelectorExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -126,13 +127,22 @@ class AclAccessLevelSelectorExtensionTest extends \PHPUnit_Framework_TestCase
             'no privileges form' => [true, true, true],
             'no role form' => [true, true, true, true],
             'not supported form name' => [true, true, true, true, true, 'not_supported_form'],
-            'supported form name' => [
+            'supported form name (AccountUserRoleType)' => [
                 true,
                 true,
                 true,
                 true,
                 true,
                 AccountUserRoleType::NAME,
+                'orob2b.account.security.access-level.'
+            ],
+            'supported form name (FrontendAccountUserRoleType)' => [
+                true,
+                true,
+                true,
+                true,
+                true,
+                FrontendAccountUserRoleType::NAME,
                 'orob2b.account.security.access-level.'
             ],
         ];

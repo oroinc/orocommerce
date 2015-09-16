@@ -1,7 +1,7 @@
 orob2b:
+    menu:
+        sales_tab.label: 'Sales'
     sale:
-        menu:
-            label: 'Sales'
         quote:
             entity_label: 'Quote'
             entity_plural_label: 'Quotes'
@@ -145,7 +145,7 @@ orob2b:
 
             quoteproductrequest:
                 quantity.label: 'Requested Qty'
-                price.label: 'Requested Price'
+                price.label: 'Target Price'
                 column_summary: 'Summary'
 
             btn:

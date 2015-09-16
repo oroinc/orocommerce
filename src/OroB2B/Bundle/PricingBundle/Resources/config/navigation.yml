@@ -4,7 +4,7 @@ oro_menu_config:
             label:           'orob2b.pricing.pricelist.entity_plural_label'
             route:           'orob2b_pricing_price_list_index'
             extras:
-                position:    10
+                position:    500
                 routes:      ['/^orob2b_pricing/']
                 description: 'orob2b.pricing.menu.price_lists_list.description'
 
@@ -24,7 +24,7 @@ oro_menu_config:
     tree:
         application_menu:
             children:
-                products_tab:
+                sales_tab:
                     children:
                         pricing_price_lists_list: ~
         shortcuts:
