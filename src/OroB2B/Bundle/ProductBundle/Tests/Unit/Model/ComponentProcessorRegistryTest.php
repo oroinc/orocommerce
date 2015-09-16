@@ -37,4 +37,19 @@ class ComponentProcessorRegistryTest extends \PHPUnit_Framework_TestCase
 
         return $processor;
     }
+
+    public function testHasAllowedProcessor()
+    {
+        $processorAllowed = $this->getProcessorMock('allowed');
+        $processorDisallowed = $this->getProcessorMock('disallowed');
+
+        $registry = new ComponentProcessorRegistry();
+        $registry->addProcessor($processorAllowed);
+        $registry->addProcessor($processorDisallowed);
+
+        $this->assertFalse($registry->hasAllowedProcessor());
+
+        $processorAllowed->expects($this->once())->method('isAllowed')->willReturn(true);
+        $this->assertTrue($registry->hasAllowedProcessor());
+    }
 }
