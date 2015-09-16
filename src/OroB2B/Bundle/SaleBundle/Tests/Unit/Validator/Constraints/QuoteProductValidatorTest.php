@@ -70,6 +70,7 @@ class QuoteProductValidatorTest extends \PHPUnit_Framework_TestCase
         ;
         $this->validator->validate($data, $this->constraint);
     }
+
     /**
      * @return array
      */

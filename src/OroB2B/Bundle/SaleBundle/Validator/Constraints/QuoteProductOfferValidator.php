@@ -55,7 +55,7 @@ class QuoteProductOfferValidator extends ConstraintValidator
                 return;
             }
 
-            if (!$isProductFreeForm && !in_array($productUnit->getCode(), $allowedUnits, true)) {
+            if (!in_array($productUnit->getCode(), $allowedUnits, true)) {
                 $this->addViolation($constraint);
                 return;
             }
