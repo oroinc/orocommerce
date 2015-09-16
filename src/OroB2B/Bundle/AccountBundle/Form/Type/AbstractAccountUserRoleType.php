@@ -81,7 +81,7 @@ abstract class AbstractAccountUserRoleType extends AbstractType
                         'privileges_config' => $config,
                     ],
                     'page_component_options' => [
-                        'accessLevelRoute' => 'orob2b_account_acl_access_levels'
+                        'accessLevelRoute' => $options['access_level_route']
                     ],
                 ]
             );
@@ -106,7 +106,10 @@ abstract class AbstractAccountUserRoleType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired(['privilege_config']);
-        $resolver->setDefaults(['data_class' => $this->dataClass]);
+        $resolver->setDefaults([
+            'data_class' => $this->dataClass,
+            'access_level_route' => 'orob2b_account_acl_access_levels',
+        ]);
     }
 
     /**
