@@ -29,7 +29,7 @@ orob2b:
             submit.label: 'Submit Request For Quote'
 
             message:
-                request_saved: 'Your Request For Proposal successfully saved!'
+                request_saved: 'Your Request For Quote successfully saved!'
 
         requestproduct:
             entity_label: 'Request Product'
@@ -107,7 +107,7 @@ orob2b:
             restore: 'Restore'
             change_status: 'Change Status'
             create_quote: 'Create Quote'
-            add_to_rfp: 'Add To Request For Proposal'
+            add_to_rfp: 'Add To Request For Quote'
             create_rfp: 'Create RFP'
 
         widget:
