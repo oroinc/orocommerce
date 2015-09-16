@@ -43,7 +43,9 @@ class AccountVoter extends AbstractEntityVoter implements ContainerAwareInterfac
      */
     protected $user;
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;

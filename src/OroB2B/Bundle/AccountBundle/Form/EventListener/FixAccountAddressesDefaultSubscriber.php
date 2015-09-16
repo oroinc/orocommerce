@@ -31,7 +31,7 @@ class FixAccountAddressesDefaultSubscriber implements EventSubscriberInterface
     /**
      * @var PropertyAccessor
      */
-    private $addressAccess;
+    private $addressesAccess;
 
     /**
      * @param string $addressesProperty
@@ -56,11 +56,11 @@ class FixAccountAddressesDefaultSubscriber implements EventSubscriberInterface
      */
     protected function getAddressesAccess()
     {
-        if (!$this->addressAccess) {
-            $this->addressAccess = PropertyAccess::createPropertyAccessor();
+        if (!$this->addressesAccess) {
+            $this->addressesAccess = PropertyAccess::createPropertyAccessor();
         }
 
-        return $this->addressAccess;
+        return $this->addressesAccess;
     }
 
     /**
