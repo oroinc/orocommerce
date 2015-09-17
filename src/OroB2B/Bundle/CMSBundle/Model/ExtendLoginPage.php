@@ -2,6 +2,16 @@
 
 namespace OroB2B\Bundle\CMSBundle\Model;
 
+use Oro\Bundle\AttachmentBundle\Entity\File;
+
+use OroB2B\Bundle\CMSBundle\Entity\LoginPage;
+
+/**
+ * @method File getLogoImage()
+ * @method LoginPage setLogoImage(File $image)
+ * @method File getBackgroundImage()
+ * @method LoginPage setBackgroundImage(File $image)
+ */
 class ExtendLoginPage
 {
     /**

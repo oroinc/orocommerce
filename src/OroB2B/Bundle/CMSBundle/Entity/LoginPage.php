@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\CMSBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 use OroB2B\Bundle\CMSBundle\Model\ExtendLoginPage;
@@ -23,10 +22,6 @@ use OroB2B\Bundle\CMSBundle\Model\ExtendLoginPage;
  *          }
  *      }
  * )
- * @method File getLogoImage()
- * @method LoginPage setLogoImage(File $image)
- * @method File getBackgroundImage()
- * @method LoginPage setBackgroundImage(File $image)
  */
 class LoginPage extends ExtendLoginPage
 {
