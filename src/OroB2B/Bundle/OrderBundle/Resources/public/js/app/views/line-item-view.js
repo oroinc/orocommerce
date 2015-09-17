@@ -71,12 +71,12 @@ define(function(require) {
 
             $freeForm.find('a').click(_.bind(function() {
                 showProductType();
-                this.fieldsByName.product.select2('val', '').change();
+                $freeForm.find(':input').val('').change();
             }, this));
 
             $product.find('a').click(_.bind(function() {
                 showFreeFormType();
-                this.fieldsByName.freeFormProduct.val('').change();
+                this.fieldsByName.product.select2('val', '').change();
             }, this));
 
             if (this.fieldsByName.freeFormProduct.val() !== '') {
