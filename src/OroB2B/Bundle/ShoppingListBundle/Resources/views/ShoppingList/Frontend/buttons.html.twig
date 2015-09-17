@@ -60,7 +60,7 @@
     {% set btnOptions = {
         dataUrl: options.dataUrl,
         dataAttributes: dataAttributes,
-        btnLabel: 'orob2b.shoppinglist.entity_label'|trans,
+        btnLabel: options.shoppingList.label,
         dataId: shoppingListId,
         actionLabel: 'orob2b.shoppinglist.actions.add_to_shopping_list'|trans
     } %}
@@ -97,6 +97,9 @@
     {% endset %}
 
     {{ UI.pinnedDropdownButton({
-        'html': buttonsHtml
+        'html': buttonsHtml,
+        'options': {
+            'truncateMain': 15
+        }
     }) }}
 {% endmacro %}
