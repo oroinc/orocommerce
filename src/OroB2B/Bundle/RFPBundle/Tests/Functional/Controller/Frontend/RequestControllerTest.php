@@ -303,7 +303,7 @@ class RequestControllerTest extends WebTestCase
 
         $this->assertEquals($expectedQuickAddLineItems, $this->getActualLineItems($crawler, 1));
 
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Submit')->form();
         $form['orob2b_rfp_frontend_request_type[firstName]'] = 'Firstname';
         $form['orob2b_rfp_frontend_request_type[lastName]'] = 'Lastname';
         $form['orob2b_rfp_frontend_request_type[email]'] = 'email@example.com';

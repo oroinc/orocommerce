@@ -7,7 +7,7 @@ orob2b:
             entity_plural_label: 'Quotes'
 
             id.label: 'Numeric ID'
-            qid.label: 'ID'
+            qid.label: 'Quote #'
             owner.label: 'Owner'
             organization.label: 'Organization'
             valid_until.label: 'Valid Until'
@@ -112,13 +112,16 @@ orob2b:
             remove_seller_notes: 'Remove Seller Notes'
             notify_and_lock: 'Notify and Lock'
 
+        navigation:
+            view: 'Quote #%id%'
+
     frontend:
         sale:
             menu:
                 label: 'Sales'
             quote:
                 entity_plural_label: Quotes
-                qid.label: 'ID'
+                qid.label: 'Quote #'
                 account_user.label: 'Assigned To'
                 valid_until.label: 'Valid Until'
                 sections:
