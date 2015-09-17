@@ -11,6 +11,7 @@ define(function(require) {
     var __ = require('orotranslation/js/translator');
     var routing = require('routing');
     var messenger = require('oroui/js/messenger');
+    require('jquery.validate');
 
     QuoteProductItemSelectionComponent = BaseComponent.extend({
         /**
@@ -21,6 +22,8 @@ define(function(require) {
             classNotesSellerActive: 'sale-quoteproduct-notes-seller-active',
             productSelect: '.sale-quoteproduct-product-select input[type="hidden"]',
             productReplacementSelect: '.sale-quoteproduct-product-replacement-select input[type="hidden"]',
+            productFreeFormInput: '.sale-quoteproduct-product-freeform-input',
+            productReplacementFreeFormInput: '.sale-quoteproduct-productreplacement-freeform-input',
             typeSelect: '.sale-quoteproduct-type-select',
             unitsSelect: '.sale-quoteproductitem-productunit-select',
             unitsRoute: 'orob2b_product_unit_product_units',
@@ -36,7 +39,7 @@ define(function(require) {
             itemsContainer: '.sale-quoteproductitem-collection .oro-item-collection',
             itemWidget: '.sale-quoteproductitem-widget',
             syncClass: 'synchronized',
-            productReplacementContainer: '.sale-quoteproduct-product-replacement-select',
+            productReplacementContainer: '.sale-quoteproduct-product-replacement-row',
             sellerNotesContainer: '.sale-quoteproduct-notes-seller',
             requestsOnlyContainer: '.sale-quoteproductrequest-only',
             errorMessage: 'Sorry, unexpected error was occurred',
@@ -186,7 +189,9 @@ define(function(require) {
         onTypeChanged: function(e) {
             var typeValue = parseInt(this.$typeSelect.val());
 
-            this.$productReplacementContainer.toggle(this.typeReplacement === typeValue);
+            this.$productReplacementContainer.toggleClass(
+                this.options.classQuoteProductBlockActive, this.typeReplacement === typeValue
+            );
             this.$requestsOnlyContainer.toggle(this.typeOffer !== typeValue);
 
             this.$productSelect.trigger('change');
@@ -205,6 +210,8 @@ define(function(require) {
          * @param {Boolean} force
          */
         updateContent: function(force) {
+            this.updateValidation();
+
             var productId = this.getProductId();
             var productUnits = productId ? this.units[productId] : this.allUnits;
 
@@ -331,9 +338,80 @@ define(function(require) {
          * Get Product Id
          */
         getProductId: function() {
-            var isTypeReplacement = this.typeReplacement === parseInt(this.$typeSelect.val());
+            return this.isProductReplacement() ? this.$productReplacementSelect.val() : this.$productSelect.val();
+        },
 
-            return isTypeReplacement ? this.$productReplacementSelect.val() : this.$productSelect.val();
+        /**
+         * Check that Product is Replacement
+         */
+        isProductReplacement: function() {
+            return this.typeReplacement === parseInt(this.$typeSelect.val());
+        },
+
+        /**
+         * Validation for products
+         */
+        updateValidation: function() {
+            var self = this;
+
+            self.$el.find(self.options.productFreeFormInput).rules('add', {
+                required: {
+                    param: true,
+                    depends: function(element) {
+                        return !self.isProductReplacement() &&
+                            $(element)
+                                .closest(self.options.freeFormContainer)
+                                .hasClass(self.options.classQuoteProductBlockActive);
+                    }
+                },
+                messages: {
+                    required: 'orob2b.sale.quoteproduct.free_form_product.blank'
+                }
+            });
+
+            self.$el.find(self.options.productReplacementFreeFormInput).rules('add', {
+                required: {
+                    param: true,
+                    depends: function(element) {
+                        return self.isProductReplacement() &&
+                            $(element)
+                                .closest(self.options.freeFormContainer)
+                                .hasClass(self.options.classQuoteProductBlockActive);
+                    }
+                },
+                messages: {
+                    required: 'orob2b.sale.quoteproduct.free_form_product.blank'
+                }
+            });
+
+            self.$productSelect.rules('add', {
+                required: {
+                    param: true,
+                    depends: function(element) {
+                        return !self.isProductReplacement() && $(element)
+                            .closest(self.options.productFormContainer)
+                            .hasClass(self.options.classQuoteProductBlockActive);
+                    }
+                },
+                messages: {
+                    required: 'orob2b.sale.quoteproduct.product.blank'
+                }
+            });
+
+            self.$productReplacementSelect.rules('add', {
+                required: {
+                    param: true,
+                    depends: function(element) {
+                        return self.isProductReplacement() &&
+                            $(element)
+                                .closest(self.options.productFormContainer)
+                                .hasClass(self.options.classQuoteProductBlockActive);
+                    }
+                },
+                messages: {
+                    required: 'orob2b.sale.quoteproduct.product.blank'
+                }
+            });
         },
 
         dispose: function() {

@@ -70,7 +70,7 @@ class QuoteProduct implements ProductHolderInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="product_sku", type="string", length=255)
+     * @ORM\Column(name="product_sku", type="string", length=255, nullable=true)
      */
     protected $productSku;
 
@@ -213,7 +213,7 @@ class QuoteProduct implements ProductHolderInterface
      */
     public function isProductFreeForm()
     {
-        return !$this->product && $this->freeFormProduct;
+        return (!$this->product) && ('' !== trim($this->freeFormProduct));
     }
 
     /**
@@ -223,7 +223,7 @@ class QuoteProduct implements ProductHolderInterface
      */
     public function isProductReplacementFreeForm()
     {
-        return !$this->productReplacement && $this->freeFormProductReplacement;
+        return (!$this->productReplacement) && ('' !== trim($this->freeFormProductReplacement));
     }
 
     /**

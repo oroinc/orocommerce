@@ -285,18 +285,14 @@
     width: 257px !important;
 }
 
-.sale-quoteproduct-product-row > div {
-    display: none;
-}
-
+.sale-quoteproduct-product-row > div,
+.sale-quoteproduct-product-replacement-row,
 .sale-quoteproduct-product-replacement-row > div {
     display: none;
 }
 
-.sale-quoteproduct-product-row > div.sale-quoteproduct-block-active {
-    display: block;
-}
-
+.sale-quoteproduct-product-row > div.sale-quoteproduct-block-active,
+.sale-quoteproduct-product-replacement-row.sale-quoteproduct-block-active,
 .sale-quoteproduct-product-replacement-row > div.sale-quoteproduct-block-active {
     display: block;
 }

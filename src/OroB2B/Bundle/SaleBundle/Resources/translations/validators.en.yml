@@ -3,6 +3,8 @@ orob2b:
         quoteproduct:
             product:
                 blank: 'Please choose existing Product.'
+            free_form_product:
+                blank: 'Please provide Product title.'
             product_replacement:
                 blank: 'Please choose existing Product.'
             quote_product_items:

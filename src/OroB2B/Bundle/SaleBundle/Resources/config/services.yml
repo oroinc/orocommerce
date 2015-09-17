@@ -8,6 +8,7 @@ parameters:
     orob2b_sale.formatter.quote_product.class: OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter
     orob2b_sale.formatter.quote_product_offer.class: OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter
     #Validators
+    orob2b_sale.validator.quote_product.class: OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProductValidator
     orob2b_sale.validator.quote_product_unit.class: OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProductOfferValidator
     #Twig extensions
     orob2b_sale.twig.quote.class: OroB2B\Bundle\SaleBundle\Twig\QuoteExtension
@@ -18,6 +19,11 @@ services:
         arguments:
             - %orob2b_sale.entity.quote.class%
             - @doctrine.orm.entity_manager
+
+    orob2b_sale.validator.quote_product:
+        class: %orob2b_sale.validator.quote_product.class%
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_sale.validator.quote_product }
 
     orob2b_sale.validator.quote_product_unit:
         class: %orob2b_sale.validator.quote_product_unit.class%
