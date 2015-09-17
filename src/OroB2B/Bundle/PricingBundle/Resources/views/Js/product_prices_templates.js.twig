@@ -1,0 +1,51 @@
+<script type="text/template" id="product-prices-tier-button-template">
+    <div class="product-tier-prices">
+        <i class="icon-bars" data-toggle="popover" data-placement="bottom" data-close="false"></i>
+    </div>
+</script>
+<script type="text/template" id="product-prices-tier-table-template">
+    <table>
+        <% if (clickable) { %>
+        <tr>
+            <td colspan="2">
+                <%= _.__('orob2b.pricing.click_to_select') %>
+            </td>
+        </tr>
+        <% } %>
+        <% _.each(tierPrices, function(prices, unit) { %>
+        <tr>
+            <td colspan="2">
+                <b><%= _.__('orob2b.product.product_unit.' + unit + '.label.full') %></b>
+            </td>
+        </tr>
+        <% _.each(prices, function(price) { %>
+        <tr class="<% if (!_.isNull(matchedPrice) && unit === unitCode && parseFloat(price.price) === parseFloat(matchedPrice)) { %>matched-tier-price<% } %>">
+            <td><div class="text-right"><%= price.qty %>:</div></td>
+            <td>
+                <div class="text-left">
+                    <% if (clickable) { %>
+                    <a
+                            href="javascript: void(0);"
+                            data-price="<%= parseFloat(price.price) %>"
+                            data-unit="<%= unit %>"
+                            ><%= formatter.formatCurrency(price.price, price.currency) %></a>
+                    <% } else { %>
+                    <%= formatter.formatCurrency(price.price, price.currency) %>
+                    <% } %>
+                </div>
+            </td>
+        </tr>
+        <% }) %>
+        <% }) %>
+    </table>
+</script>
+<script type="text/template" id="product-prices-matched-button-template">
+    {% set matchedPriceTooltip %}{% spaceless %}
+        <p><%= _.__('orob2b.order.orderlineitem.price_is_overridden.label') %></p>
+        <p><a href='javascript: void(0);'><%= _.__('orob2b.order.orderlineitem.reset_price.label') %></a></p>
+    {% endspaceless %}{% endset %}
+
+    <div class="order-line-item-price-overridden" style="display: none;">
+        <i class="icon-exclamation-sign" data-toggle="popover" data-placement="bottom" data-close="false" data-content="{{ matchedPriceTooltip }}"></i>
+    </div>
+</script>

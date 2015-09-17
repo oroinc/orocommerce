@@ -1,3 +1,4 @@
 css:
     'orob2bpricing':
         - 'bundles/orob2bpricing/css/style.less'
+        - 'bundles/orob2bpricing/css/product-prices.less'

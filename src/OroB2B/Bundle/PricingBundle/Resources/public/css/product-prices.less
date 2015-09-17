@@ -1,0 +1,38 @@
+.product-tier-prices {
+  float: left;
+  position: relative;
+
+  table {
+    min-width: 100px;
+
+    tr{
+      &:hover > td {
+        background-color: #fff;
+      }
+
+      &.matched-tier-price > td {
+        font-weight: bold;
+      }
+    }
+
+    td {
+      border: none;
+      padding: 2px;
+      height: 19px !important;
+    }
+  }
+
+  i {
+    padding-top: 5px;
+    cursor: pointer;
+
+    &.disabled {
+      cursor: default;
+      opacity: 0.4;
+    }
+
+    &:before {
+      font-size: 20px;
+    }
+  }
+}

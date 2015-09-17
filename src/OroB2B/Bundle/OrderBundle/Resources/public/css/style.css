@@ -22,39 +22,6 @@
     margin-top: 10px;
 }
 
-.order-line-item-tier-prices {
-    float: left;
-    position: relative;
-}
-
-.order-line-item-tier-prices table {
-    min-width: 100px;
-}
-
-.order-line-item-tier-prices table tr:hover > td {
-    background-color: #fff;
-}
-
-.order-line-item-tier-prices table td {
-    border: none;
-    padding: 2px;
-    height: 19px !important;
-}
-
-.order-line-item-tier-prices i {
-    padding-top: 5px;
-    cursor: pointer;
-}
-
-.order-line-item-tier-prices i.disabled {
-    cursor: default;
-    opacity: 0.4;
-}
-
-.order-line-item-tier-prices i:before {
-    font-size: 20px;
-}
-
 .order-line-item-sku {
     width: 134px;
 }
@@ -128,10 +95,6 @@
 
 .order-line-item-price-overridden div.popover {
     min-width: 130px;
-}
-
-.order-line-item-tier-prices div.popover tr.matched-tier-price > td {
-    font-weight: bold;
 }
 
 .order-line-item-price-value,

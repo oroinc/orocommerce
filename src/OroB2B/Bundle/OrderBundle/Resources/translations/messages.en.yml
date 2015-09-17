@@ -78,8 +78,6 @@ orob2b:
             select:
                 product: Select product
                 free_form: Free-form entry
-            price_is_overridden.label: Price is overridden
-            reset_price.label: Reset price
 
             column:
                 product: 'Product'

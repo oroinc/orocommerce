@@ -126,21 +126,7 @@
     </td>
     <td class="order-line-item-price">
         <div class="fields-row">
-            {% set priceOverriddenTooltip %}
-                <p>{{ 'orob2b.order.orderlineitem.price_is_overridden.label'|trans }}</p>
-                <p><a href="javascript: void(0);">{{ 'orob2b.order.orderlineitem.reset_price.label'|trans }}</a></p>
-            {% endset %}
-
-            <div class="order-line-item-price-overridden" style="display: none;">
-                <i class="icon-exclamation-sign" data-toggle="popover" data-placement="bottom" data-close="false" data-content="{{ priceOverriddenTooltip|escape }}"></i>
-            </div>
-
             {{ form_widget(form.price) }}
-
-            <div class="order-line-item-tier-prices">
-                <i class="icon-bars" data-toggle="popover" data-placement="bottom" data-close="false"></i>
-            </div>
-
             {{ form_widget(form.priceType) }}
         </div>
         {{ form_errors(form.price) }}
@@ -193,9 +179,6 @@
         {% endif %}
         <div class="order-line-item-price-value" data-price="{{ priceValue }}">
             {{ priceValue }}
-        </div>
-        <div class="order-line-item-tier-prices">
-            <i class="icon-bars" data-toggle="popover" data-placement="bottom" data-close="false"></i>
         </div>
     </td>
     <td class="order-line-item-ship_by">

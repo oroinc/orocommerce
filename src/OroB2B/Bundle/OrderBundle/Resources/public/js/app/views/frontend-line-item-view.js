@@ -4,7 +4,7 @@ define(function(require) {
     var FrontendLineItemView;
     var $ = require('jquery');
     var _ = require('underscore');
-    var NumberFormatter = require('orolocale/js/formatter/number');
+    var ProductPricesComponent = require('orob2bpricing/js/app/components/product-prices-component');
     var LineItemAbstractView = require('orob2border/js/app/views/line-item-abstract-view');
 
     /**
@@ -17,11 +17,6 @@ define(function(require) {
          * @property {jQuery}
          */
         $priceValueText: null,
-
-        /**
-         * @property {Boolean}
-         */
-        initialized: false,
 
         /**
          * @inheritDoc
@@ -63,27 +58,17 @@ define(function(require) {
                 this.fieldsByName.productUnit
             ]);
 
-            this.initialized = true;
+            this.initPrices();
         },
 
-        /**
-         * @inheritdoc
-         */
-        setMatchedPrices: function(matchedPrices) {
-            FrontendLineItemView.__super__.setMatchedPrices.apply(this, arguments);
-
-            if (!this.options.disabled && this.initialized) {
-                var matchedPrice = this.getMatchedPriceValue();
-                var price = this.$priceValueText.data('price');
-
-                if (!matchedPrice && parseFloat(price) > 0.0) {
-                    matchedPrice = price;
-                }
-
-                this.$priceValueText.text(NumberFormatter.formatCurrency(matchedPrice, this.options.currency));
-            }
-
-            this.renderTierPrices();
+        initPrices: function() {
+            this.subview('productPricesComponents', new ProductPricesComponent({
+                _sourceElement: this.$el,
+                $product: this.fieldsByName.product,
+                $priceValue: this.$priceValueText,
+                $productUnit: this.fieldsByName.productUnit,
+                $quantity: this.fieldsByName.quantity
+            }));
         },
 
         resetData: function() {

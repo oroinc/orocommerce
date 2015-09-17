@@ -3,7 +3,9 @@
 namespace OroB2B\Bundle\SaleBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -12,7 +14,9 @@ use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
 
 class QuoteController extends Controller
@@ -123,7 +127,51 @@ class QuoteController extends Controller
                     'parameters'    => ['id' => $quote->getId()]
                 ];
             },
-            $this->get('translator')->trans('orob2b.sale.controller.quote.saved.message')
+            $this->get('translator')->trans('orob2b.sale.controller.quote.saved.message'),
+            null,
+            function (Quote $quote, FormInterface $form, Request $request) {
+                return [
+                    'form' => $form->createView(),
+                    'tierPrices' => $this->getTierPrices($quote),
+                ];
+            }
         );
+    }
+
+    /**
+     * @param Quote $quote
+     * @return array
+     */
+    protected function getTierPrices(Quote $quote)
+    {
+        $tierPrices = [];
+
+        $productIds = $quote->getQuoteProducts()->filter(
+            function (QuoteProduct $quoteProduct) {
+                return $quoteProduct->getProduct() !== null;
+            }
+        )->map(
+            function (QuoteProduct $quoteProduct) {
+                return $quoteProduct->getProduct()->getId();
+            }
+        );
+
+        if ($productIds) {
+            $tierPrices = $this->get('orob2b_pricing.provider.product_price')->getPriceByPriceListIdAndProductIds(
+                $this->getPriceList($quote)->getId(),
+                $productIds->toArray()
+            );
+        }
+
+        return $tierPrices;
+    }
+
+    /**
+     * @param Quote $quote
+     * @return PriceList
+     */
+    protected function getPriceList(Quote $quote)
+    {
+        return $this->get('orob2b_pricing.model.price_list_tree_handler')->getPriceList($quote->getAccountUser());
     }
 }

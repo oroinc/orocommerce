@@ -8,6 +8,7 @@ placeholders:
     scripts_before:
         items:
             pricing_filter_templates: ~
+            product_prices_templates: ~
 
 items:
     product_sidebar_price_list_selector:
@@ -16,3 +17,5 @@ items:
         action: OroB2BPricingBundle:Frontend/Product:sidebar
     pricing_filter_templates:
         template: OroB2BPricingBundle:Js:pricing_filter_templates.js.twig
+    product_prices_templates:
+        template: OroB2BPricingBundle:Js:product_prices_templates.js.twig

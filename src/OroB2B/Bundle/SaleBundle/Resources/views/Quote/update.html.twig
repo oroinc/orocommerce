@@ -43,6 +43,18 @@
 {% block content_data %}
     {% set id = 'quote-edit' %}
 
+    {% set quoteProducts %}
+        <div class="order-line-items"
+             data-page-component-module="oroui/js/app/components/view-component"
+             data-page-component-options="{{ {
+                 view: 'orob2bsale/js/app/views/line-items-view',
+                 tierPrices: tierPrices|default({})
+             }|json_encode }}"
+             data-layout="separate">
+            {{ form_widget(form.quoteProducts) }}
+        </div>
+    {% endset %}
+
     {% set dataBlocks = [
         {
             'title': 'orob2b.sale.quote.sections.general'|trans,
@@ -63,7 +75,7 @@
             'subblocks': [{
                 'title': '',
                 'data': [
-                    form_row(form.quoteProducts)
+                    quoteProducts
                 ]
             }]
         }
