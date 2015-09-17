@@ -71,7 +71,7 @@ class OroB2BCMSBundleInstaller implements Installation, AttachmentExtensionAware
         $this->attachmentExtension->addImageRelation(
             $schema,
             self::CMS_LOGIN_PAGE_TABLE,
-            'logo_image',
+            'logoImage',
             [],
             self::MAX_LOGO_IMAGE_SIZE_IN_MB
         );
@@ -79,7 +79,7 @@ class OroB2BCMSBundleInstaller implements Installation, AttachmentExtensionAware
         $this->attachmentExtension->addImageRelation(
             $schema,
             self::CMS_LOGIN_PAGE_TABLE,
-            'backgroud_image',
+            'backgroundImage',
             [],
             self::MAX_BACKGROUND_IMAGE_SIZE_IN_MB
         );
