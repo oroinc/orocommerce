@@ -86,7 +86,7 @@ orob2b:
         btn:
             add_seller_notes: 'Add Notes'
             remove_seller_notes: 'Remove Seller Notes'
-            add_to_order: 'Add To Order'
+            create_order: 'Create Order'
 
         menu:
             sales_tab.label: Sales
