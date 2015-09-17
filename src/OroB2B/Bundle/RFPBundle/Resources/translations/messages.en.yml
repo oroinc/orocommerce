@@ -107,8 +107,8 @@ orob2b:
             restore: 'Restore'
             change_status: 'Change Status'
             create_quote: 'Create Quote'
-            add_to_rfp: 'Add To Request For Quote'
-            create_rfp: 'Create RFP'
+            add_to_rfp: 'Request A Quote'
+            create_rfp: 'Submit'
 
         widget:
             change_status_title: 'Change RFQ Status'
