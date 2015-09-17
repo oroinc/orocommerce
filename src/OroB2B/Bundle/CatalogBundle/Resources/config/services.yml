@@ -7,7 +7,6 @@ parameters:
     orob2b_catalog.event_listener.form_view.class: OroB2B\Bundle\CatalogBundle\EventListener\FormViewListener
     orob2b_catalog.event_listener.datagrid.class: OroB2B\Bundle\CatalogBundle\EventListener\DatagridListener
     orob2b_catalog.event_listener.product_duplicate.class: OroB2B\Bundle\CatalogBundle\EventListener\ProductDuplicateListener
-    orob2b_catalog.event_listener.product_datagrid.class: OroB2B\Bundle\CatalogBundle\EventListener\ProductDatagridListener
 
 services:
     orob2b_catalog.category_tree_handler:
@@ -36,7 +35,14 @@ services:
 
     orob2b_catalog.event_listener.datagrid:
         class: %orob2b_catalog.event_listener.datagrid.class%
+        arguments:
+            - @doctrine
+            - @orob2b_catalog.handler.request_product
+        calls:
+            - [setDataClass, [%orob2b_catalog.category.class%]]
         tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.products-grid, method: onPreBuildProducts }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-products-grid, method: onPreBuildProducts }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-select-grid, method: onBuildBeforeProductsSelect }
 
     orob2b_catalog.event_listener.product_duplicate:
@@ -51,13 +57,3 @@ services:
         class: %orob2b_catalog.handler.request_product.class%
         calls:
             - [setRequest, ["@?request="]]
-
-    orob2b_catalog.event_listener.product_datagrid:
-        class: %orob2b_catalog.event_listener.product_datagrid.class%
-        arguments:
-            - @doctrine
-            - @orob2b_catalog.handler.request_product
-        calls:
-            - [setDataClass, [%orob2b_catalog.category.class%]]
-        tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.products-grid, method: onPreBuild }

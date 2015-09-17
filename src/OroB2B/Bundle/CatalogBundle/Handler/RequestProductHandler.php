@@ -8,7 +8,7 @@ class RequestProductHandler
 {
     const CATEGORY_ID_KEY = 'categoryId';
     const INCLUDE_SUBCATEGORIES_KEY = 'includeSubcategories';
-    const INCLUDE_SUBCATEGORIES_DEFAULT_VALUE = true;
+    const INCLUDE_SUBCATEGORIES_DEFAULT_VALUE = false;
 
     /** @var Request|null */
     protected $request;
