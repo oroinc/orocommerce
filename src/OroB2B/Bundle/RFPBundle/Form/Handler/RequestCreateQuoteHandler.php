@@ -109,23 +109,25 @@ class RequestCreateQuoteHandler
         $quote
             ->setRequest($entity)
             ->setOwner($this->user)
-        ;
+            ->setAccount($entity->getAccount())
+            ->setAccountUser($entity->getAccountUser())
+            ->setOrganization($this->user->getOrganization());
 
         foreach ($entity->getRequestProducts() as $requestProduct) {
             $quoteProduct = new QuoteProduct();
             $quoteProduct
                 ->setProduct($requestProduct->getProduct())
                 ->setType(QuoteProduct::TYPE_REQUESTED)
-                ->setCommentAccount($requestProduct->getComment())
-            ;
+                ->setCommentAccount($requestProduct->getComment());
+
             foreach ($requestProduct->getRequestProductItems() as $requestProductItem) {
                 $quoteProductRequest = new QuoteProductRequest();
                 $quoteProductRequest
                     ->setQuantity($requestProductItem->getQuantity())
                     ->setPrice($requestProductItem->getPrice())
                     ->setProductUnit($requestProductItem->getProductUnit())
-                    ->setRequestProductItem($requestProductItem)
-                ;
+                    ->setRequestProductItem($requestProductItem);
+
                 $quoteProduct->addQuoteProductRequest($quoteProductRequest);
             }
             $quote->addQuoteProduct($quoteProduct);

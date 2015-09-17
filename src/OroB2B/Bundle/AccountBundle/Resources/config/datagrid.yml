@@ -525,13 +525,8 @@ datagrid:
         filters:
             columns:
                 account_name:
-                    type:      entity
+                    type:      string
                     data_name: account_name
-                    options:
-                        field_type: entity
-                        field_options:
-                            class:    %orob2b_account.entity.account.class%
-                            property: name
         properties:
             view_link:
                 route: orob2b_account_account_user_role_view
