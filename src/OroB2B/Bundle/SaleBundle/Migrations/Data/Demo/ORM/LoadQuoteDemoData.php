@@ -18,6 +18,7 @@ use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct as RFPRequestProduct;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
@@ -169,14 +170,14 @@ class LoadQuoteDemoData extends AbstractFixture implements
         }
 
         foreach ($quote->getQuoteProducts() as $quoteProduct) {
-            $unitPrecisions = $quoteProduct->getProduct()->getUnitPrecisions();
+            $units = $this->getProductUnits($manager, $quoteProduct->getProduct());
             $numProductOffers = rand(1, 3);
             for ($j = 0; $j < $numProductOffers; $j++) {
-                if (!count($unitPrecisions)) {
+                if (!count($units)) {
                     continue;
                 }
 
-                $productUnit = $unitPrecisions[rand(0, count($unitPrecisions) - 1)]->getUnit();
+                $productUnit = $units[rand(0, count($units) - 1)];
 
                 $currency = $currencies[rand(0, count($currencies) - 1)];
                 $priceType = $priceTypes[rand(0, count($priceTypes) - 1)];
@@ -191,9 +192,15 @@ class LoadQuoteDemoData extends AbstractFixture implements
 
                 if ($quoteProduct->isTypeNotAvailable()) {
                     $productReplacement = $products[rand(1, count($products) - 1)];
-                    $unitPrecisionsRepl = $productReplacement->getUnitPrecisions();
-                    $productUnitRepl = $unitPrecisionsRepl[rand(0, count($unitPrecisionsRepl) - 1)]->getUnit();
                     $quoteProduct->setProductReplacement($productReplacement);
+
+                    $isFreeFormProductReplacement = rand(0, 1);
+                    if ($isFreeFormProductReplacement) {
+                        $quoteProduct->setProductReplacement(null);
+                    }
+
+                    $unitsRepl = $this->getProductUnits($manager, $quoteProduct->getProductReplacement());
+                    $productUnitRepl = $unitsRepl[rand(0, count($unitsRepl) - 1)];
                     $quoteProductOffer->setProductUnit($productUnitRepl);
                 }
 
@@ -219,6 +226,11 @@ class LoadQuoteDemoData extends AbstractFixture implements
             ->setType($type)
             ->setComment(sprintf('Seller Notes %s', $index + 1))
             ->setCommentAccount(sprintf('Account Notes %s', $index + 1));
+
+        $isFreeFormProduct = rand(0, 1);
+        if ($isFreeFormProduct) {
+            $quoteProduct->setProduct(null);
+        }
 
         return $quoteProduct;
     }
@@ -291,5 +303,39 @@ class LoadQuoteDemoData extends AbstractFixture implements
         }
 
         return $user;
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @return ProductUnit[]
+     */
+    protected function getAllUnits(ObjectManager $manager)
+    {
+        static $productUnits = null;
+
+        if (null === $productUnits) {
+            $productUnits = $manager->getRepository('OroB2BProductBundle:ProductUnit')->findBy([], null, 10);
+        }
+
+        return $productUnits;
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @param Product $product
+     * @return ProductUnit[]
+     */
+    protected function getProductUnits(ObjectManager $manager, Product $product = null)
+    {
+        if (!$product) {
+            return $this->getAllUnits($manager);
+        }
+
+        $productUnits = [];
+        foreach ($product->getUnitPrecisions() as $productUnit) {
+            $productUnits[] = $productUnit->getUnit();
+        }
+
+        return $productUnits;
     }
 }
