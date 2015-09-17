@@ -8,6 +8,13 @@ orob2b_catalog_product:
     type:         annotation
     prefix:       /catalog/product
 
+orob2b_catalog_product_frontend:
+    resource:     "@OroB2BCatalogBundle/Controller/Frontend/ProductController.php"
+    type:         annotation
+    prefix:       /catalog/product
+    options:
+        frontend: true
+
 orob2b_catalog_ajax:
     resource:     "@OroB2BCatalogBundle/Controller/AjaxCatalogController.php"
     type:         annotation

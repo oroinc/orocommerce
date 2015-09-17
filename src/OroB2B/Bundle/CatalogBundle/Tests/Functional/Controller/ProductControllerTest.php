@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Component\Testing\WebTestCase;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler;
@@ -14,6 +14,8 @@ use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadProductData;
  */
 class ProductControllerTest extends WebTestCase
 {
+    const SIDEBAR_ROUTE = 'orob2b_catalog_category_product_sidebar';
+
     protected function setUp()
     {
         $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
@@ -75,7 +77,7 @@ class ProductControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_catalog_category_product_sidebar',
+                static::SIDEBAR_ROUTE,
                 [RequestProductHandler::CATEGORY_ID_KEY => $categoryId]
             )
         );
