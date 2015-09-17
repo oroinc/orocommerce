@@ -22,9 +22,10 @@
 
 {% block navButtons %}
     {{ UI.cancelButton(path('orob2b_rfp_frontend_request_index')) }}
-    {% set html = UI.saveAndCloseButton('orob2b.rfp.btn.create_rfp'|trans) %}
     {% if entity.id or resource_granted('orob2b_rfp_frontend_request_create') %}
-        {% set html = html ~ UI.saveAndStayButton() %}
+        {% set html = UI.saveAndCloseButton() ~ UI.saveAndStayButton() %}
+    {% else %}
+        {% set html = UI.saveAndCloseButton('orob2b.rfp.btn.create_rfp'|trans) %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
 {% endblock navButtons %}
