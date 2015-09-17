@@ -64,6 +64,9 @@ datagrid:
                 currency:
                     type:      choice
                     data_name: order1.currency
+                    options:
+                        field_options:
+                            choices: @orob2b_pricing.provider.currency->getAvailableCurrencies
                 subtotal:
                     type:      number
                     data_name: order1.subtotal
