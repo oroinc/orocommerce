@@ -51,6 +51,8 @@ orob2b:
             comment_account.label: 'Account Notes'
             product.removed: '{title} - removed'
             product_replacement.removed: '{title} - removed'
+            free_form_product.label: 'Product (free-form)'
+            free_form_product_replacement.label: 'Product Replacement (free-form)'
             type:
                 label: 'Type'
                 requested: 'Requested'
@@ -83,8 +85,6 @@ orob2b:
 
             product_unit.removed: '{title} - removed'
             product_unit.empty: 'Choose Unit...'
-            free_form_product.label: 'Product (free-form)'
-            free_form_product_replacement.label: 'Product Replacement (free-form)'
             column_summary: 'Summary'
 
         quoteproductrequest:
