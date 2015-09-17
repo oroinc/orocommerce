@@ -361,7 +361,7 @@ define(function(require) {
                         return !self.isProductReplacement() &&
                             $(element)
                                 .closest(self.options.freeFormContainer)
-                                .is('.' + self.options.classQuoteProductBlockActive);
+                                .hasClass(self.options.classQuoteProductBlockActive);
                     }
                 },
                 messages: {
@@ -376,7 +376,7 @@ define(function(require) {
                         return self.isProductReplacement() &&
                             $(element)
                                 .closest(self.options.freeFormContainer)
-                                .is('.' + self.options.classQuoteProductBlockActive);
+                                .hasClass(self.options.classQuoteProductBlockActive);
                     }
                 },
                 messages: {
@@ -390,7 +390,7 @@ define(function(require) {
                     depends: function(element) {
                         return !self.isProductReplacement() && $(element)
                             .closest(self.options.productFormContainer)
-                            .is('.' + self.options.classQuoteProductBlockActive);
+                            .hasClass(self.options.classQuoteProductBlockActive);
                     }
                 },
                 messages: {
@@ -405,7 +405,7 @@ define(function(require) {
                         return self.isProductReplacement() &&
                             $(element)
                                 .closest(self.options.productFormContainer)
-                                .is('.' + self.options.classQuoteProductBlockActive);
+                                .hasClass(self.options.classQuoteProductBlockActive);
                     }
                 },
                 messages: {
