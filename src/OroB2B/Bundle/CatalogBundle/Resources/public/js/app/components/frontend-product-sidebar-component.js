@@ -11,7 +11,7 @@ define(function(require) {
      *
      * @export orob2bcatalog/js/app/components/product-sidebar-component
      * @extends orob2bcatalog.app.components.ProductSidebarComponent
-     * @class orob2bcatalog.app.components.ForntendProductSidebarComponent
+     * @class orob2bcatalog.app.components.FrontendProductSidebarComponent
      */
     ForntendProductSidebarComponent = ProductSidebarComponent.extend({
         /**

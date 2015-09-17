@@ -59,7 +59,7 @@ class DatagridListener
     protected function addCategoryRelation(DatagridConfiguration $config)
     {
         // select
-        $categoryTitleSelect = 'categoryTitle.string as '.self::CATEGORY_COLUMN;
+        $categoryTitleSelect = 'categoryTitle.string as ' . self::CATEGORY_COLUMN;
         $this->addConfigElement($config, '[source][query][select]', $categoryTitleSelect);
 
         $joinCategoryTitles = [
@@ -83,7 +83,7 @@ class DatagridListener
         // filter
         $categoryFilter = [
             'type' => 'string',
-            'data_name' => 'categoryTitle.string'
+            'data_name' => 'categoryTitle.string',
         ];
         $this->addConfigElement($config, '[filters][columns]', $categoryFilter, self::CATEGORY_COLUMN);
     }
@@ -99,15 +99,11 @@ class DatagridListener
             'join' => 'OroB2BCatalogBundle:Category',
             'alias' => 'productCategory',
             'conditionType' => 'WITH',
-            'condition' => 'product MEMBER OF productCategory.products'
+            'condition' => 'product MEMBER OF productCategory.products',
         ];
-        $joins = $config->offsetGetByPath($path);
-        if (is_array($joins)) {
-            foreach ($joins as $join) {
-                if ($join === $joinCategory) {
-                    return;
-                }
-            }
+        $joins = $config->offsetGetByPath($path, []);
+        if (in_array($joinCategory, $joins, true)) {
+            return;
         }
         $this->addConfigElement($config, $path, $joinCategory);
     }
@@ -142,9 +138,7 @@ class DatagridListener
             DatasourceBindParametersListener::DATASOURCE_BIND_PARAMETERS_PATH,
             ['productCategoryIds']
         );
-        $parameters = $event->getParameters();
-        $parameters->set('productCategoryIds', $productCategoryIds);
-
+        $event->getParameters()->set('productCategoryIds', $productCategoryIds);
         $this->addCategoryJoin($event->getConfig());
     }
 
