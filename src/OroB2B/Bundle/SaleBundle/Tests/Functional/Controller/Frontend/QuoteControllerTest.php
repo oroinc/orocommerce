@@ -120,10 +120,43 @@ class QuoteControllerTest extends WebTestCase
             $this->assertContains($label, $control->textContent);
             $this->assertContains($property, $control->textContent);
         }
+
+        $createOrderButton = (bool)$crawler->selectButton('Accept and Submit to Order')->count();
+
+        $this->assertEquals($expectedData['createOrderButton'], $createOrderButton);
+    }
+
+    /**
+     * @param array $inputData
+     * @param array $expectedData
+     *
+     * @dataProvider createOrderProvider
+     */
+    public function testCreateOrder(array $inputData, array $expectedData)
+    {
+        $this->initClient([], array_merge(
+            $this->generateBasicAuthHeader($inputData['login'], $inputData['password']),
+            ['HTTP_X-CSRF-Header' => 1]
+        ));
+
+        /* @var $quote Quote */
+        $quote = $this->getReference($inputData['qid']);
+
+        $this->client->request(
+            'POST',
+            $this->getUrl('orob2b_sale_frontend_quote_create_order', ['id' => $quote->getId()])
+        );
+
+        $this->client->followRedirects(true);
+
+        $result = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($result, $expectedData['statusCode']);
     }
 
     /**
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function indexProvider()
     {
@@ -145,6 +178,7 @@ class QuoteControllerTest extends WebTestCase
                         'createdAt',
                         'validUntil',
                         'view_link',
+                        'action_configuration',
                     ],
                 ],
             ],
@@ -174,6 +208,7 @@ class QuoteControllerTest extends WebTestCase
                         'createdAt',
                         'validUntil',
                         'view_link',
+                        'action_configuration',
                     ],
                 ],
             ],
@@ -204,6 +239,7 @@ class QuoteControllerTest extends WebTestCase
                         'validUntil',
                         'accountUserName',
                         'view_link',
+                        'action_configuration',
                     ],
                 ],
             ],
@@ -224,6 +260,7 @@ class QuoteControllerTest extends WebTestCase
                         'createdAt',
                         'validUntil',
                         'view_link',
+                        'action_configuration',
                     ],
                 ],
             ],
@@ -243,6 +280,7 @@ class QuoteControllerTest extends WebTestCase
                     'password' => LoadUserData::ACCOUNT1_USER1,
                 ],
                 'expected' => [
+                    'createOrderButton' => false,
                     'columns' => [
                         [
                             'label' => 'orob2b.frontend.sale.quote.qid.label',
@@ -262,6 +300,7 @@ class QuoteControllerTest extends WebTestCase
                     'password' => LoadUserData::ACCOUNT1_USER3,
                 ],
                 'expected' => [
+                    'createOrderButton' => true,
                     'columns' => [
                         [
                             'label' => 'orob2b.frontend.sale.quote.qid.label',
@@ -276,6 +315,35 @@ class QuoteControllerTest extends WebTestCase
                             'property' => 'valid_until',
                         ],
                     ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function createOrderProvider()
+    {
+        return [
+            'account1 user1 (Order:NONE)' => [
+                'input' => [
+                    'qid' => LoadQuoteData::QUOTE3,
+                    'login' => LoadUserData::ACCOUNT1_USER1,
+                    'password' => LoadUserData::ACCOUNT1_USER1,
+                ],
+                'expected' => [
+                    'statusCode' => 403,
+                ],
+            ],
+            'account1 user3 (Order:VIEW_BASIC)' => [
+                'input' => [
+                    'qid' => LoadQuoteData::QUOTE3,
+                    'login' => LoadUserData::ACCOUNT1_USER3,
+                    'password' => LoadUserData::ACCOUNT1_USER3,
+                ],
+                'expected' => [
+                    'statusCode' => 200,
                 ],
             ],
         ];

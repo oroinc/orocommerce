@@ -41,7 +41,8 @@ class AclGroupProviderTest extends \PHPUnit_Framework_TestCase
             ->with('oro_security.security_facade')
             ->willReturn($this->securityFacade);
 
-        $this->provider = new AclGroupProvider($this->container);
+        $this->provider = new AclGroupProvider();
+        $this->provider->setContainer($this->container);
     }
 
     protected function tearDown()
@@ -88,5 +89,14 @@ class AclGroupProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetGroup()
     {
         $this->assertEquals(AccountUser::SECURITY_GROUP, $this->provider->getGroup());
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage ContainerInterface not injected
+     */
+    public function testWithoutContainer()
+    {
+        (new AclGroupProvider())->supports();
     }
 }

@@ -6,27 +6,29 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
-use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
+use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductRemovedSelectType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
 
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductRequestCollectionType;
 
-/**
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
- */
 class QuoteProductTypeTest extends AbstractTest
 {
     /**
@@ -73,10 +75,10 @@ class QuoteProductTypeTest extends AbstractTest
         $this->formType->setDataClass('OroB2B\Bundle\SaleBundle\Entity\QuoteProduct');
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolverInterface */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
+        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
+        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with([
@@ -86,7 +88,7 @@ class QuoteProductTypeTest extends AbstractTest
             ])
         ;
 
-        $this->formType->setDefaultOptions($resolver);
+        $this->formType->configureOptions($resolver);
     }
 
     /**
@@ -218,6 +220,8 @@ class QuoteProductTypeTest extends AbstractTest
 
     /**
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function submitProvider()
     {
@@ -393,27 +397,6 @@ class QuoteProductTypeTest extends AbstractTest
                     ],
                 ],
             ],
-            'deleted product' => [
-                'inputData'     => $this->createQuoteProduct(1, null, 'sku', null, ''),
-                'expectedData'  => [
-                    'product' => [
-                        'configs'   => [
-                            'placeholder'   => 'orob2b.sale.quoteproduct.product.removed:sku',
-                        ],
-                        'required'          => true,
-                        'create_enabled'    => false,
-                        'label'             => 'orob2b.product.entity_label',
-                    ],
-                    'productReplacement' => [
-                        'configs'   => [
-                            'placeholder'   => null,
-                        ],
-                        'required'          => false,
-                        'create_enabled'    => false,
-                        'label'             => 'orob2b.sale.quoteproduct.product_replacement.label',
-                    ],
-                ],
-            ],
             'deleted product replacement' => [
                 'inputData'     => $this->createQuoteProduct(
                     1,
@@ -434,7 +417,7 @@ class QuoteProductTypeTest extends AbstractTest
                     ],
                     'productReplacement' => [
                         'configs'   => [
-                            'placeholder'   => 'orob2b.sale.quoteproduct.product_replacement.removed:sku2',
+                            'placeholder'   => 'orob2b.product.removed:sku2',
                         ],
                         'required'          => false,
                         'create_enabled'    => false,
@@ -533,12 +516,9 @@ class QuoteProductTypeTest extends AbstractTest
     {
         $priceType                  = $this->preparePriceType();
         $entityType                 = $this->prepareProductEntityType();
-        $productSelectType          = new ProductSelectTypeStub();
-        $currencySelectionType      = new CurrencySelectionTypeStub();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
-
-        $quoteProductOfferType      = $this->prepareQuoteProductOfferType($this->translator);
-        $quoteProductRequestType    = $this->prepareQuoteProductRequestType($this->translator);
+        $quoteProductOfferType      = $this->prepareQuoteProductOfferType();
+        $quoteProductRequestType    = $this->prepareQuoteProductRequestType();
 
         return [
             new PreloadedExtension(
@@ -546,10 +526,12 @@ class QuoteProductTypeTest extends AbstractTest
                     CollectionType::NAME                        => new CollectionType(),
                     QuoteProductOfferCollectionType::NAME       => new QuoteProductOfferCollectionType(),
                     QuoteProductRequestCollectionType::NAME     => new QuoteProductRequestCollectionType(),
+                    ProductRemovedSelectType::NAME              => new StubProductRemovedSelectType(),
+                    ProductUnitRemovedSelectionType::NAME       => new StubProductUnitRemovedSelectionType(),
+                    ProductSelectType::NAME                     => new ProductSelectTypeStub(),
+                    CurrencySelectionType::NAME                 => new CurrencySelectionTypeStub(),
                     $priceType->getName()                       => $priceType,
                     $entityType->getName()                      => $entityType,
-                    $productSelectType->getName()               => $productSelectType,
-                    $currencySelectionType->getName()           => $currencySelectionType,
                     $quoteProductOfferType->getName()           => $quoteProductOfferType,
                     $quoteProductRequestType->getName()         => $quoteProductRequestType,
                     $productUnitSelectionType->getName()        => $productUnitSelectionType,

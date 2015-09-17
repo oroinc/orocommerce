@@ -13,16 +13,20 @@ parameters:
 
     orob2b_account.form.type.frontend.account_user_profile.class: OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserProfileType
     orob2b_account.form.type.frontend.account_user.class: OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserType
+    orob2b_account.form.type.frontend.account_user_role.class: OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleType
     orob2b_account.form.type.frontend.account_user_role_select.class: OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleSelectType
     orob2b_account.form.type.frontend.account_user.register.class: OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType
     orob2b_account.form.type.frontend.account_user.password_request.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserPasswordRequestType
     orob2b_account.form.type.frontend.account_user.password_reset.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserPasswordResetType
 
-    orob2b_account.form.handler.account_user_role.class: OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleHandler
+    orob2b_account.form.handler.view_account_user_role.class: OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleViewHandler
+    orob2b_account.form.handler.update_account_user_role.class: OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateHandler
+    orob2b_account.form.handler.update_account_user_role_frontend.class: OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateFrontendHandler
 
     orob2b_account.form.type.account_user_typed_address.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserTypedAddressType
     orob2b_account.form.type.typed_address.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountTypedAddressType
     orob2b_account.form.type.typed_address_with_default.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountTypedAddressWithDefaultType
+    orob2b_account.form.type.acl_access_level_text.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountAclAccessLevelTextType
     orob2b_account.form.extension.oro_acl_access_level_selector.class: OroB2B\Bundle\AccountBundle\Form\Extension\AclAccessLevelSelectorExtension
     orob2b_account.form.extension.select_or_create_inline.class: OroB2B\Bundle\AccountBundle\Form\Extension\OroEntitySelectOrCreateInlineExtension
     orob2b_account.form.extension.frontend_product_select.class: OroB2B\Bundle\AccountBundle\Form\Extension\FrontendProductSelectExtension
@@ -88,6 +92,13 @@ services:
         tags:
             - { name: form.type, alias: orob2b_account_account_user_role }
 
+    orob2b_account.form.type.frontend.account_user_role:
+        class: %orob2b_account.form.type.frontend.account_user_role.class%
+        calls:
+            - [setDataClass, [%orob2b_account.entity.account_user_role.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_account_frontend_account_user_role }
+
     orob2b_account.form.type.frontend.account_user_profile:
         class: %orob2b_account.form.type.frontend.account_user_profile.class%
         calls:
@@ -136,16 +147,29 @@ services:
         tags:
             - { name: form.type, alias: orob2b_account_account_user_password_reset }
 
-    orob2b_account.form.handler.account_user_role:
+    orob2b_account.form.handler.view_account_user_role:
+        parent: orob2b_account.form.handler.update_account_user_role
+        class: %orob2b_account.form.handler.view_account_user_role.class%
+        scope: prototype
+
+    orob2b_account.form.handler.update_account_user_role:
         parent: oro_user.form.handler.abstract.acl_role
-        class: %orob2b_account.form.handler.account_user_role.class%
+        class: %orob2b_account.form.handler.update_account_user_role.class%
         scope: prototype
         calls:
             - [setRequest, [@request]]
             - [setOwnershipConfigProvider, [@oro_entity_config.provider.ownership]]
             - [setChainMetadataProvider, [@oro_security.owner.metadata_provider.chain]]
+            - [setDoctrineHelper, [@oro_entity.doctrine_helper]]
             - [addExtensionFilter, ['entity', 'commerce']]
             - [addExtensionFilter, ['action', 'commerce']]
+
+    orob2b_account.form.handler.update_account_user_role_frontend:
+        parent: orob2b_account.form.handler.update_account_user_role
+        class: %orob2b_account.form.handler.update_account_user_role_frontend.class%
+        scope: prototype
+        calls:
+            - [setSecurityFacade, [@oro_security.security_facade]]
 
     orob2b_account.form.type.typed_address:
         class: %orob2b_account.form.type.typed_address.class%
@@ -170,6 +194,11 @@ services:
              - [setRegistry, [@doctrine]]
         tags:
              - { name: form.type, alias: orob2b_account_typed_address_with_default}
+
+    orob2b_account.form.type.acl_access_level_text:
+        class: %orob2b_account.form.type.acl_access_level_text.class%
+        tags:
+             - { name: form.type, alias: orob2b_account_acl_access_level_text }
 
     orob2b_account.form.extension.acl_permission:
         class: %orob2b_account.form.extension.oro_acl_access_level_selector.class%

@@ -42,8 +42,9 @@ class RequestACLTest extends WebTestCase
      * @dataProvider permissionsDataProvider
      * @param int $level
      * @param array $permissions
+     * @param int $expectedCode
      */
-    public function testRFPPermissions($level, $permissions)
+    public function testRFPPermissions($level, $permissions, $expectedCode)
     {
         $this->setRolePermissions($level);
         $this->login(LoadAccountUsersData::USER_EMAIL, LoadAccountUsersData::USER_PASSWORD);
@@ -53,32 +54,33 @@ class RequestACLTest extends WebTestCase
         $this->assertInstanceOf('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $user);
         $this->assertEquals(LoadAccountUsersData::USER_EMAIL, $user->getUsername());
 
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_frontend_request_create'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         /** @var Form $form */
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Submit')->form();
         $form['orob2b_rfp_frontend_request_type[firstName]'] = LoadAccountUsersData::USER_NAME;
         $form['orob2b_rfp_frontend_request_type[lastName]']  = LoadAccountUsersData::USER_LAST_NAME;
         $form['orob2b_rfp_frontend_request_type[email]']     = LoadAccountUsersData::USER_EMAIL;
         $form['orob2b_rfp_frontend_request_type[phone]']     = 123456789;
         $form['orob2b_rfp_frontend_request_type[company]']   = 'Company name';
         $form['orob2b_rfp_frontend_request_type[role]']      = 'Manager';
-        $form['orob2b_rfp_frontend_request_type[body]']      = 'This is test Request For Proposal';
+        $form['orob2b_rfp_frontend_request_type[body]']      = 'This is test Request For Quote';
 
         $this->client->followRedirects(true);
         $this->client->submit($form);
 
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertHtmlResponseStatusCodeEquals($result, $expectedCode);
 
         // Check isset RFP request with first user ownership
+        /** @var Request $request */
         $request = $this->getContainer()->get('doctrine')->getRepository('OroB2BRFPBundle:Request')
             ->findOneBy(['email' => LoadAccountUsersData::USER_EMAIL]);
 
-        $this->assertInstanceOf('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $request->getFrontendOwner());
-        $this->assertEquals($user->getId(), $request->getFrontendOwner()->getId());
+        $this->assertInstanceOf('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $request->getAccountUser());
+        $this->assertEquals($user->getId(), $request->getAccountUser()->getId());
 
         // Check owner access
         $this->assertIsGranted($permissions['owner'], $request);
@@ -111,8 +113,9 @@ class RequestACLTest extends WebTestCase
                     'owner' => false,
                     'sameAccountUser' => false,
                     'subAccountUser' => false,
-                    'notSameAccountUser' => false
-                ]
+                    'notSameAccountUser' => false,
+                ],
+                'expectedCode' => 200,
             ],
             'account user' => [
                 'level' => AccessLevel::BASIC_LEVEL,
@@ -120,8 +123,9 @@ class RequestACLTest extends WebTestCase
                     'owner' => true,
                     'sameAccountUser' => false,
                     'subAccountUser' => false,
-                    'notSameAccountUser' => false
-                ]
+                    'notSameAccountUser' => false,
+                ],
+                'expectedCode' => 200,
             ],
             'account' => [
                 'level' => AccessLevel::LOCAL_LEVEL,
@@ -129,9 +133,10 @@ class RequestACLTest extends WebTestCase
                     'owner' => true,
                     'sameAccountUser' => true,
                     'subAccountUser' => false,
-                    'notSameAccountUser' => false
-                ]
-            ]
+                    'notSameAccountUser' => false,
+                ],
+                'expectedCode' => 200,
+            ],
         ];
     }
 

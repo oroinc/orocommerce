@@ -8,12 +8,18 @@ use Oro\Component\Testing\WebTestCase;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Migrations\Data\ORM\LoadAccountUserRoles;
+use OroB2B\Bundle\AccountBundle\Security\AccountUserProvider;
 
 /**
  * @dbIsolation
+ *
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class AccountUserProviderTest extends WebTestCase
 {
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->initClient(
@@ -28,8 +34,8 @@ class AccountUserProviderTest extends WebTestCase
         $this->client->request('GET', $this->getUrl('orob2b_account_frontend_account_user_profile'));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        $this->assertRoleHasAccountViewPermission(LoadAccountUserRoles::ADMINISTRATOR, [true, true, true]);
-        $this->assertRoleHasAccountViewPermission(LoadAccountUserRoles::BUYER, [true, false, true]);
+        $this->assertRoleHasPermission(LoadAccountUserRoles::ADMINISTRATOR, [true, true, true, true, true]);
+        $this->assertRoleHasPermission(LoadAccountUserRoles::BUYER, [true, false, true, false, true]);
 
         $roleName = 'DENIED';
         $role = new AccountUserRole(AccountUserRole::PREFIX_ROLE . $roleName);
@@ -39,14 +45,14 @@ class AccountUserProviderTest extends WebTestCase
         $em->persist($role);
         $em->flush();
 
-        $this->assertRoleHasAccountViewPermission($roleName, [false, false, false]);
+        $this->assertRoleHasPermission($roleName, [false, false, false, false, false]);
     }
 
     /**
      * @param string $roleName
      * @param array $expected
      */
-    protected function assertRoleHasAccountViewPermission($roleName, array $expected)
+    protected function assertRoleHasPermission($roleName, array $expected)
     {
         $className = $this->getContainer()->getParameter('orob2b_account.entity.account_user_role.class');
         $em = $this->getContainer()->get('doctrine')->getManagerForClass($className);
@@ -55,6 +61,7 @@ class AccountUserProviderTest extends WebTestCase
         $role = $repository->findOneBy(['role' => AccountUserRole::PREFIX_ROLE . $roleName]);
         $this->assertNotEmpty($role);
 
+        /* @var $securityProvider AccountUserProvider */
         $securityProvider = $this->getContainer()->get('orob2b_account.security.account_user_provider');
 
         /** @var AccountUser $user */
@@ -66,7 +73,13 @@ class AccountUserProviderTest extends WebTestCase
 
         $userClassName = $this->getContainer()->getParameter('orob2b_account.entity.account_user.class');
 
-        list($isGrantedViewAccountUser, $isGrantedViewBasic, $isGrantedViewLocal) = $expected;
+        list(
+            $isGrantedViewAccountUser,
+            $isGrantedViewBasic,
+            $isGrantedViewLocal,
+            $isGrantedEditBasic,
+            $isGrantedEditLocal
+        ) = $expected;
 
         $this->assertEquals(
             $isGrantedViewAccountUser,
@@ -82,6 +95,16 @@ class AccountUserProviderTest extends WebTestCase
             $isGrantedViewLocal,
             $securityProvider->isGrantedViewLocal($userClassName),
             'isGrantedViewLocal ' . $roleName
+        );
+        $this->assertEquals(
+            $isGrantedEditBasic,
+            $securityProvider->isGrantedEditBasic($userClassName),
+            'isGrantedEditBasic ' . $roleName
+        );
+        $this->assertEquals(
+            $isGrantedEditLocal,
+            $securityProvider->isGrantedEditLocal($userClassName),
+            'isGrantedEditLocal ' . $roleName
         );
     }
 }

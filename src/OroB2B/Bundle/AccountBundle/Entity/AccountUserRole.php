@@ -9,13 +9,22 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\UserBundle\Entity\AbstractRole;
 
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository")
- * @ORM\Table(name="orob2b_account_user_role")
+ * @ORM\Table(name="orob2b_account_user_role",
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(name="orob2b_account_user_role_account_id_label_idx", columns={
+ *              "account_id",
+ *              "label"
+ *          })
+ *      }
+ * )
  * @Config(
  *      defaultValues={
  *          "entity"={
@@ -24,6 +33,13 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"="commerce"
+ *          },
+ *          "ownership"={
+ *              "frontend_owner_type"="FRONTEND_ACCOUNT",
+ *              "frontend_owner_field_name"="account",
+ *              "frontend_owner_column_name"="account_id",
+ *              "organization_field_name"="organization",
+ *              "organization_column_name"="organization_id"
  *          },
  *          "dataaudit"={
  *              "auditable"=true
@@ -34,7 +50,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  *      }
  * )
  */
-class AccountUserRole extends AbstractRole
+class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
 {
     const PREFIX_ROLE = 'ROLE_FRONTEND_';
 
@@ -69,7 +85,7 @@ class AccountUserRole extends AbstractRole
      * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $organization;
-    
+
     /**
      * @var string
      *
@@ -204,11 +220,12 @@ class AccountUserRole extends AbstractRole
     public function setAccount(Account $account = null)
     {
         $this->account = $account;
+
         return $this;
     }
 
     /**
-     * @return Organization
+     * {@inheritdoc}
      */
     public function getOrganization()
     {
@@ -216,12 +233,27 @@ class AccountUserRole extends AbstractRole
     }
 
     /**
-     * @param Organization $organization
-     * @return AccountUserRole
+     * {@inheritdoc}
      */
-    public function setOrganization($organization)
+    public function setOrganization(OrganizationInterface $organization = null)
     {
         $this->organization = $organization;
+
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPredefined()
+    {
+        return !$this->getAccount();
+    }
+
+    public function __clone()
+    {
+        $this->id = null;
+        $this->setRole($this->getLabel());
+        $this->websites = new ArrayCollection();
     }
 }

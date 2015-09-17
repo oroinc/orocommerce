@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Form\Handler;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,9 +28,9 @@ class ShoppingListHandler
     protected $manager;
 
     /**
-     * @var ObjectManager
+     * @var Registry
      */
-    protected $em;
+    protected $doctrine;
 
     /**
      * @param FormInterface       $form
@@ -48,7 +47,7 @@ class ShoppingListHandler
         $this->form = $form;
         $this->request = $request;
         $this->manager = $manager;
-        $this->em = $doctrine->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
+        $this->doctrine = $doctrine;
     }
 
     /**
@@ -70,8 +69,9 @@ class ShoppingListHandler
                         $shoppingList
                     );
                 } else {
-                    $this->em->persist($shoppingList);
-                    $this->em->flush();
+                    $em = $this->doctrine->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
+                    $em->persist($shoppingList);
+                    $em->flush();
                 }
 
                 return true;

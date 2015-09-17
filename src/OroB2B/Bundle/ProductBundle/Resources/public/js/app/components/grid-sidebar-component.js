@@ -21,7 +21,16 @@ define(function(require) {
             widgetRoute: 'oro_datagrid_widget',
             widgetRouteParameters: {
                 gridName: ''
-            }
+            },
+            stateShortKeys: {
+                currentPage: 'i',
+                pageSize: 'p',
+                sorters: 's',
+                filters: 'f',
+                gridView: 'v',
+                urlParams: 'g'
+            },
+            gridParam: 'grid'
         },
 
         /**
@@ -68,20 +77,22 @@ define(function(require) {
                 var self = this;
                 widgetManager.getWidgetInstanceByAlias(
                     this.options.widgetAlias,
-                    function(widget) {
-                        self._patchGridCollectionUrl(self._getQueryParamsFromUrl(widget.options.url));
+                    function() {
+                        self._patchGridCollectionUrl(self._getQueryParamsFromUrl(location.search));
                     }
                 );
             }
         },
 
         /**
-         *
          * @param {Object} data
          */
         onSidebarChange: function(data) {
-            var params = _.extend(this._getCurrentUrlParams(), data.params);
-            var widgetParams = _.extend(this.options.widgetRouteParameters, params);
+            var params = _.extend(this._getQueryParamsFromUrl(location.search), data.params);
+            var widgetParams = _.extend(
+                _.omit(this.options.widgetRouteParameters, this.options.gridParam),
+                params
+            );
             var self = this;
 
             this._pushState(params);
@@ -110,21 +121,17 @@ define(function(require) {
             var collection = this.gridCollection;
             if (!_.isUndefined(collection)) {
                 var url = collection.url;
+                var newParams = _.extend(
+                    this._getQueryParamsFromUrl(url),
+                    _.omit(params, this.options.gridParam)
+                );
                 if (url.indexOf('?') !== -1) {
                     url = url.substring(0, url.indexOf('?'));
                 }
-                var newParams = _.extend(this._getQueryParamsFromUrl(collection.url), params);
-
-                collection.url = url + '?' + this._urlParamsToString(newParams);
+                if (!_.isEmpty(newParams)) {
+                    collection.url = url + '?' + this._urlParamsToString(newParams);
+                }
             }
-        },
-
-        /**
-         * @private
-         * @return {Object}
-         */
-        _getCurrentUrlParams: function() {
-            return this._queryStringToObject(location.search.slice(1));
         },
 
         /**
@@ -132,12 +139,9 @@ define(function(require) {
          * @param {Object} params
          */
         _pushState: function(params) {
-            var paramsString = this._urlParamsToString(_.omit(params, 'saveState'));
-            if (paramsString.length) {
-                paramsString = '?' + paramsString;
-            }
-
-            history.pushState({}, document.title, location.pathname + paramsString + location.hash);
+            var paramsString = this._urlParamsToString(_.omit(params, ['saveState']));
+            var current = mediator.execute('pageCache:getCurrent');
+            mediator.execute('changeUrl', current.path + '?' + paramsString);
         },
 
         minimize: function() {
@@ -150,10 +154,10 @@ define(function(require) {
 
         /**
          * @private
-         * @param {string} state
+         * @param {String} state
          */
         _maximizeOrMaximize: function(state) {
-            var params = this._getCurrentUrlParams();
+            var params = this._getQueryParamsFromUrl(location.search);
 
             if (state === null) {
                 state = params.sidebar || 'on';
@@ -175,27 +179,25 @@ define(function(require) {
         },
 
         /**
-         * @param {String} query
-         * @return {Object}
-         * @private
-         */
-        _queryStringToObject: function(query) {
-            return query.length ? tools.unpackFromQueryString(decodeURIComponent(query)) : {};
-        },
-
-        /**
          * @param {String} url
          * @return {Object}
          * @private
          */
         _getQueryParamsFromUrl: function(url) {
-            var params = {};
-
-            if (url.indexOf('?') !== -1) {
-                params = this._queryStringToObject(decodeURIComponent(url.substring(url.indexOf('?') + 1, url.length)));
+            if (_.isUndefined(url)) {
+                return {};
             }
 
-            return params;
+            if (url.indexOf('?') === -1) {
+                return {};
+            }
+
+            var query = url.substring(url.indexOf('?') + 1, url.length);
+            if (!query.length) {
+                return {};
+            }
+
+            return this.decodeStateData(query);
         },
 
         /**
@@ -207,10 +209,27 @@ define(function(require) {
             return $.param(params);
         },
 
+        /**
+         * Decode state object from string, operation is invert for encodeStateData.
+         *
+         * @static
+         * @param {String} stateString
+         * @return {Object}
+         *
+         * @see orodatagrid/js/pageable-collection
+         */
+        decodeStateData: function(stateString) {
+            var data = tools.unpackFromQueryString(stateString);
+            data = tools.invertKeys(data, _.invert(this.options.stateShortKeys));
+            return data;
+        },
+
         dispose: function() {
             if (this.disposed) {
                 return;
             }
+
+            mediator.off('grid-sidebar:change:' + this.options.sidebarAlias);
 
             delete this.gridCollection;
 

@@ -112,6 +112,10 @@
     padding-top: 2px;
 }
 
+.sale-quoteproductitem-widget td .control-group div.control-label {
+    width: 120px;
+}
+
 .sale-quoteproductitem-widget input[type="number"],
 .sale-quoteproductitem-widget input[type="text"] {
     width: 120px !important;

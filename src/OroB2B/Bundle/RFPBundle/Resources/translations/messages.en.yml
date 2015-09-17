@@ -1,115 +1,126 @@
-orob2b.rfp:
-    request:
-        entity_label: 'Request For Proposal'
-        entity_label_short: 'Request'
-        entity_plural_label: 'Requests For Proposal'
-        id.label: 'ID'
-        first_name.label: 'First Name'
-        last_name.label: 'Last Name'
-        email.label: 'Email Address'
-        phone.label: 'Phone Number'
-        company.label: 'Company'
-        role.label: 'Role'
-        status.label: 'Status'
-        body.label: 'Request body'
-        frontend_owner.label: 'Submitted By'
-        organization.label: 'Organization'
-        request_products.label: 'Request Products'
-        first_name.label: 'First Name'
-        last_name.label: 'Last Name'
-        email.label: 'Email Address'
-        phone.label: 'Phone Number'
-        company.label: 'Company'
-        role.label: 'Role'
-        status.label: 'Status'
-        body.label: 'Request body'
+orob2b:
+    rfp:
+        request:
+            entity_label: 'Request For Quote'
+            entity_label_short: 'Request'
+            entity_plural_label: 'Requests For Quote'
+            id.label: 'ID'
+            first_name.label: 'First Name'
+            last_name.label: 'Last Name'
+            email.label: 'Email Address'
+            phone.label: 'Phone Number'
+            company.label: 'Company'
+            role.label: 'Role'
+            status.label: 'Status'
+            body.label: 'Request body'
+            account_user.label: 'Submitted By'
+            account.label: 'Account'
+            organization.label: 'Organization'
+            request_products.label: 'Request Products'
+            first_name.label: 'First Name'
+            last_name.label: 'Last Name'
+            email.label: 'Email Address'
+            phone.label: 'Phone Number'
+            company.label: 'Company'
+            role.label: 'Role'
+            status.label: 'Status'
+            body.label: 'Request body'
 
-        submit.label: 'Submit Request For Proposal'
+            submit.label: 'Submit Request For Quote'
+
+            message:
+                request_saved: 'Your Request For Quote successfully saved!'
+
+        requestproduct:
+            entity_label: 'Request Product'
+            entity_plural_label: 'Request Products'
+            add_label: 'Add Line Item'
+            id.label: 'ID'
+            product.label: 'Product'
+            product_sku.label: 'Product SKU'
+            request.label: 'Request'
+            request_product_items.label: 'Request Product Lines'
+            comment.label: 'Notes'
+
+        requestproductitem:
+            item: '{units}, {price} per {unit}'
+            entity_label: 'Request Product Line'
+            entity_plural_label: 'Request Product Lines'
+            add_label: 'Add Request Item'
+            id.label: 'ID'
+            quantity.label: 'Quantity'
+            request_product.label: 'Request Product'
+            product_unit.label: 'Product Unit'
+            product_unit_code.label: 'Product Unit Code'
+            price.label: 'Price'
+            value.label: 'Price Value'
+            currency.label: 'Price Currency'
+
+        requeststatus:
+            entity_label: 'RFQ Status'
+            entity_plural_label: 'RFQ Statuses'
+            id.label: 'ID'
+            name.label: 'Name'
+            label.label: 'Label'
+            sort_order.label: 'Sort Order'
+            deleted.label: 'Deleted'
+            translations.label: 'Translations'
+
+        menu:
+            request_list.description: 'List of Requests'
+            request_status_list.description: 'List of Request Statuses'
+            shortcut_request_list.description: 'Shows list of existing Requests'
+            shortcut_request_status_list.description: 'Shows list of existing Request Statuses'
+
+        sections:
+            general:    'General'
+            body:       'Request'
+            request_products: 'Line Items'
+            label_translation: 'Labels'
+
+        system_configuration:
+            group_title: 'Request For Quote'
+            requeststatus_group_title: 'RFQ Status'
+            requeststatus_default_label: 'Default RFQ Status'
+            default_user_for_notifications: 'Default User For Notifications'
 
         message:
-            request_saved: 'Your Request For Proposal successfully saved!'
+            request_status_saved: 'Request Status saved'
+            request_status_restored: 'Request Status restored'
+            request_status_deleted: 'Request Status deleted'
+            request_status_not_found: 'Request Status not found'
+            request_status_changed: 'RFQ Status was successfully changed'
+            request_status_not_deletable: 'Request Status is not deletable'
+            requestproductitem.unit.removed: '{title} - removed'
+            request.create_quote.success: 'New Quote created'
+            request.create_quote.error: 'Can not create new Quote'
 
-    requestproduct:
-        entity_label: 'Request Product'
-        entity_plural_label: 'Request Products'
-        add_label: 'Add Line Item'
-        id.label: 'ID'
-        product.label: 'Product'
-        product_sku.label: 'Product SKU'
-        request.label: 'Request'
-        request_product_items.label: 'Request Product Lines'
-        comment.label: 'Notes'
+        datagrid:
+            action_restore: 'Restore'
 
-    requestproductitem:
-        item: '{units}, {price} per {unit}'
-        entity_label: 'Request Product Line'
-        entity_plural_label: 'Request Product Lines'
-        add_label: 'Add Request Item'
-        id.label: 'ID'
-        quantity.label: 'Quantity'
-        request_product.label: 'Request Product'
-        product_unit.label: 'Product Unit'
-        product_unit_code.label: 'Product Unit Code'
-        price.label: 'Price'
-        value.label: 'Price Value'
-        currency.label: 'Price Currency'
+        controller:
+            request:
+                saved.message: 'Request has been saved'
 
-    requeststatus:
-        entity_label: 'Request For Proposal Status'
-        entity_plural_label: 'Request For Proposal Statuses'
-        id.label: 'ID'
-        name.label: 'Name'
-        label.label: 'Label'
-        sort_order.label: 'Sort Order'
-        deleted.label: 'Deleted'
-        translations.label: 'Translations'
+        btn:
+            delete: 'Delete'
+            restore: 'Restore'
+            change_status: 'Change Status'
+            create_quote: 'Create Quote'
+            add_to_rfp: 'Request A Quote'
+            create_rfp: 'Submit'
 
-    menu:
-        rfp_tab.label: 'RFP'
-        requests_list.description: 'List of Requests'
-        request_statuses_list.description: 'List of Request Statuses'
-        shortcut_requests_list.description: 'Shows list of existing Requests'
-        shortcut_request_statuses_list.description: 'Shows list of existing Request Statuses'
+        widget:
+            change_status_title: 'Change RFQ Status'
 
-    sections:
-        general:    'General'
-        body:       'Request'
-        request_products: 'Line Items'
-        label_translation: 'Labels'
-
-    system_configuration:
-        group_title: 'Request For Proposal'
-        requeststatus_group_title: 'Request For Proposal Status'
-        requeststatus_default_label: 'Default Request For Proposal Status'
-        default_user_for_notifications: 'Default User For Notifications'
-
-    message:
-        request_status_saved: 'Request Status saved'
-        request_status_restored: 'Request Status restored'
-        request_status_deleted: 'Request Status deleted' 
-        request_status_not_found: 'Request Status not found'
-        request_status_changed: 'Request For Proposal Status was successfully changed'
-        request_status_not_deletable: 'Request Status is not deletable'
-        requestproduct.product.removed: '{title} - removed'
-        requestproductitem.unit.removed: '{title} - removed'
-        request.create_quote.success: 'New Quote created'
-        request.create_quote.error: 'Can not create new Quote'
-
-    datagrid:
-        action_restore: 'Restore'
-
-    btn:
-        delete: 'Delete'
-        restore: 'Restore'
-        change_status: 'Change Status'
-        create_quote: 'Create Quote'
-
-    widget:
-        change_status_title: 'Change Request For Proposal Status'
-
-    controller:
-        request:
-            saved.message: 'Request has been saved'
+    frontend:
+        rfp:
+            request:
+                entity_label: 'Request For Quote'
+                entity_label_short: 'Request'
+                entity_plural_label: 'Requests For Quote'
+                submitted_to.label: 'Submitted To'
+                is_draft.label: 'Draft'
 
 # We MUST move this section form here in the future!
 orob2b.frontendadmin:

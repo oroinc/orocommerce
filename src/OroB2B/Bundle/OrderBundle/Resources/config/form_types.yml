@@ -81,11 +81,8 @@ services:
 
     orob2b_order.form.type.extension.frontend_order:
         class: %orob2b_order.form.type.extension.frontend_order.class%
-        arguments:
-            - @orob2b_product.service.product_data_storage
-            - @doctrine
-            - %orob2b_product.product.class%
+        parent: orob2b_product.form.type.extension.post_quick_add.abstract
         calls:
-            - [setRequest, ["@?request="]]
+            - [setDataClass, [%orob2b_order.entity.order.class%]]
         tags:
             - { name: form.type_extension, alias: "orob2b_order_frontend_type" }
