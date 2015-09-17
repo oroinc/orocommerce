@@ -20,20 +20,12 @@ class LoadCategoryProductData extends AbstractFixture implements DependentFixtur
         LoadCategoryData::THIRD_LEVEL2 => LoadProductData::TEST_PRODUCT_04,
     ];
 
-    /**
-     * @return array
-     */
-    public static function getRelations()
-    {
-        return self::$relations;
-    }
-
     /** {@inheritdoc} */
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
-            'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadProductData',
+            __NAMESPACE__ . '\LoadCategoryData',
+            __NAMESPACE__ . '\LoadProductData',
         ];
     }
 
@@ -56,8 +48,8 @@ class LoadCategoryProductData extends AbstractFixture implements DependentFixtur
     }
 
     /**
-     * @param $categories Category[]
-     * @param $title string
+     * @param Category[] $categories
+     * @param string $title
      * @return Category|null
      */
     protected function findCategoryByTitle($categories, $title)
