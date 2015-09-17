@@ -34,13 +34,14 @@ class ProductController extends Controller
      */
     protected function createCurrenciesForm()
     {
-        $currenciesList = [$this->get('oro_locale.settings')->getCurrency()];
         $accountUser = $this->getUser();
-        if ($accountUser instanceof AccountUser) {
-            $currenciesList = $this->get('orob2b_pricing.model.price_list_tree_handler')
-                ->getPriceList($accountUser)
-                ->getCurrencies();
+        if (!$accountUser instanceof AccountUser) {
+            $accountUser = null;
         }
+
+        $currenciesList = $this->get('orob2b_pricing.model.price_list_tree_handler')
+            ->getPriceList($accountUser)
+            ->getCurrencies();
 
         $selectedCurrencies = $this->getHandler()->getPriceListSelectedCurrencies();
         $formOptions = [
