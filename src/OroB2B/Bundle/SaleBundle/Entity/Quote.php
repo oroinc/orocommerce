@@ -47,6 +47,8 @@ use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
  *          "grouping"={"groups"={"activity"}}
  *      }
  * )
+ *
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHolderInterface
 {
