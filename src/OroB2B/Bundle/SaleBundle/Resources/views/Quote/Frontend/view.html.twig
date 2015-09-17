@@ -8,7 +8,7 @@
         'entity': entity,
         'indexPath': path('orob2b_sale_quote_frontend_index'),
         'indexLabel': 'orob2b.frontend.sale.quote.entity_plural_label'|trans,
-        'entityTitle': entity.qid|default('N/A'|trans)
+        'entityTitle': 'orob2b.sale.quote.qid.label'|trans ~ entity.qid|default('N/A'|trans)
     } %}
     {{ parent() }}
 {% endblock pageHeader %}

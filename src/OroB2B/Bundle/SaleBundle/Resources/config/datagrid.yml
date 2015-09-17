@@ -26,8 +26,6 @@ datagrid:
                         - { join: quote.accountUser, alias: quoteAccountUser }
                         - { join: quote.account, alias: quoteAccount }
         columns:
-            id:
-                label:         orob2b.sale.quote.id.label
             qid:
                 label:         orob2b.sale.quote.qid.label
             ownerName:
@@ -64,8 +62,6 @@ datagrid:
                 params: [ id ]
         sorters:
             columns:
-                id:
-                    data_name: quote.id
                 qid:
                     data_name: quote.qid
                 ownerName:
@@ -83,12 +79,9 @@ datagrid:
                 validUntil:
                     data_name: quote.validUntil
             default:
-                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+                qid: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
         filters:
             columns:
-                id:
-                    type:      number
-                    data_name: quote.id
                 qid:
                     type:      string
                     data_name: quote.qid
