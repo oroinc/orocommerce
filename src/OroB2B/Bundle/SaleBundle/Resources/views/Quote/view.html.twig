@@ -102,7 +102,8 @@
                                 {% if quoteProduct.product %}
                                     <a href="{{ path('orob2b_product_view', { id: quoteProduct.product.id }) }}">{{ quoteProduct.product|raw }}</a>
                                 {% else %}
-                                    {{ quoteProduct.productSku|raw }}
+                                    {% if quoteProduct.productSku %}{{ quoteProduct.productSku|raw }} - {% endif %}
+                                    {{ quoteProduct.freeFormProduct }}
                                 {% endif %}
                             </div>
                             {% if quoteProduct.isTypeNotAvailable %}
@@ -111,7 +112,8 @@
                                     {% if quoteProduct.productReplacement %}
                                         <a href="{{ path('orob2b_product_view', { id: quoteProduct.productReplacement.id }) }}">{{ quoteProduct.productReplacement|raw }}</a>
                                     {% else %}
-                                        {{ quoteProduct.productReplacementSku|raw }}
+                                        {% if quoteProduct.productReplacementSku %}{{ quoteProduct.productReplacementSku|raw }} - {% endif %}
+                                        {{ quoteProduct.freeFormProductReplacement }}
                                     {% endif %}
                                 </div>
                             {% endif %}

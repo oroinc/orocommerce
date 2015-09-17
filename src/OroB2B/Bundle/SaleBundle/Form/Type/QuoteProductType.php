@@ -14,7 +14,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
@@ -136,7 +135,7 @@ class QuoteProductType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('product', ProductRemovedSelectType::NAME, [
+            ->add('product', ProductSelectType::NAME, [
                 'required' => false,
                 'label' => 'orob2b.product.entity_label',
                 'create_enabled' => false,
@@ -183,7 +182,6 @@ class QuoteProductType extends AbstractType
                 'label' => 'orob2b.sale.quoteproduct.comment.label',
             ])
         ;
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
     }
 
     /**
@@ -204,39 +202,6 @@ class QuoteProductType extends AbstractType
     public function getName()
     {
         return self::NAME;
-    }
-
-    /**
-     * @param FormEvent $event
-     */
-    public function preSetData(FormEvent $event)
-    {
-        /* @var $quoteProduct QuoteProduct */
-        $quoteProduct = $event->getData();
-
-        if (!$quoteProduct || null === $quoteProduct->getId()) {
-            return;
-        }
-
-        $form = $event->getForm();
-
-        if ($quoteProduct->isTypeNotAvailable() && !$quoteProduct->getProductReplacement()) {
-            $options = [
-                'create_enabled' => false,
-                'required' => false,
-                'label' => 'orob2b.sale.quoteproduct.product_replacement.label',
-            ];
-
-            $emptyValueTitle = $this->translator->trans('orob2b.product.removed', [
-                '{title}' => $quoteProduct->getProductReplacementSku(),
-            ]);
-
-            $options['configs'] = [
-                'placeholder' => $emptyValueTitle,
-            ];
-
-            $form->add('productReplacement', ProductSelectType::NAME, $options);
-        }
     }
 
     /**
