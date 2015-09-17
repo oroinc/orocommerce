@@ -111,6 +111,8 @@ orob2b:
             add_seller_notes: 'Add Notes'
             remove_seller_notes: 'Remove Seller Notes'
             notify_and_lock: 'Notify and Lock'
+            send: 'Send'
+            cancel: 'Cancel'
 
     frontend:
         sale:

@@ -27,6 +27,7 @@ orob2b:
             body.label: 'Request body'
 
             submit.label: 'Submit Request For Quote'
+            cancel.label: 'Cancel'
 
             message:
                 request_saved: 'Your Request For Quote successfully saved!'
