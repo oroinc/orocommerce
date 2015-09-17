@@ -307,9 +307,9 @@ class LoadQuoteDemoData extends AbstractFixture implements
 
     /**
      * @param ObjectManager $manager
-     * @return Collection|ProductUnit[]
+     * @return ProductUnit[]
      */
-    protected function getUnits(ObjectManager $manager, Product $product = null)
+    protected function getAllUnits(ObjectManager $manager)
     {
         static $productUnits = null;
 
@@ -322,13 +322,15 @@ class LoadQuoteDemoData extends AbstractFixture implements
 
     /**
      * @param ObjectManager $manager
-     * @return Collection|ProductUnit[]
+     * @param Product $product
+     * @return ProductUnit[]
      */
     protected function getProductUnits(ObjectManager $manager, Product $product = null)
     {
         if (!$product) {
-            return $this->getUnits($manager);
+            return $this->getAllUnits($manager);
         }
+
         $productUnits = [];
         foreach ($product->getUnitPrecisions() as $productUnit) {
             $productUnits[] = $productUnit->getUnit();
