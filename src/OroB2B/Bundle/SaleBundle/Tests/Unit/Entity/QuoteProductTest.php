@@ -88,7 +88,10 @@ class QuoteProductTest extends AbstractTest
         $product->setProductReplacement((new Product)->setSku('test-sku-replacement'));
 
         $this->assertEquals('test-sku-replacement', $product->getProductReplacementSku());
-        $this->assertEquals((string)(new Product)->setSku('test-sku-replacement'), $product->getFreeFormProductReplacement());
+        $this->assertEquals(
+            (string)(new Product)->setSku('test-sku-replacement'),
+            $product->getFreeFormProductReplacement()
+        );
     }
 
     public function testAddQuoteProductOffer()
