@@ -13,6 +13,9 @@ orob2b:
             parent_category.label:  'Parent category'
             products.label:         'Products'
 
+        sections:
+            general: General
+
         subcategory:
             entity_label:   'Subcategory'
 

@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
 
 class ProductController extends Controller
@@ -33,24 +34,26 @@ class ProductController extends Controller
      */
     protected function createCurrenciesForm()
     {
+        $accountUser = $this->getUser();
+        if (!$accountUser instanceof AccountUser) {
+            $accountUser = null;
+        }
+
         $currenciesList = $this->get('orob2b_pricing.model.price_list_tree_handler')
-            ->getPriceList($this->getUser())
+            ->getPriceList($accountUser)
             ->getCurrencies();
 
         $selectedCurrencies = $this->getHandler()->getPriceListSelectedCurrencies();
+        $formOptions = [
+            'label' => 'orob2b.pricing.productprice.currency.label',
+            'compact' => true,
+            'required' => false,
+            'empty_value' => false,
+            'currencies_list' => $currenciesList,
+            'data' => reset($selectedCurrencies),
+        ];
 
-        return $this->createForm(
-            CurrencySelectionType::NAME,
-            null,
-            [
-                'label' => 'orob2b.pricing.productprice.currency.label',
-                'compact' => true,
-                'required' => false,
-                'empty_value' => false,
-                'currencies_list' => $currenciesList,
-                'data' => reset($selectedCurrencies),
-            ]
-        );
+        return $this->createForm(CurrencySelectionType::NAME, null, $formOptions);
     }
 
     /**
