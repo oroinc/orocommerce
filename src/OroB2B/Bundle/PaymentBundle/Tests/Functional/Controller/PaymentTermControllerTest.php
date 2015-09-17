@@ -21,7 +21,7 @@ class PaymentTermControllerTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
+        $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures(['OroB2B\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTermData']);
     }
 
@@ -131,7 +131,10 @@ class PaymentTermControllerTest extends WebTestCase
 
         $this->client->request(
             'DELETE',
-            $this->getUrl('orob2b_api_delete_paymentterm', ['id' => $paymentTermData['id']])
+            $this->getUrl('orob2b_api_delete_paymentterm', ['id' => $paymentTermData['id']]),
+            [],
+            [],
+            $this->generateWsseAuthHeader()
         );
 
         $result = $this->client->getResponse();

@@ -21,7 +21,7 @@ class AccountUserAddressControllerTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
+        $this->initClient([], array_merge($this->generateBasicAuthHeader()));
 
         $this->loadFixtures(
             [
@@ -77,7 +77,10 @@ class AccountUserAddressControllerTest extends WebTestCase
             'GET',
             $this->getUrl('orob2b_api_account_get_accountuser_address_primary', [
                 'entityId' => $accountUser->getId()
-            ])
+            ]),
+            [],
+            [],
+            $this->generateWsseAuthHeader()
         );
 
         $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
@@ -112,7 +115,10 @@ class AccountUserAddressControllerTest extends WebTestCase
             'GET',
             $this->getUrl('orob2b_api_account_get_accountuser_address_primary', [
                 'entityId' => $accountUserId
-            ])
+            ]),
+            [],
+            [],
+            $this->generateWsseAuthHeader()
         );
 
         $address = $this->getJsonResponseContent($this->client->getResponse(), 200);
@@ -142,7 +148,10 @@ class AccountUserAddressControllerTest extends WebTestCase
             'GET',
             $this->getUrl('orob2b_api_account_get_accountuser_address_primary', [
                 'entityId' => $accountUserId
-            ])
+            ]),
+            [],
+            [],
+            $this->generateWsseAuthHeader()
         );
 
         $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
@@ -181,17 +190,23 @@ class AccountUserAddressControllerTest extends WebTestCase
             $this->getUrl(
                 'orob2b_api_account_get_accountuser_address_primary',
                 ['entityId' => $accountUserId]
-            )
+            ),
+            [],
+            [],
+            $this->generateWsseAuthHeader()
         );
 
         $address = $this->getJsonResponseContent($this->client->getResponse(), 200);
 
-        $crawler = $this->client->request(
+        $this->client->request(
             'DELETE',
             $this->getUrl(
                 'orob2b_api_account_delete_accountuser_address',
                 ['entityId' => $accountUserId, 'addressId' => $address['id']]
-            )
+            ),
+            [],
+            [],
+            $this->generateWsseAuthHeader()
         );
 
         $result = $this->client->getResponse();
