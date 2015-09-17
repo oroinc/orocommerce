@@ -1,7 +1,10 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 
-{% oro_title_set({params : {"%identifier%": entity.identifier|default('N/A'|trans)} }) %}
+{% oro_title_set({params : {
+    '%identifier%': entity.identifier|default('N/A'|trans),
+    '%entityName%': 'orob2b.order.entity_label'|trans
+} }) %}
 
 {% set formAction = entity.id ? path('orob2b_order_update', { 'id': entity.id }) : path('orob2b_order_create')  %}
 

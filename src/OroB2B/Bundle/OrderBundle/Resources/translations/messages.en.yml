@@ -130,3 +130,6 @@ orob2b:
         subtotals:
             subtotal: Subtotal
         sales_orders.label: 'Sales Orders'
+
+        navigation:
+            view: 'Order #%identifier%'

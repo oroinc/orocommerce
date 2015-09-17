@@ -112,6 +112,9 @@ orob2b:
             remove_seller_notes: 'Remove Seller Notes'
             notify_and_lock: 'Notify and Lock'
 
+        navigation:
+            view: 'Quote #%id%'
+
     frontend:
         sale:
             menu:
