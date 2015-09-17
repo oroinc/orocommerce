@@ -1,10 +1,10 @@
 @name = quote_email_link
 @entityName = OroB2B\Bundle\SaleBundle\Entity\Quote
-@subject = Your quotation #{{ entity.id }} is ready
+@subject = Your quote #{{ entity.id }} is ready
 @isSystem = 0
 @isEditable = 1
 
-Your quotation #{{ entity.id }} is ready and can be viewed at <a
+Your quote #{{ entity.id }} is ready and can be viewed at <a
 href="{{ oro_config_value('oro_ui.application_url') }}{{ path('orob2b_sale_quote_frontend_view', {'id': entity.id}) }}">
     {{ oro_config_value('oro_ui.application_url') }}{{ path('orob2b_sale_quote_frontend_view', {'id': entity.id}) }}
 </a>
