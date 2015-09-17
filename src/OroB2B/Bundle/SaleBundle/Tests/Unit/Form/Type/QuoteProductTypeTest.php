@@ -20,12 +20,10 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductRemovedSelectType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
 
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
@@ -156,34 +154,6 @@ class QuoteProductTypeTest extends AbstractTest
         $this->formType->finishView($view, $form, []);
 
         $this->assertEquals($expectedData, $view->vars);
-    }
-
-    /**
-     * @param QuoteProduct $inputData
-     * @param array $expectedData
-     *
-     * @dataProvider preSetDataProvider
-     */
-    public function testPreSetData(QuoteProduct $inputData = null, array $expectedData = [])
-    {
-        $this->translator->expects($this->any())
-            ->method('trans')
-            ->will($this->returnCallback(function ($id, array $params) {
-                return $id . ':' .$params['{title}'];
-            }))
-        ;
-
-        $form = $this->factory->create($this->formType);
-
-        $this->formType->preSetData(new FormEvent($form, $inputData));
-
-        foreach ($expectedData as $field => $fieldOptions) {
-            $options = $form->get($field)->getConfig()->getOptions();
-
-            foreach ($fieldOptions as $key => $value) {
-                $this->assertEquals($value, $options[$key], $key);
-            }
-        }
     }
 
     /**
@@ -440,92 +410,6 @@ class QuoteProductTypeTest extends AbstractTest
     }
 
     /**
-     * @return array
-     */
-    public function preSetDataProvider()
-    {
-        return [
-            'empty item' => [
-                'inputData'     => null,
-                'expectedData'  => [
-                    'product' => [
-                        'configs'   => [
-                            'placeholder'   => null,
-                        ],
-                        'required'          => false,
-                        'create_enabled'    => false,
-                        'label'             => 'orob2b.product.entity_label',
-                    ],
-                    'productReplacement' => [
-                        'configs'   => [
-                            'placeholder'   => null,
-                        ],
-                        'required'          => false,
-                        'create_enabled'    => false,
-                        'label'             => 'orob2b.sale.quoteproduct.product_replacement.label',
-                    ],
-                ],
-            ],
-            'deleted product replacement' => [
-                'inputData'     => $this->createQuoteProduct(
-                    1,
-                    new Product(),
-                    'sku',
-                    null,
-                    'sku2',
-                    QuoteProduct::TYPE_NOT_AVAILABLE
-                ),
-                'expectedData'  => [
-                    'product' => [
-                        'configs'   => [
-                            'placeholder'   => null,
-                        ],
-                        'required'          => false,
-                        'create_enabled'    => false,
-                        'label'             => 'orob2b.product.entity_label',
-                    ],
-                    'productReplacement' => [
-                        'configs'   => [
-                            'placeholder'   => 'orob2b.product.removed:sku2',
-                        ],
-                        'required'          => false,
-                        'create_enabled'    => false,
-                        'label'             => 'orob2b.sale.quoteproduct.product_replacement.label',
-                    ],
-                ],
-            ],
-            'existing product and replacement' => [
-                'inputData'     => $this->createQuoteProduct(
-                    1,
-                    new Product(),
-                    'sku',
-                    new Product(),
-                    'sku2',
-                    QuoteProduct::TYPE_NOT_AVAILABLE
-                ),
-                'expectedData'  => [
-                    'product' => [
-                        'configs'   => [
-                            'placeholder'   => null,
-                        ],
-                        'required'          => false,
-                        'create_enabled'    => false,
-                        'label'             => 'orob2b.product.entity_label',
-                    ],
-                    'productReplacement' => [
-                        'configs'   => [
-                            'placeholder'   => null,
-                        ],
-                        'required'          => false,
-                        'create_enabled'    => false,
-                        'label'             => 'orob2b.sale.quoteproduct.product_replacement.label',
-                    ],
-                ],
-            ],
-        ];
-    }
-
-    /**
      * @param int $id
      * @param Product $product
      * @param string $productSku
@@ -595,7 +479,6 @@ class QuoteProductTypeTest extends AbstractTest
                     CollectionType::NAME                        => new CollectionType(),
                     QuoteProductOfferCollectionType::NAME       => new QuoteProductOfferCollectionType(),
                     QuoteProductRequestCollectionType::NAME     => new QuoteProductRequestCollectionType(),
-                    ProductRemovedSelectType::NAME              => new StubProductRemovedSelectType(),
                     ProductUnitRemovedSelectionType::NAME       => new StubProductUnitRemovedSelectionType(),
                     ProductSelectType::NAME                     => new ProductSelectTypeStub(),
                     CurrencySelectionType::NAME                 => new CurrencySelectionTypeStub(),
