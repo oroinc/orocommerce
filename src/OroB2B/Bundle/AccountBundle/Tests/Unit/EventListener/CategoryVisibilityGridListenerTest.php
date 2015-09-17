@@ -58,7 +58,7 @@ class CategoryVisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
         $listener = new CategoryVisibilityGridListener();
         $event = $this->getOrmResultBeforeEvent(
             CategoryVisibilityGridListener::ACCOUNT_CATEGORY_VISIBILITY_GRID,
-            $this->getParameterBag(AccountCategoryVisibility::CONFIG)
+            $this->getParameterBag(AccountCategoryVisibility::CATEGORY)
         );
         $listener->onResultBefore($event);
         $this->assertNull($event->getQuery()->getDQL());

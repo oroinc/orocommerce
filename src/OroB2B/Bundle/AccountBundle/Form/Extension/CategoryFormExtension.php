@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Form\Extension;
 
+use Genemu\Bundle\FormBundle\Form\JQuery\DataTransformer\ArrayToStringTransformer;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;

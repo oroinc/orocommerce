@@ -172,7 +172,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
                             1 => [
                                 'entity' => new AccountGroup(),
                                 'data'   => [
-                                    'visibility' => AccountGroupCategoryVisibility::CONFIG
+                                    'visibility' => AccountGroupCategoryVisibility::CATEGORY
                                 ]
                             ]
                         ]
