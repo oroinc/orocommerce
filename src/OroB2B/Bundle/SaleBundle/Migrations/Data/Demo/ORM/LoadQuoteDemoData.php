@@ -170,7 +170,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
         }
 
         foreach ($quote->getQuoteProducts() as $quoteProduct) {
-            $units = $this->getUnits($manager, $quoteProduct->getProduct());
+            $units = $this->getProductUnits($manager, $quoteProduct->getProduct());
             $numProductOffers = rand(1, 3);
             for ($j = 0; $j < $numProductOffers; $j++) {
                 if (!count($units)) {
@@ -199,7 +199,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
                         $quoteProduct->setProductReplacement(null);
                     }
 
-                    $unitsRepl = $this->getUnits($manager, $quoteProduct->getProductReplacement());
+                    $unitsRepl = $this->getProductUnits($manager, $quoteProduct->getProductReplacement());
                     $productUnitRepl = $unitsRepl[rand(0, count($unitsRepl) - 1)];
                     $quoteProductOffer->setProductUnit($productUnitRepl);
                 }
@@ -311,15 +311,29 @@ class LoadQuoteDemoData extends AbstractFixture implements
      */
     protected function getUnits(ObjectManager $manager, Product $product = null)
     {
-        if ($product) {
-            $productUnits = [];
-            foreach ($product->getUnitPrecisions() as $productUnit) {
-                $productUnits[] = $productUnit->getUnit();
-            }
+        static $productUnits = null;
 
-            return $productUnits;
+        if (null === $productUnits) {
+            $productUnits = $manager->getRepository('OroB2BProductBundle:ProductUnit')->findBy([], null, 10);
         }
 
-        return $manager->getRepository('OroB2BProductBundle:ProductUnit')->findBy([], null, 10);
+        return $productUnits;
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @return Collection|ProductUnit[]
+     */
+    protected function getProductUnits(ObjectManager $manager, Product $product = null)
+    {
+        if (!$product) {
+            return $this->getUnits($manager);
+        }
+        $productUnits = [];
+        foreach ($product->getUnitPrecisions() as $productUnit) {
+            $productUnits[] = $productUnit->getUnit();
+        }
+
+        return $productUnits;
     }
 }
