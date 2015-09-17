@@ -204,6 +204,10 @@
     width: 870px;
 }
 
+.sale-quoteproduct-table-column-1 input, .sale-quoteproduct-table-column-1 .entity-create-or-select-container   {
+    margin-bottom: 5px;
+}
+
 .sale-quoteproduct-collection .oro-item-collection>div {
     margin-top: -1px !important;
 }
@@ -279,4 +283,20 @@
 
 .sale-quote-form .account-accountuser-select .select2-container {
     width: 257px !important;
+}
+
+.sale-quoteproduct-product-row > div {
+    display: none;
+}
+
+.sale-quoteproduct-product-replacement-row > div {
+    display: none;
+}
+
+.sale-quoteproduct-product-row > div.sale-quoteproduct-block-active {
+    display: block;
+}
+
+.sale-quoteproduct-product-replacement-row > div.sale-quoteproduct-block-active {
+    display: block;
 }
