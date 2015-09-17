@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\CatalogBundle\EventListener;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\EventListener\DatasourceBindParametersListener;
@@ -17,7 +17,7 @@ class DatagridListener
 {
     const CATEGORY_COLUMN = 'category_name';
 
-    /** @var Registry */
+    /** @var ManagerRegistry */
     protected $doctrine;
 
     /** @var RequestProductHandler */
@@ -27,10 +27,10 @@ class DatagridListener
     protected $dataClass;
 
     /**
-     * @param Registry $doctrine
+     * @param ManagerRegistry $doctrine
      * @param RequestProductHandler $requestProductHandler
      */
-    public function __construct(Registry $doctrine, RequestProductHandler $requestProductHandler)
+    public function __construct(ManagerRegistry $doctrine, RequestProductHandler $requestProductHandler)
     {
         $this->doctrine = $doctrine;
         $this->requestProductHandler = $requestProductHandler;
@@ -51,7 +51,6 @@ class DatagridListener
     public function onPreBuildProducts(PreBuild $event)
     {
         $this->addFilterByCategory($event);
-        $this->addCategoryJoin($event->getConfig());
     }
 
     /**
@@ -94,14 +93,23 @@ class DatagridListener
      */
     protected function addCategoryJoin(DatagridConfiguration $config)
     {
-        // joins
+        $path = '[source][query][join][left]';
+        // join
         $joinCategory = [
             'join' => 'OroB2BCatalogBundle:Category',
             'alias' => 'productCategory',
             'conditionType' => 'WITH',
             'condition' => 'product MEMBER OF productCategory.products'
         ];
-        $this->addConfigElement($config, '[source][query][join][left]', $joinCategory);
+        $joins = $config->offsetGetByPath($path);
+        if (is_array($joins)) {
+            foreach ($joins as $join) {
+                if ($join === $joinCategory) {
+                    return;
+                }
+            }
+        }
+        $this->addConfigElement($config, $path, $joinCategory);
     }
 
     /**
@@ -136,6 +144,8 @@ class DatagridListener
         );
         $parameters = $event->getParameters();
         $parameters->set('productCategoryIds', $productCategoryIds);
+
+        $this->addCategoryJoin($event->getConfig());
     }
 
     /**
