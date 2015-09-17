@@ -42,6 +42,10 @@ class ProductPriceTest extends EntityTestCase
         $productPrice = new ProductPrice();
         $this->assertNull($productPrice->getPrice());
 
+        $productPrice->updatePrice();
+        $this->assertAttributeEquals(null, 'value', $productPrice);
+        $this->assertAttributeEquals(null, 'currency', $productPrice);
+
         $value = 11;
         $currency = 'EUR';
         $this->setProperty($productPrice, 'value', $value);

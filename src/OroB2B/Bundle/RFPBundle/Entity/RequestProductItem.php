@@ -8,6 +8,7 @@ use Oro\Bundle\CurrencyBundle\Model\OptionalPrice as Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
 /**
  * @ORM\Table(name="orob2b_rfp_request_prod_item")
@@ -25,7 +26,7 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
  * )
  * @ORM\HasLifecycleCallbacks()
  */
-class RequestProductItem
+class RequestProductItem implements ProductUnitHolderInterface
 {
     /**
      * @var int
@@ -84,6 +85,22 @@ class RequestProductItem
      * @var Price
      */
     protected $price;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityIdentifier()
+    {
+        return $this->getId();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductHolder()
+    {
+        return $this->getRequestProduct();
+    }
 
     /**
      * Get id

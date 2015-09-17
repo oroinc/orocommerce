@@ -19,7 +19,7 @@ define(function(require) {
         options: {
             productSelect:  '.rfp-requestproduct-product-select input[type="hidden"]',
             unitsSelect:    '.rfp-requestproductitem-productunit-select',
-            unitsRoute:     'orob2b_product_unit_product_units',
+            unitsRoute:     'orob2b_product_frontend_ajaxproductunit_productunits',
             addItemButton:  '.add-list-item',
             itemsContainer: '.rfp-requestproductitem-collection .oro-item-collection',
             itemWidget:     '.rfp-requestproductitem-widget',
@@ -36,7 +36,7 @@ define(function(require) {
         /**
          * @property {Object}
          */
-        $container: null,
+        $el: null,
 
         /**
          * @property {Object}
@@ -172,10 +172,14 @@ define(function(require) {
                         .append($('<option/>').val(key).text(value))
                     ;
                 });
-                if (!currentValue && $(select).has('option:first-child')) {
-                    currentValue = $(select).find('option:first-child').val();
+                var firstValue = $(select).find('option:first-child').val();
+                if (!currentValue && firstValue) {
+                    currentValue = firstValue;
                 }
                 $(select).val(currentValue);
+                if (null === $(select).val() && firstValue) {
+                    $(select).val(firstValue);
+                }
                 $(select).addClass(self.options.syncClass);
 
                 if (!force) {

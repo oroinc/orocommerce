@@ -4,6 +4,10 @@
     </div>
 {% endblock %}
 
+{% block orob2b_rfp_frontend_request_product_collection_row %}
+    {{ block('orob2b_rfp_request_product_collection_row') }}
+{% endblock %}
+
 {% block orob2b_rfp_request_product_widget %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class : '') ~ ' rfp-requestproduct-widget control-group'}) %}
 
@@ -32,6 +36,10 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block orob2b_rfp_frontend_request_product_widget %}
+    {{ block('orob2b_rfp_request_product_widget') }}
 {% endblock %}
 
 {% block orob2b_rfp_request_product_item_widget %}

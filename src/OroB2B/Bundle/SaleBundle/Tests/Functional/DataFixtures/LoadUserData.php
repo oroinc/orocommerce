@@ -24,6 +24,8 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
     const ROLE1 = 'sale-role1';
     const ROLE2 = 'sale-role2';
     const ROLE3 = 'sale-role3';
+    const ROLE4 = 'sale-role4';
+    const ROLE5 = 'sale-role5';
 
     const ACCOUNT1 = 'sale-account1';
     const ACCOUNT2 = 'sale-account2';
@@ -67,6 +69,18 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
                 'acls'  => ['VIEW_LOCAL'],
             ],
         ],
+        self::ROLE4 => [
+            [
+                'class' => 'orob2b_order.entity.order.class',
+                'acls'  => [],
+            ],
+        ],
+        self::ROLE5 => [
+            [
+                'class' => 'orob2b_order.entity.order.class',
+                'acls'  => ['VIEW_BASIC', 'CREATE_BASIC'],
+            ],
+        ],
     ];
 
     /**
@@ -91,7 +105,10 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             'lastname'  => 'User1LN',
             'password'  => self::ACCOUNT1_USER1,
             'account'   => self::ACCOUNT1,
-            'role'      => self::ROLE1,
+            'roles'     => [
+                self::ROLE1,
+                self::ROLE4,
+            ],
         ],
         [
             'email'     => self::ACCOUNT1_USER2,
@@ -99,7 +116,9 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             'lastname'  => 'User2LN',
             'password'  => self::ACCOUNT1_USER2,
             'account'   => self::ACCOUNT1,
-            'role'      => self::ROLE2,
+            'roles'     => [
+                self::ROLE2,
+            ],
         ],
         [
             'email'     => self::ACCOUNT1_USER3,
@@ -107,7 +126,10 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             'lastname'  => 'User3LN',
             'password'  => self::ACCOUNT1_USER3,
             'account'   => self::ACCOUNT1,
-            'role'      => self::ROLE3,
+            'roles'     => [
+                self::ROLE3,
+                self::ROLE5,
+            ],
         ],
         [
             'email'     => self::ACCOUNT2_USER1,
@@ -115,7 +137,9 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             'lastname'  => 'User1LN',
             'password'  => self::ACCOUNT2_USER1,
             'account'   => self::ACCOUNT2,
-            'role'      => self::ROLE1,
+            'roles'     => [
+                self::ROLE1,
+            ],
         ],
     ];
 
@@ -222,11 +246,16 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
                 ->setConfirmed(true)
                 ->setOrganization($organization)
                 ->addOrganization($organization)
-                ->addRole($this->getReference($item['role']))
                 ->setSalt('')
                 ->setPlainPassword($item['password'])
                 ->setEnabled(true)
             ;
+
+            foreach ($item['roles'] as $role) {
+                /** @var AccountUserRole $roleEntity */
+                $roleEntity = $this->getReference($role);
+                $accountUser->addRole($roleEntity);
+            }
 
             $userManager->updateUser($accountUser);
 

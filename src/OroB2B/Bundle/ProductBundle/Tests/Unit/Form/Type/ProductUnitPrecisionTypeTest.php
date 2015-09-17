@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Validation;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
-use OroB2B\Bundle\AttributeBundle\Form\Extension\IntegerExtension;
+use OroB2B\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;

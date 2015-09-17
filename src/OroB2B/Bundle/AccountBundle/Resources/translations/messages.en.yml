@@ -100,6 +100,10 @@ orob2b.account:
         websites.label:                  'Websites'
         account.label:                   'Account'
         organization.label:              'Organization'
+        type.label:                      'Type'
+        type.predefined.label:           'Predefined'
+        type.customizable.label:         'Customizable'
+        frontend.edit-predifined-role.message:   'Predefined roles cannot be edited directly. We copied all the original data so that you can save it as a new user role for your organization. All users will be moved from the original role to this new role after you click on "Save".'
 
     accountuseraddress:
         city.label:                 City
@@ -145,6 +149,8 @@ orob2b.account:
         addresses: 'Addresses'
         accountgroup:
             accounts: 'Accounts'
+        accountuserrole:
+            users: 'Users'
         roles:   'Frontend Capabilities'
         password: 'Password'
 
@@ -181,7 +187,7 @@ orob2b.account:
         region_code.label:       State ISO code
 
     menu:
-        account_tab.label: 'Accounts'
+        customers_tab.label: 'Customers'
         account_list.description: 'List of Accounts'
         account_group_list.description: 'List of Account Groups'
         shortcut_account_list.description: 'List of Accounts'
@@ -200,6 +206,9 @@ orob2b.account:
         account_user_profile.label: My Profile
         account_user_login.label: Login
         account_user_logout.label: Logout
+
+        frontend_configuration_tab: Configuration
+        frontend_account_user_roles.label: Roles
 
     controller:
         account:

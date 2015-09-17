@@ -34,11 +34,10 @@ class AccountUserExtension extends AbstractExtension implements ContainerAwareIn
             throw new \InvalidArgumentException('ContainerInterface not injected');
         }
 
-        return is_a(
-            $this->container->get('oro_security.security_facade')->getLoggedUser(),
-            $this->container->getParameter('orob2b_account.entity.account_user.class'),
-            true
-        );
+        $accountUser = $this->container->get('oro_security.security_facade')->getLoggedUser();
+        $accountUserClass = $this->container->getParameter('orob2b_account.entity.account_user.class');
+
+        return !is_object($accountUser) || is_a($accountUser, $accountUserClass, true);
     }
 
     /**

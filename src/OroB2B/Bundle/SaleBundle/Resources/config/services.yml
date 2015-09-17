@@ -11,15 +11,7 @@ parameters:
     orob2b_sale.validator.quote_product_unit.class: OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProductOfferValidator
     #Twig extensions
     orob2b_sale.twig.quote.class: OroB2B\Bundle\SaleBundle\Twig\QuoteExtension
-    #Listeners
-    orob2b_sale.event_listener.entity_subscriber.class: OroB2B\Bundle\SaleBundle\EventListener\EntitySubscriber
-
 services:
-    orob2b_sale.event_listener.entity_subscriber:
-        class: %orob2b_sale.event_listener.entity_subscriber.class%
-        tags:
-            - { name: doctrine.event_subscriber }
-
     orob2b_sale.quote.manager.api:
         class: %orob2b_sale.quote.manager.api.class%
         parent: oro_soap.manager.entity_manager.abstract

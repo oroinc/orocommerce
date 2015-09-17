@@ -1,0 +1,99 @@
+@import "../../oroui/css/less/mixins";
+
+.product-price-collection
+{
+  input[type="text"].quantity,
+  input[type="text"].price-value,
+  .entity-create-or-select-container {
+    margin-left: 4px;
+    width: 280px;
+  }
+
+  .select2-container {
+    float: left;
+  }
+
+  .entity-select-btn {
+    float: right;
+  }
+
+  .oro-multiselect-holder {
+    padding-left: 10px;
+  }
+
+  .entity-create-or-select-container {
+    margin-left: 4px;
+    width: 293px;
+  }
+
+  .oro-item-collection {
+    .row-oro {
+      position: relative;
+      padding: 10px 10px 10px 40px;
+      margin-bottom: 10px;
+      border: 1px solid #e6e6e6;
+      background: #f8f8f8;
+      .border-radius(4px);
+    }
+
+    .removeRow {
+      position: absolute;
+      width: 28px;
+      top: 4px;
+      right: 4px;
+      text-decoration: none;
+    }
+  }
+}
+
+.product-container {
+  .show-tier-prices-choice label {
+    float: left;
+  }
+
+  .show-tier-prices-choice {
+    label {
+      float: left;
+    }
+
+    input {
+      margin: 0 10px !important;
+    }
+  }
+
+  .sidebar-item .control-label {
+    font-weight: bold;
+  }
+
+  .grid-container {
+    .product-price-unit-with-margin {
+      margin-top: 5px !important;
+    }
+    .string-cell tbody td {
+      padding: 0 !important;
+      height: 10px !important;
+      border: 0 !important;
+    }
+  }
+}
+
+.product-price-filter {
+  .value-field-frame {
+    margin-right: 0 !important;
+
+    input[type=text]  {
+      width: 100px !important;
+      border-right-width: 1px !important;
+    }
+  }
+
+  .product-price-unit-filter {
+    margin-bottom: 0;
+  }
+
+  .product-price-unit-filter,
+  .choice-filter{
+    display: inline-block;
+    width: auto;
+  }
+}

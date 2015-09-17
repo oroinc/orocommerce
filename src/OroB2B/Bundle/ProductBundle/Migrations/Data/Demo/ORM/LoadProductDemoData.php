@@ -7,7 +7,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
@@ -17,7 +16,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
-class LoadProductDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
+class LoadProductDemoData extends AbstractFixture implements ContainerAwareInterface
 {
     /**
      * @var ContainerInterface
@@ -30,16 +29,6 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
-    {
-        return [
-            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadAttributeDemoData',
-        ];
     }
 
     /**

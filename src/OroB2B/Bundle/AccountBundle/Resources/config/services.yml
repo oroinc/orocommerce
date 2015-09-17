@@ -26,6 +26,7 @@ parameters:
     orob2b_account.account_user.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_account.account_user_role.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_account.datagrid.action_permission_provider.class: OroB2B\Bundle\AccountBundle\Datagrid\ActionPermissionProvider
+    orob2b_account.datagrid.account_action_permission_provider.class: OroB2B\Bundle\AccountBundle\Datagrid\AccountActionPermissionProvider
     orob2b_account.datagrid.extension.accoun_user.class: OroB2B\Bundle\AccountBundle\Datagrid\Extension\AccountUserExtension
     orob2b_account.datagrid.extension.accoun_user_by_account.class: OroB2B\Bundle\AccountBundle\Datagrid\Extension\AccountUserByAccountExtension
     orob2b_account.mailer.processor.class: OroB2B\Bundle\AccountBundle\Mailer\Processor
@@ -46,6 +47,7 @@ parameters:
     orob2b_account.acl.group_provider.class: OroB2B\Bundle\AccountBundle\Acl\Group\AclGroupProvider
     orob2b_account.account_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_account.account_user_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    orob2b_account.event_listener.frontend_datagrid.class: OroB2B\Bundle\AccountBundle\EventListener\DatagridListenerFrontend
     #Twig
     orob2b_account.twig.account_extension.class: OroB2B\Bundle\AccountBundle\Twig\AccountExtension
     #Voters
@@ -77,7 +79,8 @@ services:
         class: %orob2b_account.acl.voter.account.class%
         arguments:
             - @oro_entity.doctrine_helper
-            - @service_container
+        calls:
+            - [setContainer, [@service_container]]
         tags:
             - { name: security.voter }
 
@@ -85,6 +88,7 @@ services:
         class: %orob2b_account.event_listener.account_datagrid.class%
         arguments:
             - @orob2b_account.security.account_user_provider
+            - [@orob2b_account.datagrid.account_action_permission_provider, "getActions"]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before, method: onBuildBeforeFrontendItems }
 
@@ -164,6 +168,12 @@ services:
         class: %orob2b_account.datagrid.action_permission_provider.class%
         arguments:
             - @oro_security.security_facade
+
+    orob2b_account.datagrid.account_action_permission_provider:
+        class: %orob2b_account.datagrid.account_action_permission_provider.class%
+        arguments:
+            - @oro_security.security_facade
+            - @doctrine
 
     orob2b_account.datagrid.extension.accoun_user:
         class: %orob2b_account.datagrid.extension.accoun_user.class%
@@ -246,6 +256,7 @@ services:
         arguments:
             - @oro_entity.doctrine_helper
         calls:
+            - [setContainer, [@service_container]]
             - [setClassName, [%orob2b_account.entity.account_user_role.class%]]
         tags:
             - { name: security.voter, priority: 10 }
@@ -264,8 +275,8 @@ services:
 
     orob2b_account.acl.group_provider:
         class: %orob2b_account.acl.group_provider.class%
-        arguments:
-            - @service_container
+        calls:
+            - [setContainer, [@service_container]]
         tags:
             - { name: oro_security.acl.group_provider, alias: frontend_group }
 
@@ -275,6 +286,13 @@ services:
         arguments:
             - %orob2b_account.entity.account_user_address.class%
             - @doctrine.orm.entity_manager
+
+    orob2b_account.event_listener.frontend_datagrid:
+        class: %orob2b_account.event_listener.frontend_datagrid.class%
+        arguments:
+            - @oro_security.security_facade
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-account-account-user-roles-grid, method: onBuildBefore }
 
     orob2b_account.twig.security_extension:
         class: %orob2b_account.twig.account_extension.class%
