@@ -13,7 +13,7 @@ class PostQuickAddTypeExtensionStub extends AbstractPostQuickAddTypeExtension
     /**
      * {@inheritdoc}
      */
-    protected function addProductToEntity(Product $product, $entity, $quantity)
+    protected function getItem(Product $product, $entity)
     {
         $this->addProductToEntityCalled = true;
     }

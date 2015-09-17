@@ -24,28 +24,26 @@ class FrontendRequestExtension extends AbstractPostQuickAddTypeExtension
     /**
      * {@inheritdoc}
      */
-    protected function addProductToEntity(Product $product, $entity, $quantity)
+    protected function getItem(Product $product, $entity)
     {
         if (!$entity instanceof RFPRequest) {
-            return;
+            return null;
         }
 
         /** @var ProductUnitPrecision $unitPrecision */
         $unitPrecision = $product->getUnitPrecisions()->first();
         if (!$unitPrecision) {
-            return;
+            return null;
         }
 
         /** @var ProductUnit $unit */
         $unit = $unitPrecision->getUnit();
         if (!$unit) {
-            return;
+            return null;
         }
 
         $requestProductItem = new RequestProductItem();
-        $requestProductItem
-            ->setProductUnit($unit)
-            ->setQuantity($quantity);
+        $requestProductItem->setProductUnit($unit);
 
         $requestProduct = new RequestProduct();
         $requestProduct
@@ -53,5 +51,7 @@ class FrontendRequestExtension extends AbstractPostQuickAddTypeExtension
             ->addRequestProductItem($requestProductItem);
 
         $entity->addRequestProduct($requestProduct);
+
+        return $requestProductItem;
     }
 }
