@@ -215,8 +215,15 @@ datagrid:
                     type:      string
                     data_name: owner
                 paymentTermLabel:
-                    type:      string
-                    data_name: paymentTermLabel
+                    type:      entity
+                    data_name: paymentTerm.id
+                    options:
+                        field_type: entity
+                        field_options:
+                            class:    %orob2b_payment.entity.payment_term.class%
+                            property: label
+                            multiple: true
+
                 shipUntil:
                     type:      datetime
                     data_name: order1.shipUntil

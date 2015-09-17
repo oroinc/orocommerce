@@ -70,6 +70,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
                         'field_options' => [
                             'class' => self::PAYMENT_TERM_CLASS,
                             'property' => 'label',
+                            'multiple' => true
                         ]
                     ]
                 ]
@@ -120,6 +121,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
                         'field_options' => [
                             'class' => self::PAYMENT_TERM_CLASS,
                             'property' => 'label',
+                            'multiple' => true
                         ]
                     ]
                 ]
