@@ -119,9 +119,9 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         array $expectedParameters = []
     ) {
         $category = new Category();
-        $this->requestProductHandler->expects($this->once())->method('getCategoryId')->willReturn($catId);
+        $this->requestProductHandler->expects($this->atLeastOnce())->method('getCategoryId')->willReturn($catId);
         $this->requestProductHandler
-            ->expects($this->once())
+            ->expects($this->atLeastOnce())
             ->method('getIncludeSubcategoriesChoice')
             ->willReturn($includeSubcategoriesChoice);
 
@@ -129,24 +129,27 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         $repo = $this->getMockBuilder('OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository')
             ->disableOriginalConstructor()
             ->getMock();
-        $repo->expects($this->once())->method('find')->with($catId)->willReturn($category);
-        $repo->expects($includeSubcategoriesChoice ? $this->once() : $this->never())
+        $repo->expects($this->atLeastOnce())->method('find')->with($catId)->willReturn($category);
+        $repo->expects($includeSubcategoriesChoice ? $this->atLeastOnce() : $this->never())
             ->method('getChildrenIds')->with($category)->willReturn($childrenIds);
-        $this->doctrine->expects($this->once())->method('getRepository')->with(self::DATA_CLASS)->willReturn($repo);
+        $this->doctrine->expects($this->atLeastOnce())->method('getRepository')->with(self::DATA_CLASS)
+            ->willReturn($repo);
 
         $event = $this->createPreBuildEvent();
-        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridConfiguration $config */
-        $config = $event->getConfig();
-
-        $config->expects($this->at(0))
-            ->method('offsetSetByPath')
-            ->with(self::QUERY_AND_PATH, [sprintf('productCategory.id IN (:%s)', self::CATEGORY_ID_ALIAS)]);
-        $config->expects($this->at(1))
-            ->method('offsetSetByPath')
-            ->with(DatasourceBindParametersListener::DATASOURCE_BIND_PARAMETERS_PATH, [self::CATEGORY_ID_ALIAS]);
-
         $this->listener->onPreBuildProducts($event);
         $this->assertEquals($expectedParameters, $event->getParameters()->all());
+
+        $this->assertEquals(
+            [sprintf('productCategory.id IN (:%s)', self::CATEGORY_ID_ALIAS)],
+            $event->getConfig()->offsetGetByPath(self::QUERY_AND_PATH)
+        );
+        $this->assertEquals(
+            [self::CATEGORY_ID_ALIAS],
+            $event->getConfig()->offsetGetByPath(DatasourceBindParametersListener::DATASOURCE_BIND_PARAMETERS_PATH)
+        );
+
+        $this->listener->onPreBuildProducts($event);
+        $this->assertCount(1, $event->getConfig()->offsetGetByPath('[source][query][join][left]'));
     }
 
     /**
@@ -201,29 +204,6 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onPreBuildProducts($event);
     }
 
-    public function testAddCategoryJoinTwice()
-    {
-        $config = DatagridConfiguration::create([]);
-
-        $listenerReflectionClass = new \ReflectionClass('\OroB2B\Bundle\CatalogBundle\EventListener\DatagridListener');
-
-        $method = $listenerReflectionClass->getMethod('addCategoryJoin');
-        $method->setAccessible(true);
-        $path = '[source][query][join][left]';
-        $count = count($config->offsetGetByPath($path));
-
-        $method->invoke($this->listener, $config);
-        $count++;
-
-        $actual = $config->offsetGetByPath($path);
-        $this->assertInternalType('array', $actual);
-        $this->assertCount($count, $actual);
-
-        $method->invoke($this->listener, $config);
-
-        $this->assertCount($count, $config->offsetGetByPath($path));
-    }
-
     /**
      * @return \PHPUnit_Framework_MockObject_MockObject|\Oro\Bundle\DataGridBundle\Event\PreBuild
      */
@@ -232,9 +212,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         $event = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Event\PreBuild')
             ->disableOriginalConstructor()
             ->getMock();
-        $config = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $config = DatagridConfiguration::create([]);
         $event->expects($this->any())->method('getConfig')->willReturn($config);
 
         $params = new ParameterBag();
