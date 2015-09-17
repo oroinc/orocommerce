@@ -11,9 +11,6 @@ use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- */
 class QuoteTest extends AbstractTest
 {
     public function testProperties()

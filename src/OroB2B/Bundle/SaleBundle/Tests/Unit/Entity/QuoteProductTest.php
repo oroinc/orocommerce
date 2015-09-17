@@ -8,6 +8,9 @@ use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class QuoteProductTest extends AbstractTest
 {
     public function testProperties()
