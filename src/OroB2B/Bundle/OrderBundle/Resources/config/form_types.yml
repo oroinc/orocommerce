@@ -8,6 +8,7 @@ parameters:
     orob2b_order.form.type.frontend.order_line_item.class: OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderLineItemType
 
     orob2b_order.form.type.extension.frontend_order.class: OroB2B\Bundle\OrderBundle\Form\Extension\FrontendOrderExtension
+    orob2b_order.form.type.extension.order.class: OroB2B\Bundle\OrderBundle\Form\Extension\OrderExtension
 
 services:
     orob2b_order.form.type.order:
@@ -86,3 +87,11 @@ services:
             - [setDataClass, [%orob2b_order.entity.order.class%]]
         tags:
             - { name: form.type_extension, alias: "orob2b_order_frontend_type" }
+
+    orob2b_order.form.type.extension.order:
+        class: %orob2b_order.form.type.extension.order.class%
+        parent: orob2b_product.form.type.extension.post_quick_add.abstract
+        calls:
+            - [setDataClass, [%orob2b_order.entity.order.class%]]
+        tags:
+            - { name: form.type_extension, alias: "orob2b_order_type" }

@@ -5,14 +5,16 @@ namespace OroB2B\Bundle\ProductBundle\Form\Extension;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductRowType;
-use OroB2B\Bundle\ProductBundle\Model\DataStorageAwareProcessor;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+use OroB2B\Bundle\ProductBundle\Model\ComponentProcessorInterface;
 
 abstract class AbstractPostQuickAddTypeExtension extends AbstractTypeExtension
 {
@@ -30,6 +32,9 @@ abstract class AbstractPostQuickAddTypeExtension extends AbstractTypeExtension
 
     /** @var DoctrineHelper */
     protected $doctrineHelper;
+
+    /** @var PropertyAccessor */
+    protected $propertyAccessor;
 
     /**
      * @param ProductDataStorage $storage
@@ -70,10 +75,10 @@ abstract class AbstractPostQuickAddTypeExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if ($this->request->get(DataStorageAwareProcessor::QUICK_ADD_PARAM)) {
+        if ($this->request->get(ComponentProcessorInterface::TRANSFORM)) {
             $entity = isset($options['data']) ? $options['data'] : null;
             if ($entity instanceof $this->dataClass && !$this->doctrineHelper->getSingleEntityIdentifier($entity)) {
-                $this->fillItems($entity);
+                $this->fillData($entity);
             }
         }
     }
@@ -81,7 +86,7 @@ abstract class AbstractPostQuickAddTypeExtension extends AbstractTypeExtension
     /**
      * @param object $entity
      */
-    protected function fillItems($entity)
+    protected function fillData($entity)
     {
         $data = $this->storage->get();
         $this->storage->remove();
@@ -90,29 +95,74 @@ abstract class AbstractPostQuickAddTypeExtension extends AbstractTypeExtension
             return;
         }
 
+        if (array_key_exists(ComponentProcessorInterface::ENTITY_DATA_KEY, $data)) {
+            $this->fillEntityData($entity, $data[ComponentProcessorInterface::ENTITY_DATA_KEY]);
+        }
+
+        if (!array_key_exists(ComponentProcessorInterface::ENTITY_ITEMS_DATA_KEY, $data)) {
+            return;
+        }
+
+        $itemsData = $data[ComponentProcessorInterface::ENTITY_ITEMS_DATA_KEY];
+
         $repository = $this->getProductRepository();
-        foreach ($data as $dataRow) {
-            if (!array_key_exists(ProductRowType::PRODUCT_SKU_FIELD_NAME, $dataRow) ||
-                !array_key_exists(ProductRowType::PRODUCT_QUANTITY_FIELD_NAME, $dataRow)
+        foreach ($itemsData as $dataRow) {
+            if (!array_key_exists(ComponentProcessorInterface::PRODUCT_SKU_FIELD_NAME, $dataRow) ||
+                !array_key_exists(ComponentProcessorInterface::PRODUCT_QUANTITY_FIELD_NAME, $dataRow)
             ) {
                 continue;
             }
 
-            $product = $repository->findOneBySku($dataRow[ProductRowType::PRODUCT_SKU_FIELD_NAME]);
+            $product = $repository->findOneBySku($dataRow[ComponentProcessorInterface::PRODUCT_SKU_FIELD_NAME]);
             if (!$product) {
                 continue;
             }
 
-            $this->addProductToEntity($product, $entity, (float)$dataRow[ProductRowType::PRODUCT_QUANTITY_FIELD_NAME]);
+            $item = $this->getItem($product, $entity);
+            if (!$item) {
+                continue;
+            }
+            $this->fillEntityData($item, $dataRow);
+        }
+    }
+
+    /**
+     * @param object $entity
+     * @param array $data
+     */
+    protected function fillEntityData($entity, array $data = [])
+    {
+        if (!$data) {
+            return;
+        }
+
+        if (!$this->propertyAccessor) {
+            $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+        }
+
+        $metadata = $this->doctrineHelper->getEntityMetadata($entity);
+
+        foreach ($data as $property => $value) {
+            try {
+                if ($metadata->hasAssociation($property)) {
+                    $value = $this->doctrineHelper->getEntityReference(
+                        $metadata->getAssociationTargetClass($property),
+                        $value
+                    );
+                }
+
+                $this->propertyAccessor->setValue($entity, $property, $value);
+            } catch (NoSuchPropertyException $e) {
+            }
         }
     }
 
     /**
      * @param Product $product
      * @param object $entity
-     * @param float $quantity
+     * @return object|null
      */
-    abstract protected function addProductToEntity(Product $product, $entity, $quantity);
+    abstract protected function getItem(Product $product, $entity);
 
     /**
      * @return ProductRepository

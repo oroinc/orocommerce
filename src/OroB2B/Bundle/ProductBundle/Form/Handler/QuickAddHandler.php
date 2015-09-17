@@ -65,7 +65,10 @@ class QuickAddHandler
                 if ($form->isValid()) {
                     $products = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getData();
                     $products = is_array($products) ? $products : [];
-                    $response = $processor->process($products, $request);
+                    $response = $processor->process(
+                        [ComponentProcessorInterface::ENTITY_ITEMS_DATA_KEY => $products],
+                        $request
+                    );
                     if (!$response) {
                         // reset form
                         $form = $this->createQuickAddForm($formOptions);

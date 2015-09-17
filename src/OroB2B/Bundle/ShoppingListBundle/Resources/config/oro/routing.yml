@@ -3,6 +3,11 @@ orob2b_shopping_list:
     type:         annotation
     prefix:       /shoppinglist
 
+orob2b_shopping_order:
+    resource:     "@OroB2BShoppingListBundle/Controller/OrderController.php"
+    type:         annotation
+    prefix:       /shoppinglist/order
+
 orob2b_shopping_list_frontend:
     resource: "@OroB2BShoppingListBundle/Controller/Frontend/ShoppingListController.php"
     type:     annotation
