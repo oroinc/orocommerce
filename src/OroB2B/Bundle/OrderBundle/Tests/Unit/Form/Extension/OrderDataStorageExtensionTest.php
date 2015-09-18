@@ -9,9 +9,9 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Form\Extension\OrderDataStorageExtension;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Extension\AbstractProductDataStorageExtensionTest;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Extension\AbstractProductDataStorageExtensionTestCase;
 
-class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionTest
+class OrderDataStorageExtensionTestCase extends AbstractProductDataStorageExtensionTestCase
 {
     /**
      * {@inheritdoc}

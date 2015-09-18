@@ -10,9 +10,9 @@ use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
 use OroB2B\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Extension\AbstractProductDataStorageExtensionTest;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Extension\AbstractProductDataStorageExtensionTestCase;
 
-class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensionTest
+class RequestDataStorageExtensionTestCase extends AbstractProductDataStorageExtensionTestCase
 {
     /**
      * {@inheritdoc}
