@@ -8,6 +8,7 @@ use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
+
 use OroB2B\Bundle\CMSBundle\Migrations\Schema\OroB2BCMSBundleInstaller;
 
 class OroB2BCMSBundle implements Migration, AttachmentExtensionAwareInterface
