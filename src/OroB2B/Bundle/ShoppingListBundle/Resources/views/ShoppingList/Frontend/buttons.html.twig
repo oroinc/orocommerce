@@ -60,7 +60,7 @@
     {% set btnOptions = {
         dataUrl: options.dataUrl,
         dataAttributes: dataAttributes,
-        btnLabel: options.shoppingList.label,
+        btnLabel: options.shoppingList ? options.shoppingList.label : 'orob2b.shoppinglist.entity_label'|trans,
         dataId: shoppingListId,
         actionLabel: 'orob2b.shoppinglist.actions.add_to_shopping_list'|trans
     } %}
@@ -75,7 +75,7 @@
         'aCss': 'no-hash grid-control',
         'iCss': 'icon-shopping-cart hide-text',
         'dataId': options.dataId,
-        'label' : options.actionLabel ~ ' ' ~ options.btnLabel
+        'label' : options.actionLabel ? options.actionLabel ~ ' ' ~ options.btnLabel : options.btnLabel
     } %}
     {% if options.dataUrl %}
         {% set buttonOptions = buttonOptions|merge({
@@ -99,7 +99,7 @@
     {{ UI.pinnedDropdownButton({
         'html': buttonsHtml,
         'options': {
-            'truncateMain': 15
+            'truncateLength': 15
         }
     }) }}
 {% endmacro %}
