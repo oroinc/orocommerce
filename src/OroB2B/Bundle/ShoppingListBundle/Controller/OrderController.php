@@ -23,6 +23,18 @@ class OrderController extends Controller
      */
     public function createAction(ShoppingList $shoppingList)
     {
+        $this->saveToStorage($shoppingList);
+
+        return $this->redirect(
+            $this->generateUrl('orob2b_order_create', [ProductDataStorage::STORAGE_KEY => true])
+        );
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     */
+    protected function saveToStorage(ShoppingList $shoppingList)
+    {
         /** @var ProductDataStorage $storage */
         $storage = $this->get('orob2b_product.service.product_data_storage');
 
@@ -30,7 +42,7 @@ class OrderController extends Controller
             ProductDataStorage::ENTITY_DATA_KEY => [
                 'accountUser' => $shoppingList->getAccountUser()->getId(),
                 'account' => $shoppingList->getAccount()->getId(),
-            ]
+            ],
         ];
 
         foreach ($shoppingList->getLineItems() as $lineItem) {
@@ -44,9 +56,5 @@ class OrderController extends Controller
         }
 
         $storage->set($data);
-
-        return $this->redirect(
-            $this->generateUrl('orob2b_order_create', [ProductDataStorage::STORAGE_KEY => true])
-        );
     }
 }
