@@ -86,7 +86,7 @@ class DataStorageAwareProcessor implements ComponentProcessorInterface
             return true;
         }
 
-        return $this->securityFacade->isGranted($this->acl);
+        return $this->securityFacade->hasLoggedUser() && $this->securityFacade->isGranted($this->acl);
     }
 
     /**
