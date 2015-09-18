@@ -98,7 +98,7 @@ define(function(require) {
             );
             var self = this;
 
-            this._pushState(params);
+            this._pushState(_.omit(params, _.isNull));
 
             this._patchGridCollectionUrl(params);
 
