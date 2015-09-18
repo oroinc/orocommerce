@@ -111,6 +111,8 @@ orob2b:
             add_seller_notes: 'Add Notes'
             remove_seller_notes: 'Remove Seller Notes'
             notify_and_lock: 'Notify and Lock'
+            send: 'Send'
+            cancel: 'Cancel'
 
         navigation:
             view: 'Quote #%id%'
@@ -132,7 +134,7 @@ orob2b:
 
             quoteproduct:
                 comment.label: 'Seller Notes'
-                comment_account.label: 'Account Notes'
+                comment_account.label: 'Customer Notes'
                 product_replacement.label: 'Suggested Replacement:'
                 column:
                     product: 'Product'
@@ -143,6 +145,7 @@ orob2b:
                 quantity.label: 'Quantity'
                 price.label: 'Price'
                 column_summary: 'Summary'
+                allow_increments.label: 'or more'
 
             quoteproductrequest:
                 quantity.label: 'Requested Qty'

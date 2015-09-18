@@ -14,6 +14,9 @@ orob2b:
             products.label:         'Products'
             include_subcategories.label: 'Include Sub-Categories'
 
+        sections:
+            general: General
+
         subcategory:
             entity_label:   'Subcategory'
 
