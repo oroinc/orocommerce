@@ -54,7 +54,12 @@ class AccountUserProvider
      */
     public function getLoggedUser()
     {
-        return $this->securityFacade->getLoggedUser();
+        $user = $this->securityFacade->getLoggedUser();
+        if ($user instanceof AccountUser) {
+            return $user;
+        }
+
+        return null;
     }
 
     /**
