@@ -39,3 +39,9 @@ items:
     frontend_window_bundle_js:
         template: OroB2BFrontendBundle:Windows:javascript.html.twig
         applicable: @orob2b_frontend.placeholder.filter->isFrontendRoute()
+    view_oro_activity_list:
+        applicable: @orob2b_frontend.activity_list.placeholder.filter->isApplicable($entity$, Oro\Bundle\ActivityBundle\EntityConfig\ActivityScope::VIEW_PAGE)
+        template: OroActivityListBundle:ActivityList:activities.html.twig
+    update_oro_activity_list:
+        applicable: @orob2b_frontend.activity_list.placeholder.filter->isApplicable($entity$, Oro\Bundle\ActivityBundle\EntityConfig\ActivityScope::UPDATE_PAGE)
+        template: OroActivityListBundle:ActivityList:activities.html.twig
