@@ -33,10 +33,7 @@ class AccountUserRoleControllerTest extends WebTestCase
     {
         $this->initClient(
             [],
-            array_merge(
-                $this->generateBasicAuthHeader(OroLoadAccountUserData::AUTH_USER, OroLoadAccountUserData::AUTH_PW),
-                ['HTTP_X-CSRF-Header' => 1]
-            )
+            $this->generateBasicAuthHeader(OroLoadAccountUserData::AUTH_USER, OroLoadAccountUserData::AUTH_PW)
         );
 
         $this->loadFixtures(

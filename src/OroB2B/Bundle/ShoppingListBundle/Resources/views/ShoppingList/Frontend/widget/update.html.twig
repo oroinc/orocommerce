@@ -15,7 +15,7 @@
     <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ app.request.uri }}" {{ form_enctype(form) }}
           method="{{ form.vars.method }}" data-collect="true" class="form-dialog">
         <fieldset class="form-horizontal">
-            {{ form_row(form.label, {label: 'orob2b.shoppinglist.create_new_form.input_label'|trans }) }}
+            {{ form_row(form.label, {label: 'orob2b.shoppinglist.create_new_form.input_label' }) }}
             <i>
                 {{ 'orob2b.shoppinglist.create_new_form.comment'|trans }}<br/>
                 {{ 'orob2b.shoppinglist.create_new_form.comment_cancel'|trans }}
@@ -27,7 +27,7 @@
         </div>
 
         <div class="widget-actions">
-            <button type="reset" class="btn">{{ 'Cancel'|trans }}</button>
+            <button type="reset" class="btn">{{ 'orob2b.shoppinglist.create_new_form.cancel_label'|trans }}</button>
             <button type="submit"
                     class="btn btn-success">{{ 'orob2b.shoppinglist.create_new_form.submit_label'|trans }}</button>
         </div>
