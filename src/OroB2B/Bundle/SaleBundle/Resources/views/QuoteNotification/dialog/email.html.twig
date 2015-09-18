@@ -9,12 +9,12 @@
     {% endif %}
 {% endblock %}
 {% block page_container_form_actions %}
-    <button class="btn" type="reset">{{ 'Cancel'|trans }}</button>
+    <button class="btn" type="reset">{{ 'orob2b.sale.btn.cancel'|trans }}</button>
 
     {% if quote.locked %}
-        {% set button_text = 'Send' %}
+        {% set button_text = 'orob2b.sale.btn.send'|trans %}
     {% else %}
-        {%  set button_text = 'orob2b.sale.btn.notify_and_lock' %}
+        {% set button_text = 'orob2b.sale.btn.notify_and_lock'|trans %}
     {% endif %}
-    <button class="btn btn-primary" type="submit">{{ button_text|trans }}</button>
+    <button class="btn btn-primary" type="submit">{{ button_text }}</button>
 {% endblock %}

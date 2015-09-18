@@ -18,6 +18,7 @@ orob2b:
             comment: Selected products will be added to this new shopping list.
             comment_cancel: Click "Cancel" to select a different list.
             submit_label: Create and Add
+            cancel_label: Cancel
 
         product:
             add_to_shopping_list.label: Add to Shopping List
@@ -74,6 +75,10 @@ orob2b:
                 success: Line item has been added
             controller:
                 saved.message: Line Item Saved Successfully
+
+            action:
+                save: Save
+                cancel: Cancel
 
     frontend:
         shoppinglist:

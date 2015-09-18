@@ -26,10 +26,7 @@ class ShoppingListControllerTest extends WebTestCase
     {
         $this->initClient(
             [],
-            array_merge(
-                $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW),
-                ['HTTP_X-CSRF-Header' => 1]
-            )
+            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
 
         $this->loadFixtures(
@@ -149,10 +146,7 @@ class ShoppingListControllerTest extends WebTestCase
      */
     public function testCreateRfp(array $inputData, array $expectedData)
     {
-        $this->initClient([], array_merge(
-            $this->generateBasicAuthHeader($inputData['login'], $inputData['password']),
-            ['HTTP_X-CSRF-Header' => 1]
-        ));
+        $this->initClient([], $this->generateBasicAuthHeader($inputData['login'], $inputData['password']));
         /* @var $shoppingList ShoppingList */
         $shoppingList = $this->getReference($inputData['shoppingList']);
         $this->client->request(
