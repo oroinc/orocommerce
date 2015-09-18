@@ -15,6 +15,16 @@ orob2b.cms:
         child_pages.label:      'Child pages'
         parent_page.label:      'Parent page'
         slugs.label:            'Slugs'
+
+    loginpage:
+        entity_label:           'Login page'
+        entity_plural_label:    'Login pages'
+        bottom_content.label:   'Bottom content'
+        css.label:              'CSS'
+        id.label:               'ID'
+        top_content.label:      'Top content'
+        backgroud_image.label:  'Background image'
+        logo_image.label:       'Logo image'
     child_page:
         entity_label:           'Child page'
     slug:
