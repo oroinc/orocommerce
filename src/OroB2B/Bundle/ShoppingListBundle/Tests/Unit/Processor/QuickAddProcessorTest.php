@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
+use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ShoppingListBundle\Generator\MessageGenerator;
 use OroB2B\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
@@ -158,8 +159,10 @@ class QuickAddProcessorTest extends \PHPUnit_Framework_TestCase
             'empty' => [[], new Request()],
             'new shopping list' => [
                 [
-                    ['productSku' => 'sku1', 'productQuantity' => 2],
-                    ['productSku' => 'sku2', 'productQuantity' => 3],
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                        ['productSku' => 'sku1', 'productQuantity' => 2],
+                        ['productSku' => 'sku2', 'productQuantity' => 3],
+                    ]
                 ],
                 new Request(),
                 [1, 2],
@@ -167,8 +170,10 @@ class QuickAddProcessorTest extends \PHPUnit_Framework_TestCase
             ],
             'existing shopping list' => [
                 [
-                    ['productSku' => 'sku1', 'productQuantity' => 2],
-                    ['productSku' => 'sku2', 'productQuantity' => 3],
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                        ['productSku' => 'sku1', 'productQuantity' => 2],
+                        ['productSku' => 'sku2', 'productQuantity' => 3],
+                    ],
                 ],
                 new Request(['oro_product_quick_add' => ['additional' => 1]]),
                 [1, 2],
@@ -176,8 +181,10 @@ class QuickAddProcessorTest extends \PHPUnit_Framework_TestCase
             ],
             'ids sorting' => [
                 [
-                    ['productSku' => 'sku2', 'productQuantity' => 3],
-                    ['productSku' => 'sku1', 'productQuantity' => 2],
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                        ['productSku' => 'sku2', 'productQuantity' => 3],
+                        ['productSku' => 'sku1', 'productQuantity' => 2],
+                    ],
                 ],
                 new Request(['oro_product_quick_add' => ['additional' => 1]]),
                 [2, 1],
@@ -185,8 +192,10 @@ class QuickAddProcessorTest extends \PHPUnit_Framework_TestCase
             ],
             'process failed' => [
                 [
-                    ['productSku' => 'sku1', 'productQuantity' => 2],
-                    ['productSku' => 'sku2', 'productQuantity' => 3],
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                        ['productSku' => 'sku1', 'productQuantity' => 2],
+                        ['productSku' => 'sku2', 'productQuantity' => 3],
+                    ],
                 ],
                 new Request(),
                 [1, 2],

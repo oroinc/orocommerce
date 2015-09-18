@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
 
+use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
 use OroB2B\Bundle\ProductBundle\Model\ComponentProcessorInterface;
 use OroB2B\Bundle\ProductBundle\Model\ComponentProcessorRegistry;
@@ -65,7 +66,10 @@ class QuickAddHandler
                 if ($form->isValid()) {
                     $products = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getData();
                     $products = is_array($products) ? $products : [];
-                    $response = $processor->process($products, $request);
+                    $response = $processor->process(
+                        [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products],
+                        $request
+                    );
                     if (!$response) {
                         // reset form
                         $form = $this->createQuickAddForm($formOptions);
