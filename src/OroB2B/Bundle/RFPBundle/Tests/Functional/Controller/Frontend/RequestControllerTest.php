@@ -40,10 +40,7 @@ class RequestControllerTest extends WebTestCase
     public function testIndex(array $inputData, array $expectedData)
     {
         $authParams = $inputData['login']
-            ? array_merge(
-                static::generateBasicAuthHeader($inputData['login'], $inputData['password']),
-                ['HTTP_X-CSRF-Header' => 1]
-            )
+            ? static::generateBasicAuthHeader($inputData['login'], $inputData['password'])
             : [];
         $this->initClient([], $authParams);
 
@@ -102,10 +99,7 @@ class RequestControllerTest extends WebTestCase
      */
     public function testView(array $inputData, array $expectedData)
     {
-        $this->initClient([], array_merge(
-            static::generateBasicAuthHeader($inputData['login'], $inputData['password']),
-            ['HTTP_X-CSRF-Header' => 1]
-        ));
+        $this->initClient([], static::generateBasicAuthHeader($inputData['login'], $inputData['password']));
 
         /* @var $request Request */
         $request = $this->getReference($inputData['request']);

@@ -39,10 +39,7 @@ class QuoteControllerTest extends WebTestCase
      */
     public function testIndex(array $inputData, array $expectedData)
     {
-        $this->initClient([], array_merge(
-            $this->generateBasicAuthHeader($inputData['login'], $inputData['password']),
-            ['HTTP_X-CSRF-Header' => 1]
-        ));
+        $this->initClient([], $this->generateBasicAuthHeader($inputData['login'], $inputData['password']));
 
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_sale_quote_frontend_index'));
 
@@ -86,10 +83,7 @@ class QuoteControllerTest extends WebTestCase
      */
     public function testView(array $inputData, array $expectedData)
     {
-        $this->initClient([], array_merge(
-            $this->generateBasicAuthHeader($inputData['login'], $inputData['password']),
-            ['HTTP_X-CSRF-Header' => 1]
-        ));
+        $this->initClient([], $this->generateBasicAuthHeader($inputData['login'], $inputData['password']));
 
         /* @var $quote Quote */
         $quote = $this->getReference($inputData['qid']);
@@ -134,10 +128,7 @@ class QuoteControllerTest extends WebTestCase
      */
     public function testCreateOrder(array $inputData, array $expectedData)
     {
-        $this->initClient([], array_merge(
-            $this->generateBasicAuthHeader($inputData['login'], $inputData['password']),
-            ['HTTP_X-CSRF-Header' => 1]
-        ));
+        $this->initClient([], $this->generateBasicAuthHeader($inputData['login'], $inputData['password']));
 
         /* @var $quote Quote */
         $quote = $this->getReference($inputData['qid']);

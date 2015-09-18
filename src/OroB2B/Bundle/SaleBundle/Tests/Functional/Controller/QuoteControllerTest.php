@@ -49,7 +49,7 @@ class QuoteControllerTest extends WebTestCase
      */
     protected function setUp()
     {
-        $this->initClient([], array_merge(static::generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
+        $this->initClient([], static::generateBasicAuthHeader());
 
         $this->loadFixtures([
             'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData',
@@ -196,7 +196,13 @@ class QuoteControllerTest extends WebTestCase
      */
     public function testDelete($id)
     {
-        $this->client->request('DELETE', $this->getUrl('orob2b_api_sale_delete_quote', ['id' => $id]));
+        $this->client->request(
+            'DELETE',
+            $this->getUrl('orob2b_api_sale_delete_quote', ['id' => $id]),
+            [],
+            [],
+            $this->generateWsseAuthHeader()
+        );
 
         $result = $this->client->getResponse();
         static::assertEmptyResponseStatusCodeEquals($result, 204);
