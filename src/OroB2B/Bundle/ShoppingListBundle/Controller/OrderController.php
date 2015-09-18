@@ -8,8 +8,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductRowType;
-use OroB2B\Bundle\ProductBundle\Model\ComponentProcessorInterface;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
@@ -29,16 +27,16 @@ class OrderController extends Controller
         $storage = $this->get('orob2b_product.service.product_data_storage');
 
         $data = [
-            ComponentProcessorInterface::ENTITY_DATA_KEY => [
+            ProductDataStorage::ENTITY_DATA_KEY => [
                 'accountUser' => $shoppingList->getAccountUser()->getId(),
                 'account' => $shoppingList->getAccount()->getId(),
             ]
         ];
 
         foreach ($shoppingList->getLineItems() as $lineItem) {
-            $data[ComponentProcessorInterface::ENTITY_ITEMS_DATA_KEY][] = [
-                ProductRowType::PRODUCT_SKU_FIELD_NAME => $lineItem->getProduct()->getSku(),
-                ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => $lineItem->getQuantity(),
+            $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = [
+                ProductDataStorage::PRODUCT_SKU_KEY => $lineItem->getProduct()->getSku(),
+                ProductDataStorage::PRODUCT_QUANTITY_KEY => $lineItem->getQuantity(),
                 'comment' => $lineItem->getNotes(),
                 'productUnit' => $lineItem->getUnit()->getCode(),
                 'productUnitCode' => $lineItem->getUnit()->getCode(),
@@ -48,7 +46,7 @@ class OrderController extends Controller
         $storage->set($data);
 
         return $this->redirect(
-            $this->generateUrl('orob2b_order_create', [ComponentProcessorInterface::TRANSFORM => true])
+            $this->generateUrl('orob2b_order_create', [ProductDataStorage::STORAGE_KEY => true])
         );
     }
 }

@@ -130,6 +130,6 @@ class DataStorageAwareProcessor implements ComponentProcessorInterface
      */
     protected function getUrl($routeName)
     {
-        return $this->router->generate($routeName, [self::TRANSFORM => true]);
+        return $this->router->generate($routeName, [ProductDataStorage::STORAGE_KEY => true]);
     }
 }

@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductBySku;
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 
@@ -14,7 +15,6 @@ class ProductRowType extends AbstractType
 {
     const NAME = 'orob2b_product_row';
 
-    const PRODUCT_SKU_FIELD_NAME = 'productSku';
     const PRODUCT_QUANTITY_FIELD_NAME = 'productQuantity';
 
     /**
@@ -32,9 +32,9 @@ class ProductRowType extends AbstractType
         }
 
         $builder
-            ->add(self::PRODUCT_SKU_FIELD_NAME, 'text', $productSkuOptions)
+            ->add(ProductDataStorage::PRODUCT_SKU_KEY, 'text', $productSkuOptions)
             ->add(
-                self::PRODUCT_QUANTITY_FIELD_NAME,
+                ProductDataStorage::PRODUCT_QUANTITY_KEY,
                 'number',
                 [
                     'required' => false,

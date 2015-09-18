@@ -7,13 +7,12 @@ use Symfony\Component\Form\FormBuilderInterface;
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
-use OroB2B\Bundle\RFPBundle\Form\Extension\FrontendRequestExtension;
-use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
+use OroB2B\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductRowType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Extension\AbstractPostQuickAddTypeExtensionTest;
+use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Extension\AbstractProductDataStorageExtensionTest;
 
-class FrontendRequestExtensionTest extends AbstractPostQuickAddTypeExtensionTest
+class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensionTest
 {
     /**
      * {@inheritdoc}
@@ -22,23 +21,25 @@ class FrontendRequestExtensionTest extends AbstractPostQuickAddTypeExtensionTest
     {
         parent::setUp();
 
-        $this->extension = new FrontendRequestExtension($this->storage, $this->doctrineHelper, $this->productClass);
+        $this->extension = new RequestDataStorageExtension($this->storage, $this->doctrineHelper, $this->productClass);
         $this->extension->setRequest($this->request);
         $this->extension->setDataClass('OroB2B\Bundle\RFPBundle\Entity\Request');
 
         $this->entity = new RFPRequest();
     }
 
-    public function testGetExtendedType()
-    {
-        $this->assertEquals(RequestType::NAME, $this->extension->getExtendedType());
-    }
-
     public function testBuild()
     {
         $sku = 'TEST';
         $qty = 3;
-        $data = [[ProductRowType::PRODUCT_SKU_FIELD_NAME => $sku, ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => $qty]];
+        $data = [
+            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                [
+                    ProductDataStorage::PRODUCT_SKU_KEY => $sku,
+                    ProductDataStorage::PRODUCT_QUANTITY_KEY => $qty,
+                ],
+            ],
+        ];
         $request = new RFPRequest();
 
         $productUnit = new ProductUnit();
@@ -46,6 +47,7 @@ class FrontendRequestExtensionTest extends AbstractPostQuickAddTypeExtensionTest
 
         $product = $this->getProductEntity($sku, $productUnit);
 
+        $this->assertMetadataCalled();
         $this->assertRequestGetCalled();
         $this->assertStorageCalled($data);
         $this->assertProductRepositoryCalled($product);
@@ -74,11 +76,19 @@ class FrontendRequestExtensionTest extends AbstractPostQuickAddTypeExtensionTest
     {
         $sku = 'TEST';
         $qty = 3;
-        $data = [[ProductRowType::PRODUCT_SKU_FIELD_NAME => $sku, ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => $qty]];
+        $data = [
+            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                [
+                    ProductDataStorage::PRODUCT_SKU_KEY => $sku,
+                    ProductDataStorage::PRODUCT_QUANTITY_KEY => $qty,
+                ],
+            ],
+        ];
         $request = new RFPRequest();
 
         $product = $this->getProductEntity($sku);
 
+        $this->assertMetadataCalled();
         $this->assertRequestGetCalled();
         $this->assertStorageCalled($data);
         $this->assertProductRepositoryCalled($product);

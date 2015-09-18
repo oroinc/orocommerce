@@ -7,14 +7,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 interface ComponentProcessorInterface
 {
-    const ENTITY_DATA_KEY = 'entity_data';
-    const ENTITY_ITEMS_DATA_KEY = 'entity_items_data';
-
-    const PRODUCT_SKU_FIELD_NAME = 'productSku';
-    const PRODUCT_QUANTITY_FIELD_NAME = 'productQuantity';
-
-    const TRANSFORM = 'transform';
-
     /**
      * @param array $data
      * @param Request $request

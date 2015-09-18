@@ -14,9 +14,8 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
-use OroB2B\Bundle\ProductBundle\Model\ComponentProcessorInterface;
 
-abstract class AbstractPostQuickAddTypeExtension extends AbstractTypeExtension
+abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
 {
     /** @var Request */
     protected $request;
@@ -35,6 +34,12 @@ abstract class AbstractPostQuickAddTypeExtension extends AbstractTypeExtension
 
     /** @var PropertyAccessor */
     protected $propertyAccessor;
+
+    /** @var string */
+    protected $extendedType;
+
+    /** @var ProductRepository */
+    protected $productRepository;
 
     /**
      * @param ProductDataStorage $storage
@@ -75,7 +80,7 @@ abstract class AbstractPostQuickAddTypeExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if ($this->request->get(ComponentProcessorInterface::TRANSFORM)) {
+        if ($this->request->get(ProductDataStorage::STORAGE_KEY)) {
             $entity = isset($options['data']) ? $options['data'] : null;
             if ($entity instanceof $this->dataClass && !$this->doctrineHelper->getSingleEntityIdentifier($entity)) {
                 $this->fillData($entity);
@@ -95,34 +100,40 @@ abstract class AbstractPostQuickAddTypeExtension extends AbstractTypeExtension
             return;
         }
 
-        if (array_key_exists(ComponentProcessorInterface::ENTITY_DATA_KEY, $data)) {
-            $this->fillEntityData($entity, $data[ComponentProcessorInterface::ENTITY_DATA_KEY]);
+        if (!empty($data[ProductDataStorage::ENTITY_DATA_KEY]) &&
+            is_array($data[ProductDataStorage::ENTITY_DATA_KEY])
+        ) {
+            $this->fillEntityData($entity, $data[ProductDataStorage::ENTITY_DATA_KEY]);
         }
 
-        if (!array_key_exists(ComponentProcessorInterface::ENTITY_ITEMS_DATA_KEY, $data)) {
-            return;
+        if (!empty($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY]) &&
+            is_array($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY])
+        ) {
+            $itemsData = $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY];
+            $this->fillItemsData($entity, $itemsData);
         }
+    }
 
-        $itemsData = $data[ComponentProcessorInterface::ENTITY_ITEMS_DATA_KEY];
-
+    /**
+     * @param $entity
+     * @param array $itemsData
+     */
+    protected function fillItemsData($entity, array $itemsData = [])
+    {
         $repository = $this->getProductRepository();
         foreach ($itemsData as $dataRow) {
-            if (!array_key_exists(ComponentProcessorInterface::PRODUCT_SKU_FIELD_NAME, $dataRow) ||
-                !array_key_exists(ComponentProcessorInterface::PRODUCT_QUANTITY_FIELD_NAME, $dataRow)
+            if (!array_key_exists(ProductDataStorage::PRODUCT_SKU_KEY, $dataRow) ||
+                !array_key_exists(ProductDataStorage::PRODUCT_QUANTITY_KEY, $dataRow)
             ) {
                 continue;
             }
 
-            $product = $repository->findOneBySku($dataRow[ComponentProcessorInterface::PRODUCT_SKU_FIELD_NAME]);
+            $product = $repository->findOneBySku($dataRow[ProductDataStorage::PRODUCT_SKU_KEY]);
             if (!$product) {
                 continue;
             }
 
-            $item = $this->getItem($product, $entity);
-            if (!$item) {
-                continue;
-            }
-            $this->fillEntityData($item, $dataRow);
+            $this->addItem($product, $entity, $dataRow);
         }
     }
 
@@ -160,15 +171,35 @@ abstract class AbstractPostQuickAddTypeExtension extends AbstractTypeExtension
     /**
      * @param Product $product
      * @param object $entity
-     * @return object|null
+     * @param array $itemData
      */
-    abstract protected function getItem(Product $product, $entity);
+    abstract protected function addItem(Product $product, $entity, array $itemData = []);
 
     /**
      * @return ProductRepository
      */
     protected function getProductRepository()
     {
-        return $this->doctrineHelper->getEntityRepository($this->productClass);
+        if (!$this->productRepository) {
+            $this->productRepository = $this->doctrineHelper->getEntityRepository($this->productClass);
+        }
+
+        return $this->productRepository;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getExtendedType()
+    {
+        return $this->extendedType;
+    }
+
+    /**
+     * @param string $extendedType
+     */
+    public function setExtendedType($extendedType)
+    {
+        $this->extendedType = $extendedType;
     }
 }
