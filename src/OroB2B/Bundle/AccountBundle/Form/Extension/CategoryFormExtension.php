@@ -65,5 +65,6 @@ class CategoryFormExtension extends AbstractTypeExtension
             );
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this->postSetDataListener, 'onPostSetData']);
+        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this->postSubmitListener, 'onPostSubmit']);
     }
 }
