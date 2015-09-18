@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -56,6 +57,40 @@ class QuoteProductOfferTypeTest extends AbstractTest
     public function testGetName()
     {
         $this->assertEquals('orob2b_sale_quote_product_offer', $this->formType->getName());
+    }
+
+    /**
+     * @param QuoteProductOffer $inputData
+     * @param array $expectedData
+     *
+     * @dataProvider postSetDataProvider
+     */
+    public function testPostSetData(QuoteProductOffer $inputData, array $expectedData = [])
+    {
+        $form = $this->factory->create($this->formType, $inputData);
+
+        $this->assertEquals($expectedData['priceType'], $form->get('priceType')->getData());
+    }
+
+    /**
+     * @return array
+     */
+    public function postSetDataProvider()
+    {
+        return [
+            'empty priceType' => [
+                'input' => new QuoteProductOffer(),
+                'expected' => [
+                    'priceType' => QuoteProductOffer::PRICE_TYPE_UNIT,
+                ],
+            ],
+            'existing priceType' => [
+                'input' => (new QuoteProductOffer())->setPriceType(QuoteProductOffer::PRICE_TYPE_BUNDLED),
+                'expected' => [
+                    'priceType' => QuoteProductOffer::PRICE_TYPE_BUNDLED,
+                ],
+            ],
+        ];
     }
 
     /**
