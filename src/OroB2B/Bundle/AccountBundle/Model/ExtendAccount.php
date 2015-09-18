@@ -16,7 +16,6 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
  */
 class ExtendAccount
 {
-
     /**
      * Constructor
      *
