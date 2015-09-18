@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 use Oro\Component\Testing\WebTestCase;
+
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
@@ -35,6 +36,7 @@ class OrderControllerTest extends WebTestCase
     {
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
+        $this->assertFalse($shoppingList->getLineItems()->isEmpty());
 
         $this->client->request(
             'GET',

@@ -32,6 +32,7 @@ class OrderControllerTest extends WebTestCase
     {
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
+        $this->assertFalse($shoppingList->getLineItems()->isEmpty());
 
         $this->client->request(
             'GET',
