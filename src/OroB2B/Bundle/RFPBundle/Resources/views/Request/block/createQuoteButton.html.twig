@@ -1,7 +1,9 @@
-{% set formCreateQuoteAction = path('orob2b_rfp_request_create_quote', { 'id': entity.id }) %}
-<form id="{{ formCreateQuote.vars.id }}" name="{{ formCreateQuote.vars.name }}" action="{{ formCreateQuoteAction }}" method="post">
-    {{ form_widget(formCreateQuote) }}
-    <button type="submit" class="no-hash" id="rfp_link_create_quote">
-        <i class="icon-edit hide-text"></i>{{ 'orob2b.rfp.btn.create_quote'|trans }}
-    </button>
-</form>
+{% if resource_granted('orob2b_rfp_request_create_quote') and not entity.status.isDraft %}
+    {% set formCreateQuoteAction = path('orob2b_rfp_request_create_quote', { 'id': entity.id }) %}
+    <form id="{{ formCreateQuote.vars.id }}" name="{{ formCreateQuote.vars.name }}" action="{{ formCreateQuoteAction }}" method="post">
+        {{ form_widget(formCreateQuote) }}
+        <button type="submit" class="no-hash" id="rfp_link_create_quote">
+            <i class="icon-edit hide-text"></i>{{ 'orob2b.rfp.btn.create_quote'|trans }}
+        </button>
+    </form>
+{% endif %}
