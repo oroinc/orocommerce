@@ -1,9 +1,12 @@
 {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 
 <div class="oro-tabs" id="categoryVisibilityTabs">
+
     <ul class="nav nav-tabs">
         <li class="active">
-            <a href="#categoryVisibility" data-toggle="tab">{{ 'orob2b.account.categoryvisibility.entity_label'|trans }}</a>
+            <a href="#categoryVisibility" data-toggle="tab">
+                {{ 'orob2b.account.categoryvisibility.entity_label'|trans }}
+            </a>
         </li>
         <li>
             <a href="#AccountCategoryVisibility" data-toggle="tab">
@@ -16,8 +19,8 @@
             </a>
         </li>
     </ul>
-    <div class="tab-content" id="containerAlias">
 
+    <div class="tab-content" id="containerAlias">
         <div class="tab-pane active" id="categoryVisibility"><br>
             {{ form_row(form.categoryVisibility) }}
         </div>
@@ -30,4 +33,5 @@
             {{ dataGrid.renderGrid('account-group-category-visibility-grid', {category_id: entity.id}) }}
         </div>
     </div>
+
 </div>
