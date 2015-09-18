@@ -23,8 +23,6 @@ datagrid:
                     left:
                         - { join: order1.paymentTerm, alias: paymentTerm }
         columns:
-            id:
-                label:         orob2b.order.id.label
             identifier:
                 label:         orob2b.order.identifier.label
             poNumber:
@@ -38,8 +36,6 @@ datagrid:
                 template:      OroB2BOrderBundle:Order:Datagrid/subtotal.html.twig
         sorters:
             columns:
-                id:
-                    data_name: order1.id
                 identifier:
                     data_name: order1.identifier
                 poNumber:
@@ -52,9 +48,6 @@ datagrid:
                 createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         filters:
             columns:
-                id:
-                    type:      string
-                    data_name: order1.id
                 identifier:
                     type:      string
                     data_name: order1.identifier

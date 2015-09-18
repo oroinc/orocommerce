@@ -22,7 +22,7 @@ class QuoteNotificationControllerTest extends WebTestCase
     {
         $this->markTestIncomplete('Skipped due to issue with DOMDocument https://bugs.php.net/bug.php?id=52012');
 
-        $this->initClient([], array_merge(static::generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
+        $this->initClient([], static::generateBasicAuthHeader());
 
         $this->loadFixtures(
             [

@@ -27,10 +27,7 @@ class RequestACLTest extends WebTestCase
     {
         $this->initClient(
             [],
-            array_merge(
-                $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW),
-                ['HTTP_X-CSRF-Header' => 1]
-            )
+            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
 
         $this->loadFixtures([
@@ -193,10 +190,7 @@ class RequestACLTest extends WebTestCase
         // Login first user
         $this->initClient(
             [],
-            array_merge(
-                $this->generateBasicAuthHeader($email, $password),
-                ['HTTP_X-CSRF-Header' => 1]
-            )
+            $this->generateBasicAuthHeader($email, $password)
         );
 
         $this->client->request('GET', $this->getUrl('_frontend'));
