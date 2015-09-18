@@ -204,7 +204,8 @@
     width: 870px;
 }
 
-.sale-quoteproduct-table-column-1 input, .sale-quoteproduct-table-column-1 .entity-create-or-select-container   {
+.sale-quoteproduct-table-column-1 input,
+.sale-quoteproduct-table-column-1 .entity-create-or-select-container {
     margin-bottom: 5px;
 }
 
