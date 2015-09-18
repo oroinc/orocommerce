@@ -65,6 +65,7 @@ class QuoteControllerTest extends WebTestCase
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save and Close')->form();
+        $form->remove('orob2b_sale_quote[quoteProducts][0]');
         $form['orob2b_sale_quote[owner]']      = $owner->getId();
         $form['orob2b_sale_quote[qid]']        = self::$qid;
         $form['orob2b_sale_quote[validUntil]'] = self::$validUntil;
@@ -122,6 +123,8 @@ class QuoteControllerTest extends WebTestCase
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save and Close')->form();
+        $form->remove('orob2b_sale_quote[quoteProducts][0]');
+
         $form['orob2b_sale_quote[owner]']      = $owner->getId();
         $form['orob2b_sale_quote[qid]']        = self::$qidUpdated;
         $form['orob2b_sale_quote[validUntil]'] = self::$validUntilUpdated;
@@ -221,6 +224,7 @@ class QuoteControllerTest extends WebTestCase
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save and Close')->form();
+        $form->remove('orob2b_sale_quote[quoteProducts][0]');
         foreach ($submittedData as $field => $value) {
             $form[QuoteType::NAME . $field] = $value;
         }
