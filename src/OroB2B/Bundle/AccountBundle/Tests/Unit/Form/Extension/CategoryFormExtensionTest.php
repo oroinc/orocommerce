@@ -48,60 +48,6 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
         $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
     }
 
-    /**
-     * @return array
-     */
-    protected function getExtensions()
-    {
-        /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject $doctrineHelper */
-        $doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->setConstructorArgs([$this->registry])
-            ->getMock();
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface $translator */
-        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
-
-        /** @var ValidatorInterface|\PHPUnit_Framework_MockObject_MockObject $validator */
-        $validator = $this->getMock('Symfony\Component\Validator\Validator\ValidatorInterface');
-        $validator->expects($this->any())
-            ->method('validate')
-            ->willReturn(new ConstraintViolationList());
-
-        $oroEnumSelect = new EnumSelectType([]);
-        $entityChangeSetType = new EntityChangesetType($doctrineHelper);
-        $oroIdentifierType = new EntityIdentifierType([]);
-        $localizedFallbackType = new LocalizedFallbackValueCollectionType($this->registry);
-        $localizedPropertyType = new LocalizedPropertyType();
-        $localeCollectionType = new LocaleCollectionType($this->registry);
-        $localeCollectionType->setLocaleClass(self::LOCALE_CLASS);
-        $localeFallbackValue = new FallbackValueType();
-        $localeFallBackProperty = new FallbackPropertyType($translator);
-        $categoryType = new CategoryType();
-
-        return [
-            new PreloadedExtension(
-                [
-                    $oroEnumSelect->getName()          => $oroEnumSelect,
-                    $entityChangeSetType->getName()    => $entityChangeSetType,
-                    $oroIdentifierType->getName()      => $oroIdentifierType,
-                    $localizedFallbackType->getName()  => $localizedFallbackType,
-                    $localizedPropertyType->getName()  => $localizedPropertyType,
-                    $localeCollectionType->getName()   => $localeCollectionType,
-                    $localeFallbackValue->getName()    => $localeFallbackValue,
-                    $localeFallBackProperty->getName() => $localeFallBackProperty,
-                    $categoryType->getName()           => $categoryType,
-                ],
-                [
-                    'form'             => [
-                        new FormTypeValidatorExtension($validator),
-                    ],
-                    CategoryType::NAME => [
-                        new CategoryFormExtension($this->registry),
-                    ]
-                ]
-            )
-        ];
-    }
 
     public function testBuildForm()
     {
