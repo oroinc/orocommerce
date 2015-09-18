@@ -10,6 +10,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductBySku;
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal;
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero;
 
 class ProductRowType extends AbstractType
 {
@@ -39,7 +40,7 @@ class ProductRowType extends AbstractType
                 [
                     'required' => false,
                     'label' => 'orob2b.product.quantity.label',
-                    'constraints' => [new Decimal()]
+                    'constraints' => [new Decimal(), new GreaterThanZero()]
                 ]
             )
         ;
