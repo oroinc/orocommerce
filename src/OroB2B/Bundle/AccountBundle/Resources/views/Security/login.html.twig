@@ -1,15 +1,29 @@
 {% extends commerce.layout %}
 
+{% block head_style %}
+    {{ parent() }}
+
+    {% set login_styles = orob2b_login_css() %}
+    {% if login_styles %}
+    <style type="text/css">
+        {{ login_styles }}
+    </style>
+    {% endif %}
+{% endblock %}
+
 {% block header %}
 {% endblock %}
 
 {% block content %}
-<div class="container">
+{{ orob2b_login_top_content() }}
+{% set background_image = orob2b_login_background_image() %}
+<div class="container" {{ background_image ? 'style="background-image: url(\'' ~ asset(background_image) ~ '\')"'}}>
     <form id="login-form" action="{{ path('orob2b_account_account_user_security_check') }}" method="post" class="form-signin">
         <div class="title-box">
-            {% if oro_theme_logo() %}
-            <h1 class="oro-title logo-{{ oro_theme_logo() ? 'image' : 'text' }}">
-                <img src="{{ asset(oro_theme_logo()) }}">
+            {% set logo = orob2b_login_logo_image() %}
+            {% if logo %}
+            <h1 class="oro-title logo-image">
+                <img src="{{ asset(logo) }}">
             </h1>
             <span class="divider-vertical"></span>
             {% endif %}
@@ -62,4 +76,5 @@
         <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
     </form>
 </div>
+{{ orob2b_login_bottom_content() }}
 {% endblock %}
