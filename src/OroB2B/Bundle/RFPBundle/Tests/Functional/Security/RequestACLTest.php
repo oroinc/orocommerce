@@ -60,6 +60,7 @@ class RequestACLTest extends WebTestCase
 
         /** @var Form $form */
         $form = $crawler->selectButton('Submit')->form();
+        $form->remove('orob2b_rfp_frontend_request_type[requestProducts][0]');
         $form['orob2b_rfp_frontend_request_type[firstName]'] = LoadAccountUsersData::USER_NAME;
         $form['orob2b_rfp_frontend_request_type[lastName]']  = LoadAccountUsersData::USER_LAST_NAME;
         $form['orob2b_rfp_frontend_request_type[email]']     = LoadAccountUsersData::USER_EMAIL;
