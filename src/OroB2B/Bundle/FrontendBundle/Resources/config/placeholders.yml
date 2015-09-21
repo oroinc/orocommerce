@@ -3,8 +3,8 @@ placeholders:
         items:
             logo:
                 order: 100
-            logo_frontend:
-                order: 110
+            frontend_logo:
+                order: 100
 
     head_style:
         items:
@@ -13,11 +13,18 @@ placeholders:
             frontend_assets_css:
                 order: 100
 
+    scripts_after:
+        items:
+            window_bundle_js:
+                order: 200
+            frontend_window_bundle_js:
+                order: 200
+
 items:
     logo:
         template: OroB2BFrontendBundle:Organization:logo.html.twig
         applicable: @orob2b_frontend.placeholder.filter->isBackendRoute()
-    logo_frontend:
+    frontend_logo:
         template: OroB2BFrontendBundle:Organization:logo_frontend.html.twig
         applicable: @orob2b_frontend.placeholder.filter->isFrontendRoute()
     assets_css:
@@ -26,3 +33,15 @@ items:
     frontend_assets_css:
         template: OroB2BFrontendBundle:Assets:demo_css.html.twig
         applicable: @orob2b_frontend.placeholder.theme_filter->isDemoTheme()
+    window_bundle_js:
+        template: OroWindowsBundle:Include:javascript.html.twig
+        applicable: @orob2b_frontend.placeholder.filter->isBackendRoute()
+    frontend_window_bundle_js:
+        template: OroB2BFrontendBundle:Windows:javascript.html.twig
+        applicable: @orob2b_frontend.placeholder.filter->isFrontendRoute()
+    view_oro_activity_list:
+        applicable: @orob2b_frontend.activity_list.placeholder.filter->isApplicable($entity$, Oro\Bundle\ActivityBundle\EntityConfig\ActivityScope::VIEW_PAGE)
+        template: OroActivityListBundle:ActivityList:activities.html.twig
+    update_oro_activity_list:
+        applicable: @orob2b_frontend.activity_list.placeholder.filter->isApplicable($entity$, Oro\Bundle\ActivityBundle\EntityConfig\ActivityScope::UPDATE_PAGE)
+        template: OroActivityListBundle:ActivityList:activities.html.twig

@@ -32,9 +32,9 @@ oro_menu_config:
 
 oro_titles:
     orob2b_sale_quote_index: ~
-    orob2b_sale_quote_view:   '%%id%%'
-    orob2b_sale_quote_update: '%%id%% - oro.ui.edit'
+    orob2b_sale_quote_view:   'orob2b.sale.navigation.view'
+    orob2b_sale_quote_update: 'orob2b.sale.navigation.view - oro.ui.edit'
     orob2b_sale_quote_create: 'oro.ui.create_entity'
 
     orob2b_sale_quote_frontend_index: ~
-    orob2b_sale_quote_frontend_view:  '%%id%%'
+    orob2b_sale_quote_frontend_view:  'orob2b.sale.navigation.view'

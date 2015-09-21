@@ -155,6 +155,7 @@ class RequestControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_update', ['id' => $id]));
 
         $form = $crawler->selectButton('Save and Close')->form();
+        $form->remove('orob2b_rfp_request[requestProducts][0]');
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);

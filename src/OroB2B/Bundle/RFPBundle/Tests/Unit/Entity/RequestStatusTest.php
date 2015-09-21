@@ -76,4 +76,12 @@ class RequestStatusTest extends EntityTestCase
 
         $this->assertEquals($value, (string)$requestStatus);
     }
+
+    public function testIsDraft()
+    {
+        $requestStatus = new RequestStatus();
+        $requestStatus->setName(RequestStatus::DRAFT);
+
+        $this->assertTrue($requestStatus->isDraft());
+    }
 }

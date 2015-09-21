@@ -90,6 +90,7 @@ orob2b.account:
             password.reset.ttl_expired.message: The create password link has expired.
             confirmed.label: 'Confirmed'
             unconfirmed.label: 'Unconfirmed'
+            cancel.label: 'Cancel'
 
     accountuserrole:
         entity_label:                    'Account User Role'
@@ -209,6 +210,8 @@ orob2b.account:
 
         frontend_configuration_tab: Configuration
         frontend_account_user_roles.label: Roles
+
+        how_to_use_pinbar: 'Learn how to use this space'
 
     controller:
         account:

@@ -12,6 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
+use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\ProductBundle\Form\DataTransformer\ProductCollectionTransformer;
 
 class ProductRowCollectionType extends AbstractType
@@ -41,8 +42,8 @@ class ProductRowCollectionType extends AbstractType
 
             $form = $event->getForm();
             foreach ($products as $key => $product) {
-                if ($product[ProductRowType::PRODUCT_SKU_FIELD_NAME] === '' &&
-                    $product[ProductRowType::PRODUCT_QUANTITY_FIELD_NAME] === ''
+                if ($product[ProductDataStorage::PRODUCT_SKU_KEY] === '' &&
+                    $product[ProductDataStorage::PRODUCT_QUANTITY_KEY] === ''
                 ) {
                     // disable row validation
                     $rowFormConfig = $form->get($key)->getConfig();
@@ -51,9 +52,9 @@ class ProductRowCollectionType extends AbstractType
                     $formOptions['validation_groups'] = false;
                     $form->remove($key);
                     $form->add($key, $formType, $formOptions);
-                } elseif ($product[ProductRowType::PRODUCT_QUANTITY_FIELD_NAME] === '') {
+                } elseif ($product[ProductDataStorage::PRODUCT_QUANTITY_KEY] === '') {
                     // default quantity
-                    $products[$key][ProductRowType::PRODUCT_QUANTITY_FIELD_NAME] = '1';
+                    $products[$key][ProductDataStorage::PRODUCT_QUANTITY_KEY] = '1';
                 }
             }
             $event->setData($products);
