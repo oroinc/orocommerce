@@ -86,6 +86,8 @@ class QuoteProductToOrderType extends AbstractType
         /** @var QuoteProduct $quoteProduct */
         $quoteProduct = $options['data'];
 
+        $view->vars['quote_product'] = $quoteProduct;
+
         $offers = [];
         foreach ($quoteProduct->getQuoteProductOffers() as $offer) {
             $offers[$offer->getId()] = $offer;
@@ -119,7 +121,7 @@ class QuoteProductToOrderType extends AbstractType
         $choices = [];
 
         foreach ($quoteProduct->getQuoteProductOffers() as $offer) {
-            // only unit propositions are allowed
+            // only unit offers are allowed
             if ($offer->getPriceType() == QuoteProductOffer::PRICE_TYPE_UNIT) {
                 $label = $this->unitFormatter->formatShort(
                     $offer->getQuantity(),

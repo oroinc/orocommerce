@@ -29,20 +29,27 @@ class QuoteProductToOrderTransformer implements DataTransformerInterface
      */
     public function transform($value)
     {
-        if (!$value) {
-            return [];
-        }
+        $offerId = null;
+        $offerQuantity = null;
 
-        if (!$value instanceof QuoteProduct) {
-            throw new UnexpectedTypeException($value, 'QuoteProduct');
-        }
+        if ($value) {
+            if (!$value instanceof QuoteProduct) {
+                throw new UnexpectedTypeException($value, 'QuoteProduct');
+            }
 
-        /** @var QuoteProductOffer $offer */
-        $offer = $value->getQuoteProductOffers()->first();
+            $offers = $value->getQuoteProductOffers();
+            if ($offers->count() > 0) {
+                // first offer is a default value
+                /** @var QuoteProductOffer $offer */
+                $offer = $offers->first();
+                $offerId = $offer->getId();
+                $offerQuantity = $offer->getQuantity();
+            }
+        }
 
         return [
-            QuoteProductToOrderType::FIELD_OFFER => $offer->getId(),
-            QuoteProductToOrderType::FIELD_QUANTITY => $offer->getQuantity(),
+            QuoteProductToOrderType::FIELD_OFFER => $offerId,
+            QuoteProductToOrderType::FIELD_QUANTITY => $offerQuantity,
         ];
     }
 
@@ -51,21 +58,38 @@ class QuoteProductToOrderTransformer implements DataTransformerInterface
      */
     public function reverseTransform($value)
     {
-        if (!$value) {
-            return [];
-        }
-
-        $offerId = $value[QuoteProductToOrderType::FIELD_OFFER];
         $offerValue = null;
-        foreach ($this->quoteProduct->getQuoteProductOffers() as $offer) {
-            if ($offer->getId() == $offerId) {
-                $offerValue = $offer;
-                break;
+        $offerQuantity = null;
+
+        if ($value) {
+            if (!is_array($value)) {
+                throw new UnexpectedTypeException($value, 'array');
+            }
+
+            $offerId = $this->getOption($value, QuoteProductToOrderType::FIELD_OFFER);
+            $offerQuantity = $this->getOption($value, QuoteProductToOrderType::FIELD_QUANTITY);
+
+            foreach ($this->quoteProduct->getQuoteProductOffers() as $offer) {
+                if ($offer->getId() == $offerId) {
+                    $offerValue = $offer;
+                    break;
+                }
             }
         }
 
-        $value[QuoteProductToOrderType::FIELD_OFFER] = $offerValue;
+        return [
+            QuoteProductToOrderType::FIELD_OFFER => $offerValue,
+            QuoteProductToOrderType::FIELD_QUANTITY => $offerQuantity,
+        ];
+    }
 
-        return $value;
+    /**
+     * @param array $data
+     * @param string $option
+     * @return mixed
+     */
+    protected function getOption(array $data, $option)
+    {
+        return array_key_exists($option, $data) ? $data[$option] : null;
     }
 }
