@@ -84,6 +84,9 @@ class CategoryPostSetDataListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onPostSetData($event);
     }
 
+    /**
+     * @return array
+     */
     public function onPostSetDataWithoutCategoryDataProvider()
     {
         return [
@@ -113,6 +116,9 @@ class CategoryPostSetDataListenerTest extends \PHPUnit_Framework_TestCase
         $form->expects($this->once())->method('setData')->with(CategoryVisibility::HIDDEN);
     }
 
+    /**
+     * @param Category $category
+     */
     protected function setAccountCategoryVisibilityExpectations(Category $category)
     {
         $accountCategoryVisibility = $this->getAccountCategoryVisibility();
@@ -186,7 +192,7 @@ class CategoryPostSetDataListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|CategoryVisibility
+     * @return CategoryVisibility|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getCategoryVisibility()
     {
@@ -201,11 +207,11 @@ class CategoryPostSetDataListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|AccountCategoryVisibility
+     * @return AccountCategoryVisibility|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getAccountCategoryVisibility()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Account $account */
+        /** @var Account|\PHPUnit_Framework_MockObject_MockObject $account */
         $this->account = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\Account');
         $this->account->expects($this->once())
             ->method('getId')
@@ -225,7 +231,7 @@ class CategoryPostSetDataListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|AccountGroupCategoryVisibility
+     * @return AccountGroupCategoryVisibility|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getAccountGroupCategoryVisibility()
     {
