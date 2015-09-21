@@ -40,7 +40,7 @@ class PageControllerTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
+        $this->initClient([], $this->generateBasicAuthHeader());
         $this->entityManager = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BCMSBundle:Page');
     }
 
@@ -165,7 +165,13 @@ class PageControllerTest extends WebTestCase
         $page = $this->entityManager->find('OroB2BCMSBundle:Page', $id);
         $children = $page->getChildPages();
 
-        $this->client->request('DELETE', $this->getUrl('orob2b_api_cms_delete_page', ['id' => $id]));
+        $this->client->request(
+            'DELETE',
+            $this->getUrl('orob2b_api_cms_delete_page', ['id' => $id]),
+            [],
+            [],
+            $this->generateWsseAuthHeader()
+        );
 
         $result = $this->client->getResponse();
         $this->assertEmptyResponseStatusCodeEquals($result, 204);

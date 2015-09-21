@@ -14,12 +14,23 @@
 {% endblock pageHeader %}
 
 {% block navButtons %}
+    {% if resource_granted('orob2b_order_create') %}
+        <div class="btn-group">
+            {{ UI.link({
+                path: path('orob2b_shopping_list_create_order', {id: entity.id}),
+                label: 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.order.entity_label'|trans}),
+                class: 'btn',
+                iCss: 'icon-briefcase',
+            }) }}
+        </div>
+    {% endif %}
     {{ UI.clientButton({
         'dataUrl': path(
         'orob2b_shopping_list_line_item_create_widget', {
             shoppingListId: entity.id
         }),
         'aCss': 'no-hash btn',
+        'iCss': 'icon-plus',
         'label' : 'orob2b.shoppinglist.lineitem.add_line_item'|trans,
         'widget' : {
             'type' : 'dialog',
