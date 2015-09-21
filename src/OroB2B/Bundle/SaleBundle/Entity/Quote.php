@@ -492,20 +492,11 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
 
         foreach ($this->quoteProducts as $quoteProduct) {
             $items = $quoteProduct->getQuoteProductOffers();
+            /** @var QuoteProductOffer $firstItem */
+            $firstItem = $items->first();
 
-            if (count($items) > 1) {
+            if (count($items) > 1 || ($firstItem && $firstItem->getAllowIncrements())) {
                 $value = true;
-                break;
-            }
-
-            foreach ($items as $item) {
-                if ($item->getAllowIncrements()) {
-                    $value = true;
-                    break;
-                }
-            }
-
-            if ($value) {
                 break;
             }
         }
