@@ -83,7 +83,7 @@ class RequestController extends Controller
      *      id="orob2b_rfp_frontend_request_create",
      *      type="entity",
      *      class="OroB2BRFPBundle:Request",
-     *      permission="ACCOUNT_CREATE",
+     *      permission="CREATE",
      *      group_name="commerce"
      * )
      * @Route("/create", name="orob2b_rfp_frontend_request_create")

@@ -15,7 +15,6 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 class QuickAddController extends Controller
 {
     /**
-     * @AclAncestor("orob2b_product_frontend_view")
      * @Route("/", name="orob2b_product_frontend_quick_add")
      * @Template("OroB2BProductBundle:QuickAdd\Frontend:add.html.twig")
      *
