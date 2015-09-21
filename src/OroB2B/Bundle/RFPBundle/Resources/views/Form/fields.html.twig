@@ -2,9 +2,13 @@
     {{ block('orob2b_rfp_lineitem_collection_widget') }}
 {% endblock %}
 
+{% block orob2b_rfp_request_product_collection_widget %}
+    {{ block('orob2b_rfp_lineitem_collection_widget') }}
+{% endblock %}
+
 {% block orob2b_rfp_lineitem_collection_widget %}
     {% if prototype is defined %}
-        {% set prototype_html = _self.orob2b_rfp_frontend_request_lineitem_prototype(form) %}
+        {% set prototype_html = _self.orob2b_rfp_request_lineitem_prototype(form) %}
     {% endif %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
     {% set id = id ~ '_collection' %}
@@ -23,7 +27,7 @@
                 <tbody data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
                 {% if form.children|length %}
                     {% for child in form.children %}
-                        {{ _self.orob2b_rfp_frontend_request_lineitem_prototype(child) }}
+                        {{ _self.orob2b_rfp_request_lineitem_prototype(child) }}
                     {% endfor %}
                 {% elseif show_form_when_empty and prototype_html is defined %}
                     {{ prototype_html|replace({(prototype_name): '0'})|raw }}
@@ -35,7 +39,7 @@
     </div>
 {% endblock %}
 
-{% macro orob2b_rfp_frontend_request_lineitem_prototype(widget) %}
+{% macro orob2b_rfp_request_lineitem_prototype(widget) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
@@ -65,6 +69,10 @@
 {% endmacro %}
 
 {% block orob2b_rfp_frontend_request_product_widget %}
+    {{ block('orob2b_rfp_request_product_widget') }}
+{% endblock %}
+
+{% block orob2b_rfp_request_product_widget %}
     <td class="rfp-lineitem-product">
         {{ form_widget(form.product) }}
     </td>
@@ -78,13 +86,13 @@
     </td>
 {% endblock %}
 
-{#{% block orob2b_rfp_frontend_request_product_collection_row %}#}
-    {#{{ block('orob2b_rfp_request_product_collection_row') }}#}
-{#{% endblock %}#}
+{% block orob2b_rfp_request_frontend_product_item_collection_widget %}
+    {{ block('orob2b_rfp_request_product_item_collection_widget') }}
+{% endblock %}
 
 {% block orob2b_rfp_request_product_item_collection_widget %}
     {% if prototype is defined %}
-        {% set prototype_html = _self.orob2b_rfp_frontend_request_lineitem_requested_prototype(form) %}
+        {% set prototype_html = _self.orob2b_rfp_request_lineitem_requested_prototype(form) %}
     {% endif %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
     {% set id = id ~ '_collection' %}
@@ -102,7 +110,7 @@
                 <tbody class="rfp-lineitem-requested-items" data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %} data-content>
                 {% if form.children|length %}
                     {% for child in form.children %}
-                        {{ _self.orob2b_rfp_frontend_request_lineitem_requested_prototype(child) }}
+                        {{ _self.orob2b_rfp_request_lineitem_requested_prototype(child) }}
                     {% endfor %}
                 {% elseif show_form_when_empty and prototype_html is defined %}
                     {{ prototype_html|replace({(prototype_name): '0'})|raw }}
@@ -114,7 +122,7 @@
     </div>
 {% endblock %}
 
-{% macro orob2b_rfp_frontend_request_lineitem_requested_prototype(widget) %}
+{% macro orob2b_rfp_request_lineitem_requested_prototype(widget) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}

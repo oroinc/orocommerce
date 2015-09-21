@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\RFPBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
@@ -56,7 +58,18 @@ class RequestProductType extends AbstractType
             'data_class' => $this->dataClass,
             'intention'  => 'rfp_request_product',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
+            'page_component' => 'oroui/js/app/components/view-component',
+            'page_component_options' => ['view' => 'orob2brfp/js/app/views/line-item-view'],
         ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        $view->vars['page_component'] = $options['page_component'];
+        $view->vars['page_component_options'] = $options['page_component_options'];
     }
 
     /**
