@@ -6,6 +6,7 @@ define(function(require) {
     var $ = require('jquery');
     var mediator = require('oroui/js/mediator');
     var routing = require('routing');
+    var layout = require('oroui/js/layout');
     var tools = require('oroui/js/tools');
     var widgetManager = require('oroui/js/widget-manager');
     var BaseComponent = require('oroui/js/app/components/base/component');
@@ -64,6 +65,8 @@ define(function(require) {
             this.$container.find('.control-minimize').click(_.bind(this.minimize, this));
             this.$container.find('.control-maximize').click(_.bind(this.maximize, this));
 
+            this._fixSidebarHeight();
+
             this._maximizeOrMaximize(null);
         },
 
@@ -95,7 +98,7 @@ define(function(require) {
             );
             var self = this;
 
-            this._pushState(params);
+            this._pushState(_.omit(params, _.isNull));
 
             this._patchGridCollectionUrl(params);
 
@@ -176,6 +179,30 @@ define(function(require) {
             }
 
             this._pushState(params);
+        },
+
+        /**
+         * @private
+         */
+        _fixSidebarHeight: function() {
+            var $container = $('#container');
+            var $pageTitle = $('.page-title', $container);
+            var $productContainer = $('.product-container');
+            var $sidebar = $('.grid-sidebar', $container);
+
+            var fixHeight = function() {
+                $sidebar
+                    .height($productContainer.height())
+                    .css('min-height', $container.height() - $pageTitle.height() + 'px');
+            };
+
+            layout.onPageRendered(fixHeight);
+            $(window).on('resize', _.debounce(fixHeight, 50));
+            mediator.on('page:afterChange', fixHeight);
+            mediator.on('layout:adjustReloaded', fixHeight);
+            mediator.on('layout:adjustHeight', fixHeight);
+
+            fixHeight();
         },
 
         /**

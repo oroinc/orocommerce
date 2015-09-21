@@ -45,7 +45,8 @@ define(function(require) {
             }
 
             this.$tree.on('ready.jstree', _.bind(function() {
-                this.$tree.jstree('select_node', Number(options.defaultCategoryId));
+                this.selectedCategoryId = String(options.defaultCategoryId);
+                this.$tree.jstree('select_node', this.selectedCategoryId);
                 this.$tree.on('select_node.jstree', _.bind(this.onCategorySelect, this));
             }, this));
 
@@ -81,7 +82,12 @@ define(function(require) {
             if (this.initialization) {
                 return;
             }
-            this.selectedCategoryId = selected.node.id;
+            if (selected.node.id === this.selectedCategoryId) {
+                this.$tree.jstree('deselect_node', selected.node);
+                this.selectedCategoryId = null;
+            } else {
+                this.selectedCategoryId = selected.node.id;
+            }
             this.triggerSidebarChanged();
         },
 
