@@ -67,7 +67,7 @@ class AjaxLineItemController extends Controller
             $this->get('orob2b_shopping_list.shopping_list.manager')
         );
         $result = $this->get('oro_form.model.update_handler')
-            ->handleUpdate($lineItem, $form, null, null, null, $handler);
+            ->handleUpdate($lineItem, $form, [], [], null, $handler);
 
         if ($request->get('_wid')) {
             $result = $handler->updateSavedId($result);

@@ -20,7 +20,7 @@ class ProductController extends Controller
 {
     /**
      * @Configuration\Route(
-     *      "/add_product/{productId}",
+     *      "/add/{productId}",
      *      name="orob2b_shopping_list_product_shopping_list_form",
      *      requirements={"productId"="\d+"}
      * )
