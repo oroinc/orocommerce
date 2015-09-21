@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\RFPBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\OptionalPriceType as PriceType;
@@ -47,6 +49,17 @@ class RequestProductItemType extends AbstractType
                 'required' => true,
             ]);
         ;
+
+        // Set quantity to 1 by default
+        $builder->get('quantity')->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            function (FormEvent $event) {
+                $data = $event->getData();
+                if (!$data) {
+                    $event->setData(1);
+                }
+            }
+        );
     }
 
     /**

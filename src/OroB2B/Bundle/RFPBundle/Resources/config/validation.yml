@@ -34,7 +34,7 @@ OroB2B\Bundle\RFPBundle\Entity\RequestProduct:
             - NotBlank: ~
         product:
             - NotBlank:
-                message: 'orob2b.rfp.requestproduct.product.blank'
+                message: 'orob2b.rfp.requestproduct.message.product.blank'
         productSku:
             - NotBlank:
                 groups: [ Import ]
@@ -53,7 +53,8 @@ OroB2B\Bundle\RFPBundle\Entity\RequestProductItem:
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
         productUnit:
-            - NotBlank: ~
+            - NotBlank:
+                message: 'orob2b.rfp.requestproductitem.message.unit.blank'
         productUnitCode:
             - NotBlank:
                 groups: [ Import ]

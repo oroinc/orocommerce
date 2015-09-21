@@ -34,6 +34,8 @@ orob2b:
             request.label: 'Request'
             request_product_items.label: 'Request Product Lines'
             comment.label: 'Notes'
+            message:
+                product.blank: 'Please select a product'
 
         requestproductitem:
             item: '{units}, {price} per {unit}'
@@ -48,6 +50,8 @@ orob2b:
             price.label: 'Target Price'
             value.label: 'Price Value'
             currency.label: 'Price Currency'
+            message:
+                unit.blank: 'Unit of measurement cannot be empty'
 
         requeststatus:
             entity_label: 'RFQ Status'
