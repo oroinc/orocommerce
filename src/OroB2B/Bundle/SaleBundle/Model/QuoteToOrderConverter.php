@@ -7,6 +7,7 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductToOrderType;
 
 class QuoteToOrderConverter
 {
@@ -45,9 +46,11 @@ class QuoteToOrderConverter
         } else {
             foreach ($selectedOffers as $selectedOffer) {
                 /** @var QuoteProductOffer $offer */
-                $offer = $selectedOffer['offer'];
+                $offer = $selectedOffer[QuoteProductToOrderType::FIELD_OFFER];
 
-                $order->addLineItem($this->createOrderLineItem($offer, (float)$selectedOffer['quantity']));
+                $order->addLineItem(
+                    $this->createOrderLineItem($offer, (float)$selectedOffer[QuoteProductToOrderType::FIELD_QUANTITY])
+                );
             }
         }
 
