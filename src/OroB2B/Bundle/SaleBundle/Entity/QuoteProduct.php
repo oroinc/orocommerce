@@ -415,6 +415,21 @@ class QuoteProduct implements ProductHolderInterface
     }
 
     /**
+     * @param int $priceType
+     * @return bool
+     */
+    public function hasQuoteProductOfferByPriceType($priceType)
+    {
+        foreach ($this->quoteProductOffers as $offer) {
+            if ($offer->getPriceType() == $priceType) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Add quoteProductRequest
      *
      * @param QuoteProductRequest $quoteProductRequest
