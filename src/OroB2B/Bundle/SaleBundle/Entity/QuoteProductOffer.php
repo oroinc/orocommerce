@@ -105,7 +105,7 @@ class QuoteProductOffer extends BaseQuoteProductItem
      *
      * @return int
      */
-    public function getAllowIncrements()
+    public function isAllowIncrements()
     {
         return $this->allowIncrements;
     }

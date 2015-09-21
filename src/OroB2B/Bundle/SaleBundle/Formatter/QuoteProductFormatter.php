@@ -133,7 +133,7 @@ class QuoteProductFormatter
 
         $str = $this->translator->transChoice(
             $transConstant,
-            (int)$item->getAllowIncrements(),
+            (int)$item->isAllowIncrements(),
             [
                 '{units}'   => $this->formatProductUnit($item),
                 '{price}'   => $this->formatPrice($item),
