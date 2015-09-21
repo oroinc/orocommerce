@@ -10,6 +10,7 @@ define(function(require) {
     var tools = require('oroui/js/tools');
     var widgetManager = require('oroui/js/widget-manager');
     var BaseComponent = require('oroui/js/app/components/base/component');
+    var PageableCollection = require('orodatagrid/js/pageable-collection');
 
     GridSidebarComponent = BaseComponent.extend({
         /**
@@ -22,14 +23,6 @@ define(function(require) {
             widgetRoute: 'oro_datagrid_widget',
             widgetRouteParameters: {
                 gridName: ''
-            },
-            stateShortKeys: {
-                currentPage: 'i',
-                pageSize: 'p',
-                sorters: 's',
-                filters: 'f',
-                gridView: 'v',
-                urlParams: 'g'
             },
             gridParam: 'grid'
         },
@@ -124,6 +117,9 @@ define(function(require) {
             var collection = this.gridCollection;
             if (!_.isUndefined(collection)) {
                 var url = collection.url;
+                if (_.isUndefined(url)) {
+                    return;
+                }
                 var newParams = _.extend(
                     this._getQueryParamsFromUrl(url),
                     _.omit(params, this.options.gridParam)
@@ -224,7 +220,7 @@ define(function(require) {
                 return {};
             }
 
-            return this.decodeStateData(query);
+            return PageableCollection.decodeStateData(query);
         },
 
         /**
@@ -234,21 +230,6 @@ define(function(require) {
          */
         _urlParamsToString: function(params) {
             return $.param(params);
-        },
-
-        /**
-         * Decode state object from string, operation is invert for encodeStateData.
-         *
-         * @static
-         * @param {String} stateString
-         * @return {Object}
-         *
-         * @see orodatagrid/js/pageable-collection
-         */
-        decodeStateData: function(stateString) {
-            var data = tools.unpackFromQueryString(stateString);
-            data = tools.invertKeys(data, _.invert(this.options.stateShortKeys));
-            return data;
         },
 
         dispose: function() {
