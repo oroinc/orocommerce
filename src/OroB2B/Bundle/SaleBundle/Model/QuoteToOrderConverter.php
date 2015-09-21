@@ -31,7 +31,9 @@ class QuoteToOrderConverter
         $order = new Order();
         $order
             ->setAccount($quote->getAccount())
-            ->setAccountUser($quote->getAccountUser());
+            ->setAccountUser($quote->getAccountUser())
+            ->setOwner($quote->getOwner())
+            ->setOrganization($quote->getOrganization());
 
         if (!$selectedOffers) {
             foreach ($quote->getQuoteProducts() as $quoteProduct) {
@@ -41,9 +43,11 @@ class QuoteToOrderConverter
                 $order->addLineItem($this->createOrderLineItem($productOffer));
             }
         } else {
-            /** @var QuoteProductOffer $selectedOffer */
             foreach ($selectedOffers as $selectedOffer) {
-                $order->addLineItem($this->createOrderLineItem($selectedOffer));
+                /** @var QuoteProductOffer $offer */
+                $offer = $selectedOffer['offer'];
+
+                $order->addLineItem($this->createOrderLineItem($offer, (float)$selectedOffer['quantity']));
             }
         }
 
@@ -53,9 +57,10 @@ class QuoteToOrderConverter
 
     /**
      * @param QuoteProductOffer $quoteProductOffer
+     * @param int|null $quantity
      * @return OrderLineItem
      */
-    protected function createOrderLineItem(QuoteProductOffer $quoteProductOffer)
+    protected function createOrderLineItem(QuoteProductOffer $quoteProductOffer, $quantity = null)
     {
         $quoteProduct = $quoteProductOffer->getQuoteProduct();
 
@@ -69,7 +74,7 @@ class QuoteToOrderConverter
         $orderLineItem
             ->setProduct($product)
             ->setProductUnit($quoteProductOffer->getProductUnit())
-            ->setQuantity($quoteProductOffer->getQuantity())
+            ->setQuantity($quantity ?: $quoteProductOffer->getQuantity())
             ->setPriceType($quoteProductOffer->getPriceType())
             ->setPrice($quoteProductOffer->getPrice())
             ->setFromExternalSource(true);

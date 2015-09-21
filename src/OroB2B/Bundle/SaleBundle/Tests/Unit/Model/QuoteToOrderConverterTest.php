@@ -3,6 +3,8 @@
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Model;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -130,7 +132,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
 
         $offer = $this->createQuoteProductOffer(
             $unit,
-            $qty,
+            1000,
             QuoteProductOffer::PRICE_TYPE_UNIT,
             $price,
             self::CURRENCY
@@ -138,7 +140,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
 
         $this->createQuoteProduct($sku, true)->addQuoteProductOffer($offer);
 
-        $this->assertEquals($order, $this->converter->convert($quote, [$offer]));
+        $this->assertEquals($order, $this->converter->convert($quote, [['offer' => $offer, 'quantity' => $qty]]));
     }
 
     /**
@@ -156,8 +158,18 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
         $account = new Account();
         $account->setName($accountName)->addUser($accountUser);
 
+        $owner = new User();
+        $owner->setFirstName($userFirstName . ' owner')->setLastName($userLastName . ' owner')->setSalt(null);
+
+        $organization = new Organization();
+        $organization->setName($accountName . ' org');
+
         $entity = $isOrder ? new Order : new Quote();
-        $entity->setAccount($account)->setAccountUser($accountUser);
+        $entity
+            ->setAccount($account)
+            ->setAccountUser($accountUser)
+            ->setOwner($owner)
+            ->setOrganization($organization);
 
         return $entity;
     }
