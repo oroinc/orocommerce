@@ -4,7 +4,3 @@ orob2b:
             edit: Edit Notes
             add: Add Notes
             remove: Remove Notes
-
-        orderlineitem:
-            price_is_overridden.label: Price is overridden
-            reset_price.label: Reset price

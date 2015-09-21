@@ -5,6 +5,7 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
+    var routing = require('routing');
     var BaseComponent = require('oroui/js/app/components/base/component');
 
     ProductsPricesComponent = BaseComponent.extend({
@@ -13,10 +14,11 @@ define(function(require) {
          */
         options: {
             $priceList: null,
+            $currency: null,
             tierPrices: null,
-            tierPricesRoute: 'orob2b_pricing_price_by_pricelist',
+            tierPricesRoute: '',
             matchedPrices: {},
-            matchedPricesRoute: 'orob2b_pricing_matching_price'
+            matchedPricesRoute: ''
         },
 
         /**
@@ -28,8 +30,8 @@ define(function(require) {
             mediator.on('pricing:get:products-tier-prices', this.getProductsTierPrices, this);
             mediator.on('pricing:load:products-tier-prices', this.loadProductsTierPrices, this);
 
-            mediator.on('order:get:line-items-matched-prices', this.getLineItemsMatchedPrices, this);
-            mediator.on('order:load:line-items-matched-prices', this.loadLineItemsMatchedPrices, this);
+            mediator.on('pricing:get:line-items-matched-prices', this.getLineItemsMatchedPrices, this);
+            mediator.on('pricing:load:line-items-matched-prices', this.loadLineItemsMatchedPrices, this);
 
             if (this.options.$priceList) {
                 this.options.$priceList.change(_.bind(function() {
@@ -38,7 +40,7 @@ define(function(require) {
                     });
 
                     this.loadLineItemsMatchedPrices(this.getItems(), function(response) {
-                        mediator.trigger('order:refresh:line-items-matched-prices', response);
+                        mediator.trigger('pricing:refresh:line-items-matched-prices', response);
                     });
                 }, this));
             }
@@ -147,7 +149,11 @@ define(function(require) {
          * @private
          */
         _getCurrency: function() {
-            return this.options.currency;
+            if (_.isObject(this.options.$currency)) {
+                return this.options.$currency.val();
+            } else {
+                return this.options.$currency;
+            }
         },
 
         /**
@@ -155,7 +161,7 @@ define(function(require) {
          * @private
          */
         _getPriceList: function() {
-            return this.$priceList.length !== 0 ? this.$priceList.val() : '';
+            return this.options.$priceList.length !== 0 ? this.options.$priceList.val() : '';
         },
 
         /**
@@ -169,8 +175,8 @@ define(function(require) {
             mediator.off('pricing:get:products-tier-prices', this.getProductsTierPrices, this);
             mediator.off('pricing:load:products-tier-prices', this.loadProductsTierPrices, this);
 
-            mediator.off('order:get:line-items-matched-prices', this.getLineItemsMatchedPrices, this);
-            mediator.off('order:load:line-items-matched-prices', this.loadLineItemsMatchedPrices, this);
+            mediator.off('pricing:get:line-items-matched-prices', this.getLineItemsMatchedPrices, this);
+            mediator.off('pricing:load:line-items-matched-prices', this.loadLineItemsMatchedPrices, this);
 
             ProductsPricesComponent.__super__.dispose.call(this);
         }

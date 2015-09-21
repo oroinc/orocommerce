@@ -92,7 +92,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
             'currency' => $currency
         ];
 
-        $this->client->request('GET', $this->getUrl('orob2b_pricing_frontend_mathing_price', $params));
+        $this->client->request('GET', $this->getUrl('orob2b_pricing_frontend_matching_price', $params));
 
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);

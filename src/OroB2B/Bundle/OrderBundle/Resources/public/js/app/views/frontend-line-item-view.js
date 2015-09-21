@@ -67,7 +67,8 @@ define(function(require) {
                 $product: this.fieldsByName.product,
                 $priceValue: this.$priceValueText,
                 $productUnit: this.fieldsByName.productUnit,
-                $quantity: this.fieldsByName.quantity
+                $quantity: this.fieldsByName.quantity,
+                disabled: this.options.disabled
             }));
         },
 

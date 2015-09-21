@@ -7,3 +7,6 @@ orob2b:
             product_price:
                 per: '/'
         click_to_select: Click to select price per unit
+        product_prices:
+            price_is_overridden: Price is overridden
+            reset_price: Reset price

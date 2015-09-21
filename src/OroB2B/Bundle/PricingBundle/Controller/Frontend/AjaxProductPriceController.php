@@ -26,7 +26,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     }
 
     /**
-     * @Route("/get-matching-price", name="orob2b_pricing_frontend_mathing_price")
+     * @Route("/get-matching-price", name="orob2b_pricing_frontend_matching_price")
      * @Method({"GET"})
      *
      * {@inheritdoc}
@@ -35,7 +35,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     {
         $lineItems = $request->get('items', []);
         $currency = $request->get('currency');
-        
+
         $productUnitQuantities = $this->prepareProductUnitQuantities($lineItems);
 
         /** @var Price[] $matchedPrice */

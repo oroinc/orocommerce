@@ -39,13 +39,13 @@
         <% }) %>
     </table>
 </script>
-<script type="text/template" id="product-prices-matched-button-template">
-    {% set matchedPriceTooltip %}{% spaceless %}
-        <p><%= _.__('orob2b.order.orderlineitem.price_is_overridden.label') %></p>
-        <p><a href='javascript: void(0);'><%= _.__('orob2b.order.orderlineitem.reset_price.label') %></a></p>
+<script type="text/template" id="product-prices-price-overridden-template">
+    {% set priceOverriddenTooltip %}{% spaceless %}
+        <p><%= _.__('orob2b.pricing.product_prices.price_is_overridden') %></p>
+        <p><a href='javascript: void(0);'><%= _.__('orob2b.pricing.product_prices.reset_price') %></a></p>
     {% endspaceless %}{% endset %}
 
     <div class="order-line-item-price-overridden" style="display: none;">
-        <i class="icon-exclamation-sign" data-toggle="popover" data-placement="bottom" data-close="false" data-content="{{ matchedPriceTooltip }}"></i>
+        <i class="icon-exclamation-sign" data-toggle="popover" data-placement="bottom" data-close="false" data-content="{{ priceOverriddenTooltip }}"></i>
     </div>
 </script>
