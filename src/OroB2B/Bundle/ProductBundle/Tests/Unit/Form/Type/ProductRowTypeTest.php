@@ -8,6 +8,7 @@ use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
+use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductRowType;
 
 class ProductRowTypeTest extends FormIntegrationTestCase
@@ -120,40 +121,40 @@ class ProductRowTypeTest extends FormIntegrationTestCase
             'without default data' => [
                 'defaultData' => null,
                 'submittedData' => [
-                    ProductRowType::PRODUCT_SKU_FIELD_NAME => 'SKU_001',
-                    ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => '10'
+                    ProductDataStorage::PRODUCT_SKU_KEY => 'SKU_001',
+                    ProductDataStorage::PRODUCT_QUANTITY_KEY => '10'
                 ],
                 'expectedData' => [
-                    ProductRowType::PRODUCT_SKU_FIELD_NAME => 'SKU_001',
-                    ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => '10'
+                    ProductDataStorage::PRODUCT_SKU_KEY => 'SKU_001',
+                    ProductDataStorage::PRODUCT_QUANTITY_KEY => '10'
                 ]
             ],
             'with default data' => [
                 'defaultData' => [
-                    ProductRowType::PRODUCT_SKU_FIELD_NAME => 'SKU_001',
-                    ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => '10'
+                    ProductDataStorage::PRODUCT_SKU_KEY => 'SKU_001',
+                    ProductDataStorage::PRODUCT_QUANTITY_KEY => '10'
                 ],
                 'submittedData' => [
-                    ProductRowType::PRODUCT_SKU_FIELD_NAME => 'SKU_002',
-                    ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => '20'
+                    ProductDataStorage::PRODUCT_SKU_KEY => 'SKU_002',
+                    ProductDataStorage::PRODUCT_QUANTITY_KEY => '20'
                 ],
                 'expectedData' => [
-                    ProductRowType::PRODUCT_SKU_FIELD_NAME => 'SKU_002',
-                    ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => '20'
+                    ProductDataStorage::PRODUCT_SKU_KEY => 'SKU_002',
+                    ProductDataStorage::PRODUCT_QUANTITY_KEY => '20'
                 ]
             ],
             'with default data and validation' => [
                 'defaultData' => [
-                    ProductRowType::PRODUCT_SKU_FIELD_NAME => 'SKU_001',
-                    ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => '10'
+                    ProductDataStorage::PRODUCT_SKU_KEY => 'SKU_001',
+                    ProductDataStorage::PRODUCT_QUANTITY_KEY => '10'
                 ],
                 'submittedData' => [
-                    ProductRowType::PRODUCT_SKU_FIELD_NAME => 'SKU_002',
-                    ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => '20'
+                    ProductDataStorage::PRODUCT_SKU_KEY => 'SKU_002',
+                    ProductDataStorage::PRODUCT_QUANTITY_KEY => '20'
                 ],
                 'expectedData' => [
-                    ProductRowType::PRODUCT_SKU_FIELD_NAME => 'SKU_002',
-                    ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => '20'
+                    ProductDataStorage::PRODUCT_SKU_KEY => 'SKU_002',
+                    ProductDataStorage::PRODUCT_QUANTITY_KEY => '20'
                 ],
                 'options' => [
                     'validation_required' => true

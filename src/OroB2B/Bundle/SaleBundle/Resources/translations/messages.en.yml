@@ -7,7 +7,7 @@ orob2b:
             entity_plural_label: 'Quotes'
 
             id.label: 'Numeric ID'
-            qid.label: 'ID'
+            qid.label: 'Quote #'
             owner.label: 'Owner'
             organization.label: 'Organization'
             valid_until.label: 'Valid Until'
@@ -111,6 +111,11 @@ orob2b:
             add_seller_notes: 'Add Notes'
             remove_seller_notes: 'Remove Seller Notes'
             notify_and_lock: 'Notify and Lock'
+            send: 'Send'
+            cancel: 'Cancel'
+
+        navigation:
+            view: 'Quote #%id%'
 
     frontend:
         sale:
@@ -118,7 +123,7 @@ orob2b:
                 label: 'Sales'
             quote:
                 entity_plural_label: Quotes
-                qid.label: 'ID'
+                qid.label: 'Quote #'
                 account_user.label: 'Assigned To'
                 valid_until.label: 'Valid Until'
                 sections:
@@ -129,7 +134,7 @@ orob2b:
 
             quoteproduct:
                 comment.label: 'Seller Notes'
-                comment_account.label: 'Account Notes'
+                comment_account.label: 'Customer Notes'
                 product_replacement.label: 'Suggested Replacement:'
                 column:
                     product: 'Product'
@@ -140,6 +145,7 @@ orob2b:
                 quantity.label: 'Quantity'
                 price.label: 'Price'
                 column_summary: 'Summary'
+                allow_increments.label: 'or more'
 
             quoteproductrequest:
                 quantity.label: 'Requested Qty'

@@ -58,14 +58,14 @@ oro_menu_config:
 
 oro_titles:
     orob2b_rfp_request_index:           ~
-    orob2b_rfp_request_update:          '%%title%% - oro.ui.edit'
+    orob2b_rfp_request_update:          'RFQ #%%title%% - oro.ui.edit'
     orob2b_rfp_request_status_index:    ~
-    orob2b_rfp_request_view:            '%%title%%'
+    orob2b_rfp_request_view:            'RFQ #%%title%%'
     orob2b_rfp_request_status_create:   oro.ui.create_entity
     orob2b_rfp_request_status_view:     '%%title%%'
     orob2b_rfp_request_status_update:   '%%title%% - oro.ui.edit'
 
     orob2b_rfp_frontend_request_create: oro.ui.create_entity
-    orob2b_rfp_frontend_request_update: '%%title%% - oro.ui.edit'
+    orob2b_rfp_frontend_request_update: 'RFQ #%%title%% - oro.ui.edit'
     orob2b_rfp_frontend_request_index:  orob2b.frontend.rfp.request.entity_plural_label
-    orob2b_rfp_frontend_request_view:   '%%title%%'
+    orob2b_rfp_frontend_request_view:   'RFQ #%%title%%'

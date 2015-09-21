@@ -95,6 +95,7 @@ class DatagridListener
                 'field_options' => [
                     'class' => $this->paymentTermEntityClass,
                     'property' => 'label',
+                    'multiple' => true
                 ]
             ]
         ];
@@ -134,6 +135,7 @@ class DatagridListener
                 'field_options' => [
                     'class' => $this->paymentTermEntityClass,
                     'property' => 'label',
+                    'multiple' => true
                 ]
             ]
         ];

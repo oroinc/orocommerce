@@ -8,6 +8,7 @@ use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
+
 use OroB2B\Bundle\CMSBundle\Migrations\Schema\OroB2BCMSBundleInstaller;
 
 class OroB2BCMSBundle implements Migration, AttachmentExtensionAwareInterface
@@ -42,9 +43,9 @@ class OroB2BCMSBundle implements Migration, AttachmentExtensionAwareInterface
     {
         $table = $schema->createTable(OroB2BCMSBundleInstaller::CMS_LOGIN_PAGE_TABLE);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('top_content', 'text', []);
-        $table->addColumn('bottom_content', 'text', []);
-        $table->addColumn('css', 'text', []);
+        $table->addColumn('top_content', 'text', ['notnull' => false]);
+        $table->addColumn('bottom_content', 'text', ['notnull' => false]);
+        $table->addColumn('css', 'text', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
     }
 

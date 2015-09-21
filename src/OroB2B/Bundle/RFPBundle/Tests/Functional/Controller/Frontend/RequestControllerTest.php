@@ -40,10 +40,7 @@ class RequestControllerTest extends WebTestCase
     public function testIndex(array $inputData, array $expectedData)
     {
         $authParams = $inputData['login']
-            ? array_merge(
-                static::generateBasicAuthHeader($inputData['login'], $inputData['password']),
-                ['HTTP_X-CSRF-Header' => 1]
-            )
+            ? static::generateBasicAuthHeader($inputData['login'], $inputData['password'])
             : [];
         $this->initClient([], $authParams);
 
@@ -102,10 +99,7 @@ class RequestControllerTest extends WebTestCase
      */
     public function testView(array $inputData, array $expectedData)
     {
-        $this->initClient([], array_merge(
-            static::generateBasicAuthHeader($inputData['login'], $inputData['password']),
-            ['HTTP_X-CSRF-Header' => 1]
-        ));
+        $this->initClient([], static::generateBasicAuthHeader($inputData['login'], $inputData['password']));
 
         /* @var $request Request */
         $request = $this->getReference($inputData['request']);
@@ -303,7 +297,7 @@ class RequestControllerTest extends WebTestCase
 
         $this->assertEquals($expectedQuickAddLineItems, $this->getActualLineItems($crawler, 1));
 
-        $form = $crawler->selectButton('Save and Close')->form();
+        $form = $crawler->selectButton('Submit')->form();
         $form['orob2b_rfp_frontend_request_type[firstName]'] = 'Firstname';
         $form['orob2b_rfp_frontend_request_type[lastName]'] = 'Lastname';
         $form['orob2b_rfp_frontend_request_type[email]'] = 'email@example.com';

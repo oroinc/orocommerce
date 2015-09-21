@@ -41,6 +41,10 @@ orob2b.pricing:
         show_tier_prices.label: Show Tier Prices
         price_in_%currency%: 'Price (%currency%)'
 
+        action:
+            save: Save
+            cancel: Cancel
+
     menu:
         price_lists_tab.label: Price lists management
         price_lists_list.description: List of existing price lists

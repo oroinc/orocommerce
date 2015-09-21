@@ -8,7 +8,9 @@
         'entity': entity,
         'indexPath': path('orob2b_sale_quote_frontend_index'),
         'indexLabel': 'orob2b.frontend.sale.quote.entity_plural_label'|trans,
-        'entityTitle': entity.qid|default('N/A'|trans)
+        'entityTitle': 'orob2b.sale.navigation.view'|trans({
+            '%id%': entity.qid|default('N/A'|trans)
+        })
     } %}
     {{ parent() }}
 {% endblock pageHeader %}
@@ -34,87 +36,54 @@
         }) }}
     {% endset %}
     {% set quoteProducts %}
-        <div class="sale-quoteproducts-info control-group">
-            <table class="sale-quoteproduct-collection-table sale-quoteproduct-collection-table-view">
+        <div class="quote-line-items-info grid-container">
+            <table class="grid table table-bordered table-condensed quote-line-items">
                 <thead>
                     <tr>
-                        <th>{{ 'orob2b.frontend.sale.quoteproduct.column.product'|trans }}</th>
-                        <th>{{ 'orob2b.frontend.sale.quoteproduct.column.type'|trans }}</th>
-                        <th>{{ 'orob2b.frontend.sale.quoteproduct.column.quote_product_items'|trans }}</th>
+                        <th><span>{{ 'orob2b.product.sku.label'|trans }}</span></th>
+                        <th><span>{{ 'orob2b.frontend.sale.quoteproduct.column.product'|trans }}</span></th>
+                        <th class="quote-line_item-quantity"><span>{{ 'orob2b.frontend.sale.quoteproductoffer.quantity.label'|trans }}</span></th>
+                        <th class="quote-line_item-price"><span>{{ 'orob2b.frontend.sale.quoteproductoffer.price.label'|trans }}</span></th>
+                        <th><span>{{ 'orob2b.frontend.sale.quoteproduct.comment_account.label'|trans }}</span></th>
+                        <th><span>{{ 'orob2b.frontend.sale.quoteproduct.comment.label'|trans }}</span></th>
                     </tr>
                 </thead>
-                <tbody>
                 {% for quoteProduct in entity.quoteProducts %}
-                    <tr>
-                        <td>
-                            <div>
-                                {{ quoteProduct.productSku }}
-                            </div>
-                            {% if quoteProduct.isTypeNotAvailable %}
-                                <div>
-                                    <div>{{ 'orob2b.frontend.sale.quoteproduct.product_replacement.label'|trans }}</div>
-                                    {{ quoteProduct.productReplacementSku }}
-                                </div>
-                            {% endif %}
-                        </td>
-                        <td>
-                            {{ quoteProduct.type|orob2b_format_sale_quote_product_type }}
-                        </td>
-                        <td class="sale-quoteproductitems-info">
-                            {% if quoteProduct.quoteProductRequests|length and not quoteProduct.isTypeOffer %}
-                                <table>
-                                    <tr>
-                                        <th>{{ 'orob2b.frontend.sale.quoteproductrequest.quantity.label'|trans }}</th>
-                                        <th>{{ 'orob2b.frontend.sale.quoteproductrequest.price.label'|trans }}</th>
-                                        <th>{{ 'orob2b.frontend.sale.quoteproductrequest.column_summary'|trans }}</th>
-                                    </tr>
-                                    {% for quoteProductRequest in quoteProduct.quoteProductRequests %}
-                                        {% set quantity = quoteProductRequest.quantity %}
-                                        {% set price = quoteProductRequest.price %}
-                                        <tr>
-                                            <td>{{ quantity ? quantity|orob2b_format_product_unit_value(quoteProductRequest.productUnit) : 'N/A' }}</td>
-                                            <td>{{ price ? price|oro_format_price : 'N/A' }}</td>
-                                            <td>{{ quoteProductRequest|orob2b_format_sale_quote_product_request }}</td>
-                                        </tr>
-                                    {% endfor %}
-                                    {% if quoteProduct.commentAccount %}
-                                        <tr>
-                                            <td colspan="3">
-                                                {{ UI.renderProperty('orob2b.frontend.sale.quoteproduct.comment_account.label'|trans, quoteProduct.commentAccount) }}
-                                            </td>
-                                        </tr>
-                                    {% endif %}
-                                    </table>
-                            {% endif %}
-
-                            {% if quoteProduct.quoteProductOffers|length %}
-                                <table>
-                                    <tr>
-                                        <th>{{ 'orob2b.frontend.sale.quoteproductoffer.quantity.label'|trans }}</th>
-                                        <th>{{ 'orob2b.frontend.sale.quoteproductoffer.price.label'|trans }}</th>
-                                        <th>{{ 'orob2b.frontend.sale.quoteproductoffer.column_summary'|trans }}</th>
-                                    </tr>
-
-                                    {% for quoteProductOffer in quoteProduct.quoteProductOffers %}
-                                        <tr>
-                                            <td>{{ quoteProductOffer.quantity|orob2b_format_product_unit_value(quoteProductOffer.productUnit) }}</td>
-                                            <td>{{ quoteProductOffer.price|oro_format_price }}</td>
-                                            <td>{{ quoteProductOffer|orob2b_format_sale_quote_product_offer }}</td>
-                                        </tr>
-                                    {% endfor %}
-                                    {% if quoteProduct.comment %}
-                                        <tr>
-                                            <td colspan="3">
-                                                {{ UI.renderProperty('orob2b.frontend.sale.quoteproduct.comment.label'|trans, quoteProduct.comment) }}
-                                            </td>
-                                        </tr>
-                                    {% endif %}
-                                </table>
-                            {% endif %}
-                        </td>
-                    </tr>
+                    {% set numSubItems = quoteProduct.quoteProductOffers|length %}
+                    {% if numSubItems > 1 %}<tbody class="hasrs">{% else %}<tbody>{% endif %}
+                        {% for quoteProductOffer in quoteProduct.quoteProductOffers %}
+                            <tr>
+                                {% if loop.first %}
+                                    <td rowspan="{{ numSubItems }}">
+                                        {% if quoteProduct.isTypeNotAvailable %}
+                                            {{ quoteProduct.productReplacementSku }}
+                                        {% else %}
+                                            {{ quoteProduct.productSku }}
+                                        {% endif %}
+                                    </td>
+                                    <td rowspan="{{ numSubItems }}">
+                                        {% if quoteProduct.isTypeNotAvailable %}
+                                            {{ quoteProduct.productReplacement }}
+                                        {% else %}
+                                            {{ quoteProduct.product }}
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+                                <td class="quote-line_item-quantity quote-line_item-quantity-{% if loop.first %}first{% else %}not_first{% endif %}">
+                                    {{ quoteProductOffer.quantity|orob2b_format_short_product_unit_value(quoteProductOffer.productUnit) }}
+                                    {% if quoteProductOffer.allowIncrements %}{{ 'orob2b.frontend.sale.quoteproductoffer.allow_increments.label'|trans }}{% endif %}
+                                </td>
+                                <td class="quote-line_item-price quote-line_item-price-{% if loop.first %}first{% else %}not_first{% endif %}">
+                                    {{ quoteProductOffer.price|oro_format_price }}
+                                </td>
+                                {% if loop.first %}
+                                    <td rowspan="{{ numSubItems }}">{{ quoteProduct.commentAccount }}</td>
+                                    <td rowspan="{{ numSubItems }}">{{ quoteProduct.comment }}</td>
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
                 {% endfor %}
-                </tbody>
             </table>
         </div>
     {% endset %}

@@ -1,6 +1,9 @@
 {% extends 'OroB2BFrontendBundle:actions:update.html.twig' %}
 
-{% oro_title_set({params : {"%identifier%": entity.identifier|default('N/A'|trans)} }) %}
+{% oro_title_set({params : {
+    '%identifier%': entity.identifier|default('N/A'|trans),
+    '%entityName%': 'orob2b.order.entity_label'|trans
+} }) %}
 
 {% set formAction = entity.id ? path('orob2b_order_frontend_update', { 'id': entity.id }) : path('orob2b_order_frontend_create')  %}
 
