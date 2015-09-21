@@ -28,6 +28,7 @@ orob2b.cms:
     menu:
         marketing_tab.label: 'Marketing'
         page_list.description: 'List of landing pages'
+        loginpage_list.description: 'List of login pages'
         shortcut_page_list.description: 'Shows list of existing landing pages'
 
     sections:
@@ -36,3 +37,13 @@ orob2b.cms:
 
     template:
         select_existing_or_create_new: 'Please select a page on the left or create new one.'
+
+    loginpage:
+        entity_plural_label: 'Frontend Login Pages'
+        entity_label: 'Frontend Login Page'
+        entity.topContent.label: 'Top content'
+        entity.bottomContent.label: 'Bottom content'
+        entity.css.label: 'CSS styles'
+        entity.logoImage.label: 'Logo'
+        entity.backgroundImage.label: 'Background image'
+        save.message: 'Login form has been saved'
