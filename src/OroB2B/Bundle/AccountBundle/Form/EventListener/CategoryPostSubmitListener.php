@@ -5,9 +5,8 @@ namespace OroB2B\Bundle\AccountBundle\Form\EventListener;
 use Symfony\Component\Form\FormEvent;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Util\ClassUtils;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
 
@@ -26,19 +25,19 @@ class CategoryPostSubmitListener
     const ACCOUNT_CATEGORY_VISIBILITY = 'acc_ctgry_visibility';
     const ACCOUNT_GROUP_CATEGORY_VISIBILITY = 'acc_grp_ctgry_vsblity';
 
-    /** @var DoctrineHelper */
-    protected $doctrineHelper;
+    /** @var ManagerRegistry */
+    protected $registry;
 
     /** @var EnumValueProvider */
     protected $enumValueProvider;
 
     /**
-     * @param DoctrineHelper $doctrineHelper
+     * @param ManagerRegistry $registry
      * @param EnumValueProvider $enumValueProvider
      */
-    public function __construct(DoctrineHelper $doctrineHelper, EnumValueProvider $enumValueProvider)
+    public function __construct(ManagerRegistry $registry, EnumValueProvider $enumValueProvider)
     {
-        $this->doctrineHelper = $doctrineHelper;
+        $this->registry = $registry;
         $this->enumValueProvider = $enumValueProvider;
     }
 
@@ -47,7 +46,7 @@ class CategoryPostSubmitListener
      */
     protected function getEntityManager()
     {
-        return $this->doctrineHelper->getEntityManager('OroB2B\Bundle\CatalogBundle\Entity\Category');
+        return $this->registry->getManagerForClass('OroB2B\Bundle\CatalogBundle\Entity\Category');
     }
 
     /**
@@ -91,8 +90,8 @@ class CategoryPostSubmitListener
     protected function processCategoryVisibility(Category $category, AbstractEnumValue $visibilityEnum)
     {
         $categoryVisibility = $this
-            ->doctrineHelper
-            ->getEntityRepository('OroB2BAccountBundle:CategoryVisibility')
+            ->registry
+            ->getRepository('OroB2BAccountBundle:CategoryVisibility')
             ->findOneBy(['category' => $category]);
 
         if (!$categoryVisibility) {
@@ -194,8 +193,8 @@ class CategoryPostSubmitListener
 
         /** @var AccountCategoryVisibilityRepository $repo */
         $repo = $this
-            ->doctrineHelper
-            ->getEntityRepository('OroB2BAccountBundle:AccountCategoryVisibility');
+            ->registry
+            ->getRepository('OroB2BAccountBundle:AccountCategoryVisibility');
 
         $visibilities = new ArrayCollection();
         $repo
@@ -227,8 +226,8 @@ class CategoryPostSubmitListener
 
         /** @var AccountGroupCategoryVisibilityRepository $repo */
         $repo = $this
-            ->doctrineHelper
-            ->getEntityRepository('OroB2BAccountBundle:AccountGroupCategoryVisibility');
+            ->registry
+            ->getRepository('OroB2BAccountBundle:AccountGroupCategoryVisibility');
 
         $visibilities = new ArrayCollection();
         $repo

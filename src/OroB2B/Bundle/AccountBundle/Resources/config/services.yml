@@ -49,7 +49,6 @@ parameters:
     orob2b_account.event_listener.form_view.class: OroB2B\Bundle\AccountBundle\EventListener\FormViewListener
     orob2b_account.event_listener.category_visibility_grid_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryVisibilityGridListener
     orob2b_account.event_listener.system_config.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigListener
-    orob2b_account.event_subscriber.category_edit.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryEditSubscriber
 
     orob2b_account.acl.group_provider.class: OroB2B\Bundle\AccountBundle\Acl\Group\AclGroupProvider
     orob2b_account.account_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager

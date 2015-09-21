@@ -21,6 +21,7 @@ parameters:
     orob2b_account.form.handler.account_user_role.class: OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleHandler
 
     orob2b_account.form.listener.category.post_set_data.class: OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSetDataListener
+    orob2b_account.form.listener.category.post_submit.class: OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSubmitListener
 
     orob2b_account.form.type.account_user_typed_address.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserTypedAddressType
     orob2b_account.form.type.typed_address.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountTypedAddressType
@@ -187,10 +188,17 @@ services:
         arguments:
             - @doctrine
 
+    orob2b_account.form.listener.category.post_submit:
+        class: %orob2b_account.form.listener.category.post_submit.class%
+        arguments:
+            - @doctrine
+            - @oro_entity_extend.enum_value_provider
+
     orob2b_account.form.extension.category_type:
         class: %orob2b_account.form.extension.category_type.class%
         arguments:
             - @orob2b_account.form.listener.category.post_set_data
+            - @orob2b_account.form.listener.category.post_submit
         tags:
             - { name: form.type_extension, alias: orob2b_catalog_category }
 

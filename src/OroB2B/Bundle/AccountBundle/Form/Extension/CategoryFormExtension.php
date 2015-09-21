@@ -9,6 +9,7 @@ use Symfony\Component\Form\FormEvents;
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 
 use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSetDataListener;
+use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSubmitListener;
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
 
 class CategoryFormExtension extends AbstractTypeExtension
@@ -16,9 +17,19 @@ class CategoryFormExtension extends AbstractTypeExtension
     /** @var CategoryPostSetDataListener */
     protected $postSetDataListener;
 
-    public function __construct(CategoryPostSetDataListener $postSetDataListener)
-    {
+    /** @var CategoryPostSubmitListener */
+    protected $postSubmitListener;
+
+    /**
+     * @param CategoryPostSetDataListener $postSetDataListener
+     * @param CategoryPostSubmitListener $postSubmitListener
+     */
+    public function __construct(
+        CategoryPostSetDataListener $postSetDataListener,
+        CategoryPostSubmitListener $postSubmitListener
+    ) {
         $this->postSetDataListener = $postSetDataListener;
+        $this->postSubmitListener = $postSubmitListener;
     }
 
     /**

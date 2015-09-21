@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\src\OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
+namespace OroB2B\src\OroB2B\Bundle\AccountBundle\Tests\Unit\Form\EventListener;
 
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormEvent;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
 
@@ -17,59 +17,49 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroupCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility;
-use OroB2B\Bundle\AccountBundle\EventListener\CategoryEditSubscriber;
+use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSubmitListener;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Event\CategoryEditEvent;
 
-class CategoryEditSubscriberTest extends \PHPUnit_Framework_TestCase
+class CategoryPostSubmitListenerTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var  CategoryEditSubscriber */
-    protected $categoryEditSubscriber;
+    /** @var  CategoryPostSubmitListener */
+    protected $listener;
 
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject doctrineHelper */
-    protected $doctrineHelper;
+    /** @var \Doctrine\Common\Persistence\ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject doctrineHelper */
+    protected $registry;
 
     /** @var EnumValueProvider|\PHPUnit_Framework_MockObject_MockObject enumValueProvider */
     protected $enumValueProvider;
 
     public function setUp()
     {
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
+        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->enumValueProvider = $this->getMockBuilder('Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->enumValueProvider = $this->getMockBuilder('Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider')
-            ->setConstructorArgs([$this->doctrineHelper])
-            ->getMock();
 
-        $this->categoryEditSubscriber = new CategoryEditSubscriber($this->doctrineHelper, $this->enumValueProvider);
+        $this->form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $this->listener = new CategoryPostSubmitListener($this->registry, $this->enumValueProvider);
     }
 
-    public function testGetSubscribedEvents()
-    {
-        $subscribedEvents = CategoryEditSubscriber::getSubscribedEvents();
-        $expectedEvents = [CategoryEditEvent::NAME];
-
-        $this->assertEquals(array_keys($subscribedEvents), $expectedEvents);
-    }
-
-    public function testOnCategoryEdit()
+    public function testOnPostSubmit()
     {
         $event = $this->getEventMock();
 
         $category = new Category();
         $event->expects($this->once())
-            ->method('getCategory')
+            ->method('getData')
             ->willReturn($category);
 
         $this->prepareProcessCategoryVisibility($category);
         $this->prepareProcessAccountVisibility();
         $this->prepareProcessAccountGroupVisibility();
 
-        $this->categoryEditSubscriber->onCategoryEdit($event);
+        $this->listener->onPostSubmit($event);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|CategoryEditEvent
+     * @return \PHPUnit_Framework_MockObject_MockObject|FormEvent
      */
     protected function getEventMock()
     {
@@ -94,13 +84,17 @@ class CategoryEditSubscriberTest extends \PHPUnit_Framework_TestCase
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->exactly(3))
             ->method('get')
-            ->willReturnMap([
-                ['categoryVisibility', $categoryFormMock],
-                ['visibilityForAccount', $visibilityForAccountFormMock],
-                ['visibilityForAccountGroup', $visibilityForAccountGroupFormMock],
-            ]);
+            ->willReturnMap(
+                [
+                    ['categoryVisibility', $categoryFormMock],
+                    ['visibilityForAccount', $visibilityForAccountFormMock],
+                    ['visibilityForAccountGroup', $visibilityForAccountGroupFormMock],
+                ]
+            );
 
-        $event = $this->getMock('OroB2B\Bundle\CatalogBundle\Event\CategoryEditEvent');
+        $event = $this->getMockBuilder('\Symfony\Component\Form\FormEvent')
+            ->disableOriginalConstructor()
+            ->getMock();
         $event->expects($this->once())
             ->method('getForm')
             ->willReturn($form);
@@ -139,7 +133,7 @@ class CategoryEditSubscriberTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         /** @var CategoryVisibility|\PHPUnit_Framework_MockObject_MockObject $categoryVisibility */
-        $categoryVisibility  = $this
+        $categoryVisibility = $this
             ->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility')
             ->setMethods(['setVisibility'])
             ->getMock();
@@ -157,22 +151,23 @@ class CategoryEditSubscriberTest extends \PHPUnit_Framework_TestCase
             ->with(['category' => $category])
             ->willReturn($categoryVisibility);
 
-        $em = $this->getEntityManagerMock($categoryVisibility, false);
-
-        $this->doctrineHelper->expects($this->at(1))
-            ->method('getEntityManager')
-            ->with($categoryVisibility)
-            ->willReturn($em);
-
-        $this->doctrineHelper->expects($this->at(0))
-            ->method('getEntityRepository')
-            ->with('OroB2BAccountBundle:CategoryVisibility')
+        $this->registry->expects($this->once())
+            ->method('getRepository')
+//            ->with('OroB2BAccountBundle:CategoryVisibility')
             ->willReturn($repo);
 
-        $this->enumValueProvider->expects($this->at(0))
-            ->method('getEnumValueByCode')
-            ->with(CategoryEditSubscriber::CATEGORY_VISIBILITY, CategoryVisibility::VISIBLE)
-            ->willReturn($visibility);
+
+//        $em = $this->getEntityManagerMock($categoryVisibility, false);
+//
+//        $this->registry->expects($this->at(1))
+//            ->method('getManager')
+//            ->with($categoryVisibility)
+//            ->willReturn($em);
+//
+//        $this->enumValueProvider->expects($this->at(0))
+//            ->method('getEnumValueByCode')
+//            ->with(CategoryPostSubmitListener::CATEGORY_VISIBILITY, CategoryVisibility::VISIBLE)
+//            ->willReturn($visibility);
     }
 
     /**
@@ -187,19 +182,19 @@ class CategoryEditSubscriberTest extends \PHPUnit_Framework_TestCase
             [
                 'entity' => $this->getEntity($entityClassName, 1),
                 'data' => [
-                    'visibility' => constant($className . '::PARENT_CATEGORY')
+                    'visibility' => constant($className.'::PARENT_CATEGORY')
                 ]
             ],
             [
                 'entity' => $this->getEntity($entityClassName, 2),
                 'data' => [
-                    'visibility' => constant($className . '::PARENT_CATEGORY')
+                    'visibility' => constant($className.'::PARENT_CATEGORY')
                 ]
             ],
             [
                 'entity' => $this->getEntity($entityClassName, 3),
                 'data' => [
-                    'visibility' => constant($className . '::VISIBLE')
+                    'visibility' => constant($className.'::VISIBLE')
                 ]
             ]
         ];
@@ -224,23 +219,25 @@ class CategoryEditSubscriberTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $accountCategoryVisibilities = new ArrayCollection([
-            $this->getAccountCategoryVisibilityMock(
-                $visibility,
-                $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 1),
-                null
-            ),
-            $this->getAccountCategoryVisibilityMock(
-                $visibility,
-                $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2),
-                AccountCategoryVisibility::VISIBLE
-            ),
-            $this->getAccountCategoryVisibilityMock(
-                $visibility,
-                $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 3),
-                AccountCategoryVisibility::HIDDEN
-            )
-        ]);
+        $accountCategoryVisibilities = new ArrayCollection(
+            [
+                $this->getAccountCategoryVisibilityMock(
+                    $visibility,
+                    $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 1),
+                    null
+                ),
+                $this->getAccountCategoryVisibilityMock(
+                    $visibility,
+                    $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2),
+                    AccountCategoryVisibility::VISIBLE
+                ),
+                $this->getAccountCategoryVisibilityMock(
+                    $visibility,
+                    $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 3),
+                    AccountCategoryVisibility::HIDDEN
+                )
+            ]
+        );
 
         /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject $repo */
         $repo = $this
@@ -251,20 +248,20 @@ class CategoryEditSubscriberTest extends \PHPUnit_Framework_TestCase
             ->method('findForAccounts')
             ->willReturn($accountCategoryVisibilities);
 
-        $this->doctrineHelper->expects($this->at(2))
-            ->method('getEntityRepository')
+        $this->registry->expects($this->at(2))
+            ->method('getRepository')
             ->with('OroB2BAccountBundle:AccountCategoryVisibility')
             ->willReturn($repo);
 
         $em = $this->getEntityManagerMock($accountCategoryVisibilities->offsetGet(0));
-        $this->doctrineHelper->expects($this->at(3))
-            ->method('getEntityManager')
+        $this->registry->expects($this->at(3))
+            ->method('getManager')
             ->with($accountCategoryVisibilities->offsetGet(0))
             ->willReturn($em);
 
         $this->enumValueProvider->expects($this->at(1))
             ->method('getEnumValueByCode')
-            ->with(CategoryEditSubscriber::ACCOUNT_CATEGORY_VISIBILITY, AccountCategoryVisibility::VISIBLE)
+            ->with(CategoryPostSubmitListener::ACCOUNT_CATEGORY_VISIBILITY, AccountCategoryVisibility::VISIBLE)
             ->willReturn($visibility);
     }
 
@@ -278,23 +275,25 @@ class CategoryEditSubscriberTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $accountGroupCategoryVisibilities = new ArrayCollection([
-            $this->getAccountGroupCategoryVisibilityMock(
-                $visibility,
-                $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 1),
-                null
-            ),
-            $this->getAccountGroupCategoryVisibilityMock(
-                $visibility,
-                $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 2),
-                AccountCategoryVisibility::VISIBLE
-            ),
-            $this->getAccountGroupCategoryVisibilityMock(
-                $visibility,
-                $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 3),
-                AccountCategoryVisibility::HIDDEN
-            )
-        ]);
+        $accountGroupCategoryVisibilities = new ArrayCollection(
+            [
+                $this->getAccountGroupCategoryVisibilityMock(
+                    $visibility,
+                    $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 1),
+                    null
+                ),
+                $this->getAccountGroupCategoryVisibilityMock(
+                    $visibility,
+                    $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 2),
+                    AccountCategoryVisibility::VISIBLE
+                ),
+                $this->getAccountGroupCategoryVisibilityMock(
+                    $visibility,
+                    $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 3),
+                    AccountCategoryVisibility::HIDDEN
+                )
+            ]
+        );
 
         /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject $repo */
         $repo = $this
@@ -305,26 +304,29 @@ class CategoryEditSubscriberTest extends \PHPUnit_Framework_TestCase
             ->method('findForAccountGroups')
             ->willReturn($accountGroupCategoryVisibilities);
 
-        $this->doctrineHelper->expects($this->at(4))
-            ->method('getEntityRepository')
+        $this->registry->expects($this->at(4))
+            ->method('getRepository')
             ->with('OroB2BAccountBundle:AccountGroupCategoryVisibility')
             ->willReturn($repo);
 
         $em = $this->getEntityManagerMock($accountGroupCategoryVisibilities->offsetGet(0));
-        $this->doctrineHelper->expects($this->at(5))
-            ->method('getEntityManager')
+        $this->registry->expects($this->at(5))
+            ->method('getManager')
             ->with($accountGroupCategoryVisibilities->offsetGet(0))
             ->willReturn($em);
 
         $this->enumValueProvider->expects($this->at(2))
             ->method('getEnumValueByCode')
-            ->with(CategoryEditSubscriber::ACCOUNT_GROUP_CATEGORY_VISIBILITY, AccountGroupCategoryVisibility::VISIBLE)
+            ->with(
+                CategoryPostSubmitListener::ACCOUNT_GROUP_CATEGORY_VISIBILITY,
+                AccountGroupCategoryVisibility::VISIBLE
+            )
             ->willReturn($visibility);
     }
 
     /**
      * @param AbstractEnumValue|\PHPUnit_Framework_MockObject_MockObject $visibility $visibility
-     * @param Account|\PHPUnit_Framework_MockObject_MockObject|object $account$account
+     * @param Account|\PHPUnit_Framework_MockObject_MockObject|object $account $account
      * @param string $visibilityValue
      *
      * @return AccountCategoryVisibility|\PHPUnit_Framework_MockObject_MockObject
@@ -351,7 +353,7 @@ class CategoryEditSubscriberTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param AbstractEnumValue|\PHPUnit_Framework_MockObject_MockObject $visibility $visibility
-     * @param AccountGroup|\PHPUnit_Framework_MockObject_MockObject|object $account$account
+     * @param AccountGroup|\PHPUnit_Framework_MockObject_MockObject|object $account $account
      * @param string $visibilityValue
      *
      * @return AccountCategoryVisibility|\PHPUnit_Framework_MockObject_MockObject
@@ -406,7 +408,7 @@ class CategoryEditSubscriberTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param string $className
-     * @param int    $id
+     * @param int $id
      *
      * @return object
      */
