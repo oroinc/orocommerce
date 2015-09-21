@@ -15,6 +15,7 @@ use OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
 use OroB2B\Bundle\SaleBundle\Form\DataTransformer\QuoteProductToOrderTransformer;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
+use OroB2B\Bundle\SaleBundle\Validator\Constraints\ConfigurableQuoteProductOffer;
 
 class QuoteProductToOrderType extends AbstractType
 {
@@ -74,7 +75,12 @@ class QuoteProductToOrderType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired(['data']);
-        $resolver->setDefaults(['data_class' => null]);
+        $resolver->setDefaults(
+            [
+                'data_class' => null,
+                'constraints' => new ConfigurableQuoteProductOffer(),
+            ]
+        );
     }
 
     /**
@@ -123,9 +129,9 @@ class QuoteProductToOrderType extends AbstractType
                 $offer->getProductUnit()
             );
             if ($offer->isAllowIncrements()) {
-                $label .= ' ' . $this->translator->trans(
-                    'orob2b.frontend.sale.quoteproductoffer.allow_increments.label'
-                );
+                $label .= ' '.$this->translator->trans(
+                        'orob2b.frontend.sale.quoteproductoffer.allow_increments.label'
+                    );
             }
 
             $offerId = $offer->getId();
