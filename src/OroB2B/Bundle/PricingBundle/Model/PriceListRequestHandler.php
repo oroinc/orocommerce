@@ -68,6 +68,10 @@ class PriceListRequestHandler extends AbstractPriceListRequestHandler
      */
     public function getPriceListId()
     {
+        if (!$this->request) {
+            return false;
+        }
+
         $value = $this->request->get(self::PRICE_LIST_KEY);
 
         if (is_bool($value)) {
