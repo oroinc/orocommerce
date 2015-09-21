@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Form\Handler;
+namespace OroB2B\Bundle\SaleBundle\Form\Handler;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\DBAL\DBALException;
@@ -16,7 +16,7 @@ use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 
-class RequestCreateQuoteHandler
+class CreateQuoteFromRfpHandler
 {
     /**
      * @var FormInterface

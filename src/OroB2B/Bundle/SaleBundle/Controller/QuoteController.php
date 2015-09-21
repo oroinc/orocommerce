@@ -3,7 +3,14 @@
 namespace OroB2B\Bundle\SaleBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Translation\TranslatorInterface;
+
+use Psr\Log\LoggerInterface;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -12,7 +19,10 @@ use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
+use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
+
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use OroB2B\Bundle\SaleBundle\Form\Handler\CreateQuoteFromRfpHandler;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
 
 class QuoteController extends Controller
@@ -64,6 +74,38 @@ class QuoteController extends Controller
     public function createAction()
     {
         return $this->update(new Quote());
+    }
+
+    /**
+     * @Route("/create_from_rfp_form/{id}", name="orob2b_sale_quote_createfromrfpform", requirements={"id"="\d+"})
+     * @Template("OroB2BSaleBundle:Quote:block/createFromRfpForm.html.twig")
+     *
+     * @AclAncestor("orob2b_sale_quote_create")
+     *
+     * @param RFPRequest $rfpRequest
+     * @return array
+     */
+    public function createFromRfpFormAction(RFPRequest $rfpRequest)
+    {
+        return [
+            'entity' => $rfpRequest,
+            'formCreateQuote' => $this->getCreateFromRfpForm($rfpRequest)->createView(),
+        ];
+    }
+
+    /**
+     * @Route("/create_from_rfp/{id}", name="orob2b_sale_quote_createfromrfp", requirements={"id"="\d+"})
+     * @Template("OroB2BRFPBundle:Request:view.html.twig")
+     *
+     * @AclAncestor("orob2b_sale_quote_create")
+     *
+     * @param Request $request
+     * @param RFPRequest $rfpRequest
+     * @return array
+     */
+    public function createFromRfpAction(Request $request, RFPRequest $rfpRequest)
+    {
+        return $this->createFromRfp($request, $rfpRequest);
     }
 
     /**
@@ -125,5 +167,84 @@ class QuoteController extends Controller
             },
             $this->get('translator')->trans('orob2b.sale.controller.quote.saved.message')
         );
+    }
+
+    /**
+     * @param Request $request
+     * @param RFPRequest $rfpRequest
+     * @return array|RedirectResponse
+     */
+    protected function createFromRfp(Request $request, RFPRequest $rfpRequest)
+    {
+        $form = $this->getCreateFromRfpForm($rfpRequest);
+        $handler = new CreateQuoteFromRfpHandler(
+            $form,
+            $request,
+            $this->getDoctrine()->getManagerForClass('OroB2BSaleBundle:Quote'),
+            $this->getUser()
+        );
+
+        return $this->get('oro_form.model.update_handler')
+            ->handleUpdate(
+                $rfpRequest,
+                $form,
+                function (RFPRequest $request) {
+                    return [
+                        'route' => 'orob2b_rfp_request_view',
+                        'parameters' => ['id' => $request->getId()],
+                    ];
+                },
+                function () use ($handler) {
+                    return [
+                        'route' => 'orob2b_sale_quote_update',
+                        'parameters' => ['id' => $handler->getQuote()->getId()],
+                    ];
+                },
+                $this->getTranslator()->trans('orob2b.sale.message.quote.create_from_rfp.success'),
+                $handler,
+                function (RFPRequest $entity, FormInterface $form) use ($handler) {
+                    /* @var $session Session */
+                    $session = $this->get('session');
+                    $session->getFlashBag()->add(
+                        'error',
+                        $this->getTranslator()->trans('orob2b.sale.message.quote.create_from_rfp.error')
+                    );
+
+                    if ($handler->getException()) {
+                        $this->getLogger()->error($handler->getException());
+                    }
+
+                    return [
+                        'entity' => $entity,
+                        'formCreateQuote' => $form->createView(),
+                    ];
+                }
+            )
+        ;
+    }
+
+    /**
+     * @param RFPRequest $rfpRequest
+     * @return Form
+     */
+    protected function getCreateFromRfpForm(RFPRequest $rfpRequest = null)
+    {
+        return $this->createFormBuilder($rfpRequest)->getForm();
+    }
+
+    /**
+     * @return LoggerInterface
+     */
+    protected function getLogger()
+    {
+        return $this->get('logger');
+    }
+
+    /**
+     * @return TranslatorInterface
+     */
+    protected function getTranslator()
+    {
+        return $this->get('translator');
     }
 }

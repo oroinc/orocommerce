@@ -50,16 +50,7 @@
                 'saved': 'orob2b.rfp.message.request_status_changed'|trans
             }
         }) }}
-        {% if resource_granted('orob2b_rfp_request_create_quote') and not entity.status.isDraft %}
-            <form id="{{ formCreateQuote.vars.id }}" class="pull-left" name="{{ formCreateQuote.vars.name }}" action="{{ path('orob2b_rfp_request_create_quote', { 'id': entity.id }) }}" method="post">
-                <div class="btn-group">
-                    {{ form_widget(formCreateQuote) }}
-                    <button type="submit" class="no-hash btn">
-                        <i class="icon-file-text hide-text"></i>{{ 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.sale.quote.entity_label'|trans}) }}
-                    </button>
-                </div>
-            </form>
-        {% endif %}
+        {% placeholder orob2b_sale_create_quote_from_rfp with {id: entity.id} %}
     {% endblock navButtons %}
     {% placeholder rfp_view_navButtons_after with {entity: entity} %}
 {% endblock navButtonContainer%}

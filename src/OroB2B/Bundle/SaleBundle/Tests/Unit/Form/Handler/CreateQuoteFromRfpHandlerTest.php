@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Handler;
+namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Handler;
 
 use Doctrine\DBAL\DBALException;
 
@@ -18,13 +18,13 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
-use OroB2B\Bundle\RFPBundle\Form\Handler\RequestCreateQuoteHandler;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
+use OroB2B\Bundle\SaleBundle\Form\Handler\CreateQuoteFromRfpHandler;
 
-class RequestCreateQuoteHandlerTest extends FormHandlerTestCase
+class CreateQuoteFromRfpHandlerTest extends FormHandlerTestCase
 {
     /**
      * @var RequestCreateQuoteHandler
@@ -49,7 +49,7 @@ class RequestCreateQuoteHandlerTest extends FormHandlerTestCase
         parent::setUp();
 
         $this->entity = new Request();
-        $this->handler = new RequestCreateQuoteHandler($this->form, $this->request, $this->manager, $this->getUser());
+        $this->handler = new CreateQuoteFromRfpHandler($this->form, $this->request, $this->manager, $this->getUser());
     }
 
     /**

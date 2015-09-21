@@ -117,6 +117,10 @@ orob2b:
         navigation:
             view: 'Quote #%id%'
 
+        message:
+            quote.create_from_rfp.success: 'New Quote created'
+            quote.create_from_rfp.error: 'Can not create new Quote'
+
     frontend:
         sale:
             menu:
