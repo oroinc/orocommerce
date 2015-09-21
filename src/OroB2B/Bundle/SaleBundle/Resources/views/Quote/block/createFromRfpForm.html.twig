@@ -1,4 +1,4 @@
-{% if resource_granted('orob2b_rfp_request_create_quote') and not entity.status.isDraft %}
+{% if resource_granted('orob2b_sale_quote_create') and not entity.status.isDraft %}
     <form id="{{ formCreateQuote.vars.id }}" class="pull-left" name="{{ formCreateQuote.vars.name }}" action="{{ path('orob2b_sale_quote_createfromrfp', { 'id': entity.id }) }}" method="post">
         <div class="btn-group">
             {{ form_widget(formCreateQuote) }}
