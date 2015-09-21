@@ -1,37 +1,41 @@
-/*jslint nomen:true*/
-/*global define*/
 define(function(require) {
     'use strict';
 
-    var RequestProductItemsComponent;
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    var LineItemView;
     var $ = require('jquery');
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
+    var mediator = require('oroui/js/mediator');
+    var layout = require('oroui/js/layout');
+    var BaseView = require('oroui/js/app/views/base/view');
+    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var routing = require('routing');
     var messenger = require('oroui/js/messenger');
 
-    RequestProductItemsComponent = BaseComponent.extend({
+    /**
+     * @export orob2brfp/js/app/views/line-item-view
+     * @extends oroui.app.views.base.View
+     * @class orob2brfp.app.views.LineItemView
+     */
+    LineItemView = BaseView.extend({
         /**
          * @property {Object}
          */
         options: {
-            productSelect:  '.rfp-requestproduct-product-select input[type="hidden"]',
-            unitsSelect:    '.rfp-requestproductitem-productunit-select',
-            unitsRoute:     'orob2b_product_frontend_ajaxproductunit_productunits',
-            addItemButton:  '.add-list-item',
-            itemsContainer: '.rfp-requestproductitem-collection .oro-item-collection',
-            itemWidget:     '.rfp-requestproductitem-widget',
-            syncClass:      'synchronized',
-            errorMessage:   'Sorry, unexpected error was occurred',
-            units: {}
+            ftid: '',
+            selectors: {
+                productSelector: '.rfp-lineitem-product input.select2',
+                quantitySelector: '.rfp-lineitem-requested-quantity input',
+                unitSelector: '.rfp-lineitem-requested-unit select',
+                priceSelector: '.rfp-lineitem-requested-price input',
+                currencySelector: '.rfp-lineitem-requested-currency select'
+            },
+            unitLoaderRouteName: 'orob2b_pricing_frontend_units_by_pricelist',
+            unitsRoute: 'orob2b_product_frontend_ajaxproductunit_productunits',
+            itemsContainer: '.rfp-lineitem-requested-items',
+            itemWidget: '.rfp-lineitem-requested-item',
+            addItemButton: '.rfp-lineitem-requested-item-add'
         },
-
-        /**
-         * @property {array}
-         */
-        units: {},
 
         /**
          * @property {Object}
@@ -46,12 +50,17 @@ define(function(require) {
         /**
          * @property {Object}
          */
-        $addItemButton: null,
+        $itemsContainer: null,
 
         /**
          * @property {Object}
          */
-        $itemsContainer: null,
+        $addItemButton: null,
+
+        /**
+         * @property {array}
+         */
+        units: {},
 
         /**
          * @property {LoadingMaskView|null}
@@ -62,25 +71,25 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
-            this.options    = _.defaults(options || {}, this.options);
-            this.units      = _.defaults(this.units, options.units);
+            this.options = $.extend(true, {}, this.options, options || {});
+            if (!this.options.ftid) {
+                this.options.ftid = this.$el.data('content').toString()
+                    .replace(/[^a-zA-Z0-9]+/g, '_').replace(/_+$/, '');
+            }
 
-            this.$el = options._sourceElement;
+            this.delegate('click', '.removeLineItem', this.removeRow);
 
+            this.$productSelect = this.$el.find(this.options.selectors.productSelector);
+            this.$itemsContainer = this.$el.find(this.options.itemsContainer);
+            this.$addItemButton = this.$el.find(this.options.addItemButton);
             this.loadingMask = new LoadingMaskView({container: this.$el});
 
-            this.$productSelect     = this.$el.find(this.options.productSelect);
-            this.$addItemButton     = this.$el.find(this.options.addItemButton);
-            this.$itemsContainer    = this.$el.find(this.options.itemsContainer);
-
             this.$el
-                .on('change', this.options.productSelect, _.bind(this.onProductChanged, this))
+                .on('change', this.options.selectors.productSelector, _.bind(this.onProductChanged, this))
                 .on('content:changed', _.bind(this.onContentChanged, this))
             ;
 
             this.checkAddButton();
-
-            this.initSelects();
         },
 
         checkAddButton: function() {
@@ -91,6 +100,11 @@ define(function(require) {
             this.$el.find(this.options.unitsSelect).addClass(this.options.syncClass);
         },
 
+        removeRow: function() {
+            this.$el.trigger('content:remove');
+            this.remove();
+        },
+
         /**
          * Handle change
          *
@@ -98,11 +112,9 @@ define(function(require) {
          */
         onProductChanged: function(e) {
             this.checkAddButton();
-
             if (this.$productSelect.val() && !this.$itemsContainer.children().length) {
                 this.$addItemButton.click();
             }
-
             if (this.$itemsContainer.children().length) {
                 this.updateContent(true);
             }
@@ -161,9 +173,8 @@ define(function(require) {
             var units = data || {};
 
             var widgets = self.$el.find(self.options.itemWidget);
-
             $.each(widgets, function(index, widget) {
-                var select = $(widget).find(self.options.unitsSelect);
+                var select = $(widget).find(self.options.selectors.unitSelector);
 
                 if (!force && $(select).hasClass(self.options.syncClass)) {
                     return;
@@ -196,16 +207,16 @@ define(function(require) {
             }
         },
 
+        /**
+         * @inheritDoc
+         */
         dispose: function() {
             if (this.disposed) {
                 return;
             }
-
-            this.$el.off();
-
-            RequestProductItemsComponent.__super__.dispose.call(this);
-        }
+            LineItemView.__super__.dispose.call(this);
+        },
     });
 
-    return RequestProductItemsComponent;
+    return LineItemView;
 });

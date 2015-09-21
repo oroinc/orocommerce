@@ -152,5 +152,12 @@
 .notes-widget {
     width: 280px;
     word-wrap: break-word;
-    line-height: 31px;
+}
+
+.notes-widget-preview {
+    margin-bottom: 10px;
+}
+
+.notes-widget-edit {
+    margin-bottom: 10px;
 }

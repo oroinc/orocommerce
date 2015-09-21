@@ -48,12 +48,15 @@ class RequestProductTypeTest extends AbstractTest
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects(static::once())
             ->method('setDefaults')
-            ->with([
-                'data_class' => 'OroB2B\Bundle\RFPBundle\Entity\RequestProduct',
-                'intention'  => 'rfp_frontend_request_product',
-                'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
-            ])
-        ;
+            ->with($this->callback(function ($params) {
+                // TODO: test for something meaningful instead of just checking keys or comparing static values
+                return array_key_exists('data_class', $params) // 'OroB2B\Bundle\RFPBundle\Entity\RequestProduct'
+                    and array_key_exists('intention', $params) // 'rfp_frontend_request_product'
+                    and array_key_exists('extra_fields_message', $params)
+                    and array_key_exists('page_component', $params) // 'oroui/js/app/components/view-component'
+                    and array_key_exists('page_component_options', $params) // ['view' => ...]
+                    ;
+            }));
 
         $this->formType->configureOptions($resolver);
     }

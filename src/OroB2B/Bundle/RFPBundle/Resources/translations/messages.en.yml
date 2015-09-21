@@ -106,6 +106,18 @@ orob2b:
         widget:
             change_status_title: 'Change RFQ Status'
 
+        frontend:
+            request:
+                lineitem:
+                    product: 'Product'
+                    requested:
+                        label: ''
+                        quantity: 'Requested Quantity'
+                        price: 'Target Price'
+                        add: 'Add Line'
+                    notes: 'Notes'
+                    add: 'Add Product'
+
     frontend:
         rfp:
             request:
