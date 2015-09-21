@@ -488,19 +488,12 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      */
     public function hasOfferVariants()
     {
-        $value = false;
-
         foreach ($this->quoteProducts as $quoteProduct) {
-            $items = $quoteProduct->getQuoteProductOffers();
-            /** @var QuoteProductOffer $firstItem */
-            $firstItem = $items->first();
-
-            if (count($items) > 1 || ($firstItem && $firstItem->getAllowIncrements())) {
-                $value = true;
-                break;
+            if ($quoteProduct->hasOfferVariants()) {
+                return true;
             }
         }
 
-        return $value;
+        return false;
     }
 }
