@@ -16,6 +16,7 @@ use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
 use OroB2B\Bundle\SaleBundle\Form\DataTransformer\QuoteProductToOrderTransformer;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Validator\Constraints\ConfigurableQuoteProductOffer;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
 class QuoteProductToOrderType extends AbstractType
 {
@@ -91,6 +92,8 @@ class QuoteProductToOrderType extends AbstractType
         /** @var QuoteProduct $quoteProduct */
         $quoteProduct = $options['data'];
 
+        $view->vars['quote_product'] = $quoteProduct;
+
         $offers = [];
         foreach ($quoteProduct->getQuoteProductOffers() as $offer) {
             $offers[$offer->getId()] = $offer;
@@ -124,19 +127,22 @@ class QuoteProductToOrderType extends AbstractType
         $choices = [];
 
         foreach ($quoteProduct->getQuoteProductOffers() as $offer) {
-            $label = $this->unitFormatter->formatShort(
-                $offer->getQuantity(),
-                $offer->getProductUnit()
-            );
-            if ($offer->isAllowIncrements()) {
-                $label .= ' '.$this->translator->trans(
+            // only unit offers are allowed
+            if ($offer->getPriceType() == QuoteProductOffer::PRICE_TYPE_UNIT) {
+                $label = $this->unitFormatter->formatShort(
+                    $offer->getQuantity(),
+                    $offer->getProductUnit()
+                );
+                if ($offer->isAllowIncrements()) {
+                    $label .= ' ' . $this->translator->trans(
                         'orob2b.frontend.sale.quoteproductoffer.allow_increments.label'
                     );
-            }
+                }
 
-            $offerId = $offer->getId();
-            if ($offerId) {
-                $choices[$offerId] = $label;
+                $offerId = $offer->getId();
+                if ($offerId) {
+                    $choices[$offerId] = $label;
+                }
             }
         }
 
