@@ -49,7 +49,7 @@ class QuoteControllerTest extends WebTestCase
      */
     protected function setUp()
     {
-        $this->initClient([], array_merge(static::generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
+        $this->initClient([], static::generateBasicAuthHeader());
 
         $this->loadFixtures([
             'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData',
@@ -65,6 +65,7 @@ class QuoteControllerTest extends WebTestCase
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save and Close')->form();
+        $form->remove('orob2b_sale_quote[quoteProducts][0]');
         $form['orob2b_sale_quote[owner]']      = $owner->getId();
         $form['orob2b_sale_quote[qid]']        = self::$qid;
         $form['orob2b_sale_quote[validUntil]'] = self::$validUntil;
@@ -122,6 +123,7 @@ class QuoteControllerTest extends WebTestCase
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save and Close')->form();
+        $form->remove('orob2b_sale_quote[quoteProducts][0]');
         $form['orob2b_sale_quote[owner]']      = $owner->getId();
         $form['orob2b_sale_quote[qid]']        = self::$qidUpdated;
         $form['orob2b_sale_quote[validUntil]'] = self::$validUntilUpdated;
@@ -196,7 +198,13 @@ class QuoteControllerTest extends WebTestCase
      */
     public function testDelete($id)
     {
-        $this->client->request('DELETE', $this->getUrl('orob2b_api_sale_delete_quote', ['id' => $id]));
+        $this->client->request(
+            'DELETE',
+            $this->getUrl('orob2b_api_sale_delete_quote', ['id' => $id]),
+            [],
+            [],
+            $this->generateWsseAuthHeader()
+        );
 
         $result = $this->client->getResponse();
         static::assertEmptyResponseStatusCodeEquals($result, 204);
@@ -221,6 +229,7 @@ class QuoteControllerTest extends WebTestCase
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save and Close')->form();
+        $form->remove('orob2b_sale_quote[quoteProducts][0]');
         foreach ($submittedData as $field => $value) {
             $form[QuoteType::NAME . $field] = $value;
         }

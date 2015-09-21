@@ -99,6 +99,10 @@ define(function(require) {
         onProductChanged: function(e) {
             this.checkAddButton();
 
+            if (this.$productSelect.val() && !this.$itemsContainer.children().length) {
+                this.$addItemButton.click();
+            }
+
             if (this.$itemsContainer.children().length) {
                 this.updateContent(true);
             }

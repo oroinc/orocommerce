@@ -20,10 +20,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
     {
         $this->initClient(
             [],
-            array_merge(
-                $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW),
-                ['HTTP_X-CSRF-Header' => 1]
-            )
+            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
 
         $this->loadFixtures(

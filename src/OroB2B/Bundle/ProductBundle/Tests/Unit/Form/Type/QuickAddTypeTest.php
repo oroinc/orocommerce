@@ -9,6 +9,7 @@ use Symfony\Component\Validator\Validation;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
+use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductRowCollectionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductRowType;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
@@ -67,8 +68,8 @@ class QuickAddTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     QuickAddType::PRODUCTS_FIELD_NAME => [
                         [
-                            ProductRowType::PRODUCT_SKU_FIELD_NAME => 'sku',
-                            ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => '42',
+                            ProductDataStorage::PRODUCT_SKU_KEY => 'sku',
+                            ProductDataStorage::PRODUCT_QUANTITY_KEY => '42',
                         ]
                     ],
                     QuickAddType::COMPONENT_FIELD_NAME => 'component',
@@ -77,8 +78,8 @@ class QuickAddTypeTest extends FormIntegrationTestCase
                 'expectedData' => [
                     QuickAddType::PRODUCTS_FIELD_NAME => [
                         [
-                            ProductRowType::PRODUCT_SKU_FIELD_NAME => 'sku',
-                            ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => 42,
+                            ProductDataStorage::PRODUCT_SKU_KEY => 'sku',
+                            ProductDataStorage::PRODUCT_QUANTITY_KEY => 42,
                         ]
                     ],
                     QuickAddType::COMPONENT_FIELD_NAME => 'component',

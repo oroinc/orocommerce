@@ -32,6 +32,8 @@ datagrid:
             hints:
                 - { name: HINT_CUSTOM_OUTPUT_WALKER, value: %oro_translation.translation_walker.class%}
         columns:
+            id:
+                label:         orob2b.rfp.request.id.label
             firstName:
                 label:         orob2b.rfp.request.first_name.label
             lastName:
@@ -72,6 +74,8 @@ datagrid:
                 params: [ id ]
         sorters:
             columns:
+                id:
+                    data_name: request.id
                 firstName:
                     data_name: request.firstName
                 lastName:
@@ -98,6 +102,9 @@ datagrid:
                 updatedAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         filters:
             columns:
+                id:
+                    type:      string
+                    data_name: request.id
                 firstName:
                     type:      string
                     data_name: request.firstName

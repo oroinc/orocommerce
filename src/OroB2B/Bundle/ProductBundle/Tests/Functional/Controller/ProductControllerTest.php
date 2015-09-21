@@ -44,7 +44,7 @@ class ProductControllerTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
+        $this->initClient([], $this->generateBasicAuthHeader());
     }
 
     public function testIndex()
@@ -240,7 +240,13 @@ class ProductControllerTest extends WebTestCase
      */
     public function testDelete($id)
     {
-        $this->client->request('DELETE', $this->getUrl('orob2b_api_delete_product', ['id' => $id]));
+        $this->client->request(
+            'DELETE',
+            $this->getUrl('orob2b_api_delete_product', ['id' => $id]),
+            [],
+            [],
+            $this->generateWsseAuthHeader()
+        );
 
         $result = $this->client->getResponse();
         $this->assertEmptyResponseStatusCodeEquals($result, 204);

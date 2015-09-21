@@ -6,7 +6,14 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 class ProductDataStorage
 {
-    const PRODUCT_DATA_KEY = 'orob2b_product_quick_add_data';
+    const PRODUCT_DATA_KEY = 'orob2b_product_data';
+    const STORAGE_KEY = 'storage';
+
+    const ENTITY_DATA_KEY = 'entity_data';
+    const ENTITY_ITEMS_DATA_KEY = 'entity_items_data';
+
+    const PRODUCT_SKU_KEY = 'productSku';
+    const PRODUCT_QUANTITY_KEY = 'productQuantity';
 
     /** @var SessionInterface */
     protected $session;
