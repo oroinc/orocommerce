@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Handler;
+namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Handler;
 
 use Doctrine\DBAL\DBALException;
 
@@ -13,14 +13,14 @@ use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
+use OroB2B\Bundle\RFPBundle\Form\Handler\RequestCreateFromShoppingListHandler;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Form\Handler\ShoppingListCreateRfpHandler;
 
-class ShoppingListCreateRfpHandlerTest extends FormHandlerTestCase
+class RequestCreateFromShoppingListHandlerTest extends FormHandlerTestCase
 {
     /**
-     * @var ShoppingListCreateRfpHandler
+     * @var RequestCreateFromShoppingListHandler
      */
     protected $handler;
 
@@ -42,7 +42,7 @@ class ShoppingListCreateRfpHandlerTest extends FormHandlerTestCase
         parent::setUp();
 
         $this->entity   = new ShoppingList();
-        $this->handler  = new ShoppingListCreateRfpHandler(
+        $this->handler  = new RequestCreateFromShoppingListHandler(
             $this->form,
             $this->request,
             $this->manager,

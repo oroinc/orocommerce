@@ -32,7 +32,6 @@ class ShoppingListControllerTest extends WebTestCase
         $this->loadFixtures(
             [
                 'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
-                'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData',
                 'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists',
                 'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadUserData',
             ]
@@ -136,55 +135,6 @@ class ShoppingListControllerTest extends WebTestCase
         $html = $crawler->html();
 
         $this->assertContains('Shopping List has been saved', $html);
-    }
-
-    /**
-     * @param array $inputData
-     * @param array $expectedData
-     *
-     * @dataProvider createRfpProvider
-     */
-    public function testCreateRfp(array $inputData, array $expectedData)
-    {
-        $this->initClient([], $this->generateBasicAuthHeader($inputData['login'], $inputData['password']));
-        /* @var $shoppingList ShoppingList */
-        $shoppingList = $this->getReference($inputData['shoppingList']);
-        $this->client->request(
-            'POST',
-            $this->getUrl('orob2b_shoppinglist_frontend_shoppinglist_createrfp', ['id' => $shoppingList->getId()])
-        );
-        $this->client->followRedirects(true);
-        $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, $expectedData['statusCode']);
-    }
-
-    /**
-     * @return array
-     */
-    public function createRfpProvider()
-    {
-        return [
-            'account1 user1 (Order:NONE)' => [
-                'input' => [
-                    'shoppingList' => LoadShoppingLists::SHOPPING_LIST_1,
-                    'login' => LoadUserData::ACCOUNT1_USER1,
-                    'password' => LoadUserData::ACCOUNT1_USER1,
-                ],
-                'expected' => [
-                    'statusCode' => 403,
-                ],
-            ],
-            'account1 user2 (Order:CREATE_BASIC)' => [
-                'input' => [
-                    'shoppingList' => LoadShoppingLists::SHOPPING_LIST_1,
-                    'login' => LoadUserData::ACCOUNT1_USER2,
-                    'password' => LoadUserData::ACCOUNT1_USER2,
-                ],
-                'expected' => [
-                    'statusCode' => 200,
-                ],
-            ],
-        ];
     }
 
     public function testQuickAdd()

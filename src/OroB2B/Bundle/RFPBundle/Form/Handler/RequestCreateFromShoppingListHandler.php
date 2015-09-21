@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Form\Handler;
+namespace OroB2B\Bundle\RFPBundle\Form\Handler;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\DBAL\DBALException;
@@ -15,7 +15,7 @@ use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
-class ShoppingListCreateRfpHandler
+class RequestCreateFromShoppingListHandler
 {
     /**
      * @var FormInterface

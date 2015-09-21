@@ -79,11 +79,3 @@ orob2b:
             action:
                 save: Save
                 cancel: Cancel
-
-    frontend:
-        shoppinglist:
-            btn:
-                request_quote_create_rfp: 'Request a Quote'
-            message:
-                create_rfp.success: 'Your shopping list was submitted successfully'
-                create_rfp.error: 'Can not create new Request for Quote'

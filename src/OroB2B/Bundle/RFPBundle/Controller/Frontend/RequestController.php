@@ -2,8 +2,17 @@
 
 namespace OroB2B\Bundle\RFPBundle\Controller\Frontend;
 
+use Doctrine\Common\Persistence\ObjectManager;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Translation\TranslatorInterface;
+
+use Psr\Log\LoggerInterface;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -16,7 +25,9 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
+use OroB2B\Bundle\RFPBundle\Form\Handler\RequestCreateFromShoppingListHandler;
 use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
+use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class RequestController extends Controller
@@ -121,6 +132,47 @@ class RequestController extends Controller
     }
 
     /**
+     * @Route("/create_rfp/{id}", name="orob2b_rfp_frontend_createfromshoppinglist", requirements={"id"="\d+"})
+     * @Acl(
+     *      id="orob2b_rfp_frontend_createfromshoppinglist",
+     *      type="entity",
+     *      class="OroB2BRFPBundle:Request",
+     *      permission="CREATE",
+     *      group_name="commerce"
+     * )
+     * @Template("OroB2BShoppingListBundle:ShoppingList/Frontend:view.html.twig")
+     *
+     * @param Request $request
+     * @param ShoppingList $shoppingList
+     * @return array|RedirectResponse
+     */
+    public function createFromShoppingListAction(Request $request, ShoppingList $shoppingList)
+    {
+        return $this->createFromShoppingList($request, $shoppingList);
+    }
+
+    /**
+     * @Route(
+     *      "/create_from_rfp_form/{id}",
+     *      name="orob2b_rfp_frontend_createfromshoppinglistform",
+     *      requirements={"id"="\d+"}
+     * )
+     * @Template("OroB2BRFPBundle:Request/Frontend:block/createFromShoppingListForm.html.twig")
+     *
+     * @AclAncestor("orob2b_rfp_frontend_createfromshoppinglist")
+     *
+     * @param ShoppingList $shoppingList
+     * @return array
+     */
+    public function createFromShoppingListFormAction(ShoppingList $shoppingList)
+    {
+        return [
+            'entity' => $shoppingList,
+            'formCreateRfp' => $this->getCreateFromShoppingListForm($shoppingList)->createView(),
+        ];
+    }
+
+    /**
      * @param RFPRequest $rfpRequest
      * @return array|RedirectResponse
      */
@@ -173,6 +225,103 @@ class RequestController extends Controller
             },
             $this->get('translator')->trans('orob2b.rfp.controller.request.saved.message')
         );
+    }
+
+    /**
+     * @param Request $request
+     * @param ShoppingList $shoppingList
+     * @return array|RedirectResponse
+     */
+    protected function createFromShoppingList(Request $request, ShoppingList $shoppingList)
+    {
+        /** @var ObjectManager $em */
+        $em = $this->getDoctrine()->getManagerForClass('OroB2BShoppingListBundle:ShoppingList');
+        $form = $this->getCreateFromShoppingListForm($shoppingList);
+        $handler = new RequestCreateFromShoppingListHandler(
+            $form,
+            $request,
+            $em,
+            $this->getUser(),
+            $this->getDraftRequestStatus()
+        );
+
+        return $this->get('oro_form.model.update_handler')
+            ->handleUpdate(
+                $shoppingList,
+                $form,
+                function (ShoppingList $shoppingList) {
+                    return [
+                        'route'         => 'orob2b_shopping_list_frontend_view',
+                        'parameters'    => ['id' => $shoppingList->getId()],
+                    ];
+                },
+                function () use ($handler) {
+                    return [
+                        'route'         => 'orob2b_rfp_frontend_request_update',
+                        'parameters'    => ['id' => $handler->getRfpRequest()->getId()],
+                    ];
+                },
+                $this->getTranslator()->trans('orob2b.frontend.rfp.message.request_create_from_shoppinglist.success'),
+                $handler,
+                function (ShoppingList $entity, FormInterface $form) use ($handler) {
+                    /* @var $session Session */
+                    $session = $this->get('session');
+                    $session->getFlashBag()->add(
+                        'error',
+                        $this->getTranslator()->trans(
+                            'orob2b.frontend.rfp.message.request_create_from_shoppinglist.error'
+                        )
+                    );
+                    if ($handler->getException()) {
+                        $this->getLogger()->error($handler->getException());
+                    }
+
+                    return [
+                        'entity' => $entity,
+                        'formCreateRfp' => $form->createView(),
+                    ];
+                }
+            );
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @return Form
+     */
+    protected function getCreateFromShoppingListForm(ShoppingList $shoppingList = null)
+    {
+        return $this->createFormBuilder($shoppingList)->getForm();
+    }
+
+    /**
+     * @return RequestStatus
+     */
+    protected function getDraftRequestStatus()
+    {
+        $requestStatusClass = $this->container->getParameter('orob2b_rfp.entity.request.status.class');
+
+        return $this
+            ->getDoctrine()
+            ->getManagerForClass($requestStatusClass)
+            ->getRepository($requestStatusClass)
+            ->findOneBy(['name' => RequestStatus::DRAFT])
+        ;
+    }
+
+    /**
+     * @return LoggerInterface
+     */
+    protected function getLogger()
+    {
+        return $this->get('logger');
+    }
+
+    /**
+     * @return TranslatorInterface
+     */
+    protected function getTranslator()
+    {
+        return $this->get('translator');
     }
 
     /**
