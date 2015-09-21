@@ -289,3 +289,11 @@
 .sale-quote-form .account-accountuser-select .select2-container {
     width: 257px !important;
 }
+
+.quote-product-offer-select-offer table td {
+    border: none;
+}
+
+.quote-product-offer-select-offer table td input {
+    margin-top: 0 !important;
+}

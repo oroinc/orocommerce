@@ -118,33 +118,76 @@
 {% endblock %}
 
 {% block orob2b_sale_quote_product_to_order_widget %}
-    <div>
-        <table>
-        {% for choice in form.offer %}
-            <tr>
-                <td>{{ form_widget(choice) }}</td>
-                <td>{{ choice.vars.label }}</td>
-                <td>{{ choice.vars.offer.price|oro_format_price }}</td>
-            </tr>
-        {% endfor %}
-        </table>
-        {{ form_errors(form.offer) }}
-    </div>
-    <div>
-        {{ form_widget(form.quantity) }}
-        {{ form_errors(form.quantity) }}
-    </div>
+    {% set quoteProduct = form.vars.quote_product %}
+    {% if quoteProduct.productReplacement is not null %}
+        {% set product = quoteProduct.productReplacement %}
+    {% else %}
+        {% set product = quoteProduct.product %}
+    {% endif %}
+
+    <td>
+        <div class="quote-product-offer-product-sku">{{ product.sku }}</div>
+    </td>
+    <td>
+        <div class="quote-product-offer-product-name">{{ product.defaultName }}</div>
+    </td>
+    <td>
+        <div class="quote-product-offer-customer-notes">{{ quoteProduct.comment }}</div>
+    </td>
+    <td>
+        <div class="quote-product-offer-seller-notes">{{ quoteProduct.commentAccount }}</div>
+    </td>
+    <td>
+        <div class="quote-product-offer-select-offer">
+            <table>
+                {% for choice in form.offer %}
+                    <tr>
+                        <td>{{ form_widget(choice) }}</td>
+                        <td>{{ choice.vars.label }}</td>
+                        <td>{{ choice.vars.offer.price|oro_format_price }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+            {{ form_errors(form.offer) }}
+        </div>
+    </td>
+    <td>
+        <div class="quote-product-offer-quantity">
+            {{ form_widget(form.quantity) }}
+            {{ form_errors(form.quantity) }}
+        </div>
+    </td>
+    <td>
+        <div class="quote-product-offer-price">{{ form.offer|first.vars.offer.price|oro_format_price }}</div>
+    </td>
 {% endblock %}
 
 {% block orob2b_sale_quote_to_order_widget %}
-    <div {{ block('widget_container_attributes') }}>
-        {%- if form.parent is empty -%}
-            {{ form_errors(form) }}
-        {%- endif -%}
-        {% for child in form %}
-            {{- form_widget(child) -}}
-            {{- form_errors(child) -}}
-        {% endfor %}
-        {{- form_rest(form) -}}
-    </div>
+    {% spaceless %}
+        <div {{ block('widget_container_attributes') }}>
+            {%- if form.parent is empty -%}
+                {{ form_errors(form) }}
+            {%- endif -%}
+            <table class="grid table-hover table table-bordered table-condensed">
+                <thead>
+                    <tr>
+                        <th class="quote-product-offer-product-sku"><span>{{ 'orob2b.frontend.sale.quoteproduct.product_sku.label'|trans }}</span></th>
+                        <th class="quote-product-offer-product-name"><span>{{ 'orob2b.frontend.sale.quoteproduct.product_name.label'|trans }}</span></th>
+                        <th class="quote-product-offer-customer-notes"><span>{{ 'orob2b.frontend.sale.quoteproduct.comment.label'|trans }}</span></th>
+                        <th class="quote-product-offer-seller-notes"><span>{{ 'orob2b.frontend.sale.quoteproduct.comment_account.label'|trans }}</span></th>
+                        <th class="quote-product-offer-select-offer"><span>{{ 'orob2b.frontend.sale.quoteproductoffer.select_offer.label'|trans }}</span></th>
+                        <th class="quote-product-offer-quantity"><span>{{ 'orob2b.frontend.sale.quoteproductoffer.quantity_to_order.label'|trans }}</span></th>
+                        <th class="quote-product-offer-price"><span>{{ 'orob2b.frontend.sale.quoteproductoffer.unit_price.label'|trans }}</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for child in form.children %}
+                        {{ form_widget(child) }}
+                        {{ form_errors(child) }}
+                    {% endfor %}
+                </tbody>
+            </table>
+            {{ form_rest(form) }}
+        </div>
+    {% endspaceless %}
 {% endblock %}
