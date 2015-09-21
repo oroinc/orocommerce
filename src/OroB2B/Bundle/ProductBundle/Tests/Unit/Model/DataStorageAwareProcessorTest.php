@@ -77,7 +77,7 @@ class DataStorageAwareProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('generate')
             ->with(
                 $redirectRouteName,
-                [DataStorageAwareProcessor::QUICK_ADD_PARAM => 1],
+                [ProductDataStorage::STORAGE_KEY => true],
                 UrlGeneratorInterface::ABSOLUTE_PATH
             )
             ->willReturn($redirectUrl);
