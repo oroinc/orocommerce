@@ -1,0 +1,53 @@
+@import "../../oroui/css/less/variables";
+
+@sidebarHorizontalPadding: 5px;
+@sidebarVerticalPadding: 10px;
+@select2IconBtnWidth: 30px;
+@borderWidth: 1px;
+.grid-sidebar {
+  position: absolute;
+  top: 0;
+  padding: 0;
+  height: 100%;
+  background-color: #efefef;
+}
+
+.grid-sidebar .grid-sidebar-header {
+  border-bottom: 1px solid #d6d6d6;
+}
+
+.grid-sidebar .grid-sidebar-header,
+.grid-sidebar .grid-sidebar-content {
+  padding: @sidebarHorizontalPadding @sidebarVerticalPadding;
+}
+
+.grid-sidebar .grid-sidebar-controls i {
+  cursor: pointer;
+  font-size: 8px;
+  line-height: 12px;
+}
+
+.grid-sidebar.grid-sidebar-maximized .grid-sidebar-minimized {
+  display: none;
+}
+
+.grid-sidebar.grid-sidebar-minimized .grid-sidebar-maximized {
+  display: none;
+}
+
+.grid-sidebar-content {
+  height: calc(~ "100% - "@sidebarVerticalPadding * 2 + @baseLineHeight + @borderWidth);
+  overflow: auto;
+}
+
+.product-container {
+  position: relative;
+}
+
+.product-container .input-append, .input-prepend {
+  width: calc(~ "100% - "@select2IconBtnWidth + @borderWidth);
+}
+
+.product-container .input-prepend .select2-container, .input-append .select2-container {
+  width: 100%;
+}

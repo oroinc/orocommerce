@@ -185,11 +185,15 @@ define(function(require) {
          * @private
          */
         _fixSidebarHeight: function() {
+            var $container = $('#container');
+            var $pageTitle = $('.page-title', $container);
             var $productContainer = $('.product-container');
-            var $sidebar = $('.grid-sidebar', this.$container);
+            var $sidebar = $('.grid-sidebar', $container);
 
             var fixHeight = function() {
-                $sidebar.height($productContainer.height());
+                $sidebar
+                    .height($productContainer.height())
+                    .css('min-height', $container.height() - $pageTitle.height() + 'px');
             };
 
             layout.onPageRendered(fixHeight);
