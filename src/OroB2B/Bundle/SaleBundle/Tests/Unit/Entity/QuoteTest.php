@@ -10,6 +10,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
 class QuoteTest extends AbstractTest
 {
@@ -92,5 +93,58 @@ class QuoteTest extends AbstractTest
         $quote->addQuoteProduct($quoteProduct);
 
         $this->assertEquals($quote, $quoteProduct->getQuote());
+    }
+
+    /**
+     * @dataProvider hasOfferVariantsDataProvider
+     *
+     * @param Quote $quote
+     * @param bool $expected
+     */
+    public function testHasOfferVariants(Quote $quote, $expected)
+    {
+        $this->assertEquals($expected, $quote->hasOfferVariants());
+    }
+
+    /**
+     * @return array
+     */
+    public function hasOfferVariantsDataProvider()
+    {
+        return [
+            [$this->createQuote(0, 0), false],
+            [$this->createQuote(1, 0), false],
+            [$this->createQuote(1, 1), false],
+            [$this->createQuote(2, 0), false],
+            [$this->createQuote(2, 1), false],
+            [$this->createQuote(1, 2), true],
+            [$this->createQuote(1, 1, true), true],
+        ];
+    }
+
+    /**
+     * @param int $quoteProductCount
+     * @param int $quoteProductOfferCount
+     * @param bool|false $allowIncrements
+     * @return Quote
+     */
+    protected function createQuote($quoteProductCount, $quoteProductOfferCount, $allowIncrements = false)
+    {
+        $quote = new Quote();
+
+        for ($i = 0; $i < $quoteProductCount; $i++) {
+            $quoteProduct = new QuoteProduct();
+
+            for ($j = 0; $j < $quoteProductOfferCount; $j++) {
+                $quoteProductOffer = new QuoteProductOffer();
+                $quoteProductOffer->setAllowIncrements($allowIncrements);
+
+                $quoteProduct->addQuoteProductOffer($quoteProductOffer);
+            }
+
+            $quote->addQuoteProduct($quoteProduct);
+        }
+
+        return $quote;
     }
 }
