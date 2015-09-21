@@ -37,21 +37,21 @@ class LoginPage extends ExtendLoginPage
     /**
      * @var string
      *
-     * @ORM\Column(name="top_content", type="text")
+     * @ORM\Column(name="top_content", type="text", nullable=true)
      */
     protected $topContent;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="bottom_content", type="text")
+     * @ORM\Column(name="bottom_content", type="text", nullable=true)
      */
     protected $bottomContent;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="css", type="text")
+     * @ORM\Column(name="css", type="text", nullable=true)
      */
     protected $css;
 
@@ -72,10 +72,10 @@ class LoginPage extends ExtendLoginPage
     }
 
     /**
-     * @param $topContent
+     * @param string|null $topContent
      * @return $this
      */
-    public function setTopContent($topContent)
+    public function setTopContent($topContent = null)
     {
         $this->topContent = $topContent;
 
@@ -91,10 +91,10 @@ class LoginPage extends ExtendLoginPage
     }
 
     /**
-     * @param $bottomContent
+     * @param string|null $bottomContent
      * @return $this
      */
-    public function setBottomContent($bottomContent)
+    public function setBottomContent($bottomContent = null)
     {
         $this->bottomContent = $bottomContent;
 
@@ -110,10 +110,10 @@ class LoginPage extends ExtendLoginPage
     }
 
     /**
-     * @param $css
+     * @param string|null $css
      * @return $this
      */
-    public function setCss($css)
+    public function setCss($css = null)
     {
         $this->css = $css;
 
