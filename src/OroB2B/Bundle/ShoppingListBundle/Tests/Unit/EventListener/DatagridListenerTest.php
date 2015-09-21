@@ -34,7 +34,8 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
                     'options' => [
                         'dialogOptions' => [
                             'title' => 'Add To Shopping List'
-                        ]
+                        ],
+                        'alias' => 'shopping_list_add_product_grid'
                     ]
                 ]
             ],
