@@ -59,6 +59,40 @@ class QuoteProductOfferTypeTest extends AbstractTest
     }
 
     /**
+     * @param QuoteProductOffer $inputData
+     * @param array $expectedData
+     *
+     * @dataProvider postSetDataProvider
+     */
+    public function testPostSetData(QuoteProductOffer $inputData, array $expectedData = [])
+    {
+        $form = $this->factory->create($this->formType, $inputData);
+
+        $this->assertEquals($expectedData['priceType'], $form->get('priceType')->getData());
+    }
+
+    /**
+     * @return array
+     */
+    public function postSetDataProvider()
+    {
+        return [
+            'empty priceType' => [
+                'input' => new QuoteProductOffer(),
+                'expected' => [
+                    'priceType' => QuoteProductOffer::PRICE_TYPE_UNIT,
+                ],
+            ],
+            'existing priceType' => [
+                'input' => (new QuoteProductOffer())->setPriceType(QuoteProductOffer::PRICE_TYPE_BUNDLED),
+                'expected' => [
+                    'priceType' => QuoteProductOffer::PRICE_TYPE_BUNDLED,
+                ],
+            ],
+        ];
+    }
+
+    /**
      * @return array
      */
     public function submitProvider()
