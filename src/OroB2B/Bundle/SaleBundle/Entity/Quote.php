@@ -482,4 +482,34 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
 
         return null;
     }
+
+    /**
+     * @return bool
+     */
+    public function hasOfferVariants()
+    {
+        $value = false;
+
+        foreach ($this->quoteProducts as $quoteProduct) {
+            $items = $quoteProduct->getQuoteProductOffers();
+
+            if (count($items) > 1) {
+                $value = true;
+                break;
+            }
+
+            foreach ($items as $item) {
+                if ($item->getAllowIncrements()) {
+                    $value = true;
+                    break;
+                }
+            }
+
+            if ($value) {
+                break;
+            }
+        }
+
+        return $value;
+    }
 }
