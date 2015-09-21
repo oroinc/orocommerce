@@ -128,11 +128,11 @@ class QuoteProductToOrderTypeTest extends FormIntegrationTestCase
                 ],
                 'submit' => [
                     QuoteProductToOrderType::FIELD_OFFER => '2',
-                    QuoteProductToOrderType::FIELD_QUANTITY => '25',
+                    QuoteProductToOrderType::FIELD_QUANTITY => $secondUnitOffer->getQuantity(),
                 ],
                 'expectedData' => [
                     QuoteProductToOrderType::FIELD_OFFER => $secondUnitOffer,
-                    QuoteProductToOrderType::FIELD_QUANTITY => 25
+                    QuoteProductToOrderType::FIELD_QUANTITY => $secondUnitOffer->getQuantity()
                 ],
             ],
             'mixed offers' => [
