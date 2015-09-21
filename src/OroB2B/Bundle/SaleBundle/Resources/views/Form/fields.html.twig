@@ -116,3 +116,35 @@
         </tr>
     </table>
 {% endblock %}
+
+{% block orob2b_sale_quote_product_to_order_widget %}
+    <div>
+        <table>
+        {% for choice in form.offer %}
+            <tr>
+                <td>{{ form_widget(choice) }}</td>
+                <td>{{ choice.vars.label }}</td>
+                <td>{{ choice.vars.offer.price|oro_format_price }}</td>
+            </tr>
+        {% endfor %}
+        </table>
+        {{ form_errors(form.offer) }}
+    </div>
+    <div>
+        {{ form_widget(form.quantity) }}
+        {{ form_errors(form.quantity) }}
+    </div>
+{% endblock %}
+
+{% block orob2b_sale_quote_to_order_widget %}
+    <div {{ block('widget_container_attributes') }}>
+        {%- if form.parent is empty -%}
+            {{ form_errors(form) }}
+        {%- endif -%}
+        {% for child in form %}
+            {{- form_widget(child) -}}
+            {{- form_errors(child) -}}
+        {% endfor %}
+        {{- form_rest(form) -}}
+    </div>
+{% endblock %}
