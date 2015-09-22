@@ -20,7 +20,7 @@ orob2b_product_unit_ajax:
 orob2b_product_frontend_product:
     resource: "@OroB2BProductBundle/Controller/Frontend/ProductController.php"
     type: annotation
-    prefix: /product
+    prefix: /account/product
     options:
         frontend: true
 
@@ -34,6 +34,6 @@ orob2b_product_frontend_unit_ajax:
 orob2b_product_frontend_quick_add:
     resource:     "@OroB2BProductBundle/Controller/Frontend/QuickAddController.php"
     type:         annotation
-    prefix:       /product/quick-add
+    prefix:       /account/product/quick-add
     options:
         frontend: true
