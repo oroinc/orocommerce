@@ -10,7 +10,6 @@ use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
-use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 /**
  * @dbIsolation
@@ -33,7 +32,6 @@ class ShoppingListControllerTest extends WebTestCase
             [
                 'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
                 'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists',
-                'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadUserData',
             ]
         );
     }
@@ -89,10 +87,6 @@ class ShoppingListControllerTest extends WebTestCase
 
         $html = $crawler->html();
         $this->assertContains($shoppingList->getLabel(), $html);
-
-        $createRfpButton = (bool)$crawler->selectButton('Request a Quote')->count();
-
-        $this->assertTrue($createRfpButton);
     }
 
     public function testSetCurrent()
