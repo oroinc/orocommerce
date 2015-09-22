@@ -9,6 +9,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero;
@@ -58,12 +59,18 @@ class QuoteProductToOrderType extends AbstractType
             ->add(
                 self::FIELD_OFFER,
                 'choice',
-                ['choices' => $this->getOfferChoices($quoteProduct), 'expanded' => true]
+                [
+                    'choices' => $this->getOfferChoices($quoteProduct),
+                    'expanded' => true,
+                    'constraints' => [new NotBlank()]
+                ]
             )
             ->add(
                 self::FIELD_QUANTITY,
                 'number',
-                ['constraints' => [new Decimal(), new GreaterThanZero()]]
+                [
+                    'constraints' => [new NotBlank(), new Decimal(), new GreaterThanZero()]
+                ]
             );
 
         $builder->addModelTransformer(new QuoteProductToOrderTransformer($quoteProduct));

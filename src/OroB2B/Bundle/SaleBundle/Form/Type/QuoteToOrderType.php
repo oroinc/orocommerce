@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\SaleBundle\Form\Type;
 
+use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -46,7 +47,7 @@ class QuoteToOrderType extends CollectionType
     {
         $data = $event->getData();
         if (!$data instanceof Quote) {
-            return;
+            throw new UnexpectedTypeException($data, 'Quote');
         }
 
         /** @var QuoteProduct[] $quoteProducts */
