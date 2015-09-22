@@ -62,6 +62,7 @@
         data-page-component-options="{{ page_component_options|json_encode }}"
         >
         {{ form_widget(form) }}
+        {{ form_errors(form) }}
         <td class="rfp-lineitem-remove">
             <button type="button" class="removeLineItem btn icons-holder"><i class="icon-remove"></i></button>
         </td>
@@ -75,13 +76,16 @@
 {% block orob2b_rfp_request_product_widget %}
     <td class="rfp-lineitem-product">
         {{ form_widget(form.product) }}
+        {{ form_errors(form.product) }}
     </td>
     <td class="rfp-lineitem-requested">
         {{ form_widget(form.requestProductItems) }}
+        {{ form_errors(form.requestProductItems) }}
     </td>
     <td class="rfp-lineitem-notes">
         <div data-page-component-module="orob2border/js/app/components/notes-component" style="display: none;">
             {{ form_widget(form.comment) }}
+            {{ form_errors(form.comment) }}
         </div>
     </td>
 {% endblock %}

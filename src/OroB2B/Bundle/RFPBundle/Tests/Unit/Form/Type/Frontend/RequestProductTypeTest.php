@@ -48,14 +48,15 @@ class RequestProductTypeTest extends AbstractTest
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects(static::once())
             ->method('setDefaults')
-            ->with($this->callback(function ($params) {
+            ->with($this->callback(function (array $options) {
                 // TODO: test for something meaningful instead of just checking keys or comparing static values
-                return array_key_exists('data_class', $params) // 'OroB2B\Bundle\RFPBundle\Entity\RequestProduct'
-                    and array_key_exists('intention', $params) // 'rfp_frontend_request_product'
-                    and array_key_exists('extra_fields_message', $params)
-                    and array_key_exists('page_component', $params) // 'oroui/js/app/components/view-component'
-                    and array_key_exists('page_component_options', $params) // ['view' => ...]
-                    ;
+                $this->assertArrayHasKey('data_class', $options); // 'OroB2B\Bundle\RFPBundle\Entity\RequestProduct'
+                $this->assertArrayHasKey('intention', $options); // 'rfp_frontend_request_product'
+                $this->assertArrayHasKey('extra_fields_message', $options);
+                $this->assertArrayHasKey('page_component', $options); // 'oroui/js/app/components/view-component'
+                $this->assertArrayHasKey('page_component_options', $options); // ['view' => ...]
+
+                return true;
             }));
 
         $this->formType->configureOptions($resolver);
