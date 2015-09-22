@@ -1,7 +1,9 @@
 parameters:
     orob2b_cms.page.class: OroB2B\Bundle\CMSBundle\Entity\Page
+    orob2b_cms.loginpage.class: OroB2B\Bundle\CMSBundle\Entity\LoginPage
     orob2b_cms.page_tree_handler.class: OroB2B\Bundle\CMSBundle\JsTree\PageTreeHandler
     orob2b_cms.page.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    orob2b_cms.loginpage.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_cms.listener.page_slug_listener.class: OroB2B\Bundle\CMSBundle\EventListener\PageSlugListener
 
 services:
@@ -17,6 +19,13 @@ services:
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - %orob2b_cms.page.class%
+            - @doctrine.orm.entity_manager
+
+    orob2b_cms.loginpage.manager.api:
+        class: %orob2b_cms.loginpage.manager.api.class%
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - %orob2b_cms.loginpage.class%
             - @doctrine.orm.entity_manager
 
     orob2b_cms.listener.page_slug_listener:
