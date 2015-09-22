@@ -1,4 +1,6 @@
 orob2b:
+    menu:
+        sales_tab.label: 'Sales'
     rfp:
         request:
             entity_label: 'Request For Quote'

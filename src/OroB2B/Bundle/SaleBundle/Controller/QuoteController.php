@@ -77,7 +77,7 @@ class QuoteController extends Controller
     }
 
     /**
-     * @Route("/create_from_rfp_form/{id}", name="orob2b_sale_quote_createfromrfpform", requirements={"id"="\d+"})
+     * @Route("/create-from-rfp-form/{id}", name="orob2b_sale_quote_createfromrfpform", requirements={"id"="\d+"})
      * @Template("OroB2BSaleBundle:Quote:block/createFromRfpForm.html.twig")
      *
      * @AclAncestor("orob2b_sale_quote_create")
@@ -94,7 +94,7 @@ class QuoteController extends Controller
     }
 
     /**
-     * @Route("/create_from_rfp/{id}", name="orob2b_sale_quote_createfromrfp", requirements={"id"="\d+"})
+     * @Route("/create-from-rfp/{id}", name="orob2b_sale_quote_createfromrfp", requirements={"id"="\d+"})
      * @Template("OroB2BRFPBundle:Request:view.html.twig")
      *
      * @AclAncestor("orob2b_sale_quote_create")
