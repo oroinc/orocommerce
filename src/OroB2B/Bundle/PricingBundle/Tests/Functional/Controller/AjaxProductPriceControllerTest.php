@@ -178,10 +178,9 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
 
         $params = [
             'items' => [
-                ['qty' => $qty, 'product' => $product->getId(), 'unit' => $unit]
+                ['qty' => $qty, 'product' => $product->getId(), 'unit' => $unit, 'currency' => $currency]
             ],
-            'pricelist' => $priceList->getId(),
-            'currency' => $currency
+            'pricelist' => $priceList->getId()
         ];
 
         $this->client->request('GET', $this->getUrl('orob2b_pricing_matching_price', $params));
@@ -194,7 +193,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         $expectedData = [];
         if (!empty($expected)) {
             $expectedData = [
-                $product->getId() .'-'. $unit .'-'. $qty  => $expected
+                $product->getId() .'-'. $unit .'-'. $qty .'-'. $currency  => $expected
             ];
         }
 
