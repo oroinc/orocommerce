@@ -12,8 +12,6 @@ use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 
 /**
- * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
- *
  * @dbIsolation
  */
 class QuoteControllerTest extends WebTestCase
@@ -26,7 +24,6 @@ class QuoteControllerTest extends WebTestCase
         $this->initClient();
 
         $this->loadFixtures([
-            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData',
             'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
         ]);
     }
@@ -73,75 +70,6 @@ class QuoteControllerTest extends WebTestCase
                 $this->assertEquals($value, $data[$i][$key]);
             }
         }
-    }
-
-    /**
-     * @param array $inputData
-     * @param array $expectedData
-     *
-     * @dataProvider viewProvider
-     */
-    public function testView(array $inputData, array $expectedData)
-    {
-        $this->initClient([], $this->generateBasicAuthHeader($inputData['login'], $inputData['password']));
-
-        /* @var $quote Quote */
-        $quote = $this->getReference($inputData['qid']);
-
-        $crawler = $this->client->request('GET', $this->getUrl(
-            'orob2b_sale_quote_frontend_view',
-            ['id' => $quote->getId()]
-        ));
-
-        $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, 200);
-
-        $controls = $crawler->filter('.control-group');
-
-        $this->assertEquals(count($expectedData['columns']), count($controls));
-
-        /* @var $translator TranslatorInterface */
-        $translator = $this->getContainer()->get('translator');
-
-        $accessor = PropertyAccess::createPropertyAccessor();
-        foreach ($controls as $key => $control) {
-            /* @var $control \DOMElement */
-            $column = $expectedData['columns'][$key];
-
-            $label = $translator->trans($column['label']);
-            $property = (string)$accessor->getValue($quote, $column['property']) ?: $translator->trans('N/A');
-
-            $this->assertContains($label, $control->textContent);
-            $this->assertContains($property, $control->textContent);
-        }
-
-        $createOrderButton = (bool)$crawler->selectButton('Accept and Submit to Order')->count();
-
-        $this->assertEquals($expectedData['createOrderButton'], $createOrderButton);
-    }
-
-    /**
-     * @param array $inputData
-     * @param array $expectedData
-     *
-     * @dataProvider createOrderProvider
-     */
-    public function testCreateOrder(array $inputData, array $expectedData)
-    {
-        $this->initClient([], $this->generateBasicAuthHeader($inputData['login'], $inputData['password']));
-
-        /* @var $quote Quote */
-        $quote = $this->getReference($inputData['qid']);
-
-        $this->client->request(
-            'POST',
-            $this->getUrl('orob2b_sale_frontend_quote_create_order', ['id' => $quote->getId()])
-        );
-
-        $this->client->followRedirects(true);
-
-        $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, $expectedData['statusCode']);
     }
 
     /**
@@ -259,6 +187,51 @@ class QuoteControllerTest extends WebTestCase
     }
 
     /**
+     * @param array $inputData
+     * @param array $expectedData
+     *
+     * @dataProvider viewProvider
+     */
+    public function testView(array $inputData, array $expectedData)
+    {
+        $this->initClient([], $this->generateBasicAuthHeader($inputData['login'], $inputData['password']));
+
+        /* @var $quote Quote */
+        $quote = $this->getReference($inputData['qid']);
+
+        $crawler = $this->client->request('GET', $this->getUrl(
+            'orob2b_sale_quote_frontend_view',
+            ['id' => $quote->getId()]
+        ));
+
+        $result = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $controls = $crawler->filter('.control-group');
+
+        $this->assertSameSize($expectedData['columns'], $controls);
+
+        /* @var $translator TranslatorInterface */
+        $translator = $this->getContainer()->get('translator');
+
+        $accessor = PropertyAccess::createPropertyAccessor();
+        foreach ($controls as $key => $control) {
+            /* @var $control \DOMElement */
+            $column = $expectedData['columns'][$key];
+
+            $label = $translator->trans($column['label']);
+            $property = (string)$accessor->getValue($quote, $column['property']) ?: $translator->trans('N/A');
+
+            $this->assertContains($label, $control->textContent);
+            $this->assertContains($property, $control->textContent);
+        }
+
+        $createOrderButton = (bool)$crawler->selectLink('Accept and Submit to Order')->count();
+
+        $this->assertEquals($expectedData['createOrderButton'], $createOrderButton);
+    }
+
+    /**
      * @return array
      */
     public function viewProvider()
@@ -312,6 +285,30 @@ class QuoteControllerTest extends WebTestCase
     }
 
     /**
+     * @param array $inputData
+     * @param array $expectedData
+     *
+     * @dataProvider createOrderProvider
+     */
+    public function testCreateOrder(array $inputData, array $expectedData)
+    {
+        $this->initClient([], $this->generateBasicAuthHeader($inputData['login'], $inputData['password']));
+
+        /* @var $quote Quote */
+        $quote = $this->getReference($inputData['qid']);
+
+        $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_sale_frontend_quote_create_order', ['id' => $quote->getId()])
+        );
+
+        $this->client->followRedirects(false);
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, $expectedData['statusCode']);
+    }
+
+    /**
      * @return array
      */
     public function createOrderProvider()
@@ -334,7 +331,7 @@ class QuoteControllerTest extends WebTestCase
                     'password' => LoadUserData::ACCOUNT1_USER3,
                 ],
                 'expected' => [
-                    'statusCode' => 200,
+                    'statusCode' => 302,
                 ],
             ],
         ];
