@@ -119,55 +119,57 @@
 
 {% block orob2b_sale_quote_product_to_order_widget %}
     {% set quoteProduct = form.vars.quote_product %}
-    {% if quoteProduct.productReplacement is not null %}
-        {% set product = quoteProduct.productReplacement %}
+    {% set product = quoteProduct.productReplacement|default(quoteProduct.product) %}
+    {% if form.offer|first %}
+        {% set defaultUnitCode = form.offer|first.vars.offer.productUnit %}
+        {% set defaultPrice = form.offer|first.vars.offer.price|oro_format_price %}
     {% else %}
-        {% set product = quoteProduct.product %}
+        {% set defaultUnitCode = '' %}
+        {% set defaultPrice = '' %}
     {% endif %}
-
-    <td>
-        <div class="quote-product-offer-product-sku">{{ product.sku }}</div>
-    </td>
-    <td>
-        <div class="quote-product-offer-product-name">{{ product.defaultName }}</div>
-    </td>
-    <td>
-        <div class="quote-product-offer-customer-notes">{{ quoteProduct.comment }}</div>
-    </td>
-    <td>
-        <div class="quote-product-offer-seller-notes">{{ quoteProduct.commentAccount }}</div>
-    </td>
-    <td>
-        <div class="quote-product-offer-select-offer">
+    <tr>
+        <td class="quote-product-offer-product-sku">
+            <span>{{ product.sku }}</span>
+        </td>
+        <td class="quote-product-offer-product-name">
+            <span>{{ product.defaultName }}</span>
+        </td>
+        <td class="quote-product-offer-customer-notes">
+            <span>{{ quoteProduct.comment }}</span>
+        </td>
+        <td class="quote-product-offer-seller-notes">
+            <span>{{ quoteProduct.commentAccount }}</span>
+        </td>
+        <td class="quote-product-offer-select-offer">
             <table>
                 {% for choice in form.offer %}
                     <tr>
-                        <td>{{ form_widget(choice) }}</td>
-                        <td>{{ choice.vars.label }}</td>
-                        <td>{{ choice.vars.offer.price|oro_format_price }}</td>
+                        <td class="quote-product-offer-select-offer-choice">{{ form_widget(choice) }}</td>
+                        <td class="quote-product-offer-select-offer-label">{{ choice.vars.label }}</td>
+                        <td class="quote-product-offer-select-offer-price">{{ choice.vars.offer.price|oro_format_price }}</td>
                     </tr>
                 {% endfor %}
             </table>
             {{ form_errors(form.offer) }}
-        </div>
-    </td>
-    <td>
-        <div class="quote-product-offer-quantity">
-            {{ form_widget(form.quantity) }}
-            {{ form_errors(form.quantity) }}
-        </div>
-    </td>
-    <td>
-        <div class="quote-product-offer-price">{{ form.offer|first.vars.offer.price|oro_format_price }}</div>
-    </td>
+        </td>
+        <td class="quote-product-offer-quantity">
+            <div >
+                {{ form_widget(form.quantity) }}
+                <span class="quote-product-offer-quantity-unit">{{ defaultUnitCode }}</span>
+            </div>
+            <div>
+                {{ form_errors(form.quantity) }}
+            </div>
+        </td>
+        <td class="quote-product-offer-price">
+            <span>{{ defaultPrice }}</span>
+        </td>
+    </tr>
 {% endblock %}
 
 {% block orob2b_sale_quote_to_order_widget %}
     {% spaceless %}
         <div {{ block('widget_container_attributes') }}>
-            {%- if form.parent is empty -%}
-                {{ form_errors(form) }}
-            {%- endif -%}
             <table class="grid table-hover table table-bordered table-condensed">
                 <thead>
                     <tr>
@@ -188,6 +190,7 @@
                 </tbody>
             </table>
             {{ form_rest(form) }}
+            {{ form_errors(form) }}
         </div>
     {% endspaceless %}
 {% endblock %}

@@ -290,10 +290,72 @@
     width: 257px !important;
 }
 
-.quote-product-offer-select-offer table td {
+td.quote-product-offer-product-sku,
+td.quote-product-offer-product-name,
+td.quote-product-offer-customer-notes,
+td.quote-product-offer-seller-notes {
+    padding-top: 10px !important;
+}
+
+td.quote-product-offer-product-sku {
+    width: 300px;
+}
+
+td.quote-product-offer-product-name {
+    width: 550px;
+}
+
+td.quote-product-offer-select-offer {
+    width: 240px;
+}
+
+td.quote-product-offer-select-offer table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+td.quote-product-offer-select-offer td {
     border: none;
 }
 
-.quote-product-offer-select-offer table td input {
+td.quote-product-offer-select-offer td input {
     margin-top: 0 !important;
+}
+
+td.quote-product-offer-select-offer td.quote-product-offer-select-offer-choice {
+    width: 16px;
+    padding: 5px 0 !important;
+}
+
+td.quote-product-offer-select-offer td.quote-product-offer-select-offer-label {
+    width: 85px;
+    word-wrap: break-word;
+}
+
+td.quote-product-offer-select-offer td.quote-product-offer-select-offer-price {
+    width: 50px;
+    word-wrap: break-word;
+}
+
+td.quote-product-offer-quantity {
+    width: 140px;
+    padding-left: 25px !important;
+}
+
+td.quote-product-offer-quantity input {
+    width: 40px;
+}
+
+td.quote-product-offer-price {
+    width: 60px;
+}
+
+td.quote-product-offer-select-offer td.quote-product-offer-select-offer-choice,
+td.quote-product-offer-quantity,
+td.quote-product-offer-price {
+    vertical-align: middle !important;
+}
+
+span.quote-product-offer-quantity-unit {
+    margin-left: 5px;
 }
