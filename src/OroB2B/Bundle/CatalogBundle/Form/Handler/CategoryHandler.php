@@ -4,13 +4,11 @@ namespace OroB2B\Bundle\CatalogBundle\Form\Handler;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\CatalogBundle\Event\CategoryEditEvent;
 
 class CategoryHandler
 {
@@ -25,25 +23,19 @@ class CategoryHandler
     /** @var ObjectManager */
     protected $manager;
 
-    /** @var  EventDispatcherInterface */
-    protected $eventDispatcher;
-
     /**
      * @param FormInterface            $form
      * @param Request                  $request
      * @param ObjectManager            $manager
-     * @param EventDispatcherInterface $dispatcher
      */
     public function __construct(
         FormInterface $form,
         Request $request,
-        ObjectManager $manager,
-        EventDispatcherInterface $dispatcher
+        ObjectManager $manager
     ) {
         $this->form = $form;
         $this->request = $request;
         $this->manager = $manager;
-        $this->eventDispatcher = $dispatcher;
     }
 
     /**
@@ -58,7 +50,6 @@ class CategoryHandler
         if (in_array($this->request->getMethod(), ['POST', 'PUT'])) {
             $this->form->submit($this->request);
             if ($this->form->isValid()) {
-                $this->dispatchEvent($category);
                 $appendProducts = $this->form->get('appendProducts')->getData();
                 $removeProducts = $this->form->get('removeProducts')->getData();
                 $this->onSuccess($category, $appendProducts, $removeProducts);
@@ -114,18 +105,5 @@ class CategoryHandler
         foreach ($products as $product) {
             $category->removeProduct($product);
         }
-    }
-
-    /**
-     * @param Category $category
-     */
-    protected function dispatchEvent(Category $category)
-    {
-        $event = (new CategoryEditEvent())
-            ->setCategory($category)
-            ->setForm($this->form)
-            ->setRequest($this->request);
-
-        $this->eventDispatcher->dispatch(CategoryEditEvent::NAME, $event);
     }
 }

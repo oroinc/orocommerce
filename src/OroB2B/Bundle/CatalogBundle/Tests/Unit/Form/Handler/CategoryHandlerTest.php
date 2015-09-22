@@ -7,17 +7,11 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Oro\Component\Testing\Unit\FormHandlerTestCase;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Event\CategoryEditEvent;
 use OroB2B\Bundle\CatalogBundle\Form\Handler\CategoryHandler;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class CategoryHandlerTest extends FormHandlerTestCase
 {
-    /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $eventDispatcher;
-
     /**
      * @var Category
      */
@@ -27,9 +21,8 @@ class CategoryHandlerTest extends FormHandlerTestCase
     {
         parent::setUp();
 
-        $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
         $this->entity = new Category();
-        $this->handler = new CategoryHandler($this->form, $this->request, $this->manager, $this->eventDispatcher);
+        $this->handler = new CategoryHandler($this->form, $this->request, $this->manager);
     }
 
     /**
@@ -51,14 +44,6 @@ class CategoryHandlerTest extends FormHandlerTestCase
 
         if ($isValid) {
             $this->assertAppendRemoveProducts();
-            $this->eventDispatcher
-                ->expects($this->once())
-                ->method('dispatch')
-                ->with(CategoryEditEvent::NAME, $this->prepareCategoryEditEvent());
-        } else {
-            $this->eventDispatcher
-                ->expects($this->never())
-                ->method('dispatch');
         }
 
         $this->request->setMethod($method);
@@ -97,11 +82,6 @@ class CategoryHandlerTest extends FormHandlerTestCase
 
         $this->manager->expects($this->any())
             ->method('flush');
-
-        $this->eventDispatcher
-            ->expects($this->once())
-            ->method('dispatch')
-            ->with(CategoryEditEvent::NAME, $this->prepareCategoryEditEvent());
 
         $this->assertTrue($this->handler->process($this->entity));
     }
@@ -149,16 +129,5 @@ class CategoryHandlerTest extends FormHandlerTestCase
             ->method('getRepository')
             ->with('OroB2BCatalogBundle:Category')
             ->will($this->returnValue($categoryRepository));
-    }
-
-    /**
-     * @return CategoryEditEvent
-     */
-    protected function prepareCategoryEditEvent()
-    {
-        return (new CategoryEditEvent())
-            ->setCategory($this->entity)
-            ->setForm($this->form)
-            ->setRequest($this->request);
     }
 }

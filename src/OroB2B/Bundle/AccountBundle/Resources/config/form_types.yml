@@ -20,6 +20,9 @@ parameters:
 
     orob2b_account.form.handler.account_user_role.class: OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleHandler
 
+    orob2b_account.form.listener.category.post_set_data.class: OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSetDataListener
+    orob2b_account.form.listener.category.post_submit.class: OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSubmitListener
+
     orob2b_account.form.type.account_user_typed_address.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserTypedAddressType
     orob2b_account.form.type.typed_address.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountTypedAddressType
     orob2b_account.form.type.typed_address_with_default.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountTypedAddressWithDefaultType
@@ -31,7 +34,6 @@ parameters:
     orob2b_account.form.extension.select_or_create_inline.class: OroB2B\Bundle\AccountBundle\Form\Extension\OroEntitySelectOrCreateInlineExtension
     orob2b_account.form.extension.frontend_product_select.class: OroB2B\Bundle\AccountBundle\Form\Extension\FrontendProductSelectExtension
     orob2b_account.form.extension.address.class: OroB2B\Bundle\AccountBundle\Form\Extension\AddressExtension
-
 
 services:
     orob2b_account.form.type.account:
@@ -181,11 +183,26 @@ services:
         tags:
             - { name: form.type_extension, alias: oro_acl_access_level_selector }
 
+    orob2b_account.form.listener.category.post_set_data:
+        class: %orob2b_account.form.listener.category.post_set_data.class%
+        arguments:
+            - @doctrine
+
+    orob2b_account.form.listener.category.post_submit:
+        class: %orob2b_account.form.listener.category.post_submit.class%
+        arguments:
+            - @doctrine
+            - @oro_entity_extend.enum_value_provider
+        calls:
+            - [setCategoryVisibilityClass, [%orob2b_account.entity.category_visibility.class%]]
+            - [setAccountCategoryVisibilityClass, [%orob2b_account.entity.account_category_visibility.class%]]
+            - [setAccountGroupCategoryVisibilityClass, [%orob2b_account.entity.account_group_category_visibility.class%]]
 
     orob2b_account.form.extension.category_type:
         class: %orob2b_account.form.extension.category_type.class%
         arguments:
-            - @doctrine
+            - @orob2b_account.form.listener.category.post_set_data
+            - @orob2b_account.form.listener.category.post_submit
         tags:
             - { name: form.type_extension, alias: orob2b_catalog_category }
 

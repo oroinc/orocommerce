@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\EventListener;
+namespace OroB2B\Bundle\AccountBundle\Form\EventListener;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\FormEvent;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManager;
 use Doctrine\Common\Util\ClassUtils;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
 
@@ -20,48 +19,58 @@ use OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountCategoryVisibilityRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupCategoryVisibilityRepository;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Event\CategoryEditEvent;
 
-class CategoryEditSubscriber implements EventSubscriberInterface
+class CategoryPostSubmitListener
 {
     const CATEGORY_VISIBILITY = 'category_visibility';
     const ACCOUNT_CATEGORY_VISIBILITY = 'acc_ctgry_visibility';
     const ACCOUNT_GROUP_CATEGORY_VISIBILITY = 'acc_grp_ctgry_vsblity';
 
-    /** @var DoctrineHelper */
-    protected $doctrineHelper;
+    /** @var ManagerRegistry */
+    protected $registry;
 
     /** @var EnumValueProvider */
     protected $enumValueProvider;
 
-    /** @var  ArrayCollection|EntityManager[] */
-    protected $entityManagers;
+    /** @var string */
+    protected $categoryVisibilityClass;
+
+    /** @var string */
+    protected $accountCategoryVisibilityClass;
+
+    /** @var string */
+    protected $accountGroupCategoryVisibilityClass;
 
     /**
-     * @param DoctrineHelper    $doctrineHelper
+     * @param ManagerRegistry $registry
      * @param EnumValueProvider $enumValueProvider
      */
-    public function __construct(DoctrineHelper $doctrineHelper, EnumValueProvider $enumValueProvider)
+    public function __construct(ManagerRegistry $registry, EnumValueProvider $enumValueProvider)
     {
-        $this->doctrineHelper = $doctrineHelper;
+        $this->registry = $registry;
         $this->enumValueProvider = $enumValueProvider;
-        $this->entityManagers = new ArrayCollection();
     }
 
     /**
-     * {@inheritdoc}
+     * @param object $object
+     * @return \Doctrine\ORM\EntityManager
      */
-    public static function getSubscribedEvents()
+    protected function getEntityManager($object)
     {
-        return [CategoryEditEvent::NAME => 'onCategoryEdit'];
+        return $this->registry->getManagerForClass(ClassUtils::getClass($object));
     }
 
     /**
-     * @param CategoryEditEvent $event
+     * @param FormEvent $event
      */
-    public function onCategoryEdit(CategoryEditEvent $event)
+    public function onPostSubmit(FormEvent $event)
     {
-        $category = $event->getCategory();
+        $category = $event->getData();
+
+        if (!$category || !$category instanceof Category || !$category->getId()) {
+            return;
+        }
+
         $form = $event->getForm();
 
         /** @var AbstractEnumValue $visibilityEnum */
@@ -83,32 +92,30 @@ class CategoryEditSubscriber implements EventSubscriberInterface
             $this->processAccountGroupVisibility($category, $accountGroupChangeSet);
         }
 
-        foreach ($this->entityManagers as $em) {
-            $em->flush();
-        }
+        $this->getEntityManager($category)->flush();
     }
 
     /**
-     * @param Category          $category
+     * @param Category $category
      * @param AbstractEnumValue $visibilityEnum
      */
     protected function processCategoryVisibility(Category $category, AbstractEnumValue $visibilityEnum)
     {
         $categoryVisibility = $this
-            ->doctrineHelper
-            ->getEntityRepository('OroB2BAccountBundle:CategoryVisibility')
+            ->registry
+            ->getRepository('OroB2BAccountBundle:CategoryVisibility')
             ->findOneBy(['category' => $category]);
 
         if (!$categoryVisibility) {
-            $categoryVisibility = (new CategoryVisibility())
+            $categoryVisibility = (new $this->categoryVisibilityClass())
                 ->setCategory($category);
         }
 
-        $this->applyVisibility($categoryVisibility, self::CATEGORY_VISIBILITY, $visibilityEnum->getId());
+        $this->applyVisibility($category, $categoryVisibility, self::CATEGORY_VISIBILITY, $visibilityEnum->getId());
     }
 
     /**
-     * @param Category        $category
+     * @param Category $category
      * @param ArrayCollection $accountChangeSet
      */
     protected function processAccountVisibility(Category $category, ArrayCollection $accountChangeSet)
@@ -120,12 +127,13 @@ class CategoryEditSubscriber implements EventSubscriberInterface
 
             $accountCategoryVisibility = $accountVisibilities->offsetGet($account->getId());
             if (!$accountCategoryVisibility) {
-                $accountCategoryVisibility = (new AccountCategoryVisibility())
+                $accountCategoryVisibility = (new $this->accountCategoryVisibilityClass())
                     ->setCategory($category)
                     ->setAccount($account);
             }
 
             $this->applyVisibility(
+                $category,
                 $accountCategoryVisibility,
                 self::ACCOUNT_CATEGORY_VISIBILITY,
                 $item['data']['visibility']
@@ -134,7 +142,7 @@ class CategoryEditSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param Category        $category
+     * @param Category $category
      * @param ArrayCollection $accountChangeSet
      */
     protected function processAccountGroupVisibility(Category $category, ArrayCollection $accountChangeSet)
@@ -146,12 +154,13 @@ class CategoryEditSubscriber implements EventSubscriberInterface
 
             $accountGroupCategoryVisibility = $accountGroupVisibilities->offsetGet($accountGroup->getId());
             if (!$accountGroupCategoryVisibility) {
-                $accountGroupCategoryVisibility = (new AccountGroupCategoryVisibility())
+                $accountGroupCategoryVisibility = (new $this->accountGroupCategoryVisibilityClass())
                     ->setCategory($category)
                     ->setAccountGroup($accountGroup);
             }
 
             $this->applyVisibility(
+                $category,
                 $accountGroupCategoryVisibility,
                 self::ACCOUNT_GROUP_CATEGORY_VISIBILITY,
                 $item['data']['visibility']
@@ -160,21 +169,14 @@ class CategoryEditSubscriber implements EventSubscriberInterface
     }
 
     /**
+     * @param Category $category
      * @param CategoryVisibility|AccountCategoryVisibility|AccountGroupCategoryVisibility $visibilityEntity
      * @param string $enumCode
      * @param string $visibilityCode
      */
-    protected function applyVisibility($visibilityEntity, $enumCode, $visibilityCode)
+    protected function applyVisibility(Category $category, $visibilityEntity, $enumCode, $visibilityCode)
     {
-        $entityClass = ClassUtils::getClass($visibilityEntity);
-
-        if (!$this->entityManagers->offsetExists($entityClass)) {
-            $em = $this->doctrineHelper->getEntityManager($visibilityEntity);
-            $this->entityManagers->offsetSet($entityClass, $em);
-        } else {
-            $em = $this->entityManagers->offsetGet($entityClass);
-        }
-
+        $em = $this->getEntityManager($category);
         if ($visibilityCode === $visibilityEntity->getDefault()) {
             if ($visibilityEntity->getVisibility()) {
                 $em->remove($visibilityEntity);
@@ -190,7 +192,7 @@ class CategoryEditSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param Category        $category
+     * @param Category $category
      * @param ArrayCollection $accountChangeSet
      *
      * @return ArrayCollection|\OroB2B\Bundle\AccountBundle\Entity\AccountCategoryVisibility[]
@@ -206,13 +208,14 @@ class CategoryEditSubscriber implements EventSubscriberInterface
 
         /** @var AccountCategoryVisibilityRepository $repo */
         $repo = $this
-            ->doctrineHelper
-            ->getEntityRepository('OroB2BAccountBundle:AccountCategoryVisibility');
+            ->registry
+            ->getRepository('OroB2BAccountBundle:AccountCategoryVisibility');
 
         $visibilities = new ArrayCollection();
-        $repo
-            ->findForAccounts($accounts, $category)
-            ->map(
+        $a = $repo
+            ->findForAccounts($accounts, $category);
+
+            $a->map(
                 function ($visibility) use ($visibilities) {
                     /** @var AccountCategoryVisibility $visibility */
                     $visibilities->offsetSet($visibility->getAccount()->getId(), $visibility);
@@ -223,7 +226,7 @@ class CategoryEditSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * @param Category        $category
+     * @param Category $category
      * @param ArrayCollection $accountGroupChangeSet
      *
      * @return ArrayCollection|\OroB2B\Bundle\AccountBundle\Entity\AccountCategoryVisibility[]
@@ -239,8 +242,8 @@ class CategoryEditSubscriber implements EventSubscriberInterface
 
         /** @var AccountGroupCategoryVisibilityRepository $repo */
         $repo = $this
-            ->doctrineHelper
-            ->getEntityRepository('OroB2BAccountBundle:AccountGroupCategoryVisibility');
+            ->registry
+            ->getRepository('OroB2BAccountBundle:AccountGroupCategoryVisibility');
 
         $visibilities = new ArrayCollection();
         $repo
@@ -253,5 +256,38 @@ class CategoryEditSubscriber implements EventSubscriberInterface
             );
 
         return $visibilities;
+    }
+
+    /**
+     * @param string $categoryVisibilityClass
+     * @return $this
+     */
+    public function setCategoryVisibilityClass($categoryVisibilityClass)
+    {
+        $this->categoryVisibilityClass = $categoryVisibilityClass;
+
+        return $this;
+    }
+
+    /**
+     * @param string $accountCategoryVisibilityClass
+     * @return $this
+     */
+    public function setAccountCategoryVisibilityClass($accountCategoryVisibilityClass)
+    {
+        $this->accountCategoryVisibilityClass = $accountCategoryVisibilityClass;
+
+        return $this;
+    }
+
+    /**
+     * @param string $accountGroupCategoryVisibilityClass
+     * @return $this
+     */
+    public function setAccountGroupCategoryVisibilityClass($accountGroupCategoryVisibilityClass)
+    {
+        $this->accountGroupCategoryVisibilityClass = $accountGroupCategoryVisibilityClass;
+
+        return $this;
     }
 }
