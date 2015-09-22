@@ -35,8 +35,8 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
     /**
      * @var array
      */
-    protected $items = [
-        [
+    public static $items = [
+        self::QUOTE1 => [
             'qid'       => self::QUOTE1,
             'products'  => [
                 self::PRODUCT1 => [
@@ -66,35 +66,35 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
                 ],
             ],
         ],
-        [
+        self::QUOTE2 => [
             'qid'           => self::QUOTE2,
             'account'       => LoadUserData::ACCOUNT1,
             'products'      => [],
         ],
-        [
+        self::QUOTE3 => [
             'qid'           => self::QUOTE3,
             'account'       => LoadUserData::ACCOUNT1,
             'accountUser'   => LoadUserData::ACCOUNT1_USER1,
             'products'      => [],
         ],
-        [
+        self::QUOTE4 => [
             'qid'           => self::QUOTE4,
             'account'       => LoadUserData::ACCOUNT1,
             'accountUser'   => LoadUserData::ACCOUNT1_USER2,
             'products'      => [],
         ],
-        [
+        self::QUOTE5 => [
             'qid'           => self::QUOTE5,
             'account'       => LoadUserData::ACCOUNT1,
             'accountUser'   => LoadUserData::ACCOUNT1_USER3,
             'products'      => [],
         ],
-        [
+        self::QUOTE6 => [
             'qid'           => self::QUOTE6,
             'account'       => LoadUserData::ACCOUNT2,
             'products'      => [],
         ],
-        [
+        self::QUOTE7 => [
             'qid'           => self::QUOTE7,
             'account'       => LoadUserData::ACCOUNT2,
             'accountUser'   => LoadUserData::ACCOUNT2_USER1,
@@ -120,7 +120,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
     {
         $user = $this->getUser($manager);
 
-        foreach ($this->items as $item) {
+        foreach (self::$items as $item) {
             /* @var $quote Quote */
             $quote = new Quote();
             $quote

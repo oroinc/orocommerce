@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\SaleBundle\Controller\Frontend;
 
 use Doctrine\Common\Util\ClassUtils;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
@@ -28,6 +30,7 @@ class QuoteController extends Controller
      *      permission="ACCOUNT_VIEW",
      *      group_name="commerce"
      * )
+     * @ParamConverter("quote", options={"repository_method" = "getQuote"})
      *
      * @param Quote $quote
      * @return array
@@ -77,6 +80,7 @@ class QuoteController extends Controller
     /**
      * @Route("/create-order/{id}", name="orob2b_sale_frontend_quote_create_order", requirements={"id"="\d+"})
      * @AclAncestor("orob2b_order_frontend_create")
+     * @ParamConverter("quote", options={"repository_method" = "getQuote"})
      *
      * @param Quote $quote
      * @return RedirectResponse
