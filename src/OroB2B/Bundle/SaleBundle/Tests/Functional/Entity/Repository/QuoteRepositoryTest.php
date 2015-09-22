@@ -50,9 +50,17 @@ class QuoteRepositoryTest extends WebTestCase
         $loadedQuote = $repository->getQuote($quote->getId());
 
         // iterate collections to run additional queries if not fetched at once
+        $this->assertSameSize(
+            LoadQuoteData::$items[LoadQuoteData::QUOTE1]['products'],
+            $loadedQuote->getQuoteProducts()
+        );
         foreach ($loadedQuote->getQuoteProducts() as $quoteProduct) {
             $this->assertNotEmpty($quoteProduct->getProductSku());
 
+            $this->assertSameSize(
+                LoadQuoteData::$items[LoadQuoteData::QUOTE1]['products'][$quoteProduct->getProductSku()],
+                $quoteProduct->getQuoteProductOffers()
+            );
             foreach ($quoteProduct->getQuoteProductOffers() as $quoteProductOffer) {
                 $this->assertNotEmpty($quoteProductOffer->getQuantity());
             }
