@@ -75,8 +75,27 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
     public function testCreateForShoppingListWithoutPermission()
     {
         $this->securityFacade->expects($this->once())
+            ->method('hasLoggedUser')
+            ->willReturn(true);
+
+        $this->securityFacade->expects($this->once())
             ->method('isGranted')
             ->willReturn(false);
+
+        $this->handler->createForShoppingList(new ShoppingList());
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     */
+    public function testCreateForShoppingListWithoutUser()
+    {
+        $this->securityFacade->expects($this->once())
+            ->method('hasLoggedUser')
+            ->willReturn(false);
+
+        $this->securityFacade->expects($this->never())
+            ->method('isGranted');
 
         $this->handler->createForShoppingList(new ShoppingList());
     }
@@ -91,13 +110,17 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsAllowed($isGrantedAdd, $expected, ShoppingList $shoppingList = null, $isGrantedEdit = false)
     {
-        $this->securityFacade->expects($this->at(0))->method('isGranted')
+        $this->securityFacade->expects($this->once())
+            ->method('hasLoggedUser')
+            ->willReturn(true);
+
+        $this->securityFacade->expects($this->at(1))->method('isGranted')
             ->with('orob2b_shopping_list_line_item_frontend_add')
             ->willReturn($isGrantedAdd);
 
         if ($shoppingList && $isGrantedAdd) {
             $this->securityFacade
-                ->expects($this->at(1))
+                ->expects($this->at(2))
                 ->method('isGranted')
                 ->with('EDIT', $shoppingList)
                 ->willReturn($isGrantedEdit);
@@ -143,6 +166,9 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getAccountUser')
             ->willReturn($accountUser);
 
+        $this->securityFacade->expects($this->any())
+            ->method('hasLoggedUser')
+            ->willReturn(true);
         $this->securityFacade->expects($this->any())->method('isGranted')->willReturn(true);
 
         $this->manager->expects($this->once())->method('bulkAddLineItems')->with(

@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\SaleBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
@@ -53,6 +55,7 @@ class QuoteProductOfferType extends AbstractType
                 'label' => 'orob2b.sale.quoteproductoffer.quantity.label'
             ])
             ->add('price', PriceType::NAME, [
+                'currency_empty_value' => null,
                 'error_bubbling' => false,
                 'required' => true,
                 'label' => 'orob2b.sale.quoteproductoffer.price.label'
@@ -65,7 +68,8 @@ class QuoteProductOfferType extends AbstractType
             ->add('productUnit', ProductUnitRemovedSelectionType::NAME, [
                 'label' => 'orob2b.product.productunit.entity_label',
                 'required' => true,
-            ]);
+            ])
+            ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetData'])
         ;
     }
 
@@ -87,5 +91,19 @@ class QuoteProductOfferType extends AbstractType
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function postSetData(FormEvent $event)
+    {
+        $priceType = $event->getForm()->get('priceType');
+
+        if ($priceType->getData()) {
+            return;
+        }
+
+        $priceType->setData(QuoteProductOffer::PRICE_TYPE_UNIT);
     }
 }

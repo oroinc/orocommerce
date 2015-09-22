@@ -10,12 +10,13 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductRowType;
-use OroB2B\Bundle\ProductBundle\Model\DataStorageAwareProcessor;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Extension\Stub\PostQuickAddTypeExtensionStub;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Extension\Stub\ProductDataStorageExtensionStub;
 
-class AbstractPostQuickAddTypeExtensionTest extends \PHPUnit_Framework_TestCase
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
+abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Framework_TestCase
 {
     /** @var \PHPUnit_Framework_MockObject_MockObject|ProductDataStorage */
     protected $storage;
@@ -26,7 +27,7 @@ class AbstractPostQuickAddTypeExtensionTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|Request */
     protected $request;
 
-    /** @var PostQuickAddTypeExtensionStub */
+    /** @var ProductDataStorageExtensionStub */
     protected $extension;
 
     /** @var string */
@@ -53,7 +54,7 @@ class AbstractPostQuickAddTypeExtensionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->extension = new PostQuickAddTypeExtensionStub(
+        $this->extension = new ProductDataStorageExtensionStub(
             $this->storage,
             $this->doctrineHelper,
             $this->productClass
@@ -111,25 +112,6 @@ class AbstractPostQuickAddTypeExtensionTest extends \PHPUnit_Framework_TestCase
         $this->extension->buildForm($builder, ['data' => $this->entity]);
     }
 
-    public function testBuild()
-    {
-        $this->assertFalse($this->extension->isAddProductToEntityCalled());
-
-        $sku = 'TEST';
-        $product = $this->getProductEntity($sku);
-        $data = [[ProductRowType::PRODUCT_SKU_FIELD_NAME => $sku, ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => 3]];
-
-        $this->assertRequestGetCalled();
-        $this->assertStorageCalled($data);
-        $this->assertProductRepositoryCalled($product);
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface $builder */
-        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
-        $this->extension->buildForm($builder, ['data' => $this->entity]);
-
-        $this->assertTrue($this->extension->isAddProductToEntityCalled());
-    }
-
     /**
      * @param string $sku
      * @param ProductUnit|null $productUnit
@@ -157,7 +139,7 @@ class AbstractPostQuickAddTypeExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $this->request->expects($this->once())
             ->method('get')
-            ->with(DataStorageAwareProcessor::QUICK_ADD_PARAM)
+            ->with(ProductDataStorage::STORAGE_KEY)
             ->willReturn($result);
     }
 
@@ -190,5 +172,57 @@ class AbstractPostQuickAddTypeExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('getEntityRepository')
             ->with($this->productClass)
             ->willReturn($repo);
+    }
+
+    /**
+     * @param array $mappings
+     */
+    protected function assertMetadataCalled(array $mappings = [])
+    {
+        $metadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
+        $metadata->expects($this->any())->method('hasAssociation')->will(
+            $this->returnCallback(
+                function ($property) use ($mappings) {
+                    return array_key_exists($property, $mappings);
+                }
+            )
+        );
+        $metadata->expects($this->any())->method('getAssociationTargetClass')->will(
+            $this->returnCallback(
+                function ($property) use ($mappings) {
+                    $this->assertArrayHasKey($property, $mappings);
+                    $this->assertArrayHasKey('targetClass', $mappings[$property]);
+
+                    return $mappings[$property]['targetClass'];
+                }
+            )
+        );
+
+        $this->doctrineHelper->expects($this->any())->method('getEntityMetadata')->willReturn($metadata);
+        $this->doctrineHelper->expects($this->any())->method('getEntityReference')
+            ->willReturnCallback([$this, 'getEntity']);
+    }
+
+    /**
+     * @param string $className
+     * @param int $id
+     * @return object
+     */
+    public function getEntity($className, $id)
+    {
+        $entity = new $className;
+        $reflectionClass = new \ReflectionClass($className);
+        $method = $reflectionClass->getProperty('id');
+        $method->setAccessible(true);
+        $method->setValue($entity, $id);
+
+        return $entity;
+    }
+
+    public function testExtendedType()
+    {
+        $type = 'entity';
+        $this->extension->setExtendedType($type);
+        $this->assertSame($type, $this->extension->getExtendedType());
     }
 }

@@ -41,7 +41,7 @@ class PriceType extends AbstractType
                 'full_currency_list' => $options['full_currency_list'],
                 'compact' => $options['compact'],
                 'required' => true,
-                'empty_value' => 'oro.currency.currency.form.choose'
+                'empty_value' => $options['currency_empty_value'],
             ];
         } else {
             $currencyType = 'hidden';
@@ -70,6 +70,7 @@ class PriceType extends AbstractType
             'currencies_list' => null,
             'default_currency' => null,
             'full_currency_list' => false,
+            'currency_empty_value' => 'oro.currency.currency.form.choose',
             'compact' => false
         ]);
     }

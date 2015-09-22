@@ -38,6 +38,7 @@ class RequestProductItemType extends AbstractType
                 'label'     => 'orob2b.rfp.requestproductitem.quantity.label',
             ])
             ->add('price', PriceType::NAME, [
+                'currency_empty_value' => null,
                 'required'  => true,
                 'label'     => 'orob2b.rfp.requestproductitem.price.label',
             ])

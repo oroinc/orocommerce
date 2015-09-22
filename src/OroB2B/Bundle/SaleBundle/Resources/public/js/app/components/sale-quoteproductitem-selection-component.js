@@ -158,6 +158,10 @@ define(function(require) {
         onProductChanged: function(e) {
             this.checkAddButton();
 
+            if (this.getProductId() && !this.$itemsContainer.children().length) {
+                this.$addItemButton.click();
+            }
+
             if (this.$itemsContainer.children().length) {
                 this.updateContent(true);
             }
@@ -245,8 +249,13 @@ define(function(require) {
                         .append($('<option/>').val(key).text(value))
                     ;
                 });
-                if (!currentValue && $(select).has('option:first-child')) {
-                    currentValue = $(select).find('option:first-child').val();
+                var firstValue = $(select).find('option:first-child').val();
+                if (!currentValue && firstValue) {
+                    currentValue = firstValue;
+                }
+                $(select).val(currentValue);
+                if (null === $(select).val() && firstValue) {
+                    $(select).val(firstValue);
                 }
                 $(select).val(currentValue).change();
                 $(select).addClass(self.options.syncClass);

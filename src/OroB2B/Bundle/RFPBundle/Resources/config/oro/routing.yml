@@ -20,6 +20,6 @@ orob2b_rfp_bundle_api:
 orob2b_rfp_frontend:
     resource: "@OroB2BRFPBundle/Controller/Frontend/RequestController.php"
     type: annotation
-    prefix: /rfp
+    prefix: /account/rfp
     options:
         frontend: true

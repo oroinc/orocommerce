@@ -6,7 +6,6 @@ define(function(require) {
     var AddProductComponent;
     var _ = require('underscore');
     var BaseComponent = require('oroui/js/app/components/base/component');
-    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
 
     AddProductComponent = BaseComponent.extend({
         /**
@@ -18,11 +17,6 @@ define(function(require) {
         },
 
         /**
-         * @property {LoadingMaskView}
-         */
-        loadingMaskView: null,
-
-        /**
          * @property {jQuery.Element}
          */
         shoppingListLabelSelector: null,
@@ -32,7 +26,6 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-            this.loadingMaskView = new LoadingMaskView({container: this.options._sourceElement});
 
             this.shoppingListLabelSelector = this.options._sourceElement.find(this.options.shoppingListLabelSelector);
             this.options._sourceElement

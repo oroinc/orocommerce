@@ -1,4 +1,5 @@
 parameters:
+    orob2b_frontend.activity_list.placeholder.filter.class: OroB2B\Bundle\FrontendBundle\Placeholder\ActivityListPlaceholderFilter
     orob2b_frontend.listener.frontend_route_collection.class: OroB2B\Bundle\FrontendBundle\EventListener\FrontendRouteCollectionListener
     orob2b_frontend.listener.route_collection.class: OroB2B\Bundle\FrontendBundle\EventListener\RouteCollectionListener
     orob2b_frontend.menu.breadcrumb_manager.class: OroB2B\Bundle\FrontendBundle\Menu\BreadcrumbManager
@@ -74,3 +75,12 @@ services:
         class: %orob2b_frontend.request.frontend_helper.class%
         arguments:
             - %backend_prefix%
+
+    orob2b_frontend.activity_list.placeholder.filter:
+        class: %orob2b_frontend.activity_list.placeholder.filter.class%
+        arguments:
+            - @oro_activity_list.placeholder.filter
+            - @orob2b_frontend.request.frontend_helper
+            - @request_stack
+        tags:
+            - { name: kernel.event_listener, event: oro.ui.grouping_chain_widget.before, method: isAllowedButton, priority: 10 }

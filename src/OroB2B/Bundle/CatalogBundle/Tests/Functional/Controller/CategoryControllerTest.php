@@ -33,7 +33,7 @@ class CategoryControllerTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
+        $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([
             'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadLocaleData',
             'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadProductData'
@@ -113,7 +113,13 @@ class CategoryControllerTest extends WebTestCase
      */
     public function testDelete($id)
     {
-        $this->client->request('DELETE', $this->getUrl('orob2b_api_delete_category', ['id' => $id]));
+        $this->client->request(
+            'DELETE',
+            $this->getUrl('orob2b_api_delete_category', ['id' => $id]),
+            [],
+            [],
+            $this->generateWsseAuthHeader()
+        );
 
         $result = $this->client->getResponse();
         $this->assertEmptyResponseStatusCodeEquals($result, 204);
@@ -129,7 +135,10 @@ class CategoryControllerTest extends WebTestCase
     {
         $this->client->request(
             'DELETE',
-            $this->getUrl('orob2b_api_delete_category', ['id' => $this->masterCatalog->getId()])
+            $this->getUrl('orob2b_api_delete_category', ['id' => $this->masterCatalog->getId()]),
+            [],
+            [],
+            $this->generateWsseAuthHeader()
         );
 
         $result = $this->client->getResponse();
