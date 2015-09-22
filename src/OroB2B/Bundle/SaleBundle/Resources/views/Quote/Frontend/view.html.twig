@@ -16,7 +16,7 @@
 {% endblock pageHeader %}
 
 {% block navButtons %}
-    {% if resource_granted('orob2b_sale_frontend_quote_create_order') %}
+    {% if resource_granted('orob2b_order_frontend_create') %}
         <a href="{{ path('orob2b_sale_frontend_quote_create_order', {'id': entity.id}) }}" class="btn">
             <i class="icon-edit hide-text"></i>{{ 'orob2b.frontend.sale.btn.accept_quote_create_order'|trans }}
         </a>

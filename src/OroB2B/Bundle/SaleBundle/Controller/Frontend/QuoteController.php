@@ -76,13 +76,7 @@ class QuoteController extends Controller
 
     /**
      * @Route("/create-order/{id}", name="orob2b_sale_frontend_quote_create_order", requirements={"id"="\d+"})
-     * @Acl(
-     *      id="orob2b_sale_frontend_quote_create_order",
-     *      type="entity",
-     *      class="OroB2BOrderBundle:Order",
-     *      permission="CREATE",
-     *      group_name="commerce"
-     * )
+     * @AclAncestor("orob2b_order_frontend_create")
      *
      * @param Quote $quote
      * @return RedirectResponse
