@@ -47,16 +47,23 @@ class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
      */
     protected function getBeforeListRenderEvent()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|BeforeListRenderEvent $event */
-        $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->getBeforeListRenderEventMock();
 
         $event->expects($this->once())
             ->method('getScrollData')
             ->willReturn($this->getScrollData());
 
         return $event;
+    }
+
+    /**
+     * @return BeforeListRenderEvent|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getBeforeListRenderEventMock()
+    {
+        return $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     /**
@@ -84,10 +91,8 @@ class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
      */
     protected function getRequest()
     {
-        $request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
+        return $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
             ->disableOriginalConstructor()
             ->getMock();
-
-        return $request;
     }
 }
