@@ -22,7 +22,7 @@ class LoadAccountCategoryVisibilities extends AbstractFixture implements Depende
     protected static $data = [
         [
             'name' => self::VISIBILITY1,
-            'category' => 'Test First Level',
+            'category' => LoadCategoryData::FIRST_LEVEL,
             'account' => 'account.level_1',
         ],
         [
