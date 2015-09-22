@@ -60,7 +60,7 @@ class QuoteToOrderConverter
 
     /**
      * @param QuoteProductOffer $quoteProductOffer
-     * @param int|null $quantity
+     * @param float|null $quantity
      * @return OrderLineItem
      */
     protected function createOrderLineItem(QuoteProductOffer $quoteProductOffer, $quantity = null)
