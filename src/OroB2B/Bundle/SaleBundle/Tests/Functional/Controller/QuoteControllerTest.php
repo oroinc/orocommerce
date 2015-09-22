@@ -7,6 +7,9 @@ use Symfony\Component\DomCrawler\Form;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
 
+use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
+use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
+
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 
@@ -53,6 +56,7 @@ class QuoteControllerTest extends WebTestCase
 
         $this->loadFixtures([
             'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData',
+            'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData',
         ]);
     }
 
@@ -244,6 +248,30 @@ class QuoteControllerTest extends WebTestCase
 
         $this->assertEquals(1, $filtered->count());
         $this->assertContains($expectedData['contains'], $filtered->html());
+    }
+
+    public function testCreateFromRfpForm()
+    {
+        /* @var $request RFPRequest */
+        $request = $this->getReference(LoadRequestData::REQUEST1);
+        $this->client->request('GET', $this->getUrl(
+            'orob2b_sale_quote_createfromrfpform',
+            ['id' => $request->getId()]
+        ));
+        $result = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
+    }
+
+    public function testCreateFromRfp()
+    {
+        /* @var $request RFPRequest */
+        $request = $this->getReference(LoadRequestData::REQUEST1);
+        $this->client->request('GET', $this->getUrl(
+            'orob2b_sale_quote_createfromrfp',
+            ['id' => $request->getId()]
+        ));
+        $result = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
     }
 
     /**

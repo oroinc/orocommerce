@@ -27,7 +27,7 @@ use OroB2B\Bundle\SaleBundle\Form\Handler\CreateQuoteFromRfpHandler;
 class CreateQuoteFromRfpHandlerTest extends FormHandlerTestCase
 {
     /**
-     * @var RequestCreateQuoteHandler
+     * @var CreateQuoteFromRfpHandler
      */
     protected $handler;
 
