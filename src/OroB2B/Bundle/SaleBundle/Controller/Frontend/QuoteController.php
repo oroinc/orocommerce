@@ -5,14 +5,10 @@ namespace OroB2B\Bundle\SaleBundle\Controller\Frontend;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\Form;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
-
-use Psr\Log\LoggerInterface;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -21,7 +17,8 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Form\Handler\QuoteCreateOrderHandler;
+use OroB2B\Bundle\SaleBundle\Form\Type\QuoteToOrderType;
+use OroB2B\Bundle\SaleBundle\Form\Handler\QuoteToOrderHandler;
 
 class QuoteController extends Controller
 {
@@ -43,7 +40,6 @@ class QuoteController extends Controller
     {
         return [
             'entity' => $quote,
-            'formCreateOrder' => $this->getCreateOrderForm($quote)->createView(),
         ];
     }
 
@@ -103,63 +99,44 @@ class QuoteController extends Controller
     }
 
     /**
+     * @Route(
+     *      "/create-order/from-widget/{id}",
+     *      name="orob2b_sale_frontend_quote_create_order_from_widget",
+     *      requirements={"id"="\d+"}
+     * )
+     * @AclAncestor("orob2b_sale_frontend_quote_create_order")
+     * @Template("OroB2BSaleBundle:Quote/Frontend:createOrder.html.twig")
+     *
      * @param Request $request
      * @param Quote $quote
      * @return array|RedirectResponse
      */
-    protected function createOrder(Request $request, Quote $quote)
+    public function createOrderFromWidgetAction(Request $request, Quote $quote)
     {
-        /** @var ObjectManager $em */
-        $em = $this->getDoctrine()->getManagerForClass(
+        /** @var ObjectManager $objectManager */
+        $objectManager = $this->getDoctrine()->getManagerForClass(
             $this->getParameter('orob2b_sale.entity.quote.class')
         );
-        $form = $this->getCreateOrderForm($quote);
-        $handler = new QuoteCreateOrderHandler($form, $request, $em, $this->getUser());
+        $converter = $this->get('orob2b_sale.service.quote_to_order_converter');
 
-        return $this->get('oro_form.model.update_handler')
-            ->handleUpdate(
-                $quote,
-                $form,
-                function (Quote $quote) {
-                    return [
-                        'route'         => 'orob2b_sale_quote_frontend_view',
-                        'parameters'    => ['id' => $quote->getId()],
-                    ];
-                },
-                function () use ($handler) {
-                    return [
-                        'route'         => 'orob2b_order_frontend_view',
-                        'parameters'    => ['id' => $handler->getOrder()->getId()],
-                    ];
-                },
-                $this->getTranslator()->trans('orob2b.frontend.sale.message.quote.create_order.success'),
-                $handler,
-                function (Quote $entity, FormInterface $form) use ($handler) {
-                    /* @var $session Session */
-                    $session = $this->get('session');
-                    $session->getFlashBag()->add(
-                        'error',
-                        $this->getTranslator()->trans('orob2b.frontend.sale.message.quote.create_order.error')
-                    );
+        $form = $this->createForm(QuoteToOrderType::NAME, $quote);
+        $handler = new QuoteToOrderHandler($form, $request, $objectManager, $converter, $this->getUser());
+        $order = $handler->process($quote);
 
-                    if ($handler->getException()) {
-                        $this->getLogger()->error($handler->getException());
-                    }
-
-                    return [
-                        'entity' => $entity,
-                        'formCreateOrder' => $form->createView(),
-                    ];
-                }
+        if ($order) {
+            /** @var Session $session */
+            $session = $request->getSession();
+            $session->getFlashBag()->add(
+                'success',
+                $this->getTranslator()->trans('orob2b.frontend.sale.message.quote.create_order.success')
             );
-    }
+        }
 
-    /**
-     * @return LoggerInterface
-     */
-    protected function getLogger()
-    {
-        return $this->get('logger');
+        return [
+            'form' => $form->createView(),
+            'quote' => $quote,
+            'order' => $order,
+        ];
     }
 
     /**
@@ -168,14 +145,5 @@ class QuoteController extends Controller
     protected function getTranslator()
     {
         return $this->get('translator');
-    }
-
-    /**
-     * @param Quote $quote
-     * @return Form
-     */
-    protected function getCreateOrderForm(Quote $quote = null)
-    {
-        return $this->createFormBuilder($quote)->getForm();
     }
 }

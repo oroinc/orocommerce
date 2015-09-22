@@ -132,6 +132,10 @@ orob2b:
                 widgets:
                     quote_information: 'Quote Information'
 
+                submit_to_order:
+                    submit: 'Submit'
+                    cancel: 'Cancel'
+
             quoteproduct:
                 comment.label: 'Seller Notes'
                 comment_account.label: 'Customer Notes'

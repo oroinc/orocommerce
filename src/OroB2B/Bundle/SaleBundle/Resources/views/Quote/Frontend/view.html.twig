@@ -17,13 +17,23 @@
 
 {% block navButtons %}
     {% if resource_granted('orob2b_sale_frontend_quote_create_order') %}
-        {% set formCreateOrderAction = path('orob2b_sale_frontend_quote_create_order', { 'id': entity.id }) %}
-        <form id="{{ formCreateOrder.vars.id }}" name="{{ formCreateOrder.vars.name }}" action="{{ formCreateOrderAction }}" method="post">
-            {{ form_widget(formCreateOrder) }}
-            <button type="submit" class="no-hash btn">
-                <i class="icon-edit hide-text"></i>{{ 'orob2b.frontend.sale.btn.accept_quote_create_order'|trans }}
-            </button>
-        </form>
+        {% if entity.hasOfferVariants() %}
+            {{ UI.button({
+                'path': 'javascript:void(0);',
+                'data': {
+                    'url': path('orob2b_sale_frontend_quote_create_order_from_widget', { 'id': entity.id }),
+                    'page-component-module': 'orob2bsale/js/app/components/quote-to-order-widget-component',
+                    'page-component-options': {
+                        'options': {
+                            'title': 'orob2b.frontend.sale.btn.accept_quote_create_order'|trans,
+                        }
+                    }|json_encode|raw
+                },
+                'label': 'orob2b.frontend.sale.btn.accept_quote_create_order'|trans,
+                'class': 'no-hash',
+                'iCss': 'icon-edit'
+            }) }}
+        {% endif %}
     {% endif %}
 {% endblock %}
 

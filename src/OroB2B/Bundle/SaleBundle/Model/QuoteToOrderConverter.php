@@ -7,11 +7,15 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductToOrderType;
 
 class QuoteToOrderConverter
 {
-    /** @var OrderCurrencyHandler */
+    const FIELD_OFFER = 'offer';
+    const FIELD_QUANTITY = 'quantity';
+
+    /**
+     * @var OrderCurrencyHandler
+     */
     protected $orderCurrencyHandler;
 
     /**
@@ -46,10 +50,10 @@ class QuoteToOrderConverter
         } else {
             foreach ($selectedOffers as $selectedOffer) {
                 /** @var QuoteProductOffer $offer */
-                $offer = $selectedOffer[QuoteProductToOrderType::FIELD_OFFER];
+                $offer = $selectedOffer[self::FIELD_OFFER];
 
                 $order->addLineItem(
-                    $this->createOrderLineItem($offer, (float)$selectedOffer[QuoteProductToOrderType::FIELD_QUANTITY])
+                    $this->createOrderLineItem($offer, (float)$selectedOffer[self::FIELD_QUANTITY])
                 );
             }
         }

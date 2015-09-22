@@ -1,3 +1,4 @@
 config:
     paths:
         'orob2bsale/js/app/components/sale-quoteproductitem-selection-component': 'bundles/orob2bsale/js/app/components/sale-quoteproductitem-selection-component.js'
+        'orob2bsale/js/app/components/quote-to-order-widget-component': 'bundles/orob2bsale/js/app/components/quote-to-order-widget-component.js'
