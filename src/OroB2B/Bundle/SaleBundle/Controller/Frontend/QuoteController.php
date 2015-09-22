@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\SaleBundle\Controller\Frontend;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Util\ClassUtils;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -39,7 +39,7 @@ class QuoteController extends Controller
     public function viewAction(Quote $quote)
     {
         return [
-            'entity' => $quote,
+            'entity' => $quote
         ];
     }
 
@@ -79,23 +79,23 @@ class QuoteController extends Controller
     }
 
     /**
-     * @Route("/create_order/{id}", name="orob2b_sale_frontend_quote_create_order", requirements={"id"="\d+"})
-     * @Acl(
-     *      id="orob2b_sale_frontend_quote_create_order",
-     *      type="entity",
-     *      class="OroB2BOrderBundle:Order",
-     *      permission="CREATE",
-     *      group_name="commerce"
-     * )
-     * @Template("OroB2BSaleBundle:Quote/Frontend:view.html.twig")
+     * @Route("/create-order/{id}", name="orob2b_sale_frontend_quote_create_order", requirements={"id"="\d+"})
+     * @AclAncestor("orob2b_order_frontend_create")
      *
-     * @param Request $request
      * @param Quote $quote
-     * @return array|RedirectResponse
+     * @return RedirectResponse
      */
-    public function createOrderAction(Request $request, Quote $quote)
+    public function createOrderAction(Quote $quote)
     {
-        return $this->createOrder($request, $quote);
+        /** @var QuoteToOrderConverter $converter */
+        $converter = $this->get('orob2b_sale.service.quote_to_order_converter');
+        $order = $converter->convert($quote);
+
+        $em = $this->getDoctrine()->getManagerForClass(ClassUtils::getClass($order));
+        $em->persist($order);
+        $em->flush();
+
+        return $this->redirectToRoute('orob2b_order_view', ['id' => $order->getId()]);
     }
 
     /**

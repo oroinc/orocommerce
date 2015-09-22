@@ -16,7 +16,7 @@
 {% endblock pageHeader %}
 
 {% block navButtons %}
-    {% if resource_granted('orob2b_sale_frontend_quote_create_order') %}
+    {% if resource_granted('orob2b_order_frontend_create') %}
         {% if entity.hasOfferVariants() %}
             {{ UI.button({
                 'path': 'javascript:void(0);',
@@ -31,6 +31,12 @@
                 },
                 'label': 'orob2b.frontend.sale.btn.accept_quote_create_order'|trans,
                 'class': 'no-hash',
+                'iCss': 'icon-edit'
+            }) }}
+        {% else %}
+            {{ UI.button({
+                'path': path('orob2b_sale_frontend_quote_create_order', {'id': entity.id}),
+                'label': 'orob2b.frontend.sale.btn.accept_quote_create_order'|trans,
                 'iCss': 'icon-edit'
             }) }}
         {% endif %}
