@@ -294,9 +294,8 @@ td.quote-product-offer-product-sku,
 td.quote-product-offer-product-name,
 td.quote-product-offer-customer-notes,
 td.quote-product-offer-seller-notes,
-td.quote-product-offer-quantity,
 td.quote-product-offer-price {
-    padding-top: 10px !important;
+    padding-top: 11px !important;
 }
 
 td.quote-product-offer-select-offer table {
