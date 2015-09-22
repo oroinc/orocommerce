@@ -9,26 +9,30 @@ use Doctrine\Common\Persistence\ObjectManager;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountCategoryVisibility;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
 class LoadAccountCategoryVisibilities extends AbstractFixture implements DependentFixtureInterface
 {
+    const VISIBILITY1 = 'account_category_visibility.1';
+    const VISIBILITY2 = 'account_category_visibility.2';
+    const VISIBILITY3 = 'account_category_visibility.3';
     /**
      * @var array
      */
     protected static $data = [
         [
-            'name' => 'account_category_visibility.1',
+            'name' => self::VISIBILITY1,
             'category' => 'Test First Level',
             'account' => 'account.level_1',
         ],
         [
-            'name' => 'account_category_visibility.2',
-            'category' => 'Test Second Level',
+            'name' => self::VISIBILITY2,
+            'category' => LoadCategoryData::SECOND_LEVEL1,
             'account' => 'account.level_1',
         ],
         [
-            'name' => 'account_category_visibility.3',
-            'category' => 'Test Second Level',
+            'name' => self::VISIBILITY3,
+            'category' => LoadCategoryData::SECOND_LEVEL1,
             'account' => 'account.level_1.4',
         ],
     ];
