@@ -11,7 +11,7 @@ placeholders:
 
 items:
     add-products-btn:
-        action: OroB2BShoppingListBundle:Frontend/AjaxLineItem:getProductsAddBtn
+        template: OroB2BShoppingListBundle:ShoppingList:Frontend/addProductsBtnWidget.html.twig
         applicable: @orob2b_shopping_list.placeholder.filter->userCanCreateLineItem()
 
     shopping_list_quick_add:
