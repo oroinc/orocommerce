@@ -24,6 +24,14 @@ class AccountControllerTest extends WebTestCase
 
     public function testDelete()
     {
-
+        /** @var Account $account */
+        $account = $this->getReference('account.orphan');
+        $accountId = $account->getId();
+        $this->client->request(
+            'DELETE',
+            $this->getUrl('orob2b_api_account_delete_account', ['id' => $accountId])
+        );
+        $result = $this->client->getResponse();
+        $this->assertEmptyResponseStatusCodeEquals($result, 204);
     }
 }

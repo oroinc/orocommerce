@@ -8,7 +8,7 @@
         'entity': entity,
         'indexPath': path('orob2b_cms_loginpage_index'),
         'indexLabel': 'orob2b.cms.loginpage.entity_plural_label'|trans,
-        'entityTitle': entity.name|default('N/A'|trans)
+        'entityTitle': entity.id|default('N/A'|trans)
     } %}
 
     {{ parent() }}
@@ -29,15 +29,15 @@
         'class': 'active',
         'subblocks': [
             {'data' : [
-                UI.renderProperty('orob2b.cms.loginpage.entity.topContent.label'|trans, entity.topContent|slice(0, 100)),
-                UI.renderProperty('orob2b.cms.loginpage.entity.bottomContent.label'|trans, entity.bottomContent|slice(0, 100)),
-                UI.renderProperty('orob2b.cms.loginpage.entity.css.label'|trans, entity.css|slice(0, 100)),
+                UI.renderProperty('orob2b.cms.loginpage.top_content.label'|trans, entity.topContent|slice(0, 100)),
+                UI.renderProperty('orob2b.cms.loginpage.bottom_content.label'|trans, entity.bottomContent|slice(0, 100)),
+                UI.renderProperty('orob2b.cms.loginpage.css.label'|trans, entity.css|slice(0, 100)),
                 UI.renderHtmlProperty(
-                    'orob2b.cms.loginpage.entity.logoImage.label'|trans,
+                    'orob2b.cms.loginpage.logo_image.label'|trans,
                     oro_image_view(entity, entity.logoImage, null, 'logoImage')
                 ),
                 UI.renderHtmlProperty(
-                    'orob2b.cms.loginpage.entity.backgroundImage.label'|trans,
+                    'orob2b.cms.loginpage.background_image.label'|trans,
                     oro_image_view(entity, entity.backgroundImage, null, 'backgroundImage')
                 )
             ]},

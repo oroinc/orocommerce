@@ -20,7 +20,7 @@ class LoginPageType extends AbstractType
                 'topContent',
                 'textarea',
                 [
-                    'label' => 'orob2b.cms.loginpage.entity.topContent.label',
+                    'label' => 'orob2b.cms.loginpage.top_content.label',
                     'required' => false
                 ]
             )
@@ -28,7 +28,7 @@ class LoginPageType extends AbstractType
                 'bottomContent',
                 'textarea',
                 [
-                    'label' => 'orob2b.cms.loginpage.entity.bottomContent.label',
+                    'label' => 'orob2b.cms.loginpage.bottom_content.label',
                     'required' => false
                 ]
             )
@@ -36,7 +36,7 @@ class LoginPageType extends AbstractType
                 'css',
                 'textarea',
                 [
-                    'label' => 'orob2b.cms.loginpage.entity.css.label',
+                    'label' => 'orob2b.cms.loginpage.css.label',
                     'required' => false
                 ]
             )
@@ -44,7 +44,7 @@ class LoginPageType extends AbstractType
                 'logoImage',
                 'oro_image',
                 [
-                    'label'    => 'orob2b.cms.loginpage.entity.logoImage.label',
+                    'label'    => 'orob2b.cms.loginpage.logo_image.label',
                     'required' => false
                 ]
             )
@@ -52,7 +52,7 @@ class LoginPageType extends AbstractType
                 'backgroundImage',
                 'oro_image',
                 [
-                    'label'    => 'orob2b.cms.loginpage.entity.backgroundImage.label',
+                    'label'    => 'orob2b.cms.loginpage.background_image.label',
                     'required' => false
                 ]
             );
