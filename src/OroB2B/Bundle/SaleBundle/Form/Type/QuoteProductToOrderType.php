@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\SaleBundle\Form\Type;
 
-use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -11,6 +10,8 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
+
+use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero;
@@ -132,18 +133,16 @@ class QuoteProductToOrderType extends AbstractType
                 /** @var QuoteProductOffer $quoteProductOffer */
                 $quoteProductOffer = $offers[$optionValue];
                 $optionView->vars['offer'] = $quoteProductOffer;
-                $optionView->vars['attr'] = array_merge(
-                    $optionView->vars['attr'],
-                    [
-                        'data-unit' => $quoteProductOffer->getProductUnitCode(),
-                        'data-quantity' => $quoteProductOffer->getQuantity(),
-                        'data-allow-increment' => (string)$quoteProductOffer->isAllowIncrements(),
-                        'data-price' => $this->numberFormatter->formatCurrency(
-                            $quoteProductOffer->getPrice()->getValue(),
-                            $quoteProductOffer->getPrice()->getCurrency()
-                        ),
-                    ]
-                );
+                $optionView->vars['attr']['data-unit'] = $quoteProductOffer->getProductUnitCode();
+                $optionView->vars['attr']['data-quantity'] = $quoteProductOffer->getQuantity();
+                $optionView->vars['attr']['data-allow-increment'] = (string)$quoteProductOffer->isAllowIncrements();
+                $price = $quoteProductOffer->getPrice();
+                if ($price) {
+                    $optionView->vars['attr']['data-price'] = $this->numberFormatter->formatCurrency(
+                        $quoteProductOffer->getPrice()->getValue(),
+                        $quoteProductOffer->getPrice()->getCurrency()
+                    );
+                }
             }
         }
     }

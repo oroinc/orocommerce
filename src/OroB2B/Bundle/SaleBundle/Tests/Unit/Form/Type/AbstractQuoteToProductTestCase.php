@@ -5,6 +5,8 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
+
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\SaleBundle\Validator\Constraints;
@@ -23,6 +25,27 @@ abstract class AbstractQuoteToProductTestCase extends FormIntegrationTestCase
             ->willReturn('or more');
 
         return $translator;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|NumberFormatter
+     */
+    protected function getNumberFormatter()
+    {
+        $formatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\NumberFormatter')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $formatter->expects($this->any())
+            ->method('formatCurrency')
+            ->with($this->isType('float'), $this->isType('string'))
+            ->willReturnCallback(
+                function ($value, $currency) {
+                    return $currency . $value;
+                }
+            );
+
+        return $formatter;
     }
 
     /**

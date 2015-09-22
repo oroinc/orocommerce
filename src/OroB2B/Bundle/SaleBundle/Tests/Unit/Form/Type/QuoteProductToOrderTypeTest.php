@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\CurrencyBundle\Model\Price;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Validator\Validation;
@@ -24,7 +25,11 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
     {
         parent::setUp();
 
-        $this->type = new QuoteProductToOrderType($this->getTranslator(), $this->getUnitFormatter());
+        $this->type = new QuoteProductToOrderType(
+            $this->getTranslator(),
+            $this->getUnitFormatter(),
+            $this->getNumberFormatter()
+        );
     }
 
     /**
@@ -81,10 +86,14 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
         }
     }
 
+    /**
+     * @return array
+     */
     public function submitDataProvider()
     {
         $firstUnitOffer = $this->createOffer(1, QuoteProductOffer::PRICE_TYPE_UNIT, 12, 'kg', true);
         $secondUnitOffer = $this->createOffer(2, QuoteProductOffer::PRICE_TYPE_UNIT, 16, 'kg');
+        $secondUnitOffer->setPrice(Price::create(mt_rand(1, 5) / 10, 'USD'));
         $bundledOffer = $this->createOffer(3, QuoteProductOffer::PRICE_TYPE_BUNDLED, 1000, 'item');
 
         $unitQuoteProduct = new QuoteProduct();
