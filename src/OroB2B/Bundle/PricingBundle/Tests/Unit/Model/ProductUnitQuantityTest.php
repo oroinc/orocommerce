@@ -78,6 +78,15 @@ class ProductUnitQuantityTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Currency must be non-empty string.
+     */
+    public function testConstructorCurrencyException()
+    {
+        new ProductUnitQuantity($this->getProduct(42), (new ProductUnit())->setCode('kg'), 1, '');
+    }
+
+    /**
      * @return array
      */
     public function constructorExceptionDataProvider()
