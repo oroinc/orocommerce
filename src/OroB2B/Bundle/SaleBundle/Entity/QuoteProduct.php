@@ -415,6 +415,21 @@ class QuoteProduct implements ProductHolderInterface
     }
 
     /**
+     * @param int $priceType
+     * @return bool
+     */
+    public function hasQuoteProductOfferByPriceType($priceType)
+    {
+        foreach ($this->quoteProductOffers as $offer) {
+            if ($offer->getPriceType() == $priceType) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Add quoteProductRequest
      *
      * @param QuoteProductRequest $quoteProductRequest
@@ -453,5 +468,20 @@ class QuoteProduct implements ProductHolderInterface
     public function getQuoteProductRequests()
     {
         return $this->quoteProductRequests;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasOfferVariants()
+    {
+        if (count($this->quoteProductOffers) > 1) {
+            return true;
+        }
+
+        /** @var QuoteProductOffer $firstItem */
+        $firstItem = $this->quoteProductOffers->first();
+
+        return $firstItem && $firstItem->isAllowIncrements();
     }
 }

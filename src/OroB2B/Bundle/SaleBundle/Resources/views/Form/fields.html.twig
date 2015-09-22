@@ -135,3 +135,16 @@
         {{ form_errors(form.quantity) }}
     </div>
 {% endblock %}
+
+{% block orob2b_sale_quote_to_order_widget %}
+    <div {{ block('widget_container_attributes') }}>
+        {%- if form.parent is empty -%}
+            {{ form_errors(form) }}
+        {%- endif -%}
+        {% for child in form %}
+            {{- form_widget(child) -}}
+            {{- form_errors(child) -}}
+        {% endfor %}
+        {{- form_rest(form) -}}
+    </div>
+{% endblock %}

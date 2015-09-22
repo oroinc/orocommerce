@@ -9,12 +9,14 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
 use OroB2B\Bundle\SaleBundle\Form\DataTransformer\QuoteProductToOrderTransformer;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
+use OroB2B\Bundle\SaleBundle\Validator\Constraints\ConfigurableQuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
 class QuoteProductToOrderType extends AbstractType
@@ -58,12 +60,18 @@ class QuoteProductToOrderType extends AbstractType
             ->add(
                 self::FIELD_OFFER,
                 'choice',
-                ['choices' => $this->getOfferChoices($quoteProduct), 'expanded' => true]
+                [
+                    'choices' => $this->getOfferChoices($quoteProduct),
+                    'expanded' => true,
+                    'constraints' => [new NotBlank()]
+                ]
             )
             ->add(
                 self::FIELD_QUANTITY,
                 'number',
-                ['constraints' => [new Decimal(), new GreaterThanZero()]]
+                [
+                    'constraints' => [new NotBlank(), new Decimal(), new GreaterThanZero()]
+                ]
             );
 
         $builder->addModelTransformer(new QuoteProductToOrderTransformer($quoteProduct));
@@ -75,7 +83,12 @@ class QuoteProductToOrderType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired(['data']);
-        $resolver->setDefaults(['data_class' => null]);
+        $resolver->setDefaults(
+            [
+                'data_class' => null,
+                'constraints' => new ConfigurableQuoteProductOffer(),
+            ]
+        );
     }
 
     /**
