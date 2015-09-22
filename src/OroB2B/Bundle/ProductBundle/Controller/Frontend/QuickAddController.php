@@ -10,8 +10,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
 class QuickAddController extends Controller
 {
     /**
