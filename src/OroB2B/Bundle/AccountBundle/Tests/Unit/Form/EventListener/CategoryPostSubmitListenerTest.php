@@ -289,7 +289,7 @@ class CategoryPostSubmitListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->enumValueProvider->expects($this->at(1))
             ->method('getEnumValueByCode')
-            ->with(CategoryPostSubmitListener::ACCOUNT_CATEGORY_VISIBILITY, AccountCategoryVisibility::VISIBLE)
+            ->with(CategoryPostSubmitListener::ACCOUNT_CATEGORY_VISIBILITY, AccountCategoryVisibility::PARENT_CATEGORY)
             ->willReturn($visibility);
     }
 

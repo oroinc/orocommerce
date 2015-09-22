@@ -212,10 +212,8 @@ class CategoryPostSubmitListener
             ->getRepository('OroB2BAccountBundle:AccountCategoryVisibility');
 
         $visibilities = new ArrayCollection();
-        $a = $repo
-            ->findForAccounts($accounts, $category);
-
-            $a->map(
+        $repo
+            ->findForAccounts($accounts, $category)->map(
                 function ($visibility) use ($visibilities) {
                     /** @var AccountCategoryVisibility $visibility */
                     $visibilities->offsetSet($visibility->getAccount()->getId(), $visibility);
