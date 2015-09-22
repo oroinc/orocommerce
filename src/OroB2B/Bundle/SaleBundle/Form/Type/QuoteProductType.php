@@ -2,7 +2,9 @@
 
 namespace OroB2B\Bundle\SaleBundle\Form\Type;
 
+use Symfony\Bridge\Doctrine\Form\DataTransformer\CollectionToArrayTransformer;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormEvent;
@@ -69,6 +71,15 @@ class QuoteProductType extends AbstractType
     /**
      * {@inheritdoc}
      */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        $view->vars['page_component'] = $options['page_component'];
+        $view->vars['page_component_options'] = $options['page_component_options'];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $units = [];
@@ -125,15 +136,18 @@ class QuoteProductType extends AbstractType
                 'create_enabled' => false,
             ])
             ->add('quoteProductRequests', QuoteProductRequestCollectionType::NAME, [
+                'read_only' => true,
+                'required' => false,
             ])
             ->add('quoteProductOffers', QuoteProductOfferCollectionType::NAME, [
                 'add_label' => 'orob2b.sale.quoteproductoffer.add_label',
             ])
-            ->add('type', 'choice', [
-                'label' => 'orob2b.sale.quoteproduct.type.label',
-                'choices' => $this->formatter->formatTypeLabels(QuoteProduct::getTypes()),
-                'required' => true,
-                'expanded' => false,
+            ->add('type', 'hidden', [
+                'data' => QuoteProduct::TYPE_REQUESTED,
+                //'label' => 'orob2b.sale.quoteproduct.type.label',
+                //'choices' => $this->formatter->formatTypeLabels(QuoteProduct::getTypes()),
+                //'required' => true,
+                //'expanded' => false,
             ])
             ->add('commentAccount', 'textarea', [
                 'required' => false,
@@ -147,6 +161,25 @@ class QuoteProductType extends AbstractType
 
         ;
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
+
+        $builder->get('quoteProductRequests')->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+            /** @var \Doctrine\ORM\PersistentCollection $formData */
+            $formData = $event->getForm()->getData();
+            $requests = [];
+            foreach ($formData as $quoteProductRequest) {
+                $requests[] = [
+                    'quantity' => $quoteProductRequest->getQuantity(),
+                    'productUnit' => $quoteProductRequest->getProductUnitCode(),
+                    'price' => [
+                        'value' => $quoteProductRequest->getPrice()->getValue(),
+                        'currency' => $quoteProductRequest->getPrice()->getCurrency(),
+                    ]
+                ];
+            }
+            if (null === $event->getData()) {
+                $event->setData($requests);
+            }
+        });
     }
 
     /**
@@ -158,6 +191,8 @@ class QuoteProductType extends AbstractType
             'data_class' => $this->dataClass,
             'intention' => 'sale_quote_product',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
+            'page_component' => 'oroui/js/app/components/view-component',
+            'page_component_options' => ['view' => 'orob2bsale/js/app/views/line-item-view'],
         ]);
     }
 

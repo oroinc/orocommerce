@@ -34,6 +34,21 @@ orob2b:
                     link.text: 'Notify by Email'
                     notify_and_lock_warning: 'Once you click on "Notify and Lock" this email will be sent to the customer and the quote will be locked for further edits.'
 
+            lineitem:
+                product: 'Product'
+                requested:
+                    label: ''
+                    quantity: 'Requested Quantity'
+                    price: 'Requested Price'
+                offers:
+                    label: 'Offers'
+                    quantity: 'Quantity'
+                    price: 'Unit Price'
+                    add: 'Add Offer'
+                notes: 'Notes'
+                add: 'Add Product'
+                remove: 'Delete'
+
         quoteproduct:
             entity_label: 'Quote Product'
             entity_plural_label: 'Quote Products'
@@ -48,7 +63,7 @@ orob2b:
             quote_product_requests.label: 'Quote Product Requests'
             request_product_item.label: 'Requested Item'
             comment.label: 'Seller Notes'
-            comment_account.label: 'Account Notes'
+            comment_account.label: 'Customer Notes'
             product.removed: '{title} - removed'
             product_replacement.removed: '{title} - removed'
             type:

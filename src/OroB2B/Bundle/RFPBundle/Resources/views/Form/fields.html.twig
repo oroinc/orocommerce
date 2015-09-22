@@ -131,8 +131,7 @@
         {% set name = widget.vars.full_name %}
     {% endif %}
     <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
-        class="rfp-lineitem-requested rfp-lineitem-requested-item"
-            >
+        class="rfp-lineitem-requested rfp-lineitem-requested-item">
         {{ form_widget(form) }}
         <td class="rfp-lineitem-requested-remove">
             <button type="button" class="removeRow btn icons-holder"><i class="icon-remove"></i></button>

@@ -36,14 +36,17 @@ class QuoteProductRequestType extends AbstractType
             ->add('quantity', 'integer', [
                 'required'  => false,
                 'label'     => 'orob2b.sale.quoteproductrequest.quantity.label',
+                'read_only'  => true,
             ])
             ->add('price', PriceType::NAME, [
                 'required'  => false,
                 'label'     => 'orob2b.sale.quoteproductrequest.price.label',
+                'read_only'  => true,
             ])
             ->add('productUnit', ProductUnitRemovedSelectionType::NAME, [
                 'label' => 'orob2b.product.productunit.entity_label',
-                'required' => true,
+                'required' => false,
+                'read_only'  => true,
             ]);
         ;
     }
