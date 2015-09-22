@@ -75,8 +75,9 @@ class AbstractAjaxProductPriceController extends Controller
                 );
 
                 $quantity = (float)$this->getLineItemData($lineItem, 'qty');
+                $currency = (string)$this->getLineItemData($lineItem, 'currency');
 
-                $productUnitQuantities[] = new ProductUnitQuantity($product, $unit, $quantity);
+                $productUnitQuantities[] = new ProductUnitQuantity($product, $unit, $quantity, $currency);
             }
         }
 

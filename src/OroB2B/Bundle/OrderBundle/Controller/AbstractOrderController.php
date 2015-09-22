@@ -65,11 +65,12 @@ abstract class AbstractOrderController extends Controller
                 return $lineItem->getProduct() && $lineItem->getProductUnit() && $lineItem->getQuantity();
             }
         )->map(
-            function (OrderLineItem $lineItem) {
+            function (OrderLineItem $lineItem) use ($order) {
                 return new ProductUnitQuantity(
                     $lineItem->getProduct(),
                     $lineItem->getProductUnit(),
-                    $lineItem->getQuantity()
+                    $lineItem->getQuantity(),
+                    $order->getCurrency()
                 );
             }
         );
@@ -77,7 +78,6 @@ abstract class AbstractOrderController extends Controller
         if ($productUnitQuantities) {
             $matchedPrices = $this->get('orob2b_pricing.provider.product_price')->getMatchedPrices(
                 $productUnitQuantities->toArray(),
-                $order->getCurrency(),
                 $this->getPriceList($order)
             );
         }

@@ -12,15 +12,22 @@ class ProductUnitQuantityTest extends \PHPUnit_Framework_TestCase
      * @dataProvider productUnitQuantityDataProvider
      *
      * @param mixed $quantity
+     * @param string $currency
      */
-    public function testProductUnitQuantity($quantity)
+    public function testProductUnitQuantity($quantity, $currency)
     {
-        $instance = new ProductUnitQuantity($this->getProduct(42), (new ProductUnit())->setCode('kg'), $quantity);
+        $instance = new ProductUnitQuantity(
+            $this->getProduct(42),
+            (new ProductUnit())->setCode('kg'),
+            $quantity,
+            $currency
+        );
 
         $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\Model\ProductUnitQuantity', $instance);
         $this->assertEquals($this->getProduct(42), $instance->getProduct());
         $this->assertEquals((new ProductUnit())->setCode('kg'), $instance->getProductUnit());
         $this->assertEquals($quantity, $instance->getQuantity());
+        $this->assertEquals($currency, $instance->getCurrency());
     }
 
     /**
@@ -29,12 +36,12 @@ class ProductUnitQuantityTest extends \PHPUnit_Framework_TestCase
     public function productUnitQuantityDataProvider()
     {
         return [
-            [0],
-            ['0'],
-            [1],
-            [1.1],
-            ['1'],
-            ['1.1']
+            [0, 'USD'],
+            ['0', 'EUR'],
+            [1, 'USD'],
+            [1.1, 'EUR'],
+            ['1', 'USD'],
+            ['1.1', 'EUR']
         ];
     }
 
@@ -44,7 +51,7 @@ class ProductUnitQuantityTest extends \PHPUnit_Framework_TestCase
      */
     public function testConstructorProductException()
     {
-        new ProductUnitQuantity(new Product(), (new ProductUnit())->setCode('kg'), 1);
+        new ProductUnitQuantity(new Product(), (new ProductUnit())->setCode('kg'), 1, 'USD');
     }
 
     /**
@@ -53,7 +60,7 @@ class ProductUnitQuantityTest extends \PHPUnit_Framework_TestCase
      */
     public function testConstructorProductUnitException()
     {
-        new ProductUnitQuantity($this->getProduct(42), new ProductUnit(), 1);
+        new ProductUnitQuantity($this->getProduct(42), new ProductUnit(), 1, 'USD');
     }
 
     /**
@@ -63,10 +70,11 @@ class ProductUnitQuantityTest extends \PHPUnit_Framework_TestCase
      * @expectedExceptionMessage Quantity must be numeric and more than or equal zero.
      *
      * @param mixed $quantity
+     * @param string $currency
      */
-    public function testConstructorQuantityException($quantity)
+    public function testConstructorQuantityException($quantity, $currency)
     {
-        new ProductUnitQuantity($this->getProduct(42), (new ProductUnit())->setCode('kg'), $quantity);
+        new ProductUnitQuantity($this->getProduct(42), (new ProductUnit())->setCode('kg'), $quantity, $currency);
     }
 
     /**
@@ -75,10 +83,10 @@ class ProductUnitQuantityTest extends \PHPUnit_Framework_TestCase
     public function constructorExceptionDataProvider()
     {
         return [
-            [-1],
-            [''],
-            [null],
-            ['1a']
+            [-1, 'USD'],
+            ['', 'EUR'],
+            [null, 'USD'],
+            ['1a', 'EUR']
         ];
     }
 
@@ -89,9 +97,9 @@ class ProductUnitQuantityTest extends \PHPUnit_Framework_TestCase
         $productUnit = new ProductUnit();
         $productUnit->setCode('kg');
 
-        $productUnitQuantity = new ProductUnitQuantity($product, $productUnit, 42);
+        $productUnitQuantity = new ProductUnitQuantity($product, $productUnit, 42, 'USD');
 
-        $this->assertEquals('150-kg-42', $productUnitQuantity->getIdentifier());
+        $this->assertEquals('150-kg-42-USD', $productUnitQuantity->getIdentifier());
     }
 
     /**

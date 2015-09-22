@@ -23,6 +23,7 @@ define(function(require) {
          */
         initialize: function() {
             this.options = $.extend(true, {
+                currency: null,
                 unitLoaderRouteName: 'orob2b_pricing_frontend_units_by_pricelist',
                 selectors: {
                     priceValueText: 'div.order-line-item-price-value'
@@ -68,6 +69,7 @@ define(function(require) {
                 $priceValue: this.$priceValueText,
                 $productUnit: this.fieldsByName.productUnit,
                 $quantity: this.fieldsByName.quantity,
+                $currency: this.options.currency,
                 disabled: this.options.disabled
             }));
         },

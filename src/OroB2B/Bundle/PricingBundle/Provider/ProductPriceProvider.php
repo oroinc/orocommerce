@@ -66,11 +66,10 @@ class ProductPriceProvider
 
     /**
      * @param array $productUnitQuantities
-     * @param string $currency
      * @param PriceList|null $priceList
      * @return array|Price[]
      */
-    public function getMatchedPrices(array $productUnitQuantities, $currency, PriceList $priceList = null)
+    public function getMatchedPrices(array $productUnitQuantities, PriceList $priceList = null)
     {
         if (!$priceList) {
             $priceList = $this->requestHandler->getPriceList();
@@ -98,6 +97,7 @@ class ProductPriceProvider
             $id = $productUnitQuantity->getProduct()->getId();
             $code = $productUnitQuantity->getProductUnit()->getCode();
             $quantity = $productUnitQuantity->getQuantity();
+            $currency = $productUnitQuantity->getCurrency();
 
             $productPrices = array_filter(
                 $prices,

@@ -185,15 +185,15 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
      */
     protected function getPrice(Product $product, ProductUnit $productUnit, $quantity, $currency, PriceList $priceList)
     {
-        $productUnitQuantity = new ProductUnitQuantity($product, $productUnit, $quantity);
+        $productUnitQuantity = new ProductUnitQuantity($product, $productUnit, $quantity, $currency);
         $identifier = $productUnitQuantity->getIdentifier();
 
-        if (!isset($this->prices[$priceList->getId()][$currency][$identifier])) {
-            $prices = $this->productPriceProvider->getMatchedPrices([$productUnitQuantity], $currency, $priceList);
-            $this->prices[$priceList->getId()][$currency][$identifier] = $prices[$identifier];
+        if (!isset($this->prices[$priceList->getId()][$identifier])) {
+            $prices = $this->productPriceProvider->getMatchedPrices([$productUnitQuantity], $priceList);
+            $this->prices[$priceList->getId()][$identifier] = $prices[$identifier];
         }
 
-        $price = $this->prices[$priceList->getId()][$currency][$identifier];
+        $price = $this->prices[$priceList->getId()][$identifier];
 
         return $price ?: Price::create(mt_rand(10, 1000), $currency);
     }

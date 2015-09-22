@@ -35,6 +35,9 @@ define(function(require) {
         handleLayoutInit: function() {
             LineItemView.__super__.handleLayoutInit.apply(this, arguments);
 
+            this.fieldsByName.currency = this.$form
+                .find(':input[data-ftid="' + this.$form.attr('name') + '_currency"]');
+
             this.subtotalFields([
                 this.fieldsByName.product,
                 this.fieldsByName.quantity,
@@ -54,7 +57,8 @@ define(function(require) {
                 $priceValue: this.fieldsByName.priceValue,
                 $priceType: this.fieldsByName.priceType,
                 $productUnit: this.fieldsByName.productUnit,
-                $quantity: this.fieldsByName.quantity
+                $quantity: this.fieldsByName.quantity,
+                $currency: this.fieldsByName.currency
             }));
         },
 

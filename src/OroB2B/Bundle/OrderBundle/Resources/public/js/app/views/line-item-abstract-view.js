@@ -19,7 +19,6 @@ define(function(require) {
          */
         options: {
             ftid: '',
-            currency: null,
             selectors: {
                 productSelector: '.order-line-item-type-product input.select2',
                 quantitySelector: '.order-line-item-quantity input',
@@ -29,6 +28,11 @@ define(function(require) {
             disabled: false,
             freeFormUnits: null
         },
+
+        /**
+         * @property {jQuery}
+         */
+        $form: null,
 
         /**
          * @property {jQuery}
@@ -78,6 +82,8 @@ define(function(require) {
          */
         handleLayoutInit: function() {
             var self = this;
+
+            this.$form = this.$el.closest('form');
 
             this.$fields = this.$el.find(':input[data-ftid]');
             this.fieldsByName = {};

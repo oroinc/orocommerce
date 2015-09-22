@@ -26,6 +26,7 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
+            this.$el = this.options._sourceElement;
 
             mediator.on('pricing:get:products-tier-prices', this.getProductsTierPrices, this);
             mediator.on('pricing:load:products-tier-prices', this.loadProductsTierPrices, this);
@@ -39,7 +40,7 @@ define(function(require) {
                         mediator.trigger('pricing:refresh:products-tier-prices', response);
                     });
 
-                    this.loadLineItemsMatchedPrices(this.getItems(), function(response) {
+                    this.loadLineItemsMatchedPrices(this.getLineItems(), function(response) {
                         mediator.trigger('pricing:refresh:line-items-matched-prices', response);
                     });
                 }, this));
@@ -100,8 +101,7 @@ define(function(require) {
          */
         loadLineItemsMatchedPrices: function(items, callback) {
             var params = {
-                items: items,
-                currency: this._getCurrency()
+                items: items
             };
 
             var priceList = this._getPriceList();
@@ -124,23 +124,9 @@ define(function(require) {
         /**
          * @returns {Array} products
          */
-        getItems: function() {
-            var lineItems = this.$el.find('.order-line-item');
+        getLineItems: function() {
             var items = [];
-
-            _.each(lineItems, function(lineItem) {
-                var $lineItem = $(lineItem);
-                var productId = $lineItem.find('input[data-ftid$="_product"]')[0].value;
-                if (productId.length === 0) {
-                    return;
-                }
-
-                var unitCode = $lineItem.find('select[data-ftid$="_productUnit"]')[0].value;
-                var quantity = $lineItem.find('input[data-ftid$="_quantity"]')[0].value;
-
-                items.push({'product': productId, 'unit': unitCode, 'qty': quantity});
-            });
-
+            mediator.trigger('pricing:collect:line-items', items);
             return items;
         },
 
@@ -161,7 +147,7 @@ define(function(require) {
          * @private
          */
         _getPriceList: function() {
-            return this.options.$priceList.length !== 0 ? this.options.$priceList.val() : '';
+            return this.options.$priceList && this.options.$priceList.length !== 0 ? this.options.$priceList.val() : '';
         },
 
         /**

@@ -180,14 +180,12 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
      * @dataProvider getMatchedPricesDataProvider
      *
      * @param array $productUnitQuantities
-     * @param string $currency
      * @param bool $withPriceList
      * @param array $repositoryData
      * @param array $expectedData
      */
     public function testGetMatchedPrices(
         array $productUnitQuantities,
-        $currency,
         $withPriceList,
         array $repositoryData,
         array $expectedData
@@ -218,7 +216,6 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
 
         $prices = $this->provider->getMatchedPrices(
             $productUnitQuantities,
-            $currency,
             $withPriceList ? $priceList : null
         );
 
@@ -232,33 +229,32 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function getMatchedPricesDataProvider()
     {
-        $prodUnitQty1 = $this->getProductUnitQuantity(1);
-        $prodUnitQty105 = $this->getProductUnitQuantity(10.5);
-        $prodUnitQty50 = $this->getProductUnitQuantity(50);
-        $prodUnitQty200 = $this->getProductUnitQuantity(200);
-        $prodUnitQty01 = $this->getProductUnitQuantity(0.1);
+        $currency = 'USD';
+        $prodUnitQty1 = $this->getProductUnitQuantity(1, $currency);
+        $prodUnitQty105 = $this->getProductUnitQuantity(10.5, $currency);
+        $prodUnitQty50 = $this->getProductUnitQuantity(50, $currency);
+        $prodUnitQty200 = $this->getProductUnitQuantity(200, $currency);
+        $prodUnitQty01 = $this->getProductUnitQuantity(0.1, $currency);
 
         $repositoryData = $this->getRepositoryData($prodUnitQty50);
 
         return [
             'with priceList' => [
                 'productUnitQuantities' => [$prodUnitQty1, $prodUnitQty105],
-                'currency' => 'USD',
                 'withPriceList' => true,
                 'repositoryData' => $repositoryData,
                 'expectedData' => [
                     $prodUnitQty1->getIdentifier() => null,
-                    $prodUnitQty105->getIdentifier() => Price::create(15, 'USD'),
+                    $prodUnitQty105->getIdentifier() => Price::create(15, $currency),
                 ]
             ],
             'without priceList' => [
                 'productUnitQuantities' => [$prodUnitQty50, $prodUnitQty200, $prodUnitQty01],
-                'currency' => 'USD',
                 'withPriceList' => false,
                 'repositoryData' => $repositoryData,
                 'expectedData' => [
-                    $prodUnitQty50->getIdentifier() => Price::create(300, 'USD'),
-                    $prodUnitQty200->getIdentifier() => Price::create(1400, 'USD'),
+                    $prodUnitQty50->getIdentifier() => Price::create(300, $currency),
+                    $prodUnitQty200->getIdentifier() => Price::create(1400, $currency),
                     $prodUnitQty01->getIdentifier() => null,
                 ]
             ]
@@ -267,9 +263,10 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param float $quantity
+     * @param string $currency
      * @return ProductUnitQuantity
      */
-    protected function getProductUnitQuantity($quantity)
+    protected function getProductUnitQuantity($quantity, $currency)
     {
         /** @var Product $product */
         $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 42);
@@ -277,7 +274,7 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
         $productUnit = new ProductUnit();
         $productUnit->setCode('kg');
 
-        return new ProductUnitQuantity($product, $productUnit, $quantity);
+        return new ProductUnitQuantity($product, $productUnit, $quantity, $currency);
     }
 
     /**

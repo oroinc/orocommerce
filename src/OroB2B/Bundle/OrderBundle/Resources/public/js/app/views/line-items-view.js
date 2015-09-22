@@ -60,6 +60,7 @@ define(function(require) {
             });
 
             this.subview('productsPricesComponent', new ProductsPricesComponent({
+                _sourceElement: this.$el,
                 tierPrices: this.options.tierPrices,
                 matchedPrices: this.options.matchedPrices,
                 $currency: this.$currency.length ? this.$currency : this.options.currency,

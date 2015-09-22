@@ -23,11 +23,17 @@ class ProductUnitQuantity
     protected $quantity;
 
     /**
+     * @var string
+     */
+    protected $currency;
+
+    /**
      * @param Product $product
      * @param ProductUnit $productUnit
      * @param float $quantity
+     * @param string $currency
      */
-    public function __construct(Product $product, ProductUnit $productUnit, $quantity)
+    public function __construct(Product $product, ProductUnit $productUnit, $quantity, $currency)
     {
         if (!$product->getId()) {
             throw new \InvalidArgumentException('Product must have id.');
@@ -42,8 +48,12 @@ class ProductUnitQuantity
         if (!is_numeric($quantity) || $quantity < 0) {
             throw new \InvalidArgumentException('Quantity must be numeric and more than or equal zero.');
         }
-
         $this->quantity = $quantity;
+
+        if (strlen($currency) === 0) {
+            throw new \InvalidArgumentException('Currency must be non-empty string.');
+        }
+        $this->currency = $currency;
     }
 
     /**
@@ -73,13 +83,22 @@ class ProductUnitQuantity
     /**
      * @return string
      */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * @return string
+     */
     public function getIdentifier()
     {
         return sprintf(
-            '%s-%s-%s',
+            '%s-%s-%s-%s',
             $this->getProduct()->getId(),
             $this->getProductUnit()->getCode(),
-            $this->getQuantity()
+            $this->getQuantity(),
+            $this->getCurrency()
         );
     }
 }

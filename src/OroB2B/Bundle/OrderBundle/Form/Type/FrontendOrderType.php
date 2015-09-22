@@ -170,14 +170,15 @@ class FrontendOrderType extends AbstractType
                 $productUnitQuantity = new ProductUnitQuantity(
                     $lineItem->getProduct(),
                     $lineItem->getProductUnit(),
-                    $lineItem->getQuantity()
+                    $lineItem->getQuantity(),
+                    $order->getCurrency()
                 );
 
                 $productUnitQuantities[] = $productUnitQuantity;
                 $lineItemsWithIdentifier[$productUnitQuantity->getIdentifier()] = $lineItem;
             }
 
-            $this->fillLineItemsPrice($order->getCurrency(), $productUnitQuantities, $lineItemsWithIdentifier);
+            $this->fillLineItemsPrice($productUnitQuantities, $lineItemsWithIdentifier);
         }
     }
 
@@ -196,13 +197,12 @@ class FrontendOrderType extends AbstractType
     }
 
     /**
-     * @param string $currency
      * @param ProductUnitQuantity[] $productUnitQuantities
      * @param OrderLineItem[] $lineItemsWithIdentifier
      */
-    protected function fillLineItemsPrice($currency, array $productUnitQuantities, array $lineItemsWithIdentifier)
+    protected function fillLineItemsPrice(array $productUnitQuantities, array $lineItemsWithIdentifier)
     {
-        $prices = $this->productPriceProvider->getMatchedPrices($productUnitQuantities, $currency);
+        $prices = $this->productPriceProvider->getMatchedPrices($productUnitQuantities);
 
         foreach ($lineItemsWithIdentifier as $identifier => $lineItem) {
             if (array_key_exists($identifier, $prices) && $prices[$identifier] instanceof Price) {

@@ -24,6 +24,7 @@ define(function(require) {
             $priceType: null,
             $productUnit: null,
             $quantity: null,
+            $currency: null,
             bundledPriceTypeValue: '20',
             disabled: false
         },
@@ -91,6 +92,10 @@ define(function(require) {
                 this.options.$product.change(_.bind(this.updateTierPrices, this));
             }
 
+            if (_.isObject(this.options.$currency)) {
+                this.options.$currency.change(_.bind(this.renderTierPrices, this));
+            }
+
             if (this.options.$priceValue.is(':input')) {
                 this.$tierButton.on('click', 'a[data-price]', _.bind(this.setPriceFromTier, this));
             }
@@ -138,9 +143,20 @@ define(function(require) {
         renderTierPrices: function() {
             var $button = this.$tierButton.find('i');
             var content = '';
-            if (!_.isEmpty(this.tierPrices)) {
+            var tierPrices = {};
+            var currency = this._getCurrency();
+            _.each(this.tierPrices, function(prices, unit) {
+                prices = _.filter(prices, function(price) {
+                    return price.currency === currency;
+                });
+                if (!_.isEmpty(prices)) {
+                    tierPrices[unit] = prices;
+                }
+            });
+
+            if (!_.isEmpty(tierPrices)) {
                 content = this.tierTableTemplate({
-                    tierPrices: this.tierPrices,
+                    tierPrices: tierPrices,
                     unitCode: this.options.$productUnit.val(),
                     clickable: this.options.$priceValue.is(':input'),
                     formatter: NumberFormatter,
@@ -176,6 +192,7 @@ define(function(require) {
 
             mediator.trigger('pricing:get:line-items-matched-prices', _.bind(this.setMatchedPrices, this));
             mediator.on('pricing:refresh:line-items-matched-prices', this.setMatchedPrices, this);
+            mediator.on('pricing:collect:line-items', this.collectLineItems, this);
 
             //skip product, productUnit always changed after product change
             this.options.$productUnit.change(_.bind(this.updateMatchedPrices, this));
@@ -185,6 +202,29 @@ define(function(require) {
         setPriceFromMatched: function() {
             this.setPrice(this.getMatchedPriceValue());
             this.options.$priceValue.addClass('matched-price');
+        },
+
+        collectLineItems: function(items) {
+            var item = this.getLineItem();
+            if (item) {
+                items.push(item);
+            }
+        },
+
+        getLineItem: function() {
+            var productId = this._getProductId();
+            var item = null;
+
+            if (productId.length) {
+                item = {
+                    product: productId,
+                    unit: this.options.$productUnit.val(),
+                    qty: this.options.$quantity.val(),
+                    currency: this._getCurrency()
+                };
+            }
+
+            return item;
         },
 
         /**
@@ -200,18 +240,12 @@ define(function(require) {
                 return;
             }
 
-            var productId = this._getProductId();
-            var unitCode = this.options.$productUnit.val();
-            var quantity = this.options.$quantity.val();
+            var item = this.getLineItem();
 
-            if (productId.length === 0) {
+            if (!item) {
                 this.setMatchedPrices({});
             } else {
-                mediator.trigger(
-                    'pricing:load:line-items-matched-prices',
-                    [{'product': productId, 'unit': unitCode, 'qty': quantity}],
-                    _.bind(this.setMatchedPrices, this)
-                );
+                mediator.trigger('pricing:load:line-items-matched-prices', [item], _.bind(this.setMatchedPrices, this));
             }
         },
 
@@ -247,7 +281,7 @@ define(function(require) {
                     matchedPrice = price;
                 }
 
-                this.options.$priceValue.text(NumberFormatter.formatCurrency(matchedPrice, this.options.currency));
+                this.options.$priceValue.text(NumberFormatter.formatCurrency(matchedPrice, this._getCurrency()));
             }
 
             this.options.$priceValue.trigger('value:changed');
@@ -259,10 +293,17 @@ define(function(require) {
          */
         _getMatchedPriceIdentifier: function() {
             var productId = this._getProductId();
-            var unitCode = this.options.$productUnit.val();
-            var quantity = this.options.$quantity.val();
+            if (productId.length === 0) {
+                return null;
+            }
 
-            return productId.length === 0 ? null : productId + '-' + unitCode + '-' + quantity;
+            var identifiers = [];
+            identifiers.push(productId);
+            identifiers.push(this.options.$productUnit.val());
+            identifiers.push(this.options.$quantity.val());
+            identifiers.push(this._getCurrency());
+
+            return identifiers.join('-');
         },
 
         /**
@@ -330,6 +371,14 @@ define(function(require) {
 
                 this.change[name] = setTimeout(_.bind(callback, this), 1500);
             }, this));
+        },
+
+        _getCurrency: function() {
+            if (_.isObject(this.options.$currency)) {
+                return this.options.$currency.val();
+            } else {
+                return this.options.$currency;
+            }
         },
 
         /**
