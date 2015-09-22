@@ -34,13 +34,15 @@ class ImportExportTest extends WebTestCase
 
         $this->priceList = $this->getReference('price_list_1');
 
-        $this->getBatchJobManager()->beginTransaction();
+        $this->getContainer()->get('akeneo_batch.job_repository')->getJobManager()->beginTransaction();
     }
 
     protected function tearDown()
     {
         // clear DB from separate connection
-        $this->getBatchJobManager()->rollback();
+        $manager = $this->getContainer()->get('akeneo_batch.job_repository')->getJobManager();
+        $manager->rollback();
+        $manager->getConnection()->close();
     }
 
     /**
