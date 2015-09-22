@@ -82,7 +82,10 @@
     margin-right: 15px;
 }
 
-.sale-quoteproductitem-widget td {
+.sale-quoteproductitem-widget-quantity,
+.sale-quoteproductitem-widget-more,
+.sale-quoteproductitem-widget-productunit,
+.sale-quoteproductitem-widget-price {
     width: 150px;
     vertical-align: top;
     padding-bottom: 4px;
@@ -96,6 +99,9 @@
     padding-top: 10px;
 }
 
+.sale-quoteproductitem-widget-pricetype {
+    display: none;
+}
 .sale-quoteproductitem-widget-pricetype > div {
     margin-bottom: -10px;
 }
@@ -106,9 +112,19 @@
 
 .sale-quoteproductitem-widget-price {
     padding-top: 5px;
+    width: auto !important;
 }
+
 .sale-quoteproductitem-widget-price table {
     position: relative;
+}
+
+.sale-quoteproductitem-widget-price .selector {
+    margin: 0;
+}
+
+.sale-quoteproductitem-widget-price .product-tier-prices i {
+    margin-right: 0;
 }
 
 .sale-quoteproductitem-widget-price input[type="text"] {

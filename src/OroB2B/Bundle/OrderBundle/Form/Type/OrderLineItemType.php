@@ -113,14 +113,7 @@ class OrderLineItemType extends AbstractOrderLineItemType
                     'default_currency' => $options['currency']
                 ]
             )
-            ->add(
-                'priceType',
-                PriceTypeSelectorType::NAME,
-                [
-                    'label' => 'orob2b.order.orderlineitem.price_type.label',
-                    'required' => true,
-                ]
-            );
+            ->add('priceType', 'hidden');
     }
 
     /**
