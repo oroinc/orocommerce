@@ -248,7 +248,7 @@ define(function(require) {
                 if (!currentValue && $(select).has('option:first-child')) {
                     currentValue = $(select).find('option:first-child').val();
                 }
-                $(select).val(currentValue);
+                $(select).val(currentValue).change();
                 $(select).addClass(self.options.syncClass);
 
                 if (!force) {

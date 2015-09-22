@@ -107,6 +107,14 @@
 .sale-quoteproductitem-widget-price {
     padding-top: 5px;
 }
+.sale-quoteproductitem-widget-price table {
+    position: relative;
+}
+
+.sale-quoteproductitem-widget-price input[type="text"] {
+    text-align: right;
+    padding-left: 17px;
+}
 
 .sale-quoteproductitem-widget td span.validation-failed {
     padding-top: 2px;

@@ -61,7 +61,6 @@ class QuoteProductOfferType extends AbstractType
                 'label' => 'orob2b.sale.quoteproductoffer.price_type.label',
                 'choices' => $this->formatter->formatPriceTypeLabels(QuoteProductOffer::getPriceTypes()),
                 'required' => true,
-                'expanded' => true,
             ])
             ->add('allowIncrements', 'checkbox', [
                 'required' => false,

@@ -58,6 +58,8 @@
 
 .order-line-item-price {
     width: 243px;
+}
+.order-line-item-price .fields-row {
     position: relative;
 }
 
@@ -77,24 +79,6 @@
 .order-line-item-price input[type="text"],
 .order-line-item-price .selector {
     float: left;
-}
-
-.order-line-item-price input.matched-price {
-    background-color: #eee;
-}
-
-.order-line-item-price-overridden {
-    position: absolute;
-    top: 4px;
-    left: 10px;
-}
-
-.order-line-item-price-overridden i {
-    cursor: pointer;
-}
-
-.order-line-item-price-overridden div.popover {
-    min-width: 130px;
 }
 
 .order-line-item-price-value,

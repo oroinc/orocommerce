@@ -77,7 +77,10 @@ define(function(require) {
                 _sourceElement: this.$el,
                 $product: this.fieldsByName.product,
                 $priceValue: this.fieldsByName.priceValue,
-                $productUnit: this.fieldsByName.productUnit
+                $priceType: this.fieldsByName.priceType,
+                $productUnit: this.fieldsByName.productUnit,
+                $quantity: this.fieldsByName.quantity,
+                $currency: this.fieldsByName.priceCurrency
             }));
         }
     });

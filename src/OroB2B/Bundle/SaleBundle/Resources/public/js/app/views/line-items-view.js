@@ -12,7 +12,10 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            tierPrices: null
+            tierPrices: null,
+            matchedPrices: {},
+            tierPricesRoute: '',
+            matchedPricesRoute: ''
         },
 
         /**
@@ -22,7 +25,10 @@ define(function(require) {
             this.options = $.extend(true, {}, this.options, options || {});
 
             this.subview('productsPricesComponent', new ProductsPricesComponent({
-                tierPrices: this.options.tierPrices
+                tierPrices: this.options.tierPrices,
+                matchedPrices: this.options.matchedPrices,
+                tierPricesRoute: this.options.tierPricesRoute,
+                matchedPricesRoute: this.options.matchedPricesRoute
             }));
 
             this.initLayout().done(_.bind(this.handleLayoutInit, this));

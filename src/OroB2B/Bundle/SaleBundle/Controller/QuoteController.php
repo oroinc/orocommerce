@@ -10,13 +10,16 @@ use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
+use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Model\ProductUnitQuantity;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
 
 class QuoteController extends Controller
@@ -133,6 +136,7 @@ class QuoteController extends Controller
                 return [
                     'form' => $form->createView(),
                     'tierPrices' => $this->getTierPrices($quote),
+                    'matchedPrices' => $this->getMatchedPrices($quote),
                 ];
             }
         );
@@ -158,7 +162,7 @@ class QuoteController extends Controller
 
         if ($productIds) {
             $tierPrices = $this->get('orob2b_pricing.provider.product_price')->getPriceByPriceListIdAndProductIds(
-                $this->getPriceList($quote)->getId(),
+                $this->getPriceList()->getId(),
                 $productIds->toArray()
             );
         }
@@ -168,10 +172,56 @@ class QuoteController extends Controller
 
     /**
      * @param Quote $quote
+     * @return array
+     */
+    protected function getMatchedPrices(Quote $quote)
+    {
+        $matchedPrices = [];
+        $productUnitQuantities = [];
+
+        /** @var QuoteProduct $quoteProduct */
+        foreach ($quote->getQuoteProducts() as $quoteProduct) {
+            if (!$quoteProduct->getProduct()) {
+                continue;
+            }
+            /** @var QuoteProductOffer $quoteProductOffer */
+            foreach ($quoteProduct->getQuoteProductOffers() as $quoteProductOffer) {
+                if ($quoteProductOffer->getProductUnit() && $quoteProductOffer->getQuantity()) {
+                    $productUnitQuantities[] = new ProductUnitQuantity(
+                        $quoteProduct->getProduct(),
+                        $quoteProductOffer->getProductUnit(),
+                        $quoteProductOffer->getQuantity(),
+                        $quoteProductOffer->getPrice()->getCurrency()
+                    );
+                }
+            }
+        }
+
+        if ($productUnitQuantities) {
+            $matchedPrices = $this->get('orob2b_pricing.provider.product_price')->getMatchedPrices(
+                $productUnitQuantities,
+                $this->getPriceList()
+            );
+        }
+
+        /** @var Price $price */
+        foreach ($matchedPrices as &$price) {
+            if ($price) {
+                $price = [
+                    'value' => $price->getValue(),
+                    'currency' => $price->getCurrency()
+                ];
+            }
+        }
+
+        return $matchedPrices;
+    }
+
+    /**
      * @return PriceList
      */
-    protected function getPriceList(Quote $quote)
+    protected function getPriceList()
     {
-        return $this->get('orob2b_pricing.model.price_list_tree_handler')->getPriceList($quote->getAccountUser());
+        return $this->get('orob2b_pricing.model.frontend.price_list_request_handler')->getPriceList();
     }
 }

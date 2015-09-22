@@ -48,7 +48,10 @@
              data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ {
                  view: 'orob2bsale/js/app/views/line-items-view',
-                 tierPrices: tierPrices|default({})
+                 tierPrices: tierPrices|default({}),
+                 matchedPrices: matchedPrices|default({}),
+                 tierPricesRoute: 'orob2b_pricing_price_by_pricelist',
+                 matchedPricesRoute: 'orob2b_pricing_matching_price'
              }|json_encode }}"
              data-layout="separate">
             {{ form_widget(form.quoteProducts) }}
