@@ -65,6 +65,7 @@ services:
         arguments:
             - @translator
             - @orob2b_product.formatter.product_unit_value
+            - @oro_locale.formatter.number
         tags:
             - { name: form.type, alias: orob2b_sale_quote_product_to_order }
 

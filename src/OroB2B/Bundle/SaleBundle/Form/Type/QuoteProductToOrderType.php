@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\SaleBundle\Form\Type;
 
+use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -37,13 +38,23 @@ class QuoteProductToOrderType extends AbstractType
     protected $unitFormatter;
 
     /**
+     * @var NumberFormatter
+     */
+    protected $numberFormatter;
+
+    /**
      * @param TranslatorInterface $translator
      * @param ProductUnitValueFormatter $unitFormatter
+     * @param NumberFormatter $numberFormatter
      */
-    public function __construct(TranslatorInterface $translator, ProductUnitValueFormatter $unitFormatter)
-    {
+    public function __construct(
+        TranslatorInterface $translator,
+        ProductUnitValueFormatter $unitFormatter,
+        NumberFormatter $numberFormatter
+    ) {
         $this->translator = $translator;
         $this->unitFormatter = $unitFormatter;
+        $this->numberFormatter = $numberFormatter;
     }
 
     /**
@@ -55,6 +66,9 @@ class QuoteProductToOrderType extends AbstractType
         if (!$quoteProduct instanceof QuoteProduct) {
             throw new UnexpectedTypeException($quoteProduct, 'QuoteProduct');
         }
+
+        /** @var QuoteProductOffer $firstQuoteProductOffer */
+        $firstQuoteProductOffer = $quoteProduct->getQuoteProductOffers()->first();
 
         $builder
             ->add(
@@ -70,7 +84,10 @@ class QuoteProductToOrderType extends AbstractType
                 self::FIELD_QUANTITY,
                 'number',
                 [
-                    'constraints' => [new NotBlank(), new Decimal(), new GreaterThanZero()]
+                    'constraints' => [new NotBlank(), new Decimal(), new GreaterThanZero()],
+                    'attr' => [
+                        'disabled' => $firstQuoteProductOffer ? !$firstQuoteProductOffer->isAllowIncrements() : true
+                    ]
                 ]
             );
 
@@ -112,7 +129,21 @@ class QuoteProductToOrderType extends AbstractType
         foreach ($offerView->children as $optionView) {
             $optionValue = $optionView->vars['value'];
             if (isset($offers[$optionValue])) {
-                $optionView->vars['offer'] = $offers[$optionValue];
+                /** @var QuoteProductOffer $quoteProductOffer */
+                $quoteProductOffer = $offers[$optionValue];
+                $optionView->vars['offer'] = $quoteProductOffer;
+                $optionView->vars['attr'] = array_merge(
+                    $optionView->vars['attr'],
+                    [
+                        'data-unit' => $quoteProductOffer->getProductUnitCode(),
+                        'data-quantity' => $quoteProductOffer->getQuantity(),
+                        'data-allow-increment' => (string)$quoteProductOffer->isAllowIncrements(),
+                        'data-price' => $this->numberFormatter->formatCurrency(
+                            $quoteProductOffer->getPrice()->getValue(),
+                            $quoteProductOffer->getPrice()->getCurrency()
+                        ),
+                    ]
+                );
             }
         }
     }
