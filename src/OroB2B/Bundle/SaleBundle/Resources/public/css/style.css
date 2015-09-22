@@ -298,6 +298,10 @@ td.quote-product-offer-price {
     padding-top: 11px !important;
 }
 
+td.quote-product-offer-select-offer {
+    width: 260px;
+}
+
 td.quote-product-offer-select-offer table {
     table-layout: fixed;
 }
@@ -323,8 +327,8 @@ td.quote-product-offer-select-offer td.quote-product-offer-select-offer-label {
 }
 
 td.quote-product-offer-quantity {
-    width: 140px;
-    padding-left: 25px !important;
+    width: 160px;
+    text-align: center;
 }
 
 td.quote-product-offer-quantity input {
