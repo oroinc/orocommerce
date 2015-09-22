@@ -165,6 +165,11 @@ class QuoteProductType extends AbstractType
         $builder->get('quoteProductRequests')->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
             /** @var \Doctrine\ORM\PersistentCollection $formData */
             $formData = $event->getForm()->getData();
+
+            if (!$formData) {
+                return;
+            }
+            
             $requests = [];
             foreach ($formData as $quoteProductRequest) {
                 $requests[] = [
