@@ -91,6 +91,6 @@ class QuoteController extends Controller
         $em->persist($order);
         $em->flush();
 
-        return $this->redirectToRoute('orob2b_order_view', ['id' => $order->getId()]);
+        return $this->redirectToRoute('orob2b_order_frontend_view', ['id' => $order->getId()]);
     }
 }
