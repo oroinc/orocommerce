@@ -193,6 +193,10 @@ services:
         arguments:
             - @doctrine
             - @oro_entity_extend.enum_value_provider
+        calls:
+            - [setCategoryVisibilityClass, [%orob2b_account.entity.category_visibility.class%]]
+            - [setAccountCategoryVisibilityClass, [%orob2b_account.entity.account_category_visibility.class%]]
+            - [setAccountGroupCategoryVisibilityClass, [%orob2b_account.entity.account_group_category_visibility.class%]]
 
     orob2b_account.form.extension.category_type:
         class: %orob2b_account.form.extension.category_type.class%

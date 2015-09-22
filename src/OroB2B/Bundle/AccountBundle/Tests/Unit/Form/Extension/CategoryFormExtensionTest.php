@@ -6,18 +6,20 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
 use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSetDataListener;
+use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSubmitListener;
 use OroB2B\Bundle\AccountBundle\Form\Extension\CategoryFormExtension;
 
 class CategoryFormExtensionTest extends FormIntegrationTestCase
 {
     /** @var CategoryPostSetDataListener|\PHPUnit_Framework_MockObject_MockObject */
     protected $categoryPostSetDataListener;
+
+    /** @var CategoryPostSubmitListener|\PHPUnit_Framework_MockObject_MockObject */
+    protected $categoryPostSubmitListener;
 
     /** @var  CategoryFormExtension|\PHPUnit_Framework_MockObject_MockObject */
     protected $categoryFormExtension;
@@ -29,7 +31,15 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
         )
             ->disableOriginalConstructor()
             ->getMock();
-        $this->categoryFormExtension = new CategoryFormExtension($this->categoryPostSetDataListener);
+        $this->categoryPostSubmitListener = $this->getMockBuilder(
+            'OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSubmitListener'
+        )
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->categoryFormExtension = new CategoryFormExtension(
+            $this->categoryPostSetDataListener,
+            $this->categoryPostSubmitListener
+        );
     }
 
     public function testBuildForm()
@@ -76,11 +86,19 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
             )
             ->willReturn($builder);
 
-        $builder->expects($this->once())
+        $builder->expects($this->at(3))
             ->method('addEventListener')
             ->with(
                 FormEvents::POST_SET_DATA,
                 [$this->categoryPostSetDataListener, 'onPostSetData']
+            )
+            ->willReturn($builder);
+
+        $builder->expects($this->at(4))
+            ->method('addEventListener')
+            ->with(
+                FormEvents::POST_SUBMIT,
+                [$this->categoryPostSubmitListener, 'onPostSubmit']
             )
             ->willReturn($builder);
 
