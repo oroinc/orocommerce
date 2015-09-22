@@ -149,7 +149,7 @@ class ConfigurableQuoteProductOfferTest extends \PHPUnit_Framework_TestCase
         $violation = $this->getMock('Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface');
         $violation->expects($this->any())
             ->method('atPath')
-            ->with($path)
+            ->with('[' . $path . ']')
             ->will($this->returnSelf());
 
         $this->context->expects($this->once())
