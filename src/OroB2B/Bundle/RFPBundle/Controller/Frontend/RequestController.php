@@ -132,7 +132,10 @@ class RequestController extends Controller
     }
 
     /**
-     * @Route("/create_rfp/{id}", name="orob2b_rfp_frontend_createfromshoppinglist", requirements={"id"="\d+"})
+     * @Route(
+     *      "/create-from-shopping-list/{id}",
+     *      name="orob2b_rfp_frontend_createfromshoppinglist",
+     *      requirements={"id"="\d+"})
      * @Acl(
      *      id="orob2b_rfp_frontend_createfromshoppinglist",
      *      type="entity",
@@ -153,7 +156,7 @@ class RequestController extends Controller
 
     /**
      * @Route(
-     *      "/create_from_rfp_form/{id}",
+     *      "/create-from-shopping-list-form/{id}",
      *      name="orob2b_rfp_frontend_createfromshoppinglistform",
      *      requirements={"id"="\d+"}
      * )
