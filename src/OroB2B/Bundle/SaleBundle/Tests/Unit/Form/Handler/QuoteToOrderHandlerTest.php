@@ -121,7 +121,7 @@ class QuoteToOrderHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->converter->expects($this->once())
             ->method('convert')
-            ->with($quote, $offerData)
+            ->with($quote, $this->accountUser, $offerData)
             ->willReturn($order);
 
         $this->manager->expects($this->once())
@@ -131,7 +131,5 @@ class QuoteToOrderHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('flush');
 
         $this->assertEquals($order, $this->handler->process($quote));
-        $this->assertEquals($this->accountUser, $order->getAccountUser());
-        $this->assertEquals($this->accountUser->getAccount(), $order->getAccount());
     }
 }

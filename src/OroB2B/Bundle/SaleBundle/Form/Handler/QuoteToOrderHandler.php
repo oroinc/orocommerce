@@ -81,13 +81,12 @@ class QuoteToOrderHandler
 
     /**
      * @param Quote $quote
+     * @param array $offerData
      * @return Order|null
      */
     protected function onSuccess(Quote $quote, array $offerData)
     {
-        $order = $this->converter->convert($quote, $offerData);
-        $order->setAccountUser($this->user)
-            ->setAccount($this->user->getAccount());
+        $order = $this->converter->convert($quote, $this->user, $offerData);
 
         $this->manager->persist($order);
         $this->manager->flush();
