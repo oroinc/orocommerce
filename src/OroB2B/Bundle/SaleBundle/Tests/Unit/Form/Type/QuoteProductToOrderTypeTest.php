@@ -4,18 +4,14 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
 
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductToOrderType;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Helper\QuoteToOrderTestTrait;
 
-class QuoteProductToOrderTypeTest extends FormIntegrationTestCase
+class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
 {
     use QuoteToOrderTestTrait;
 
@@ -28,27 +24,7 @@ class QuoteProductToOrderTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface $translator */
-        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
-        $translator->expects($this->any())
-            ->method('trans')
-            ->with('orob2b.frontend.sale.quoteproductoffer.allow_increments.label')
-            ->willReturn('or more');
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitValueFormatter $unitFormatter */
-        $unitFormatter = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $unitFormatter->expects($this->any())
-            ->method('formatShort')
-            ->with($this->isType('int'), $this->isInstanceOf('OroB2B\Bundle\ProductBundle\Entity\ProductUnit'))
-            ->willReturnCallback(
-                function ($quantity, ProductUnit $unit) {
-                    return sprintf('%s %s', $quantity, $unit->getCode());
-                }
-            );
-
-        $this->type = new QuoteProductToOrderType($translator, $unitFormatter);
+        $this->type = new QuoteProductToOrderType($this->getTranslator(), $this->getUnitFormatter());
     }
 
     /**
