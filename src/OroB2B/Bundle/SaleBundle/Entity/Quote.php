@@ -20,7 +20,7 @@ use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
 
 /**
  * @ORM\Table(name="orob2b_sale_quote")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\SaleBundle\Entity\Repository\QuoteRepository")
  * @ORM\EntityListeners({"OroB2B\Bundle\SaleBundle\Entity\Listener\QuoteListener"})
  * @ORM\HasLifecycleCallbacks()
  * @Config(
@@ -495,7 +495,7 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
             /** @var QuoteProductOffer $firstItem */
             $firstItem = $items->first();
 
-            if (count($items) > 1 || ($firstItem && $firstItem->getAllowIncrements())) {
+            if (count($items) > 1 || ($firstItem && $firstItem->isAllowIncrements())) {
                 $value = true;
                 break;
             }
