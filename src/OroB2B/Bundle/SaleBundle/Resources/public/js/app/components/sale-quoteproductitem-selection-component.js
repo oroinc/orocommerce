@@ -48,7 +48,7 @@ define(function(require) {
         typeReplacement: null,
 
         /**
-         * @property {array}
+         * @property {Object}
          */
         units: {},
 

@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\SaleBundle\Form\Type;
 
+use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -46,7 +47,7 @@ class QuoteToOrderType extends CollectionType
     {
         $data = $event->getData();
         if (!$data instanceof Quote) {
-            return;
+            throw new UnexpectedTypeException($data, 'Quote');
         }
 
         /** @var QuoteProduct[] $quoteProducts */
@@ -57,6 +58,18 @@ class QuoteToOrderType extends CollectionType
                 unset($quoteProducts[$key]);
             }
         }
+
+        // quote products without variants must be in the end
+        usort($quoteProducts, function (QuoteProduct $first, QuoteProduct $second) {
+            $hasFirst = $first->hasOfferVariants();
+            $hasSecond = $second->hasOfferVariants();
+
+            if ($hasFirst === $hasSecond) {
+                return 0;
+            } else {
+                return $hasFirst ? -1 : 1;
+            }
+        });
 
         $event->setData($quoteProducts);
     }
