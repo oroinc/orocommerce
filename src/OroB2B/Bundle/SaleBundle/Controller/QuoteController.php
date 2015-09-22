@@ -162,7 +162,7 @@ class QuoteController extends Controller
 
         if ($productIds) {
             $tierPrices = $this->get('orob2b_pricing.provider.product_price')->getPriceByPriceListIdAndProductIds(
-                $this->getPriceList()->getId(),
+                $this->getPriceList($quote)->getId(),
                 $productIds->toArray()
             );
         }
@@ -200,7 +200,7 @@ class QuoteController extends Controller
         if ($productUnitQuantities) {
             $matchedPrices = $this->get('orob2b_pricing.provider.product_price')->getMatchedPrices(
                 $productUnitQuantities,
-                $this->getPriceList()
+                $this->getPriceList($quote)
             );
         }
 
@@ -218,10 +218,15 @@ class QuoteController extends Controller
     }
 
     /**
+     * @param Quote $quote
      * @return PriceList
      */
-    protected function getPriceList()
+    protected function getPriceList(Quote $quote)
     {
-        return $this->get('orob2b_pricing.model.frontend.price_list_request_handler')->getPriceList();
+        $priceList = $quote->getPriceList();
+        if (!$priceList) {
+            $priceList = $this->get('orob2b_pricing.model.frontend.price_list_request_handler')->getPriceList();
+        }
+        return $priceList;
     }
 }

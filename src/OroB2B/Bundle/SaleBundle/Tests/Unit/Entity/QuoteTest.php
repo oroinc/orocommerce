@@ -7,6 +7,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
@@ -27,6 +28,7 @@ class QuoteTest extends AbstractTest
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
             ['request', new Request()],
+            ['priceList', new PriceList()]
         ];
 
         static::assertPropertyAccessors(new Quote(), $properties);

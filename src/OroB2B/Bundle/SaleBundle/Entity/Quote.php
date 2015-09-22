@@ -15,6 +15,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
 
@@ -161,6 +162,14 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      * @ORM\Column(type="boolean")
      */
     protected $locked = false;
+
+    /**
+     * @var PriceList
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList")
+     * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="SET NULL")
+     **/
+    protected $priceList;
 
     /**
      * Constructor
@@ -481,5 +490,24 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
         }
 
         return null;
+    }
+
+    /**
+     * @return PriceList
+     */
+    public function getPriceList()
+    {
+        return $this->priceList;
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @return Quote
+     */
+    public function setPriceList(PriceList $priceList = null)
+    {
+        $this->priceList = $priceList;
+
+        return $this;
     }
 }

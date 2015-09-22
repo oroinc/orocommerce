@@ -10,6 +10,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
+use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 
 class QuoteType extends AbstractType
 {
@@ -47,6 +48,14 @@ class QuoteType extends AbstractType
                 'label'     => 'orob2b.sale.quote.account.label',
                 'required'  => false,
             ])
+            ->add(
+                'priceList',
+                PriceListSelectType::NAME,
+                [
+                    'required' => false,
+                    'label' => 'orob2b.sale.quote.price_list.label',
+                ]
+            )
             ->add('validUntil', OroDateTimeType::NAME, [
                 'label'     => 'orob2b.sale.quote.valid_until.label',
                 'required'  => false,
