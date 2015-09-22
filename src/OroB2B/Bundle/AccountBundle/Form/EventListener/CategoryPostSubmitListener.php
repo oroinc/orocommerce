@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\AccountBundle\Form\EventListener;
 
-use Doctrine\Common\Util\ClassUtils;
 use Symfony\Component\Form\FormEvent;
 
+use Doctrine\Common\Util\ClassUtils;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
