@@ -33,15 +33,14 @@ class ImportExportTest extends WebTestCase
         $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices']);
 
         $this->priceList = $this->getReference('price_list_1');
+
+        $this->getBatchJobManager()->beginTransaction();
     }
 
     protected function tearDown()
     {
         // clear DB from separate connection
-        $batchJobManager = $this->getBatchJobManager();
-        $batchJobManager->createQuery('DELETE AkeneoBatchBundle:JobInstance')->execute();
-        $batchJobManager->createQuery('DELETE AkeneoBatchBundle:JobExecution')->execute();
-        $batchJobManager->createQuery('DELETE AkeneoBatchBundle:StepExecution')->execute();
+        $this->getBatchJobManager()->rollback();
     }
 
     /**
