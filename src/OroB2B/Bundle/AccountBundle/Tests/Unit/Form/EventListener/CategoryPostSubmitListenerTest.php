@@ -60,9 +60,11 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
             ->method('getData')
             ->willReturn($category);
 
-        $this->prepareProcessCategoryVisibility($category);
-        $this->prepareProcessAccountVisibility();
-        $this->prepareProcessAccountGroupVisibility();
+        $this->prepareEnumValueProvider(
+            $this->getCategoryVisibility($category),
+            $this->getAccountVisibility(),
+            $this->getAccountGroupVisibility()
+        );
 
         $this->em->expects($this->once())
             ->method('flush');
@@ -150,9 +152,54 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
     }
 
     /**
-     * @param Category $category
+     * @param AbstractEnumValue $categoryVisibility
+     * @param AbstractEnumValue $accountCategoryVisibility
+     * @param AbstractEnumValue $accountCategoryGroupVisibility
      */
-    protected function prepareProcessCategoryVisibility(Category $category)
+    protected function prepareEnumValueProvider(
+        AbstractEnumValue $categoryVisibility,
+        AbstractEnumValue $accountCategoryVisibility,
+        AbstractEnumValue $accountCategoryGroupVisibility
+    ) {
+        $this->enumValueProvider->expects($this->any())
+            ->method('getEnumValueByCode')
+            ->withConsecutive(
+                [CategoryPostSubmitListener::CATEGORY_VISIBILITY, CategoryVisibility::VISIBLE],
+                [CategoryPostSubmitListener::ACCOUNT_CATEGORY_VISIBILITY, AccountCategoryVisibility::PARENT_CATEGORY],
+                [CategoryPostSubmitListener::ACCOUNT_CATEGORY_VISIBILITY, AccountCategoryVisibility::PARENT_CATEGORY],
+                [CategoryPostSubmitListener::ACCOUNT_CATEGORY_VISIBILITY, AccountCategoryVisibility::VISIBLE],
+                [
+                    CategoryPostSubmitListener::ACCOUNT_GROUP_CATEGORY_VISIBILITY,
+                    AccountGroupCategoryVisibility::PARENT_CATEGORY,
+                ],
+                [
+                    CategoryPostSubmitListener::ACCOUNT_GROUP_CATEGORY_VISIBILITY,
+                    AccountGroupCategoryVisibility::PARENT_CATEGORY,
+                ],
+                [
+                    CategoryPostSubmitListener::ACCOUNT_GROUP_CATEGORY_VISIBILITY,
+                    AccountGroupCategoryVisibility::VISIBLE,
+                ]
+            )
+            ->will(
+                $this->onConsecutiveCalls(
+                    $categoryVisibility,
+                    $accountCategoryVisibility,
+                    $accountCategoryVisibility,
+                    $accountCategoryVisibility,
+                    $accountCategoryGroupVisibility,
+                    $accountCategoryGroupVisibility,
+                    $accountCategoryGroupVisibility
+                )
+            );
+    }
+
+    /**
+     * @param Category $category
+     *
+     * @return AbstractEnumValue|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getCategoryVisibility(Category $category)
     {
         /** @var AbstractEnumValue|\PHPUnit_Framework_MockObject_MockObject $visibility */
         $visibility = $this->getMockBuilder('Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue')
@@ -172,11 +219,7 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
             ->with(['category' => $category])
             ->willReturn($categoryVisibility);
 
-
-        $this->enumValueProvider->expects($this->at(0))
-            ->method('getEnumValueByCode')
-            ->with(CategoryPostSubmitListener::CATEGORY_VISIBILITY, CategoryVisibility::VISIBLE)
-            ->willReturn($visibility);
+        return $visibility;
     }
 
     /**
@@ -219,9 +262,9 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
     }
 
     /**
-     * Method prepareProcessAccountVisibility
+     * @return AbstractEnumValue|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function prepareProcessAccountVisibility()
+    protected function getAccountVisibility()
     {
         /** @var AbstractEnumValue|\PHPUnit_Framework_MockObject_MockObject $visibility */
         $visibility = $this->getMockBuilder('Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue')
@@ -233,17 +276,17 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
                 $this->getAccountCategoryVisibilityMock(
                     $visibility,
                     $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 1),
-                    null
+                    AccountCategoryVisibility::PARENT_CATEGORY
                 ),
                 $this->getAccountCategoryVisibilityMock(
                     $visibility,
                     $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2),
-                    AccountCategoryVisibility::VISIBLE
+                    AccountCategoryVisibility::PARENT_CATEGORY
                 ),
                 $this->getAccountCategoryVisibilityMock(
                     $visibility,
                     $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 3),
-                    AccountCategoryVisibility::HIDDEN
+                    AccountCategoryVisibility::VISIBLE
                 ),
             ]
         );
@@ -252,16 +295,13 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
             ->method('findForAccounts')
             ->willReturn($accountCategoryVisibilities);
 
-        $this->enumValueProvider->expects($this->at(1))
-            ->method('getEnumValueByCode')
-            ->with(CategoryPostSubmitListener::ACCOUNT_CATEGORY_VISIBILITY, AccountCategoryVisibility::VISIBLE)
-            ->willReturn($visibility);
+        return $visibility;
     }
 
     /**
-     * Method prepareProcessAccountGroupVisibility
+     * @return AbstractEnumValue|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function prepareProcessAccountGroupVisibility()
+    protected function getAccountGroupVisibility()
     {
         /** @var AbstractEnumValue|\PHPUnit_Framework_MockObject_MockObject $visibility */
         $visibility = $this->getMockBuilder('Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue')
@@ -292,13 +332,7 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
             ->method('findForAccountGroups')
             ->willReturn($accountGroupCategoryVisibilities);
 
-        $this->enumValueProvider->expects($this->at(2))
-            ->method('getEnumValueByCode')
-            ->with(
-                CategoryPostSubmitListener::ACCOUNT_GROUP_CATEGORY_VISIBILITY,
-                AccountGroupCategoryVisibility::VISIBLE
-            )
-            ->willReturn($visibility);
+        return $visibility;
     }
 
     public function testProcessCategoryVisibilityWithEmptyCategoryVisibility()
@@ -345,7 +379,7 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
         ];
         $accountChangeSet = new ArrayCollection($data);
 
-        $this->accountCategoryVisibilityRepository->expects($this->at(0))
+        $this->accountCategoryVisibilityRepository->expects($this->atLeastOnce())
             ->method('findForAccounts')
             ->willReturn(new ArrayCollection([]));
 
@@ -381,7 +415,7 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
         ];
         $accountGroupChangeSet = new ArrayCollection($data);
 
-        $this->accountGroupCategoryVisibilityRepository->expects($this->at(0))
+        $this->accountGroupCategoryVisibilityRepository->expects($this->atLeastOnce())
             ->method('findForAccountGroups')
             ->willReturn(new ArrayCollection([]));
 

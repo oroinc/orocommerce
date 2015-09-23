@@ -17,7 +17,7 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 class AccountCategoryVisibility extends ExtendAccountCategoryVisibility implements DefaultVisibilityInterface
 {
     const PARENT_CATEGORY = 'parent_category';
-    const CONFIG = 'config';
+    const CATEGORY = 'category';
     const ACCOUNT_GROUP = 'account_group';
     const VISIBLE = 'visible';
     const HIDDEN = 'hidden';
@@ -100,6 +100,6 @@ class AccountCategoryVisibility extends ExtendAccountCategoryVisibility implemen
      */
     public function getDefault()
     {
-        return self::PARENT_CATEGORY;
+        return self::ACCOUNT_GROUP;
     }
 }

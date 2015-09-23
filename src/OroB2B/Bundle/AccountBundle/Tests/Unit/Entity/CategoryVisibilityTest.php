@@ -25,6 +25,6 @@ class CategoryVisibilityTest extends \PHPUnit_Framework_TestCase
                 ['category', new Category()],
             ]
         );
-        $this->assertEquals(CategoryVisibility::CONFIG, $entity->getDefault());
+        $this->assertEquals(CategoryVisibility::PARENT_CATEGORY, $entity->getDefault());
     }
 }

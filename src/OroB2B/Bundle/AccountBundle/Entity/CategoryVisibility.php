@@ -16,6 +16,7 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
  */
 class CategoryVisibility extends ExtendCategoryVisibility implements DefaultVisibilityInterface
 {
+    const PARENT_CATEGORY = 'parent_category';
     const CONFIG = 'config';
     const VISIBLE = 'visible';
     const HIDDEN = 'hidden';
@@ -70,6 +71,6 @@ class CategoryVisibility extends ExtendCategoryVisibility implements DefaultVisi
      */
     public function getDefault()
     {
-        return self::CONFIG;
+        return self::PARENT_CATEGORY;
     }
 }

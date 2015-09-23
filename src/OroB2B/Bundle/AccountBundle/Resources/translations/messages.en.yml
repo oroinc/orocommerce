@@ -181,7 +181,7 @@ orob2b.account:
         region_code.label:       State ISO code
 
     accountcategoryvisibility:
-        entity_label: Visible to Selected Accounts
+        entity_label: Visibility to Accounts
         entity_plural_label: Account Category Visibilities
         id.label: ID
         account.label: Account
@@ -189,7 +189,7 @@ orob2b.account:
         visibility.label: Visibility
 
     accountgroupcategoryvisibility:
-        entity_label: Visible to Selected Account Groups
+        entity_label: Visibility to Account Groups
         entity_plural_label: Account Group Category Visibilities
         id.label: ID
         account_group.label: Account Group
@@ -197,12 +197,11 @@ orob2b.account:
         visibility.label: Visibility
 
     categoryvisibility:
-        entity_label: Visible to All Accounts
+        entity_label: Visibility to All
         entity_plural_label: Category Visibilities
         id.label: ID
         category.label: Category
         visibility.label: Visibility
-        default.label: Config
 
     catalog:
         visibility:

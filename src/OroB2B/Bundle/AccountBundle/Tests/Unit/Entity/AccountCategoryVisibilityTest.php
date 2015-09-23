@@ -27,6 +27,6 @@ class AccountCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
                 ['account', new Account()],
             ]
         );
-        $this->assertEquals(AccountCategoryVisibility::PARENT_CATEGORY, $entity->getDefault());
+        $this->assertEquals(AccountCategoryVisibility::ACCOUNT_GROUP, $entity->getDefault());
     }
 }

@@ -14,9 +14,10 @@ class LoadCategoryVisibilityData extends AbstractEnumFixture
     protected function getData()
     {
         return [
+            CategoryVisibility::PARENT_CATEGORY => 'Parent Category',
             CategoryVisibility::CONFIG => 'Config',
-            CategoryVisibility::VISIBLE => 'Visible',
             CategoryVisibility::HIDDEN => 'Hidden',
+            CategoryVisibility::VISIBLE => 'Visible',
         ];
     }
 
@@ -33,6 +34,6 @@ class LoadCategoryVisibilityData extends AbstractEnumFixture
      */
     protected function getDefaultValue()
     {
-        return CategoryVisibility::CONFIG;
+        return CategoryVisibility::PARENT_CATEGORY;
     }
 }
