@@ -2,10 +2,11 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Validator\Validation;
+
+use Oro\Bundle\CurrencyBundle\Model\Price;
 
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductToOrderType;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;

@@ -28,17 +28,17 @@ define(function(require) {
         /**
          * @property {jQuery.Element}
          */
-        quantity: null,
+        $quantity: null,
 
         /**
          * @property {jQuery.Element}
          */
-        unit: null,
+        $unit: null,
 
         /**
          * @property {jQuery.Element}
          */
-        unitPrice: null,
+        $unitPrice: null,
 
         /**
          * @inheritDoc
@@ -46,12 +46,11 @@ define(function(require) {
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
-            this.quantity = $(this.options.quantitySelector);
-            this.unit = $(this.options.unitSelector);
-            this.unitPrice = $(this.options.unitPriceSelector);
+            this.$quantity = $(this.options.quantitySelector);
+            this.$unit = $(this.options.unitSelector);
+            this.$unitPrice = $(this.options.unitPriceSelector);
 
-            this.options._sourceElement
-                .on('change', this.options.offerSelector, _.bind(this.onSelectorChange, this));
+            this.options._sourceElement.on('change', this.options.offerSelector, _.bind(this.onSelectorChange, this));
         },
 
         /**
@@ -70,29 +69,29 @@ define(function(require) {
          * @param {Number} quantity
          */
         updateQuantityInputValue: function(quantity) {
-            this.quantity.val(quantity);
-            this.quantity.data(this.options.data_attributes.quantity, quantity);
+            this.$quantity.val(quantity);
+            this.$quantity.data(this.options.data_attributes.quantity, quantity);
         },
 
         /**
          * @param {Boolean} allowIncrement
          */
         updateQuantityInputState: function(allowIncrement) {
-            this.quantity.prop('disabled', !allowIncrement);
+            this.$quantity.prop('disabled', !allowIncrement);
         },
 
         /**
          * @param {String} unit
          */
         updateUnitValue: function(unit) {
-            this.unit.text(unit);
+            this.$unit.text(unit);
         },
 
         /**
          * @param {String} price
          */
         updateUnitPriceValue: function(price) {
-            this.unitPrice.text(price);
+            this.$unitPrice.text(price);
         },
 
         dispose: function() {
