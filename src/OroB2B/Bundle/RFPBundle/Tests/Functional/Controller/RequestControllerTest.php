@@ -65,7 +65,7 @@ class RequestControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains(
-            sprintf('%s %s - Requests For Quote - Sales', LoadRequestData::FIRST_NAME, LoadRequestData::LAST_NAME),
+            sprintf('%s %s - Requests For Quote', LoadRequestData::FIRST_NAME, LoadRequestData::LAST_NAME),
             $result->getContent()
         );
 
@@ -171,6 +171,10 @@ class RequestControllerTest extends WebTestCase
      */
     public function testCreateQuote($id)
     {
+        // this test needs SaleBundle
+        if (!class_exists('OroB2B\Bundle\SaleBundle\OroB2BSaleBundle', false)) {
+            return;
+        }
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_view', ['id' => $id]));
 
         $form = $crawler->selectButton('Create Quote')->form();
