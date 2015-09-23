@@ -61,7 +61,7 @@ class QuoteProductOfferType extends AbstractType
                 'label' => 'orob2b.sale.quoteproductoffer.price.label'
             ])
             ->add('priceType', 'hidden', [
-                //'data' => QuoteProductOffer::PRICE_TYPE_UNIT, // update in postSetData()
+                'data' => QuoteProductOffer::PRICE_TYPE_UNIT,
                 // TODO: enable once fully supported on the quote views and in orders
                 //'label' => 'orob2b.sale.quoteproductoffer.price_type.label',
                 //'choices' => $this->formatter->formatPriceTypeLabels(QuoteProductOffer::getPriceTypes()),

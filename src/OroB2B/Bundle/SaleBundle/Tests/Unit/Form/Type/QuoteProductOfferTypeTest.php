@@ -86,7 +86,8 @@ class QuoteProductOfferTypeTest extends AbstractTest
             'existing priceType' => [
                 'input' => (new QuoteProductOffer())->setPriceType(QuoteProductOffer::PRICE_TYPE_BUNDLED),
                 'expected' => [
-                    'priceType' => QuoteProductOffer::PRICE_TYPE_BUNDLED,
+                    //'priceType' => QuoteProductOffer::PRICE_TYPE_BUNDLED, // always PRICE_TYPE_UNIT
+                    'priceType' => QuoteProductOffer::PRICE_TYPE_UNIT,
                 ],
             ],
         ];
