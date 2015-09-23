@@ -30,7 +30,7 @@ define(function(require) {
         },
 
         /**
-         * Doing something after loading child components
+         * @inheritDoc
          */
         handleLayoutInit: function() {
             LineItemView.__super__.handleLayoutInit.apply(this, arguments);
@@ -93,6 +93,9 @@ define(function(require) {
             }
         },
 
+        /**
+         * @inheritDoc
+         */
         resetData: function() {
             LineItemView.__super__.resetData.apply(this, arguments);
 

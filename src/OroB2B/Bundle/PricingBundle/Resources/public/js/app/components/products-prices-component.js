@@ -75,7 +75,7 @@ define(function(require) {
         },
 
         /**
-         * @returns {Array} products
+         * @returns {Array} products ID
          */
         getProductsId: function() {
             return _.map(this.getLineItems(), function(lineItem) {
@@ -117,7 +117,7 @@ define(function(require) {
         },
 
         /**
-         * @returns {Array} products
+         * @returns {Array} line items
          */
         getLineItems: function() {
             var items = [];

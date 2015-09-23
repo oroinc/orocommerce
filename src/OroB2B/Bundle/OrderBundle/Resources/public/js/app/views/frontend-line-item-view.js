@@ -46,7 +46,7 @@ define(function(require) {
         },
 
         /**
-         * Doing something after loading child components
+         * @inheritDoc
          */
         handleLayoutInit: function() {
             this.$priceValueText = $(this.$el.find(this.options.selectors.priceValueText));
@@ -74,6 +74,9 @@ define(function(require) {
             }));
         },
 
+        /**
+         * @inheritDoc
+         */
         resetData: function() {
             FrontendLineItemView.__super__.resetData.apply(this, arguments);
 

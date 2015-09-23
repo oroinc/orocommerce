@@ -129,6 +129,9 @@ define(function(require) {
             this.renderTierPrices();
         },
 
+        /**
+         * @param {Event} e
+         */
         setPriceFromTier: function(e) {
             var $target = $(e.currentTarget);
 
@@ -136,6 +139,9 @@ define(function(require) {
             this.setPrice($target.data('price'));
         },
 
+        /**
+         * @param {Number|String} price
+         */
         setPrice: function(price) {
             this.options.$priceValue.val(this.calcTotalPrice(price)).change();
         },
@@ -204,6 +210,9 @@ define(function(require) {
             this.options.$priceValue.addClass('matched-price');
         },
 
+        /**
+         * @param {Array} items
+         */
         collectLineItems: function(items) {
             var item = this.getLineItem();
             if (item) {
@@ -211,6 +220,9 @@ define(function(require) {
             }
         },
 
+        /**
+         * @returns {Object}
+         */
         getLineItem: function() {
             var productId = this._getProductId();
             var item = null;
@@ -313,6 +325,10 @@ define(function(require) {
             return !_.isEmpty(this.matchedPrice) ? this.matchedPrice.value : null;
         },
 
+        /**
+         * @param {Number|String} price
+         * @returns {Number}
+         */
         calcTotalPrice: function(price) {
             var quantity = 1;
             if (this.options.$priceType && this.options.$priceType.val() === this.options.bundledPriceTypeValue) {
@@ -379,6 +395,10 @@ define(function(require) {
             }, this));
         },
 
+        /**
+         * @returns {String}
+         * @private
+         */
         _getCurrency: function() {
             if (_.isObject(this.options.$currency)) {
                 return this.options.$currency.val();
