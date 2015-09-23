@@ -8,9 +8,9 @@ placeholders:
         items:
             rfp_quick_add: ~
 
-    orob2b_rfp_create_request_from_shoppinglist:
+    orob2b_rfp_request_create_from_shoppinglist:
         items:
-            create_request_from_shoppinglist: ~
+            rfp_request_create_from_shoppinglist: ~
 
 items:
     rfp_view_buttons:
@@ -22,5 +22,5 @@ items:
         template: OroB2BRFPBundle:Product:Frontend/quickAdd.html.twig
         applicable: @orob2b_rfp.processor.quick_add->isAllowed()
 
-    create_request_from_shoppinglist:
+    rfp_request_create_from_shoppinglist:
         action: OroB2BRFPBundle:Frontend\Request:createFromShoppingListForm

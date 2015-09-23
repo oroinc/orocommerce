@@ -25,7 +25,7 @@
         </div>
     {% endif %}
 
-    {% placeholder orob2b_rfp_create_request_from_shoppinglist with {id: entity.id} %}
+    {% placeholder orob2b_rfp_request_create_from_shoppinglist with {id: entity.id} %}
 
     {% if resource_granted('EDIT', entity) %}
         {{ UI.editButton({
