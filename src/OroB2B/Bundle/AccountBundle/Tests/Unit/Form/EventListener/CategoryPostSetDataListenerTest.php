@@ -5,10 +5,6 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\EventListener;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormEvent;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
@@ -19,44 +15,37 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroupCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSetDataListener;
 
-class CategoryPostSetDataListenerTest extends \PHPUnit_Framework_TestCase
+class CategoryPostSetDataListenerTest extends AbstractCategoryListenerTestCase
 {
-    /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
-    protected $registry;
-
-    /** @var  CategoryPostSetDataListener */
+    /** @var CategoryPostSetDataListener */
     protected $listener;
 
-    /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
-    protected $categoryVisibilityRepository;
-
-    /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
-
-    protected $accountCategoryVisibilityRepository;
-
-    /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
-    protected $accountGroupCategoryVisibilityRepository;
-
-    /** @var  FormInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $form;
 
-    /** @var  Account| \PHPUnit_Framework_MockObject_MockObject */
+    /** @var Account|\PHPUnit_Framework_MockObject_MockObject */
     protected $account;
 
-    /** @var  AccountGroup| \PHPUnit_Framework_MockObject_MockObject */
+    /** @var AccountGroup|\PHPUnit_Framework_MockObject_MockObject */
     protected $accountGroup;
 
     protected function setUp()
     {
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-
         $this->form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $this->listener = new CategoryPostSetDataListener($this->registry);
+
+        parent::setUp();
+    }
+
+    /**
+     * @return CategoryPostSetDataListener
+     */
+    public function getListener()
+    {
+        return new CategoryPostSetDataListener($this->registry);
     }
 
     public function testOnPostSetData()
     {
-        $this->setRepositories();
         /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')->disableOriginalConstructor()->getMock();
         /** @var Category $category */
@@ -91,7 +80,7 @@ class CategoryPostSetDataListenerTest extends \PHPUnit_Framework_TestCase
     {
         return [
             ['categoryWithoutId' => new Category()],
-            ['anotherClass' => new \StdClass()],
+            ['anotherClass' => new \stdClass()],
             ['null' => null],
             ['false' => false],
             ['string' => 'Category'],
@@ -252,43 +241,6 @@ class CategoryPostSetDataListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->getEnumValue());
 
         return $visibility;
-    }
-
-    protected function setRepositories()
-    {
-        $this->categoryVisibilityRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->accountCategoryVisibilityRepository = clone $this->categoryVisibilityRepository;
-        $this->accountGroupCategoryVisibilityRepository = clone $this->categoryVisibilityRepository;
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager $em */
-        $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
-        $em->expects($this->at(0))
-            ->method('getRepository')
-            ->with('OroB2BAccountBundle:CategoryVisibility')
-            ->willReturn($this->categoryVisibilityRepository);
-        $em->expects($this->at(1))
-            ->method('getRepository')
-            ->with('OroB2BAccountBundle:AccountCategoryVisibility')
-            ->willReturn($this->accountCategoryVisibilityRepository);
-        $em->expects($this->at(2))
-            ->method('getRepository')
-            ->with('OroB2BAccountBundle:AccountGroupCategoryVisibility')
-            ->willReturn($this->accountGroupCategoryVisibilityRepository);
-
-        $this->registry->expects($this->at(0))
-            ->method('getManagerForClass')
-            ->with('OroB2BAccountBundle:CategoryVisibility')
-            ->willReturn($em);
-        $this->registry->expects($this->at(1))
-            ->method('getManagerForClass')
-            ->with('OroB2BAccountBundle:AccountCategoryVisibility')
-            ->willReturn($em);
-        $this->registry->expects($this->at(2))
-            ->method('getManagerForClass')
-            ->with('OroB2BAccountBundle:AccountGroupCategoryVisibility')
-            ->willReturn($em);
     }
 
     /**
