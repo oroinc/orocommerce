@@ -193,9 +193,9 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
                 null
             ],
             [
-                '{"param1":"value1"}',
-                '{"param2":"value2"}',
-                '{"param1":"value1","param2":"value2"}'
+                json_encode(['param1' => 'value1']),
+                json_encode(['param2' => 'value2']),
+                json_encode(['param1' => 'value1','param2' => 'value2']),
             ]
         ];
     }
