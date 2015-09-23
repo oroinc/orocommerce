@@ -1,10 +1,12 @@
-define(function (require) {
+define(function(require) {
     'use strict';
 
-    var BasicTreeComponent,
-        $ = require('jquery'),
-        _ = require('underscore'),
-        BaseComponent = require('oroui/js/app/components/base/component');
+    var BasicTreeComponent;
+    var $ = require('jquery');
+    var _ = require('underscore');
+    var mediator = require('oroui/js/mediator');
+    var layout = require('oroui/js/layout');
+    var BaseComponent = require('oroui/js/app/components/base/component');
 
     require('jquery.jstree');
 
@@ -21,22 +23,22 @@ define(function (require) {
         /**
          * @property {Object}
          */
-        $tree : null,
+        $tree: null,
 
         /**
          * @property {Number}
          */
-        nodeId : null,
+        nodeId: null,
 
         /**
          * @property {Boolean}
          */
-        initialization : false,
+        initialization: false,
 
         /**
          * @param {Object} options
          */
-        initialize: function (options) {
+        initialize: function(options) {
             var nodeList = options.data;
             if (!nodeList) {
                 return;
@@ -45,17 +47,17 @@ define(function (require) {
             this.$tree = $(options._sourceElement);
 
             var config = {
-                'core' : {
-                    'multiple' : false,
-                    'data' : nodeList,
-                    'check_callback' : true,
+                'core': {
+                    'multiple': false,
+                    'data': nodeList,
+                    'check_callback': true,
                     'themes': {
                         'name': 'b2b'
                     }
                 },
-                'state' : {
-                    'key' : options.key,
-                    'filter' : _.bind(this.onFilter, this)
+                'state': {
+                    'key': options.key,
+                    'filter': _.bind(this.onFilter, this)
                 },
 
                 'plugins': ['state']
@@ -70,7 +72,7 @@ define(function (require) {
             this.$tree.jstree(config);
 
             var self = this;
-            this.$tree.on('ready.jstree', function () {
+            this.$tree.on('ready.jstree', function() {
                 self._resolveDeferredInit();
                 self.initialization = false;
             });
@@ -94,8 +96,47 @@ define(function (require) {
          * @returns {Object}
          */
         onFilter: function(state) {
-            state.core.selected = this.nodeId ? [this.nodeId] : [];
+            if (this.nodeId) {
+                state.core.selected = [this.nodeId];
+            } else {
+                state.core.selected = [];
+            }
             return state;
+        },
+
+        /**
+         * Fix scrollable container height
+         * TODO: This method should be removed during fixing of https://magecore.atlassian.net/browse/BB-336
+         *
+         */
+        _fixContainerHeight: function() {
+            var categoryTree = this.$tree.parent();
+            if (!categoryTree.hasClass('category-tree')) {
+                return;
+            }
+
+            var categoryContainer = categoryTree.parent();
+            if (!categoryContainer.hasClass('category-container')) {
+                return;
+            }
+
+            var fixHeight = function() {
+                var anchor = $('#bottom-anchor').position().top;
+                var container = categoryContainer.position().top;
+                var debugBarHeight = $('.sf-toolbar:visible').height() || 0;
+                var footerHeight = $('#footer:visible').height() || 0;
+                var fixContent = 1;
+
+                categoryTree.height(anchor - container - debugBarHeight - footerHeight + fixContent);
+            };
+
+            layout.onPageRendered(fixHeight);
+            $(window).on('resize', _.debounce(fixHeight, 50));
+            mediator.on('page:afterChange', fixHeight);
+            mediator.on('layout:adjustReloaded', fixHeight);
+            mediator.on('layout:adjustHeight', fixHeight);
+
+            fixHeight();
         }
     });
 

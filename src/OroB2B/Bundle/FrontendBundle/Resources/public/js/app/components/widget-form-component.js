@@ -15,8 +15,8 @@ define(
                         }
 
                         messenger.notificationFlashMessage('success', __(options.message));
-                        mediator.trigger('widget_success:' + widget.getAlias());
-                        mediator.trigger('widget_success:' + widget.getWid());
+                        mediator.trigger('widget_success:' + widget.getAlias(), options);
+                        mediator.trigger('widget_success:' + widget.getWid(), options);
                         widget.trigger('formSave', options.savedId);
                         widget.remove();
                     }

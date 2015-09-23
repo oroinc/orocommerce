@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\UserBundle\Entity\User;
 
+use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class LoadProductData extends AbstractFixture
@@ -24,7 +25,7 @@ class LoadProductData extends AbstractFixture
         ['productCode' => self::TEST_PRODUCT_01],
         ['productCode' => self::TEST_PRODUCT_02],
         ['productCode' => self::TEST_PRODUCT_03],
-        ['productCode' => self::TEST_PRODUCT_04]
+        ['productCode' => self::TEST_PRODUCT_04],
     ];
 
     /**
@@ -42,7 +43,9 @@ class LoadProductData extends AbstractFixture
             $product->setOwner($businessUnit)
                 ->setOrganization($organization)
                 ->setSku($item['productCode']);
-
+            $name = new LocalizedFallbackValue();
+            $product->addName($name);
+            $name->setString($item['productCode']);
             $manager->persist($product);
             $this->addReference($item['productCode'], $product);
         }
