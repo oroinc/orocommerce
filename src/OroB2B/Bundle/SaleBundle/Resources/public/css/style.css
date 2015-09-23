@@ -313,3 +313,7 @@
 .sale-quote-form .account-accountuser-select .select2-container {
     width: 257px !important;
 }
+
+.sale-quoteproductitem-widget-price .controls {
+    width: 310px;
+}

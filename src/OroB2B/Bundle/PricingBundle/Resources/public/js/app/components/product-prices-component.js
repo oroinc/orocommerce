@@ -314,10 +314,8 @@ define(function(require) {
         },
 
         calcTotalPrice: function(price) {
-            var priceType = this.options.$priceType.val();
             var quantity = 1;
-
-            if (priceType === this.options.bundledPriceTypeValue) {
+            if (this.options.$priceType && this.options.$priceType.val() === this.options.bundledPriceTypeValue) {
                 quantity = parseFloat(this.options.$quantity.val());
             }
 
@@ -343,11 +341,19 @@ define(function(require) {
         },
 
         /**
-         * @returns {String|null}
+         * @returns {String}
          * @private
          */
         _getProductId: function() {
-            return this.options.$product ? this.options.$product.val() : '';
+            var productId = '';
+            if (this.options.$product) {
+                this.options.$product.each(function() {
+                    if (this.value && $(this).parent().is(':visible')) {
+                        productId = this.value;
+                    }
+                });
+            }
+            return productId;
         },
 
         /**

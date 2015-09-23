@@ -52,7 +52,9 @@ define(function(require) {
             }, this));
 
             var $productEl = this.$el.closest('.sale-quoteproduct-collection-table');
-            this.fieldsByName.product = $productEl.find(':input[data-ftid="' + $productEl.data('ftid') + '_product"]');
+            var productElFilter = ':input[data-ftid="' + $productEl.data('ftid');
+            this.fieldsByName.product = $productEl.find(productElFilter + '_product"]');
+            this.fieldsByName.productReplacement = $productEl.find(productElFilter + '_productReplacement"]');
 
             this.initPrices();
         },
@@ -73,9 +75,10 @@ define(function(require) {
         },
 
         initPrices: function() {
+            var $product = $(this.fieldsByName.product).add(this.fieldsByName.productReplacement);
             this.subview('productPricesComponents', new ProductPricesComponent({
                 _sourceElement: this.$el,
-                $product: this.fieldsByName.product,
+                $product: $product,
                 $priceValue: this.fieldsByName.priceValue,
                 $priceType: this.fieldsByName.priceType,
                 $productUnit: this.fieldsByName.productUnit,

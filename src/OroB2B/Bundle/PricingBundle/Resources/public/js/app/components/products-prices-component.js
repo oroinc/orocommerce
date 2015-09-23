@@ -78,14 +78,9 @@ define(function(require) {
          * @returns {Array} products
          */
         getProductsId: function() {
-            var products = this.$el.find('input[data-ftid$="_product"]');
-            products = _.filter(products, function(product) {
-                return product.value.length > 0;
+            return _.map(this.getLineItems(), function(lineItem) {
+                return lineItem.product;
             });
-            products = _.map(products, function(product) {
-                return product.value;
-            });
-            return products;
         },
 
         /**

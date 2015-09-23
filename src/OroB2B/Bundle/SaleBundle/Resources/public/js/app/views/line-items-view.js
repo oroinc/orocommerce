@@ -19,12 +19,26 @@ define(function(require) {
         },
 
         /**
+         * @property {jQuery}
+         */
+        $form: null,
+
+        /**
+         * @property {jQuery}
+         */
+        $priceList: null,
+
+        /**
          * @inheritDoc
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
 
+            this.$form = this.$el.closest('form');
+            this.$priceList = this.$form.find(':input[data-ftid="' + this.$form.attr('name') + '_priceList"]');
+
             this.subview('productsPricesComponent', new ProductsPricesComponent({
+                $priceList: this.$priceList,
                 tierPrices: this.options.tierPrices,
                 matchedPrices: this.options.matchedPrices,
                 tierPricesRoute: this.options.tierPricesRoute,

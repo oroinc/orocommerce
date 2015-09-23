@@ -20,6 +20,7 @@ use OroB2B\Bundle\PricingBundle\Model\ProductUnitQuantity;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
 
 class QuoteController extends Controller
@@ -152,11 +153,15 @@ class QuoteController extends Controller
 
         $productIds = $quote->getQuoteProducts()->filter(
             function (QuoteProduct $quoteProduct) {
-                return $quoteProduct->getProduct() !== null;
+                return $quoteProduct->getProduct() !== null || $quoteProduct->getProductReplacement() !== null;
             }
         )->map(
             function (QuoteProduct $quoteProduct) {
-                return $quoteProduct->getProduct()->getId();
+                if ($quoteProduct->getProductReplacement()) {
+                    return $quoteProduct->getProductReplacement()->getId();
+                } else {
+                    return $quoteProduct->getProduct()->getId();
+                }
             }
         );
 
@@ -177,25 +182,7 @@ class QuoteController extends Controller
     protected function getMatchedPrices(Quote $quote)
     {
         $matchedPrices = [];
-        $productUnitQuantities = [];
-
-        /** @var QuoteProduct $quoteProduct */
-        foreach ($quote->getQuoteProducts() as $quoteProduct) {
-            if (!$quoteProduct->getProduct()) {
-                continue;
-            }
-            /** @var QuoteProductOffer $quoteProductOffer */
-            foreach ($quoteProduct->getQuoteProductOffers() as $quoteProductOffer) {
-                if ($quoteProductOffer->getProductUnit() && $quoteProductOffer->getQuantity()) {
-                    $productUnitQuantities[] = new ProductUnitQuantity(
-                        $quoteProduct->getProduct(),
-                        $quoteProductOffer->getProductUnit(),
-                        $quoteProductOffer->getQuantity(),
-                        $quoteProductOffer->getPrice()->getCurrency()
-                    );
-                }
-            }
-        }
+        $productUnitQuantities = $this->getProductUnitQuantities($quote);
 
         if ($productUnitQuantities) {
             $matchedPrices = $this->get('orob2b_pricing.provider.product_price')->getMatchedPrices(
@@ -215,6 +202,43 @@ class QuoteController extends Controller
         }
 
         return $matchedPrices;
+    }
+
+    /**
+     * @param Quote $quote
+     * @return array
+     */
+    protected function getProductUnitQuantities(Quote $quote)
+    {
+        $productUnitQuantities = [];
+
+        /** @var QuoteProduct $quoteProduct */
+        foreach ($quote->getQuoteProducts() as $quoteProduct) {
+            if ($quoteProduct->getProductReplacement()) {
+                $product = $quoteProduct->getProductReplacement();
+            } elseif ($quoteProduct->getProduct()) {
+                $product = $quoteProduct->getProduct();
+            } else {
+                continue;
+            }
+            $lineItems = array_merge(
+                $quoteProduct->getQuoteProductOffers()->toArray(),
+                $quoteProduct->getQuoteProductRequests()->toArray()
+            );
+            /** @var QuoteProductOffer|QuoteProductRequest $lineItem */
+            foreach ($lineItems as $lineItem) {
+                if ($lineItem->getProductUnit() && $lineItem->getQuantity()) {
+                    $productUnitQuantities[] = new ProductUnitQuantity(
+                        $product,
+                        $lineItem->getProductUnit(),
+                        $lineItem->getQuantity(),
+                        $lineItem->getPrice()->getCurrency()
+                    );
+                }
+            }
+        }
+
+        return $productUnitQuantities;
     }
 
     /**
