@@ -3,32 +3,15 @@
 namespace OroB2B\Bundle\AccountBundle\Form\EventListener;
 
 use Symfony\Component\Form\FormEvent;
-
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityRepository;
-
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountCategoryVisibilityRepository;
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupCategoryVisibilityRepository;
+use Symfony\Component\Form\FormInterface;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroupCategoryVisibility;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility;
 
-class CategoryPostSetDataListener
+class CategoryPostSetDataListener extends AbstractCategoryListener
 {
-    /** @var Registry */
-    protected $registry;
-
-    /**
-     * @param ManagerRegistry $registry
-     */
-    public function __construct(ManagerRegistry $registry)
-    {
-        $this->registry = $registry;
-    }
-
     /**
      * @param FormEvent $event
      */
@@ -41,39 +24,35 @@ class CategoryPostSetDataListener
             return;
         }
 
-        $this->setCategoryVisibility($event, $category);
-        $this->setAccountCategoryVisibility($event, $category);
-        $this->setAccountGroupCategoryVisibility($event, $category);
+        $form = $event->getForm();
+
+        $this->setCategoryVisibility($form, $category);
+        $this->setAccountCategoryVisibility($form, $category);
+        $this->setAccountGroupCategoryVisibility($form, $category);
     }
 
     /**
-     * @param FormEvent $event
+     * @param FormInterface $form
      * @param Category $category
      */
-    protected function setCategoryVisibility(FormEvent $event, Category $category)
+    protected function setCategoryVisibility(FormInterface $form, Category $category)
     {
-        /** @var EntityRepository $repo */
-        $repo = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:CategoryVisibility')
-            ->getRepository('OroB2BAccountBundle:CategoryVisibility');
-        $categoryVisibility = $repo->findOneBy(['category' => $category]);
+        $categoryVisibility = $this->getEntityRepository($this->categoryVisibilityClass)
+            ->findOneBy(['category' => $category]);
 
         if ($categoryVisibility instanceof CategoryVisibility) {
-            $event->getForm()->get('categoryVisibility')->setData($categoryVisibility->getVisibility());
+            $form->get('categoryVisibility')->setData($categoryVisibility->getVisibility());
         }
     }
 
     /**
-     * @param FormEvent $event
+     * @param FormInterface $form
      * @param Category $category
      */
-    protected function setAccountCategoryVisibility(FormEvent $event, Category $category)
+    protected function setAccountCategoryVisibility(FormInterface $form, Category $category)
     {
-        /** @var AccountCategoryVisibilityRepository $repo */
-        $repo = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:AccountCategoryVisibility')
-            ->getRepository('OroB2BAccountBundle:AccountCategoryVisibility');
-        $accountCategoryVisibilities = $repo->findBy(['category' => $category]);
+        $accountCategoryVisibilities = $this->getAccountCategoryVisibilityRepository()
+            ->findBy(['category' => $category]);
 
         $accountCategoryVisibilityData = [];
         /** @var AccountCategoryVisibility $accountCategoryVisibility */
@@ -87,21 +66,18 @@ class CategoryPostSetDataListener
         }
 
         if (count($accountCategoryVisibilityData) > 0) {
-            $event->getForm()->get('visibilityForAccount')->setData($accountCategoryVisibilityData);
+            $form->get('visibilityForAccount')->setData($accountCategoryVisibilityData);
         }
     }
 
     /**
-     * @param FormEvent $event
+     * @param FormInterface $form
      * @param Category $category
      */
-    protected function setAccountGroupCategoryVisibility(FormEvent $event, Category $category)
+    protected function setAccountGroupCategoryVisibility(FormInterface $form, Category $category)
     {
-        /** @var AccountGroupCategoryVisibilityRepository $repo */
-        $repo = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:AccountGroupCategoryVisibility')
-            ->getRepository('OroB2BAccountBundle:AccountGroupCategoryVisibility');
-            $accountGroupCategoryVisibilities = $repo->findBy(['category' => $category]);
+        $accountGroupCategoryVisibilities = $this->getAccountGroupCategoryVisibilityRepository()
+            ->findBy(['category' => $category]);
 
         $accountGroupCategoryVisibilityData = [];
         /** @var AccountGroupCategoryVisibility $accountGroupCategoryVisibility */
@@ -115,7 +91,7 @@ class CategoryPostSetDataListener
         }
 
         if (count($accountGroupCategoryVisibilityData) > 0) {
-            $event->getForm()->get('visibilityForAccountGroup')->setData($accountGroupCategoryVisibilityData);
+            $form->get('visibilityForAccountGroup')->setData($accountGroupCategoryVisibilityData);
         }
     }
 }

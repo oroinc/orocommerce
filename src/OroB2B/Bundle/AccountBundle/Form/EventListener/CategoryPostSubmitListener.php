@@ -2,11 +2,11 @@
 
 namespace OroB2B\Bundle\AccountBundle\Form\EventListener;
 
-use Symfony\Component\Form\FormEvent;
-
-use Doctrine\Common\Util\ClassUtils;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
+
+use Symfony\Component\Form\FormEvent;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
@@ -16,48 +16,29 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroupCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountCategoryVisibilityRepository;
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupCategoryVisibilityRepository;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
-class CategoryPostSubmitListener
+class CategoryPostSubmitListener extends AbstractCategoryListener
 {
     const CATEGORY_VISIBILITY = 'category_visibility';
     const ACCOUNT_CATEGORY_VISIBILITY = 'acc_ctgry_visibility';
     const ACCOUNT_GROUP_CATEGORY_VISIBILITY = 'acc_grp_ctgry_vsblity';
 
-    /** @var ManagerRegistry */
-    protected $registry;
-
     /** @var EnumValueProvider */
     protected $enumValueProvider;
 
-    /** @var string */
-    protected $categoryVisibilityClass;
-
-    /** @var string */
-    protected $accountCategoryVisibilityClass;
-
-    /** @var string */
-    protected $accountGroupCategoryVisibilityClass;
+    /** @var EntityManager */
+    protected $categoryManager;
 
     /**
-     * @param ManagerRegistry $registry
+     * {@inheritdoc}
      * @param EnumValueProvider $enumValueProvider
      */
     public function __construct(ManagerRegistry $registry, EnumValueProvider $enumValueProvider)
     {
-        $this->registry = $registry;
-        $this->enumValueProvider = $enumValueProvider;
-    }
+        parent::__construct($registry);
 
-    /**
-     * @param object $object
-     * @return \Doctrine\ORM\EntityManager
-     */
-    protected function getEntityManager($object)
-    {
-        return $this->registry->getManagerForClass(ClassUtils::getClass($object));
+        $this->enumValueProvider = $enumValueProvider;
     }
 
     /**
@@ -101,14 +82,13 @@ class CategoryPostSubmitListener
      */
     protected function processCategoryVisibility(Category $category, AbstractEnumValue $visibilityEnum)
     {
-        $categoryVisibility = $this
-            ->registry
-            ->getRepository('OroB2BAccountBundle:CategoryVisibility')
+        $categoryVisibility = $this->getEntityRepository($this->categoryVisibilityClass)
             ->findOneBy(['category' => $category]);
 
         if (!$categoryVisibility) {
-            $categoryVisibility = (new $this->categoryVisibilityClass())
-                ->setCategory($category);
+            /** @var CategoryVisibility $categoryVisibility */
+            $categoryVisibility = new $this->categoryVisibilityClass();
+            $categoryVisibility->setCategory($category);
         }
 
         $this->applyVisibility($category, $categoryVisibility, self::CATEGORY_VISIBILITY, $visibilityEnum->getId());
@@ -127,9 +107,9 @@ class CategoryPostSubmitListener
 
             $accountCategoryVisibility = $accountVisibilities->offsetGet($account->getId());
             if (!$accountCategoryVisibility) {
-                $accountCategoryVisibility = (new $this->accountCategoryVisibilityClass())
-                    ->setCategory($category)
-                    ->setAccount($account);
+                /** @var AccountCategoryVisibility $accountCategoryVisibility */
+                $accountCategoryVisibility = new $this->accountCategoryVisibilityClass();
+                $accountCategoryVisibility->setCategory($category)->setAccount($account);
             }
 
             $this->applyVisibility(
@@ -154,9 +134,9 @@ class CategoryPostSubmitListener
 
             $accountGroupCategoryVisibility = $accountGroupVisibilities->offsetGet($accountGroup->getId());
             if (!$accountGroupCategoryVisibility) {
-                $accountGroupCategoryVisibility = (new $this->accountGroupCategoryVisibilityClass())
-                    ->setCategory($category)
-                    ->setAccountGroup($accountGroup);
+                /** @var AccountGroupCategoryVisibility $accountGroupCategoryVisibility */
+                $accountGroupCategoryVisibility = new $this->accountGroupCategoryVisibilityClass();
+                $accountGroupCategoryVisibility->setCategory($category)->setAccountGroup($accountGroup);
             }
 
             $this->applyVisibility(
@@ -176,7 +156,7 @@ class CategoryPostSubmitListener
      */
     protected function applyVisibility(Category $category, $visibilityEntity, $enumCode, $visibilityCode)
     {
-        $em = $this->getEntityManager($category);
+        $em = $this->getCategoryManager($category);
         if ($visibilityCode === $visibilityEntity->getDefault()) {
             if ($visibilityEntity->getVisibility()) {
                 $em->remove($visibilityEntity);
@@ -200,19 +180,16 @@ class CategoryPostSubmitListener
     protected function getAccountVisibilities(Category $category, ArrayCollection $accountChangeSet)
     {
         /** @var Account[] $accounts */
-        $accounts = $accountChangeSet->map(
-            function ($item) {
-                return $item['entity'];
-            }
-        )->toArray();
-
-        /** @var AccountCategoryVisibilityRepository $repo */
-        $repo = $this
-            ->registry
-            ->getRepository('OroB2BAccountBundle:AccountCategoryVisibility');
+        $accounts = $accountChangeSet
+            ->map(
+                function ($item) {
+                    return $item['entity'];
+                }
+            )
+            ->toArray();
 
         $visibilities = new ArrayCollection();
-        $repo
+        $this->getAccountCategoryVisibilityRepository()
             ->findForAccounts($accounts, $category)->map(
                 function ($visibility) use ($visibilities) {
                     /** @var AccountCategoryVisibility $visibility */
@@ -232,19 +209,16 @@ class CategoryPostSubmitListener
     protected function getAccountGroupVisibilities(Category $category, ArrayCollection $accountGroupChangeSet)
     {
         /** @var AccountGroup[] $accountGroups */
-        $accountGroups = $accountGroupChangeSet->map(
-            function ($item) {
-                return $item['entity'];
-            }
-        )->toArray();
-
-        /** @var AccountGroupCategoryVisibilityRepository $repo */
-        $repo = $this
-            ->registry
-            ->getRepository('OroB2BAccountBundle:AccountGroupCategoryVisibility');
+        $accountGroups = $accountGroupChangeSet
+            ->map(
+                function ($item) {
+                    return $item['entity'];
+                }
+            )
+            ->toArray();
 
         $visibilities = new ArrayCollection();
-        $repo
+        $this->getAccountGroupCategoryVisibilityRepository()
             ->findForAccountGroups($accountGroups, $category)
             ->map(
                 function ($visibility) use ($visibilities) {
@@ -257,35 +231,15 @@ class CategoryPostSubmitListener
     }
 
     /**
-     * @param string $categoryVisibilityClass
-     * @return $this
+     * @param Category $category
+     * @return EntityManager
      */
-    public function setCategoryVisibilityClass($categoryVisibilityClass)
+    protected function getCategoryManager(Category $category)
     {
-        $this->categoryVisibilityClass = $categoryVisibilityClass;
+        if (!$this->categoryManager) {
+            $this->categoryManager = $this->getEntityManager($category);
+        }
 
-        return $this;
-    }
-
-    /**
-     * @param string $accountCategoryVisibilityClass
-     * @return $this
-     */
-    public function setAccountCategoryVisibilityClass($accountCategoryVisibilityClass)
-    {
-        $this->accountCategoryVisibilityClass = $accountCategoryVisibilityClass;
-
-        return $this;
-    }
-
-    /**
-     * @param string $accountGroupCategoryVisibilityClass
-     * @return $this
-     */
-    public function setAccountGroupCategoryVisibilityClass($accountGroupCategoryVisibilityClass)
-    {
-        $this->accountGroupCategoryVisibilityClass = $accountGroupCategoryVisibilityClass;
-
-        return $this;
+        return $this->categoryManager;
     }
 }

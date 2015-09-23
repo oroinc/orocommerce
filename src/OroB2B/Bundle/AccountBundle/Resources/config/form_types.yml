@@ -20,6 +20,7 @@ parameters:
 
     orob2b_account.form.handler.account_user_role.class: OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleHandler
 
+    orob2b_account.form.listener.category.abstract.class: OroB2B\Bundle\AccountBundle\Form\EventListener\AbstractCategoryListener
     orob2b_account.form.listener.category.post_set_data.class: OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSetDataListener
     orob2b_account.form.listener.category.post_submit.class: OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSubmitListener
 
@@ -183,13 +184,9 @@ services:
         tags:
             - { name: form.type_extension, alias: oro_acl_access_level_selector }
 
-    orob2b_account.form.listener.category.post_set_data:
-        class: %orob2b_account.form.listener.category.post_set_data.class%
-        arguments:
-            - @doctrine
-
-    orob2b_account.form.listener.category.post_submit:
-        class: %orob2b_account.form.listener.category.post_submit.class%
+    orob2b_account.form.listener.category.abstract:
+        class: %orob2b_account.form.listener.category.abstract.class%
+        abstract: true
         arguments:
             - @doctrine
             - @oro_entity_extend.enum_value_provider
@@ -197,6 +194,16 @@ services:
             - [setCategoryVisibilityClass, [%orob2b_account.entity.category_visibility.class%]]
             - [setAccountCategoryVisibilityClass, [%orob2b_account.entity.account_category_visibility.class%]]
             - [setAccountGroupCategoryVisibilityClass, [%orob2b_account.entity.account_group_category_visibility.class%]]
+
+    orob2b_account.form.listener.category.post_set_data:
+        class: %orob2b_account.form.listener.category.post_set_data.class%
+        parent: orob2b_account.form.listener.category.abstract
+
+    orob2b_account.form.listener.category.post_submit:
+        class: %orob2b_account.form.listener.category.post_submit.class%
+        parent: orob2b_account.form.listener.category.abstract
+        arguments:
+            - @oro_entity_extend.enum_value_provider
 
     orob2b_account.form.extension.category_type:
         class: %orob2b_account.form.extension.category_type.class%
