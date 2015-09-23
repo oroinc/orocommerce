@@ -105,10 +105,12 @@ class QuoteProductToOrderType extends AbstractType
         $quoteProduct = $form->getConfig()->getOption('data');
 
         $selectedOffer = null;
-        foreach ($quoteProduct->getQuoteProductOffers() as $offer) {
-            if ($offer->getId() == $selectedOfferId) {
-                $selectedOffer = $offer;
-                break;
+        if ($selectedOfferId) {
+            foreach ($quoteProduct->getQuoteProductOffers() as $offer) {
+                if ($offer->getId() == $selectedOfferId) {
+                    $selectedOffer = $offer;
+                    break;
+                }
             }
         }
         if (!$selectedOffer) {
