@@ -226,7 +226,7 @@ class QuoteControllerTest extends WebTestCase
             $this->assertContains($property, $control->textContent);
         }
 
-        $createOrderButton = (bool)$crawler->selectLink('Accept and Submit to Order')->count();
+        $createOrderButton = (bool)$crawler->filterXPath('//a[contains(., \'Accept and Submit to Order\')]')->count();
 
         $this->assertEquals($expectedData['createOrderButton'], $createOrderButton);
     }
