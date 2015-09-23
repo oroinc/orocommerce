@@ -5,6 +5,8 @@ namespace OroB2B\Bundle\SaleBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -68,15 +70,6 @@ class QuoteProductToOrderType extends AbstractType
             throw new UnexpectedTypeException($quoteProduct, 'QuoteProduct');
         }
 
-        /** @var QuoteProductOffer $firstQuoteProductOffer */
-        $firstQuoteProductOffer = $quoteProduct->getQuoteProductOffers()->first();
-
-        $quantityAttr = ['disabled' => true];
-
-        if ($firstQuoteProductOffer) {
-            $quantityAttr['disabled'] = !$firstQuoteProductOffer->isAllowIncrements();
-        }
-
         $builder
             ->add(
                 self::FIELD_OFFER,
@@ -86,17 +79,56 @@ class QuoteProductToOrderType extends AbstractType
                     'expanded' => true,
                     'constraints' => [new NotBlank()]
                 ]
-            )
-            ->add(
-                self::FIELD_QUANTITY,
-                'number',
-                [
-                    'constraints' => [new NotBlank(), new Decimal(), new GreaterThanZero()],
-                    'attr' => $quantityAttr
-                ]
             );
 
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+            $form = $event->getForm();
+            $selectedOfferId = $form->get(self::FIELD_OFFER)->getData();
+            $this->addQuantityField($form, $selectedOfferId);
+        });
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+            $form = $event->getForm();
+            $data = $event->getData();
+            $this->addQuantityField($form, $data[self::FIELD_OFFER]);
+        });
+
         $builder->addModelTransformer(new QuoteProductToOrderTransformer($quoteProduct));
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param int|null $selectedOfferId
+     */
+    public function addQuantityField(FormInterface $form, $selectedOfferId)
+    {
+        /** @var QuoteProduct $quoteProduct */
+        $quoteProduct = $form->getConfig()->getOption('data');
+
+        $selectedOffer = null;
+        if ($selectedOfferId) {
+            foreach ($quoteProduct->getQuoteProductOffers() as $offer) {
+                if ($offer->getId() == $selectedOfferId) {
+                    $selectedOffer = $offer;
+                    break;
+                }
+            }
+        }
+        if (!$selectedOffer) {
+            $selectedOffer = $quoteProduct->getQuoteProductOffers()->first();
+        }
+
+        // add of refresh form field
+        if ($form->has(self::FIELD_QUANTITY)) {
+            $form->remove(self::FIELD_QUANTITY);
+        }
+        $form->add(
+            self::FIELD_QUANTITY,
+            'number',
+            [
+                'constraints' => [new NotBlank(), new Decimal(), new GreaterThanZero()],
+                'read_only' => $selectedOffer ? !$selectedOffer->isAllowIncrements() : true
+            ]
+        );
     }
 
     /**
@@ -130,6 +162,8 @@ class QuoteProductToOrderType extends AbstractType
 
         /** @var FormView $offerView */
         $offerView = $view->children[self::FIELD_OFFER];
+        /** @var QuoteProductOffer $selectedOffer */
+        $selectedOffer = null;
         /** @var FormView $optionView */
         foreach ($offerView->children as $optionView) {
             $optionValue = $optionView->vars['value'];
@@ -147,11 +181,20 @@ class QuoteProductToOrderType extends AbstractType
                         $quoteProductOffer->getPrice()->getCurrency()
                     );
                 }
+                if ($optionValue == $offerView->vars['value']) {
+                    $selectedOffer = $quoteProductOffer;
+                }
             }
         }
 
+        $offerView->vars['selected_offer'] = $selectedOffer;
+
         /** @var FormView $quantityView */
         $quantityView = $view->children[self::FIELD_QUANTITY];
+
+        if ($selectedOffer) {
+            $quantityView->vars['attr']['data-quantity'] = $selectedOffer->getQuantity();
+        }
 
         if (isset($view->vars['attr']['data-validation'], $quantityView->vars['attr']['data-validation'])) {
             $viewAttr = $view->vars['attr']['data-validation'];

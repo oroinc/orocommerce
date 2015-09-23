@@ -48,7 +48,7 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
      * @param array $choices
      * @param array $submit
      * @param array $expectedData
-     * @param bool $expectedDisableAttr
+     * @param bool $expectedReadOnly
      * @param bool $isValid
      * @param string $rootViewValidation
      * @param string $quantityViewValidation
@@ -60,7 +60,7 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
         array $choices,
         array $submit,
         array $expectedData,
-        $expectedDisableAttr,
+        $expectedReadOnly,
         $isValid = true,
         $rootViewValidation = null,
         $quantityViewValidation = null,
@@ -83,11 +83,9 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
         $this->assertEquals($expectedData, $form->getData());
 
         $quantityField = $form->get(QuoteProductToOrderType::FIELD_QUANTITY);
+        $this->assertEquals($expectedReadOnly, $quantityField->getConfig()->getOption('read_only'));
         $this->assertEquals(
-            [
-                'disabled' => $expectedDisableAttr,
-                'data-validation' => $quantityViewValidation
-            ],
+            ['data-validation' => $quantityViewValidation],
             $quantityField->getConfig()->getOption('attr')
         );
 
@@ -181,7 +179,7 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
                     QuoteProductToOrderType::FIELD_OFFER => $secondUnitOffer,
                     QuoteProductToOrderType::FIELD_QUANTITY => $secondUnitOffer->getQuantity(),
                 ],
-                'expectedDisableAttr' => false,
+                'expectedReadOnly' => true,
             ],
             'mixed offers' => [
                 'input' => $mixedQuoteProduct,
@@ -197,7 +195,7 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
                     QuoteProductToOrderType::FIELD_OFFER => $firstUnitOffer,
                     QuoteProductToOrderType::FIELD_QUANTITY => 15,
                 ],
-                'expectedDisableAttr' => true,
+                'expectedReadOnly' => false,
             ],
             'empty offers' => [
                 'input' => new QuoteProduct(),
@@ -207,7 +205,7 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
                     QuoteProductToOrderType::FIELD_OFFER => null,
                     QuoteProductToOrderType::FIELD_QUANTITY => null,
                 ],
-                'expectedDisableAttr' => true,
+                'expectedReadOnly' => true,
                 'isValid' => false,
                 'rootViewValidation' => json_encode(['param1' => 'value1']),
                 'quantityViewValidation' => json_encode(['param2' => 'value2']),

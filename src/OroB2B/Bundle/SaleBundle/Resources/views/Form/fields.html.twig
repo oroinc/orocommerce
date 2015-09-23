@@ -120,9 +120,10 @@
 {% block orob2b_sale_quote_product_to_order_widget %}
     {% set quoteProduct = form.vars.quote_product %}
     {% set product = quoteProduct.productReplacement|default(quoteProduct.product) %}
-    {% if form.offer|first %}
-        {% set defaultUnitCode = form.offer|first.vars.offer.productUnit %}
-        {% set defaultPrice = form.offer|first.vars.offer.price|oro_format_price %}
+    {% set selectedOffer = form.offer.vars.selected_offer %}
+    {% if selectedOffer %}
+        {% set defaultUnitCode = selectedOffer.productUnit %}
+        {% set defaultPrice = selectedOffer.price|oro_format_price %}
     {% else %}
         {% set defaultUnitCode = '' %}
         {% set defaultPrice = '' %}

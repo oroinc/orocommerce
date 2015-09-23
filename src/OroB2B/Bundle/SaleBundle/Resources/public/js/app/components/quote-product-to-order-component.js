@@ -71,13 +71,18 @@ define(function(require) {
         updateQuantityInputValue: function(quantity) {
             this.$quantity.val(quantity);
             this.$quantity.data(this.options.data_attributes.quantity, quantity);
+            this.$quantity.trigger('blur');
         },
 
         /**
          * @param {Boolean} allowIncrement
          */
         updateQuantityInputState: function(allowIncrement) {
-            this.$quantity.prop('disabled', !allowIncrement);
+            if (allowIncrement) {
+                this.$quantity.prop('readonly', false);
+            } else {
+                this.$quantity.prop('readonly', true);
+            }
         },
 
         /**
