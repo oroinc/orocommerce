@@ -137,6 +137,8 @@ orob2b:
                     cancel: 'Cancel'
 
             quoteproduct:
+                product_sku.label: 'Sku'
+                product_name.label: 'Product'
                 comment.label: 'Seller Notes'
                 comment_account.label: 'Customer Notes'
                 product_replacement.label: 'Suggested Replacement:'
@@ -150,6 +152,9 @@ orob2b:
                 price.label: 'Price'
                 column_summary: 'Summary'
                 allow_increments.label: 'or more'
+                select_offer.label: 'Select An Offer'
+                quantity_to_order.label: 'Quantity To Order'
+                unit_price.label: 'Unit Price'
 
             quoteproductrequest:
                 quantity.label: 'Requested Qty'

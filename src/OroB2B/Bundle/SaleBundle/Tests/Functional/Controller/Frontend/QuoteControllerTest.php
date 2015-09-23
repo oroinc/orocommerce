@@ -297,12 +297,11 @@ class QuoteControllerTest extends WebTestCase
         /* @var $quote Quote */
         $quote = $this->getReference($inputData['qid']);
 
+        $this->client->followRedirects(true);
         $this->client->request(
             'GET',
             $this->getUrl('orob2b_sale_frontend_quote_create_order', ['id' => $quote->getId()])
         );
-
-        $this->client->followRedirects(false);
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, $expectedData['statusCode']);
@@ -331,7 +330,7 @@ class QuoteControllerTest extends WebTestCase
                     'password' => LoadUserData::ACCOUNT1_USER3,
                 ],
                 'expected' => [
-                    'statusCode' => 302,
+                    'statusCode' => 200,
                 ],
             ],
         ];
