@@ -77,7 +77,11 @@ define(function(require) {
          * @param {Boolean} allowIncrement
          */
         updateQuantityInputState: function(allowIncrement) {
-            this.$quantity.prop('disabled', !allowIncrement);
+            if (allowIncrement) {
+                this.$quantity.removeProp('readonly');
+            } else {
+                this.$quantity.prop('readonly', 'readonly');
+            }
         },
 
         /**
