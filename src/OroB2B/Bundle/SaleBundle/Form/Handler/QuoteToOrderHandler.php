@@ -68,7 +68,7 @@ class QuoteToOrderHandler
     {
         $this->form->setData($quote);
 
-        if ($this->request->getMethod() === 'POST') {
+        if ($this->request->isMethod('POST')) {
             $this->form->submit($this->request);
 
             if ($this->form->isValid()) {
