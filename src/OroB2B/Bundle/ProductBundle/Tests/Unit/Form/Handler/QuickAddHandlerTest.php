@@ -12,6 +12,7 @@ use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
 use OroB2B\Bundle\ProductBundle\Form\Handler\QuickAddHandler;
 use OroB2B\Bundle\ProductBundle\Model\ComponentProcessorRegistry;
 use OroB2B\Bundle\ProductBundle\Model\ComponentProcessorInterface;
+use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 {
@@ -175,7 +176,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $processor = $this->getProcessor();
         $processor->expects($this->once())
             ->method('process')
-            ->with($products, $request);
+            ->with([ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products], $request);
 
         $this->assertEquals(['form' => $clearForm, 'response' => null], $this->handler->process($request));
     }
@@ -214,7 +215,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $processor = $this->getProcessor();
         $processor->expects($this->once())
             ->method('process')
-            ->with($products, $request)
+            ->with([ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products], $request)
             ->willReturn($response);
 
         $this->assertEquals(['form' => $form, 'response' => $response], $this->handler->process($request));

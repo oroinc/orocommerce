@@ -10,6 +10,7 @@ class LoadCategoryData extends AbstractCategoryFixture
     const SECOND_LEVEL1 = 'Test Second Level 1';
     const THIRD_LEVEL1 = 'Test Third Level 1';
     const THIRD_LEVEL2 = 'Test Third Level 2';
+
     /**
      * @var array
      */

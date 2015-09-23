@@ -21,6 +21,7 @@ use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
 /**
  * @ORM\Table(name="orob2b_sale_quote")
  * @ORM\Entity
+ * @ORM\EntityListeners({"OroB2B\Bundle\SaleBundle\Entity\Listener\QuoteListener"})
  * @ORM\HasLifecycleCallbacks()
  * @Config(
  *      routeName="orob2b_sale_quote_index",

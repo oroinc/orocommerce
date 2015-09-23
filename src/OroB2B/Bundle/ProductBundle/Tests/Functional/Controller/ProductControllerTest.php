@@ -44,7 +44,7 @@ class ProductControllerTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
+        $this->initClient([], $this->generateBasicAuthHeader());
     }
 
     public function testIndex()
@@ -179,7 +179,7 @@ class ProductControllerTest extends WebTestCase
         $html = $crawler->html();
         $this->assertContains('Product has been duplicated', $html);
         $this->assertContains(
-            self::FIRST_DUPLICATED_SKU . ' - ' . self::DEFAULT_NAME_ALTERED . ' - Products - Product management',
+            self::FIRST_DUPLICATED_SKU . ' - ' . self::DEFAULT_NAME_ALTERED . ' - Products - Products',
             $html
         );
         $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
@@ -214,7 +214,7 @@ class ProductControllerTest extends WebTestCase
 
         $html = $crawler->html();
         $this->assertContains(
-            self::UPDATED_SKU . ' - ' . self::DEFAULT_NAME_ALTERED . ' - Products - Product management',
+            self::UPDATED_SKU . ' - ' . self::DEFAULT_NAME_ALTERED . ' - Products - Products',
             $html
         );
         $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
@@ -240,7 +240,13 @@ class ProductControllerTest extends WebTestCase
      */
     public function testDelete($id)
     {
-        $this->client->request('DELETE', $this->getUrl('orob2b_api_delete_product', ['id' => $id]));
+        $this->client->request(
+            'DELETE',
+            $this->getUrl('orob2b_api_delete_product', ['id' => $id]),
+            [],
+            [],
+            $this->generateWsseAuthHeader()
+        );
 
         $result = $this->client->getResponse();
         $this->assertEmptyResponseStatusCodeEquals($result, 204);
@@ -252,7 +258,7 @@ class ProductControllerTest extends WebTestCase
     }
 
     /**
-     * @depends testDelete
+     * @depends testUpdate
      *
      * @return int
      */
@@ -265,6 +271,9 @@ class ProductControllerTest extends WebTestCase
 
         $locale = $this->getLocale();
         $product = $this->getContainer()->get('doctrine')->getManager()->find('OroB2BProductBundle:Product', $id);
+
+        $this->assertInstanceOf('OroB2B\Bundle\ProductBundle\Entity\Product', $product);
+
         $localizedName = $this->getLocalizedName($product, $locale);
 
         /** @var Form $form */
@@ -302,7 +311,7 @@ class ProductControllerTest extends WebTestCase
         $html = $crawler->html();
         $this->assertContains('Product has been saved and duplicated', $html);
         $this->assertContains(
-            self::SECOND_DUPLICATED_SKU . ' - ' . self::DEFAULT_NAME_ALTERED . ' - Products - Product management',
+            self::SECOND_DUPLICATED_SKU . ' - ' . self::DEFAULT_NAME_ALTERED . ' - Products - Products',
             $html
         );
         $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
@@ -328,7 +337,7 @@ class ProductControllerTest extends WebTestCase
      */
     protected function getBusinessUnitId()
     {
-        return $this->getContainer()->get('security.context')->getToken()->getUser()->getOwner()->getId();
+        return $this->getContainer()->get('oro_security.security_facade')->getLoggedUser()->getOwner()->getId();
     }
 
     /**
@@ -350,6 +359,10 @@ class ProductControllerTest extends WebTestCase
         return $unitPrecisions;
     }
 
+    /**
+     * @param string $sku
+     * @return array
+     */
     private function getProductDataBySku($sku)
     {
         $response = $this->client->requestGrid(

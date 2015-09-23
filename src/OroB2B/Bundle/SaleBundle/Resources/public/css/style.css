@@ -1,3 +1,12 @@
+.grid-container .table-bordered tbody.hasrs td:not([rowspan]) {
+    border-left: 0;
+}
+
+.grid-container .table-bordered td.quote-line_item-quantity-not_first,
+.grid-container .table-bordered td.quote-line_item-price-not_first {
+    border-top: 0;
+}
+
 .sale-quoteproduct-collection-table {
     margin-left: 90px;
 }
@@ -110,6 +119,10 @@
 
 .sale-quoteproductitem-widget td span.validation-failed {
     padding-top: 2px;
+}
+
+.sale-quoteproductitem-widget td .control-group div.control-label {
+    width: 120px;
 }
 
 .sale-quoteproductitem-widget input[type="number"],

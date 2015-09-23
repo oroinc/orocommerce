@@ -40,7 +40,7 @@ class PageControllerTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
+        $this->initClient([], $this->generateBasicAuthHeader());
         $this->entityManager = $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BCMSBundle:Page');
     }
 
@@ -49,7 +49,7 @@ class PageControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_cms_page_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertEquals("Pages", $crawler->filter('h1.oro-subtitle')->html());
+        $this->assertEquals("Landing Pages", $crawler->filter('h1.oro-subtitle')->html());
         $this->assertContains(
             "Please select a page on the left or create new one.",
             $crawler->filter('.content .text-center')->html()
@@ -165,7 +165,13 @@ class PageControllerTest extends WebTestCase
         $page = $this->entityManager->find('OroB2BCMSBundle:Page', $id);
         $children = $page->getChildPages();
 
-        $this->client->request('DELETE', $this->getUrl('orob2b_api_cms_delete_page', ['id' => $id]));
+        $this->client->request(
+            'DELETE',
+            $this->getUrl('orob2b_api_cms_delete_page', ['id' => $id]),
+            [],
+            [],
+            $this->generateWsseAuthHeader()
+        );
 
         $result = $this->client->getResponse();
         $this->assertEmptyResponseStatusCodeEquals($result, 204);

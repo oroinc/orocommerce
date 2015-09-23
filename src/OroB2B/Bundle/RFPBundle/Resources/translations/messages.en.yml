@@ -1,10 +1,10 @@
 orob2b:
     rfp:
         request:
-            entity_label: 'Request For Proposal'
+            entity_label: 'Request For Quote'
             entity_label_short: 'Request'
-            entity_plural_label: 'Requests For Proposal'
-            id.label: 'ID'
+            entity_plural_label: 'Requests For Quote'
+            id.label: 'RFQ #'
             first_name.label: 'First Name'
             last_name.label: 'Last Name'
             email.label: 'Email Address'
@@ -12,24 +12,17 @@ orob2b:
             company.label: 'Company'
             role.label: 'Role'
             status.label: 'Status'
-            body.label: 'Request body'
+            body.label: 'Request'
             account_user.label: 'Submitted By'
             account.label: 'Account'
             organization.label: 'Organization'
             request_products.label: 'Request Products'
-            first_name.label: 'First Name'
-            last_name.label: 'Last Name'
-            email.label: 'Email Address'
-            phone.label: 'Phone Number'
-            company.label: 'Company'
-            role.label: 'Role'
-            status.label: 'Status'
-            body.label: 'Request body'
 
-            submit.label: 'Submit Request For Proposal'
+            submit.label: 'Submit Request For Quote'
+            cancel.label: 'Cancel'
 
             message:
-                request_saved: 'Your Request For Proposal successfully saved!'
+                request_saved: 'Your Request For Quote successfully saved!'
 
         requestproduct:
             entity_label: 'Request Product'
@@ -48,17 +41,17 @@ orob2b:
             entity_plural_label: 'Request Product Lines'
             add_label: 'Add Request Item'
             id.label: 'ID'
-            quantity.label: 'Quantity'
+            quantity.label: 'Requested Quantity'
             request_product.label: 'Request Product'
             product_unit.label: 'Product Unit'
             product_unit_code.label: 'Product Unit Code'
-            price.label: 'Price'
+            price.label: 'Target Price'
             value.label: 'Price Value'
             currency.label: 'Price Currency'
 
         requeststatus:
-            entity_label: 'Request For Proposal Status'
-            entity_plural_label: 'Request For Proposal Statuses'
+            entity_label: 'RFQ Status'
+            entity_plural_label: 'RFQ Statuses'
             id.label: 'ID'
             name.label: 'Name'
             label.label: 'Label'
@@ -67,14 +60,10 @@ orob2b:
             translations.label: 'Translations'
 
         menu:
-            rfp_tab.label: 'RFP'
-            requests_list.description: 'List of Requests'
-            request_statuses_list.description: 'List of Request Statuses'
-            shortcut_requests_list.description: 'Shows list of existing Requests'
-            shortcut_request_statuses_list.description: 'Shows list of existing Request Statuses'
-            order_quick_add:
-                label: Quick Order Form
-                description: Quick add products to order, RFQ or shopping cart
+            request_list.description: 'List of Requests'
+            request_status_list.description: 'List of Request Statuses'
+            shortcut_request_list.description: 'Shows list of existing Requests'
+            shortcut_request_status_list.description: 'Shows list of existing Request Statuses'
 
         sections:
             general:    'General'
@@ -83,9 +72,9 @@ orob2b:
             label_translation: 'Labels'
 
         system_configuration:
-            group_title: 'Request For Proposal'
-            requeststatus_group_title: 'Request For Proposal Status'
-            requeststatus_default_label: 'Default Request For Proposal Status'
+            group_title: 'Request For Quote'
+            requeststatus_group_title: 'RFQ Status'
+            requeststatus_default_label: 'Default RFQ Status'
             default_user_for_notifications: 'Default User For Notifications'
 
         message:
@@ -93,7 +82,7 @@ orob2b:
             request_status_restored: 'Request Status restored'
             request_status_deleted: 'Request Status deleted'
             request_status_not_found: 'Request Status not found'
-            request_status_changed: 'Request For Proposal Status was successfully changed'
+            request_status_changed: 'RFQ Status was successfully changed'
             request_status_not_deletable: 'Request Status is not deletable'
             requestproductitem.unit.removed: '{title} - removed'
             request.create_quote.success: 'New Quote created'
@@ -111,18 +100,19 @@ orob2b:
             restore: 'Restore'
             change_status: 'Change Status'
             create_quote: 'Create Quote'
-            add_to_rfp: 'Add To Request For Proposal'
-            create_rfp: 'Create RFP'
+            add_to_rfp: 'Request A Quote'
+            create_rfp: 'Submit'
 
         widget:
-            change_status_title: 'Change Request For Proposal Status'
+            change_status_title: 'Change RFQ Status'
 
     frontend:
         rfp:
             request:
-                entity_label: 'Request For Proposal'
+                entity_label: 'Request For Quote'
                 entity_label_short: 'Request'
-                entity_plural_label: 'Requests For Proposal'
+                entity_plural_label: 'Requests For Quote'
+                id.label: 'RFQ #'
                 submitted_to.label: 'Submitted To'
                 is_draft.label: 'Draft'
 

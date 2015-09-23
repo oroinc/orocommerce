@@ -88,14 +88,6 @@ class ShoppingListHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('isValid')
             ->will($this->returnValue(true));
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager $manager */
-        $manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
-
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(self::SHOPPING_LIST_SHORTCUT)
-            ->will($this->returnValue($manager));
-
         $handler = new ShoppingListHandler($this->form, $this->request, $this->manager, $this->registry);
         $this->assertTrue($handler->process($this->shoppingList));
     }

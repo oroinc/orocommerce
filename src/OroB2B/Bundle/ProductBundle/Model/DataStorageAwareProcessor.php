@@ -12,8 +12,6 @@ use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class DataStorageAwareProcessor implements ComponentProcessorInterface
 {
-    const QUICK_ADD_PARAM = 'quick_add';
-
     /** @var UrlGeneratorInterface */
     protected $router;
 
@@ -86,7 +84,7 @@ class DataStorageAwareProcessor implements ComponentProcessorInterface
             return true;
         }
 
-        return $this->securityFacade->isGranted($this->acl);
+        return $this->securityFacade->hasLoggedUser() && $this->securityFacade->isGranted($this->acl);
     }
 
     /**
@@ -132,6 +130,6 @@ class DataStorageAwareProcessor implements ComponentProcessorInterface
      */
     protected function getUrl($routeName)
     {
-        return $this->router->generate($routeName, [self::QUICK_ADD_PARAM => 1]);
+        return $this->router->generate($routeName, [ProductDataStorage::STORAGE_KEY => true]);
     }
 }

@@ -99,6 +99,10 @@ class ShoppingListLineItemHandler
      */
     public function isAllowed(ShoppingList $shoppingList = null)
     {
+        if (!$this->securityFacade->hasLoggedUser()) {
+            return false;
+        }
+
         $isAllowed = $this->securityFacade->isGranted('orob2b_shopping_list_line_item_frontend_add');
 
         if (!$shoppingList) {

@@ -108,6 +108,14 @@ class RequestStatus implements Translatable
     }
 
     /**
+     * @return bool
+     */
+    public function isDraft()
+    {
+        return self::DRAFT === $this->name;
+    }
+
+    /**
      * Set locale
      *
      * @param string $locale

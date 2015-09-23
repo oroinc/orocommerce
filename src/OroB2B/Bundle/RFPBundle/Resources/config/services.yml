@@ -34,5 +34,6 @@ services:
         calls:
             - [setName, ['orob2b_rfp_quick_add_processor']]
             - [setRedirectRouteName, ['orob2b_rfp_frontend_request_create']]
+            - [setAcl, ['orob2b_rfp_frontend_request_create']]
         tags:
             - { name: orob2b_product.quick_add_processor }

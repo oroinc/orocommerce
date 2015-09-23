@@ -17,18 +17,18 @@ use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 
 class ProductFormExtension extends AbstractTypeExtension
 {
-    /**
-     * @var CategoryRepository
-     */
-    protected $categoryRepository;
+    /** @var CategoryRepository */
+    private $categoryRepository;
+
+    /** @var ManagerRegistry */
+    protected $registry;
 
     /**
      * @param ManagerRegistry $registry
      */
     public function __construct(ManagerRegistry $registry)
     {
-        $this->categoryRepository = $registry->getManagerForClass('OroB2BCatalogBundle:Category')
-            ->getRepository('OroB2BCatalogBundle:Category');
+        $this->registry = $registry;
     }
 
     /**
@@ -70,7 +70,7 @@ class ProductFormExtension extends AbstractTypeExtension
             return;
         }
 
-        $category = $this->categoryRepository->findOneByProduct($product);
+        $category = $this->getCategoryRepository()->findOneByProduct($product);
 
         if ($category instanceof Category) {
             $event->getForm()->get('category')->setData($category);
@@ -98,7 +98,7 @@ class ProductFormExtension extends AbstractTypeExtension
 
         if (null !== $product->getId()) {
             /** @var Category $productCategory */
-            $productCategory = $this->categoryRepository->findOneByProduct($product);
+            $productCategory = $this->getCategoryRepository()->findOneByProduct($product);
 
             if ($productCategory instanceof Category && $category !== $productCategory) {
                 $productCategory->removeProduct($product);
@@ -108,5 +108,18 @@ class ProductFormExtension extends AbstractTypeExtension
         if ($category instanceof Category) {
             $category->addProduct($product);
         }
+    }
+
+    /**
+     * @return CategoryRepository
+     */
+    protected function getCategoryRepository()
+    {
+        if (!$this->categoryRepository) {
+            $this->categoryRepository = $this->registry->getManagerForClass('OroB2BCatalogBundle:Category')
+                ->getRepository('OroB2BCatalogBundle:Category');
+        }
+
+        return $this->categoryRepository;
     }
 }
