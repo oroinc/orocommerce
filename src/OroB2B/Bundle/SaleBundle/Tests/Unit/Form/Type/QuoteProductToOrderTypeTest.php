@@ -50,6 +50,9 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
      * @param array $expectedData
      * @param bool $expectedReadOnly
      * @param bool $isValid
+     * @param string $rootViewValidation
+     * @param string $quantityViewValidation
+     * @param string $expectedValidation
      * @dataProvider submitDataProvider
      */
     public function testSubmit(
@@ -58,13 +61,22 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
         array $submit,
         array $expectedData,
         $expectedReadOnly,
-        $isValid = true
+        $isValid = true,
+        $rootViewValidation = null,
+        $quantityViewValidation = null,
+        $expectedValidation = null
     ) {
-        $form = $this->factory->create($this->type, $input);
+        $form = $this->factory->create($this->type, $input, ['attr' => ['data-validation' => $rootViewValidation]]);
         $this->assertEquals(
             $choices,
             $form->get(QuoteProductToOrderType::FIELD_OFFER)->getConfig()->getOption('choices')
         );
+
+        $quantityForm = $form->get(QuoteProductToOrderType::FIELD_QUANTITY);
+        $options = $quantityForm->getConfig()->getOptions();
+        $options['attr']['data-validation'] = $quantityViewValidation;
+
+        $form->add(QuoteProductToOrderType::FIELD_QUANTITY, 'number', $options);
 
         $form->submit($submit);
         $this->assertEquals($isValid, $form->isValid());
@@ -72,6 +84,10 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
 
         $quantityField = $form->get(QuoteProductToOrderType::FIELD_QUANTITY);
         $this->assertEquals($expectedReadOnly, $quantityField->getConfig()->getOption('read_only'));
+        $this->assertEquals(
+            ['data-validation' => $quantityViewValidation],
+            $quantityField->getConfig()->getOption('attr')
+        );
 
         // check quote product object
         $rootView = $form->createView();
@@ -98,6 +114,9 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
 
             $this->assertViewDataAttributes($actualOffer, $view);
         }
+
+        $quantityView = $rootView->children[QuoteProductToOrderType::FIELD_QUANTITY];
+        $this->assertEquals($expectedValidation, $quantityView->vars['attr']['data-validation']);
     }
 
     /**
@@ -188,6 +207,9 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
                 ],
                 'expectedReadOnly' => true,
                 'isValid' => false,
+                'rootViewValidation' => json_encode(['param1' => 'value1']),
+                'quantityViewValidation' => json_encode(['param2' => 'value2']),
+                'expectedValidation' => json_encode(['param1' => 'value1','param2' => 'value2']),
             ],
         ];
     }
@@ -204,63 +226,5 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
     public function testGetName()
     {
         $this->assertEquals(QuoteProductToOrderType::NAME, $this->type->getName());
-    }
-
-    /**
-     * @dataProvider finishViewDataProvider
-     *
-     * @param string $parentViewValidation
-     * @param string $quantityViewValidation
-     * @param string $expectedValidation
-     */
-    public function testFinishView($parentViewValidation, $quantityViewValidation, $expectedValidation)
-    {
-        $firstUnitOffer = $this->createOffer(1, QuoteProductOffer::PRICE_TYPE_UNIT, 12, 'kg', true);
-        $secondUnitOffer = $this->createOffer(3, QuoteProductOffer::PRICE_TYPE_BUNDLED, 1000, 'item');
-
-        $quoteProduct = new QuoteProduct();
-        $quoteProduct->addQuoteProductOffer($firstUnitOffer)->addQuoteProductOffer($secondUnitOffer);
-
-        $form = $this->factory->create($this->type, $quoteProduct);
-
-        $formView = $form->createView();
-        $formView->vars['attr']['data-validation'] = $parentViewValidation;
-
-        $quantityView = $formView->children[QuoteProductToOrderType::FIELD_QUANTITY];
-        $quantityView->vars['attr']['data-validation'] = $quantityViewValidation;
-
-        $this->type->finishView($formView, $form, ['data' => $quoteProduct]);
-
-        $this->assertArrayHasKey('quote_product', $formView->vars);
-
-        /** @var FormView $offerView */
-        $offerView = $formView->children[QuoteProductToOrderType::FIELD_OFFER];
-        /** @var FormView $optionView */
-        foreach ($offerView->children as $optionView) {
-            $this->assertArrayHasKey('offer', $optionView->vars);
-            $this->assertInstanceOf('OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer', $optionView->vars['offer']);
-        }
-
-        $this->assertSame($quoteProduct, $formView->vars['quote_product']);
-        $this->assertEquals($expectedValidation, $quantityView->vars['attr']['data-validation']);
-    }
-
-    /**
-     * @return array
-     */
-    public function finishViewDataProvider()
-    {
-        return [
-            [
-                null,
-                null,
-                null
-            ],
-            [
-                json_encode(['param1' => 'value1']),
-                json_encode(['param2' => 'value2']),
-                json_encode(['param1' => 'value1','param2' => 'value2']),
-            ]
-        ];
     }
 }

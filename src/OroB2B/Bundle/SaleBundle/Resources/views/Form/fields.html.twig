@@ -176,6 +176,7 @@
 {% endblock %}
 
 {% block orob2b_sale_quote_to_order_widget %}
+    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'grid-container' }) %}
     {% spaceless %}
         <div {{ block('widget_container_attributes') }}>
             <table class="grid table-hover table table-bordered table-condensed">
