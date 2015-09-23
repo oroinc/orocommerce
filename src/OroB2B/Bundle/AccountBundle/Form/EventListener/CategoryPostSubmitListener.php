@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\AccountBundle\Form\EventListener;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\Form\FormEvent;
 
@@ -25,6 +26,9 @@ class CategoryPostSubmitListener extends AbstractCategoryListener
 
     /** @var EnumValueProvider */
     protected $enumValueProvider;
+
+    /** @var EntityManager */
+    protected $categoryManager;
 
     /**
      * {@inheritdoc}
@@ -152,7 +156,7 @@ class CategoryPostSubmitListener extends AbstractCategoryListener
      */
     protected function applyVisibility(Category $category, $visibilityEntity, $enumCode, $visibilityCode)
     {
-        $em = $this->getEntityManager($category);
+        $em = $this->getCategoryManager($category);
         if ($visibilityCode === $visibilityEntity->getDefault()) {
             if ($visibilityEntity->getVisibility()) {
                 $em->remove($visibilityEntity);
@@ -224,5 +228,18 @@ class CategoryPostSubmitListener extends AbstractCategoryListener
             );
 
         return $visibilities;
+    }
+
+    /**
+     * @param Category $category
+     * @return EntityManager
+     */
+    protected function getCategoryManager(Category $category)
+    {
+        if (!$this->categoryManager) {
+            $this->categoryManager = $this->getEntityManager($category);
+        }
+
+        return $this->categoryManager;
     }
 }
