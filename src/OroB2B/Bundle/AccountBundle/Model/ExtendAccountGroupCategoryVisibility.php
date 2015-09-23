@@ -4,14 +4,11 @@ namespace OroB2B\Bundle\AccountBundle\Model;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroupCategoryVisibility;
-
-/**
- * @method AbstractEnumValue getVisibility()
- * @method AccountGroupCategoryVisibility setVisibility(AbstractEnumValue $enumId)
- */
 class ExtendAccountGroupCategoryVisibility
 {
+    /** @var AbstractEnumValue */
+    protected $visibility;
+
     /**
      * Constructor
      *
@@ -21,5 +18,24 @@ class ExtendAccountGroupCategoryVisibility
      */
     public function __construct()
     {
+    }
+
+    /**
+     * @param AbstractEnumValue|null $enumValue
+     * @return $this
+     */
+    public function setVisibility(AbstractEnumValue $enumValue = null)
+    {
+        $this->visibility = $enumValue;
+
+        return $this;
+    }
+
+    /**
+     * @return AbstractEnumValue|null
+     */
+    public function getVisibility()
+    {
+        return $this->visibility;
     }
 }
