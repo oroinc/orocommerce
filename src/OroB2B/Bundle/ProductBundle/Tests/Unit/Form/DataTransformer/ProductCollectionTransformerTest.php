@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\DataTransformer;
 
 use OroB2B\Bundle\ProductBundle\Form\DataTransformer\ProductCollectionTransformer;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductRowType;
+use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class ProductCollectionTransformerTest extends \PHPUnit_Framework_TestCase
 {
@@ -46,23 +46,23 @@ class ProductCollectionTransformerTest extends \PHPUnit_Framework_TestCase
             'array' => [
                 'input' => [
                     [
-                        ProductRowType::PRODUCT_SKU_FIELD_NAME => 'sku',
-                        ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => 1,
+                        ProductDataStorage::PRODUCT_SKU_KEY => 'sku',
+                        ProductDataStorage::PRODUCT_QUANTITY_KEY => 1,
                     ],
                     [
-                        ProductRowType::PRODUCT_SKU_FIELD_NAME => '',
-                        ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => '',
+                        ProductDataStorage::PRODUCT_SKU_KEY => '',
+                        ProductDataStorage::PRODUCT_QUANTITY_KEY => '',
                     ],
                     [
-                        ProductRowType::PRODUCT_SKU_FIELD_NAME => null,
-                        ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => null,
+                        ProductDataStorage::PRODUCT_SKU_KEY => null,
+                        ProductDataStorage::PRODUCT_QUANTITY_KEY => null,
                     ],
                     []
                 ],
                 'expected' => [
                     [
-                        ProductRowType::PRODUCT_SKU_FIELD_NAME => 'sku',
-                        ProductRowType::PRODUCT_QUANTITY_FIELD_NAME => 1,
+                        ProductDataStorage::PRODUCT_SKU_KEY => 'sku',
+                        ProductDataStorage::PRODUCT_QUANTITY_KEY => 1,
                     ]
                 ]
             ],

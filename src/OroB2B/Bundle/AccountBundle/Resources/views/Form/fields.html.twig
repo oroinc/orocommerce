@@ -1,5 +1,21 @@
 {% extends 'OroAddressBundle:Include:fields.html.twig' %}
 
+{% block orob2b_account_acl_access_level_text_widget %}
+    {% set additionalClass = '' %}
+    {% if form.parent.parent.vars.privileges_config.view_type is defined and form.parent.parent.vars.privileges_config.view_type != 'grid' %}
+        {% set additionalClass = 'span2' %}
+    {% endif %}
+        <div class="access_level_value_link">
+                {% set label = level_label is not defined or level_label is empty ?
+                translation_prefix ~ 'NONE' :
+                translation_prefix ~ level_label
+                %}
+                {{ label|trans }}
+            {% set type = type|default('hidden') %}
+            {{ block('form_widget_simple') }}
+        </div>
+{% endblock %}
+
 {% block orob2b_account_typed_address_with_default_row %}
     {{ form_rest(form) }}
 {% endblock %}

@@ -13,10 +13,22 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, {
-                mediatorPrefix: 'frontend:shoppinglist'
+                mediatorPrefix: 'frontend:shoppinglist',
+                gridWidget: 'shopping_list_add_product_grid'
             });
 
+            mediator.on('widget_success:' + this.options.gridWidget, this.onGridWidgetSuccess, this);
+
             AddProductsButtonComponent.__super__.initialize.apply(this, arguments);
+        },
+
+        /**
+         * @param {Object} options
+         */
+        onGridWidgetSuccess: function(options) {
+            if (options.hasOwnProperty('shoppingListId')) {
+                this.reloadWidget(options.shoppingListId);
+            }
         },
 
         /**
@@ -36,9 +48,18 @@ define(function(require) {
                 return;
             }
             AddProductsButtonComponent.__super__.showForm.call(this);
+        },
+
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            mediator.off('widget_success:' + this.options.gridWidget);
+
+            AddProductsButtonComponent.__super__.dispose.call(this);
         }
     });
 
     return AddProductsButtonComponent;
 });
-

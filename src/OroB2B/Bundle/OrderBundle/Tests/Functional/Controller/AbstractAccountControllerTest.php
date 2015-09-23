@@ -18,7 +18,7 @@ abstract class AbstractAccountControllerTest extends WebTestCase
      */
     protected function setUp()
     {
-        $this->initClient([], array_merge(static::generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
+        $this->initClient([], $this->generateBasicAuthHeader());
 
         $this->loadFixtures(
             [

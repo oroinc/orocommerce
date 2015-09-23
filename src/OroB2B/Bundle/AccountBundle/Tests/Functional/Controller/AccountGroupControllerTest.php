@@ -26,7 +26,7 @@ class AccountGroupControllerTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
+        $this->initClient([], $this->generateBasicAuthHeader());
         $this->entityManager = $this->getContainer()
             ->get('doctrine')
             ->getManagerForClass('OroB2BAccountBundle:AccountGroup');
@@ -102,7 +102,7 @@ class AccountGroupControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
-        $this->assertContains(self::UPDATED_NAME . ' - Account Groups - Accounts', $html);
+        $this->assertContains(self::UPDATED_NAME . ' - Account Groups - Customers', $html);
         $this->assertContains(self::ADD_NOTE_BUTTON, $html);
         $this->assertViewPage($html, self::UPDATED_NAME);
     }

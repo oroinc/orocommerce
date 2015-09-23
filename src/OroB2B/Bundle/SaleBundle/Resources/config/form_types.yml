@@ -30,7 +30,6 @@ services:
     orob2b_sale.form.type.quote_product_offer:
         class: %orob2b_sale.form.type.quote_product_offer.class%
         arguments:
-            - @translator
             - @orob2b_sale.formatter.quote_product_offer
         calls:
             - [setDataClass, [%orob2b_sale.entity.quote_product_offer.class%]]
@@ -39,8 +38,6 @@ services:
 
     orob2b_sale.form.type.quote_product_request:
         class: %orob2b_sale.form.type.quote_product_request.class%
-        arguments:
-            - @translator
         calls:
             - [setDataClass, [%orob2b_sale.entity.quote_product_request.class%]]
         tags:

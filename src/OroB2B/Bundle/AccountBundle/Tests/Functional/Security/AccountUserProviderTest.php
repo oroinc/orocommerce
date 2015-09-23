@@ -35,7 +35,7 @@ class AccountUserProviderTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $this->assertRoleHasPermission(LoadAccountUserRoles::ADMINISTRATOR, [true, true, true, true, true]);
-        $this->assertRoleHasPermission(LoadAccountUserRoles::BUYER, [true, false, true, false, false]);
+        $this->assertRoleHasPermission(LoadAccountUserRoles::BUYER, [true, false, true, false, true]);
 
         $roleName = 'DENIED';
         $role = new AccountUserRole(AccountUserRole::PREFIX_ROLE . $roleName);

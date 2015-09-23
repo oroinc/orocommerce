@@ -291,7 +291,9 @@ class ProductPrice
      */
     public function updatePrice()
     {
-        $this->value    = $this->price->getValue();
-        $this->currency = $this->price->getCurrency();
+        if ($this->price) {
+            $this->value    = $this->price->getValue();
+            $this->currency = $this->price->getCurrency();
+        }
     }
 }

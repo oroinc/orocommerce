@@ -1,5 +1,8 @@
 {% extends commerce.layout %}
 
+{% block header %}
+{% endblock %}
+
 {% block content %}
 <div class="container">
     <form id="login-form" action="{{ path('orob2b_account_account_user_security_check') }}" method="post" class="form-signin">
@@ -59,4 +62,4 @@
         <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
     </form>
 </div>
-{% endblock content %}
+{% endblock %}

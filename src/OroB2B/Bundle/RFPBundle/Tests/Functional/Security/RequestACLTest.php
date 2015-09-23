@@ -27,10 +27,7 @@ class RequestACLTest extends WebTestCase
     {
         $this->initClient(
             [],
-            array_merge(
-                $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW),
-                ['HTTP_X-CSRF-Header' => 1]
-            )
+            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
 
         $this->loadFixtures([
@@ -60,13 +57,14 @@ class RequestACLTest extends WebTestCase
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
+        $form->remove('orob2b_rfp_frontend_request_type[requestProducts][0]');
         $form['orob2b_rfp_frontend_request_type[firstName]'] = LoadAccountUsersData::USER_NAME;
         $form['orob2b_rfp_frontend_request_type[lastName]']  = LoadAccountUsersData::USER_LAST_NAME;
         $form['orob2b_rfp_frontend_request_type[email]']     = LoadAccountUsersData::USER_EMAIL;
         $form['orob2b_rfp_frontend_request_type[phone]']     = 123456789;
         $form['orob2b_rfp_frontend_request_type[company]']   = 'Company name';
         $form['orob2b_rfp_frontend_request_type[role]']      = 'Manager';
-        $form['orob2b_rfp_frontend_request_type[body]']      = 'This is test Request For Proposal';
+        $form['orob2b_rfp_frontend_request_type[body]']      = 'This is test Request For Quote';
 
         $this->client->followRedirects(true);
         $this->client->submit($form);
@@ -107,16 +105,6 @@ class RequestACLTest extends WebTestCase
     public function permissionsDataProvider()
     {
         return [
-            'none' => [
-                'level' => AccessLevel::NONE_LEVEL,
-                'permissions' => [
-                    'owner' => false,
-                    'sameAccountUser' => false,
-                    'subAccountUser' => false,
-                    'notSameAccountUser' => false,
-                ],
-                'expectedCode' => 200,
-            ],
             'account user' => [
                 'level' => AccessLevel::BASIC_LEVEL,
                 'permissions' => [
@@ -193,10 +181,7 @@ class RequestACLTest extends WebTestCase
         // Login first user
         $this->initClient(
             [],
-            array_merge(
-                $this->generateBasicAuthHeader($email, $password),
-                ['HTTP_X-CSRF-Header' => 1]
-            )
+            $this->generateBasicAuthHeader($email, $password)
         );
 
         $this->client->request('GET', $this->getUrl('_frontend'));

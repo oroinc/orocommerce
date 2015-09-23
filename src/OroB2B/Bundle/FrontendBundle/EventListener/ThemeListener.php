@@ -2,20 +2,16 @@
 
 namespace OroB2B\Bundle\FrontendBundle\EventListener;
 
-use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 use Oro\Bundle\ThemeBundle\Model\ThemeRegistry;
 
+use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
+
 class ThemeListener
 {
     const FRONTEND_THEME = 'demo';
-
-    /**
-     * @var RouterInterface
-     */
-    protected $router;
 
     /**
      * @var ThemeRegistry
@@ -23,19 +19,24 @@ class ThemeListener
     protected $themeRegistry;
 
     /**
+     * @var FrontendHelper
+     */
+    protected $helper;
+
+    /**
      * @var bool
      */
     protected $installed;
 
     /**
-     * @param RouterInterface $router
      * @param ThemeRegistry $themeRegistry
+     * @param FrontendHelper $helper
      * @param boolean $installed
      */
-    public function __construct(RouterInterface $router, ThemeRegistry $themeRegistry, $installed)
+    public function __construct(ThemeRegistry $themeRegistry, FrontendHelper $helper, $installed)
     {
-        $this->router = $router;
         $this->themeRegistry = $themeRegistry;
+        $this->helper = $helper;
         $this->installed = $installed;
     }
 
@@ -52,18 +53,7 @@ class ThemeListener
             return;
         }
 
-        $request = $event->getRequest();
-        $routeName = $request->attributes->get('_route');
-        if (!$routeName) {
-            return;
-        }
-
-        $route = $this->router->getRouteCollection()->get($routeName);
-        if (!$route) {
-            return;
-        }
-
-        if ($route->getOption(RouteCollectionListener::OPTION_FRONTEND)) {
+        if ($this->helper->isFrontendRequest($event->getRequest())) {
             $this->themeRegistry->setActiveTheme(self::FRONTEND_THEME);
         }
     }
