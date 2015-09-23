@@ -37,8 +37,11 @@ class QuoteToOrderTypeTest extends AbstractQuoteToProductTestCase
         return [
             new PreloadedExtension(
                 [
-                    QuoteProductToOrderType::NAME
-                        => new QuoteProductToOrderType($this->getTranslator(), $this->getUnitFormatter())
+                    QuoteProductToOrderType::NAME => new QuoteProductToOrderType(
+                        $this->getTranslator(),
+                        $this->getUnitFormatter(),
+                        $this->getNumberFormatter()
+                    ),
                 ],
                 []
             ),

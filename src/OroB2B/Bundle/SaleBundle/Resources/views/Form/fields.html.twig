@@ -127,7 +127,15 @@
         {% set defaultUnitCode = '' %}
         {% set defaultPrice = '' %}
     {% endif %}
-    <tr>
+    {% set componentOptions = {
+        offerSelector: '[name=\'%s\']'|format(form.offer.vars.full_name),
+        quantitySelector: '[name=\'%s\']'|format(form.quantity.vars.full_name),
+        unitSelector: '#%s .quote-product-offer-quantity-unit'|format(form.vars.id),
+        unitPriceSelector: '#%s .quote-product-offer-price span'|format(form.vars.id)
+    } %}
+    <tr id="{{ form.vars.id }}"
+        data-page-component-module="orob2bsale/js/app/components/quote-product-to-order-component"
+        data-page-component-options="{{ componentOptions|json_encode }}">
         <td class="quote-product-offer-product-sku">
             <span>{{ product.sku }}</span>
         </td>
