@@ -161,7 +161,7 @@
             {{ form_errors(form.offer) }}
         </td>
         <td class="quote-product-offer-quantity">
-            <div >
+            <div class="fields-row">
                 {{ form_widget(form.quantity) }}
                 <span class="quote-product-offer-quantity-unit">{{ defaultUnitCode }}</span>
             </div>
@@ -193,7 +193,6 @@
                 <tbody>
                     {% for child in form.children %}
                         {{ form_widget(child) }}
-                        {{ form_errors(child) }}
                     {% endfor %}
                 </tbody>
             </table>
