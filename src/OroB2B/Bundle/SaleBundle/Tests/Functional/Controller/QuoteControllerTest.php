@@ -15,6 +15,7 @@ use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 /**
  * @dbIsolation
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class QuoteControllerTest extends WebTestCase
 {
@@ -254,12 +255,13 @@ class QuoteControllerTest extends WebTestCase
     {
         /* @var $request RFPRequest */
         $request = $this->getReference(LoadRequestData::REQUEST1);
-        $this->client->request('GET', $this->getUrl(
+        $crawler = $this->client->request('GET', $this->getUrl(
             'orob2b_sale_quote_createfromrfpform',
             ['id' => $request->getId()]
         ));
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
+        static::assertCount(1, $crawler->selectButton('Create Quote'));
     }
 
     public function testCreateFromRfp()
