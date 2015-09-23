@@ -71,6 +71,12 @@ class QuoteProductToOrderType extends AbstractType
         /** @var QuoteProductOffer $firstQuoteProductOffer */
         $firstQuoteProductOffer = $quoteProduct->getQuoteProductOffers()->first();
 
+        $quantityAttr = ['disabled' => true];
+
+        if ($firstQuoteProductOffer) {
+            $quantityAttr['disabled'] = !$firstQuoteProductOffer->isAllowIncrements();
+        }
+
         $builder
             ->add(
                 self::FIELD_OFFER,
@@ -86,9 +92,7 @@ class QuoteProductToOrderType extends AbstractType
                 'number',
                 [
                     'constraints' => [new NotBlank(), new Decimal(), new GreaterThanZero()],
-                    'attr' => [
-                        'disabled' => $firstQuoteProductOffer ? !$firstQuoteProductOffer->isAllowIncrements() : true
-                    ]
+                    'attr' => $quantityAttr
                 ]
             );
 

@@ -39,7 +39,7 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
     protected function getExtensions()
     {
         return [
-            new ValidatorExtension(Validation::createValidator())
+            new ValidatorExtension(Validation::createValidator()),
         ];
     }
 
@@ -48,10 +48,18 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
      * @param array $choices
      * @param array $submit
      * @param array $expectedData
+     * @param bool $expectedDisableAttr
+     * @param bool $isValid
      * @dataProvider submitDataProvider
      */
-    public function testSubmit(QuoteProduct $input, array $choices, array $submit, array $expectedData)
-    {
+    public function testSubmit(
+        QuoteProduct $input,
+        array $choices,
+        array $submit,
+        array $expectedData,
+        $expectedDisableAttr,
+        $isValid = true
+    ) {
         $form = $this->factory->create($this->type, $input);
         $this->assertEquals(
             $choices,
@@ -59,8 +67,11 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
         );
 
         $form->submit($submit);
-        $this->assertTrue($form->isValid());
+        $this->assertEquals($isValid, $form->isValid());
         $this->assertEquals($expectedData, $form->getData());
+
+        $quantityField = $form->get(QuoteProductToOrderType::FIELD_QUANTITY);
+        $this->assertEquals(['disabled' => $expectedDisableAttr], $quantityField->getConfig()->getOption('attr'));
 
         // check quote product object
         $rootView = $form->createView();
@@ -84,6 +95,33 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
             /** @var QuoteProductOffer $actualOffer */
             $actualOffer = $view->vars['offer'];
             $this->assertEquals($expectedOffer->getId(), $actualOffer->getId());
+
+            $this->assertViewDataAttributes($actualOffer, $view);
+        }
+    }
+
+    /**
+     * @param QuoteProductOffer $offer
+     * @param FormView $view
+     */
+    protected function assertViewDataAttributes(QuoteProductOffer $offer, FormView $view)
+    {
+        $this->assertArrayHasKey('attr', $view->vars);
+        $this->assertArrayHasKey('data-unit', $view->vars['attr']);
+        $this->assertEquals($offer->getProductUnitCode(), $view->vars['attr']['data-unit']);
+
+        $this->assertArrayHasKey('data-quantity', $view->vars['attr']);
+        $this->assertEquals($offer->getQuantity(), $view->vars['attr']['data-quantity']);
+
+        $this->assertArrayHasKey('data-allow-increment', $view->vars['attr']);
+        $this->assertEquals($offer->isAllowIncrements(), $view->vars['attr']['data-allow-increment']);
+
+        if ($offer->getPrice()) {
+            $this->assertArrayHasKey('data-price', $view->vars['attr']);
+            $this->assertEquals(
+                $offer->getPrice()->getCurrency() . $offer->getPrice()->getValue(),
+                $view->vars['attr']['data-price']
+            );
         }
     }
 
@@ -102,7 +140,9 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
             ->addQuoteProductOffer($secondUnitOffer);
 
         $mixedQuoteProduct = new QuoteProduct();
-        $mixedQuoteProduct->addQuoteProductOffer($firstUnitOffer)
+        $mixedQuoteProduct
+            ->addQuoteProductOffer($secondUnitOffer)
+            ->addQuoteProductOffer($firstUnitOffer)
             ->addQuoteProductOffer($bundledOffer);
 
         return [
@@ -118,13 +158,15 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
                 ],
                 'expectedData' => [
                     QuoteProductToOrderType::FIELD_OFFER => $secondUnitOffer,
-                    QuoteProductToOrderType::FIELD_QUANTITY => $secondUnitOffer->getQuantity()
+                    QuoteProductToOrderType::FIELD_QUANTITY => $secondUnitOffer->getQuantity(),
                 ],
+                'expectedDisableAttr' => false,
             ],
             'mixed offers' => [
                 'input' => $mixedQuoteProduct,
                 'choices' => [
                     1 => '12 kg or more',
+                    2 => '16 kg',
                 ],
                 'submit' => [
                     QuoteProductToOrderType::FIELD_OFFER => '1',
@@ -132,8 +174,20 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
                 ],
                 'expectedData' => [
                     QuoteProductToOrderType::FIELD_OFFER => $firstUnitOffer,
-                    QuoteProductToOrderType::FIELD_QUANTITY => 15
-                ]
+                    QuoteProductToOrderType::FIELD_QUANTITY => 15,
+                ],
+                'expectedDisableAttr' => true,
+            ],
+            'empty offers' => [
+                'input' => new QuoteProduct(),
+                'choices' => [],
+                'submit' => [],
+                'expectedData' => [
+                    QuoteProductToOrderType::FIELD_OFFER => null,
+                    QuoteProductToOrderType::FIELD_QUANTITY => null,
+                ],
+                'expectedDisableAttr' => true,
+                'isValid' => false,
             ],
         ];
     }
