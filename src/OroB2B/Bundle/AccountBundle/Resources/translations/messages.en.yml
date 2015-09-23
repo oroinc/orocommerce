@@ -202,7 +202,6 @@ orob2b.account:
         id.label: ID
         category.label: Category
         visibility.label: Visibility
-        default.label: Config
 
     catalog:
         visibility:
