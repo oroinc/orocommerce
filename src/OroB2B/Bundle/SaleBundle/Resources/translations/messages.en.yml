@@ -123,7 +123,7 @@ orob2b:
                 saved.message: 'Quote has been saved'
 
         btn:
-            add_seller_notes: 'Add Notes'
+            add_seller_notes: 'Add Seller Notes'
             remove_seller_notes: 'Remove Seller Notes'
             notify_and_lock: 'Notify and Lock'
             send: 'Send'
