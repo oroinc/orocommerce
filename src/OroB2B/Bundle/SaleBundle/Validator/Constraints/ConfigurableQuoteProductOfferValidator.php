@@ -18,11 +18,11 @@ class ConfigurableQuoteProductOfferValidator extends ConstraintValidator
     public function validate($value, Constraint $constraint)
     {
         if (!is_array($value)
-            ||!array_key_exists(QuoteProductToOrderType::FIELD_OFFER, $value)
+            || !array_key_exists(QuoteProductToOrderType::FIELD_OFFER, $value)
             || !$value[QuoteProductToOrderType::FIELD_OFFER] instanceof QuoteProductOfferEntity
         ) {
             $this->context->buildViolation($constraint->blankOfferMessage)
-                ->atPath(QuoteProductToOrderType::FIELD_OFFER)
+                ->atPath('[' .QuoteProductToOrderType::FIELD_OFFER. ']')
                 ->addViolation();
 
             return;
@@ -39,12 +39,12 @@ class ConfigurableQuoteProductOfferValidator extends ConstraintValidator
         if ($offer->isAllowIncrements()) {
             if ($offerQuantity > $quantity) {
                 $this->context->buildViolation($constraint->lessQuantityMessage)
-                    ->atPath(QuoteProductToOrderType::FIELD_QUANTITY)
+                    ->atPath('[' . QuoteProductToOrderType::FIELD_QUANTITY . ']')
                     ->addViolation();
             }
         } elseif ($offerQuantity !== $quantity) {
             $this->context->buildViolation($constraint->notEqualQuantityMessage)
-                ->atPath(QuoteProductToOrderType::FIELD_QUANTITY)
+                ->atPath('[' . QuoteProductToOrderType::FIELD_QUANTITY . ']')
                 ->addViolation();
         }
     }
