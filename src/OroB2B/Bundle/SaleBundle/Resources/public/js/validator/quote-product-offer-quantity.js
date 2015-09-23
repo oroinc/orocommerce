@@ -5,7 +5,7 @@ define([
     'use strict';
 
     var defaultParam = {
-        message: 'Quantity should be grater than or equal to offered quantity.'
+        lessQuantityMessage: 'Quantity should be grater than or equal to offered quantity.'
     };
 
     return [
@@ -21,7 +21,7 @@ define([
         },
         function(param) {
             param = _.extend({}, defaultParam, param);
-            return __(param.message);
+            return __(param.lessQuantityMessage);
         }
     ];
 });
