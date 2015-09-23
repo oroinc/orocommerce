@@ -18,7 +18,7 @@ class LoadAccounts extends AbstractFixture implements DependentFixtureInterface
      */
     public function getDependencies()
     {
-        return [__NAMESPACE__.'\LoadGroups'];
+        return [__NAMESPACE__ . '\LoadGroups'];
     }
 
     /**

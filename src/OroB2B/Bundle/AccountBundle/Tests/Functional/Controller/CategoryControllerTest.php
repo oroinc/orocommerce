@@ -6,7 +6,6 @@ use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Oro\Bundle\UserBundle\Entity\Group;
-use Oro\Component\PropertyAccess\PropertyAccessor;
 use Oro\Component\Testing\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
@@ -25,7 +24,7 @@ class CategoryControllerTest extends WebTestCase
 {
     protected function setUp()
     {
-        $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
+        $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures(
             [
                 'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
@@ -114,7 +113,7 @@ class CategoryControllerTest extends WebTestCase
             if (!$pos = strpos($key, '[')) {
                 continue;
             }
-            $key = '['.substr($key, 0, $pos).']'.substr($key, $pos);
+            $key = '[' . substr($key, 0, $pos) . ']' . substr($key, $pos);
             $accessor->setValue($parameters, $key, $val);
         }
 
