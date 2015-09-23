@@ -258,7 +258,7 @@ class ProductControllerTest extends WebTestCase
     }
 
     /**
-     * @depends testDelete
+     * @depends testUpdate
      *
      * @return int
      */
@@ -271,6 +271,9 @@ class ProductControllerTest extends WebTestCase
 
         $locale = $this->getLocale();
         $product = $this->getContainer()->get('doctrine')->getManager()->find('OroB2BProductBundle:Product', $id);
+
+        $this->assertInstanceOf('OroB2B\Bundle\ProductBundle\Entity\Product', $product);
+
         $localizedName = $this->getLocalizedName($product, $locale);
 
         /** @var Form $form */
@@ -334,7 +337,7 @@ class ProductControllerTest extends WebTestCase
      */
     protected function getBusinessUnitId()
     {
-        return $this->getContainer()->get('security.context')->getToken()->getUser()->getOwner()->getId();
+        return $this->getContainer()->get('oro_security.security_facade')->getLoggedUser()->getOwner()->getId();
     }
 
     /**
@@ -356,6 +359,10 @@ class ProductControllerTest extends WebTestCase
         return $unitPrecisions;
     }
 
+    /**
+     * @param string $sku
+     * @return array
+     */
     private function getProductDataBySku($sku)
     {
         $response = $this->client->requestGrid(
