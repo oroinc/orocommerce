@@ -290,6 +290,10 @@
     width: 257px !important;
 }
 
+.quote-to-order-widget {
+    padding-bottom: 10px;
+}
+
 td.quote-product-offer-product-sku,
 td.quote-product-offer-product-name,
 td.quote-product-offer-customer-notes,

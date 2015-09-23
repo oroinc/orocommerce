@@ -110,6 +110,44 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($order, $this->converter->convert($quote));
     }
 
+    public function testConvertFromQuoteWithUser()
+    {
+        $sku = 'sku1';
+        $unit = 'kg';
+        $qty = 10;
+        $pr = 10.5;
+
+        $accountName = 'acc';
+        $accountUser = $this->createAccountUser($accountName);
+
+        $quoteProduct = $this->createQuoteProduct($sku);
+        $quoteProduct->addQuoteProductOffer(
+            $this->createQuoteProductOffer($unit, $qty, QuoteProductOffer::PRICE_TYPE_BUNDLED, $pr, self::CURRENCY)
+        );
+
+        $quote = $this
+            ->createMainEntity(self::ACCOUNT_NAME, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME)
+            ->addQuoteProduct($quoteProduct);
+
+        $order = $this
+            ->createMainEntity($accountName, self::ACCOUNT_USER_FIRST_NAME, self::ACCOUNT_USER_LAST_NAME, true)
+            ->setCurrency(self::CURRENCY)
+            ->setAccountUser($accountUser)
+            ->setAccount($accountUser->getAccount())
+            ->addLineItem(
+                $this->createOrderLineItem(
+                    $sku,
+                    $unit,
+                    $qty,
+                    OrderLineItem::PRICE_TYPE_BUNDLED,
+                    $pr,
+                    self::CURRENCY
+                )
+            );
+
+        $this->assertEquals($order, $this->converter->convert($quote, $accountUser));
+    }
+
     public function testConvertFromSelectedOffers()
     {
         $sku = 'sku1';
@@ -140,7 +178,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
 
         $this->createQuoteProduct($sku, true)->addQuoteProductOffer($offer);
 
-        $this->assertEquals($order, $this->converter->convert($quote, [['offer' => $offer, 'quantity' => $qty]]));
+        $this->assertEquals($order, $this->converter->convert($quote, null, [['offer' => $offer, 'quantity' => $qty]]));
     }
 
     /**
@@ -152,21 +190,17 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
      */
     protected function createMainEntity($accountName, $userFirstName, $userLastName, $isOrder = false)
     {
-        $accountUser = new AccountUser();
-        $accountUser->setFirstName($userFirstName)->setLastName($userLastName)->setSalt(null);
-
-        $account = new Account();
-        $account->setName($accountName)->addUser($accountUser);
+        $accountUser = $this->createAccountUser($accountName);
 
         $owner = new User();
         $owner->setFirstName($userFirstName . ' owner')->setLastName($userLastName . ' owner')->setSalt(null);
 
         $organization = new Organization();
-        $organization->setName($accountName . ' org');
+        $organization->setName($userFirstName . ' ' . $userLastName . ' org');
 
         $entity = $isOrder ? new Order : new Quote();
         $entity
-            ->setAccount($account)
+            ->setAccount($accountUser->getAccount())
             ->setAccountUser($accountUser)
             ->setOwner($owner)
             ->setOrganization($organization);
@@ -240,5 +274,20 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             ->setFromExternalSource(true);
 
         return $orderLineItem;
+    }
+
+    /**
+     * @param string $accountName
+     * @return AccountUser
+     */
+    protected function createAccountUser($accountName)
+    {
+        $accountUser = new AccountUser();
+        $accountUser->setFirstName($accountName . ' first')->setLastName($accountName . ' last')->setSalt(null);
+
+        $account = new Account();
+        $account->setName($accountName)->addUser($accountUser);
+
+        return $accountUser;
     }
 }
