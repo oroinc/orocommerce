@@ -179,7 +179,7 @@
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'grid-container' }) %}
     {% spaceless %}
         <div {{ block('widget_container_attributes') }}>
-            <table class="grid table-hover table table-bordered table-condensed quote-to-order-table">
+            <table class="grid table-hover table table-bordered table-condensed">
                 <thead>
                     <tr>
                         <th class="quote-product-offer-product-sku"><span>{{ 'orob2b.frontend.sale.quoteproduct.product_sku.label'|trans }}</span></th>
