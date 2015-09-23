@@ -289,3 +289,56 @@
 .sale-quote-form .account-accountuser-select .select2-container {
     width: 257px !important;
 }
+
+td.quote-product-offer-product-sku,
+td.quote-product-offer-product-name,
+td.quote-product-offer-customer-notes,
+td.quote-product-offer-seller-notes,
+td.quote-product-offer-price {
+    padding-top: 11px !important;
+}
+
+td.quote-product-offer-select-offer {
+    width: 260px;
+}
+
+td.quote-product-offer-select-offer table {
+    table-layout: fixed;
+}
+
+td.quote-product-offer-select-offer td {
+    border: none;
+}
+
+td.quote-product-offer-select-offer td input {
+    margin-top: 0 !important;
+}
+
+td.quote-product-offer-select-offer td.quote-product-offer-select-offer-choice {
+    width: 16px;
+    padding: 5px 0 !important;
+    vertical-align: middle !important;
+}
+
+td.quote-product-offer-select-offer td.quote-product-offer-select-offer-label {
+    min-width: 125px;
+    width: 125px;
+    word-break: break-all;
+}
+
+td.quote-product-offer-quantity {
+    width: 160px;
+    text-align: center;
+}
+
+td.quote-product-offer-quantity input {
+    width: 40px;
+}
+
+td.quote-product-offer-price {
+    width: 60px;
+}
+
+span.quote-product-offer-quantity-unit {
+    margin-left: 5px;
+}
