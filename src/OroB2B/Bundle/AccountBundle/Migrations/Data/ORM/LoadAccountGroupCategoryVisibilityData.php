@@ -14,10 +14,10 @@ class LoadAccountGroupCategoryVisibilityData extends AbstractEnumFixture
     protected function getData()
     {
         return [
+            AccountGroupCategoryVisibility::CATEGORY => 'Visibility to All',
             AccountGroupCategoryVisibility::PARENT_CATEGORY => 'Parent Category',
-            AccountGroupCategoryVisibility::CONFIG => 'Config',
-            AccountGroupCategoryVisibility::VISIBLE => 'Visible',
             AccountGroupCategoryVisibility::HIDDEN => 'Hidden',
+            AccountGroupCategoryVisibility::VISIBLE => 'Visible',
         ];
     }
 
@@ -34,6 +34,6 @@ class LoadAccountGroupCategoryVisibilityData extends AbstractEnumFixture
      */
     protected function getDefaultValue()
     {
-        return AccountGroupCategoryVisibility::PARENT_CATEGORY;
+        return AccountGroupCategoryVisibility::CATEGORY;
     }
 }
