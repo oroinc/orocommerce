@@ -14,7 +14,7 @@ define(function(require) {
                 dialogOptions: {
                     modal: true,
                     resizable: true,
-                    width: 800,
+                    width: 1000,
                     autoResize: true
                 }
             }

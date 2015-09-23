@@ -12,6 +12,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -110,6 +111,7 @@ class QuoteController extends Controller
      *      requirements={"id"="\d+"}
      * )
      * @AclAncestor("orob2b_order_frontend_create")
+     * @ParamConverter("quote", options={"repository_method" = "getQuote"})
      * @Template("OroB2BSaleBundle:Quote/Frontend:createOrder.html.twig")
      *
      * @param Request $request
