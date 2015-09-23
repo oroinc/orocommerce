@@ -69,9 +69,8 @@ abstract class AbstractCategoryListener
     protected function getAccountCategoryVisibilityRepository()
     {
         if (!$this->accountCategoryVisibilityRepository) {
-            $this->accountCategoryVisibilityRepository = $this->registry
-                ->getManagerForClass($this->accountCategoryVisibilityClass)
-                ->getRepository($this->accountCategoryVisibilityClass);
+            $this->accountCategoryVisibilityRepository = $this
+                ->getEntityRepository($this->accountCategoryVisibilityClass);
         }
 
         return $this->accountCategoryVisibilityRepository;
@@ -83,9 +82,8 @@ abstract class AbstractCategoryListener
     protected function getAccountGroupCategoryVisibilityRepository()
     {
         if (!$this->accountGroupCategoryVisibilityRepository) {
-            $this->accountGroupCategoryVisibilityRepository = $this->registry
-                ->getManagerForClass($this->accountGroupCategoryVisibilityClass)
-                ->getRepository($this->accountGroupCategoryVisibilityClass);
+            $this->accountGroupCategoryVisibilityRepository = $this
+                ->getEntityRepository($this->accountGroupCategoryVisibilityClass);
         }
 
         return $this->accountGroupCategoryVisibilityRepository;
