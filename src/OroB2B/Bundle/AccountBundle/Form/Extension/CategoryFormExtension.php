@@ -2,13 +2,13 @@
 
 namespace OroB2B\Bundle\AccountBundle\Form\Extension;
 
-use Genemu\Bundle\FormBundle\Form\JQuery\DataTransformer\ArrayToStringTransformer;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 
+use OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSetDataListener;
 use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSubmitListener;
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
@@ -57,7 +57,7 @@ class CategoryFormExtension extends AbstractTypeExtension
                     'enum_code' => 'category_visibility',
                     'configs' => [
                         'allowClear' => false,
-                        'placeholder' => 'orob2b.account.categoryvisibility.default.label',
+                        'placeholder' => false,
                     ],
                 ]
             )
