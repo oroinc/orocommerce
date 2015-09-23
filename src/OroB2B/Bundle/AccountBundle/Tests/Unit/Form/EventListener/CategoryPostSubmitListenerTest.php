@@ -258,17 +258,17 @@ class CategoryPostSubmitListenerTest extends \PHPUnit_Framework_TestCase
                 $this->getAccountCategoryVisibilityMock(
                     $visibility,
                     $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 1),
-                    null
+                    AccountCategoryVisibility::PARENT_CATEGORY
                 ),
                 $this->getAccountCategoryVisibilityMock(
                     $visibility,
                     $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 2),
-                    AccountCategoryVisibility::VISIBLE
+                    AccountCategoryVisibility::PARENT_CATEGORY
                 ),
                 $this->getAccountCategoryVisibilityMock(
                     $visibility,
                     $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 3),
-                    AccountCategoryVisibility::HIDDEN
+                    AccountCategoryVisibility::VISIBLE
                 )
             ]
         );
@@ -288,6 +288,14 @@ class CategoryPostSubmitListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($repo);
 
         $this->enumValueProvider->expects($this->at(1))
+            ->method('getEnumValueByCode')
+            ->with(CategoryPostSubmitListener::ACCOUNT_CATEGORY_VISIBILITY, AccountCategoryVisibility::PARENT_CATEGORY)
+            ->willReturn($visibility);
+        $this->enumValueProvider->expects($this->at(2))
+            ->method('getEnumValueByCode')
+            ->with(CategoryPostSubmitListener::ACCOUNT_CATEGORY_VISIBILITY, AccountCategoryVisibility::PARENT_CATEGORY)
+            ->willReturn($visibility);
+        $this->enumValueProvider->expects($this->at(3))
             ->method('getEnumValueByCode')
             ->with(CategoryPostSubmitListener::ACCOUNT_CATEGORY_VISIBILITY, AccountCategoryVisibility::VISIBLE)
             ->willReturn($visibility);
@@ -337,7 +345,21 @@ class CategoryPostSubmitListenerTest extends \PHPUnit_Framework_TestCase
             ->with('OroB2BAccountBundle:AccountGroupCategoryVisibility')
             ->willReturn($repo);
 
-        $this->enumValueProvider->expects($this->at(2))
+        $this->enumValueProvider->expects($this->at(4))
+            ->method('getEnumValueByCode')
+            ->with(
+                CategoryPostSubmitListener::ACCOUNT_GROUP_CATEGORY_VISIBILITY,
+                AccountGroupCategoryVisibility::PARENT_CATEGORY
+            )
+            ->willReturn($visibility);
+        $this->enumValueProvider->expects($this->at(5))
+            ->method('getEnumValueByCode')
+            ->with(
+                CategoryPostSubmitListener::ACCOUNT_GROUP_CATEGORY_VISIBILITY,
+                AccountGroupCategoryVisibility::PARENT_CATEGORY
+            )
+            ->willReturn($visibility);
+        $this->enumValueProvider->expects($this->at(6))
             ->method('getEnumValueByCode')
             ->with(
                 CategoryPostSubmitListener::ACCOUNT_GROUP_CATEGORY_VISIBILITY,
