@@ -153,13 +153,14 @@ class RequestControllerTest extends WebTestCase
         /* @var $shoppingList ShoppingList */
         $shoppingList = $this->getReference($inputData['shoppingList']);
 
-        $this->client->request('GET', $this->getUrl(
+        $crawler = $this->client->request('GET', $this->getUrl(
             'orob2b_rfp_frontend_createfromshoppinglistform',
             ['id' => $shoppingList->getId()]
         ));
 
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, $expectedData['statusCode']);
+        static::assertCount($expectedData['buttonsCount'], $crawler->selectButton('Request a Quote'));
     }
 
     /**
@@ -312,6 +313,7 @@ class RequestControllerTest extends WebTestCase
                 ],
                 'expected' => [
                     'statusCode' => 403,
+                    'buttonsCount' => 0,
                 ],
             ],
             'account1 user1 (RFP:CREATE_BASIC)' => [
@@ -322,6 +324,7 @@ class RequestControllerTest extends WebTestCase
                 ],
                 'expected' => [
                     'statusCode' => 200,
+                    'buttonsCount' => 1,
                 ],
             ],
         ];
