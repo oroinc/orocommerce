@@ -179,7 +179,7 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
                     QuoteProductToOrderType::FIELD_OFFER => $secondUnitOffer,
                     QuoteProductToOrderType::FIELD_QUANTITY => $secondUnitOffer->getQuantity(),
                 ],
-                'expectedReadOnly' => false,
+                'expectedReadOnly' => true,
             ],
             'mixed offers' => [
                 'input' => $mixedQuoteProduct,
@@ -195,7 +195,7 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
                     QuoteProductToOrderType::FIELD_OFFER => $firstUnitOffer,
                     QuoteProductToOrderType::FIELD_QUANTITY => 15,
                 ],
-                'expectedReadOnly' => true,
+                'expectedReadOnly' => false,
             ],
             'empty offers' => [
                 'input' => new QuoteProduct(),

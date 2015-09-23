@@ -71,6 +71,7 @@ define(function(require) {
         updateQuantityInputValue: function(quantity) {
             this.$quantity.val(quantity);
             this.$quantity.data(this.options.data_attributes.quantity, quantity);
+            this.$quantity.trigger('blur');
         },
 
         /**
@@ -78,9 +79,9 @@ define(function(require) {
          */
         updateQuantityInputState: function(allowIncrement) {
             if (allowIncrement) {
-                this.$quantity.removeProp('readonly');
+                this.$quantity.prop('readonly', false);
             } else {
-                this.$quantity.prop('readonly', 'readonly');
+                this.$quantity.prop('readonly', true);
             }
         },
 
