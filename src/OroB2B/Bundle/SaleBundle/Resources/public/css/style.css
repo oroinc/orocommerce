@@ -290,8 +290,8 @@
     width: 257px !important;
 }
 
-table.quote-to-order-table {
-    margin-bottom: 10px;
+.quote-to-order-widget {
+    padding-bottom: 10px;
 }
 
 td.quote-product-offer-product-sku,
