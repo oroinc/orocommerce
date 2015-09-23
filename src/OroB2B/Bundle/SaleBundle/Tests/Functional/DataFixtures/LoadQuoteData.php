@@ -46,6 +46,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
                         'unit'      => self::UNIT1,
                         'price'     => 1,
                         'currency'  => self::CURRENCY1,
+                        'allow_increments' => true
                     ],
                     [
                         'priceType' => QuoteProductOffer::PRICE_TYPE_UNIT,
@@ -53,6 +54,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
                         'unit'      => self::UNIT2,
                         'price'     => 2,
                         'currency'  => self::CURRENCY1,
+                        'allow_increments' => false
                     ],
                 ],
                 self::PRODUCT2 => [
@@ -62,6 +64,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
                         'unit'      => self::UNIT3,
                         'price'     => 3,
                         'currency'  => self::CURRENCY1,
+                        'allow_increments' => false
                     ]
                 ],
             ],
@@ -168,7 +171,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
         foreach ($items as $item) {
             $productOffer = new QuoteProductOffer();
             $productOffer
-                ->setAllowIncrements(false)
+                ->setAllowIncrements($item['allow_increments'])
                 ->setQuantity($item['quantity'])
                 ->setPriceType($item['priceType'])
                 ->setPrice((new Price())->setValue($item['price'])->setCurrency($item['currency']))

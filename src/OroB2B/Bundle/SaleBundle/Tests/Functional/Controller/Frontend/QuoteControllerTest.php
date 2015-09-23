@@ -2,12 +2,18 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Controller\Frontend;
 
+use Doctrine\Common\Persistence\ObjectRepository;
+
+use Symfony\Component\DomCrawler\Field\ChoiceFormField;
+use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Component\Testing\WebTestCase;
 
+use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 
@@ -334,5 +340,123 @@ class QuoteControllerTest extends WebTestCase
                 ],
             ],
         ];
+    }
+
+    public function testCreateOrderFromWidgetAction()
+    {
+        $quantity = 12345;
+        $orderCount = count($this->getOrderRepository()->findBy([]));
+
+        $this->initClient(
+            [],
+            $this->generateBasicAuthHeader(LoadUserData::ACCOUNT1_USER3, LoadUserData::ACCOUNT1_USER3)
+        );
+
+        /** @var Quote $quote */
+        $quote = $this->getReference(LoadQuoteData::QUOTE1);
+        $this->assertInstanceOf('OroB2B\Bundle\SaleBundle\Entity\Quote', $quote);
+
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl(
+                'orob2b_sale_frontend_quote_create_order_from_widget',
+                ['id' => $quote->getId(), '_widgetContainer' => 'dialog']
+            )
+        );
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        /* @var Form $form */
+        $form = $crawler->selectButton('Submit')->form();
+        $selectedOffers = $this->setFormData($form, $quote, $quantity);
+
+        $this->client->followRedirects(true);
+        $this->client->submit($form);
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $orders = $this->getOrderRepository()->findBy([], ['createdAt' => 'DESC']);
+
+        $this->assertCount($orderCount + 1, $orders);
+
+        /** @var \OroB2B\Bundle\OrderBundle\Entity\Order $order */
+        $order = reset($orders);
+
+        $this->assertOrderLineItems($order, $selectedOffers, $quantity);
+    }
+
+    /**
+     * @return ObjectRepository
+     */
+    protected function getOrderRepository()
+    {
+        return $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BOrderBundle:Order')
+            ->getRepository('OroB2BOrderBundle:Order');
+    }
+
+    /**
+     * @param Form $form
+     * @param Quote $quote
+     * @param int $customQuantity
+     * @return array
+     */
+    protected function setFormData(Form $form, Quote $quote, $customQuantity)
+    {
+        $selectedOffers = [];
+
+        foreach ($quote->getQuoteProducts() as $quoteProduct) {
+            /** @var \OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer $quoteProductOffer */
+            $quoteProductOffer = $quoteProduct->getQuoteProductOffers()->first();
+
+            foreach ($form->get('orob2b_sale_quote_to_order') as $key => $row) {
+                if (!is_array($row)) {
+                    continue;
+                }
+
+                /** @var ChoiceFormField $offer */
+                $offer = $row['offer'];
+
+                if ($offer->getValue() != $quoteProductOffer->getId()) {
+                    continue;
+                }
+
+                if ($quoteProductOffer->isAllowIncrements()) {
+                    $form['orob2b_sale_quote_to_order['.$key.'][quantity]'] = $customQuantity;
+                } else {
+                    $form['orob2b_sale_quote_to_order['.$key.'][quantity]'] = $quoteProductOffer->getQuantity();
+                }
+
+                $selectedOffers[] = $quoteProductOffer;
+            }
+        }
+
+        return $selectedOffers;
+    }
+
+    /**
+     * @param Order $order
+     * @param array $offers
+     * @param int $customQuantity
+     */
+    protected function assertOrderLineItems(Order $order, array $offers, $customQuantity)
+    {
+        $this->assertCount(count($offers), $order->getLineItems());
+
+        foreach ($order->getLineItems() as $orderLineItem) {
+            /** @var QuoteProductOffer $selectedOffer */
+            foreach ($offers as $selectedOffer) {
+                $quoteProduct = $selectedOffer->getQuoteProduct();
+
+                if ($quoteProduct->getProduct()->getId() === $orderLineItem->getProduct()->getId()) {
+                    if ($selectedOffer->isAllowIncrements()) {
+                        $this->assertEquals($customQuantity, $orderLineItem->getQuantity());
+                    } else {
+                        $this->assertEquals($selectedOffer->getQuantity(), $orderLineItem->getQuantity());
+                    }
+                }
+            }
+        }
     }
 }
