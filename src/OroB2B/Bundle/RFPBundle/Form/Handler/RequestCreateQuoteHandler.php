@@ -130,6 +130,7 @@ class RequestCreateQuoteHandler
                     ->setRequestProductItem($requestProductItem);
 
                 $quoteProduct->addQuoteProductRequest($quoteProductRequest);
+
                 $quoteProductOffer = new QuoteProductOffer();
                 $quoteProductOffer
                     ->setQuantity($requestProductItem->getQuantity())
