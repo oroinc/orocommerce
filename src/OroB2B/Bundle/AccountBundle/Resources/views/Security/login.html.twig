@@ -1,5 +1,6 @@
 {% extends commerce.layout %}
 
+{# @todo: https://magecore.atlassian.net/browse/BB-1234 #}
 {% set loginPage = orob2b_login_page() %}
 
 {% block head_style %}
@@ -16,12 +17,12 @@
 {% endblock %}
 
 {% block content %} 
-    <div{% if loginPage and loginPage.backgroundImage %} style="background-image: url('{{ file_url(loginPage, 'backgroundImage', loginPage.backgroundImage) }}'); height: 100%; position: absolute; width: 100%"{% endif %}>
-            {% if loginPage and loginPage.logoImage %}
-                <div class="logo">
-                    <img src="{{ filtered_image_url(loginPage.logoImage, 'login_page_logo') }}">
-                </div>
-            {% endif %}
+    <div class="login-page"{% if loginPage and loginPage.backgroundImage %} style="background-image: url('{{ file_url(loginPage, 'backgroundImage', loginPage.backgroundImage) }}');"{% endif %}>
+        {% if loginPage and loginPage.logoImage %}
+            <div class="logo">
+                <img src="{{ filtered_image_url(loginPage.logoImage, 'login_page_logo') }}">
+            </div>
+        {% endif %}
 
         {% if loginPage and loginPage.topContent %}
             <div class="login-form-before">
@@ -29,7 +30,11 @@
             </div>
         {% endif %}
 
-        <form id="login-form" action="{{ path('orob2b_account_account_user_security_check') }}" method="post" class="form-signin">
+        {% set formId = 'login-form' %}
+        <form id="{{ formId }}"
+              action="{{ path('orob2b_account_account_user_security_check') }}"
+              method="post" class="form-signin"
+              data-page-component-module="orob2bcms/js/app/components/login-form-component">
             <div class="title-box">
                 {% if oro_theme_logo() %}
                     <h1 class="oro-title logo-{{ oro_theme_logo() ? 'image' : 'text' }}">
@@ -40,14 +45,6 @@
                 <h2 class="title">{{ 'orob2b.account.accountuser.profile.login'|trans }}</h2>
             </div>
             <fieldset>
-                <script type="text/javascript">
-                    require(['jquery'], function ($) {
-                        var $form = $('#login-form');
-                        $form.on('submit', function () {
-                            $form.find('button').attr('disabled', 'disabled');
-                        });
-                    });
-                </script>
                 {% if error %}
                     <div class="alert alert-error">
                         <div>{{ error|trans }}</div>

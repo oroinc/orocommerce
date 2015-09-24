@@ -10,8 +10,7 @@ class LoginPageType extends AbstractType
     const NAME = 'orob2b_cms_login_page';
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
+     * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -59,7 +58,7 @@ class LoginPageType extends AbstractType
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getName()
     {

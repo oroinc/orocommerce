@@ -42,12 +42,12 @@ oro_menu_config:
 oro_titles:
     orob2b_cms_page_index:  ~
     orob2b_cms_page_view:   '%%title%%'
-    orob2b_cms_page_update: '%%title%% - Edit'
-    orob2b_cms_page_create: 'Create Page'
+    orob2b_cms_page_update: '%%title%% - oro.ui.edit'
+    orob2b_cms_page_create: 'oro.ui.create_entity'
 
     orob2b_cms_loginpage_index:  ~
     orob2b_cms_loginpage_view:   '%%title%%'
-    orob2b_cms_loginpage_update: 'Edit'
-    orob2b_cms_loginpage_create: 'Create Login Page'
+    orob2b_cms_loginpage_update: 'oro.ui.edit'
+    orob2b_cms_loginpage_create: 'oro.ui.create'
 
     orob2b_cms_frontend_page_view: '%%title%%'
