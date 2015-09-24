@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-//use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;

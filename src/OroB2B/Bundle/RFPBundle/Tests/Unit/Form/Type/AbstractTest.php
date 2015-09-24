@@ -68,17 +68,6 @@ abstract class AbstractTest extends FormIntegrationTestCase
         ];
     }
 
-//    /**
-//     * @return RequestProductType
-//     */
-//    protected function prepareRequestProductType()
-//    {
-//        $requestProductType = new RequestProductType(null);
-//        $requestProductType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
-//
-//        return $requestProductType;
-//    }
-
     /**
      * @return RequestProductItemType
      */

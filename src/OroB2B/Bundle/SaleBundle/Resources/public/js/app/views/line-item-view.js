@@ -33,6 +33,7 @@ define(function(require) {
             notesContainer: '.quote-lineitem-notes',
             addNotesButton: '.quote-lineitem-notes-add-btn',
             removeNotesButton: '.quote-lineitem-notes-remove-btn',
+            itemsCollectionContainer: '.quote-lineitem-collection',
             itemsContainer: '.quote-lineitem-offers-items',
             itemWidget: '.quote-lineitem-offers-item',
             syncClass: 'synchronized',
@@ -61,7 +62,7 @@ define(function(require) {
         /**
          * @property {Object}
          */
-        $el: null,
+        $container: null,
 
         /**
          * @property {Object}
@@ -87,6 +88,11 @@ define(function(require) {
          * @property {Object}
          */
         $itemsContainer: null,
+
+        /**
+         * @property {Object}
+         */
+        $itemsCollectionContainer: null,
 
         /**
          * @property {Object}
@@ -131,6 +137,7 @@ define(function(require) {
             this.$productReplacementSelect = this.$el.find(this.options.productReplacementSelect);
             this.$typeSelect = this.$el.find(this.options.typeSelect);
             this.$addItemButton = this.$el.find(this.options.addItemButton);
+            this.$itemsCollectionContainer = this.$el.find(this.options.itemsCollectionContainer);
             this.$itemsContainer = this.$el.find(this.options.itemsContainer);
             this.$productReplacementContainer = this.$el.find(this.options.productReplacementContainer);
             this.$notesContainer = this.$el.find(this.options.notesContainer);
@@ -218,7 +225,7 @@ define(function(require) {
                 if (this.options.compactUnits) {
                     routeParams['short'] = true;
                 }
-                
+
                 $.ajax({
                     url: routing.generate(this.options.unitsRoute, routeParams),
                     type: 'GET',

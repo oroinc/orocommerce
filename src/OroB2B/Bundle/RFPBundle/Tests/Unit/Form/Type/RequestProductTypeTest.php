@@ -99,7 +99,7 @@ class RequestProductTypeTest extends AbstractTest
 
         $this->assertSame($expectedData, $view->vars);
     }
-    
+
     /**
      * @param array $inputData
      * @param array $expectedData
@@ -329,7 +329,6 @@ class RequestProductTypeTest extends AbstractTest
         $optionalPriceType          = $this->prepareOptionalPriceType();
         $productRemovedSelectType   = new StubProductRemovedSelectType();
         $currencySelectionType      = new CurrencySelectionTypeStub();
-        //$requestProductType         = new RequestProductType(null);
         $requestProductItemType     = $this->prepareRequestProductItemType();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
 
@@ -343,7 +342,6 @@ class RequestProductTypeTest extends AbstractTest
                     $entityType->getName()                  => $entityType,
                     $optionalPriceType->getName()           => $optionalPriceType,
                     $productRemovedSelectType->getName()    => $productRemovedSelectType,
-                    //$requestProductType->getName()          => $requestProductType,
                     $requestProductItemType->getName()      => $requestProductItemType,
                     $currencySelectionType->getName()       => $currencySelectionType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
