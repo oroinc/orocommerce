@@ -118,9 +118,14 @@ class QuoteProductToOrderTransformer implements DataTransformerInterface
      */
     protected function roundQuantity($quantity, $unitCode)
     {
+        $precision = 0;
         $product = $this->quoteProduct->getProductReplacement() ?: $this->quoteProduct->getProduct();
-        $unitPrecision = $product->getUnitPrecision($unitCode);
-        $precision = $unitPrecision ? $unitPrecision->getPrecision() : 0;
+        if ($product) {
+            $unitPrecision = $product->getUnitPrecision($unitCode);
+            if ($unitPrecision) {
+                $precision = $unitPrecision->getPrecision();
+            }
+        }
 
         return $this->roundingService->round($quantity, $precision);
     }

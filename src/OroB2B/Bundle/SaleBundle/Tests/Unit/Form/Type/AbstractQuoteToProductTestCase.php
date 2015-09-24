@@ -3,69 +3,55 @@
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
-use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
-
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use OroB2B\Bundle\SaleBundle\Model\QuoteProductOfferMatcher;
 use OroB2B\Bundle\SaleBundle\Validator\Constraints;
 
 abstract class AbstractQuoteToProductTestCase extends FormIntegrationTestCase
 {
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     * @return \PHPUnit_Framework_MockObject_MockObject|QuoteProductOfferMatcher
      */
-    protected function getTranslator()
+    protected function getMatcher()
     {
-        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
-        $translator->expects($this->any())
-            ->method('trans')
-            ->with('orob2b.frontend.sale.quoteproductoffer.allow_increments.label')
-            ->willReturn('or more');
-
-        return $translator;
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|NumberFormatter
-     */
-    protected function getNumberFormatter()
-    {
-        $formatter = $this->getMockBuilder('Oro\Bundle\LocaleBundle\Formatter\NumberFormatter')
+        $matcher = $this->getMockBuilder('OroB2B\Bundle\SaleBundle\Model\QuoteProductOfferMatcher')
             ->disableOriginalConstructor()
             ->getMock();
-
-        $formatter->expects($this->any())
-            ->method('formatCurrency')
-            ->with($this->isType('float'), $this->isType('string'))
+        $matcher->expects($this->any())
+            ->method('match')
             ->willReturnCallback(
-                function ($value, $currency) {
-                    return $currency . $value;
+                function (QuoteProduct $quoteProduct, $unitCode, $quantity) {
+                    // simple emulation of original match algorithm
+                    return $quoteProduct->getQuoteProductOffers()->filter(
+                        function (QuoteProductOffer $offer) use ($quantity) {
+                            return $offer->getQuantity() == $quantity;
+                        }
+                    )->first();
                 }
             );
 
-        return $formatter;
+        return $matcher;
     }
 
     /**
-     * @return ProductUnitValueFormatter|\PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|RoundingService
      */
-    protected function getUnitFormatter()
+    protected function getRoundingService()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitValueFormatter $unitFormatter */
-        $unitFormatter = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter')
+        $roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\RoundingService')
             ->disableOriginalConstructor()
             ->getMock();
-        $unitFormatter->expects($this->any())
-            ->method('formatShort')
-            ->with($this->isType('int'), $this->isInstanceOf('OroB2B\Bundle\ProductBundle\Entity\ProductUnit'))
+        $roundingService->expects($this->any())
+            ->method('round')
             ->willReturnCallback(
-                function ($quantity, ProductUnit $unit) {
-                    return sprintf('%s %s', $quantity, $unit->getCode());
+                function ($value, $precision) {
+                    return round($value, $precision, PHP_ROUND_HALF_UP);
                 }
             );
 
-        return $unitFormatter;
+        return $roundingService;
     }
 }

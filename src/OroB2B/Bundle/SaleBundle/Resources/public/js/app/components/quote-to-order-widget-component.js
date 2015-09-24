@@ -15,7 +15,8 @@ define(function(require) {
                     modal: true,
                     resizable: true,
                     width: 1000,
-                    autoResize: true
+                    allowMaximize: true,
+                    dblclick: 'maximize'
                 }
             }
         },
