@@ -4,9 +4,10 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Component\Testing\WebTestCase;
 
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
+
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 
@@ -22,30 +23,48 @@ class AjaxQuoteProductControllerTest extends WebTestCase
     {
         $this->initClient();
 
-        $this->loadFixtures([
-            'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
-        ]);
+        $this->loadFixtures(
+            [
+                'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
+            ]
+        );
     }
 
-    public function testMatchQuoteProductOfferAction()
-    {
+    /**
+     * @dataProvider offerDataProvider
+     *
+     * @param string $productSku
+     * @param string $quoteProductOfferReference
+     * @param string $unitCode
+     * @param string $quantity
+     * @param array $expected
+     */
+    public function testMatchQuoteProductOfferAction(
+        $productSku,
+        $quoteProductOfferReference,
+        $unitCode,
+        $quantity,
+        array $expected = []
+    ) {
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(LoadUserData::ACCOUNT1_USER3, LoadUserData::ACCOUNT1_USER3)
         );
 
         /** @var QuoteProduct $quoteProduct */
-        $quoteProduct = $this->getQuoteProduct();
+        $quoteProduct = $this->getQuoteProduct($productSku);
 
-        /** @var ProductUnit $productUnit */
-        $productUnit = $this->getReference(LoadQuoteData::UNIT2);
-        $quantity = 2;
+        /** @var QuoteProductOffer $quoteProductOffer */
+        $quoteProductOffer = $this->getReference($quoteProductOfferReference);
+        if ($expected) {
+            $expected = array_merge_recursive(['id' => $quoteProductOffer->getId()], $expected);
+        }
 
         $this->client->request(
             'GET',
             $this->getUrl(
                 'orob2b_sale_quote_frontend_quote_product_match_offer',
-                ['id' => $quoteProduct->getId(), 'unit'=> $productUnit->getCode(), 'qty'=> $quantity]
+                ['id' => $quoteProduct->getId(), 'unit' => $unitCode, 'qty' => $quantity]
             )
         );
 
@@ -53,32 +72,56 @@ class AjaxQuoteProductControllerTest extends WebTestCase
 
         $result = $this->getJsonResponseContent($response, 200);
 
-        $this->assertArrayHasKey('offer', $result);
-        $this->assertArrayHasKey('unit', $result['offer']);
-        $this->assertArrayHasKey('qty', $result['offer']);
-        $this->assertArrayHasKey('price', $result['offer']);
+        $this->assertInternalType('array', $result);
 
-        $formatter = $this->getContainer()->get('oro_locale.formatter.number');
-        $offer = $result['offer'];
+        if (!$expected) {
+            $this->assertEquals([], $result);
 
-        $this->assertEquals($productUnit->getCode(), $offer['unit']);
-        $this->assertEquals($quantity, $offer['qty']);
-        $this->assertEquals(
-            $formatter->formatCurrency(LoadQuoteData::PRICE2, LoadQuoteData::CURRENCY1),
-            $offer['price']
-        );
+            return;
+        }
+
+        $this->assertArrayHasKey('id', $result);
+        $this->assertArrayHasKey('unit', $result);
+        $this->assertArrayHasKey('qty', $result);
+        $this->assertArrayHasKey('price', $result);
+
+        $this->assertEquals($expected, $result);
     }
 
     /**
+     * @return array
+     */
+    public function offerDataProvider()
+    {
+        return [
+            'valid' => [
+                LoadQuoteData::PRODUCT1,
+                'sale.quote.1.product.1.offer.2',
+                'bottle',
+                2,
+                [
+                    'unit' => 'bottle',
+                    'qty' => 2,
+                    'price' => '$2.00',
+                ],
+            ],
+            'empty unit' => [LoadQuoteData::PRODUCT1, 'sale.quote.1.product.1.offer.2', null, 2],
+            'empty quantity' => [LoadQuoteData::PRODUCT1, 'sale.quote.1.product.1.offer.2', 'bottle', null],
+        ];
+    }
+
+    /**
+     * @param string $productSku
+     *
      * @return null|QuoteProduct
      */
-    protected function getQuoteProduct()
+    protected function getQuoteProduct($productSku)
     {
         /** @var Quote $quote */
         $quote = $this->getReference(LoadQuoteData::QUOTE1);
 
         foreach ($quote->getQuoteProducts() as $quoteItem) {
-            if ($quoteItem->getProductSku() === LoadQuoteData::PRODUCT1) {
+            if ($quoteItem->getProductSku() === $productSku) {
                 return $quoteItem;
             }
         }

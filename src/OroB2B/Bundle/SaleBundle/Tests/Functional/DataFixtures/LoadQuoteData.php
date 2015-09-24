@@ -171,7 +171,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
             $product->setProductSku($sku);
         }
 
-        foreach ($items as $item) {
+        foreach ($items as $index => $item) {
             $productOffer = new QuoteProductOffer();
             $productOffer
                 ->setAllowIncrements($item['allow_increments'])
@@ -187,6 +187,9 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
             }
 
             $manager->persist($productOffer);
+
+            // e.g sale.quote.1.product.1.offer.1
+            $this->addReference($quote->getQid() . '.' . $sku . '.offer.' . ($index + 1), $productOffer);
 
             $product->addQuoteProductOffer($productOffer);
         }

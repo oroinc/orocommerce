@@ -32,22 +32,32 @@ class AjaxQuoteProductController extends Controller
         $matcher = $this->get('orob2b_sale.service.quote_product_offer_matcher');
         $offer = $matcher->match($quoteProduct, $request->get('unit'), $request->get('qty'));
 
-        return new JsonResponse(['offer' => !$offer ? null : $this->createResponseData($offer)]);
+        return new JsonResponse($this->createResponseData($offer));
     }
 
     /**
-     * @param QuoteProductOffer $offer
+     * @param QuoteProductOffer|null $offer
      * @return array
      */
-    protected function createResponseData(QuoteProductOffer $offer)
+    protected function createResponseData(QuoteProductOffer $offer = null)
     {
-        $formatter = $this->get('oro_locale.formatter.number');
+        if (!$offer) {
+            return [];
+        }
+
         $price = $offer->getPrice();
 
+        if (!$price) {
+            return [];
+        }
+
+        $formatter = $this->get('oro_locale.formatter.number');
+
         return [
+            'id' => $offer->getId(),
             'unit' => $offer->getProductUnitCode(),
             'qty' => $offer->getQuantity(),
-            'price' => $formatter->formatCurrency($price->getValue(), $price->getCurrency())
+            'price' => $formatter->formatCurrency($price->getValue(), $price->getCurrency()),
         ];
     }
 }
