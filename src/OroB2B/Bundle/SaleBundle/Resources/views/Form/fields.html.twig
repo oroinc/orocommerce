@@ -145,8 +145,11 @@
     {% set componentOptions = {
         offerSelector: '[name=\'%s\']'|format(offerChoiceName),
         quantitySelector: '[name=\'%s\']'|format(form.quantity.vars.full_name),
+        unitInputSelector: '[name=\'%s\']'|format(form.unit.vars.full_name),
         unitSelector: '#%s .quote-product-offer-quantity-unit'|format(id),
-        unitPriceSelector: '#%s .quote-product-offer-price span'|format(id)
+        unitPriceSelector: '#%s .quote-product-offer-price span'|format(id),
+        quoteProductId: quoteProduct.id,
+        offerNotFoundMessage: 'orob2b.sale.quoteproductoffer.configurable.offer.blank'
     } %}
     <tr id="{{ id }}"
         data-page-component-module="orob2bsale/js/app/components/quote-product-to-order-component"
@@ -194,10 +197,8 @@
                 {{ form_widget(form.unit) }}
                 <span class="quote-product-offer-quantity-unit">{{ defaultUnitCode }}</span>
             </div>
-            <div>
-                {{ form_errors(form.quantity) }}
-                {{ form_errors(form.unit) }}
-            </div>
+            {{ form_errors(form.quantity) }}
+            {{ form_errors(form.unit) }}
         </td>
         <td class="quote-product-offer-price">
             <span>{{ defaultPrice }}</span>
