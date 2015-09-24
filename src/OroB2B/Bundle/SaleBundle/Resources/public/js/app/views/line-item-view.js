@@ -37,7 +37,7 @@ define(function(require) {
             itemWidget: '.quote-lineitem-offers-item',
             syncClass: 'synchronized',
             productReplacementContainer: '.sale-quoteproduct-product-replacement-select',
-            sellerNotesContainer: '.sale-quoteproduct-notes-seller',
+            sellerNotesContainer: '.quote-lineitem-notes-seller',
             requestsOnlyContainer: '.sale-quoteproductrequest-only',
             errorMessage: 'Sorry, unexpected error was occurred',
             units: {}
@@ -156,6 +156,7 @@ define(function(require) {
             this.$typeSelect.trigger('change');
 
             this.checkAddButton();
+            this.checkAddNotes();
         },
 
         checkAddButton: function() {
@@ -283,6 +284,16 @@ define(function(require) {
 
             if (force) {
                 this.$el.find('select').uniform('update');
+            }
+        },
+
+        /**
+         * Check Add Notes
+         */
+        checkAddNotes: function() {
+            if (this.$sellerNotesContainer.find('textarea').val()) {
+                this.$notesContainer.addClass(this.options.classNotesSellerActive);
+                this.$sellerNotesContainer.find('textarea').focus();
             }
         },
 

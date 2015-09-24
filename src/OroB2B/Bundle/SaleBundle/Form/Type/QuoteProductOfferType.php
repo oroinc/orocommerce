@@ -70,7 +70,10 @@ class QuoteProductOfferType extends AbstractType
             ])
             ->add('allowIncrements', 'checkbox', [
                 'required' => false,
-                'label' => 'orob2b.sale.quoteproductoffer.allow_increments.label'
+                'label' => 'orob2b.sale.quoteproductoffer.allow_increments.label',
+                'attr' => [
+                    'default' => true,
+                ],
             ])
             ->add('productUnit', ProductUnitRemovedSelectionType::NAME, [
                 'label' => 'orob2b.product.productunit.entity_label',
@@ -78,28 +81,6 @@ class QuoteProductOfferType extends AbstractType
             ])
             ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetData'])
         ;
-
-        // Set quantity to 1 by default
-        $builder->get('quantity')->addEventListener(
-            FormEvents::PRE_SET_DATA,
-            function (FormEvent $event) {
-                $data = $event->getData();
-                if (!$data) {
-                    $event->setData(1);
-                }
-            }
-        );
-
-        // Set 'or more' checked by default
-        $builder->get('allowIncrements')->addEventListener(
-            FormEvents::PRE_SET_DATA,
-            function (FormEvent $event) {
-                $data = $event->getData();
-                if (!$data) {
-                    $event->setData(true);
-                }
-            }
-        );
     }
 
     /**
@@ -127,12 +108,16 @@ class QuoteProductOfferType extends AbstractType
      */
     public function postSetData(FormEvent $event)
     {
-        $priceType = $event->getForm()->get('priceType');
+//        // Set priceType to PRICE_TYPE_UNIT by default
+//        $priceType = $event->getForm()->get('priceType');
+//        if (null === $priceType->getData()) {
+//            $priceType->setData(QuoteProductOffer::PRICE_TYPE_UNIT);
+//        }
 
-        if ($priceType->getData()) {
-            return;
+        // Set quantity to 1 by default
+        $quantity = $event->getForm()->get('quantity');
+        if (null === $quantity->getData()) {
+            $quantity->setData(1);
         }
-
-        $priceType->setData(QuoteProductOffer::PRICE_TYPE_UNIT);
     }
 }

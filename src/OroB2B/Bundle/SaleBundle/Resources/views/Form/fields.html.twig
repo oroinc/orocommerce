@@ -69,6 +69,7 @@
 
     {% set commentAccount = form.vars.value.commentAccount|default(null) %}
     {% set commentSeller = form.vars.value.comment|default(null) %}
+    {% set quoteProductRequests = form.vars.value.quoteProductRequests|default([]) %}
 
     <td class="quote-lineitem-product">
         <div class="quote-lineitem-product-select">
@@ -87,8 +88,9 @@
         {#</div>#}
     </td>
     <td class="quote-lineitem-requested">
-        {{ form_widget(form.quoteProductRequests) }}
-        {{ form_errors(form.quoteProductRequests) }}
+        {#{{ form_widget(form.quoteProductRequests) }}
+        {{ form_errors(form.quoteProductRequests) }}#}
+        {{ block('orob2b_sale_quote_product_request_collection') }}
     </td>
     <td class="quote-lineitem-offers">
         {{ form_widget(form.quoteProductOffers) }}
@@ -112,6 +114,37 @@
     </td>
 {% endblock %}
 
+{% block orob2b_sale_quote_product_request_collection %}
+    {% if quoteProductRequests|length %}
+        <table class="quote-lineitem-requests-widget table-bordered">
+            <thead>
+                <tr>
+                    <th colspan="2"><span>{{ 'orob2b.sale.quoteproductrequest.quantity.label'|trans }}</span></th>
+                    <th><span>{{ 'orob2b.sale.quoteproductrequest.price.label'|trans }}</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for child in quoteProductRequests %}
+                    <tr class="quote-lineitem-requested quote-lineitem-requested-item">
+                        <td class="quote-lineitem-requested-quantity">
+                            {{ child.quantity }}
+                        </td>
+                        <td class="quote-lineitem-requested-unit">
+                            {{ child.productUnit }}
+                        </td>
+                        <td class="quote-lineitem-requested-price">
+                            {% if child.price is not empty %}
+                                {{ child.price|oro_format_price }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}
+
+{#
 {% block orob2b_sale_quote_product_request_collection_widget %}
     {% if form.children|length %}
         <table class="quote-lineitem-requests-widget table-bordered">
@@ -157,10 +190,11 @@
         {% endif %}
     </td>
 {% endblock %}
+#}
 
 {% block orob2b_sale_quote_product_offer_collection_widget %}
     {% if prototype is defined %}
-        {% set prototype_html = _self.orob2b_sale_quote_product_offer_prototype(form) %}
+        {% set prototype_html = _self.orob2b_sale_quote_product_offer_prototype(form, true) %}
     {% endif %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
     {% set id = id ~ '_collection' %}
@@ -190,7 +224,7 @@
     </div>
 {% endblock %}
 
-{% macro orob2b_sale_quote_product_offer_prototype(widget) %}
+{% macro orob2b_sale_quote_product_offer_prototype(widget, prototype) %}
     {% if 'collection' in widget.vars.block_prefixes %}
         {% set form = widget.vars.prototype %}
         {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
@@ -200,7 +234,7 @@
     {% endif %}
     <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
         class="quote-lineitem-offers quote-lineitem-offers-item">
-        {{ form_widget(form) }}
+        {{ form_widget(form, { 'prototype' : prototype}) }}
         <td class="quote-lineitem-offers-remove">
             <button type="button" class="removeRow btn icons-holder"><i class="icon-remove"></i></button>
         </td>
@@ -218,7 +252,11 @@
     </td>
     <td class="quote-lineitem-offers-more">
         <div class="quote-lineitem-offers-more-fields">
-            {{ form_widget(form.allowIncrements) }}
+            {% set attrs = {} %}
+            {% if prototype|default(false) and form.allowIncrements.vars.attr.default is defined %}
+                {% set attrs = attrs|merge({'checked' : 'checked'}) %}
+            {% endif %}
+            {{ form_widget(form.allowIncrements, attrs) }}
             {{ form_label(form.allowIncrements) }}
             {{ form_errors(form.allowIncrements) }}
         </div>
@@ -231,25 +269,3 @@
     </td>
 {% endblock %}
 
-
-{% block oro_currency_price_widget %}
-    {% if hide_currency %}
-        {{ form_widget(form.value) }}
-        {{ form_widget(form.currency) }}
-        {{ form_errors(form.value) }}
-        {{ form_errors(form.currency) }}
-    {% else %}
-        <table>
-            <tr>
-                <td>
-                    {{ form_widget(form.value) }}
-                    {{ form_errors(form.value) }}
-                </td>
-                <td>
-                    {{ form_widget(form.currency) }}
-                    {{ form_errors(form.currency) }}
-                </td>
-            </tr>
-        </table>
-    {% endif %}
-{% endblock %}

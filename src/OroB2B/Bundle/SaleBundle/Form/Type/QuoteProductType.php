@@ -2,9 +2,7 @@
 
 namespace OroB2B\Bundle\SaleBundle\Form\Type;
 
-use Symfony\Bridge\Doctrine\Form\DataTransformer\CollectionToArrayTransformer;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormEvent;
@@ -135,10 +133,6 @@ class QuoteProductType extends AbstractType
                 'label' => 'orob2b.sale.quoteproduct.product_replacement.label',
                 'create_enabled' => false,
             ])
-            ->add('quoteProductRequests', QuoteProductRequestCollectionType::NAME, [
-                'read_only' => true,
-                'required' => false,
-            ])
             ->add('quoteProductOffers', QuoteProductOfferCollectionType::NAME, [
                 'add_label' => 'orob2b.sale.quoteproductoffer.add_label',
             ])
@@ -161,30 +155,6 @@ class QuoteProductType extends AbstractType
 
         ;
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
-
-        $builder->get('quoteProductRequests')->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
-            /** @var \Doctrine\ORM\PersistentCollection $formData */
-            $formData = $event->getForm()->getData();
-
-            if (!$formData) {
-                return;
-            }
-            
-            $requests = [];
-            foreach ($formData as $quoteProductRequest) {
-                $requests[] = [
-                    'quantity' => $quoteProductRequest->getQuantity(),
-                    'productUnit' => $quoteProductRequest->getProductUnitCode(),
-                    'price' => [
-                        'value' => $quoteProductRequest->getPrice()->getValue(),
-                        'currency' => $quoteProductRequest->getPrice()->getCurrency(),
-                    ]
-                ];
-            }
-            if (null === $event->getData()) {
-                $event->setData($requests);
-            }
-        });
     }
 
     /**

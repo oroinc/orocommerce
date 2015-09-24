@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -63,6 +65,48 @@ class RequestProductTypeTest extends AbstractTest
     public function testGetName()
     {
         $this->assertEquals(RequestProductType::NAME, $this->formType->getName());
+    }
+
+    /**
+     * @param array $inputData
+     * @param array $expectedData
+     *
+     * @dataProvider buildViewProvider
+     */
+    public function testBuildView(array $inputData, array $expectedData)
+    {
+        $view = new FormView();
+
+        $view->vars = $inputData['vars'];
+
+        /* @var $form FormInterface|\PHPUnit_Framework_MockObject_MockObject */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+
+        $this->formType->buildView($view, $form, $inputData['options']);
+
+        $this->assertSame($expectedData, $view->vars);
+    }
+
+    /**
+     * @return array
+     */
+    public function buildViewProvider()
+    {
+        return [
+            'test options' => [
+                'input' => [
+                    'vars' => [],
+                    'options' => [
+                        'page_component' => 'component',
+                        'page_component_options' => 'options',
+                    ],
+                ],
+                'expected' => [
+                    'page_component' => 'component',
+                    'page_component_options' => 'options',
+                ],
+            ],
+        ];
     }
 
     /**

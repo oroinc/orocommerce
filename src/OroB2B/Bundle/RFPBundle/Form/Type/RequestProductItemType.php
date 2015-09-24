@@ -47,19 +47,9 @@ class RequestProductItemType extends AbstractType
             ->add('productUnit', ProductUnitRemovedSelectionType::NAME, [
                 'label' => 'orob2b.product.productunit.entity_label',
                 'required' => true,
-            ]);
+            ])
+            ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetData'])
         ;
-
-        // Set quantity to 1 by default
-        $builder->get('quantity')->addEventListener(
-            FormEvents::PRE_SET_DATA,
-            function (FormEvent $event) {
-                $data = $event->getData();
-                if (!$data) {
-                    $event->setData(1);
-                }
-            }
-        );
     }
 
     /**
@@ -80,5 +70,17 @@ class RequestProductItemType extends AbstractType
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function postSetData(FormEvent $event)
+    {
+        // Set quantity to 1 by default
+        $quantity = $event->getForm()->get('quantity');
+        if (null === $quantity->getData()) {
+            $quantity->setData(1);
+        }
     }
 }
