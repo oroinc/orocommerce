@@ -58,7 +58,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
                     'enum_code' => 'category_visibility',
                     'configs' => [
                         'allowClear' => false,
-                        'placeholder' => 'orob2b.account.categoryvisibility.default.label',
+                        'placeholder' => false,
                     ],
                 ]
             )
