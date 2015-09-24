@@ -96,7 +96,7 @@ class ProductUnitRemovedSelectionTypeTest extends FormIntegrationTestCase
      * @param array $expectedData
      * @param boolean $withParent
      *
-     * @dataProvider finishViewDataProvider
+     * @dataProvider finishViewProvider
      */
     public function testFinishView(array $inputData = [], array $expectedData = [], $withParent = true)
     {
@@ -132,8 +132,10 @@ class ProductUnitRemovedSelectionTypeTest extends FormIntegrationTestCase
 
     /**
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function finishViewDataProvider()
+    public function finishViewProvider()
     {
         $precision = new ProductUnitPrecision();
         $unit = new ProductUnit();
