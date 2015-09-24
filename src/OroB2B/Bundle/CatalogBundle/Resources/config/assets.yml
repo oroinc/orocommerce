@@ -1,5 +1,6 @@
 css:
     'orob2bcatalog':
         - 'bundles/orob2bcatalog/css/categories.css'
+        - 'bundles/orob2bcatalog/css/product-grid-sidebar.css'
         # libraries' styles
         - 'bundles/orob2bcatalog/css/lib/jstree/themes/b2b/style.css'

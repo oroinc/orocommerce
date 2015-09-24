@@ -2,7 +2,8 @@
 
 {% set pageComponentOptions = {
     '_wid': app.request.get('_wid'),
-    'savedId': savedId|default(null)
+    'savedId': savedId|default(null),
+    'shoppingListId': shoppingListId|default(null)
 } %}
 {% set message %}
     {% set msgArray = ['orob2b.shoppinglist.lineitem.flash.success'|trans] %}
