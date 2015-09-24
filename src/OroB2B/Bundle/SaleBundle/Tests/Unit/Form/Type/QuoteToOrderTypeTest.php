@@ -38,9 +38,8 @@ class QuoteToOrderTypeTest extends AbstractQuoteToProductTestCase
             new PreloadedExtension(
                 [
                     QuoteProductToOrderType::NAME => new QuoteProductToOrderType(
-                        $this->getTranslator(),
-                        $this->getUnitFormatter(),
-                        $this->getNumberFormatter()
+                        $this->getMatcher(),
+                        $this->getRoundingService()
                     ),
                 ],
                 []
@@ -105,23 +104,22 @@ class QuoteToOrderTypeTest extends AbstractQuoteToProductTestCase
                 ],
                 'submit' => [
                     [
-                        QuoteProductToOrderType::FIELD_OFFER => '2',
-                        QuoteProductToOrderType::FIELD_QUANTITY => '15',
-
+                        QuoteProductToOrderType::FIELD_QUANTITY => '16',
+                        QuoteProductToOrderType::FIELD_UNIT => 'kg',
                     ],
                     [
-                        QuoteProductToOrderType::FIELD_OFFER => '1',
-                        QuoteProductToOrderType::FIELD_QUANTITY => '11',
+                        QuoteProductToOrderType::FIELD_QUANTITY => '12',
+                        QuoteProductToOrderType::FIELD_UNIT => 'kg',
                     ],
                 ],
                 'expectedData' => [
                     [
+                        QuoteProductToOrderType::FIELD_QUANTITY => 16,
                         QuoteProductToOrderType::FIELD_OFFER => $secondUnitOffer,
-                        QuoteProductToOrderType::FIELD_QUANTITY => 15,
                     ],
                     [
+                        QuoteProductToOrderType::FIELD_QUANTITY => 12,
                         QuoteProductToOrderType::FIELD_OFFER => $firstUnitOffer,
-                        QuoteProductToOrderType::FIELD_QUANTITY => 11,
                     ]
                 ],
             ]

@@ -489,7 +489,7 @@ class QuoteProduct implements ProductHolderInterface
     /**
      * @return bool
      */
-    public function hasIncrementedOffers()
+    public function hasIncrementalOffers()
     {
         foreach ($this->quoteProductOffers as $offer) {
             if ($offer->isAllowIncrements()) {
