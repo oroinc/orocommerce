@@ -32,6 +32,9 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
     const CURRENCY1 = 'USD';
     const CURRENCY2 = 'EUR';
 
+    const PRICE1 = 1.00;
+    const PRICE2 = 2.00;
+
     /**
      * @var array
      */
@@ -44,15 +47,17 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
                         'priceType' => QuoteProductOffer::PRICE_TYPE_UNIT,
                         'quantity'  => 1,
                         'unit'      => self::UNIT1,
-                        'price'     => 1,
+                        'price'     => self::PRICE1,
                         'currency'  => self::CURRENCY1,
+                        'allow_increments' => true
                     ],
                     [
                         'priceType' => QuoteProductOffer::PRICE_TYPE_UNIT,
                         'quantity'  => 2,
                         'unit'      => self::UNIT2,
-                        'price'     => 2,
+                        'price'     => self::PRICE2,
                         'currency'  => self::CURRENCY1,
+                        'allow_increments' => false
                     ],
                 ],
                 self::PRODUCT2 => [
@@ -62,6 +67,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
                         'unit'      => self::UNIT3,
                         'price'     => 3,
                         'currency'  => self::CURRENCY1,
+                        'allow_increments' => false
                     ]
                 ],
             ],
@@ -168,7 +174,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
         foreach ($items as $item) {
             $productOffer = new QuoteProductOffer();
             $productOffer
-                ->setAllowIncrements(false)
+                ->setAllowIncrements($item['allow_increments'])
                 ->setQuantity($item['quantity'])
                 ->setPriceType($item['priceType'])
                 ->setPrice((new Price())->setValue($item['price'])->setCurrency($item['currency']))
