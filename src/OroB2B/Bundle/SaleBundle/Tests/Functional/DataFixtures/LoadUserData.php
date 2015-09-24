@@ -67,11 +67,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             [
                 'class' => 'orob2b_account.entity.account_user.class',
                 'acls'  => ['VIEW_LOCAL'],
-            ],
-            [
-                'class' => 'orob2b_order.entity.order.class',
-                'acls'  => ['VIEW_LOCAL'],
-            ],
+            ]
         ],
         self::ROLE4 => [
             [

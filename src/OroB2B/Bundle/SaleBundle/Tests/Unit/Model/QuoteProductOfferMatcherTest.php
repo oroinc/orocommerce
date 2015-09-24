@@ -48,6 +48,12 @@ class QuoteProductOfferMatcherTest extends \PHPUnit_Framework_TestCase
                 'quantity' => '100',
                 'expectedResult' => null,
             ],
+            'empty request' => [
+                'quoteProduct' => $this->createQuoteProduct(),
+                'unitCode' => null,
+                'quantity' => null,
+                'expectedResult' => null,
+            ],
             'quote product without expected unit code' => [
                 'quoteProduct' => $this->createQuoteProduct(
                     [
