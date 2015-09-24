@@ -56,7 +56,7 @@ class AjaxProductUnitControllerTest extends WebTestCase
     public function productUnitsDataProvider()
     {
         return [
-            'product.1' => [
+            'product.1 full' => [
                 'product.1',
                 [
                     'bottle' => 'orob2b.product_unit.bottle.label.full',
@@ -64,7 +64,7 @@ class AjaxProductUnitControllerTest extends WebTestCase
                 ],
                 false
             ],
-            'product.2' => [
+            'product.2 full' => [
                 'product.2',
                 [
                     'bottle' => 'orob2b.product_unit.bottle.label.full',
@@ -73,7 +73,7 @@ class AjaxProductUnitControllerTest extends WebTestCase
                 ],
                 false
             ],
-            'product.1 short label' => [
+            'product.1 short' => [
                 'product.1',
                 [
                     'bottle' => 'orob2b.product_unit.bottle.label.short',
@@ -81,7 +81,7 @@ class AjaxProductUnitControllerTest extends WebTestCase
                 ],
                 true
             ],
-            'product.2 short label' => [
+            'product.2 short' => [
                 'product.2',
                 [
                     'bottle' => 'orob2b.product_unit.bottle.label.short',

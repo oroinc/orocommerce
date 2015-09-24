@@ -202,6 +202,28 @@ abstract class AbstractTest extends FormIntegrationTestCase
 
     /**
      * @param string $className
+     * @param array $fields
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getMockEntity($className, array $fields = [])
+    {
+        $mock = $this->getMockBuilder($className)
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+
+        foreach ($fields as $method => $value) {
+            $mock->expects($this->any())
+                ->method($method)
+                ->will($this->returnValue($value))
+            ;
+        }
+
+        return $mock;
+    }
+
+    /**
+     * @param string $className
      * @param int $id
      * @param string $primaryKey
      * @return object
@@ -223,28 +245,6 @@ abstract class AbstractTest extends FormIntegrationTestCase
         }
 
         return $entities[$className][$id];
-    }
-
-    /**
-     * @param string $className
-     * @param array $fields
-     * @return \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getMockEntity($className, array $fields = [])
-    {
-        $mock = $this->getMockBuilder($className)
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-
-        foreach ($fields as $method => $value) {
-            $mock->expects($this->any())
-                ->method($method)
-                ->will($this->returnValue($value))
-            ;
-        }
-
-        return $mock;
     }
 
     /**
