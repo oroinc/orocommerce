@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormFactory;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\EntityConfigBundle\Provider\ConfigProviderInterface;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclPrivilegeRepository;
@@ -42,7 +42,7 @@ abstract class AbstractAccountUserRoleUpdateHandlerTestCase extends \PHPUnit_Fra
     protected $chainMetadataProvider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ConfigProviderInterface
+     * @var \PHPUnit_Framework_MockObject_MockObject|ConfigProvider
      */
     protected $ownershipConfigProvider;
 
@@ -102,8 +102,10 @@ abstract class AbstractAccountUserRoleUpdateHandlerTestCase extends \PHPUnit_Fra
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $this->ownershipConfigProvider
-            = $this->getMock('Oro\Bundle\EntityConfigBundle\Provider\ConfigProviderInterface');
+        $this->ownershipConfigProvider =
+            $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider')
+                ->disableOriginalConstructor()
+                ->getMock();
 
         $this->roleRepository =
             $this->getMockBuilder('\OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository')
