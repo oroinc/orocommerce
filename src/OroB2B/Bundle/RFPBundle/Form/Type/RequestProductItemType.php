@@ -47,6 +47,7 @@ class RequestProductItemType extends AbstractType
             ->add('productUnit', ProductUnitRemovedSelectionType::NAME, [
                 'label' => 'orob2b.product.productunit.entity_label',
                 'required' => true,
+                'compact' => $options['compact_units'],
             ])
             ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetData'])
         ;
@@ -59,6 +60,7 @@ class RequestProductItemType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
+            'compact_units' => false,
             'intention'  => 'rfp_request_product_item',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
         ]);

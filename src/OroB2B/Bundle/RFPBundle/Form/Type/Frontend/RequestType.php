@@ -92,7 +92,11 @@ class RequestType extends AbstractType
             ->add('body', 'textarea', [
                 'label' => 'orob2b.rfp.request.body.label'
             ])
-            ->add('requestProducts', RequestProductCollectionType::NAME)
+            ->add('requestProducts', RequestProductCollectionType::NAME, [
+                'options' => [
+                    'compact_units' => true,
+                ],
+            ])
         ;
 
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'postSubmit']);

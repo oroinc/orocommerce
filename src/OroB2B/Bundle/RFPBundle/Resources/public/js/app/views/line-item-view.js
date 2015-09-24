@@ -32,6 +32,7 @@ define(function(require) {
             },
             unitLoaderRouteName: 'orob2b_pricing_frontend_units_by_pricelist',
             unitsRoute: 'orob2b_product_frontend_ajaxproductunit_productunits',
+            compactUnits: false,
             itemsContainer: '.rfp-lineitem-requested-items',
             itemWidget: '.rfp-lineitem-requested-item',
             addItemButton: '.rfp-lineitem-requested-item-add'
@@ -140,8 +141,14 @@ define(function(require) {
                 this.updateProductUnits(productUnits, force || false);
             } else {
                 var self = this;
+                var routeParams = {'id': productId};
+
+                if (this.options.compactUnits) {
+                    routeParams['short'] = true;
+                }
+
                 $.ajax({
-                    url: routing.generate(this.options.unitsRoute, {'id': productId}),
+                    url: routing.generate(this.options.unitsRoute, routeParams),
                     type: 'GET',
                     beforeSend: function() {
                         self.loadingMask.show();

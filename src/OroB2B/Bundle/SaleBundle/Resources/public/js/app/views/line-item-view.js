@@ -28,6 +28,7 @@ define(function(require) {
             typeSelect: '.quote-lineitem-product-type-select',
             unitsSelect: '.quote-lineitem-offer-unit-select',
             unitsRoute: 'orob2b_product_unit_product_units',
+            compactUnits: false,
             addItemButton: '.add-list-item',
             notesContainer: '.quote-lineitem-notes',
             addNotesButton: '.quote-lineitem-notes-add-btn',
@@ -219,8 +220,14 @@ define(function(require) {
                 this.updateProductUnits(productUnits, force || false);
             } else {
                 var self = this;
+                var routeParams = {'id': productId};
+
+                if (this.options.compactUnits) {
+                    routeParams['short'] = true;
+                }
+
                 $.ajax({
-                    url: routing.generate(this.options.unitsRoute, {'id': productId}),
+                    url: routing.generate(this.options.unitsRoute, routeParams),
                     type: 'GET',
                     beforeSend: function() {
                         self.loadingMask.show();
