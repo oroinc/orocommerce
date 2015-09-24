@@ -79,6 +79,8 @@ services:
 
     orob2b_rfp.form.type.request_product:
         class: %orob2b_rfp.form.type.request_product.class%
+        arguments:
+            - @orob2b_product.formatter.product_unit_label
         calls:
             - [setDataClass, [%orob2b_rfp.entity.request_product.class%]]
         tags:

@@ -20,8 +20,9 @@ use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductRemovedSele
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
+use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType;
 use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductCollectionType;
-use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType;
+use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType as FrontendRequestProductType;
 use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
 use OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type\AbstractTest;
@@ -184,14 +185,23 @@ class RequestTypeTest extends AbstractTest
      */
     protected function getExtensions()
     {
+        /* @var $productUnitLabelFormatter ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject */
+        $productUnitLabelFormatter = $this->getMockBuilder(
+            'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
+        )
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $priceType                  = $this->preparePriceType();
         $entityType                 = $this->prepareProductEntityType();
         $optionalPriceType          = $this->prepareOptionalPriceType();
         $currencySelectionType      = new CurrencySelectionTypeStub();
         $requestProductItemType     = $this->prepareRequestProductItemType();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
-        $requestProductType         = new RequestProductType();
+        $requestProductType         = new RequestProductType($productUnitLabelFormatter);
         $requestProductType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
+        $frontendRequestProductType = new FrontendRequestProductType();
+        $frontendRequestProductType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
 
         return [
             new PreloadedExtension(
@@ -208,6 +218,7 @@ class RequestTypeTest extends AbstractTest
                     $currencySelectionType->getName()       => $currencySelectionType,
                     $requestProductItemType->getName()      => $requestProductItemType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
+                    $frontendRequestProductType->getName()  => $frontendRequestProductType,
                 ],
                 []
             ),

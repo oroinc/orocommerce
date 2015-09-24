@@ -28,11 +28,11 @@ define(function(require) {
             typeSelect: '.quote-lineitem-product-type-select',
             unitsSelect: '.quote-lineitem-offer-unit-select',
             unitsRoute: 'orob2b_product_unit_product_units',
+            compactUnits: false,
             addItemButton: '.add-list-item',
             notesContainer: '.quote-lineitem-notes',
             addNotesButton: '.quote-lineitem-notes-add-btn',
             removeNotesButton: '.quote-lineitem-notes-remove-btn',
-            itemsCollectionContainer: '.quote-lineitem-collection',
             itemsContainer: '.quote-lineitem-offers-items',
             itemWidget: '.quote-lineitem-offers-item',
             syncClass: 'synchronized',
@@ -61,7 +61,7 @@ define(function(require) {
         /**
          * @property {Object}
          */
-        $container: null,
+        $el: null,
 
         /**
          * @property {Object}
@@ -87,11 +87,6 @@ define(function(require) {
          * @property {Object}
          */
         $itemsContainer: null,
-
-        /**
-         * @property {Object}
-         */
-        $itemsCollectionContainer: null,
 
         /**
          * @property {Object}
@@ -136,7 +131,6 @@ define(function(require) {
             this.$productReplacementSelect = this.$el.find(this.options.productReplacementSelect);
             this.$typeSelect = this.$el.find(this.options.typeSelect);
             this.$addItemButton = this.$el.find(this.options.addItemButton);
-            this.$itemsCollectionContainer = this.$el.find(this.options.itemsCollectionContainer);
             this.$itemsContainer = this.$el.find(this.options.itemsContainer);
             this.$productReplacementContainer = this.$el.find(this.options.productReplacementContainer);
             this.$notesContainer = this.$el.find(this.options.notesContainer);
@@ -219,8 +213,14 @@ define(function(require) {
                 this.updateProductUnits(productUnits, force || false);
             } else {
                 var self = this;
+                var routeParams = {'id': productId};
+
+                if (this.options.compactUnits) {
+                    routeParams['short'] = true;
+                }
+                
                 $.ajax({
-                    url: routing.generate(this.options.unitsRoute, {'id': productId}),
+                    url: routing.generate(this.options.unitsRoute, routeParams),
                     type: 'GET',
                     beforeSend: function() {
                         self.loadingMask.show();

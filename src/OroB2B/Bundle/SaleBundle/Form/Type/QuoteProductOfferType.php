@@ -78,6 +78,7 @@ class QuoteProductOfferType extends AbstractType
             ->add('productUnit', ProductUnitRemovedSelectionType::NAME, [
                 'label' => 'orob2b.product.productunit.entity_label',
                 'required' => true,
+                'compact' => $options['compact_units'],
             ])
             ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetData'])
         ;
@@ -90,6 +91,7 @@ class QuoteProductOfferType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
+            'compact_units' => false,
             'intention' => 'sale_quote_product_offer',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
         ]);

@@ -104,7 +104,7 @@ class QuoteProductType extends AbstractType
             $units[$product->getId()] = [];
 
             foreach ($product->getAvailableUnitCodes() as $unitCode) {
-                $units[$product->getId()][$unitCode] = $this->labelFormatter->format($unitCode);
+                $units[$product->getId()][$unitCode] = $this->labelFormatter->format($unitCode, $options['compact_units']);
             }
         }
 
@@ -112,6 +112,7 @@ class QuoteProductType extends AbstractType
             'units' => $units,
             'typeOffer' => QuoteProduct::TYPE_OFFER,
             'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
+            'compactUnits' => $options['compact_units'],
         ];
 
         $view->vars['componentOptions'] = $componentOptions;
@@ -135,6 +136,9 @@ class QuoteProductType extends AbstractType
             ])
             ->add('quoteProductOffers', QuoteProductOfferCollectionType::NAME, [
                 'add_label' => 'orob2b.sale.quoteproductoffer.add_label',
+                'options' => [
+                    'compact_units' => $options['compact_units'],
+                ],
             ])
             ->add('type', 'hidden', [
                 'data' => QuoteProduct::TYPE_REQUESTED,
@@ -165,6 +169,7 @@ class QuoteProductType extends AbstractType
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
             'intention' => 'sale_quote_product',
+            'compact_units' => false,
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
             'page_component' => 'oroui/js/app/components/view-component',
             'page_component_options' => ['view' => 'orob2bsale/js/app/views/line-item-view'],

@@ -20,6 +20,7 @@ use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductUnitHolderValidator
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
+use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemType;
 
 abstract class AbstractTest extends FormIntegrationTestCase
@@ -66,6 +67,17 @@ abstract class AbstractTest extends FormIntegrationTestCase
             $productUnitHolderConstraint->validatedBy() => new ProductUnitHolderValidator(),
         ];
     }
+
+//    /**
+//     * @return RequestProductType
+//     */
+//    protected function prepareRequestProductType()
+//    {
+//        $requestProductType = new RequestProductType(null);
+//        $requestProductType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
+//
+//        return $requestProductType;
+//    }
 
     /**
      * @return RequestProductItemType
@@ -222,6 +234,28 @@ abstract class AbstractTest extends FormIntegrationTestCase
         }
 
         return $entities[$className][$id];
+    }
+
+    /**
+     * @param string $className
+     * @param array $fields
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getMockEntity($className, array $fields = [])
+    {
+        $mock = $this->getMockBuilder($className)
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+
+        foreach ($fields as $method => $value) {
+            $mock->expects($this->any())
+                ->method($method)
+                ->will($this->returnValue($value))
+            ;
+        }
+
+        return $mock;
     }
 
     /**
