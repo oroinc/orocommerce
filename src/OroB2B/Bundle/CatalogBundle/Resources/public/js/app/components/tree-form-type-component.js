@@ -1,10 +1,10 @@
-define(function (require) {
+define(function(require) {
     'use strict';
 
-    var TreeFormTypeComponent,
-        $ = require('jquery'),
-        _ = require('underscore'),
-        BasicTreeComponent = require('orob2bcatalog/js/app/components/basic-tree-component');
+    var TreeFormTypeComponent;
+    var $ = require('jquery');
+    var _ = require('underscore');
+    var BasicTreeComponent = require('orob2bcatalog/js/app/components/basic-tree-component');
 
     /**
      * Additional option:
@@ -14,18 +14,18 @@ define(function (require) {
         /**
          * @property {Object}
          */
-        $fieldSelector : null,
+        $fieldSelector: null,
 
         /**
          * @param {Object} options
          */
-        initialize: function (options) {
+        initialize: function(options) {
             TreeFormTypeComponent.__super__.initialize.call(this, options);
             if (!this.$tree) {
                 return;
             }
 
-            var fieldSelector = options['fieldSelector'];
+            var fieldSelector = options.fieldSelector;
             if (!fieldSelector) {
                 return;
             }
