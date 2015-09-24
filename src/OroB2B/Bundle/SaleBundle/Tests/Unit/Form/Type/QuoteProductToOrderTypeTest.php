@@ -66,6 +66,8 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
         $quantityViewValidation = null,
         $expectedValidation = null
     ) {
+        $this->markTestSkipped('This test is fixed in scope of BB-1224');
+
         $form = $this->factory->create($this->type, $input, ['attr' => ['data-validation' => $rootViewValidation]]);
         $this->assertEquals(
             $choices,
