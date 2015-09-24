@@ -40,7 +40,7 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
     }
 
     /**
-     * @param QuoteProduct $input
+     * @param QuoteProduct $quoteProduct
      * @param array $submit
      * @param bool $isValid
      * @param array $expectedData
@@ -48,13 +48,13 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
      * @dataProvider submitDataProvider
      */
     public function testSubmit(
-        QuoteProduct $input,
+        QuoteProduct $quoteProduct,
         array $submit,
         $isValid,
         array $expectedData,
         $expectedReadOnly
     ) {
-        $form = $this->factory->create($this->type, $input);
+        $form = $this->factory->create($this->type, $quoteProduct);
 
         $form->submit($submit);
         $this->assertSame($isValid, $form->isValid());
@@ -63,6 +63,10 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
             $expectedReadOnly,
             $form->get(QuoteProductToOrderType::FIELD_QUANTITY)->getConfig()->getOption('read_only')
         );
+
+        $view = $form->createView();
+        $this->assertArrayHasKey('quoteProduct', $view->vars);
+        $this->assertEquals($quoteProduct, $view->vars['quoteProduct']);
     }
 
     /**
@@ -76,7 +80,7 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
 
         return [
             'existing offers' => [
-                'input' => $this->createQuoteProduct([$firstOffer, $secondOffer, $thirdOffer]),
+                'quoteProduct' => $this->createQuoteProduct([$firstOffer, $secondOffer, $thirdOffer]),
                 'submit' => [
                     QuoteProductToOrderType::FIELD_QUANTITY => $secondOffer->getQuantity(),
                     QuoteProductToOrderType::FIELD_UNIT => 'kg',
@@ -89,7 +93,7 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
                 'expectedReadOnly' => false,
             ],
             'existing offers with readonly quantity' => [
-                'input' => $this->createQuoteProduct([$secondOffer, $thirdOffer]),
+                'quoteProduct' => $this->createQuoteProduct([$secondOffer, $thirdOffer]),
                 'submit' => [
                     QuoteProductToOrderType::FIELD_QUANTITY => $thirdOffer->getQuantity(),
                     QuoteProductToOrderType::FIELD_UNIT => 'kg',
@@ -102,7 +106,7 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
                 'expectedReadOnly' => true,
             ],
             'empty offers' => [
-                'input' => new QuoteProduct(),
+                'quoteProduct' => new QuoteProduct(),
                 'submit' => [],
                 'isValid' => false,
                 'expectedData' => [
