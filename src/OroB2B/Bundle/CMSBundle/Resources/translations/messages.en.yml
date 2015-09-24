@@ -15,16 +15,6 @@ orob2b.cms:
         child_pages.label:      'Child pages'
         parent_page.label:      'Parent page'
         slugs.label:            'Slugs'
-
-    loginpage:
-        entity_label:           'Login page'
-        entity_plural_label:    'Login pages'
-        bottom_content.label:   'Bottom content'
-        css.label:              'CSS'
-        id.label:               'ID'
-        top_content.label:      'Top content'
-        backgroud_image.label:  'Background image'
-        logo_image.label:       'Logo image'
     child_page:
         entity_label:           'Child page'
     slug:
@@ -50,11 +40,11 @@ orob2b.cms:
 
     loginpage:
         entity_plural_label: 'Frontend Login Pages'
+        background_image.label: 'Background image'
         entity_label: 'Frontend Login Page'
         id.label: 'Id'
         top_content.label: 'Top content'
         bottom_content.label: 'Bottom content'
         css.label: 'CSS styles'
         logo_image.label: 'Logo'
-        background_image.label: 'Background image'
         save.message: 'Login form has been saved'

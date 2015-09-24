@@ -5,7 +5,8 @@
 {% oro_title_set({params : {'%entityName%': 'orob2b.cms.loginpage.entity_label'|trans} }) %}
 
 {% block navButtons %}
-    {{ UI.cancelButton(path('orob2b_cms_loginpage_view', {id: entity.id})) }}
+    {{ UI.cancelButton(path('orob2b_cms_loginpage_index')) }}
+
     {% set html = UI.saveAndCloseButton() %}
     {% if entity.id or resource_granted('orob2b_crm_login_page_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}

@@ -24,6 +24,28 @@
 {% endblock navButtons %}
 
 {% block content_data %}
+    {% set imageLogoData %}
+        {% if entity.logoImage %}
+            {{ UI.renderAttribute(
+                    'orob2b.cms.loginpage.logo_image.label'|trans,
+                    '<div class="control-label html-content"><img src="' ~ filtered_image_url(entity.logoImage, "login_page") ~ '"></div>'
+                ) }}
+        {% else %}
+            {{ UI.renderHtmlProperty('orob2b.cms.loginpage.logo_image.label'|trans, 'N/A'|trans) }}
+        {% endif %}
+    {% endset %}
+
+    {% set backgroundImageData %}
+        {% if entity.backgroundImage %}
+            {{ UI.renderAttribute(
+            'orob2b.cms.loginpage.background_image.label'|trans,
+            '<div class="control-label html-content"><img src="' ~ filtered_image_url(entity.backgroundImage, "login_page") ~ '"></div>'
+            ) }}
+        {% else %}
+            {{ UI.renderHtmlProperty('orob2b.cms.loginpage.background_image.label'|trans, 'N/A'|trans) }}
+        {% endif %}
+    {% endset %}
+
     {% set dataBlocks = [{
         'title': 'orob2b.cms.sections.general'|trans,
         'class': 'active',
@@ -32,14 +54,8 @@
                 UI.renderProperty('orob2b.cms.loginpage.top_content.label'|trans, entity.topContent|slice(0, 100)),
                 UI.renderProperty('orob2b.cms.loginpage.bottom_content.label'|trans, entity.bottomContent|slice(0, 100)),
                 UI.renderProperty('orob2b.cms.loginpage.css.label'|trans, entity.css|slice(0, 100)),
-                UI.renderHtmlProperty(
-                    'orob2b.cms.loginpage.logo_image.label'|trans,
-                    oro_image_view(entity, entity.logoImage, null, 'logoImage')
-                ),
-                UI.renderHtmlProperty(
-                    'orob2b.cms.loginpage.background_image.label'|trans,
-                    oro_image_view(entity, entity.backgroundImage, null, 'backgroundImage')
-                )
+                imageLogoData,
+                backgroundImageData,
             ]},
         ]
     }] %}
