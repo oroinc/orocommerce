@@ -96,7 +96,6 @@ class QuoteProductOfferTypeTest extends AbstractTest
                     ->setAllowIncrements(false),
                 'expected' => [
                     // TODO: enable once fully supported on the quote views and in orders
-                    //'priceType' => QuoteProductOffer::PRICE_TYPE_BUNDLED,
                     'priceType' => QuoteProductOffer::PRICE_TYPE_UNIT,
                     'quantity' => 10,
                 ],

@@ -68,20 +68,9 @@
             {{ form_widget(form.product) }}
             {{ form_errors(form.product) }}
         </div>
-        {#<div class="quote-lineitem-product-type">#}
-            {#<span>{{ 'orob2b.sale.quote.lineitem.product.type'|trans }}</span>#}
-            {{ form_widget(form.type) }}
-            {#{{ form_errors(form.type) }}#}
-        {#</div>#}
-        {#<div class="quote-lineitem-product-replacement">#}
-            {#{{ form_label(form.productReplacement) }}#}
-            {#{{ form_widget(form.productReplacement) }}#}
-            {#{{ form_errors(form.productReplacement) }}#}
-        {#</div>#}
+        {{ form_widget(form.type) }}
     </td>
     <td class="quote-lineitem-requested">
-        {#{{ form_widget(form.quoteProductRequests) }}
-        {{ form_errors(form.quoteProductRequests) }}#}
         {{ block('orob2b_sale_quote_product_request_collection') }}
     </td>
     <td class="quote-lineitem-offers">
@@ -135,54 +124,6 @@
         </table>
     {% endif %}
 {% endblock %}
-
-{#
-{% block orob2b_sale_quote_product_request_collection_widget %}
-    {% if form.children|length %}
-        <table class="quote-lineitem-requests-widget table-bordered">
-            <thead>
-                <tr>
-                    <th colspan="2"><span>{{ 'orob2b.sale.quoteproductrequest.quantity.label'|trans }}</span></th>
-                    <th><span>{{ 'orob2b.sale.quoteproductrequest.price.label'|trans }}</span></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for child in form.children %}
-                    {{ _self.orob2b_sale_quote_product_request_prototype(child) }}
-                {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
-{% endblock %}
-
-{% macro orob2b_sale_quote_product_request_prototype(widget) %}
-    {% if 'collection' in widget.vars.block_prefixes %}
-        {% set form = widget.vars.prototype %}
-        {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
-    {% else %}
-        {% set form = widget %}
-        {% set name = widget.vars.full_name %}
-    {% endif %}
-    <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
-        class="quote-lineitem-requested quote-lineitem-requested-item">
-        {{ form_widget(form) }}
-    </tr>
-{% endmacro %}
-
-{% block orob2b_sale_quote_product_request_widget %}
-    <td class="quote-lineitem-requested-quantity">
-        {{ form.vars.value.quantity }}
-    </td>
-    <td class="quote-lineitem-requested-unit">
-        {{ form.vars.value.productUnit }}
-    </td>
-    <td class="quote-lineitem-requested-price">
-        {% if form.price.vars.value is not empty %}
-            {{ form.price.vars.value|oro_format_price }}
-        {% endif %}
-    </td>
-{% endblock %}
-#}
 
 {% block orob2b_sale_quote_product_offer_collection_widget %}
     {% if prototype is defined %}
@@ -260,4 +201,3 @@
         {{ form_errors(form.price) }}
     </td>
 {% endblock %}
-

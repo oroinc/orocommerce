@@ -61,12 +61,8 @@ class QuoteProductOfferType extends AbstractType
                 'label' => 'orob2b.sale.quoteproductoffer.price.label'
             ])
             ->add('priceType', 'hidden', [
-                'data' => QuoteProductOffer::PRICE_TYPE_UNIT,
                 // TODO: enable once fully supported on the quote views and in orders
-                //'label' => 'orob2b.sale.quoteproductoffer.price_type.label',
-                //'choices' => $this->formatter->formatPriceTypeLabels(QuoteProductOffer::getPriceTypes()),
-                //'required' => true,
-                //'expanded' => true,
+                'data' => QuoteProductOffer::PRICE_TYPE_UNIT,
             ])
             ->add('allowIncrements', 'checkbox', [
                 'required' => false,
@@ -110,12 +106,6 @@ class QuoteProductOfferType extends AbstractType
      */
     public function postSetData(FormEvent $event)
     {
-//        // Set priceType to PRICE_TYPE_UNIT by default
-//        $priceType = $event->getForm()->get('priceType');
-//        if (null === $priceType->getData()) {
-//            $priceType->setData(QuoteProductOffer::PRICE_TYPE_UNIT);
-//        }
-
         // Set quantity to 1 by default
         $quantity = $event->getForm()->get('quantity');
         if (null === $quantity->getData()) {

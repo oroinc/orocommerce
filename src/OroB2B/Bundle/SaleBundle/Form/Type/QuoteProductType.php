@@ -145,10 +145,6 @@ class QuoteProductType extends AbstractType
             ])
             ->add('type', 'hidden', [
                 'data' => QuoteProduct::TYPE_REQUESTED,
-                //'label' => 'orob2b.sale.quoteproduct.type.label',
-                //'choices' => $this->formatter->formatTypeLabels(QuoteProduct::getTypes()),
-                //'required' => true,
-                //'expanded' => false,
             ])
             ->add('commentAccount', 'textarea', [
                 'required' => false,

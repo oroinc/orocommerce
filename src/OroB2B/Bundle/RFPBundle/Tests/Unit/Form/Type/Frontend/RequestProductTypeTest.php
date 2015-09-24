@@ -53,9 +53,8 @@ class RequestProductTypeTest extends AbstractTest
         $resolver->expects(static::once())
             ->method('setDefaults')
             ->with($this->callback(function (array $options) {
-                // TODO: test for something meaningful instead of just checking keys or comparing static values
-                $this->assertArrayHasKey('data_class', $options); // 'OroB2B\Bundle\RFPBundle\Entity\RequestProduct'
-                $this->assertArrayHasKey('intention', $options); // 'rfp_frontend_request_product'
+                $this->assertArrayHasKey('data_class', $options);
+                $this->assertArrayHasKey('intention', $options);
 
                 return true;
             }));

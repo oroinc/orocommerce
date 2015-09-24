@@ -50,8 +50,6 @@ orob2b:
             price.label: 'Target Price'
             value.label: 'Price Value'
             currency.label: 'Price Currency'
-            message:
-                unit.blank: 'Unit of measurement cannot be empty'
 
         requeststatus:
             entity_label: 'RFQ Status'

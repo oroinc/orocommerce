@@ -34,7 +34,7 @@ OroB2B\Bundle\RFPBundle\Entity\RequestProduct:
             - NotBlank: ~
         product:
             - NotBlank:
-                message: 'orob2b.rfp.requestproduct.message.product.blank'
+                message: 'orob2b.rfp.requestproduct.product.blank'
         productSku:
             - NotBlank:
                 groups: [ Import ]
@@ -54,7 +54,7 @@ OroB2B\Bundle\RFPBundle\Entity\RequestProductItem:
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
         productUnit:
             - NotBlank:
-                message: 'orob2b.rfp.requestproductitem.message.unit.blank'
+                message: 'orob2b.rfp.requestproductitem.unit.blank'
         productUnitCode:
             - NotBlank:
                 groups: [ Import ]
