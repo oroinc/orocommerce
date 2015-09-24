@@ -5,9 +5,10 @@ namespace OroB2B\Bundle\OrderBundle\Tests\Functional\Controller\Frontend;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
-use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
-use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 use Oro\Component\Testing\WebTestCase;
+use Oro\Component\Testing\Fixtures\LoadAccountUserData;
+use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
+use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 
 use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
@@ -29,6 +30,11 @@ class OrderControllerTest extends WebTestCase
      */
     protected $dateFormatter;
 
+    /**
+     * @var NumberFormatter
+     */
+    protected $numberFormatter;
+
     protected function setUp()
     {
         $this->initClient(
@@ -43,6 +49,7 @@ class OrderControllerTest extends WebTestCase
         );
 
         $this->dateFormatter = $this->getContainer()->get('oro_locale.formatter.date_time');
+        $this->numberFormatter = $this->getContainer()->get('oro_locale.formatter.number');
     }
 
     public function testIndex()
@@ -106,21 +113,19 @@ class OrderControllerTest extends WebTestCase
             $date,
         ]);
 
-        $actualLineItems = $this->getActualLineItems($crawler, count($lineItems));
-
-        /** @var ProductPrice $price */
+        /** @var ProductPrice $productPrice */
         $productPrice = $this->getReference('product_price.1');
         $expectedLineItems = [
             [
                 'product' => $product->getId(),
                 'quantity' => 10,
                 'productUnit' => 'orob2b.product_unit.liter.label.full',
-                'price' => $productPrice->getPrice()->getValue(),
+                'price' => $this->formatProductPrice($productPrice),
                 'shipBy' => $date,
             ],
         ];
 
-        $this->assertEquals($expectedLineItems, $actualLineItems);
+        $this->assertEquals($expectedLineItems, $this->getActualLineItems($crawler, count($lineItems)));
     }
 
     public function testQuickAdd()
@@ -188,7 +193,7 @@ class OrderControllerTest extends WebTestCase
                 'product' => $product->getId(),
                 'quantity' => 15,
                 'productUnit' => 'orob2b.product_unit.liter.label.full',
-                'price' => $productPrice->getPrice()->getValue(),
+                'price' => $this->formatProductPrice($productPrice),
                 'shipBy' => null
             ]
         ];
@@ -263,21 +268,19 @@ class OrderControllerTest extends WebTestCase
                 ->extract('value')[0]
         );
 
-        /** @var ProductPrice $price */
+        /** @var ProductPrice $productPrice */
         $productPrice = $this->getReference('product_price.1');
         $expectedLineItems = [
             [
                 'product' => $product->getId(),
                 'quantity' => 15,
                 'productUnit' => 'orob2b.product_unit.liter.label.full',
-                'price' => $productPrice->getPrice()->getValue(),
+                'price' => $this->formatProductPrice($productPrice),
                 'shipBy' => $date,
             ],
         ];
 
-        $actualLineItems = $this->getActualLineItems($crawler, count($lineItems));
-
-        $this->assertEquals($expectedLineItems, $actualLineItems);
+        $this->assertEquals($expectedLineItems, $this->getActualLineItems($crawler, count($lineItems)));
 
         return $id;
     }
@@ -394,5 +397,16 @@ class OrderControllerTest extends WebTestCase
         $priceList = $this->getReference($name);
         $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BPricingBundle:PriceList')
             ->getRepository('OroB2BPricingBundle:PriceList')->setDefault($priceList);
+    }
+
+    /**
+     * @param ProductPrice $productPrice
+     * @return string
+     */
+    protected function formatProductPrice(ProductPrice $productPrice)
+    {
+        $price = $productPrice->getPrice();
+
+        return $this->numberFormatter->formatCurrency($price->getValue(), $price->getCurrency());
     }
 }
