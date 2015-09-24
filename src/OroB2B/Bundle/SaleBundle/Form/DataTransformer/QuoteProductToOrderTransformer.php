@@ -29,8 +29,8 @@ class QuoteProductToOrderTransformer implements DataTransformerInterface
      */
     public function transform($value)
     {
-        $offerId = null;
         $offerQuantity = null;
+        $offerUnit = null;
 
         if ($value) {
             if (!$value instanceof QuoteProduct) {
@@ -42,14 +42,14 @@ class QuoteProductToOrderTransformer implements DataTransformerInterface
                 // first offer is a default value
                 /** @var QuoteProductOffer $offer */
                 $offer = $offers->first();
-                $offerId = $offer->getId();
                 $offerQuantity = $offer->getQuantity();
+                $offerUnit = $offer->getProductUnitCode();
             }
         }
 
         return [
-            QuoteProductToOrderType::FIELD_OFFER => $offerId,
             QuoteProductToOrderType::FIELD_QUANTITY => $offerQuantity,
+            QuoteProductToOrderType::FIELD_UNIT => $offerUnit,
         ];
     }
 
@@ -58,7 +58,7 @@ class QuoteProductToOrderTransformer implements DataTransformerInterface
      */
     public function reverseTransform($value)
     {
-        $offerValue = null;
+        $offer = null;
         $offerQuantity = null;
 
         if ($value) {
@@ -66,20 +66,16 @@ class QuoteProductToOrderTransformer implements DataTransformerInterface
                 throw new UnexpectedTypeException($value, 'array');
             }
 
-            $offerId = $this->getOption($value, QuoteProductToOrderType::FIELD_OFFER);
             $offerQuantity = $this->getOption($value, QuoteProductToOrderType::FIELD_QUANTITY);
+            $offerUnit = $this->getOption($value, QuoteProductToOrderType::FIELD_UNIT);
 
-            foreach ($this->quoteProduct->getQuoteProductOffers() as $offer) {
-                if ($offer->getId() == $offerId) {
-                    $offerValue = $offer;
-                    break;
-                }
-            }
+            // TODO: use matcher to found offer
+            $offer = $this->quoteProduct->getQuoteProductOffers()->last();
         }
 
         return [
-            QuoteProductToOrderType::FIELD_OFFER => $offerValue,
             QuoteProductToOrderType::FIELD_QUANTITY => $offerQuantity,
+            QuoteProductToOrderType::FIELD_OFFER => $offer,
         ];
     }
 
