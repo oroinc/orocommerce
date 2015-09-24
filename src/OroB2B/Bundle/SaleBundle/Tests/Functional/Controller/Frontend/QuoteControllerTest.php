@@ -416,9 +416,9 @@ class QuoteControllerTest extends WebTestCase
                 }
 
                 /** @var ChoiceFormField $offer */
-                $offer = $row['offer'];
+                $offer = $form->get('offer_choice_' . $key);
 
-                if ($offer->getValue() != $quoteProductOffer->getId()) {
+                if ((int)$offer->getValue() !== (int)$quoteProductOffer->getId()) {
                     continue;
                 }
 
