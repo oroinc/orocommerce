@@ -78,3 +78,8 @@ orob2b:
             action:
                 save: Save
                 cancel: Cancel
+
+    frontend:
+        shoppinglist:
+            btn:
+                request_quote_create_rfp: 'Request a Quote'

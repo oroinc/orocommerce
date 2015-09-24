@@ -116,13 +116,6 @@ orob2b:
                 submitted_to.label: 'Submitted To'
                 is_draft.label: 'Draft'
 
-            btn:
-                request_create_from_shoppinglist: 'Request a Quote'
-
-            message:
-                request_create_from_shoppinglist.success: 'Your shopping list was submitted successfully'
-                request_create_from_shoppinglist.error: 'Can not create new Request for Quote'
-
 # We MUST move this section form here in the future!
 orob2b.frontendadmin:
     system_configuration:
