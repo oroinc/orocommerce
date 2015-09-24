@@ -20,7 +20,6 @@ define(function(require) {
             data_attributes: {
                 unit: 'unit',
                 quantity: 'quantity',
-                allow_increment: 'allow-increment',
                 price: 'price'
             }
         },
@@ -60,7 +59,6 @@ define(function(require) {
             var target = $(e.target);
 
             this.updateQuantityInputValue(Number(target.data(this.options.data_attributes.quantity)));
-            this.updateQuantityInputState(Boolean(target.data(this.options.data_attributes.allow_increment)));
             this.updateUnitValue(String(target.data(this.options.data_attributes.unit)));
             this.updateUnitPriceValue(String(target.data(this.options.data_attributes.price)));
         },
@@ -72,17 +70,6 @@ define(function(require) {
             this.$quantity.val(quantity);
             this.$quantity.data(this.options.data_attributes.quantity, quantity);
             this.$quantity.trigger('blur');
-        },
-
-        /**
-         * @param {Boolean} allowIncrement
-         */
-        updateQuantityInputState: function(allowIncrement) {
-            if (allowIncrement) {
-                this.$quantity.prop('readonly', false);
-            } else {
-                this.$quantity.prop('readonly', true);
-            }
         },
 
         /**

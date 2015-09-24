@@ -13,7 +13,7 @@ orob2b:
                 blank: 'Please choose existing Unit.'
             configurable:
                 offer:
-                    blank: 'Please choose offer'
+                    blank: 'Please choose valid quantity for selected offer'
                 quantity:
                     equal: 'Quantity should be equal to offered quantity'
                     less: 'Quantity should be grater than or equal to offered quantity'

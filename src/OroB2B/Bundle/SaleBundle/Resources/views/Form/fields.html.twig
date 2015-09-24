@@ -118,9 +118,22 @@
 {% endblock %}
 
 {% block orob2b_sale_quote_product_to_order_widget %}
-    {% set quoteProduct = form.vars.quote_product %}
     {% set product = quoteProduct.productReplacement|default(quoteProduct.product) %}
-    {% set selectedOffer = form.offer.vars.selected_offer %}
+    {% set offerChoiceName = 'offer_choice_%s'|format(name) %}
+
+    {% set selectedOffer = null %}
+    {% set selectedOfferId = app.request.request.get(offerChoiceName) %}
+    {% if selectedOfferId %}
+        {% for offer in quoteProduct.quoteProductOffers %}
+            {% if offer.id == selectedOfferId %}
+                {% set selectedOffer = offer %}
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        {# first offer is a default value #}
+        {% set selectedOffer = quoteProduct.quoteProductOffers|first %}
+    {% endif %}
+
     {% if selectedOffer %}
         {% set defaultUnitCode = selectedOffer.productUnit %}
         {% set defaultPrice = selectedOffer.price|oro_format_price %}
@@ -128,13 +141,14 @@
         {% set defaultUnitCode = '' %}
         {% set defaultPrice = '' %}
     {% endif %}
+
     {% set componentOptions = {
-        offerSelector: '[name=\'%s\']'|format(form.offer.vars.full_name),
+        offerSelector: '[name=\'%s\']'|format(offerChoiceName),
         quantitySelector: '[name=\'%s\']'|format(form.quantity.vars.full_name),
-        unitSelector: '#%s .quote-product-offer-quantity-unit'|format(form.vars.id),
-        unitPriceSelector: '#%s .quote-product-offer-price span'|format(form.vars.id)
+        unitSelector: '#%s .quote-product-offer-quantity-unit'|format(id),
+        unitPriceSelector: '#%s .quote-product-offer-price span'|format(id)
     } %}
-    <tr id="{{ form.vars.id }}"
+    <tr id="{{ id }}"
         data-page-component-module="orob2bsale/js/app/components/quote-product-to-order-component"
         data-page-component-options="{{ componentOptions|json_encode }}">
         <td class="quote-product-offer-product-sku">
@@ -151,23 +165,38 @@
         </td>
         <td class="quote-product-offer-select-offer">
             <table>
-                {% for choice in form.offer %}
+                {% for offer in quoteProduct.quoteProductOffers %}
                     <tr>
-                        <td class="quote-product-offer-select-offer-choice">{{ form_widget(choice) }}</td>
-                        <td class="quote-product-offer-select-offer-label">{{ choice.vars.label }}</td>
-                        <td class="quote-product-offer-select-offer-price">{{ choice.vars.offer.price|oro_format_price }}</td>
+                        <td class="quote-product-offer-select-offer-choice">
+                            <input type="radio" name="{{ offerChoiceName }}" value="{{ offer.id }}"
+                               {% if offer.id == selectedOffer.id %}checked="checked"{% endif %}
+                               data-unit="{{ offer.productUnitCode }}"
+                               data-quantity="{{ offer.quantity }}"
+                               data-price="{{ offer.price|oro_format_price }}"
+                            />
+                        </td>
+                        <td class="quote-product-offer-select-offer-label">
+                            {{ offer.quantity|orob2b_format_short_product_unit_value(offer.productUnit) }}
+                            {% if offer.allowIncrements %}
+                                {{ 'orob2b.frontend.sale.quoteproductoffer.allow_increments.label'|trans }}
+                            {% endif %}
+                        </td>
+                        <td class="quote-product-offer-select-offer-price">
+                            {{ offer.price|oro_format_price }}
+                        </td>
                     </tr>
                 {% endfor %}
             </table>
-            {{ form_errors(form.offer) }}
         </td>
         <td class="quote-product-offer-quantity">
             <div class="fields-row">
                 {{ form_widget(form.quantity) }}
+                {{ form_widget(form.unit) }}
                 <span class="quote-product-offer-quantity-unit">{{ defaultUnitCode }}</span>
             </div>
             <div>
                 {{ form_errors(form.quantity) }}
+                {{ form_errors(form.unit) }}
             </div>
         </td>
         <td class="quote-product-offer-price">

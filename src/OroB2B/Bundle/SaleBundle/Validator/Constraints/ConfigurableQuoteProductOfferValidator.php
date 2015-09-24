@@ -22,7 +22,7 @@ class ConfigurableQuoteProductOfferValidator extends ConstraintValidator
             || !$value[QuoteProductToOrderType::FIELD_OFFER] instanceof QuoteProductOfferEntity
         ) {
             $this->context->buildViolation($constraint->blankOfferMessage)
-                ->atPath('[' .QuoteProductToOrderType::FIELD_OFFER. ']')
+                ->atPath('[' .QuoteProductToOrderType::FIELD_QUANTITY. ']')
                 ->addViolation();
 
             return;

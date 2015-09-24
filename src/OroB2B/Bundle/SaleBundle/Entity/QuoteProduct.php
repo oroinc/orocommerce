@@ -25,6 +25,7 @@ use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
  *          }
  *      }
  * )
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class QuoteProduct implements ProductHolderInterface
 {
@@ -483,5 +484,19 @@ class QuoteProduct implements ProductHolderInterface
         $firstItem = $this->quoteProductOffers->first();
 
         return $firstItem && $firstItem->isAllowIncrements();
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasIncrementedOffers()
+    {
+        foreach ($this->quoteProductOffers as $offer) {
+            if ($offer->isAllowIncrements()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
