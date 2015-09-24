@@ -2,12 +2,8 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 
-use Symfony\Component\DomCrawler\Crawler;
-
 use Oro\Component\Testing\WebTestCase;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Model\DataStorageAwareProcessor;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
@@ -24,11 +20,13 @@ class RequestControllerTest extends WebTestCase
     {
         $this->initClient();
 
-        $this->loadFixtures([
-            'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData',
-            'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData',
-            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
-        ]);
+        $this->loadFixtures(
+            [
+                'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData',
+                'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData',
+                'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
+            ]
+        );
     }
 
     /**
@@ -53,10 +51,12 @@ class RequestControllerTest extends WebTestCase
 
         static::assertContains('frontend-requests-grid', $crawler->html());
 
-        $response = $this->requestFrontendGrid([
-            'gridName' => 'frontend-requests-grid',
-            'frontend-requests-grid[_sort_by][id]' => 'ASC',
-        ]);
+        $response = $this->requestFrontendGrid(
+            [
+                'gridName' => 'frontend-requests-grid',
+                'frontend-requests-grid[_sort_by][id]' => 'ASC',
+            ]
+        );
 
         $result = static::getJsonResponseContent($response, 200);
 
@@ -104,10 +104,13 @@ class RequestControllerTest extends WebTestCase
         /* @var $request Request */
         $request = $this->getReference($inputData['request']);
 
-        $crawler = $this->client->request('GET', $this->getUrl(
-            'orob2b_rfp_frontend_request_view',
-            ['id' => $request->getId()]
-        ));
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl(
+                'orob2b_rfp_frontend_request_view',
+                ['id' => $request->getId()]
+            )
+        );
 
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
@@ -125,14 +128,6 @@ class RequestControllerTest extends WebTestCase
     public function indexProvider()
     {
         return [
-            'not logged in' => [
-                'input' => [
-                    'login' => null,
-                ],
-                'expected' => [
-                    'code' => 302,
-                ],
-            ],
             'account1 user1 (only account user requests)' => [
                 'input' => [
                     'login' => LoadUserData::ACCOUNT1_USER1,

@@ -7,6 +7,8 @@ use Doctrine\Common\Persistence\ObjectRepository;
 
 use Oro\Component\Testing\WebTestCase;
 
+use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
+
 abstract class AbstractUserControllerTest extends WebTestCase
 {
     /**
@@ -84,7 +86,7 @@ abstract class AbstractUserControllerTest extends WebTestCase
     }
 
     /**
-     * @return ObjectRepository
+     * @return AccountUserRoleRepository
      */
     protected function getUserRoleRepository()
     {

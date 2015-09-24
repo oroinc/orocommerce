@@ -1,4 +1,4 @@
 css:
     'orob2bproduct':
         - 'bundles/orob2bproduct/css/style.css'
-        - 'bundles/orob2bproduct/css/grid-sidebar.css'
+        - 'bundles/orob2bproduct/css/grid-sidebar.less'
