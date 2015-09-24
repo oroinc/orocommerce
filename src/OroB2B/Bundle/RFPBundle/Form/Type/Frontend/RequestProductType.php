@@ -67,6 +67,9 @@ class RequestProductType extends AbstractType
         ]);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParent()
     {
         return BaseRequestProductType::NAME;

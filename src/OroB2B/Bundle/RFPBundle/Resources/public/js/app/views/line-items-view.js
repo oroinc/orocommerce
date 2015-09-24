@@ -26,6 +26,11 @@ define(function(require) {
         $form: null,
 
         /**
+         * @property {jQuery}
+         */
+        $el: null,
+
+        /**
          * @inheritDoc
          */
         initialize: function(options) {
