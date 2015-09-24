@@ -168,4 +168,49 @@ class QuoteProductTest extends AbstractTest
             ],
         ];
     }
+
+    /**
+     * @param array $offers
+     * @param bool $expected
+     * @dataProvider hasIncrementalOffersDataProvider
+     */
+    public function testHasIncrementalOffers(array $offers, $expected)
+    {
+        $quoteProduct = new QuoteProduct();
+        foreach ($offers as $offer) {
+            $quoteProduct->addQuoteProductOffer($offer);
+        }
+
+        $this->assertSame($expected, $quoteProduct->hasIncrementalOffers());
+    }
+
+    /**
+     * @return array
+     */
+    public function hasIncrementalOffersDataProvider()
+    {
+        $firstNotIncrementedOffer = new QuoteProductOffer();
+        $firstNotIncrementedOffer->setAllowIncrements(false);
+
+        $secondNotIncrementedOffer = new QuoteProductOffer();
+        $secondNotIncrementedOffer->setAllowIncrements(false);
+
+        $incrementedOffer = new QuoteProductOffer();
+        $incrementedOffer->setAllowIncrements(true);
+
+        return [
+            'no offers' => [
+                'offers' => [],
+                'expected' => false,
+            ],
+            'no incremented offers' => [
+                'offers' => [$firstNotIncrementedOffer, $secondNotIncrementedOffer],
+                'expected' => false,
+            ],
+            'one incremented offer' => [
+                'offers' => [$firstNotIncrementedOffer, $secondNotIncrementedOffer, $incrementedOffer],
+                'expected' => true,
+            ],
+        ];
+    }
 }

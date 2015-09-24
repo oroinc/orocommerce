@@ -69,17 +69,17 @@ class ConfigurableQuoteProductOfferTest extends \PHPUnit_Framework_TestCase
             [
                 null,
                 'orob2b.sale.quoteproductoffer.configurable.offer.blank',
-                QuoteProductToOrderType::FIELD_OFFER
+                QuoteProductToOrderType::FIELD_QUANTITY
             ],
             [
                 [],
                 'orob2b.sale.quoteproductoffer.configurable.offer.blank',
-                QuoteProductToOrderType::FIELD_OFFER
+                QuoteProductToOrderType::FIELD_QUANTITY
             ],
             [
                 [QuoteProductToOrderType::FIELD_QUANTITY => 10],
                 'orob2b.sale.quoteproductoffer.configurable.offer.blank',
-                QuoteProductToOrderType::FIELD_OFFER
+                QuoteProductToOrderType::FIELD_QUANTITY
             ],
             [
                 [
@@ -87,7 +87,7 @@ class ConfigurableQuoteProductOfferTest extends \PHPUnit_Framework_TestCase
                     QuoteProductToOrderType::FIELD_QUANTITY => 10
                 ],
                 'orob2b.sale.quoteproductoffer.configurable.offer.blank',
-                QuoteProductToOrderType::FIELD_OFFER
+                QuoteProductToOrderType::FIELD_QUANTITY
             ],
             [
                 [
