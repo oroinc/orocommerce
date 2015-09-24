@@ -35,7 +35,7 @@ class LoginPageControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertEquals("Frontend Login Pages", $crawler->filter('h1.oro-subtitle')->html());
+        $this->assertEquals("Customer Login Pages", $crawler->filter('h1.oro-subtitle')->html());
         $this->assertNotContains('Create Login Page', $crawler->filter('div.title-buttons-container')->html());
     }
 
