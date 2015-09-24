@@ -172,22 +172,22 @@ class QuoteProductTest extends AbstractTest
     /**
      * @param array $offers
      * @param bool $expected
-     * @dataProvider hasIncrementedOffersDataProvider
+     * @dataProvider hasIncrementalOffersDataProvider
      */
-    public function testHasIncrementedOffers(array $offers, $expected)
+    public function testHasIncrementalOffers(array $offers, $expected)
     {
         $quoteProduct = new QuoteProduct();
         foreach ($offers as $offer) {
             $quoteProduct->addQuoteProductOffer($offer);
         }
 
-        $this->assertSame($expected, $quoteProduct->hasIncrementedOffers());
+        $this->assertSame($expected, $quoteProduct->hasIncrementalOffers());
     }
 
     /**
      * @return array
      */
-    public function hasIncrementedOffersDataProvider()
+    public function hasIncrementalOffersDataProvider()
     {
         $firstNotIncrementedOffer = new QuoteProductOffer();
         $firstNotIncrementedOffer->setAllowIncrements(false);

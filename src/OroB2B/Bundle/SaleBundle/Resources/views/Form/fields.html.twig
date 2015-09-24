@@ -135,7 +135,7 @@
     {% endif %}
 
     {% if selectedOffer %}
-        {% set defaultUnitCode = selectedOffer.productUnit %}
+        {% set defaultUnitCode = selectedOffer.productUnit.code|orob2b_format_product_unit_label(true) %}
         {% set defaultPrice = selectedOffer.price|oro_format_price %}
     {% else %}
         {% set defaultUnitCode = '' %}
