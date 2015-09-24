@@ -37,6 +37,7 @@ class QuoteProductOfferMatcherTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @return array
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function matchDataProvider()
     {
@@ -60,6 +61,254 @@ class QuoteProductOfferMatcherTest extends \PHPUnit_Framework_TestCase
                 'quantity' => '100',
                 'expectedResult' => null,
             ],
+            'quote product with one selected matched offer' => [
+                'quoteProduct' => $this->createQuoteProduct(
+                    [
+                        ['kg', 50, false],
+                    ]
+                ),
+                'unitCode' => 'kg',
+                'quantity' => '50',
+                'expectedResult' => $this->createQuoteProductOffer('kg', 50, false),
+            ],
+            'quote product with no selected matched offer' => [
+                'quoteProduct' => $this->createQuoteProduct(
+                    [
+                        ['kg', 50, false],
+                    ]
+                ),
+                'unitCode' => 'kg',
+                'quantity' => '51',
+                'expectedResult' => null,
+            ],
+            'quote product with one matched offer with open condition' => [
+                'quoteProduct' => $this->createQuoteProduct(
+                    [
+                        ['kg', 60, true],
+                    ]
+                ),
+                'unitCode' => 'kg',
+                'quantity' => '60',
+                'expectedResult' => $this->createQuoteProductOffer('kg', 60, true),
+            ],
+            'quote product with one more than matched offer with open condition' => [
+                'quoteProduct' => $this->createQuoteProduct(
+                    [
+                        ['kg', 60, true],
+                    ]
+                ),
+                'unitCode' => 'kg',
+                'quantity' => '65',
+                'expectedResult' => $this->createQuoteProductOffer('kg', 60, true),
+            ],
+            'quote product with not matched offer with open condition' => [
+                'quoteProduct' => $this->createQuoteProduct(
+                    [
+                        ['kg', 60, true],
+                    ]
+                ),
+                'unitCode' => 'kg',
+                'quantity' => '50',
+                'expectedResult' => null,
+            ],
+            'quote product with two matched offers first selected' => [
+                'quoteProduct' => $this->createQuoteProduct(
+                    [
+                        ['kg', 60, true],
+                        ['kg', 50, false],
+                    ]
+                ),
+                'unitCode' => 'kg',
+                'quantity' => '50',
+                'expectedResult' => $this->createQuoteProductOffer('kg', 50, false),
+            ],
+            'quote product with two matched offers second selected' => [
+                'quoteProduct' => $this->createQuoteProduct(
+                    [
+                        ['kg', 50, false],
+                        ['kg', 60, false],
+                    ]
+                ),
+                'unitCode' => 'kg',
+                'quantity' => '60',
+                'expectedResult' => $this->createQuoteProductOffer('kg', 60, false),
+            ],
+            'quote product with two matched offers none selected' => [
+                'quoteProduct' => $this->createQuoteProduct(
+                    [
+                        ['kg', 50, false],
+                        ['kg', 60, false],
+                    ]
+                ),
+                'unitCode' => 'kg',
+                'quantity' => '55',
+                'expectedResult' => null,
+            ],
+            'quote product with two offers with opened conditions first limit' => [
+                'quoteProduct' => $this->createQuoteProduct(
+                    [
+                        ['kg', 60, true],
+                        ['kg', 50, true],
+                    ]
+                ),
+                'unitCode' => 'kg',
+                'quantity' => '50',
+                'expectedResult' => $this->createQuoteProductOffer('kg', 50, true),
+            ],
+            'quote product with two offers with opened conditions more than first' => [
+                'quoteProduct' => $this->createQuoteProduct(
+                    [
+                        ['kg', 50, true],
+                        ['kg', 60, true],
+                    ]
+                ),
+                'unitCode' => 'kg',
+                'quantity' => '55',
+                'expectedResult' => $this->createQuoteProductOffer('kg', 50, true),
+            ],
+            'quote product with two offers with opened conditions second limit' => [
+                'quoteProduct' => $this->createQuoteProduct(
+                    [
+                        ['kg', 50, true],
+                        ['kg', 60, true],
+                    ]
+                ),
+                'unitCode' => 'kg',
+                'quantity' => '60',
+                'expectedResult' => $this->createQuoteProductOffer('kg', 60, true),
+            ],
+            'quote product with two offers with opened conditions more than second' => [
+                'quoteProduct' => $this->createQuoteProduct(
+                    [
+                        ['kg', 60, true],
+                        ['kg', 50, true],
+                    ]
+                ),
+                'unitCode' => 'kg',
+                'quantity' => '65',
+                'expectedResult' => $this->createQuoteProductOffer('kg', 60, true),
+            ],
+            'quote product with two offers with opened not matched' => [
+                'quoteProduct' => $this->createQuoteProduct(
+                    [
+                        ['kg', 50, true],
+                        ['kg', 60, true],
+                    ]
+                ),
+                'unitCode' => 'kg',
+                'quantity' => '45',
+                'expectedResult' => null,
+            ],
+            'quote product with two offers and first opened condition first limit' => [
+                'quoteProduct' => $this->createQuoteProduct(
+                    [
+                        ['kg', 50, true],
+                        ['kg', 60, false],
+                    ]
+                ),
+                'unitCode' => 'kg',
+                'quantity' => '50',
+                'expectedResult' => $this->createQuoteProductOffer('kg', 50, true),
+            ],
+            'quote product with two offers and first opened condition more than first' => [
+                'quoteProduct' => $this->createQuoteProduct(
+                    [
+                        ['kg', 50, true],
+                        ['kg', 60, false],
+                    ]
+                ),
+                'unitCode' => 'kg',
+                'quantity' => '55',
+                'expectedResult' => $this->createQuoteProductOffer('kg', 50, true),
+            ],
+            'quote product with two offers and first opened condition second limit' => [
+                'quoteProduct' => $this->createQuoteProduct(
+                    [
+                        ['kg', 60, false],
+                        ['kg', 50, true],
+                    ]
+                ),
+                'unitCode' => 'kg',
+                'quantity' => '60',
+                'expectedResult' => $this->createQuoteProductOffer('kg', 60, false),
+            ],
+            'quote product with two offers and first opened condition more than second' => [
+                'quoteProduct' => $this->createQuoteProduct(
+                    [
+                        ['kg', 50, true],
+                        ['kg', 60, false],
+                    ]
+                ),
+                'unitCode' => 'kg',
+                'quantity' => '65',
+                'expectedResult' => $this->createQuoteProductOffer('kg', 50, true),
+            ],
+            'quote product with two offers and first opened not matched' => [
+                'quoteProduct' => $this->createQuoteProduct(
+                    [
+                        ['kg', 60, false],
+                        ['kg', 50, true],
+                    ]
+                ),
+                'unitCode' => 'kg',
+                'quantity' => '45',
+                'expectedResult' => null,
+            ],
+            'quote product with two offers and second opened condition first limit' => [
+                'quoteProduct' => $this->createQuoteProduct(
+                    [
+                        ['kg', 50, false],
+                        ['kg', 60, true],
+                    ]
+                ),
+                'unitCode' => 'kg',
+                'quantity' => '50',
+                'expectedResult' => $this->createQuoteProductOffer('kg', 50, false),
+            ],
+            'quote product with two offers and second opened condition more than first' => [
+                'quoteProduct' => $this->createQuoteProduct(
+                    [
+                        ['kg', 60, true],
+                        ['kg', 50, false],
+                    ]
+                ),
+                'unitCode' => 'kg',
+                'quantity' => '55',
+                'expectedResult' => null,
+            ],
+            'quote product with two offers and second opened condition second limit' => [
+                'quoteProduct' => $this->createQuoteProduct(
+                    [
+                        ['kg', 50, false],
+                        ['kg', 60, true],
+                    ]
+                ),
+                'unitCode' => 'kg',
+                'quantity' => '60',
+                'expectedResult' => $this->createQuoteProductOffer('kg', 60, true),
+            ],
+            'quote product with two offers and second opened condition more than second' => [
+                'quoteProduct' => $this->createQuoteProduct(
+                    [
+                        ['kg', 50, false],
+                        ['kg', 60, true],
+                    ]
+                ),
+                'unitCode' => 'kg',
+                'quantity' => '65',
+                'expectedResult' => $this->createQuoteProductOffer('kg', 60, true),
+            ],
+            'quote product with two offers and second opened not matched' => [
+                'quoteProduct' => $this->createQuoteProduct(
+                    [
+                        ['kg', 50, false],
+                        ['kg', 60, true],
+                    ]
+                ),
+                'unitCode' => 'kg',
+                'quantity' => '45',
+                'expectedResult' => null,
+            ],
             'quote product without expected quantity' => [
                 'quoteProduct' => $this->createQuoteProduct(
                     [
@@ -73,13 +322,13 @@ class QuoteProductOfferMatcherTest extends \PHPUnit_Framework_TestCase
                 'quantity' => '100',
                 'expectedResult' => null,
             ],
-            'quote product with expected unit code and int quantity' => [
+            'quote product with expected unit code and int quantity mixed order' => [
                 'quoteProduct' => $this->createQuoteProduct(
                     [
-                        ['kg', 1, true],
-                        ['kg', 50, false],
                         ['kg', 60, true],
+                        ['kg', 1, true],
                         ['kg', 100, false],
+                        ['kg', 50, false],
                         ['liter', 120, false]
                     ]
                 ),
@@ -87,17 +336,17 @@ class QuoteProductOfferMatcherTest extends \PHPUnit_Framework_TestCase
                 'quantity' => '120',
                 'expectedResult' => $this->createQuoteProductOffer('kg', 60, true),
             ],
-            'quote product with expected unit code and float quantity' => [
+            'quote product with expected unit code and float quantity mixed order' => [
                 'quoteProduct' => $this->createQuoteProduct(
                     [
                         ['kg', 1, true],
-                        ['kg', 50, false],
                         ['kg', 100, false],
-                        ['liter', 100, true],
                         ['liter', 100.5, true],
-                        ['kg', '100.5', false],
                         ['kg', 101, true],
-                        ['liter', 120, false]
+                        ['liter', 100, true],
+                        ['kg', '100.5', false],
+                        ['liter', 120, false],
+                        ['kg', 50, false],
                     ]
                 ),
                 'unitCode' => 'kg',
