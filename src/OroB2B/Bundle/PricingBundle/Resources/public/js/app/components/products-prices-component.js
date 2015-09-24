@@ -59,19 +59,47 @@ define(function(require) {
          * @param {Function} callback
          */
         loadProductsTierPrices: function(products, callback) {
-            var params = {
-                product_ids: products,
-                currency: this._getCurrency()
-            };
+            this.joinSubrequests(this.loadProductsTierPrices, products, callback, _.bind(function(products, callback) {
+                var params = {
+                    product_ids: products,
+                    currency: this._getCurrency()
+                };
 
-            var priceList = this._getPriceList();
-            if (priceList.length !== 0) {
-                params = _.extend(params, {price_list_id: priceList});
+                var priceList = this._getPriceList();
+                if (priceList.length !== 0) {
+                    params = _.extend(params, {price_list_id: priceList});
+                }
+
+                $.get(routing.generate(this.options.tierPricesRoute, params), callback);
+            }, this));
+        },
+
+        joinSubrequests: function(storage, data, callback, request) {
+            storage.timeoutId = storage.timeoutId || null;
+            storage.data = storage.data || [];
+            storage.callbacks = storage.callbacks || [];
+
+            storage.data = _.union(storage.data, data);
+            storage.callbacks.push(callback);
+
+            if (storage.timeoutId) {
+                clearTimeout(storage.timeoutId);
             }
 
-            $.get(routing.generate(this.options.tierPricesRoute, params), function(response) {
-                callback(response);
-            });
+            storage.timeoutId = setTimeout(function() {
+                var data = storage.data;
+                var callbacks = storage.callbacks;
+
+                storage.timeoutId = null;
+                storage.data = [];
+                storage.callbacks = [];
+
+                request(data, function(response) {
+                    _.each(callbacks, function(callback) {
+                        callback(response);
+                    });
+                });
+            }, 50);
         },
 
         /**
@@ -95,25 +123,25 @@ define(function(require) {
          * @param {Function} callback
          */
         loadLineItemsMatchedPrices: function(items, callback) {
-            var params = {
-                items: items
-            };
+            this.joinSubrequests(this.loadLineItemsMatchedPrices, items, callback, _.bind(function(items, callback) {
+                var params = {
+                    items: items
+                };
 
-            var priceList = this._getPriceList();
-            if (priceList.length !== 0) {
-                params = _.extend(params, {pricelist: priceList});
-            }
-
-            $.ajax({
-                url: routing.generate(this.options.matchedPricesRoute, params),
-                type: 'GET',
-                success: function(response) {
-                    callback(response);
-                },
-                error: function(response) {
-                    callback();
+                var priceList = this._getPriceList();
+                if (priceList.length !== 0) {
+                    params = _.extend(params, {pricelist: priceList});
                 }
-            });
+
+                $.ajax({
+                    url: routing.generate(this.options.matchedPricesRoute, params),
+                    type: 'GET',
+                    success: callback,
+                    error: function(response) {
+                        callback();
+                    }
+                });
+            }, this));
         },
 
         /**

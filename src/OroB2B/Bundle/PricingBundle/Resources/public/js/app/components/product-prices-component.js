@@ -78,6 +78,9 @@ define(function(require) {
 
             this.initTierPrices();
             this.initMatchedPrices();
+
+            mediator.trigger('pricing:get:products-tier-prices', _.bind(this.setTierPrices, this));
+            mediator.trigger('pricing:get:line-items-matched-prices', _.bind(this.setMatchedPrices, this));
         },
 
         initTierPrices: function() {
@@ -85,7 +88,6 @@ define(function(require) {
             this.$tierButton = $($(this.options.selectors.tierButtonTemplate).text());
             this.options.$priceValue.after(this.$tierButton);
 
-            mediator.trigger('pricing:get:products-tier-prices', _.bind(this.setTierPrices, this));
             mediator.on('pricing:refresh:products-tier-prices', this.setTierPrices, this);
 
             if (this.options.$product) {
@@ -126,7 +128,7 @@ define(function(require) {
             }
 
             this.tierPrices = productTierPrices;
-            this.renderTierPrices();
+            this.setMatchedPrices();
         },
 
         /**
@@ -196,7 +198,6 @@ define(function(require) {
                 this.$priceOverridden.on('click', 'a', _.bind(this.setPriceFromMatched, this));
             }
 
-            mediator.trigger('pricing:get:line-items-matched-prices', _.bind(this.setMatchedPrices, this));
             mediator.on('pricing:refresh:line-items-matched-prices', this.setMatchedPrices, this);
             mediator.on('pricing:collect:line-items', this.collectLineItems, this);
 
