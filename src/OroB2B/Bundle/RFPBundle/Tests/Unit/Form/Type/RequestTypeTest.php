@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
@@ -12,9 +11,11 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 
+use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
+
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
-use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
+use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductRemovedSelectType;
 
@@ -291,8 +292,12 @@ class RequestTypeTest extends AbstractTest
      */
     protected function getExtensions()
     {
-        /* @var $translator \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface */
-        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        /* @var $productUnitLabelFormatter ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject */
+        $productUnitLabelFormatter = $this->getMockBuilder(
+            'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
+        )
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $priceType                  = $this->preparePriceType();
         $entityType                 = $this->prepareProductEntityType();
@@ -324,7 +329,7 @@ class RequestTypeTest extends AbstractTest
             RequestStatusSelectType::NAME
         );
 
-        $requestProductType = new RequestProductType($translator);
+        $requestProductType = new RequestProductType($productUnitLabelFormatter);
         $requestProductType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
 
         return [
