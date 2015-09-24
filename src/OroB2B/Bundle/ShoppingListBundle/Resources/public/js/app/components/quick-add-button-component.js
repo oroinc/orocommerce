@@ -40,11 +40,11 @@ define(function(require) {
                 return;
             }
 
-            mediator.off(this.options.mediatorPrefix + ':add-widget-requested', this.triggerWidget, this);
+            mediator.off(this.options.mediatorPrefix + ':add-widget-requested');
+
             QuickAddButtonComponent.__super__.dispose.call(this);
         }
     });
 
     return QuickAddButtonComponent;
 });
-

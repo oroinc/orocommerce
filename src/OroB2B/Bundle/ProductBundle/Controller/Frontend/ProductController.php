@@ -7,6 +7,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
 
+use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class ProductController extends Controller
@@ -16,6 +19,7 @@ class ProductController extends Controller
      *
      * @Route("/", name="orob2b_product_frontend_product_index")
      * @Template("OroB2BProductBundle:Product\Frontend:index.html.twig")
+     * @AclAncestor("orob2b_product_frontend_view")
      *
      * @return array
      */
@@ -44,6 +48,13 @@ class ProductController extends Controller
      *
      * @Route("/view/{id}", name="orob2b_product_frontend_product_view", requirements={"id"="\d+"})
      * @Template("OroB2BProductBundle:Product\Frontend:view.html.twig")
+     * @Acl(
+     *      id="orob2b_product_frontend_view",
+     *      type="entity",
+     *      class="OroB2BProductBundle:Product",
+     *      permission="VIEW",
+     *      group_name="commerce"
+     * )
      *
      * @param Product $product
      *
@@ -59,6 +70,7 @@ class ProductController extends Controller
     /**
      * @Route("/info/{id}", name="orob2b_product_frontend_product_info", requirements={"id"="\d+"})
      * @Template("OroB2BProductBundle:Product\Frontend\widget:info.html.twig")
+     * @AclAncestor("orob2b_product_frontend_view")
      *
      * @param Product $product
      *

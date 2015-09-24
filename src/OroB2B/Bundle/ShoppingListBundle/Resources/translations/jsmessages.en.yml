@@ -11,3 +11,5 @@ orob2b:
                 error.message: Failed to add to shopping list
         widget:
             add_to_new_shopping_list: Create New Shopping List
+        datagrid:
+            add_to_shopping_list: Add To Shopping List
