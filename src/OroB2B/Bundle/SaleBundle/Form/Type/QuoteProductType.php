@@ -104,7 +104,10 @@ class QuoteProductType extends AbstractType
             $units[$product->getId()] = [];
 
             foreach ($product->getAvailableUnitCodes() as $unitCode) {
-                $units[$product->getId()][$unitCode] = $this->labelFormatter->format($unitCode, $options['compact_units']);
+                $units[$product->getId()][$unitCode] = $this->labelFormatter->format(
+                    $unitCode,
+                    $options['compact_units']
+                );
             }
         }
 
