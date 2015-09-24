@@ -20,7 +20,6 @@ use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductUnitHolderValidator
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemType;
 
 abstract class AbstractTest extends FormIntegrationTestCase
