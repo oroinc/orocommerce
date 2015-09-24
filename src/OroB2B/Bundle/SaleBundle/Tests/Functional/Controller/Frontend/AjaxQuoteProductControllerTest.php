@@ -73,18 +73,6 @@ class AjaxQuoteProductControllerTest extends WebTestCase
         $result = $this->getJsonResponseContent($response, 200);
 
         $this->assertInternalType('array', $result);
-
-        if (!$expected) {
-            $this->assertEquals([], $result);
-
-            return;
-        }
-
-        $this->assertArrayHasKey('id', $result);
-        $this->assertArrayHasKey('unit', $result);
-        $this->assertArrayHasKey('qty', $result);
-        $this->assertArrayHasKey('price', $result);
-
         $this->assertEquals($expected, $result);
     }
 
