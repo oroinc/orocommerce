@@ -10,8 +10,10 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero;
+use OroB2B\Bundle\SaleBundle\Model\QuoteProductOfferMatcher;
 use OroB2B\Bundle\SaleBundle\Form\DataTransformer\QuoteProductToOrderTransformer;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Validator\Constraints\ConfigurableQuoteProductOffer;
@@ -23,6 +25,25 @@ class QuoteProductToOrderType extends AbstractType
     const FIELD_QUANTITY = 'quantity';
     const FIELD_UNIT = 'unit';
     const FIELD_OFFER = 'offer'; // virtual field used in result data
+
+    /**
+     * @var QuoteProductOfferMatcher
+     */
+    protected $matcher;
+
+    /**
+     * @var RoundingService
+     */
+    protected $roundingService;
+
+    /**
+     * @param QuoteProductOfferMatcher $matcher
+     */
+    public function __construct(QuoteProductOfferMatcher $matcher, RoundingService $roundingService)
+    {
+        $this->matcher = $matcher;
+        $this->roundingService = $roundingService;
+    }
 
     /**
      * {@inheritdoc}
@@ -40,14 +61,16 @@ class QuoteProductToOrderType extends AbstractType
                 'number',
                 [
                     'constraints' => [new NotBlank(), new Decimal(), new GreaterThanZero()],
-                    'read_only' => false, // TODO
+                    'read_only' => !$quoteProduct->hasIncrementedOffers(),
                 ]
             )->add(
                 self::FIELD_UNIT,
                 'hidden'
             );
 
-        $builder->addModelTransformer(new QuoteProductToOrderTransformer($quoteProduct));
+        $builder->addModelTransformer(
+            new QuoteProductToOrderTransformer($this->matcher, $this->roundingService, $quoteProduct)
+        );
     }
 
     /**
