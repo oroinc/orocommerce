@@ -493,7 +493,7 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
     }
 
     /**
-     * @return PriceList
+     * @return PriceList|null
      */
     public function getPriceList()
     {
@@ -501,7 +501,7 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
     }
 
     /**
-     * @param PriceList $priceList
+     * @param PriceList|null $priceList
      * @return Quote
      */
     public function setPriceList(PriceList $priceList = null)

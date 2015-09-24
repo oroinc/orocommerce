@@ -52,7 +52,7 @@ define(function(require) {
          */
         handleLayoutInit: function() {
             this.$form = this.$el.closest('form');
-            this.$priceList = this.$form.find(':input[data-ftid="' + this.$form.attr('name') + '_priceList"]');
+            this.$priceList = this.$form.find(':input[name$="[priceList]"]');
             this.$currency = this.$form.find(':input[data-ftid="' + this.$form.attr('name') + '_currency"]');
 
             this.$el.find('.add-list-item').mousedown(function(e) {

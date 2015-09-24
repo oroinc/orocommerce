@@ -20,7 +20,6 @@ use OroB2B\Bundle\PricingBundle\Model\ProductUnitQuantity;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
 
 class QuoteController extends Controller
@@ -221,18 +220,15 @@ class QuoteController extends Controller
             } else {
                 continue;
             }
-            $lineItems = array_merge(
-                $quoteProduct->getQuoteProductOffers()->toArray(),
-                $quoteProduct->getQuoteProductRequests()->toArray()
-            );
-            /** @var QuoteProductOffer|QuoteProductRequest $lineItem */
-            foreach ($lineItems as $lineItem) {
-                if ($lineItem->getProductUnit() && $lineItem->getQuantity()) {
+
+            /** @var QuoteProductOffer $quoteProductOffer */
+            foreach ($quoteProduct->getQuoteProductOffers() as $quoteProductOffer) {
+                if ($quoteProductOffer->getProductUnit() && $quoteProductOffer->getQuantity()) {
                     $productUnitQuantities[] = new ProductUnitQuantity(
                         $product,
-                        $lineItem->getProductUnit(),
-                        $lineItem->getQuantity(),
-                        $lineItem->getPrice()->getCurrency()
+                        $quoteProductOffer->getProductUnit(),
+                        $quoteProductOffer->getQuantity(),
+                        $quoteProductOffer->getPrice()->getCurrency()
                     );
                 }
             }

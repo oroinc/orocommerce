@@ -11,9 +11,7 @@ define(function(require) {
         /**
          * @property {Object}
          */
-        options: {
-            ftid: ''
-        },
+        options: {},
 
         /**
          * @property {jQuery}
@@ -30,11 +28,6 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
-            if (!this.options.ftid) {
-                this.options.ftid = this.$el.closest('div[data-content]').data('content').toString()
-                    .replace(/[^a-zA-Z0-9]+/g, '_').replace(/_+$/, '');
-            }
-
             this.initLayout().done(_.bind(this.handleLayoutInit, this));
         },
 
@@ -42,36 +35,41 @@ define(function(require) {
          * Doing something after loading child components
          */
         handleLayoutInit: function() {
-            this.$fields = this.$el.find(':input[data-ftid]');
+            this.$fields = this.$el.find(':input[name]');
 
             this.fieldsByName = {};
             this.$fields.each(_.bind(function(i, field) {
-                field = $(field);
-                var name = this.normalizeName(field.data('ftid').replace(this.options.ftid + '_', ''));
-                this.fieldsByName[name] = field;
+                this.fieldsByName[this.formFieldName(field)] = $(field);
             }, this));
 
             var $productEl = this.$el.closest('.sale-quoteproduct-collection-table');
-            var productElFilter = ':input[data-ftid="' + $productEl.data('ftid');
-            this.fieldsByName.product = $productEl.find(productElFilter + '_product"]');
-            this.fieldsByName.productReplacement = $productEl.find(productElFilter + '_productReplacement"]');
+            this.fieldsByName.product = $productEl.find(':input[name$="[product]"]');
+            this.fieldsByName.productReplacement = $productEl.find(':input[name$="[productReplacement]"]');
 
             this.initPrices();
         },
 
         /**
-         * Convert name with "_" to name with upper case, example: some_name > someName
-         *
-         * @param {String} name
-         *
+         * @param {Object} field
          * @returns {String}
          */
-        normalizeName: function(name) {
-            name = name.split('_');
-            for (var i = 1, iMax = name.length; i < iMax; i++) {
-                name[i] = name[i][0].toUpperCase() + name[i].substr(1);
+        formFieldName: function(field) {
+            var name = '';
+            var nameParts = field.name.replace(/.*\[[0-9]+\]/, '').replace(/[\[\]]/g, '_').split('_');
+            var namePart;
+
+            for (var i = 0, iMax = nameParts.length; i < iMax; i++) {
+                namePart = nameParts[i];
+                if (!namePart.length) {
+                    continue;
+                }
+                if (name.length === 0) {
+                    name += namePart;
+                } else {
+                    name += namePart[0].toUpperCase() + namePart.substr(1);
+                }
             }
-            return name.join('');
+            return name;
         },
 
         initPrices: function() {

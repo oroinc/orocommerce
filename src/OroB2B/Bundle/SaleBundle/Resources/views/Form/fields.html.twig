@@ -104,10 +104,7 @@
 {% endblock %}
 
 {% block orob2b_sale_quote_product_request_widget %}
-    <table class="sale-quoteproductitem-widget"
-           data-page-component-module="oroui/js/app/components/view-component"
-           data-page-component-options="{{ {view: 'orob2bsale/js/app/views/line-item-view'}|json_encode }}"
-           data-layout="separate">
+    <table class="sale-quoteproductitem-widget">
         <tr>
             <td>
                 {{ form_row(form.quantity) }}
@@ -119,7 +116,7 @@
                 }) }}
                 {{ form_errors(form.productUnit) }}
             </td>
-            <td class="sale-quoteproductitem-widget-price">
+            <td>
                 {{ form_row(form.price) }}
                 {{ form_errors(form.price.value) }}
             </td>

@@ -35,7 +35,7 @@ define(function(require) {
             this.options = $.extend(true, {}, this.options, options || {});
 
             this.$form = this.$el.closest('form');
-            this.$priceList = this.$form.find(':input[data-ftid="' + this.$form.attr('name') + '_priceList"]');
+            this.$priceList = this.$form.find(':input[name$="[priceList]"]');
 
             this.subview('productsPricesComponent', new ProductsPricesComponent({
                 $priceList: this.$priceList,
