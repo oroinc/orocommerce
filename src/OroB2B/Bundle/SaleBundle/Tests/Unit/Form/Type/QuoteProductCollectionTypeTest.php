@@ -35,7 +35,7 @@ class QuoteProductCollectionTypeTest extends FormIntegrationTestCase
             ->method('setDefaults')
             ->with([
                     'type'  => QuoteProductType::NAME,
-                    'show_form_when_empty'  => false,
+                    'show_form_when_empty'  => true,
                     'error_bubbling'        => false,
                     'prototype_name'        => '__namequoteproduct__',
             ])

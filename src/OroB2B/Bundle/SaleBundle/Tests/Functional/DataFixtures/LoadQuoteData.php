@@ -32,6 +32,9 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
     const CURRENCY1 = 'USD';
     const CURRENCY2 = 'EUR';
 
+    const PRICE1 = 1.00;
+    const PRICE2 = 2.00;
+
     /**
      * @var array
      */
@@ -44,7 +47,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
                         'priceType' => QuoteProductOffer::PRICE_TYPE_UNIT,
                         'quantity'  => 1,
                         'unit'      => self::UNIT1,
-                        'price'     => 1,
+                        'price'     => self::PRICE1,
                         'currency'  => self::CURRENCY1,
                         'allow_increments' => true
                     ],
@@ -52,7 +55,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
                         'priceType' => QuoteProductOffer::PRICE_TYPE_UNIT,
                         'quantity'  => 2,
                         'unit'      => self::UNIT2,
-                        'price'     => 2,
+                        'price'     => self::PRICE2,
                         'currency'  => self::CURRENCY1,
                         'allow_increments' => false
                     ],
@@ -168,7 +171,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
             $product->setProductSku($sku);
         }
 
-        foreach ($items as $item) {
+        foreach ($items as $index => $item) {
             $productOffer = new QuoteProductOffer();
             $productOffer
                 ->setAllowIncrements($item['allow_increments'])
@@ -184,6 +187,9 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
             }
 
             $manager->persist($productOffer);
+
+            // e.g sale.quote.1.product.1.offer.1
+            $this->addReference($quote->getQid() . '.' . $sku . '.offer.' . ($index + 1), $productOffer);
 
             $product->addQuoteProductOffer($productOffer);
         }
