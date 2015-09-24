@@ -8,10 +8,6 @@ placeholders:
         items:
             rfp_quick_add: ~
 
-    orob2b_rfp_request_create_from_shoppinglist:
-        items:
-            rfp_request_create_from_shoppinglist: ~
-
 items:
     rfp_view_buttons:
         template: OroB2BRFPBundle:Request:block/viewButtons.html.twig
@@ -21,6 +17,3 @@ items:
     rfp_quick_add:
         template: OroB2BRFPBundle:Product:Frontend/quickAdd.html.twig
         applicable: @orob2b_rfp.processor.quick_add->isAllowed()
-
-    rfp_request_create_from_shoppinglist:
-        action: OroB2BRFPBundle:Frontend\Request:createFromShoppingListForm

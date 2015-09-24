@@ -25,7 +25,16 @@
         </div>
     {% endif %}
 
-    {% placeholder orob2b_rfp_request_create_from_shoppinglist with {id: entity.id} %}
+    {% if resource_granted('orob2b_rfp_frontend_request_update') %}
+        <div class="btn-group">
+            {{ UI.link({
+                path: path('orob2b_shoppinglist_frontend_createrequest', {id: entity.id}),
+                label: 'orob2b.frontend.rfp.btn.request_create_from_shoppinglist'|trans,
+                class: 'btn',
+                iCss: 'icon-briefcase',
+            }) }}
+        </div>
+    {% endif %}
 
     {% if resource_granted('EDIT', entity) %}
         {{ UI.editButton({

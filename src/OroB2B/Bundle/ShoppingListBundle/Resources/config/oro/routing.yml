@@ -15,6 +15,13 @@ orob2b_shopping_list_frontend_order:
     options:
         frontend: true
 
+orob2b_shopping_list_frontend_request:
+    resource:     "@OroB2BShoppingListBundle/Controller/Frontend/RequestController.php"
+    type:         annotation
+    prefix:       /account/shoppinglist/request
+    options:
+        frontend: true
+
 orob2b_shopping_list_frontend:
     resource: "@OroB2BShoppingListBundle/Controller/Frontend/ShoppingListController.php"
     type:     annotation

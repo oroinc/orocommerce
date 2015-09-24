@@ -7,8 +7,6 @@ use Oro\Component\Testing\WebTestCase;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
 /**
  * @dbIsolation
@@ -27,7 +25,6 @@ class RequestControllerTest extends WebTestCase
                 'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData',
                 'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData',
                 'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
-                'OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists',
             ]
         );
     }
@@ -121,49 +118,6 @@ class RequestControllerTest extends WebTestCase
         $controls = $crawler->filter('.control-group');
 
         static::assertEquals($expectedData['columnsCount'], count($controls));
-    }
-
-    /**
-     * @param array $inputData
-     * @param array $expectedData
-     *
-     * @dataProvider createFromShoppingListProvider
-     */
-    public function testCreateFromShoppingList(array $inputData, array $expectedData)
-    {
-        $this->initClient([], static::generateBasicAuthHeader($inputData['login'], $inputData['password']));
-        /* @var $shoppingList ShoppingList */
-        $shoppingList = $this->getReference($inputData['shoppingList']);
-        $this->client->request(
-            'POST',
-            $this->getUrl('orob2b_rfp_frontend_createfromshoppinglist', ['id' => $shoppingList->getId()])
-        );
-        $this->client->followRedirects(true);
-        $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, $expectedData['statusCode']);
-    }
-
-    /**
-     * @param array $inputData
-     * @param array $expectedData
-     *
-     * @dataProvider createFromShoppingListProvider
-     */
-    public function testCreateFromShoppingListForm(array $inputData, array $expectedData)
-    {
-        $this->initClient([], static::generateBasicAuthHeader($inputData['login'], $inputData['password']));
-
-        /* @var $shoppingList ShoppingList */
-        $shoppingList = $this->getReference($inputData['shoppingList']);
-
-        $crawler = $this->client->request('GET', $this->getUrl(
-            'orob2b_rfp_frontend_createfromshoppinglistform',
-            ['id' => $shoppingList->getId()]
-        ));
-
-        $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, $expectedData['statusCode']);
-        static::assertCount($expectedData['buttonsCount'], $crawler->selectButton('Request a Quote'));
     }
 
     /**
@@ -289,37 +243,6 @@ class RequestControllerTest extends WebTestCase
                 ],
                 'expected' => [
                     'columnsCount' => 8,
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function createFromShoppingListProvider()
-    {
-        return [
-            'account1 user2 (RFP:NONE)' => [
-                'input' => [
-                    'shoppingList' => LoadShoppingLists::SHOPPING_LIST_1,
-                    'login' => LoadUserData::ACCOUNT1_USER2,
-                    'password' => LoadUserData::ACCOUNT1_USER2,
-                ],
-                'expected' => [
-                    'statusCode' => 403,
-                    'buttonsCount' => 0,
-                ],
-            ],
-            'account1 user1 (RFP:CREATE_BASIC)' => [
-                'input' => [
-                    'shoppingList' => LoadShoppingLists::SHOPPING_LIST_1,
-                    'login' => LoadUserData::ACCOUNT1_USER1,
-                    'password' => LoadUserData::ACCOUNT1_USER1,
-                ],
-                'expected' => [
-                    'statusCode' => 200,
-                    'buttonsCount' => 1,
                 ],
             ],
         ];

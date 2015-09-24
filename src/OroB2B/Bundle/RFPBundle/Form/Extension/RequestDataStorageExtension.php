@@ -29,6 +29,8 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
             ->setProduct($product)
             ->addRequestProductItem($requestProductItem);
 
+        $this->fillEntityData($requestProduct, $itemData);
+
         if (array_key_exists(ProductDataStorage::PRODUCT_QUANTITY_KEY, $itemData)) {
             $requestProductItem->setQuantity($itemData[ProductDataStorage::PRODUCT_QUANTITY_KEY]);
         }

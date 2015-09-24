@@ -10,9 +10,6 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Translation\TranslatorInterface;
-
-use Psr\Log\LoggerInterface;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -25,7 +22,6 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
-use OroB2B\Bundle\RFPBundle\Form\Handler\RequestCreateFromShoppingListHandler;
 use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
@@ -102,7 +98,7 @@ class RequestController extends Controller
      *
      * @return array
      */
-    public function createAction()
+    public function createAction(Request $request)
     {
         $rfpRequest = new RFPRequest();
         $user = $this->getUser();
@@ -117,7 +113,7 @@ class RequestController extends Controller
             ;
         }
 
-        return $this->update($rfpRequest);
+        return $this->update($rfpRequest, $request);
     }
 
     /**
@@ -137,50 +133,6 @@ class RequestController extends Controller
     public function updateAction(RFPRequest $rfpRequest)
     {
         return $this->update($rfpRequest);
-    }
-
-    /**
-     * @Route(
-     *      "/create-from-shopping-list/{id}",
-     *      name="orob2b_rfp_frontend_createfromshoppinglist",
-     *      requirements={"id"="\d+"})
-     * @Acl(
-     *      id="orob2b_rfp_frontend_createfromshoppinglist",
-     *      type="entity",
-     *      class="OroB2BRFPBundle:Request",
-     *      permission="CREATE",
-     *      group_name="commerce"
-     * )
-     * @Template("OroB2BShoppingListBundle:ShoppingList/Frontend:view.html.twig")
-     *
-     * @param Request $request
-     * @param ShoppingList $shoppingList
-     * @return array|RedirectResponse
-     */
-    public function createFromShoppingListAction(Request $request, ShoppingList $shoppingList)
-    {
-        return $this->createFromShoppingList($request, $shoppingList);
-    }
-
-    /**
-     * @Route(
-     *      "/create-from-shopping-list-form/{id}",
-     *      name="orob2b_rfp_frontend_createfromshoppinglistform",
-     *      requirements={"id"="\d+"}
-     * )
-     * @Template("OroB2BRFPBundle:Request/Frontend:block/createFromShoppingListForm.html.twig")
-     *
-     * @AclAncestor("orob2b_rfp_frontend_createfromshoppinglist")
-     *
-     * @param ShoppingList $shoppingList
-     * @return array
-     */
-    public function createFromShoppingListFormAction(ShoppingList $shoppingList)
-    {
-        return [
-            'entity' => $shoppingList,
-            'formCreateRfp' => $this->getCreateFromShoppingListForm($shoppingList)->createView(),
-        ];
     }
 
     /**
@@ -317,22 +269,6 @@ class RequestController extends Controller
             ->getRepository($requestStatusClass)
             ->findOneBy(['name' => RequestStatus::DRAFT])
         ;
-    }
-
-    /**
-     * @return LoggerInterface
-     */
-    protected function getLogger()
-    {
-        return $this->get('logger');
-    }
-
-    /**
-     * @return TranslatorInterface
-     */
-    protected function getTranslator()
-    {
-        return $this->get('translator');
     }
 
     /**
