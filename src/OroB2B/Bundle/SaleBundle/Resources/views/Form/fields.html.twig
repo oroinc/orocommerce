@@ -120,6 +120,7 @@
 {% block orob2b_sale_quote_product_to_order_widget %}
     {% set product = quoteProduct.productReplacement|default(quoteProduct.product) %}
     {% set offerChoiceName = 'offer_choice_%s'|format(name) %}
+    {% set isQuantityValid = form.quantity.vars.valid %}
 
     {% set selectedOffer = null %}
     {% set selectedOfferId = app.request.request.get(offerChoiceName) %}
@@ -136,10 +137,14 @@
 
     {% if selectedOffer %}
         {% set defaultUnitCode = selectedOffer.productUnit.code|orob2b_format_product_unit_label(true) %}
-        {% set defaultPrice = selectedOffer.price|oro_format_price %}
+        {% if isQuantityValid %}
+            {% set defaultPriceValue = selectedOffer.price|oro_format_price %}
+        {% else %}
+            {% set defaultPriceValue = 'orob2b.frontend.sale.quoteproductoffer.not_available.message'|trans %}
+        {% endif %}
     {% else %}
         {% set defaultUnitCode = '' %}
-        {% set defaultPrice = '' %}
+        {% set defaultPriceValue = '' %}
     {% endif %}
 
     {% set componentOptions = {
@@ -148,7 +153,9 @@
         unitInputSelector: '[name=\'%s\']'|format(form.unit.vars.full_name),
         unitSelector: '#%s .quote-product-offer-quantity-unit'|format(id),
         unitPriceSelector: '#%s .quote-product-offer-price span'|format(id),
-        quoteProductId: quoteProduct.id
+        quoteProductId: quoteProduct.id,
+        calculatingMessage: 'orob2b.frontend.sale.quoteproductoffer.price_calculating.message'|trans,
+        notAvailableMessage: 'orob2b.frontend.sale.quoteproductoffer.not_available.message'|trans,
     } %}
     <tr id="{{ id }}"
         data-page-component-module="orob2bsale/js/app/components/quote-product-to-order-component"
@@ -192,7 +199,7 @@
         </td>
         <td class="quote-product-offer-quantity">
             <div class="fields-row">
-                {{ form_widget(form.quantity, {'attr': {'data-valid': form.quantity.vars.valid|json_encode}}) }}
+                {{ form_widget(form.quantity, {'attr': {'data-valid': isQuantityValid|json_encode}}) }}
                 {{ form_widget(form.unit) }}
                 <span class="quote-product-offer-quantity-unit">{{ defaultUnitCode }}</span>
             </div>
@@ -200,7 +207,7 @@
             {{ form_errors(form.unit) }}
         </td>
         <td class="quote-product-offer-price">
-            <span>{{ defaultPrice }}</span>
+            <span>{{ defaultPriceValue }}</span>
         </td>
     </tr>
 {% endblock %}

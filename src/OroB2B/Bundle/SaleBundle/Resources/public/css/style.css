@@ -340,7 +340,7 @@ td.quote-product-offer-quantity input {
 }
 
 td.quote-product-offer-price {
-    width: 60px;
+    min-width: 100px;
 }
 
 span.quote-product-offer-quantity-unit {
