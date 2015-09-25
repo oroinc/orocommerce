@@ -1,7 +1,7 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
 {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 
-{% oro_title_set({params : {"%title%": "Login page" } }) %}
+{% oro_title_set({params : {"%title%": 'orob2b.cms.page.entity_label'|trans } }) %}
 
 {% block pageHeader %}
     {% set breadcrumbs = {
@@ -26,10 +26,12 @@
 {% block content_data %}
     {% set imageLogoData %}
         {% if entity.logoImage %}
-            {{ UI.renderAttribute(
-                    'orob2b.cms.loginpage.logo_image.label'|trans,
-                    '<div class="control-label html-content"><img src="' ~ filtered_image_url(entity.logoImage, "login_page") ~ '"></div>'
-                ) }}
+            {% set logoImageContent %}
+                <div class="control-label html-content">
+                    <img src="{{ filtered_image_url(entity.logoImage, "login_page") }}">
+                </div>
+            {% endset %}
+            {{ UI.renderAttribute('orob2b.cms.loginpage.logo_image.label'|trans, logoImageContent) }}
         {% else %}
             {{ UI.renderHtmlProperty('orob2b.cms.loginpage.logo_image.label'|trans, 'N/A'|trans) }}
         {% endif %}
@@ -37,10 +39,12 @@
 
     {% set backgroundImageData %}
         {% if entity.backgroundImage %}
-            {{ UI.renderAttribute(
-            'orob2b.cms.loginpage.background_image.label'|trans,
-            '<div class="control-label html-content"><img src="' ~ filtered_image_url(entity.backgroundImage, "login_page") ~ '"></div>'
-            ) }}
+            {% set backgroupImageContent %}
+                <div class="control-label html-content">
+                    <img src="{{ filtered_image_url(entity.backgroundImage, "login_page") }}">
+                </div>
+            {% endset %}
+            {{ UI.renderAttribute('orob2b.cms.loginpage.background_image.label'|trans, backgroupImageContent) }}
         {% else %}
             {{ UI.renderHtmlProperty('orob2b.cms.loginpage.background_image.label'|trans, 'N/A'|trans) }}
         {% endif %}
@@ -51,9 +55,9 @@
         'class': 'active',
         'subblocks': [
             {'data' : [
-                UI.renderProperty('orob2b.cms.loginpage.top_content.label'|trans, entity.topContent|slice(0, 100)),
-                UI.renderProperty('orob2b.cms.loginpage.bottom_content.label'|trans, entity.bottomContent|slice(0, 100)),
-                UI.renderProperty('orob2b.cms.loginpage.css.label'|trans, entity.css|slice(0, 100)),
+                UI.renderProperty('orob2b.cms.loginpage.top_content.label'|trans, entity.topContent|truncate(100)),
+                UI.renderProperty('orob2b.cms.loginpage.bottom_content.label'|trans, entity.bottomContent|truncate(100)),
+                UI.renderProperty('orob2b.cms.loginpage.css.label'|trans, entity.css|truncate(100)),
                 imageLogoData,
                 backgroundImageData,
             ]},
