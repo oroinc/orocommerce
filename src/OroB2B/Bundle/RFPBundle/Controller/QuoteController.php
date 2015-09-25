@@ -11,6 +11,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 
 class QuoteController extends Controller
 {
@@ -53,9 +54,14 @@ class QuoteController extends Controller
                 $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = [
                     ProductDataStorage::PRODUCT_SKU_KEY => $requestProduct->getProduct()->getSku(),
                     ProductDataStorage::PRODUCT_QUANTITY_KEY => $requestProductItem->getQuantity(),
-                    'comment' => $requestProduct->getComment(),
+                    'commentAccount' => $requestProduct->getComment(),
                     'productUnit' => $productUnitCode,
                     'productUnitCode' => $productUnitCode,
+                    'type' => QuoteProduct::TYPE_REQUESTED,
+                    'price' => $requestProductItem->getPrice(),
+                    'requestProductItem' => $requestProductItem,
+                    'requestProduct' => $requestProduct,
+                    'allowIncrements' => true,
                 ];
             }
         }

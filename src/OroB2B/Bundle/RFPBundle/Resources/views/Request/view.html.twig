@@ -54,7 +54,7 @@
         {% if resource_granted('orob2b_sale_quote_create') and not entity.status.isDraft %}
             <div class="btn-group">
                 {{ UI.link({
-                    path: path('orob2b_rfp_frontend_quote_create', {id: entity.id}),
+                    path: path('orob2b_rfp_quote_create', {id: entity.id}),
                     label: 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.sale.quote.entity_label'|trans}),
                     class: 'no-hash btn',
                     iCss: 'icon-file-text hide-text',
