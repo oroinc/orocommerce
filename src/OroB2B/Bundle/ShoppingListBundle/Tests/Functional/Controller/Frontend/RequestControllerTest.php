@@ -53,7 +53,7 @@ class RequestControllerTest extends WebTestCase
         );
         static::assertEquals(true, $this->client->getRequest()->get(ProductDataStorage::STORAGE_KEY));
 
-        $lineItems = $crawler->filter('[data-ftid=orob2b_rfp_frontend_request_type_requestProducts]');
+        $lineItems = $crawler->filter('[data-ftid=orob2b_rfp_frontend_request_requestProducts]');
         static::assertNotEmpty($lineItems);
         $content = $lineItems->html();
         foreach ($shoppingList->getLineItems() as $lineItem) {
