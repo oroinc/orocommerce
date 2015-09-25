@@ -1,0 +1,75 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
+{% oro_title_set({params : {"%title%": 'orob2b.cms.page.entity_label'|trans } }) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('orob2b_cms_loginpage_index'),
+        'indexLabel': 'orob2b.cms.loginpage.entity_plural_label'|trans,
+        'entityTitle': entity.id|default('N/A'|trans)
+    } %}
+
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block navButtons %}
+    {% if resource_granted('EDIT', entity) %}
+        {{ UI.editButton({
+            'path' : path('orob2b_cms_loginpage_update', { 'id': entity.id }),
+            'entity_label': 'orob2b.cms.loginpage.entity_label'|trans
+        }) }}
+    {% endif %}
+{% endblock navButtons %}
+
+{% block content_data %}
+    {% set imageLogoData %}
+        {% if entity.logoImage %}
+            {% set logoImageContent %}
+                <div class="control-label html-content">
+                    <img src="{{ filtered_image_url(entity.logoImage, "login_page") }}">
+                </div>
+            {% endset %}
+            {{ UI.renderAttribute('orob2b.cms.loginpage.logo_image.label'|trans, logoImageContent) }}
+        {% else %}
+            {{ UI.renderHtmlProperty('orob2b.cms.loginpage.logo_image.label'|trans, 'N/A'|trans) }}
+        {% endif %}
+    {% endset %}
+
+    {% set backgroundImageData %}
+        {% if entity.backgroundImage %}
+            {% set backgroupImageContent %}
+                <div class="control-label html-content">
+                    <img src="{{ filtered_image_url(entity.backgroundImage, "login_page") }}">
+                </div>
+            {% endset %}
+            {{ UI.renderAttribute('orob2b.cms.loginpage.background_image.label'|trans, backgroupImageContent) }}
+        {% else %}
+            {{ UI.renderHtmlProperty('orob2b.cms.loginpage.background_image.label'|trans, 'N/A'|trans) }}
+        {% endif %}
+    {% endset %}
+
+    {% set dataBlocks = [{
+        'title': 'orob2b.cms.sections.general'|trans,
+        'class': 'active',
+        'subblocks': [
+            {'data' : [
+                UI.renderProperty('orob2b.cms.loginpage.top_content.label'|trans, entity.topContent|truncate(100)),
+                UI.renderProperty('orob2b.cms.loginpage.bottom_content.label'|trans, entity.bottomContent|truncate(100)),
+                UI.renderProperty('orob2b.cms.loginpage.css.label'|trans, entity.css|truncate(100)),
+                imageLogoData,
+                backgroundImageData,
+            ]},
+        ]
+    }] %}
+
+    {% set id = 'login-page-view' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ parent() }}
+{% endblock content_data %}
+
+{% block stats %}
+    {# Must be empty, because parent view uses this block to render dates, which are not implemented in this entity #}
+{% endblock stats %}

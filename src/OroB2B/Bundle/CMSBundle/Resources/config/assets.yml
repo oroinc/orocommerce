@@ -1,3 +1,4 @@
 css:
     'orob2bcms':
         - 'bundles/orob2bcms/css/pages.css'
+        - 'bundles/orob2bcms/css/loginPage.css'
