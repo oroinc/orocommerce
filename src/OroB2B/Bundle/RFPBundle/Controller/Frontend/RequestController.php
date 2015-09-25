@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\RFPBundle\Controller\Frontend;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -92,7 +91,7 @@ class RequestController extends Controller
      *
      * @return array
      */
-    public function createAction(Request $request)
+    public function createAction()
     {
         $rfpRequest = new RFPRequest();
         $user = $this->getUser();
@@ -107,7 +106,7 @@ class RequestController extends Controller
             ;
         }
 
-        return $this->update($rfpRequest, $request);
+        return $this->update($rfpRequest);
     }
 
     /**
