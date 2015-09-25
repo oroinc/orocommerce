@@ -62,8 +62,8 @@ class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
      * @dataProvider getTierPricesDataProvider
      * @param PriceList|null $quotePriceList
      * @param QuoteProduct[] $quoteProducts
-     * @param []|null $productPriceProviderArgs
-     * @param [] $tierPricesCount
+     * @param array|null $productPriceProviderArgs
+     * @param int $tierPricesCount
      */
     public function testGetTierPrices($quotePriceList, $quoteProducts, $productPriceProviderArgs, $tierPricesCount)
     {
@@ -129,7 +129,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
      * @dataProvider getMatchedPricesDataProvider
      * @param PriceList|null $quotePriceList
      * @param QuoteProduct[] $quoteProducts
-     * @param []|null $productPriceProviderArgs
+     * @param array|null $productPriceProviderArgs
      * @param int $matchedPriceCount
      */
     public function testGetMatchedPrices($quotePriceList, $quoteProducts, $productPriceProviderArgs, $matchedPriceCount)
