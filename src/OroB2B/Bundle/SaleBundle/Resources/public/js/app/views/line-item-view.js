@@ -11,7 +11,9 @@ define(function(require) {
         /**
          * @property {Object}
          */
-        options: {},
+        options: {
+            isNew: false
+        },
 
         /**
          * @property {jQuery}
@@ -81,7 +83,8 @@ define(function(require) {
                 $priceType: this.fieldsByName.priceType,
                 $productUnit: this.fieldsByName.productUnit,
                 $quantity: this.fieldsByName.quantity,
-                $currency: this.fieldsByName.priceCurrency
+                $currency: this.fieldsByName.priceCurrency,
+                isNew: this.options.isNew
             }));
         }
     });

@@ -74,7 +74,10 @@
 {% block orob2b_sale_quote_product_offer_widget %}
     <table class="sale-quoteproductitem-widget"
            data-page-component-module="oroui/js/app/components/view-component"
-           data-page-component-options="{{ {view: 'orob2bsale/js/app/views/line-item-view'}|json_encode }}"
+           data-page-component-options="{{ {
+               view: 'orob2bsale/js/app/views/line-item-view',
+               isNew: form.vars.value is empty
+           }|json_encode }}"
            data-layout="separate">
         <tr>
             <td class="sale-quoteproductitem-widget-quantity">

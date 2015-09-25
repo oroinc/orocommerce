@@ -26,7 +26,8 @@ define(function(require) {
             $quantity: null,
             $currency: null,
             bundledPriceTypeValue: '20',
-            disabled: false
+            disabled: false,
+            isNew: false
         },
 
         /**
@@ -79,8 +80,13 @@ define(function(require) {
             this.initTierPrices();
             this.initMatchedPrices();
 
-            mediator.trigger('pricing:get:products-tier-prices', _.bind(this.setTierPrices, this));
-            mediator.trigger('pricing:get:line-items-matched-prices', _.bind(this.setMatchedPrices, this));
+            if (this.options.isNew) {
+                this.updateTierPrices();
+                this.updateMatchedPrices();
+            } else {
+                mediator.trigger('pricing:get:products-tier-prices', _.bind(this.setTierPrices, this));
+                mediator.trigger('pricing:get:line-items-matched-prices', _.bind(this.setMatchedPrices, this));
+            }
         },
 
         initTierPrices: function() {
