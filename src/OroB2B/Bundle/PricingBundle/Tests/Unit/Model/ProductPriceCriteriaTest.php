@@ -2,28 +2,28 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Model;
 
-use OroB2B\Bundle\PricingBundle\Model\ProductUnitQuantity;
+use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
-class ProductUnitQuantityTest extends \PHPUnit_Framework_TestCase
+class ProductPriceCriteriaTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @dataProvider productUnitQuantityDataProvider
+     * @dataProvider productPriceCriteriaDataProvider
      *
      * @param mixed $quantity
      * @param string $currency
      */
-    public function testProductUnitQuantity($quantity, $currency)
+    public function testProductPriceCriteria($quantity, $currency)
     {
-        $instance = new ProductUnitQuantity(
+        $instance = new ProductPriceCriteria(
             $this->getProduct(42),
             (new ProductUnit())->setCode('kg'),
             $quantity,
             $currency
         );
 
-        $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\Model\ProductUnitQuantity', $instance);
+        $this->assertInstanceOf('OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria', $instance);
         $this->assertEquals($this->getProduct(42), $instance->getProduct());
         $this->assertEquals((new ProductUnit())->setCode('kg'), $instance->getProductUnit());
         $this->assertEquals($quantity, $instance->getQuantity());
@@ -33,7 +33,7 @@ class ProductUnitQuantityTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function productUnitQuantityDataProvider()
+    public function productPriceCriteriaDataProvider()
     {
         return [
             [0, 'USD'],
@@ -51,7 +51,7 @@ class ProductUnitQuantityTest extends \PHPUnit_Framework_TestCase
      */
     public function testConstructorProductException()
     {
-        new ProductUnitQuantity(new Product(), (new ProductUnit())->setCode('kg'), 1, 'USD');
+        new ProductPriceCriteria(new Product(), (new ProductUnit())->setCode('kg'), 1, 'USD');
     }
 
     /**
@@ -60,7 +60,7 @@ class ProductUnitQuantityTest extends \PHPUnit_Framework_TestCase
      */
     public function testConstructorProductUnitException()
     {
-        new ProductUnitQuantity($this->getProduct(42), new ProductUnit(), 1, 'USD');
+        new ProductPriceCriteria($this->getProduct(42), new ProductUnit(), 1, 'USD');
     }
 
     /**
@@ -74,7 +74,7 @@ class ProductUnitQuantityTest extends \PHPUnit_Framework_TestCase
      */
     public function testConstructorQuantityException($quantity, $currency)
     {
-        new ProductUnitQuantity($this->getProduct(42), (new ProductUnit())->setCode('kg'), $quantity, $currency);
+        new ProductPriceCriteria($this->getProduct(42), (new ProductUnit())->setCode('kg'), $quantity, $currency);
     }
 
     /**
@@ -83,7 +83,7 @@ class ProductUnitQuantityTest extends \PHPUnit_Framework_TestCase
      */
     public function testConstructorCurrencyException()
     {
-        new ProductUnitQuantity($this->getProduct(42), (new ProductUnit())->setCode('kg'), 1, '');
+        new ProductPriceCriteria($this->getProduct(42), (new ProductUnit())->setCode('kg'), 1, '');
     }
 
     /**
@@ -106,9 +106,9 @@ class ProductUnitQuantityTest extends \PHPUnit_Framework_TestCase
         $productUnit = new ProductUnit();
         $productUnit->setCode('kg');
 
-        $productUnitQuantity = new ProductUnitQuantity($product, $productUnit, 42, 'USD');
+        $productPriceCriteria = new ProductPriceCriteria($product, $productUnit, 42, 'USD');
 
-        $this->assertEquals('150-kg-42-USD', $productUnitQuantity->getIdentifier());
+        $this->assertEquals('150-kg-42-USD', $productPriceCriteria->getIdentifier());
     }
 
     /**

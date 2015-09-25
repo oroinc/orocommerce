@@ -35,11 +35,11 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     {
         $lineItems = $request->get('items', []);
 
-        $productUnitQuantities = $this->prepareProductUnitQuantities($lineItems);
+        $productsPriceCriteria = $this->prepareProductsPriceCriteria($lineItems);
 
         /** @var Price[] $matchedPrice */
         $matchedPrice = $this->get('orob2b_pricing.provider.product_price')
-            ->getMatchedPrices($productUnitQuantities);
+            ->getMatchedPrices($productsPriceCriteria);
 
         return new JsonResponse($this->formatMatchedPrices($matchedPrice));
     }

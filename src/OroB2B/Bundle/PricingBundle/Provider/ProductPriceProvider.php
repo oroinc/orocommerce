@@ -9,7 +9,7 @@ use Oro\Bundle\CurrencyBundle\Model\Price;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
-use OroB2B\Bundle\PricingBundle\Model\ProductUnitQuantity;
+use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 
 class ProductPriceProvider
 {
@@ -65,11 +65,11 @@ class ProductPriceProvider
     }
 
     /**
-     * @param array $productUnitQuantities
+     * @param array $productsPriceCriteria
      * @param PriceList|null $priceList
      * @return array|Price[]
      */
-    public function getMatchedPrices(array $productUnitQuantities, PriceList $priceList = null)
+    public function getMatchedPrices(array $productsPriceCriteria, PriceList $priceList = null)
     {
         if (!$priceList) {
             $priceList = $this->requestHandler->getPriceList();
@@ -78,10 +78,10 @@ class ProductPriceProvider
         $productIds = [];
         $productUnitCodes = [];
 
-        /** @var ProductUnitQuantity[] $productUnitQuantities */
-        foreach ($productUnitQuantities as $productUnitQuantity) {
-            $productIds[] = $productUnitQuantity->getProduct()->getId();
-            $productUnitCodes[] = $productUnitQuantity->getProductUnit()->getCode();
+        /** @var ProductPriceCriteria[] $productsPriceCriteria */
+        foreach ($productsPriceCriteria as $productPriceCriteria) {
+            $productIds[] = $productPriceCriteria->getProduct()->getId();
+            $productUnitCodes[] = $productPriceCriteria->getProductUnit()->getCode();
         }
 
         $prices = $this->getRepository()->getPricesBatch(
@@ -93,11 +93,11 @@ class ProductPriceProvider
 
         $result = [];
 
-        foreach ($productUnitQuantities as $productUnitQuantity) {
-            $id = $productUnitQuantity->getProduct()->getId();
-            $code = $productUnitQuantity->getProductUnit()->getCode();
-            $quantity = $productUnitQuantity->getQuantity();
-            $currency = $productUnitQuantity->getCurrency();
+        foreach ($productsPriceCriteria as $productPriceCriteria) {
+            $id = $productPriceCriteria->getProduct()->getId();
+            $code = $productPriceCriteria->getProductUnit()->getCode();
+            $quantity = $productPriceCriteria->getQuantity();
+            $currency = $productPriceCriteria->getCurrency();
 
             $productPrices = array_filter(
                 $prices,
@@ -108,7 +108,7 @@ class ProductPriceProvider
 
             $price = $this->matchPriceByQuantity($productPrices, $quantity);
 
-            $result[$productUnitQuantity->getIdentifier()] = $price ? Price::create($price, $currency) : null;
+            $result[$productPriceCriteria->getIdentifier()] = $price ? Price::create($price, $currency) : null;
         }
 
         return $result;

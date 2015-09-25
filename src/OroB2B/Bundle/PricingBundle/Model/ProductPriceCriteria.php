@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\PricingBundle\Model;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
-class ProductUnitQuantity
+class ProductPriceCriteria
 {
     /**
      * @var Product

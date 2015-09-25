@@ -13,7 +13,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-use OroB2B\Bundle\PricingBundle\Model\ProductUnitQuantity;
+use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
@@ -53,9 +53,9 @@ class AbstractAjaxProductPriceController extends Controller
      * @param array $lineItems
      * @return array
      */
-    protected function prepareProductUnitQuantities(array $lineItems)
+    protected function prepareProductsPriceCriteria(array $lineItems)
     {
-        $productUnitQuantities = [];
+        $productsPriceCriteria = [];
 
         foreach ($lineItems as $lineItem) {
             $productId = $this->getLineItemData($lineItem, 'product');
@@ -77,11 +77,11 @@ class AbstractAjaxProductPriceController extends Controller
                 $quantity = (float)$this->getLineItemData($lineItem, 'qty');
                 $currency = (string)$this->getLineItemData($lineItem, 'currency');
 
-                $productUnitQuantities[] = new ProductUnitQuantity($product, $unit, $quantity, $currency);
+                $productsPriceCriteria[] = new ProductPriceCriteria($product, $unit, $quantity, $currency);
             }
         }
 
-        return $productUnitQuantities;
+        return $productsPriceCriteria;
     }
 
     /**

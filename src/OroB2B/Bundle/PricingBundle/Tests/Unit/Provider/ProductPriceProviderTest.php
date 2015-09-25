@@ -8,7 +8,7 @@ use Oro\Bundle\CurrencyBundle\Model\Price;
 
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
-use OroB2B\Bundle\PricingBundle\Model\ProductUnitQuantity;
+use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -179,13 +179,13 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider getMatchedPricesDataProvider
      *
-     * @param array $productUnitQuantities
+     * @param array $productPriceCriteria
      * @param bool $withPriceList
      * @param array $repositoryData
      * @param array $expectedData
      */
     public function testGetMatchedPrices(
-        array $productUnitQuantities,
+        array $productPriceCriteria,
         $withPriceList,
         array $repositoryData,
         array $expectedData
@@ -215,12 +215,12 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($em);
 
         $prices = $this->provider->getMatchedPrices(
-            $productUnitQuantities,
+            $productPriceCriteria,
             $withPriceList ? $priceList : null
         );
 
         $this->assertInternalType('array', $prices);
-        $this->assertEquals(count($productUnitQuantities), count($prices));
+        $this->assertEquals(count($productPriceCriteria), count($prices));
         $this->assertEquals($expectedData, $prices);
     }
 
@@ -230,17 +230,17 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
     public function getMatchedPricesDataProvider()
     {
         $currency = 'USD';
-        $prodUnitQty1 = $this->getProductUnitQuantity(1, $currency);
-        $prodUnitQty105 = $this->getProductUnitQuantity(10.5, $currency);
-        $prodUnitQty50 = $this->getProductUnitQuantity(50, $currency);
-        $prodUnitQty200 = $this->getProductUnitQuantity(200, $currency);
-        $prodUnitQty01 = $this->getProductUnitQuantity(0.1, $currency);
+        $prodUnitQty1 = $this->getProductPriceCriteria(1, $currency);
+        $prodUnitQty105 = $this->getProductPriceCriteria(10.5, $currency);
+        $prodUnitQty50 = $this->getProductPriceCriteria(50, $currency);
+        $prodUnitQty200 = $this->getProductPriceCriteria(200, $currency);
+        $prodUnitQty01 = $this->getProductPriceCriteria(0.1, $currency);
 
         $repositoryData = $this->getRepositoryData($prodUnitQty50);
 
         return [
             'with priceList' => [
-                'productUnitQuantities' => [$prodUnitQty1, $prodUnitQty105],
+                'productPriceCriteria' => [$prodUnitQty1, $prodUnitQty105],
                 'withPriceList' => true,
                 'repositoryData' => $repositoryData,
                 'expectedData' => [
@@ -249,7 +249,7 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
                 ]
             ],
             'without priceList' => [
-                'productUnitQuantities' => [$prodUnitQty50, $prodUnitQty200, $prodUnitQty01],
+                'productPriceCriteria' => [$prodUnitQty50, $prodUnitQty200, $prodUnitQty01],
                 'withPriceList' => false,
                 'repositoryData' => $repositoryData,
                 'expectedData' => [
@@ -264,9 +264,9 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @param float $quantity
      * @param string $currency
-     * @return ProductUnitQuantity
+     * @return ProductPriceCriteria
      */
-    protected function getProductUnitQuantity($quantity, $currency)
+    protected function getProductPriceCriteria($quantity, $currency)
     {
         /** @var Product $product */
         $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 42);
@@ -274,17 +274,17 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
         $productUnit = new ProductUnit();
         $productUnit->setCode('kg');
 
-        return new ProductUnitQuantity($product, $productUnit, $quantity, $currency);
+        return new ProductPriceCriteria($product, $productUnit, $quantity, $currency);
     }
 
     /**
-     * @param ProductUnitQuantity $productUnitQuantity
+     * @param ProductPriceCriteria $productPriceCriteria
      * @return array
      */
-    protected function getRepositoryData(ProductUnitQuantity $productUnitQuantity)
+    protected function getRepositoryData(ProductPriceCriteria $productPriceCriteria)
     {
-        $product = $productUnitQuantity->getProduct();
-        $productUnit = $productUnitQuantity->getProductUnit();
+        $product = $productPriceCriteria->getProduct();
+        $productUnit = $productPriceCriteria->getProductUnit();
 
         return [
             [

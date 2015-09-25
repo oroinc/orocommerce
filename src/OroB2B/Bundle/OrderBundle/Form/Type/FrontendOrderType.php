@@ -18,7 +18,7 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use OroB2B\Bundle\PaymentBundle\Provider\PaymentTermProvider;
-use OroB2B\Bundle\PricingBundle\Model\ProductUnitQuantity;
+use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 
 class FrontendOrderType extends AbstractType
@@ -158,7 +158,7 @@ class FrontendOrderType extends AbstractType
         /** @var Order $order */
         $order = $event->getData();
         if ($order && $order->getLineItems()) {
-            $productUnitQuantities = [];
+            $productsPriceCriteria = [];
             /** @var OrderLineItem[] $lineItemsWithIdentifier */
             $lineItemsWithIdentifier = [];
 
@@ -167,18 +167,18 @@ class FrontendOrderType extends AbstractType
                     continue;
                 }
 
-                $productUnitQuantity = new ProductUnitQuantity(
+                $productPriceCriteria = new ProductPriceCriteria(
                     $lineItem->getProduct(),
                     $lineItem->getProductUnit(),
                     $lineItem->getQuantity(),
                     $order->getCurrency()
                 );
 
-                $productUnitQuantities[] = $productUnitQuantity;
-                $lineItemsWithIdentifier[$productUnitQuantity->getIdentifier()] = $lineItem;
+                $productsPriceCriteria[] = $productPriceCriteria;
+                $lineItemsWithIdentifier[$productPriceCriteria->getIdentifier()] = $lineItem;
             }
 
-            $this->fillLineItemsPrice($productUnitQuantities, $lineItemsWithIdentifier);
+            $this->fillLineItemsPrice($productsPriceCriteria, $lineItemsWithIdentifier);
         }
     }
 
@@ -197,12 +197,12 @@ class FrontendOrderType extends AbstractType
     }
 
     /**
-     * @param ProductUnitQuantity[] $productUnitQuantities
+     * @param ProductPriceCriteria[] $productsPriceCriteria
      * @param OrderLineItem[] $lineItemsWithIdentifier
      */
-    protected function fillLineItemsPrice(array $productUnitQuantities, array $lineItemsWithIdentifier)
+    protected function fillLineItemsPrice(array $productsPriceCriteria, array $lineItemsWithIdentifier)
     {
-        $prices = $this->productPriceProvider->getMatchedPrices($productUnitQuantities);
+        $prices = $this->productPriceProvider->getMatchedPrices($productsPriceCriteria);
 
         foreach ($lineItemsWithIdentifier as $identifier => $lineItem) {
             if (array_key_exists($identifier, $prices) && $prices[$identifier] instanceof Price) {

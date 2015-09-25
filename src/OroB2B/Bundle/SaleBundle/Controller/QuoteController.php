@@ -16,7 +16,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Model\ProductUnitQuantity;
+use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
@@ -181,11 +181,11 @@ class QuoteController extends Controller
     protected function getMatchedPrices(Quote $quote)
     {
         $matchedPrices = [];
-        $productUnitQuantities = $this->getProductUnitQuantities($quote);
+        $productsPriceCriteria = $this->getProductsPriceCriteria($quote);
 
-        if ($productUnitQuantities) {
+        if ($productsPriceCriteria) {
             $matchedPrices = $this->get('orob2b_pricing.provider.product_price')->getMatchedPrices(
-                $productUnitQuantities,
+                $productsPriceCriteria,
                 $this->getPriceList($quote)
             );
         }
@@ -207,9 +207,9 @@ class QuoteController extends Controller
      * @param Quote $quote
      * @return array
      */
-    protected function getProductUnitQuantities(Quote $quote)
+    protected function getProductsPriceCriteria(Quote $quote)
     {
-        $productUnitQuantities = [];
+        $productsPriceCriteria = [];
 
         /** @var QuoteProduct $quoteProduct */
         foreach ($quote->getQuoteProducts() as $quoteProduct) {
@@ -224,7 +224,7 @@ class QuoteController extends Controller
             /** @var QuoteProductOffer $quoteProductOffer */
             foreach ($quoteProduct->getQuoteProductOffers() as $quoteProductOffer) {
                 if ($quoteProductOffer->getProductUnit() && $quoteProductOffer->getQuantity()) {
-                    $productUnitQuantities[] = new ProductUnitQuantity(
+                    $productsPriceCriteria[] = new ProductPriceCriteria(
                         $product,
                         $quoteProductOffer->getProductUnit(),
                         $quoteProductOffer->getQuantity(),
@@ -234,7 +234,7 @@ class QuoteController extends Controller
             }
         }
 
-        return $productUnitQuantities;
+        return $productsPriceCriteria;
     }
 
     /**

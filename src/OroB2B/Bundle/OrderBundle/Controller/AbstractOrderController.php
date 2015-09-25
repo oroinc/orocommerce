@@ -11,7 +11,7 @@ use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Model\ProductUnitQuantity;
+use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 
 abstract class AbstractOrderController extends Controller
 {
@@ -60,13 +60,13 @@ abstract class AbstractOrderController extends Controller
     {
         $matchedPrices = [];
 
-        $productUnitQuantities = $order->getLineItems()->filter(
+        $productsPriceCriteria = $order->getLineItems()->filter(
             function (OrderLineItem $lineItem) {
                 return $lineItem->getProduct() && $lineItem->getProductUnit() && $lineItem->getQuantity();
             }
         )->map(
             function (OrderLineItem $lineItem) use ($order) {
-                return new ProductUnitQuantity(
+                return new ProductPriceCriteria(
                     $lineItem->getProduct(),
                     $lineItem->getProductUnit(),
                     $lineItem->getQuantity(),
@@ -75,9 +75,9 @@ abstract class AbstractOrderController extends Controller
             }
         );
 
-        if ($productUnitQuantities) {
+        if ($productsPriceCriteria) {
             $matchedPrices = $this->get('orob2b_pricing.provider.product_price')->getMatchedPrices(
-                $productUnitQuantities->toArray(),
+                $productsPriceCriteria->toArray(),
                 $this->getPriceList($order)
             );
         }
