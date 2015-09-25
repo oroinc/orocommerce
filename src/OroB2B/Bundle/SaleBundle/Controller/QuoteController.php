@@ -10,17 +10,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
+use OroB2B\Bundle\SaleBundle\Provider\QuoteProductPriceProvider;
 
 class QuoteController extends Controller
 {
@@ -135,118 +131,18 @@ class QuoteController extends Controller
             function (Quote $quote, FormInterface $form, Request $request) {
                 return [
                     'form' => $form->createView(),
-                    'tierPrices' => $this->getTierPrices($quote),
-                    'matchedPrices' => $this->getMatchedPrices($quote),
+                    'tierPrices' => $this->getQuoteProductPriceProvider()->getTierPrices($quote),
+                    'matchedPrices' => $this->getQuoteProductPriceProvider()->getMatchedPrices($quote),
                 ];
             }
         );
     }
 
     /**
-     * @param Quote $quote
-     * @return array
+     * @return QuoteProductPriceProvider
      */
-    protected function getTierPrices(Quote $quote)
+    protected function getQuoteProductPriceProvider()
     {
-        $tierPrices = [];
-
-        $productIds = $quote->getQuoteProducts()->filter(
-            function (QuoteProduct $quoteProduct) {
-                return $quoteProduct->getProduct() !== null || $quoteProduct->getProductReplacement() !== null;
-            }
-        )->map(
-            function (QuoteProduct $quoteProduct) {
-                if ($quoteProduct->getProductReplacement()) {
-                    return $quoteProduct->getProductReplacement()->getId();
-                } else {
-                    return $quoteProduct->getProduct()->getId();
-                }
-            }
-        );
-
-        if ($productIds) {
-            $tierPrices = $this->get('orob2b_pricing.provider.product_price')->getPriceByPriceListIdAndProductIds(
-                $this->getPriceList($quote)->getId(),
-                $productIds->toArray()
-            );
-        }
-
-        return $tierPrices;
-    }
-
-    /**
-     * @param Quote $quote
-     * @return array
-     */
-    protected function getMatchedPrices(Quote $quote)
-    {
-        $matchedPrices = [];
-        $productsPriceCriteria = $this->getProductsPriceCriteria($quote);
-
-        if ($productsPriceCriteria) {
-            $matchedPrices = $this->get('orob2b_pricing.provider.product_price')->getMatchedPrices(
-                $productsPriceCriteria,
-                $this->getPriceList($quote)
-            );
-        }
-
-        /** @var Price $price */
-        foreach ($matchedPrices as &$price) {
-            if ($price) {
-                $price = [
-                    'value' => $price->getValue(),
-                    'currency' => $price->getCurrency()
-                ];
-            }
-        }
-
-        return $matchedPrices;
-    }
-
-    /**
-     * @param Quote $quote
-     * @return array
-     */
-    protected function getProductsPriceCriteria(Quote $quote)
-    {
-        $productsPriceCriteria = [];
-
-        /** @var QuoteProduct $quoteProduct */
-        foreach ($quote->getQuoteProducts() as $quoteProduct) {
-            if ($quoteProduct->getProductReplacement()) {
-                $product = $quoteProduct->getProductReplacement();
-            } elseif ($quoteProduct->getProduct()) {
-                $product = $quoteProduct->getProduct();
-            } else {
-                continue;
-            }
-
-            /** @var QuoteProductOffer $quoteProductOffer */
-            foreach ($quoteProduct->getQuoteProductOffers() as $quoteProductOffer) {
-                if ($quoteProductOffer->getProductUnit() && $quoteProductOffer->getQuantity()) {
-                    $productsPriceCriteria[] = new ProductPriceCriteria(
-                        $product,
-                        $quoteProductOffer->getProductUnit(),
-                        $quoteProductOffer->getQuantity(),
-                        $quoteProductOffer->getPrice()->getCurrency()
-                    );
-                }
-            }
-        }
-
-        return $productsPriceCriteria;
-    }
-
-    /**
-     * @param Quote $quote
-     * @return PriceList
-     */
-    protected function getPriceList(Quote $quote)
-    {
-        $priceList = $quote->getPriceList();
-        if (!$priceList) {
-            $priceList = $this->get('orob2b_pricing.model.frontend.price_list_request_handler')->getPriceList();
-        }
-        return $priceList;
+        return $this->get('orob2b_sale.provider.quote_product_price');
     }
 }

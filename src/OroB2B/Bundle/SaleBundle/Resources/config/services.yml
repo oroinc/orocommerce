@@ -4,6 +4,8 @@ parameters:
     orob2b_sale.entity.quote_product_offer.class: OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer
     orob2b_sale.entity.quote_product_request.class: OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest
     orob2b_sale.quote.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    #Providers
+    orob2b_sale.provider.quote_product_price.class: OroB2B\Bundle\SaleBundle\Provider\QuoteProductPriceProvider
     #Formatters
     orob2b_sale.formatter.quote_product.class: OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter
     orob2b_sale.formatter.quote_product_offer.class: OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter
@@ -18,6 +20,12 @@ services:
         arguments:
             - %orob2b_sale.entity.quote.class%
             - @doctrine.orm.entity_manager
+
+    orob2b_sale.provider.quote_product_price:
+            class: %orob2b_sale.provider.quote_product_price.class%
+            arguments:
+                - @orob2b_pricing.provider.product_price
+                - @orob2b_pricing.model.frontend.price_list_request_handler
 
     orob2b_sale.validator.quote_product_unit:
         class: %orob2b_sale.validator.quote_product_unit.class%
