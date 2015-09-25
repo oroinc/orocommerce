@@ -1,37 +1,44 @@
-/*jslint nomen:true*/
-/*global define*/
 define(function(require) {
     'use strict';
 
-    var QuoteProductItemSelectionComponent;
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    var LineItemView;
     var $ = require('jquery');
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
+    var mediator = require('oroui/js/mediator');
+    var layout = require('oroui/js/layout');
+    var BaseView = require('oroui/js/app/views/base/view');
+    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var routing = require('routing');
     var messenger = require('oroui/js/messenger');
 
-    QuoteProductItemSelectionComponent = BaseComponent.extend({
+    /**
+     * @export orob2bsale/js/app/views/line-item-view
+     * @extends oroui.app.views.base.View
+     * @class orob2bsale.app.views.LineItemView
+     */
+    LineItemView = BaseView.extend({
         /**
          * @property {Object}
          */
         options: {
-            classNotesSellerActive: 'sale-quoteproduct-notes-seller-active',
-            productSelect: '.sale-quoteproduct-product-select input[type="hidden"]',
-            productReplacementSelect: '.sale-quoteproduct-product-replacement-select input[type="hidden"]',
-            typeSelect: '.sale-quoteproduct-type-select',
-            unitsSelect: '.sale-quoteproductitem-productunit-select',
+            classNotesSellerActive: 'quote-lineitem-notes-seller-active',
+            productSelect: '.quote-lineitem-product-select input[type="hidden"]',
+            productReplacementSelect: '.quote-lineitem-product-replacement-select input[type="hidden"]',
+            typeSelect: '.quote-lineitem-product-type-select',
+            unitsSelect: '.quote-lineitem-offer-unit-select',
             unitsRoute: 'orob2b_product_unit_product_units',
+            compactUnits: false,
             addItemButton: '.add-list-item',
-            addNotesButton: '.sale-quoteproduct-add-notes-btn',
-            removeNotesButton: '.sale-quoteproduct-remove-notes-btn',
-            itemsCollectionContainer: '.sale-quoteproductitem-collection',
-            itemsContainer: '.sale-quoteproductitem-collection .oro-item-collection',
-            itemWidget: '.sale-quoteproductitem-widget',
+            notesContainer: '.quote-lineitem-notes',
+            addNotesButton: '.quote-lineitem-notes-add-btn',
+            removeNotesButton: '.quote-lineitem-notes-remove-btn',
+            itemsCollectionContainer: '.quote-lineitem-collection',
+            itemsContainer: '.quote-lineitem-offers-items',
+            itemWidget: '.quote-lineitem-offers-item',
             syncClass: 'synchronized',
             productReplacementContainer: '.sale-quoteproduct-product-replacement-select',
-            sellerNotesContainer: '.sale-quoteproduct-notes-seller',
+            sellerNotesContainer: '.quote-lineitem-notes-seller',
             requestsOnlyContainer: '.sale-quoteproductrequest-only',
             errorMessage: 'Sorry, unexpected error was occurred',
             units: {}
@@ -95,6 +102,11 @@ define(function(require) {
         /**
          * @property {Object}
          */
+        $notesContainer: null,
+
+        /**
+         * @property {Object}
+         */
         $sellerNotesContainer: null,
 
         /**
@@ -114,12 +126,12 @@ define(function(require) {
             this.options = _.defaults(options || {}, this.options);
             this.units = _.defaults(this.units, options.units);
 
-            this.$el = options._sourceElement;
-
             this.typeOffer = options.typeOffer;
             this.typeReplacement = options.typeReplacement;
 
             this.loadingMask = new LoadingMaskView({container: this.$el});
+
+            this.delegate('click', '.removeLineItem', this.removeRow);
 
             this.$productSelect = this.$el.find(this.options.productSelect);
             this.$productReplacementSelect = this.$el.find(this.options.productReplacementSelect);
@@ -128,6 +140,7 @@ define(function(require) {
             this.$itemsCollectionContainer = this.$el.find(this.options.itemsCollectionContainer);
             this.$itemsContainer = this.$el.find(this.options.itemsContainer);
             this.$productReplacementContainer = this.$el.find(this.options.productReplacementContainer);
+            this.$notesContainer = this.$el.find(this.options.notesContainer);
             this.$sellerNotesContainer = this.$el.find(this.options.sellerNotesContainer);
             this.$requestsOnlyContainer = this.$el.find(this.options.requestsOnlyContainer);
 
@@ -144,10 +157,16 @@ define(function(require) {
             this.$typeSelect.trigger('change');
 
             this.checkAddButton();
+            this.checkAddNotes();
         },
 
         checkAddButton: function() {
             this.$addItemButton.toggle(Boolean(this.getProductId()));
+        },
+
+        removeRow: function() {
+            this.$el.trigger('content:remove');
+            this.remove();
         },
 
         /**
@@ -201,8 +220,14 @@ define(function(require) {
                 this.updateProductUnits(productUnits, force || false);
             } else {
                 var self = this;
+                var routeParams = {'id': productId};
+
+                if (this.options.compactUnits) {
+                    routeParams['short'] = true;
+                }
+
                 $.ajax({
-                    url: routing.generate(this.options.unitsRoute, {'id': productId}),
+                    url: routing.generate(this.options.unitsRoute, routeParams),
                     type: 'GET',
                     beforeSend: function() {
                         self.loadingMask.show();
@@ -270,6 +295,16 @@ define(function(require) {
         },
 
         /**
+         * Check Add Notes
+         */
+        checkAddNotes: function() {
+            if (this.$sellerNotesContainer.find('textarea').val()) {
+                this.$notesContainer.addClass(this.options.classNotesSellerActive);
+                this.$sellerNotesContainer.find('textarea').focus();
+            }
+        },
+
+        /**
          * Handle Add Notes click
          *
          * @param {jQuery.Event} e
@@ -277,7 +312,7 @@ define(function(require) {
         onAddNotesClick: function(e) {
             e.preventDefault();
 
-            this.$itemsCollectionContainer.addClass(this.options.classNotesSellerActive);
+            this.$notesContainer.addClass(this.options.classNotesSellerActive);
             this.$sellerNotesContainer.find('textarea').focus();
         },
 
@@ -289,7 +324,7 @@ define(function(require) {
         onRemoveNotesClick: function(e) {
             e.preventDefault();
 
-            this.$itemsCollectionContainer.removeClass(this.options.classNotesSellerActive);
+            this.$notesContainer.removeClass(this.options.classNotesSellerActive);
             this.$sellerNotesContainer.find('textarea').val('');
         },
 
@@ -309,9 +344,9 @@ define(function(require) {
 
             this.$el.off();
 
-            QuoteProductItemSelectionComponent.__super__.dispose.call(this);
+            LineItemView.__super__.dispose.call(this);
         }
     });
 
-    return QuoteProductItemSelectionComponent;
+    return LineItemView;
 });
