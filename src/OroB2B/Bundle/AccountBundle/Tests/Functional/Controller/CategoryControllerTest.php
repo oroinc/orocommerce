@@ -102,7 +102,6 @@ class CategoryControllerTest extends WebTestCase
 
         $this->assertContains('This value is not valid', $crawler->html());
         $this->assertContains('invalidDataMessage', $crawler->html());
-        $this->assertContains('invalidDataMessage', $crawler->html());
     }
 
     /**
