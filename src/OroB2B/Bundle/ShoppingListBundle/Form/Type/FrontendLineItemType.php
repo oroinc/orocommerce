@@ -6,10 +6,11 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Form\EventListener\LineItemSubscriber;
 
 class FrontendLineItemType extends AbstractType
 {
@@ -19,11 +20,6 @@ class FrontendLineItemType extends AbstractType
      * @var string
      */
     protected $dataClass;
-
-    /**
-     * @var LineItemSubscriber
-     */
-    protected $lineItemSubscriber;
 
     /**
      * {@inheritdoc}
@@ -36,11 +32,22 @@ class FrontendLineItemType extends AbstractType
 
         $builder
             ->add(
+                'product',
+                ProductSelectType::NAME,
+                [
+                    'required' => false,
+                    'create_enabled' => false,
+                    'mapped' => false,
+                ]
+            )
+            ->add(
                 'quantity',
-                'text',
+                QuantityType::NAME,
                 [
                     'required' => true,
-                    'label' => 'orob2b.shoppinglist.lineitem.quantity.label'
+                    'label' => 'orob2b.shoppinglist.lineitem.quantity.label',
+                    'product' => $product,
+                    'product_unit_field' => 'unit',
                 ]
             )
             ->add(
@@ -51,11 +58,9 @@ class FrontendLineItemType extends AbstractType
                     'label' => 'orob2b.shoppinglist.lineitem.unit.label',
                     'query_builder' => function (ProductUnitRepository $repository) use ($product) {
                         return $repository->getProductUnitsQueryBuilder($product);
-                    }
+                    },
                 ]
             );
-
-        $builder->addEventSubscriber($this->lineItemSubscriber);
     }
 
     /**
@@ -66,7 +71,7 @@ class FrontendLineItemType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
-                'validation_groups' => ['add_product']
+                'validation_groups' => ['add_product'],
             ]
         );
     }
@@ -89,13 +94,5 @@ class FrontendLineItemType extends AbstractType
         $this->dataClass = $dataClass;
 
         return $this;
-    }
-
-    /**
-     * @param LineItemSubscriber $lineItemSubscriber
-     */
-    public function setLineItemSubscriber(LineItemSubscriber $lineItemSubscriber)
-    {
-        $this->lineItemSubscriber = $lineItemSubscriber;
     }
 }

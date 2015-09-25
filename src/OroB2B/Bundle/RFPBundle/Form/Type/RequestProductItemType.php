@@ -4,13 +4,13 @@ namespace OroB2B\Bundle\RFPBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\OptionalPriceType as PriceType;
 
+use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
+use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
 
 class RequestProductItemType extends AbstractType
 {
@@ -34,23 +34,38 @@ class RequestProductItemType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /** @var RequestProductItem $requestProductItem */
+        $requestProductItem = $options['data'];
+
         $builder
-            ->add('quantity', 'integer', [
-                'required'  => true,
-                'label'     => 'orob2b.rfp.requestproductitem.quantity.label',
-            ])
-            ->add('price', PriceType::NAME, [
-                'currency_empty_value' => null,
-                'required'  => true,
-                'label'     => 'orob2b.rfp.requestproductitem.price.label',
-            ])
-            ->add('productUnit', ProductUnitRemovedSelectionType::NAME, [
-                'label' => 'orob2b.product.productunit.entity_label',
-                'required' => true,
-                'compact' => $options['compact_units'],
-            ])
-            ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetData'])
-        ;
+            ->add(
+                'quantity',
+                QuantityType::NAME,
+                [
+                    'required' => true,
+                    'label' => 'orob2b.rfp.requestproductitem.quantity.label',
+                    'product' => $requestProductItem ? $requestProductItem->getRequestProduct() : null,
+                    'default_data' => 1,
+                ]
+            )
+            ->add(
+                'price',
+                PriceType::NAME,
+                [
+                    'currency_empty_value' => null,
+                    'required' => true,
+                    'label' => 'orob2b.rfp.requestproductitem.price.label',
+                ]
+            )
+            ->add(
+                'productUnit',
+                ProductUnitRemovedSelectionType::NAME,
+                [
+                    'label' => 'orob2b.product.productunit.entity_label',
+                    'required' => true,
+                    'compact' => $options['compact_units'],
+                ]
+            );
     }
 
     /**
@@ -58,12 +73,14 @@ class RequestProductItemType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'data_class' => $this->dataClass,
-            'compact_units' => false,
-            'intention'  => 'rfp_request_product_item',
-            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
-        ]);
+        $resolver->setDefaults(
+            [
+                'data_class' => $this->dataClass,
+                'compact_units' => false,
+                'intention' => 'rfp_request_product_item',
+                'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
+            ]
+        );
     }
 
     /**
@@ -72,17 +89,5 @@ class RequestProductItemType extends AbstractType
     public function getName()
     {
         return self::NAME;
-    }
-
-    /**
-     * @param FormEvent $event
-     */
-    public function postSetData(FormEvent $event)
-    {
-        // Set quantity to 1 by default
-        $quantity = $event->getForm()->get('quantity');
-        if (null === $quantity->getData()) {
-            $quantity->setData(1);
-        }
     }
 }

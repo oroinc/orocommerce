@@ -44,6 +44,9 @@ class ProductFormExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /** @var Product $product */
+        $product = $builder->getData();
+
         $builder->add(
             'prices',
             ProductPriceCollectionType::NAME,
@@ -51,7 +54,10 @@ class ProductFormExtension extends AbstractTypeExtension
                 'label' => 'orob2b.pricing.productprice.entity_plural_label',
                 'required' => false,
                 'mapped' => false,
-                'constraints' => [new UniqueProductPrices()]
+                'constraints' => [new UniqueProductPrices()],
+                'options' => [
+                    'product' => $product,
+                ],
             ]
         );
 

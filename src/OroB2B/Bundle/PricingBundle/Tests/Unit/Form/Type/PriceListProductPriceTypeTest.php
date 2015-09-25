@@ -52,6 +52,8 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
+        $this->markTestSkipped('qty');
+
         $this->roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\RoundingService')
             ->disableOriginalConstructor()
             ->getMock();

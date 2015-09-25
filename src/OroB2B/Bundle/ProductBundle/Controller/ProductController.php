@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ProductBundle\Controller;
 
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
@@ -156,7 +157,7 @@ class ProductController extends Controller
     {
         return $this->get('orob2b_product.service.product_update_handler')->handleUpdate(
             $product,
-            $this->get('orob2b_product.form.product'),
+            $this->createForm(ProductType::NAME, $product),
             function (Product $product) {
                 return [
                     'route' => 'orob2b_product_update',

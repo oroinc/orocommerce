@@ -12,6 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
 
 abstract class AbstractOrderLineItemType extends AbstractType
 {
@@ -33,13 +34,18 @@ abstract class AbstractOrderLineItemType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /** @var OrderLineItem $orderLineItem */
+        $orderLineItem = $options['data'];
+
         $builder
             ->add(
                 'quantity',
-                'integer',
+                QuantityType::NAME,
                 [
                     'required' => true,
                     'label' => 'orob2b.order.orderlineitem.quantity.label',
+                    'default_data' => 1,
+                    'product' => $orderLineItem ? $orderLineItem->getProduct() : null
                 ]
             )
             ->add(
@@ -67,17 +73,6 @@ abstract class AbstractOrderLineItemType extends AbstractType
                 ]
             );
 
-        // Set quantity to 1 by default
-        $builder->get('quantity')->addEventListener(
-            FormEvents::PRE_SET_DATA,
-            function (FormEvent $event) {
-                $data = $event->getData();
-                if (!$data) {
-                    $event->setData(1);
-                }
-            }
-        );
-
         $builder->addEventListener(
             FormEvents::POST_SET_DATA,
             function (FormEvent $event) {
@@ -103,7 +98,7 @@ abstract class AbstractOrderLineItemType extends AbstractType
                 'intention' => 'order_line_item',
                 'page_component' => 'oroui/js/app/components/view-component',
                 'page_component_options' => [],
-                'currency' => null
+                'currency' => null,
             ]
         );
         $resolver->setAllowedTypes('page_component_options', 'array');

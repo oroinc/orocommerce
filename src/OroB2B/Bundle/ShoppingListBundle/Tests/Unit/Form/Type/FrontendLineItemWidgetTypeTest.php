@@ -52,6 +52,8 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
      */
     protected function setUp()
     {
+        $this->markTestSkipped('qty');
+
         parent::setUp();
 
         $this->type = new FrontendLineItemWidgetType(

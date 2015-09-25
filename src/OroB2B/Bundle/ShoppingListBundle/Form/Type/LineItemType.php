@@ -2,20 +2,16 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Form\Type;
 
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
-use OroB2B\Bundle\ShoppingListBundle\Form\EventListener\LineItemSubscriber;
 
 class LineItemType extends AbstractType
 {
@@ -25,36 +21,6 @@ class LineItemType extends AbstractType
      * @var string
      */
     protected $dataClass;
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
-     * @var string
-     */
-    protected $productClass;
-
-    /**
-     * @var LineItemManager
-     */
-    protected $lineItemManager;
-
-    /**
-     * @var LineItemSubscriber
-     */
-    protected $lineItemSubscriber;
-
-    /**
-     * @param ManagerRegistry $registry
-     * @param LineItemManager $lineItemManager
-     */
-    public function __construct(ManagerRegistry $registry, LineItemManager $lineItemManager)
-    {
-        $this->registry = $registry;
-        $this->lineItemManager = $lineItemManager;
-    }
 
     /**
      * {@inheritdoc}
@@ -73,15 +39,17 @@ class LineItemType extends AbstractType
                     'required' => true,
                     'label' => 'orob2b.shoppinglist.lineitem.product.label',
                     'create_enabled' => false,
-                    'disabled' => $isExisting
+                    'disabled' => $isExisting,
                 ]
             )
             ->add(
                 'quantity',
-                'text',
+                QuantityType::NAME,
                 [
                     'required' => true,
-                    'label' => 'orob2b.shoppinglist.lineitem.quantity.label'
+                    'label' => 'orob2b.shoppinglist.lineitem.quantity.label',
+                    'product' => $data ? $data->getProduct() : null,
+                    'product_unit_field' => 'unit',
                 ]
             )
             ->add(
@@ -90,6 +58,9 @@ class LineItemType extends AbstractType
                 [
                     'required' => true,
                     'label' => 'orob2b.shoppinglist.lineitem.unit.label',
+                    'query_builder' => function (ProductUnitRepository $er) use ($data) {
+                        return $er->getProductUnitsQueryBuilder($data->getProduct());
+                    },
                 ]
             )
             ->add(
@@ -101,35 +72,6 @@ class LineItemType extends AbstractType
                     'empty_data' => null,
                 ]
             );
-
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
-        $builder->addEventSubscriber($this->lineItemSubscriber);
-    }
-
-    /**
-     * @param FormEvent $event
-     */
-    public function preSetData(FormEvent $event)
-    {
-        $entity = $event->getData();
-
-        if (!($entity instanceof LineItem) || !$entity->getId()) {
-            return;
-        }
-
-        $form = $event->getForm();
-
-        $form->add(
-            'unit',
-            ProductUnitSelectionType::NAME,
-            [
-                'required' => true,
-                'label' => 'orob2b.shoppinglist.lineitem.unit.label',
-                'query_builder' => function (ProductUnitRepository $er) use ($entity) {
-                    return $er->getProductUnitsQueryBuilder($entity->getProduct());
-                }
-            ]
-        );
     }
 
     /**
@@ -138,22 +80,6 @@ class LineItemType extends AbstractType
     public function getName()
     {
         return self::NAME;
-    }
-
-    /**
-     * @param string $productClass
-     */
-    public function setProductClass($productClass)
-    {
-        $this->productClass = $productClass;
-    }
-
-    /**
-     * @param LineItemSubscriber $lineItemSubscriber
-     */
-    public function setLineItemSubscriber(LineItemSubscriber $lineItemSubscriber)
-    {
-        $this->lineItemSubscriber = $lineItemSubscriber;
     }
 
     /**
@@ -178,7 +104,7 @@ class LineItemType extends AbstractType
                 'data_class' => $this->dataClass,
                 'validation_groups' => function (FormInterface $form) {
                     return $form->getData()->getId() ? ['update'] : ['create'];
-                }
+                },
             ]
         );
     }
