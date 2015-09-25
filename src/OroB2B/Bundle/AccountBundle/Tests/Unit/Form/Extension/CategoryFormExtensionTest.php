@@ -48,7 +48,6 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
             $this->categoryPostSetDataListener,
             $this->categoryPostSubmitListener,
             $this->categoryVisibilityFormatter
-
         );
     }
 
