@@ -94,6 +94,17 @@ class QuoteProductToOrderType extends AbstractType
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['quoteProduct'] = $options['data'];
+
+        /** @var FormView $quantityView */
+        $quantityView = $view->children[self::FIELD_QUANTITY];
+        if (isset($view->vars['attr']['data-validation'], $quantityView->vars['attr']['data-validation'])) {
+            $viewAttr = $view->vars['attr']['data-validation'];
+            $quantityViewAttr = $quantityView->vars['attr']['data-validation'];
+
+            $quantityView->vars['attr']['data-validation'] = json_encode(
+                array_merge(json_decode($viewAttr, true), json_decode($quantityViewAttr, true))
+            );
+        }
     }
 
     /**

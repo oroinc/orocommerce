@@ -6,7 +6,6 @@ define(function(require) {
     var QuoteProductToOrderComponent;
     var BaseComponent = require('oroui/js/app/components/base/component');
     var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
     var $ = require('jquery');
     var routing = require('routing');
 
@@ -27,7 +26,7 @@ define(function(require) {
             },
             matchOfferRoute: 'orob2b_sale_quote_frontend_quote_product_match_offer',
             quoteProductId: null,
-            offerNotFoundMessage: 'orob2b.sale.quoteproductoffer.configurable.offer.blank'
+            offerNotFoundMessage: 'Please enter valid quantity'
         },
 
         /**
@@ -105,7 +104,7 @@ define(function(require) {
                         self.updateUnitPriceValue(String(response.price));
                         self.updateSelector(response.id);
                     } else {
-                        self.addFieldErrors(self.$quantity, __(self.options.offerNotFoundMessage));
+                        self.addFieldErrors(self.$quantity, self.options.offerNotFoundMessage);
                     }
                 }
             });
@@ -137,6 +136,7 @@ define(function(require) {
             var $field = $(field);
             var $container = $field.parent();
 
+            $field.data('valid', true);
             $container.removeClass('validation-error');
             $container.find('.error').removeClass('error');
             $container.siblings('.validation-failed').hide().text('');
@@ -162,8 +162,8 @@ define(function(require) {
                 text = $errorContainer.text() + '; ' + text;
             }
 
+            $field.addClass('error').data('valid', false);
             $errorContainer.text(text).show();
-            $field.addClass('error');
             $container.addClass('validation-error');
         },
 

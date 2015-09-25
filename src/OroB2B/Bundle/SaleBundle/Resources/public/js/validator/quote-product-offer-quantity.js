@@ -5,23 +5,23 @@ define([
     'use strict';
 
     var defaultParam = {
-        lessQuantityMessage: 'Quantity should be grater than or equal to offered quantity.'
+        blankOfferMessage: 'Please enter valid quantity'
     };
 
     return [
         'OroB2B\\Bundle\\SaleBundle\\Validator\\Constraints\\ConfigurableQuoteProductOffer',
         function(value, element) {
-            var quantity = $(element).data('quantity');
+            var valid = $(element).data('valid');
 
-            if (quantity === undefined) {
+            if (valid === undefined) {
                 return true;
             }
 
-            return parseFloat(value) >= parseFloat(quantity);
+            return Boolean(valid);
         },
         function(param) {
             param = _.extend({}, defaultParam, param);
-            return __(param.lessQuantityMessage);
+            return __(param.blankOfferMessage);
         }
     ];
 });
