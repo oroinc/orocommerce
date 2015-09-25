@@ -25,7 +25,8 @@ define(function(require) {
                 price: 'price'
             },
             matchOfferRoute: 'orob2b_sale_quote_frontend_quote_product_match_offer',
-            quoteProductId: null
+            quoteProductId: null,
+            priceCalculatingMessage: 'Calculating...'
         },
 
         /**
@@ -153,6 +154,7 @@ define(function(require) {
                     clearTimeout(this.quantityChange);
                 }
                 this.setValidAttribute(this.$quantity, true);
+                this.updateUnitPriceValue(this.options.priceCalculatingMessage);
                 this.quantityChange = setTimeout(_.bind(this.onQuantityChange, this), 1500);
             }, this));
         },

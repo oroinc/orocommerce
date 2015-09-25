@@ -148,7 +148,8 @@
         unitInputSelector: '[name=\'%s\']'|format(form.unit.vars.full_name),
         unitSelector: '#%s .quote-product-offer-quantity-unit'|format(id),
         unitPriceSelector: '#%s .quote-product-offer-price span'|format(id),
-        quoteProductId: quoteProduct.id
+        quoteProductId: quoteProduct.id,
+        priceCalculatingMessage: 'orob2b.frontend.sale.quoteproductoffer.price_calculating.message'|trans
     } %}
     <tr id="{{ id }}"
         data-page-component-module="orob2bsale/js/app/components/quote-product-to-order-component"

@@ -155,6 +155,7 @@ orob2b:
                 select_offer.label: 'Select An Offer'
                 quantity_to_order.label: 'Quantity To Order'
                 unit_price.label: 'Unit Price'
+                price_calculating.message: 'Calculating...'
 
             quoteproductrequest:
                 quantity.label: 'Requested Qty'
