@@ -71,6 +71,8 @@ parameters:
 
     orob2b_account.content_provider.menu.class: Oro\Bundle\NavigationBundle\ContentProvider\MenuContentProvider
 
+    orob2b.account.catalog.visibility.schange_set.validatior.class: OroB2B\Bundle\AccountBundle\Validator\Constraints\VisibilityChangeSetValidator
+
 services:
     orob2b_account.security.account_user_provider:
         class: %orob2b_account.security.account_user_provider.class%
@@ -459,3 +461,7 @@ services:
         arguments:
             - @oro_security.security_facade
 
+    orob2b.account.catalog.visibility.schange_set.validatior:
+        class: %orob2b.account.catalog.visibility.schange_set.validatior.class%
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b.account.catalog.visibility.schange_set.validatior }
