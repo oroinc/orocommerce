@@ -43,11 +43,14 @@ class QuoteProductOfferTypeTest extends AbstractTest
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
-            ->with([
-                'data_class'    => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer',
-                'intention'     => 'sale_quote_product_offer',
-                'extra_fields_message'  => 'This form should not contain extra fields: "{{ extra_fields }}"',
-            ])
+            ->with($this->callback(function (array $options) {
+                $this->assertArrayHasKey('data_class', $options);
+                $this->assertArrayHasKey('compact_units', $options);
+                $this->assertArrayHasKey('intention', $options);
+                $this->assertArrayHasKey('extra_fields_message', $options);
+
+                return true;
+            }))
         ;
 
         $this->formType->configureOptions($resolver);
@@ -68,7 +71,9 @@ class QuoteProductOfferTypeTest extends AbstractTest
     {
         $form = $this->factory->create($this->formType, $inputData);
 
-        $this->assertEquals($expectedData['priceType'], $form->get('priceType')->getData());
+        foreach ($expectedData as $key => $value) {
+            $this->assertEquals($value, $form->get($key)->getData(), $key);
+        }
     }
 
     /**
@@ -77,16 +82,22 @@ class QuoteProductOfferTypeTest extends AbstractTest
     public function postSetDataProvider()
     {
         return [
-            'empty priceType' => [
+            'empty values' => [
                 'input' => new QuoteProductOffer(),
                 'expected' => [
                     'priceType' => QuoteProductOffer::PRICE_TYPE_UNIT,
+                    'quantity' => 1,
                 ],
             ],
-            'existing priceType' => [
-                'input' => (new QuoteProductOffer())->setPriceType(QuoteProductOffer::PRICE_TYPE_BUNDLED),
+            'existing values' => [
+                'input' => (new QuoteProductOffer())
+                    ->setPriceType(QuoteProductOffer::PRICE_TYPE_BUNDLED)
+                    ->setQuantity(10)
+                    ->setAllowIncrements(false),
                 'expected' => [
-                    'priceType' => QuoteProductOffer::PRICE_TYPE_BUNDLED,
+                    // TODO: enable once fully supported on the quote views and in orders
+                    'priceType' => QuoteProductOffer::PRICE_TYPE_UNIT,
+                    'quantity' => 10,
                 ],
             ],
         ];
