@@ -38,6 +38,7 @@ class QuoteProductToOrderType extends AbstractType
 
     /**
      * @param QuoteProductOfferMatcher $matcher
+     * @param RoundingService $roundingService
      */
     public function __construct(QuoteProductOfferMatcher $matcher, RoundingService $roundingService)
     {
@@ -61,7 +62,7 @@ class QuoteProductToOrderType extends AbstractType
                 'number',
                 [
                     'constraints' => [new NotBlank(), new Decimal(), new GreaterThanZero()],
-                    'read_only' => !$quoteProduct->hasIncrementedOffers(),
+                    'read_only' => !$quoteProduct->hasIncrementalOffers(),
                 ]
             )->add(
                 self::FIELD_UNIT,
