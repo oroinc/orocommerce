@@ -40,7 +40,7 @@ class RequestControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_shoppinglist_frontend_createrequest', ['id' => $shoppingList->getId()])
+            $this->getUrl('orob2b_shoppinglist_frontend_request_create', ['id' => $shoppingList->getId()])
         );
 
         static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 302);

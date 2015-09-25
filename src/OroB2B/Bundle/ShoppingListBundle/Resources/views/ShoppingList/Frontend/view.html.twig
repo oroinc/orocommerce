@@ -28,7 +28,7 @@
     {% if resource_granted('orob2b_rfp_frontend_request_create') %}
         <div class="btn-group">
             {{ UI.link({
-                path: path('orob2b_shoppinglist_frontend_createrequest', {id: entity.id}),
+                path: path('orob2b_shoppinglist_frontend_request_create', {id: entity.id}),
                 label: 'orob2b.frontend.shoppinglist.btn.request_quote_create_rfp'|trans,
                 class: 'btn',
                 iCss: 'icon-briefcase',

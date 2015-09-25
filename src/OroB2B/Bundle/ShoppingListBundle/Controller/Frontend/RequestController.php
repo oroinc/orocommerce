@@ -15,7 +15,7 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 class RequestController extends Controller
 {
     /**
-     * @Route("/create/{id}", name="orob2b_shoppinglist_frontend_createrequest", requirements={"id"="\d+"})
+     * @Route("/create/{id}", name="orob2b_shoppinglist_frontend_request_create", requirements={"id"="\d+"})
      * @AclAncestor("orob2b_rfp_frontend_request_create")
      *
      * @param ShoppingList $shoppingList
