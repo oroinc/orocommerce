@@ -81,8 +81,9 @@ define(function(require) {
 
         onQuantityChange: function() {
             var self = this;
+            var quantity = parseFloat(this.$quantity.val());
 
-            if (!this.$quantity.val()) {
+            if (_.isNaN(quantity) || quantity <= 0) {
                 return;
             }
 
@@ -92,7 +93,7 @@ define(function(require) {
                     {
                         id: this.options.quoteProductId,
                         unit: this.$unitInput.val(),
-                        qty: this.$quantity.val()
+                        qty: quantity
                     }
                 ),
                 type: 'GET',
