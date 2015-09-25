@@ -45,7 +45,13 @@ class ProductUnitLabelFormatterTest extends \PHPUnit_Framework_TestCase
         $this->formatter->format($unitCode, $isShort);
     }
 
-    public function formatChoices()
+    /**
+     * @param bool $isShort
+     * @param array $expected
+     *
+     * @dataProvider formatChoicesProvider
+     */
+    public function testFormatChoices($isShort, array $expected)
     {
         $units = [
             (new ProductUnit())->setCode('kg'),
@@ -55,16 +61,13 @@ class ProductUnitLabelFormatterTest extends \PHPUnit_Framework_TestCase
         $this->translator->expects($this->exactly(2))
             ->method('trans')
             ->will($this->returnValueMap([
-                ['orob2b.product_unit.kg', [], null, null, '_KG'],
-                ['orob2b.product_unit.item', [], null, null, '_ITEM']
+                ['orob2b.product_unit.kg.label.full', [], null, null, '_KG'],
+                ['orob2b.product_unit.item.label.full', [], null, null, '_ITEM'],
+                ['orob2b.product_unit.kg.label.short', [], null, null, '_KG_SHORT'],
+                ['orob2b.product_unit.item.label.short', [], null, null, '_ITEM_SHORT'],
             ]));
 
-        $expected = [
-            'kg' => '_KG',
-            'item' => '_ITEM'
-        ];
-
-        $this->assertEquals($expected, $this->formatter->formatChoices($units));
+        $this->assertEquals($expected, $this->formatter->formatChoices($units, $isShort));
     }
 
     /**
@@ -82,6 +85,29 @@ class ProductUnitLabelFormatterTest extends \PHPUnit_Framework_TestCase
                 'unitCode'  => 'item',
                 'isShort'   => true,
                 'expected'  => 'orob2b.product_unit.item.label.short',
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function formatChoicesProvider()
+    {
+        return [
+            'full labels' => [
+                'isShort' => false,
+                'expected' => [
+                    'kg' => '_KG',
+                    'item' => '_ITEM'
+                ],
+            ],
+            'short labels' => [
+                'isShort' => true,
+                'expected' => [
+                    'kg' => '_KG_SHORT',
+                    'item' => '_ITEM_SHORT'
+                ],
             ],
         ];
     }

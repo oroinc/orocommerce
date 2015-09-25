@@ -2,15 +2,15 @@ orob2b:
     sale:
         quoteproduct:
             product:
-                blank: 'Please choose existing Product.'
+                blank: 'Product cannot be empty.'
             product_replacement:
-                blank: 'Please choose existing Product.'
+                blank: 'Product cannot be empty.'
             quote_product_items:
                 blank: 'Please add one or more offers.'
 
         quoteproductoffer:
             product_unit:
-                blank: 'Please choose existing Unit.'
+                blank: 'Unit of measurement cannot be empty.'
             configurable:
                 offer:
                     blank: 'Please enter valid quantity'
