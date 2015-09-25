@@ -94,11 +94,15 @@ class CategoryControllerTest extends WebTestCase
 
     public function testSubmitInvalidData()
     {
-        $crawler = $this->submitForm('wrong Visibility', '{"wrong":"format"}', 'not json');
+        $crawler = $this->submitForm(
+            'wrong Visibility',
+            '{"wrong_id":{"visibility":"hidden"}}',
+            '{"wrong_id":{"visibility":"hidden"}}'
+        );
 
         $this->assertContains('This value is not valid', $crawler->html());
         $this->assertContains('invalidDataMessage', $crawler->html());
-        $this->assertContains('invalidFormatMessage', $crawler->html());
+        $this->assertContains('invalidDataMessage', $crawler->html());
     }
 
     /**

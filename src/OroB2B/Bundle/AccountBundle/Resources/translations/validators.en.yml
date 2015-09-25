@@ -5,3 +5,7 @@ orob2b:
     account:
           message:
               password_mismatch: 'The password fields must match.'
+          category:
+              visibility:
+                  message:
+                      invalid_data: "Data is not valid"

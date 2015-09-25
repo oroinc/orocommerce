@@ -2,11 +2,11 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Validator\Constraints;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Validator\Constraints\VisibilityChangeSet;
 use OroB2B\Bundle\AccountBundle\Validator\Constraints\VisibilityChangeSetValidator;
 
@@ -42,15 +42,7 @@ class VisibilityChangeSetValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testValidateEmptyArrayCollection()
     {
-        $this->context->expects($this->once())->method('addViolation')->with($this->constraint->invalidFormatMessage);
-        $this->visibilityChangeSetValidator->validate($this->value, $this->constraint);
-    }
-
-    public function testValidateInvalidKeys()
-    {
-        $wrongData = ['wrong' => 'data'];
-        $this->value->offsetSet(1, $wrongData);
-        $this->context->expects($this->once())->method('addViolation')->with($this->constraint->invalidFormatMessage);
+        $this->context->expects($this->never())->method('addViolation');
         $this->visibilityChangeSetValidator->validate($this->value, $this->constraint);
     }
 
