@@ -15,9 +15,9 @@ parameters:
     orob2b_account.entity.sidebar_state.class: OroB2B\Bundle\AccountBundle\Entity\AccountUserSidebarState
     orob2b_account.entity.widget.class: OroB2B\Bundle\AccountBundle\Entity\AccountUserSidebarWidget
     orob2b_account.entity.page_state.class: OroB2B\Bundle\AccountBundle\Entity\PageState
-    orob2b_account.entity.category_visibility.class: OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility
-    orob2b_account.entity.account_category_visibility.class: OroB2B\Bundle\AccountBundle\Entity\AccountCategoryVisibility
-    orob2b_account.entity.account_group_category_visibility.class: OroB2B\Bundle\AccountBundle\Entity\AccountGroupCategoryVisibility
+    orob2b_account.entity.category_visibility.class: OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility
+    orob2b_account.entity.account_category_visibility.class: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility
+    orob2b_account.entity.account_group_category_visibility.class: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility
 
     orob2b_account.account_tree_handler.class: OroB2B\Bundle\AccountBundle\JsTree\AccountTreeHandler
     orob2b_account.account_delete_handler.class: OroB2B\Bundle\AccountBundle\Handler\UserDeleteHandler
@@ -70,6 +70,8 @@ parameters:
     orob2b_account.item.pinbar.post_persist_listener.class: Oro\Bundle\NavigationBundle\Entity\Listener\PinbarPostPersist
 
     orob2b_account.content_provider.menu.class: Oro\Bundle\NavigationBundle\ContentProvider\MenuContentProvider
+
+    orob2b_account.formatter.choice.class: OroB2B\Bundle\AccountBundle\Formatter\ChoiceFormatter
 
 services:
     orob2b_account.security.account_user_provider:
@@ -459,3 +461,24 @@ services:
         arguments:
             - @oro_security.security_facade
 
+    orob2b_account.formatter.choice:
+        class: %orob2b_account.formatter.choice.class%
+        arguments: [ @translator ]
+
+    orob2b_account.formatter.choice.category_visibility:
+        parent: orob2b_account.formatter.choice
+        calls:
+            - [ setTranslationPattern, [ 'orob2b.account.categoryvisibility.choice.%s' ] ]
+            - [ setChoices, [[%orob2b_account.entity.category_visibility.class%, 'getVisibilityList']] ]
+
+    orob2b_account.formatter.choice.account_category_visibility:
+        parent: orob2b_account.formatter.choice
+        calls:
+            - [ setTranslationPattern, [ 'orob2b.account.accountcategoryvisibility.choice.%s' ] ]
+            - [ setChoices, [[%orob2b_account.entity.account_category_visibility.class%, 'getVisibilityList']] ]
+
+    orob2b_account.formatter.choice.account_group_category_visibility:
+        parent: orob2b_account.formatter.choice
+        calls:
+            - [ setTranslationPattern   , [ 'orob2b.account.accountgroupcategoryvisibility.choice.%s' ] ]
+            - [ setChoices, [[%orob2b_account.entity.account_group_category_visibility.class%, 'getVisibilityList']] ]

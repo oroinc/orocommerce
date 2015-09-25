@@ -218,7 +218,6 @@ services:
         abstract: true
         arguments:
             - @doctrine
-            - @oro_entity_extend.enum_value_provider
         calls:
             - [setCategoryVisibilityClass, [%orob2b_account.entity.category_visibility.class%]]
             - [setAccountCategoryVisibilityClass, [%orob2b_account.entity.account_category_visibility.class%]]
@@ -231,14 +230,13 @@ services:
     orob2b_account.form.listener.category.post_submit:
         class: %orob2b_account.form.listener.category.post_submit.class%
         parent: orob2b_account.form.listener.category.abstract
-        arguments:
-            - @oro_entity_extend.enum_value_provider
 
     orob2b_account.form.extension.category_type:
         class: %orob2b_account.form.extension.category_type.class%
         arguments:
             - @orob2b_account.form.listener.category.post_set_data
             - @orob2b_account.form.listener.category.post_submit
+            - @orob2b_account.formatter.choice.category_visibility
         tags:
             - { name: form.type_extension, alias: orob2b_catalog_category }
 

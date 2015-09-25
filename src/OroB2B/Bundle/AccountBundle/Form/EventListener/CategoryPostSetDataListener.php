@@ -5,10 +5,10 @@ namespace OroB2B\Bundle\AccountBundle\Form\EventListener;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroupCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 
 class CategoryPostSetDataListener extends AbstractCategoryListener
 {
@@ -41,8 +41,11 @@ class CategoryPostSetDataListener extends AbstractCategoryListener
             ->findOneBy(['category' => $category]);
 
         if ($categoryVisibility instanceof CategoryVisibility) {
-            $form->get('categoryVisibility')->setData($categoryVisibility->getVisibility());
+            $visibility = $categoryVisibility->getVisibility();
+        } else {
+            $visibility = CategoryVisibility::getDefault();
         }
+        $form->get('categoryVisibility')->setData($visibility);
     }
 
     /**
@@ -60,7 +63,7 @@ class CategoryPostSetDataListener extends AbstractCategoryListener
             $accountCategoryVisibilityData[$accountCategoryVisibility->getAccount()->getId()] = [
                 'entity' => $accountCategoryVisibility->getAccount(),
                 'data' => [
-                    'visibility' => $accountCategoryVisibility->getVisibility()->getId(),
+                    'visibility' => $accountCategoryVisibility->getVisibility(),
                 ],
             ];
         }
@@ -85,7 +88,7 @@ class CategoryPostSetDataListener extends AbstractCategoryListener
             $accountGroupCategoryVisibilityData[$accountGroupCategoryVisibility->getAccountGroup()->getId()] = [
                 'entity' => $accountGroupCategoryVisibility->getAccountGroup(),
                 'data' => [
-                    'visibility' => $accountGroupCategoryVisibility->getVisibility()->getId(),
+                    'visibility' => $accountGroupCategoryVisibility->getVisibility(),
                 ],
             ];
         }

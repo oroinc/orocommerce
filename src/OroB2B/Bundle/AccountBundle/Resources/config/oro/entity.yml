@@ -18,12 +18,12 @@ oro_entity:
         OroB2B\Bundle\AccountBundle\Entity\PageState:
             alias:        account_user_page_state
             plural_alias: account_user_page_states
-        OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility:
+        OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility:
             alias:        category_visibility
             plural_alias: category_visibilities
-        OroB2B\Bundle\AccountBundle\Entity\AccountCategoryVisibility:
+        OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility:
             alias:        account_category_visibility
             plural_alias: account_category_visibilities
-        OroB2B\Bundle\AccountBundle\Entity\AccountGroupCategoryVisibility:
+        OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility:
             alias:        account_group_category_visibility
             plural_alias: account_group_category_visibilities

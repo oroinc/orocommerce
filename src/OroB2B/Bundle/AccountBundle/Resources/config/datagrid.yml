@@ -739,7 +739,7 @@ datagrid:
                 label: orob2b.account.accountcategoryvisibility.entity_label
                 frontend_type: select
                 editable: true
-                choices: @oro_entity_extend.enum_value_provider->getEnumChoicesByCode('acc_ctgry_visibility')
+                choices: @orob2b_account.formatter.choice.account_category_visibility->formatChoices()
         sorters:
             columns:
                 name:
@@ -759,7 +759,7 @@ datagrid:
                     options:
                         field_options:
                             multiple: true
-                            choices: @oro_entity_extend.enum_value_provider->getEnumChoicesByCode('acc_ctgry_visibility')
+                            choices: @orob2b_account.formatter.choice.account_category_visibility->formatChoices()
         options:
             cellSelection:
                 dataField: id
@@ -790,7 +790,7 @@ datagrid:
                 label: orob2b.account.accountgroupcategoryvisibility.entity_label
                 frontend_type: select
                 editable: true
-                choices: @oro_entity_extend.enum_value_provider->getEnumChoicesByCode('acc_grp_ctgry_vsblity')
+                choices: @orob2b_account.formatter.choice.account_group_category_visibility->formatChoices()
         sorters:
             columns:
                 name:
@@ -810,7 +810,7 @@ datagrid:
                     options:
                         field_options:
                             multiple: true
-                            choices: @oro_entity_extend.enum_value_provider->getEnumChoicesByCode('acc_grp_ctgry_vsblity')
+                            choices: @orob2b_account.formatter.choice.account_group_category_visibility->formatChoices()
         options:
             cellSelection:
                 dataField: id

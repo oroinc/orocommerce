@@ -5,14 +5,12 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\EventListener;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormEvent;
 
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
-
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroupCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSetDataListener;
 
 class CategoryPostSetDataListenerTest extends AbstractCategoryListenerTestCase
@@ -124,7 +122,7 @@ class CategoryPostSetDataListenerTest extends AbstractCategoryListenerTestCase
                     [
                         'entity' => $this->account,
                         'data' =>
-                            ['visibility' => 1],
+                            ['visibility' => AccountCategoryVisibility::VISIBLE],
                     ],
             ]
         );
@@ -149,7 +147,7 @@ class CategoryPostSetDataListenerTest extends AbstractCategoryListenerTestCase
                     [
                         'entity' => $this->accountGroup,
                         'data' =>
-                            ['visibility' => 1],
+                            ['visibility' => AccountGroupCategoryVisibility::VISIBLE],
                     ],
             ]
         );
@@ -185,7 +183,7 @@ class CategoryPostSetDataListenerTest extends AbstractCategoryListenerTestCase
      */
     protected function getCategoryVisibility()
     {
-        $categoryVisibility = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility')
+        $categoryVisibility = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility')
             ->setMethods(['getVisibility'])
             ->getMock();
         $categoryVisibility->expects($this->once())
@@ -206,7 +204,7 @@ class CategoryPostSetDataListenerTest extends AbstractCategoryListenerTestCase
             ->method('getId')
             ->willReturn(1);
 
-        $visibility = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\AccountCategoryVisibility')
+        $visibility = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility')
             ->setMethods(['getVisibility', 'getAccount'])
             ->getMock();
         $visibility->expects($this->exactly(2))
@@ -214,7 +212,7 @@ class CategoryPostSetDataListenerTest extends AbstractCategoryListenerTestCase
             ->willReturn($this->account);
         $visibility->expects($this->once())
             ->method('getVisibility')
-            ->willReturn($this->getEnumValue());
+            ->willReturn(AccountCategoryVisibility::VISIBLE);
 
         return $visibility;
     }
@@ -230,7 +228,9 @@ class CategoryPostSetDataListenerTest extends AbstractCategoryListenerTestCase
             ->method('getId')
             ->willReturn(1);
 
-        $visibility = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\AccountGroupCategoryVisibility')
+        $visibility = $this->getMockBuilder(
+            'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility'
+        )
             ->setMethods(['getVisibility', 'getAccountGroup'])
             ->getMock();
         $visibility->expects($this->exactly(2))
@@ -238,23 +238,8 @@ class CategoryPostSetDataListenerTest extends AbstractCategoryListenerTestCase
             ->willReturn($this->accountGroup);
         $visibility->expects($this->once())
             ->method('getVisibility')
-            ->willReturn($this->getEnumValue());
+            ->willReturn(AccountGroupCategoryVisibility::VISIBLE);
 
         return $visibility;
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|AbstractEnumValue
-     */
-    protected function getEnumValue()
-    {
-        $enumValue = $this->getMockBuilder('Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $enumValue->expects($this->once())
-            ->method('getId')
-            ->willReturn(1);
-
-        return $enumValue;
     }
 }

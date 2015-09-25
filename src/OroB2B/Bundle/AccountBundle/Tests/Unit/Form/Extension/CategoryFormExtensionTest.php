@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Extension;
 
+use OroB2B\Bundle\AccountBundle\Formatter\ChoiceFormatter;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -21,6 +22,9 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
     /** @var CategoryPostSubmitListener|\PHPUnit_Framework_MockObject_MockObject */
     protected $categoryPostSubmitListener;
 
+    /** @var ChoiceFormatter */
+    protected $categoryVisibilityFormatter;
+
     /** @var  CategoryFormExtension|\PHPUnit_Framework_MockObject_MockObject */
     protected $categoryFormExtension;
 
@@ -36,9 +40,15 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
         )
             ->disableOriginalConstructor()
             ->getMock();
+
+        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->categoryVisibilityFormatter = new ChoiceFormatter($translator);
+
         $this->categoryFormExtension = new CategoryFormExtension(
             $this->categoryPostSetDataListener,
-            $this->categoryPostSubmitListener
+            $this->categoryPostSubmitListener,
+            $this->categoryVisibilityFormatter
+
         );
     }
 
@@ -50,16 +60,12 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
             ->method('add')
             ->with(
                 'categoryVisibility',
-                'oro_enum_select',
+                'choice',
                 [
-                    'required' => false,
+                    'required' => true,
                     'mapped' => false,
                     'label' => 'orob2b.account.categoryvisibility.entity_label',
-                    'enum_code' => 'category_visibility',
-                    'configs' => [
-                        'allowClear' => false,
-                        'placeholder' => false,
-                    ],
+                    'choices' => $this->categoryVisibilityFormatter->formatChoices()
                 ]
             )
             ->willReturn($builder);

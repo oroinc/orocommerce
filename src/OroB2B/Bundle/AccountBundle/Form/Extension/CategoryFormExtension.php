@@ -2,13 +2,14 @@
 
 namespace OroB2B\Bundle\AccountBundle\Form\Extension;
 
+use OroB2B\Bundle\AccountBundle\Formatter\ChoiceFormatter;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 
-use OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSetDataListener;
 use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSubmitListener;
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
@@ -22,15 +23,24 @@ class CategoryFormExtension extends AbstractTypeExtension
     protected $postSubmitListener;
 
     /**
+     * @var ChoiceFormatter
+     */
+    protected $categoryVisibilityFormatter;
+
+    /**
      * @param CategoryPostSetDataListener $postSetDataListener
      * @param CategoryPostSubmitListener $postSubmitListener
+     * @param ChoiceFormatter $categoryVisibilityFormatter
      */
     public function __construct(
         CategoryPostSetDataListener $postSetDataListener,
-        CategoryPostSubmitListener $postSubmitListener
+        CategoryPostSubmitListener $postSubmitListener,
+        ChoiceFormatter $categoryVisibilityFormatter
     ) {
         $this->postSetDataListener = $postSetDataListener;
         $this->postSubmitListener = $postSubmitListener;
+
+        $this->categoryVisibilityFormatter = $categoryVisibilityFormatter;
     }
 
     /**
@@ -49,16 +59,12 @@ class CategoryFormExtension extends AbstractTypeExtension
         $builder
             ->add(
                 'categoryVisibility',
-                'oro_enum_select',
+                'choice',
                 [
-                    'required' => false,
+                    'required' => true,
                     'mapped' => false,
                     'label' => 'orob2b.account.categoryvisibility.entity_label',
-                    'enum_code' => 'category_visibility',
-                    'configs' => [
-                        'allowClear' => false,
-                        'placeholder' => false,
-                    ],
+                    'choices' => $this->categoryVisibilityFormatter->formatChoices()
                 ]
             )
             ->add(

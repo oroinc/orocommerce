@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Form\Type\CatalogVisibilityType;
 
 class CatalogVisibilityTypeTest extends FormIntegrationTestCase

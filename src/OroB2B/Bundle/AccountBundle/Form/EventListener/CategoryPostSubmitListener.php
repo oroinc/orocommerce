@@ -8,38 +8,18 @@ use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\Form\FormEvent;
 
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
-use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
-
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroupCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class CategoryPostSubmitListener extends AbstractCategoryListener
 {
-    const CATEGORY_VISIBILITY = 'category_visibility';
-    const ACCOUNT_CATEGORY_VISIBILITY = 'acc_ctgry_visibility';
-    const ACCOUNT_GROUP_CATEGORY_VISIBILITY = 'acc_grp_ctgry_vsblity';
-
-    /** @var EnumValueProvider */
-    protected $enumValueProvider;
-
     /** @var EntityManager */
     protected $categoryManager;
-
-    /**
-     * {@inheritdoc}
-     * @param EnumValueProvider $enumValueProvider
-     */
-    public function __construct(ManagerRegistry $registry, EnumValueProvider $enumValueProvider)
-    {
-        parent::__construct($registry);
-
-        $this->enumValueProvider = $enumValueProvider;
-    }
 
     /**
      * @param FormEvent $event
@@ -54,15 +34,15 @@ class CategoryPostSubmitListener extends AbstractCategoryListener
 
         $form = $event->getForm();
 
-        /** @var AbstractEnumValue $visibilityEnum */
-        $visibilityEnum = $form->get('categoryVisibility')->getData();
+        /** @var string $visibilityCode */
+        $visibilityCode = $form->get('categoryVisibility')->getData();
         /** @var ArrayCollection $accountChangeSet */
         $accountChangeSet = $form->get('visibilityForAccount')->getData();
         /** @var ArrayCollection $accountGroupChangeSet */
         $accountGroupChangeSet = $form->get('visibilityForAccountGroup')->getData();
 
-        if ($visibilityEnum) {
-            $this->processCategoryVisibility($category, $visibilityEnum);
+        if ($visibilityCode) {
+            $this->processCategoryVisibility($category, $visibilityCode);
         }
 
         if (!$accountChangeSet->isEmpty()) {
@@ -78,9 +58,9 @@ class CategoryPostSubmitListener extends AbstractCategoryListener
 
     /**
      * @param Category $category
-     * @param AbstractEnumValue $visibilityEnum
+     * @param string $visibilityCode
      */
-    protected function processCategoryVisibility(Category $category, AbstractEnumValue $visibilityEnum)
+    protected function processCategoryVisibility(Category $category, $visibilityCode)
     {
         $categoryVisibility = $this->getEntityRepository($this->categoryVisibilityClass)
             ->findOneBy(['category' => $category]);
@@ -91,7 +71,7 @@ class CategoryPostSubmitListener extends AbstractCategoryListener
             $categoryVisibility->setCategory($category);
         }
 
-        $this->applyVisibility($category, $categoryVisibility, self::CATEGORY_VISIBILITY, $visibilityEnum->getId());
+        $this->applyVisibility($category, $categoryVisibility, $visibilityCode);
     }
 
     /**
@@ -115,7 +95,6 @@ class CategoryPostSubmitListener extends AbstractCategoryListener
             $this->applyVisibility(
                 $category,
                 $accountCategoryVisibility,
-                self::ACCOUNT_CATEGORY_VISIBILITY,
                 $item['data']['visibility']
             );
         }
@@ -142,7 +121,6 @@ class CategoryPostSubmitListener extends AbstractCategoryListener
             $this->applyVisibility(
                 $category,
                 $accountGroupCategoryVisibility,
-                self::ACCOUNT_GROUP_CATEGORY_VISIBILITY,
                 $item['data']['visibility']
             );
         }
@@ -150,12 +128,14 @@ class CategoryPostSubmitListener extends AbstractCategoryListener
 
     /**
      * @param Category $category
-     * @param CategoryVisibility|AccountCategoryVisibility|AccountGroupCategoryVisibility $visibilityEntity
-     * @param string $enumCode
+     * @param VisibilityInterface $visibilityEntity
      * @param string $visibilityCode
      */
-    protected function applyVisibility(Category $category, $visibilityEntity, $enumCode, $visibilityCode)
-    {
+    protected function applyVisibility(
+        Category $category,
+        VisibilityInterface $visibilityEntity,
+        $visibilityCode
+    ) {
         $em = $this->getCategoryManager($category);
         if ($visibilityCode === $visibilityEntity->getDefault()) {
             if ($visibilityEntity->getVisibility()) {
@@ -165,8 +145,7 @@ class CategoryPostSubmitListener extends AbstractCategoryListener
             return;
         }
 
-        $visibility = $this->enumValueProvider->getEnumValueByCode($enumCode, $visibilityCode);
-        $visibilityEntity->setVisibility($visibility);
+        $visibilityEntity->setVisibility($visibilityCode);
 
         $em->persist($visibilityEntity);
     }
@@ -175,7 +154,7 @@ class CategoryPostSubmitListener extends AbstractCategoryListener
      * @param Category $category
      * @param ArrayCollection $accountChangeSet
      *
-     * @return ArrayCollection|\OroB2B\Bundle\AccountBundle\Entity\AccountCategoryVisibility[]
+     * @return ArrayCollection|AccountCategoryVisibility[]
      */
     protected function getAccountVisibilities(Category $category, ArrayCollection $accountChangeSet)
     {
@@ -204,7 +183,7 @@ class CategoryPostSubmitListener extends AbstractCategoryListener
      * @param Category $category
      * @param ArrayCollection $accountGroupChangeSet
      *
-     * @return ArrayCollection|\OroB2B\Bundle\AccountBundle\Entity\AccountCategoryVisibility[]
+     * @return ArrayCollection|AccountCategoryVisibility[]
      */
     protected function getAccountGroupVisibilities(Category $category, ArrayCollection $accountGroupChangeSet)
     {

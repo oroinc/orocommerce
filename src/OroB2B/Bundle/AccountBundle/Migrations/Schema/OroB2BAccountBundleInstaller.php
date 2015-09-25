@@ -98,7 +98,7 @@ class OroB2BAccountBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_4';
+        return 'v1_5';
     }
 
     /**
@@ -1079,14 +1079,8 @@ class OroB2BAccountBundleInstaller implements
         $table = $schema->createTable(self::ORO_B2B_CATEGORY_VISIBILITY_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
+        $table->addColumn('visibility', 'string', ['length' => 255]);
         $table->setPrimaryKey(['id']);
-
-        $this->extendExtension->addEnumField(
-            $schema,
-            self::ORO_B2B_CATEGORY_VISIBILITY_TABLE_NAME,
-            'visibility',
-            'category_visibility'
-        );
     }
 
     /**
@@ -1116,14 +1110,8 @@ class OroB2BAccountBundleInstaller implements
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
+        $table->addColumn('visibility', 'string', ['length' => 255]);
         $table->setPrimaryKey(['id']);
-
-        $this->extendExtension->addEnumField(
-            $schema,
-            self::ORO_B2B_ACCOUNT_CATEGORY_VISIBILITY_TABLE_NAME,
-            'visibility',
-            'acc_ctgry_visibility'
-        );
     }
 
     /**
@@ -1159,14 +1147,8 @@ class OroB2BAccountBundleInstaller implements
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_group_id', 'integer', ['notnull' => false]);
+        $table->addColumn('visibility', 'string', ['length' => 255]);
         $table->setPrimaryKey(['id']);
-
-        $this->extendExtension->addEnumField(
-            $schema,
-            self::ORO_B2B_ACCOUNT_GROUP_CATEGORY_VISIBILITY_TABLE_NAME,
-            'visibility',
-            'acc_grp_ctgry_vsblity'
-        );
     }
 
     /**

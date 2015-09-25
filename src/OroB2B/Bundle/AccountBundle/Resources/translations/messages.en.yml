@@ -194,6 +194,12 @@ orob2b.account:
         account.label: Account
         category.label: Category
         visibility.label: Visibility
+        choice:
+            parent_category: Parent Category
+            category: Category
+            account_group: Account Group
+            visible: Visible
+            hidden: Hidden
 
     accountgroupcategoryvisibility:
         entity_label: Visibility to Account Groups
@@ -202,6 +208,11 @@ orob2b.account:
         account_group.label: Account Group
         category.label: Category
         visibility.label: Visibility
+        choice:
+            parent_category: Parent Category
+            category: Category
+            visible: Visible
+            hidden: Hidden
 
     categoryvisibility:
         entity_label: Visibility to All
@@ -209,6 +220,11 @@ orob2b.account:
         id.label: ID
         category.label: Category
         visibility.label: Visibility
+        choice:
+            parent_category: Parent Category
+            config: Config
+            visible: Visible
+            hidden: Hidden
 
     catalog:
         visibility:
