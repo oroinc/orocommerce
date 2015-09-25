@@ -7,6 +7,8 @@ parameters:
     orob2b_sale.form.type.quote_product_offer_collection.class: OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType
     orob2b_sale.form.type.quote_product_request_collection.class: OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductRequestCollectionType
 
+    orob2b_sale.form.type.extension.quote_data_storage.class: OroB2B\Bundle\SaleBundle\Form\Extension\QuoteDataStorageExtension
+
 services:
     # Quote form types
     orob2b_sale.form.type.quote:
@@ -57,3 +59,12 @@ services:
         class: %orob2b_sale.form.type.quote_product_request_collection.class%
         tags:
             - { name: form.type, alias: orob2b_sale_quote_product_request_collection }
+
+    orob2b_sale.form.type.extension.quote_data_storage:
+        class: %orob2b_sale.form.type.extension.quote_data_storage.class%
+        parent: orob2b_product.form.type.extension.product_data_storage.abstract
+        calls:
+            - [setDataClass, [%orob2b_sale.entity.quote.class%]]
+            - [setExtendedType, [orob2b_sale_quote]]
+        tags:
+            - { name: form.type_extension, alias: orob2b_sale_quote }
