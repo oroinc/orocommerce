@@ -156,6 +156,7 @@ orob2b:
                 quantity_to_order.label: 'Quantity To Order'
                 unit_price.label: 'Unit Price'
                 price_calculating.message: 'Calculating...'
+                not_available.message: 'N/A'
 
             quoteproductrequest:
                 quantity.label: 'Requested Qty'

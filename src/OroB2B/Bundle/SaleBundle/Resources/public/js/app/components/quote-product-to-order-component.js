@@ -26,7 +26,8 @@ define(function(require) {
             },
             matchOfferRoute: 'orob2b_sale_quote_frontend_quote_product_match_offer',
             quoteProductId: null,
-            priceCalculatingMessage: 'Calculating...'
+            calculatingMessage: 'Calculating...',
+            notAvailableMessage: 'N/A'
         },
 
         /**
@@ -101,9 +102,8 @@ define(function(require) {
 
         onQuantityChange: function() {
             var self = this;
-            var quantity = parseFloat(this.$quantity.val());
-
-            if (_.isNaN(quantity) || quantity <= 0) {
+            var quantity = this.$quantity.val();
+            if (!this.isQuantityValueValid(quantity)) {
                 return;
             }
 
@@ -123,12 +123,26 @@ define(function(require) {
                         self.updateSelector(response.id);
                         self.setValidAttribute(self.$quantity, true);
                     } else {
+                        self.updateUnitPriceValue(self.options.notAvailableMessage);
                         self.setValidAttribute(self.$quantity, false);
                     }
                 }
             });
         },
 
+        /**
+         * @param {String} value
+         * @returns {Boolean}
+         */
+        isQuantityValueValid: function(value) {
+            var floatValue = parseFloat(value);
+            return !_.isNaN(floatValue) && floatValue > 0;
+        },
+
+        /**
+         * @param {Object} field
+         * @param {Boolean} value
+         */
         setValidAttribute: function(field, value) {
             var $field = $(field);
             $field.data('valid', value);
@@ -147,6 +161,11 @@ define(function(require) {
             }, this));
 
             this.$quantity.keyup(_.bind(function() {
+                if (this.isQuantityValueValid(this.$quantity.val())) {
+                    this.updateUnitPriceValue(this.options.calculatingMessage);
+                } else {
+                    this.updateUnitPriceValue(this.options.notAvailableMessage);
+                }
                 if (!this.quantityEventsEnabled) {
                     return;
                 }
@@ -154,7 +173,6 @@ define(function(require) {
                     clearTimeout(this.quantityChange);
                 }
                 this.setValidAttribute(this.$quantity, true);
-                this.updateUnitPriceValue(this.options.priceCalculatingMessage);
                 this.quantityChange = setTimeout(_.bind(this.onQuantityChange, this), 1500);
             }, this));
         },
