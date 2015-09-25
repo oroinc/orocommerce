@@ -49,9 +49,19 @@ define(function(require) {
         $unitPrice: null,
 
         /**
+         * @property {jQuery.Element}
+         */
+        $offerSelector: null,
+
+        /**
          * @property {Number}
          */
         quantityChange: null,
+
+        /**
+         * @property {Boolean}
+         */
+        quantityEventsEnabled: true,
 
         /**
          * @inheritDoc
@@ -63,20 +73,29 @@ define(function(require) {
             this.$unitInput = $(this.options.unitInputSelector);
             this.$unit = $(this.options.unitSelector);
             this.$unitPrice = $(this.options.unitPriceSelector);
+            this.$offerSelector = $(this.options.offerSelector);
 
-            this.options._sourceElement.on('change', this.options.offerSelector, _.bind(this.onSelectorChange, this));
+            this.$offerSelector.mousedown(_.bind(this.onSelectorStartChange, this));
+            this.$offerSelector.change(_.bind(this.onSelectorFinishChange, this));
             this.addQuantityEvents();
         },
 
         /**
          * @param {Event} e
          */
-        onSelectorChange: function(e) {
+        onSelectorStartChange: function(e) {
             var target = $(e.target);
 
+            this.quantityEventsEnabled = false;
+
             this.updateQuantityInputValue(Number(target.data(this.options.data_attributes.quantity)));
+            this.setValidAttribute(this.$quantity, true);
             this.updateUnitValue(String(target.data(this.options.data_attributes.unit)));
             this.updateUnitPriceValue(String(target.data(this.options.data_attributes.price)));
+        },
+
+        onSelectorFinishChange: function() {
+            this.quantityEventsEnabled = true;
         },
 
         onQuantityChange: function() {
@@ -101,17 +120,25 @@ define(function(require) {
                     if (!_.isEmpty(response)) {
                         self.updateUnitPriceValue(String(response.price));
                         self.updateSelector(response.id);
-                        self.$quantity.data('valid', true);
+                        self.setValidAttribute(self.$quantity, true);
                     } else {
-                        self.$quantity.data('valid', false);
+                        self.setValidAttribute(self.$quantity, false);
                     }
-                    self.$quantity.valid();
                 }
             });
         },
 
+        setValidAttribute: function(field, value) {
+            var $field = $(field);
+            $field.data('valid', value);
+            $field.valid();
+        },
+
         addQuantityEvents: function() {
             this.$quantity.change(_.bind(function() {
+                if (!this.quantityEventsEnabled) {
+                    return;
+                }
                 if (this.quantityChange) {
                     clearTimeout(this.quantityChange);
                 }
@@ -119,9 +146,13 @@ define(function(require) {
             }, this));
 
             this.$quantity.keyup(_.bind(function() {
+                if (!this.quantityEventsEnabled) {
+                    return;
+                }
                 if (this.quantityChange) {
                     clearTimeout(this.quantityChange);
                 }
+                this.setValidAttribute(this.$quantity, true);
                 this.quantityChange = setTimeout(_.bind(this.onQuantityChange, this), 1500);
             }, this));
         },
@@ -132,7 +163,6 @@ define(function(require) {
         updateQuantityInputValue: function(quantity) {
             this.$quantity.val(quantity);
             this.$quantity.data(this.options.data_attributes.quantity, quantity);
-            this.$quantity.trigger('blur');
         },
 
         /**
