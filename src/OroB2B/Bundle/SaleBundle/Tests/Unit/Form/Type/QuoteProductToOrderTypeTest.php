@@ -62,6 +62,7 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
     ) {
         $form = $this->factory->create($this->type, $quoteProduct, ['attr' => ['data-validation' => $viewValidation]]);
 
+        // add test data validation to assert moving of constraint to another field
         $quantityForm = $form->get(QuoteProductToOrderType::FIELD_QUANTITY);
         $options = $quantityForm->getConfig()->getOptions();
         $options['attr']['data-validation'] = $quantityViewValidation;

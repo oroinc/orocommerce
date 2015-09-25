@@ -84,7 +84,6 @@ orob2b:
             product_unit.removed: '{title} - removed'
             product_unit.empty: 'Choose Unit...'
             column_summary: 'Summary'
-            configurable.offer.blank: 'Please enter valid quantity'
 
         quoteproductrequest:
             item: '{units}, {price} per {unit}'

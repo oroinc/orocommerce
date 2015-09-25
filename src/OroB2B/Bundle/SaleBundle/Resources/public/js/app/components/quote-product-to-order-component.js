@@ -25,8 +25,7 @@ define(function(require) {
                 price: 'price'
             },
             matchOfferRoute: 'orob2b_sale_quote_frontend_quote_product_match_offer',
-            quoteProductId: null,
-            offerNotFoundMessage: 'Please enter valid quantity'
+            quoteProductId: null
         },
 
         /**
@@ -98,14 +97,14 @@ define(function(require) {
                 ),
                 type: 'GET',
                 success: function(response) {
-                    self.removeFieldErrors(self.$quantity);
-
                     if (!_.isEmpty(response)) {
                         self.updateUnitPriceValue(String(response.price));
                         self.updateSelector(response.id);
+                        self.$quantity.data('valid', true);
                     } else {
-                        self.addFieldErrors(self.$quantity, self.options.offerNotFoundMessage);
+                        self.$quantity.data('valid', false);
                     }
+                    self.$quantity.valid();
                 }
             });
         },
@@ -115,7 +114,6 @@ define(function(require) {
                 if (this.quantityChange) {
                     clearTimeout(this.quantityChange);
                 }
-
                 this.onQuantityChange.call(this);
             }, this));
 
@@ -123,48 +121,8 @@ define(function(require) {
                 if (this.quantityChange) {
                     clearTimeout(this.quantityChange);
                 }
-
-                this.removeFieldErrors(this.$quantity);
                 this.quantityChange = setTimeout(_.bind(this.onQuantityChange, this), 1500);
             }, this));
-        },
-
-        /**
-         * @param {jQuery.Element|string} field
-         */
-        removeFieldErrors: function(field) {
-            var $field = $(field);
-            var $container = $field.parent();
-
-            $field.data('valid', true);
-            $container.removeClass('validation-error');
-            $container.find('.error').removeClass('error');
-            $container.siblings('.validation-failed').hide().text('');
-        },
-
-        /**
-         * @param {jQuery.Element|string} field
-         * @param {String[]|String} messages
-         */
-        addFieldErrors: function(field, messages) {
-            var $field = $(field);
-            var $container = $field.parent();
-            var $errorContainer = $container.siblings('.validation-failed');
-
-            if (!$errorContainer.length) {
-                $errorContainer = $('<span class="validation-failed"></span>');
-                $container.after($errorContainer);
-            }
-
-            var text = _.isArray(messages) ? messages.join('; ') : messages;
-
-            if ($errorContainer.text().length) {
-                text = $errorContainer.text() + '; ' + text;
-            }
-
-            $field.addClass('error').data('valid', false);
-            $errorContainer.text(text).show();
-            $container.addClass('validation-error');
         },
 
         /**

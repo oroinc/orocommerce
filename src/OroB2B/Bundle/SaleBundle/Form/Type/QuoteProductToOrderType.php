@@ -95,6 +95,7 @@ class QuoteProductToOrderType extends AbstractType
     {
         $view->vars['quoteProduct'] = $options['data'];
 
+        // move constraint to quantity field to support JS validation
         /** @var FormView $quantityView */
         $quantityView = $view->children[self::FIELD_QUANTITY];
         if (isset($view->vars['attr']['data-validation'], $quantityView->vars['attr']['data-validation'])) {
