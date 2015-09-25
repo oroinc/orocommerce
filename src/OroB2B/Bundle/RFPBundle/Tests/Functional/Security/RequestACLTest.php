@@ -57,14 +57,14 @@ class RequestACLTest extends WebTestCase
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
-        $form->remove('orob2b_rfp_frontend_request_type[requestProducts][0]');
-        $form['orob2b_rfp_frontend_request_type[firstName]'] = LoadAccountUsersData::USER_NAME;
-        $form['orob2b_rfp_frontend_request_type[lastName]']  = LoadAccountUsersData::USER_LAST_NAME;
-        $form['orob2b_rfp_frontend_request_type[email]']     = LoadAccountUsersData::USER_EMAIL;
-        $form['orob2b_rfp_frontend_request_type[phone]']     = 123456789;
-        $form['orob2b_rfp_frontend_request_type[company]']   = 'Company name';
-        $form['orob2b_rfp_frontend_request_type[role]']      = 'Manager';
-        $form['orob2b_rfp_frontend_request_type[body]']      = 'This is test Request For Quote';
+        $form->remove('orob2b_rfp_frontend_request[requestProducts][0]');
+        $form['orob2b_rfp_frontend_request[firstName]'] = LoadAccountUsersData::USER_NAME;
+        $form['orob2b_rfp_frontend_request[lastName]']  = LoadAccountUsersData::USER_LAST_NAME;
+        $form['orob2b_rfp_frontend_request[email]']     = LoadAccountUsersData::USER_EMAIL;
+        $form['orob2b_rfp_frontend_request[phone]']     = 123456789;
+        $form['orob2b_rfp_frontend_request[company]']   = 'Company name';
+        $form['orob2b_rfp_frontend_request[role]']      = 'Manager';
+        $form['orob2b_rfp_frontend_request[body]']      = 'This is test Request For Quote';
 
         $this->client->followRedirects(true);
         $this->client->submit($form);

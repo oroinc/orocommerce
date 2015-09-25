@@ -36,14 +36,18 @@ class QuoteProductRequestType extends AbstractType
             ->add('quantity', 'integer', [
                 'required'  => false,
                 'label'     => 'orob2b.sale.quoteproductrequest.quantity.label',
+                'read_only' => true,
             ])
             ->add('price', PriceType::NAME, [
                 'required'  => false,
                 'label'     => 'orob2b.sale.quoteproductrequest.price.label',
+                'read_only' => true,
             ])
             ->add('productUnit', ProductUnitRemovedSelectionType::NAME, [
-                'label' => 'orob2b.product.productunit.entity_label',
-                'required' => true,
+                'label'     => 'orob2b.product.productunit.entity_label',
+                'required'  => false,
+                'read_only' => true,
+                'compact'   => $options['compact_units'],
             ]);
         ;
     }
@@ -55,6 +59,7 @@ class QuoteProductRequestType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class'    => $this->dataClass,
+            'compact_units' => false,
             'intention'     => 'sale_quote_product_request',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
         ]);

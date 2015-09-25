@@ -27,6 +27,11 @@
     width: 313px;
 }
 
+.row-oro.add-products {
+    float: left;
+    width: auto;
+}
+
 .row-oro.add-products .add-list-item,
 .row-oro.add-products .add-buttons
 {

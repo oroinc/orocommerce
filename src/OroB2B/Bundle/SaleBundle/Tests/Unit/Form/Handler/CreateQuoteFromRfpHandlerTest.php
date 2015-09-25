@@ -21,6 +21,7 @@ use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use OroB2B\Bundle\SaleBundle\Form\Handler\CreateQuoteFromRfpHandler;
 
@@ -129,11 +130,17 @@ class CreateQuoteFromRfpHandlerTest extends FormHandlerTestCase
             ->setPrice(OptionalPrice::create(20, 'USD'))
             ->setProductUnit($productUnit)
             ->setRequestProductItem($requestProductItem);
+        $quoteProductOffer = (new QuoteProductOffer())
+            ->setQuantity(10)
+            ->setProductUnit($productUnit)
+            ->setPriceType(QuoteProductOffer::PRICE_TYPE_UNIT)
+            ->setAllowIncrements(true);
         $quoteProduct = (new QuoteProduct())
             ->setProduct($product)
             ->setCommentAccount('comment1')
             ->setType(QuoteProduct::TYPE_REQUESTED)
-            ->addQuoteProductRequest($quoteProductRequest);
+            ->addQuoteProductRequest($quoteProductRequest)
+            ->addQuoteProductOffer($quoteProductOffer);
         $quote = (new Quote())
             ->setAccount($account)
             ->setAccountUser($accountUser)
