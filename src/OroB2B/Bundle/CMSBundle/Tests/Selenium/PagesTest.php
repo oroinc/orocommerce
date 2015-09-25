@@ -66,7 +66,7 @@ class PagesTest extends Selenium2TestCase
             ->assertCurrentSlugUrl([self::$firstPageSlug])
             ->assertTitle(self::$firstPage . ' - Landing Pages - Marketing')
             ->createChildPage()
-            ->assertTitle('Create Page - Landing Pages - Marketing')
+            ->assertTitle('Create Landing Page - Landing Pages - Marketing')
             ->setTitle(self::$secondPage)
             ->waitForApiCall()
             ->savePage();
