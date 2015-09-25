@@ -100,7 +100,7 @@ define(function(require) {
             LineItemView.__super__.resetData.apply(this, arguments);
 
             if (this.fieldsByName.hasOwnProperty('priceValue')) {
-                this.fieldsByName.priceValue.val(null);
+                this.fieldsByName.priceValue.val(null).addClass('matched-price');
             }
         }
     });

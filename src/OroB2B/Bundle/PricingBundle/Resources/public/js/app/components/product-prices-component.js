@@ -357,7 +357,6 @@ define(function(require) {
             var priceValue = this.options.$priceValue.val();
 
             if (!_.isEmpty(this.matchedPrice) &&
-                priceValue &&
                 this.calcTotalPrice(this.matchedPrice.value) !== parseFloat(priceValue)
             ) {
                 this.$priceOverridden.show();
