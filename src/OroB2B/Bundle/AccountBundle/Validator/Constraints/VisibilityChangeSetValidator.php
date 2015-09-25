@@ -16,11 +16,10 @@ class VisibilityChangeSetValidator extends ConstraintValidator
     {
         /** @var ArrayCollection $value */
         if ($value->count() == 0) {
-
             return;
         }
-        foreach ($value as $item) {
 
+        foreach ($value as $item) {
             if (isset($item['entity']) && !$item['entity'] instanceof $constraint->entityClass) {
                 /** @var VisibilityChangeSet $constraint */
                 $this->context->addViolation($constraint->invalidDataMessage);
