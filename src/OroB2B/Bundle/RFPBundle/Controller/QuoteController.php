@@ -59,8 +59,8 @@ class QuoteController extends Controller
                     'productUnitCode' => $productUnitCode,
                     'type' => QuoteProduct::TYPE_REQUESTED,
                     'price' => $requestProductItem->getPrice(),
-                    'requestProductItem' => $requestProductItem,
-                    'requestProduct' => $requestProduct,
+                    'requestProductItem' => $requestProductItem->getId(),
+                    'requestProduct' => $requestProduct->getId(),
                     'allowIncrements' => true,
                 ];
             }

@@ -10,6 +10,7 @@ use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 
 class QuoteDataStorageExtension extends AbstractProductDataStorageExtension
 {
@@ -23,19 +24,24 @@ class QuoteDataStorageExtension extends AbstractProductDataStorageExtension
         }
 
         $quoteProductOffer = new QuoteProductOffer();
+        $quoteProductRequest = new QuoteProductRequest();
         $quoteProduct = new QuoteProduct();
 
         $quoteProduct
             ->setProduct($product)
+            ->addQuoteProductRequest($quoteProductRequest)
             ->addQuoteProductOffer($quoteProductOffer);
 
         $this->fillEntityData($quoteProduct, $itemData);
 
         if (array_key_exists(ProductDataStorage::PRODUCT_QUANTITY_KEY, $itemData)) {
             $quoteProductOffer->setQuantity($itemData[ProductDataStorage::PRODUCT_QUANTITY_KEY]);
+            $quoteProductRequest->setQuantity($itemData[ProductDataStorage::PRODUCT_QUANTITY_KEY]);
+
         }
 
         $this->fillEntityData($quoteProductOffer, $itemData);
+        $this->fillEntityData($quoteProductRequest, $itemData);
 
         if (!$quoteProductOffer->getProductUnit()) {
             /** @var ProductUnitPrecision $unitPrecision */
@@ -51,6 +57,7 @@ class QuoteDataStorageExtension extends AbstractProductDataStorageExtension
             }
 
             $quoteProductOffer->setProductUnit($unit);
+            $quoteProductRequest->setProductUnit($unit);
         }
 
         if ($quoteProductOffer->getProductUnit()) {
