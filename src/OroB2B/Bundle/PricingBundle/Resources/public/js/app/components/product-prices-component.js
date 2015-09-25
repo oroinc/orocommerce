@@ -96,8 +96,9 @@ define(function(require) {
 
             mediator.on('pricing:refresh:products-tier-prices', this.setTierPrices, this);
 
+            this.updateTierPrices.thisContext = this.updateTierPrices;
             if (this.options.$product) {
-                this.options.$product.change(_.bind(this.updateTierPrices, this));
+                this.options.$product.change(this.updateTierPrices.thisContext);
             }
 
             if (_.isObject(this.options.$currency)) {
@@ -424,6 +425,8 @@ define(function(require) {
 
             mediator.off('pricing:refresh:products-tier-prices', this.setTierPrices, this);
             mediator.off('pricing:refresh:line-items-matched-prices', this.setMatchedPrices, this);
+
+            this.options.$product.off('change', this.updateTierPrices.thisContext);
 
             ProductPricesComponent.__super__.dispose.call(this);
         }
