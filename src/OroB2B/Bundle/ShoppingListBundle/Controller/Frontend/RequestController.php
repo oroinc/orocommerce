@@ -25,6 +25,7 @@ class RequestController extends Controller
     public function createAction(ShoppingList $shoppingList)
     {
         $this->saveToStorage($shoppingList);
+
         return $this->redirectToRoute('orob2b_rfp_frontend_request_create', [ProductDataStorage::STORAGE_KEY => true]);
     }
 
