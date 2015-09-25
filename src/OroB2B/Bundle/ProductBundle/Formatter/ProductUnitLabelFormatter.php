@@ -35,13 +35,14 @@ class ProductUnitLabelFormatter
 
     /**
      * @param array|ProductUnit[] $units
+     * @param bool $isShort
      * @return array
      */
-    public function formatChoices(array $units)
+    public function formatChoices(array $units, $isShort = false)
     {
         $result = [];
         foreach ($units as $unit) {
-            $result[$unit->getCode()] = $this->format($unit->getCode());
+            $result[$unit->getCode()] = $this->format($unit->getCode(), $isShort);
         }
 
         return $result;
