@@ -16,7 +16,7 @@ class RequestController extends Controller
 {
     /**
      * @Route("/create/{id}", name="orob2b_shoppinglist_frontend_createrequest", requirements={"id"="\d+"})
-     * @AclAncestor("orob2b_rfp_frontend_request_update")
+     * @AclAncestor("orob2b_rfp_frontend_request_create")
      *
      * @param ShoppingList $shoppingList
      *
