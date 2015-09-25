@@ -45,6 +45,9 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
      * @param bool $isValid
      * @param array $expectedData
      * @param bool $expectedReadOnly
+     * @param null|string $viewValidation
+     * @param null|string $quantityViewValidation
+     * @param null|string $expectedValidation
      * @dataProvider submitDataProvider
      */
     public function testSubmit(
@@ -52,21 +55,30 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
         array $submit,
         $isValid,
         array $expectedData,
-        $expectedReadOnly
+        $expectedReadOnly,
+        $viewValidation = null,
+        $quantityViewValidation = null,
+        $expectedValidation = null
     ) {
-        $form = $this->factory->create($this->type, $quoteProduct);
+        $form = $this->factory->create($this->type, $quoteProduct, ['attr' => ['data-validation' => $viewValidation]]);
+
+        // add test data validation to assert moving of constraint to another field
+        $quantityForm = $form->get(QuoteProductToOrderType::FIELD_QUANTITY);
+        $options = $quantityForm->getConfig()->getOptions();
+        $options['attr']['data-validation'] = $quantityViewValidation;
+        $form->add(QuoteProductToOrderType::FIELD_QUANTITY, 'number', $options);
 
         $form->submit($submit);
         $this->assertSame($isValid, $form->isValid());
         $this->assertEquals($expectedData, $form->getData());
-        $this->assertSame(
-            $expectedReadOnly,
-            $form->get(QuoteProductToOrderType::FIELD_QUANTITY)->getConfig()->getOption('read_only')
-        );
+        $this->assertSame($expectedReadOnly, $quantityForm->getConfig()->getOption('read_only'));
 
         $view = $form->createView();
         $this->assertArrayHasKey('quoteProduct', $view->vars);
         $this->assertEquals($quoteProduct, $view->vars['quoteProduct']);
+
+        $quantityView = $view->children[QuoteProductToOrderType::FIELD_QUANTITY];
+        $this->assertEquals($expectedValidation, $quantityView->vars['attr']['data-validation']);
     }
 
     /**
@@ -114,6 +126,9 @@ class QuoteProductToOrderTypeTest extends AbstractQuoteToProductTestCase
                     QuoteProductToOrderType::FIELD_QUANTITY => null,
                 ],
                 'expectedReadOnly' => true,
+                'rootViewValidation' => json_encode(['param1' => 'value1']),
+                'quantityViewValidation' => json_encode(['param2' => 'value2']),
+                'expectedValidation' => json_encode(['param1' => 'value1','param2' => 'value2']),
             ],
         ];
     }
