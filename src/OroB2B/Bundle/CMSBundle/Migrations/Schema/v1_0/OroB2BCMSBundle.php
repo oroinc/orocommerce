@@ -4,11 +4,28 @@ namespace OroB2B\Bundle\CMSBundle\Migrations\Schema\v1_0;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroB2BCMSBundle implements Migration
+class OroB2BCMSBundle implements Migration, AttachmentExtensionAwareInterface
 {
+    const CMS_LOGIN_PAGE_TABLE = 'orob2b_cms_login_page';
+    const MAX_LOGO_IMAGE_SIZE_IN_MB = 10;
+    const MAX_BACKGROUND_IMAGE_SIZE_IN_MB = 10;
+
+    /** @var AttachmentExtension */
+    protected $attachmentExtension;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
+    {
+        $this->attachmentExtension = $attachmentExtension;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -17,10 +34,13 @@ class OroB2BCMSBundle implements Migration
         /** Tables generation **/
         $this->createOrob2BCmsPageTable($schema);
         $this->createOrob2BCmsPageToSlugTable($schema);
+        $this->createOroB2BCmsLoginPageTable($schema);
 
         /** Foreign keys generation **/
         $this->addOrob2BCmsPageForeignKeys($schema);
         $this->addOrob2BCmsPageToSlugForeignKeys($schema);
+
+        $this->addImageAssociations($schema);
     }
 
     /**
@@ -108,6 +128,43 @@ class OroB2BCMSBundle implements Migration
             ['slug_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Create orob2b_cms_login_page table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BCmsLoginPageTable(Schema $schema)
+    {
+        $table = $schema->createTable(self::CMS_LOGIN_PAGE_TABLE);
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('top_content', 'text', ['notnull' => false]);
+        $table->addColumn('bottom_content', 'text', ['notnull' => false]);
+        $table->addColumn('css', 'text', ['notnull' => false]);
+        $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addImageAssociations(Schema $schema)
+    {
+        $this->attachmentExtension->addImageRelation(
+            $schema,
+            self::CMS_LOGIN_PAGE_TABLE,
+            'logoImage',
+            [],
+            self::MAX_LOGO_IMAGE_SIZE_IN_MB
+        );
+
+        $this->attachmentExtension->addImageRelation(
+            $schema,
+            self::CMS_LOGIN_PAGE_TABLE,
+            'backgroundImage',
+            [],
+            self::MAX_BACKGROUND_IMAGE_SIZE_IN_MB
         );
     }
 }
