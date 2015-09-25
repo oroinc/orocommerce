@@ -25,7 +25,7 @@
         </div>
     {% endif %}
 
-    {% if resource_granted('orob2b_rfp_frontend_request_update') %}
+    {% if resource_granted('orob2b_rfp_frontend_request_create') %}
         <div class="btn-group">
             {{ UI.link({
                 path: path('orob2b_shoppinglist_frontend_createrequest', {id: entity.id}),
