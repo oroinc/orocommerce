@@ -142,7 +142,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
 
         $types = [
             QuoteProduct::TYPE_REQUESTED,
-            QuoteProduct::TYPE_NOT_AVAILABLE,
+            //QuoteProduct::TYPE_NOT_AVAILABLE,
         ];
 
         $priceTypes = [
