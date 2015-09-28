@@ -7,15 +7,11 @@ use Symfony\Component\DomCrawler\Form;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
 
-use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
-use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
-
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 /**
  * @dbIsolation
- * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class QuoteControllerTest extends WebTestCase
 {
@@ -57,7 +53,6 @@ class QuoteControllerTest extends WebTestCase
 
         $this->loadFixtures([
             'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData',
-            'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData',
         ]);
     }
 
