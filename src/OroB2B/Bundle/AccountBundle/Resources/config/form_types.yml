@@ -1,4 +1,7 @@
 parameters:
+    orob2b_account.account.class: OroB2B\Bundle\AccountBundle\Entity\Account
+    orob2b_account.account_group.class: OroB2B\Bundle\AccountBundle\Entity\AccountGroup
+
     orob2b_account.form.type.account.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountType
     orob2b_account.form.type.account_group.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountGroupType
 
@@ -239,6 +242,9 @@ services:
             - @orob2b_account.formatter.choice.category_visibility
         tags:
             - { name: form.type_extension, alias: orob2b_catalog_category }
+        calls:
+            - [setAccountClass,[%orob2b_account.account.class%]]
+            - [setAccountGroupClass,[%orob2b_account.account_group.class%]]
 
     orob2b_account.form.type.catalog_visibility:
         class: %orob2b_account.form.type.catalog_visibility.class%

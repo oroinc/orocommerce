@@ -9,6 +9,7 @@ use Symfony\Component\Form\FormEvents;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 
+use OroB2B\Bundle\AccountBundle\Validator\Constraints\VisibilityChangeSet;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSetDataListener;
 use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSubmitListener;
@@ -21,6 +22,12 @@ class CategoryFormExtension extends AbstractTypeExtension
 
     /** @var CategoryPostSubmitListener */
     protected $postSubmitListener;
+
+    /** @var  string */
+    protected $accountClass;
+
+    /** @var  string */
+    protected $accountGroupClass;
 
     /**
      * @var ChoiceFormatter
@@ -71,18 +78,36 @@ class CategoryFormExtension extends AbstractTypeExtension
                 'visibilityForAccount',
                 EntityChangesetType::NAME,
                 [
-                    'class' => 'OroB2B\Bundle\AccountBundle\Entity\Account',
+                    'class' => $this->accountClass,
+                    'constraints' => [new VisibilityChangeSet(['entityClass' => $this->accountClass])],
                 ]
             )
             ->add(
                 'visibilityForAccountGroup',
                 EntityChangesetType::NAME,
                 [
-                    'class' => 'OroB2B\Bundle\AccountBundle\Entity\AccountGroup',
+                    'class' => $this->accountGroupClass,
+                    'constraints' => [new VisibilityChangeSet(['entityClass' => $this->accountGroupClass])],
                 ]
             );
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this->postSetDataListener, 'onPostSetData']);
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this->postSubmitListener, 'onPostSubmit']);
+    }
+
+    /**
+     * @param string $accountClass
+     */
+    public function setAccountClass($accountClass)
+    {
+        $this->accountClass = $accountClass;
+    }
+
+    /**
+     * @param string $accountGroupClass
+     */
+    public function setAccountGroupClass($accountGroupClass)
+    {
+        $this->accountGroupClass = $accountGroupClass;
     }
 }

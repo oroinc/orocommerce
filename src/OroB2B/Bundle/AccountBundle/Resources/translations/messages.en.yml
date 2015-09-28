@@ -234,7 +234,6 @@ orob2b.account:
             catalog_configuration_label: Categories
             visible.label: Visible
             hidden.label: Hidden
-
     menu:
         customers_tab.label: 'Customers'
         account_list.description: 'List of Accounts'

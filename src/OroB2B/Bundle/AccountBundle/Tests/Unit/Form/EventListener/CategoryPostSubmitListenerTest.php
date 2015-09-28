@@ -40,6 +40,23 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
         return new CategoryPostSubmitListener($this->registry);
     }
 
+    public function testInvalidForm()
+    {
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form->expects($this->once())->method('isValid')->willReturn(false);
+        /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder('\Symfony\Component\Form\FormEvent')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $event->expects($this->once())
+            ->method('getForm')
+            ->willReturn($form);
+        $event->expects($this->never())->method('getData');
+        $this->listener->onPostSubmit($event);
+    }
+
     public function testOnPostSubmit()
     {
         $event = $this->getEventMock();
@@ -69,9 +86,12 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
         $event->expects($this->once())
             ->method('getData')
             ->willReturn(null);
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $event->expects($this->once())
+            ->method('getForm')->willReturn($form);
+        $form->expects($this->once())->method('isValid')->willReturn(true);
         $this->listener->onPostSubmit($event);
-        $event->expects($this->never())
-            ->method('getForm');
     }
 
     /**
@@ -98,6 +118,7 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form->expects($this->once())->method('isValid')->willReturn(true);
         $form->expects($this->exactly(3))
             ->method('get')
             ->willReturnMap(
@@ -107,11 +128,10 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
                     ['visibilityForAccountGroup', $visibilityForAccountGroupFormMock],
                 ]
             );
-
         $event = $this->getMockBuilder('\Symfony\Component\Form\FormEvent')
             ->disableOriginalConstructor()
             ->getMock();
-        $event->expects($this->once())
+        $event->expects($this->exactly(2))
             ->method('getForm')
             ->willReturn($form);
 

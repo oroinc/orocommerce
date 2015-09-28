@@ -26,6 +26,9 @@ class CategoryPostSubmitListener extends AbstractCategoryListener
      */
     public function onPostSubmit(FormEvent $event)
     {
+        if (!$event->getForm()->isValid()) {
+            return;
+        }
         $category = $event->getData();
 
         if (!$category || !$category instanceof Category || !$category->getId()) {
