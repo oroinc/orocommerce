@@ -50,6 +50,7 @@ services:
         class: %orob2b_sale.service.quote_to_order_converter.class%
         arguments:
             - @orob2b_order.model.order_currency_handler
+            - @orob2b_order.provider.subtotals
 
     orob2b_sale.service.quote_product_offer_matcher:
         class: %orob2b_sale.service.quote_product_offer_matcher.class%
