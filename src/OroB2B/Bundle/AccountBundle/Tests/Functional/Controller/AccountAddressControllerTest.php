@@ -148,17 +148,22 @@ class AccountAddressControllerTest extends WebTestCase
         $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
 
         $this->assertEquals('Manicaland', $result['region']);
-        $this->assertEquals([
 
+        $this->assertCount(2, $result['types']);
+        $this->assertContains(
+            [
+                'name' => AddressType::TYPE_SHIPPING,
+                'label' => ucfirst(AddressType::TYPE_SHIPPING)
+            ],
+            $result['types']
+        );
+        $this->assertContains(
             [
                 'name' => AddressType::TYPE_BILLING,
                 'label' => ucfirst(AddressType::TYPE_BILLING)
             ],
-            [
-                'name' => AddressType::TYPE_SHIPPING,
-                'label' => ucfirst(AddressType::TYPE_SHIPPING)
-            ]
-        ], $result['types']);
+            $result['types']
+        );
 
         $this->assertEquals([
             [

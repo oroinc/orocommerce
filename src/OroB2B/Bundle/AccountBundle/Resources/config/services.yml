@@ -45,6 +45,7 @@ parameters:
     orob2b_account.event_listener.ormdatasource_acl.class: OroB2B\Bundle\AccountBundle\EventListener\OrmDatasourceAclListener
 
     orob2b_account.acl.group_provider.class: OroB2B\Bundle\AccountBundle\Acl\Group\AclGroupProvider
+    orob2b_account.acl.resolver.role_translation_prefix.class: OroB2B\Bundle\AccountBundle\Acl\Resolver\RoleTranslationPrefixResolver
     orob2b_account.account_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_account.account_user_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_account.event_listener.frontend_datagrid.class: OroB2B\Bundle\AccountBundle\EventListener\DatagridListenerFrontend
@@ -277,6 +278,11 @@ services:
             - [setContainer, [@service_container]]
         tags:
             - { name: oro_security.acl.group_provider, alias: frontend_group }
+
+    orob2b_account.acl.resolver.role_translation_prefix:
+        class: %orob2b_account.acl.resolver.role_translation_prefix.class%
+        arguments:
+            - @oro_security.security_facade
 
     orob2b_account.account_user_address.manager.api:
         class: %orob2b_account.account_user_address.manager.api.class%
