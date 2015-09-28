@@ -25,7 +25,7 @@ class AccountCategoryVisibilityRepositoryTest extends WebTestCase
 
         $this->repository = $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroB2BAccountBundle:AccountCategoryVisibility');
+            ->getRepository('OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility');
 
         $this->loadFixtures(
             [

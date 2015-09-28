@@ -40,7 +40,7 @@ class CategoryVisibility implements VisibilityInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="visibility", type="string", length=255)
+     * @ORM\Column(name="visibility", type="string", length=255, nullable=true)
      */
     protected $visibility;
 
@@ -107,8 +107,8 @@ class CategoryVisibility implements VisibilityInterface
         return [
             self::PARENT_CATEGORY,
             self::CONFIG,
-            self::VISIBLE,
-            self::HIDDEN
+            self::HIDDEN,
+            self::VISIBLE
         ];
     }
 }

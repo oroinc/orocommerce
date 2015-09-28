@@ -45,7 +45,7 @@ class OroB2BAccountBundle implements Migration, ExtendExtensionAwareInterface
     protected function updateOroB2BCategoryVisibilityTable(Schema $schema)
     {
         $table = $schema->getTable(self::ORO_B2B_CATEGORY_VISIBILITY_TABLE_NAME);
-        $table->addColumn('visibility', 'string', ['length' => 255]);
+        $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
     }
 
     /**
@@ -56,7 +56,7 @@ class OroB2BAccountBundle implements Migration, ExtendExtensionAwareInterface
     protected function updateOroB2BAccountCategoryVisibilityTable(Schema $schema)
     {
         $table = $schema->getTable(self::ORO_B2B_ACCOUNT_CATEGORY_VISIBILITY_TABLE_NAME);
-        $table->addColumn('visibility', 'string', ['length' => 255]);
+        $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
     }
 
     /**
@@ -67,6 +67,6 @@ class OroB2BAccountBundle implements Migration, ExtendExtensionAwareInterface
     protected function updateOroB2BAccountGroupCategoryVisibilityTable(Schema $schema)
     {
         $table = $schema->getTable(self::ORO_B2B_ACCOUNT_GROUP_CATEGORY_VISIBILITY_TABLE_NAME);
-        $table->addColumn('visibility', 'string', ['length' => 255]);
+        $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
     }
 }

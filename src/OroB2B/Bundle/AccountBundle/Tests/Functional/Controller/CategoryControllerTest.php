@@ -15,9 +15,9 @@ use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\AccountBundle\Entity\AccountCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroupCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 
 /**
  * @dbIsolation

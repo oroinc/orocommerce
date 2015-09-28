@@ -50,7 +50,7 @@ class AccountCategoryVisibility implements VisibilityInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="visibility", type="string", length=255)
+     * @ORM\Column(name="visibility", type="string", length=255, nullable=true)
      */
     protected $visibility;
 
@@ -135,11 +135,11 @@ class AccountCategoryVisibility implements VisibilityInterface
     public static function getVisibilityList()
     {
         return [
-            self::PARENT_CATEGORY,
-            self::CATEGORY,
             self::ACCOUNT_GROUP,
-            self::VISIBLE,
-            self::HIDDEN
+            self::CATEGORY,
+            self::PARENT_CATEGORY,
+            self::HIDDEN,
+            self::VISIBLE
         ];
     }
 }

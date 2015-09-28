@@ -1079,7 +1079,7 @@ class OroB2BAccountBundleInstaller implements
         $table = $schema->createTable(self::ORO_B2B_CATEGORY_VISIBILITY_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
-        $table->addColumn('visibility', 'string', ['length' => 255]);
+        $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
         $table->setPrimaryKey(['id']);
     }
 
@@ -1110,7 +1110,7 @@ class OroB2BAccountBundleInstaller implements
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
-        $table->addColumn('visibility', 'string', ['length' => 255]);
+        $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
         $table->setPrimaryKey(['id']);
     }
 
@@ -1147,7 +1147,7 @@ class OroB2BAccountBundleInstaller implements
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_group_id', 'integer', ['notnull' => false]);
-        $table->addColumn('visibility', 'string', ['length' => 255]);
+        $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
         $table->setPrimaryKey(['id']);
     }
 

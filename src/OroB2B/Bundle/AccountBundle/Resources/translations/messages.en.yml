@@ -195,11 +195,11 @@ orob2b.account:
         category.label: Category
         visibility.label: Visibility
         choice:
-            parent_category: Parent Category
-            category: Category
             account_group: Account Group
-            visible: Visible
+            category: Visibility to All
+            parent_category: Parent Category
             hidden: Hidden
+            visible: Visible
 
     accountgroupcategoryvisibility:
         entity_label: Visibility to Account Groups
@@ -209,10 +209,10 @@ orob2b.account:
         category.label: Category
         visibility.label: Visibility
         choice:
+            category: Visibility to All
             parent_category: Parent Category
-            category: Category
-            visible: Visible
             hidden: Hidden
+            visible: Visible
 
     categoryvisibility:
         entity_label: Visibility to All
