@@ -14,9 +14,6 @@ services:
 
     orob2b_shopping_list.form.type.line_item:
         class: %orob2b_shopping_list.form.type.line_item.class%
-        arguments:
-            - @doctrine
-            - @orob2b_shopping_list.line_item.manager
         calls:
             - [setDataClass, [%orob2b_shopping_list.entity.line_item.class%]]
         tags:

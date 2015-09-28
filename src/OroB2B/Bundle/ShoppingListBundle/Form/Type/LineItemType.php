@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\ShoppingListBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -31,6 +33,11 @@ class LineItemType extends AbstractType
         $data = $builder->getData();
         $isExisting = $data && $data->getId();
 
+        $unitOptions = [
+            'required' => true,
+            'label' => 'orob2b.shoppinglist.lineitem.unit.label',
+        ];
+
         $builder
             ->add(
                 'product',
@@ -42,17 +49,7 @@ class LineItemType extends AbstractType
                     'disabled' => $isExisting,
                 ]
             )
-            ->add(
-                'unit',
-                ProductUnitSelectionType::NAME,
-                [
-                    'required' => true,
-                    'label' => 'orob2b.shoppinglist.lineitem.unit.label',
-                    'query_builder' => function (ProductUnitRepository $er) use ($data) {
-                        return $er->getProductUnitsQueryBuilder($data->getProduct());
-                    },
-                ]
-            )
+            ->add('unit', ProductUnitSelectionType::NAME, $unitOptions)
             ->add(
                 'quantity',
                 QuantityType::NAME,
@@ -71,6 +68,47 @@ class LineItemType extends AbstractType
                     'label' => 'orob2b.shoppinglist.lineitem.notes.label',
                     'empty_data' => null,
                 ]
+            );
+
+        $builder
+            ->get('product')
+            ->addEventListener(
+                FormEvents::POST_SUBMIT,
+                function (FormEvent $event) use ($unitOptions) {
+                    $productId = $event->getData();
+
+                    $this->replaceUnitField($event->getForm(), $unitOptions, $productId);
+                }
+            );
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param $unitOptions
+     * @param $productId
+     */
+    protected function replaceUnitField(FormInterface $form, $unitOptions, $productId)
+    {
+        if ($productId) {
+            $unitOptions['query_builder'] = function (ProductUnitRepository $er) use ($productId) {
+                return $er->getProductUnitsQueryBuilderById($productId);
+            };
+        } else {
+            $unitOptions['choices'] = [];
+        }
+
+        $form->getParent()
+            ->add(
+                'unit',
+                ProductUnitSelectionType::NAME,
+                array_merge(
+                    $unitOptions,
+                    [
+                        'query_builder' => function (ProductUnitRepository $er) use ($productId) {
+                            return $er->getProductUnitsQueryBuilderById($productId);
+                        },
+                    ]
+                )
             );
     }
 
