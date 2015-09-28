@@ -102,6 +102,7 @@ class QuoteToOrderTypeTest extends AbstractQuoteToProductTestCase
                 'defaultData' => [
                     $firstUnitQuoteProduct,
                     $secondUnitQuoteProduct,
+                    $bundledQuoteProduct,
                 ],
                 'submit' => [
                     [
@@ -112,6 +113,10 @@ class QuoteToOrderTypeTest extends AbstractQuoteToProductTestCase
                         QuoteProductToOrderType::FIELD_QUANTITY => '16',
                         QuoteProductToOrderType::FIELD_UNIT => 'kg',
                     ],
+                    [
+                        QuoteProductToOrderType::FIELD_QUANTITY => '1000',
+                        QuoteProductToOrderType::FIELD_UNIT => 'item',
+                    ],
                 ],
                 'expectedData' => [
                     [
@@ -121,6 +126,10 @@ class QuoteToOrderTypeTest extends AbstractQuoteToProductTestCase
                     [
                         QuoteProductToOrderType::FIELD_QUANTITY => 16,
                         QuoteProductToOrderType::FIELD_OFFER => $secondUnitOffer,
+                    ],
+                    [
+                        QuoteProductToOrderType::FIELD_QUANTITY => 1000,
+                        QuoteProductToOrderType::FIELD_OFFER => $bundledOffer,
                     ],
                 ],
             ]
