@@ -79,8 +79,8 @@ class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAw
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
-            $product = $this->getProductBySku($manager, $row['productCode']);
-            $category = $this->getCategoryByDefaultTitle($manager, $row['productLine']);
+            $product = $this->getProductBySku($manager, $row['sku']);
+            $category = $this->getCategoryByDefaultTitle($manager, $row['category']);
             $category->addProduct($product);
             $manager->persist($category);
         }
