@@ -16,14 +16,30 @@
 {% endblock pageHeader %}
 
 {% block navButtons %}
-    {% if resource_granted('orob2b_sale_frontend_quote_create_order') %}
-        {% set formCreateOrderAction = path('orob2b_sale_frontend_quote_create_order', { 'id': entity.id }) %}
-        <form id="{{ formCreateOrder.vars.id }}" name="{{ formCreateOrder.vars.name }}" action="{{ formCreateOrderAction }}" method="post">
-            {{ form_widget(formCreateOrder) }}
-            <button type="submit" class="no-hash btn">
-                <i class="icon-edit hide-text"></i>{{ 'orob2b.frontend.sale.btn.accept_quote_create_order'|trans }}
-            </button>
-        </form>
+    {% if resource_granted('orob2b_order_frontend_create') %}
+        {% if entity.hasOfferVariants() %}
+            {{ UI.button({
+                'path': 'javascript:void(0);',
+                'data': {
+                    'url': path('orob2b_sale_frontend_quote_create_order_from_widget', { 'id': entity.id }),
+                    'page-component-module': 'orob2bsale/js/app/components/quote-to-order-widget-component',
+                    'page-component-options': {
+                        'options': {
+                            'title': 'orob2b.frontend.sale.btn.accept_quote_create_order'|trans,
+                        }
+                    }|json_encode|raw
+                },
+                'label': 'orob2b.frontend.sale.btn.accept_quote_create_order'|trans,
+                'class': 'no-hash',
+                'iCss': 'icon-edit'
+            }) }}
+        {% else %}
+            {{ UI.button({
+                'path': path('orob2b_sale_frontend_quote_create_order', {'id': entity.id}),
+                'label': 'orob2b.frontend.sale.btn.accept_quote_create_order'|trans,
+                'iCss': 'icon-edit'
+            }) }}
+        {% endif %}
     {% endif %}
 {% endblock %}
 
@@ -43,7 +59,7 @@
                         <th><span>{{ 'orob2b.product.sku.label'|trans }}</span></th>
                         <th><span>{{ 'orob2b.frontend.sale.quoteproduct.column.product'|trans }}</span></th>
                         <th class="quote-line_item-quantity"><span>{{ 'orob2b.frontend.sale.quoteproductoffer.quantity.label'|trans }}</span></th>
-                        <th class="quote-line_item-price"><span>{{ 'orob2b.frontend.sale.quoteproductoffer.price.label'|trans }}</span></th>
+                        <th class="quote-line_item-price"><span>{{ 'orob2b.frontend.sale.quoteproductoffer.unit_price.label'|trans }}</span></th>
                         <th><span>{{ 'orob2b.frontend.sale.quoteproduct.comment_account.label'|trans }}</span></th>
                         <th><span>{{ 'orob2b.frontend.sale.quoteproduct.comment.label'|trans }}</span></th>
                     </tr>
