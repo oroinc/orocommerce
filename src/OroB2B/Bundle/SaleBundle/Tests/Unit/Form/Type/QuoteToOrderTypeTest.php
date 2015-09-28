@@ -85,9 +85,10 @@ class QuoteToOrderTypeTest extends AbstractQuoteToProductTestCase
         $bundledQuoteProduct->addQuoteProductOffer($bundledOffer);
 
         $unitAndBundledQuote = new Quote();
-        $unitAndBundledQuote->addQuoteProduct($bundledQuoteProduct)
+        $unitAndBundledQuote
             ->addQuoteProduct($firstUnitQuoteProduct)
-            ->addQuoteProduct($secondUnitQuoteProduct);
+            ->addQuoteProduct($secondUnitQuoteProduct)
+            ->addQuoteProduct($bundledQuoteProduct);
 
         return [
             'no products' => [
@@ -99,28 +100,37 @@ class QuoteToOrderTypeTest extends AbstractQuoteToProductTestCase
             'unit and bundled products' => [
                 'quote' => $unitAndBundledQuote,
                 'defaultData' => [
+                    $firstUnitQuoteProduct,
                     $secondUnitQuoteProduct,
-                    $firstUnitQuoteProduct
+                    $bundledQuoteProduct,
                 ],
                 'submit' => [
+                    [
+                        QuoteProductToOrderType::FIELD_QUANTITY => '12',
+                        QuoteProductToOrderType::FIELD_UNIT => 'kg',
+                    ],
                     [
                         QuoteProductToOrderType::FIELD_QUANTITY => '16',
                         QuoteProductToOrderType::FIELD_UNIT => 'kg',
                     ],
                     [
-                        QuoteProductToOrderType::FIELD_QUANTITY => '12',
-                        QuoteProductToOrderType::FIELD_UNIT => 'kg',
+                        QuoteProductToOrderType::FIELD_QUANTITY => '1000',
+                        QuoteProductToOrderType::FIELD_UNIT => 'item',
                     ],
                 ],
                 'expectedData' => [
+                    [
+                        QuoteProductToOrderType::FIELD_QUANTITY => 12,
+                        QuoteProductToOrderType::FIELD_OFFER => $firstUnitOffer,
+                    ],
                     [
                         QuoteProductToOrderType::FIELD_QUANTITY => 16,
                         QuoteProductToOrderType::FIELD_OFFER => $secondUnitOffer,
                     ],
                     [
-                        QuoteProductToOrderType::FIELD_QUANTITY => 12,
-                        QuoteProductToOrderType::FIELD_OFFER => $firstUnitOffer,
-                    ]
+                        QuoteProductToOrderType::FIELD_QUANTITY => 1000,
+                        QuoteProductToOrderType::FIELD_OFFER => $bundledOffer,
+                    ],
                 ],
             ]
         ];

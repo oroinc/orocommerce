@@ -15,6 +15,7 @@ define(function(require) {
                     modal: true,
                     resizable: true,
                     width: 1000,
+                    height: 500,
                     allowMaximize: true,
                     dblclick: 'maximize'
                 }
