@@ -43,17 +43,17 @@ class LoadPaymentTermToAccountDemoData extends AbstractFixture implements
     public function load(ObjectManager $manager)
     {
         $doctrine = $this->container->get('doctrine');
+
+        /** @var \OroB2B\Bundle\AccountBundle\Entity\Repository\AccountRepository $accountRepository */
         $accountRepository = $doctrine->getRepository('OroB2BAccountBundle:Account');
+
+        /** @var \OroB2B\Bundle\PaymentBundle\Entity\Repository\PaymentTermRepository $paymentTermRepository */
         $paymentTermRepository = $doctrine->getRepository('OroB2BPaymentBundle:PaymentTerm');
 
         $paymentTermsAll = $paymentTermRepository->findAll();
         $accountsAll = $accountRepository->findAll();
 
         foreach ($accountsAll as $account) {
-            if ($account->getGroup()->getName() === 'First') {
-                continue;
-            }
-
             /** @var PaymentTerm $paymentTerm */
             $paymentTerm = $paymentTermsAll[array_rand($paymentTermsAll)];
             $paymentTerm->addAccount($account);

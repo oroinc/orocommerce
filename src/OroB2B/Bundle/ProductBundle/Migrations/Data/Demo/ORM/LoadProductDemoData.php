@@ -58,18 +58,18 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
             $row = array_combine($headers, array_values($data));
 
             $name = new LocalizedFallbackValue();
-            $name->setString($row['productName']);
+            $name->setString($row['name']);
 
             $description = new LocalizedFallbackValue();
-            $description->setText(nl2br($row['productDescription']));
+            $description->setText(nl2br($row['description']));
 
             $product = new Product();
             $product->setOwner($businessUnit)
                 ->setOrganization($organization)
-                ->setSku($row['productCode'])
-                ->setInventoryStatus($inventoryStatuses[array_rand($inventoryStatuses)])
-                ->setVisibility($visibilities[array_rand($visibilities)])
-                ->setStatus($statuses[array_rand($statuses)])
+                ->setSku($row['sku'])
+                ->setInventoryStatus($inventoryStatuses[1])
+                ->setVisibility($visibilities[0])
+                ->setStatus($statuses[1])
                 ->addName($name)
                 ->addDescription($description);
 

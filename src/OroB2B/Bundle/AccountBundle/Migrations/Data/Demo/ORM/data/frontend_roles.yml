@@ -1,7 +1,0 @@
-MANAGER:
-    label: Manager
-    permissions: []
-
-OPERATOR:
-    label: Operator
-    permissions: []

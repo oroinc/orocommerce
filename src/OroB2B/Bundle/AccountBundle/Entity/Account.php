@@ -157,8 +157,6 @@ class Account extends ExtendAccount
     }
 
     /**
-     * Get id
-     *
      * @return int
      */
     public function getId()
@@ -167,10 +165,9 @@ class Account extends ExtendAccount
     }
 
     /**
-     * Set name
-     *
      * @param string $name
-     * @return Account
+     *
+     * @return $this
      */
     public function setName($name)
     {
@@ -180,8 +177,6 @@ class Account extends ExtendAccount
     }
 
     /**
-     * Get name
-     *
      * @return string
      */
     public function getName()
@@ -190,10 +185,9 @@ class Account extends ExtendAccount
     }
 
     /**
-     * Set parent
-     *
      * @param Account $parent
-     * @return Account
+     *
+     * @return $this
      */
     public function setParent(Account $parent = null)
     {
@@ -203,8 +197,6 @@ class Account extends ExtendAccount
     }
 
     /**
-     * Get parent
-     *
      * @return Account
      */
     public function getParent()
@@ -213,10 +205,9 @@ class Account extends ExtendAccount
     }
 
     /**
-     * Add addresses
-     *
      * @param AbstractDefaultTypedAddress $address
-     * @return Account
+     *
+     * @return $this
      */
     public function addAddress(AbstractDefaultTypedAddress $address)
     {
@@ -235,10 +226,9 @@ class Account extends ExtendAccount
     }
 
     /**
-     * Remove addresses
-     *
      * @param AbstractDefaultTypedAddress $address
-     * @return Account
+     *
+     * @return $this
      */
     public function removeAddress(AbstractDefaultTypedAddress $address)
     {
@@ -286,8 +276,6 @@ class Account extends ExtendAccount
     }
 
     /**
-     * Get addresses
-     *
      * @return Collection
      */
     public function getAddresses()
@@ -297,6 +285,7 @@ class Account extends ExtendAccount
 
     /**
      * @param AbstractDefaultTypedAddress $address
+     *
      * @return bool
      */
     protected function hasAddress(AbstractDefaultTypedAddress $address)
@@ -305,10 +294,9 @@ class Account extends ExtendAccount
     }
 
     /**
-     * Set group
-     *
      * @param AccountGroup $group
-     * @return Account
+     *
+     * @return $this
      */
     public function setGroup(AccountGroup $group = null)
     {
@@ -318,8 +306,6 @@ class Account extends ExtendAccount
     }
 
     /**
-     * Get group
-     *
      * @return AccountGroup
      */
     public function getGroup()
@@ -328,10 +314,9 @@ class Account extends ExtendAccount
     }
 
     /**
-     * Add child
-     *
      * @param Account $child
-     * @return Account
+     *
+     * @return $this
      */
     public function addChild(Account $child)
     {
@@ -344,10 +329,9 @@ class Account extends ExtendAccount
     }
 
     /**
-     * Remove child
-     *
      * @param Account $child
-     * @return Account
+     *
+     * @return $this
      */
     public function removeChild(Account $child)
     {
@@ -360,8 +344,6 @@ class Account extends ExtendAccount
     }
 
     /**
-     * Get children
-     *
      * @return Collection|Account[]
      */
     public function getChildren()
@@ -371,6 +353,7 @@ class Account extends ExtendAccount
 
     /**
      * @param Account $child
+     *
      * @return bool
      */
     protected function hasChild(Account $child)
@@ -380,7 +363,8 @@ class Account extends ExtendAccount
 
     /**
      * @param AccountUser $accountUser
-     * @return Account
+     *
+     * @return $this
      */
     public function addUser(AccountUser $accountUser)
     {
@@ -398,7 +382,8 @@ class Account extends ExtendAccount
 
     /**
      * @param AccountUser $accountUser
-     * @return Account
+     *
+     * @return $this
      */
     public function removeUser(AccountUser $accountUser)
     {
@@ -411,8 +396,6 @@ class Account extends ExtendAccount
     }
 
     /**
-     * Get children
-     *
      * @return Collection|AccountUser[]
      */
     public function getUsers()
@@ -432,7 +415,7 @@ class Account extends ExtendAccount
      * @param User $owner
      * @param bool $force
      *
-     * @return Account
+     * @return $this
      */
     public function setOwner(User $owner, $force = true)
     {
@@ -461,14 +444,19 @@ class Account extends ExtendAccount
 
     /**
      * @param Organization|null $organization
+     *
+     * @return $this
      */
     public function setOrganization(Organization $organization = null)
     {
         $this->organization = $organization;
+
+        return $this;
     }
 
     /**
      * @param AccountUser $accountUser
+     *
      * @return bool
      */
     protected function hasUser(AccountUser $accountUser)
