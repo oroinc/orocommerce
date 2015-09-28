@@ -2,10 +2,14 @@
 
 namespace OroB2B\Bundle\SaleBundle\Model;
 
+use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Model\OrderCurrencyHandler;
+use OroB2B\Bundle\OrderBundle\Provider\SubtotalsProvider;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 
@@ -14,17 +18,20 @@ class QuoteToOrderConverter
     const FIELD_OFFER = 'offer';
     const FIELD_QUANTITY = 'quantity';
 
-    /**
-     * @var OrderCurrencyHandler
-     */
+    /** @var OrderCurrencyHandler */
     protected $orderCurrencyHandler;
+
+    /** @var SubtotalsProvider */
+    protected $subtotalsProvider;
 
     /**
      * @param OrderCurrencyHandler $orderCurrencyHandler
+     * @param SubtotalsProvider $subtotalsProvider
      */
-    public function __construct(OrderCurrencyHandler $orderCurrencyHandler)
+    public function __construct(OrderCurrencyHandler $orderCurrencyHandler, SubtotalsProvider $subtotalsProvider)
     {
         $this->orderCurrencyHandler = $orderCurrencyHandler;
+        $this->subtotalsProvider = $subtotalsProvider;
     }
 
     /**
@@ -64,6 +71,8 @@ class QuoteToOrderConverter
         }
 
         $this->orderCurrencyHandler->setOrderCurrency($order);
+        $this->fillSubtotals($order);
+
         return $order;
     }
 
@@ -92,5 +101,21 @@ class QuoteToOrderConverter
             ->setFromExternalSource(true);
 
         return $orderLineItem;
+    }
+
+    /**
+     * @param Order $order
+     */
+    protected function fillSubtotals(Order $order)
+    {
+        $subtotals = $this->subtotalsProvider->getSubtotals($order);
+
+        $propertyAccessor = PropertyAccess::createPropertyAccessor();
+        foreach ($subtotals as $subtotal) {
+            try {
+                $propertyAccessor->setValue($order, $subtotal->getType(), $subtotal->getAmount());
+            } catch (NoSuchPropertyException $e) {
+            }
+        }
     }
 }
