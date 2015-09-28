@@ -14,6 +14,27 @@ class LoadAccountDemoData extends AbstractFixture implements DependentFixtureInt
 {
     const ACCOUNT_REFERENCE_PREFIX = 'account_demo_data';
 
+    /** @var array */
+    protected $accounts = [
+        'Company A' => [
+            'group' => 'All Customers',
+            'subsidiaries' => [
+                'Company A - East Division' => [
+                    'group' => 'All Customers',
+                ],
+                'Company A - West Division' => [
+                    'group' => 'All Customers',
+                ],
+            ],
+        ],
+        'Wholesaler B' => [
+            'group' => 'Wholesale Accounts'
+        ],
+        'Partner C' => [
+            'group' => 'Partners'
+        ]
+    ];
+
     /**
      * {@inheritdoc}
      */
@@ -33,31 +54,10 @@ class LoadAccountDemoData extends AbstractFixture implements DependentFixtureInt
         $internalRatings = $manager->getRepository(ExtendHelper::buildEnumValueClassName(Account::INTERNAL_RATING_CODE))
             ->findAll();
 
-        $accounts = [
-            'Company A' => [
-                'group' => 'All Customers',
-                'subsidiaries' => [
-                    'Company A - East Division' => [
-                        'group' => 'All Customers',
-                    ],
-                    'Company A - West Division' => [
-                        'group' => 'All Customers',
-                    ],
-                ],
-            ],
-            'Wholesaler B' => [
-                'group' => 'Wholesale Accounts'
-            ],
-            'Partner C' => [
-                'group' => 'Partners'
-            ],
-
-        ];
-
         /** @var \Oro\Bundle\UserBundle\Entity\User $accountOwner */
         $accountOwner = $manager->getRepository('OroUserBundle:User')->findOneBy([]);
 
-        foreach ($accounts as $accountName => $accountData) {
+        foreach ($this->accounts as $accountName => $accountData) {
             /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountGroup $accountGroup */
             $accountGroup = $this->getReference(
                 LoadAccountGroupDemoData::ACCOUNT_GROUP_REFERENCE_PREFIX . $accountData['group']

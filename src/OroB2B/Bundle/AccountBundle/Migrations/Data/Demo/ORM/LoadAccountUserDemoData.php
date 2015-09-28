@@ -3,12 +3,11 @@
 namespace OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-
-use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
