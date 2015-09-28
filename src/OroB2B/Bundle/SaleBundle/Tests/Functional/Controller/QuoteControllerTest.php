@@ -251,31 +251,6 @@ class QuoteControllerTest extends WebTestCase
         $this->assertContains($expectedData['contains'], $filtered->html());
     }
 
-    public function testCreateFromRfpForm()
-    {
-        /* @var $request RFPRequest */
-        $request = $this->getReference(LoadRequestData::REQUEST1);
-        $crawler = $this->client->request('GET', $this->getUrl(
-            'orob2b_sale_quote_createfromrfpform',
-            ['id' => $request->getId()]
-        ));
-        $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, 200);
-        static::assertCount(1, $crawler->selectButton('Create Quote'));
-    }
-
-    public function testCreateFromRfp()
-    {
-        /* @var $request RFPRequest */
-        $request = $this->getReference(LoadRequestData::REQUEST1);
-        $this->client->request('GET', $this->getUrl(
-            'orob2b_sale_quote_createfromrfp',
-            ['id' => $request->getId()]
-        ));
-        $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, 200);
-    }
-
     /**
      * @return array
      */
