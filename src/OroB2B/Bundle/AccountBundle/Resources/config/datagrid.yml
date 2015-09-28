@@ -736,7 +736,7 @@ datagrid:
             name:
                 label: orob2b.account.name.label
             visibility:
-                label: orob2b.account.accountcategoryvisibility.entity_label
+                label: orob2b.account.visibility.accountcategoryvisibility.entity_label
                 frontend_type: select
                 editable: true
                 choices: @orob2b_account.formatter.choice.account_category_visibility->formatChoices()
@@ -787,7 +787,7 @@ datagrid:
             name:
                 label: orob2b.account.name.label
             visibility:
-                label: orob2b.account.accountgroupcategoryvisibility.entity_label
+                label: orob2b.account.visibility.accountgroupcategoryvisibility.entity_label
                 frontend_type: select
                 editable: true
                 choices: @orob2b_account.formatter.choice.account_group_category_visibility->formatChoices()

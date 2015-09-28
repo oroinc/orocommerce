@@ -70,7 +70,7 @@ class CategoryFormExtension extends AbstractTypeExtension
                 [
                     'required' => true,
                     'mapped' => false,
-                    'label' => 'orob2b.account.categoryvisibility.entity_label',
+                    'label' => 'orob2b.account.visibility.categoryvisibility.entity_label',
                     'choices' => $this->categoryVisibilityFormatter->formatChoices()
                 ]
             )

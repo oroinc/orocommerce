@@ -77,7 +77,7 @@ class FormViewListener
      */
     protected function addAccountCategoryVisibilityBlock(ScrollData $scrollData, $html)
     {
-        $blockLabel = $this->translator->trans('orob2b.account.categoryvisibility.visibility.label');
+        $blockLabel = $this->translator->trans('orob2b.account.visibility.categoryvisibility.visibility.label');
         $blockId = $scrollData->addBlock($blockLabel);
         $subBlockId = $scrollData->addSubBlock($blockId);
         $scrollData->addSubBlockData($blockId, $subBlockId, $html);
