@@ -49,7 +49,6 @@ class CategoryControllerTest extends WebTestCase
         $this->group = $this->getReference(LoadGroups::GROUP1);
     }
 
-
     public function testEdit()
     {
         $categoryVisibility = CategoryVisibility::HIDDEN;
@@ -111,9 +110,15 @@ class CategoryControllerTest extends WebTestCase
     {
         /** @var EntityManager $em */
         $em = $this->client->getContainer()->get('doctrine')->getManager();
-        $categoryVisibilityRepo = $em->getRepository('OroB2BAccountBundle:CategoryVisibility');
-        $accountCategoryVisibilityRepo = $em->getRepository('OroB2BAccountBundle:AccountCategoryVisibility');
-        $accountGroupCategoryVisibilityRepo = $em->getRepository('OroB2BAccountBundle:AccountGroupCategoryVisibility');
+        $categoryVisibilityRepo = $em->getRepository(
+            'OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility'
+        );
+        $accountCategoryVisibilityRepo = $em->getRepository(
+            'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility'
+        );
+        $accountGroupCategoryVisibilityRepo = $em->getRepository(
+            'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility'
+        );
 
         $this->assertNotCount(0, $categoryVisibilityRepo->findAll());
         $this->assertNotCount(0, $accountCategoryVisibilityRepo->findAll());
