@@ -25,9 +25,6 @@ class QuoteToOrderConverter
     /** @var SubtotalsProvider */
     protected $subtotalsProvider;
 
-    /** @var PropertyAccessor */
-    protected $propertyAccessor;
-
     /**
      * @param OrderCurrencyHandler $orderCurrencyHandler
      * @param SubtotalsProvider $subtotalsProvider
@@ -36,7 +33,6 @@ class QuoteToOrderConverter
     {
         $this->orderCurrencyHandler = $orderCurrencyHandler;
         $this->subtotalsProvider = $subtotalsProvider;
-        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
     }
 
     /**
@@ -114,9 +110,11 @@ class QuoteToOrderConverter
     protected function fillSubtotals(Order $order)
     {
         $subtotals = $this->subtotalsProvider->getSubtotals($order);
+
+        $propertyAccessor = PropertyAccess::createPropertyAccessor();
         foreach ($subtotals as $subtotal) {
             try {
-                $this->propertyAccessor->setValue($order, $subtotal->getType(), $subtotal->getAmount());
+                $propertyAccessor->setValue($order, $subtotal->getType(), $subtotal->getAmount());
             } catch (NoSuchPropertyException $e) {
             }
         }
