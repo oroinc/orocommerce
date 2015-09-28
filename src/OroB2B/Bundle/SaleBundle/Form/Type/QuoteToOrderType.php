@@ -59,18 +59,6 @@ class QuoteToOrderType extends CollectionType
             }
         }
 
-        // quote products without variants must be in the end
-        usort($quoteProducts, function (QuoteProduct $first, QuoteProduct $second) {
-            $hasFirst = $first->hasOfferVariants();
-            $hasSecond = $second->hasOfferVariants();
-
-            if ($hasFirst === $hasSecond) {
-                return 0;
-            } else {
-                return $hasFirst ? -1 : 1;
-            }
-        });
-
         $event->setData($quoteProducts);
     }
 
