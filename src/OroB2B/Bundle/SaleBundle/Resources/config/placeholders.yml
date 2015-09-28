@@ -1,8 +1,0 @@
-placeholders:
-    orob2b_sale_create_quote_from_rfp:
-        items:
-            create_quote_from_rfp: ~
-
-items:
-    create_quote_from_rfp:
-        action: OroB2BSaleBundle:Quote:createFromRfpForm
