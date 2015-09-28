@@ -166,28 +166,6 @@ class RequestControllerTest extends WebTestCase
     }
 
     /**
-     * @depends testView
-     * @param integer $id
-     */
-    public function testCreateQuote($id)
-    {
-        // this test needs SaleBundle
-        if (!class_exists('OroB2B\Bundle\SaleBundle\OroB2BSaleBundle', false)) {
-            return;
-        }
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_view', ['id' => $id]));
-
-        $form = $crawler->selectButton('Create Quote')->form();
-
-        $this->client->followRedirects(true);
-        $crawler = $this->client->submit($form);
-
-        $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('New Quote created', $crawler->html());
-    }
-
-    /**
      * @param Request $entity
      * @return ActivityList[]
      */

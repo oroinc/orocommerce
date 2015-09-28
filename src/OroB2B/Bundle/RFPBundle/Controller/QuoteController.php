@@ -40,8 +40,8 @@ class QuoteController extends Controller
 
         $data = [
             ProductDataStorage::ENTITY_DATA_KEY => [
-                'accountUser' => $rfpRequest->getAccountUser()->getId(),
-                'account' => $rfpRequest->getAccount()->getId(),
+                'accountUser' => $rfpRequest->getAccountUser() ? $rfpRequest->getAccountUser()->getId() : null,
+                'account' => $rfpRequest->getAccount() ? $rfpRequest->getAccount()->getId() : null,
             ],
         ];
 
