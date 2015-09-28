@@ -9,7 +9,6 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Range;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -43,7 +42,7 @@ class QuantityType extends AbstractType
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'roundQuantity'], -2048);
         $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'roundQuantity'], -2048);
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'roundQuantity'], -2048);
-        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'setDefaultData'], -1024);
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'setDefaultData'], -1024);
     }
 
     /**
@@ -132,8 +131,7 @@ class QuantityType extends AbstractType
                 'product_unit_field' => 'productUnit',
                 'product_field' => 'product',
                 'default_data' => null,
-                'constraints' => [new NotBlank(), new Range(['min' => 0]), new Decimal()],
-                'precision_applied' => false,
+                'constraints' => [new Range(['min' => 0]), new Decimal()],
             ]
         );
 

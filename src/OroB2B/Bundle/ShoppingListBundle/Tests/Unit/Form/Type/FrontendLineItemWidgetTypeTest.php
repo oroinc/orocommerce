@@ -18,18 +18,18 @@ use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Form\EventListener\LineItemSubscriber;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType;
-use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;
 
 class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
 {
+    use QuantityTypeTrait;
+
     const DATA_CLASS = 'OroB2B\Bundle\ShoppingListBundle\Entity\LineItem';
     const PRODUCT_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
     const SHOPPING_LIST_CLASS = 'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList';
@@ -52,8 +52,6 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->markTestSkipped('qty');
-
         parent::setUp();
 
         $this->type = new FrontendLineItemWidgetType(
@@ -87,6 +85,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
                     FrontendLineItemType::NAME     => $this->getParentForm(),
                     $entityType->getName()         => $entityType,
                     ProductUnitSelectionType::NAME => $productUnitSelection,
+                    QuantityTypeTrait::$name       => $this->getQuantityType(),
                 ],
                 []
             )
@@ -126,6 +125,8 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
 
         $closure = $form->get('shoppingList')->getConfig()->getOptions()['query_builder'];
         $this->assertNull($closure($repo));
+
+        $this->addRoundingServiceExpect();
 
         $this->assertEquals($defaultData, $form->getData());
 
@@ -305,37 +306,8 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
     protected function getParentForm()
     {
         $form = new FrontendLineItemType();
-        $form->setLineItemSubscriber($this->getLineItemSubscriber());
         $form->setDataClass(self::DATA_CLASS);
 
         return $form;
-    }
-
-    /**
-     * @return LineItemSubscriber
-     */
-    protected function getLineItemSubscriber()
-    {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|LineItemManager $lineItemManager */
-        $lineItemManager = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $lineItemManager->expects($this->any())
-            ->method('roundProductQuantity')
-            ->willReturnCallback(
-                function ($product, $unit, $quantity) {
-                    /** @var \PHPUnit_Framework_MockObject_MockObject|Product $product */
-                    return round($quantity, $product->getUnitPrecision($unit)->getPrecision());
-                }
-            );
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $registry */
-        $registry = $this->getMockBuilder('Symfony\Bridge\Doctrine\ManagerRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $lineItemSubscriber = new LineItemSubscriber($lineItemManager, $registry);
-
-        return $lineItemSubscriber;
     }
 }

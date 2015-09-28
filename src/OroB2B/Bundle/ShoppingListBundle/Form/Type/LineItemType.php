@@ -33,11 +33,6 @@ class LineItemType extends AbstractType
         $data = $builder->getData();
         $isExisting = $data && $data->getId();
 
-        $unitOptions = [
-            'required' => true,
-            'label' => 'orob2b.shoppinglist.lineitem.unit.label',
-        ];
-
         $builder
             ->add(
                 'product',
@@ -49,7 +44,14 @@ class LineItemType extends AbstractType
                     'disabled' => $isExisting,
                 ]
             )
-            ->add('unit', ProductUnitSelectionType::NAME, $unitOptions)
+            ->add(
+                'unit',
+                ProductUnitSelectionType::NAME,
+                [
+                    'required' => true,
+                    'label' => 'orob2b.shoppinglist.lineitem.unit.label',
+                ]
+            )
             ->add(
                 'quantity',
                 QuantityType::NAME,
@@ -70,46 +72,30 @@ class LineItemType extends AbstractType
                 ]
             );
 
-        $builder
-            ->get('product')
-            ->addEventListener(
-                FormEvents::POST_SUBMIT,
-                function (FormEvent $event) use ($unitOptions) {
-                    $productId = $event->getData();
-
-                    $this->replaceUnitField($event->getForm(), $unitOptions, $productId);
-                }
-            );
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
     }
 
     /**
-     * @param FormInterface $form
-     * @param $unitOptions
-     * @param $productId
+     * @param FormEvent $event
      */
-    protected function replaceUnitField(FormInterface $form, $unitOptions, $productId)
+    public function preSetData(FormEvent $event)
     {
-        if ($productId) {
-            $unitOptions['query_builder'] = function (ProductUnitRepository $er) use ($productId) {
-                return $er->getProductUnitsQueryBuilderById($productId);
-            };
-        } else {
-            $unitOptions['choices'] = [];
+        $entity = $event->getData();
+        if (!($entity instanceof LineItem) || !$entity->getId()) {
+            return;
         }
-
-        $form->getParent()
-            ->add(
-                'unit',
-                ProductUnitSelectionType::NAME,
-                array_merge(
-                    $unitOptions,
-                    [
-                        'query_builder' => function (ProductUnitRepository $er) use ($productId) {
-                            return $er->getProductUnitsQueryBuilderById($productId);
-                        },
-                    ]
-                )
-            );
+        $form = $event->getForm();
+        $form->add(
+            'unit',
+            ProductUnitSelectionType::NAME,
+            [
+                'required' => true,
+                'label' => 'orob2b.shoppinglist.lineitem.unit.label',
+                'query_builder' => function (ProductUnitRepository $er) use ($entity) {
+                    return $er->getProductUnitsQueryBuilder($entity->getProduct());
+                },
+            ]
+        );
     }
 
     /**

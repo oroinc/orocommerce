@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -25,19 +23,16 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
 class PriceListProductPriceTypeTest extends FormIntegrationTestCase
 {
+    use QuantityTypeTrait;
+
     /**
      * @var PriceListProductPriceType
      */
     protected $formType;
-
-    /**
-     * @var RoundingService|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $roundingService;
 
     /**
      * @var array
@@ -52,15 +47,8 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->markTestSkipped('qty');
-
-        $this->roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\RoundingService')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->formType = new PriceListProductPriceType($this->getRegistry(), $this->roundingService);
+        $this->formType = new PriceListProductPriceType();
         $this->formType->setDataClass('OroB2B\Bundle\PricingBundle\Entity\ProductPrice');
-        $this->formType->setProductClass('OroB2B\Bundle\ProductBundle\Entity\Product');
 
         parent::setUp();
     }
@@ -117,7 +105,8 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
                     ProductSelectType::NAME => $productSelect,
                     ProductUnitSelectionType::NAME => $productUnitSelection,
                     PriceType::NAME => $priceType,
-                    CurrencySelectionType::NAME => new CurrencySelectionType($configManager, $localeSettings)
+                    CurrencySelectionType::NAME => new CurrencySelectionType($configManager, $localeSettings),
+                    QuantityTypeTrait::$name => $this->getQuantityType()
                 ],
                 []
             ),
@@ -139,13 +128,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
         $rounding = false
     ) {
         if ($rounding) {
-            $this->roundingService->expects($this->once())
-                ->method('round')
-                ->willReturnCallback(
-                    function ($value, $precision) {
-                        return round($value, $precision);
-                    }
-                );
+            $this->addRoundingServiceExpect();
         }
 
         $form = $this->factory->create($this->formType, $defaultData, []);
@@ -153,8 +136,9 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
         $this->assertEquals($defaultData, $form->getData());
 
         $form->submit($submittedData);
-        $this->assertEmpty($form->getErrors()->count());
+        $this->assertCount(0, $form->getErrors(true, true));
         $this->assertTrue($form->isValid());
+
         $this->assertEquals($expectedData, $form->getData());
     }
 
@@ -190,7 +174,12 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
         return [
             'product price without data' => [
                 'defaultData'   => $defaultProductPrice,
-                'submittedData' => [],
+                'submittedData' => [
+                    'product'  => null,
+                    'quantity'  => null,
+                    'unit'  => null,
+                    'price'  => null,
+                ],
                 'expectedData'  => clone $defaultProductPrice,
                 'rounding'      => false
             ],
@@ -246,28 +235,6 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
         }
 
         return $choices;
-    }
-
-    /**
-     * @return ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getRegistry()
-    {
-        $repo = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repo->expects($this->any())
-            ->method('find')
-            ->willReturn($this->getProductEntityWithPrecision(1, 'kg', 3));
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $registry */
-        $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $registry->expects($this->any())
-            ->method('getRepository')
-            ->with($this->isType('string'))
-            ->willReturn($repo);
-
-        return $registry;
     }
 
     /**

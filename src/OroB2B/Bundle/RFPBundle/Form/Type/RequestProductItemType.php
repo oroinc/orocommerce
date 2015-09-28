@@ -63,7 +63,7 @@ class RequestProductItemType extends AbstractType
                 'quantity',
                 QuantityType::NAME,
                 [
-                    'required' => true,
+                    'required' => false,
                     'label' => 'orob2b.rfp.requestproductitem.quantity.label',
                     'product' => $requestProductItem ? $requestProductItem->getRequestProduct() : null,
                     'default_data' => 1,

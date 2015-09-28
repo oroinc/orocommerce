@@ -2,18 +2,19 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
+
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
-
-use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\PricingBundle\Form\Extension\ProductFormExtension;
 use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType;
 use OroB2B\Bundle\PricingBundle\Validator\Constraints\UniqueProductPrices;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 
@@ -33,11 +34,6 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
     protected $priceRepository;
 
     /**
-     * @var RoundingService|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $roundingService;
-
-    /**
      * @var ProductFormExtension
      */
     protected $extension;
@@ -55,17 +51,14 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->with('OroB2BPricingBundle:ProductPrice')
             ->willReturn($this->priceRepository);
 
+        /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $registry */
         $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
         $registry->expects($this->any())
             ->method('getManagerForClass')
             ->with('OroB2BPricingBundle:ProductPrice')
             ->willReturn($this->priceManager);
 
-        $this->roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\RoundingService')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->extension = new ProductFormExtension($registry, $this->roundingService);
+        $this->extension = new ProductFormExtension($registry);
     }
 
     public function testGetExtendedType()
@@ -75,6 +68,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildForm()
     {
+        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
         $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
         $builder->expects($this->once())
             ->method('add')
@@ -85,17 +79,19 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
                     'label' => 'orob2b.pricing.productprice.entity_plural_label',
                     'required' => false,
                     'mapped' => false,
-                    'constraints' => [new UniqueProductPrices()]
+                    'constraints' => [new UniqueProductPrices()],
+                    'options' => [
+                        'product' => null,
+                    ],
                 ]
             );
-        $builder->expects($this->exactly(3))
+
+        $builder->expects($this->exactly(2))
             ->method('addEventListener');
-        $builder->expects($this->at(1))
-            ->method('addEventListener')
-            ->with(FormEvents::POST_SET_DATA, [$this->extension, 'onPostSetData']);
+
         $builder->expects($this->at(2))
             ->method('addEventListener')
-            ->with(FormEvents::PRE_SUBMIT, [$this->extension, 'onPreSubmit']);
+            ->with(FormEvents::POST_SET_DATA, [$this->extension, 'onPostSetData']);
         $builder->expects($this->at(3))
             ->method('addEventListener')
             ->with(FormEvents::POST_SUBMIT, [$this->extension, 'onPostSubmit'], 10);
@@ -141,81 +137,6 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
             'no product'       => [null],
             'new product'      => [$this->createProduct()],
             'existing product' => [$this->createProduct(1)]
-        ];
-    }
-
-    /**
-     * @param array $sourceData
-     * @param array $expectedData
-     * @dataProvider onPreSubmitDataProvider
-     */
-    public function testOnPreSubmit(array $sourceData, array $expectedData)
-    {
-        $this->roundingService->expects($this->any())
-            ->method('round')
-            ->willReturnCallback(
-                function ($quantity, $precision) {
-                    return round($quantity, $precision);
-                }
-            );
-
-        $event = $this->createEvent($sourceData);
-        $this->extension->onPreSubmit($event);
-        $this->assertEquals($expectedData, $event->getData());
-    }
-
-    /**
-     * @return array
-     */
-    public function onPreSubmitDataProvider()
-    {
-        return [
-            'empty data' => [
-                'sourceData' => [],
-                'expectedData' => []
-            ],
-            'no prices' => [
-                'sourceData' => [
-                    'unitPrecisions' => [['unit' => 'item', 'precision' => 0], ['unit' => 'kg', 'precision' => 3]]
-                ],
-                'expectedData' => [
-                    'unitPrecisions' => [['unit' => 'item', 'precision' => 0], ['unit' => 'kg', 'precision' => 3]]
-                ]
-            ],
-            'no unit precisions' => [
-                'sourceData' => [
-                    'prices' => [['quantity' => 12.345, 'unit' => 'kg']]
-                ],
-                'expectedData' => [
-                    'prices' => [['quantity' => 12.345, 'unit' => 'kg']]
-                ]
-            ],
-            'price not valid unit' => [
-                'sourceData' => [
-                    'prices' => [['quantity' => 1, 'unit' => '']]
-                ],
-                'expectedData' => [
-                    'prices' => []
-                ]
-            ],
-            'price not valid quantity' => [
-                'sourceData' => [
-                    'prices' => [['quantity' => null, 'unit' => 'kg']]
-                ],
-                'expectedData' => [
-                    'prices' => []
-                ]
-            ],
-            'valid rounding data' => [
-                'sourceData' => [
-                    'unitPrecisions' => [['unit' => 'item', 'precision' => 0], ['unit' => 'kg', 'precision' => 3]],
-                    'prices' => [['quantity' => 12.3, 'unit' => 'item'], ['quantity' => 12.3456, 'unit' => 'kg']]
-                ],
-                'expectedData' => [
-                    'unitPrecisions' => [['unit' => 'item', 'precision' => 0], ['unit' => 'kg', 'precision' => 3]],
-                    'prices' => [['quantity' => 12, 'unit' => 'item'], ['quantity' => 12.346, 'unit' => 'kg']]
-                ]
-            ]
         ];
     }
 

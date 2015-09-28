@@ -16,9 +16,12 @@ use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeS
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
 class RequestProductItemTypeTest extends AbstractTest
 {
+    use QuantityTypeTrait;
+
     /**
      * @var RequestProductItemType
      */
@@ -258,6 +261,7 @@ class RequestProductItemTypeTest extends AbstractTest
                     $optionalPriceType->getName()           => $optionalPriceType,
                     $currencySelectionType->getName()       => $currencySelectionType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
+                    QuantityTypeTrait::$name                => $this->getQuantityType(),
                 ],
                 []
             ),
