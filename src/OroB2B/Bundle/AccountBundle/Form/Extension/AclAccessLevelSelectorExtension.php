@@ -8,11 +8,25 @@ use Symfony\Component\Form\FormView;
 
 use Oro\Bundle\SecurityBundle\Form\Type\AclAccessLevelSelectorType;
 
+use OroB2B\Bundle\AccountBundle\Acl\Resolver\RoleTranslationPrefixResolver;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType;
 
 class AclAccessLevelSelectorExtension extends AbstractTypeExtension
 {
+    /**
+     * @var RoleTranslationPrefixResolver
+     */
+    protected $roleTranslationPrefixResolver;
+
+    /**
+     * @param RoleTranslationPrefixResolver $roleTranslationPrefixResolver
+     */
+    public function __construct(RoleTranslationPrefixResolver $roleTranslationPrefixResolver)
+    {
+        $this->roleTranslationPrefixResolver = $roleTranslationPrefixResolver;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -55,7 +69,8 @@ class AclAccessLevelSelectorExtension extends AbstractTypeExtension
             $roleForm->getConfig()->getType()->getName(),
             [AccountUserRoleType::NAME, FrontendAccountUserRoleType::NAME]
         )) {
-            $view->vars['translation_prefix'] = 'orob2b.account.security.access-level.';
+            //uses on edit page for rendering preloaded string (role permission name)
+            $view->vars['translation_prefix'] = $this->roleTranslationPrefixResolver->getPrefix();
         }
     }
 }

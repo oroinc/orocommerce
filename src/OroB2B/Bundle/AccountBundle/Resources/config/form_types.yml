@@ -197,11 +197,15 @@ services:
 
     orob2b_account.form.type.acl_access_level_text:
         class: %orob2b_account.form.type.acl_access_level_text.class%
+        arguments:
+            - @orob2b_account.acl.resolver.role_translation_prefix
         tags:
              - { name: form.type, alias: orob2b_account_acl_access_level_text }
 
     orob2b_account.form.extension.acl_permission:
         class: %orob2b_account.form.extension.oro_acl_access_level_selector.class%
+        arguments:
+            - @orob2b_account.acl.resolver.role_translation_prefix
         tags:
             - { name: form.type_extension, alias: oro_acl_access_level_selector }
 

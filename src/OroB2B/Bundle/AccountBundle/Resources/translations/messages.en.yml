@@ -252,12 +252,22 @@ orob2b.account:
         permission:
             register_account_user: 'Register Account User'
         access-level:
-            BASIC: 'Own'
-            LOCAL: 'All'
+            BASIC: 'Account User'
+            LOCAL: 'Account'
             DEEP: 'Not supported'
             GLOBAL: 'Not supported'
             SYSTEM: 'Full'
             NONE: 'None'
+
+    frontend:
+        security:
+            access-level:
+                BASIC: 'Own'
+                LOCAL: 'All'
+                DEEP: 'Not supported'
+                GLOBAL: 'Not supported'
+                SYSTEM: 'System'
+                NONE: 'None'
 
     account_typed_address_with_default_type:
         choice.default_text: 'Default %type_name%'
