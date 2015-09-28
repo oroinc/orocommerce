@@ -46,15 +46,11 @@ class QuoteProductPriceProvider
 
         $productIds = $quote->getQuoteProducts()->filter(
             function (QuoteProduct $quoteProduct) {
-                return $quoteProduct->getProduct() !== null || $quoteProduct->getProductReplacement() !== null;
+                return $quoteProduct->getProduct() !== null;
             }
         )->map(
             function (QuoteProduct $quoteProduct) {
-                if ($quoteProduct->getProductReplacement()) {
-                    return $quoteProduct->getProductReplacement()->getId();
-                } else {
-                    return $quoteProduct->getProduct()->getId();
-                }
+                return $quoteProduct->getProduct()->getId();
             }
         );
 
@@ -110,9 +106,7 @@ class QuoteProductPriceProvider
 
         /** @var QuoteProduct $quoteProduct */
         foreach ($quote->getQuoteProducts() as $quoteProduct) {
-            if ($quoteProduct->getProductReplacement()) {
-                $product = $quoteProduct->getProductReplacement();
-            } elseif ($quoteProduct->getProduct()) {
+            if ($quoteProduct->getProduct()) {
                 $product = $quoteProduct->getProduct();
             } else {
                 continue;

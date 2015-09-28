@@ -95,26 +95,24 @@ class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
     public function getTierPricesDataProvider()
     {
         $quoteProduct = $this->getQuoteProduct();
-        $quoteProductReplacement = $this->getQuoteProduct('replacement');
         $emptyQuoteProduct = $this->getQuoteProduct('empty');
 
         $quotePriceList = $this->setEntityId(new PriceList(), 2);
 
         $product1 = $quoteProduct->getProduct();
-        $product2 = $quoteProductReplacement->getProductReplacement();
 
         return [
             'default price list' => [
                 'quotePriceList' => null,
-                'quoteProducts' => [$quoteProduct, $quoteProductReplacement, $emptyQuoteProduct],
-                'productPriceProviderArgs' => [self::DEFAULT_PRICE_LIST_ID, [$product1->getId(), $product2->getId()]],
-                'tierPricesCount' => 2,
+                'quoteProducts' => [$quoteProduct, $emptyQuoteProduct],
+                'productPriceProviderArgs' => [self::DEFAULT_PRICE_LIST_ID, [$product1->getId()]],
+                'tierPricesCount' => 1,
             ],
             'quote price list' => [
                 'quotePriceList' => $quotePriceList,
-                'quoteProducts' => [$quoteProduct, $quoteProductReplacement, $emptyQuoteProduct],
-                'productPriceProviderArgs' => [$quotePriceList->getId(), [$product1->getId(), $product2->getId()]],
-                'tierPricesCount' => 2,
+                'quoteProducts' => [$quoteProduct, $emptyQuoteProduct],
+                'productPriceProviderArgs' => [$quotePriceList->getId(), [$product1->getId()]],
+                'tierPricesCount' => 1,
             ],
             'empty quote products list' => [
                 'quotePriceList' => $quotePriceList,
@@ -166,18 +164,15 @@ class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
     public function getMatchedPricesDataProvider()
     {
         $quoteProduct = $this->getQuoteProduct();
-        $quoteProductReplacement = $this->getQuoteProduct('replacement');
         $emptyQuoteProduct = $this->getQuoteProduct('empty');
 
         $defaultPriceList = $this->setEntityId(new PriceList(), self::DEFAULT_PRICE_LIST_ID);
         $quotePriceList = $this->setEntityId(new PriceList(), 2);
 
         $product1 = $quoteProduct->getProduct();
-        $product2 = $quoteProductReplacement->getProductReplacement();
 
         $quoteProductOffer1 = $quoteProduct->getQuoteProductOffers()->get(0);
         $quoteProductOffer2 = $quoteProduct->getQuoteProductOffers()->get(1);
-        $quoteProductOffer3 = $quoteProductReplacement->getQuoteProductOffers()->get(0);
 
         $productsPriceCriteria = [];
         $productsPriceCriteria[] = new ProductPriceCriteria(
@@ -192,23 +187,17 @@ class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
             $quoteProductOffer2->getQuantity(),
             $quoteProductOffer2->getPrice()->getCurrency()
         );
-        $productsPriceCriteria[] = new ProductPriceCriteria(
-            $product2,
-            $quoteProductOffer3->getProductUnit(),
-            $quoteProductOffer3->getQuantity(),
-            $quoteProductOffer3->getPrice()->getCurrency()
-        );
 
         return [
             'default price list' => [
                 'quotePriceList' => null,
-                'quoteProducts' => [$quoteProduct, $quoteProductReplacement, $emptyQuoteProduct],
+                'quoteProducts' => [$quoteProduct, $emptyQuoteProduct],
                 'productPriceProviderArgs' => [$productsPriceCriteria, $defaultPriceList],
                 'matchedPrice' => 3,
             ],
             'quote price list' => [
                 'quotePriceList' => $quotePriceList,
-                'quoteProducts' => [$quoteProduct, $quoteProductReplacement, $emptyQuoteProduct],
+                'quoteProducts' => [$quoteProduct, $emptyQuoteProduct],
                 'productPriceProviderArgs' => [$productsPriceCriteria, $quotePriceList],
                 'matchedPrice' => 3,
             ],
@@ -242,16 +231,8 @@ class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
 
         /** @var Product $product1 */
         $product1 = $this->setEntityId(new Product(), 1);
-        /** @var Product $product2 */
-        $product2 = $this->setEntityId(new Product(), 2);
 
         switch ($type) {
-            case 'replacement':
-                $quoteProduct = new QuoteProduct();
-                $quoteProduct->setProduct($product1);
-                $quoteProduct->setProductReplacement($product2);
-                $quoteProduct->addQuoteProductOffer($quoteProductOffer);
-                break;
             case 'empty':
                 $quoteProduct = new QuoteProduct();
                 break;

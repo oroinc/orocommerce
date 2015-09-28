@@ -14,7 +14,6 @@ define(function(require) {
         options: {
             $: {
                 product: '',
-                productReplacement: '',
                 priceValue: '',
                 priceType: '',
                 productUnit: '',
@@ -43,10 +42,9 @@ define(function(require) {
         },
 
         initPrices: function() {
-            var $product = $(this.options.$.product).add(this.options.$.productReplacement);
             this.subview('productPricesComponents', new ProductPricesComponent({
                 _sourceElement: this.$el,
-                $product: $product,
+                $product: this.options.$.product,
                 $priceValue: this.options.$.priceValue,
                 $priceType: this.options.$.priceType,
                 $productUnit: this.options.$.productUnit,
