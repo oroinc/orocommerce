@@ -7,6 +7,11 @@ define(function(require) {
     var ProductsPricesComponent = require('orob2bpricing/js/app/components/products-prices-component');
     var BaseView = require('oroui/js/app/views/base/view');
 
+    /**
+     * @export orob2bsale/js/app/views/line-items-view
+     * @extends oroui.app.views.base.View
+     * @class orob2bsale.app.views.LineItemsView
+     */
     LineItemsView = BaseView.extend({
         /**
          * @property {Object}
@@ -52,6 +57,9 @@ define(function(require) {
          * Doing something after loading child components
          */
         handleLayoutInit: function() {
+            this.$el.find('.add-lineitem').mousedown(function() {
+                $(this).click();
+            });
         }
     });
 

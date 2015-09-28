@@ -13,7 +13,6 @@ use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
 class OroB2BRFPBundleInstaller implements
     Installation,
@@ -51,7 +50,7 @@ class OroB2BRFPBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_3';
+        return 'v1_0';
     }
 
     /**

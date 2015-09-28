@@ -1,5 +1,10 @@
 config:
     paths:
-        'orob2bsale/js/app/components/sale-quoteproductitem-selection-component': 'bundles/orob2bsale/js/app/components/sale-quoteproductitem-selection-component.js'
         'orob2bsale/js/app/views/line-item-view': 'bundles/orob2bsale/js/app/views/line-item-view.js'
+        'orob2bsale/js/app/views/line-item-offer-view': 'bundles/orob2bsale/js/app/views/line-item-offer-view.js'
         'orob2bsale/js/app/views/line-items-view': 'bundles/orob2bsale/js/app/views/line-items-view.js'
+        'orob2bsale/js/app/components/quote-product-to-order-component': 'bundles/orob2bsale/js/app/components/quote-product-to-order-component.js'
+        'orob2bsale/js/validator/quote-product-offer-quantity': 'bundles/orob2bsale/js/validator/quote-product-offer-quantity.js'
+        'orob2bsale/js/app/components/quote-to-order-widget-component': 'bundles/orob2bsale/js/app/components/quote-to-order-widget-component.js'
+    appmodules:
+        - orob2bsale/js/app/modules/validator-constraints-module

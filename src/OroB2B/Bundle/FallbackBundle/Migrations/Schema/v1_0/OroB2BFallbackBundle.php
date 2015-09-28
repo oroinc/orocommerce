@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\FallbackBundle\Migrations\Schema\v1_0;
 
 use Doctrine\DBAL\Schema\Schema;
+
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -34,6 +35,8 @@ class OroB2BFallbackBundle implements Migration
         $table->addColumn('string', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('text', 'text', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
+        $table->addIndex(['fallback'], 'idx_orob2b_fallback_fallback', []);
+        $table->addIndex(['string'], 'idx_orob2b_fallback_string', []);
     }
 
     /**

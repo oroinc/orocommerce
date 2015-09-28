@@ -43,8 +43,8 @@
 {% block content_data %}
     {% set id = 'quote-edit' %}
 
-    {% set quoteProducts %}
-        <div class="order-line-items"
+    {% set lineItems %}
+        <div class="quote-lineitems"
              data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ {
                  view: 'orob2bsale/js/app/views/line-items-view',
@@ -55,6 +55,7 @@
              }|json_encode }}"
              data-layout="separate">
             {{ form_widget(form.quoteProducts) }}
+            {{ form_errors(form.quoteProducts) }}
         </div>
     {% endset %}
 
@@ -79,7 +80,7 @@
             'subblocks': [{
                 'title': '',
                 'data': [
-                    quoteProducts
+                    lineItems
                 ]
             }]
         }

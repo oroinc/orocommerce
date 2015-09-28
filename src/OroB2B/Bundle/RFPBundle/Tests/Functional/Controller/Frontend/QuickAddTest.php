@@ -77,15 +77,15 @@ class QuickAddTest extends WebTestCase
         $this->assertEquals($expectedQuickAddLineItems, $this->getActualLineItems($crawler, 1));
 
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['orob2b_rfp_frontend_request_type[firstName]'] = 'Firstname';
-        $form['orob2b_rfp_frontend_request_type[lastName]'] = 'Lastname';
-        $form['orob2b_rfp_frontend_request_type[email]'] = 'email@example.com';
-        $form['orob2b_rfp_frontend_request_type[phone]'] = '55555555';
-        $form['orob2b_rfp_frontend_request_type[company]'] = 'Test Company';
-        $form['orob2b_rfp_frontend_request_type[role]'] = 'Test Role';
-        $form['orob2b_rfp_frontend_request_type[body]'] = 'Test Body';
-        $form['orob2b_rfp_frontend_request_type[requestProducts][0][requestProductItems][0][price][value]'] = 100;
-        $form['orob2b_rfp_frontend_request_type[requestProducts][0][requestProductItems][0][price][currency]'] = 'USD';
+        $form['orob2b_rfp_frontend_request[firstName]'] = 'Firstname';
+        $form['orob2b_rfp_frontend_request[lastName]'] = 'Lastname';
+        $form['orob2b_rfp_frontend_request[email]'] = 'email@example.com';
+        $form['orob2b_rfp_frontend_request[phone]'] = '55555555';
+        $form['orob2b_rfp_frontend_request[company]'] = 'Test Company';
+        $form['orob2b_rfp_frontend_request[role]'] = 'Test Role';
+        $form['orob2b_rfp_frontend_request[body]'] = 'Test Body';
+        $form['orob2b_rfp_frontend_request[requestProducts][0][requestProductItems][0][price][value]'] = 100;
+        $form['orob2b_rfp_frontend_request[requestProducts][0][requestProductItems][0][price][currency]'] = 'USD';
 
         $crawler = $this->client->submit($form);
 
@@ -101,7 +101,7 @@ class QuickAddTest extends WebTestCase
     protected function getActualLineItems(Crawler $crawler, $count)
     {
         $result = [];
-        $basePath = 'input[name="orob2b_rfp_frontend_request_type[requestProducts]';
+        $basePath = 'input[name="orob2b_rfp_frontend_request[requestProducts]';
 
         for ($i = 0; $i < $count; $i++) {
             $value = $crawler->filter($basePath.'['.$i.'][product]"]')->extract('value');

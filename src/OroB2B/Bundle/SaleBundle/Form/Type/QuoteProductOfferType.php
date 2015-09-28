@@ -60,14 +60,21 @@ class QuoteProductOfferType extends AbstractType
                 'required' => true,
                 'label' => 'orob2b.sale.quoteproductoffer.price.label'
             ])
-            ->add('priceType', 'hidden')
+            ->add('priceType', 'hidden', [
+                // TODO: enable once fully supported on the quote views and in orders
+                'data' => QuoteProductOffer::PRICE_TYPE_UNIT,
+            ])
             ->add('allowIncrements', 'checkbox', [
                 'required' => false,
-                'label' => 'orob2b.sale.quoteproductoffer.allow_increments.label'
+                'label' => 'orob2b.sale.quoteproductoffer.allow_increments.label',
+                'attr' => [
+                    'default' => true,
+                ],
             ])
             ->add('productUnit', ProductUnitRemovedSelectionType::NAME, [
                 'label' => 'orob2b.product.productunit.entity_label',
                 'required' => true,
+                'compact' => $options['compact_units'],
             ])
             ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetData'])
         ;
@@ -80,6 +87,7 @@ class QuoteProductOfferType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
+            'compact_units' => false,
             'intention' => 'sale_quote_product_offer',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
         ]);
@@ -98,12 +106,10 @@ class QuoteProductOfferType extends AbstractType
      */
     public function postSetData(FormEvent $event)
     {
-        $priceType = $event->getForm()->get('priceType');
-
-        if ($priceType->getData()) {
-            return;
+        // Set quantity to 1 by default
+        $quantity = $event->getForm()->get('quantity');
+        if (null === $quantity->getData()) {
+            $quantity->setData(1);
         }
-
-        $priceType->setData(QuoteProductOffer::PRICE_TYPE_UNIT);
     }
 }

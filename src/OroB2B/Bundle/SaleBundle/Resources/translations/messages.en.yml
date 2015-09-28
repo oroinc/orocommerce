@@ -35,6 +35,21 @@ orob2b:
                     link.text: 'Notify by Email'
                     notify_and_lock_warning: 'Once you click on "Notify and Lock" this email will be sent to the customer and the quote will be locked for further edits.'
 
+            lineitem:
+                product: 'Product'
+                requested:
+                    label: ''
+                    quantity: 'Requested Quantity'
+                    price: 'Requested Price'
+                offers:
+                    label: 'Offers'
+                    quantity: 'Quantity'
+                    price: 'Unit Price'
+                    add: 'Add Offer'
+                notes: 'Notes'
+                add: 'Add Product'
+                remove: 'Delete'
+
         quoteproduct:
             entity_label: 'Quote Product'
             entity_plural_label: 'Quote Products'
@@ -49,7 +64,7 @@ orob2b:
             quote_product_requests.label: 'Quote Product Requests'
             request_product_item.label: 'Requested Item'
             comment.label: 'Seller Notes'
-            comment_account.label: 'Account Notes'
+            comment_account.label: 'Customer Notes'
             product.removed: '{title} - removed'
             product_replacement.removed: '{title} - removed'
             type:
@@ -109,7 +124,7 @@ orob2b:
                 saved.message: 'Quote has been saved'
 
         btn:
-            add_seller_notes: 'Add Notes'
+            add_seller_notes: 'Add Seller Notes'
             remove_seller_notes: 'Remove Seller Notes'
             notify_and_lock: 'Notify and Lock'
             send: 'Send'
@@ -133,7 +148,13 @@ orob2b:
                 widgets:
                     quote_information: 'Quote Information'
 
+                submit_to_order:
+                    submit: 'Submit'
+                    cancel: 'Cancel'
+
             quoteproduct:
+                product_sku.label: 'Sku'
+                product_name.label: 'Product'
                 comment.label: 'Seller Notes'
                 comment_account.label: 'Customer Notes'
                 product_replacement.label: 'Suggested Replacement:'
@@ -147,6 +168,11 @@ orob2b:
                 price.label: 'Price'
                 column_summary: 'Summary'
                 allow_increments.label: 'or more'
+                select_offer.label: 'Select An Offer'
+                quantity_to_order.label: 'Quantity To Order'
+                unit_price.label: 'Unit Price'
+                price_calculating.message: 'Calculating...'
+                not_available.message: 'N/A'
 
             quoteproductrequest:
                 quantity.label: 'Requested Qty'

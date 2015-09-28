@@ -8,7 +8,7 @@ define(function(require) {
     var LineItemAbstractView = require('orob2border/js/app/views/line-item-abstract-view');
 
     /**
-     * @export orob2border/js/app/views/line-item-view
+     * @export orob2border/js/app/views/frontend-line-item-view
      * @extends oroui.app.views.base.View
      * @class orob2border.app.views.LineItemView
      */

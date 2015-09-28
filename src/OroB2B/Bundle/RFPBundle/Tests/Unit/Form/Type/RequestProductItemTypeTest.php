@@ -46,62 +46,50 @@ class RequestProductItemTypeTest extends AbstractTest
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
-            ->with([
-                'data_class' => 'OroB2B\Bundle\RFPBundle\Entity\RequestProductItem',
-                'intention'  => 'rfp_request_product_item',
-                'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
-            ])
+            ->with($this->callback(function (array $options) {
+                $this->assertArrayHasKey('data_class', $options);
+                $this->assertArrayHasKey('compact_units', $options);
+                $this->assertArrayHasKey('intention', $options);
+                $this->assertArrayHasKey('extra_fields_message', $options);
+
+                return true;
+            }))
         ;
 
         $this->formType->configureOptions($resolver);
     }
 
     /**
+     * @param RequestProductItem $inputData
+     * @param array $expectedData
+     *
+     * @dataProvider postSetDataProvider
+     */
+    public function testPostSetData(RequestProductItem $inputData, array $expectedData = [])
+    {
+        $form = $this->factory->create($this->formType, $inputData);
+
+        foreach ($expectedData as $key => $value) {
+            $this->assertEquals($value, $form->get($key)->getData(), $key);
+        }
+    }
+
+    /**
      * @return array
      */
-    public function preSetDataProvider()
+    public function postSetDataProvider()
     {
-        $units = $this->getProductUnits(['kg', 'item']);
-
         return [
-            'choices is []' => [
-                'inputData'     => null,
-                'expectedData'  => [
-                    'choices'       => [],
-                    'empty_value'   => null,
-                    'required'      => true,
-                    'disabled'      => false,
-                    'label'         => 'orob2b.product.productunit.entity_label',
+            'empty values' => [
+                'input' => new RequestProductItem(),
+                'expected' => [
+                    'quantity' => 1,
                 ],
             ],
-            'choices is ProductUnit[]' => [
-                'inputData'     => $this->createRequestProductItem(1, $units, 'kg'),
-                'expectedData'  => [
-                    'choices'       => $units,
-                    'empty_value'   => null,
-                    'required'      => true,
-                    'disabled'      => false,
-                    'label'         => 'orob2b.product.productunit.entity_label',
-                ],
-            ],
-            'choices is ProductUnit[] and unit is deleted' => [
-                'inputData'     => $this->createRequestProductItem(1, $units, 'test'),
-                'expectedData'  => [
-                    'choices'       => $units,
-                    'empty_value'   => 'orob2b.rfp.message.requestproductitem.unit.removed',
-                    'required'      => true,
-                    'disabled'      => false,
-                    'label'         => 'orob2b.product.productunit.entity_label',
-                ],
-            ],
-            'choices is [] and unit is deleted' => [
-                'inputData'     => $this->createRequestProductItem(1, [], 'test'),
-                'expectedData'  => [
-                    'choices'       => [],
-                    'empty_value'   => 'orob2b.rfp.message.requestproductitem.unit.removed',
-                    'required'      => true,
-                    'disabled'      => false,
-                    'label'         => 'orob2b.product.productunit.entity_label',
+            'existing values' => [
+                'input' => (new RequestProductItem())->setQuantity(10),
+                'expected' => [
+                    'quantity' => 10,
                 ],
             ],
         ];

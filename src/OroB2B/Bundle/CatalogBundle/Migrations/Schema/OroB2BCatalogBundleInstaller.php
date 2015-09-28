@@ -19,7 +19,7 @@ class OroB2BCatalogBundleInstaller implements Installation, NoteExtensionAwareIn
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_0';
     }
 
     /**

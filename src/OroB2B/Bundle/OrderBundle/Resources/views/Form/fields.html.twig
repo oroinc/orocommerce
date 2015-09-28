@@ -174,11 +174,12 @@
     <td class="order-line-item-price">
         {% if form.vars.value.price is defined and form.vars.value.price is not null %}
             {% set priceValue = form.vars.value.price.value %}
+            {% set price = form.vars.value.price %}
         {% else %}
             {% set priceValue = '' %}
         {% endif %}
         <div class="order-line-item-price-value" data-price="{{ priceValue }}">
-            {{ priceValue }}
+            {% if price is defined %}{{ price|oro_format_price }}{% endif %}
         </div>
     </td>
     <td class="order-line-item-ship_by">
