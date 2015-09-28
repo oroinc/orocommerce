@@ -61,7 +61,7 @@ class ProductWithPricesTest extends WebTestCase
         $locales = $this->getLocales();
 
         $formData = [
-            '_token' => $form['orob2b_product_form[_token]']->getValue(),
+            '_token' => $form['orob2b_product[_token]']->getValue(),
             'owner'  => $this->getBusinessUnitId(),
             'sku'    => self::TEST_SKU,
             'unitPrecisions' => [
@@ -90,7 +90,7 @@ class ProductWithPricesTest extends WebTestCase
 
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), [
             'input_action'        => 'save_and_stay',
-            'orob2b_product_form' => $formData
+            'orob2b_product' => $formData
         ]);
 
         $result = $this->client->getResponse();
@@ -100,23 +100,23 @@ class ProductWithPricesTest extends WebTestCase
 
         $this->assertEquals(
             $priceList->getId(),
-            $crawler->filter('input[name="orob2b_product_form[prices][0][priceList]"]')->extract('value')[0]
+            $crawler->filter('input[name="orob2b_product[prices][0][priceList]"]')->extract('value')[0]
         );
         $this->assertEquals(
             self::FIRST_QUANTITY,
-            $crawler->filter('input[name="orob2b_product_form[prices][0][quantity]"]')->extract('value')[0]
+            $crawler->filter('input[name="orob2b_product[prices][0][quantity]"]')->extract('value')[0]
         );
         $this->assertEquals(
             self::FIRST_UNIT_FULL_NAME,
-            $crawler->filter('select[name="orob2b_product_form[prices][0][unit]"] :selected')->html()
+            $crawler->filter('select[name="orob2b_product[prices][0][unit]"] :selected')->html()
         );
         $this->assertEquals(
             self::FIRST_PRICE_VALUE,
-            $crawler->filter('input[name="orob2b_product_form[prices][0][price][value]"]')->extract('value')[0]
+            $crawler->filter('input[name="orob2b_product[prices][0][price][value]"]')->extract('value')[0]
         );
         $this->assertEquals(
             self::FIRST_PRICE_CURRENCY,
-            $crawler->filter('select[name="orob2b_product_form[prices][0][price][currency]"] :selected')
+            $crawler->filter('select[name="orob2b_product[prices][0][price][currency]"] :selected')
                 ->extract('value')[0]
         );
     }
@@ -145,14 +145,14 @@ class ProductWithPricesTest extends WebTestCase
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['orob2b_product_form[sku]'] = self::TEST_SKU;
-        $form['orob2b_product_form[unitPrecisions][0][unit]'] = self::SECOND_UNIT_CODE;
-        $form['orob2b_product_form[unitPrecisions][0][precision]'] = self::SECOND_UNIT_PRECISION;
-        $form['orob2b_product_form[prices][0][priceList]'] = $priceList->getId();
-        $form['orob2b_product_form[prices][0][quantity]'] = self::SECOND_QUANTITY;
-        $form['orob2b_product_form[prices][0][unit]'] = self::SECOND_UNIT_CODE;
-        $form['orob2b_product_form[prices][0][price][value]'] = self::SECOND_PRICE_VALUE;
-        $form['orob2b_product_form[prices][0][price][currency]'] = self::SECOND_PRICE_CURRENCY;
+        $form['orob2b_product[sku]'] = self::TEST_SKU;
+        $form['orob2b_product[unitPrecisions][0][unit]'] = self::SECOND_UNIT_CODE;
+        $form['orob2b_product[unitPrecisions][0][precision]'] = self::SECOND_UNIT_PRECISION;
+        $form['orob2b_product[prices][0][priceList]'] = $priceList->getId();
+        $form['orob2b_product[prices][0][quantity]'] = self::SECOND_QUANTITY;
+        $form['orob2b_product[prices][0][unit]'] = self::SECOND_UNIT_CODE;
+        $form['orob2b_product[prices][0][price][value]'] = self::SECOND_PRICE_VALUE;
+        $form['orob2b_product[prices][0][price][currency]'] = self::SECOND_PRICE_CURRENCY;
 
         $this->client->followRedirects(true);
 
@@ -166,23 +166,23 @@ class ProductWithPricesTest extends WebTestCase
 
         $this->assertEquals(
             $priceList->getId(),
-            $crawler->filter('input[name="orob2b_product_form[prices][0][priceList]"]')->extract('value')[0]
+            $crawler->filter('input[name="orob2b_product[prices][0][priceList]"]')->extract('value')[0]
         );
         $this->assertEquals(
             self::EXPECTED_SECOND_QUANTITY,
-            $crawler->filter('input[name="orob2b_product_form[prices][0][quantity]"]')->extract('value')[0]
+            $crawler->filter('input[name="orob2b_product[prices][0][quantity]"]')->extract('value')[0]
         );
         $this->assertEquals(
             self::SECOND_UNIT_FULL_NAME,
-            $crawler->filter('select[name="orob2b_product_form[prices][0][unit]"] :selected')->html()
+            $crawler->filter('select[name="orob2b_product[prices][0][unit]"] :selected')->html()
         );
         $this->assertEquals(
             self::SECOND_PRICE_VALUE,
-            $crawler->filter('input[name="orob2b_product_form[prices][0][price][value]"]')->extract('value')[0]
+            $crawler->filter('input[name="orob2b_product[prices][0][price][value]"]')->extract('value')[0]
         );
         $this->assertEquals(
             self::SECOND_PRICE_CURRENCY,
-            $crawler->filter('select[name="orob2b_product_form[prices][0][price][currency]"] :selected')
+            $crawler->filter('select[name="orob2b_product[prices][0][price][currency]"] :selected')
                 ->extract('value')[0]
         );
 
@@ -200,7 +200,7 @@ class ProductWithPricesTest extends WebTestCase
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
-        unset($form['orob2b_product_form[prices]']);
+        unset($form['orob2b_product[prices]']);
 
         $this->client->followRedirects(true);
 
@@ -212,8 +212,8 @@ class ProductWithPricesTest extends WebTestCase
 
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
 
-        $this->assertContains('orob2b_product_form[unitPrecisions][0]', $crawler->html());
-        $this->assertNotContains('orob2b_product_form[prices][0]', $crawler->html());
+        $this->assertContains('orob2b_product[unitPrecisions][0]', $crawler->html());
+        $this->assertNotContains('orob2b_product[prices][0]', $crawler->html());
     }
 
     /**
