@@ -94,10 +94,6 @@ class QuantityType extends AbstractType
 
         $productUnit = $parent->get($productUnitField)->getData();
         if (!$productUnit || !$productUnit instanceof ProductUnit) {
-            if ($parent->get($productUnitField)->isRequired()) {
-                throw new \InvalidArgumentException(sprintf('Missing "%s" data', $productUnitField));
-            }
-
             return null;
         }
 

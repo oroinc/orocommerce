@@ -6,7 +6,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
@@ -31,15 +30,6 @@ class FrontendLineItemType extends AbstractType
         $product = $formData->getProduct();
 
         $builder
-            ->add(
-                'product',
-                ProductSelectType::NAME,
-                [
-                    'required' => false,
-                    'create_enabled' => false,
-                    'mapped' => false,
-                ]
-            )
             ->add(
                 'unit',
                 ProductUnitSelectionType::NAME,
