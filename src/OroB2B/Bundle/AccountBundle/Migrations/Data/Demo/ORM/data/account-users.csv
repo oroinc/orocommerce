@@ -1,11 +1,20 @@
-"email","firstName","lastName","role","street","city","state","zipCode","country","types","defaultTypes"
-"BrandaJSanborn@dayrep.com","Branda","Sanborn","Manager","1215 Caldwell Road","Rochester","NY","14608","US","billing,shipping","billing,shipping"
-"LoisLLessard@teleworm.us","Lois","Lessard","Operator","2413 Capitol Avenue","Romney","IN","47981","US","billing,shipping","billing,shipping"
-"AmandaRCole@rhyta.com","Amanda","Cole","Administrator","722 Harvest Lane","Sedalia","MO","65301","US","billing,shipping","billing,shipping"
-"LonnieVTownsend@jourrapide.com","Lonnie","Townsend","Operator","1167 Marion Drive","Winter Haven","FL","33830","US","billing,shipping","billing,shipping"
-"JamesSWall@armyspy.com","James","Wall","Manager","988 Sunburst Drive","Fort Myers","FL","33901","US","billing,shipping","billing,shipping"
-"RuthWMaxwell@armyspy.com","Ruth","Maxwell","Manager","2849 Junkins Avenue","Albany","GA","31707","US","billing,shipping","billing,shipping"
-"BrentLJohnson@dayrep.com","Brent","Johnson","Operator","643 Patterson Road","Queens","NY","11418","US","billing,shipping","billing,shipping"
-"NancyJSallee@dayrep.com","Nancy","Sallee","Manager","180 Tenmile","Desert Center","CA","92239","US","billing,shipping","billing,shipping"
-"MarleneSBradley@dayrep.com","Marlene","Bradley","Operator","4237 Warner Street","Casper","WY","82601","US","billing,shipping","billing,shipping"
-"JuanaPBrzezinski@teleworm.us","Juana","Brzezinski","Operator","4979 Canis Heights Drive","Los Angeles","CA","90071","US","billing,shipping","billing,shipping"
+"account","email","firstName","lastName","role","street","city","state","zipCode","country","types","defaultTypes"
+"Company A",AmandaRCole@example.org,Amanda,Cole,Administrator,"12300 Harvest Lane",Sedalia,MO,65301,US,"billing,shipping","billing,shipping"
+"Company A",BrandaJSanborn@example.org,Branda,"Sanborn
+",Buyer,"23400 Caldwell Road",Rochester,NY,14608,US,"billing,shipping","billing,shipping"
+"Company A",LoisLLessard@example.org,Lois,"Lessard
+",Buyer,"34500 Capitol Avenue",Romney,IN,47981,US,"billing,shipping","billing,shipping"
+"Company A - East Division",LonnieVTownsend@example.org,Lonnie,"Townsend
+",Administrator,"45600 Marion Drive","Winter Haven",FL,33830,US,"billing,shipping","billing,shipping"
+"Company A - East Division",JamesSWall@example.org,James,"Wall
+",Buyer,"56700 Sunburst Drive","Fort Myers",FL,33901,US,"billing,shipping","billing,shipping"
+"Company A - West Division",RuthWMaxwell@example.org,Ruth,"Maxwell
+",Administrator,"67800 Junkins Avenue",Albany,GA,31707,US,"billing,shipping","billing,shipping"
+"Company A - West Division",BrentLJohnson@example.org,Brent,"Johnson
+",Buyer,"78900 Patterson Road",Queens,NY,11418,US,"billing,shipping","billing,shipping"
+"Wholesaler B",NancyJSallee@example.com,Nancy,"Sallee
+",Administrator,"89100 Tenmile","Desert Center",CA,92239,US,"billing,shipping","billing,shipping"
+"Wholesaler B",MarleneSBradley@example.com,Marlene,"Bradley
+",Buyer,"91200 Warner Street",Casper,WY,82601,US,"billing,shipping","billing,shipping"
+"Partner C",JuanaPBrzezinski@example.net,Juana,"Brzezinski
+",Administrator,"19200 Canis Heights Drive","Los Angeles",CA,90071,US,"billing,shipping","billing,shipping"

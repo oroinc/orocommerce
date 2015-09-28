@@ -31,7 +31,7 @@ class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareI
     /** @return array */
     public function getDependencies()
     {
-        return [__NAMESPACE__ . '\LoadAccountUserRolesDemoData'];
+        return [__NAMESPACE__ . '\LoadAccountDemoData'];
     }
 
     /**
@@ -39,6 +39,7 @@ class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareI
      */
     public function load(ObjectManager $manager)
     {
+        /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUserManager $userManager */
         $userManager = $this->container->get('orob2b_account_user.manager');
 
         $locator = $this->container->get('file_locator');
@@ -60,6 +61,11 @@ class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareI
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
+            $account = $this->getReference(LoadAccountDemoData::ACCOUNT_REFERENCE_PREFIX . $row['account']);
+            if (!$account) {
+                continue;
+            }
+
             // create/get account user role
             $roleLabel = $row['role'];
             if (!array_key_exists($roleLabel, $roles)) {
@@ -75,8 +81,9 @@ class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareI
                 ->setEmail($row['email'])
                 ->setPassword($row['email'])
                 ->setFirstName($row['firstName'])
-                ->setLastName(sprintf('%s (%s)', $row['lastName'], $roleLabel))
+                ->setLastName($row['lastName'])
                 ->setPlainPassword(md5(uniqid(mt_rand(), true)))
+                ->setAccount($account)
                 ->setEnabled(true)
                 ->setOrganization($organization)
                 ->addOrganization($organization)

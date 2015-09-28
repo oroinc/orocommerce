@@ -15,7 +15,7 @@ class LoadAccountUserAddressDemoData extends AbstractLoadAddressDemoData impleme
      */
     public function getDependencies()
     {
-        return ['OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData'];
+        return [__NAMESPACE__ . '\LoadAccountUserDemoData'];
     }
 
     /**
