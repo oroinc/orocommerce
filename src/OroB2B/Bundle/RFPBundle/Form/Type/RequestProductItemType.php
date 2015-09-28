@@ -35,19 +35,12 @@ class RequestProductItemType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /** @var RequestProductItem $requestProductItem */
-        $requestProductItem = $options['data'];
+        $requestProductItem = null;
+        if (array_key_exists('data', $options)) {
+            $requestProductItem = $options['data'];
+        }
 
         $builder
-            ->add(
-                'quantity',
-                QuantityType::NAME,
-                [
-                    'required' => true,
-                    'label' => 'orob2b.rfp.requestproductitem.quantity.label',
-                    'product' => $requestProductItem ? $requestProductItem->getRequestProduct() : null,
-                    'default_data' => 1,
-                ]
-            )
             ->add(
                 'price',
                 PriceType::NAME,
@@ -64,6 +57,16 @@ class RequestProductItemType extends AbstractType
                     'label' => 'orob2b.product.productunit.entity_label',
                     'required' => true,
                     'compact' => $options['compact_units'],
+                ]
+            )
+            ->add(
+                'quantity',
+                QuantityType::NAME,
+                [
+                    'required' => true,
+                    'label' => 'orob2b.rfp.requestproductitem.quantity.label',
+                    'product' => $requestProductItem ? $requestProductItem->getRequestProduct() : null,
+                    'default_data' => 1,
                 ]
             );
     }

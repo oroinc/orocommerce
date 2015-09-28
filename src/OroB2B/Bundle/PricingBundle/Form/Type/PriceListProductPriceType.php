@@ -48,22 +48,22 @@ class PriceListProductPriceType extends AbstractType
                 ]
             )
             ->add(
+                'unit',
+                ProductUnitSelectionType::NAME,
+                [
+                    'required' => true,
+                    'label' => 'orob2b.pricing.productprice.unit.label',
+                    'placeholder' => 'orob2b.pricing.productprice.unit.choose',
+                ]
+            )
+            ->add(
                 'quantity',
                 QuantityType::NAME,
                 [
                     'required' => true,
                     'label' => 'orob2b.pricing.productprice.quantity.label',
                     'product' => $data ? $data->getProduct() : null,
-                ]
-            )
-            ->add(
-                'unit',
-                ProductUnitSelectionType::NAME,
-                [
-                    'required' => true,
-                    'label' => 'orob2b.pricing.productprice.unit.label',
-                    'empty_data' => null,
-                    'empty_value' => 'orob2b.pricing.productprice.unit.choose',
+                    'product_unit_field' => 'unit'
                 ]
             )
             ->add(

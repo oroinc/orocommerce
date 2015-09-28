@@ -39,16 +39,6 @@ class QuoteProductRequestType extends AbstractType
 
         $builder
             ->add(
-                'quantity',
-                QuantityType::NAME,
-                [
-                    'required' => false,
-                    'label' => 'orob2b.sale.quoteproductrequest.quantity.label',
-                    'read_only' => true,
-                    'product' => $quoteProductRequest ? $quoteProductRequest->getQuoteProduct() : null,
-                ]
-            )
-            ->add(
                 'price',
                 PriceType::NAME,
                 [
@@ -65,6 +55,16 @@ class QuoteProductRequestType extends AbstractType
                     'required' => false,
                     'read_only' => true,
                     'compact' => $options['compact_units'],
+                ]
+            )
+            ->add(
+                'quantity',
+                QuantityType::NAME,
+                [
+                    'required' => false,
+                    'label' => 'orob2b.sale.quoteproductrequest.quantity.label',
+                    'read_only' => true,
+                    'product' => $quoteProductRequest ? $quoteProductRequest->getQuoteProduct() : null,
                 ]
             );
     }

@@ -83,6 +83,5 @@ services:
         class: %orob2b_pricing.form.extension.product_type.class%
         arguments:
             - @doctrine
-            - @orob2b_product.service.rounding
         tags:
             - { name: form.type_extension, alias: orob2b_product }

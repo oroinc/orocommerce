@@ -15,6 +15,8 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
 
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal;
+
 class QuantityType extends AbstractType
 {
     const NAME = 'orob2b_quantity';
@@ -38,85 +40,91 @@ class QuantityType extends AbstractType
     /** {@inheritdoc} */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->addEventListener(
-            FormEvents::POST_SET_DATA,
-            function (FormEvent $event) use ($options) {
-                if ($options['precision']) {
-                    return;
-                }
+        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'roundQuantity'], -2048);
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'roundQuantity'], -2048);
+        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'roundQuantity'], -2048);
+        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'setDefaultData'], -1024);
+    }
 
-                $form = $event->getForm()->getParent();
+    /**
+     * @param FormEvent $event
+     */
+    public function roundQuantity(FormEvent $event)
+    {
+        $scale = $this->getScale($event->getForm());
+        if (!$scale) {
+            return;
+        }
 
-                $product = $options['product'];
+        $quantity = $event->getData();
+        $formattedQuantity = $this->roundingService->round($quantity, $scale);
 
-                $productField = $options['product_field'];
-                if ($form->has($productField)) {
-                    $productData = $form->get($productField)->getData();
-                    if ($productData instanceof Product) {
-                        $product = $productData;
-                    }
-                }
-
-                if (!$product instanceof Product) {
-                    return;
-                }
-
-                $productUnitField = $options['product_unit_field'];
-                if (!$form->has($productUnitField)) {
-                    throw new \InvalidArgumentException(sprintf('Missing "%s" on form', $productUnitField));
-                }
-
-                $productUnit = $form->get($productUnitField)->getData();
-                if (!$productUnit || !$productUnit instanceof ProductUnit) {
-                    return;
-                }
-
-                $precision = $product->getUnitPrecision($productUnit->getCode());
-                if ($precision) {
-                    $precision = $precision->getPrecision();
-                } else {
-                    $precision = $productUnit->getDefaultPrecision();
-                }
-
-                $quantity = $event->getData();
-                $formattedQuantity = $this->roundingService->round($quantity, $precision);
-                $event->setData($formattedQuantity);
-
-                $this->replaceQuantity($form, $precision);
-            },
-            -255
-        );
-
-        // Set quantity by default
-        $builder->addEventListener(
-            FormEvents::POST_SET_DATA,
-            function (FormEvent $event) use ($options) {
-                $defaultData = $options['default_data'];
-                if (!is_numeric($defaultData)) {
-                    return;
-                }
-
-                $data = $event->getData();
-                if (!$data) {
-                    $event->setData($defaultData);
-                }
-            }
-        );
+        if ($quantity !== $formattedQuantity) {
+            $event->setData($formattedQuantity);
+        }
     }
 
     /**
      * @param FormInterface $form
-     * @param mixed $precision
+     * @return int|null
      */
-    protected function replaceQuantity(FormInterface $form, $precision)
+    protected function getScale(FormInterface $form)
     {
-        $options = $form->get('quantity')->getConfig()->getOptions();
+        $options = $form->getConfig()->getOptions();
+        $parent = $form->getParent();
 
-        $form->add(
-            'quantity',
-            self::NAME,
-            array_merge($options, ['precision' => $precision, 'precision_applied' => true])
-        );
+        $product = $options['product'];
+        $productField = $options['product_field'];
+
+        if ($parent->has($productField)) {
+            $productData = $parent->get($productField)->getData();
+            if ($productData instanceof Product) {
+                $product = $productData;
+            }
+        }
+
+        if (!$product instanceof Product) {
+            return null;
+        }
+
+        $productUnitField = $options['product_unit_field'];
+        if (!$parent->has($productUnitField)) {
+            throw new \InvalidArgumentException(sprintf('Missing "%s" on form', $productUnitField));
+        }
+
+        $productUnit = $parent->get($productUnitField)->getData();
+        if (!$productUnit || !$productUnit instanceof ProductUnit) {
+            if ($parent->get($productUnitField)->isRequired()) {
+                throw new \InvalidArgumentException(sprintf('Missing "%s" data', $productUnitField));
+            }
+
+            return null;
+        }
+
+        $scale = $product->getUnitPrecision($productUnit->getCode());
+        if ($scale) {
+            return $scale->getPrecision();
+        }
+
+        return $productUnit->getDefaultPrecision();
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function setDefaultData(FormEvent $event)
+    {
+        $options = $event->getForm()->getConfig()->getOptions();
+
+        $defaultData = $options['default_data'];
+        if (!is_numeric($defaultData)) {
+            return;
+        }
+
+        $data = $event->getData();
+        if (!$data) {
+            $event->setData($defaultData);
+        }
     }
 
     /** {@inheritdoc} */
@@ -128,12 +136,11 @@ class QuantityType extends AbstractType
                 'product_unit_field' => 'productUnit',
                 'product_field' => 'product',
                 'default_data' => null,
-                'constraints' => [new NotBlank(), new Range(['min' => 0])],
+                'constraints' => [new NotBlank(), new Range(['min' => 0]), new Decimal()],
                 'precision_applied' => false,
             ]
         );
 
-//        $resolver->setAllowedTypes('product', $this->productClass);
         $resolver->setAllowedTypes('product_unit_field', 'string');
         $resolver->setAllowedTypes('product_field', 'string');
     }
@@ -141,7 +148,7 @@ class QuantityType extends AbstractType
     /** {@inheritDoc} */
     public function getParent()
     {
-        return 'number';
+        return 'text';
     }
 
     /** {@inheritDoc} */

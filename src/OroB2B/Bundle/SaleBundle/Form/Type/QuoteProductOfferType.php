@@ -49,19 +49,12 @@ class QuoteProductOfferType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /** @var QuoteProductOffer $quoteProductOffer */
-        $quoteProductOffer = $options['data'];
+        $quoteProductOffer = null;
+        if (array_key_exists('data', $options)) {
+            $quoteProductOffer = $options['data'];
+        }
 
         $builder
-            ->add(
-                'quantity',
-                QuantityType::NAME,
-                [
-                    'required' => true,
-                    'label' => 'orob2b.sale.quoteproductoffer.quantity.label',
-                    'product' => $quoteProductOffer ? $quoteProductOffer->getQuoteProduct() : null,
-                    'default_data' => 1,
-                ]
-            )
             ->add(
                 'price',
                 PriceType::NAME,
@@ -98,6 +91,16 @@ class QuoteProductOfferType extends AbstractType
                     'label' => 'orob2b.product.productunit.entity_label',
                     'required' => true,
                     'compact' => $options['compact_units'],
+                ]
+            )
+            ->add(
+                'quantity',
+                QuantityType::NAME,
+                [
+                    'required' => true,
+                    'label' => 'orob2b.sale.quoteproductoffer.quantity.label',
+                    'product' => $quoteProductOffer ? $quoteProductOffer->getQuoteProduct() : null,
+                    'default_data' => 1,
                 ]
             );
     }

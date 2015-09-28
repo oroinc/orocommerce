@@ -41,16 +41,6 @@ class FrontendLineItemType extends AbstractType
                 ]
             )
             ->add(
-                'quantity',
-                QuantityType::NAME,
-                [
-                    'required' => true,
-                    'label' => 'orob2b.shoppinglist.lineitem.quantity.label',
-                    'product' => $product,
-                    'product_unit_field' => 'unit',
-                ]
-            )
-            ->add(
                 'unit',
                 ProductUnitSelectionType::NAME,
                 [
@@ -59,6 +49,16 @@ class FrontendLineItemType extends AbstractType
                     'query_builder' => function (ProductUnitRepository $repository) use ($product) {
                         return $repository->getProductUnitsQueryBuilder($product);
                     },
+                ]
+            )
+            ->add(
+                'quantity',
+                QuantityType::NAME,
+                [
+                    'required' => true,
+                    'label' => 'orob2b.shoppinglist.lineitem.quantity.label',
+                    'product' => $product,
+                    'product_unit_field' => 'unit',
                 ]
             );
     }
