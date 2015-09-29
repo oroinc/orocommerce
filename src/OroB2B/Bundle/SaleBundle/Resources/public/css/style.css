@@ -161,14 +161,6 @@ span.quote-product-offer-quantity-unit {
     margin-left: 5px;
 }
 
-.sale-quote-form .account-accountuser-select .entity-select-btn {
-    display: none;
-}
-
-.sale-quote-form .account-accountuser-select .select2-container {
-    width: 257px !important;
-}
-
 .quote-lineitem-product-row > div,
 .quote-lineitem-product-replacement-row,.quote-lineitem-product-replacement-row > div {
     display: none;
