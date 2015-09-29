@@ -115,7 +115,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
             'empty form' => [
                 'isValid'       => false,
                 'submittedData' => [],
-                'expectedData'  => $this->getQuoteProductOffer(1),
+                'expectedData'  => $this->getQuoteProductOffer(1, 1),
                 'defaultData'   => $this->getQuoteProductOffer(1),
             ],
             'empty quote product' => [
@@ -136,7 +136,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
                     ->setQuoteProduct(null),
             ],
             'empty quantity' => [
-                'isValid'       => false,
+                'isValid'       => true,
                 'submittedData' => [
                     'productUnit'   => 'kg',
                     'priceType'     => self::QPO_PRICE_TYPE1,
@@ -146,7 +146,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
                     ],
                 ],
                 'expectedData'  => $this
-                    ->getQuoteProductOffer(3, null, 'kg', self::QPO_PRICE_TYPE1, $this->createPrice(11, 'EUR')),
+                    ->getQuoteProductOffer(3, 1, 'kg', self::QPO_PRICE_TYPE1, $this->createPrice(11, 'EUR')),
                 'defaultData'   => $this->getQuoteProductOffer(3),
             ],
             'empty price type' => [

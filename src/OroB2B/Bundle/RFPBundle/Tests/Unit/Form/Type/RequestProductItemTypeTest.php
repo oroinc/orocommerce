@@ -107,7 +107,7 @@ class RequestProductItemTypeTest extends AbstractTest
             'empty form' => [
                 'isValid'       => false,
                 'submittedData' => [],
-                'expectedData'  => $this->getRequestProductItem(1),
+                'expectedData'  => $this->getRequestProductItem(1, 1),
                 'defaultData'   => $this->getRequestProductItem(1),
             ],
             'empty quantity' => [
@@ -119,7 +119,7 @@ class RequestProductItemTypeTest extends AbstractTest
                         'currency'  => 'USD',
                     ],
                 ],
-                'expectedData'  => $this->getRequestProductItem(2, null, 'kg', $this->createPrice(20, 'USD')),
+                'expectedData'  => $this->getRequestProductItem(2, 1, 'kg', $this->createPrice(20, 'USD')),
                 'defaultData'   => $this->getRequestProductItem(2),
             ],
             'empty product unit' => [
