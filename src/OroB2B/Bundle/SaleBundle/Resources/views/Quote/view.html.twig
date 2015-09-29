@@ -108,17 +108,9 @@
                             {% if loop.first %}
                                 <td rowspan="{{ numSubItems }}">
                                     {% if quoteProduct.isTypeNotAvailable %}
-                                        {% if quoteProduct.productReplacement %}
-                                            <a href="{{ path('orob2b_product_view', { id: quoteProduct.productReplacement.id }) }}">{{ quoteProduct.productReplacement.sku|raw }}</a>
-                                        {% else %}
-                                            {{ quoteProduct.productReplacementSku|raw }}
-                                        {% endif %}
+                                        {{ quoteProduct.productReplacementSku }}
                                     {% else %}
-                                        {% if quoteProduct.product %}
-                                            <a href="{{ path('orob2b_product_view', { id: quoteProduct.product.id }) }}">{{ quoteProduct.product.sku|raw }}</a>
-                                        {% else %}
-                                            {{ quoteProduct.productSku|raw }}
-                                        {% endif %}
+                                        {{ quoteProduct.productSku }}
                                     {% endif %}
                                 </td>
                                 <td rowspan="{{ numSubItems }}">

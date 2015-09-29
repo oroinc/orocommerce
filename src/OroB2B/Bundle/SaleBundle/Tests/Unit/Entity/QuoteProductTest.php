@@ -265,6 +265,9 @@ class QuoteProductTest extends AbstractTest
     }
 
     /**
+     * @param array $inputData
+     * @param bool $expectedResult
+     *
      * @dataProvider freeFormProvider
      */
     public function testIsProductReplacementFreeForm(array $inputData, $expectedResult)
