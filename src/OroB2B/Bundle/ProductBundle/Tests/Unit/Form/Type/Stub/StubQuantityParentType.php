@@ -2,9 +2,10 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+
+use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
 
 class StubQuantityParentType extends AbstractType
 {
