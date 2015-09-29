@@ -4,7 +4,7 @@ orob2b:
             entity_label: 'Request For Quote'
             entity_label_short: 'Request'
             entity_plural_label: 'Requests For Quote'
-            id.label: 'ID'
+            id.label: 'RFQ #'
             first_name.label: 'First Name'
             last_name.label: 'Last Name'
             email.label: 'Email Address'
@@ -12,21 +12,14 @@ orob2b:
             company.label: 'Company'
             role.label: 'Role'
             status.label: 'Status'
-            body.label: 'Request body'
+            body.label: 'Request'
             account_user.label: 'Submitted By'
             account.label: 'Account'
             organization.label: 'Organization'
             request_products.label: 'Request Products'
-            first_name.label: 'First Name'
-            last_name.label: 'Last Name'
-            email.label: 'Email Address'
-            phone.label: 'Phone Number'
-            company.label: 'Company'
-            role.label: 'Role'
-            status.label: 'Status'
-            body.label: 'Request body'
 
             submit.label: 'Submit Request For Quote'
+            cancel.label: 'Cancel'
 
             message:
                 request_saved: 'Your Request For Quote successfully saved!'
@@ -41,6 +34,8 @@ orob2b:
             request.label: 'Request'
             request_product_items.label: 'Request Product Lines'
             comment.label: 'Notes'
+            message:
+                product.blank: 'Please select a product'
 
         requestproductitem:
             item: '{units}, {price} per {unit}'
@@ -48,11 +43,11 @@ orob2b:
             entity_plural_label: 'Request Product Lines'
             add_label: 'Add Request Item'
             id.label: 'ID'
-            quantity.label: 'Quantity'
+            quantity.label: 'Requested Quantity'
             request_product.label: 'Request Product'
             product_unit.label: 'Product Unit'
             product_unit_code.label: 'Product Unit Code'
-            price.label: 'Price'
+            price.label: 'Target Price'
             value.label: 'Price Value'
             currency.label: 'Price Currency'
 
@@ -107,11 +102,23 @@ orob2b:
             restore: 'Restore'
             change_status: 'Change Status'
             create_quote: 'Create Quote'
-            add_to_rfp: 'Add To Request For Quote'
-            create_rfp: 'Create RFP'
+            add_to_rfp: 'Request A Quote'
+            create_rfp: 'Submit'
 
         widget:
             change_status_title: 'Change RFQ Status'
+
+        frontend:
+            request:
+                lineitem:
+                    product: 'Product'
+                    requested:
+                        label: ''
+                        quantity: 'Requested Quantity'
+                        price: 'Target Price'
+                        add: 'Add Line'
+                    notes: 'Notes'
+                    add: 'Add Product'
 
     frontend:
         rfp:
@@ -119,6 +126,7 @@ orob2b:
                 entity_label: 'Request For Quote'
                 entity_label_short: 'Request'
                 entity_plural_label: 'Requests For Quote'
+                id.label: 'RFQ #'
                 submitted_to.label: 'Submitted To'
                 is_draft.label: 'Draft'
 

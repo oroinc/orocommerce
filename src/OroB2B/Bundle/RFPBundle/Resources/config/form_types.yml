@@ -16,7 +16,7 @@ parameters:
     orob2b_rfp.form.type.frontend_request_product.class: OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType
     orob2b_rfp.form.type.frontend_request_product_collection.class: OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductCollectionType
 
-    orob2b_rfp.form.type.extension.frontend_request.class: OroB2B\Bundle\RFPBundle\Form\Extension\FrontendRequestExtension
+    orob2b_rfp.form.type.extension.request_data_storage.class: OroB2B\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension
 
 services:
     orob2b_rfp.form.type.default_request_status:
@@ -79,6 +79,8 @@ services:
 
     orob2b_rfp.form.type.request_product:
         class: %orob2b_rfp.form.type.request_product.class%
+        arguments:
+            - @orob2b_product.formatter.product_unit_label
         calls:
             - [setDataClass, [%orob2b_rfp.entity.request_product.class%]]
         tags:
@@ -110,7 +112,7 @@ services:
             - [setDataClass, [%orob2b_rfp.entity.request.class%]]
             - [setRequestStatusClass, [%orob2b_rfp.entity.request.status.class%]]
         tags:
-            - { name: form.type, alias: orob2b_rfp_frontend_request_type }
+            - { name: form.type, alias: orob2b_rfp_frontend_request }
 
     orob2b_rfp.form.type.frontend_request_product:
         class: %orob2b_rfp.form.type.frontend_request_product.class%
@@ -124,10 +126,11 @@ services:
         tags:
             - { name: form.type, alias: orob2b_rfp_frontend_request_product_collection }
 
-    orob2b_rfp.form.type.extension.frontend_order:
-        class: %orob2b_rfp.form.type.extension.frontend_request.class%
-        parent: orob2b_product.form.type.extension.post_quick_add.abstract
+    orob2b_rfp.form.type.extension.frontend_request_data_storage:
+        class: %orob2b_rfp.form.type.extension.request_data_storage.class%
+        parent: orob2b_product.form.type.extension.product_data_storage.abstract
         calls:
             - [setDataClass, [%orob2b_rfp.entity.request.class%]]
+            - [setExtendedType, [orob2b_rfp_frontend_request]]
         tags:
-            - { name: form.type_extension, alias: orob2b_rfp_frontend_request_type }
+            - { name: form.type_extension, alias: orob2b_rfp_frontend_request }

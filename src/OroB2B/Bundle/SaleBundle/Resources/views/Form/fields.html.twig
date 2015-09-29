@@ -1,145 +1,359 @@
 {% block orob2b_sale_quote_product_collection_row %}
-    <div class="sale-quoteproduct-collection">
-        <table class="sale-quoteproduct-collection sale-quoteproduct-collection-table">
-            <thead>
+    {{ form_widget(form) }}
+{% endblock %}
+
+{% block orob2b_sale_quote_product_collection_widget %}
+    {% if prototype is defined %}
+        {% set prototype_html = _self.orob2b_sale_quote_lineitem_prototype(form) %}
+    {% endif %}
+    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
+    {% set id = id ~ '_collection' %}
+    <div class="row-oro">
+        {% set prototype_name = form.vars.prototype_name %}
+        <div {{ block('widget_container_attributes') }}>
+            <table class="grid table-hover table table-bordered table-condensed">
+                <thead>
                 <tr>
-                    <th class="sale-quoteproduct-table-column-1">Product</th>
-                    <th class="sale-quoteproduct-table-column-2">Type</th>
-                    <th class="sale-quoteproduct-table-column-3">Offers</th>
+                    <th><span>{{ 'orob2b.sale.quote.lineitem.product'|trans }}</span></th>
+                    <th><span>{{ 'orob2b.sale.quote.lineitem.requested.label'|trans }}</span></th>
+                    <th><span>{{ 'orob2b.sale.quote.lineitem.offers.label'|trans }}</span></th>
+                    <th><span>{{ 'orob2b.sale.quote.lineitem.notes'|trans }}</span></th>
+                    <th></th>
                 </tr>
-            </thead>
-        </table>
-        {{ form_widget(form) }}
+                </thead>
+                <tbody data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %} class="1">
+                {% if form.children|length %}
+                    {% for child in form.children %}
+                        {{ _self.orob2b_sale_quote_lineitem_prototype(child) }}
+                    {% endfor %}
+                {% elseif show_form_when_empty and prototype_html is defined %}
+                    {{ prototype_html|replace({(prototype_name): '0'})|raw }}
+                {% endif %}
+                </tbody>
+            </table>
+        </div>
+        <a class="btn add-list-item" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'orob2b.sale.quote.lineitem.add'|trans }}</a>
     </div>
 {% endblock %}
 
+{% macro orob2b_sale_quote_lineitem_prototype(widget) %}
+    {% if 'collection' in widget.vars.block_prefixes %}
+        {% set form = widget.vars.prototype %}
+        {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
+    {% else %}
+        {% set form = widget %}
+        {% set name = widget.vars.full_name %}
+    {% endif %}
+    {% set page_component_options = form.vars.page_component_options|merge(form.vars.componentOptions|default({})) %}
+    <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
+        class="quote-lineitem"
+        data-page-component-module="{{ form.vars.page_component }}"
+        data-page-component-options="{{ page_component_options|json_encode }}">
+        {{ form_widget(form) }}
+        <td class="quote-lineitem-remove">
+            <button type="button" class="removeLineItem btn icons-holder">{{ 'orob2b.sale.quote.lineitem.remove'|trans }}</button>
+        </td>
+    </tr>
+{% endmacro %}
+
 {% block orob2b_sale_quote_product_widget %}
-    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class : '') ~ ' sale-quoteproduct-widget control-group'}) %}
+    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class : '') ~ ' quote-lineitem-widget control-group'}) %}
 
     {% set commentAccount = form.vars.value.commentAccount|default(null) %}
     {% set commentSeller = form.vars.value.comment|default(null) %}
+    {% set quoteProductRequests = form.vars.value.quoteProductRequests|default([]) %}
     {% set isProductFreeForm = form.vars.value.isProductFreeForm()|default(false) %}
     {% set isProductReplacementFreeForm = form.vars.value.isProductReplacementFreeForm()|default(false) %}
     {% set isProductReplacement = form.vars.value.type|default(false) == componentOptions.typeReplacement %}
 
-    <table class="sale-quoteproduct-collection-table" {{ block('widget_container_attributes') }}
-           data-page-component-options="{{ componentOptions|json_encode }}"
-           data-page-component-module="orob2bsale/js/app/components/sale-quoteproductitem-selection-component">
-    <tr>
-        <td class="sale-quoteproduct-table-column-1">
-            <div class="fields-row sale-quoteproduct-product-row">
-                <div class="sale-quoteproduct-product-select sale-quoteproduct-product-form{% if not isProductFreeForm %} sale-quoteproduct-block-active{% endif %}">
-                    {{ form_widget(form.product) }}
-                    {{ form_errors(form.product) }}
-                    <a class="sale-quoteproduct-free-form-link" href="javascript: void(0);">{{ 'orob2b.sale.quoteproduct.select.free_form'|trans }}</a>
-                </div>
-                <div class="sale-quoteproduct-product-free-form{% if isProductFreeForm %} sale-quoteproduct-block-active{% endif %}">
-                    {{ form_label(form.productSku) }}
-                    {{ form_widget(form.productSku) }}
-                    {{ form_errors(form.productSku) }}
-                    {{ form_label(form.freeFormProduct) }}
-                    {{ form_widget(form.freeFormProduct, {attr: attr|merge({class: 'sale-quoteproduct-product-freeform-input'})}) }}
-                    {{ form_errors(form.freeFormProduct) }}
-                    <br/><a class="sale-quoteproduct-product-select-link" href="javascript: void(0);">{{ 'orob2b.sale.quoteproduct.select.product'|trans }}</a>
-                </div>
+    <td class="quote-lineitem-product">
+        <div class="fields-row quote-lineitem-product-row{% if not isProductReplacement %} quote-lineitem-block-active{% endif %}">
+            <div class="quote-lineitem-product-select quote-lineitem-product-form{% if not isProductFreeForm %} quote-lineitem-block-active{% endif %}">
+                {{ form_widget(form.product) }}
+                {{ form_errors(form.product) }}
+                <a class="quote-lineitem-free-form-link" href="javascript: void(0);">{{ 'orob2b.sale.quoteproduct.select.free_form'|trans }}</a>
             </div>
-            <div class="fields-row sale-quoteproduct-product-replacement-row{% if isProductReplacement %} sale-quoteproduct-block-active{% endif %}">
-                <div class="sale-quoteproduct-product-replacement-select sale-quoteproduct-product-form{% if not isProductReplacementFreeForm %} sale-quoteproduct-block-active{% endif %}">
-                    {{ form_widget(form.productReplacement) }}
-                    {{ form_errors(form.productReplacement) }}
-                    <a class="sale-quoteproduct-free-form-link" href="javascript: void(0);">{{ 'orob2b.sale.quoteproduct.select.free_form'|trans }}</a>
-                </div>
-                <div class="sale-quoteproduct-product-free-form{% if isProductReplacementFreeForm %} sale-quoteproduct-block-active{% endif %}">
-                    {{ form_label(form.productReplacementSku) }}
-                    {{ form_widget(form.productReplacementSku) }}
-                    {{ form_errors(form.productReplacementSku) }}
-                    {{ form_label(form.freeFormProductReplacement) }}
-                    {{ form_widget(form.freeFormProductReplacement, {attr: attr|merge({class: 'sale-quoteproduct-productreplacement-freeform-input'})}) }}
-                    {{ form_errors(form.freeFormProductReplacement) }}
-                    <br/><a class="sale-quoteproduct-product-select-link" href="javascript: void(0);">{{ 'orob2b.sale.quoteproduct.select.product'|trans }}</a>
-                </div>
+            <div class="quote-lineitem-product-free-form{% if isProductFreeForm %} quote-lineitem-block-active{% endif %}">
+                {{ form_label(form.productSku) }}
+                {{ form_widget(form.productSku) }}
+                {{ form_errors(form.productSku) }}
+                {{ form_label(form.freeFormProduct) }}
+                {{ form_widget(form.freeFormProduct, {attr: attr|merge({class: 'quote-lineitem-product-freeform-input'})}) }}
+                {{ form_errors(form.freeFormProduct) }}
+                <br/><a class="quote-lineitem-product-select-link" href="javascript: void(0);">{{ 'orob2b.sale.quoteproduct.select.product'|trans }}</a>
             </div>
-        </td>
-        <td class="sale-quoteproduct-table-column-2">
-            {{ form_widget(form.type, {attr: attr|merge({class: 'sale-quoteproduct-type-select'})}) }}
-            {{ form_errors(form.type) }}
-        </td>
-        <td class="sale-quoteproduct-table-column-3">
-            <div class="sale-quoteproductitem-collection{% if commentSeller is not empty %} sale-quoteproduct-notes-seller-active{% endif %}">
-                <div class="sale-quoteproductrequest-collection sale-quoteproductrequest-only">
-                    {{ form_widget(form.quoteProductRequests) }}
-                    {{ form_errors(form.quoteProductRequests) }}
-                </div>
+        </div>
 
-                <div class="sale-quoteproductoffer-collection">
-                    {{ form_widget(form.quoteProductOffers) }}
-                    {{ form_errors(form.quoteProductOffers) }}
-                </div>
+        <div class="fields-row quote-lineitem-product-replacement-row{% if isProductReplacement %} quote-lineitem-block-active{% endif %}">
+            <div class="quote-lineitem-product-replacement-select quote-lineitem-product-form{% if not isProductReplacementFreeForm %} quote-lineitem-block-active{% endif %}">
+                {{ form_widget(form.productReplacement) }}
+                {{ form_errors(form.productReplacement) }}
+                <a class="quote-lineitem-free-form-link" href="javascript: void(0);">{{ 'orob2b.sale.quoteproduct.select.free_form'|trans }}</a>
+            </div>
+            <div class="quote-lineitem-product-free-form{% if isProductReplacementFreeForm %} quote-lineitem-block-active{% endif %}">
+                {{ form_label(form.productReplacementSku) }}
+                {{ form_widget(form.productReplacementSku) }}
+                {{ form_errors(form.productReplacementSku) }}
+                {{ form_label(form.freeFormProductReplacement) }}
+                {{ form_widget(form.freeFormProductReplacement, {attr: attr|merge({class: 'quote-lineitem-productreplacement-freeform-input'})}) }}
+                {{ form_errors(form.freeFormProductReplacement) }}
+                <br/><a class="quote-lineitem-product-select-link" href="javascript: void(0);">{{ 'orob2b.sale.quoteproduct.select.product'|trans }}</a>
+            </div>
+        </div>
+        {{ form_widget(form.type) }}
+    </td>
+    <td class="quote-lineitem-requested">
+        {{ block('orob2b_sale_quote_product_request_collection') }}
+    </td>
+    <td class="quote-lineitem-offers">
+        {{ form_widget(form.quoteProductOffers) }}
+        {{ form_errors(form.quoteProductOffers) }}
+    </td>
+    <td class="quote-lineitem-notes">
+        {% if commentAccount %}
+            <div class="quote-lineitem-notes quote-lineitem-notes-account">
+                {{ form_label(form.commentAccount) }}
+                {{ form_widget(form.commentAccount) }}
+            </div>
+        {% endif %}
 
-                <div>
-                    <a class="btn sale-quoteproduct-add-notes-btn" href="#">
-                        {{ 'orob2b.sale.btn.add_seller_notes'|trans }}
-                    </a>
-                </div>
-                {% if commentAccount %}
-                    <div class="sale-quoteproduct-notes sale-quoteproduct-notes-account sale-quoteproductrequest-only">
-                        {{ form_row(form.commentAccount) }}
-                    </div>
+        <a class="btn quote-lineitem-notes-add-btn" href="#">{{ 'orob2b.sale.btn.add_seller_notes'|trans }}</a>
+        <div class="quote-lineitem-notes quote-lineitem-notes-seller ">
+            {{ form_label(form.comment) }}
+            {{ form_widget(form.comment) }}
+            <a class="btn quote-lineitem-notes-remove-btn" href="#">
+                {{ 'orob2b.sale.btn.remove_seller_notes'|trans }}
+            </a>
+        </div>
+    </td>
+{% endblock %}
+
+{% block orob2b_sale_quote_product_request_collection %}
+    {% if quoteProductRequests|length %}
+        <table class="quote-lineitem-requests-widget table-bordered">
+            <thead>
+                <tr>
+                    <th colspan="2"><span>{{ 'orob2b.sale.quoteproductrequest.quantity.label'|trans }}</span></th>
+                    <th><span>{{ 'orob2b.sale.quoteproductrequest.price.label'|trans }}</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for child in quoteProductRequests %}
+                    <tr class="quote-lineitem-requested quote-lineitem-requested-item">
+                        <td class="quote-lineitem-requested-quantity">
+                            {{ child.quantity }}
+                        </td>
+                        <td class="quote-lineitem-requested-unit">
+                            {{ child.productUnit }}
+                        </td>
+                        <td class="quote-lineitem-requested-price">
+                            {% if child.price is not empty %}
+                                {{ child.price|oro_format_price }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}
+
+{% block orob2b_sale_quote_product_offer_collection_widget %}
+    {% if prototype is defined %}
+        {% set prototype_html = _self.orob2b_sale_quote_product_offer_prototype(form, true) %}
+    {% endif %}
+    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
+    {% set id = id ~ '_collection' %}
+    <div class="row-oro">
+        {% set prototype_name = form.vars.prototype_name %}
+        <div {{ block('widget_container_attributes') }}>
+            <table class="table-hover table table-bordered quote-lineitem-offers">
+                <thead>
+                <tr>
+                    <th colspan="3"><span>{{ 'orob2b.sale.quote.lineitem.offers.quantity'|trans }}</span></th>
+                    <th><span>{{ 'orob2b.sale.quote.lineitem.offers.price'|trans }}</span></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody class="quote-lineitem-offers-items" data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %} data-content>
+                {% if form.children|length %}
+                    {% for child in form.children %}
+                        {{ _self.orob2b_sale_quote_product_offer_prototype(child) }}
+                    {% endfor %}
+                {% elseif show_form_when_empty and prototype_html is defined %}
+                    {{ prototype_html|replace({(prototype_name): '0'})|raw }}
                 {% endif %}
-                <div class="sale-quoteproduct-notes sale-quoteproduct-notes-seller ">
-                    {{ form_row(form.comment) }}
-                    <a class="btn sale-quoteproduct-remove-notes-btn" href="#">
-                        {{ 'orob2b.sale.btn.remove_seller_notes'|trans }}
-                    </a>
-                </div>
-            </div>
+                </tbody>
+            </table>
+        </div>
+        <a class="btn add-list-item quote-lineitem-offers-item-add" data-container=".oro-item-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'orob2b.sale.quote.lineitem.offers.add'|trans }}</a>
+    </div>
+{% endblock %}
+
+{% macro orob2b_sale_quote_product_offer_prototype(widget, prototype) %}
+    {% if 'collection' in widget.vars.block_prefixes %}
+        {% set form = widget.vars.prototype %}
+        {% set name = widget.vars.full_name ~ '[' ~ widget.vars.prototype.vars.name ~ ']' %}
+    {% else %}
+        {% set form = widget %}
+        {% set name = widget.vars.full_name %}
+    {% endif %}
+    <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
+        class="quote-lineitem-offers quote-lineitem-offers-item">
+        {{ form_widget(form, { 'prototype' : prototype}) }}
+        <td class="quote-lineitem-offers-remove">
+            <button type="button" class="removeRow btn icons-holder"><i class="icon-remove"></i></button>
         </td>
     </tr>
-    </table>
-{% endblock %}
+{% endmacro %}
 
 {% block orob2b_sale_quote_product_offer_widget %}
-    <table class="sale-quoteproductitem-widget">
-        <tr>
-            <td class="sale-quoteproductitem-widget-quantity">
-                {{ form_widget(form.quantity) }}
-                {{ form_errors(form.quantity) }}
-            </td>
-            <td class="sale-quoteproductitem-widget-more">
-                {{ form_widget(form.allowIncrements) }}&nbsp;{{ form_label(form.allowIncrements) }}
-                {{ form_errors(form.allowIncrements) }}
-            </td>
-            <td class="sale-quoteproductitem-widget-pricetype">
-                {{ form_widget(form.priceType) }}
-                {{ form_errors(form.priceType) }}
-            </td>
-            <td class="sale-quoteproductitem-widget-productunit">
-                {{ form_widget(form.productUnit, {attr: attr|merge({class: 'sale-quoteproductitem-productunit-select'})}) }}
-                {{ form_errors(form.productUnit) }}
-            </td>
-            <td class="sale-quoteproductitem-widget-price">
-                {{ form_widget(form.price) }}
-                {{ form_errors(form.price) }}
-            </td>
-        </tr>
-    </table>
+    <td class="quote-lineitem-offers-quantity">
+        {{ form_widget(form.quantity) }}
+        {{ form_errors(form.quantity) }}
+    </td>
+    <td class="quote-lineitem-offers-unit">
+        {{ form_widget(form.productUnit, {attr: attr|merge({class: 'quote-lineitem-offer-unit-select'})}) }}
+        {{ form_errors(form.productUnit) }}
+    </td>
+    <td class="quote-lineitem-offers-more">
+        <div class="quote-lineitem-offers-more-fields">
+            {% set attrs = {} %}
+            {% if prototype|default(false) and form.allowIncrements.vars.attr.default is defined %}
+                {% set attrs = attrs|merge({'checked' : 'checked'}) %}
+            {% endif %}
+            {{ form_widget(form.allowIncrements, attrs) }}
+            {{ form_label(form.allowIncrements) }}
+            {{ form_errors(form.allowIncrements) }}
+        </div>
+        {{ form_widget(form.priceType) }}
+        {{ form_errors(form.priceType) }}
+    </td>
+    <td class="quote-lineitem-offers-price">
+        {{ form_widget(form.price) }}
+        {{ form_errors(form.price) }}
+    </td>
 {% endblock %}
 
-{% block orob2b_sale_quote_product_request_widget %}
-    <table class="sale-quoteproductitem-widget">
-        <tr>
-            <td>
-                {{ form_row(form.quantity) }}
-                {{ form_errors(form.quantity) }}
-            </td>
-            <td>
-                {{ form_widget(form.productUnit, {attr: attr|merge({class: 'sale-quoteproductitem-productunit-select'})}) }}
-                {{ form_errors(form.productUnit) }}
-            </td>
-            <td>
-                {{ form_row(form.price) }}
-                {{ form_errors(form.price.value) }}
-            </td>
-        </tr>
-    </table>
+{% block orob2b_sale_quote_product_to_order_widget %}
+    {% set product = quoteProduct.productReplacement|default(quoteProduct.product) %}
+    {% set offerChoiceName = 'offer_choice_%s'|format(name) %}
+    {% set isQuantityValid = form.quantity.vars.valid %}
+
+    {% set selectedOffer = null %}
+    {% set selectedOfferId = app.request.request.get(offerChoiceName) %}
+    {% if selectedOfferId %}
+        {% for offer in quoteProduct.quoteProductOffers %}
+            {% if offer.id == selectedOfferId %}
+                {% set selectedOffer = offer %}
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        {# first offer is a default value #}
+        {% set selectedOffer = quoteProduct.quoteProductOffers|first %}
+    {% endif %}
+
+    {% if selectedOffer %}
+        {% set defaultUnitCode = selectedOffer.productUnit.code|orob2b_format_product_unit_label(true) %}
+        {% if isQuantityValid %}
+            {% set defaultPriceValue = selectedOffer.price|oro_format_price %}
+        {% else %}
+            {% set defaultPriceValue = 'orob2b.frontend.sale.quoteproductoffer.not_available.message'|trans %}
+        {% endif %}
+    {% else %}
+        {% set defaultUnitCode = '' %}
+        {% set defaultPriceValue = '' %}
+    {% endif %}
+
+    {% set componentOptions = {
+        offerSelector: '[name=\'%s\']'|format(offerChoiceName),
+        quantitySelector: '[name=\'%s\']'|format(form.quantity.vars.full_name),
+        unitInputSelector: '[name=\'%s\']'|format(form.unit.vars.full_name),
+        unitSelector: '#%s .quote-product-offer-quantity-unit'|format(id),
+        unitPriceSelector: '#%s .quote-product-offer-price span'|format(id),
+        quoteProductId: quoteProduct.id,
+        calculatingMessage: 'orob2b.frontend.sale.quoteproductoffer.price_calculating.message'|trans,
+        notAvailableMessage: 'orob2b.frontend.sale.quoteproductoffer.not_available.message'|trans,
+    } %}
+    <tr id="{{ id }}"
+        data-page-component-module="orob2bsale/js/app/components/quote-product-to-order-component"
+        data-page-component-options="{{ componentOptions|json_encode }}">
+        <td class="quote-product-offer-product-sku">
+            <span>{{ product.sku }}</span>
+        </td>
+        <td class="quote-product-offer-product-name">
+            <span>{{ product.defaultName }}</span>
+        </td>
+        <td class="quote-product-offer-customer-notes">
+            <span>{{ quoteProduct.comment }}</span>
+        </td>
+        <td class="quote-product-offer-seller-notes">
+            <span>{{ quoteProduct.commentAccount }}</span>
+        </td>
+        <td class="quote-product-offer-select-offer">
+            <table>
+                {% for offer in quoteProduct.quoteProductOffers %}
+                    <tr>
+                        <td class="quote-product-offer-select-offer-choice">
+                            <input type="radio" name="{{ offerChoiceName }}" value="{{ offer.id }}"
+                               {% if offer.id == selectedOffer.id %}checked="checked"{% endif %}
+                               data-unit="{{ offer.productUnitCode }}"
+                               data-quantity="{{ offer.quantity }}"
+                               data-price="{{ offer.price|oro_format_price }}"
+                            />
+                        </td>
+                        <td class="quote-product-offer-select-offer-label">
+                            {{ offer.quantity|orob2b_format_short_product_unit_value(offer.productUnit) }}
+                            {% if offer.allowIncrements %}
+                                {{ 'orob2b.frontend.sale.quoteproductoffer.allow_increments.label'|trans }}
+                            {% endif %}
+                        </td>
+                        <td class="quote-product-offer-select-offer-price">
+                            {{ offer.price|oro_format_price }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </td>
+        <td class="quote-product-offer-quantity">
+            <div class="fields-row">
+                {{ form_widget(form.quantity, {'attr': {'data-valid': isQuantityValid|json_encode}}) }}
+                {{ form_widget(form.unit) }}
+                <span class="quote-product-offer-quantity-unit">{{ defaultUnitCode }}</span>
+            </div>
+            {{ form_errors(form.quantity) }}
+            {{ form_errors(form.unit) }}
+        </td>
+        <td class="quote-product-offer-price">
+            <span>{{ defaultPriceValue }}</span>
+        </td>
+    </tr>
+{% endblock %}
+
+{% block orob2b_sale_quote_to_order_widget %}
+    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'grid-container' }) %}
+    {% spaceless %}
+        <div {{ block('widget_container_attributes') }}>
+            <table class="grid table-hover table table-bordered table-condensed">
+                <thead>
+                    <tr>
+                        <th class="quote-product-offer-product-sku"><span>{{ 'orob2b.frontend.sale.quoteproduct.product_sku.label'|trans }}</span></th>
+                        <th class="quote-product-offer-product-name"><span>{{ 'orob2b.frontend.sale.quoteproduct.product_name.label'|trans }}</span></th>
+                        <th class="quote-product-offer-customer-notes"><span>{{ 'orob2b.frontend.sale.quoteproduct.comment.label'|trans }}</span></th>
+                        <th class="quote-product-offer-seller-notes"><span>{{ 'orob2b.frontend.sale.quoteproduct.comment_account.label'|trans }}</span></th>
+                        <th class="quote-product-offer-select-offer"><span>{{ 'orob2b.frontend.sale.quoteproductoffer.select_offer.label'|trans }}</span></th>
+                        <th class="quote-product-offer-quantity"><span>{{ 'orob2b.frontend.sale.quoteproductoffer.quantity_to_order.label'|trans }}</span></th>
+                        <th class="quote-product-offer-price"><span>{{ 'orob2b.frontend.sale.quoteproductoffer.unit_price.label'|trans }}</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for child in form.children %}
+                        {{ form_widget(child) }}
+                    {% endfor %}
+                </tbody>
+            </table>
+            {{ form_rest(form) }}
+            {{ form_errors(form) }}
+        </div>
+    {% endspaceless %}
 {% endblock %}

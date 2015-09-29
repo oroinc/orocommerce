@@ -14,6 +14,7 @@ use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 
 class RequestCreateQuoteHandler
@@ -109,24 +110,35 @@ class RequestCreateQuoteHandler
         $quote
             ->setRequest($entity)
             ->setOwner($this->user)
-        ;
+            ->setAccount($entity->getAccount())
+            ->setAccountUser($entity->getAccountUser())
+            ->setOrganization($this->user->getOrganization());
 
         foreach ($entity->getRequestProducts() as $requestProduct) {
             $quoteProduct = new QuoteProduct();
             $quoteProduct
                 ->setProduct($requestProduct->getProduct())
                 ->setType(QuoteProduct::TYPE_REQUESTED)
-                ->setCommentAccount($requestProduct->getComment())
-            ;
+                ->setCommentAccount($requestProduct->getComment());
+
             foreach ($requestProduct->getRequestProductItems() as $requestProductItem) {
                 $quoteProductRequest = new QuoteProductRequest();
                 $quoteProductRequest
                     ->setQuantity($requestProductItem->getQuantity())
                     ->setPrice($requestProductItem->getPrice())
                     ->setProductUnit($requestProductItem->getProductUnit())
-                    ->setRequestProductItem($requestProductItem)
-                ;
+                    ->setRequestProductItem($requestProductItem);
+
                 $quoteProduct->addQuoteProductRequest($quoteProductRequest);
+
+                $quoteProductOffer = new QuoteProductOffer();
+                $quoteProductOffer
+                    ->setQuantity($requestProductItem->getQuantity())
+                    ->setProductUnit($requestProductItem->getProductUnit())
+                    ->setPriceType(QuoteProductOffer::PRICE_TYPE_UNIT)
+                    ->setAllowIncrements(true);
+
+                $quoteProduct->addQuoteProductOffer($quoteProductOffer);
             }
             $quote->addQuoteProduct($quoteProduct);
         }

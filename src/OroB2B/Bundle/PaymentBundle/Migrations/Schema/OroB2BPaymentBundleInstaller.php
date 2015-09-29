@@ -5,9 +5,9 @@ namespace OroB2B\Bundle\PaymentBundle\Migrations\Schema;
 use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\MigrationBundle\Migration\Installation;
+use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
-use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroB2BPaymentBundleInstaller implements Installation, NoteExtensionAwareInterface
 {
@@ -33,6 +33,9 @@ class OroB2BPaymentBundleInstaller implements Installation, NoteExtensionAwareIn
         return 'v1_0';
     }
 
+    /**
+     * @param NoteExtension $noteExtension
+     */
     public function setNoteExtension(NoteExtension $noteExtension)
     {
         $this->noteExtension = $noteExtension;

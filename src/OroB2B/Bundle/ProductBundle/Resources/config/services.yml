@@ -151,6 +151,5 @@ services:
         class: %orob2b_product.menu.frontend.quick_add.class%
         arguments:
             - @orob2b_product.component_processor.registry
-            - @translator
         tags:
             - { name: oro_menu.builder, alias: frontend_menu }

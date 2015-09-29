@@ -18,17 +18,17 @@ orob2b:
             comment: Selected products will be added to this new shopping list.
             comment_cancel: Click "Cancel" to select a different list.
             submit_label: Create and Add
+            cancel_label: Cancel
 
         product:
             add_to_shopping_list.label: Add to Shopping List
-            add_to.label: Add to
             create_new_shopping_list.label: Create New Shopping List
             added.label: Product has been added
 
         actions:
             set_current: Set as current
             view: view shopping list
-            add_to_shopping_list: Add to
+            add_to_shopping_list: Add to {{ shoppingList }}
             add_to_new_shopping_list: Create New Shopping List
             add_success_message: "{0} No products were added|{1} 1 product was added|]1,Inf[ %count% products were added"
             failed_mesage: "You can't add these products to shopping list"
@@ -74,6 +74,10 @@ orob2b:
                 success: Line item has been added
             controller:
                 saved.message: Line Item Saved Successfully
+
+            action:
+                save: Save
+                cancel: Cancel
 
     frontend:
         shoppinglist:

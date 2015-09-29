@@ -22,9 +22,10 @@
 
 {% block navButtons %}
     {{ UI.cancelButton(path('orob2b_rfp_frontend_request_index')) }}
-    {% set html = UI.saveAndCloseButton() %}
     {% if entity.id or resource_granted('orob2b_rfp_frontend_request_create') %}
-        {% set html = html ~ UI.saveAndStayButton() %}
+        {% set html = UI.saveAndCloseButton() ~ UI.saveAndStayButton() %}
+    {% else %}
+        {% set html = UI.saveAndCloseButton('orob2b.rfp.btn.create_rfp'|trans) %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
 {% endblock navButtons %}
@@ -32,6 +33,18 @@
 {% block content_data %}
 
     {% set id = 'request-edit' %}
+
+    {% set lineItems %}
+        <div class="rfp-lineitems"
+             data-page-component-module="oroui/js/app/components/view-component"
+             data-page-component-options="{{ {
+                 view: 'orob2brfp/js/app/views/line-items-view'
+             }|json_encode }}"
+             data-layout="separate">
+            {{ form_widget(form.requestProducts) }}
+            {{ form_errors(form.requestProducts) }}
+        </div>
+    {% endset %}
 
     {% set dataBlocks = [
         {
@@ -55,7 +68,7 @@
             'subblocks': [{
                 'title': '',
                 'data': [
-                    form_row(form.requestProducts)
+                    lineItems
                 ]
             }]
         }

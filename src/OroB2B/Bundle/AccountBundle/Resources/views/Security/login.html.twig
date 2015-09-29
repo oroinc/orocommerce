@@ -1,62 +1,92 @@
 {% extends commerce.layout %}
 
-{% block content %}
-<div class="container">
-    <form id="login-form" action="{{ path('orob2b_account_account_user_security_check') }}" method="post" class="form-signin">
-        <div class="title-box">
-            {% if oro_theme_logo() %}
-            <h1 class="oro-title logo-{{ oro_theme_logo() ? 'image' : 'text' }}">
-                <img src="{{ asset(oro_theme_logo()) }}">
-            </h1>
-            <span class="divider-vertical"></span>
-            {% endif %}
-            <h2 class="title">{{ 'orob2b.account.accountuser.profile.login'|trans }}</h2>
-        </div>
-        <fieldset>
-            <script type="text/javascript">
-                require(['jquery'], function ($) {
-                    var $form = $('#login-form');
-                    $form.on('submit', function () {
-                        $form.find('button').attr('disabled', 'disabled');
-                    });
-                });
-            </script>
-            {% if error %}
-                <div class="alert alert-error">
-                    <div>{{ error|trans }}</div>
-                </div>
-            {% endif %}
-            {%- set usernameLabel = 'orob2b.account.accountuser.email.label'|trans %}
-            {%- set passwordLabel = 'orob2b.account.accountuser.password.label'|trans %}
-            {%- set showLabels = (usernameLabel|length <= 9) and (passwordLabel|trans <= 9) %}
-            <div class="input-prepend">
-                {% if showLabels %}
-                <span class="add-on">{{ usernameLabel }}</span>
+{# @todo: https://magecore.atlassian.net/browse/BB-1234 #}
+{% set loginPage = orob2b_login_page() %}
+
+{% block head_style %}
+    {{ parent() }}
+
+    {% if loginPage and loginPage.css %}
+        <style type="text/css">
+            {{ loginPage.css }}
+        </style>
+    {% endif %}
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %} 
+    <div class="login-page"{% if loginPage and loginPage.backgroundImage %} style="background-image: url('{{ file_url(loginPage, 'backgroundImage', loginPage.backgroundImage) }}');"{% endif %}>
+        {% if loginPage and loginPage.logoImage %}
+            <div class="logo">
+                <img src="{{ filtered_image_url(loginPage.logoImage, 'login_page_logo') }}">
+            </div>
+        {% endif %}
+
+        {% if loginPage and loginPage.topContent %}
+            <div class="login-form-before">
+                {{ loginPage.topContent|raw }}
+            </div>
+        {% endif %}
+
+        {% set formId = 'login-form' %}
+        <form id="{{ formId }}"
+              action="{{ path('orob2b_account_account_user_security_check') }}"
+              method="post" class="form-signin"
+              data-page-component-module="orob2bcms/js/app/components/login-form-component">
+            <div class="title-box">
+                {% if oro_theme_logo() %}
+                    <h1 class="oro-title logo-{{ oro_theme_logo() ? 'image' : 'text' }}">
+                        <img src="{{ asset(oro_theme_logo()) }}">
+                    </h1>
+                    <span class="divider-vertical"></span>
                 {% endif %}
-                <input type="text" id="prependedInput" class="span2" name="_username" value="{{ last_username }}" required="required" placeholder="{{ usernameLabel }}" autofocus/>
+                <h2 class="title">{{ 'orob2b.account.accountuser.profile.login'|trans }}</h2>
             </div>
-            <div class="input-prepend">
-                {% if showLabels %}
-                <span class="add-on">{{ passwordLabel }}</span>
+            <fieldset>
+                {% if error %}
+                    <div class="alert alert-error">
+                        <div>{{ error|trans }}</div>
+                    </div>
                 {% endif %}
-                <input type="password" id="prependedInput2" class="span2" name="_password" required="required" placeholder="{{ passwordLabel }}" autocomplete="off" />
-            </div>
-            <label class="checkbox oro-remember-me">
-                <input type="checkbox" id="remember_me" name="_remember_me" value="on" /> {{ 'orob2b.account.accountuser.profile.remember_me'|trans }}
-            </label>
-            <div class="control-group form-row">
-                <div class="pull-left">
-                    <a href="{{ path('orob2b_account_frontend_account_user_reset_request') }}">{{ 'orob2b.account.accountuser.profile.forgot_password'|trans }}?</a><br/>
-                    <a href="{{ path('orob2b_account_frontend_account_user_register') }}">{{ 'orob2b.account.accountuser.profile.register'|trans }}</a>
+                {%- set usernameLabel = 'orob2b.account.accountuser.email.label'|trans %}
+                {%- set passwordLabel = 'orob2b.account.accountuser.password.label'|trans %}
+                {%- set showLabels = (usernameLabel|length <= 9) and (passwordLabel|trans <= 9) %}
+                <div class="input-prepend">
+                    {% if showLabels %}
+                        <span class="add-on">{{ usernameLabel }}</span>
+                    {% endif %}
+                    <input type="text" id="prependedInput" class="span2" name="_username" value="{{ last_username }}" required="required" placeholder="{{ usernameLabel }}" autofocus/>
                 </div>
-                <div class="pull-right">
-                    <button type="submit" class="btn btn-large btn-primary" id="_submit" name="_submit">{{ 'orob2b.account.accountuser.profile.login'|trans }}</button>
+                <div class="input-prepend">
+                    {% if showLabels %}
+                        <span class="add-on">{{ passwordLabel }}</span>
+                    {% endif %}
+                    <input type="password" id="prependedInput2" class="span2" name="_password" required="required" placeholder="{{ passwordLabel }}" autocomplete="off" />
                 </div>
+                <label class="checkbox oro-remember-me">
+                    <input type="checkbox" id="remember_me" name="_remember_me" value="on" /> {{ 'orob2b.account.accountuser.profile.remember_me'|trans }}
+                </label>
+                <div class="control-group form-row">
+                    <div class="pull-left">
+                        <a href="{{ path('orob2b_account_frontend_account_user_reset_request') }}">{{ 'orob2b.account.accountuser.profile.forgot_password'|trans }}?</a><br/>
+                        <a href="{{ path('orob2b_account_frontend_account_user_register') }}">{{ 'orob2b.account.accountuser.profile.register'|trans }}</a>
+                    </div>
+                    <div class="pull-right">
+                        <button type="submit" class="btn btn-large btn-primary" id="_submit" name="_submit">{{ 'orob2b.account.accountuser.profile.login'|trans }}</button>
+                    </div>
+                </div>
+                {% placeholder oro_user_login_form %}
+            </fieldset>
+            <input type="hidden" name="_target_path" value="" />
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
+        </form>
+
+        {% if loginPage and loginPage.bottomContent %}
+            <div class="login-form-after">
+                {{ loginPage.bottomContent|raw }}
             </div>
-            {% placeholder oro_user_login_form %}
-        </fieldset>
-        <input type="hidden" name="_target_path" value="" />
-        <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
-    </form>
-</div>
-{% endblock content %}
+        {% endif %}
+    </div>
+{% endblock %}

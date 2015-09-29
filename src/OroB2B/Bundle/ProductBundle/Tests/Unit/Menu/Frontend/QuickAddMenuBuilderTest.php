@@ -19,22 +19,16 @@ class QuickAddMenuBuilderTest extends \PHPUnit_Framework_TestCase
      */
     protected $componentRegistry;
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
-     */
-    protected $translator;
-
     protected function setUp()
     {
-        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
         $this->componentRegistry = $this->getMock('OroB2B\Bundle\ProductBundle\Model\ComponentProcessorRegistry');
 
-        $this->builder = new QuickAddMenuBuilder($this->componentRegistry, $this->translator);
+        $this->builder = new QuickAddMenuBuilder($this->componentRegistry);
     }
 
     protected function tearDown()
     {
-        unset($this->builder, $this->componentRegistry, $this->translator);
+        unset($this->builder, $this->componentRegistry);
     }
 
     /**
@@ -51,25 +45,15 @@ class QuickAddMenuBuilderTest extends \PHPUnit_Framework_TestCase
         $menu = $this->getMock('Knp\Menu\ItemInterface');
 
         if ($hasAllowedProcessor) {
-            $this->translator->expects($this->at(0))
-                ->method('trans')
-                ->with('orob2b.product.frontend.quick_add.title')
-                ->willReturn('Title');
-
-            $this->translator->expects($this->at(1))
-                ->method('trans')
-                ->with('orob2b.product.frontend.quick_add.description')
-                ->willReturn('Description');
-
             $menu->expects($this->once())
                 ->method('addChild')
                 ->with(
-                    'Title',
+                    'orob2b.product.frontend.quick_add.title',
                     [
                         'route' => 'orob2b_product_frontend_quick_add',
                         'extras' => [
                             'position' => 500,
-                            'description' => 'Description',
+                            'description' => 'orob2b.product.frontend.quick_add.description',
                         ],
                     ]
                 );

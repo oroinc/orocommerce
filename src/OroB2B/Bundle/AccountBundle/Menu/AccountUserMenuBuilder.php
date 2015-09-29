@@ -11,19 +11,6 @@ use Oro\Bundle\NavigationBundle\Menu\BuilderInterface;
 class AccountUserMenuBuilder implements BuilderInterface
 {
     /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    /**
-     * @param TranslatorInterface $translator
-     */
-    public function __construct(TranslatorInterface $translator)
-    {
-        $this->translator = $translator;
-    }
-
-    /**
      * {@inheritDoc}
      */
     public function build(ItemInterface $menu, array $options = array(), $alias = null)
@@ -37,7 +24,7 @@ class AccountUserMenuBuilder implements BuilderInterface
 
         $menu
             ->addChild(
-                $this->translator->trans('orob2b.account.menu.account_user_logout.label'),
+                'orob2b.account.menu.account_user_logout.label',
                 [
                     'route'          => 'orob2b_account_account_user_security_logout',
                     'linkAttributes' => ['class' => 'no-hash']

@@ -6,7 +6,6 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 
-use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\PreloadedExtension;
@@ -91,15 +90,15 @@ class QuoteProductTypeTest extends AbstractTest
 
         $productUnitLabelFormatter->expects($this->any())
             ->method('format')
-            ->will($this->returnCallback(function ($unitCode) {
-                return $unitCode . '-formatted';
+            ->will($this->returnCallback(function ($unitCode, $isShort) {
+                return $unitCode . '-formatted-' . ($isShort ? 'short' : 'full');
             }))
         ;
         $productUnitLabelFormatter->expects($this->any())
             ->method('formatChoices')
-            ->will($this->returnCallback(function ($units) {
-                return array_map(function ($unit) {
-                    return $unit . '-formatted2';
+            ->will($this->returnCallback(function ($units, $isShort) {
+                return array_map(function ($unit) use ($isShort) {
+                    return $unit . '-formatted2-' . ($isShort ? 'short' : 'full');
                 }, $units);
             }))
         ;
@@ -121,11 +120,16 @@ class QuoteProductTypeTest extends AbstractTest
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
-            ->with([
-                'data_class'    => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProduct',
-                'intention'     => 'sale_quote_product',
-                'extra_fields_message'  => 'This form should not contain extra fields: "{{ extra_fields }}"'
-            ])
+            ->with($this->callback(function (array $options) {
+                $this->assertArrayHasKey('data_class', $options);
+                $this->assertArrayHasKey('compact_units', $options);
+                $this->assertArrayHasKey('intention', $options);
+                $this->assertArrayHasKey('extra_fields_message', $options);
+                $this->assertArrayHasKey('page_component', $options);
+                $this->assertArrayHasKey('page_component_options', $options);
+
+                return true;
+            }))
         ;
 
         $this->formType->configureOptions($resolver);
@@ -151,13 +155,15 @@ class QuoteProductTypeTest extends AbstractTest
         /* @var $form \PHPUnit_Framework_MockObject_MockObject|FormInterface */
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
 
-        $this->formType->finishView($view, $form, []);
+        $this->formType->finishView($view, $form, $inputData['options']);
 
         $this->assertEquals($expectedData, $view->vars);
     }
 
     /**
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function finishViewProvider()
     {
@@ -168,6 +174,9 @@ class QuoteProductTypeTest extends AbstractTest
                         'value' => null,
                     ],
                     'allUnits' => [],
+                    'options' => [
+                        'compact_units' => false,
+                    ],
                 ],
                 'expected'  => [
                     'value' => null,
@@ -176,6 +185,7 @@ class QuoteProductTypeTest extends AbstractTest
                         'allUnits'          => [],
                         'typeOffer'         => QuoteProduct::TYPE_OFFER,
                         'typeReplacement'   => QuoteProduct::TYPE_NOT_AVAILABLE,
+                        'compactUnits' => false,
                     ],
                 ],
             ],
@@ -187,16 +197,20 @@ class QuoteProductTypeTest extends AbstractTest
                     'allUnits' => [
                         'unit10'
                     ],
+                    'options' => [
+                        'compact_units' => false,
+                    ],
                 ],
                 'expected'  => [
                     'value' => new QuoteProduct(),
                     'componentOptions' => [
                         'units' => [],
                         'allUnits' => [
-                            'unit10-formatted2',
+                            'unit10-formatted2-full',
                         ],
-                        'typeOffer'         => QuoteProduct::TYPE_OFFER,
-                        'typeReplacement'   => QuoteProduct::TYPE_NOT_AVAILABLE,
+                        'typeOffer' => QuoteProduct::TYPE_OFFER,
+                        'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
+                        'compactUnits' => false,
                     ],
                 ],
             ],
@@ -211,6 +225,9 @@ class QuoteProductTypeTest extends AbstractTest
                         'unit20',
                         'unit30',
                     ],
+                    'options' => [
+                        'compact_units' => false,
+                    ],
                 ],
                 'expected'  => [
                     'value' => (new QuoteProduct())
@@ -219,20 +236,61 @@ class QuoteProductTypeTest extends AbstractTest
                     'componentOptions' => [
                         'units' => [
                             1 => [
-                                'unit1' => 'unit1-formatted',
-                                'unit2' => 'unit2-formatted',
+                                'unit1' => 'unit1-formatted-full',
+                                'unit2' => 'unit2-formatted-full',
                             ],
                             2 => [
-                                'unit2' => 'unit2-formatted',
-                                'unit3' => 'unit3-formatted',
+                                'unit2' => 'unit2-formatted-full',
+                                'unit3' => 'unit3-formatted-full',
                             ],
                         ],
                         'allUnits' => [
-                            'unit20-formatted2',
-                            'unit30-formatted2',
+                            'unit20-formatted2-full',
+                            'unit30-formatted2-full',
                         ],
-                        'typeOffer'         => QuoteProduct::TYPE_OFFER,
-                        'typeReplacement'   => QuoteProduct::TYPE_NOT_AVAILABLE,
+                        'typeOffer' => QuoteProduct::TYPE_OFFER,
+                        'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
+                        'compactUnits' => false,
+                    ],
+                ],
+            ],
+            'existing product and replacement and compact units' => [
+                'input'     => [
+                    'vars' => [
+                        'value' => (new QuoteProduct())
+                            ->setProduct($this->createProduct(3, ['unit3', 'unit4']))
+                            ->setProductReplacement($this->createProduct(4, ['unit4', 'unit5'])),
+                    ],
+                    'allUnits' => [
+                        'unit3',
+                        'unit4',
+                    ],
+                    'options' => [
+                        'compact_units' => true,
+                    ],
+                ],
+                'expected'  => [
+                    'value' => (new QuoteProduct())
+                        ->setProduct($this->createProduct(3, ['unit3', 'unit4']))
+                        ->setProductReplacement($this->createProduct(4, ['unit4', 'unit5'])),
+                    'componentOptions' => [
+                        'units' => [
+                            3 => [
+                                'unit3' => 'unit3-formatted-short',
+                                'unit4' => 'unit4-formatted-short',
+                            ],
+                            4 => [
+                                'unit4' => 'unit4-formatted-short',
+                                'unit5' => 'unit5-formatted-short',
+                            ],
+                        ],
+                        'allUnits' => [
+                            'unit3-formatted2-short',
+                            'unit4-formatted2-short',
+                        ],
+                        'typeOffer' => QuoteProduct::TYPE_OFFER,
+                        'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
+                        'compactUnits' => true,
                     ],
                 ],
             ],

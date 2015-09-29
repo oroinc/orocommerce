@@ -42,12 +42,18 @@ class LoadAccountAddressDemoData extends AbstractLoadAddressDemoData implements 
             $accountUserByEmail[$accountUser->getEmail()] = $accountUser;
         }
 
+        $accountHasAddress = [];
+
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
             $accountUser = $accountUserByEmail[$row['email']];
+            if (isset($accountHasAddress[$accountUser->getAccount()->getId()])) {
+                continue;
+            }
             $accountUser
                 ->getAccount()
                 ->addAddress($this->createAddress($row));
+            $accountHasAddress[$accountUser->getAccount()->getId()] = true;
         }
 
         fclose($handler);

@@ -23,7 +23,7 @@ class AccountAddressControllerTest extends WebTestCase
      */
     protected function setUp()
     {
-        $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
+        $this->initClient([], $this->generateBasicAuthHeader());
 
         $this->loadFixtures(
             [
@@ -72,7 +72,10 @@ class AccountAddressControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_api_account_get_account_address_primary', ['entityId' => $account->getId()])
+            $this->getUrl('orob2b_api_account_get_account_address_primary', ['entityId' => $account->getId()]),
+            [],
+            [],
+            $this->generateWsseAuthHeader()
         );
 
         $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
@@ -105,7 +108,10 @@ class AccountAddressControllerTest extends WebTestCase
     {
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_api_account_get_account_address_primary', ['entityId' => $id])
+            $this->getUrl('orob2b_api_account_get_account_address_primary', ['entityId' => $id]),
+            [],
+            [],
+            $this->generateWsseAuthHeader()
         );
 
         $address = $this->getJsonResponseContent($this->client->getResponse(), 200);
@@ -133,23 +139,31 @@ class AccountAddressControllerTest extends WebTestCase
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_api_account_get_account_address_primary', ['entityId' => $id])
+            $this->getUrl('orob2b_api_account_get_account_address_primary', ['entityId' => $id]),
+            [],
+            [],
+            $this->generateWsseAuthHeader()
         );
 
         $result = $this->getJsonResponseContent($this->client->getResponse(), 200);
 
         $this->assertEquals('Manicaland', $result['region']);
-        $this->assertEquals([
 
+        $this->assertCount(2, $result['types']);
+        $this->assertContains(
+            [
+                'name' => AddressType::TYPE_SHIPPING,
+                'label' => ucfirst(AddressType::TYPE_SHIPPING)
+            ],
+            $result['types']
+        );
+        $this->assertContains(
             [
                 'name' => AddressType::TYPE_BILLING,
                 'label' => ucfirst(AddressType::TYPE_BILLING)
             ],
-            [
-                'name' => AddressType::TYPE_SHIPPING,
-                'label' => ucfirst(AddressType::TYPE_SHIPPING)
-            ]
-        ], $result['types']);
+            $result['types']
+        );
 
         $this->assertEquals([
             [
@@ -173,17 +187,23 @@ class AccountAddressControllerTest extends WebTestCase
             $this->getUrl(
                 'orob2b_api_account_get_account_address_primary',
                 ['entityId' => $accountId]
-            )
+            ),
+            [],
+            [],
+            $this->generateWsseAuthHeader()
         );
 
         $address = $this->getJsonResponseContent($this->client->getResponse(), 200);
 
-        $crawler = $this->client->request(
+        $this->client->request(
             'DELETE',
             $this->getUrl(
                 'orob2b_api_account_delete_account_address',
                 ['entityId' => $accountId, 'addressId' => $address['id']]
-            )
+            ),
+            [],
+            [],
+            $this->generateWsseAuthHeader()
         );
 
         $result = $this->client->getResponse();

@@ -43,6 +43,7 @@ class RequestController extends Controller
     }
 
     /**
+     * @AclAncestor("orob2b_rfp_frontend_request_view")
      * @Route("/", name="orob2b_rfp_frontend_request_index")
      * @Template("OroB2BRFPBundle:Request/Frontend:index.html.twig")
      * @return array
@@ -78,6 +79,13 @@ class RequestController extends Controller
     }
 
     /**
+     * @Acl(
+     *      id="orob2b_rfp_frontend_request_create",
+     *      type="entity",
+     *      class="OroB2BRFPBundle:Request",
+     *      permission="CREATE",
+     *      group_name="commerce"
+     * )
      * @Route("/create", name="orob2b_rfp_frontend_request_create")
      * @Template("OroB2BRFPBundle:Request/Frontend:update.html.twig")
      *

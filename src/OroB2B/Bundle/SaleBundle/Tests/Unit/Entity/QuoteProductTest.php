@@ -158,6 +158,98 @@ class QuoteProductTest extends AbstractTest
     }
 
     /**
+     * @param QuoteProductOffer[] $offers
+     * @param int $type
+     * @param bool $expected
+     * @dataProvider hasQuoteProductOfferByPriceTypeDataProvider
+     */
+    public function testHasQuoteProductOfferByPriceType(array $offers, $type, $expected)
+    {
+        $quoteProduct = new QuoteProduct();
+        foreach ($offers as $offer) {
+            $quoteProduct->addQuoteProductOffer($offer);
+        }
+
+        $this->assertSame($expected, $quoteProduct->hasQuoteProductOfferByPriceType($type));
+    }
+
+    /**
+     * @return array
+     */
+    public function hasQuoteProductOfferByPriceTypeDataProvider()
+    {
+        $unitOffer = new QuoteProductOffer();
+        $unitOffer->setPriceType(QuoteProductOffer::PRICE_TYPE_UNIT);
+
+        $firstBundledOffer = new QuoteProductOffer();
+        $firstBundledOffer->setPriceType(QuoteProductOffer::PRICE_TYPE_BUNDLED);
+
+        $secondBundledOffer = new QuoteProductOffer();
+        $secondBundledOffer->setPriceType(QuoteProductOffer::PRICE_TYPE_BUNDLED);
+
+        return [
+            'true' => [
+                'offers' => [$unitOffer, $firstBundledOffer, $secondBundledOffer],
+                'type' => QuoteProductOffer::PRICE_TYPE_UNIT,
+                'expected' => true,
+            ],
+            'false' => [
+                'offers' => [$firstBundledOffer, $secondBundledOffer],
+                'type' => QuoteProductOffer::PRICE_TYPE_UNIT,
+                'expected' => false,
+            ],
+        ];
+    }
+
+    /**
+     * @param array $offers
+     * @param bool $expected
+     * @dataProvider hasIncrementalOffersDataProvider
+     */
+    public function testHasIncrementalOffers(array $offers, $expected)
+    {
+        $quoteProduct = new QuoteProduct();
+        foreach ($offers as $offer) {
+            $quoteProduct->addQuoteProductOffer($offer);
+        }
+
+        $this->assertSame($expected, $quoteProduct->hasIncrementalOffers());
+    }
+
+    /**
+     * @return array
+     */
+    public function hasIncrementalOffersDataProvider()
+    {
+        $firstNotIncrementedOffer = new QuoteProductOffer();
+        $firstNotIncrementedOffer->setAllowIncrements(false);
+
+        $secondNotIncrementedOffer = new QuoteProductOffer();
+        $secondNotIncrementedOffer->setAllowIncrements(false);
+
+        $incrementedOffer = new QuoteProductOffer();
+        $incrementedOffer->setAllowIncrements(true);
+
+        return [
+            'no offers' => [
+                'offers' => [],
+                'expected' => false,
+            ],
+            'no incremented offers' => [
+                'offers' => [$firstNotIncrementedOffer, $secondNotIncrementedOffer],
+                'expected' => false,
+            ],
+            'one incremented offer' => [
+                'offers' => [$firstNotIncrementedOffer, $secondNotIncrementedOffer, $incrementedOffer],
+                'expected' => true,
+            ],
+        ];
+    }
+
+    /**
+     * @param array $inputData
+     * @param bool $expectedResult
+     *
      * @dataProvider freeFormProvider
      */
     public function testIsProductFreeForm(array $inputData, $expectedResult)

@@ -8,6 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
+use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType as BaseRequestProductType;
 
 class RequestProductType extends AbstractType
 {
@@ -44,11 +45,13 @@ class RequestProductType extends AbstractType
             ])
             ->add('requestProductItems', RequestProductItemCollectionType::NAME, [
                 'label' => 'orob2b.rfp.requestproductitem.entity_plural_label',
-                'add_label' => 'orob2b.rfp.requestproductitem.add_label',
+                'options' => [
+                    'compact_units' => $options['compact_units'],
+                ],
             ])
             ->add('comment', 'textarea', [
                 'required' => false,
-                'label' => 'orob2b.rfp.requestproduct.comment.label',
+                'label' => 'orob2b.rfp.requestproduct.notes.label',
             ])
         ;
     }
@@ -61,8 +64,15 @@ class RequestProductType extends AbstractType
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
             'intention'  => 'rfp_frontend_request_product',
-            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
         ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getParent()
+    {
+        return BaseRequestProductType::NAME;
     }
 
     /**

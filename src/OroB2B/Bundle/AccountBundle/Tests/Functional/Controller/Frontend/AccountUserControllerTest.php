@@ -6,6 +6,7 @@ use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
 
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\AbstractUserControllerTest;
 
 /**
@@ -34,10 +35,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
     {
         $this->initClient(
             [],
-            array_merge(
-                $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW),
-                ['HTTP_X-CSRF-Header' => 1]
-            )
+            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
         $this->loadFixtures(
             [
@@ -59,8 +57,17 @@ class AccountUserControllerTest extends AbstractUserControllerTest
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_frontend_account_user_create'));
 
-        /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUserRole $role */
-        $role = $this->getUserRoleRepository()->findOneBy([]);
+        $loggedUser = $this->getContainer()->get('oro_security.security_facade')->getLoggedUser();
+
+        $this->assertInstanceOf('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $loggedUser);
+
+        /** @var AccountUserRole[] $roles */
+        $roles = $this->getUserRoleRepository()
+            ->getAvailableRolesByAccountUserQueryBuilder($loggedUser)
+            ->getQuery()
+            ->getResult();
+
+        $role = reset($roles);
 
         $this->assertNotNull($role);
 

@@ -2,7 +2,8 @@
 
 {% set pageComponentOptions = {
     '_wid': app.request.get('_wid'),
-    'savedId': savedId|default(null)
+    'savedId': savedId|default(null),
+    'shoppingListId': shoppingListId|default(null)
 } %}
 {% set message %}
     {% set msgArray = ['orob2b.shoppinglist.lineitem.flash.success'|trans] %}
@@ -48,8 +49,8 @@
         </div>
 
         <div class="widget-actions">
-            <button type="reset" class="btn">{{ 'Cancel'|trans }}</button>
-            <button type="submit" class="btn btn-success">{{ 'Save'|trans }}</button>
+            <button type="reset" class="btn">{{ 'orob2b.shoppinglist.lineitem.action.cancel'|trans }}</button>
+            <button type="submit" class="btn btn-success">{{ 'orob2b.shoppinglist.lineitem.action.save'|trans }}</button>
         </div>
     </form>
     {{ oro_form_js_validation(form) }}

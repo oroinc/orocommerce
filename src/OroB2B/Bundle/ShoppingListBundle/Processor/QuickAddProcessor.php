@@ -13,6 +13,7 @@ use Oro\Bundle\UIBundle\Tools\ArrayUtils;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ProductBundle\Model\ComponentProcessorInterface;
+use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\ShoppingListBundle\Generator\MessageGenerator;
 use OroB2B\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
 
@@ -50,9 +51,13 @@ class QuickAddProcessor implements ComponentProcessorInterface
     /** {@inheritdoc} */
     public function process(array $data, Request $request)
     {
-        if (!$data) {
+        if (empty($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY]) ||
+            !is_array($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY])
+        ) {
             return;
         }
+
+        $data = $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY];
 
         $shoppingListId = (int)$request->get(
             sprintf('%s[%s]', QuickAddType::NAME, QuickAddType::ADDITIONAL_FIELD_NAME),

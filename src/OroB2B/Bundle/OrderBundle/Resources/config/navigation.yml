@@ -46,11 +46,11 @@ oro_menu_config:
 
 oro_titles:
     orob2b_order_index: ~
-    orob2b_order_view:   '%%identifier%%'
-    orob2b_order_update: '%%identifier%% - Edit'
-    orob2b_order_create: 'Create Order'
+    orob2b_order_view:   'orob2b.order.navigation.view'
+    orob2b_order_update: 'orob2b.order.navigation.view - oro.ui.edit'
+    orob2b_order_create: 'oro.ui.create_entity'
 
     orob2b_order_frontend_index:  'orob2b.order.entity_plural_label'
-    orob2b_order_frontend_view:   '%%identifier%%'
-    orob2b_order_frontend_update: '%%identifier%% - Edit'
-    orob2b_order_frontend_create: 'Create Order'
+    orob2b_order_frontend_view:   'orob2b.order.navigation.view'
+    orob2b_order_frontend_update: 'orob2b.order.navigation.view - oro.ui.edit'
+    orob2b_order_frontend_create: 'oro.ui.create_entity'
