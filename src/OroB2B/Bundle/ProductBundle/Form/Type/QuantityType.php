@@ -39,10 +39,13 @@ class QuantityType extends AbstractType
     /** {@inheritdoc} */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'roundQuantity'], -2048);
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'roundQuantity'], -2048);
         $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'roundQuantity'], -2048);
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'roundQuantity'], -2048);
+
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'setDefaultData'], -1024);
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'setDefaultData'], -1024);
     }
 
     /**
@@ -69,9 +72,12 @@ class QuantityType extends AbstractType
      */
     protected function getScale(FormInterface $form)
     {
-        $options = $form->getConfig()->getOptions();
         $parent = $form->getParent();
+        if (!$parent) {
+            return null;
+        }
 
+        $options = $form->getConfig()->getOptions();
         $product = $options['product'];
         $productField = $options['product_field'];
 
@@ -92,7 +98,7 @@ class QuantityType extends AbstractType
         }
 
         $productUnit = $parent->get($productUnitField)->getData();
-        if (!$productUnit || !$productUnit instanceof ProductUnit) {
+        if (!$productUnit instanceof ProductUnit) {
             return null;
         }
 

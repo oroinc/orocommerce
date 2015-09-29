@@ -7,7 +7,7 @@ use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
 
 /**
  * @method \PHPUnit_Framework_MockObject_MockBuilder getMockBuilder($className)
- * @method \PHPUnit_Framework_MockObject_Matcher_InvokedAtLeastOnce atLeastOnce()
+ * @method \PHPUnit_Framework_MockObject_Matcher_AnyInvokedCount any()
  */
 trait QuantityTypeTrait
 {
@@ -26,9 +26,13 @@ trait QuantityTypeTrait
      */
     public function getRoundingService()
     {
-        return $this->roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\RoundingService')
-            ->disableOriginalConstructor()
-            ->getMock();
+        if (!$this->roundingService) {
+            $this->roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\RoundingService')
+                ->disableOriginalConstructor()
+                ->getMock();
+        }
+
+        return $this->roundingService;
     }
 
     /**
@@ -41,7 +45,7 @@ trait QuantityTypeTrait
 
     public function addRoundingServiceExpect()
     {
-        $this->roundingService->expects($this->atLeastOnce())
+        $this->roundingService->expects($this->any())
             ->method('round')
             ->willReturnCallback(
                 function ($value, $precision) {
