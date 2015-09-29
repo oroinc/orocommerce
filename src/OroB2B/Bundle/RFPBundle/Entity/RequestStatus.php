@@ -42,6 +42,7 @@ class RequestStatus implements Translatable
 {
     const OPEN = 'open';
     const CLOSED = 'closed';
+    const DRAFT = 'draft';
 
     /**
      * @var integer
@@ -104,6 +105,14 @@ class RequestStatus implements Translatable
     public function __construct()
     {
         $this->translations = new ArrayCollection();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDraft()
+    {
+        return self::DRAFT === $this->name;
     }
 
     /**

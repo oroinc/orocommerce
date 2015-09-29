@@ -8,15 +8,16 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
-use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
+use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 
 class QuoteProductType extends AbstractType
 {
@@ -68,6 +69,15 @@ class QuoteProductType extends AbstractType
     /**
      * {@inheritdoc}
      */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        $view->vars['page_component'] = $options['page_component'];
+        $view->vars['page_component_options'] = $options['page_component_options'];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $units = [];
@@ -94,7 +104,10 @@ class QuoteProductType extends AbstractType
             $units[$product->getId()] = [];
 
             foreach ($product->getAvailableUnitCodes() as $unitCode) {
-                $units[$product->getId()][$unitCode] = $this->labelFormatter->format($unitCode);
+                $units[$product->getId()][$unitCode] = $this->labelFormatter->format(
+                    $unitCode,
+                    $options['compact_units']
+                );
             }
         }
 
@@ -102,6 +115,7 @@ class QuoteProductType extends AbstractType
             'units' => $units,
             'typeOffer' => QuoteProduct::TYPE_OFFER,
             'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
+            'compactUnits' => $options['compact_units'],
         ];
 
         $view->vars['componentOptions'] = $componentOptions;
@@ -113,7 +127,7 @@ class QuoteProductType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('product', ProductSelectType::NAME, [
+            ->add('product', ProductRemovedSelectType::NAME, [
                 'required' => true,
                 'label' => 'orob2b.product.entity_label',
                 'create_enabled' => false,
@@ -123,16 +137,14 @@ class QuoteProductType extends AbstractType
                 'label' => 'orob2b.sale.quoteproduct.product_replacement.label',
                 'create_enabled' => false,
             ])
-            ->add('quoteProductRequests', QuoteProductRequestCollectionType::NAME, [
-            ])
             ->add('quoteProductOffers', QuoteProductOfferCollectionType::NAME, [
                 'add_label' => 'orob2b.sale.quoteproductoffer.add_label',
+                'options' => [
+                    'compact_units' => $options['compact_units'],
+                ],
             ])
-            ->add('type', 'choice', [
-                'label' => 'orob2b.sale.quoteproduct.type.label',
-                'choices' => $this->formatter->formatTypeLabels(QuoteProduct::getTypes()),
-                'required' => true,
-                'expanded' => false,
+            ->add('type', 'hidden', [
+                'data' => QuoteProduct::TYPE_REQUESTED,
             ])
             ->add('commentAccount', 'textarea', [
                 'required' => false,
@@ -151,12 +163,15 @@ class QuoteProductType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
             'intention' => 'sale_quote_product',
+            'compact_units' => false,
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
+            'page_component' => 'oroui/js/app/components/view-component',
+            'page_component_options' => ['view' => 'orob2bsale/js/app/views/line-item-view'],
         ]);
     }
 
@@ -182,61 +197,22 @@ class QuoteProductType extends AbstractType
 
         $form = $event->getForm();
 
-        if (!$quoteProduct->getProduct()) {
-            $this->replaceProductField(
-                $form,
-                'product',
-                true,
-                $quoteProduct->getProductSku(),
-                'orob2b.product.entity_label',
-                'orob2b.sale.quoteproduct.product.removed'
-            );
-        }
-
         if ($quoteProduct->isTypeNotAvailable() && !$quoteProduct->getProductReplacement()) {
-            $this->replaceProductField(
-                $form,
-                'productReplacement',
-                false,
-                $quoteProduct->getProductReplacementSku(),
-                'orob2b.sale.quoteproduct.product_replacement.label',
-                'orob2b.sale.quoteproduct.product_replacement.removed'
-            );
-        }
-    }
+            $options = [
+                'create_enabled' => false,
+                'required' => false,
+                'label' => 'orob2b.sale.quoteproduct.product_replacement.label',
+            ];
 
-    /**
-     * @param FormInterface $form
-     * @param string $field
-     * @param bool $required
-     * @param string $productSku
-     * @param string $label
-     * @param string $emptyLabel
-     */
-    protected function replaceProductField(
-        FormInterface $form,
-        $field,
-        $required,
-        $productSku,
-        $label,
-        $emptyLabel = null
-    ) {
-        $options = [
-            'create_enabled' => false,
-            'required' => $required,
-            'label' => $label,
-        ];
-
-        if ($emptyLabel) {
-            $emptyValueTitle = $this->translator->trans($emptyLabel, [
-                '{title}' => $productSku,
+            $emptyValueTitle = $this->translator->trans('orob2b.product.removed', [
+                '{title}' => $quoteProduct->getProductReplacementSku(),
             ]);
 
             $options['configs'] = [
                 'placeholder' => $emptyValueTitle,
             ];
-        }
 
-        $form->add($field, ProductSelectType::NAME, $options);
+            $form->add('productReplacement', ProductSelectType::NAME, $options);
+        }
     }
 }

@@ -3,8 +3,9 @@ orob2b:
         entity_label: Order
         entity_plural_label: Orders
         entity_description: Represents order information
-        id.label: Numeric ID
-        identifier.label: ID
+        id.label: ID
+        identifier.label: Order Number
+        identifier.short_label: 'Order #'
         owner.label: Owner
         account.label: Account
         account_user.label: Account User
@@ -86,16 +87,14 @@ orob2b:
         btn:
             add_seller_notes: 'Add Notes'
             remove_seller_notes: 'Remove Seller Notes'
-            add_to_order: 'Add To Order'
+            create_order: 'Create Order'
 
         menu:
             sales_tab.label: Sales
-            orders_list.description: List of existing orders
+            order_list.description: List of existing orders
             shortcut_new_order.label: Create new order
             shortcut_new_order.description: Create new order item
-            shortcut_orders_list.description: Show list of existing orders
-            order_quick_add.label: Quick Order Form
-            order_quick_add.description: Quick add products to order, RFQ or shopping cart
+            shortcut_order_list.description: Show list of existing orders
 
         widgets:
             order_information: Order Information
@@ -131,3 +130,6 @@ orob2b:
         subtotals:
             subtotal: Subtotal
         sales_orders.label: 'Sales Orders'
+
+        navigation:
+            view: 'Order #%identifier%'

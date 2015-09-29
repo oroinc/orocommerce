@@ -18,7 +18,7 @@
 {% block navButtons %}
     {{ UI.cancelButton(path('orob2b_rfp_request_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or resource_granted('orob2b_rfp_request_create') %}
+    {% if entity.id or resource_granted('orob2b_rfp_frontend_request_create') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
@@ -28,6 +28,18 @@
 
     {% set id = 'request-edit' %}
 
+    {% set lineItems %}
+        <div class="rfp-lineitems"
+             data-page-component-module="oroui/js/app/components/view-component"
+             data-page-component-options="{{ {
+                 view: 'orob2brfp/js/app/views/line-items-view'
+             }|json_encode }}"
+             data-layout="separate">
+            {{ form_widget(form.requestProducts) }}
+            {{ form_errors(form.requestProducts) }}
+        </div>
+    {% endset %}
+
     {% set dataBlocks = [
         {
             'title': 'orob2b.rfp.sections.general'|trans,
@@ -35,7 +47,16 @@
             'subblocks': [{
                 'title': '',
                 'data': [
-                    include('OroB2BRFPBundle:Request:block/infoRequest.html.twig'),
+                    form_row(form.firstName),
+                    form_row(form.lastName),
+                    form_row(form.email),
+                    form_row(form.phone),
+                    form_row(form.company),
+                    form_row(form.role),
+                    form_row(form.account),
+                    form_row(form.accountUser),
+                    form_row(form.status),
+                    form_row(form.body),
                 ]
             }]
         },
@@ -44,7 +65,7 @@
             'subblocks': [{
                 'title': '',
                 'data': [
-                    form_row(form.requestProducts)
+                    lineItems
                 ]
             }]
         }
@@ -61,5 +82,7 @@
         'dataBlocks': dataBlocks
     }%}
 
-    {{ parent() }}
+    <div class="rfp-request-widget" data-page-component-module="orob2baccount/js/app/components/account-selection-component">
+        {{ parent() }}
+    </div>
 {% endblock content_data %}

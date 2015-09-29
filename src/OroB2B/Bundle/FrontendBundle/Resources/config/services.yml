@@ -1,4 +1,5 @@
 parameters:
+    orob2b_frontend.activity_list.placeholder.filter.class: OroB2B\Bundle\FrontendBundle\Placeholder\ActivityListPlaceholderFilter
     orob2b_frontend.listener.frontend_route_collection.class: OroB2B\Bundle\FrontendBundle\EventListener\FrontendRouteCollectionListener
     orob2b_frontend.listener.route_collection.class: OroB2B\Bundle\FrontendBundle\EventListener\RouteCollectionListener
     orob2b_frontend.menu.breadcrumb_manager.class: OroB2B\Bundle\FrontendBundle\Menu\BreadcrumbManager
@@ -6,6 +7,7 @@ parameters:
     orob2b_frontend.listener.theme.class: OroB2B\Bundle\FrontendBundle\EventListener\ThemeListener
     orob2b_frontend.placeholder.theme_filter.class: OroB2B\Bundle\FrontendBundle\Placeholder\ThemeFilter
     orob2b_frontend.placeholder.filter.class: OroB2B\Bundle\FrontendBundle\Placeholder\FrontendFilter
+    orob2b_frontend.request.frontend_helper.class: OroB2B\Bundle\FrontendBundle\Request\FrontendHelper
 
 services:
     orob2b_frontend.listener.frontend_route_collection:
@@ -36,8 +38,8 @@ services:
     orob2b_frontend.listener.theme:
         class: %orob2b_frontend.listener.theme.class%
         arguments:
-            - @router
             - @oro_theme.registry
+            - @orob2b_frontend.request.frontend_helper
             - %installed%
         tags:
             - {name: kernel.event_listener, event: kernel.request, method: onKernelRequest}
@@ -65,6 +67,20 @@ services:
     orob2b_frontend.placeholder.filter:
         class: %orob2b_frontend.placeholder.filter.class%
         arguments:
-            - @router
+            - @orob2b_frontend.request.frontend_helper
         calls:
             - [setRequest, ["@?request="]]
+
+    orob2b_frontend.request.frontend_helper:
+        class: %orob2b_frontend.request.frontend_helper.class%
+        arguments:
+            - %backend_prefix%
+
+    orob2b_frontend.activity_list.placeholder.filter:
+        class: %orob2b_frontend.activity_list.placeholder.filter.class%
+        arguments:
+            - @oro_activity_list.placeholder.filter
+            - @orob2b_frontend.request.frontend_helper
+            - @request_stack
+        tags:
+            - { name: kernel.event_listener, event: oro.ui.grouping_chain_widget.before, method: isAllowedButton, priority: 10 }

@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\OrderBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
+
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
@@ -56,7 +57,7 @@ class OroB2BOrderBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_2';
+        return 'v1_0';
     }
 
     /**
@@ -105,7 +106,7 @@ class OroB2BOrderBundleInstaller implements
         $table->addColumn('account_id', 'integer', []);
         $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['created_at'], 'created_at_index', []);
+        $table->addIndex(['created_at'], 'orob2b_order_created_at_index', []);
         $table->addUniqueIndex(['identifier'], 'uniq_orob2b_order_identifier');
         $table->addUniqueIndex(['shipping_address_id'], 'uniq_c036ff904d4cff2b');
         $table->addUniqueIndex(['billing_address_id'], 'uniq_c036ff9079d0c0e4');

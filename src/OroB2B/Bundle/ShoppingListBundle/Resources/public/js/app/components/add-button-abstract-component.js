@@ -7,6 +7,7 @@ define(function(require) {
     var mediator = require('oroui/js/mediator');
     var ShoppingListWidget = require('orob2bshoppinglist/js/app/widget/shopping-list-widget');
     var BaseComponent = require('oroui/js/app/components/base/component');
+    var widgetManager = require('oroui/js/widget-manager');
 
     AddButtonAbstractComponent = BaseComponent.extend({
         /**
@@ -16,8 +17,14 @@ define(function(require) {
             mediatorPrefix: '',
             intention: {
                 create_new: 'new'
-            }
+            },
+            widgetAlias: 'shopping_list_add_product_widget'
         },
+
+        /**
+         * @property {jQuery.Element}
+         */
+        dialog: null,
 
         /**
          * @inheritDoc
@@ -26,7 +33,8 @@ define(function(require) {
             this.options = $.extend(true, {}, this.options, options || {});
 
             mediator.on(this.options.mediatorPrefix + ':add-widget-requested-response', this.showForm, this);
-            this.options._sourceElement.find('.grid-control').click(_.bind(this.onClick, this));
+
+            this.options._sourceElement.on('click', '.grid-control', _.bind(this.onClick, this));
         },
 
         /**
@@ -43,13 +51,38 @@ define(function(require) {
         },
 
         showForm: function() {
-            var dialog = new ShoppingListWidget({});
+            var self = this;
+            if (!this.dialog) {
+                this.dialog = new ShoppingListWidget({});
+                this.dialog.on('formSave', _.bind(function(response) {
+                    self.reloadWidget(response);
 
-            dialog.render();
-            dialog.on('formSave', _.bind(function(response) {
-                this.selectShoppingList(response);
-                $('.btn[data-intention="current"]').data('id', response);
-            }, this));
+                    this.selectShoppingList(response);
+                    $('.btn[data-intention="current"]').data('id', response);
+                }, this));
+            }
+
+            this.dialog.render();
+        },
+
+        /**
+         * @param {String} id
+         */
+        reloadWidget: function(id) {
+            if (this.buttonExists(id)) {
+                return;
+            }
+
+            widgetManager.getWidgetInstanceByAlias(this.options.widgetAlias, function(widget) {
+                widget.render();
+            });
+        },
+
+        /**
+         * @param {String} id
+         */
+        buttonExists: function(id) {
+            return Boolean(this.options._sourceElement.find('[data-id="' + id + '"]').length);
         },
 
         /**
@@ -66,12 +99,13 @@ define(function(require) {
                 return;
             }
 
-            this.options._sourceElement.find('.grid-control').off();
-            mediator.off(this.options.mediatorPrefix + ':add-widget-requested-response', this.showForm, this);
+            this.options._sourceElement.off();
+
+            mediator.off(this.options.mediatorPrefix + ':add-widget-requested-response');
+
             AddButtonAbstractComponent.__super__.dispose.call(this);
         }
     });
 
     return AddButtonAbstractComponent;
 });
-

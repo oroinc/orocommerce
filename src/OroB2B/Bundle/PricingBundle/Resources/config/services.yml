@@ -23,7 +23,6 @@ parameters:
     orob2b_pricing.event_listener.datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\DatagridListener
     orob2b_pricing.event_listener.product_price_datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener
     orob2b_pricing.event_listener.frontend.product_price_datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener
-    orob2b_pricing.event_listener.product_price_widget.class: OroB2B\Bundle\PricingBundle\EventListener\ProductPriceWidgetListener
     orob2b_pricing.event_listener.product_duplicate.class: OroB2B\Bundle\PricingBundle\EventListener\ProductDuplicateListener
 
     orob2b_pricing.model.price_list_request_handler.abstract.class: OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler
@@ -156,13 +155,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-products-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-products-grid, method: onResultAfter }
-
-    orob2b_pricing.event_listener.product_price_widget:
-        class: %orob2b_pricing.event_listener.product_price_widget.class%
-        arguments:
-            - @orob2b_pricing.model.price_list_request_handler
-        tags:
-            - { name: kernel.event_listener, event: product_grid.render, method: onWidgetRender, priority: 10 }
 
     orob2b_pricing.validator.product_price_allowed_units:
         class: %orob2b_pricing.validator.product_price_allowed_units.class%

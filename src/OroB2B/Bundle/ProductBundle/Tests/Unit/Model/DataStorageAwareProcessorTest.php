@@ -77,7 +77,7 @@ class DataStorageAwareProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('generate')
             ->with(
                 $redirectRouteName,
-                [DataStorageAwareProcessor::QUICK_ADD_PARAM => 1],
+                [ProductDataStorage::STORAGE_KEY => true],
                 UrlGeneratorInterface::ABSOLUTE_PATH
             )
             ->willReturn($redirectUrl);
@@ -103,28 +103,37 @@ class DataStorageAwareProcessorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param {String|null} $acl
-     * @param {bool|null} $isGranted
-     *
+     * @param string $acl
+     * @param bool $isGranted
+     * @param bool $hasLoggedUser
+     * @param bool $expected
      * @dataProvider processorIsAllowedProvider
      */
-    public function testProcessorIsAllowed($acl, $isGranted)
+    public function testProcessorIsAllowed($acl, $isGranted, $hasLoggedUser, $expected)
     {
         if (null !== $acl) {
+            $this->securityFacade->expects($this->any())
+                ->method('hasLoggedUser')
+                ->willReturn($hasLoggedUser);
             $this->securityFacade->expects($this->any())->method('isGranted')
                 ->with($acl)->willReturn($isGranted);
         }
 
         $this->processor->setAcl($acl);
-        $this->assertEquals($isGranted, $this->processor->isAllowed());
+        $this->assertEquals($expected, $this->processor->isAllowed());
     }
 
+    /**
+     * @return array
+     */
     public function processorIsAllowedProvider()
     {
         return [
-            [null, true],
-            ['fail', false],
-            ['success', true],
+            [null, true, false, true],
+            ['fail', false, false, false],
+            ['fail', true, false, false],
+            ['fail', false, true, false],
+            ['success', true, true, true],
         ];
     }
 

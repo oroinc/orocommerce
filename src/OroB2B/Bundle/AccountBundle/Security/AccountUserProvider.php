@@ -54,7 +54,12 @@ class AccountUserProvider
      */
     public function getLoggedUser()
     {
-        return $this->securityFacade->getLoggedUser();
+        $user = $this->securityFacade->getLoggedUser();
+        if ($user instanceof AccountUser) {
+            return $user;
+        }
+
+        return null;
     }
 
     /**
@@ -73,6 +78,24 @@ class AccountUserProvider
     public function isGrantedViewLocal($class)
     {
         return $this->isGrantedEntityMask($class, EntityMaskBuilder::MASK_VIEW_LOCAL);
+    }
+
+    /**
+     * @param string $class
+     * @return boolean
+     */
+    public function isGrantedEditBasic($class)
+    {
+        return $this->isGrantedEntityMask($class, EntityMaskBuilder::MASK_EDIT_BASIC);
+    }
+
+    /**
+     * @param string $class
+     * @return boolean
+     */
+    public function isGrantedEditLocal($class)
+    {
+        return $this->isGrantedEntityMask($class, EntityMaskBuilder::MASK_EDIT_LOCAL);
     }
 
     /**

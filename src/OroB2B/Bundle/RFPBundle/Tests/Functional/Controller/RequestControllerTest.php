@@ -2,14 +2,11 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller;
 
-use Doctrine\Common\Persistence\ObjectManager;
-
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ActivityListBundle\Entity\ActivityList;
 use Oro\Bundle\ActivityListBundle\Entity\Manager\ActivityListManager;
 
 use OroB2B\Bundle\RFPBundle\Entity\Request;
-use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
 /**
@@ -68,7 +65,7 @@ class RequestControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains(
-            sprintf('%s %s - Requests For Proposal - RFP', LoadRequestData::FIRST_NAME, LoadRequestData::LAST_NAME),
+            sprintf('%s %s - Requests For Quote - Sales', LoadRequestData::FIRST_NAME, LoadRequestData::LAST_NAME),
             $result->getContent()
         );
 
@@ -133,7 +130,7 @@ class RequestControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Request For Proposal Status was successfully changed', $result->getContent());
+        $this->assertContains('RFQ Status was successfully changed', $result->getContent());
 
         /* @var $entity Request */
         $entity = $this->getContainer()->get('doctrine')->getRepository('OroB2BRFPBundle:Request')->find($id);
@@ -158,6 +155,7 @@ class RequestControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_update', ['id' => $id]));
 
         $form = $crawler->selectButton('Save and Close')->form();
+        $form->remove('orob2b_rfp_request[requestProducts][0]');
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);

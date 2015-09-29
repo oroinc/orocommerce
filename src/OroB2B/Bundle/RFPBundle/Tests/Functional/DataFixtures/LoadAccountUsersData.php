@@ -2,11 +2,9 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
@@ -16,7 +14,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
 
-class LoadAccountUsersData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
+class LoadAccountUsersData extends AbstractFixture implements DependentFixtureInterface
 {
     const ADMINISTRATOR = 'ROLE_FRONTEND_ADMINISTRATOR';
     const BUYER         = 'ROLE_FRONTEND_BUYER';
@@ -93,14 +91,6 @@ class LoadAccountUsersData extends AbstractFixture implements ContainerAwareInte
             'role' => self::BUYER
         ]
     ];
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
 
     /**
      * @param ObjectManager $manager

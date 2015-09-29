@@ -34,37 +34,37 @@ class CategoriesTest extends Selenium2TestCase
         sleep(1);
 
         // preconditions
-        $categories->assertTitle('Categories - Catalog Management')
+        $categories->assertTitle('Master Catalog - Products')
             ->assertCategoryExists(self::MASTER_CATALOG);
 
         // create first level category
         $categories->createCategory()
-            ->assertTitle('Create Category - Categories - Catalog Management')
+            ->assertTitle('Create Category - Master Catalog - Products')
             ->setDefaultTitle(self::$firstCategory)
             ->saveCategory();
 
         // assert first level category created
-        $categories->assertTitle('Categories - Catalog Management')
+        $categories->assertTitle('Master Catalog - Products')
             ->assertMessage('Category has been saved')
             ->assertCategoryExists(self::$firstCategory)
             ->assertContainsSubcategory(self::MASTER_CATALOG, self::$firstCategory);
 
         // create second level category
         $categories->openCategory(self::$firstCategory)
-            ->assertTitle(self::$firstCategory . ' - Edit - Categories - Catalog Management')
+            ->assertTitle(self::$firstCategory . ' - Edit - Master Catalog - Products')
             ->createSubcategory()
-            ->assertTitle('Create Category - Categories - Catalog Management')
+            ->assertTitle('Create Category - Master Catalog - Products')
             ->setDefaultTitle(self::$secondCategory)
             ->saveCategory();
 
         // assert second level category created
-        $categories->assertTitle('Categories - Catalog Management')
+        $categories->assertTitle('Master Catalog - Products')
             ->assertMessage('Category has been saved')
             ->openTreeSubcategories(self::$firstCategory)
             ->assertCategoryExists(self::$secondCategory)
             ->assertContainsSubcategory(self::$firstCategory, self::$secondCategory)
             ->openCategory(self::$secondCategory)
-            ->assertTitle(self::$secondCategory . ' - Edit - Categories - Catalog Management');
+            ->assertTitle(self::$secondCategory . ' - Edit - Master Catalog - Products');
     }
 
     /**
@@ -158,7 +158,7 @@ class CategoriesTest extends Selenium2TestCase
             ->deleteCategory();
 
         // assert categories removed
-        $categories->assertTitle('Categories - Catalog Management')
+        $categories->assertTitle('Master Catalog - Products')
             ->assertMessage('Category deleted')
             ->assertCategoryNotExist(self::$firstCategory)
             ->assertCategoryNotExist(self::$secondCategory);

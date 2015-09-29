@@ -4,6 +4,8 @@ parameters:
     orob2b_sale.entity.quote_product_offer.class: OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer
     orob2b_sale.entity.quote_product_request.class: OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest
     orob2b_sale.quote.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+    orob2b_sale.service.quote_to_order_converter.class: OroB2B\Bundle\SaleBundle\Model\QuoteToOrderConverter
+    orob2b_sale.service.quote_product_offer_matcher.class: OroB2B\Bundle\SaleBundle\Model\QuoteProductOfferMatcher
     #Formatters
     orob2b_sale.formatter.quote_product.class: OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter
     orob2b_sale.formatter.quote_product_offer.class: OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter
@@ -11,15 +13,7 @@ parameters:
     orob2b_sale.validator.quote_product_unit.class: OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProductOfferValidator
     #Twig extensions
     orob2b_sale.twig.quote.class: OroB2B\Bundle\SaleBundle\Twig\QuoteExtension
-    #Listeners
-    orob2b_sale.event_listener.entity_subscriber.class: OroB2B\Bundle\SaleBundle\EventListener\EntitySubscriber
-
 services:
-    orob2b_sale.event_listener.entity_subscriber:
-        class: %orob2b_sale.event_listener.entity_subscriber.class%
-        tags:
-            - { name: doctrine.event_subscriber }
-
     orob2b_sale.quote.manager.api:
         class: %orob2b_sale.quote.manager.api.class%
         parent: oro_soap.manager.entity_manager.abstract
@@ -51,3 +45,12 @@ services:
         class: %orob2b_sale.formatter.quote_product_offer.class%
         arguments:
             - @translator
+
+    orob2b_sale.service.quote_to_order_converter:
+        class: %orob2b_sale.service.quote_to_order_converter.class%
+        arguments:
+            - @orob2b_order.model.order_currency_handler
+            - @orob2b_order.provider.subtotals
+
+    orob2b_sale.service.quote_product_offer_matcher:
+        class: %orob2b_sale.service.quote_product_offer_matcher.class%

@@ -126,7 +126,32 @@ datagrid:
             acl_resource: orob2b_product_view_products
 
     products-grid:
-        extends: products-select-grid
+        extends: products-select-grid-base
+        source:
+            acl_resource: orob2b_product_view
+            query:
+                select:
+                    - productVisibility.id as visibilityId
+                    - productVisibility.name as visibilityName
+                join:
+                    left:
+                        - { join: product.visibility, alias: productVisibility}
+        columns:
+            visibility:
+                label:         orob2b.product.visibility.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BProductBundle:Product:Datagrid/visibility.html.twig
+        sorters:
+            columns:
+                visibility:
+                    data_name: visibilityName
+        filters:
+            columns:
+                visibility:
+                    type:      enum
+                    data_name: visibilityId
+                    enum_code: prod_visibility
         options:
             entity_pagination: true
         properties:
@@ -225,7 +250,7 @@ datagrid:
                     data_name: product.sku
                 name:
                     type:      string
-                    data_name: product.sku
+                    data_name: name
                 inventoryStatusName:
                     type:      enum
                     data_name: inventoryStatusId

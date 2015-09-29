@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
 
 /**
  * @ORM\Table(name="orob2b_sale_quote_product")
@@ -24,8 +25,9 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
  *          }
  *      }
  * )
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class QuoteProduct
+class QuoteProduct implements ProductHolderInterface
 {
     const TYPE_REQUESTED        = 10;
     const TYPE_OFFER            = 20;
@@ -120,6 +122,14 @@ class QuoteProduct
     {
         $this->quoteProductOffers   = new ArrayCollection();
         $this->quoteProductRequests = new ArrayCollection();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityIdentifier()
+    {
+        return $this->getId();
     }
 
     /**
@@ -406,6 +416,21 @@ class QuoteProduct
     }
 
     /**
+     * @param int $priceType
+     * @return bool
+     */
+    public function hasQuoteProductOfferByPriceType($priceType)
+    {
+        foreach ($this->quoteProductOffers as $offer) {
+            if ($offer->getPriceType() == $priceType) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Add quoteProductRequest
      *
      * @param QuoteProductRequest $quoteProductRequest
@@ -444,5 +469,34 @@ class QuoteProduct
     public function getQuoteProductRequests()
     {
         return $this->quoteProductRequests;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasOfferVariants()
+    {
+        if (count($this->quoteProductOffers) > 1) {
+            return true;
+        }
+
+        /** @var QuoteProductOffer $firstItem */
+        $firstItem = $this->quoteProductOffers->first();
+
+        return $firstItem && $firstItem->isAllowIncrements();
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasIncrementalOffers()
+    {
+        foreach ($this->quoteProductOffers as $offer) {
+            if ($offer->isAllowIncrements()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

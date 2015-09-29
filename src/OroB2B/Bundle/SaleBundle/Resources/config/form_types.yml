@@ -6,6 +6,8 @@ parameters:
     orob2b_sale.form.type.quote_product_collection.class: OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductCollectionType
     orob2b_sale.form.type.quote_product_offer_collection.class: OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferCollectionType
     orob2b_sale.form.type.quote_product_request_collection.class: OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductRequestCollectionType
+    orob2b_sale.form.type.orob2b_sale_quote_product_to_order.class: OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductToOrderType
+    orob2b_sale.form.type.orob2b_sale_quote_to_order.class: OroB2B\Bundle\SaleBundle\Form\Type\QuoteToOrderType
 
 services:
     # Quote form types
@@ -30,7 +32,6 @@ services:
     orob2b_sale.form.type.quote_product_offer:
         class: %orob2b_sale.form.type.quote_product_offer.class%
         arguments:
-            - @translator
             - @orob2b_sale.formatter.quote_product_offer
         calls:
             - [setDataClass, [%orob2b_sale.entity.quote_product_offer.class%]]
@@ -39,8 +40,6 @@ services:
 
     orob2b_sale.form.type.quote_product_request:
         class: %orob2b_sale.form.type.quote_product_request.class%
-        arguments:
-            - @translator
         calls:
             - [setDataClass, [%orob2b_sale.entity.quote_product_request.class%]]
         tags:
@@ -60,3 +59,16 @@ services:
         class: %orob2b_sale.form.type.quote_product_request_collection.class%
         tags:
             - { name: form.type, alias: orob2b_sale_quote_product_request_collection }
+
+    orob2b_sale.form.type.quote_product_to_order:
+        class: %orob2b_sale.form.type.orob2b_sale_quote_product_to_order.class%
+        arguments:
+            - @orob2b_sale.service.quote_product_offer_matcher
+            - @orob2b_product.service.rounding
+        tags:
+            - { name: form.type, alias: orob2b_sale_quote_product_to_order }
+
+    orob2b_sale.form.type.quote_to_order:
+        class: %orob2b_sale.form.type.orob2b_sale_quote_to_order.class%
+        tags:
+            - { name: form.type, alias: orob2b_sale_quote_to_order }

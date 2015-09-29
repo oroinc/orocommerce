@@ -14,7 +14,7 @@
         btnLabel: options.shoppingList.label,
         btnId: options.shoppingList.id,
         dataId: options.shoppingList.id,
-        actionLabel: 'orob2b.shoppinglist.actions.add_to_shopping_list'|trans
+        actionLabel: 'orob2b.shoppinglist.actions.add_to_shopping_list'|trans({'{{ shoppingList }}': options.shoppingList.label})
     } %}
 
     {{ buttons.getButton(btnOptions) }}
@@ -57,12 +57,13 @@
         }) %}
     {% endif %}
 
+    {% set label = options.shoppingList ? options.shoppingList.label : 'orob2b.shoppinglist.entity_label'|trans %}
     {% set btnOptions = {
         dataUrl: options.dataUrl,
         dataAttributes: dataAttributes,
-        btnLabel: 'orob2b.shoppinglist.entity_label'|trans,
+        btnLabel: label,
         dataId: shoppingListId,
-        actionLabel: 'orob2b.shoppinglist.actions.add_to_shopping_list'|trans
+        actionLabel: 'orob2b.shoppinglist.actions.add_to_shopping_list'|trans({'{{ shoppingList }}': label})
     } %}
 
     {{ buttons.getButton(btnOptions) }}
@@ -75,7 +76,7 @@
         'aCss': 'no-hash grid-control',
         'iCss': 'icon-shopping-cart hide-text',
         'dataId': options.dataId,
-        'label' : options.actionLabel ~ ' ' ~ options.btnLabel
+        'label' : options.actionLabel|default(options.btnLabel)
     } %}
     {% if options.dataUrl %}
         {% set buttonOptions = buttonOptions|merge({
@@ -97,6 +98,9 @@
     {% endset %}
 
     {{ UI.pinnedDropdownButton({
-        'html': buttonsHtml
+        'html': buttonsHtml,
+        'options': {
+            'truncateLength': 15
+        }
     }) }}
 {% endmacro %}

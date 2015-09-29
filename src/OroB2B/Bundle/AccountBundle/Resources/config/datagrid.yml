@@ -12,6 +12,7 @@ datagrid:
                     - account_group.name as group_name
                     - parent.name as parent_name
                     - internalRating.name as internal_rating_name
+                    - internalRating.id as internal_rating_id
                 from:
                     - { table: %orob2b_account.entity.account.class%, alias: account }
                 join:
@@ -38,6 +39,8 @@ datagrid:
                     data_name: group_name
                 parent_name:
                     data_name: parent_name
+                internal_rating_name:
+                    data_name: internal_rating_name
             default:
                 name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
         filters:
@@ -56,6 +59,10 @@ datagrid:
                 parent_name:
                     type:      string
                     data_name: parent.name
+                internal_rating_name:
+                    type:      enum
+                    data_name: internal_rating_id
+                    enum_code: acc_internal_rating
 
     account-accounts-grid:
         extends: account-accounts-select-grid
@@ -422,39 +429,49 @@ datagrid:
     account-account-user-select-grid:
         extends:  account-account-user-grid-base
 
-    account-account-user-roles-grid:
+    basic-account-account-user-roles-grid:
         options:
             entityHint: role
             entity_pagination: true
         source:
-            acl_resource: orob2b_account_account_user_role_view
             type: orm
             query:
                 select:
                     - role.id
                     - role.role
                     - role.label
+                    - (CASE WHEN role.account IS NOT NULL THEN false ELSE true END) as isRolePredefined
                 from:
                     - { table: %orob2b_account.entity.account_user_role.class%, alias: role }
         properties:
             id: ~
+            view_link:
+                type: url
+                params:
+                    - id
             update_link:
                 type: url
-                route: orob2b_account_account_user_role_update
                 params:
                     - id
             delete_link:
                 type: url
-                route: orob2b_api_account_delete_accountuserrole
                 params:
                     - id
         columns:
             label:
                 label: orob2b.account.accountuserrole.role.label
+            isRolePredefined:
+                type: twig
+                label: orob2b.account.accountuserrole.type.label
+                frontend_type: html
+                data_name: isRolePredefined
+                template: OroB2BAccountBundle:AccountUserRole:Datagrid/Property/isRolePredifined.html.twig
         sorters:
             columns:
                 label:
                     data_name: role.label
+                isRolePredefined:
+                    data_name: isRolePredefined
             default:
                 label: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
         filters:
@@ -462,45 +479,130 @@ datagrid:
                 label:
                     type: string
                     data_name: role.label
+                isRolePredefined:
+                    type: choice
+                    data_name: CAST(isRolePredefined as int)
+                    options:
+                        field_options:
+                            choices:
+                                true:  orob2b.account.accountuserrole.type.predefined.label
+                                false: orob2b.account.accountuserrole.type.customizable.label
         actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                rowAction:     true
             update:
                 type:          navigate
                 label:         oro.grid.action.update
                 link:          update_link
                 icon:          edit
-                acl_resource:  orob2b_account_account_user_role_update
-                rowAction:     true
             delete:
                 type:          delete
                 label:         oro.grid.action.delete
                 link:          delete_link
                 icon:          trash
-                acl_resource:  orob2b_account_account_user_role_delete
 
-    account-account-users-grid-update:
+    account-account-user-roles-grid:
+        extends: basic-account-account-user-roles-grid
         source:
-            type: orm
-            acl_resource: orob2b_account_account_user_view
+            acl_resource: orob2b_account_account_user_role_view
             query:
                 select:
-                    - user.id
-                    - user.firstName
-                    - user.lastName
-                    - user.email
+                    - role_account.name as account_name
+                join:
+                    left:
+                        - { join: role.account, alias: role_account }
+        columns:
+            account_name:
+                label: orob2b.account.accountuserrole.account.label
+        sorters:
+            columns:
+                account_name:
+                    data_name: account_name
+        filters:
+            columns:
+                account_name:
+                    type:      string
+                    data_name: account_name
+        properties:
+            view_link:
+                route: orob2b_account_account_user_role_view
+            update_link:
+                route: orob2b_account_account_user_role_update
+            delete_link:
+                route: orob2b_api_account_delete_accountuserrole
+        actions:
+            view:
+                acl_resource:  orob2b_account_account_user_role_view
+            update:
+                acl_resource:  orob2b_account_account_user_role_update
+            delete:
+                acl_resource:  orob2b_account_account_user_role_delete
+
+    frontend-account-account-user-roles-grid:
+        extends: basic-account-account-user-roles-grid
+        extended_entity_name: %orob2b_account.entity.account_user_role.class%
+        options:
+            skip_acl_check: true
+        properties:
+            view_link:
+                route:  orob2b_account_frontend_account_user_role_view
+            update_link:
+                route: orob2b_account_frontend_account_user_role_update
+            delete_link:
+                route: orob2b_api_frontend_account_delete_accountuserrole
+        actions:
+            view:
+                acl_resource:  orob2b_account_frontend_account_user_role_view
+            update:
+                acl_resource:  orob2b_account_frontend_account_user_role_update
+            delete:
+                acl_resource:  orob2b_account_frontend_account_user_role_delete
+        action_configuration: [@orob2b_account.datagrid.action_permission_provider, "getAccountUserRolePermission"]
+
+    account-account-users-grid-update-basic:
+        extends: account-account-users-grid-basic
+        source:
+            query:
+                select:
                     - >
                         (CASE WHEN (:role IS NOT NULL) THEN
-                            CASE WHEN (:role MEMBER OF user.roles OR user.id IN (:data_in)) AND user.id NOT IN (:data_not_in)
+                            CASE WHEN (:role MEMBER OF user.roles OR user.id IN (:data_in)) AND user.id NOT IN (:data_not_in) AND (:hideHasRole = FALSE)
                             THEN true ELSE false END
                         ELSE
-                            CASE WHEN user.id IN (:data_in) AND user.id NOT IN (:data_not_in)
+                            CASE WHEN user.id IN (:data_in) AND user.id NOT IN (:data_not_in) AND (:hideHasRole = FALSE)
                             THEN true ELSE false END
                         END) as hasRole
-                from:
-                    - { table: %orob2b_account.entity.account_user.class%, alias: user }
+                where:
+                    or:
+                        - :account IS NULL AND :newAccount IS NULL AND :changeAccountAction = FALSE
+                        - :newAccount IS NULL AND :changeAccountAction = TRUE
+                        - :account IS NOT NULL AND :newAccount IS NULL AND :changeAccountAction = FALSE AND user.account = :account
+                        - :newAccount IS NOT NULL AND user.account = :newAccount AND :changeAccountAction = TRUE
             bind_parameters:
-                - role
-        properties:
-            id: ~
+                -
+                    name: role
+                    default: NULL
+                -
+                    name: account
+                    default: NULL
+                -
+                    name: newAccount
+                    path: _parameters.newAccount
+                    default: NULL
+                -
+                    name: changeAccountAction
+                    path: _parameters.changeAccountAction
+                    default: FALSE
+                    type: boolean
+                -
+                    name: hideHasRole
+                    path: _parameters.hideHasRole
+                    default: FALSE
+                    type: boolean
         columns:
             hasRole:
                 label: orob2b.account.accountuser.has_role.label
@@ -517,6 +619,37 @@ datagrid:
                 hasRole:
                     type: boolean
                     data_name: hasRole
+        sorters:
+            columns:
+                hasRole:
+                    data_name: hasRole
+            default:
+                hasRole: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+        options:
+            entityHint: user
+            rowSelection:
+                dataField: id
+                columnName: hasRole
+                selectors:
+                    included: '#roleAppendUsers'
+                    excluded: '#roleRemoveUsers'
+
+    account-account-users-grid-basic:
+        source:
+            type: orm
+            acl_resource: orob2b_account_account_user_view
+            query:
+                select:
+                    - user.id
+                    - user.firstName
+                    - user.lastName
+                    - user.email
+                from:
+                    - { table: %orob2b_account.entity.account_user.class%, alias: user }
+        properties:
+            id: ~
+        filters:
+            columns:
                 firstName:
                     type:      string
                     data_name: user.firstName
@@ -528,24 +661,61 @@ datagrid:
                     data_name: user.email
         sorters:
             columns:
-                hasRole:
-                    data_name: hasRole
                 firstName:
                     data_name: user.firstName
                 lastName:
                     data_name: user.lastName
                 email:
                     data_name: user.email
-            default:
-                hasRole: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
-        options:
-            entityHint: user
-            rowSelection:
-                dataField: id
-                columnName: hasRole
-                selectors:
-                    included: '#roleAppendUsers'
-                    excluded: '#roleRemoveUsers'
+
+    account-account-users-grid-view-basic:
+        extends: account-account-users-grid-basic
+        source:
+            query:
+                where:
+                    and:
+                        - :role MEMBER OF user.roles
+            bind_parameters:
+                -
+                    name: role
+                    default: NULL
+        columns:
+            firstName:
+                label: orob2b.account.accountuser.first_name.label
+            lastName:
+                label: orob2b.account.accountuser.last_name.label
+            email:
+                label: orob2b.account.accountuser.email.label
+
+    account-account-users-grid-view:
+        extends: account-account-users-grid-view-basic
+        source:
+            acl_resource: orob2b_account_account_user_view
+
+    frontend-account-account-users-grid-view:
+        extends: account-account-users-grid-view-basic
+        source:
+            acl_resource: orob2b_account_frontend_account_user_view
+
+    account-account-users-grid-update:
+        extends: account-account-users-grid-update-basic
+        source:
+            acl_resource: orob2b_account_account_user_view
+        properties:
+            update_link:
+                route: orob2b_account_account_user_role_update
+            delete_link:
+                route: orob2b_api_account_delete_accountuserrole
+
+    account-account-users-grid-frontend-update:
+        extends: account-account-users-grid-update-basic
+        source:
+            acl_resource: orob2b_account_frontend_account_user_view
+        properties:
+            update_link:
+                route: orob2b_account_frontend_account_user_role_update
+            delete_link:
+                route: orob2b_api_frontend_account_delete_accountuserrole
 
     frontend-account-account-user-grid:
         extends: account-account-user-grid-base

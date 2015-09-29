@@ -6,9 +6,11 @@ define(function(require) {
     var $ = require('jquery');
     var mediator = require('oroui/js/mediator');
     var routing = require('routing');
+    var layout = require('oroui/js/layout');
     var tools = require('oroui/js/tools');
     var widgetManager = require('oroui/js/widget-manager');
     var BaseComponent = require('oroui/js/app/components/base/component');
+    var PageableCollection = require('orodatagrid/js/pageable-collection');
 
     GridSidebarComponent = BaseComponent.extend({
         /**
@@ -21,7 +23,8 @@ define(function(require) {
             widgetRoute: 'oro_datagrid_widget',
             widgetRouteParameters: {
                 gridName: ''
-            }
+            },
+            gridParam: 'grid'
         },
 
         /**
@@ -55,6 +58,8 @@ define(function(require) {
             this.$container.find('.control-minimize').click(_.bind(this.minimize, this));
             this.$container.find('.control-maximize').click(_.bind(this.maximize, this));
 
+            this._fixSidebarHeight();
+
             this._maximizeOrMaximize(null);
         },
 
@@ -68,23 +73,25 @@ define(function(require) {
                 var self = this;
                 widgetManager.getWidgetInstanceByAlias(
                     this.options.widgetAlias,
-                    function(widget) {
-                        self._patchGridCollectionUrl(self._getQueryParamsFromUrl(widget.options.url));
+                    function() {
+                        self._patchGridCollectionUrl(self._getQueryParamsFromUrl(location.search));
                     }
                 );
             }
         },
 
         /**
-         *
          * @param {Object} data
          */
         onSidebarChange: function(data) {
-            var params = _.extend(this._getCurrentUrlParams(), data.params);
-            var widgetParams = _.extend(this.options.widgetRouteParameters, params);
+            var params = _.extend(this._getQueryParamsFromUrl(location.search), data.params);
+            var widgetParams = _.extend(
+                _.omit(this.options.widgetRouteParameters, this.options.gridParam),
+                params
+            );
             var self = this;
 
-            this._pushState(params);
+            this._pushState(_.omit(params, _.isNull));
 
             this._patchGridCollectionUrl(params);
 
@@ -110,21 +117,20 @@ define(function(require) {
             var collection = this.gridCollection;
             if (!_.isUndefined(collection)) {
                 var url = collection.url;
+                if (_.isUndefined(url)) {
+                    return;
+                }
+                var newParams = _.extend(
+                    this._getQueryParamsFromUrl(url),
+                    _.omit(params, this.options.gridParam)
+                );
                 if (url.indexOf('?') !== -1) {
                     url = url.substring(0, url.indexOf('?'));
                 }
-                var newParams = _.extend(this._getQueryParamsFromUrl(collection.url), params);
-
-                collection.url = url + '?' + this._urlParamsToString(newParams);
+                if (!_.isEmpty(newParams)) {
+                    collection.url = url + '?' + this._urlParamsToString(newParams);
+                }
             }
-        },
-
-        /**
-         * @private
-         * @return {Object}
-         */
-        _getCurrentUrlParams: function() {
-            return this._queryStringToObject(location.search.slice(1));
         },
 
         /**
@@ -132,12 +138,9 @@ define(function(require) {
          * @param {Object} params
          */
         _pushState: function(params) {
-            var paramsString = this._urlParamsToString(_.omit(params, 'saveState'));
-            if (paramsString.length) {
-                paramsString = '?' + paramsString;
-            }
-
-            history.pushState({}, document.title, location.pathname + paramsString + location.hash);
+            var paramsString = this._urlParamsToString(_.omit(params, ['saveState']));
+            var current = mediator.execute('pageCache:getCurrent');
+            mediator.execute('changeUrl', current.path + '?' + paramsString);
         },
 
         minimize: function() {
@@ -150,10 +153,10 @@ define(function(require) {
 
         /**
          * @private
-         * @param {string} state
+         * @param {String} state
          */
         _maximizeOrMaximize: function(state) {
-            var params = this._getCurrentUrlParams();
+            var params = this._getQueryParamsFromUrl(location.search);
 
             if (state === null) {
                 state = params.sidebar || 'on';
@@ -175,12 +178,27 @@ define(function(require) {
         },
 
         /**
-         * @param {String} query
-         * @return {Object}
          * @private
          */
-        _queryStringToObject: function(query) {
-            return query.length ? tools.unpackFromQueryString(decodeURIComponent(query)) : {};
+        _fixSidebarHeight: function() {
+            var $container = $('#container');
+            var $pageTitle = $('.page-title', $container);
+            var $productContainer = $('.product-container');
+            var $sidebar = $('.grid-sidebar', $container);
+
+            var fixHeight = function() {
+                $sidebar
+                    .height($productContainer.height())
+                    .css('min-height', $container.height() - $pageTitle.height() + 'px');
+            };
+
+            layout.onPageRendered(fixHeight);
+            $(window).on('resize', _.debounce(fixHeight, 50));
+            mediator.on('page:afterChange', fixHeight);
+            mediator.on('layout:adjustReloaded', fixHeight);
+            mediator.on('layout:adjustHeight', fixHeight);
+
+            fixHeight();
         },
 
         /**
@@ -189,13 +207,20 @@ define(function(require) {
          * @private
          */
         _getQueryParamsFromUrl: function(url) {
-            var params = {};
-
-            if (url.indexOf('?') !== -1) {
-                params = this._queryStringToObject(decodeURIComponent(url.substring(url.indexOf('?') + 1, url.length)));
+            if (_.isUndefined(url)) {
+                return {};
             }
 
-            return params;
+            if (url.indexOf('?') === -1) {
+                return {};
+            }
+
+            var query = url.substring(url.indexOf('?') + 1, url.length);
+            if (!query.length) {
+                return {};
+            }
+
+            return PageableCollection.decodeStateData(query);
         },
 
         /**
@@ -211,6 +236,8 @@ define(function(require) {
             if (this.disposed) {
                 return;
             }
+
+            mediator.off('grid-sidebar:change:' + this.options.sidebarAlias);
 
             delete this.gridCollection;
 

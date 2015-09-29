@@ -7,7 +7,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
@@ -17,7 +16,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
-class LoadProductDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
+class LoadProductDemoData extends AbstractFixture implements ContainerAwareInterface
 {
     /**
      * @var ContainerInterface
@@ -30,16 +29,6 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
-    {
-        return [
-            'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadAttributeDemoData',
-        ];
     }
 
     /**
@@ -69,18 +58,18 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
             $row = array_combine($headers, array_values($data));
 
             $name = new LocalizedFallbackValue();
-            $name->setString($row['productName']);
+            $name->setString($row['name']);
 
             $description = new LocalizedFallbackValue();
-            $description->setText(nl2br($row['productDescription']));
+            $description->setText(nl2br($row['description']));
 
             $product = new Product();
             $product->setOwner($businessUnit)
                 ->setOrganization($organization)
-                ->setSku($row['productCode'])
-                ->setInventoryStatus($inventoryStatuses[array_rand($inventoryStatuses)])
-                ->setVisibility($visibilities[array_rand($visibilities)])
-                ->setStatus($statuses[array_rand($statuses)])
+                ->setSku($row['sku'])
+                ->setInventoryStatus($inventoryStatuses[1])
+                ->setVisibility($visibilities[0])
+                ->setStatus($statuses[1])
                 ->addName($name)
                 ->addDescription($description);
 

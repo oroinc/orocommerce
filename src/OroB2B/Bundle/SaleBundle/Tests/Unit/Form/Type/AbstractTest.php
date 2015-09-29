@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormTypeInterface;
-use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -122,24 +121,22 @@ abstract class AbstractTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param TranslatorInterface $translator
      * @return QuoteProductOfferType
      */
-    protected function prepareQuoteProductOfferType(TranslatorInterface $translator)
+    protected function prepareQuoteProductOfferType()
     {
-        $quoteProductOfferType = new QuoteProductOfferType($translator, $this->quoteProductOfferFormatter);
+        $quoteProductOfferType = new QuoteProductOfferType($this->quoteProductOfferFormatter);
         $quoteProductOfferType->setDataClass('OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer');
 
         return $quoteProductOfferType;
     }
 
     /**
-     * @param TranslatorInterface $translator
      * @return QuoteProductRequestType
      */
-    protected function prepareQuoteProductRequestType(TranslatorInterface $translator)
+    protected function prepareQuoteProductRequestType()
     {
-        $quoteProductRequestType = new QuoteProductRequestType($translator);
+        $quoteProductRequestType = new QuoteProductRequestType();
         $quoteProductRequestType->setDataClass('OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest');
 
         return $quoteProductRequestType;

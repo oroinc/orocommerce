@@ -2,17 +2,20 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
-use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
+use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductRemovedSelectType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
 
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType;
@@ -26,37 +29,50 @@ class RequestProductTypeTest extends AbstractTest
     protected $formType;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
-     */
-    protected $translator;
-
-    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->translator   = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        /* @var $productUnitLabelFormatter ProductUnitLabelFormatter|\PHPUnit_Framework_MockObject_MockObject */
+        $productUnitLabelFormatter = $this->getMockBuilder(
+            'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
+        )
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->formType     = new RequestProductType($this->translator);
+        $productUnitLabelFormatter->expects($this->any())
+            ->method('format')
+            ->will($this->returnCallback(function ($unitCode, $short) {
+                return $unitCode . '-formatted-' . ($short ? 'short' : 'full');
+            }))
+        ;
+
+
+        $this->formType     = new RequestProductType($productUnitLabelFormatter);
         $this->formType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
 
         parent::setUp();
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolverInterface */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
+        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
+        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
-            ->with([
-                'data_class' => 'OroB2B\Bundle\RFPBundle\Entity\RequestProduct',
-                'intention'  => 'rfp_request_product',
-                'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
-            ])
+            ->with($this->callback(function (array $options) {
+                $this->assertArrayHasKey('data_class', $options);
+                $this->assertArrayHasKey('compact_units', $options);
+                $this->assertArrayHasKey('intention', $options);
+                $this->assertArrayHasKey('extra_fields_message', $options);
+                $this->assertArrayHasKey('page_component', $options);
+                $this->assertArrayHasKey('page_component_options', $options);
+
+                return true;
+            }));
         ;
 
-        $this->formType->setDefaultOptions($resolver);
+        $this->formType->configureOptions($resolver);
     }
 
     public function testGetName()
@@ -65,71 +81,176 @@ class RequestProductTypeTest extends AbstractTest
     }
 
     /**
-     * @param RequestProduct $inputData
+     * @param array $inputData
      * @param array $expectedData
      *
-     * @dataProvider preSetDataProvider
+     * @dataProvider buildViewProvider
      */
-    public function testPreSetData(RequestProduct $inputData = null, array $expectedData = [])
+    public function testBuildView(array $inputData, array $expectedData)
     {
-        $productSku = $inputData ? $inputData->getProductSku() : '';
+        $view = new FormView();
 
-        $placeholder = $expectedData['configs']['placeholder'];
+        $view->vars = $inputData['vars'];
 
-        $this->translator
-            ->expects($placeholder ? $this->once() : $this->never())
-            ->method('trans')
-            ->with($placeholder, [
-                '{title}' => $productSku,
-            ])
-            ->will($this->returnValue($placeholder))
-        ;
+        /* @var $form FormInterface|\PHPUnit_Framework_MockObject_MockObject */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
 
-        $form = $this->factory->create($this->formType);
+        $this->formType->buildView($view, $form, $inputData['options']);
 
-        $this->formType->preSetData(new FormEvent($form, $inputData));
+        $this->assertSame($expectedData, $view->vars);
+    }
 
-        $this->assertTrue($form->has('product'));
+    /**
+     * @param array $inputData
+     * @param array $expectedData
+     *
+     * @dataProvider finishViewProvider
+     */
+    public function testFinishView(array $inputData, array $expectedData)
+    {
+        $view = new FormView();
 
-        $config = $form->get('product')->getConfig();
+        $view->vars = $inputData['vars'];
 
-        $this->assertEquals(ProductSelectType::NAME, $config->getType()->getName());
+        /* @var $form FormInterface|\PHPUnit_Framework_MockObject_MockObject */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
 
-        $options = $form->get('product')->getConfig()->getOptions();
+        $this->formType->finishView($view, $form, $inputData['options']);
 
-        foreach ($expectedData as $key => $value) {
-            $this->assertEquals($value, $options[$key], $key);
-        }
+        $this->assertEquals($expectedData, $view->vars);
     }
 
     /**
      * @return array
      */
-    public function preSetDataProvider()
+    public function buildViewProvider()
     {
         return [
-            'empty item' => [
-                'inputData'     => null,
-                'expectedData'  => [
-                    'configs'   => [
-                        'placeholder'   => null,
+            'test options' => [
+                'input' => [
+                    'vars' => [],
+                    'options' => [
+                        'page_component' => 'component',
+                        'page_component_options' => 'options',
                     ],
-                    'required'          => true,
-                    'create_enabled'    => false,
-                    'label'             => 'orob2b.product.entity_label',
                 ],
-            ],
-            'deleted product' => [
-                'inputData'     => $this->createRequestProduct(1, null, 'sku'),
-                'expectedData'  => [
-                    'configs'   => [
-                        'placeholder' => 'orob2b.rfp.message.requestproductitem.unit.removed',
-                    ],
-                    'required'  => true,
-                    'label'     => 'orob2b.product.entity_label',
+                'expected' => [
+                    'page_component' => 'component',
+                    'page_component_options' => 'options',
                 ],
             ],
         ];
+    }
+
+    /**
+     * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
+    public function finishViewProvider()
+    {
+        return [
+            'empty request product' => [
+                'input'     => [
+                    'vars' => [
+                        'value' => null,
+                    ],
+                    'options' => [
+                        'compact_units' => false,
+                    ],
+                ],
+                'expected'  => [
+                    'value' => null,
+                    'componentOptions' => [
+                        'units' => [],
+                        'compactUnits' => false,
+                    ],
+                ],
+            ],
+            'empty product' => [
+                'input'     => [
+                    'vars' => [
+                        'value' => new RequestProduct(),
+                    ],
+                    'options' => [
+                        'compact_units' => false,
+                    ],
+                ],
+                'expected'  => [
+                    'value' => new RequestProduct(),
+                    'componentOptions' => [
+                        'units' => [],
+                        'compactUnits' => false,
+                    ],
+                ],
+            ],
+            'existing product' => [
+                'input'     => [
+                    'vars' => [
+                        'value' => (new RequestProduct())
+                        ->setProduct($this->createProduct(1, ['unit1', 'unit2']))
+                    ],
+                    'options' => [
+                        'compact_units' => false,
+                    ],
+                ],
+                'expected'  => [
+                    'value' => (new RequestProduct())
+                        ->setProduct($this->createProduct(1, ['unit1', 'unit2'])),
+                    'componentOptions' => [
+                        'units' => [
+                            1 => [
+                                'unit1' => 'unit1-formatted-full',
+                                'unit2' => 'unit2-formatted-full',
+                            ],
+                        ],
+                        'compactUnits' => false,
+                    ],
+                ],
+            ],
+            'existing product and compact units' => [
+                'input'     => [
+                    'vars' => [
+                        'value' => (new RequestProduct())
+                        ->setProduct($this->createProduct(2, ['unit3', 'unit4']))
+                    ],
+                    'options' => [
+                        'compact_units' => true,
+                    ],
+                ],
+                'expected'  => [
+                    'value' => (new RequestProduct())
+                        ->setProduct($this->createProduct(2, ['unit3', 'unit4'])),
+                    'componentOptions' => [
+                        'units' => [
+                            2 => [
+                                'unit3' => 'unit3-formatted-short',
+                                'unit4' => 'unit4-formatted-short',
+                            ],
+                        ],
+                        'compactUnits' => true,
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @param int $id
+     * @param array $units
+     * @return Product|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function createProduct($id, array $units = [])
+    {
+        $product = $this->getMockEntity(
+            'OroB2B\Bundle\ProductBundle\Entity\Product',
+            [
+                'getId' => $id,
+                'getAvailableUnitCodes' => $units,
+            ]
+        );
+
+        return $product;
     }
 
     /**
@@ -204,35 +325,6 @@ class RequestProductTypeTest extends AbstractTest
     }
 
     /**
-     * @param int $id
-     * @param RequestProduct $product
-     * @param string $productSku
-     * @return \PHPUnit_Framework_MockObject_MockObject|RequestProduct
-     */
-    protected function createRequestProduct($id, $product, $productSku)
-    {
-        /* @var $requestProduct \PHPUnit_Framework_MockObject_MockObject|RequestProduct */
-        $requestProduct = $this->getMock('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
-        $requestProduct
-            ->expects($this->any())
-            ->method('getId')
-            ->will($this->returnValue($id))
-        ;
-        $requestProduct
-            ->expects($this->any())
-            ->method('getProduct')
-            ->will($this->returnValue($product))
-        ;
-        $requestProduct
-            ->expects($this->any())
-            ->method('getProductSku')
-            ->will($this->returnValue($productSku))
-        ;
-
-        return $requestProduct;
-    }
-
-    /**
      * {@inheritdoc}
      */
     protected function getExtensions()
@@ -240,9 +332,9 @@ class RequestProductTypeTest extends AbstractTest
         $priceType                  = $this->preparePriceType();
         $entityType                 = $this->prepareProductEntityType();
         $optionalPriceType          = $this->prepareOptionalPriceType();
-        $productSelectType          = new ProductSelectTypeStub();
+        $productRemovedSelectType   = new StubProductRemovedSelectType();
         $currencySelectionType      = new CurrencySelectionTypeStub();
-        $requestProductItemType     = $this->prepareRequestProductItemType($this->translator);
+        $requestProductItemType     = $this->prepareRequestProductItemType();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
 
         return [
@@ -250,10 +342,11 @@ class RequestProductTypeTest extends AbstractTest
                 [
                     CollectionType::NAME                    => new CollectionType(),
                     RequestProductItemCollectionType::NAME  => new RequestProductItemCollectionType(),
+                    ProductUnitRemovedSelectionType::NAME   => new StubProductUnitRemovedSelectionType(),
                     $priceType->getName()                   => $priceType,
                     $entityType->getName()                  => $entityType,
                     $optionalPriceType->getName()           => $optionalPriceType,
-                    $productSelectType->getName()           => $productSelectType,
+                    $productRemovedSelectType->getName()    => $productRemovedSelectType,
                     $requestProductItemType->getName()      => $requestProductItemType,
                     $currencySelectionType->getName()       => $currencySelectionType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,

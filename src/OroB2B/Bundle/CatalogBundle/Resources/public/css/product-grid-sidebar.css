@@ -1,0 +1,7 @@
+.product-container .include-sub-categories-choice label {
+    float: left;
+}
+
+.product-container .include-sub-categories-choice input {
+    margin: 0 10px !important;
+}

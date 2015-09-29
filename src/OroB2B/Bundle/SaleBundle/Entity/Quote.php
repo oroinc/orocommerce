@@ -20,7 +20,8 @@ use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
 
 /**
  * @ORM\Table(name="orob2b_sale_quote")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\SaleBundle\Entity\Repository\QuoteRepository")
+ * @ORM\EntityListeners({"OroB2B\Bundle\SaleBundle\Entity\Listener\QuoteListener"})
  * @ORM\HasLifecycleCallbacks()
  * @Config(
  *      routeName="orob2b_sale_quote_index",
@@ -480,5 +481,18 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
         }
 
         return null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasOfferVariants()
+    {
+        foreach ($this->quoteProducts as $quoteProduct) {
+            if ($quoteProduct->hasOfferVariants()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

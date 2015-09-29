@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\SaleBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
@@ -26,6 +27,7 @@ class QuoteController extends Controller
      *      class="OroB2BSaleBundle:Quote",
      *      permission="VIEW"
      * )
+     * @ParamConverter("quote", options={"repository_method" = "getQuote"})
      *
      * @param Quote $quote
      * @return array
@@ -75,6 +77,7 @@ class QuoteController extends Controller
      *     permission="EDIT",
      *     class="OroB2BSaleBundle:Quote"
      * )
+     * @ParamConverter("quote", options={"repository_method" = "getQuote"})
      *
      * @param Quote $quote
      *

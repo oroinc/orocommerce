@@ -13,8 +13,6 @@ services:
         class: %orob2b_shopping_list.event_listener.form_view.class%
         arguments:
             - @translator
-            - @security.token_storage
-            - @form.factory
             - @oro_entity.doctrine_helper
         calls:
             - [setRequest, ["@?request="]]

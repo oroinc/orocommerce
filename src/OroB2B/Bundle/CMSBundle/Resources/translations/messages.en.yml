@@ -1,7 +1,7 @@
 orob2b.cms:
     page:
-        entity_label:           'Page'
-        entity_plural_label:    'Pages'
+        entity_label:           'Landing Page'
+        entity_plural_label:    'Landing Pages'
         id.label:               'ID'
         title.label:            'Title'
         content.label:          'Content'
@@ -26,9 +26,10 @@ orob2b.cms:
         page.saved.message: 'Page has been saved'
 
     menu:
-        cms_tab.label: 'CMS'
-        pages_list.description: 'List of pages'
-        shortcut_pages_list.description: 'Shows list of existing pages'
+        marketing_tab.label: 'Marketing'
+        page_list.description: 'List of landing pages'
+        loginpage_list.description: 'List of login pages'
+        shortcut_page_list.description: 'Shows list of existing landing pages'
 
     sections:
         general: 'General'
@@ -36,3 +37,14 @@ orob2b.cms:
 
     template:
         select_existing_or_create_new: 'Please select a page on the left or create new one.'
+
+    loginpage:
+        entity_plural_label: 'Customer Login Pages'
+        entity_label: 'Customer Login Page'
+        id.label: 'Id'
+        top_content.label: 'Top content'
+        bottom_content.label: 'Bottom content'
+        css.label: 'CSS styles'
+        logo_image.label: 'Logo'
+        background_image.label: 'Background image'
+        save.message: 'Login form has been saved'

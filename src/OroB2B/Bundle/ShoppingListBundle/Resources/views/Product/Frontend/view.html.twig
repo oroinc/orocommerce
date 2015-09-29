@@ -1,41 +1,5 @@
-{% import 'OroUIBundle::macros.html.twig' as UI %}
-{% import 'OroB2BShoppingListBundle:ShoppingList/Frontend:buttons.html.twig' as buttons %}
-
-{% if form.vars.errors|length > 0 %}
-    <div class="alert alert-error">
-        {{ form_errors(form) }}
-    </div>
-{% endif %}
-
-<form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ app.request.uri }}" {{ form_enctype(form) }}
-      method="{{ form.vars.method }}" data-collect="true" class="form-inline">
-    <table class="add-product-table">
-        <tr>
-            <td>{{ form_row(form.quantity) }}</td>
-            <td>{{ form_row(form.unit) }}</td>
-            <td>
-                <div class="btn-group add-products-btn-holder" data-page-component-module="orob2bshoppinglist/js/app/components/add-product-from-view-component">
-                    {% set commonOptions = {
-                        dataUrl: 'orob2b_shopping_list_frontend_add_product',
-                        dataUrlOptions: {
-                            productId: product.id
-                        },
-                        dataAttributes: {}
-                    } %}
-                    {% set options = {
-                        new: commonOptions,
-                        current: commonOptions,
-                        existing: commonOptions,
-                        shoppingLists: shoppingLists,
-                        currentShoppingList: currentShoppingList
-                    } %}
-                    {{ buttons.createAddToShoppingListButton(options) }}
-                </div>
-            </td>
-        </tr>
-    </table>
-    <div class="hidden">
-        {{ form_rest(form) }}
-    </div>
-</form>
-{{ oro_form_js_validation(form) }}
+{{ oro_widget_render({
+    'widgetType': 'block',
+    'url': path('orob2b_shopping_list_product_shopping_list_form', { productId: productId }),
+    'alias': 'shopping_list_add_product_form'
+}) }}

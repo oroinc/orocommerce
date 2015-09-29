@@ -15,7 +15,7 @@ class Pages extends AbstractPage
     protected $page = '//a[contains(., "%s")]/i';
 
     /** @var string */
-    protected $createButton = '//a[@title="Create Page"]';
+    protected $createButton = '//a[@title="Create Landing Page"]';
 
     /** @var string */
     protected $childPageClosed = '//a[contains(., "%s")]/parent::li[contains(@class,"jstree-closed")]';

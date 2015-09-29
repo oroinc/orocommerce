@@ -49,6 +49,20 @@ class CategoryRepository extends NestedTreeRepository
     }
 
     /**
+     * @param Category $category
+     * @return array
+     */
+    public function getChildrenIds(Category $category)
+    {
+        $result = $this->childrenQueryBuilder($category)
+            ->select('node.id')
+            ->getQuery()
+            ->getScalarResult();
+
+        return array_map('current', $result);
+    }
+
+    /**
      * @param string $title
      * @return Category|null
      */

@@ -7,7 +7,7 @@ parameters:
     orob2b_order.form.type.order_line_item_collection.class: OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemsCollectionType
     orob2b_order.form.type.frontend.order_line_item.class: OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderLineItemType
 
-    orob2b_order.form.type.extension.frontend_order.class: OroB2B\Bundle\OrderBundle\Form\Extension\FrontendOrderExtension
+    orob2b_order.form.type.extension.order_data_storage.class: OroB2B\Bundle\OrderBundle\Form\Extension\OrderDataStorageExtension
 
 services:
     orob2b_order.form.type.order:
@@ -79,13 +79,20 @@ services:
         tags:
             - { name: form.type, alias: orob2b_order_line_item_frontend }
 
-    orob2b_order.form.type.extension.frontend_order:
-        class: %orob2b_order.form.type.extension.frontend_order.class%
-        arguments:
-            - @orob2b_product.service.product_data_storage
-            - @doctrine
-            - %orob2b_product.product.class%
+    orob2b_order.form.type.extension.frontend_order_data_storage:
+        class: %orob2b_order.form.type.extension.order_data_storage.class%
+        parent: orob2b_product.form.type.extension.product_data_storage.abstract
         calls:
-            - [setRequest, ["@?request="]]
+            - [setDataClass, [%orob2b_order.entity.order.class%]]
+            - [setExtendedType, [orob2b_order_frontend_type]]
         tags:
-            - { name: form.type_extension, alias: "orob2b_order_frontend_type" }
+            - { name: form.type_extension, alias: orob2b_order_frontend_type }
+
+    orob2b_order.form.type.extension.order_data_storage:
+        class: %orob2b_order.form.type.extension.order_data_storage.class%
+        parent: orob2b_product.form.type.extension.product_data_storage.abstract
+        calls:
+            - [setDataClass, [%orob2b_order.entity.order.class%]]
+            - [setExtendedType, [orob2b_order_type]]
+        tags:
+            - { name: form.type_extension, alias: orob2b_order_type }

@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Twig;
 
+use Symfony\Component\Translation\TranslatorInterface;
+
 use OroB2B\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;
 
 class CategoryExtension extends \Twig_Extension
@@ -14,11 +16,18 @@ class CategoryExtension extends \Twig_Extension
     protected $categoryTreeHandler;
 
     /**
-     * @param CategoryTreeHandler $categoryTreeHandler
+     * @var TranslatorInterface
      */
-    public function __construct(CategoryTreeHandler $categoryTreeHandler)
+    protected $translator;
+
+    /**
+     * @param CategoryTreeHandler $categoryTreeHandler
+     * @param TranslatorInterface $translator
+     */
+    public function __construct(CategoryTreeHandler $categoryTreeHandler, TranslatorInterface $translator)
     {
         $this->categoryTreeHandler = $categoryTreeHandler;
+        $this->translator = $translator;
     }
 
     /**
@@ -40,10 +49,16 @@ class CategoryExtension extends \Twig_Extension
     }
 
     /**
+     * @param string|null $rootLabel
      * @return array
      */
-    public function getCategoryList()
+    public function getCategoryList($rootLabel = null)
     {
-        return $this->categoryTreeHandler->createTree();
+        $tree = $this->categoryTreeHandler->createTree();
+        if ($rootLabel && array_key_exists(0, $tree)) {
+            $tree[0]['text'] = $this->translator->trans($rootLabel);
+        }
+
+        return $tree;
     }
 }

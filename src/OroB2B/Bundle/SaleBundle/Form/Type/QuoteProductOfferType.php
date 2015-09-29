@@ -6,24 +6,17 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter;
 
 class QuoteProductOfferType extends AbstractType
 {
     const NAME = 'orob2b_sale_quote_product_offer';
-
-    /**
-     * @var TranslatorInterface
-     */
-    protected $translator;
 
     /**
      * @var QuoteProductOfferFormatter
@@ -36,12 +29,10 @@ class QuoteProductOfferType extends AbstractType
     protected $dataClass;
 
     /**
-     * @param TranslatorInterface $translator
      * @param QuoteProductOfferFormatter $formatter
      */
-    public function __construct(TranslatorInterface $translator, QuoteProductOfferFormatter $formatter)
+    public function __construct(QuoteProductOfferFormatter $formatter)
     {
-        $this->translator = $translator;
         $this->formatter = $formatter;
     }
 
@@ -64,33 +55,39 @@ class QuoteProductOfferType extends AbstractType
                 'label' => 'orob2b.sale.quoteproductoffer.quantity.label'
             ])
             ->add('price', PriceType::NAME, [
+                'currency_empty_value' => null,
                 'error_bubbling' => false,
                 'required' => true,
                 'label' => 'orob2b.sale.quoteproductoffer.price.label'
             ])
-            ->add('priceType', 'choice', [
-                'label' => 'orob2b.sale.quoteproductoffer.price_type.label',
-                'choices' => $this->formatter->formatPriceTypeLabels(QuoteProductOffer::getPriceTypes()),
-                'required' => true,
-                'expanded' => true,
+            ->add('priceType', 'hidden', [
+                // TODO: enable once fully supported on the quote views and in orders
+                'data' => QuoteProductOffer::PRICE_TYPE_UNIT,
             ])
             ->add('allowIncrements', 'checkbox', [
                 'required' => false,
-                'label' => 'orob2b.sale.quoteproductoffer.allow_increments.label'
+                'label' => 'orob2b.sale.quoteproductoffer.allow_increments.label',
+                'attr' => [
+                    'default' => true,
+                ],
             ])
+            ->add('productUnit', ProductUnitRemovedSelectionType::NAME, [
+                'label' => 'orob2b.product.productunit.entity_label',
+                'required' => true,
+                'compact' => $options['compact_units'],
+            ])
+            ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetData'])
         ;
-
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmit']);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
+            'compact_units' => false,
             'intention' => 'sale_quote_product_offer',
             'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
         ]);
@@ -107,58 +104,12 @@ class QuoteProductOfferType extends AbstractType
     /**
      * @param FormEvent $event
      */
-    public function preSetData(FormEvent $event)
+    public function postSetData(FormEvent $event)
     {
-        /* @var $quoteProductOffer QuoteProductOffer */
-        $quoteProductOffer = $event->getData();
-        $form = $event->getForm();
-        $choices = [];
-
-        $productUnitOptions = [
-            'required' => true,
-            'label' => 'orob2b.product.productunit.entity_label',
-        ];
-
-        if ($quoteProductOffer && null !== $quoteProductOffer->getId()) {
-            $product = $quoteProductOffer->getQuoteProduct()->getProduct();
-            if ($product) {
-                foreach ($product->getUnitPrecisions() as $unitPrecision) {
-                    $choices[] = $unitPrecision->getUnit();
-                }
-            }
-
-            $productUnit = $quoteProductOffer->getProductUnit();
-            if (!$productUnit || ($product && !in_array($productUnit, $choices, true))) {
-                // productUnit was removed
-                $productUnitOptions['empty_value'] = $this->translator->trans(
-                    'orob2b.sale.quoteproduct.product.removed',
-                    [
-                        '{title}' => $quoteProductOffer->getProductUnitCode(),
-                    ]
-                );
-            }
+        // Set quantity to 1 by default
+        $quantity = $event->getForm()->get('quantity');
+        if (null === $quantity->getData()) {
+            $quantity->setData(1);
         }
-
-        $productUnitOptions['choices'] = $choices;
-
-        $form->add(
-            'productUnit',
-            ProductUnitSelectionType::NAME,
-            $productUnitOptions
-        );
-    }
-
-    /**
-     * @param FormEvent $event
-     */
-    public function preSubmit(FormEvent $event)
-    {
-        $event->getForm()->add(
-            'productUnit',
-            ProductUnitSelectionType::NAME,
-            [
-                'label' => 'orob2b.product.productunit.entity_label',
-            ]
-        );
     }
 }

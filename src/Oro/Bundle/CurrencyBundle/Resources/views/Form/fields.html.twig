@@ -7,12 +7,14 @@
     {% else %}
         <table>
             <tr>
-                <td>{{ form_widget(form.value) }}</td>
-                <td>{{ form_widget(form.currency) }}</td>
-            </tr>
-            <tr>
-                <td>{{ form_errors(form.value) }}</td>
-                <td>{{ form_errors(form.currency) }}</td>
+                <td>
+                    {{ form_widget(form.value) }}
+                    {{ form_errors(form.value) }}
+                </td>
+                <td>
+                    {{ form_widget(form.currency) }}
+                    {{ form_errors(form.currency) }}
+                </td>
             </tr>
         </table>
     {% endif %}

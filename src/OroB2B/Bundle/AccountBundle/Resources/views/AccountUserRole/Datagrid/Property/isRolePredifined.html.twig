@@ -1,0 +1,5 @@
+{% if record.getValue('isRolePredefined') %}
+    {{ 'orob2b.account.accountuserrole.type.predefined.label'|trans }}
+{% else %}
+    {{ 'orob2b.account.accountuserrole.type.customizable.label'|trans }}
+{% endif %}

@@ -1,3 +1,0 @@
-config:
-    paths:
-        'orob2battribute/js/app/components/select-default-value-component': 'bundles/orob2battribute/js/app/components/select-default-value-component.js'

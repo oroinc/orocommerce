@@ -11,36 +11,57 @@ define(function(require) {
     var Error = require('oroui/js/error');
     var $ = require('jquery');
     var _ = require('underscore');
-    var options = {
-        intention: {
-            new: 'new'
-        }
-    };
+    var widgetManager = require('oroui/js/widget-manager');
 
     AddProductFromViewComponent = BaseComponent.extend({
-        initialize: function(additionalOptions) {
-            var component = this;
-            _.extend(options, additionalOptions || {});
-
-            options._sourceElement.find('a').on('click', function() {
-                var el = $(this);
-                var form = el.closest('form');
-                var url = el.data('url');
-                var urlOptions = el.data('urloptions');
-                var intention = el.data('intention');
-
-                if (!component.validateForm(form)) {
-                    return;
-                }
-
-                if (intention === options.intention.new) {
-                    component.createNewShoppingList(url, urlOptions, form.serialize());
-                } else {
-                    component.addProductToShoppingList(url, urlOptions, form.serialize());
-                }
-            });
+        /**
+         * @property {Object}
+         */
+        options: {
+            intention: {
+                new: 'new'
+            },
+            widgetAlias: 'shopping_list_add_product_form'
         },
 
+        /**
+         * @property {jQuery.Element}
+         */
+        dialog: null,
+
+        /**
+         * @param {Object} additionalOptions
+         */
+        initialize: function(additionalOptions) {
+            _.extend(this.options, additionalOptions || {});
+
+            this.options._sourceElement.on('click', 'a[data-id]', _.bind(this.onClick, this));
+        },
+
+        /**
+         * @param {jQuery.Event} e
+         */
+        onClick: function(e) {
+            var el = $(e.target);
+            var form = el.closest('form');
+            var url = el.data('url');
+            var urlOptions = el.data('urloptions');
+            var intention = el.data('intention');
+
+            if (!this.validateForm(form)) {
+                return;
+            }
+
+            if (intention === this.options.intention.new) {
+                this.createNewShoppingList(url, urlOptions, form.serialize());
+            } else {
+                this.addProductToShoppingList(url, urlOptions, form.serialize());
+            }
+        },
+
+        /**
+         * @param {Object} form
+         */
         validateForm: function(form) {
             var component = this;
             var validator;
@@ -56,36 +77,54 @@ define(function(require) {
             return valid;
         },
 
+        /**
+         * @param {Object} form
+         */
         formElements: function(form) {
             return form.find('input, select, textarea').not(':submit, :reset, :image');
         },
 
+        /**
+         * @param {String} url
+         * @param {Object} urlOptions
+         * @param {Object} formData
+         */
         createNewShoppingList: function(url, urlOptions, formData) {
-            var component = this;
-            var dialog = new ShoppingListWidget({});
+            var self = this;
+            if (!this.dialog) {
+                this.dialog = new ShoppingListWidget({});
+                this.dialog.on('formSave', _.bind(function(response) {
+                    urlOptions.shoppingListId = response;
+                    self.addProductToShoppingList(url, urlOptions, formData);
+                }, this));
+            }
 
-            dialog.render();
-            dialog.on('formSave', _.bind(function(response) {
-                urlOptions.shoppingListId = response;
-                component.addProductToShoppingList(url, urlOptions, formData);
-            }, this));
+            this.dialog.render();
         },
 
+        /**
+         * @param {String} url
+         * @param {Object} urlOptions
+         * @param {Object} formData
+         */
         addProductToShoppingList: function(url, urlOptions, formData) {
+            var self = this;
             $.ajax({
                 type: 'POST',
                 url: routing.generate(url, urlOptions),
                 data: formData,
                 success: function(response) {
                     if (response && response.message) {
-                        mediator.once('page:afterChange', function() {
-                            mediator.execute(
-                                'showFlashMessage', (response.successful ? 'success' : 'error'),
-                                response.message
-                            );
+                        mediator.execute(
+                            'showFlashMessage', (response.hasOwnProperty('successful') ? 'success' : 'error'),
+                            response.message
+                        );
+                    }
+                    if (!self.buttonExists(urlOptions.shoppingListId)) {
+                        widgetManager.getWidgetInstanceByAlias(self.options.widgetAlias, function(widget) {
+                            widget.render();
                         });
                     }
-                    mediator.execute('refreshPage');
                 },
                 error: function(xhr) {
                     Error.handle({}, xhr, {enforce: true});
@@ -93,12 +132,20 @@ define(function(require) {
             });
         },
 
+        /**
+         * @param {String} id
+         */
+        buttonExists: function(id) {
+            return Boolean(this.options._sourceElement.find('[data-id="' + id + '"]').length);
+        },
+
         dispose: function() {
             if (this.disposed) {
                 return;
             }
 
-            options._sourceElement.off();
+            this.options._sourceElement.off();
+
             AddProductFromViewComponent.__super__.dispose.call(this);
         }
     });

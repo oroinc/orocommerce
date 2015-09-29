@@ -17,6 +17,7 @@ orob2b:
         image.label: Image
         names.label: Name
         descriptions.label: Description
+        removed: '{title} - removed'
         is_variant.label: Is variant?
         variant_links.label: Product Variant Links
 
@@ -35,6 +36,7 @@ orob2b:
             code.label: Code
             default_precision.label: Default Precision
             form.choose: 'Choose Unit...'
+            removed: '{title} - removed'
 
         productunitprecision:
             entity_label: Product Unit Precision
@@ -53,11 +55,11 @@ orob2b:
             product.label: Product
 
         menu:
-            products_tab.label: Product management
-            products_list.description: List of existing products
+            products_tab.label: Products
+            product_list.description: List of existing products
             shortcut_new_product.label: Create new product
             shortcut_new_product.description: Create new product item
-            shortcut_products_list.description: Show list of existing products
+            shortcut_product_list.description: Show list of existing products
 
         acl:
             view_products.label: View products
@@ -101,8 +103,34 @@ orob2b:
             save_and_duplicate: Save And Duplicate
 
         frontend:
-            quick_add.title: Quick Order Form
+            quick_add:
+                title: Quick Order Form
+                description: Quick add products to order, RFQ or shopping cart
             component_not_accessible.message: Can't process request, component not accessible
+
+    product_unit.each:
+        label:
+            full: each
+            short: ea
+        value:
+            full: '{0} none|{1} %count% each|]1,Inf] %count% each'
+            short: '{0} none|{1} %count% ea|]1,Inf] %count% ea'
+
+    product_unit.hour:
+        label:
+            full: hour
+            short: hr
+        value:
+            full: '{0} none|{1} %count% hour|]1,Inf] %count% hours'
+            short: '{0} none|{1} %count% hr|]1,Inf] %count% hrs'
+
+    product_unit.item:
+        label:
+            full: item
+            short: item
+        value:
+            full: '{0} none|{1} %count% item|]1,Inf] %count% items'
+            short: '{0} none|{1} %count% item|]1,Inf] %count% items'
 
     product_unit.kg:
         label:
@@ -112,10 +140,18 @@ orob2b:
             full: '{0} none|{1} %count% kilogram|]1,Inf] %count% kilograms'
             short: '{0} none|{1} %count% kg|]1,Inf] %count% kg'
 
-    product_unit.item:
+    product_unit.piece:
         label:
-            full: item
-            short: item
+            full: piece
+            short: pc
         value:
-            full: '{0} none|{1} %count% item|]1,Inf] %count% items'
-            short: '{0} none|{1} %count% item|]1,Inf] %count% items'
+            full: '{0} none|{1} %count% piece|]1,Inf] %count% pieces'
+            short: '{0} none|{1} %count% pc|]1,Inf] %count% pcs'
+
+    product_unit.set:
+        label:
+            full: set
+            short: set
+        value:
+            full: '{0} none|{1} %count% set|]1,Inf] %count% sets'
+            short: '{0} none|{1} %count% set|]1,Inf] %count% sets'

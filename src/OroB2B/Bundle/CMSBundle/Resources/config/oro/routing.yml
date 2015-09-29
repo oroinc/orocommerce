@@ -23,3 +23,8 @@ orob2b_cms_bundle_api:
         _format:  json
     defaults:
         version:  latest
+
+orob2b_cms_login_page:
+    resource:     "@OroB2BCMSBundle/Controller/LoginPageController.php"
+    type:         annotation
+    prefix:       /cms/login-page

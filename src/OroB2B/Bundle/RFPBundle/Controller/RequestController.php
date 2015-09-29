@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -21,7 +22,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\RFPBundle\Form\Handler\RequestCreateQuoteHandler;
-use OroB2B\Bundle\RFPBundle\Entity\Request;
+use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use OroB2B\Bundle\RFPBundle\Form\Handler\RequestChangeStatusHandler;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestChangeStatusType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestType;
@@ -38,14 +39,14 @@ class RequestController extends Controller
      *      permission="VIEW"
      * )
      *
-     * @param Request $request
+     * @param RFPRequest $rfpRequest
      * @return array
      */
-    public function viewAction(Request $request)
+    public function viewAction(RFPRequest $rfpRequest)
     {
         return [
-            'entity' => $request,
-            'formCreateQuote' => $this->getCreateQuoteForm($request)->createView()
+            'entity' => $rfpRequest,
+            'formCreateQuote' => $this->getCreateQuoteForm($rfpRequest)->createView(),
         ];
     }
 
@@ -54,13 +55,13 @@ class RequestController extends Controller
      * @Template
      * @AclAncestor("orob2b_rfp_request_view")
      *
-     * @param Request $request
+     * @param RFPRequest $rfpRequest
      * @return array
      */
-    public function infoAction(Request $request)
+    public function infoAction(RFPRequest $rfpRequest)
     {
         return [
-            'entity' => $request
+            'entity' => $rfpRequest,
         ];
     }
 
@@ -74,7 +75,7 @@ class RequestController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_rfp.entity.request.class')
+            'entity_class' => $this->container->getParameter('orob2b_rfp.entity.request.class'),
         ];
     }
 
@@ -88,13 +89,13 @@ class RequestController extends Controller
      *     class="OroB2BRFPBundle:Request"
      * )
      *
-     * @param Request $request
+     * @param RFPRequest $rfpRequest
      *
      * @return array|RedirectResponse
      */
-    public function updateAction(Request $request)
+    public function updateAction(RFPRequest $rfpRequest)
     {
-        return $this->update($request);
+        return $this->update($rfpRequest);
     }
 
     /**
@@ -107,12 +108,13 @@ class RequestController extends Controller
      *      permission="EDIT"
      * )
      *
+     * @param RFPRequest $rfpRequest
      * @param Request $request
      * @return RedirectResponse
      */
-    public function createQuoteAction(Request $request)
+    public function createQuoteAction(RFPRequest $rfpRequest, Request $request)
     {
-        return $this->createQuote($request);
+        return $this->createQuote($rfpRequest, $request);
     }
 
     /**
@@ -125,59 +127,64 @@ class RequestController extends Controller
      *      permission="EDIT"
      * )
      *
+     * @param RFPRequest $rfpRequest
      * @param Request $request
      * @throws NotFoundHttpException
      * @return array
      */
-    public function changeStatusAction(Request $request)
+    public function changeStatusAction(RFPRequest $rfpRequest, Request $request)
     {
-        if (!$this->getRequest()->get('_widgetContainer')) {
+        if (!$request->get('_widgetContainer')) {
             throw $this->createNotFoundException();
         }
 
-        $form = $this->createForm(RequestChangeStatusType::NAME, ['status' => $request->getStatus()]);
+        $form = $this->createForm(RequestChangeStatusType::NAME, ['status' => $rfpRequest->getStatus()]);
         $handler = new RequestChangeStatusHandler(
             $form,
-            $this->getRequest(),
+            $request,
             $this->getDoctrine()->getManagerForClass(
                 $this->container->getParameter('orob2b_rfp.entity.request.class')
             ),
             $this->container->get('templating')
         );
 
-        $formAction = $this->get('router')->generate('orob2b_rfp_request_change_status', [
-            'id' => $request->getId()
-        ]);
+        $formAction = $this->get('router')->generate(
+            'orob2b_rfp_request_change_status',
+            [
+                'id' => $rfpRequest->getId(),
+            ]
+        );
 
         return [
-            'entity'     => $request,
-            'saved'      => $handler->process($request),
-            'form'       => $form->createView(),
-            'formAction' => $formAction
+            'entity' => $rfpRequest,
+            'saved' => $handler->process($rfpRequest),
+            'form' => $form->createView(),
+            'formAction' => $formAction,
         ];
     }
 
     /**
-     * @param Request $request
+     * @param RFPRequest $rfpRequest
      * @return array|RedirectResponse
      */
-    protected function update(Request $request)
+    protected function update(RFPRequest $rfpRequest)
     {
         /* @var $handler UpdateHandler */
         $handler = $this->get('oro_form.model.update_handler');
+
         return $handler->handleUpdate(
-            $request,
-            $this->createForm(RequestType::NAME, $request),
-            function (Request $request) {
+            $rfpRequest,
+            $this->createForm(RequestType::NAME, $rfpRequest),
+            function (RFPRequest $request) {
                 return [
-                    'route'         => 'orob2b_rfp_request_update',
-                    'parameters'    => ['id' => $request->getId()]
+                    'route' => 'orob2b_rfp_request_update',
+                    'parameters' => ['id' => $request->getId()],
                 ];
             },
-            function (Request $request) {
+            function (RFPRequest $request) {
                 return [
-                    'route'         => 'orob2b_rfp_request_view',
-                    'parameters'    => ['id' => $request->getId()]
+                    'route' => 'orob2b_rfp_request_view',
+                    'parameters' => ['id' => $request->getId()],
                 ];
             },
             $this->get('translator')->trans('orob2b.rfp.controller.request.saved.message')
@@ -185,38 +192,39 @@ class RequestController extends Controller
     }
 
     /**
+     * @param RFPRequest $rfpRequest
      * @param Request $request
      * @return array|RedirectResponse
      */
-    protected function createQuote(Request $request)
+    protected function createQuote(RFPRequest $rfpRequest, Request $request)
     {
-        $form = $this->getCreateQuoteForm($request);
+        $form = $this->getCreateQuoteForm($rfpRequest);
         $handler = new RequestCreateQuoteHandler(
             $form,
-            $this->getRequest(),
+            $request,
             $this->getDoctrine()->getManagerForClass('OroB2BPricingBundle:PriceList'),
             $this->getUser()
         );
 
         return $this->get('oro_form.model.update_handler')
             ->handleUpdate(
-                $request,
+                $rfpRequest,
                 $form,
-                function (Request $request) {
+                function (RFPRequest $request) {
                     return [
-                        'route'         => 'orob2b_rfp_request_view',
-                        'parameters'    => ['id' => $request->getId()]
+                        'route' => 'orob2b_rfp_request_view',
+                        'parameters' => ['id' => $request->getId()],
                     ];
                 },
                 function () use ($handler) {
                     return [
-                        'route'         => 'orob2b_sale_quote_update',
-                        'parameters'    => ['id' => $handler->getQuote()->getId()]
+                        'route' => 'orob2b_sale_quote_update',
+                        'parameters' => ['id' => $handler->getQuote()->getId()],
                     ];
                 },
                 $this->getTranslator()->trans('orob2b.rfp.message.request.create_quote.success'),
                 $handler,
-                function (Request $entity, FormInterface $form) use ($handler) {
+                function (RFPRequest $entity, FormInterface $form) use ($handler) {
                     /* @var $session Session */
                     $session = $this->get('session');
                     $session->getFlashBag()->add(
@@ -253,11 +261,11 @@ class RequestController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param RFPRequest $rfpRequest
      * @return Form
      */
-    protected function getCreateQuoteForm(Request $request = null)
+    protected function getCreateQuoteForm(RFPRequest $rfpRequest = null)
     {
-        return $this->createFormBuilder($request)->getForm();
+        return $this->createFormBuilder($rfpRequest)->getForm();
     }
 }

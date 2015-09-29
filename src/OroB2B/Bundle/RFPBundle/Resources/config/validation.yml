@@ -13,12 +13,16 @@ OroB2B\Bundle\RFPBundle\Entity\Request:
             - Email: ~
             - Length:
                 max: 255
+        phone:
+            - NotBlank: ~
         body:
             - NotBlank: ~
         company:
+            - NotBlank: ~
             - Length:
                 max: 255
         role:
+            - NotBlank: ~
             - Length:
                 max: 255
         requestProducts:
@@ -41,7 +45,7 @@ OroB2B\Bundle\RFPBundle\Entity\RequestProduct:
 
 OroB2B\Bundle\RFPBundle\Entity\RequestProductItem:
     constraints:
-        - OroB2B\Bundle\RFPBundle\Validator\Constraints\RequestProductItem: ~
+        - OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductUnitHolder: ~
     properties:
         requestProduct:
             - NotBlank: ~
@@ -49,7 +53,8 @@ OroB2B\Bundle\RFPBundle\Entity\RequestProductItem:
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
         productUnit:
-            - NotBlank: ~
+            - NotBlank:
+                message: 'orob2b.rfp.requestproductitem.unit.blank'
         productUnitCode:
             - NotBlank:
                 groups: [ Import ]

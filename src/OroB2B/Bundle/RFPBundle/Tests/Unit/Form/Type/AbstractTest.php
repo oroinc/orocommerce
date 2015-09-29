@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormTypeInterface;
-use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -16,11 +15,12 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-
+use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductUnitHolder;
+use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductUnitHolderValidator;
+use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemType;
-use OroB2B\Bundle\RFPBundle\Validator\Constraints;
 
 abstract class AbstractTest extends FormIntegrationTestCase
 {
@@ -60,19 +60,19 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected function getValidators()
     {
-        $requestProductItemConstraint = new Constraints\RequestProductItem();
+        $productUnitHolderConstraint = new ProductUnitHolder();
+
         return [
-            $requestProductItemConstraint->validatedBy() => new Constraints\RequestProductItemValidator(),
+            $productUnitHolderConstraint->validatedBy() => new ProductUnitHolderValidator(),
         ];
     }
 
     /**
-     * @param TranslatorInterface $translator
      * @return RequestProductItemType
      */
-    protected function prepareRequestProductItemType(TranslatorInterface $translator)
+    protected function prepareRequestProductItemType()
     {
-        $requestProductItemType = new RequestProductItemType($translator);
+        $requestProductItemType = new RequestProductItemType();
         $requestProductItemType->setDataClass('OroB2B\Bundle\RFPBundle\Entity\RequestProductItem');
 
         return $requestProductItemType;
@@ -171,6 +171,57 @@ abstract class AbstractTest extends FormIntegrationTestCase
     }
 
     /**
+     * @param int $id
+     * @param RequestProduct $product
+     * @param string $productSku
+     * @return \PHPUnit_Framework_MockObject_MockObject|RequestProduct
+     */
+    protected function createRequestProduct($id, $product, $productSku)
+    {
+        /* @var $requestProduct \PHPUnit_Framework_MockObject_MockObject|RequestProduct */
+        $requestProduct = $this->getMock('OroB2B\Bundle\RFPBundle\Entity\RequestProduct');
+        $requestProduct
+            ->expects(static::any())
+            ->method('getId')
+            ->will(static::returnValue($id))
+        ;
+        $requestProduct
+            ->expects(static::any())
+            ->method('getProduct')
+            ->will(static::returnValue($product))
+        ;
+        $requestProduct
+            ->expects(static::any())
+            ->method('getProductSku')
+            ->will(static::returnValue($productSku))
+        ;
+
+        return $requestProduct;
+    }
+
+    /**
+     * @param string $className
+     * @param array $fields
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getMockEntity($className, array $fields = [])
+    {
+        $mock = $this->getMockBuilder($className)
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+
+        foreach ($fields as $method => $value) {
+            $mock->expects($this->any())
+                ->method($method)
+                ->will($this->returnValue($value))
+            ;
+        }
+
+        return $mock;
+    }
+
+    /**
      * @param string $className
      * @param int $id
      * @param string $primaryKey
@@ -259,5 +310,39 @@ abstract class AbstractTest extends FormIntegrationTestCase
         }
 
         return $requestProductItem;
+    }
+
+    /**
+     * @param string $firstName
+     * @param string $lastName
+     * @param string $email
+     * @param string $body
+     * @param string $company
+     * @param string $role
+     * @param string $phone
+     * @return Request
+     */
+    protected function getRequest(
+        $firstName = null,
+        $lastName = null,
+        $email = null,
+        $body = null,
+        $company = null,
+        $role = null,
+        $phone = null
+    ) {
+        $request = new Request();
+
+        $request
+            ->setFirstName($firstName)
+            ->setLastName($lastName)
+            ->setEmail($email)
+            ->setBody($body)
+            ->setCompany($company)
+            ->setRole($role)
+            ->setPhone($phone)
+        ;
+
+        return $request;
     }
 }
