@@ -12,6 +12,7 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
@@ -21,6 +22,8 @@ use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
 
 class QuoteProductOfferTypeTest extends AbstractTest
 {
+    use QuantityTypeTrait;
+
     /**
      * @var QuoteProductOfferType
      */
@@ -112,7 +115,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
             'empty form' => [
                 'isValid'       => false,
                 'submittedData' => [],
-                'expectedData'  => $this->getQuoteProductOffer(1),
+                'expectedData'  => $this->getQuoteProductOffer(1, 1),
                 'defaultData'   => $this->getQuoteProductOffer(1),
             ],
             'empty quote product' => [
@@ -133,7 +136,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
                     ->setQuoteProduct(null),
             ],
             'empty quantity' => [
-                'isValid'       => false,
+                'isValid'       => true,
                 'submittedData' => [
                     'productUnit'   => 'kg',
                     'priceType'     => self::QPO_PRICE_TYPE1,
@@ -143,7 +146,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
                     ],
                 ],
                 'expectedData'  => $this
-                    ->getQuoteProductOffer(3, null, 'kg', self::QPO_PRICE_TYPE1, $this->createPrice(11, 'EUR')),
+                    ->getQuoteProductOffer(3, 1, 'kg', self::QPO_PRICE_TYPE1, $this->createPrice(11, 'EUR')),
                 'defaultData'   => $this->getQuoteProductOffer(3),
             ],
             'empty price type' => [
@@ -272,6 +275,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
                     $priceType->getName()                   => $priceType,
                     $currencySelectionType->getName()       => $currencySelectionType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
+                    QuantityTypeTrait::$name                => $this->getQuantityType()
                 ],
                 []
             ),

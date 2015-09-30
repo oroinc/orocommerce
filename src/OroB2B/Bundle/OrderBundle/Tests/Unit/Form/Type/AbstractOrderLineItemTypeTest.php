@@ -16,9 +16,12 @@ use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Form\Type\AbstractOrderLineItemType;
 use OroB2B\Bundle\OrderBundle\Form\Type\PriceTypeSelectorType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
 abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
 {
+    use QuantityTypeTrait;
+
     /**
      * @var AbstractOrderLineItemType
      */
@@ -50,6 +53,7 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
                     $priceType->getName() => $priceType,
                     $orderPriceType->getName() => $orderPriceType,
                     $dateType->getName() => $dateType,
+                    QuantityTypeTrait::$name => $this->getQuantityType(),
                 ],
                 []
             ),

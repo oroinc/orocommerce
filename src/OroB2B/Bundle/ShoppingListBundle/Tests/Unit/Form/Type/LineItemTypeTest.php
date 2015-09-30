@@ -2,10 +2,6 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
-
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -14,17 +10,18 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\LineItemType;
-use OroB2B\Bundle\ShoppingListBundle\Form\EventListener\LineItemSubscriber;
-use OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
 class LineItemTypeTest extends AbstractFormIntegrationTestCase
 {
+    use QuantityTypeTrait;
+
     const DATA_CLASS = 'OroB2B\Bundle\ShoppingListBundle\Entity\LineItem';
     const PRODUCT_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
 
@@ -45,23 +42,8 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
     {
         parent::setUp();
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|LineItemManager $lineItemManager */
-        $lineItemManager = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $lineItemManager->expects($this->any())
-            ->method('roundProductQuantity')
-            ->willReturnCallback(
-                function ($product, $unit, $quantity) {
-                    /** @var \PHPUnit_Framework_MockObject_MockObject|Product $product */
-                    return round($quantity, $product->getUnitPrecision($unit)->getPrecision());
-                }
-            );
-
-        $this->type = new LineItemType($this->getRegistry(), $lineItemManager);
+        $this->type = new LineItemType();
         $this->type->setDataClass(self::DATA_CLASS);
-        $this->type->setProductClass(self::PRODUCT_CLASS);
-        $this->type->setLineItemSubscriber($this->getLineItemSubscriber());
     }
 
     /**
@@ -88,6 +70,7 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
                     $entityType->getName()         => $entityType,
                     $productSelectType->getName()  => $productSelectType,
                     ProductUnitSelectionType::NAME => $productUnitSelection,
+                    QuantityTypeTrait::$name       => $this->getQuantityType(),
                 ],
                 []
             )
@@ -118,6 +101,10 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
 
         $this->assertEquals($defaultData, $form->getData());
 
+        $this->addRoundingServiceExpect();
+
+        $form->submit($submittedData);
+
         if ($isExisting) {
             $repo = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
                 ->disableOriginalConstructor()
@@ -127,12 +114,11 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
                 ->will($this->returnValue(null));
 
             $closure = $form->get('unit')->getConfig()->getOptions()['query_builder'];
+            $this->assertNotEmpty($closure);
             $this->assertNull($closure($repo));
         }
 
-        $form->submit($submittedData);
-
-        $this->assertEmpty($form->getErrors()->count());
+        $this->assertEmpty($form->getErrors(true)->count());
         $this->assertTrue($form->isValid());
         $this->assertEquals($expectedData, $form->getData());
     }
@@ -263,79 +249,5 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
         }
 
         return $choices;
-    }
-
-    /**
-     * @return ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getRegistry()
-    {
-        $repo = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repo->expects($this->any())
-            ->method('find')
-            ->willReturn($this->getProductEntityWithPrecision(1, 'kg', 3));
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $registry */
-        $registry = $this->getMockBuilder('Symfony\Bridge\Doctrine\ManagerRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $registry->expects($this->any())
-            ->method('getRepository')
-            ->with($this->isType('string'))
-            ->willReturn($repo);
-
-        return $registry;
-    }
-
-    /**
-     * @return LineItemSubscriber
-     */
-    protected function getLineItemSubscriber()
-    {
-        /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $repository */
-        $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $repository->expects($this->any())
-            ->method('find')
-            ->willReturn($this->getProductEntityWithPrecision(1, 'kg', 3));
-
-        /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $manager */
-        $manager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $manager->expects($this->any())
-            ->method('getRepository')
-            ->willReturn($repository);
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $registry */
-        $registry = $this->getMockBuilder('Symfony\Bridge\Doctrine\ManagerRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($manager);
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|LineItemManager $lineItemManager */
-        $lineItemManager = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $lineItemManager->expects($this->any())
-            ->method('roundProductQuantity')
-            ->willReturnCallback(
-                function ($product, $unit, $quantity) {
-                    /** @var \PHPUnit_Framework_MockObject_MockObject|Product $product */
-                    return round($quantity, $product->getUnitPrecision($unit)->getPrecision());
-                }
-            );
-
-        $lineItemSubscriber = new LineItemSubscriber($lineItemManager, $registry);
-
-        return $lineItemSubscriber;
     }
 }

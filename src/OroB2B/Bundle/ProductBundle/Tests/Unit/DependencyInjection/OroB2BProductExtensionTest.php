@@ -29,7 +29,6 @@ class OroB2BProductExtensionTest extends ExtensionTestCase
         $this->assertParametersLoaded($expectedParameters);
 
         $expectedDefinitions = [
-            'orob2b_product.form.product',
             'orob2b_product.form.type.product',
             'orob2b_product.form.type.product_unit_rounding_type',
             'orob2b_product.product.manager.api',

@@ -3,7 +3,6 @@ parameters:
     orob2b_shopping_list.form.type.line_item.class: OroB2B\Bundle\ShoppingListBundle\Form\Type\LineItemType
     orob2b_shopping_list.form.type.frontend_line_item_widget.class: OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType
     orob2b_shopping_list.form.type.frontend_line_item.class: OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType
-    orob2b_shopping_list.event_listener.form.type.line_item_subscriber.class: OroB2B\Bundle\ShoppingListBundle\Form\EventListener\LineItemSubscriber
 
 services:
     orob2b_shopping_list.form.type.shopping_list:
@@ -15,13 +14,8 @@ services:
 
     orob2b_shopping_list.form.type.line_item:
         class: %orob2b_shopping_list.form.type.line_item.class%
-        arguments:
-            - @doctrine
-            - @orob2b_shopping_list.line_item.manager
         calls:
-            - [setLineItemSubscriber, [@orob2b_shopping_list.event_listener.form.type.line_item_subscriber]]
             - [setDataClass, [%orob2b_shopping_list.entity.line_item.class%]]
-            - [setProductClass, [%orob2b_product.product.class%]]
         tags:
             - { name: form.type, alias: orob2b_shopping_list_line_item }
 
@@ -29,7 +23,6 @@ services:
         class: %orob2b_shopping_list.form.type.frontend_line_item.class%
         calls:
             - [setDataClass, [%orob2b_shopping_list.entity.line_item.class%]]
-            - [setLineItemSubscriber, [@orob2b_shopping_list.event_listener.form.type.line_item_subscriber]]
         tags:
             - { name: form.type, alias: orob2b_shopping_list_frontend_line_item }
 
@@ -42,11 +35,3 @@ services:
             - [setShoppingListClass, [%orob2b_shopping_list.entity.shopping_list.class%]]
         tags:
             - { name: form.type, alias: orob2b_shopping_list_frontend_line_item_widget }
-
-    orob2b_shopping_list.event_listener.form.type.line_item_subscriber:
-        class: %orob2b_shopping_list.event_listener.form.type.line_item_subscriber.class%
-        arguments:
-            - @orob2b_shopping_list.line_item.manager
-            - @doctrine
-        calls:
-            - [setProductClass, [%orob2b_product.product.class%]]

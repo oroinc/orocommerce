@@ -61,14 +61,14 @@ class ProductControllerTest extends WebTestCase
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
-        $form['orob2b_product_form[sku]'] = self::TEST_SKU;
-        $form['orob2b_product_form[owner]'] = $this->getBusinessUnitId();
+        $form['orob2b_product[sku]'] = self::TEST_SKU;
+        $form['orob2b_product[owner]'] = $this->getBusinessUnitId();
 
-        $form['orob2b_product_form[inventoryStatus]'] = Product::INVENTORY_STATUS_IN_STOCK;
-        $form['orob2b_product_form[visibility]'] = Product::VISIBILITY_VISIBLE;
-        $form['orob2b_product_form[status]'] = Product::STATUS_DISABLED;
-        $form['orob2b_product_form[names][values][default]'] = self::DEFAULT_NAME;
-        $form['orob2b_product_form[descriptions][values][default]'] = self::DEFAULT_DESCRIPTION;
+        $form['orob2b_product[inventoryStatus]'] = Product::INVENTORY_STATUS_IN_STOCK;
+        $form['orob2b_product[visibility]'] = Product::VISIBILITY_VISIBLE;
+        $form['orob2b_product[status]'] = Product::STATUS_DISABLED;
+        $form['orob2b_product[names][values][default]'] = self::DEFAULT_NAME;
+        $form['orob2b_product[descriptions][values][default]'] = self::DEFAULT_DESCRIPTION;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -106,8 +106,8 @@ class ProductControllerTest extends WebTestCase
 
         $submittedData = [
             'input_action' => 'save_and_stay',
-            'orob2b_product_form' => [
-                '_token' => $form['orob2b_product_form[_token]']->getValue(),
+            'orob2b_product' => [
+                '_token' => $form['orob2b_product[_token]']->getValue(),
                 'sku' => self::UPDATED_SKU,
                 'owner' => $this->getBusinessUnitId(),
                 'inventoryStatus' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
@@ -138,15 +138,15 @@ class ProductControllerTest extends WebTestCase
 
         $actualUnitPrecisions = [
             [
-                'unit' => $crawler->filter('select[name="orob2b_product_form[unitPrecisions][0][unit]"] :selected')
+                'unit' => $crawler->filter('select[name="orob2b_product[unitPrecisions][0][unit]"] :selected')
                     ->html(),
-                'precision' => $crawler->filter('input[name="orob2b_product_form[unitPrecisions][0][precision]"]')
+                'precision' => $crawler->filter('input[name="orob2b_product[unitPrecisions][0][precision]"]')
                     ->extract('value')[0]
             ],
             [
-                'unit' => $crawler->filter('select[name="orob2b_product_form[unitPrecisions][1][unit]"] :selected')
+                'unit' => $crawler->filter('select[name="orob2b_product[unitPrecisions][1][unit]"] :selected')
                     ->html(),
-                'precision' => $crawler->filter('input[name="orob2b_product_form[unitPrecisions][1][precision]"]')
+                'precision' => $crawler->filter('input[name="orob2b_product[unitPrecisions][1][precision]"]')
                     ->extract('value')[0]
             ],
         ];
@@ -281,8 +281,8 @@ class ProductControllerTest extends WebTestCase
 
         $submittedData = [
             'input_action' => 'save_and_duplicate',
-            'orob2b_product_form' => [
-                '_token' => $form['orob2b_product_form[_token]']->getValue(),
+            'orob2b_product' => [
+                '_token' => $form['orob2b_product[_token]']->getValue(),
                 'sku' => self::FIRST_DUPLICATED_SKU,
                 'owner' => $this->getBusinessUnitId(),
                 'inventoryStatus' => Product::INVENTORY_STATUS_OUT_OF_STOCK,

@@ -9,7 +9,6 @@ use Symfony\Component\Form\FormEvents;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
 use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType;
 use OroB2B\Bundle\PricingBundle\Validator\Constraints\UniqueProductPrices;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
@@ -25,18 +24,11 @@ class ProductFormExtension extends AbstractTypeExtension
     protected $registry;
 
     /**
-     * @var RoundingService
-     */
-    protected $roundingService;
-
-    /**
      * @param ManagerRegistry $registry
-     * @param RoundingService $roundingService
      */
-    public function __construct(ManagerRegistry $registry, RoundingService $roundingService)
+    public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
-        $this->roundingService = $roundingService;
     }
 
     /**
@@ -44,6 +36,9 @@ class ProductFormExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /** @var Product $product */
+        $product = $builder->getData();
+
         $builder->add(
             'prices',
             ProductPriceCollectionType::NAME,
@@ -51,12 +46,14 @@ class ProductFormExtension extends AbstractTypeExtension
                 'label' => 'orob2b.pricing.productprice.entity_plural_label',
                 'required' => false,
                 'mapped' => false,
-                'constraints' => [new UniqueProductPrices()]
+                'constraints' => [new UniqueProductPrices()],
+                'options' => [
+                    'product' => $product,
+                ],
             ]
         );
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData']);
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit'], 10);
     }
 
@@ -74,38 +71,6 @@ class ProductFormExtension extends AbstractTypeExtension
         $prices = $this->getProductPriceRepository()->getPricesByProduct($product);
 
         $event->getForm()->get('prices')->setData($prices);
-    }
-
-    /**
-     * @param FormEvent $event
-     */
-    public function onPreSubmit(FormEvent $event)
-    {
-        $data = $event->getData();
-
-        $unitPrecisions = [];
-        if (isset($data['unitPrecisions'])) {
-            foreach ($data['unitPrecisions'] as $unitPrecision) {
-                $unitPrecisions[$unitPrecision['unit']] = $unitPrecision['precision'];
-            }
-        }
-
-        if (isset($data['prices'])) {
-            foreach ($data['prices'] as $key => &$price) {
-                if (empty($price['unit']) || empty($price['quantity'])) {
-                    unset($data['prices'][$key]);
-
-                    continue;
-                }
-
-                if (array_key_exists($price['unit'], $unitPrecisions)) {
-                    $price['quantity'] = $this->roundingService
-                        ->round($price['quantity'], $unitPrecisions[$price['unit']]);
-                }
-            }
-        }
-
-        $event->setData($data);
     }
 
     /**

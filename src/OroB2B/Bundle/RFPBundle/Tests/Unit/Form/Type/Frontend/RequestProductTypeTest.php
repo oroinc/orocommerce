@@ -20,9 +20,12 @@ use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType as BaseRequestProductTy
 use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
 use OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type\AbstractTest;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
 class RequestProductTypeTest extends AbstractTest
 {
+    use QuantityTypeTrait;
+
     /**
      * @var RequestProductType
      */
@@ -174,6 +177,7 @@ class RequestProductTypeTest extends AbstractTest
                     $requestProductItemType->getName()      => $requestProductItemType,
                     $currencySelectionType->getName()       => $currencySelectionType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
+                    QuantityTypeTrait::$name                => $this->getQuantityType(),
                 ],
                 []
             ),
