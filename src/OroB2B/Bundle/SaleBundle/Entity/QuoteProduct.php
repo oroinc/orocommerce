@@ -227,6 +227,23 @@ class QuoteProduct implements ProductHolderInterface
     }
 
     /**
+     * Get actual Product name
+     * @return string
+     */
+    public function getProductName()
+    {
+        if ($this->isTypeNotAvailable()) {
+            return $this->isProductReplacementFreeForm()
+                ? $this->freeFormProductReplacement
+                : (string) $this->productReplacement;
+        }
+
+        return $this->isProductFreeForm()
+            ? $this->freeFormProduct
+            : (string) $this->product;
+    }
+
+    /**
      * Get id
      *
      * @return integer

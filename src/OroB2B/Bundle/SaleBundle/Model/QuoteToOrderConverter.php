@@ -76,14 +76,20 @@ class QuoteToOrderConverter
     {
         $quoteProduct = $quoteProductOffer->getQuoteProduct();
 
-        if ($quoteProduct->getProductReplacement()) {
+        if ($quoteProduct->isTypeNotAvailable()) {
             $product = $quoteProduct->getProductReplacement();
+            $freeFormTitle = $quoteProduct->getFreeFormProductReplacement();
+            $productSku = $quoteProduct->getProductReplacementSku();
         } else {
             $product = $quoteProduct->getProduct();
+            $freeFormTitle = $quoteProduct->getFreeFormProduct();
+            $productSku = $quoteProduct->getProductSku();
         }
 
         $orderLineItem = new OrderLineItem();
         $orderLineItem
+            ->setFreeFormProduct($freeFormTitle)
+            ->setProductSku($productSku)
             ->setProduct($product)
             ->setProductUnit($quoteProductOffer->getProductUnit())
             ->setQuantity($quantity ?: $quoteProductOffer->getQuantity())

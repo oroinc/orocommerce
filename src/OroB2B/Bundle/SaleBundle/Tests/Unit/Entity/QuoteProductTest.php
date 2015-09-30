@@ -283,6 +283,31 @@ class QuoteProductTest extends AbstractTest
     }
 
     /**
+     * @param array $inputData
+     * @param string $expectedResult
+     *
+     * @dataProvider getProductNameProvider
+     */
+    public function testGetProductName(array $inputData, $expectedResult)
+    {
+        $quoteProduct = new QuoteProduct();
+
+        if ($inputData['isProductReplacement']) {
+            $quoteProduct
+                ->setType(QuoteProduct::TYPE_NOT_AVAILABLE)
+                ->setFreeFormProductReplacement($inputData['productTitle'])
+                ->setProductReplacement($inputData['product']);
+        } else {
+            $quoteProduct
+                ->setFreeFormProduct($inputData['productTitle'])
+                ->setProduct($inputData['product']);
+        }
+
+        $this->assertEquals($expectedResult, $quoteProduct->getProductName());
+    }
+
+
+    /**
      * @return array
      */
     public function freeFormProvider()
@@ -329,6 +354,67 @@ class QuoteProductTest extends AbstractTest
                     'title' => 'free form title',
                 ],
                 'expected' => false,
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getProductNameProvider()
+    {
+        $product1 = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\Product');
+        $product1->expects($this->any())
+            ->method('__toString')
+            ->willReturn('Product 1');
+        ;
+        $product2 = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\Product');
+        $product2->expects($this->any())
+            ->method('__toString')
+            ->willReturn('Product 2');
+        ;
+
+        return [
+            'no products' => [
+                'input' => [
+                    'product' => null,
+                    'isProductReplacement' => false,
+                    'productTitle' => null,
+                    'productReplacementTitle' => null,
+                ],
+                'expected' => '',
+            ],
+            'product' => [
+                'input' => [
+                    'product' => $product1,
+                    'isProductReplacement' => false,
+                    'productTitle' => null,
+                ],
+                'expected' => 'Product 1',
+            ],
+            'productReplacement' => [
+                'input' => [
+                    'product' => $product2,
+                    'isProductReplacement' => true,
+                    'productTitle' => null,
+                ],
+                'expected' => 'Product 2',
+            ],
+            'product free form' => [
+                'input' => [
+                    'product' => null,
+                    'isProductReplacement' => false,
+                    'productTitle' => 'Free Form Product 1',
+                ],
+                'expected' => 'Free Form Product 1',
+            ],
+            'productReplacement free form' => [
+                'input' => [
+                    'product' => null,
+                    'isProductReplacement' => true,
+                    'productTitle' => 'Free Form Product 2',
+                ],
+                'expected' => 'Free Form Product 2',
             ],
         ];
     }

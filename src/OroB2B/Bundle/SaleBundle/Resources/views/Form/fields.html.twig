@@ -278,10 +278,16 @@
         data-page-component-module="orob2bsale/js/app/components/quote-product-to-order-component"
         data-page-component-options="{{ componentOptions|json_encode }}">
         <td class="quote-product-offer-product-sku">
-            <span>{{ product.sku }}</span>
+            <span>
+                {% if quoteProduct.isTypeNotAvailable %}
+                    {{ quoteProduct.productReplacementSku }}
+                {% else %}
+                    {{ quoteProduct.productSku }}
+                {% endif %}
+            </span>
         </td>
         <td class="quote-product-offer-product-name">
-            <span>{{ product.defaultName }}</span>
+            <span>{{ quoteProduct.productName }}</span>
         </td>
         <td class="quote-product-offer-customer-notes">
             <span>{{ quoteProduct.comment }}</span>
