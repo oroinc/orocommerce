@@ -9,7 +9,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 /**
  * @ORM\Entity
  * @ORM\Table(name="orob2b_product_variant_link")
- * @Config()
+ * @Config
  */
 class ProductVariantLink
 {
@@ -36,7 +36,7 @@ class ProductVariantLink
     protected $product;
 
     /**
-     * @var boolean
+     * @var bool
      * @ORM\Column(name="linked", type="boolean", nullable=false, options={"default"=true})
      */
     protected $linked = true;
@@ -76,7 +76,7 @@ class ProductVariantLink
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isLinked()
     {

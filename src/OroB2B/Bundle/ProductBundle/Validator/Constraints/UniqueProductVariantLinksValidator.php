@@ -14,16 +14,6 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
     const ALIAS = 'orob2b_product_unique_variant_links';
 
     /**
-     * @var PropertyAccessor
-     */
-    private $accessor;
-
-    public function __construct()
-    {
-        $this->accessor = new PropertyAccessor();
-    }
-
-    /**
      * @param Product $value
      * @param UniqueProductVariantLinks|Constraint $constraint
      */
@@ -41,7 +31,7 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
         }
 
         if (count($variantHashes) !== count(array_unique($variantHashes))) {
-            $this->context->addViolation($constraint->variantFieldValueCombinationsShouldBeUnique);
+            $this->context->addViolation($constraint->message);
         }
     }
 
@@ -52,10 +42,11 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
      */
     private function getVariantFieldsHash(array $variantFields, Product $product)
     {
-        $fields = [];
+        $propertyAccessor = new PropertyAccessor();
 
+        $fields = [];
         foreach ($variantFields as $fieldName) {
-            $fields[$fieldName] = $this->accessor->getValue($product, $fieldName);
+            $fields[$fieldName] = $propertyAccessor->getValue($product, $fieldName);
         }
 
         return md5(json_encode($fields));

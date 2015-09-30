@@ -4,13 +4,16 @@ namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\ProductBundle\Form\DataTransformer\ProductVariantLinksDataTransformer;
 
 class ProductVariantLinksType extends AbstractType
 {
     const NAME = 'orob2b_product_variant_links';
+
+    /** @var ProductVariantLinksDataTransformer */
+    protected $transformer;
 
     /**
      * @param ProductVariantLinksDataTransformer $transformer
@@ -60,12 +63,13 @@ class ProductVariantLinksType extends AbstractType
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * @param OptionsResolver $resolver
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'product_class' => null
         ]);
+        $resolver->setRequired('product_class');
     }
 }

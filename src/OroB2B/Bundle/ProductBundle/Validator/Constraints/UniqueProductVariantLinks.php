@@ -6,8 +6,8 @@ use Symfony\Component\Validator\Constraint;
 
 class UniqueProductVariantLinks extends Constraint
 {
-    public $variantFieldValueCombinationsShouldBeUnique =
-        'orob2b.product.validators.product_variant_links.unique_variants_combination.message';
+    /** @var string */
+    public $message = 'orob2b.product.product_variant_links.unique_variants_combination.message';
 
     /**
      * {@inheritdoc}

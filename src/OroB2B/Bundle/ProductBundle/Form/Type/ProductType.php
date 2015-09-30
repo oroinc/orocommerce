@@ -50,14 +50,26 @@ class ProductType extends AbstractType
                 ['label' => 'orob2b.product.variant_fields.label']
             )
             ->add(
+                'variantLinks',
+                ProductVariantLinksType::NAME,
+                ['product_class' => $this->dataClass, 'by_reference' => false]
+            )
+            ->add(
                 'status',
                 'oro_enum_select',
                 [
                     'label'     => 'orob2b.product.status.label',
                     'enum_code' => 'prod_status',
-                    'configs'   => [
-                        'allowClear' => false,
-                    ]
+                    'configs'   => ['allowClear' => false]
+                ]
+            )
+            ->add(
+                'unitPrecisions',
+                ProductUnitPrecisionCollectionType::NAME,
+                [
+                    'label'    => 'orob2b.product.unit_precisions.label',
+                    'tooltip'  => 'orob2b.product.form.tooltip.unit_precision',
+                    'required' => false
                 ]
             )
             ->add(
@@ -66,9 +78,7 @@ class ProductType extends AbstractType
                 [
                     'label'     => 'orob2b.product.inventory_status.label',
                     'enum_code' => 'prod_inventory_status',
-                    'configs'   => [
-                        'allowClear' => false,
-                    ]
+                    'configs'   => ['allowClear' => false]
                 ]
             )
             ->add(
@@ -94,10 +104,7 @@ class ProductType extends AbstractType
                             'resize' => true,
                             'width' => 500,
                             'height' => 300,
-                            'plugins' => array_merge(
-                                OroRichTextType::$defaultPlugins,
-                                ['fullscreen']
-                            ),
+                            'plugins' => array_merge(OroRichTextType::$defaultPlugins, ['fullscreen']),
                             'toolbar' =>
                                 [reset(OroRichTextType::$toolbars[OroRichTextType::TOOLBAR_DEFAULT]) . ' | fullscreen'],
                         ],
@@ -118,14 +125,9 @@ class ProductType extends AbstractType
                 [
                     'label'     => 'orob2b.product.visibility.label',
                     'enum_code' => 'prod_visibility',
-                    'configs'   => [
-                        'allowClear' => false,
-                    ]
+                    'configs'   => ['allowClear' => false]
                 ]
             );
-
-        $this->addUnitPrecisions($builder);
-        $this->addVariantLinks($builder);
     }
 
     /**
@@ -146,36 +148,5 @@ class ProductType extends AbstractType
     public function getName()
     {
         return self::NAME;
-    }
-
-    /**
-     * @param FormBuilderInterface $builder
-     */
-    private function addVariantLinks(FormBuilderInterface $builder)
-    {
-        $builder->add(
-            'variantLinks',
-            ProductVariantLinksType::NAME,
-            [
-                'product_class' => $this->dataClass,
-                'by_reference' => false
-            ]
-        );
-    }
-
-    /**
-     * @param FormBuilderInterface $builder
-     */
-    private function addUnitPrecisions(FormBuilderInterface $builder)
-    {
-        $builder->add(
-            'unitPrecisions',
-            ProductUnitPrecisionCollectionType::NAME,
-            [
-                'label'    => 'orob2b.product.unit_precisions.label',
-                'tooltip'  => 'orob2b.product.form.tooltip.unit_precision',
-                'required' => false
-            ]
-        );
     }
 }

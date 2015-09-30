@@ -18,7 +18,7 @@ orob2b:
         names.label: Name
         descriptions.label: Description
         removed: '{title} - removed'
-        is_variant.label: Is variant?
+        is_variant.label: Is Variant
         variant_links.label: Product Variant Links
 
         visibility:

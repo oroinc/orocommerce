@@ -31,11 +31,6 @@ class ProductVariantCustomFieldsDatagridListener
     private $productClass;
 
     /**
-     * @var PropertyAccessor
-     */
-    private $accessor;
-
-    /**
      * @param DoctrineHelper $doctrineHelper
      * @param CustomFieldProvider $customFieldProvider
      * @param string $productClass
@@ -48,7 +43,6 @@ class ProductVariantCustomFieldsDatagridListener
         $this->doctrineHelper = $doctrineHelper;
         $this->customFieldProvider = $customFieldProvider;
         $this->productClass = $productClass;
-        $this->accessor = new PropertyAccessor();
     }
 
     /**
@@ -75,6 +69,8 @@ class ProductVariantCustomFieldsDatagridListener
      */
     public function onResultAfter(OrmResultAfter $event)
     {
+        $propertyAccessor = new PropertyAccessor();
+
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
 
@@ -90,7 +86,7 @@ class ProductVariantCustomFieldsDatagridListener
             $data = [];
             foreach ($customFields as $customField) {
                 $fieldName = $customField['name'];
-                $data[$fieldName] = $this->accessor->getValue($product, $fieldName);
+                $data[$fieldName] = $propertyAccessor->getValue($product, $fieldName);
             }
             $record->addData($data);
         }

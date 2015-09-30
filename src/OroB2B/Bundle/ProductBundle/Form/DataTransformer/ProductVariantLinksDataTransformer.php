@@ -63,16 +63,15 @@ class ProductVariantLinksDataTransformer implements DataTransformerInterface
 
     /**
      * @param Product[] $variants
-     * @return null
      */
     private function removeVariants(array $variants)
     {
         if (!$variants) {
-            return null;
+            return;
         }
 
         foreach ($this->variantLinks as $variantLink) {
-            if (in_array($variantLink->getProduct(), $variants)) {
+            if (in_array($variantLink->getProduct(), $variants, true)) {
                 $this->variantLinks->removeElement($variantLink);
             }
         }

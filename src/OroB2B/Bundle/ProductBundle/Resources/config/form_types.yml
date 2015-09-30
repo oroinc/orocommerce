@@ -112,7 +112,9 @@ services:
 
     orob2b_product.form.type.custom_entity_fields_choice:
         class: %orob2b_product.form.type.custom_entity_fields_choice.class%
-        arguments: [@orob2b_product.provider.custom_field_provider, %orob2b_product.product.class%]
+        arguments:
+            - @orob2b_product.provider.custom_field_provider
+            - %orob2b_product.product.class%
         tags:
             - { name: form.type, alias: orob2b_product_custom_entity_fields_choice }
 

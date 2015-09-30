@@ -361,7 +361,7 @@ datagrid:
                 editable: true
                 frontend_type: boolean
             id:
-                label: orob2b.product.id.label
+                label:         orob2b.product.id.label
             sku:
                 label:         orob2b.product.sku.label
             productName:
