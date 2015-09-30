@@ -264,8 +264,7 @@ services:
         arguments:
             - @translator
             - @oro_entity.doctrine_helper
-        calls:
-            - [setRequest, ["@?request="]]
+            - @request_stack
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.category-edit, method: onCategoryEdit }
 

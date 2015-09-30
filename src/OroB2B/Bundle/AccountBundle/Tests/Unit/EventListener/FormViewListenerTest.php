@@ -2,10 +2,8 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
 
-use Doctrine\ORM\EntityRepository;
-
-use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -28,6 +26,11 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
     protected $doctrineHelper;
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|RequestStack
+     */
+    protected $requestStack;
+
+    /**
      * {@inheritdoc}
      */
     public function setUp()
@@ -37,7 +40,9 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->doctrineHelper = $this->getDoctrineHelper();
 
-        $listener = new FormViewListener($translator, $this->doctrineHelper);
+        $this->requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+
+        $listener = new FormViewListener($translator, $this->doctrineHelper, $this->requestStack);
         $this->listener = $listener;
     }
 
@@ -50,7 +55,7 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
         $this->doctrineHelper->expects($this->never())
             ->method('getEntityReference');
 
-        $this->listener->setRequest(null);
+        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn(null);
         $this->listener->onCategoryEdit($event);
     }
 
@@ -77,7 +82,7 @@ class FormViewListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getEnvironment')
             ->willReturn($env);
 
-        $this->listener->setRequest($this->getRequest());
+        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($this->getRequest());
         $this->listener->onCategoryEdit($event);
     }
 

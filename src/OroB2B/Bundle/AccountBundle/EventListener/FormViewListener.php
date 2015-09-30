@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\EventListener;
 
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -24,26 +24,23 @@ class FormViewListener
     protected $doctrineHelper;
 
     /**
-     * @var Request
+     * @var RequestStack
      */
-    protected $request;
+    protected $requestStack;
 
     /**
      * @param TranslatorInterface $translator
      * @param DoctrineHelper $doctrineHelper
+     * @param RequestStack $requestStack
      */
-    public function __construct(TranslatorInterface $translator, DoctrineHelper $doctrineHelper)
-    {
+    public function __construct(
+        TranslatorInterface $translator,
+        DoctrineHelper $doctrineHelper,
+        RequestStack $requestStack
+    ) {
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
-    }
-
-    /**
-     * @param Request $request
-     */
-    public function setRequest($request)
-    {
-        $this->request = $request;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -51,11 +48,12 @@ class FormViewListener
      */
     public function onCategoryEdit(BeforeListRenderEvent $event)
     {
-        if (!$this->request) {
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
             return;
         }
 
-        $categoryId = $this->request->get('id');
+        $categoryId = $request->get('id');
 
         /** @var Category $category */
         $category = $this->doctrineHelper->getEntityReference('OroB2BCatalogBundle:Category', $categoryId);
