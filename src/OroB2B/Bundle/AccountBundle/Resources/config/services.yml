@@ -453,4 +453,4 @@ services:
         public: false
         parent: oro.file_cache.abstract
         calls:
-            - [ setNamespace, [ "orob2b_account.storage.category_visibility.cache" ] ]
+            - [ setNamespace, [ "orob2b_account.storage.category_visibility_storage.cache" ] ]
