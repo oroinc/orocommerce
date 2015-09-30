@@ -53,7 +53,8 @@ OroB2B\Bundle\RFPBundle\Entity\RequestProductItem:
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
         productUnit:
-            - NotBlank: ~
+            - NotBlank:
+                message: 'orob2b.rfp.requestproductitem.unit.blank'
         productUnitCode:
             - NotBlank:
                 groups: [ Import ]

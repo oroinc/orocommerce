@@ -15,6 +15,7 @@ use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemoved
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
@@ -22,6 +23,8 @@ use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductRequestType;
 
 class QuoteProductRequestTypeTest extends AbstractTest
 {
+    use QuantityTypeTrait;
+
     /**
      * @var QuoteProductRequestType
      */
@@ -44,11 +47,14 @@ class QuoteProductRequestTypeTest extends AbstractTest
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
-            ->with([
-                'data_class'    => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest',
-                'intention'     => 'sale_quote_product_request',
-                'extra_fields_message'  => 'This form should not contain extra fields: "{{ extra_fields }}"',
-            ])
+            ->with($this->callback(function (array $options) {
+                $this->assertArrayHasKey('data_class', $options);
+                $this->assertArrayHasKey('compact_units', $options);
+                $this->assertArrayHasKey('intention', $options);
+                $this->assertArrayHasKey('extra_fields_message', $options);
+
+                return true;
+            }))
         ;
 
         $this->formType->configureOptions($resolver);
@@ -222,6 +228,7 @@ class QuoteProductRequestTypeTest extends AbstractTest
                     $priceType->getName()                   => $priceType,
                     $optionalPriceType->getName()           => $optionalPriceType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
+                    QuantityTypeTrait::$name                => $this->getQuantityType(),
                 ],
                 []
             ),

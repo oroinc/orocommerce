@@ -3,13 +3,15 @@
 namespace OroB2B\Bundle\CMSBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Component\Testing\Unit\EntityTestCase;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\CMSBundle\Entity\Page;
 use OroB2B\Bundle\RedirectBundle\Entity\Slug;
 
-class PageTest extends EntityTestCase
+class PageTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTestCaseTrait;
+
     public function testAccessors()
     {
         $date = new \DateTime();

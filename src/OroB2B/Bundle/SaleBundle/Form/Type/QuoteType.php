@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\SaleBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 
@@ -60,6 +60,9 @@ class QuoteType extends AbstractType
                 QuoteProductCollectionType::NAME,
                 [
                     'add_label' => 'orob2b.sale.quoteproduct.add_label',
+                    'options' => [
+                        'compact_units' => true,
+                    ],
                 ]
             )
         ;
@@ -68,7 +71,7 @@ class QuoteType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class'    => $this->dataClass,

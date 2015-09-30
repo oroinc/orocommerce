@@ -570,6 +570,9 @@
             <arg line="--exclude=SaleBundle/Migrations/Schema"/>
             <arg line="--exclude=OrderBundle/Migrations/Schema"/>
             <arg line="--exclude=ShoppingListBundle/Migrations/Schema"/>
+            <arg line="--exclude=WebsiteBundle/Migrations/Schema"/>
+            <arg line="--exclude=CatalogBundle/Migrations/Schema"/>
+            <arg line="--exclude=CMSBundle/Migrations/Schema"/>
             <arg line="${srcdir}"/>
         </exec>
     </target>

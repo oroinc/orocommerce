@@ -1,0 +1,12 @@
+liip_imagine:
+    filter_sets:
+        login_page_logo:
+            quality:          95
+            filters:
+                relative_resize: { heighten: 80 }
+                strip:        ~
+        login_page:
+            quality:          95
+            filters:
+                thumbnail: { size: [80, 80], mode: outbound }
+                strip:        ~

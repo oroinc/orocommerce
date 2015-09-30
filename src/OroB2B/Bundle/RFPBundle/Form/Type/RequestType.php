@@ -70,6 +70,9 @@ class RequestType extends AbstractType
             ->add('requestProducts', RequestProductCollectionType::NAME, [
                 'label'     => 'orob2b.rfp.requestproduct.entity_plural_label',
                 'add_label' => 'orob2b.rfp.requestproduct.add_label',
+                'options' => [
+                    'compact_units' => true,
+                ],
             ])
         ;
     }

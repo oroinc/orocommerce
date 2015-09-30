@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ProductBundle\Controller\Frontend;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 use OroB2B\Bundle\ProductBundle\Controller\AbstractAjaxProductUnitController;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -18,11 +19,14 @@ class AjaxProductUnitController extends AbstractAjaxProductUnitController
      *      requirements={"id"="\d+"}
      * )
      *
+     * @param Request $request
      * @param Product $product
      * @return JsonResponse
      */
-    public function productUnitsAction(Product $product)
+    public function productUnitsAction(Request $request, Product $product)
     {
-        return $this->getProductUnits($product);
+        $isShort = (bool)$request->get('short', false);
+
+        return $this->getProductUnits($product, $isShort);
     }
 }

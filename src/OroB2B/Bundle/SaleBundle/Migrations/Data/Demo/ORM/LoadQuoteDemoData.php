@@ -142,12 +142,12 @@ class LoadQuoteDemoData extends AbstractFixture implements
 
         $types = [
             QuoteProduct::TYPE_REQUESTED,
-            QuoteProduct::TYPE_NOT_AVAILABLE,
+            //QuoteProduct::TYPE_NOT_AVAILABLE,
         ];
 
         $priceTypes = [
             QuoteProductOffer::PRICE_TYPE_UNIT,
-            QuoteProductOffer::PRICE_TYPE_BUNDLED,
+            //QuoteProductOffer::PRICE_TYPE_BUNDLED,
         ];
 
         if ($quote->getRequest()) {

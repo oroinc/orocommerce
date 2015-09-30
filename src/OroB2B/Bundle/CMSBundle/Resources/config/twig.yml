@@ -1,5 +1,6 @@
 parameters:
     orob2b_cms.twig.page_extension.class: OroB2B\Bundle\CMSBundle\Twig\PageExtension
+    orob2b_cms.twig.login_page_extension.class: OroB2B\Bundle\CMSBundle\Twig\LoginPageExtension
 
 services:
     # Twig extensions
@@ -7,5 +8,12 @@ services:
         class: %orob2b_cms.twig.page_extension.class%
         arguments:
             - @orob2b_cms.page_tree_handler
+        tags:
+            - { name: twig.extension }
+
+    orob2b_cms.twig.login_page_extension:
+        class: %orob2b_cms.twig.login_page_extension.class%
+        arguments:
+            - @doctrine
         tags:
             - { name: twig.extension }

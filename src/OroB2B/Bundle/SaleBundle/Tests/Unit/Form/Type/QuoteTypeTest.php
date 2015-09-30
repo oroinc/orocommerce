@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
@@ -20,6 +20,7 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductRemovedSelectType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
@@ -33,6 +34,8 @@ use OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type\Stub\EntityType as StubEntityT
 
 class QuoteTypeTest extends AbstractTest
 {
+    use QuantityTypeTrait;
+
     /**
      * @var QuoteType
      */
@@ -49,10 +52,10 @@ class QuoteTypeTest extends AbstractTest
         $this->formType->setDataClass('OroB2B\Bundle\SaleBundle\Entity\Quote');
     }
 
-    public function testSetDefaultOptions()
+    public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolverInterface */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolverInterface');
+        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
+        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(
@@ -63,7 +66,7 @@ class QuoteTypeTest extends AbstractTest
                 ]
             );
 
-        $this->formType->setDefaultOptions($resolver);
+        $this->formType->configureOptions($resolver);
     }
 
     public function testGetName()
@@ -228,6 +231,7 @@ class QuoteTypeTest extends AbstractTest
                     $productUnitSelectionType->getName()        => $productUnitSelectionType,
                     $accountSelectType->getName()               => $accountSelectType,
                     $accountUserSelectType->getName()           => $accountUserSelectType,
+                    QuantityTypeTrait::$name                    => $this->getQuantityType(),
                 ],
                 []
             ),

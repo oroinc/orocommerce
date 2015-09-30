@@ -17,7 +17,7 @@ use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 
 class RequestType extends AbstractType
 {
-    const NAME = 'orob2b_rfp_frontend_request_type';
+    const NAME = 'orob2b_rfp_frontend_request';
 
     /**
      * @var ConfigManager
@@ -93,8 +93,9 @@ class RequestType extends AbstractType
                 'label' => 'orob2b.rfp.request.body.label'
             ])
             ->add('requestProducts', RequestProductCollectionType::NAME, [
-                'label'     => 'orob2b.rfp.requestproduct.entity_plural_label',
-                'add_label' => 'orob2b.rfp.requestproduct.add_label',
+                'options' => [
+                    'compact_units' => true,
+                ],
             ])
         ;
 

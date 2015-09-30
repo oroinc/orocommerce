@@ -28,6 +28,18 @@
 
     {% set id = 'request-edit' %}
 
+    {% set lineItems %}
+        <div class="rfp-lineitems"
+             data-page-component-module="oroui/js/app/components/view-component"
+             data-page-component-options="{{ {
+                 view: 'orob2brfp/js/app/views/line-items-view'
+             }|json_encode }}"
+             data-layout="separate">
+            {{ form_widget(form.requestProducts) }}
+            {{ form_errors(form.requestProducts) }}
+        </div>
+    {% endset %}
+
     {% set dataBlocks = [
         {
             'title': 'orob2b.rfp.sections.general'|trans,
@@ -53,7 +65,7 @@
             'subblocks': [{
                 'title': '',
                 'data': [
-                    form_row(form.requestProducts)
+                    lineItems
                 ]
             }]
         }

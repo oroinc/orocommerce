@@ -6,9 +6,24 @@ use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
+use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
-class OroB2BCatalogBundle implements Migration
+class OroB2BCatalogBundle implements Migration, NoteExtensionAwareInterface
 {
+    /** @var NoteExtension */
+    protected $noteExtension;
+
+    /**
+     * Sets the NoteExtension
+     *
+     * @param NoteExtension $noteExtension
+     */
+    public function setNoteExtension(NoteExtension $noteExtension)
+    {
+        $this->noteExtension = $noteExtension;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -17,10 +32,12 @@ class OroB2BCatalogBundle implements Migration
         /** Tables generation **/
         $this->createOroB2BCatalogCategoryTable($schema);
         $this->createOroB2BCatalogCategoryTitleTable($schema);
+        $this->createOrob2BCategoryToProductTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroB2BCatalogCategoryForeignKeys($schema);
         $this->addOroB2BCatalogCategoryTitleForeignKeys($schema);
+        $this->addOrob2BCategoryToProductForeignKeys($schema);
     }
 
     /**
@@ -40,6 +57,7 @@ class OroB2BCatalogBundle implements Migration
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
+        $this->noteExtension->addNoteAssociation($schema, 'orob2b_catalog_category');
     }
 
     /**
@@ -54,6 +72,20 @@ class OroB2BCatalogBundle implements Migration
         $table->addColumn('localized_value_id', 'integer', []);
         $table->setPrimaryKey(['category_id', 'localized_value_id']);
         $table->addUniqueIndex(['localized_value_id']);
+    }
+
+    /**
+     * Create orob2b_category_to_product table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BCategoryToProductTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_category_to_product');
+        $table->addColumn('category_id', 'integer', []);
+        $table->addColumn('product_id', 'integer', []);
+        $table->setPrimaryKey(['category_id', 'product_id']);
+        $table->addUniqueIndex(['product_id']);
     }
 
     /**
@@ -91,6 +123,28 @@ class OroB2BCatalogBundle implements Migration
             ['category_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    /**
+     * Add orob2b_category_to_product foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BCategoryToProductForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_category_to_product');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_catalog_category'),
+            ['category_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_product'),
+            ['product_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 }

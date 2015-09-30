@@ -122,7 +122,7 @@ class ProductUnitRemovedSelectionType extends AbstractType
             ]);
             $view->vars['empty_value'] =  $emptyValueTitle;
         }
-        $choices = $this->productUnitFormatter->formatChoices($choices);
+        $choices = $this->productUnitFormatter->formatChoices($choices, $options['compact']);
         $choicesViews = [];
         foreach ($choices as $key => $value) {
             $choicesViews[] = new ChoiceView($value, $key, $value);

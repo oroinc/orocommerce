@@ -25,16 +25,20 @@ class AjaxProductUnitControllerTest extends WebTestCase
     /**
      * @param string $productReference
      * @param array $expectedData
+     * @param bool $isShort
      *
      * @dataProvider productUnitsDataProvider
      */
-    public function testProductUnitsAction($productReference, array $expectedData)
+    public function testProductUnitsAction($productReference, array $expectedData, $isShort = false)
     {
         $product = $this->getProduct($productReference);
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_product_frontend_ajaxproductunit_productunits', ['id' => $product->getId()])
+            $this->getUrl('orob2b_product_frontend_ajaxproductunit_productunits', [
+                'id' => $product->getId(),
+                'short' => $isShort
+            ])
         );
 
         $result = $this->client->getResponse();
@@ -52,21 +56,40 @@ class AjaxProductUnitControllerTest extends WebTestCase
     public function productUnitsDataProvider()
     {
         return [
-            [
+            'product.1 full' => [
                 'product.1',
                 [
                     'bottle' => 'orob2b.product_unit.bottle.label.full',
-                    'liter' => 'orob2b.product_unit.liter.label.full',
+                    'liter' => 'orob2b.product_unit.liter.label.full'
                 ],
+                false
             ],
-            [
+            'product.2 full' => [
                 'product.2',
                 [
                     'bottle' => 'orob2b.product_unit.bottle.label.full',
                     'box' => 'orob2b.product_unit.box.label.full',
-                    'liter' => 'orob2b.product_unit.liter.label.full',
+                    'liter' => 'orob2b.product_unit.liter.label.full'
                 ],
+                false
             ],
+            'product.1 short' => [
+                'product.1',
+                [
+                    'bottle' => 'orob2b.product_unit.bottle.label.short',
+                    'liter' => 'orob2b.product_unit.liter.label.short'
+                ],
+                true
+            ],
+            'product.2 short' => [
+                'product.2',
+                [
+                    'bottle' => 'orob2b.product_unit.bottle.label.short',
+                    'box' => 'orob2b.product_unit.box.label.short',
+                    'liter' => 'orob2b.product_unit.liter.label.short'
+                ],
+                true
+            ]
         ];
     }
 
