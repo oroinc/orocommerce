@@ -446,7 +446,7 @@ services:
         arguments:
             - @oro_security.security_facade
 
- orob2b_account.storage.category_visibility_storage:
+    orob2b_account.storage.category_visibility_storage:
         class: %orob2b_account.storage.category_visibility_storage.class%
 
     orob2b_account.storage.category_visibility_storage.cache:
