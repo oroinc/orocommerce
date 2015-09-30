@@ -67,7 +67,7 @@ parameters:
 
     orob2b_account.content_provider.menu.class: Oro\Bundle\NavigationBundle\ContentProvider\MenuContentProvider
 
-    orob2b_catalog.storage.category_visibility_storage.class: OroB2B\Bundle\AccountBundle\Storage\CategoryVisibilityStorage
+    orob2b_account.storage.category_visibility_storage.class: OroB2B\Bundle\AccountBundle\Storage\CategoryVisibilityStorage
 
 services:
     orob2b_account.security.account_user_provider:
@@ -446,5 +446,5 @@ services:
         arguments:
             - @oro_security.security_facade
 
-    orob2b_catalog.storage.category_visibility_storage:
-        class: %orob2b_catalog.storage.category_visibility_storage.class%
+    orob2b_account.storage.category_visibility_storage:
+        class: %orob2b_account.storage.category_visibility_storage.class%
