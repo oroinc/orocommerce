@@ -691,6 +691,24 @@ datagrid:
         extends: account-account-users-grid-view-basic
         source:
             acl_resource: orob2b_account_account_user_view
+            query:
+                select:
+                    - userAccount.name as accountName
+                join:
+                    left:
+                        - { join: user.account, alias: userAccount }
+        columns:
+            accountName:
+                label: orob2b.account.accountuser.account.label
+        filters:
+            columns:
+                accountName:
+                    type:      string
+                    data_name: accountName
+        sorters:
+            columns:
+                accountName:
+                    data_name: accountName
 
     frontend-account-account-users-grid-view:
         extends: account-account-users-grid-view-basic
@@ -701,6 +719,24 @@ datagrid:
         extends: account-account-users-grid-update-basic
         source:
             acl_resource: orob2b_account_account_user_view
+            query:
+                select:
+                    - userAccount.name as accountName
+                join:
+                    left:
+                        - { join: user.account, alias: userAccount }
+        columns:
+            accountName:
+                label: orob2b.account.accountuser.account.label
+        filters:
+            columns:
+                accountName:
+                    type:      string
+                    data_name: accountName
+        sorters:
+            columns:
+                accountName:
+                    data_name: accountName
         properties:
             update_link:
                 route: orob2b_account_account_user_role_update
