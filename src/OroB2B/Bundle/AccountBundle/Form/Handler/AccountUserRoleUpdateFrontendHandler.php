@@ -7,7 +7,6 @@ use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\UserBundle\Form\Handler\AclRoleHandler;
 use Oro\Bundle\UserBundle\Entity\AbstractRole;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -20,7 +19,7 @@ class AccountUserRoleUpdateFrontendHandler extends AbstractAccountUserRoleHandle
     /**
      * @var AccountUserRole
      */
-    protected $newRole;
+    protected $handledRole;
 
     /**
      * @var SecurityFacade
@@ -38,6 +37,14 @@ class AccountUserRoleUpdateFrontendHandler extends AbstractAccountUserRoleHandle
     protected $loggedAccountUser;
 
     /**
+     * @return AccountUserRole
+     */
+    public function getHandledRole()
+    {
+        return $this->handledRole;
+    }
+
+    /**
      * {@inheritDoc}
      * @throws \Doctrine\DBAL\ConnectionException
      */
@@ -53,10 +60,8 @@ class AccountUserRoleUpdateFrontendHandler extends AbstractAccountUserRoleHandle
             $this->appendUsers = $roleRepository->getAssignedUsers($role);
         }
 
-        $this->loggedAccountUser = $this->securityFacade->getLoggedUser();
-
         /** @var EntityManager $manager */
-        $manager = $this->managerRegistry->getManagerForClass(ClassUtils::getClass($this->loggedAccountUser));
+        $manager = $this->managerRegistry->getManagerForClass(ClassUtils::getClass($this->getLoggedUser()));
 
         $connection = $manager->getConnection();
         $connection->setTransactionIsolation(Connection::TRANSACTION_REPEATABLE_READ);
@@ -64,7 +69,7 @@ class AccountUserRoleUpdateFrontendHandler extends AbstractAccountUserRoleHandle
 
         try {
             $this->removeOriginalRoleFromUsers($role, $manager);
-            AclRoleHandler::onSuccess($this->newRole, $appendUsers, $removeUsers);
+            parent::onSuccess($this->handledRole, $appendUsers, $removeUsers);
             $this->addNewRoleToUsers($role, $manager, $appendUsers, $removeUsers);
 
             $manager->flush();
@@ -77,7 +82,7 @@ class AccountUserRoleUpdateFrontendHandler extends AbstractAccountUserRoleHandle
 
     /**
      * @param AccountUserRole|AbstractRole $role
-     * @param EntityManager             $manager
+     * @param EntityManager                $manager
      * @param array                        $appendUsers
      * @param array                        $removeUsers
      */
@@ -87,16 +92,16 @@ class AccountUserRoleUpdateFrontendHandler extends AbstractAccountUserRoleHandle
         array $appendUsers,
         array $removeUsers
     ) {
-        if (!$role->getId() || $role->getId() === $this->newRole->getId()) {
+        if (!$role->getId() || $role->getId() === $this->handledRole->getId()) {
             return;
         }
 
         $accountRolesToAdd = array_diff($this->appendUsers, $removeUsers);
         $accountRolesToAdd = array_merge($accountRolesToAdd, $appendUsers);
         array_map(
-            function (AccountUser $accountUser) use ($role, $manager) {
-                if ($accountUser->getAccount()->getId() === $this->loggedAccountUser->getAccount()->getId()) {
-                    $accountUser->addRole($this->newRole);
+            function (AccountUser $accountUser) use ($manager) {
+                if ($accountUser->getAccount()->getId() === $this->getLoggedUser()->getAccount()->getId()) {
+                    $accountUser->addRole($this->handledRole);
                     $manager->persist($accountUser);
                 }
             },
@@ -110,13 +115,13 @@ class AccountUserRoleUpdateFrontendHandler extends AbstractAccountUserRoleHandle
      */
     protected function removeOriginalRoleFromUsers(AccountUserRole $role, EntityManager $manager)
     {
-        if (!$role->getId() || $role->getId() === $this->newRole->getId()) {
+        if (!$role->getId() || $role->getId() === $this->handledRole->getId()) {
             return;
         }
 
         array_map(
             function (AccountUser $accountUser) use ($role, $manager) {
-                if ($accountUser->getAccount()->getId() === $this->loggedAccountUser->getAccount()->getId()) {
+                if ($accountUser->getAccount()->getId() === $this->getLoggedUser()->getAccount()->getId()) {
                     $accountUser->removeRole($role);
                     $manager->persist($accountUser);
                 }
@@ -135,10 +140,15 @@ class AccountUserRoleUpdateFrontendHandler extends AbstractAccountUserRoleHandle
 
     /**
      * {@inheritdoc}
+     * @param AccountUserRole $role
      */
     public function createForm(AbstractRole $role)
     {
-        $this->newRole = $role;
+        if ($role->isPredefined()) {
+            $this->handledRole = $this->createNewRole($role);
+        } else {
+            $this->handledRole = $role;
+        }
 
         return parent::createForm($role);
     }
@@ -148,7 +158,7 @@ class AccountUserRoleUpdateFrontendHandler extends AbstractAccountUserRoleHandle
      */
     protected function processPrivileges(AbstractRole $role)
     {
-        parent::processPrivileges($this->newRole);
+        parent::processPrivileges($this->handledRole);
     }
 
     /**
@@ -161,5 +171,34 @@ class AccountUserRoleUpdateFrontendHandler extends AbstractAccountUserRoleHandle
             $role,
             ['privilege_config' => $privilegeConfig]
         );
+    }
+
+    /**
+     * @param AccountUserRole $role
+     * @return AccountUserRole
+     */
+    protected function createNewRole(AccountUserRole $role)
+    {
+        /** @var AccountUser $accountUser */
+        $accountUser = $this->getLoggedUser();
+
+        $newRole = $role->getId() ? clone $role : $role;
+
+        $newRole->setAccount($accountUser->getAccount())
+            ->setOrganization($accountUser->getOrganization());
+
+        return $newRole;
+    }
+
+    /**
+     * @return AccountUser
+     */
+    protected function getLoggedUser()
+    {
+        if (!$this->loggedAccountUser) {
+            $this->loggedAccountUser = $this->securityFacade->getLoggedUser();
+        }
+
+        return $this->loggedAccountUser;
     }
 }

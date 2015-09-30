@@ -3,6 +3,8 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Handler;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
+use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
@@ -12,26 +14,20 @@ use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateFrontendHandle
 
 class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUpdateHandlerTestCase
 {
-    /** @var  SecurityFacade| \PHPUnit_Framework_MockObject_MockObject */
+    /** @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject */
     protected $securityFacade;
 
     protected function setUp()
     {
         parent::setUp();
 
-        $this->handler = new AccountUserRoleUpdateFrontendHandler($this->formFactory, $this->privilegeConfig);
-        $this->setRequirementsForHandler($this->handler);
-
         $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->handler->setSecurityFacade($this->securityFacade);
     }
 
     /**
      * @param AccountUserRole $role
-     * @param AccountUserRole $newRole
      * @param array           $appendUsers
      * @param array           $removeUsers
      * @param array           $assignedUsers
@@ -45,7 +41,6 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
      */
     public function testOnSuccess(
         AccountUserRole $role,
-        AccountUserRole $newRole,
         array $appendUsers,
         array $removeUsers,
         array $assignedUsers,
@@ -53,22 +48,30 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
         array $expectedUsers,
         array $expectedUsersWithoutRole
     ) {
-        // Array of persisted users
-        /** @var AccountUser[] $persistedUsers */
+        /** @var AccountUser[] $persistedUsers Array of persisted users */
         $persistedUsers = [];
 
         $request = new Request();
         $request->setMethod('POST');
 
-        $appendForm = $this->getMock('Symfony\Component\Form\FormInterface');
-        $appendForm->expects($this->once())
-            ->method('getData')
-            ->willReturn($appendUsers);
+        $formMapData = [
+            ['appendUsers', $appendUsers],
+            ['removeUsers', $removeUsers]
+        ];
 
-        $removeForm = $this->getMock('Symfony\Component\Form\FormInterface');
-        $removeForm->expects($this->once())
-            ->method('getData')
-            ->willReturn($removeUsers);
+        foreach ($this->privilegeConfig as $fieldName => $config) {
+            $formMapData[] = [$fieldName, []];
+        }
+
+        $formMap = [];
+        foreach ($formMapData as $formValue) {
+            $subForm = $this->getMock('Symfony\Component\Form\FormInterface');
+            $subForm->expects($this->once())
+                ->method('getData')
+                ->willReturn($formValue[1]);
+
+            $formMap[] = [$formValue[0], $subForm];
+        }
 
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
@@ -81,23 +84,13 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
 
         $form->expects($this->any())
             ->method('get')
-            ->willReturnMap(
-                [
-                    ['appendUsers', $appendForm],
-                    ['removeUsers', $removeForm],
-                ]
-            );
+            ->willReturnMap($formMap);
 
         $this->formFactory->expects($this->once())
             ->method('create')
             ->willReturn($form);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|AccountUserRoleUpdateFrontendHandler $handler */
-        $handler = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateFrontendHandler')
-            ->setMethods(['processPrivileges'])
-            ->setConstructorArgs([$this->formFactory, $this->privilegeConfig])
-            ->getMock();
+        $handler = new AccountUserRoleUpdateFrontendHandler($this->formFactory, $this->privilegeConfig);
 
         $this->setRequirementsForHandler($handler);
         $handler->setRequest($request);
@@ -149,20 +142,32 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
                 }
             );
 
-        $handler->createForm($newRole);
+        $handler->createForm($role);
+        $handledRole = $handler->getHandledRole();
+
+        $this->aclManager->expects($this->exactly(2))
+            ->method('getSid')
+            ->with($handledRole)
+            ->willReturn(new RoleSecurityIdentity($handledRole->getRole()));
+
+        $this->aclManager->expects($this->any())
+            ->method('getOid')
+            ->willReturn(new ObjectIdentity(1, 2));
+
         $handler->process($role);
+
 
         foreach ($expectedUsers as $expectedUser) {
             $this->assertEquals(
-                $persistedUsers[spl_object_hash($expectedUser)]->getRole($newRole->getRole()),
-                $newRole
+                $handledRole,
+                $persistedUsers[spl_object_hash($expectedUser)]->getRole($handledRole->getRole())
             );
         }
 
         foreach ($expectedUsersWithoutRole as $expectedUserWithoutRole) {
             $this->assertNotEquals(
-                $persistedUsers[spl_object_hash($expectedUserWithoutRole)]->getRole($role->getRole()),
-                $role
+                $role,
+                $persistedUsers[spl_object_hash($expectedUserWithoutRole)]->getRole($role->getRole())
             );
         }
     }
@@ -176,21 +181,18 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
         $account = $this->createEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 1);
         $accountUser->setAccount($account);
 
-        $role = $this->createAccountUserRole('test role1', 1);
+        $roleWithoutAccount = $this->createAccountUserRole('test role1', 1);
 
         $roleWithAccount = $this->createAccountUserRole('test role3', 3);
         $roleWithAccount->setAccount($account);
 
-        $assignedUsers = $this->createUsersWithRole($role, 2, $account);
+        $assignedUsers = $this->createUsersWithRole($roleWithoutAccount, 2, $account);
 
         $usersForUpdateRole = $this->createUsersWithRole($roleWithAccount, 3, $account);
 
-        $newRole = $this->createAccountUserRole('new role', 4);
-
         return [
-            'clone system role and add all users' => [
-                'role'                     => $role,
-                'newRole'                  => clone $role,
+            'clone system role (without account) and add all users' => [
+                'role'                     => $roleWithoutAccount,
                 'appendUsers'              => [],
                 'removeUsers'              => [],
                 'assignedUsers'            => $assignedUsers,
@@ -198,9 +200,8 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
                 'expectedUsers'            => $assignedUsers,
                 'expectedUsersWithoutRole' => $assignedUsers,
             ],
-            'clone system role and add one user'  => [
-                'role'                     => $role,
-                'newRole'                  => clone $role,
+            'clone system role (without account) and add one user'  => [
+                'role'                     => $roleWithoutAccount,
                 'appendUsers'              => [],
                 'removeUsers'              => [$assignedUsers[1]],
                 'assignedUsers'            => $assignedUsers,
@@ -208,9 +209,8 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
                 'expectedUsers'            => [$assignedUsers[0]],
                 'expectedUsersWithoutRole' => [$assignedUsers[1], $assignedUsers[0]],
             ],
-            'change customizable role'            => [
+            'change customizable role (with account)'               => [
                 'role'                     => $roleWithAccount,
-                'newRole'                  => $roleWithAccount,
                 'appendUsers'              => [$usersForUpdateRole[2]],
                 'removeUsers'              => [$usersForUpdateRole[0]],
                 'assignedUsers'            => [$usersForUpdateRole[0], $usersForUpdateRole[1]],
@@ -218,9 +218,8 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
                 'expectedUsers'            => [$usersForUpdateRole[2]],
                 'expectedUsersWithoutRole' => [$usersForUpdateRole[0]],
             ],
-            'create role'            => [
+            'create role'                                           => [
                 'role'                     => $roleWithAccount,
-                'newRole'                  => $roleWithAccount,
                 'appendUsers'              => [$usersForUpdateRole[2]],
                 'removeUsers'              => [$usersForUpdateRole[0]],
                 'assignedUsers'            => [$usersForUpdateRole[0], $usersForUpdateRole[1]],
@@ -263,12 +262,12 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
             ->method('create')
             ->willReturn($form);
 
-        /** @var AccountUserRoleUpdateFrontendHandler| /PHPUnit_Framework_MockObject_MockObject $handler */
-        $handler = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateFrontendHandler')
-            ->setMethods(['processPrivileges'])
-            ->setConstructorArgs([$this->formFactory, $this->privilegeConfig])
-            ->getMock();
+        $accountUser = new AccountUser();
+        $this->securityFacade->expects($this->once())
+            ->method('getLoggedUser')
+            ->willReturn($accountUser);
+
+        $handler = new AccountUserRoleUpdateFrontendHandler($this->formFactory, $this->privilegeConfig);
 
         $this->setRequirementsForHandler($handler);
         $handler->setRequest($request);
@@ -307,7 +306,7 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
         $role = $this->createAccountUserRole('test role', 1);
         $this->setExpectedException('Exception', 'test message');
 
-        $handler->createForm(clone $role);
+        $handler->createForm($role);
         $handler->process($role);
     }
 
