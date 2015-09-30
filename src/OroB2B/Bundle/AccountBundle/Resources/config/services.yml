@@ -43,19 +43,20 @@ parameters:
     orob2b_account.event_listener.login.class: OroB2B\Bundle\AccountBundle\EventListener\LoginListener
     orob2b_account.event_listener.account_datagrid.class: OroB2B\Bundle\AccountBundle\EventListener\AccountDatagridListener
     orob2b_account.event_listener.ormdatasource_acl.class: OroB2B\Bundle\AccountBundle\EventListener\OrmDatasourceAclListener
+    orob2b_account.event_listener.frontend_datagrid.class: OroB2B\Bundle\AccountBundle\EventListener\DatagridListenerFrontend
+    orob2b_account.event_listener.system_config.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigListener
+    orob2b_account.event_listener.category_visibility_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryVisibilityListener
 
     orob2b_account.acl.group_provider.class: OroB2B\Bundle\AccountBundle\Acl\Group\AclGroupProvider
     orob2b_account.acl.resolver.role_translation_prefix.class: OroB2B\Bundle\AccountBundle\Acl\Resolver\RoleTranslationPrefixResolver
     orob2b_account.account_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_account.account_user_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
-    orob2b_account.event_listener.frontend_datagrid.class: OroB2B\Bundle\AccountBundle\EventListener\DatagridListenerFrontend
     #Twig
     orob2b_account.twig.account_extension.class: OroB2B\Bundle\AccountBundle\Twig\AccountExtension
     #Voters
     orob2b_account.acl.voter.account_user_role.class: OroB2B\Bundle\AccountBundle\Acl\Voter\AccountUserRoleVoter
     orob2b_account.acl.voter.account.class: OroB2B\Bundle\AccountBundle\Acl\Voter\AccountVoter
 
-    orob2b_account.event_listener.system_config.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigListener
     orob2b_account.item.builder.pinbar.class: Oro\Bundle\NavigationBundle\Entity\Builder\PinbarTabBuilder
     orob2b_account.item.builder.favorite.class: Oro\Bundle\NavigationBundle\Entity\Builder\NavigationItemBuilder
     orob2b_account.item.builder.history.class: Oro\Bundle\NavigationBundle\Entity\Builder\HistoryItemBuilder
@@ -462,3 +463,15 @@ services:
         arguments:
             - @orob2b_account.storage.category_visibility_storage.cache
             - @orob2b_account.calculator.category_visibility_calculator
+
+    orob2b_account.event_listener.category_visibility_listener:
+        class: %orob2b_account.event_listener.category_visibility_listener.class%
+        arguments:
+            - @orob2b_account.storage.category_visibility_storage
+        tags:
+            - { name: doctrine.event_listener, event: postPersist }
+            - { name: doctrine.event_listener, event: postUpdate }
+            - { name: doctrine.event_listener, event: postRemove }
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: postFlush }
+            - { name: doctrine.event_listener, event: onClear }
