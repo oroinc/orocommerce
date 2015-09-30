@@ -21,10 +21,10 @@ class CategoryFormExtension extends AbstractTypeExtension
     /** @var CategoryPostSubmitListener */
     protected $postSubmitListener;
 
-    /** @var  string */
+    /** @var string */
     protected $accountClass;
 
-    /** @var  string */
+    /** @var string */
     protected $accountGroupClass;
 
     /**

@@ -15,16 +15,8 @@ class VisibilityChangeSet extends Constraint
     /**
      * {@inheritdoc}
      */
-    public function __construct($options)
-    {
-        parent::__construct($options);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function validatedBy()
     {
-        return 'orob2b.account.catalog.visibility.schange_set.validatior';
+        return 'orob2b.account.catalog.visibility.change_set.validatior';
     }
 }
