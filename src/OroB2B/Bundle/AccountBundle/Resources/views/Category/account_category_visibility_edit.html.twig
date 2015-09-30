@@ -9,13 +9,13 @@
             </a>
         </li>
         <li>
-            <a href="#AccountCategoryVisibility" data-toggle="tab">
-                {{ 'orob2b.account.visibility.accountcategoryvisibility.entity_label'|trans }}
+            <a href="#AccountGroupCategoryVisibility" data-toggle="tab">
+                {{ 'orob2b.account.visibility.accountgroupcategoryvisibility.entity_label'|trans }}
             </a>
         </li>
         <li>
-            <a href="#AccountGroupCategoryVisibility" data-toggle="tab">
-                {{ 'orob2b.account.visibility.accountgroupcategoryvisibility.entity_label'|trans }}
+            <a href="#AccountCategoryVisibility" data-toggle="tab">
+                {{ 'orob2b.account.visibility.accountcategoryvisibility.entity_label'|trans }}
             </a>
         </li>
     </ul>
@@ -24,13 +24,13 @@
         <div class="tab-pane active" id="categoryVisibility"><br>
             {{ form_row(form.categoryVisibility) }}
         </div>
-        <div class="tab-pane" id="AccountCategoryVisibility">
-            {{ form_row(form.visibilityForAccount, {'id': 'account-category-visibility-changeset'}) }}
-            {{ dataGrid.renderGrid('account-category-visibility-grid', {category_id: entity.id}) }}
-        </div>
         <div class="tab-pane" id="AccountGroupCategoryVisibility">
             {{ form_row(form.visibilityForAccountGroup, {'id': 'accountgroup-category-visibility-changeset'}) }}
             {{ dataGrid.renderGrid('account-group-category-visibility-grid', {category_id: entity.id}) }}
+        </div>
+        <div class="tab-pane" id="AccountCategoryVisibility">
+            {{ form_row(form.visibilityForAccount, {'id': 'account-category-visibility-changeset'}) }}
+            {{ dataGrid.renderGrid('account-category-visibility-grid', {category_id: entity.id}) }}
         </div>
     </div>
 
