@@ -55,12 +55,15 @@ class AccountCategoryVisibilityRepositoryTest extends WebTestCase
         $actual = $this->repository->findForAccounts($accounts, $category);
         $this->assertCount(count($expected), $actual);
 
-        foreach ($expected as $i => $visibilityReference) {
+        $ids = [];
+        foreach ($actual as $actualVisibility) {
+            $ids[] = $actualVisibility->getId();
+        }
+        foreach ($expected as $visibilityReference) {
             /** @var AccountCategoryVisibility $a */
             $visibility = $this->getReference($visibilityReference);
-            $this->assertAccountEquals($visibility->getAccount(), $actual[$i]->getAccount());
-            $this->assertEquals($visibility->getVisibility(), $actual[$i]->getVisibility());
-            $this->assertCategoryEquals($visibility->getCategory(), $actual[$i]->getCategory());
+
+            $this->assertContains($visibility->getId(), $ids);
         }
     }
 

@@ -54,13 +54,14 @@ class AccountGroupCategoryVisibilityRepositoryTest extends WebTestCase
 
         $actual = $this->repository->findForAccountGroups($accountGroups, $category);
         $this->assertCount(count($expected), $actual);
-
-        foreach ($expected as $i => $visibilityReference) {
-            /** @var AccountGroupCategoryVisibility $visibility */
-            $visibility = $this->getReference($visibilityReference);
-            $this->assertAccountGroupEquals($visibility->getAccountGroup(), $actual[$i]->getAccountGroup());
-            $this->assertCategoryEquals($visibility->getCategory(), $actual[$i]->getCategory());
-            $this->assertEquals($visibility->getVisibility(), $actual[$i]->getVisibility());
+        $ids = [];
+        foreach ($actual as $actualVisibility) {
+            $ids[] = $actualVisibility->getId();
+        }
+        foreach ($expected as $visibilityReference) {
+            /** @var AccountGroupCategoryVisibility $expectedVisibility */
+            $expectedVisibility = $this->getReference($visibilityReference);
+            $this->assertContains($expectedVisibility->getId(), $ids);
         }
     }
 
