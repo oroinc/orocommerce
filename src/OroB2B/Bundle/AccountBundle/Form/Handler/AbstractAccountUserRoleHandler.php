@@ -158,11 +158,15 @@ abstract class AbstractAccountUserRoleHandler extends AclRoleHandler
         ) {
             // Remove assigned users
             $assignedUsers = $roleRepository->getAssignedUsers($role);
-            $removeUsers = array_filter(
-                $assignedUsers,
-                function (AccountUser $accountUser) use ($role) {
-                    return $accountUser->getAccount() !== $role->getAccount();
-                }
+
+            $removeUsers = array_replace(
+                $removeUsers,
+                array_filter(
+                    $assignedUsers,
+                    function (AccountUser $accountUser) use ($role) {
+                        return $accountUser->getAccount() !== $role->getAccount();
+                    }
+                )
             );
 
             $appendNewUsers = array_diff($appendUsers, $removeUsers);

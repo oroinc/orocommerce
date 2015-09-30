@@ -136,20 +136,22 @@ abstract class AbstractAccountUserRoleUpdateHandlerTestCase extends \PHPUnit_Fra
 
     /**
      * @param AccountUserRole $role
-     * @param int             $numberOfUsers
-     * @param Account         $account
+     * @param int $numberOfUsers
+     * @param Account $account
+     * @param int $offset
      * @return \OroB2B\Bundle\AccountBundle\Entity\AccountUser[]
      */
-    protected function createUsersWithRole(AccountUserRole $role, $numberOfUsers, Account $account = null)
+    protected function createUsersWithRole(AccountUserRole $role, $numberOfUsers, Account $account = null, $offset = 0)
     {
         /** @var AccountUser[] $users */
         $users = [];
         for ($i = 0; $i < $numberOfUsers; $i++) {
+            $userId = $offset + $i + 1;
             $user = new AccountUser();
-            $user->setUsername('user' . $i . $role->getRole());
+            $user->setUsername('user_id_' . $userId . '_role_' . $role->getRole());
             $user->setRoles([$role]);
             $user->setAccount($account);
-            $users[] = $user;
+            $users[$userId] = $user;
         }
 
         return $users;
