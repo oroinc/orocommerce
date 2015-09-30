@@ -6,6 +6,14 @@
     margin: 0 0 8px !important;
 }
 
+.unit-precisions-collection .selector {
+    margin-left: 0 !important;
+}
+
+.unit-precisions-collection .collection-fields-list td {
+    padding-left: 0;
+}
+
 .unit-precisions-collection select.hidden-unit {
     display: none;
     visibility: hidden;
@@ -25,6 +33,11 @@
 
 .product-container .grid-sidebar.grid-sidebar-maximized {
     width: 313px;
+}
+
+.row-oro.add-products {
+    float: left;
+    width: auto;
 }
 
 .row-oro.add-products .add-list-item,

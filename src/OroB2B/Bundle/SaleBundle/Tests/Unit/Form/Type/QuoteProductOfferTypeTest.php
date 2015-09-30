@@ -12,6 +12,7 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
@@ -21,6 +22,8 @@ use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
 
 class QuoteProductOfferTypeTest extends AbstractTest
 {
+    use QuantityTypeTrait;
+
     /**
      * @var QuoteProductOfferType
      */
@@ -43,11 +46,14 @@ class QuoteProductOfferTypeTest extends AbstractTest
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
-            ->with([
-                'data_class'    => 'OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer',
-                'intention'     => 'sale_quote_product_offer',
-                'extra_fields_message'  => 'This form should not contain extra fields: "{{ extra_fields }}"',
-            ])
+            ->with($this->callback(function (array $options) {
+                $this->assertArrayHasKey('data_class', $options);
+                $this->assertArrayHasKey('compact_units', $options);
+                $this->assertArrayHasKey('intention', $options);
+                $this->assertArrayHasKey('extra_fields_message', $options);
+
+                return true;
+            }))
         ;
 
         $this->formType->configureOptions($resolver);
@@ -68,7 +74,9 @@ class QuoteProductOfferTypeTest extends AbstractTest
     {
         $form = $this->factory->create($this->formType, $inputData);
 
-        $this->assertEquals($expectedData['priceType'], $form->get('priceType')->getData());
+        foreach ($expectedData as $key => $value) {
+            $this->assertEquals($value, $form->get($key)->getData(), $key);
+        }
     }
 
     /**
@@ -77,16 +85,22 @@ class QuoteProductOfferTypeTest extends AbstractTest
     public function postSetDataProvider()
     {
         return [
-            'empty priceType' => [
+            'empty values' => [
                 'input' => new QuoteProductOffer(),
                 'expected' => [
                     'priceType' => QuoteProductOffer::PRICE_TYPE_UNIT,
+                    'quantity' => 1,
                 ],
             ],
-            'existing priceType' => [
-                'input' => (new QuoteProductOffer())->setPriceType(QuoteProductOffer::PRICE_TYPE_BUNDLED),
+            'existing values' => [
+                'input' => (new QuoteProductOffer())
+                    ->setPriceType(QuoteProductOffer::PRICE_TYPE_BUNDLED)
+                    ->setQuantity(10)
+                    ->setAllowIncrements(false),
                 'expected' => [
-                    'priceType' => QuoteProductOffer::PRICE_TYPE_BUNDLED,
+                    // TODO: enable once fully supported on the quote views and in orders
+                    'priceType' => QuoteProductOffer::PRICE_TYPE_UNIT,
+                    'quantity' => 10,
                 ],
             ],
         ];
@@ -101,7 +115,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
             'empty form' => [
                 'isValid'       => false,
                 'submittedData' => [],
-                'expectedData'  => $this->getQuoteProductOffer(1),
+                'expectedData'  => $this->getQuoteProductOffer(1, 1),
                 'defaultData'   => $this->getQuoteProductOffer(1),
             ],
             'empty quote product' => [
@@ -122,7 +136,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
                     ->setQuoteProduct(null),
             ],
             'empty quantity' => [
-                'isValid'       => false,
+                'isValid'       => true,
                 'submittedData' => [
                     'productUnit'   => 'kg',
                     'priceType'     => self::QPO_PRICE_TYPE1,
@@ -132,7 +146,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
                     ],
                 ],
                 'expectedData'  => $this
-                    ->getQuoteProductOffer(3, null, 'kg', self::QPO_PRICE_TYPE1, $this->createPrice(11, 'EUR')),
+                    ->getQuoteProductOffer(3, 1, 'kg', self::QPO_PRICE_TYPE1, $this->createPrice(11, 'EUR')),
                 'defaultData'   => $this->getQuoteProductOffer(3),
             ],
             'empty price type' => [
@@ -261,6 +275,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
                     $priceType->getName()                   => $priceType,
                     $currencySelectionType->getName()       => $currencySelectionType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
+                    QuantityTypeTrait::$name                => $this->getQuantityType()
                 ],
                 []
             ),

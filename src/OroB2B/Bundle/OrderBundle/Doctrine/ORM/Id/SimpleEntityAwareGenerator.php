@@ -1,4 +1,5 @@
 <?php
+
 namespace OroB2B\Bundle\OrderBundle\Doctrine\ORM\Id;
 
 class SimpleEntityAwareGenerator implements EntityAwareGeneratorInterface

@@ -12,7 +12,7 @@ define(function (require) {
          * @property {Object}
          */
         options: {
-            selectSelector: "select[name^='orob2b_product_form[prices]'][name$='[unit]']",
+            selectSelector: "select[name^='orob2b_product[prices]'][name$='[unit]']",
             unitsAttribute: 'units'
         },
 

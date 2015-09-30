@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ProductBundle\Entity\Repository;
 
+use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -41,5 +42,27 @@ class ProductUnitRepository extends EntityRepository
             ->setParameter('product', $product);
 
         return $qb;
+    }
+
+    /**
+     * @param int $productId
+     * @return QueryBuilder
+     *
+     * @throws \InvalidArgumentException if id is not valid
+     * @throws EntityNotFoundException if entity not found by id
+     */
+    public function getProductUnitsQueryBuilderById($productId)
+    {
+        if (!is_numeric($productId)) {
+            throw new \InvalidArgumentException();
+        }
+
+        $product = $this->_em->getReference('OroB2BProductBundle:Product', (int)$productId);
+        if (!$product) {
+            throw new EntityNotFoundException();
+        }
+
+        /** @var Product $product */
+        return $this->getProductUnitsQueryBuilder($product);
     }
 }

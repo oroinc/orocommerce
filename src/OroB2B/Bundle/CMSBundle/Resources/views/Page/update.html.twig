@@ -4,7 +4,7 @@
 {% set entityId = entity.id %}
 {% set parentPageId = entity.parentPage ? entity.parentPage.id : null %}
 
-{% oro_title_set({params : {"%title%": entity.title} }) %}
+{% oro_title_set({params : {"%title%": entity.title, '%entityName%': 'orob2b.cms.page.entity_label'|trans} }) %}
 
 {% set formAction = entityId ? path('orob2b_cms_page_update', { 'id': entityId }) : path('orob2b_cms_page_create', { 'id': parentPageId })  %}
 

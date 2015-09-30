@@ -92,21 +92,18 @@ class ProductUnitRemovedSelectionTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param ProductUnitHolderInterface $productUnitHolder
+     * @param array $inputData
      * @param array $expectedData
      * @param boolean $withParent
      *
-     * @dataProvider finishViewDataProvider
+     * @dataProvider finishViewProvider
      */
-    public function testFinishView(
-        ProductUnitHolderInterface $productUnitHolder = null,
-        array $expectedData = [],
-        $withParent = true
-    ) {
-        $form = $this->factory->create($this->formType);
+    public function testFinishView(array $inputData = [], array $expectedData = [], $withParent = true)
+    {
+        $form = $this->factory->create($this->formType, null, $inputData['options']);
 
         if ($withParent) {
-            $formParent = $this->factory->create(new StubProductUnitHolderType(), $productUnitHolder);
+            $formParent = $this->factory->create(new StubProductUnitHolderType(), $inputData['productUnitHolder']);
         } else {
             $formParent = null;
         }
@@ -117,11 +114,12 @@ class ProductUnitRemovedSelectionTypeTest extends FormIntegrationTestCase
         $this->formType->finishView($view, $form, $form->getConfig()->getOptions());
 
         if (isset($view->vars['choices'])) {
-            /** @var ChoiceView $choice */
-            foreach ($view->vars['choices'] as &$choice) {
-                $choice = $choice ->value;
+            $choices = [];
+            /* @var $choice ChoiceView */
+            foreach ($view->vars['choices'] as $choice) {
+                $choices[$choice->value] = $choice->label;
             }
-            unset($choice);
+            $view->vars['choices'] = $choices;
         }
 
         foreach ($expectedData as $field => $value) {
@@ -134,8 +132,10 @@ class ProductUnitRemovedSelectionTypeTest extends FormIntegrationTestCase
 
     /**
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function finishViewDataProvider()
+    public function finishViewProvider()
     {
         $precision = new ProductUnitPrecision();
         $unit = new ProductUnit();
@@ -144,19 +144,25 @@ class ProductUnitRemovedSelectionTypeTest extends FormIntegrationTestCase
 
         return [
             'empty item' => [
-                'productHolder' => null,
+                'inputData' => [
+                    'options' => [],
+                    'productUnitHolder' => null,
+                ],
                 'expectedData' => [
                     'empty_value' => null,
                     'choices' => null,
                 ],
             ],
             'without parent form' => [
-                'productHolder' => $this->createProductUnitHolder(
-                    1,
-                    'sku',
-                    new ProductUnit(),
-                    $this->createProductHolder(1, 'sku', null)
-                ),
+                'inputData' => [
+                    'options' => [],
+                    'productHolder' => $this->createProductUnitHolder(
+                        1,
+                        'sku',
+                        new ProductUnit(),
+                        $this->createProductHolder(1, 'sku', null)
+                    ),
+                ],
                 'expectedData' => [
                     'empty_value' => null,
                     'choices' => null
@@ -164,36 +170,66 @@ class ProductUnitRemovedSelectionTypeTest extends FormIntegrationTestCase
                 false
             ],
             'filled item' => [
-                'productHolder' => $this->createProductUnitHolder(
-                    1,
-                    'sku',
-                    new ProductUnit(),
-                    $this->createProductHolder(1, 'sku', null)
-                ),
+                'inputData' => [
+                    'options' => [],
+                    'productUnitHolder' => $this->createProductUnitHolder(
+                        1,
+                        'sku',
+                        new ProductUnit(),
+                        $this->createProductHolder(1, 'sku', null)
+                    ),
+                ],
                 'expectedData' => [
                     'empty_value' => null,
                     'choices' => [],
                 ],
             ],
             'existing product' => [
-                'productHolder' => $this->createProductUnitHolder(
-                    1,
-                    'sku',
-                    new ProductUnit(),
-                    $this->createProductHolder(1, 'sku', (new Product())->addUnitPrecision($precision))
-                ),
+                'inputData' => [
+                    'options' => [],
+                    'productUnitHolder' => $this->createProductUnitHolder(
+                        1,
+                        'sku',
+                        new ProductUnit(),
+                        $this->createProductHolder(1, 'sku', (new Product())->addUnitPrecision($precision))
+                    ),
+                ],
                 'expectedData' => [
                     'empty_value' => 'orob2b.product.productunit.removed:sku',
-                    'choices' => ['code'],
+                    'choices' => [
+                        'code' => 'orob2b.product_unit.code.label.full'
+                    ],
+                ],
+            ],
+            'existing product and compact mode' => [
+                'inputData' => [
+                    'options' => [
+                        'compact' => true,
+                    ],
+                    'productUnitHolder' => $this->createProductUnitHolder(
+                        1,
+                        'sku',
+                        new ProductUnit(),
+                        $this->createProductHolder(1, 'sku', (new Product())->addUnitPrecision($precision))
+                    ),
+                ],
+                'expectedData' => [
+                    'empty_value' => 'orob2b.product.productunit.removed:sku',
+                    'choices' => [
+                        'code' => 'orob2b.product_unit.code.label.short'
+                    ],
                 ],
             ],
             'deleted product' => [
-                'productHolder' => $this->createProductUnitHolder(
-                    1,
-                    'sku',
-                    null,
-                    $this->createProductHolder(1, 'sku', null)
-                ),
+                'inputData' => [
+                    'options' => [],
+                    'productUnitHolder' => $this->createProductUnitHolder(
+                        1,
+                        'sku',
+                        null,
+                        $this->createProductHolder(1, 'sku', null)
+                    ),
+                ],
                 'expectedData' => [
                     'empty_value' => 'orob2b.product.productunit.removed:sku',
                     'choices' => [],

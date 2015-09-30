@@ -2,10 +2,10 @@ orob2b:
     rfp:
         requestproduct:
             product:
-                blank: 'Please choose existing Product.'
+                blank: 'Product cannot be empty.'
             request_product_items:
                 blank: 'Please add one or more requests.'
 
         requestproductitem:
             unit:
-                blank: 'Please choose existing Unit.'
+                blank: 'Unit of measurement cannot be empty.'

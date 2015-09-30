@@ -47,7 +47,7 @@ class ShoppingListTypeTest extends FormIntegrationTestCase
 
         $form->submit($submittedData);
 
-        $this->assertEmpty($form->getErrors()->count());
+        $this->assertEmpty($form->getErrors(true)->count());
         $this->assertTrue($form->isValid());
         $this->assertEquals($expectedData, $form->getData());
     }

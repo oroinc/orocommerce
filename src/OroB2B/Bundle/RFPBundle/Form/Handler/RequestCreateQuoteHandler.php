@@ -14,6 +14,7 @@ use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 
 class RequestCreateQuoteHandler
@@ -129,6 +130,15 @@ class RequestCreateQuoteHandler
                     ->setRequestProductItem($requestProductItem);
 
                 $quoteProduct->addQuoteProductRequest($quoteProductRequest);
+
+                $quoteProductOffer = new QuoteProductOffer();
+                $quoteProductOffer
+                    ->setQuantity($requestProductItem->getQuantity())
+                    ->setProductUnit($requestProductItem->getProductUnit())
+                    ->setPriceType(QuoteProductOffer::PRICE_TYPE_UNIT)
+                    ->setAllowIncrements(true);
+
+                $quoteProduct->addQuoteProductOffer($quoteProductOffer);
             }
             $quote->addQuoteProduct($quoteProduct);
         }

@@ -1,0 +1,10 @@
+#container .logo img {
+    display: block;
+    margin: 0 auto;
+}
+
+.login-page {
+    height: 100%;
+    position: absolute;
+    width: 100%
+}
