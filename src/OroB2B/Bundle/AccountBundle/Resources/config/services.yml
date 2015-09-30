@@ -69,6 +69,8 @@ parameters:
 
     orob2b_account.storage.category_visibility_storage.class: OroB2B\Bundle\AccountBundle\Storage\CategoryVisibilityStorage
 
+    orob2b_account.calculator.category_visibility_calculator: OroB2B\Bundle\AccountBundle\Calculator\CategoryVisibilityCalculator
+
 services:
     orob2b_account.security.account_user_provider:
         class: %orob2b_account.security.account_user_provider.class%
@@ -446,11 +448,17 @@ services:
         arguments:
             - @oro_security.security_facade
 
-    orob2b_account.storage.category_visibility_storage:
-        class: %orob2b_account.storage.category_visibility_storage.class%
-
     orob2b_account.storage.category_visibility_storage.cache:
         public: false
         parent: oro.file_cache.abstract
         calls:
             - [ setNamespace, [ "orob2b_account.storage.category_visibility_storage.cache" ] ]
+
+    orob2b_account.calculator.category_visibility_calculator:
+        class: %orob2b_account.calculator.category_visibility_calculator%
+
+    orob2b_account.storage.category_visibility_storage:
+        class: %orob2b_account.storage.category_visibility_storage.class%
+        arguments:
+            - @orob2b_account.storage.category_visibility_storage.cache
+            - @orob2b_account.calculator.category_visibility_calculator
