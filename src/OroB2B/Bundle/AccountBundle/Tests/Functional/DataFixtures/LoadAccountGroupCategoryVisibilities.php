@@ -7,7 +7,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroupCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
@@ -25,16 +25,19 @@ class LoadAccountGroupCategoryVisibilities extends AbstractFixture implements De
             'name' => self::VISIBILITY1,
             'category' => LoadCategoryData::FIRST_LEVEL,
             'group' => 'account_group.group1',
+            'visibility' => AccountGroupCategoryVisibility::VISIBLE
         ],
         [
             'name' => self::VISIBILITY2,
             'category' => LoadCategoryData::SECOND_LEVEL1,
             'group' => 'account_group.group1',
+            'visibility' => AccountGroupCategoryVisibility::HIDDEN
         ],
         [
             'name' => self::VISIBILITY3,
             'category' => LoadCategoryData::SECOND_LEVEL1,
             'group' => 'account_group.group2',
+            'visibility' => AccountGroupCategoryVisibility::CATEGORY
         ],
     ];
 
@@ -72,7 +75,8 @@ class LoadAccountGroupCategoryVisibilities extends AbstractFixture implements De
 
             $visibility = (new AccountGroupCategoryVisibility())
                 ->setCategory($category)
-                ->setAccountGroup($accountGroup);
+                ->setAccountGroup($accountGroup)
+                ->setVisibility($visibilityData['visibility']);
             $manager->persist($visibility);
             $this->addReference($visibilityData['name'], $visibility);
         }

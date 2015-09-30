@@ -12,9 +12,10 @@ use OroB2B\Bundle\AccountBundle\Form\EventListener\AbstractCategoryListener;
 
 abstract class AbstractCategoryListenerTestCase extends \PHPUnit_Framework_TestCase
 {
-    const CATEGORY_VISIBILITY_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\CategoryVisibility';
-    const ACCOUNT_CATEGORY_VISIBILITY_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountCategoryVisibility';
-    const ACCOUNT_GROUP_CATEGORY_VISIBILITY_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountGroupCategoryVisibility';
+    const CATEGORY_VISIBILITY_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility';
+    const ACCOUNT_CATEGORY_VISIBILITY_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility';
+    const ACCOUNT_GROUP_CATEGORY_VISIBILITY_CLASS =
+        'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility';
 
     /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
     protected $registry;

@@ -2,17 +2,27 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Extension;
 
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvents;
+use Doctrine\Common\Persistence\ManagerRegistry;
+
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\Validator\Validation;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
+use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 
-use OroB2B\Bundle\AccountBundle\Validator\Constraints\VisibilityChangeSet;
-use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as EntityIdentifierTypeStub;
 use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSetDataListener;
 use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSubmitListener;
 use OroB2B\Bundle\AccountBundle\Form\Extension\CategoryFormExtension;
+use OroB2B\Bundle\AccountBundle\Formatter\ChoiceFormatter;
+use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityChangesetTypeStub;
+use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\LocaleCollectionType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedPropertyType;
+use OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\Type\Stub\LocaleCollectionTypeStub;
 
 class CategoryFormExtensionTest extends FormIntegrationTestCase
 {
@@ -25,7 +35,10 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
     /** @var CategoryPostSubmitListener|\PHPUnit_Framework_MockObject_MockObject */
     protected $categoryPostSubmitListener;
 
-    /** @var  CategoryFormExtension|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var ChoiceFormatter|\PHPUnit_Framework_MockObject_MockObject */
+    protected $categoryVisibilityFormatter;
+
+    /** @var CategoryFormExtension|\PHPUnit_Framework_MockObject_MockObject */
     protected $categoryFormExtension;
 
     protected function setUp()
@@ -40,76 +53,57 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
         )
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->categoryVisibilityFormatter = $this
+            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Formatter\ChoiceFormatter')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->categoryFormExtension = new CategoryFormExtension(
             $this->categoryPostSetDataListener,
-            $this->categoryPostSubmitListener
+            $this->categoryPostSubmitListener,
+            $this->categoryVisibilityFormatter
         );
         $this->categoryFormExtension->setAccountGroupClass(self::ACCOUNT_GROUP_CLASS);
         $this->categoryFormExtension->setAccountClass(self::ACCOUNT_CLASS);
+
+        parent::setUp();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getExtensions()
+    {
+        /** @var ManagerRegistry $registry */
+        $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+
+        return [
+            new PreloadedExtension(
+                [
+                    CategoryType::NAME => new CategoryType(),
+                    EntityIdentifierType::NAME => new EntityIdentifierTypeStub([]),
+                    LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionType($registry),
+                    LocalizedPropertyType::NAME => new LocalizedPropertyType(),
+                    LocaleCollectionType::NAME => new LocaleCollectionTypeStub(),
+                    EntityChangesetType::NAME => new EntityChangesetTypeStub()
+                ],
+                [
+                    CategoryType::NAME => [$this->categoryFormExtension],
+                ]
+            ),
+            new ValidatorExtension(Validation::createValidator()),
+        ];
     }
 
     public function testBuildForm()
     {
-        /** @var  FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
-        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
-        $builder->expects($this->at(0))
-            ->method('add')
-            ->with(
-                'categoryVisibility',
-                'oro_enum_select',
-                [
-                    'required' => true,
-                    'mapped' => false,
-                    'label' => 'orob2b.account.categoryvisibility.entity_label',
-                    'enum_code' => 'category_visibility',
-                    'configs' => [
-                        'allowClear' => false,
-                    ],
-                ]
-            )
-            ->willReturn($builder);
+        $this->categoryVisibilityFormatter->expects($this->once())->method('formatChoices')->willReturn([]);
 
-        $builder->expects($this->at(1))
-            ->method('add')
-            ->with(
-                'visibilityForAccount',
-                EntityChangesetType::NAME,
-                [
-                    'class' => self::ACCOUNT_CLASS,
-                    'constraints' => [new VisibilityChangeSet(['entityClass' => self::ACCOUNT_CLASS])]
-                ]
-            )
-            ->willReturn($builder);
-
-        $builder->expects($this->at(2))
-            ->method('add')
-            ->with(
-                'visibilityForAccountGroup',
-                EntityChangesetType::NAME,
-                [
-                    'class' => self::ACCOUNT_GROUP_CLASS,
-                    'constraints' => [new VisibilityChangeSet(['entityClass' => self::ACCOUNT_GROUP_CLASS])]
-                ]
-            )
-            ->willReturn($builder);
-
-        $builder->expects($this->at(3))
-            ->method('addEventListener')
-            ->with(
-                FormEvents::POST_SET_DATA,
-                [$this->categoryPostSetDataListener, 'onPostSetData']
-            )
-            ->willReturn($builder);
-
-        $builder->expects($this->at(4))
-            ->method('addEventListener')
-            ->with(
-                FormEvents::POST_SUBMIT,
-                [$this->categoryPostSubmitListener, 'onPostSubmit']
-            )
-            ->willReturn($builder);
-
-        $this->categoryFormExtension->buildForm($builder, []);
+        $form = $this->factory->create(CategoryType::NAME);
+        $this->assertTrue($form->has('categoryVisibility'));
+        $this->assertTrue($form->has('visibilityForAccount'));
+        $this->assertTrue($form->has('visibilityForAccountGroup'));
     }
 
     public function testGetExtendedType()

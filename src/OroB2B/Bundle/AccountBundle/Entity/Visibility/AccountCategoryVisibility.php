@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity;
+namespace OroB2B\Bundle\AccountBundle\Entity\Visibility;
 
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
-use OroB2B\Bundle\AccountBundle\Model\ExtendAccountCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 /**
@@ -14,7 +14,7 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
  * @ORM\Table(name="orob2b_acc_category_visibility")
  * @Config
  */
-class AccountCategoryVisibility extends ExtendAccountCategoryVisibility implements DefaultVisibilityInterface
+class AccountCategoryVisibility implements VisibilityInterface
 {
     const PARENT_CATEGORY = 'parent_category';
     const CATEGORY = 'category';
@@ -46,6 +46,13 @@ class AccountCategoryVisibility extends ExtendAccountCategoryVisibility implemen
      * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $account;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="visibility", type="string", length=255, nullable=true)
+     */
+    protected $visibility;
 
     /**
      * @return int
@@ -98,8 +105,40 @@ class AccountCategoryVisibility extends ExtendAccountCategoryVisibility implemen
     /**
      * {@inheritdoc}
      */
-    public function getDefault()
+    public static function getDefault()
     {
         return self::ACCOUNT_GROUP;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setVisibility($visibility)
+    {
+        $this->visibility = $visibility;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getVisibility()
+    {
+        return $this->visibility;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public static function getVisibilityList()
+    {
+        return [
+            self::ACCOUNT_GROUP,
+            self::CATEGORY,
+            self::PARENT_CATEGORY,
+            self::HIDDEN,
+            self::VISIBLE
+        ];
     }
 }

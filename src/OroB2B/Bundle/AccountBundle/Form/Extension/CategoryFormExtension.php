@@ -8,6 +8,7 @@ use Symfony\Component\Form\FormEvents;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 
+use OroB2B\Bundle\AccountBundle\Formatter\ChoiceFormatter;
 use OroB2B\Bundle\AccountBundle\Validator\Constraints\VisibilityChangeSet;
 use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSetDataListener;
 use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSubmitListener;
@@ -27,16 +28,23 @@ class CategoryFormExtension extends AbstractTypeExtension
     /** @var string */
     protected $accountGroupClass;
 
+    /** @var ChoiceFormatter */
+    protected $categoryVisibilityFormatter;
+
     /**
      * @param CategoryPostSetDataListener $postSetDataListener
      * @param CategoryPostSubmitListener $postSubmitListener
+     * @param ChoiceFormatter $categoryVisibilityFormatter
      */
     public function __construct(
         CategoryPostSetDataListener $postSetDataListener,
-        CategoryPostSubmitListener $postSubmitListener
+        CategoryPostSubmitListener $postSubmitListener,
+        ChoiceFormatter $categoryVisibilityFormatter
     ) {
         $this->postSetDataListener = $postSetDataListener;
         $this->postSubmitListener = $postSubmitListener;
+
+        $this->categoryVisibilityFormatter = $categoryVisibilityFormatter;
     }
 
     /**
@@ -55,15 +63,12 @@ class CategoryFormExtension extends AbstractTypeExtension
         $builder
             ->add(
                 'categoryVisibility',
-                'oro_enum_select',
+                'choice',
                 [
                     'required' => true,
                     'mapped' => false,
-                    'label' => 'orob2b.account.categoryvisibility.entity_label',
-                    'enum_code' => 'category_visibility',
-                    'configs' => [
-                        'allowClear' => false,
-                    ],
+                    'label' => 'orob2b.account.visibility.categoryvisibility.entity_label',
+                    'choices' => $this->categoryVisibilityFormatter->formatChoices()
                 ]
             )
             ->add(

@@ -4,9 +4,11 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountCategoryVisibilityRepository;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountCategoryVisibilities;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
 /**
@@ -25,7 +27,7 @@ class AccountCategoryVisibilityRepositoryTest extends WebTestCase
 
         $this->repository = $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroB2BAccountBundle:AccountCategoryVisibility');
+            ->getRepository('OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility');
 
         $this->loadFixtures(
             [
@@ -53,8 +55,15 @@ class AccountCategoryVisibilityRepositoryTest extends WebTestCase
         $actual = $this->repository->findForAccounts($accounts, $category);
         $this->assertCount(count($expected), $actual);
 
-        foreach ($expected as $i => $visibilityReference) {
-            $this->assertEquals($this->getReference($visibilityReference), $actual[$i]);
+        $ids = [];
+        foreach ($actual as $actualVisibility) {
+            $ids[] = $actualVisibility->getId();
+        }
+        foreach ($expected as $visibilityReference) {
+            /** @var AccountCategoryVisibility $a */
+            $visibility = $this->getReference($visibilityReference);
+
+            $this->assertContains($visibility->getId(), $ids);
         }
     }
 
