@@ -16,6 +16,7 @@ class LoadAccountCategoryVisibilities extends AbstractFixture implements Depende
     const VISIBILITY1 = 'account_category_visibility.1';
     const VISIBILITY2 = 'account_category_visibility.2';
     const VISIBILITY3 = 'account_category_visibility.3';
+
     /**
      * @var array
      */
@@ -24,16 +25,19 @@ class LoadAccountCategoryVisibilities extends AbstractFixture implements Depende
             'name' => self::VISIBILITY1,
             'category' => LoadCategoryData::FIRST_LEVEL,
             'account' => 'account.level_1',
+            'visibility' => AccountCategoryVisibility::VISIBLE
         ],
         [
             'name' => self::VISIBILITY2,
             'category' => LoadCategoryData::SECOND_LEVEL1,
             'account' => 'account.level_1',
+            'visibility' => AccountCategoryVisibility::HIDDEN
         ],
         [
             'name' => self::VISIBILITY3,
             'category' => LoadCategoryData::SECOND_LEVEL1,
             'account' => 'account.level_1.4',
+            'visibility' => AccountCategoryVisibility::ACCOUNT_GROUP
         ],
     ];
 
@@ -71,7 +75,8 @@ class LoadAccountCategoryVisibilities extends AbstractFixture implements Depende
 
             $visibility = (new AccountCategoryVisibility())
                 ->setCategory($category)
-                ->setAccount($account);
+                ->setAccount($account)
+                ->setVisibility($visibilityData['visibility']);
             $manager->persist($visibility);
             $this->addReference($visibilityData['name'], $visibility);
         }

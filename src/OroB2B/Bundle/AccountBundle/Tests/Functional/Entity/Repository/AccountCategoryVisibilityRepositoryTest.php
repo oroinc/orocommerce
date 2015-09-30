@@ -4,9 +4,11 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountCategoryVisibilityRepository;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountCategoryVisibilities;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
 /**
@@ -54,7 +56,11 @@ class AccountCategoryVisibilityRepositoryTest extends WebTestCase
         $this->assertCount(count($expected), $actual);
 
         foreach ($expected as $i => $visibilityReference) {
-            $this->assertEquals($this->getReference($visibilityReference), $actual[$i]);
+            /** @var AccountCategoryVisibility $a */
+            $visibility = $this->getReference($visibilityReference);
+            $this->assertAccountEquals($visibility->getAccount(), $actual[$i]->getAccount());
+            $this->assertEquals($visibility->getVisibility(), $actual[$i]->getVisibility());
+            $this->assertCategoryEquals($visibility->getCategory(), $actual[$i]->getCategory());
         }
     }
 
@@ -94,5 +100,23 @@ class AccountCategoryVisibilityRepositoryTest extends WebTestCase
                 ],
             ],
         ];
+    }
+
+    /**
+     * @param Account $expected
+     * @param Account $actual
+     */
+    public function assertAccountEquals(Account $expected, Account $actual)
+    {
+        $this->assertEquals($expected->getName(), $actual->getName());
+    }
+
+    /**
+     * @param Category $expected
+     * @param Category $actual
+     */
+    public function assertCategoryEquals(Category $expected, Category $actual)
+    {
+        $this->assertEquals($expected->getDefaultTitle()->getString(), $actual->getDefaultTitle()->getString());
     }
 }
