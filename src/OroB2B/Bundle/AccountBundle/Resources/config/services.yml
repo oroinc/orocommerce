@@ -443,3 +443,9 @@ services:
         class: %orob2b_account.account_delete_handler.class%
         arguments:
             - @oro_security.security_facade
+
+    orob2b_account.category_visibility.cache:
+        public: false
+        parent: oro.file_cache.abstract
+        calls:
+            - [ setNamespace, [ "orob2b_account.category_visibility.cache" ] ]
