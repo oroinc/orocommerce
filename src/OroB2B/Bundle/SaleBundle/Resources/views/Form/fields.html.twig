@@ -64,7 +64,7 @@
     {% set quoteProductRequests = form.vars.value.quoteProductRequests|default([]) %}
     {% set isProductFreeForm = form.vars.value.isProductFreeForm()|default(false) %}
     {% set isProductReplacementFreeForm = form.vars.value.isProductReplacementFreeForm()|default(false) %}
-    {% set isProductReplacement = form.vars.value.type|default(false) == componentOptions.typeReplacement %}
+    {% set isProductReplacement = form.vars.value.isTypeNotAvailable()|default(false) %}
 
     <td class="quote-lineitem-product">
         <div class="fields-row quote-lineitem-product-row{% if not isProductReplacement %} quote-lineitem-block-active{% endif %}">
