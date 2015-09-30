@@ -102,22 +102,4 @@ class AccountGroupCategoryVisibilityRepositoryTest extends WebTestCase
             ],
         ];
     }
-
-    /**
-     * @param AccountGroup $expected
-     * @param AccountGroup $actual
-     */
-    public function assertAccountGroupEquals(AccountGroup $expected, AccountGroup $actual)
-    {
-        $this->assertEquals($expected->getName(), $actual->getName());
-    }
-
-    /**
-     * @param Category $expected
-     * @param Category $actual
-     */
-    public function assertCategoryEquals(Category $expected, Category $actual)
-    {
-        $this->assertEquals($expected->getDefaultTitle()->getString(), $actual->getDefaultTitle()->getString());
-    }
 }

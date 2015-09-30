@@ -104,22 +104,4 @@ class AccountCategoryVisibilityRepositoryTest extends WebTestCase
             ],
         ];
     }
-
-    /**
-     * @param Account $expected
-     * @param Account $actual
-     */
-    public function assertAccountEquals(Account $expected, Account $actual)
-    {
-        $this->assertEquals($expected->getName(), $actual->getName());
-    }
-
-    /**
-     * @param Category $expected
-     * @param Category $actual
-     */
-    public function assertCategoryEquals(Category $expected, Category $actual)
-    {
-        $this->assertEquals($expected->getDefaultTitle()->getString(), $actual->getDefaultTitle()->getString());
-    }
 }
