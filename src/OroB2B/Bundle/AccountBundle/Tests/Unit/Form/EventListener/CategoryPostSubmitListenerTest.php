@@ -106,6 +106,7 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
 
         $this->prepareCategoryVisibilityRepository($category, CategoryVisibility::PARENT_CATEGORY);
 
+        $this->em->expects($this->once())->method('remove');
         $this->em->expects($this->once())->method('flush');
 
         $this->listener->onPostSubmit($event);
