@@ -21,7 +21,7 @@ class CategoryVisibilityStorageTest extends \PHPUnit_Framework_TestCase
     /** @var CategoryVisibilityCalculator|\PHPUnit_Framework_MockObject_MockObject */
     protected $calculator;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->cacheProvider = $this->getMockBuilder('Doctrine\Common\Cache\CacheProvider')
             ->disableOriginalConstructor()
@@ -33,14 +33,27 @@ class CategoryVisibilityStorageTest extends \PHPUnit_Framework_TestCase
         $this->storage = new CategoryVisibilityStorage($this->cacheProvider, $this->calculator);
     }
 
+    protected function tearDown()
+    {
+        unset($this->cacheProvider, $this->calculator, $this->storage);
+    }
+
     /**
      * @dataProvider getCategoryVisibilityDataProvider
+     *
+     * @param int|null accountId
      * @param array|null $cacheValue
      * @param array|null $calcValue
+     * @param array $expectedCacheValue
      * @param CategoryVisibilityData $expectedValue
      */
-    public function testGetCategoryVisibilityData($cacheValue, $calcValue, CategoryVisibilityData $expectedValue)
-    {
+    public function testGetCategoryVisibilityData(
+        $accountId,
+        $cacheValue,
+        $calcValue,
+        array $expectedCacheValue,
+        CategoryVisibilityData $expectedValue
+    ) {
         $this->cacheProvider->expects($this->once())
             ->method('fetch')
             ->willReturn($cacheValue);
@@ -48,11 +61,18 @@ class CategoryVisibilityStorageTest extends \PHPUnit_Framework_TestCase
         if ($calcValue) {
             $this->calculator->expects($this->once())
                 ->method('getVisibility')
-                ->with(self::ACCOUNT_ID)
+                ->with($accountId)
                 ->willReturn($calcValue);
+
+            $this->cacheProvider->expects($this->once())
+                ->method('save')
+                ->with(
+                    $accountId ?: CategoryVisibilityStorage::ANONYMOUS_CACHE_KEY,
+                    $expectedCacheValue
+                );
         }
 
-        $this->assertEquals($expectedValue, $this->storage->getCategoryVisibilityData(self::ACCOUNT_ID));
+        $this->assertEquals($expectedValue, $this->storage->getCategoryVisibilityData($accountId));
     }
 
     /**
@@ -62,28 +82,56 @@ class CategoryVisibilityStorageTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'exist in cache' => [
+                'accountId' => self::ACCOUNT_ID,
                 'cacheValue' => [
                     'visibility' => true,
                     'ids' => [1, 2, 3]
                 ],
                 'calcValue' => null,
-                'expectedValue' => new CategoryVisibilityData(true, [1, 2, 3])
+                'expectedCacheValue' => [
+                    'visibility' => true,
+                    'ids' => [1, 2, 3]
+                ],
+                'expectedValue' => new CategoryVisibilityData([1, 2, 3], true)
             ],
             'not exist in cache invisible' => [
+                'accountId' => self::ACCOUNT_ID,
                 'cacheValue' => null,
                 'calcValue' => [
                     'visible' => [1, 2, 3],
                     'invisible' => [42]
                 ],
-                'expectedValue' => new CategoryVisibilityData(false, [42])
+                'expectedCacheValue' => [
+                    'visibility' => false,
+                    'ids' => [42]
+                ],
+                'expectedValue' => new CategoryVisibilityData([42], false)
             ],
             'not exist in cache visible' => [
+                'accountId' => self::ACCOUNT_ID,
                 'cacheValue' => null,
                 'calcValue' => [
                     'visible' => [4, 5, 6],
                     'invisible' => [7, 8, 9, 10, 11, 12]
                 ],
-                'expectedValue' => new CategoryVisibilityData(true, [4, 5, 6])
+                'expectedCacheValue' => [
+                    'visibility' => true,
+                    'ids' => [4, 5, 6]
+                ],
+                'expectedValue' => new CategoryVisibilityData([4, 5, 6], true)
+            ],
+            'not exist in cache visible for anonymous' => [
+                'accountId' => null,
+                'cacheValue' => null,
+                'calcValue' => [
+                    'visible' => [4, 5, 6],
+                    'invisible' => [7, 8, 9, 10, 11, 12]
+                ],
+                'expectedCacheValue' => [
+                    'visibility' => true,
+                    'ids' => [4, 5, 6]
+                ],
+                'expectedValue' => new CategoryVisibilityData([4, 5, 6], true)
             ]
         ];
     }

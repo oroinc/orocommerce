@@ -8,16 +8,20 @@ class CategoryVisibilityDataTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider gettersDataProvider
+     *
      * @param bool $visible
      * @param array $ids
      */
     public function testGetters($visible, $ids)
     {
-        $categoryVisibilityData = new CategoryVisibilityData($visible, $ids);
-        $this->assertEquals($ids, $categoryVisibilityData->getIds());
+        $categoryVisibilityData = new CategoryVisibilityData($ids, $visible);
         $this->assertEquals($visible, $categoryVisibilityData->isVisible());
+        $this->assertEquals($ids, $categoryVisibilityData->getIds());
     }
 
+    /**
+     * @return array
+     */
     public function gettersDataProvider()
     {
         return [

@@ -4,20 +4,20 @@ namespace OroB2B\Bundle\AccountBundle\Storage;
 
 class CategoryVisibilityData
 {
-    /** @var  bool */
-    protected $visible;
-
-    /** @var array  */
+    /** @var array */
     protected $ids = [];
 
+    /** @var bool */
+    protected $visible;
+
     /**
-     * @param bool $visible
      * @param array $ids
+     * @param bool $visible
      */
-    public function __construct($visible, array $ids)
+    public function __construct(array $ids, $visible)
     {
-        $this->visible = $visible;
         $this->ids = $ids;
+        $this->visible = $visible;
     }
 
     /**

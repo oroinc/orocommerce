@@ -11,6 +11,8 @@ class CategoryVisibilityStorage
     const VISIBILITY = 'visibility';
     const IDS = 'ids';
 
+    const ANONYMOUS_CACHE_KEY = 'anon';
+
     /** @var CacheProvider */
     protected $cacheProvider;
 
@@ -28,14 +30,14 @@ class CategoryVisibilityStorage
     }
 
     /**
-     * @param $accountId
+     * @param int|null $accountId
      * @return CategoryVisibilityData
      */
-    public function getCategoryVisibilityData($accountId)
+    public function getCategoryVisibilityData($accountId = null)
     {
         $data = $this->getData($accountId);
 
-        return new CategoryVisibilityData($data[self::VISIBILITY], $data[self::IDS]);
+        return new CategoryVisibilityData($data[self::IDS], $data[self::VISIBILITY]);
     }
 
     /**
@@ -53,38 +55,36 @@ class CategoryVisibilityStorage
     }
 
     /**
-     * @param int $accountId
+     * @param int|null $accountId
      * @return array
      */
-    protected function getData($accountId)
+    protected function getData($accountId = null)
     {
         $data = $this->cacheProvider->fetch($accountId);
 
         if (!$data) {
             $calculatedData = $this->calculator->getVisibility($accountId);
             $data = $this->formatData($calculatedData);
-            $this->cacheProvider->save($accountId, $data);
+            $this->cacheProvider->save($accountId ?: self::ANONYMOUS_CACHE_KEY, $data);
         }
 
         return $data;
     }
 
     /**
-     * @param $data
+     * @param array $data
      * @return array
      */
-    protected function formatData($data)
+    protected function formatData(array $data)
     {
-        $formattedData = [];
-        $visible =
-            count($data[CategoryVisibilityCalculator::VISIBLE]) < count($data[CategoryVisibilityCalculator::INVISIBLE]);
+        $visibleIds = $data[CategoryVisibilityCalculator::VISIBLE];
+        $invisibleIds = $data[CategoryVisibilityCalculator::INVISIBLE];
 
-        $formattedData[self::VISIBILITY] = $visible;
+        $visible = count($visibleIds) < count($invisibleIds);
 
-        $formattedData[self::IDS] = $visible
-            ? $data[CategoryVisibilityCalculator::VISIBLE]
-            : $data[CategoryVisibilityCalculator::INVISIBLE];
-
-        return $formattedData;
+        return [
+            self::VISIBILITY => $visible,
+            self::IDS => $visible ? $visibleIds : $invisibleIds
+        ];
     }
 }
