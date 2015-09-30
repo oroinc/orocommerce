@@ -7,9 +7,9 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Doctrine\ORM\EntityManager;
 
-use Oro\Bundle\UserBundle\Entity\Group;
 use Oro\Component\Testing\WebTestCase;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
@@ -24,14 +24,13 @@ use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
  */
 class CategoryControllerTest extends WebTestCase
 {
-
     /** @var Category */
     protected $category;
 
     /** @var  Account */
     protected $account;
 
-    /** @var Group */
+    /** @var AccountGroup */
     protected $group;
 
     protected function setUp()
@@ -68,9 +67,9 @@ class CategoryControllerTest extends WebTestCase
             $this->getUrl('orob2b_catalog_category_update', ['id' => $this->category->getId()])
         );
 
-        $selectedCatalogVisibility = $crawler->filterXPath(
-            '//select[@name="orob2b_catalog_category[categoryVisibility]"]/option[@selected]/@value'
-        )->text();
+        $selectedCatalogVisibility = $crawler
+            ->filterXPath('//select[@name="orob2b_catalog_category[categoryVisibility]"]/option[@selected]/@value')
+            ->text();
 
         $this->assertEquals($categoryVisibility, $selectedCatalogVisibility);
 
@@ -78,6 +77,7 @@ class CategoryControllerTest extends WebTestCase
             $crawler,
             'account-category-visibility-changeset'
         );
+
         $this->checkVisibilityValue(
             $accountGroupCategoryVisibilityData,
             $this->group->getId(),
@@ -88,6 +88,7 @@ class CategoryControllerTest extends WebTestCase
             $crawler,
             'accountgroup-category-visibility-changeset'
         );
+
         $this->checkVisibilityValue($accountCategoryVisibilityData, $this->account->getId(), $visibilityForAccount);
     }
 
@@ -165,6 +166,7 @@ class CategoryControllerTest extends WebTestCase
             ],
             $parameters['orob2b_catalog_category']
         );
+
         $crawler = $this->client->request(
             'POST',
             $this->getUrl('orob2b_catalog_category_update', ['id' => $this->category->getId()]),
@@ -189,7 +191,7 @@ class CategoryControllerTest extends WebTestCase
             if (!$pos = strpos($key, '[')) {
                 continue;
             }
-            $key = '['.substr($key, 0, $pos).']'.substr($key, $pos);
+            $key = '[' . substr($key, 0, $pos) . ']' . substr($key, $pos);
             $accessor->setValue($parameters, $key, $val);
         }
 
