@@ -444,7 +444,7 @@ services:
         arguments:
             - @oro_security.security_facade
 
-    orob2b_account.category_visibility_storage.cache:
+    orob2b_catalog.storage.category_visibility_storage.cache:
         public: false
         parent: oro.file_cache.abstract
         calls:
