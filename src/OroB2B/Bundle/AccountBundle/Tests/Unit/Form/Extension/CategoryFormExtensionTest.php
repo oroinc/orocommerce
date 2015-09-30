@@ -8,6 +8,7 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 
+use OroB2B\Bundle\AccountBundle\Validator\Constraints\VisibilityChangeSet;
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
 use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSetDataListener;
 use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSubmitListener;
@@ -15,6 +16,9 @@ use OroB2B\Bundle\AccountBundle\Form\Extension\CategoryFormExtension;
 
 class CategoryFormExtensionTest extends FormIntegrationTestCase
 {
+    const ACCOUNT_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Account';
+    const ACCOUNT_GROUP_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountGroup';
+
     /** @var CategoryPostSetDataListener|\PHPUnit_Framework_MockObject_MockObject */
     protected $categoryPostSetDataListener;
 
@@ -40,6 +44,8 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
             $this->categoryPostSetDataListener,
             $this->categoryPostSubmitListener
         );
+        $this->categoryFormExtension->setAccountGroupClass(self::ACCOUNT_GROUP_CLASS);
+        $this->categoryFormExtension->setAccountClass(self::ACCOUNT_CLASS);
     }
 
     public function testBuildForm()
@@ -52,13 +58,12 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
                 'categoryVisibility',
                 'oro_enum_select',
                 [
-                    'required' => false,
+                    'required' => true,
                     'mapped' => false,
                     'label' => 'orob2b.account.categoryvisibility.entity_label',
                     'enum_code' => 'category_visibility',
                     'configs' => [
                         'allowClear' => false,
-                        'placeholder' => false,
                     ],
                 ]
             )
@@ -70,7 +75,8 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
                 'visibilityForAccount',
                 EntityChangesetType::NAME,
                 [
-                    'class' => 'OroB2B\Bundle\AccountBundle\Entity\Account',
+                    'class' => self::ACCOUNT_CLASS,
+                    'constraints' => [new VisibilityChangeSet(['entityClass' => self::ACCOUNT_CLASS])]
                 ]
             )
             ->willReturn($builder);
@@ -81,7 +87,8 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
                 'visibilityForAccountGroup',
                 EntityChangesetType::NAME,
                 [
-                    'class' => 'OroB2B\Bundle\AccountBundle\Entity\AccountGroup',
+                    'class' => self::ACCOUNT_GROUP_CLASS,
+                    'constraints' => [new VisibilityChangeSet(['entityClass' => self::ACCOUNT_GROUP_CLASS])]
                 ]
             )
             ->willReturn($builder);

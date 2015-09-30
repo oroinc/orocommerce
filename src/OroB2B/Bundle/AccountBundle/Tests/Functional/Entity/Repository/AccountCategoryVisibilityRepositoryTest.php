@@ -5,7 +5,9 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Repository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountCategoryVisibilityRepository;
+use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountCategoryVisibilities;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
 /**
  * @dbIsolation
@@ -27,7 +29,7 @@ class AccountCategoryVisibilityRepositoryTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountCategoryVisibilities'
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountCategoryVisibilities',
             ]
         );
     }
@@ -35,9 +37,9 @@ class AccountCategoryVisibilityRepositoryTest extends WebTestCase
     /**
      * @dataProvider visibilityDataProvider
      *
-     * @param array  $accountReferences
+     * @param array $accountReferences
      * @param string $categoryReference
-     * @param array  $expected
+     * @param array $expected
      */
     public function testFindForAccounts($accountReferences, $categoryReference, array $expected)
     {
@@ -66,30 +68,30 @@ class AccountCategoryVisibilityRepositoryTest extends WebTestCase
                 [
                     'account.level_1',
                 ],
-                'Test First Level',
+                LoadCategoryData::FIRST_LEVEL,
                 [
-                    'account_category_visibility.1',
-                ]
+                    LoadAccountCategoryVisibilities::VISIBILITY1,
+                ],
             ],
             [
                 [
                     'account.level_1',
                 ],
-                'Test Second Level',
+                LoadCategoryData::SECOND_LEVEL1,
                 [
-                    'account_category_visibility.2',
-                ]
+                    LoadAccountCategoryVisibilities::VISIBILITY2,
+                ],
             ],
             [
                 [
                     'account.level_1',
                     'account.level_1.4',
                 ],
-                'Test Second Level',
+                LoadCategoryData::SECOND_LEVEL1,
                 [
-                    'account_category_visibility.2',
-                    'account_category_visibility.3',
-                ]
+                    LoadAccountCategoryVisibilities::VISIBILITY2,
+                    LoadAccountCategoryVisibilities::VISIBILITY3,
+                ],
             ],
         ];
     }

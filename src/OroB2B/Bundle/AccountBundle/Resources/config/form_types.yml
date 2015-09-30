@@ -241,6 +241,9 @@ services:
             - @orob2b_account.form.listener.category.post_submit
         tags:
             - { name: form.type_extension, alias: orob2b_catalog_category }
+        calls:
+            - [setAccountClass,[%orob2b_account.entity.account.class%]]
+            - [setAccountGroupClass,[%orob2b_account.entity.account_group.class%]]
 
     orob2b_account.form.type.catalog_visibility:
         class: %orob2b_account.form.type.catalog_visibility.class%

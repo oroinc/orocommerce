@@ -5,7 +5,9 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Repository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupCategoryVisibilityRepository;
+use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountGroupCategoryVisibilities;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
 /**
  * @dbIsolation
@@ -27,7 +29,7 @@ class AccountGroupCategoryVisibilityRepositoryTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountGroupCategoryVisibilities'
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountGroupCategoryVisibilities',
             ]
         );
     }
@@ -35,9 +37,9 @@ class AccountGroupCategoryVisibilityRepositoryTest extends WebTestCase
     /**
      * @dataProvider visibilityDataProvider
      *
-     * @param array  $accountGroupReferences
+     * @param array $accountGroupReferences
      * @param string $categoryReference
-     * @param array  $expected
+     * @param array $expected
      */
     public function testFindForAccountGroups($accountGroupReferences, $categoryReference, array $expected)
     {
@@ -66,30 +68,30 @@ class AccountGroupCategoryVisibilityRepositoryTest extends WebTestCase
                 [
                     'account_group.group1',
                 ],
-                'Test First Level',
+                LoadCategoryData::FIRST_LEVEL,
                 [
-                    'account_group_category_visibility.1',
-                ]
+                    LoadAccountGroupCategoryVisibilities::VISIBILITY1,
+                ],
             ],
             [
                 [
                     'account_group.group1',
                 ],
-                'Test Second Level',
+                LoadCategoryData::SECOND_LEVEL1,
                 [
-                    'account_group_category_visibility.2',
-                ]
+                    LoadAccountGroupCategoryVisibilities::VISIBILITY2,
+                ],
             ],
             [
                 [
                     'account_group.group1',
                     'account_group.group2',
                 ],
-                'Test Second Level',
+                LoadCategoryData::SECOND_LEVEL1,
                 [
-                    'account_group_category_visibility.2',
-                    'account_group_category_visibility.3',
-                ]
+                    LoadAccountGroupCategoryVisibilities::VISIBILITY2,
+                    LoadAccountGroupCategoryVisibilities::VISIBILITY3,
+                ],
             ],
         ];
     }
