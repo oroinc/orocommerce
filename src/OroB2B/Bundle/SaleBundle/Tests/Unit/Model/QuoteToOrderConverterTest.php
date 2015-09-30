@@ -220,6 +220,7 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
 
         $quoteProduct = new QuoteProduct();
         if ($isReplacement) {
+            $quoteProduct->setType(QuoteProduct::TYPE_NOT_AVAILABLE);
             $quoteProduct->setProductReplacement($product);
         } else {
             $quoteProduct->setProduct($product);

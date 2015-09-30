@@ -75,15 +75,21 @@ class QuoteToOrderConverter
     protected function createOrderLineItem(QuoteProductOffer $quoteProductOffer, $quantity = null)
     {
         $quoteProduct = $quoteProductOffer->getQuoteProduct();
+        $freeFormTitle = null;
+        $productSku = null;
 
         if ($quoteProduct->isTypeNotAvailable()) {
             $product = $quoteProduct->getProductReplacement();
-            $freeFormTitle = $quoteProduct->getFreeFormProductReplacement();
-            $productSku = $quoteProduct->getProductReplacementSku();
+            if ($quoteProduct->isProductReplacementFreeForm()) {
+                $freeFormTitle = $quoteProduct->getFreeFormProductReplacement();
+                $productSku = $quoteProduct->getProductReplacementSku();
+            }
         } else {
             $product = $quoteProduct->getProduct();
-            $freeFormTitle = $quoteProduct->getFreeFormProduct();
-            $productSku = $quoteProduct->getProductSku();
+            if ($quoteProduct->isProductFreeForm()) {
+                $freeFormTitle = $quoteProduct->getFreeFormProduct();
+                $productSku = $quoteProduct->getProductSku();
+            }
         }
 
         $orderLineItem = new OrderLineItem();
