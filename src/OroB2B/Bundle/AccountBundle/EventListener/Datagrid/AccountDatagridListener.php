@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\EventListener;
+namespace OroB2B\Bundle\AccountBundle\EventListener\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Builder;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
@@ -109,6 +109,7 @@ class AccountDatagridListener
 
     /**
      * @param DatagridConfiguration $config
+     * @param string $column
      */
     protected function removeAccountUserColumn(DatagridConfiguration $config, $column)
     {
