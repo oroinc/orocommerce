@@ -67,12 +67,46 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
             ->method('getData')
             ->willReturn($category);
 
-        $this->getCategoryVisibility($category);
-        $this->getAccountVisibility();
-        $this->getAccountGroupVisibility();
+        $this->prepareCategoryVisibilityRepository($category);
+        $this->prepareAccountVisibilityRepository();
+        $this->prepareAccountGroupVisibilityRepository();
 
         $this->em->expects($this->once())
             ->method('flush');
+
+        $this->listener->onPostSubmit($event);
+    }
+
+    public function testOnPostSubmitRemoveDefault()
+    {
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form->expects($this->once())->method('isValid')->willReturn(true);
+        $form->expects($this->exactly(3))->method('get')->willReturn($form);
+        $form->expects($this->exactly(3))->method('getData')->willReturnOnConsecutiveCalls(
+            CategoryVisibility::PARENT_CATEGORY,
+            new ArrayCollection(),
+            new ArrayCollection()
+        );
+
+        /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder('\Symfony\Component\Form\FormEvent')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $event->expects($this->once())
+            ->method('getForm')
+            ->willReturn($form);
+
+        /** @var Category $category */
+        $category = $this->getEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', self::CATEGORY_ID);
+        $event->expects($this->once())
+            ->method('getData')
+            ->willReturn($category);
+
+        $this->prepareCategoryVisibilityRepository($category, CategoryVisibility::PARENT_CATEGORY);
+
+        $this->em->expects($this->once())->method('flush');
 
         $this->listener->onPostSubmit($event);
     }
@@ -131,7 +165,7 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
         $event = $this->getMockBuilder('\Symfony\Component\Form\FormEvent')
             ->disableOriginalConstructor()
             ->getMock();
-        $event->expects($this->exactly(2))
+        $event->expects($this->once())
             ->method('getForm')
             ->willReturn($form);
 
@@ -154,26 +188,25 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
     /**
      * @param Category $category
      *
+     * @param string $visibility
      * @return string
      */
-    protected function getCategoryVisibility(Category $category)
-    {
-        $visibility = CategoryVisibility::VISIBLE;
+    protected function prepareCategoryVisibilityRepository(
+        Category $category,
+        $visibility = CategoryVisibility::VISIBLE
+    ) {
         /** @var CategoryVisibility|\PHPUnit_Framework_MockObject_MockObject $categoryVisibility */
         $categoryVisibility = $this
             ->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility')
-            ->setMethods(['setVisibility'])
+            ->setMethods(['setVisibility', 'getVisibility'])
             ->getMock();
-        $categoryVisibility->expects($this->once())
-            ->method('setVisibility')
-            ->with($visibility);
+        $categoryVisibility->expects($this->any())->method('setVisibility')->with($visibility);
+        $categoryVisibility->expects($this->any())->method('getVisibility')->willReturn($visibility);
 
         $this->categoryVisibilityRepository->expects($this->once())
             ->method('findOneBy')
             ->with(['category' => $category])
             ->willReturn($categoryVisibility);
-
-        return $visibility;
     }
 
     /**
@@ -188,19 +221,19 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
             [
                 'entity' => $this->getEntity($entityClassName, 1),
                 'data' => [
-                    'visibility' => constant($className.'::PARENT_CATEGORY'),
+                    'visibility' => constant($className . '::PARENT_CATEGORY'),
                 ],
             ],
             [
                 'entity' => $this->getEntity($entityClassName, 2),
                 'data' => [
-                    'visibility' => constant($className.'::PARENT_CATEGORY'),
+                    'visibility' => constant($className . '::PARENT_CATEGORY'),
                 ],
             ],
             [
                 'entity' => $this->getEntity($entityClassName, 3),
                 'data' => [
-                    'visibility' => constant($className.'::VISIBLE'),
+                    'visibility' => constant($className . '::VISIBLE'),
                 ],
             ],
         ];
@@ -215,13 +248,8 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
         return $form;
     }
 
-    /**
-     * @return string
-     */
-    protected function getAccountVisibility()
+    protected function prepareAccountVisibilityRepository()
     {
-        $visibility = AccountCategoryVisibility::VISIBLE;
-
         $accountCategoryVisibilities = new ArrayCollection(
             [
                 $this->getAccountCategoryVisibilityMock(
@@ -242,14 +270,9 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
         $this->accountCategoryVisibilityRepository->expects($this->once())
             ->method('findForAccounts')
             ->willReturn($accountCategoryVisibilities);
-
-        return $visibility;
     }
 
-    /**
-     * @return string
-     */
-    protected function getAccountGroupVisibility()
+    protected function prepareAccountGroupVisibilityRepository()
     {
         $accountGroupCategoryVisibilities = new ArrayCollection(
             [

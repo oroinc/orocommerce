@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\AccountBundle\Form\EventListener;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\Form\FormEvent;
@@ -26,7 +25,9 @@ class CategoryPostSubmitListener extends AbstractCategoryListener
      */
     public function onPostSubmit(FormEvent $event)
     {
-        if (!$event->getForm()->isValid()) {
+        $form = $event->getForm();
+
+        if (!$form->isValid()) {
             return;
         }
         $category = $event->getData();
@@ -34,8 +35,6 @@ class CategoryPostSubmitListener extends AbstractCategoryListener
         if (!$category || !$category instanceof Category || !$category->getId()) {
             return;
         }
-
-        $form = $event->getForm();
 
         /** @var string $visibilityCode */
         $visibilityCode = $form->get('categoryVisibility')->getData();

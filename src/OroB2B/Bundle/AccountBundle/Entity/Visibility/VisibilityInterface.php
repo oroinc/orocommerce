@@ -11,6 +11,7 @@ interface VisibilityInterface
 
     /**
      * @param string $visibility
+     * @return $this
      */
     public function setVisibility($visibility);
 
@@ -18,4 +19,9 @@ interface VisibilityInterface
      * @return string
      */
     public function getVisibility();
+
+    /**
+     * @return array
+     */
+    public static function getVisibilityList();
 }

@@ -51,6 +51,22 @@ class CategoryPostSetDataListenerTest extends AbstractCategoryListenerTestCase
         $event->expects($this->once())->method('getData')->willReturn($category);
         $event->expects($this->any())->method('getForm')->willReturn($this->form);
 
+        $this->setCategoryVisibilityExpectations($category, $this->getCategoryVisibility(), CategoryVisibility::HIDDEN);
+        $this->setAccountCategoryVisibilityExpectations($category);
+        $this->setAccountGroupCategoryVisibilityExpectations($category);
+
+        $this->listener->onPostSetData($event);
+    }
+
+    public function testOnPostSetDataWithDefaultCategoryVisibility()
+    {
+        /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')->disableOriginalConstructor()->getMock();
+        /** @var Category $category */
+        $category = $this->getEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', 1);
+        $event->expects($this->once())->method('getData')->willReturn($category);
+        $event->expects($this->any())->method('getForm')->willReturn($this->form);
+
         $this->setCategoryVisibilityExpectations($category);
         $this->setAccountCategoryVisibilityExpectations($category);
         $this->setAccountGroupCategoryVisibilityExpectations($category);
@@ -88,10 +104,14 @@ class CategoryPostSetDataListenerTest extends AbstractCategoryListenerTestCase
 
     /**
      * @param Category $category
+     * @param CategoryVisibility $categoryVisibility
+     * @param string $expectedVisibility
      */
-    protected function setCategoryVisibilityExpectations(Category $category)
-    {
-        $categoryVisibility = $this->getCategoryVisibility();
+    protected function setCategoryVisibilityExpectations(
+        Category $category,
+        CategoryVisibility $categoryVisibility = null,
+        $expectedVisibility = CategoryVisibility::PARENT_CATEGORY
+    ) {
         $this->categoryVisibilityRepository->expects($this->once())
             ->method('findOneBy')
             ->with(['category' => $category])
@@ -100,7 +120,7 @@ class CategoryPostSetDataListenerTest extends AbstractCategoryListenerTestCase
         /** @var  FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
         $this->form->expects($this->at(0))->method('get')->with('categoryVisibility')->willReturn($form);
-        $form->expects($this->once())->method('setData')->with(CategoryVisibility::HIDDEN);
+        $form->expects($this->once())->method('setData')->with($expectedVisibility);
     }
 
     /**

@@ -2,15 +2,14 @@
 
 namespace OroB2B\Bundle\AccountBundle\Form\Extension;
 
-use OroB2B\Bundle\AccountBundle\Formatter\ChoiceFormatter;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 
+use OroB2B\Bundle\AccountBundle\Formatter\ChoiceFormatter;
 use OroB2B\Bundle\AccountBundle\Validator\Constraints\VisibilityChangeSet;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSetDataListener;
 use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSubmitListener;
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
@@ -29,9 +28,7 @@ class CategoryFormExtension extends AbstractTypeExtension
     /** @var string */
     protected $accountGroupClass;
 
-    /**
-     * @var ChoiceFormatter
-     */
+    /** @var ChoiceFormatter */
     protected $categoryVisibilityFormatter;
 
     /**

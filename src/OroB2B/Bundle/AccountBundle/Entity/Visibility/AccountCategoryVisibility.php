@@ -111,8 +111,7 @@ class AccountCategoryVisibility implements VisibilityInterface
     }
 
     /**
-     * @param string $visibility
-     * @return $this
+     * {@inheritdoc}
      */
     public function setVisibility($visibility)
     {
@@ -122,7 +121,7 @@ class AccountCategoryVisibility implements VisibilityInterface
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getVisibility()
     {
@@ -130,7 +129,7 @@ class AccountCategoryVisibility implements VisibilityInterface
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public static function getVisibilityList()
     {

@@ -81,8 +81,7 @@ class CategoryVisibility implements VisibilityInterface
     }
 
     /**
-     * @param string $visibility
-     * @return $this
+     * {@inheritdoc}
      */
     public function setVisibility($visibility)
     {
@@ -92,7 +91,7 @@ class CategoryVisibility implements VisibilityInterface
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getVisibility()
     {
@@ -100,7 +99,7 @@ class CategoryVisibility implements VisibilityInterface
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public static function getVisibilityList()
     {

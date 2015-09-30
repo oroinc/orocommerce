@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Migrations\Schema\v1_4;
+namespace OroB2B\Bundle\AccountBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
 
@@ -55,6 +55,7 @@ class OroB2BAccountBundle implements Migration, ExtendExtensionAwareInterface
         $table = $schema->createTable(self::ORO_B2B_CATEGORY_VISIBILITY_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
+        $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
         $table->setPrimaryKey(['id']);
 
         $this->extendExtension->addEnumField(
@@ -76,6 +77,7 @@ class OroB2BAccountBundle implements Migration, ExtendExtensionAwareInterface
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
+        $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
         $table->setPrimaryKey(['id']);
 
         $this->extendExtension->addEnumField(
@@ -97,6 +99,7 @@ class OroB2BAccountBundle implements Migration, ExtendExtensionAwareInterface
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_group_id', 'integer', ['notnull' => false]);
+        $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
         $table->setPrimaryKey(['id']);
 
         $this->extendExtension->addEnumField(
