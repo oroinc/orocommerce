@@ -487,5 +487,5 @@ services:
     orob2b_account.formatter.choice.account_group_category_visibility:
         parent: orob2b_account.formatter.choice
         calls:
-            - [ setTranslationPattern   , [ 'orob2b.account.visibility.accountgroupcategoryvisibility.choice.%s' ] ]
+            - [ setTranslationPattern, [ 'orob2b.account.visibility.accountgroupcategoryvisibility.choice.%s' ] ]
             - [ setChoices, [[%orob2b_account.entity.account_group_category_visibility.class%, 'getVisibilityList']] ]
