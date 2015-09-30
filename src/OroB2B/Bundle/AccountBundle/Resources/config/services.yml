@@ -67,6 +67,8 @@ parameters:
 
     orob2b_account.content_provider.menu.class: Oro\Bundle\NavigationBundle\ContentProvider\MenuContentProvider
 
+    orob2b_account.calculator.category_visibility_calculator: OroB2B\Bundle\AccountBundle\Calculator\CategoryVisibilityCalculator
+
 services:
     orob2b_account.security.account_user_provider:
         class: %orob2b_account.security.account_user_provider.class%
@@ -443,3 +445,6 @@ services:
         class: %orob2b_account.account_delete_handler.class%
         arguments:
             - @oro_security.security_facade
+
+    orob2b_account.calculator.category_visibility_calculator:
+        class: %orob2b_account.calculator.category_visibility_calculator%
