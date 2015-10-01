@@ -37,11 +37,9 @@ class CategoryVisibilityListener
      */
     public function postPersist(LifecycleEventArgs $args)
     {
-        if (!$args->getEntity() instanceof Category) {
-            return;
+        if ($args->getEntity() instanceof Category) {
+            $this->invalidateAll = true;
         }
-
-        $this->invalidateAll = true;
     }
 
     /**
@@ -65,11 +63,9 @@ class CategoryVisibilityListener
      */
     public function postRemove(LifecycleEventArgs $args)
     {
-        if (!$args->getEntity() instanceof Category) {
-            return;
+        if ($args->getEntity() instanceof Category) {
+            $this->invalidateAll = true;
         }
-
-        $this->invalidateAll = true;
     }
 
     /**

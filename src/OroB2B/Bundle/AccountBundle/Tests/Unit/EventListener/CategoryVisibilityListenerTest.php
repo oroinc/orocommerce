@@ -6,7 +6,6 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\OnClearEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
-use Doctrine\ORM\UnitOfWork;
 
 use OroB2B\Bundle\AccountBundle\EventListener\CategoryVisibilityListener;
 use OroB2B\Bundle\AccountBundle\Storage\CategoryVisibilityStorage;
@@ -74,6 +73,57 @@ class CategoryVisibilityListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->listener->postRemove($lifecycleEventArgs);
         $this->assertAttributeEquals($invalidateAll, 'invalidateAll', $this->listener);
+    }
+
+    public function testOnPostFlush()
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|OnFlushEventArgs $onFlushEventArgs */
+        $onFlushEventArgs = $this->getMockBuilder('Doctrine\ORM\Event\OnFlushEventArgs')
+            ->disableOriginalConstructor()
+            ->getMock();
+        /** @var \PHPUnit_Framework_MockObject_MockObject|PostFlushEventArgs $postFlushEventArgs */
+        $postFlushEventArgs = $this->getMockBuilder('Doctrine\ORM\Event\PostFlushEventArgs')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->assertAttributeEquals(0, 'flushCounter', $this->listener);
+
+        $this->listener->onFlush($onFlushEventArgs);
+        $this->assertAttributeEquals(1, 'flushCounter', $this->listener);
+
+        $this->listener->onFlush($onFlushEventArgs);
+        $this->assertAttributeEquals(2, 'flushCounter', $this->listener);
+
+        $this->listener->postPersist($this->getLifecycleEventArgs(new Category()));
+        $this->assertAttributeEquals(true, 'invalidateAll', $this->listener);
+
+        $this->listener->postFlush($postFlushEventArgs);
+        $this->assertAttributeEquals(1, 'flushCounter', $this->listener);
+        $this->assertAttributeEquals(true, 'invalidateAll', $this->listener);
+
+        $this->categoryVisibilityStorage->expects($this->once())
+            ->method('clearData')
+            ->willReturnCallback(function (array $accountIds = null) {
+                $this->assertNull($accountIds);
+            });
+        $this->listener->postFlush($postFlushEventArgs);
+        $this->assertAttributeEquals(0, 'flushCounter', $this->listener);
+        $this->assertAttributeEquals(false, 'invalidateAll', $this->listener);
+    }
+
+    public function testOnClear()
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|OnClearEventArgs $onClearEventArgs */
+        $onClearEventArgs = $this->getMockBuilder('Doctrine\ORM\Event\OnClearEventArgs')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->listener->postPersist($this->getLifecycleEventArgs(new Category()));
+        $this->assertAttributeEquals(true, 'invalidateAll', $this->listener);
+
+        $this->listener->onClear($onClearEventArgs);
+
+        $this->assertAttributeEquals(false, 'invalidateAll', $this->listener);
     }
 
     /**
