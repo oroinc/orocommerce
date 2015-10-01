@@ -7,7 +7,12 @@ use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\OnClearEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Storage\CategoryVisibilityStorage;
+
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class CategoryVisibilityListener
@@ -21,6 +26,11 @@ class CategoryVisibilityListener
      * @var bool
      */
     protected $invalidateAll = false;
+
+    /**
+     * @var array
+     */
+    protected $invalidateAccountIds = [];
 
     /**
      * @var bool
@@ -37,8 +47,12 @@ class CategoryVisibilityListener
      */
     public function postPersist(LifecycleEventArgs $args)
     {
-        if ($args->getEntity() instanceof Category) {
+        $entity = $args->getEntity();
+
+        if ($entity instanceof Category || $entity instanceof CategoryVisibility) {
             $this->invalidateAll = true;
+        } elseif (!$this->invalidateAll) {
+            $this->collectInvalidateAccounts($entity, $args);
         }
     }
 
@@ -48,13 +62,36 @@ class CategoryVisibilityListener
     public function postUpdate(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
-        if (!$entity instanceof Category) {
-            return;
-        }
-
-        $changeSet = $args->getEntityManager()->getUnitOfWork()->getEntityChangeSet($entity);
-        if (isset($changeSet['parentCategory'])) {
+        if ($entity instanceof Category) {
+            $changeSet = $args->getEntityManager()->getUnitOfWork()->getEntityChangeSet($entity);
+            if (isset($changeSet['parentCategory'])) {
+                $this->invalidateAll = true;
+            }
+        } elseif ($entity instanceof CategoryVisibility) {
             $this->invalidateAll = true;
+        } elseif (!$this->invalidateAll) {
+            $this->collectInvalidateAccounts($entity, $args);
+        }
+    }
+
+    /**
+     * @param $entity
+     * @param LifecycleEventArgs $args
+     */
+    protected function collectInvalidateAccounts($entity, LifecycleEventArgs $args)
+    {
+        if ($entity instanceof Account) {
+            $changeSet = $args->getEntityManager()->getUnitOfWork()->getEntityChangeSet($entity);
+            if (isset($changeSet['group'])) {
+                $this->invalidateAccountIds[] = $entity->getId();
+            }
+        } elseif ($entity instanceof AccountCategoryVisibility && $entity->getAccount()) {
+            $this->invalidateAccountIds[] = $entity->getAccount()->getId();
+        } elseif ($entity instanceof AccountGroupCategoryVisibility && $entity->getAccountGroup()) {
+            $groupAccounts = $entity->getAccountGroup()->getAccounts();
+            foreach ($groupAccounts as $account) {
+                $this->invalidateAccountIds[] = $account->getId();
+            }
         }
     }
 
@@ -82,9 +119,15 @@ class CategoryVisibilityListener
     public function postFlush(PostFlushEventArgs $args)
     {
         $this->flushCounter--;
-        if ($this->flushCounter === 0 && $this->invalidateAll) {
-            $this->categoryVisibilityStorage->clearData();
-            $this->reset();
+
+        if ($this->flushCounter === 0) {
+            if ($this->invalidateAll) {
+                $this->categoryVisibilityStorage->clearData();
+                $this->reset();
+            } elseif (count($this->invalidateAccountIds)) {
+                $this->categoryVisibilityStorage->clearData($this->invalidateAccountIds);
+                $this->invalidateAccountIds = [];
+            }
         }
     }
 
