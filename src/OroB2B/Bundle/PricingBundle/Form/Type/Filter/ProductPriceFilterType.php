@@ -6,10 +6,10 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType;
+use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberRangeFilterType;
 
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
@@ -60,7 +60,7 @@ class ProductPriceFilterType extends AbstractType
      */
     public function getParent()
     {
-        return NumberFilterType::NAME;
+        return NumberRangeFilterType::NAME;
     }
 
     /**
@@ -68,8 +68,6 @@ class ProductPriceFilterType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        parent::buildForm($builder, $options);
-
         $builder->add(
             'unit',
             'choice',
@@ -83,31 +81,9 @@ class ProductPriceFilterType extends AbstractType
     /**
      * {@inheritDoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(
-            [
-                'data_type' => NumberFilterType::DATA_DECIMAL,
-                'operator_choices'  => [
-                    NumberFilterType::TYPE_EQUAL => $this->translator->trans('oro.filter.form.label_type_equal'),
-                    NumberFilterType::TYPE_NOT_EQUAL => $this->translator->trans(
-                        'oro.filter.form.label_type_not_equal'
-                    ),
-                    NumberFilterType::TYPE_GREATER_EQUAL => $this->translator->trans(
-                        'oro.filter.form.label_type_greater_equal'
-                    ),
-                    NumberFilterType::TYPE_GREATER_THAN => $this->translator->trans(
-                        'oro.filter.form.label_type_greater_than'
-                    ),
-                    NumberFilterType::TYPE_LESS_EQUAL => $this->translator->trans(
-                        'oro.filter.form.label_type_less_equal'
-                    ),
-                    NumberFilterType::TYPE_LESS_THAN => $this->translator->trans(
-                        'oro.filter.form.label_type_less_than'
-                    )
-                ],
-            ]
-        );
+        $resolver->setDefault('data_type', NumberRangeFilterType::DATA_DECIMAL);
     }
 
     /**
