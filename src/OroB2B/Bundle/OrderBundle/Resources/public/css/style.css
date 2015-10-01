@@ -72,12 +72,12 @@
     width: 279px !important;
 }
 
-.order-line-item-quantity input[type="number"],
+.order-line-item-quantity input[type="text"],
 .order-line-item-price input[type="text"] {
     text-align: right;
 }
 
-.order-line-item-quantity input[type="number"] {
+.order-line-item-quantity input[type="text"] {
     margin-right: 3px;
 }
 
@@ -98,14 +98,14 @@
     padding-left: 17px;
 }
 
-.order-line-item-quantity input[type="number"],
+.order-line-item-quantity input[type="text"],
 .order-line-item-quantity select,
 .order-line-item-price input[type="text"],
 .order-line-item-price select {
     width: 80px !important;
 }
 
-.order-line-item-quantity input[type="number"],
+.order-line-item-quantity input[type="text"],
 .order-line-item-quantity .selector,
 .order-line-item-price input[type="text"],
 .order-line-item-price .selector {

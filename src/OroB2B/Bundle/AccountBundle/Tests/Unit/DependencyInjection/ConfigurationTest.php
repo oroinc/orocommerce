@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Processor;
 
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\DependencyInjection\Configuration;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
@@ -58,6 +59,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                         ],
                         'send_password_in_welcome_email' => [
                             'value' => false,
+                            'scope' => 'app'
+                        ],
+                        'category_visibility' => [
+                            'value' => CategoryVisibility::VISIBLE,
                             'scope' => 'app'
                         ]
                     ]

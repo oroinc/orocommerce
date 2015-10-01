@@ -11,6 +11,8 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 
 class LoadAccounts extends AbstractFixture implements DependentFixtureInterface
 {
+    const DEFAULT_ACCOUNT_NAME = 'account.orphan';
+
     /**
      * {@inheritdoc}
      */
@@ -36,7 +38,7 @@ class LoadAccounts extends AbstractFixture implements DependentFixtureInterface
      */
     public function load(ObjectManager $manager)
     {
-        $this->createAccount($manager, 'account.orphan');
+        $this->createAccount($manager, self::DEFAULT_ACCOUNT_NAME);
 
         $levelOne = $this->createAccount($manager, 'account.level_1');
 
