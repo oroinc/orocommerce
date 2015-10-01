@@ -25,6 +25,9 @@ class SystemConfigCategoryVisibilityListener
         $this->categoryVisibilityStorage = $categoryVisibilityStorage;
     }
 
+    /**
+     * @param ConfigSettingsUpdateEvent $event
+     */
     public function onSettingsSaveBefore(ConfigSettingsUpdateEvent $event)
     {
         $settingsKey = $this->getSettingsKey();
