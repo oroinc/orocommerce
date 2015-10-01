@@ -38,8 +38,8 @@ class ProductVariantLinksDataTransformerTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $this->assertCount(2, $links);
-        $this->assertEquals($product1, $links->first()->getProduct());
-        $this->assertEquals($product2, $links->next()->getProduct());
+        $this->assertSame($product1, $links->first()->getProduct());
+        $this->assertSame($product2, $links->next()->getProduct());
 
         $this->assertInstanceOf(self::PRODUCT_VARIANT_LINK_CLASS, $links->first());
         $this->assertInstanceOf(self::PRODUCT_VARIANT_LINK_CLASS, $links->next());
@@ -64,8 +64,8 @@ class ProductVariantLinksDataTransformerTest extends \PHPUnit_Framework_TestCase
             'removeVariants' => [$product1],
         ]);
 
-        $this->assertCount(1, $links);
-        $this->assertEquals($product2, $links->first()->getProduct());
+        $this->assertSame([$variantLink2], $links->getValues());
+        $this->assertSame($product2, $links->first()->getProduct());
         $this->assertInstanceOf(self::PRODUCT_VARIANT_LINK_CLASS, $links->first());
     }
 
@@ -91,8 +91,8 @@ class ProductVariantLinksDataTransformerTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $this->assertCount(2, $links);
-        $this->assertEquals($product2, $links->first()->getProduct());
-        $this->assertEquals($product3, $links->next()->getProduct());
+        $this->assertSame($product2, $links->first()->getProduct());
+        $this->assertSame($product3, $links->next()->getProduct());
 
         $this->assertInstanceOf(self::PRODUCT_VARIANT_LINK_CLASS, $links->first());
         $this->assertInstanceOf(self::PRODUCT_VARIANT_LINK_CLASS, $links->next());

@@ -388,7 +388,7 @@ datagrid:
         source:
             query:
                 select:
-                    - productVariantLink.linked as linked
+                    - productVariantLink.visible as visible
                 from:
                     - { table: %orob2b_product.product_variant_link.class%, alias: productVariantLink }
                 join:
@@ -398,7 +398,7 @@ datagrid:
                     and:
                         - productVariantLink.parentProduct = :parentProduct
                 orderBy:
-                    - { column: linked, dir: DESC}
+                    - { column: visible, dir: DESC}
                     - { column: product.sku, dir: ASC}
         columns:
             id:
@@ -407,8 +407,8 @@ datagrid:
                 label:         orob2b.product.sku.label
             productName:
                 label:         orob2b.product.names.label
-            linked:
-                label:         orob2b.product.productvariantlink.linked.label
+            visible:
+                label:         orob2b.product.productvariantlink.visible.label
                 frontend_type: boolean
             status:
                 label:         orob2b.product.status.label
@@ -424,5 +424,5 @@ datagrid:
             id: ~
         sorters:
             columns:
-                linked:
-                    data_name: linked
+                visible:
+                    data_name: visible

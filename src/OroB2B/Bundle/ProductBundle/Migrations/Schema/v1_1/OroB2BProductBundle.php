@@ -31,7 +31,7 @@ class OroB2BProductBundle implements Migration
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_id', 'integer', ['notnull' => true]);
         $table->addColumn('parent_product_id', 'integer', ['notnull' => true]);
-        $table->addColumn('linked', 'boolean', ['default' => true]);
+        $table->addColumn('visible', 'boolean', ['default' => true]);
         $table->setPrimaryKey(['id']);
     }
 

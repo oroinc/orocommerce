@@ -50,7 +50,7 @@ orob2b:
             entity_label: Product Variant Link
             entity_plural_label: Product Variant Links
             id.label: Id
-            linked.label: Linked
+            visible.label: Visible
             parent_product.label: Parent Product
             product.label: Product
 

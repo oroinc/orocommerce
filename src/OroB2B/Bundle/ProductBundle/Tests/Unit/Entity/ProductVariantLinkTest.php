@@ -17,7 +17,7 @@ class ProductVariantLinkTest extends \PHPUnit_Framework_TestCase
             ['id', '123'],
             ['parentProduct', new Product()],
             ['product', new Product()],
-            ['linked', false, true],
+            ['visible', false, true],
         ];
 
         $this->assertPropertyAccessors(new ProductVariantLink(), $properties);

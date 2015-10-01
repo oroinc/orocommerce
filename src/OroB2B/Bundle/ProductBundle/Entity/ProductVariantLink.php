@@ -37,9 +37,9 @@ class ProductVariantLink
 
     /**
      * @var bool
-     * @ORM\Column(name="linked", type="boolean", nullable=false, options={"default"=true})
+     * @ORM\Column(name="visible", type="boolean", nullable=false, options={"default"=true})
      */
-    protected $linked = true;
+    protected $visible = true;
 
     /**
      * @param Product $parentProduct
@@ -78,9 +78,9 @@ class ProductVariantLink
     /**
      * @return bool
      */
-    public function isLinked()
+    public function isVisible()
     {
-        return $this->linked;
+        return $this->visible;
     }
 
     /**
@@ -106,12 +106,12 @@ class ProductVariantLink
     }
 
     /**
-     * @param boolean $linked
+     * @param boolean $visible
      * @return $this
      */
-    public function setLinked($linked)
+    public function setVisible($visible)
     {
-        $this->linked = (bool) $linked;
+        $this->visible = (bool) $visible;
 
         return $this;
     }

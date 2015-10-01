@@ -81,16 +81,20 @@ class ProductVariantLinksTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
+    /**
+     * @return array
+     */
     public function submitProvider()
     {
         $this->initProducts();
 
         $expectedDataNoChanges = $this->prepareExpectedVariantLinks();
-        $expectedDataAddVariants = $this->prepareExpectedVariantLinks([$this->products[1], $this->products[2]]);
-        $expectedDataRemoveVariants = $this->prepareExpectedVariantLinks([], [$this->products[3], $this->products[4]]);
+        $expectedDataAddVariants = $this->prepareExpectedVariantLinks(
+            [$this->products[1], $this->products[2]]
+        );
+        $expectedDataRemoveVariants = $this->prepareExpectedVariantLinks([]);
         $expectedDataAddAndRemoveVariants = $this->prepareExpectedVariantLinks(
-            [$this->products[1], $this->products[2]],
-            [$this->products[3], $this->products[4]]
+            [$this->products[1], $this->products[2]]
         );
 
         return [
