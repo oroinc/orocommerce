@@ -116,40 +116,28 @@ class CategoryTreeHandler extends AbstractTreeHandler
      */
     protected function filterCategories(array $categories, $accountId = null)
     {
-        $visibilityData = $this->categoryVisibilityStorage->getCategoryVisibilityData($accountId);
+        $visibilityData = $this->categoryVisibilityStorage->getData($accountId);
 
         $isVisible = $visibilityData->isVisible();
         $ids = $visibilityData->getIds();
 
-        $idsToUnset = [];
-
-        $tree = $this->prepareTree($categories);
-        foreach ($tree as $item) {
-            if (($isVisible && !in_array($item['id'], $ids, true)) ||
-                (!$isVisible && in_array($item['id'], $ids, true))
-            ) {
-                $this->collectIdsToUnset($item, $idsToUnset);
+        $categoriesTree = $this->buildCategoriesTree($categories);
+        foreach ($categoriesTree as &$category) {
+            $inIds = in_array($category['id'], $ids, true);
+            if (($isVisible && !$inIds) || (!$isVisible && $inIds)) {
+                $this->unsetTree($categoriesTree, $category);
             }
+            unset($category['children']);
         }
 
-        $idsToUnset = array_unique($idsToUnset);
-
-        foreach ($tree as $key => &$item) {
-            if (in_array($item['id'], $idsToUnset, true)) {
-                unset($tree[$key]);
-            }
-
-            unset($item['children']);
-        }
-
-        return array_values($tree);
+        return array_values($categoriesTree);
     }
 
     /**
      * @param array $categories
      * @return array
      */
-    protected function prepareTree(array $categories)
+    protected function buildCategoriesTree(array $categories)
     {
         $tree = [];
 
@@ -169,16 +157,16 @@ class CategoryTreeHandler extends AbstractTreeHandler
     }
 
     /**
+     * @param array $tree
      * @param array $category
-     * @param array $idsToUnset
      */
-    protected function collectIdsToUnset(array $category, array &$idsToUnset)
+    protected function unsetTree(array &$tree, array $category)
     {
-        $idsToUnset[] = $category['id'];
+        unset($tree[$category['id']]);
 
         if (array_key_exists('children', $category)) {
             foreach ($category['children'] as $child) {
-                $this->collectIdsToUnset($child, $idsToUnset);
+                $this->unsetTree($tree, $child);
             }
         }
     }
