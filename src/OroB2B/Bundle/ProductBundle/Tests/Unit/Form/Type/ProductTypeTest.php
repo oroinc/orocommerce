@@ -309,5 +309,4 @@ class ProductTypeTest extends FormIntegrationTestCase
 
         return $defaultProduct;
     }
-
 }
