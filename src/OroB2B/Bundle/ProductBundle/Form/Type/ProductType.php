@@ -4,12 +4,15 @@ namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class ProductType extends AbstractType
 {
@@ -43,16 +46,6 @@ class ProductType extends AbstractType
                     'label' => 'orob2b.product.has_variants.label',
                     'tooltip'  => 'orob2b.product.form.tooltip.has_variants'
                 ]
-            )
-            ->add(
-                'variantFields',
-                ProductCustomFieldsChoiceType::NAME,
-                ['label' => 'orob2b.product.variant_fields.label']
-            )
-            ->add(
-                'variantLinks',
-                ProductVariantLinksType::NAME,
-                ['product_class' => $this->dataClass, 'by_reference' => false]
             )
             ->add(
                 'status',
@@ -128,6 +121,31 @@ class ProductType extends AbstractType
                     'configs'   => ['allowClear' => false]
                 ]
             );
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener']);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function preSetDataListener(FormEvent $event)
+    {
+        $product = $event->getData();
+        $form = $event->getForm();
+
+        if ($product instanceof Product && $product->getHasVariants()) {
+            $form
+                ->add(
+                    'variantFields',
+                    ProductCustomFieldsChoiceType::NAME,
+                    ['label' => 'orob2b.product.variant_fields.label']
+                )
+                ->add(
+                    'variantLinks',
+                    ProductVariantLinksType::NAME,
+                    ['product_class' => $this->dataClass, 'by_reference' => false]
+                );
+        }
     }
 
     /**

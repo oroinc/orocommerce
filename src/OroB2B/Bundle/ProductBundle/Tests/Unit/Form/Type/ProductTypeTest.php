@@ -155,11 +155,9 @@ class ProductTypeTest extends FormIntegrationTestCase
      */
     public function submitProvider()
     {
-        $defaultProduct = new StubProduct();
-
         return [
             'simple product' => [
-                'defaultData'   => $defaultProduct,
+                'defaultData'   => $this->createDefaultProductEntity(),
                 'submittedData' => [
                     'sku' => 'test sku',
                     'unitPrecisions' => [],
@@ -173,7 +171,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                 'rounding' => false
             ],
             'product with unitPrecisions' => [
-                'defaultData'   => $defaultProduct,
+                'defaultData'   => $this->createDefaultProductEntity(),
                 'submittedData' => [
                     'sku' => 'test sku',
                     'unitPrecisions' => [
@@ -192,7 +190,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                 'rounding' => false
             ],
             'product with names and descriptions' => [
-                'defaultData'   => $defaultProduct,
+                'defaultData'   => $this->createDefaultProductEntity(),
                 'submittedData' => [
                     'sku' => 'test sku',
                     'unitPrecisions' => [],
@@ -213,21 +211,40 @@ class ProductTypeTest extends FormIntegrationTestCase
                 'expectedData'  => $this->createExpectedProductEntity(false, true),
                 'rounding' => false
             ],
+            'simple product without hasVariants' => [
+                'defaultData'   => $this->createDefaultProductEntity(false),
+                'submittedData' => [
+                    'sku' => 'test sku',
+                    'unitPrecisions' => [],
+                    'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
+                    'visible' => 1,
+                    'status' => Product::STATUS_DISABLED,
+                    'hasVariants' => false,
+                ],
+                'expectedData'  => $this->createExpectedProductEntity(false, false, false),
+                'rounding' => false
+            ],
         ];
     }
 
     /**
-     * @param boolean $withProductUnitPrecision
-     * @param boolean $withNamesAndDescriptions
-     * @return Product
+     * @param bool|false $withProductUnitPrecision
+     * @param bool|false $withNamesAndDescriptions
+     * @param bool|true $hasVariants
+     * @return StubProduct
      */
     protected function createExpectedProductEntity(
         $withProductUnitPrecision = false,
-        $withNamesAndDescriptions = false
+        $withNamesAndDescriptions = false,
+        $hasVariants = true
     ) {
         $expectedProduct = new StubProduct();
-        $expectedProduct->setHasVariants(true);
-        $expectedProduct->setVariantFields(array_keys($this->exampleCustomFields));
+
+        $expectedProduct->setHasVariants($hasVariants);
+
+        if ($hasVariants) {
+            $expectedProduct->setVariantFields(array_keys($this->exampleCustomFields));
+        }
 
         $productUnit = new ProductUnit();
         $productUnit->setCode('kg');
@@ -259,7 +276,7 @@ class ProductTypeTest extends FormIntegrationTestCase
 
         $this->assertTrue($form->has('sku'));
         $this->assertTrue($form->has('unitPrecisions'));
-        $this->assertTrue($form->has('variantLinks'));
+        $this->assertTrue($form->has('hasVariants'));
     }
 
     public function testGetName()
@@ -280,4 +297,17 @@ class ProductTypeTest extends FormIntegrationTestCase
 
         return $value;
     }
+
+    /**
+     * @param bool|true $hasVariants
+     * @return StubProduct
+     */
+    protected function createDefaultProductEntity($hasVariants = true)
+    {
+        $defaultProduct = new StubProduct();
+        $defaultProduct->setHasVariants($hasVariants);
+
+        return $defaultProduct;
+    }
+
 }
