@@ -32,6 +32,11 @@ class SystemConfigCategoryVisibilityListenerTest extends \PHPUnit_Framework_Test
         $this->listener = new SystemConfigCategoryVisibilityListener($this->categoryVisibilityStorage);
     }
 
+    protected function tearDown()
+    {
+        unset($this->categoryVisibilityStorage, $this->listener);
+    }
+
     /**
      * @dataProvider onSettingsSaveBeforeDataProvider
      * @param array $settings
@@ -48,10 +53,8 @@ class SystemConfigCategoryVisibilityListenerTest extends \PHPUnit_Framework_Test
             ->method('getSettings')
             ->will($this->returnValue($settings));
 
-        if ($clearAll) {
-            $this->categoryVisibilityStorage->expects($this->once())
-                ->method('clearData');
-        }
+        $this->categoryVisibilityStorage->expects($clearAll ? $this->once() : $this->never())
+            ->method('clearData');
 
         $this->listener->onSettingsSaveBefore($event);
     }

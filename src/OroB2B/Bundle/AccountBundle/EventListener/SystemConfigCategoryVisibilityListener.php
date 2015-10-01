@@ -5,11 +5,11 @@ namespace OroB2B\Bundle\AccountBundle\EventListener;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 
+use OroB2B\Bundle\AccountBundle\DependencyInjection\OroB2BAccountExtension;
 use OroB2B\Bundle\AccountBundle\Storage\CategoryVisibilityStorage;
 
 class SystemConfigCategoryVisibilityListener
 {
-    const SECTION = 'oro_b2b_account';
     const SETTING = 'category_visibility';
 
     /**
@@ -42,6 +42,6 @@ class SystemConfigCategoryVisibilityListener
      */
     protected function getSettingsKey()
     {
-        return implode(ConfigManager::SECTION_VIEW_SEPARATOR, [self::SECTION, self::SETTING]);
+        return implode(ConfigManager::SECTION_VIEW_SEPARATOR, [OroB2BAccountExtension::ALIAS, self::SETTING]);
     }
 }
