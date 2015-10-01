@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Form\Handler;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 use Oro\Component\Testing\Unit\FormHandlerTestCase;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
@@ -10,6 +12,11 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class CategoryHandlerTest extends FormHandlerTestCase
 {
+    /**
+     * @var Category
+     */
+    protected $entity;
+
     protected function setUp()
     {
         parent::setUp();
@@ -20,6 +27,7 @@ class CategoryHandlerTest extends FormHandlerTestCase
 
     /**
      * @dataProvider supportedMethods
+     *
      * @param string $method
      * @param boolean $isValid
      * @param boolean $isProcessed

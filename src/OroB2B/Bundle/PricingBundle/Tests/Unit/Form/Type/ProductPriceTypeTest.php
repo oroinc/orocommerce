@@ -22,9 +22,12 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
 class ProductPriceTypeTest extends FormIntegrationTestCase
 {
+    use QuantityTypeTrait;
+
     /**
      * @var ProductPriceType
      */
@@ -91,7 +94,8 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
                     PriceListSelectType::NAME => new PriceListSelectTypeStub(),
                     ProductUnitSelectionType::NAME => $productUnitSelection,
                     PriceType::NAME => $priceType,
-                    CurrencySelectionType::NAME => new CurrencySelectionTypeStub()
+                    CurrencySelectionType::NAME => new CurrencySelectionTypeStub(),
+                    QuantityTypeTrait::$name => $this->getQuantityType(),
                 ],
                 []
             ),
@@ -103,26 +107,16 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
      * @param ProductPrice $defaultData
      * @param $submittedData
      * @param ProductPrice $expectedData
-     * @param array $expectedOptions
      * @dataProvider submitProvider
      */
     public function testSubmit(
         ProductPrice $defaultData,
         $submittedData,
-        ProductPrice $expectedData,
-        array $expectedOptions = null
+        ProductPrice $expectedData
     ) {
         $form = $this->factory->create($this->formType, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
-
-        if ($expectedOptions) {
-            $quantityConfig = $form->get('quantity')->getConfig();
-            foreach ($expectedOptions as $key => $value) {
-                $this->assertTrue($quantityConfig->hasOption($key));
-                $this->assertEquals($value, $quantityConfig->getOption($key));
-            }
-        }
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
@@ -196,9 +190,6 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
                     ]
                 ],
                 'expectedData' => $updatedExpectedProductPrice,
-                'expectedOptions' => [
-                    'precision' => 5
-                ]
             ]
         ];
     }
