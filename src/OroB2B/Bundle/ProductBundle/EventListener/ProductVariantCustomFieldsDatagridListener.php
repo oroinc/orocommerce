@@ -56,7 +56,7 @@ class ProductVariantCustomFieldsDatagridListener
         /** @var Product $parentProduct */
         $parentProduct = $productRepository->find($event->getDatagrid()->getParameters()->get('parentProduct'));
 
-        foreach ($this->getActualVariantField($parentProduct) as $customField) {
+        foreach ($this->getActualVariantFields($parentProduct) as $customField) {
             $columnName = $customField['name'];
             $column = ['label' => $customField['label']];
 
@@ -77,7 +77,7 @@ class ProductVariantCustomFieldsDatagridListener
         $productRepository = $this->getProductRepository();
         /** @var Product $parentProduct */
         $parentProduct = $productRepository->find($event->getDatagrid()->getParameters()->get('parentProduct'));
-        $customFields = $this->getActualVariantField($parentProduct);
+        $customFields = $this->getActualVariantFields($parentProduct);
 
         foreach ($records as $record) {
             $productId = $record->getValue('id');
@@ -104,7 +104,7 @@ class ProductVariantCustomFieldsDatagridListener
      * @param Product $product
      * @return array
      */
-    private function getActualVariantField(Product $product)
+    private function getActualVariantFields(Product $product)
     {
         $customFields = [];
         $allCustomFields = $this->customFieldProvider->getEntityCustomFields($this->productClass);
