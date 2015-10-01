@@ -4,6 +4,9 @@ namespace OroB2B\Bundle\AccountBundle\Calculator;
 
 class CategoryVisibilityCalculator
 {
+    const VISIBLE = 'visible';
+    const INVISIBLE = 'invisible';
+
     /**
      * @param int|null $accountId
      * @return array

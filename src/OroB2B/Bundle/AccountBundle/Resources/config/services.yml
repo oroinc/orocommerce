@@ -15,6 +15,9 @@ parameters:
     orob2b_account.entity.sidebar_state.class: OroB2B\Bundle\AccountBundle\Entity\AccountUserSidebarState
     orob2b_account.entity.widget.class: OroB2B\Bundle\AccountBundle\Entity\AccountUserSidebarWidget
     orob2b_account.entity.page_state.class: OroB2B\Bundle\AccountBundle\Entity\PageState
+    orob2b_account.entity.category_visibility.class: OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility
+    orob2b_account.entity.account_category_visibility.class: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility
+    orob2b_account.entity.account_group_category_visibility.class: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility
 
     orob2b_account.account_tree_handler.class: OroB2B\Bundle\AccountBundle\JsTree\AccountTreeHandler
     orob2b_account.account_delete_handler.class: OroB2B\Bundle\AccountBundle\Handler\UserDeleteHandler
@@ -43,6 +46,9 @@ parameters:
     orob2b_account.event_listener.login.class: OroB2B\Bundle\AccountBundle\EventListener\LoginListener
     orob2b_account.event_listener.account_datagrid.class: OroB2B\Bundle\AccountBundle\EventListener\AccountDatagridListener
     orob2b_account.event_listener.ormdatasource_acl.class: OroB2B\Bundle\AccountBundle\EventListener\OrmDatasourceAclListener
+    orob2b_account.event_listener.form_view.class: OroB2B\Bundle\AccountBundle\EventListener\FormViewListener
+    orob2b_account.event_listener.category_visibility_grid_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryVisibilityGridListener
+    orob2b_account.event_listener.system_config.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigListener
 
     orob2b_account.acl.group_provider.class: OroB2B\Bundle\AccountBundle\Acl\Group\AclGroupProvider
     orob2b_account.acl.resolver.role_translation_prefix.class: OroB2B\Bundle\AccountBundle\Acl\Resolver\RoleTranslationPrefixResolver
@@ -55,7 +61,6 @@ parameters:
     orob2b_account.acl.voter.account_user_role.class: OroB2B\Bundle\AccountBundle\Acl\Voter\AccountUserRoleVoter
     orob2b_account.acl.voter.account.class: OroB2B\Bundle\AccountBundle\Acl\Voter\AccountVoter
 
-    orob2b_account.event_listener.system_config.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigListener
     orob2b_account.item.builder.pinbar.class: Oro\Bundle\NavigationBundle\Entity\Builder\PinbarTabBuilder
     orob2b_account.item.builder.favorite.class: Oro\Bundle\NavigationBundle\Entity\Builder\NavigationItemBuilder
     orob2b_account.item.builder.history.class: Oro\Bundle\NavigationBundle\Entity\Builder\HistoryItemBuilder
@@ -66,6 +71,12 @@ parameters:
     orob2b_account.item.pinbar.post_persist_listener.class: Oro\Bundle\NavigationBundle\Entity\Listener\PinbarPostPersist
 
     orob2b_account.content_provider.menu.class: Oro\Bundle\NavigationBundle\ContentProvider\MenuContentProvider
+
+    orob2b.account.catalog.visibility.change_set.validatior.class: OroB2B\Bundle\AccountBundle\Validator\Constraints\VisibilityChangeSetValidator
+
+    orob2b_account.formatter.choice.class: OroB2B\Bundle\AccountBundle\Formatter\ChoiceFormatter
+
+    orob2b_account.storage.category_visibility_storage.class: OroB2B\Bundle\AccountBundle\Storage\CategoryVisibilityStorage
 
     orob2b_account.calculator.category_visibility_calculator: OroB2B\Bundle\AccountBundle\Calculator\CategoryVisibilityCalculator
 
@@ -251,6 +262,15 @@ services:
         class: %orob2b_account.event_listener.datagrid.class%
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.websites-grid, method: onBuildBeforeWebsites }
+
+    orob2b_account.event_listener.form_view:
+        class: %orob2b_account.event_listener.form_view.class%
+        arguments:
+            - @translator
+            - @oro_entity.doctrine_helper
+            - @request_stack
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.category-edit, method: onCategoryEdit }
 
     orob2b_account.acl.voter.account_user_role:
         class: %orob2b_account.acl.voter.account_user_role.class%
@@ -441,10 +461,55 @@ services:
         tags:
             - { name: oro_ui.content_provider }
 
+    orob2b_account.event_listener.category_visibility_grid_listener:
+        class: %orob2b_account.event_listener.category_visibility_grid_listener.class%
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before.account-category-visibility-grid, method: onResultBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before.account-group-category-visibility-grid, method: onResultBefore }
+
     orob2b_account.account_delete_handler:
         class: %orob2b_account.account_delete_handler.class%
         arguments:
             - @oro_security.security_facade
 
+    orob2b.account.catalog.visibility.change_set.validatior:
+        class: %orob2b.account.catalog.visibility.change_set.validatior.class%
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b.account.catalog.visibility.change_set.validatior }
+
+    orob2b_account.formatter.choice:
+        class: %orob2b_account.formatter.choice.class%
+        arguments: [ @translator ]
+
+    orob2b_account.formatter.choice.category_visibility:
+        parent: orob2b_account.formatter.choice
+        calls:
+            - [ setTranslationPattern, [ 'orob2b.account.visibility.categoryvisibility.choice.%s' ] ]
+            - [ setChoices, [[%orob2b_account.entity.category_visibility.class%, 'getVisibilityList']] ]
+
+    orob2b_account.formatter.choice.account_category_visibility:
+        parent: orob2b_account.formatter.choice
+        calls:
+            - [ setTranslationPattern, [ 'orob2b.account.visibility.accountcategoryvisibility.choice.%s' ] ]
+            - [ setChoices, [[%orob2b_account.entity.account_category_visibility.class%, 'getVisibilityList']] ]
+
+    orob2b_account.formatter.choice.account_group_category_visibility:
+        parent: orob2b_account.formatter.choice
+        calls:
+            - [ setTranslationPattern, [ 'orob2b.account.visibility.accountgroupcategoryvisibility.choice.%s' ] ]
+            - [ setChoices, [[%orob2b_account.entity.account_group_category_visibility.class%, 'getVisibilityList']] ]
+
+    orob2b_account.storage.category_visibility_storage.cache:
+        public: false
+        parent: oro.file_cache.abstract
+        calls:
+            - [ setNamespace, [ "orob2b_account.storage.category_visibility_storage.cache" ] ]
+
     orob2b_account.calculator.category_visibility_calculator:
         class: %orob2b_account.calculator.category_visibility_calculator%
+
+    orob2b_account.storage.category_visibility_storage:
+        class: %orob2b_account.storage.category_visibility_storage.class%
+        arguments:
+            - @orob2b_account.storage.category_visibility_storage.cache
+            - @orob2b_account.calculator.category_visibility_calculator
