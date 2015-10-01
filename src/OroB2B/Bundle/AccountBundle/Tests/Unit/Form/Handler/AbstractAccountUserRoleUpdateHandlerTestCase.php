@@ -11,13 +11,13 @@ use Oro\Bundle\EntityConfigBundle\Provider\ConfigProviderInterface;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclPrivilegeRepository;
-use Oro\Bundle\UserBundle\Form\Handler\AclRoleHandler;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateHandler;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
+use OroB2B\Bundle\AccountBundle\Form\Handler\AbstractAccountUserRoleHandler;
 
 abstract class AbstractAccountUserRoleUpdateHandlerTestCase extends \PHPUnit_Framework_TestCase
 {
@@ -122,9 +122,9 @@ abstract class AbstractAccountUserRoleUpdateHandlerTestCase extends \PHPUnit_Fra
     }
 
     /**
-     * @param AclRoleHandler $handler
+     * @param AbstractAccountUserRoleHandler $handler
      */
-    protected function setRequirementsForHandler(AclRoleHandler $handler)
+    protected function setRequirementsForHandler(AbstractAccountUserRoleHandler $handler)
     {
         $handler->setAclManager($this->aclManager);
         $handler->setAclPrivilegeRepository($this->privilegeRepository);

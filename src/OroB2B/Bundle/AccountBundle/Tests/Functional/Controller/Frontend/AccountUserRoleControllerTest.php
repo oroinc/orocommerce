@@ -138,7 +138,7 @@ class AccountUserRoleControllerTest extends WebTestCase
         /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUser $user */
         $user = $this->getCurrentUser();
 
-        $this->assertEquals($user->getRole($role->getRole()), $role);
+        $this->assertEquals($role, $user->getRole($role->getRole()));
 
         return $id;
     }

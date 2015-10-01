@@ -117,6 +117,13 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     protected $websites;
 
     /**
+     * @var AccountUser[]|Collection
+     *
+     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser", mappedBy="roles")
+     */
+    protected $accountUsers;
+
+    /**
      * @param string|null $role
      */
     public function __construct($role = null)
@@ -126,6 +133,7 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
         }
 
         $this->websites = new ArrayCollection();
+        $this->accountUsers = new ArrayCollection();
     }
 
     /**
@@ -255,5 +263,36 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
         $this->id = null;
         $this->setRole($this->getLabel());
         $this->websites = new ArrayCollection();
+        $this->accountUsers = new ArrayCollection();
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     *
+     * @return AccountUserRole
+     */
+    public function addAccountUser(AccountUser $accountUser)
+    {
+        if (!$this->accountUsers->contains($accountUser)) {
+            $this->accountUsers[] = $accountUser;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     */
+    public function removeAccountUser(AccountUser $accountUser)
+    {
+        $this->accountUsers->removeElement($accountUser);
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getAccountUsers()
+    {
+        return $this->accountUsers;
     }
 }
