@@ -2,10 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Form\Handler;
 
-use Doctrine\Common\Util\ClassUtils;
-use Doctrine\DBAL\Connection;
-use Doctrine\ORM\EntityManager;
-
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
@@ -44,26 +40,12 @@ class AccountUserRoleUpdateFrontendHandler extends AbstractAccountUserRoleHandle
      * {@inheritDoc}
      *
      * @param AccountUserRole $role
-     * @throws \Doctrine\DBAL\ConnectionException
      */
     protected function onSuccess(AbstractRole $role, array $appendUsers, array $removeUsers)
     {
-        /** @var EntityManager $manager */
-        $manager = $this->managerRegistry->getManagerForClass(ClassUtils::getClass($this->getLoggedUser()));
+        $this->removePredefinedRoleAccountUsers($role);
 
-        $connection = $manager->getConnection();
-        $connection->setTransactionIsolation(Connection::TRANSACTION_REPEATABLE_READ);
-        $connection->beginTransaction();
-
-        try {
-            $this->removePredefinedRoleAccountUsers($role);
-
-            parent::onSuccess($role, $appendUsers, $removeUsers);
-            $connection->commit();
-        } catch (\Exception $e) {
-            $connection->rollBack();
-            throw $e;
-        }
+        parent::onSuccess($role, $appendUsers, $removeUsers);
     }
 
     /**
