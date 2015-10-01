@@ -29,34 +29,40 @@ class FrontendAccountUserRoleType extends AbstractAccountUserRoleType
     {
         parent::buildForm($builder, $options);
 
-        $builder->addEventListener(
-            FormEvents::POST_SET_DATA,
-            function (FormEvent $event) use ($options) {
-                $predefinedRole = $options['predefined_role'];
-                if (!$predefinedRole instanceof AccountUserRole) {
-                    return;
-                }
+        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'updateAccountUsers']);
+    }
 
-                $role = $event->getData();
-                if (!$role instanceof AccountUserRole || !$role->getAccount()) {
-                    return;
-                }
+    /**
+     * @param FormEvent $event
+     */
+    public function updateAccountUsers(FormEvent $event)
+    {
+        $options = $event->getForm()->getConfig()->getOptions();
 
-                $accountUsers = $predefinedRole->getAccountUsers()->filter(
-                    function (AccountUser $accountUser) use ($role) {
-                        return $accountUser->getAccount()->getId() === $role->getAccount()->getId();
-                    }
-                );
+        $predefinedRole = $options['predefined_role'];
+        if (!$predefinedRole instanceof AccountUserRole) {
+            return;
+        }
 
-                $accountUsers->map(
-                    function (AccountUser $accountUser) use ($predefinedRole) {
-                        $accountUser->removeRole($predefinedRole);
-                    }
-                );
+        $role = $event->getData();
+        if (!$role instanceof AccountUserRole || !$role->getAccount()) {
+            return;
+        }
 
-                $event->getForm()->get('appendUsers')->setData($accountUsers);
+        $accountUsers = $predefinedRole->getAccountUsers()->filter(
+            function (AccountUser $accountUser) use ($role) {
+                return $accountUser->getAccount() &&
+                    $accountUser->getAccount()->getId() === $role->getAccount()->getId();
             }
         );
+
+        $accountUsers->map(
+            function (AccountUser $accountUser) use ($predefinedRole) {
+                $accountUser->removeRole($predefinedRole);
+            }
+        );
+
+        $event->getForm()->get('appendUsers')->setData($accountUsers->toArray());
     }
 
     /**
