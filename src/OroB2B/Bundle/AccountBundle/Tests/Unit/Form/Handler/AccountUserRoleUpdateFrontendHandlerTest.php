@@ -143,7 +143,7 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
             );
 
         $handler->createForm($role);
-        $handledRole = $handler->getHandledRole();
+        $handledRole = $handler->getRole();
 
         $this->aclManager->expects($this->exactly(2))
             ->method('getSid')

@@ -6,30 +6,21 @@ use Doctrine\Common\Util\ClassUtils;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
 
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+
 use Oro\Bundle\UserBundle\Entity\AbstractRole;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleType;
 
 class AccountUserRoleUpdateFrontendHandler extends AbstractAccountUserRoleHandler
 {
     /**
-     * @var AccountUserRole
+     * @var TokenStorageInterface
      */
-    protected $handledRole;
-
-    /**
-     * @var SecurityFacade
-     */
-    protected $securityFacade;
-
-    /**
-     * @var array
-     */
-    protected $appendUsers = [];
+    protected $tokenStorage;
 
     /**
      * @var AccountUser
@@ -37,29 +28,26 @@ class AccountUserRoleUpdateFrontendHandler extends AbstractAccountUserRoleHandle
     protected $loggedAccountUser;
 
     /**
-     * @return AccountUserRole
+     * @var AccountUserRole
      */
-    public function getHandledRole()
+    protected $predefinedRole;
+
+    /**
+     * @param TokenStorageInterface $tokenStorage
+     */
+    public function setTokenStorage(TokenStorageInterface $tokenStorage)
     {
-        return $this->handledRole;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param AccountUserRole $role
      * @throws \Doctrine\DBAL\ConnectionException
      */
     protected function onSuccess(AbstractRole $role, array $appendUsers, array $removeUsers)
     {
-        // TODO: When task BB-1046 will be done, remove method removeOriginalRoleFromUsers.
-        // In method addNewRoleToUsers before addRole add method removeRole($role). Also needs delete flush;
-
-        /** @var AccountUserRole $role */
-        if ($role->getId()) {
-            /** @var AccountUserRoleRepository $roleRepository */
-            $roleRepository = $this->doctrineHelper->getEntityRepository($role);
-            $this->appendUsers = $roleRepository->getAssignedUsers($role);
-        }
-
         /** @var EntityManager $manager */
         $manager = $this->managerRegistry->getManagerForClass(ClassUtils::getClass($this->getLoggedUser()));
 
@@ -68,11 +56,9 @@ class AccountUserRoleUpdateFrontendHandler extends AbstractAccountUserRoleHandle
         $connection->beginTransaction();
 
         try {
-            $this->removeOriginalRoleFromUsers($role, $manager);
-            parent::onSuccess($this->handledRole, $appendUsers, $removeUsers);
-            $this->addNewRoleToUsers($role, $manager, $appendUsers, $removeUsers);
+            $this->removePredefinedRoleAccountUsers($role);
 
-            $manager->flush();
+            parent::onSuccess($role, $appendUsers, $removeUsers);
             $connection->commit();
         } catch (\Exception $e) {
             $connection->rollBack();
@@ -81,61 +67,21 @@ class AccountUserRoleUpdateFrontendHandler extends AbstractAccountUserRoleHandle
     }
 
     /**
-     * @param AccountUserRole|AbstractRole $role
-     * @param EntityManager                $manager
-     * @param array                        $appendUsers
-     * @param array                        $removeUsers
+     * @param AccountUserRole $role
      */
-    protected function addNewRoleToUsers(
-        AccountUserRole $role,
-        EntityManager $manager,
-        array $appendUsers,
-        array $removeUsers
-    ) {
-        if (!$role->getId() || $role->getId() === $this->handledRole->getId()) {
-            return;
-        }
-
-        $accountRolesToAdd = array_diff($this->appendUsers, $removeUsers);
-        $accountRolesToAdd = array_merge($accountRolesToAdd, $appendUsers);
-        array_map(
-            function (AccountUser $accountUser) use ($manager) {
-                if ($accountUser->getAccount()->getId() === $this->getLoggedUser()->getAccount()->getId()) {
-                    $accountUser->addRole($this->handledRole);
-                    $manager->persist($accountUser);
-                }
-            },
-            $accountRolesToAdd
-        );
-    }
-
-    /**
-     * @param AccountUserRole|AbstractRole $role
-     * @param EntityManager                $manager
-     */
-    protected function removeOriginalRoleFromUsers(AccountUserRole $role, EntityManager $manager)
+    protected function removePredefinedRoleAccountUsers(AccountUserRole $role)
     {
-        if (!$role->getId() || $role->getId() === $this->handledRole->getId()) {
-            return;
+        if ($this->predefinedRole && $this->predefinedRole !== $role) {
+            $this->predefinedRole
+                ->getAccountUsers()
+                ->map(
+                    function (AccountUser $accountUser) use ($role) {
+                        if ($accountUser->getAccount()->getId() === $role->getAccount()->getId()) {
+                            $this->predefinedRole->getAccountUsers()->removeElement($accountUser);
+                        }
+                    }
+                );
         }
-
-        array_map(
-            function (AccountUser $accountUser) use ($role, $manager) {
-                if ($accountUser->getAccount()->getId() === $this->getLoggedUser()->getAccount()->getId()) {
-                    $accountUser->removeRole($role);
-                    $manager->persist($accountUser);
-                }
-            },
-            $this->appendUsers
-        );
-    }
-
-    /**
-     * @param SecurityFacade $securityFacade
-     */
-    public function setSecurityFacade(SecurityFacade $securityFacade)
-    {
-        $this->securityFacade = $securityFacade;
     }
 
     /**
@@ -145,9 +91,8 @@ class AccountUserRoleUpdateFrontendHandler extends AbstractAccountUserRoleHandle
     public function createForm(AbstractRole $role)
     {
         if ($role->isPredefined()) {
-            $this->handledRole = $this->createNewRole($role);
-        } else {
-            $this->handledRole = $role;
+            $this->predefinedRole = $role;
+            $role = $this->createNewRole($role);
         }
 
         return parent::createForm($role);
@@ -156,21 +101,15 @@ class AccountUserRoleUpdateFrontendHandler extends AbstractAccountUserRoleHandle
     /**
      * {@inheritdoc}
      */
-    protected function processPrivileges(AbstractRole $role)
-    {
-        parent::processPrivileges($this->handledRole);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function createRoleFormInstance(AbstractRole $role, array $privilegeConfig)
     {
-        return $this->formFactory->create(
+        $form = $this->formFactory->create(
             FrontendAccountUserRoleType::NAME,
             $role,
-            ['privilege_config' => $privilegeConfig]
+            ['privilege_config' => $privilegeConfig, 'predefined_role' => $this->predefinedRole]
         );
+
+        return $form;
     }
 
     /**
@@ -182,9 +121,10 @@ class AccountUserRoleUpdateFrontendHandler extends AbstractAccountUserRoleHandle
         /** @var AccountUser $accountUser */
         $accountUser = $this->getLoggedUser();
 
-        $newRole = $role->getId() ? clone $role : $role;
+        $newRole = clone $role;
 
-        $newRole->setAccount($accountUser->getAccount())
+        $newRole
+            ->setAccount($accountUser->getAccount())
             ->setOrganization($accountUser->getOrganization());
 
         return $newRole;
@@ -196,7 +136,15 @@ class AccountUserRoleUpdateFrontendHandler extends AbstractAccountUserRoleHandle
     protected function getLoggedUser()
     {
         if (!$this->loggedAccountUser) {
-            $this->loggedAccountUser = $this->securityFacade->getLoggedUser();
+            $token = $this->tokenStorage->getToken();
+
+            if ($token) {
+                $this->loggedAccountUser = $token->getUser();
+            }
+        }
+
+        if (!$this->loggedAccountUser instanceof AccountUser) {
+            throw new AccessDeniedException();
         }
 
         return $this->loggedAccountUser;

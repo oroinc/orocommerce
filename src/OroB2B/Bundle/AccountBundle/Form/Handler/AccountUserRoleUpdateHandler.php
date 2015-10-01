@@ -22,7 +22,8 @@ class AccountUserRoleUpdateHandler extends AbstractAccountUserRoleHandler
      */
     protected function onSuccess(AbstractRole $role, array $appendUsers, array $removeUsers)
     {
-        $this->fixUsersByAccount($role, $appendUsers, $removeUsers);
+        $this->applyAccountLimits($role, $appendUsers, $removeUsers);
+
         parent::onSuccess($role, $appendUsers, $removeUsers);
     }
 
@@ -67,7 +68,7 @@ class AccountUserRoleUpdateHandler extends AbstractAccountUserRoleHandler
      * @param array                        $appendUsers
      * @param array                        $removeUsers
      */
-    protected function fixUsersByAccount(AccountUserRole $role, array &$appendUsers, array &$removeUsers)
+    protected function applyAccountLimits(AccountUserRole $role, array &$appendUsers, array &$removeUsers)
     {
         /** @var AccountUserRoleRepository $roleRepository */
         $roleRepository = $this->doctrineHelper->getEntityRepository($role);
@@ -106,7 +107,9 @@ class AccountUserRoleUpdateHandler extends AbstractAccountUserRoleHandler
      */
     public function process(AbstractRole $role)
     {
-        $this->originalAccount = $role->getAccount();
+        if ($role instanceof AccountUserRole) {
+            $this->originalAccount = $role->getAccount();
+        }
 
         return parent::process($role);
     }
