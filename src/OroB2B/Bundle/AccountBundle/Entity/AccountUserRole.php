@@ -119,16 +119,7 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     /**
      * @var AccountUser[]|Collection
      *
-     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
-     * @ORM\JoinTable(
-     *      name="orob2b_acc_user_access_role",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="account_user_role_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     * )
+     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser", mappedBy="roles")
      */
     protected $accountUsers;
 
