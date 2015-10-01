@@ -39,7 +39,7 @@ class CategoryVisibilityStorageTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider getCategoryVisibilityDataProvider
+     * @dataProvider getDataProvider
      *
      * @param int|null accountId
      * @param array|null $cacheValue
@@ -47,7 +47,7 @@ class CategoryVisibilityStorageTest extends \PHPUnit_Framework_TestCase
      * @param array $expectedCacheValue
      * @param CategoryVisibilityData $expectedValue
      */
-    public function testGetCategoryVisibilityData(
+    public function testGetData(
         $accountId,
         $cacheValue,
         $calcValue,
@@ -72,13 +72,13 @@ class CategoryVisibilityStorageTest extends \PHPUnit_Framework_TestCase
                 );
         }
 
-        $this->assertEquals($expectedValue, $this->storage->getCategoryVisibilityData($accountId));
+        $this->assertEquals($expectedValue, $this->storage->getData($accountId));
     }
 
     /**
      * @return array
      */
-    public function getCategoryVisibilityDataProvider()
+    public function getDataProvider()
     {
         return [
             'exist in cache' => [

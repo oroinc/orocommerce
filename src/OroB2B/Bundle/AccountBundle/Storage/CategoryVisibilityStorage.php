@@ -33,9 +33,9 @@ class CategoryVisibilityStorage
      * @param int|null $accountId
      * @return CategoryVisibilityData
      */
-    public function getCategoryVisibilityData($accountId = null)
+    public function getData($accountId = null)
     {
-        $data = $this->getData($accountId);
+        $data = $this->getDataFromCache($accountId);
 
         return new CategoryVisibilityData($data[self::IDS], $data[self::VISIBILITY]);
     }
@@ -58,7 +58,7 @@ class CategoryVisibilityStorage
      * @param int|null $accountId
      * @return array
      */
-    protected function getData($accountId = null)
+    protected function getDataFromCache($accountId = null)
     {
         $data = $this->cacheProvider->fetch($accountId);
 
