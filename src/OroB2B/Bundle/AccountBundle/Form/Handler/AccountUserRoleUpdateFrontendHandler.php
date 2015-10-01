@@ -37,36 +37,6 @@ class AccountUserRoleUpdateFrontendHandler extends AbstractAccountUserRoleHandle
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @param AccountUserRole $role
-     */
-    protected function onSuccess(AbstractRole $role, array $appendUsers, array $removeUsers)
-    {
-        $this->removePredefinedRoleAccountUsers($role);
-
-        parent::onSuccess($role, $appendUsers, $removeUsers);
-    }
-
-    /**
-     * @param AccountUserRole $role
-     */
-    protected function removePredefinedRoleAccountUsers(AccountUserRole $role)
-    {
-        if ($this->predefinedRole && $this->predefinedRole !== $role) {
-            $this->predefinedRole
-                ->getAccountUsers()
-                ->map(
-                    function (AccountUser $accountUser) use ($role) {
-                        if ($accountUser->getAccount()->getId() === $role->getAccount()->getId()) {
-                            $this->predefinedRole->getAccountUsers()->removeElement($accountUser);
-                        }
-                    }
-                );
-        }
-    }
-
-    /**
      * {@inheritdoc}
      * @param AccountUserRole $role
      */

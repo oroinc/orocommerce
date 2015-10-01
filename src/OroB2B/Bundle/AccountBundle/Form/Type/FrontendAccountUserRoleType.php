@@ -32,21 +32,25 @@ class FrontendAccountUserRoleType extends AbstractAccountUserRoleType
         $builder->addEventListener(
             FormEvents::POST_SET_DATA,
             function (FormEvent $event) use ($options) {
-                /** @var AccountUserRole $predefinedRole */
                 $predefinedRole = $options['predefined_role'];
-                if (!$predefinedRole) {
+                if (!$predefinedRole instanceof AccountUserRole) {
                     return;
                 }
 
-                /** @var AccountUserRole $role */
                 $role = $event->getData();
-                if (!$role || !$role->getAccount()) {
+                if (!$role instanceof AccountUserRole || !$role->getAccount()) {
                     return;
                 }
 
                 $accountUsers = $predefinedRole->getAccountUsers()->filter(
                     function (AccountUser $accountUser) use ($role) {
                         return $accountUser->getAccount()->getId() === $role->getAccount()->getId();
+                    }
+                );
+
+                $accountUsers->map(
+                    function (AccountUser $accountUser) use ($predefinedRole) {
+                        $accountUser->removeRole($predefinedRole);
                     }
                 );
 
