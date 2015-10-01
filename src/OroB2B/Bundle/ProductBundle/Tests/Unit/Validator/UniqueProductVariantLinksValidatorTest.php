@@ -36,6 +36,16 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
         $this->service->initialize($this->context);
     }
 
+    public function testDoesNothingIfProductDoesNotHaveVariants()
+    {
+        $product = new StubProduct();
+        $product->setHasVariants(false);
+
+        $this->context->expects($this->never())->method('addViolation');
+
+        $this->service->validate($product, new UniqueProductVariantLinks());
+    }
+
     public function testDoesNotAddViolationIfAllVariantFieldCombinationsAreUnique()
     {
         $product = $this->prepareProduct([
