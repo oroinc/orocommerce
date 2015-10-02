@@ -22,8 +22,10 @@ orob2b:
             not_visible.label: No
             as_defined_in_system_config.label: As Defined in System Configuration
 
-        form.choose: 'Choose Product...'
-        form.add_row: 'Add row'
+        form:
+            choose: Choose Product...
+            product_required: Please select a product first...
+        form.add_row: Add row
 
         productunit:
             entity_label: Product Unit
@@ -31,7 +33,7 @@ orob2b:
             entity_description: Represents product units information
             code.label: Code
             default_precision.label: Default Precision
-            form.choose: 'Choose Unit...'
+            form.choose: Choose Unit...
             removed: '{title} - removed'
 
         productunitprecision:
