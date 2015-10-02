@@ -7,6 +7,10 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class ConfigureTypeExtension extends AbstractTypeExtension
 {
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -19,6 +23,9 @@ class ConfigureTypeExtension extends AbstractTypeExtension
             );
     }
 
+    /**
+     * @return string
+     */
     public function getExtendedType()
     {
         return 'oro_installer_configuration';

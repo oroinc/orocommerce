@@ -8,6 +8,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class WebType extends AbstractType
 {
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -23,6 +27,9 @@ class WebType extends AbstractType
             );
     }
 
+    /**
+     * @return string
+     */
     public function getName()
     {
         return 'orob2b_frontend_configuration_web';
