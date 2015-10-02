@@ -49,19 +49,11 @@ abstract class AbstractCategoryFixture extends AbstractFixture
             $category = new Category();
             $category->addTitle($categoryTitle);
 
-            $this->addReference($this->getReferencePrefix() . $title, $category);
+            $this->addReference($title, $category);
 
             $root->addChildCategory($category);
 
             $this->addCategories($category, $nestedCategories);
         }
-    }
-
-    /**
-     * @return string
-     */
-    protected function getReferencePrefix()
-    {
-        return '';
     }
 }

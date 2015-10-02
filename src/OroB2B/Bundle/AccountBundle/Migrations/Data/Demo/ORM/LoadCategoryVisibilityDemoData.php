@@ -15,7 +15,6 @@ use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\CatalogBundle\Migrations\Data\Demo\ORM\LoadCategoryDemoData;
 
 class LoadCategoryVisibilityDemoData extends AbstractFixture implements
     DependentFixtureInterface,
@@ -56,7 +55,7 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
-            $category = $this->getCategory($row['category']);
+            $category = $this->getCategory($manager, $row['category']);
             $visibility = $row['visibility'];
 
             if ($row['all']) {
@@ -67,7 +66,7 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
             if ($row['account']) {
                 $accountCategoryVisibility = $this->createAccountCategoryVisibility(
                     $category,
-                    $this->getAccount($row['account']),
+                    $this->getAccount($manager, $row['account']),
                     $visibility
                 );
                 $manager->persist($accountCategoryVisibility);
@@ -76,7 +75,7 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
             if ($row['accountGroup']) {
                 $accountGroupCategoryVisibility = $this->createAccountGroupCategoryVisibility(
                     $category,
-                    $this->getAccountGroup($row['accountGroup']),
+                    $this->getAccountGroup($manager, $row['accountGroup']),
                     $visibility
                 );
                 $manager->persist($accountGroupCategoryVisibility);
@@ -88,30 +87,33 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
     }
 
     /**
-     * @param string $name
+     * @param ObjectManager $manager
+     * @param string $title
      * @return Category
      */
-    protected function getCategory($name)
+    protected function getCategory(ObjectManager $manager, $title)
     {
-        return $this->getReference(LoadCategoryDemoData::CATEGORY_REFERENCE_PREFIX . $name);
+        return $manager->getRepository('OroB2BCatalogBundle:Category')->findOneByDefaultTitle($title);
     }
 
     /**
+     * @param ObjectManager $manager
      * @param string $name
      * @return Account
      */
-    protected function getAccount($name)
+    protected function getAccount(ObjectManager $manager, $name)
     {
-        return $this->getReference(LoadAccountDemoData::ACCOUNT_REFERENCE_PREFIX . $name);
+        return $manager->getRepository('OroB2BAccountBundle:Account')->findOneBy(['name' => $name]);
     }
 
     /**
+     * @param ObjectManager $manager
      * @param string $name
      * @return AccountGroup
      */
-    protected function getAccountGroup($name)
+    protected function getAccountGroup(ObjectManager $manager, $name)
     {
-        return $this->getReference(LoadAccountGroupDemoData::ACCOUNT_GROUP_REFERENCE_PREFIX . $name);
+        return $manager->getRepository('OroB2BAccountBundle:AccountGroup')->findOneBy(['name' => $name]);
     }
 
     /**

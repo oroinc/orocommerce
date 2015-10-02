@@ -6,8 +6,6 @@ use OroB2B\Bundle\CatalogBundle\Migrations\Data\ORM\AbstractCategoryFixture;
 
 class LoadCategoryDemoData extends AbstractCategoryFixture
 {
-    const CATEGORY_REFERENCE_PREFIX = 'category_demo_data';
-
     /**
      * @var array
      */
@@ -21,12 +19,4 @@ class LoadCategoryDemoData extends AbstractCategoryFixture
             ],
         ],
     ];
-
-    /**
-     * @return string
-     */
-    protected function getReferencePrefix()
-    {
-        return self::CATEGORY_REFERENCE_PREFIX;
-    }
 }
