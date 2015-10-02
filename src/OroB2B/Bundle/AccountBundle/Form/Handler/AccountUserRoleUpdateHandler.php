@@ -4,10 +4,29 @@ namespace OroB2B\Bundle\AccountBundle\Form\Handler;
 
 use Oro\Bundle\UserBundle\Entity\AbstractRole;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
+use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
 use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
 class AccountUserRoleUpdateHandler extends AbstractAccountUserRoleHandler
 {
+    /**
+     * @var Account
+     */
+    protected $originalAccount;
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function onSuccess(AbstractRole $role, array $appendUsers, array $removeUsers)
+    {
+        $this->applyAccountLimits($role, $appendUsers, $removeUsers);
+
+        parent::onSuccess($role, $appendUsers, $removeUsers);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -42,5 +61,56 @@ class AccountUserRoleUpdateHandler extends AbstractAccountUserRoleHandler
         if ($this->chainMetadataProvider) {
             $this->chainMetadataProvider->stopProviderEmulation();
         }
+    }
+
+    /**
+     * @param AccountUserRole|AbstractRole $role
+     * @param array                        $appendUsers
+     * @param array                        $removeUsers
+     */
+    protected function applyAccountLimits(AccountUserRole $role, array &$appendUsers, array &$removeUsers)
+    {
+        /** @var AccountUserRoleRepository $roleRepository */
+        $roleRepository = $this->doctrineHelper->getEntityRepository($role);
+
+        // Role moved to another account OR account added
+        if ($role->getId() && (
+                ($this->originalAccount !== $role->getAccount() &&
+                    $this->originalAccount !== null && $role->getAccount() !== null) ||
+                ($this->originalAccount === null && $role->getAccount() !== null)
+            )
+        ) {
+            // Remove assigned users
+            $assignedUsers = $roleRepository->getAssignedUsers($role);
+            $removeUsers = array_replace($removeUsers, $assignedUsers);
+
+            $appendNewUsers = array_diff($appendUsers, $removeUsers);
+            $removeNewUsers = array_diff($removeUsers, $appendUsers);
+
+            $removeUsers = $removeNewUsers;
+            $appendUsers = $appendNewUsers;
+        }
+
+        if ($role->getAccount()) {
+            // Security check
+            $appendUsers = array_filter(
+                $appendUsers,
+                function (AccountUser $user) use ($role) {
+                    return $user->getAccount() === $role->getAccount();
+                }
+            );
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function process(AbstractRole $role)
+    {
+        if ($role instanceof AccountUserRole) {
+            $this->originalAccount = $role->getAccount();
+        }
+
+        return parent::process($role);
     }
 }

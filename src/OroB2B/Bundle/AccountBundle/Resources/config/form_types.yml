@@ -177,7 +177,7 @@ services:
         class: %orob2b_account.form.handler.update_account_user_role_frontend.class%
         scope: prototype
         calls:
-            - [setSecurityFacade, [@oro_security.security_facade]]
+            - [setTokenStorage, [@security.token_storage]]
 
     orob2b_account.form.type.typed_address:
         class: %orob2b_account.form.type.typed_address.class%

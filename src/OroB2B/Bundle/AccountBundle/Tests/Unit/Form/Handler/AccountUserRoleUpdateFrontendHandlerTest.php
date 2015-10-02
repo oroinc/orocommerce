@@ -2,330 +2,215 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Handler;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-use Oro\Bundle\SecurityBundle\SecurityFacade;
+use Oro\Bundle\SecurityBundle\Model\AclPrivilege;
+use Oro\Bundle\SecurityBundle\Model\AclPrivilegeIdentity;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateFrontendHandler;
 
 class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUpdateHandlerTestCase
 {
-    /** @var  SecurityFacade| \PHPUnit_Framework_MockObject_MockObject */
-    protected $securityFacade;
+    /** @var TokenStorageInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $tokenStorage;
 
     protected function setUp()
     {
         parent::setUp();
 
-        $this->handler = new AccountUserRoleUpdateFrontendHandler($this->formFactory, $this->privilegeConfig);
-        $this->setRequirementsForHandler($this->handler);
-
-        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
+        $this->tokenStorage = $this
+            ->getMockBuilder('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface')
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->handler->setSecurityFacade($this->securityFacade);
     }
 
     /**
      * @param AccountUserRole $role
-     * @param AccountUserRole $newRole
-     * @param array           $appendUsers
-     * @param array           $removeUsers
-     * @param array           $assignedUsers
-     * @param AccountUser     $accountUser
-     * @param array           $expectedUsers
-     * @param array           $expectedUsersWithoutRole
-     * @dataProvider onSuccessDataProvider
+     * @param AccountUserRole $expectedRole
+     * @param AccountUser $accountUser
+     * @param AccountUserRole $expectedPredefinedRole
      *
-     * @SuppressWarnings(PHPMD.NPathComplexity)
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @dataProvider successDataProvider
      */
     public function testOnSuccess(
         AccountUserRole $role,
-        AccountUserRole $newRole,
-        array $appendUsers,
-        array $removeUsers,
-        array $assignedUsers,
+        AccountUserRole $expectedRole,
         AccountUser $accountUser,
-        array $expectedUsers,
-        array $expectedUsersWithoutRole
+        AccountUserRole $expectedPredefinedRole = null
     ) {
-        // Array of persisted users
-        /** @var AccountUser[] $persistedUsers */
-        $persistedUsers = [];
-
         $request = new Request();
         $request->setMethod('POST');
 
-        $appendForm = $this->getMock('Symfony\Component\Form\FormInterface');
-        $appendForm->expects($this->once())
-            ->method('getData')
-            ->willReturn($appendUsers);
-
-        $removeForm = $this->getMock('Symfony\Component\Form\FormInterface');
-        $removeForm->expects($this->once())
-            ->method('getData')
-            ->willReturn($removeUsers);
-
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $form->expects($this->once())
-            ->method('submit')
-            ->with($request);
-
-        $form->expects($this->once())
-            ->method('isValid')
-            ->willReturn(true);
-
-        $form->expects($this->any())
-            ->method('get')
-            ->willReturnMap(
-                [
-                    ['appendUsers', $appendForm],
-                    ['removeUsers', $removeForm],
-                ]
-            );
-
         $this->formFactory->expects($this->once())
             ->method('create')
+            ->with(
+                $this->isType('string'),
+                $this->equalTo($expectedRole),
+                $this->logicalAnd(
+                    $this->isType('array'),
+                    $this->callback(
+                        function ($options) use ($expectedPredefinedRole) {
+                            $this->arrayHasKey('predefined_role');
+                            $this->assertEquals($expectedPredefinedRole, $options['predefined_role']);
+
+                            return true;
+                        }
+                    )
+                )
+            )
             ->willReturn($form);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|AccountUserRoleUpdateFrontendHandler $handler */
-        $handler = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateFrontendHandler')
-            ->setMethods(['processPrivileges'])
-            ->setConstructorArgs([$this->formFactory, $this->privilegeConfig])
-            ->getMock();
+        $handler = new AccountUserRoleUpdateFrontendHandler($this->formFactory, $this->privilegeConfig);
 
         $this->setRequirementsForHandler($handler);
         $handler->setRequest($request);
-        $handler->setSecurityFacade($this->securityFacade);
+        $handler->setTokenStorage($this->tokenStorage);
 
-        $this->doctrineHelper->expects($role->getId() ? $this->once() : $this->never())
-            ->method('getEntityRepository')
-            ->with($role)
-            ->willReturn($this->roleRepository);
+        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token->expects($this->any())->method('getUser')->willReturn($accountUser);
+        $this->tokenStorage->expects($this->any())->method('getToken')->willReturn($token);
 
-        $this->roleRepository->expects($role->getId() ? $this->once() : $this->never())
-            ->method('getAssignedUsers')
-            ->with($role)
-            ->willReturn($assignedUsers);
-
-        $this->securityFacade->expects($this->once())
-            ->method('getLoggedUser')
-            ->willReturn($accountUser);
-
-        $manager = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\OroEntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->managerRegistry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($manager);
-
-        $connection = $this->getMockBuilder('Doctrine\DBAL\Connection')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $manager->expects($this->any())
-            ->method('getConnection')
-            ->will($this->returnValue($connection));
-
-        $connection->expects($this->any())
-            ->method('beginTransaction');
-
-        $connection->expects($this->any())
-            ->method('commit');
-
-        $manager->expects($this->any())
-            ->method('persist')
-            ->willReturnCallback(
-                function ($entity) use (&$persistedUsers) {
-                    if ($entity instanceof AccountUser) {
-                        $persistedUsers[spl_object_hash($entity)] = $entity;
-                    }
-                }
-            );
-
-        $handler->createForm($newRole);
-        $handler->process($role);
-
-        foreach ($expectedUsers as $expectedUser) {
-            $this->assertEquals(
-                $persistedUsers[spl_object_hash($expectedUser)]->getRole($newRole->getRole()),
-                $newRole
-            );
-        }
-
-        foreach ($expectedUsersWithoutRole as $expectedUserWithoutRole) {
-            $this->assertNotEquals(
-                $persistedUsers[spl_object_hash($expectedUserWithoutRole)]->getRole($role->getRole()),
-                $role
-            );
-        }
+        $handler->createForm($role);
     }
 
     /**
      * @return array
      */
-    public function onSuccessDataProvider()
+    public function successDataProvider()
     {
-        $accountUser = $this->createEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', 1);
-        $account = $this->createEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 1);
+        $accountUser = new AccountUser();
+        $account = new Account();
         $accountUser->setAccount($account);
 
-        $role = $this->createAccountUserRole('test role1', 1);
-
-        $roleWithAccount = $this->createAccountUserRole('test role3', 3);
-        $roleWithAccount->setAccount($account);
-
-        $assignedUsers = $this->createUsersWithRole($role, 2, $account);
-
-        $usersForUpdateRole = $this->createUsersWithRole($roleWithAccount, 3, $account);
-
-        $newRole = $this->createAccountUserRole('new role', 4);
-
         return [
-            'clone system role and add all users' => [
-                'role'                     => $role,
-                'newRole'                  => clone $role,
-                'appendUsers'              => [],
-                'removeUsers'              => [],
-                'assignedUsers'            => $assignedUsers,
-                'accountUser'              => $accountUser,
-                'expectedUsers'            => $assignedUsers,
-                'expectedUsersWithoutRole' => $assignedUsers,
+            'edit predefined role should pass it to from and' => [
+                (new AccountUserRole()),
+                (new AccountUserRole())->setAccount($account),
+                $accountUser,
+                (new AccountUserRole()),
             ],
-            'clone system role and add one user'  => [
-                'role'                     => $role,
-                'newRole'                  => clone $role,
-                'appendUsers'              => [],
-                'removeUsers'              => [$assignedUsers[1]],
-                'assignedUsers'            => $assignedUsers,
-                'accountUser'              => $accountUser,
-                'expectedUsers'            => [$assignedUsers[0]],
-                'expectedUsersWithoutRole' => [$assignedUsers[1], $assignedUsers[0]],
-            ],
-            'change customizable role'            => [
-                'role'                     => $roleWithAccount,
-                'newRole'                  => $roleWithAccount,
-                'appendUsers'              => [$usersForUpdateRole[2]],
-                'removeUsers'              => [$usersForUpdateRole[0]],
-                'assignedUsers'            => [$usersForUpdateRole[0], $usersForUpdateRole[1]],
-                'accountUser'              => $accountUser,
-                'expectedUsers'            => [$usersForUpdateRole[2]],
-                'expectedUsersWithoutRole' => [$usersForUpdateRole[0]],
-            ],
-            'create role'            => [
-                'role'                     => $roleWithAccount,
-                'newRole'                  => $roleWithAccount,
-                'appendUsers'              => [$usersForUpdateRole[2]],
-                'removeUsers'              => [$usersForUpdateRole[0]],
-                'assignedUsers'            => [$usersForUpdateRole[0], $usersForUpdateRole[1]],
-                'accountUser'              => $accountUser,
-                'expectedUsers'            => [$usersForUpdateRole[2]],
-                'expectedUsersWithoutRole' => [$usersForUpdateRole[0]],
+            'edit account role should not pass predefined role to form' => [
+
+                (new AccountUserRole())->setAccount($account),
+                (new AccountUserRole())->setAccount($account),
+                $accountUser,
             ],
         ];
     }
 
-    public function testRollBackWhenErrorHappened()
-    {
+    /**
+     * @param AccountUserRole $role
+     * @param AccountUserRole $expectedRole
+     * @param AccountUser $accountUser
+     *
+     * @dataProvider successDataPrivilegesProvider
+     */
+    public function testOnSuccessSetPrivileges(
+        AccountUserRole $role,
+        AccountUserRole $expectedRole,
+        AccountUser $accountUser
+    ) {
         $request = new Request();
-        $request->setMethod('POST');
+        $request->setMethod('GET');
 
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $this->formFactory->expects($this->once())->method('create')->willReturn($form);
 
-        $form->expects($this->any())
-            ->method('getData')
-            ->willReturn([]);
-
-        $form->expects($this->any())
-            ->method('get')
-            ->willReturnMap(
-                [
-                    ['appendUsers', $form],
-                    ['removeUsers', $form],
-                ]
-            );
-
-        $form->expects($this->once())
-            ->method('submit')
-            ->with($request);
-
-        $form->expects($this->once())
-            ->method('isValid')
-            ->willReturn(true);
-
-        $this->formFactory->expects($this->once())
-            ->method('create')
-            ->willReturn($form);
-
-        /** @var AccountUserRoleUpdateFrontendHandler| /PHPUnit_Framework_MockObject_MockObject $handler */
-        $handler = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateFrontendHandler')
-            ->setMethods(['processPrivileges'])
-            ->setConstructorArgs([$this->formFactory, $this->privilegeConfig])
-            ->getMock();
+        $handler = new AccountUserRoleUpdateFrontendHandler($this->formFactory, $this->privilegeConfig);
 
         $this->setRequirementsForHandler($handler);
         $handler->setRequest($request);
-        $handler->setSecurityFacade($this->securityFacade);
+        $handler->setTokenStorage($this->tokenStorage);
 
-        $manager = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\OroEntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token->expects($this->any())->method('getUser')->willReturn($accountUser);
+        $this->tokenStorage->expects($this->any())->method('getToken')->willReturn($token);
 
-        $this->managerRegistry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($manager);
+        $handler->createForm($role);
 
-        $connection = $this->getMockBuilder('Doctrine\DBAL\Connection')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $roleSecurityIdentity = new RoleSecurityIdentity($expectedRole);
 
-        $manager->expects($this->any())
-            ->method('getConnection')
-            ->willReturn($connection);
+        $privilege = new AclPrivilege();
+        $privilege->setExtensionKey('entity');
+        $privilege->setIdentity(new AclPrivilegeIdentity('entity:\stdClass', 'VIEW'));
 
-        $connection->expects($this->any())
-            ->method('beginTransaction');
+        $privilege2 = new AclPrivilege();
+        $privilege2->setExtensionKey('action');
+        $privilege2->setIdentity(new AclPrivilegeIdentity('action:todo', 'FULL'));
 
-        $connection->expects($this->any())
-            ->method('commit')
-            ->willThrowException(new \Exception('test message'));
+        $privilegeCollection = new ArrayCollection([$privilege, $privilege2]);
 
-        $connection->expects($this->once())
-            ->method('rollBack');
+        $this->privilegeRepository->expects($this->any())
+            ->method('getPrivileges')
+            ->with($roleSecurityIdentity)
+            ->willReturn($privilegeCollection);
 
-        $this->roleRepository->expects($this->once())
-            ->method('getAssignedUsers')
-            ->willReturn([]);
+        $this->aclManager->expects($this->once())->method('getSid')->with($expectedRole)
+            ->willReturn($roleSecurityIdentity);
 
-        $role = $this->createAccountUserRole('test role', 1);
-        $this->setExpectedException('Exception', 'test message');
+        $this->ownershipConfigProvider->expects($this->once())->method('hasConfig')->willReturn(true);
 
-        $handler->createForm(clone $role);
+        $privilegeForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form->expects($this->any())->method('get')
+            ->with($this->logicalOr($this->equalTo('action'), $this->equalTo('entity')))
+            ->willReturn($privilegeForm);
+        $form->expects($this->any())->method('setData')->withConsecutive(
+            new ArrayCollection([$privilege]),
+            new ArrayCollection([$privilege2])
+        );
+
         $handler->process($role);
     }
 
     /**
-     * @param string   $class
-     * @param int|null $id
-     *
-     * @return object
+     * @return array
      */
-    protected function createEntity($class, $id = null)
+    public function successDataPrivilegesProvider()
     {
-        $entity = new $class();
-        if ($id) {
-            $reflection = new \ReflectionProperty($class, 'id');
-            $reflection->setAccessible(true);
-            $reflection->setValue($entity, $id);
-        }
+        $accountUser = new AccountUser();
+        $account = new Account();
+        $accountUser->setAccount($account);
 
-        return $entity;
+        return [
+            'edit predefined role should use privileges form predefined' => [
+                (new AccountUserRole()),
+                (new AccountUserRole()),
+                $accountUser,
+            ],
+            'edit account role should use own privileges' => [
+                (new AccountUserRole())->setAccount($account),
+                (new AccountUserRole())->setAccount($account),
+                $accountUser,
+            ],
+        ];
+    }
+
+    /**
+     * @expectedException \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     */
+    public function testMissingAccountUser()
+    {
+        $request = new Request();
+        $request->setMethod('POST');
+
+        $handler = new AccountUserRoleUpdateFrontendHandler($this->formFactory, $this->privilegeConfig);
+
+        $this->setRequirementsForHandler($handler);
+        $handler->setRequest($request);
+        $handler->setTokenStorage($this->tokenStorage);
+
+        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token->expects($this->any())->method('getUser')->willReturn(new \stdClass());
+        $this->tokenStorage->expects($this->any())->method('getToken')->willReturn($token);
+
+        $handler->createForm(new AccountUserRole());
     }
 }
