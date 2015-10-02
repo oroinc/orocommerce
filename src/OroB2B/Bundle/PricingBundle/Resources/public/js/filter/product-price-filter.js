@@ -91,7 +91,7 @@ define([
         _getCriteriaHint: function() {
             var value = (arguments.length > 0) ? this._getDisplayValue(arguments[0]) : this._getDisplayValue();
 
-            if (!value.value) {
+            if (this.isEmptyValue()) {
                 return this.placeholder;
             }
 
@@ -105,6 +105,17 @@ define([
             hintValue += ' ' + __('orob2b.pricing.filter.product_price.per') + ' ' + unitOption;
 
             return hintValue;
+        },
+
+        /**
+         * @inheritDoc
+         */
+        _updateValueField: function() {
+            ProductPriceFilter.__super__._updateValueField.apply(this, arguments);
+
+            var type = this.$(this.criteriaValueSelectors.type).val();
+
+            this.$('.product-price-unit-filter-separator').toggle(!this.isEmptyType(type));
         },
 
         /**
