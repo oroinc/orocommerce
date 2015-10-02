@@ -27,6 +27,9 @@ datagrid:
                 label:         orob2b.order.identifier.label
             poNumber:
                 label:         orob2b.order.po_number.label
+            shipUntil:
+                label:         orob2b.order.ship_until.label
+                frontend_type: date
             currency:
                 label:         orob2b.order.currency.label
             subtotal:
@@ -40,6 +43,8 @@ datagrid:
                     data_name: order1.identifier
                 poNumber:
                     data_name: order1.poNumber
+                shipUntil:
+                    data_name: order1.shipUntil
                 currency:
                     data_name: order1.currency
                 subtotal:
@@ -54,6 +59,9 @@ datagrid:
                 poNumber:
                     type:      string
                     data_name: order1.poNumber
+                shipUntil:
+                    type:      date
+                    data_name: order1.shipUntil
                 currency:
                     type:      choice
                     data_name: order1.currency
@@ -99,6 +107,8 @@ datagrid:
         columns:
             paymentTermLabel:
                 label:         orob2b.order.payment_term.label
+            poNumber:
+                label:         orob2b.order.po_number.label
             shipUntil:
                 label:         orob2b.order.ship_until.label
                 frontend_type: date
@@ -112,6 +122,8 @@ datagrid:
             columns:
                 paymentTermLabel:
                     data_name: paymentTermLabel
+                poNumber:
+                    data_name: order1.poNumber
                 shipUntil:
                     data_name: order1.shipUntil
                 createdAt:
@@ -123,8 +135,11 @@ datagrid:
                 paymentTermLabel:
                     type:      string
                     data_name: paymentTermLabel
+                poNumber:
+                    type:      string
+                    data_name: order1.poNumber
                 shipUntil:
-                    type:      datetime
+                    type:      date
                     data_name: order1.shipUntil
                 createdAt:
                     type:      datetime
@@ -171,6 +186,8 @@ datagrid:
                 label:         orob2b.order.owner.label
             paymentTermLabel:
                 label:         orob2b.order.payment_term.label
+            poNumber:
+                label:         orob2b.order.po_number.label
             shipUntil:
                 label:         orob2b.order.ship_until.label
                 frontend_type: date
@@ -190,6 +207,8 @@ datagrid:
                     data_name: owner
                 paymentTermLabel:
                     data_name: paymentTermLabel
+                poNumber:
+                    data_name: order1.poNumber
                 shipUntil:
                     data_name: order1.shipUntil
                 createdAt:
@@ -217,8 +236,11 @@ datagrid:
                             property: label
                             multiple: true
 
+                poNumber:
+                    type:      string
+                    data_name: order1.poNumber
                 shipUntil:
-                    type:      datetime
+                    type:      date
                     data_name: order1.shipUntil
                 createdAt:
                     type:      datetime
@@ -255,6 +277,8 @@ datagrid:
                     - order1.id
                     - order1.identifier
                     - order1.subtotal
+                    - order1.poNumber
+                    - order1.shipUntil
                     - COUNT(lineItems.id) as lineItemsCount
                     - order1.createdAt
                     - order1.updatedAt
@@ -275,6 +299,11 @@ datagrid:
                 label:         orob2b.order.line_items_count.label
                 type: field
                 frontend_type: integer
+            poNumber:
+                label:         orob2b.order.po_number.label
+            shipUntil:
+                label:         orob2b.order.ship_until.label
+                frontend_type: date
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -289,6 +318,10 @@ datagrid:
                     data_name: order1.subtotal
                 lineItemsCount:
                     data_name: lineItemsCount
+                poNumber:
+                    data_name: order1.poNumber
+                shipUntil:
+                    data_name: order1.shipUntil
                 createdAt:
                     data_name: order1.createdAt
                 updatedAt:
@@ -307,6 +340,12 @@ datagrid:
                     type:      number
                     data_name: lineItemsCount
                     filter_by_having: true
+                poNumber:
+                    type:      string
+                    data_name: order1.poNumber
+                shipUntil:
+                    type:      date
+                    data_name: order1.shipUntil
                 createdAt:
                     type: datetime
                     data_name: order1.createdAt
