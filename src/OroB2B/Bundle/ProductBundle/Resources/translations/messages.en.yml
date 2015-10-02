@@ -6,6 +6,8 @@ orob2b:
         id.label: Id
         sku.label: SKU
         quantity.label: Quantity
+        has_variants.label: Has Variants
+        variant_fields.label: Variant Fields
         inventory_status.label: Inventory Status
         visibility.label: Visible to Accounts
         status.label: Status
@@ -16,6 +18,8 @@ orob2b:
         names.label: Name
         descriptions.label: Description
         removed: '{title} - removed'
+        is_variant.label: Is Variant
+        variant_links.label: Product Variant Links
 
         visibility:
             visible.label: Yes
@@ -44,6 +48,14 @@ orob2b:
             precision.label: Precision
             representation: "{{ label }} with precision {{ precision }} decimal places"
 
+        productvariantlink:
+            entity_label: Product Variant Link
+            entity_plural_label: Product Variant Links
+            id.label: Id
+            visible.label: Visible
+            parent_product.label: Parent Product
+            product.label: Product
+
         menu:
             products_tab.label: Products
             product_list.description: List of existing products
@@ -65,6 +77,7 @@ orob2b:
             general: General
             additional: Additional
             visibility: Visibility
+            productVariants: Product Variants
 
         widgets:
             product_information: Product Information

@@ -1,5 +1,8 @@
 orob2b:
     product:
+        product_variant_links:
+            unique_variants_combination.message: 'Cannot save product variants. Variant field value combinations should be unique.'
+
         productunitholder:
             product_unit:
                 blank: 'Please choose existing Unit.'
