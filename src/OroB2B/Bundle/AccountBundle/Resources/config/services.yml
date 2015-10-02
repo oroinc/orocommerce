@@ -471,7 +471,6 @@ services:
         arguments:
             - @oro_security.security_facade
 
-<<<<<<< HEAD
     orob2b.account.catalog.visibility.change_set.validatior:
         class: %orob2b.account.catalog.visibility.change_set.validatior.class%
         tags:
