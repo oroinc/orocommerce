@@ -37,6 +37,9 @@ class CategoryVisibilityListener
      */
     protected $flushCounter = 0;
 
+    /**
+     * @param CategoryVisibilityStorage $categoryVisibilityStorage
+     */
     public function __construct(CategoryVisibilityStorage $categoryVisibilityStorage)
     {
         $this->categoryVisibilityStorage = $categoryVisibilityStorage;
@@ -48,11 +51,10 @@ class CategoryVisibilityListener
     public function postPersist(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
-
         if ($entity instanceof Category || $entity instanceof CategoryVisibility) {
             $this->invalidateAll = true;
         } elseif (!$this->invalidateAll) {
-            $this->collectInvalidateAccounts($entity, $args);
+            $this->collectInvalidateAccountIds($args);
         }
     }
 
@@ -62,36 +64,12 @@ class CategoryVisibilityListener
     public function postUpdate(LifecycleEventArgs $args)
     {
         $entity = $args->getEntity();
-        if ($entity instanceof Category) {
-            $changeSet = $args->getEntityManager()->getUnitOfWork()->getEntityChangeSet($entity);
-            if (isset($changeSet['parentCategory'])) {
-                $this->invalidateAll = true;
-            }
-        } elseif ($entity instanceof CategoryVisibility) {
+        if (($entity instanceof Category && $this->hasChangeSetProperty($args, 'parentCategory')) ||
+            $entity instanceof CategoryVisibility
+        ) {
             $this->invalidateAll = true;
         } elseif (!$this->invalidateAll) {
-            $this->collectInvalidateAccounts($entity, $args);
-        }
-    }
-
-    /**
-     * @param $entity
-     * @param LifecycleEventArgs $args
-     */
-    protected function collectInvalidateAccounts($entity, LifecycleEventArgs $args)
-    {
-        if ($entity instanceof Account) {
-            $changeSet = $args->getEntityManager()->getUnitOfWork()->getEntityChangeSet($entity);
-            if (isset($changeSet['group'])) {
-                $this->invalidateAccountIds[] = $entity->getId();
-            }
-        } elseif ($entity instanceof AccountCategoryVisibility && $entity->getAccount()) {
-            $this->invalidateAccountIds[] = $entity->getAccount()->getId();
-        } elseif ($entity instanceof AccountGroupCategoryVisibility && $entity->getAccountGroup()) {
-            $groupAccounts = $entity->getAccountGroup()->getAccounts();
-            foreach ($groupAccounts as $account) {
-                $this->invalidateAccountIds[] = $account->getId();
-            }
+            $this->collectInvalidateAccountIds($args);
         }
     }
 
@@ -100,8 +78,42 @@ class CategoryVisibilityListener
      */
     public function postRemove(LifecycleEventArgs $args)
     {
-        if ($args->getEntity() instanceof Category) {
+        $entity = $args->getEntity();
+        if ($entity instanceof Category || $entity instanceof CategoryVisibility) {
             $this->invalidateAll = true;
+        } elseif (!$this->invalidateAll) {
+            $this->collectInvalidateAccountIds($args, false);
+        }
+    }
+
+    /**
+     * @param LifecycleEventArgs $args
+     * @param string $propertyName
+     * @return bool
+     */
+    protected function hasChangeSetProperty(LifecycleEventArgs $args, $propertyName)
+    {
+        $changeSet = $args->getEntityManager()->getUnitOfWork()->getEntityChangeSet($args->getEntity());
+
+        return isset($changeSet[$propertyName]);
+    }
+
+    /**
+     * @param LifecycleEventArgs $args
+     * @param bool $checkAccountChangeSet
+     */
+    protected function collectInvalidateAccountIds(LifecycleEventArgs $args, $checkAccountChangeSet = true)
+    {
+        $entity = $args->getEntity();
+        if ($entity instanceof Account && (!$checkAccountChangeSet || $this->hasChangeSetProperty($args, 'group'))) {
+            $this->invalidateAccountIds[] = $entity->getId();
+        } elseif ($entity instanceof AccountCategoryVisibility && $entity->getAccount()) {
+            $this->invalidateAccountIds[] = $entity->getAccount()->getId();
+        } elseif ($entity instanceof AccountGroupCategoryVisibility && $entity->getAccountGroup()) {
+            $groupAccounts = $entity->getAccountGroup()->getAccounts();
+            foreach ($groupAccounts as $account) {
+                $this->invalidateAccountIds[] = $account->getId();
+            }
         }
     }
 
@@ -126,7 +138,7 @@ class CategoryVisibilityListener
                 $this->reset();
             } elseif (count($this->invalidateAccountIds)) {
                 $this->categoryVisibilityStorage->clearData($this->invalidateAccountIds);
-                $this->invalidateAccountIds = [];
+                $this->reset();
             }
         }
     }
@@ -142,5 +154,6 @@ class CategoryVisibilityListener
     protected function reset()
     {
         $this->invalidateAll = false;
+        $this->invalidateAccountIds = [];
     }
 }
