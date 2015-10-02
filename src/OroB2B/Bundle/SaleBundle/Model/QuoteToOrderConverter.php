@@ -50,7 +50,9 @@ class QuoteToOrderConverter
             ->setAccount($account)
             ->setAccountUser($accountUser)
             ->setOwner($quote->getOwner())
-            ->setOrganization($quote->getOrganization());
+            ->setOrganization($quote->getOrganization())
+            ->setPoNumber($quote->getPoNumber())
+            ->setShipUntil($quote->getShipUntil());
 
         if (!$selectedOffers) {
             foreach ($quote->getQuoteProducts() as $quoteProduct) {

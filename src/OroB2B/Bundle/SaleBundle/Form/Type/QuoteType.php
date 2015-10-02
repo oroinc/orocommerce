@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
+use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
@@ -54,6 +55,14 @@ class QuoteType extends AbstractType
             ->add('locked', 'checkbox', [
                 'label' => 'orob2b.sale.quote.locked.label',
                 'required'  => false,
+            ])
+            ->add('poNumber', 'text', [
+                'required' => false,
+                'label' => 'orob2b.sale.quote.po_number.label'
+            ])
+            ->add('shipUntil', OroDateType::NAME, [
+                'required' => false,
+                'label' => 'orob2b.sale.quote.ship_until.label'
             ])
             ->add(
                 'quoteProducts',

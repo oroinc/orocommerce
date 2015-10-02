@@ -9,6 +9,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
@@ -77,9 +78,11 @@ class QuoteTypeTest extends AbstractTest
      * @param int $accountId
      * @param QuoteProduct[] $items
      * @param bool $locked
+     * @param string $poNumber
+     * @param string $shipUntil
      * @return Quote
      */
-    protected function getQuote($ownerId, $accountUserId = null, $accountId = null, array $items = [], $locked = false)
+    protected function getQuote($ownerId, $accountUserId = null, $accountId = null, array $items = [], $locked = false, $poNumber = null, $shipUntil = null)
     {
         $quote = new Quote();
         $quote->setOwner($this->getEntity('Oro\Bundle\UserBundle\Entity\User', $ownerId));
@@ -97,6 +100,14 @@ class QuoteTypeTest extends AbstractTest
         }
         $quote->setLocked($locked);
 
+        if (null !== $poNumber) {
+            $quote->setPoNumber($poNumber);
+        }
+
+        if (null !== $shipUntil) {
+            $quote->setShipUntil($shipUntil);
+        }
+
         return $quote;
     }
 
@@ -107,6 +118,8 @@ class QuoteTypeTest extends AbstractTest
     {
         $quoteProductOffer = $this->getQuoteProductOffer(2, 33, 'kg', self::QPO_PRICE_TYPE1, Price::create(44, 'USD'));
         $quoteProduct = $this->getQuoteProduct(2, self::QP_TYPE1, 'comment1', 'comment2', [], [$quoteProductOffer]);
+
+        $date = '2015-10-15';
 
         return [
             'empty owner' => [
@@ -122,6 +135,8 @@ class QuoteTypeTest extends AbstractTest
                     'accountUser' => 1,
                     'account' => 2,
                     'locked' => false,
+                    'poNumber'  => 'poNumber',
+                    'shipUntil' => $date,
                     'quoteProducts' => [
                         [
                             'product'   => 2,
@@ -142,7 +157,7 @@ class QuoteTypeTest extends AbstractTest
                         ],
                     ],
                 ],
-                'expectedData'  => $this->getQuote(1, 1, 2, [$quoteProduct], false),
+                'expectedData'  => $this->getQuote(1, 1, 2, [$quoteProduct], false, 'poNumber', new \DateTime($date . 'T00:00:00+0000')),
             ],
         ];
     }
@@ -217,6 +232,7 @@ class QuoteTypeTest extends AbstractTest
                     QuoteProductRequestCollectionType::NAME     => new QuoteProductRequestCollectionType(),
                     ProductRemovedSelectType::NAME              => new StubProductRemovedSelectType(),
                     ProductUnitRemovedSelectionType::NAME       => new StubProductUnitRemovedSelectionType(),
+                    OroDateType::NAME                           => new OroDateType(),
                     $priceType->getName()                       => $priceType,
                     $entityType->getName()                      => $entityType,
                     $userSelectType->getName()                  => $userSelectType,

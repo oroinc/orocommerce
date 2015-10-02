@@ -17,9 +17,12 @@ orob2b:
             account_user.label: 'Account User'
             locked.label: 'Locked'
             not_locked.label: 'Not Locked'
+            po_number.label: 'PO Number'
+            ship_until.label: 'Do Not Ship Later Than'
 
             sections:
                 general: 'General'
+                additional: 'Additional'
                 quote_products: 'Line Items'
 
             widgets:
@@ -141,6 +144,8 @@ orob2b:
                 qid.label: 'Quote #'
                 account_user.label: 'Assigned To'
                 valid_until.label: 'Valid Until'
+                po_number.label: 'PO Number'
+                ship_until.label: 'Do Not Ship Later Than'
                 sections:
                     general: 'General'
                     quote_products: 'Line Items'

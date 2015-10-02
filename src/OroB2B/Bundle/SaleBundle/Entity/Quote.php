@@ -114,6 +114,34 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
     protected $request;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="po_number", type="string", length=255, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $poNumber;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="ship_until", type="date", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $shipUntil;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="created_at", type="datetime")
@@ -494,5 +522,52 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
             }
         }
         return false;
+    }
+    /**
+     * Set poNumber
+     *
+     * @param string $poNumber
+     *
+     * @return Quote
+     */
+    public function setPoNumber($poNumber)
+    {
+        $this->poNumber = $poNumber;
+
+        return $this;
+    }
+
+    /**
+     * Get poNumber
+     *
+     * @return string
+     */
+    public function getPoNumber()
+    {
+        return $this->poNumber;
+    }
+
+    /**
+     * Set shipUntil
+     *
+     * @param \DateTime $shipUntil
+     *
+     * @return Quote
+     */
+    public function setShipUntil($shipUntil)
+    {
+        $this->shipUntil = $shipUntil;
+
+        return $this;
+    }
+
+    /**
+     * Get shipUntil
+     *
+     * @return \DateTime
+     */
+    public function getShipUntil()
+    {
+        return $this->shipUntil;
     }
 }

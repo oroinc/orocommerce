@@ -127,12 +127,16 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
         $user = $this->getUser($manager);
 
         foreach (self::$items as $item) {
+            $poNumber = 'CA' . rand(1000, 9999) . 'USD';
+
             /* @var $quote Quote */
             $quote = new Quote();
             $quote
                 ->setQid($item['qid'])
                 ->setOwner($user)
                 ->setOrganization($user->getOrganization())
+                ->setShipUntil(new \DateTime())
+                ->setPoNumber($poNumber)
             ;
 
             if (!empty($item['account'])) {

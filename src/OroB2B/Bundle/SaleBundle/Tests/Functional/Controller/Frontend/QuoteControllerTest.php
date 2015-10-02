@@ -102,6 +102,8 @@ class QuoteControllerTest extends WebTestCase
                         'qid',
                         'createdAt',
                         'validUntil',
+                        'poNumber',
+                        'shipUntil',
                         'view_link',
                         'action_configuration',
                     ],
@@ -132,6 +134,8 @@ class QuoteControllerTest extends WebTestCase
                         'qid',
                         'createdAt',
                         'validUntil',
+                        'poNumber',
+                        'shipUntil',
                         'view_link',
                         'action_configuration',
                     ],
@@ -163,6 +167,8 @@ class QuoteControllerTest extends WebTestCase
                         'createdAt',
                         'validUntil',
                         'accountUserName',
+                        'poNumber',
+                        'shipUntil',
                         'view_link',
                         'action_configuration',
                     ],
@@ -184,6 +190,8 @@ class QuoteControllerTest extends WebTestCase
                         'qid',
                         'createdAt',
                         'validUntil',
+                        'poNumber',
+                        'shipUntil',
                         'view_link',
                         'action_configuration',
                     ],
@@ -225,8 +233,14 @@ class QuoteControllerTest extends WebTestCase
             /* @var $control \DOMElement */
             $column = $expectedData['columns'][$key];
 
+
             $label = $translator->trans($column['label']);
-            $property = (string)$accessor->getValue($quote, $column['property']) ?: $translator->trans('N/A');
+            $property = $accessor->getValue($quote, $column['property']) ?: $translator->trans('N/A');
+            if ($property instanceof \DateTime) {
+                $property = $property->format('M j, Y');
+            } else {
+                $property = (string)$property;
+            }
 
             $this->assertContains($label, $control->textContent);
             $this->assertContains($property, $control->textContent);
@@ -260,6 +274,14 @@ class QuoteControllerTest extends WebTestCase
                             'label' => 'orob2b.frontend.sale.quote.valid_until.label',
                             'property' => 'valid_until',
                         ],
+                        [
+                            'label' => 'orob2b.sale.quote.po_number.label',
+                            'property' => 'po_number',
+                        ],
+                        [
+                            'label' => 'orob2b.sale.quote.ship_until.label',
+                            'property' => 'ship_until',
+                        ],
                     ],
                 ],
             ],
@@ -283,6 +305,14 @@ class QuoteControllerTest extends WebTestCase
                         [
                             'label' => 'orob2b.frontend.sale.quote.valid_until.label',
                             'property' => 'valid_until',
+                        ],
+                        [
+                            'label' => 'orob2b.sale.quote.po_number.label',
+                            'property' => 'po_number',
+                        ],
+                        [
+                            'label' => 'orob2b.sale.quote.ship_until.label',
+                            'property' => 'ship_until',
                         ],
                     ],
                 ],
