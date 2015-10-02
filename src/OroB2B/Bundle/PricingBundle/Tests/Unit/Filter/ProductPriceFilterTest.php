@@ -112,10 +112,6 @@ class ProductPriceFilterTest extends \PHPUnit_Framework_TestCase
                 'data' => [],
                 'expected' => false
             ],
-            'not numeric value' => [
-                'data' => ['value' => 'not numeric'],
-                'expected' => false
-            ]
         ];
     }
 
