@@ -99,7 +99,7 @@ class AccountUserRoleController extends Controller
                         ->trans('orob2b.account.accountuserrole.frontend.edit-predifined-role.message')
                 );
             }
-            $isGranted = $securityFacade->isGranted('FRONTEND_ACCOUNT_ROLE_UPDATE', $role);
+            $isGranted = $securityFacade->isGranted('orob2b_account_frontend_account_user_role_create');
         } else {
             $isGranted = $securityFacade->isGranted('FRONTEND_ACCOUNT_ROLE_UPDATE', $role);
         }
