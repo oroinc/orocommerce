@@ -8,6 +8,8 @@ parameters:
     orob2b_frontend.placeholder.theme_filter.class: OroB2B\Bundle\FrontendBundle\Placeholder\ThemeFilter
     orob2b_frontend.placeholder.filter.class: OroB2B\Bundle\FrontendBundle\Placeholder\FrontendFilter
     orob2b_frontend.request.frontend_helper.class: OroB2B\Bundle\FrontendBundle\Request\FrontendHelper
+    orob2b_frontend.form.type.extension.configuration.web.class: OroB2B\Bundle\FrontendBundle\Form\Extension\ConfigureTypeExtension
+    orob2b_frontend.form.type.configuration.web.class: OroB2B\Bundle\FrontendBundle\Form\Type\Configuration\WebType
 
 services:
     orob2b_frontend.listener.frontend_route_collection:
@@ -84,3 +86,13 @@ services:
             - @request_stack
         tags:
             - { name: kernel.event_listener, event: oro.ui.grouping_chain_widget.before, method: isAllowedButton, priority: 10 }
+
+    orob2b_frontend.form.type.configuration.web:
+        class: %orob2b_frontend.form.type.configuration.web.class%
+        tags:
+            - { name: form.type, alias: orob2b_frontend_configuration_web }
+
+    orob2b_frontend.form.type.extension.configuration.web:
+        class: %orob2b_frontend.form.type.extension.configuration.web.class%
+        tags:
+            - { name: form.type_extension, alias: oro_installer_configuration }

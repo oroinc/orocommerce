@@ -20,6 +20,11 @@ placeholders:
             frontend_window_bundle_js:
                 order: 200
 
+    additional_configuration_fields:
+        items:
+            web_settings:
+                order: 300
+
 items:
     logo:
         template: OroB2BFrontendBundle:Organization:logo.html.twig
@@ -45,3 +50,5 @@ items:
     update_oro_activity_list:
         applicable: @orob2b_frontend.activity_list.placeholder.filter->isApplicable($entity$, Oro\Bundle\ActivityBundle\EntityConfig\ActivityScope::UPDATE_PAGE)
         template: OroActivityListBundle:ActivityList:activities.html.twig
+    web_settings:
+        template: OroB2BFrontendBundle:configuration:web.configuration.html.twig
