@@ -72,9 +72,12 @@ parameters:
 
     orob2b_account.content_provider.menu.class: Oro\Bundle\NavigationBundle\ContentProvider\MenuContentProvider
 
+
     orob2b.account.catalog.visibility.change_set.validatior.class: OroB2B\Bundle\AccountBundle\Validator\Constraints\VisibilityChangeSetValidator
 
     orob2b_account.formatter.choice.class: OroB2B\Bundle\AccountBundle\Formatter\ChoiceFormatter
+
+    orob2b_account.helper.account_user_role_privileges.class: OroB2B\Bundle\AccountBundle\Helper\AccountUserRolePrivilegesHelper
 
 services:
     orob2b_account.security.account_user_provider:
@@ -468,6 +471,7 @@ services:
         arguments:
             - @oro_security.security_facade
 
+<<<<<<< HEAD
     orob2b.account.catalog.visibility.change_set.validatior:
         class: %orob2b.account.catalog.visibility.change_set.validatior.class%
         tags:
@@ -494,3 +498,13 @@ services:
         calls:
             - [ setTranslationPattern, [ 'orob2b.account.visibility.accountgroupcategoryvisibility.choice.%s' ] ]
             - [ setChoices, [[%orob2b_account.entity.account_group_category_visibility.class%, 'getVisibilityList']] ]
+
+    orob2b_account.helper.account_user_role_privileges:
+        class: %orob2b_account.helper.account_user_role_privileges.class%
+        arguments:
+            - @orob2b_account.form.handler.update_account_user_role=
+
+    orob2b_account.helper.account_user_role_privileges.frontend:
+        class: %orob2b_account.helper.account_user_role_privileges.class%
+        arguments:
+            - @orob2b_account.form.handler.update_account_user_role_frontend=
