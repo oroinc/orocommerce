@@ -15,9 +15,9 @@ class LoadAccountGroupDemoData extends AbstractFixture
      * @var array
      */
     protected $accountGroups = [
-        'Root',
-        'First',
-        'Second'
+        'All Customers',
+        'Wholesale Accounts',
+        'Partners'
     ];
 
     /**

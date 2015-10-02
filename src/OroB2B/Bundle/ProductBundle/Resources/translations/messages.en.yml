@@ -22,8 +22,10 @@ orob2b:
             not_visible.label: No
             as_defined_in_system_config.label: As Defined in System Configuration
 
-        form.choose: 'Choose Product...'
-        form.add_row: 'Add row'
+        form:
+            choose: Choose Product...
+            product_required: Please select a product first...
+        form.add_row: Add row
 
         productunit:
             entity_label: Product Unit
@@ -31,7 +33,7 @@ orob2b:
             entity_description: Represents product units information
             code.label: Code
             default_precision.label: Default Precision
-            form.choose: 'Choose Unit...'
+            form.choose: Choose Unit...
             removed: '{title} - removed'
 
         productunitprecision:
@@ -95,13 +97,21 @@ orob2b:
                 description: Quick add products to order, RFQ or shopping cart
             component_not_accessible.message: Can't process request, component not accessible
 
-    product_unit.kg:
+    product_unit.each:
         label:
-            full: kilogram
-            short: kg
+            full: each
+            short: ea
         value:
-            full: '{0} none|{1} %count% kilogram|]1,Inf] %count% kilograms'
-            short: '{0} none|{1} %count% kg|]1,Inf] %count% kg'
+            full: '{0} none|{1} %count% each|]1,Inf] %count% each'
+            short: '{0} none|{1} %count% ea|]1,Inf] %count% ea'
+
+    product_unit.hour:
+        label:
+            full: hour
+            short: hr
+        value:
+            full: '{0} none|{1} %count% hour|]1,Inf] %count% hours'
+            short: '{0} none|{1} %count% hr|]1,Inf] %count% hrs'
 
     product_unit.item:
         label:
@@ -110,3 +120,27 @@ orob2b:
         value:
             full: '{0} none|{1} %count% item|]1,Inf] %count% items'
             short: '{0} none|{1} %count% item|]1,Inf] %count% items'
+
+    product_unit.kg:
+        label:
+            full: kilogram
+            short: kg
+        value:
+            full: '{0} none|{1} %count% kilogram|]1,Inf] %count% kilograms'
+            short: '{0} none|{1} %count% kg|]1,Inf] %count% kg'
+
+    product_unit.piece:
+        label:
+            full: piece
+            short: pc
+        value:
+            full: '{0} none|{1} %count% piece|]1,Inf] %count% pieces'
+            short: '{0} none|{1} %count% pc|]1,Inf] %count% pcs'
+
+    product_unit.set:
+        label:
+            full: set
+            short: set
+        value:
+            full: '{0} none|{1} %count% set|]1,Inf] %count% sets'
+            short: '{0} none|{1} %count% set|]1,Inf] %count% sets'

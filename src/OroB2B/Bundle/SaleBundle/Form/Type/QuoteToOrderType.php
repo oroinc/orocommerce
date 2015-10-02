@@ -49,29 +49,7 @@ class QuoteToOrderType extends CollectionType
         if (!$data instanceof Quote) {
             throw new UnexpectedTypeException($data, 'Quote');
         }
-
-        /** @var QuoteProduct[] $quoteProducts */
-        $quoteProducts = $data->getQuoteProducts()->toArray();
-        foreach ($quoteProducts as $key => $quoteProduct) {
-            // only unit offers are allowed
-            if (!$quoteProduct->hasQuoteProductOfferByPriceType(QuoteProductOffer::PRICE_TYPE_UNIT)) {
-                unset($quoteProducts[$key]);
-            }
-        }
-
-        // quote products without variants must be in the end
-        usort($quoteProducts, function (QuoteProduct $first, QuoteProduct $second) {
-            $hasFirst = $first->hasOfferVariants();
-            $hasSecond = $second->hasOfferVariants();
-
-            if ($hasFirst === $hasSecond) {
-                return 0;
-            } else {
-                return $hasFirst ? -1 : 1;
-            }
-        });
-
-        $event->setData($quoteProducts);
+        $event->setData($data->getQuoteProducts()->toArray());
     }
 
     /**

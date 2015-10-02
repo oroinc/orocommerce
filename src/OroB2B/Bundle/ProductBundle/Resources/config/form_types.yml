@@ -3,6 +3,7 @@ parameters:
     orob2b_product.form.type.product_default_visibility_type.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductDefaultVisibilityType
     orob2b_product.form.type.product_unit_rounding_type.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRoundingTypeType
     orob2b_product.form.type.product_unit_selection.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
+    orob2b_product.form.type.quantity_type.class: OroB2B\Bundle\ProductBundle\Form\Type\QuantityType
     orob2b_product.form.type.product_unit_removed_selection.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType
     orob2b_product.form.type.product_unit_precision.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType
     orob2b_product.form.type.product_unit_precision_collection.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType
@@ -48,6 +49,14 @@ services:
             - [setEntityClass, [%orob2b_product.product_unit.class%]]
         tags:
             - { name: form.type, alias: orob2b_product_unit_selection }
+
+    orob2b_product.form.type.quantity_type:
+        class: %orob2b_product.form.type.quantity_type.class%
+        arguments:
+            - @orob2b_product.service.rounding
+            - %orob2b_product.product.class%
+        tags:
+            - { name: form.type, alias: orob2b_quantity }
 
     orob2b_product.form.type.product_unit_removed_selection:
         class: %orob2b_product.form.type.product_unit_removed_selection.class%

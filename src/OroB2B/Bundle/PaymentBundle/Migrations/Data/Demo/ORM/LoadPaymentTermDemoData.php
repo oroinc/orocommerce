@@ -16,9 +16,9 @@ class LoadPaymentTermDemoData extends AbstractFixture
     {
         $paymentTermsLabels = [
             'net 10',
-            'net 15',
             'net 30',
             'net 60',
+            'net 90',
         ];
 
         foreach ($paymentTermsLabels as $paymentTermLabel) {

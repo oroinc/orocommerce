@@ -1,5 +1,3 @@
 name,default,currencies
-"Wholesale price list",0,"USD, CAD, MXN"
-"Partnership price list",0,"USD, EUR"
-"Purchase price list",0,USD
-"Custom price list",0,"USD, EUR, CHE"
+"Wholesale Price List",0,"USD, EUR"
+"Partner C Custom Price List",0,"USD"

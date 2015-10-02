@@ -60,7 +60,7 @@ class ProductFormExtension extends AbstractTypeExtension
     }
 
     /**
-     * {@inheritdoc}
+     * @param FormEvent $event
      */
     public function onPostSetData(FormEvent $event)
     {
@@ -78,7 +78,7 @@ class ProductFormExtension extends AbstractTypeExtension
     }
 
     /**
-     * {@inheritdoc}
+     * @param FormEvent $event
      */
     public function onPostSubmit(FormEvent $event)
     {
