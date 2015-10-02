@@ -47,7 +47,7 @@ class CategoryVisibilityListenerTest extends \PHPUnit_Framework_TestCase
      * @param bool $invalidateAll
      * @dataProvider lifecycleEventArgsDataProvider
      */
-    public function testPostPersist($lifecycleEventArgs, $invalidateAll)
+    public function testPostPersist(LifecycleEventArgs $lifecycleEventArgs, $invalidateAll)
     {
         $this->listener->postPersist($lifecycleEventArgs);
         $this->assertAttributeEquals($invalidateAll, 'invalidateAll', $this->listener);
@@ -58,7 +58,7 @@ class CategoryVisibilityListenerTest extends \PHPUnit_Framework_TestCase
      * @param bool $invalidateAll
      * @dataProvider postUpdateDataProvider
      */
-    public function testPostUpdate($lifecycleEventArgs, $invalidateAll)
+    public function testPostUpdate(LifecycleEventArgs $lifecycleEventArgs, $invalidateAll)
     {
         $this->listener->postUpdate($lifecycleEventArgs);
         $this->assertAttributeEquals($invalidateAll, 'invalidateAll', $this->listener);
@@ -69,7 +69,7 @@ class CategoryVisibilityListenerTest extends \PHPUnit_Framework_TestCase
      * @param bool $invalidateAll
      * @dataProvider lifecycleEventArgsDataProvider
      */
-    public function testPostRemove($lifecycleEventArgs, $invalidateAll)
+    public function testPostRemove(LifecycleEventArgs $lifecycleEventArgs, $invalidateAll)
     {
         $this->listener->postRemove($lifecycleEventArgs);
         $this->assertAttributeEquals($invalidateAll, 'invalidateAll', $this->listener);
