@@ -186,7 +186,6 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
                 $accountUser,
             ],
             'edit account role should use own privileges' => [
-
                 (new AccountUserRole())->setAccount($account),
                 (new AccountUserRole())->setAccount($account),
                 $accountUser,
