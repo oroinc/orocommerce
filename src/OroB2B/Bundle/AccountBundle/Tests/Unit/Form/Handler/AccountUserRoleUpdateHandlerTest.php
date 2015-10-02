@@ -9,6 +9,7 @@ use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
+use Oro\Bundle\SecurityBundle\Model\AclPermission;
 use Oro\Bundle\SecurityBundle\Model\AclPrivilege;
 use Oro\Bundle\SecurityBundle\Model\AclPrivilegeIdentity;
 use Oro\Bundle\SecurityBundle\Acl\Extension\EntityMaskBuilder;
@@ -20,6 +21,9 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateHandler;
 use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHandlerTestCase
 {
     protected function setUp()
@@ -500,5 +504,167 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
             ->willReturn($hasFrontendOwner);
 
         return $config;
+    }
+
+    public function testGetAccountUserRolePrivilegeConfig()
+    {
+        $role = new AccountUserRole();
+        $this->assertInternalType('array', $this->handler->getAccountUserRolePrivilegeConfig($role));
+        $this->assertEquals($this->privilegeConfig, $this->handler->getAccountUserRolePrivilegeConfig($role));
+    }
+
+    /**
+     * @param ArrayCollection $privileges
+     * @param array $expected
+     *
+     * @dataProvider accountUserRolePrivilegesDataProvider
+     */
+    public function testGetAccountUserRolePrivileges(ArrayCollection $privileges, array $expected)
+    {
+        $privilegeConfig = [
+            'entity' => ['types' => ['entity'], 'fix_values' => false, 'show_default' => true],
+            'action' => ['types' => ['action'], 'fix_values' => false, 'show_default' => true],
+            'default' => ['types' => ['(default)'], 'fix_values' => true, 'show_default' => false],
+        ];
+        $handler = new AccountUserRoleUpdateHandler($this->formFactory, $privilegeConfig);
+        $this->setRequirementsForHandler($handler);
+
+        $role = new AccountUserRole('ROLE_ADMIN');
+        $securityIdentity = new RoleSecurityIdentity($role);
+        $this->aclManager->expects($this->once())
+            ->method('getSid')
+            ->with($role)
+            ->willReturn($securityIdentity);
+        $this->privilegeRepository->expects($this->once())
+            ->method('getPrivileges')
+            ->with($securityIdentity)
+            ->willReturn($privileges);
+        $this->chainMetadataProvider->expects($this->at(0))
+            ->method('startProviderEmulation')
+            ->with(FrontendOwnershipMetadataProvider::ALIAS);
+        $this->chainMetadataProvider->expects($this->at(1))
+            ->method('stopProviderEmulation');
+        $result = $handler->getAccountUserRolePrivileges($role);
+
+
+        $this->assertEquals(array_keys($expected), array_keys($result));
+        /**
+         * @var string $key
+         * @var ArrayCollection $value
+         */
+        foreach ($expected as $key => $value) {
+            $this->assertEquals($value->getValues(), $result[$key]->getValues());
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function accountUserRolePrivilegesDataProvider()
+    {
+        $privilegesForEntity = [
+            ['VIEW', 2],
+            ['CREATE', 2],
+            ['EDIT', 2],
+            ['DELETE', 2],
+            ['SHARE', 2],
+        ];
+        $privilegesForEntity2 = [
+            ['VIEW', 222],
+            ['CREATE', 2],
+            ['EDIT', 2],
+            ['DELETE', 2],
+            ['SHARE', 2],
+        ];
+        $privilegesForAction = [
+            ['EXECUTE', 5],
+        ];
+        return [
+            'get and sorted privileges' => [
+                'privileges' => $this->createPrivileges(
+                    [
+                        [
+                            'total' => 10,
+                            'extensionKey' => 'entity',
+                            'identityName' => null,
+                            'aclPermissions' => $privilegesForEntity,
+                        ],
+                        [
+                            'total' => 5,
+                            'extensionKey' => 'action',
+                            'identityName' => null,
+                            'aclPermissions' => $privilegesForAction,
+                        ],
+                        [
+                            'total' => 3,
+                            'extensionKey' => 'testExtension',
+                            'identityName' => null,
+                            'aclPermissions' => $privilegesForEntity,
+                        ],
+                        [
+                            'total' => 2,
+                            'extensionKey' => '(default)',
+                            'identityName' => '(default)',
+                            'aclPermissions' => $privilegesForEntity,
+                        ],
+                        [
+                            'total' => 1,
+                            'extensionKey' => '(default)',
+                            'identityName' => null,
+                            'aclPermissions' => $privilegesForEntity,
+                        ],
+                    ]
+                ),
+                'expected' => [
+                    'entity' => $this->createPrivileges([
+                        [
+                            'total' => 10,
+                            'extensionKey' => 'entity',
+                            'identityName' => null,
+                            'aclPermissions' => $privilegesForEntity,
+                        ],
+                    ]),
+                    'action' => $this->createPrivileges([
+                        [
+                            'total' => 5,
+                            'extensionKey' => 'action',
+                            'identityName' => null,
+                            'aclPermissions' => $privilegesForAction,
+                        ],
+                    ]),
+                    'default' => $this->createPrivileges([
+                        [
+                            'total' => 1,
+                            'extensionKey' => '(default)',
+                            'identityName' => null,
+                            'aclPermissions' => $privilegesForEntity2,
+                        ],
+                    ]),
+                ],
+            ],
+        ];
+    }
+    /**
+     * @param array $config
+     * @return array
+     */
+    protected function createPrivileges(array $config)
+    {
+        $privileges = new ArrayCollection();
+        foreach ($config as $value) {
+            for ($i = 1; $i <= $value['total']; $i++) {
+                $privilege = new AclPrivilege();
+                $privilege->setExtensionKey($value['extensionKey']);
+                $identityName = $value['identityName'] ?: 'EntityClass_' . $i;
+                $privilege->setIdentity(new AclPrivilegeIdentity($i, $identityName));
+                $privilege->setGroup('commerce');
+                foreach ($value['aclPermissions'] as $aclPermission) {
+                    list($name, $accessLevel) = $aclPermission;
+                    $privilege->addPermission(new AclPermission($name, $accessLevel));
+                }
+                $privileges->add($privilege);
+            }
+        }
+        return $privileges;
     }
 }

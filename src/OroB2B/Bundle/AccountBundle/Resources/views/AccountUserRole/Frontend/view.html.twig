@@ -49,53 +49,7 @@
 
     {% for privilegeConfigName, privilegeConfig in privileges.privilegesConfig %}
         {% set privilegeDataBLock %}
-            {% if privilegeConfig.view_type == 'grid' %}
-                <table class="table table-striped acl-table">
-                    <tbody>
-                    <tr>
-                        <th>
-                            &nbsp;
-                        </th>
-                        {% set width = ((100/(privilegeConfig['permissions']|length + 1))-1)|number_format(0) %}
-                        {% for field in privilegeConfig['permissions'] %}
-                            <th width="{{ width }}%">
-                                {{ field|trans }}
-                            </th>
-                        {% endfor %}
-                    </tr>
-                    {% for privilege in privileges.data[privilegeConfigName] %}
-                        <tr>
-                            <td>
-                                <strong>{{ privilege.identity.name|trans }}</strong>
-                            </td>
-                            {% for field in privilegeConfig['permissions'] %}
-                                <td>
-                                    {% for permission in privilege.permissions %}
-                                        {% if permission.name == field %}
-                                            {% set accessLevel = 'orob2b.account.security.access-level.' ~ privileges.accessLevelNames[permission.accessLevel-1] %}
-                                            <div>{{ accessLevel|trans }}</div>
-                                        {% endif %}
-                                    {% endfor %}
-                                    &nbsp;
-                                </td>
-                            {% endfor %}
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                {% for privilege in privileges.data[privilegeConfigName] %}
-                    <div class="security-row row-fluid">
-                        <div class="span8">
-                            <strong>{{ privilege.identity.name|trans }}</strong>
-                        </div>
-                        {% for permission in privilege.permissions %}
-                            {% set accessLevel = 'orob2b.account.security.access-level.' ~ privileges.accessLevelNames[permission.accessLevel-1] %}
-                            <div class="span2">{{ accessLevel|trans }}</div>
-                        {% endfor %}
-                    </div>
-                {% endfor %}
-            {% endif %}
+            {% include '@OroB2BAccount/AccountUserRole/privileges.html.twig' with {prefix: 'orob2b.account.frontend.security.access-level.'} %}
         {% endset %}
 
         {% set dataBlocks = dataBlocks|merge([{

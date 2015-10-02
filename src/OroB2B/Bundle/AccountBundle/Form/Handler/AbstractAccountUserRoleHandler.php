@@ -177,4 +177,32 @@ abstract class AbstractAccountUserRoleHandler extends AclRoleHandler
             );
         }
     }
+
+    /**
+     * @param AccountUserRole $role
+     * @return ArrayCollection[]
+     */
+    public function getAccountUserRolePrivileges(AccountUserRole $role)
+    {
+        $sortedPrivileges= [];
+        $privileges = $this->getRolePrivileges($role);
+
+        $this->loadPrivilegeConfigPermissions(true);
+
+        foreach ($this->privilegeConfig as $fieldName => $config) {
+            $sortedPrivileges[$fieldName] = $this->filterPrivileges($privileges, $config['types']);
+            $this->applyOptions($sortedPrivileges[$fieldName], $config);
+        }
+
+        return $sortedPrivileges;
+    }
+
+    /**
+     * @param AccountUserRole $role
+     * @return array
+     */
+    public function getAccountUserRolePrivilegeConfig(AccountUserRole $role)
+    {
+        return $this->privilegeConfig;
+    }
 }

@@ -44,7 +44,7 @@ class AccountUserRoleController extends Controller
      */
     public function viewAction(AccountUserRole $role)
     {
-        $privileges = $this->get('orob2b_account.collect_account_user_role_acl_privileges.helper')->collect($role);
+        $privileges = $this->get('orob2b_account.helper.account_user_role_privileges')->collect($role);
 
         return [
             'entity' => $role,

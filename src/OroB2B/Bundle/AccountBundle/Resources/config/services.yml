@@ -67,7 +67,7 @@ parameters:
 
     orob2b_account.content_provider.menu.class: Oro\Bundle\NavigationBundle\ContentProvider\MenuContentProvider
 
-    orob2b_account.collect_account_user_role_acl_privileges.helper.class: OroB2B\Bundle\AccountBundle\Helper\CollectAccountUserRoleAclPrivileges
+    orob2b_account.helper.account_user_role_privileges.class: OroB2B\Bundle\AccountBundle\Helper\AccountUserRolePrivilegesHelper
 
 services:
     orob2b_account.security.account_user_provider:
@@ -446,13 +446,12 @@ services:
         arguments:
             - @oro_security.security_facade
 
-    orob2b_account.collect_account_user_role_acl_privileges.helper:
-        class: %orob2b_account.collect_account_user_role_acl_privileges.helper.class%
+    orob2b_account.helper.account_user_role_privileges:
+        class: %orob2b_account.helper.account_user_role_privileges.class%
         arguments:
-            - @oro_security.acl.privilege_repository
-            - @oro_security.acl.manager
-            - @oro_security.owner.metadata_provider.chain
-            - %oro_user.privileges%
-        calls:
-            - [addExtensionFilter, ['entity', 'commerce']]
-            - [addExtensionFilter, ['action', 'commerce']]
+            - @orob2b_account.form.handler.update_account_user_role=
+
+    orob2b_account.helper.account_user_role_privileges.frontend:
+        class: %orob2b_account.helper.account_user_role_privileges.class%
+        arguments:
+            - @orob2b_account.form.handler.update_account_user_role_frontend=
