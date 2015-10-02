@@ -48,7 +48,9 @@ abstract class AbstractCategoryFixture extends AbstractFixture
 
             $category = new Category();
             $category->addTitle($categoryTitle);
+
             $this->addReference($title, $category);
+
             $root->addChildCategory($category);
 
             $this->addCategories($category, $nestedCategories);

@@ -28,9 +28,12 @@ use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType as FrontendReq
 use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
 use OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type\AbstractTest;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
 class RequestTypeTest extends AbstractTest
 {
+    use QuantityTypeTrait;
+
     const DATA_CLASS = 'OroB2B\Bundle\RFPBundle\Entity\Request';
     const REQUEST_STATUS_CLASS = 'OroB2B\Bundle\RFPBundle\Entity\RequestStatus';
 
@@ -222,6 +225,7 @@ class RequestTypeTest extends AbstractTest
                     $requestProductItemType->getName()      => $requestProductItemType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
                     $frontendRequestProductType->getName()  => $frontendRequestProductType,
+                    QuantityTypeTrait::$name                => $this->getQuantityType(),
                 ],
                 []
             ),
