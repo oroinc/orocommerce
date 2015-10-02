@@ -173,3 +173,7 @@ td.quote-product-offer-price {
 span.quote-product-offer-quantity-unit {
     margin-left: 5px;
 }
+
+.quote-lineitems table.grid {
+    overflow: auto;
+}
