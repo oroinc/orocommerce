@@ -52,13 +52,11 @@ class AccountUserRoleController extends Controller
      */
     public function viewAction(AccountUserRole $role)
     {
-        $handler = $this->get('orob2b_account.form.handler.view_account_user_role');
-        $handler->createForm($role);
-        $handler->process($role);
+        $privileges = $this->get('orob2b_account.collect_account_user_role_acl_privileges.helper')->collect($role);
 
         return [
             'entity' => $role,
-            'form'   => $handler->createView()
+            'privileges' => $privileges
         ];
     }
 
