@@ -397,9 +397,6 @@ datagrid:
                 where:
                     and:
                         - productVariantLink.parentProduct = :parentProduct
-                orderBy:
-                    - { column: visible, dir: DESC}
-                    - { column: product.sku, dir: ASC}
         columns:
             id:
                 label:         orob2b.product.id.label
@@ -426,3 +423,6 @@ datagrid:
             columns:
                 visible:
                     data_name: visible
+            default:
+                visible: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                sku: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
