@@ -5,7 +5,6 @@ define(function(require) {
 
     var AccountUserRole;
     var BaseComponent = require('oroui/js/app/components/base/component');
-    var $ = require('jquery');
     var mediator = require('oroui/js/mediator');
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
@@ -15,53 +14,34 @@ define(function(require) {
         /**
          * @property {Object}
          */
-        targetElement: null,
-
-        /**
-         * @property {String}
-         */
-        datagridName: null,
-
-        /**
-         * Account change confirmation dialog is shown
-         *
-         * @property {Boolean}
-         */
-        accountChangeConfirmationShown: false,
-
-        /**
-         * @property {integer}
-         */
-        originalValue: null,
+        options: {
+            accountFieldId: '#accountFieldId',
+            datagridName: 'account-users-datagrid',
+            originalValue: null
+        },
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
-            this.targetElement = $('#' + options.accountFieldId);
-            this.datagridName = options.datagridName;
-            var previousValue = this.originalValue = this.targetElement.val();
-            var self = this;
+            this.options = _.defaults(options || {}, this.options);
 
-            this.targetElement.on('change', function() {
-                var value = $(this).val();
+            this.options._sourceElement
+                .on('change', this.options.accountFieldId, _.bind(this.onAccountSelectorChange, this));
+        },
 
-                if (value === previousValue) {
-                    return;
-                }
+        onAccountSelectorChange: function(e) {
+            var value = e.target.value;
 
-                var showRoles = !value || self.originalValue === value;
+            if (!value) {
+                this._updateAccountUserGrid(value);
+            }
 
-                if (!self.accountChangeConfirmationShown && !showRoles) {
-                    setTimeout(function() {
-                        self.targetElement.val(previousValue).trigger('change');
-                    }, 10);
-                } else {
-                    previousValue = value;
-                }
-
-                self._changeAccountAction(value, showRoles);
-            });
+            if (value !== this.options.originalValue) {
+                this._getAccountConfirmDialog(function() {
+                    this._updateAccountUserGrid(value);
+                });
+            }
         },
 
         dispose: function() {
@@ -69,36 +49,15 @@ define(function(require) {
                 return;
             }
 
-            this.targetElement.off('change');
+            this.options._sourceElement.off('change');
 
             if (this.changeAccountConfirmDialog) {
+                this.changeAccountConfirmDialog.off();
                 this.changeAccountConfirmDialog.dispose();
                 delete this.changeAccountConfirmDialog;
             }
 
             AccountUserRole.__super__.dispose.call(this);
-        },
-
-        /**
-         * Change account action
-         *
-         * @param {String} value
-         * @param {Boolean} showRoles
-         * @private
-         */
-        _changeAccountAction: function(value, showRoles) {
-
-            if (this.accountChangeConfirmationShown || showRoles) {
-                if (value) {
-                    this.targetElement.val(value).trigger('change');
-                }
-                this._updateAccountUserGrid(value, showRoles);
-            } else {
-                this._getAccountConfirmDialog(function() {
-                    this.accountChangeConfirmationShown = true;
-                    this.targetElement.val(value).trigger('change');
-                });
-            }
         },
 
         /**
@@ -110,8 +69,9 @@ define(function(require) {
         _getAccountConfirmDialog: function(okCallback) {
             if (!this.changeAccountConfirmDialog) {
                 this.changeAccountConfirmDialog = this._createChangeAccountConfirmationDialog();
-                this.changeAccountConfirmDialog.on('ok', _.bind(okCallback, this));
             }
+
+            this.changeAccountConfirmDialog.off('ok').on('ok', _.bind(okCallback, this));
             this.changeAccountConfirmDialog.open();
         },
 
@@ -136,19 +96,18 @@ define(function(require) {
          * Update account user grid
          *
          * @param {String} value
-         * @param {Boolean} showRoles
          * @private
          */
-        _updateAccountUserGrid: function(value, showRoles) {
+        _updateAccountUserGrid: function(value) {
             if (value) {
-                mediator.trigger('datagrid:setParam:' + this.datagridName, 'newAccount', value);
+                mediator.trigger('datagrid:setParam:' + this.options.datagridName, 'newAccount', value);
             } else {
-                mediator.trigger('datagrid:removeParam:' + this.datagridName, 'newAccount');
+                mediator.trigger('datagrid:removeParam:' + this.options.datagridName, 'newAccount');
             }
 
             // Add param to know this request is change account action
-            mediator.trigger('datagrid:setParam:' + this.datagridName, 'changeAccountAction', 1);
-            mediator.trigger('datagrid:doReset:' + this.datagridName);
+            mediator.trigger('datagrid:setParam:' + this.options.datagridName, 'changeAccountAction', 1);
+            mediator.trigger('datagrid:doReset:' + this.options.datagridName);
         }
     });
 
