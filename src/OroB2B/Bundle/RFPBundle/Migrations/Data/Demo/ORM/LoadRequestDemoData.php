@@ -77,6 +77,7 @@ class LoadRequestDemoData extends AbstractFixture implements
             $row = array_combine($headers, array_values($data));
 
             $accountUser = $accountUsers[rand(0, count($accountUsers) - 1)];
+            $poNumber = 'CA' . rand(1000, 9999) . 'USD';
 
             $request = new Request();
             $request
@@ -87,6 +88,8 @@ class LoadRequestDemoData extends AbstractFixture implements
                 ->setCompany($row['company'])
                 ->setRole($row['role'])
                 ->setBody($row['body'])
+                ->setShipUntil(new \DateTime())
+                ->setPoNumber($poNumber)
                 ->setAccountUser($accountUser)
                 ->setAccount($accountUser ? $accountUser->getAccount() : null)
             ;

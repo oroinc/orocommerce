@@ -7,6 +7,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
+use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
@@ -79,6 +80,8 @@ class RequestTypeTest extends AbstractTest
         $longStr    = str_repeat('a', 256);
         $longEmail  = $longStr . '@example.com';
         $email      = 'test@example.com';
+        $date       = '2015-10-15';
+        $dateObj    = new \DateTime($date . 'T00:00:00+0000');
 
         return [
             'valid data' => [
@@ -88,6 +91,8 @@ class RequestTypeTest extends AbstractTest
                     'lastName'      => 'LastName',
                     'email'         => $email,
                     'body'          => 'body',
+                    'poNumber'      => 'poNumber',
+                    'shipUntil'     => $date,
                     'role'          => 'role',
                     'phone'         => '123',
                     'company'       => 'company',
@@ -106,9 +111,9 @@ class RequestTypeTest extends AbstractTest
 
                     ],
                 ],
-                'expectedData'  => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', '123')
+                'expectedData'  => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', 'poNumber', $dateObj, '123')
                     ->addRequestProduct($requestProduct),
-                'defaultData'   => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', '123'),
+                'defaultData'   => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', 'poNumber', $dateObj, '123'),
             ],
             'valid data empty items' => [
                 'isValid'       => true,
@@ -117,12 +122,14 @@ class RequestTypeTest extends AbstractTest
                     'lastName'      => 'LastName',
                     'email'         => $email,
                     'body'          => 'body',
+                    'poNumber'      => 'poNumber',
+                    'shipUntil'     => $date,
                     'role'          => 'role',
                     'phone'         => '123',
                     'company'       => 'company',
                 ],
-                'expectedData'  => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', '123'),
-                'defaultData'   => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', '123'),
+                'expectedData'  => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', 'poNumber', $dateObj, '123'),
+                'defaultData'   => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', 'poNumber', $dateObj, '123'),
             ],
             'empty first name' => [
                 'isValid'       => false,
@@ -250,6 +257,36 @@ class RequestTypeTest extends AbstractTest
                 'expectedData'  => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', $longStr),
                 'defaultData'   => $this->getRequest(),
             ],
+            'poNumber len > 255' => [
+                'isValid'       => false,
+                'submittedData' => [
+                    'firstName' => 'FirstName',
+                    'lastName'  => 'LastName',
+                    'email'     => $email,
+                    'body'      => 'body',
+                    'poNumber'  => $longStr,
+                    'shipUntil' => $date,
+                    'role'      => 'role',
+                    'company'   => 'company',
+                ],
+                'expectedData'  => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', $longStr, $dateObj),
+                'defaultData'   => $this->getRequest(),
+            ],
+            'invalid shipUntil' => [
+                'isValid'       => false,
+                'submittedData' => [
+                    'firstName' => 'FirstName',
+                    'lastName'  => 'LastName',
+                    'email'     => $email,
+                    'body'      => 'body',
+                    'poNumber'  => 'poNumber',
+                    'shipUntil' => 'no-date',
+                    'role'      => 'role',
+                    'company'   => 'company',
+                ],
+                'expectedData'  => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', 'poNumber', null),
+                'defaultData'   => $this->getRequest(),
+            ],
         ];
     }
 
@@ -260,6 +297,8 @@ class RequestTypeTest extends AbstractTest
      * @param string $body
      * @param string $company
      * @param string $role
+     * @param string $poNumber
+     * @param string $shipUntil
      * @param string $phone
      * @return Request
      */
@@ -270,6 +309,8 @@ class RequestTypeTest extends AbstractTest
         $body = null,
         $company = null,
         $role = null,
+        $poNumber = null,
+        $shipUntil = null,
         $phone = null
     ) {
         $request = new Request();
@@ -282,6 +323,8 @@ class RequestTypeTest extends AbstractTest
             ->setCompany($company)
             ->setRole($role)
             ->setPhone($phone)
+            ->setPoNumber($poNumber)
+            ->setShipUntil($shipUntil)
         ;
 
         return $request;
@@ -340,6 +383,7 @@ class RequestTypeTest extends AbstractTest
                     RequestProductItemCollectionType::NAME  => new RequestProductItemCollectionType(),
                     ProductRemovedSelectType::NAME          => new StubProductRemovedSelectType(),
                     ProductUnitRemovedSelectionType::NAME   => new StubProductUnitRemovedSelectionType(),
+                    OroDateType::NAME                       => new OroDateType(),
                     $priceType->getName()                   => $priceType,
                     $entityType->getName()                  => $entityType,
                     $optionalPriceType->getName()           => $optionalPriceType,

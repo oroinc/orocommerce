@@ -16,6 +16,8 @@ orob2b:
             account_user.label: 'Submitted By'
             account.label: 'Account'
             organization.label: 'Organization'
+            po_number.label: 'PO Number'
+            ship_until.label: 'Do Not Ship Later Than'
             request_products.label: 'Request Products'
 
             submit.label: 'Submit Request For Quote'
@@ -70,6 +72,7 @@ orob2b:
         sections:
             general:    'General'
             body:       'Request'
+            additional: 'Additional'
             request_products: 'Line Items'
             label_translation: 'Labels'
 

@@ -112,7 +112,9 @@ class RequestCreateQuoteHandler
             ->setOwner($this->user)
             ->setAccount($entity->getAccount())
             ->setAccountUser($entity->getAccountUser())
-            ->setOrganization($this->user->getOrganization());
+            ->setOrganization($this->user->getOrganization())
+            ->setPoNumber($entity->getPoNumber())
+            ->setShipUntil($entity->getShipUntil());
 
         foreach ($entity->getRequestProducts() as $requestProduct) {
             $quoteProduct = new QuoteProduct();

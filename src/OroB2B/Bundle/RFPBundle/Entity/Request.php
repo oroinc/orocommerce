@@ -118,6 +118,34 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
     protected $requestProducts;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="po_number", type="string", length=255, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $poNumber;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="ship_until", type="date", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $shipUntil;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="created_at", type="datetime")
@@ -534,5 +562,53 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
     public function __toString()
     {
         return sprintf('%s: %s %s', $this->id, $this->firstName, $this->lastName);
+    }
+
+    /**
+     * Set poNumber
+     *
+     * @param string $poNumber
+     *
+     * @return Request
+     */
+    public function setPoNumber($poNumber)
+    {
+        $this->poNumber = $poNumber;
+
+        return $this;
+    }
+
+    /**
+     * Get poNumber
+     *
+     * @return string
+     */
+    public function getPoNumber()
+    {
+        return $this->poNumber;
+    }
+
+    /**
+     * Set shipUntil
+     *
+     * @param \DateTime $shipUntil
+     *
+     * @return Request
+     */
+    public function setShipUntil($shipUntil)
+    {
+        $this->shipUntil = $shipUntil;
+
+        return $this;
+    }
+
+    /**
+     * Get shipUntil
+     *
+     * @return \DateTime
+     */
+    public function getShipUntil()
+    {
+        return $this->shipUntil;
     }
 }

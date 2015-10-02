@@ -12,6 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
@@ -212,6 +213,7 @@ class RequestTypeTest extends AbstractTest
                     RequestProductItemCollectionType::NAME  => new RequestProductItemCollectionType(),
                     ProductRemovedSelectType::NAME          => new StubProductRemovedSelectType(),
                     ProductUnitRemovedSelectionType::NAME   => new StubProductUnitRemovedSelectionType(),
+                    OroDateType::NAME                       => new OroDateType(),
                     $priceType->getName()                   => $priceType,
                     $entityType->getName()                  => $entityType,
                     $optionalPriceType->getName()           => $optionalPriceType,

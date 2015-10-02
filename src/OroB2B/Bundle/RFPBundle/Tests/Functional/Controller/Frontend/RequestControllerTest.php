@@ -143,6 +143,8 @@ class RequestControllerTest extends WebTestCase
                     'columns' => [
                         'id',
                         'isDraft',
+                        'poNumber',
+                        'shipUntil',
                         'createdAt',
                         'update_link',
                         'view_link',
@@ -167,6 +169,8 @@ class RequestControllerTest extends WebTestCase
                     'columns' => [
                         'id',
                         'isDraft',
+                        'poNumber',
+                        'shipUntil',
                         'createdAt',
                         'accountUserName',
                         'update_link',
@@ -188,6 +192,8 @@ class RequestControllerTest extends WebTestCase
                     'columns' => [
                         'id',
                         'isDraft',
+                        'poNumber',
+                        'shipUntil',
                         'createdAt',
                         'update_link',
                         'view_link',
@@ -209,6 +215,8 @@ class RequestControllerTest extends WebTestCase
                     'columns' => [
                         'id',
                         'isDraft',
+                        'poNumber',
+                        'shipUntil',
                         'createdAt',
                         'update_link',
                         'view_link',
@@ -232,7 +240,7 @@ class RequestControllerTest extends WebTestCase
                     'password' => LoadUserData::ACCOUNT1_USER1,
                 ],
                 'expected' => [
-                    'columnsCount' => 7,
+                    'columnsCount' => 9,
                 ],
             ],
             'account1 user3 (AccountUser:VIEW_LOCAL)' => [
@@ -242,7 +250,7 @@ class RequestControllerTest extends WebTestCase
                     'password' => LoadUserData::ACCOUNT1_USER2,
                 ],
                 'expected' => [
-                    'columnsCount' => 8,
+                    'columnsCount' => 10,
                 ],
             ],
         ];

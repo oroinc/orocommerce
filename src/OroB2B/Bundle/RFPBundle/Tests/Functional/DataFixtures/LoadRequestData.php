@@ -143,6 +143,8 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
         $organization = $this->getUser($manager)->getOrganization();
 
         foreach ($this->requests as $key => $rawRequest) {
+            $poNumber = 'CA' . rand(1000, 9999) . 'USD';
+
             $request = new Request();
             $request
                 ->setFirstName($rawRequest['first_name'])
@@ -154,6 +156,8 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
                 ->setBody($rawRequest['body'])
                 ->setStatus($status)
                 ->setOrganization($organization)
+                ->setShipUntil(new \DateTime())
+                ->setPoNumber($poNumber)
             ;
             if (!empty($rawRequest['account'])) {
                 $request->setAccount($this->getReference($rawRequest['account']));
