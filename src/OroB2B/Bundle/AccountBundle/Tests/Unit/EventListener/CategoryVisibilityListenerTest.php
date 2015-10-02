@@ -7,10 +7,18 @@ use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\OnClearEventArgs;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\EventListener\CategoryVisibilityListener;
 use OroB2B\Bundle\AccountBundle\Storage\CategoryVisibilityStorage;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class CategoryVisibilityListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -25,9 +33,10 @@ class CategoryVisibilityListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->categoryVisibilityStorage = $this->getMockBuilder(
-            'OroB2B\Bundle\AccountBundle\Storage\CategoryVisibilityStorage'
-        )->disableOriginalConstructor()->getMock();
+        $this->categoryVisibilityStorage = $this
+            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Storage\CategoryVisibilityStorage')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->listener = new CategoryVisibilityListener($this->categoryVisibilityStorage);
     }
@@ -45,12 +54,23 @@ class CategoryVisibilityListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @param \PHPUnit_Framework_MockObject_MockObject|LifecycleEventArgs $lifecycleEventArgs
      * @param bool $invalidateAll
-     * @dataProvider lifecycleEventArgsDataProvider
+     * @param array $accountIds
+     * @param array $changeSet
+     * @dataProvider postPersistAndPostRemoveDataProvider
      */
-    public function testPostPersist(LifecycleEventArgs $lifecycleEventArgs, $invalidateAll)
-    {
+    public function testPostPersist(
+        LifecycleEventArgs $lifecycleEventArgs,
+        $invalidateAll,
+        array $accountIds = [],
+        array $changeSet = []
+    ) {
+        if ($changeSet) {
+            $this->prepareChangeSet($lifecycleEventArgs, $changeSet);
+        }
+
         $this->listener->postPersist($lifecycleEventArgs);
         $this->assertAttributeEquals($invalidateAll, 'invalidateAll', $this->listener);
+        $this->assertAttributeEquals($accountIds, 'invalidateAccountIds', $this->listener);
     }
 
     /**
@@ -67,15 +87,22 @@ class CategoryVisibilityListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @param \PHPUnit_Framework_MockObject_MockObject|LifecycleEventArgs $lifecycleEventArgs
      * @param bool $invalidateAll
-     * @dataProvider lifecycleEventArgsDataProvider
+     * @dataProvider postPersistAndPostRemoveDataProvider
      */
-    public function testPostRemove(LifecycleEventArgs $lifecycleEventArgs, $invalidateAll)
+    public function testPostRemove(LifecycleEventArgs $lifecycleEventArgs, $invalidateAll, array $accountIds = [])
     {
         $this->listener->postRemove($lifecycleEventArgs);
         $this->assertAttributeEquals($invalidateAll, 'invalidateAll', $this->listener);
+        $this->assertAttributeEquals($accountIds, 'invalidateAccountIds', $this->listener);
     }
 
-    public function testOnPostFlush()
+    /**
+     * @dataProvider onPostFlushDataProvider
+     * @param LifecycleEventArgs $arg
+     * @param bool $invalidateAll
+     * @param array $invalidateAccountIds
+     */
+    public function testOnPostFlush(LifecycleEventArgs $arg, $invalidateAll, array $invalidateAccountIds)
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|OnFlushEventArgs $onFlushEventArgs */
         $onFlushEventArgs = $this->getMockBuilder('Doctrine\ORM\Event\OnFlushEventArgs')
@@ -94,21 +121,54 @@ class CategoryVisibilityListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onFlush($onFlushEventArgs);
         $this->assertAttributeEquals(2, 'flushCounter', $this->listener);
 
-        $this->listener->postPersist($this->getLifecycleEventArgs(new Category()));
-        $this->assertAttributeEquals(true, 'invalidateAll', $this->listener);
+        $this->listener->postPersist($arg);
+        $this->assertAttributeEquals($invalidateAll, 'invalidateAll', $this->listener);
+        $this->assertAttributeEquals($invalidateAccountIds, 'invalidateAccountIds', $this->listener);
 
         $this->listener->postFlush($postFlushEventArgs);
         $this->assertAttributeEquals(1, 'flushCounter', $this->listener);
-        $this->assertAttributeEquals(true, 'invalidateAll', $this->listener);
+        $this->assertAttributeEquals($invalidateAll, 'invalidateAll', $this->listener);
+        $this->assertAttributeEquals($invalidateAccountIds, 'invalidateAccountIds', $this->listener);
 
-        $this->categoryVisibilityStorage->expects($this->once())
+        $expectClearData = $invalidateAll || $invalidateAccountIds;
+
+        $this->categoryVisibilityStorage->expects($expectClearData ? $this->once() : $this->never())
             ->method('clearData')
-            ->willReturnCallback(function (array $accountIds = null) {
-                $this->assertNull($accountIds);
-            });
+            ->with($invalidateAccountIds ?: null);
+
         $this->listener->postFlush($postFlushEventArgs);
         $this->assertAttributeEquals(0, 'flushCounter', $this->listener);
         $this->assertAttributeEquals(false, 'invalidateAll', $this->listener);
+    }
+
+    /**
+     * @return array
+     */
+    public function onPostFlushDataProvider()
+    {
+        $account = new Account();
+        $this->setAccountId($account, 456);
+
+        $accountVisibility = new AccountCategoryVisibility();
+        $accountVisibility->setAccount($account);
+
+        return [
+            'invalidateAll' => [
+                'arg' => $this->getLifecycleEventArgs(new Category()),
+                'invalidateAll' => true,
+                'invalidateAccountIds' => []
+            ],
+            'invalidateAccountIds' => [
+                'arg' => $this->getLifecycleEventArgs($accountVisibility),
+                'invalidateAll' => false,
+                'invalidateAccountIds' => [$account->getId()]
+            ],
+            'nothing' => [
+                'arg' => $this->getLifecycleEventArgs(new \stdClass()),
+                'invalidateAll' => false,
+                'invalidateAccountIds' => []
+            ],
+        ];
     }
 
     public function testOnClear()
@@ -129,11 +189,28 @@ class CategoryVisibilityListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function lifecycleEventArgsDataProvider()
+    public function postUpdateDataProvider()
     {
+        $changedParent = new Category();
+        $changedNonParent = new Category();
+
+        $changedParentLifecycleEventArgs = $this->getLifecycleEventArgs($changedParent);
+        $changedNonParentLifecycleEventArgs = $this->getLifecycleEventArgs($changedNonParent);
+
+        $this->prepareChangeSet($changedParentLifecycleEventArgs, ['parentCategory' => 1]);
+        $this->prepareChangeSet($changedNonParentLifecycleEventArgs, ['nonParentCategory' => 1]);
+
         return [
-            'category' => [
-                'lifecycleEventArgs' => $this->getLifecycleEventArgs(new Category()),
+            'category changed parent' => [
+                'lifecycleEventArgs' => $changedParentLifecycleEventArgs,
+                'invalidateAll' => true,
+            ],
+            'category changed non parent' => [
+                'lifecycleEventArgs' => $changedNonParentLifecycleEventArgs,
+                'invalidateAll' => false,
+            ],
+            'category visibility' => [
+                'lifecycleEventArgs' => $this->getLifecycleEventArgs(new CategoryVisibility()),
                 'invalidateAll' => true,
             ],
             'other' => [
@@ -146,53 +223,92 @@ class CategoryVisibilityListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function postUpdateDataProvider()
+    public function postPersistAndPostRemoveDataProvider()
     {
-        $changedParent = new Category();
-        $changedNonParent = new Category();
+        $account = new Account();
+        $this->setAccountId($account, 42);
+        
+        $anotherAccount = new Account();
+        $this->setAccountId($account, 123);
 
-        $unitOfWork = $this->getMockBuilder('Doctrine\ORM\UnitOfWork')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $unitOfWork->expects($this->exactly(2))
-            ->method('getEntityChangeSet')
-            ->willReturnMap(
-                [
-                    [$changedParent, ['parentCategory' => 1]],
-                    [$changedNonParent, ['nonParentCategory' => 1]],
-                ]
-            );
-        $entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $entityManager->expects($this->exactly(2))
-            ->method('getUnitOfWork')
-            ->willReturn($unitOfWork);
+        $accountVisibility = new AccountCategoryVisibility();
+        $accountVisibility->setAccount($account);
 
-        $changedParentLifecycleEventArgs = $this->getLifecycleEventArgs($changedParent);
-        $changedParentLifecycleEventArgs->expects($this->exactly(1))
-            ->method('getEntityManager')
-            ->willReturn($entityManager);
+        $accountGroup = new AccountGroup();
+        $accountGroup->addAccount($account);
+        $accountGroup->addAccount($anotherAccount);
 
-        $changedNonParentLifecycleEventArgs = $this->getLifecycleEventArgs($changedNonParent);
-        $changedNonParentLifecycleEventArgs->expects($this->exactly(1))
-            ->method('getEntityManager')
-            ->willReturn($entityManager);
+        $accountGroupVisibility = new AccountGroupCategoryVisibility();
+        $accountGroupVisibility->setAccountGroup($accountGroup);
 
         return [
-            'category changed parent' => [
-                'lifecycleEventArgs' => $changedParentLifecycleEventArgs,
+            'category' => [
+                'lifecycleEventArgs' => $this->getLifecycleEventArgs(new Category()),
                 'invalidateAll' => true,
             ],
-            'category changed non parent' => [
-                'lifecycleEventArgs' => $changedNonParentLifecycleEventArgs,
+            'category visibility' => [
+                'lifecycleEventArgs' => $this->getLifecycleEventArgs(new CategoryVisibility()),
+                'invalidateAll' => true,
+            ],
+            'account' => [
+                'lifecycleEventArgs' => $this->getLifecycleEventArgs($account),
                 'invalidateAll' => false,
+                'accountIds' => [$account->getId()],
+                'changeSet' => ['group' => 123]
+            ],
+            'account visibility' => [
+                'lifecycleEventArgs' => $this->getLifecycleEventArgs($accountVisibility),
+                'invalidateAll' => false,
+                'accountIds' => [$account->getId()]
+            ],
+            'account group visibility' => [
+                'lifecycleEventArgs' => $this->getLifecycleEventArgs($accountGroupVisibility),
+                'invalidateAll' => false,
+                'accountIds' => [$account->getId(), $anotherAccount->getId()]
             ],
             'other' => [
                 'lifecycleEventArgs' => $this->getLifecycleEventArgs(new \stdClass()),
                 'invalidateAll' => false,
             ],
         ];
+    }
+
+    /**
+     * @param LifecycleEventArgs|\PHPUnit_Framework_MockObject_MockObject $arg
+     * @param array $value
+     */
+    protected function prepareChangeSet(LifecycleEventArgs $arg, array $value)
+    {
+        $unitOfWork = $this->getMockBuilder('Doctrine\ORM\UnitOfWork')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $unitOfWork->expects($this->any())
+            ->method('getEntityChangeSet')
+            ->willReturn($value);
+
+        $entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $entityManager->expects($this->any())
+            ->method('getUnitOfWork')
+            ->willReturn($unitOfWork);
+
+        $arg->expects($this->any())
+            ->method('getEntityManager')
+            ->willReturn($entityManager);
+    }
+
+    /**
+     * @param Account $account
+     * @param int $id
+     */
+    protected function setAccountId(Account $account, $id)
+    {
+        $class = new \ReflectionClass($account);
+        $prop  = $class->getProperty('id');
+        $prop->setAccessible(true);
+
+        $prop->setValue($account, $id);
     }
 
     /**
@@ -205,7 +321,7 @@ class CategoryVisibilityListenerTest extends \PHPUnit_Framework_TestCase
         $lifecycleEventArgs = $this->getMockBuilder('Doctrine\ORM\Event\LifecycleEventArgs')
             ->disableOriginalConstructor()
             ->getMock();
-        $lifecycleEventArgs->expects($this->once())
+        $lifecycleEventArgs->expects($this->any())
             ->method('getEntity')
             ->willReturn($entity);
 
