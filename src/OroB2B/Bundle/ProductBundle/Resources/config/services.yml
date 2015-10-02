@@ -171,10 +171,10 @@ services:
             - @orob2b_product.provider.custom_field_provider
             - %orob2b_product.product.class%
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.product-variants-view-grid, method: onBuildBefore }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.product-variants-view-grid, method: onResultAfter }
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.product-variants-select-grid, method: onBuildBefore }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.product-variants-select-grid, method: onResultAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.orob2b_product-product_variants-product_view, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.orob2b_product-product_variants-product_view, method: onResultAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.orob2b_product-product_variants-product_edit, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.orob2b_product-product_variants-product_edit, method: onResultAfter }
 
     orob2b_product.validator.unique_variant_links:
         class: %orob2b_product.validator.unique_variant_links.class%

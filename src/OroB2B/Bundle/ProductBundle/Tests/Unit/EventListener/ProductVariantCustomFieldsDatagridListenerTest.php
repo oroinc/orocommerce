@@ -2,7 +2,10 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
+use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
+use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -38,7 +41,7 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
     /** @var string */
     protected $productClass = 'OroB2BProductBundle:Product';
 
-    /** @var string[] */
+    /** @var array|string[] */
     protected $parentProductCustomFields = [self::FIELD_SIZE];
 
     /** @var array */
@@ -92,10 +95,11 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
     {
         $this->prepareRepositoryProduct();
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridConfiguration $config */
         $config = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration')
             ->disableOriginalConstructor()
             ->getMock();
-        $config->expects($this->at(0))
+        $config->expects($this->once())
             ->method('offsetSetByPath')
             ->with('[columns][' . self::FIELD_SIZE . ']', ['label' => self::LABEL_SIZE]);
 
@@ -106,14 +110,15 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
     {
         $this->prepareRepositoryProduct();
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ResultRecord $resultRecord */
         $resultRecord = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datasource\ResultRecord')
             ->disableOriginalConstructor()
             ->getMock();
-        $resultRecord->expects($this->at(0))
+        $resultRecord->expects($this->once())
             ->method('getValue')
             ->with('id')
             ->willReturn(self::PRODUCT_ID);
-        $resultRecord->expects($this->at(1))
+        $resultRecord->expects($this->once())
             ->method('addData')
             ->with([self::FIELD_SIZE => self::SIZE]);
 
@@ -121,10 +126,10 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
     }
 
     /**
-     * @param $config
+     * @param DatagridConfiguration $config
      * @return BuildBefore
      */
-    private function prepareBuildBeforeEvent($config)
+    private function prepareBuildBeforeEvent(DatagridConfiguration $config)
     {
         return new BuildBefore($this->prepareDatagrid(), $config);
     }
@@ -142,16 +147,16 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
     }
 
     /**
-     * @param $resultRecord
+     * @param ResultRecord $resultRecord
      * @return OrmResultAfter
      */
-    private function prepareOrmResultAfterEvent($resultRecord)
+    private function prepareOrmResultAfterEvent(ResultRecord $resultRecord)
     {
         return new OrmResultAfter($this->prepareDatagrid(), [$resultRecord]);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|DatagridInterface
      */
     private function prepareDatagrid()
     {

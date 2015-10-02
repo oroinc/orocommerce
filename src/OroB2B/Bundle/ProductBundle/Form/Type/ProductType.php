@@ -57,15 +57,6 @@ class ProductType extends AbstractType
                 ]
             )
             ->add(
-                'unitPrecisions',
-                ProductUnitPrecisionCollectionType::NAME,
-                [
-                    'label'    => 'orob2b.product.unit_precisions.label',
-                    'tooltip'  => 'orob2b.product.form.tooltip.unit_precision',
-                    'required' => false
-                ]
-            )
-            ->add(
                 'inventoryStatus',
                 'oro_enum_select',
                 [
@@ -119,6 +110,15 @@ class ProductType extends AbstractType
                     'label'     => 'orob2b.product.visibility.label',
                     'enum_code' => 'prod_visibility',
                     'configs'   => ['allowClear' => false]
+                ]
+            )
+            ->add(
+                'unitPrecisions',
+                ProductUnitPrecisionCollectionType::NAME,
+                [
+                    'label'    => 'orob2b.product.unit_precisions.label',
+                    'tooltip'  => 'orob2b.product.form.tooltip.unit_precision',
+                    'required' => false
                 ]
             );
 

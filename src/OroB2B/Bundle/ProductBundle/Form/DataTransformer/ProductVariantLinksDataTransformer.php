@@ -52,7 +52,7 @@ class ProductVariantLinksDataTransformer implements DataTransformerInterface
     }
 
     /**
-     * @param Product[] $variants
+     * @param array|Product[] $variants
      */
     private function appendVariants(array $variants)
     {

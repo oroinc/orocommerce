@@ -94,17 +94,11 @@ class ProductCustomFieldsChoiceTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * Test getParent
-     */
     public function testGetParent()
     {
         $this->assertEquals('choice', $this->formType->getParent());
     }
 
-    /**
-     * Test getName
-     */
     public function testGetName()
     {
         $this->assertEquals(ProductCustomFieldsChoiceType::NAME, $this->formType->getName());

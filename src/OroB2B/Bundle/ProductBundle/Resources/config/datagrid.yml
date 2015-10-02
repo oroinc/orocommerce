@@ -263,7 +263,7 @@ datagrid:
                 icon:          eye-open
                 rowAction:     true
 
-    product-variants-base-grid:
+    orob2b_product-product_variants:
         options:
             entityHint:        parentProduct
             entity_pagination: true
@@ -325,8 +325,8 @@ datagrid:
                     data_name: inventoryStatusId
                     enum_code: prod_inventory_status
 
-    product-variants-select-grid:
-        extends: product-variants-base-grid
+    orob2b_product-product_variants-product_edit:
+        extends: orob2b_product-product_variants
         options:
             rowSelection:
                 dataField: id
@@ -383,8 +383,8 @@ datagrid:
             default:
                 sku: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
 
-    product-variants-view-grid:
-        extends: product-variants-base-grid
+    orob2b_product-product_variants-product_view:
+        extends: orob2b_product-product_variants
         source:
             query:
                 select:

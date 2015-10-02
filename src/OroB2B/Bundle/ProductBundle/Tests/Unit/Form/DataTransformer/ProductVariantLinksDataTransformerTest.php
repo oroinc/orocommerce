@@ -24,7 +24,6 @@ class ProductVariantLinksDataTransformerTest extends \PHPUnit_Framework_TestCase
     {
         $this->transformer = new ProductVariantLinksDataTransformer();
         $this->transformer->transform(new ArrayCollection());
-
     }
 
     public function testAddsLinkToEmptyCollection()

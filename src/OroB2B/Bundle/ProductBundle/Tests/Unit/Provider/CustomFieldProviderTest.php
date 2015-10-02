@@ -35,8 +35,8 @@ class CustomFieldProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->extendConfigProvider = $this->getMockShortcut('Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider');
-        $this->entityConfigProvider = $this->getMockShortcut('Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider');
+        $this->extendConfigProvider = $this->getMockForClass('Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider');
+        $this->entityConfigProvider = $this->getMockForClass('Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider');
 
         $this->provider = new CustomFieldProvider($this->extendConfigProvider, $this->entityConfigProvider);
     }
@@ -83,10 +83,10 @@ class CustomFieldProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $className
+     * @param string $className
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    private function getMockShortcut($className)
+    private function getMockForClass($className)
     {
         return $this->getMockBuilder($className)
             ->disableOriginalConstructor()
