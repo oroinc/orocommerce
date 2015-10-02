@@ -269,7 +269,7 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     /**
      * @param AccountUser $accountUser
      *
-     * @return AccountUserRole
+     * @return $this
      */
     public function addAccountUser(AccountUser $accountUser)
     {
@@ -289,7 +289,7 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     }
 
     /**
-     * @return Collection
+     * @return Collection|AccountUser[]
      */
     public function getAccountUsers()
     {
