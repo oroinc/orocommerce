@@ -2,16 +2,17 @@
 
 namespace OroB2B\Bundle\AccountBundle\EventListener;
 
-use Doctrine\ORM\Query\Expr\Andx;
-use Doctrine\ORM\Query\Expr\Orx;
-use Doctrine\ORM\Query\Parameter;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
+use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Event\OrmResultBefore;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Formatter\ChoiceFormatter;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class CategoryVisibilityGridListener
 {
@@ -21,13 +22,55 @@ class CategoryVisibilityGridListener
     const ACCOUNT_GROUP_CATEGORY_VISIBILITY_ALIAS = 'accountGroupCategoryVisibility.visibility';
 
     /**
+     * @var ManagerRegistry
+     */
+    protected $registry;
+
+    /**
+     * @var ChoiceFormatter
+     */
+    protected $choiceFormatter;
+
+    /**
+     * @var string
+     */
+    protected $categoryClass;
+
+    /**
+     * @param ManagerRegistry $registry
+     * @param ChoiceFormatter $choiceFormatter
+     */
+    public function __construct(ManagerRegistry $registry, ChoiceFormatter $choiceFormatter)
+    {
+        $this->registry = $registry;
+        $this->choiceFormatter = $choiceFormatter;
+    }
+
+    /**
+     * @param string $categoryClass
+     */
+    public function setCategoryClassName($categoryClass)
+    {
+        $this->categoryClass = $categoryClass;
+    }
+
+    public function onPreBuild(PreBuild $event)
+    {
+        $category = $this->getCategory($event->getParameters()->get('category_id'));
+        $config = $event->getConfig();
+
+        $choices = $config->offsetGetByPath('[columns][visibility][choices]');
+        $choices = $this->choiceFormatter->filterChoices($choices, $category);
+
+        $config->offsetSetByPath('[columns][visibility][choices]', $choices);
+    }
+
+    /**
      * @param OrmResultBefore $event
      */
     public function onResultBefore(OrmResultBefore $event)
     {
-        if (!$this->canHandleGrid($event->getDatagrid()->getName())
-            || !$this->isFilteredByDefaultValue($event->getDatagrid()->getParameters())
-        ) {
+        if (!$this->isFilteredByDefaultValue($event->getDatagrid()->getParameters())) {
             return;
         }
 
@@ -51,23 +94,6 @@ class CategoryVisibilityGridListener
             ], $parts)
         );
         $event->getQuery()->setDQL($dataSource->getQueryBuilder()->getQuery()->getDQL());
-    }
-
-    /**
-     * @param string $gridName
-     *
-     * @return bool
-     */
-    protected function canHandleGrid($gridName)
-    {
-        return in_array(
-            $gridName,
-            [
-                self::ACCOUNT_CATEGORY_VISIBILITY_GRID,
-                self::ACCOUNT_GROUP_CATEGORY_VISIBILITY_GRID
-            ],
-            true
-        );
     }
 
     /**
@@ -132,5 +158,18 @@ class CategoryVisibilityGridListener
             self::ACCOUNT_CATEGORY_VISIBILITY_ALIAS,
             self::ACCOUNT_GROUP_CATEGORY_VISIBILITY_ALIAS
         ];
+    }
+
+    /**
+     * @param integer|null $categoryId
+     * @return Category|null
+     */
+    protected function getCategory($categoryId)
+    {
+        $category = null;
+        if ($categoryId) {
+            $category = $this->registry->getRepository($this->categoryClass)->find($categoryId);
+        }
+        return $category;
     }
 }

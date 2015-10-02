@@ -75,9 +75,13 @@ class CategoryVisibility implements VisibilityInterface
     /**
      * {@inheritdoc}
      */
-    public static function getDefault()
+    public static function getDefault(Category $category = null)
     {
-        return self::PARENT_CATEGORY;
+        if ($category instanceof Category && !$category->getParentCategory()) {
+            return self::CONFIG;
+        } else {
+            return self::PARENT_CATEGORY;
+        }
     }
 
     /**

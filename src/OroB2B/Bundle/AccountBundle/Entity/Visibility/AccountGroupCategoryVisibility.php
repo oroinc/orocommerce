@@ -104,7 +104,7 @@ class AccountGroupCategoryVisibility implements VisibilityInterface
     /**
      * {@inheritdoc}
      */
-    public static function getDefault()
+    public static function getDefault(Category $category = null)
     {
         return self::CATEGORY;
     }

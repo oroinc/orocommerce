@@ -60,6 +60,8 @@ class CategoryFormExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $choices = $this->categoryVisibilityFormatter->formatChoices();
+        $choices = $this->categoryVisibilityFormatter->filterChoices($choices, $options['data']);
         $builder
             ->add(
                 'categoryVisibility',
@@ -68,7 +70,7 @@ class CategoryFormExtension extends AbstractTypeExtension
                     'required' => true,
                     'mapped' => false,
                     'label' => 'orob2b.account.visibility.categoryvisibility.entity_label',
-                    'choices' => $this->categoryVisibilityFormatter->formatChoices()
+                    'choices' => $choices
                 ]
             )
             ->add(

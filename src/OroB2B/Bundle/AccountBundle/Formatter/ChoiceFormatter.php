@@ -4,6 +4,9 @@ namespace OroB2B\Bundle\AccountBundle\Formatter;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
+
 class ChoiceFormatter
 {
     /**
@@ -27,6 +30,19 @@ class ChoiceFormatter
     public function __construct(TranslatorInterface $translator)
     {
         $this->translator = $translator;
+    }
+
+    /**
+     * @param array $choices
+     * @param mixed $category
+     * @return array
+     */
+    public function filterChoices($choices, $category)
+    {
+        if ($category instanceof Category && !$category->getParentCategory()) {
+            unset($choices[CategoryVisibility::PARENT_CATEGORY]);
+        }
+        return $choices;
     }
 
     /**

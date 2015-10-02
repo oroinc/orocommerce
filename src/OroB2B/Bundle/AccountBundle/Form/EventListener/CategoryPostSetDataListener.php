@@ -43,7 +43,7 @@ class CategoryPostSetDataListener extends AbstractCategoryListener
         if ($categoryVisibility instanceof CategoryVisibility) {
             $visibility = $categoryVisibility->getVisibility();
         } else {
-            $visibility = CategoryVisibility::getDefault();
+            $visibility = CategoryVisibility::getDefault($category);
         }
         $form->get('categoryVisibility')->setData($visibility);
     }

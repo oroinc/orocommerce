@@ -139,7 +139,7 @@ class CategoryPostSubmitListener extends AbstractCategoryListener
         $visibilityCode
     ) {
         $em = $this->getCategoryManager($category);
-        if ($visibilityCode === $visibilityEntity->getDefault()) {
+        if ($visibilityCode === $visibilityEntity->getDefault($category)) {
             if ($visibilityEntity->getVisibility()) {
                 $em->remove($visibilityEntity);
             }
