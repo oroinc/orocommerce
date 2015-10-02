@@ -507,7 +507,10 @@ services:
 
     orob2b_account.calculator.category_visibility_calculator:
         class: %orob2b_account.calculator.category_visibility_calculator%
-
+        arguments:
+            - @doctrine
+            - @oro_config.manager
+            
     orob2b_account.storage.category_visibility_storage:
         class: %orob2b_account.storage.category_visibility_storage.class%
         arguments:
