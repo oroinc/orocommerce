@@ -18,7 +18,7 @@ class AddPoNumberToRequest implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         self::addColumns($schema);
-   }
+    }
 
     /**
      * Add description to Request

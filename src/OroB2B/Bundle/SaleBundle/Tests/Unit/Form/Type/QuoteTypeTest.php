@@ -85,8 +85,15 @@ class QuoteTypeTest extends AbstractTest
      * @param string $shipUntil
      * @return Quote
      */
-    protected function getQuote($ownerId, $accountUserId = null, $accountId = null, array $items = [], $locked = false, $poNumber = null, $shipUntil = null)
-    {
+    protected function getQuote(
+        $ownerId,
+        $accountUserId = null,
+        $accountId = null,
+        array $items = [],
+        $locked = false,
+        $poNumber = null,
+        $shipUntil = null
+    ) {
         $quote = new Quote();
         $quote->setOwner($this->getEntity('Oro\Bundle\UserBundle\Entity\User', $ownerId));
 
@@ -160,7 +167,15 @@ class QuoteTypeTest extends AbstractTest
                         ],
                     ],
                 ],
-                'expectedData'  => $this->getQuote(1, 1, 2, [$quoteProduct], false, 'poNumber', new \DateTime($date . 'T00:00:00+0000')),
+                'expectedData'  => $this->getQuote(
+                    1,
+                    1,
+                    2,
+                    [$quoteProduct],
+                    false,
+                    'poNumber',
+                    new \DateTime($date . 'T00:00:00+0000')
+                ),
             ],
         ];
     }

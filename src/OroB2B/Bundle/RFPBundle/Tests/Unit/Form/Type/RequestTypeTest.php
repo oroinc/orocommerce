@@ -114,9 +114,29 @@ class RequestTypeTest extends AbstractTest
 
                     ],
                 ],
-                'expectedData'  => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', 'poNumber', $dateObj, '123')
+                'expectedData'  => $this->getRequest(
+                    'FirstName',
+                    'LastName',
+                    $email,
+                    'body',
+                    'company',
+                    'role',
+                    'poNumber',
+                    $dateObj,
+                    '123'
+                )
                     ->addRequestProduct($requestProduct),
-                'defaultData'   => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', 'poNumber', $dateObj, '123'),
+                'defaultData'   => $this->getRequest(
+                    'FirstName',
+                    'LastName',
+                    $email,
+                    'body',
+                    'company',
+                    'role',
+                    'poNumber',
+                    $dateObj,
+                    '123'
+                ),
             ],
             'valid data empty items' => [
                 'isValid'       => true,
@@ -131,8 +151,28 @@ class RequestTypeTest extends AbstractTest
                     'phone'         => '123',
                     'company'       => 'company',
                 ],
-                'expectedData'  => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', 'poNumber', $dateObj, '123'),
-                'defaultData'   => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', 'poNumber', $dateObj, '123'),
+                'expectedData'  => $this->getRequest(
+                    'FirstName',
+                    'LastName',
+                    $email,
+                    'body',
+                    'company',
+                    'role',
+                    'poNumber',
+                    $dateObj,
+                    '123'
+                ),
+                'defaultData'   => $this->getRequest(
+                    'FirstName',
+                    'LastName',
+                    $email,
+                    'body',
+                    'company',
+                    'role',
+                    'poNumber',
+                    $dateObj,
+                    '123'
+                ),
             ],
             'empty first name' => [
                 'isValid'       => false,
@@ -272,7 +312,16 @@ class RequestTypeTest extends AbstractTest
                     'role'      => 'role',
                     'company'   => 'company',
                 ],
-                'expectedData'  => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', $longStr, $dateObj),
+                'expectedData'  => $this->getRequest(
+                    'FirstName',
+                    'LastName',
+                    $email,
+                    'body',
+                    'company',
+                    'role',
+                    $longStr,
+                    $dateObj
+                ),
                 'defaultData'   => $this->getRequest(),
             ],
             'invalid shipUntil' => [
@@ -287,7 +336,16 @@ class RequestTypeTest extends AbstractTest
                     'role'      => 'role',
                     'company'   => 'company',
                 ],
-                'expectedData'  => $this->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', 'poNumber', null),
+                'expectedData'  => $this->getRequest(
+                    'FirstName',
+                    'LastName',
+                    $email,
+                    'body',
+                    'company',
+                    'role',
+                    'poNumber',
+                    null
+                ),
                 'defaultData'   => $this->getRequest(),
             ],
         ];
