@@ -13,6 +13,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
+use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
@@ -222,6 +223,14 @@ class QuoteTypeTest extends AbstractTest
             AccountUserSelectType::NAME
         );
 
+        $priceListSelectType = new StubEntityType(
+            [
+                1 => $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 1),
+                2 => $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 2),
+            ],
+            PriceListSelectType::NAME
+        );
+
         $priceType                  = $this->preparePriceType();
         $entityType                 = $this->prepareProductEntityType();
         $productSelectType          = new ProductSelectTypeStub();
@@ -262,6 +271,7 @@ class QuoteTypeTest extends AbstractTest
                     $productUnitSelectionType->getName()        => $productUnitSelectionType,
                     $accountSelectType->getName()               => $accountSelectType,
                     $accountUserSelectType->getName()           => $accountUserSelectType,
+                    $priceListSelectType->getName()             => $priceListSelectType,
                     QuantityTypeTrait::$name                    => $this->getQuantityType(),
                 ],
                 []

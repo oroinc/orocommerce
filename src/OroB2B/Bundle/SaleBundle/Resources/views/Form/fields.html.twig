@@ -165,8 +165,24 @@
         {% set form = widget %}
         {% set name = widget.vars.full_name %}
     {% endif %}
-    <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
-        class="quote-lineitem-offers quote-lineitem-offers-item">
+    {% set productForm = form.parent.parent %}
+    <tr data-content="{{ name }}"
+        data-validation-optional-group {{ block('widget_container_attributes') }}
+        class="quote-lineitem-offers quote-lineitem-offers-item"
+        data-page-component-module="oroui/js/app/components/view-component"
+        data-page-component-options="{{ {
+            view: 'orob2bsale/js/app/views/line-item-offer-view',
+            '$': {
+                product: '#' ~ productForm.product.vars.id,
+                priceValue: '#' ~ form.price.value.vars.id,
+                priceType: '#' ~ form.priceType.vars.id,
+                productUnit: '#' ~ form.productUnit.vars.id,
+                quantity: '#' ~ form.quantity.vars.id,
+                currency: '#' ~ form.price.currency.vars.id
+            },
+            isNew: form.vars.value is empty
+        }|json_encode }}"
+        data-layout="separate">
         {{ form_widget(form, { 'prototype' : prototype}) }}
         <td class="quote-lineitem-offers-remove">
             <button type="button" class="removeRow btn icons-holder"><i class="icon-remove"></i></button>
