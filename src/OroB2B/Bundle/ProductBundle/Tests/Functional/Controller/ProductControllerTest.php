@@ -168,43 +168,6 @@ class ProductControllerTest extends WebTestCase
      * @param int $id
      * @return int
      */
-    public function testDuplicate($id)
-    {
-        $this->client->followRedirects(true);
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_duplicate', ['id' => $id]));
-
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
-        $html = $crawler->html();
-        $this->assertContains('Product has been duplicated', $html);
-        $this->assertContains(
-            self::FIRST_DUPLICATED_SKU.' - '.self::DEFAULT_NAME_ALTERED.' - Products - Products',
-            $html
-        );
-        $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
-        $this->assertContains(self::UPDATED_VISIBILITY, $html);
-        $this->assertContains(self::STATUS, $html);
-
-        $this->assertContains(
-            $this->createUnitPrecisionString(self::FIRST_UNIT_FULL_NAME, self::FIRST_UNIT_PRECISION),
-            $html
-        );
-        $this->assertContains(
-            $this->createUnitPrecisionString(self::SECOND_UNIT_FULL_NAME, self::SECOND_UNIT_PRECISION),
-            $html
-        );
-
-        $result = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
-
-        return $result['id'];
-    }
-
-    /**
-     * @depends testUpdate
-     * @param int $id
-     * @return int
-     */
     public function testView($id)
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_view', ['id' => $id]));
@@ -214,7 +177,7 @@ class ProductControllerTest extends WebTestCase
 
         $html = $crawler->html();
         $this->assertContains(
-            self::UPDATED_SKU.' - '.self::DEFAULT_NAME_ALTERED.' - Products - Products',
+            self::UPDATED_SKU . ' - ' . self::DEFAULT_NAME_ALTERED . ' - Products - Products',
             $html
         );
         $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
@@ -237,28 +200,42 @@ class ProductControllerTest extends WebTestCase
     /**
      * @depends testView
      * @param int $id
+     * @return int
      */
-    public function testDelete($id)
+    public function testDuplicate($id)
     {
-        $this->client->request(
-            'DELETE',
-            $this->getUrl('orob2b_api_delete_product', ['id' => $id]),
-            [],
-            [],
-            $this->generateWsseAuthHeader()
+        $this->client->followRedirects(true);
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_duplicate', ['id' => $id]));
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $html = $crawler->html();
+        $this->assertContains('Product has been duplicated', $html);
+        $this->assertContains(
+            self::FIRST_DUPLICATED_SKU . ' - ' . self::DEFAULT_NAME_ALTERED . ' - Products - Products',
+            $html
+        );
+        $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
+        $this->assertContains(self::UPDATED_VISIBILITY, $html);
+        $this->assertContains(self::STATUS, $html);
+
+        $this->assertContains(
+            $this->createUnitPrecisionString(self::FIRST_UNIT_FULL_NAME, self::FIRST_UNIT_PRECISION),
+            $html
+        );
+        $this->assertContains(
+            $this->createUnitPrecisionString(self::SECOND_UNIT_FULL_NAME, self::SECOND_UNIT_PRECISION),
+            $html
         );
 
-        $result = $this->client->getResponse();
-        $this->assertEmptyResponseStatusCodeEquals($result, 204);
+        $result = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
 
-        $this->client->request('GET', $this->getUrl('orob2b_product_view', ['id' => $id]));
-
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 404);
+        return $result['id'];
     }
 
     /**
-     * @depends testUpdate
+     * @depends testDuplicate
      *
      * @return int
      */
@@ -268,7 +245,7 @@ class ProductControllerTest extends WebTestCase
 
         $id = (int)$result['id'];
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
-        $resp = $this->client->getResponse();
+
         $locale = $this->getLocale();
         $product = $this->getContainer()->get('doctrine')->getManager()->find('OroB2BProductBundle:Product', $id);
 
@@ -311,7 +288,7 @@ class ProductControllerTest extends WebTestCase
         $html = $crawler->html();
         $this->assertContains('Product has been saved and duplicated', $html);
         $this->assertContains(
-            self::SECOND_DUPLICATED_SKU.' - '.self::DEFAULT_NAME_ALTERED.' - Products - Products',
+            self::SECOND_DUPLICATED_SKU . ' - ' . self::DEFAULT_NAME_ALTERED . ' - Products - Products',
             $html
         );
         $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
@@ -327,9 +304,32 @@ class ProductControllerTest extends WebTestCase
             $html
         );
 
-        $result = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
+        $result = $this->getProductDataBySku(self::UPDATED_SKU);
 
         return $result['id'];
+    }
+
+    /**
+     * @depends testSaveAndDuplicate
+     * @param int $id
+     */
+    public function testDelete($id)
+    {
+        $this->client->request(
+            'DELETE',
+            $this->getUrl('orob2b_api_delete_product', ['id' => $id]),
+            [],
+            [],
+            $this->generateWsseAuthHeader()
+        );
+
+        $result = $this->client->getResponse();
+        $this->assertEmptyResponseStatusCodeEquals($result, 204);
+
+        $this->client->request('GET', $this->getUrl('orob2b_product_view', ['id' => $id]));
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 404);
     }
 
     /**
@@ -383,6 +383,11 @@ class ProductControllerTest extends WebTestCase
         return $result;
     }
 
+    /**
+     * @param string $name
+     * @param string $precision
+     * @return string
+     */
     private function createUnitPrecisionString($name, $precision)
     {
         return sprintf('%s with precision %s decimal places', $name, $precision);

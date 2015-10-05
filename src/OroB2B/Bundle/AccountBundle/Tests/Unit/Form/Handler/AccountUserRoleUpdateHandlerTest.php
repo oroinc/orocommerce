@@ -73,6 +73,9 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
         return $names;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testSetRolePrivileges()
     {
         $role = new AccountUserRole('TEST');
