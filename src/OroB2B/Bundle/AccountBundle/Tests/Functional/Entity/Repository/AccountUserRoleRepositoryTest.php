@@ -108,7 +108,10 @@ class AccountUserRoleRepositoryTest extends WebTestCase
         $accountUser = $this->getReference($accountUser);
         /** @var AccountUserRole[] $actual */
         $actual = $this->repository
-            ->getAvailableRolesByAccountUserQueryBuilder($accountUser)
+            ->getAvailableRolesByAccountUserQueryBuilder(
+                $accountUser->getAccount(),
+                $accountUser->getOrganization()->getId()
+            )
             ->getQuery()
             ->getResult();
         $this->assertCount(count($expectedAccountUserRoles) +  self::$defaultRolesCount, $actual);

@@ -173,7 +173,8 @@ class AccountUserType extends AbstractType
             );
 
         if ($this->securityFacade->isGranted('orob2b_account_account_user_role_view')) {
-            $this->addRoleField($builder);
+            $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
+            $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmit']);
         }
     }
 
@@ -204,27 +205,50 @@ class AccountUserType extends AbstractType
     }
 
     /**
-     * @param FormBuilderInterface $builder
+     * @param FormEvent $event
      */
-    protected function addRoleField(FormBuilderInterface $builder)
+    public function preSetData(FormEvent $event)
     {
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
-            $form = $event->getForm();
+        $form = $event->getForm();
 
-            /** @var AccountUser $data */
-            $data = $event->getData();
-            $data->setOrganization($this->securityFacade->getOrganization());
+        /** @var AccountUser $data */
+        $data = $event->getData();
+        $data->setOrganization($this->securityFacade->getOrganization());
 
-            $form->add(
-                'roles',
-                AccountUserRoleSelectType::NAME,
-                [
-                    'query_builder' => function (AccountUserRoleRepository $repository) use ($data) {
-                        return $repository->getAvailableRolesByAccountUserQueryBuilder($data);
-                    }
-                ]
-            );
-        });
+        $form->add(
+            'roles',
+            AccountUserRoleSelectType::NAME,
+            [
+                'query_builder' => function (AccountUserRoleRepository $repository) use ($data) {
+                    return $repository->getAvailableRolesByAccountUserQueryBuilder(
+                        $data->getAccount(),
+                        $data->getOrganization()->getId()
+                    );
+                }
+            ]
+        );
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function preSubmit(FormEvent $event)
+    {
+        $form = $event->getForm();
+        $data = $event->getData();
+
+        $form->add(
+            'roles',
+            AccountUserRoleSelectType::NAME,
+            [
+                'query_builder' => function (AccountUserRoleRepository $repository) use ($data) {
+                    return $repository->getAvailableRolesByAccountUserQueryBuilder(
+                        $data['account'],
+                        $this->securityFacade->getOrganizationId()
+                    );
+                }
+            ]
+        );
     }
 
     /**

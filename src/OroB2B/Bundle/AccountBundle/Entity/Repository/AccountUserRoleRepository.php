@@ -92,10 +92,12 @@ class AccountUserRoleRepository extends EntityRepository
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param $account
+     * @param $organization
+     *
      * @return QueryBuilder
      */
-    public function getAvailableRolesByAccountUserQueryBuilder(AccountUser $accountUser)
+    public function getAvailableRolesByAccountUserQueryBuilder($account, $organization)
     {
         $qb = $this->createQueryBuilder('accountUserRole');
         $qb->where(
@@ -107,8 +109,8 @@ class AccountUserRoleRepository extends EntityRepository
                 $qb->expr()->eq('accountUserRole.organization', ':organization')
             )
         );
-        $qb->setParameter('account', $accountUser->getAccount());
-        $qb->setParameter('organization', $accountUser->getOrganization());
+        $qb->setParameter('account', $account);
+        $qb->setParameter('organization', $organization);
         return $qb;
     }
 }
