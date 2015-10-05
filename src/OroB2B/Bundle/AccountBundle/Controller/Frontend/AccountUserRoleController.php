@@ -52,13 +52,11 @@ class AccountUserRoleController extends Controller
      */
     public function viewAction(AccountUserRole $role)
     {
-        $handler = $this->get('orob2b_account.form.handler.view_account_user_role');
-        $handler->createForm($role);
-        $handler->process($role);
+        $privileges = $this->get('orob2b_account.helper.account_user_role_privileges.frontend')->collect($role);
 
         return [
             'entity' => $role,
-            'form' => $handler->createView(),
+            'privileges' => $privileges
         ];
     }
 
@@ -90,7 +88,6 @@ class AccountUserRoleController extends Controller
     public function updateAction(AccountUserRole $role, Request $request)
     {
         $securityFacade = $this->get('oro_security.security_facade');
-        $isGranted = $securityFacade->isGranted('orob2b_account_frontend_account_user_role_create');
 
         if ($role->isPredefined()) {
             if ($request->isMethod(Request::METHOD_GET)) {
@@ -100,7 +97,9 @@ class AccountUserRoleController extends Controller
                         ->trans('orob2b.account.accountuserrole.frontend.edit-predifined-role.message')
                 );
             }
-            $isGranted &= $securityFacade->isGranted('FRONTEND_ACCOUNT_ROLE_UPDATE', $role);
+            $isGranted = $securityFacade->isGranted('orob2b_account_frontend_account_user_role_create');
+        } else {
+            $isGranted = $securityFacade->isGranted('FRONTEND_ACCOUNT_ROLE_UPDATE', $role);
         }
 
         if (!$isGranted) {

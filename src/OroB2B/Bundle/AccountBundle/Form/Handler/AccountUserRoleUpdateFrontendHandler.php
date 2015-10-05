@@ -65,6 +65,16 @@ class AccountUserRoleUpdateFrontendHandler extends AbstractAccountUserRoleHandle
     }
 
     /**
+     * {@inheritdoc}
+     */
+    protected function getRolePrivileges(AbstractRole $role)
+    {
+        $sid = $this->aclManager->getSid($this->predefinedRole ?: $role);
+
+        return $this->privilegeRepository->getPrivileges($sid);
+    }
+
+    /**
      * @param AccountUserRole $role
      * @return AccountUserRole
      */

@@ -12,6 +12,7 @@ use Oro\Bundle\UserBundle\Entity\AbstractRole;
 use Oro\Bundle\UserBundle\Form\Handler\AclRoleHandler;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType;
 
 abstract class AbstractAccountUserRoleHandler extends AclRoleHandler
@@ -110,5 +111,33 @@ abstract class AbstractAccountUserRoleHandler extends AclRoleHandler
     protected function getAclGroup()
     {
         return AccountUser::SECURITY_GROUP;
+    }
+
+    /**
+     * @param AccountUserRole $role
+     * @return ArrayCollection[]
+     */
+    public function getAccountUserRolePrivileges(AccountUserRole $role)
+    {
+        $sortedPrivileges= [];
+        $privileges = $this->getRolePrivileges($role);
+
+        $this->loadPrivilegeConfigPermissions(true);
+
+        foreach ($this->privilegeConfig as $fieldName => $config) {
+            $sortedPrivileges[$fieldName] = $this->filterPrivileges($privileges, $config['types']);
+            $this->applyOptions($sortedPrivileges[$fieldName], $config);
+        }
+
+        return $sortedPrivileges;
+    }
+
+    /**
+     * @param AccountUserRole $role
+     * @return array
+     */
+    public function getAccountUserRolePrivilegeConfig(AccountUserRole $role)
+    {
+        return $this->privilegeConfig;
     }
 }
