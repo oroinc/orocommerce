@@ -105,11 +105,11 @@ class ProductPriceFilterTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'correct' => [
-                'data' => ['value' => 20, 'type' => 'type'],
-                'expected' => ['value' => 20, 'type' => 'type']
+                'data' => ['value' => [10, 20], 'type' => 'type', 'unit' => 'unit'],
+                'expected' => ['value' => [10, 20], 'type' => 'type', 'unit' => 'unit']
             ],
-            'without value' => [
-                'data' => [],
+            'without unit' => [
+                'data' => ['value' => [10, 20], 'type' => 'type'],
                 'expected' => false
             ],
         ];

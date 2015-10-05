@@ -141,11 +141,13 @@ class ProductPriceFilter extends NumberRangeFilter
      */
     public function parseData($data)
     {
-        if (!is_array($data) || !array_key_exists('value', $data)) {
+        if (false == ($data = parent::parseData($data))) {
             return false;
         }
 
-        $data['type'] = isset($data['type']) ? $data['type'] : null;
+        if (empty($data['unit'])) {
+            return false;
+        }
 
         return $data;
     }
