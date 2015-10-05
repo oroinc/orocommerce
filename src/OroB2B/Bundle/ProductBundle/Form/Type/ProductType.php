@@ -4,12 +4,15 @@ namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class ProductType extends AbstractType
 {
@@ -37,14 +40,20 @@ class ProductType extends AbstractType
         $builder
             ->add('sku', 'text', ['required' => true, 'label' => 'orob2b.product.sku.label'])
             ->add(
+                'hasVariants',
+                'checkbox',
+                [
+                    'label' => 'orob2b.product.has_variants.label',
+                    'tooltip'  => 'orob2b.product.form.tooltip.has_variants'
+                ]
+            )
+            ->add(
                 'status',
                 'oro_enum_select',
                 [
                     'label'     => 'orob2b.product.status.label',
                     'enum_code' => 'prod_status',
-                    'configs'   => [
-                        'allowClear' => false,
-                    ]
+                    'configs'   => ['allowClear' => false]
                 ]
             )
             ->add(
@@ -53,9 +62,7 @@ class ProductType extends AbstractType
                 [
                     'label'     => 'orob2b.product.inventory_status.label',
                     'enum_code' => 'prod_inventory_status',
-                    'configs'   => [
-                        'allowClear' => false,
-                    ]
+                    'configs'   => ['allowClear' => false]
                 ]
             )
             ->add(
@@ -81,10 +88,7 @@ class ProductType extends AbstractType
                             'resize' => true,
                             'width' => 500,
                             'height' => 300,
-                            'plugins' => array_merge(
-                                OroRichTextType::$defaultPlugins,
-                                ['fullscreen']
-                            ),
+                            'plugins' => array_merge(OroRichTextType::$defaultPlugins, ['fullscreen']),
                             'toolbar' =>
                                 [reset(OroRichTextType::$toolbars[OroRichTextType::TOOLBAR_DEFAULT]) . ' | fullscreen'],
                         ],
@@ -105,9 +109,7 @@ class ProductType extends AbstractType
                 [
                     'label'     => 'orob2b.product.visibility.label',
                     'enum_code' => 'prod_visibility',
-                    'configs'   => [
-                        'allowClear' => false,
-                    ]
+                    'configs'   => ['allowClear' => false]
                 ]
             )
             ->add(
@@ -119,6 +121,31 @@ class ProductType extends AbstractType
                     'required' => false
                 ]
             );
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener']);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function preSetDataListener(FormEvent $event)
+    {
+        $product = $event->getData();
+        $form = $event->getForm();
+
+        if ($product instanceof Product && $product->getHasVariants()) {
+            $form
+                ->add(
+                    'variantFields',
+                    ProductCustomFieldsChoiceType::NAME,
+                    ['label' => 'orob2b.product.variant_fields.label']
+                )
+                ->add(
+                    'variantLinks',
+                    ProductVariantLinksType::NAME,
+                    ['product_class' => $this->dataClass, 'by_reference' => false]
+                );
+        }
     }
 
     /**

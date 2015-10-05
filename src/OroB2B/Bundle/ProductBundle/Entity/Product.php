@@ -55,6 +55,7 @@ use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
  * @ORM\HasLifecycleCallbacks()
  *
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class Product extends ExtendProduct implements OrganizationAwareInterface
 {
@@ -92,6 +93,20 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * )
      */
     protected $sku;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="has_variants", type="boolean", nullable=false, options={"default"=false})
+     */
+    protected $hasVariants = false;
+
+    /**
+     * @var array
+     *
+     * @ORM\Column(name="variant_fields", type="array", nullable=true)
+     */
+    protected $variantFields = [];
 
     /**
      * @var \DateTime $createdAt
@@ -191,6 +206,13 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      */
     protected $descriptions;
 
+    /**
+     * @var Collection|ProductVariantLink[]
+     *
+     * @ORM\OneToMany(targetEntity="ProductVariantLink", mappedBy="parentProduct", cascade={"ALL"}, orphanRemoval=true)
+     */
+    protected $variantLinks;
+
     public function __construct()
     {
         parent::__construct();
@@ -198,6 +220,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
         $this->unitPrecisions = new ArrayCollection();
         $this->names          = new ArrayCollection();
         $this->descriptions   = new ArrayCollection();
+        $this->variantLinks   = new ArrayCollection();
     }
 
     /**
@@ -235,6 +258,44 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     public function setSku($sku)
     {
         $this->sku = $sku;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getHasVariants()
+    {
+        return $this->hasVariants;
+    }
+
+    /**
+     * @param bool $hasVariants
+     * @return Product
+     */
+    public function setHasVariants($hasVariants)
+    {
+        $this->hasVariants = $hasVariants;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getVariantFields()
+    {
+        return $this->variantFields;
+    }
+
+    /**
+     * @param array $variantFields
+     * @return Product
+     */
+    public function setVariantFields(array $variantFields)
+    {
+        $this->variantFields = $variantFields;
 
         return $this;
     }
@@ -503,6 +564,42 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     }
 
     /**
+     * @return Collection|ProductVariantLink[]
+     */
+    public function getVariantLinks()
+    {
+        return $this->variantLinks;
+    }
+
+    /**
+     * @param ProductVariantLink $variantLink
+     * @return $this
+     */
+    public function addVariantLink(ProductVariantLink $variantLink)
+    {
+        $variantLink->setParentProduct($this);
+
+        if (!$this->variantLinks->contains($variantLink)) {
+            $this->variantLinks->add($variantLink);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ProductVariantLink $variantLink
+     * @return $this
+     */
+    public function removeVariantLink(ProductVariantLink $variantLink)
+    {
+        if ($this->variantLinks->contains($variantLink)) {
+            $this->variantLinks->removeElement($variantLink);
+        }
+
+        return $this;
+    }
+
+    /**
      * Pre persist event handler
      *
      * @ORM\PrePersist
@@ -521,6 +618,11 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+
+        if (false === $this->hasVariants) {
+            $this->variantLinks->clear();
+            $this->variantFields = [];
+        }
     }
 
     public function __clone()
@@ -530,6 +632,8 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
             $this->unitPrecisions = new ArrayCollection();
             $this->names = new ArrayCollection();
             $this->descriptions = new ArrayCollection();
+            $this->variantLinks = new ArrayCollection();
+            $this->variantFields = [];
         }
     }
 }

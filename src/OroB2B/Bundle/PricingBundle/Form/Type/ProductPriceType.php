@@ -50,7 +50,7 @@ class ProductPriceType extends AbstractType
                 ProductUnitSelectionType::NAME,
                 [
                     'label' => 'orob2b.pricing.unit.label',
-                    'empty_value' => 'orob2b.product.productunit.form.choose',
+                    'empty_value' => false,
                     'constraints' => [new NotBlank()],
                 ]
             )
@@ -59,6 +59,7 @@ class ProductPriceType extends AbstractType
                 PriceType::NAME,
                 [
                     'label' => 'orob2b.pricing.price.label',
+                    'currency_empty_value' => 'orob2b.pricing.pricelist.form.pricelist_required',
                     'full_currency_list' => true,
                 ]
             )
