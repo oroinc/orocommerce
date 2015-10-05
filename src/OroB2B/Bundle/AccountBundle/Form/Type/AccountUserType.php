@@ -4,11 +4,14 @@ namespace OroB2B\Bundle\AccountBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\AddressBundle\Form\Type\AddressCollectionType;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
+use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 class AccountUserType extends AbstractType
@@ -170,13 +173,7 @@ class AccountUserType extends AbstractType
             );
 
         if ($this->securityFacade->isGranted('orob2b_account_account_user_role_view')) {
-            $builder->add(
-                'roles',
-                AccountUserRoleSelectType::NAME,
-                [
-                    'label' => 'orob2b.account.accountuser.roles.label'
-                ]
-            );
+            $this->addRoleField($builder);
         }
     }
 
@@ -204,6 +201,30 @@ class AccountUserType extends AbstractType
                     'mapped' => false
                 ]
             );
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
+     */
+    protected function addRoleField(FormBuilderInterface $builder)
+    {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+            $form = $event->getForm();
+
+            /** @var AccountUser $data */
+            $data = $event->getData();
+            $data->setOrganization($this->securityFacade->getOrganization());
+
+            $form->add(
+                'roles',
+                AccountUserRoleSelectType::NAME,
+                [
+                    'query_builder' => function (AccountUserRoleRepository $repository) use ($data) {
+                        return $repository->getAvailableRolesByAccountUserQueryBuilder($data);
+                    }
+                ]
+            );
+        });
     }
 
     /**

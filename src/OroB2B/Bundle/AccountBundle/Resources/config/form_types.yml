@@ -87,6 +87,8 @@ services:
 
     orob2b_account.form.type.account_user_role_select:
         class: %orob2b_account.form.type.account_user_role_select.class%
+        arguments:
+            - @translator
         calls:
             - [setRoleClass, [%orob2b_account.entity.account_user_role.class%]]
         tags:
