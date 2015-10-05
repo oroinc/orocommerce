@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
@@ -12,7 +13,7 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Extension\AbstractProductDataStorageExtensionTestCase;
 
-class RequestDataStorageExtensionTestCase extends AbstractProductDataStorageExtensionTestCase
+class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensionTestCase
 {
     /**
      * {@inheritdoc}
@@ -21,8 +22,17 @@ class RequestDataStorageExtensionTestCase extends AbstractProductDataStorageExte
     {
         parent::setUp();
 
-        $this->extension = new RequestDataStorageExtension($this->storage, $this->doctrineHelper, $this->productClass);
-        $this->extension->setRequest($this->request);
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $this->request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+
+        $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
+        $this->extension = new RequestDataStorageExtension(
+            $requestStack,
+            $this->storage,
+            $this->doctrineHelper,
+            $this->productClass
+        );
         $this->extension->setDataClass('OroB2B\Bundle\RFPBundle\Entity\Request');
 
         $this->entity = new RFPRequest();

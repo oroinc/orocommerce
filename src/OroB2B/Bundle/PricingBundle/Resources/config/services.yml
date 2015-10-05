@@ -100,11 +100,10 @@ services:
     orob2b_pricing.event_listener.form_view:
         class: %orob2b_pricing.event_listener.form_view.class%
         arguments:
+            - @request_stack
             - @translator
             - @oro_entity.doctrine_helper
             - @orob2b_pricing.model.frontend.price_list_request_handler
-        calls:
-            - [setRequest, ["@?request="]]
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onAccountView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-edit, method: onEntityEdit }
@@ -155,8 +154,8 @@ services:
     orob2b_pricing.model.price_list_request_handler.abstract:
         class: %orob2b_pricing.model.price_list_request_handler.abstract.class%
         abstract: true
-        calls:
-            - [setRequest, ["@?request="]]
+        arguments:
+            - @request_stack
 
     orob2b_pricing.model.price_list_request_handler:
         class: %orob2b_pricing.model.price_list_request_handler.class%
@@ -207,12 +206,11 @@ services:
     orob2b_pricing.datagrid.extension.product_selection_grid:
         class: %orob2b_pricing.datagrid.extension.product_selection_grid.class%
         arguments:
+            - @request_stack
             - @security.token_storage
             - @orob2b_pricing.model.frontend_product_list_modifier
         tags:
             - { name: oro_datagrid.extension }
-        calls:
-            - [setRequest, ["@?request="]]
 
     orob2b_pricing.autocomplete.product.search_handler:
         class: %orob2b_pricing.autocomplete.product.search_handler.class%
@@ -220,9 +218,9 @@ services:
             - %orob2b_product.product.class%
             - ["sku", "defaultName.string"]
             - @orob2b_pricing.model.frontend_product_list_modifier
+            - @request_stack
         calls:
             - [initDoctrinePropertiesByManagerRegistry, ["@doctrine"]]
             - [setAclHelper,["@oro_security.acl_helper"]]
-            - [setRequest, ["@?request="]]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: "orob2b_pricing_price_list_aware_products_list" }

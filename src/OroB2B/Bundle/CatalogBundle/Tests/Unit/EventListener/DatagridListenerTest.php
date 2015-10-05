@@ -83,7 +83,10 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->doctrine = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->requestProductHandler = $this->getMock('OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler');
+        $this->requestProductHandler = $this
+            ->getMockBuilder('OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler')
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->listener = new DatagridListener($this->doctrine, $this->requestProductHandler);
         $this->listener->setDataClass(self::DATA_CLASS);
     }
