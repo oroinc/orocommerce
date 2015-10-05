@@ -42,6 +42,7 @@ use OroB2B\Bundle\RFPBundle\Model\ExtendRequest;
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class Request extends ExtendRequest implements AccountOwnerAwareInterface
 {
