@@ -20,7 +20,7 @@ placeholders:
             frontend_window_bundle_js:
                 order: 200
 
-    additional_configuration_fields:
+    install_additional_configuration_fields:
         items:
             web_settings:
                 order: 300
