@@ -2,10 +2,13 @@
 
 namespace OroB2B\Bundle\AccountBundle\Form\Handler;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+use Oro\Bundle\SecurityBundle\Acl\Domain\ObjectIdentityFactory;
 use Oro\Bundle\UserBundle\Entity\AbstractRole;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -123,5 +126,32 @@ class AccountUserRoleUpdateFrontendHandler extends AbstractAccountUserRoleHandle
         }
 
         return $this->loggedAccountUser;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function filterPrivileges(ArrayCollection $privileges, array $rootIds)
+    {
+        $privileges = parent::filterPrivileges($privileges, $rootIds);
+        $entityPrefix =  'entity:';
+
+        foreach ($privileges as $privilege) {
+            $oid = $privilege->getIdentity()->getId();
+            if (strpos($oid, $entityPrefix) === 0) {
+                $className = substr($oid, strlen($entityPrefix));
+
+                if ($className === ObjectIdentityFactory::ROOT_IDENTITY_TYPE) {
+                    continue;
+                }
+
+                $metadata = $this->chainMetadataProvider->getMetadata($className);
+                if (!$metadata->hasOwner()) {
+                    $privileges->removeElement($privilege);
+                }
+            }
+        }
+
+        return $privileges;
     }
 }
