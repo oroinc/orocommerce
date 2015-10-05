@@ -74,9 +74,25 @@ class SkuIncrementorTest extends \PHPUnit_Framework_TestCase
                     'DEF123-88-2' => 'DEF123-88',
                 ]
             ],
+            [
+                ['SKU-001-updated', 'SKU-001-updated-1'],
+                [
+                    'SKU-001-updated-2' => 'SKU-001-updated-1',
+                ]
+            ],
+            [
+                ['SKU-001-updated-1'],
+                [
+                    'SKU-001-updated-1-1' => 'SKU-001-updated-1',
+                ]
+            ],
         ];
     }
 
+    /**
+     * @param string $existingSku
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
     private function getProductRepositoryMock($existingSku)
     {
         $mock = $this
@@ -94,7 +110,7 @@ class SkuIncrementorTest extends \PHPUnit_Framework_TestCase
             ->expects($this->any())
             ->method('findOneBySku')
             ->willReturnCallback(function ($sku) use ($existingSku) {
-                return in_array($sku, $existingSku) ? new Product() : null;
+                return in_array($sku, $existingSku, true) ? new Product() : null;
             });
 
         return $mock;

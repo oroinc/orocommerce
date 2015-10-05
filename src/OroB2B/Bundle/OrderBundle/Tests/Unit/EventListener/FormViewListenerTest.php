@@ -2,6 +2,9 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\EventListener;
 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
@@ -16,27 +19,29 @@ class FormViewListenerTest extends FormViewListenerTestCase
      */
     protected $listener;
 
+    /** @var  Request|\PHPUnit_Framework_MockObject_MockObject */
+    protected $request;
+
     /**
      * {@inheritdoc}
      */
     public function setUp()
     {
         parent::setUp();
-
-        $listener = new FormViewListener($this->translator, $this->doctrineHelper);
-        $this->listener = $listener;
+        $this->request = $this->getRequest();
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
+        $this->listener = new FormViewListener($this->translator, $this->doctrineHelper, $requestStack);
     }
 
     public function testOnAccountUserView()
     {
-        $request = $this->getRequest();
-        $request
+        $this->request
             ->expects($this->any())
             ->method('get')
             ->with('id')
             ->willReturn(1);
-
-        $this->listener->setRequest($request);
 
         $accountUser = new AccountUser();
 
@@ -77,10 +82,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
     public function testOnAccountView()
     {
-        $request = $this->getRequest();
-        $request->expects($this->any())->method('get')->with('id')->willReturn(1);
-
-        $this->listener->setRequest($request);
+        $this->request->expects($this->any())->method('get')->with('id')->willReturn(1);
 
         $account = new Account();
 
@@ -108,10 +110,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
     public function testOnAccountViewWithoutId()
     {
-        $request = $this->getRequest();
-        $request->expects($this->any())->method('get')->with('id')->willReturn(null);
-
-        $this->listener->setRequest($request);
+        $this->request->expects($this->any())->method('get')->with('id')->willReturn(null);
 
         $account = new Account();
 
@@ -131,10 +130,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
     public function testOnAccountViewWithoutEntity()
     {
-        $request = $this->getRequest();
-        $request->expects($this->any())->method('get')->with('id')->willReturn(1);
-
-        $this->listener->setRequest($request);
+        $this->request->expects($this->any())->method('get')->with('id')->willReturn(1);
 
         $this->doctrineHelper
             ->expects($this->once())

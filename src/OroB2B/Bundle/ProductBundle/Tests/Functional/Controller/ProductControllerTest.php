@@ -19,7 +19,7 @@ class ProductControllerTest extends WebTestCase
     const TEST_SKU = 'SKU-001';
     const UPDATED_SKU = 'SKU-001-updated';
     const FIRST_DUPLICATED_SKU = 'SKU-001-updated-1';
-    const SECOND_DUPLICATED_SKU = 'SKU-001-updated-1-1';
+    const SECOND_DUPLICATED_SKU = 'SKU-001-updated-2';
 
     const STATUS = 'Disabled';
     const UPDATED_STATUS = 'Enabled';
@@ -120,11 +120,11 @@ class ProductControllerTest extends WebTestCase
                 'names' => [
                     'values' => [
                         'default' => self::DEFAULT_NAME_ALTERED,
-                        'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]]
+                        'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
                     ],
-                    'ids' => [$locale->getId() => $localizedName->getId()]
+                    'ids' => [$locale->getId() => $localizedName->getId()],
                 ],
-            ]
+            ],
         ];
 
         $this->client->followRedirects(true);
@@ -141,13 +141,13 @@ class ProductControllerTest extends WebTestCase
                 'unit' => $crawler->filter('select[name="orob2b_product[unitPrecisions][0][unit]"] :selected')
                     ->html(),
                 'precision' => $crawler->filter('input[name="orob2b_product[unitPrecisions][0][precision]"]')
-                    ->extract('value')[0]
+                    ->extract('value')[0],
             ],
             [
                 'unit' => $crawler->filter('select[name="orob2b_product[unitPrecisions][1][unit]"] :selected')
                     ->html(),
                 'precision' => $crawler->filter('input[name="orob2b_product[unitPrecisions][1][precision]"]')
-                    ->extract('value')[0]
+                    ->extract('value')[0],
             ],
         ];
         $expectedUnitPrecisions = [
@@ -161,43 +161,6 @@ class ProductControllerTest extends WebTestCase
         );
 
         return $id;
-    }
-
-    /**
-     * @depends testUpdate
-     * @param int $id
-     * @return int
-     */
-    public function testDuplicate($id)
-    {
-        $this->client->followRedirects(true);
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_duplicate', ['id' => $id]));
-
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
-        $html = $crawler->html();
-        $this->assertContains('Product has been duplicated', $html);
-        $this->assertContains(
-            self::FIRST_DUPLICATED_SKU . ' - ' . self::DEFAULT_NAME_ALTERED . ' - Products - Products',
-            $html
-        );
-        $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
-        $this->assertContains(self::UPDATED_VISIBILITY, $html);
-        $this->assertContains(self::STATUS, $html);
-
-        $this->assertContains(
-            $this->createUnitPrecisionString(self::FIRST_UNIT_FULL_NAME, self::FIRST_UNIT_PRECISION),
-            $html
-        );
-        $this->assertContains(
-            $this->createUnitPrecisionString(self::SECOND_UNIT_FULL_NAME, self::SECOND_UNIT_PRECISION),
-            $html
-        );
-
-        $result = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
-
-        return $result['id'];
     }
 
     /**
@@ -237,28 +200,42 @@ class ProductControllerTest extends WebTestCase
     /**
      * @depends testView
      * @param int $id
+     * @return int
      */
-    public function testDelete($id)
+    public function testDuplicate($id)
     {
-        $this->client->request(
-            'DELETE',
-            $this->getUrl('orob2b_api_delete_product', ['id' => $id]),
-            [],
-            [],
-            $this->generateWsseAuthHeader()
+        $this->client->followRedirects(true);
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_duplicate', ['id' => $id]));
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $html = $crawler->html();
+        $this->assertContains('Product has been duplicated', $html);
+        $this->assertContains(
+            self::FIRST_DUPLICATED_SKU . ' - ' . self::DEFAULT_NAME_ALTERED . ' - Products - Products',
+            $html
+        );
+        $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
+        $this->assertContains(self::UPDATED_VISIBILITY, $html);
+        $this->assertContains(self::STATUS, $html);
+
+        $this->assertContains(
+            $this->createUnitPrecisionString(self::FIRST_UNIT_FULL_NAME, self::FIRST_UNIT_PRECISION),
+            $html
+        );
+        $this->assertContains(
+            $this->createUnitPrecisionString(self::SECOND_UNIT_FULL_NAME, self::SECOND_UNIT_PRECISION),
+            $html
         );
 
-        $result = $this->client->getResponse();
-        $this->assertEmptyResponseStatusCodeEquals($result, 204);
+        $result = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
 
-        $this->client->request('GET', $this->getUrl('orob2b_product_view', ['id' => $id]));
-
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 404);
+        return $result['id'];
     }
 
     /**
-     * @depends testUpdate
+     * @depends testDuplicate
      *
      * @return int
      */
@@ -266,7 +243,7 @@ class ProductControllerTest extends WebTestCase
     {
         $result = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
 
-        $id = $result['id'];
+        $id = (int)$result['id'];
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
 
         $locale = $this->getLocale();
@@ -295,11 +272,11 @@ class ProductControllerTest extends WebTestCase
                 'names' => [
                     'values' => [
                         'default' => self::DEFAULT_NAME_ALTERED,
-                        'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]]
+                        'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
                     ],
-                    'ids' => [$locale->getId() => $localizedName->getId()]
+                    'ids' => [$locale->getId() => $localizedName->getId()],
                 ],
-            ]
+            ],
         ];
 
         $this->client->followRedirects(true);
@@ -327,9 +304,32 @@ class ProductControllerTest extends WebTestCase
             $html
         );
 
-        $result = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
+        $result = $this->getProductDataBySku(self::UPDATED_SKU);
 
         return $result['id'];
+    }
+
+    /**
+     * @depends testSaveAndDuplicate
+     * @param int $id
+     */
+    public function testDelete($id)
+    {
+        $this->client->request(
+            'DELETE',
+            $this->getUrl('orob2b_api_delete_product', ['id' => $id]),
+            [],
+            [],
+            $this->generateWsseAuthHeader()
+        );
+
+        $result = $this->client->getResponse();
+        $this->assertEmptyResponseStatusCodeEquals($result, 204);
+
+        $this->client->request('GET', $this->getUrl('orob2b_product_view', ['id' => $id]));
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 404);
     }
 
     /**
@@ -347,14 +347,17 @@ class ProductControllerTest extends WebTestCase
     protected function sortUnitPrecisions(array $unitPrecisions)
     {
         // prices must be sort by unit and currency
-        usort($unitPrecisions, function (array $a, array $b) {
-            $unitCompare = strcmp($a['unit'], $b['unit']);
-            if ($unitCompare !== 0) {
-                return $unitCompare;
-            }
+        usort(
+            $unitPrecisions,
+            function (array $a, array $b) {
+                $unitCompare = strcmp($a['unit'], $b['unit']);
+                if ($unitCompare !== 0) {
+                    return $unitCompare;
+                }
 
-            return strcmp($a['precision'], $b['precision']);
-        });
+                return strcmp($a['precision'], $b['precision']);
+            }
+        );
 
         return $unitPrecisions;
     }
@@ -380,6 +383,11 @@ class ProductControllerTest extends WebTestCase
         return $result;
     }
 
+    /**
+     * @param string $name
+     * @param string $precision
+     * @return string
+     */
     private function createUnitPrecisionString($name, $precision)
     {
         return sprintf('%s with precision %s decimal places', $name, $precision);

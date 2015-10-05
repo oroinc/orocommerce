@@ -12,10 +12,9 @@ services:
     orob2b_shopping_list.event_listener.form_view:
         class: %orob2b_shopping_list.event_listener.form_view.class%
         arguments:
+            - @request_stack
             - @translator
             - @oro_entity.doctrine_helper
-        calls:
-            - [setRequest, ["@?request="]]
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.frontend-product-view, method: onFrontendProductView }
 

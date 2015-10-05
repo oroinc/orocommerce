@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\AccountBundle\Form\Handler;
 
+use Symfony\Component\HttpFoundation\RequestStack;
+
 use Oro\Bundle\UserBundle\Entity\AbstractRole;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
@@ -12,6 +14,19 @@ use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider
 
 class AccountUserRoleUpdateHandler extends AbstractAccountUserRoleHandler
 {
+    /** @var  RequestStack */
+    protected $requestStack;
+
+    /**
+     * @param RequestStack $requestStack
+     */
+    public function setRequestStack($requestStack)
+    {
+        $this->requestStack = $requestStack;
+        $this->request = $requestStack->getCurrentRequest();
+    }
+
+
     /**
      * @var Account
      */

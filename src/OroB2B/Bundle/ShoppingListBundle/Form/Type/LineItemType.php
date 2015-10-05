@@ -50,6 +50,7 @@ class LineItemType extends AbstractType
                 [
                     'required' => true,
                     'label' => 'orob2b.shoppinglist.lineitem.unit.label',
+                    'placeholder' => 'orob2b.product.form.product_required'
                 ]
             )
             ->add(
@@ -91,6 +92,7 @@ class LineItemType extends AbstractType
             [
                 'required' => true,
                 'label' => 'orob2b.shoppinglist.lineitem.unit.label',
+                'placeholder' => null,
                 'query_builder' => function (ProductUnitRepository $er) use ($entity) {
                     return $er->getProductUnitsQueryBuilder($entity->getProduct());
                 },
