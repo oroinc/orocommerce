@@ -124,6 +124,13 @@ class ProductControllerTest extends WebTestCase
                     ],
                     'ids' => [$locale->getId() => $localizedName->getId()],
                 ],
+                'descriptions' => [
+                    'values' => [
+                        'default' => self::DEFAULT_DESCRIPTION,
+                        'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
+                    ],
+                    'ids' => [$locale->getId() => $localizedName->getId()],
+                ],
             ],
         ];
 
@@ -269,6 +276,13 @@ class ProductControllerTest extends WebTestCase
                 'names' => [
                     'values' => [
                         'default' => self::DEFAULT_NAME_ALTERED,
+                        'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
+                    ],
+                    'ids' => [$locale->getId() => $localizedName->getId()],
+                ],
+                'descriptions' => [
+                    'values' => [
+                        'default' => self::DEFAULT_DESCRIPTION,
                         'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
                     ],
                     'ids' => [$locale->getId() => $localizedName->getId()],
