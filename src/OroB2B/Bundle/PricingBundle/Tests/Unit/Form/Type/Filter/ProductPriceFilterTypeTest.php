@@ -94,7 +94,7 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
         return [
             [
                 'defaultOptions' => [
-                    'data_type'         => NumberRangeFilterType::DATA_DECIMAL,
+                    'data_type' => NumberRangeFilterType::DATA_DECIMAL,
                 ]
             ]
         ];
