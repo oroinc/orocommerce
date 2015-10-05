@@ -13,7 +13,7 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Extension\AbstractProductDataStorageExtensionTestCase;
 
-class RequestDataStorageExtensionTestCase extends AbstractProductDataStorageExtensionTestCase
+class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensionTestCase
 {
     /**
      * {@inheritdoc}

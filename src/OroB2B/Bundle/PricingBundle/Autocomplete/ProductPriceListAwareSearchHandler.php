@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\Autocomplete;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandler;
@@ -53,7 +52,6 @@ class ProductPriceListAwareSearchHandler extends SearchHandler
      */
     protected function searchEntities($search, $firstResult, $maxResults)
     {
-        /** @var Request $request */
         $request = $this->requestStack->getCurrentRequest();
         $currency = null;
         if ($request) {

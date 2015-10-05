@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\OrderBundle\EventListener;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -33,6 +32,7 @@ class FormViewListener
     /**
      * @param TranslatorInterface $translator
      * @param DoctrineHelper $doctrineHelper
+     * @param RequestStack $requestStack
      */
     public function __construct(
         TranslatorInterface $translator,
@@ -82,7 +82,6 @@ class FormViewListener
      */
     protected function getEntityFromRequestId($className)
     {
-        /** @var Request $request */
         $request = $this->requestStack->getCurrentRequest();
         if (!$request) {
             return null;

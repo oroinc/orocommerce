@@ -143,10 +143,11 @@ class FormViewListenerTest extends FormViewListenerTestCase
                 )
                 ->willReturn(
                     $isPaymentTermInGroupExist ?
-                        $templateAccountGroupPaymentTermHtml :
-                        $templateAccountGroupWithoutPaymentTermHtml
+                    $templateAccountGroupPaymentTermHtml :
+                    $templateAccountGroupWithoutPaymentTermHtml
                 );
         }
+
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
         $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn(

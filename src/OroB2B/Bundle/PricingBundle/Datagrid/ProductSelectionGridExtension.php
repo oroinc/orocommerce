@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\Datagrid;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -63,7 +62,6 @@ class ProductSelectionGridExtension extends AbstractExtension
             return;
         }
 
-        /** @var Request $request */
         $request = $this->requestStack->getCurrentRequest();
         if ($request) {
             $currency = $request->get(self::CURRENCY_KEY, null);

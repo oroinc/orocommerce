@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -62,7 +61,6 @@ class FormViewListener
      */
     public function onAccountView(BeforeListRenderEvent $event)
     {
-        /** @var Request $request */
         $request = $this->requestStack->getCurrentRequest();
         if (!$request) {
             return;
@@ -87,7 +85,6 @@ class FormViewListener
      */
     public function onAccountGroupView(BeforeListRenderEvent $event)
     {
-        /** @var Request $request */
         $request = $this->requestStack->getCurrentRequest();
         if (!$request) {
             return;
@@ -124,7 +121,6 @@ class FormViewListener
      */
     public function onProductView(BeforeListRenderEvent $event)
     {
-        /** @var Request $request */
         $request = $this->requestStack->getCurrentRequest();
         if (!$request) {
             return;
@@ -146,7 +142,6 @@ class FormViewListener
      */
     public function onFrontendProductView(BeforeListRenderEvent $event)
     {
-        /** @var Request $request */
         $request = $this->requestStack->getCurrentRequest();
         if (!$request) {
             return;

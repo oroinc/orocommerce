@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\Model;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -47,7 +46,6 @@ class PriceListRequestHandler extends AbstractPriceListRequestHandler
      */
     public function getPriceList()
     {
-        /** @var Request $request */
         $request = $this->requestStack->getCurrentRequest();
         if (!$request) {
             return $this->getDefaultPriceList();
@@ -75,7 +73,6 @@ class PriceListRequestHandler extends AbstractPriceListRequestHandler
      */
     public function getPriceListId()
     {
-        /** @var Request $request */
         $request = $this->requestStack->getCurrentRequest();
         if (!$request) {
             return false;
@@ -102,7 +99,6 @@ class PriceListRequestHandler extends AbstractPriceListRequestHandler
     {
         $priceListCurrencies = $this->getPriceList()->getCurrencies();
 
-        /** @var Request $request */
         $request = $this->requestStack->getCurrentRequest();
 
         if (!$request) {

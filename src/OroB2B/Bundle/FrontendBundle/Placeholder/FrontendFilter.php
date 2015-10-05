@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\FrontendBundle\Placeholder;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
@@ -34,7 +33,6 @@ class FrontendFilter
      */
     public function isFrontendRoute()
     {
-        /** @var Request $request */
         $request = $this->requestStack->getCurrentRequest();
         if (!$request) {
             return false;
@@ -48,7 +46,6 @@ class FrontendFilter
      */
     public function isBackendRoute()
     {
-        /** @var Request $request */
         $request = $this->requestStack->getCurrentRequest();
         if (!$request) {
             return true;

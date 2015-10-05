@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\Model;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
@@ -70,7 +69,6 @@ class FrontendPriceListRequestHandler extends AbstractPriceListRequestHandler
         $priceListCurrencies = $this->getPriceList()->getCurrencies();
         $currency = null;
 
-        /** @var Request $request */
         $request = $this->requestStack->getCurrentRequest();
         if ($request) {
             $currency = $request->get(self::PRICE_LIST_CURRENCY_KEY);
@@ -98,7 +96,6 @@ class FrontendPriceListRequestHandler extends AbstractPriceListRequestHandler
     {
         $showTierPrices = parent::getShowTierPrices();
 
-        /** @var Request $request */
         $request = $this->requestStack->getCurrentRequest();
 
         if ((!$request || ($request && !$request->get(self::TIER_PRICES_KEY)))

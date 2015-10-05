@@ -53,9 +53,9 @@ class AccountUserByAccountExtension extends AbstractExtension
         $request = $this->requestStack->getCurrentRequest();
 
         return !$this->applied
-        && static::SUPPORTED_GRID === $config->getName()
-        && $request
-        && $request->get(self::ACCOUNT_KEY);
+            && static::SUPPORTED_GRID === $config->getName()
+            && $request
+            && $request->get(self::ACCOUNT_KEY);
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\Model;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
@@ -16,7 +15,9 @@ abstract class AbstractPriceListRequestHandler
      */
     protected $requestStack;
 
-
+    /**
+     * @param RequestStack $requestStack
+     */
     public function __construct(RequestStack $requestStack)
     {
         $this->requestStack = $requestStack;
@@ -37,7 +38,6 @@ abstract class AbstractPriceListRequestHandler
      */
     public function getShowTierPrices()
     {
-        /** @var Request $request */
         $request = $this->requestStack->getCurrentRequest();
         if (!$request) {
             return false;

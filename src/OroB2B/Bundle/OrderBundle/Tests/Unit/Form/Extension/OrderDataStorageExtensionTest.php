@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
@@ -13,7 +12,7 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Extension\AbstractProductDataStorageExtensionTestCase;
 
-class OrderDataStorageExtensionTestCase extends AbstractProductDataStorageExtensionTestCase
+class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionTestCase
 {
     /**
      * {@inheritdoc}

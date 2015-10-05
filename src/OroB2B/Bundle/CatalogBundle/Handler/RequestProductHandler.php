@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Handler;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class RequestProductHandler
@@ -27,7 +26,6 @@ class RequestProductHandler
      */
     public function getCategoryId()
     {
-        /** @var Request $request */
         $request = $this->requestStack->getCurrentRequest();
         if (!$request) {
             return false;
@@ -52,7 +50,6 @@ class RequestProductHandler
      */
     public function getIncludeSubcategoriesChoice()
     {
-        /** @var Request $request */
         $request = $this->requestStack->getCurrentRequest();
         if (!$request) {
             return self::INCLUDE_SUBCATEGORIES_DEFAULT_VALUE;

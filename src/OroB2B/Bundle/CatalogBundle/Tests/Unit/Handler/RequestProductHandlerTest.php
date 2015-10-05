@@ -3,9 +3,9 @@
 namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Handler;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 use OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class RequestProductHandlerTest extends \PHPUnit_Framework_TestCase
 {

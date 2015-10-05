@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\PricingBundle\Form\Handler;
 
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Doctrine\Common\Persistence\ObjectManager;
@@ -50,7 +49,6 @@ class PriceListHandler
     public function process(PriceList $priceList)
     {
         $this->form->setData($priceList);
-        /** @var Request $request */
         $request = $this->requestStack->getCurrentRequest();
         if (in_array($request->getMethod(), ['POST', 'PUT'], true)) {
             $this->form->submit($request);

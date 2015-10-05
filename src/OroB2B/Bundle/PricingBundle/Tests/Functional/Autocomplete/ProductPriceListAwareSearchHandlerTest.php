@@ -91,7 +91,7 @@ class ProductPriceListAwareSearchHandlerTest extends WebTestCase
         $searchHandler = new ProductPriceListAwareSearchHandler(
             self::TEST_ENTITY_CLASS,
             $this->testProperties,
-            $modifier
+            $modifier,
             $requestStack
         );
         $searchHandler->setAclHelper($this->getContainer()->get('oro_security.acl_helper'));
@@ -185,6 +185,10 @@ class ProductPriceListAwareSearchHandlerTest extends WebTestCase
         $searchHandler->search('test', 1, 10);
     }
 
+    /**
+     * @param Request $request
+     * @return \PHPUnit_Framework_MockObject_MockObject|RequestStack
+     */
     protected function getRequestStack(Request $request)
     {
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */

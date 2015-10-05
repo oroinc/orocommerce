@@ -129,7 +129,7 @@ class ProductSelectionGridExtensionTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $dataSource->expects($this->once())
             ->method('getQueryBuilder')
-            ->will($this->returnValue($qb, $currency));
+            ->will($this->returnValue($qb));
 
         $this->productListModifier->expects($this->once())
             ->method('applyPriceListLimitations')

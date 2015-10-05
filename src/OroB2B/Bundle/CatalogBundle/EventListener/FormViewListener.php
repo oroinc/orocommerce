@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\CatalogBundle\EventListener;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -50,7 +49,6 @@ class FormViewListener
      */
     public function onProductView(BeforeListRenderEvent $event)
     {
-        /** @var Request $request */
         $request = $this->requestStack->getCurrentRequest();
 
         if (!$request) {

@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\OrderBundle\Model;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -30,7 +29,7 @@ class OrderRequestHandler
      * @param RequestStack $requestStack
      * @param string $accountClass
      * @param string $accountUserClass
-     **/
+     */
     public function __construct(ManagerRegistry $registry, RequestStack $requestStack, $accountClass, $accountUserClass)
     {
         $this->registry = $registry;
@@ -74,7 +73,6 @@ class OrderRequestHandler
      */
     protected function getFromRequest($var, $default = null)
     {
-        /** @var Request $request */
         $request = $this->requestStack->getCurrentRequest();
         if (!$request) {
             return $default;

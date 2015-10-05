@@ -218,9 +218,9 @@ services:
             - %orob2b_product.product.class%
             - ["sku", "defaultName.string"]
             - @orob2b_pricing.model.frontend_product_list_modifier
+            - @request_stack
         calls:
             - [initDoctrinePropertiesByManagerRegistry, ["@doctrine"]]
             - [setAclHelper,["@oro_security.acl_helper"]]
-            - [setRequest, ["@?request="]]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: "orob2b_pricing_price_list_aware_products_list" }
