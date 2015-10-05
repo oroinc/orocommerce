@@ -195,7 +195,7 @@ services:
     orob2b_account.datagrid.extension.accoun_user_by_account:
         class: %orob2b_account.datagrid.extension.accoun_user_by_account.class%
         calls:
-            - [setRequest, ["@?request="]]
+            - [setRequestStack, [@request_stack]]
         tags:
             - { name: oro_datagrid.extension }
 
