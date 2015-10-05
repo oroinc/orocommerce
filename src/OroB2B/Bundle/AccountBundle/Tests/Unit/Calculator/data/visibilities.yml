@@ -1,0 +1,133 @@
+'expected data':
+    -
+        visible: [1,2,4,6,8,9,10,11,13,14,15,16,17,18,19]
+        invisible: [3,5,7,12,20]
+    - visible
+    -
+        -
+            id: 1
+            parent_id: null
+            to_all: visible
+            to_group: visible
+            to_account: null
+        -
+            id: 2
+            parent_id: 1
+            to_all: null
+            to_group: hidden
+            to_account: parent_category
+        -
+            id: 3
+            parent_id: 2
+            to_all: config
+            to_group: parent_category
+            to_account: null
+        -
+            id: 4
+            parent_id: 4
+            to_all: visible
+            to_group: null
+            to_account: null
+        -
+            id: 5
+            parent_id: 3
+            to_all: hidden
+            to_group: null
+            to_account: null
+        -
+            id: 6
+            parent_id: 2
+            to_all: visible
+            to_group: null
+            to_account: null
+        -
+            id: 7
+            parent_id: 6
+            to_all: null
+            to_group: parent_category
+            to_account: hidden
+        -
+            id: 8
+            parent_id: 6
+            to_all: hidden
+            to_group: parent_category
+            to_account: null
+        -
+            id: 9
+            parent_id: 2
+            to_all: hidden
+            to_group: null
+            to_account: visible
+        -
+            id: 10
+            parent_id: 1
+            to_all: visible
+            to_group: parent_category
+            to_account: parent_category
+        -
+            id: 11
+            parent_id: 10
+            to_all: null
+            to_group: null
+            to_account: null
+        -
+            id: 12
+            parent_id: 10
+            to_all: config
+            to_group: hidden
+            to_account: null
+        -
+            id: 13
+            parent_id: 10
+            to_all: null
+            to_group: null
+            to_account: null
+        -
+            id: 14
+            parent_id: 1
+            to_all: null
+            to_group: null
+            to_account: null
+        -
+            id: 15
+            parent_id: 14
+            to_all: null
+            to_group: null
+            to_account: null
+        -
+            id: 16
+            parent_id: 15
+            to_all: null
+            to_group: null
+            to_account: null
+        -
+            id: 17
+            parent_id: 16
+            to_all: null
+            to_group: null
+            to_account: null
+        -
+            id: 18
+            parent_id: 17
+            to_all: null
+            to_group: null
+            to_account: null
+        -
+            id: 19
+            parent_id: 17
+            to_all: null
+            to_group: null
+            to_account: null
+        -
+            id: 20
+            parent_id: 1
+            to_all: hidden
+            to_group: visible
+            to_account: hidden
+
+empty:
+    -
+        visible: []
+        invisible: []
+    - visible
+    - []

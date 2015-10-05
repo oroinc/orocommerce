@@ -5,23 +5,27 @@ namespace OroB2B\Bundle\AccountBundle\Calculator;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
 
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Exception\InvalidVisibilityValueException;
 
-class CategoryVisibilityCalculator
+class CategoryVisibilityCalculator implements ContainerAwareInterface
 {
-    const CONFIG_VALUE_KEY = 'oro_b2b_account.category_visibility';
+    const CATEGORY_VISIBILITY_CONFIG_VALUE_KEY = 'oro_b2b_account.category_visibility';
 
     const VISIBLE = 'visible';
     const INVISIBLE = 'invisible';
 
     const TO_ALL = 'to_all';
-    const TO_ACCOUNT = 'to_group';
-    const TO_GROUP = 'to_account';
+    const TO_GROUP = 'to_group';
+    const TO_ACCOUNT = 'to_account';
 
     /**
      * @var ManagerRegistry
@@ -39,24 +43,27 @@ class CategoryVisibilityCalculator
     protected $configValue;
 
     /**
-     * @param ManagerRegistry $managerRegistry
-     * @param ConfigManager $configManager
+     * @var ContainerInterface
      */
-    public function __construct(ManagerRegistry $managerRegistry, ConfigManager $configManager)
+    protected $container;
+
+    /**
+     * @param ManagerRegistry $managerRegistry
+     */
+    public function __construct(ManagerRegistry $managerRegistry)
     {
         $this->managerRegistry = $managerRegistry;
-        $this->configManager = $configManager;
     }
 
     /**
-     * @param int|null $accountId
+     * @param Account|null $account
      * @return array
      */
-    public function getVisibility($accountId = null)
+    public function getVisibility(Account $account = null)
     {
         /** @var \OroB2B\Bundle\AccountBundle\Entity\Repository\CategoryVisibilityRepository $repo */
         $repo = $this->getRepository('OroB2BAccountBundle:Visibility\CategoryVisibility');
-        $visibilities = $repo->getVisibilityToAll($accountId);
+        $visibilities = $repo->getVisibilityToAll($account);
         $visibleIds = $this->calculateVisible($visibilities);
         $ids = array_map(
             function ($visibility) {
@@ -64,7 +71,7 @@ class CategoryVisibilityCalculator
             },
             $visibilities
         );
-        $invisibleIds = array_diff($ids, $visibleIds);
+        $invisibleIds = array_values(array_diff($ids, $visibleIds));
 
         return [
             self::VISIBLE => $visibleIds,
@@ -85,12 +92,12 @@ class CategoryVisibilityCalculator
         foreach ($visibilities as $category) {
             $id = $category['id'];
             $result[$id] = [];
-            // calculation order is important because of result dependency
+            // calculation order is import ant because of result dependency
             $result[$id][self::TO_ALL] = $this->calculateVisibleToAll($category, $result);
             $result[$id][self::TO_GROUP] = $this->calculateVisibleToGroup($category, $result);
             $result[$id][self::TO_ACCOUNT] = $this->calculateVisibleToAccount($category, $result);
 
-            // todo refactor: move constants to model
+            // todo refactor: move Visibility constants to model
             if ('visible' === $result[$id][self::TO_ACCOUNT]) {
                 $visibleIds[] = $id;
             }
@@ -113,11 +120,11 @@ class CategoryVisibilityCalculator
                 if (null !== $category['parent_id']) {
                     return $result[$category['parent_id']][self::TO_ALL];
                 } else {
-                    return $this->getConfigValue();
+                    return $this->getConfigValue(self::CATEGORY_VISIBILITY_CONFIG_VALUE_KEY);
                 }
                 break;
             case CategoryVisibility::CONFIG:
-                return $this->getConfigValue();
+                return $this->getConfigValue(self::CATEGORY_VISIBILITY_CONFIG_VALUE_KEY);
             case CategoryVisibility::VISIBLE:
             case CategoryVisibility::HIDDEN:
                 return $category[self::TO_ALL];
@@ -143,7 +150,7 @@ class CategoryVisibilityCalculator
                 if (null !== $category['parent_id']) {
                     return $result[$category['parent_id']][self::TO_GROUP];
                 } else {
-                    return $this->getConfigValue();
+                    return $this->getConfigValue(self::CATEGORY_VISIBILITY_CONFIG_VALUE_KEY);
                 }
                 break;
             case AccountGroupCategoryVisibility::VISIBLE:
@@ -173,7 +180,7 @@ class CategoryVisibilityCalculator
                 if (null !== $category['parent_id']) {
                     return $result[$category['parent_id']][self::TO_ACCOUNT];
                 } else {
-                    return $this->getConfigValue();
+                    return $this->getConfigValue(self::CATEGORY_VISIBILITY_CONFIG_VALUE_KEY);
                 }
                 break;
             case AccountCategoryVisibility::VISIBLE:
@@ -182,21 +189,6 @@ class CategoryVisibilityCalculator
         }
 
         throw new InvalidVisibilityValueException;
-    }
-
-    /**
-     * @return string
-     */
-    protected function getConfigValue()
-    {
-        if (!$this->configValue) {
-            $this->configValue = $this->configManager->get(
-                self::CONFIG_VALUE_KEY,
-                $this->getDefaultConfigValue()
-            );
-        }
-
-        return $this->configValue;
     }
 
     /**
@@ -216,5 +208,26 @@ class CategoryVisibilityCalculator
     protected function getRepository($persistentObject, $persistentManagerName = null)
     {
         return $this->managerRegistry->getRepository($persistentObject, $persistentManagerName);
+    }
+
+    /**
+     * @param string $name
+     * @return array|string
+     */
+    protected function getConfigValue($name)
+    {
+        if (!$this->configManager) {
+            $this->configManager = $this->container->get('oro_config.global');
+        }
+
+        return $this->configManager->get($name);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
     }
 }

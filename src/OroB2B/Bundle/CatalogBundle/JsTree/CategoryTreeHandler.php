@@ -7,6 +7,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Storage\CategoryVisibilityStorage;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
@@ -51,7 +52,7 @@ class CategoryTreeHandler extends AbstractTreeHandler
             /** @var AccountUser $user */
             $categories = $this->filterCategories(
                 $categories,
-                $user instanceof AccountUser ? $user->getAccount()->getId() : null
+                $user instanceof AccountUser ? $user->getAccount() : null
             );
         }
 
@@ -111,12 +112,12 @@ class CategoryTreeHandler extends AbstractTreeHandler
 
     /**
      * @param array|Category[] $categories
-     * @param int|null $accountId
+     * @param Account|null $account
      * @return array
      */
-    protected function filterCategories(array $categories, $accountId = null)
+    protected function filterCategories(array $categories, Account $account = null)
     {
-        $visibilityData = $this->categoryVisibilityStorage->getData($accountId);
+        $visibilityData = $this->categoryVisibilityStorage->getData($account);
 
         $isVisible = $visibilityData->isVisible();
         $ids = $visibilityData->getIds();
