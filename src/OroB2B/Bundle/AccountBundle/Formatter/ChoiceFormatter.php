@@ -34,10 +34,10 @@ class ChoiceFormatter
 
     /**
      * @param array $choices
-     * @param mixed $category
+     * @param Category|null $category
      * @return array
      */
-    public function filterChoices($choices, $category)
+    public function filterChoices($choices, Category $category = null)
     {
         if ($category instanceof Category && !$category->getParentCategory()) {
             unset($choices[CategoryVisibility::PARENT_CATEGORY]);
