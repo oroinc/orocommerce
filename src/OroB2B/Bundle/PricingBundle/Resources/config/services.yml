@@ -161,7 +161,6 @@ services:
         class: %orob2b_pricing.model.price_list_request_handler.class%
         parent: orob2b_pricing.model.price_list_request_handler.abstract
         arguments:
-            - @request_stack
             - @doctrine
             - %orob2b_pricing.entity.price_list.class%
 
@@ -169,7 +168,6 @@ services:
         class: %orob2b_pricing.model.frontend.price_list_request_handler.class%
         parent: orob2b_pricing.model.price_list_request_handler.abstract
         arguments:
-            - @request_stack
             - @session
             - @oro_security.security_facade
             - @orob2b_pricing.model.price_list_tree_handler
