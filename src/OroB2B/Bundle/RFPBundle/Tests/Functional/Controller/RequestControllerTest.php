@@ -30,12 +30,17 @@ class RequestControllerTest extends WebTestCase
 
     public function testIndex()
     {
+        $dateObj    = new \DateTime();
+        $date       = $dateObj->format('Y-m-d');
+
         $this->client->request('GET', $this->getUrl('orob2b_rfp_request_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains(LoadRequestData::FIRST_NAME, $result->getContent());
         $this->assertContains(LoadRequestData::LAST_NAME, $result->getContent());
         $this->assertContains(LoadRequestData::EMAIL, $result->getContent());
+        $this->assertContains(LoadRequestData::PO_NUMBER, $result->getContent());
+        $this->assertContains($date, $result->getContent());
     }
 
     /**
@@ -78,6 +83,9 @@ class RequestControllerTest extends WebTestCase
      */
     public function testInfo($id)
     {
+        $dateObj    = new \DateTime();
+        $date       = $dateObj->format('M j, Y');
+
         $this->client->request(
             'GET',
             $this->getUrl('orob2b_rfp_request_info', ['id' => $id]),
@@ -89,6 +97,8 @@ class RequestControllerTest extends WebTestCase
         $this->assertContains(LoadRequestData::FIRST_NAME, $result->getContent());
         $this->assertContains(LoadRequestData::LAST_NAME, $result->getContent());
         $this->assertContains(LoadRequestData::EMAIL, $result->getContent());
+        $this->assertContains(LoadRequestData::PO_NUMBER, $result->getContent());
+        $this->assertContains($date, $result->getContent());
     }
 
     /**

@@ -139,6 +139,54 @@ class QuoteTypeTest extends AbstractTest
                 ],
                 'expectedData'  => new Quote(),
             ],
+            'empty PO number' => [
+                'isValid'       => true,
+                'submittedData' => [
+                    'owner' => 1,
+                    'accountUser' => 1,
+                    'account' => 2,
+                    'locked' => false,
+                    'poNumber'  => null,
+                    'shipUntil' => null,
+                    'quoteProducts' => [
+                        [
+                            'product'   => 2,
+                            'type'      => self::QP_TYPE1,
+                            'comment'   => 'comment1',
+                            'commentAccount' => 'comment2',
+                            'quoteProductOffers' => [
+                                [
+                                    'quantity'      => 33,
+                                    'productUnit'   => 'kg',
+                                    'priceType'     => self::QPO_PRICE_TYPE1,
+                                    'price'         => [
+                                        'value'     => 44,
+                                        'currency'  => 'USD',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'expectedData'  => $this->getQuote(
+                    1,
+                    1,
+                    2,
+                    [$quoteProduct],
+                    false,
+                    null,
+                    null
+                ),
+                'defaultData'   => $this->getQuote(
+                    1,
+                    1,
+                    2,
+                    [$quoteProduct],
+                    false,
+                    null,
+                    null
+                ),
+            ],
             'valid data' => [
                 'isValid'       => true,
                 'submittedData' => [

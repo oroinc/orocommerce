@@ -15,6 +15,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
     const FIRST_NAME    = 'Grzegorz';
     const LAST_NAME     = 'Brzeczyszczykiewicz';
     const EMAIL         = 'test_request@example.com';
+    const PO_NUMBER     = 'CA1234USD';
 
     const REQUEST1      = 'rfp.request.1';
     const REQUEST2      = 'rfp.request.2';
@@ -143,8 +144,6 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
         $organization = $this->getUser($manager)->getOrganization();
 
         foreach ($this->requests as $key => $rawRequest) {
-            $poNumber = 'CA' . rand(1000, 9999) . 'USD';
-
             $request = new Request();
             $request
                 ->setFirstName($rawRequest['first_name'])
@@ -157,7 +156,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
                 ->setStatus($status)
                 ->setOrganization($organization)
                 ->setShipUntil(new \DateTime())
-                ->setPoNumber($poNumber)
+                ->setPoNumber(self::PO_NUMBER)
             ;
             if (!empty($rawRequest['account'])) {
                 $request->setAccount($this->getReference($rawRequest['account']));

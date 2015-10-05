@@ -97,12 +97,12 @@
     {% endfor %}
     {% if additionalData is not empty %}
         {% set dataBlocks = dataBlocks|merge([{
-        'title': 'orob2b.sale.quote.sections.additional'|trans,
-        'subblocks': [{
-        'title': '',
-        'useSpan': false,
-        'data' : additionalData
-        }]
+            'title': 'orob2b.sale.quote.sections.additional'|trans,
+            'subblocks': [{
+                'title': '',
+                'useSpan': false,
+                'data' : additionalData
+            }]
         }] ) %}
     {% endif %}
 

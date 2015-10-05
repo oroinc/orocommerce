@@ -233,7 +233,6 @@ class QuoteControllerTest extends WebTestCase
             /* @var $control \DOMElement */
             $column = $expectedData['columns'][$key];
 
-
             $label = $translator->trans($column['label']);
             $property = $accessor->getValue($quote, $column['property']) ?: $translator->trans('N/A');
             if ($property instanceof \DateTime) {

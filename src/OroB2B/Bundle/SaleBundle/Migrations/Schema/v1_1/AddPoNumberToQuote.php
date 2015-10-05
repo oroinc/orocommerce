@@ -17,7 +17,7 @@ class AddPoNumberToQuote implements Migration
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        self::addColumns($schema);
+        $this->addColumns($schema);
     }
 
     /**
@@ -25,7 +25,7 @@ class AddPoNumberToQuote implements Migration
      *
      * @param Schema $schema
      */
-    public static function addColumns(Schema $schema)
+    protected function addColumns(Schema $schema)
     {
         $table = $schema->getTable('orob2b_sale_quote');
         $table->addColumn('po_number', 'string', ['notnull' => false, 'length' => 255]);

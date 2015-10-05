@@ -348,6 +348,32 @@ class RequestTypeTest extends AbstractTest
                 ),
                 'defaultData'   => $this->getRequest(),
             ],
+            'valid data empty PO number' => [
+                'isValid'       => true,
+                'submittedData' => [
+                    'firstName'     => 'FirstName',
+                    'lastName'      => 'LastName',
+                    'email'         => $email,
+                    'body'          => 'body',
+                    'poNumber'      => null,
+                    'shipUntil'     => null,
+                    'role'          => 'role',
+                    'phone'         => '123',
+                    'company'       => 'company',
+                ],
+                'expectedData'  => $this->getRequest(
+                    'FirstName',
+                    'LastName',
+                    $email,
+                    'body',
+                    'company',
+                    'role',
+                    null,
+                    null,
+                    '123'
+                ),
+                'defaultData'   => $this->getRequest(),
+            ],
         ];
     }
 

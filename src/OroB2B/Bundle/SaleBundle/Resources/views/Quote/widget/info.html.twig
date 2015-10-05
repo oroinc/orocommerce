@@ -30,8 +30,8 @@
                 {%  endif %}
                 {{ UI.renderHtmlProperty('orob2b.sale.quote.request.label'|trans, request) }}
             {% endif %}
-            {{ UI.renderProperty('orob2b.sale.quote.po_number.label'|trans, entity.poNumber|default('N/A')) }}
-            {{ UI.renderProperty('orob2b.sale.quote.ship_until.label'|trans, entity.shipUntil|oro_format_date|default('N/A')) }}
+            {{ UI.renderProperty('orob2b.sale.quote.po_number.label'|trans, entity.poNumber|default('N/A'|trans)) }}
+            {{ UI.renderProperty('orob2b.sale.quote.ship_until.label'|trans, entity.shipUntil|oro_format_date|default('N/A'|trans)) }}
         </div>
         <div class="responsive-block">
             {{ entityConfig.renderDynamicFields(entity) }}

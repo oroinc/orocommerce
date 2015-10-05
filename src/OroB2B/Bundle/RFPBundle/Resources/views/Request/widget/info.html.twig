@@ -8,10 +8,10 @@
             {{ UI.renderProperty('orob2b.rfp.request.last_name.label'|trans, entity.lastName) }}
             {{ UI.renderHtmlProperty('orob2b.rfp.request.email.label'|trans, EmailActions.sendEmailLink(entity.email, entity))}}
             {{ UI.renderProperty('orob2b.rfp.request.phone.label'|trans, entity.phone) }}
-            {{ UI.renderProperty('orob2b.rfp.request.company.label'|trans, entity.company|default('N/A')) }}
-            {{ UI.renderProperty('orob2b.rfp.request.role.label'|trans, entity.role|default('N/A')) }}
-            {{ UI.renderProperty('orob2b.rfp.request.po_number.label'|trans, entity.poNumber|default('N/A')) }}
-            {{ UI.renderProperty('orob2b.rfp.request.ship_until.label'|trans, entity.shipUntil|oro_format_date|default('N/A')) }}
+            {{ UI.renderProperty('orob2b.rfp.request.company.label'|trans, entity.company|default('N/A'|trans)) }}
+            {{ UI.renderProperty('orob2b.rfp.request.role.label'|trans, entity.role|default('N/A'|trans)) }}
+            {{ UI.renderProperty('orob2b.rfp.request.po_number.label'|trans, entity.poNumber|default('N/A'|trans)) }}
+            {{ UI.renderProperty('orob2b.rfp.request.ship_until.label'|trans, entity.shipUntil|oro_format_date|default('N/A'|trans)) }}
             {% if entity.account %}
                 {% if resource_granted('VIEW', entity.account) %}
                     {% set accountView = UI.renderUrl(path('orob2b_account_view', {'id': entity.account.id}), entity.account.name) %}
