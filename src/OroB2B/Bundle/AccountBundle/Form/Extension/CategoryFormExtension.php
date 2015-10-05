@@ -60,8 +60,9 @@ class CategoryFormExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $category = isset($options['data']) ? $options['data'] : null;
         $choices = $this->categoryVisibilityFormatter->formatChoices();
-        $choices = $this->categoryVisibilityFormatter->filterChoices($choices, $options['data']);
+        $choices = $this->categoryVisibilityFormatter->filterChoices($choices, $category);
         $builder
             ->add(
                 'categoryVisibility',
