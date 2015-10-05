@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\AccountBundle\Form\Handler;
 
+use Symfony\Component\HttpFoundation\RequestStack;
+
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManager;
@@ -36,6 +38,18 @@ class AccountUserRoleUpdateFrontendHandler extends AbstractAccountUserRoleHandle
      * @var AccountUser
      */
     protected $loggedAccountUser;
+
+    /** @var  RequestStack */
+    protected $requestStack;
+
+    /**
+     * @param RequestStack $requestStack
+     */
+    public function setRequestStack($requestStack)
+    {
+        $this->requestStack = $requestStack;
+        $this->request = $requestStack->getCurrentRequest();
+    }
 
     /**
      * {@inheritDoc}

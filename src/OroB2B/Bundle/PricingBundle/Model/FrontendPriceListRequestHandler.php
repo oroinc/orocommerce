@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PricingBundle\Model;
 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
@@ -29,15 +31,18 @@ class FrontendPriceListRequestHandler extends AbstractPriceListRequestHandler
     protected $priceListTreeHandler;
 
     /**
+     * @param RequestStack $requestStack
      * @param SessionInterface $session
      * @param SecurityFacade $securityFacade
      * @param PriceListTreeHandler $priceListTreeHandler
      */
     public function __construct(
+        RequestStack $requestStack,
         SessionInterface $session,
         SecurityFacade $securityFacade,
         PriceListTreeHandler $priceListTreeHandler
     ) {
+        parent::__construct($requestStack);
         $this->session = $session;
         $this->securityFacade = $securityFacade;
         $this->priceListTreeHandler = $priceListTreeHandler;
@@ -65,8 +70,10 @@ class FrontendPriceListRequestHandler extends AbstractPriceListRequestHandler
         $priceListCurrencies = $this->getPriceList()->getCurrencies();
         $currency = null;
 
-        if ($this->request) {
-            $currency = $this->request->get(self::PRICE_LIST_CURRENCY_KEY);
+        /** @var Request $request */
+        $request = $this->requestStack->getCurrentRequest();
+        if ($request) {
+            $currency = $request->get(self::PRICE_LIST_CURRENCY_KEY);
         }
 
         if (!$currency && $this->session->has(self::PRICE_LIST_CURRENCY_KEY)) {
@@ -74,7 +81,7 @@ class FrontendPriceListRequestHandler extends AbstractPriceListRequestHandler
         }
 
         if (in_array($currency, $priceListCurrencies, true)) {
-            if ($this->request && $this->request->get(self::SAVE_STATE_KEY)) {
+            if ($request && $request->get(self::SAVE_STATE_KEY)) {
                 $this->session->set(self::PRICE_LIST_CURRENCY_KEY, $currency);
             }
 
@@ -91,7 +98,10 @@ class FrontendPriceListRequestHandler extends AbstractPriceListRequestHandler
     {
         $showTierPrices = parent::getShowTierPrices();
 
-        if ((!$this->request || ($this->request && !$this->request->get(self::TIER_PRICES_KEY)))
+        /** @var Request $request */
+        $request = $this->requestStack->getCurrentRequest();
+
+        if ((!$request || ($request && !$request->get(self::TIER_PRICES_KEY)))
             && $this->session->has(self::TIER_PRICES_KEY)
         ) {
             $showTierPrices = $this->session->get(self::TIER_PRICES_KEY);
@@ -100,10 +110,10 @@ class FrontendPriceListRequestHandler extends AbstractPriceListRequestHandler
         if (is_string($showTierPrices)) {
             $showTierPrices = filter_var($showTierPrices, FILTER_VALIDATE_BOOLEAN);
         } else {
-            $showTierPrices = (bool) $showTierPrices;
+            $showTierPrices = (bool)$showTierPrices;
         }
 
-        if ($this->request && $this->request->get(self::SAVE_STATE_KEY)) {
+        if ($request && $request->get(self::SAVE_STATE_KEY)) {
             $this->session->set(self::TIER_PRICES_KEY, $showTierPrices);
         }
 

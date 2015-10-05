@@ -4,10 +4,10 @@ namespace OroB2B\Bundle\PaymentBundle\Tests\Unit\Datagrid;
 
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
-
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
@@ -19,21 +19,6 @@ class FormViewListenerTest extends FormViewListenerTestCase
 {
     const PAYMENT_TERM_CLASS = 'OroB2B\Bundle\PaymentBundle\Entity\PaymentTerm';
 
-    /**
-     * @var FormViewListener
-     */
-    protected $listener;
-
-    /**
-     * {@inheritDoc}
-     */
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->listener = new FormViewListener($this->translator, $this->doctrineHelper, static::PAYMENT_TERM_CLASS);
-    }
-
     protected function tearDown()
     {
         unset($this->doctrineHelper, $this->translator, $this->listener);
@@ -41,6 +26,15 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
     public function testOnViewNoRequest()
     {
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+
+        $listener = new FormViewListener(
+            $requestStack,
+            $this->translator,
+            $this->doctrineHelper,
+            static::PAYMENT_TERM_CLASS
+        );
         $this->doctrineHelper->expects($this->never())
             ->method('getEntityReference');
 
@@ -48,8 +42,8 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $env = $this->getMock('\Twig_Environment');
         $event = $this->createEvent($env);
 
-        $this->listener->onAccountView($event);
-        $this->listener->onAccountGroupView($event);
+        $listener->onAccountView($event);
+        $listener->onAccountGroupView($event);
     }
 
     /**
@@ -149,15 +143,25 @@ class FormViewListenerTest extends FormViewListenerTestCase
                 )
                 ->willReturn(
                     $isPaymentTermInGroupExist ?
-                    $templateAccountGroupPaymentTermHtml :
-                    $templateAccountGroupWithoutPaymentTermHtml
+                        $templateAccountGroupPaymentTermHtml :
+                        $templateAccountGroupWithoutPaymentTermHtml
                 );
         }
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn(
+            new Request(['id' => $accountId])
+        );
 
-        $this->listener->setRequest(new Request(['id' => $accountId]));
+        $listener = new FormViewListener(
+            $requestStack,
+            $this->translator,
+            $this->doctrineHelper,
+            static::PAYMENT_TERM_CLASS
+        );
 
         $event = $this->createEvent($environment);
-        $this->listener->onAccountView($event);
+        $listener->onAccountView($event);
         $scrollData = $event->getScrollData()->getData();
 
         if ($isPaymentTermExist) {
@@ -211,9 +215,20 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->willReturn($isPaymentTermExist ? $templateHtml : $emptyTemplate);
 
         $event = $this->createEvent($environment);
-        $this->listener->setRequest(new Request(['id' => $accountGroupId]));
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn(
+            new Request(['id' => $accountGroupId])
+        );
 
-        $this->listener->onAccountGroupView($event);
+        $listener = new FormViewListener(
+            $requestStack,
+            $this->translator,
+            $this->doctrineHelper,
+            static::PAYMENT_TERM_CLASS
+        );
+
+        $listener->onAccountGroupView($event);
         $scrollData = $event->getScrollData()->getData();
 
         if ($isPaymentTermExist) {
@@ -237,7 +252,17 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $event = $this->createEvent($environment, $formView);
 
-        $this->listener->onEntityEdit($event);
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+
+        $listener = new FormViewListener(
+            $requestStack,
+            $this->translator,
+            $this->doctrineHelper,
+            static::PAYMENT_TERM_CLASS
+        );
+
+        $listener->onEntityEdit($event);
         $scrollData = $event->getScrollData()->getData();
 
         $this->assertEqualsForScrollData($templateHtml, $scrollData);

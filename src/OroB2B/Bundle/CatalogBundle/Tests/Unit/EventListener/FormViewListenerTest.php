@@ -2,9 +2,11 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
-use Doctrine\ORM\EntityRepository;
-
 use Symfony\Component\Form\FormView;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+
+use Doctrine\ORM\EntityRepository;
 
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
@@ -20,6 +22,9 @@ class FormViewListenerTest extends FormViewListenerTestCase
      */
     protected $listener;
 
+    /** @var  Request|\PHPUnit_Framework_MockObject_MockObject */
+    protected $request;
+
     /**
      * {@inheritdoc}
      */
@@ -27,7 +32,11 @@ class FormViewListenerTest extends FormViewListenerTestCase
     {
         parent::setUp();
 
-        $this->listener = new FormViewListener($this->translator, $this->doctrineHelper);
+        $this->request = $this->getRequest();
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
+        $this->listener = new FormViewListener($this->translator, $this->doctrineHelper, $requestStack);
     }
 
     public function testOnProductEdit()
@@ -52,20 +61,16 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->method('getFormView')
             ->willReturn(new FormView());
 
-        $this->listener->setRequest($this->getRequest());
         $this->listener->onProductEdit($event);
     }
 
     public function testOnProductView()
     {
-        $request = $this->getRequest();
-        $request
+        $this->request
             ->expects($this->any())
             ->method('get')
             ->with('id')
             ->willReturn(1);
-
-        $this->listener->setRequest($request);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|EntityRepository $repository */
         $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
@@ -117,14 +122,12 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $this->listener->onProductView($event);
 
-        $request = $this->getRequest();
-        $request
+        $this->request
             ->expects($this->once())
             ->method('get')
             ->with('id')
             ->willReturn('string');
 
-        $this->listener->setRequest($request);
         $this->listener->onProductView($event);
     }
 
@@ -140,8 +143,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->method('getEntityReference')
             ->willReturn(null);
 
-        $request = $this->getRequest();
-        $request
+        $this->request
             ->expects($this->once())
             ->method('get')
             ->with('id')
@@ -152,7 +154,6 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->method('getEntityRepository')
             ->willReturn(null);
 
-        $this->listener->setRequest($request);
         $this->listener->onProductView($event);
     }
 }

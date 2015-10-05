@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Datagrid\Extension;
 
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\DatasourceInterface;
@@ -20,9 +20,9 @@ class AccountUserByAccountExtension extends AbstractExtension
     protected $applied = false;
 
     /**
-     * @var Request
+     * @var RequestStack
      */
-    protected $request;
+    protected $requestStack;
 
     /**
      * {@inheritdoc}
@@ -33,7 +33,7 @@ class AccountUserByAccountExtension extends AbstractExtension
             return;
         }
 
-        $accountId = $this->request->get(self::ACCOUNT_KEY);
+        $accountId = $this->requestStack->getCurrentRequest()->get(self::ACCOUNT_KEY);
 
         /** @var OrmDatasource $datasource */
         $qb = $datasource->getQueryBuilder();
@@ -50,17 +50,19 @@ class AccountUserByAccountExtension extends AbstractExtension
      */
     public function isApplicable(DatagridConfiguration $config)
     {
+        $request = $this->requestStack->getCurrentRequest();
+
         return !$this->applied
-            && static::SUPPORTED_GRID === $config->getName()
-            && $this->request
-            && $this->request->get(self::ACCOUNT_KEY);
+        && static::SUPPORTED_GRID === $config->getName()
+        && $request
+        && $request->get(self::ACCOUNT_KEY);
     }
 
     /**
-     * @param Request $request
+     * @param RequestStack $requestStack
      */
-    public function setRequest($request)
+    public function setRequestStack($requestStack)
     {
-        $this->request = $request;
+        $this->requestStack = $requestStack;
     }
 }

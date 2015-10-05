@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\OrderBundle\EventListener;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -25,9 +26,9 @@ class FormViewListener
     protected $doctrineHelper;
 
     /**
-     * @var Request
+     * @var RequestStack
      */
-    protected $request;
+    protected $requestStack;
 
     /**
      * @param TranslatorInterface $translator
@@ -35,10 +36,12 @@ class FormViewListener
      */
     public function __construct(
         TranslatorInterface $translator,
-        DoctrineHelper $doctrineHelper
+        DoctrineHelper $doctrineHelper,
+        RequestStack $requestStack
     ) {
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -79,11 +82,13 @@ class FormViewListener
      */
     protected function getEntityFromRequestId($className)
     {
-        if (!$this->request) {
+        /** @var Request $request */
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
             return null;
         }
 
-        $entityId = (int)$this->request->get('id');
+        $entityId = (int)$request->get('id');
         if (!$entityId) {
             return null;
         }
@@ -94,14 +99,6 @@ class FormViewListener
         }
 
         return $entity;
-    }
-
-    /**
-     * @param Request $request
-     */
-    public function setRequest($request)
-    {
-        $this->request = $request;
     }
 
     /**

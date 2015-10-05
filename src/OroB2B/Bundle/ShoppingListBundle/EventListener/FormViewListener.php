@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ShoppingListBundle\EventListener;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -17,9 +18,9 @@ class FormViewListener
     protected $translator;
 
     /**
-     * @var Request
+     * @var RequestStack
      */
-    protected $request;
+    protected $requestStack;
 
     /**
      * @var DoctrineHelper
@@ -27,21 +28,18 @@ class FormViewListener
     protected $doctrineHelper;
 
     /**
+     * @param RequestStack $requestStack
      * @param TranslatorInterface $translator
      * @param DoctrineHelper $doctrineHelper
      */
-    public function __construct(TranslatorInterface $translator, DoctrineHelper $doctrineHelper)
-    {
+    public function __construct(
+        RequestStack $requestStack,
+        TranslatorInterface $translator,
+        DoctrineHelper $doctrineHelper
+    ) {
+        $this->requestStack = $requestStack;
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
-    }
-
-    /**
-     * @param Request $request
-     */
-    public function setRequest($request)
-    {
-        $this->request = $request;
     }
 
     /**
@@ -49,11 +47,13 @@ class FormViewListener
      */
     public function onFrontendProductView(BeforeListRenderEvent $event)
     {
-        if (!$this->request) {
+        /** @var Request $request */
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
             return;
         }
 
-        $productId = (int)$this->request->get('id');
+        $productId = (int)$request->get('id');
         if (!$productId) {
             return;
         }

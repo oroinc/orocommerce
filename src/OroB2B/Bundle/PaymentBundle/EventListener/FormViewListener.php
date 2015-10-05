@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PaymentBundle\EventListener;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -25,9 +26,9 @@ class FormViewListener
     protected $doctrineHelper;
 
     /**
-     * @var Request
+     * @var RequestStack
      */
-    protected $request;
+    protected $requestStack;
 
     /**
      * @var string
@@ -35,12 +36,18 @@ class FormViewListener
     protected $paymentTermClass;
 
     /**
+     * @param RequestStack $requestStack
      * @param TranslatorInterface $translator
      * @param DoctrineHelper      $doctrineHelper
      * @param string              $paymentTermClass
      */
-    public function __construct(TranslatorInterface $translator, DoctrineHelper $doctrineHelper, $paymentTermClass)
-    {
+    public function __construct(
+        RequestStack $requestStack,
+        TranslatorInterface $translator,
+        DoctrineHelper $doctrineHelper,
+        $paymentTermClass
+    ) {
+        $this->requestStack = $requestStack;
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
         $this->paymentTermClass = $paymentTermClass;
@@ -51,11 +58,13 @@ class FormViewListener
      */
     public function onAccountView(BeforeListRenderEvent $event)
     {
-        if (!$this->request) {
+        /** @var Request $request */
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
             return;
         }
 
-        $accountId = (int)$this->request->get('id');
+        $accountId = (int)$request->get('id');
         /** @var Account $account */
         $account = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:Account', $accountId);
 
@@ -115,21 +124,23 @@ class FormViewListener
      */
     public function onAccountGroupView(BeforeListRenderEvent $event)
     {
-        if (!$this->request) {
+        /** @var Request $request */
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
             return;
         }
 
-        $groupId = (int)$this->request->get('id');
+        $groupId = (int)$request->get('id');
         /** @var AccountGroup $group */
         $group = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:AccountGroup', $groupId);
         $paymentTermRepository = $this->getPaymentTermRepository();
-        $paymentTerm  = $paymentTermRepository->getOnePaymentTermByAccountGroup($group);
+        $paymentTerm = $paymentTermRepository->getOnePaymentTermByAccountGroup($group);
 
         $paymentTermData = [
             'paymentTerm' => $paymentTerm,
             'paymentTermLabel' => ($paymentTerm) ? $paymentTerm->getLabel() : null,
             'empty' => $this->translator->trans('N/A'),
-            'defineToTheGroup' => false
+            'defineToTheGroup' => false,
         ];
         $template = $event->getEnvironment()->render(
             'OroB2BPaymentBundle:Account:payment_term_view.html.twig',
@@ -148,14 +159,6 @@ class FormViewListener
             ['form' => $event->getFormView()]
         );
         $event->getScrollData()->addSubBlockData(0, 0, $template);
-    }
-
-    /**
-     * @param Request $request
-     */
-    public function setRequest($request)
-    {
-        $this->request = $request;
     }
 
     /**

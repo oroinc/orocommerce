@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PricingBundle\Model;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
@@ -11,9 +12,15 @@ abstract class AbstractPriceListRequestHandler
     const TIER_PRICES_KEY = 'showTierPrices';
 
     /**
-     * @var Request
+     * @var RequestStack
      */
-    protected $request;
+    protected $requestStack;
+
+
+    public function __construct(RequestStack $requestStack)
+    {
+        $this->requestStack = $requestStack;
+    }
 
     /**
      * @return PriceList
@@ -30,18 +37,12 @@ abstract class AbstractPriceListRequestHandler
      */
     public function getShowTierPrices()
     {
-        if (!$this->request) {
+        /** @var Request $request */
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
             return false;
         }
 
-        return filter_var($this->request->get(self::TIER_PRICES_KEY), FILTER_VALIDATE_BOOLEAN);
-    }
-
-    /**
-     * @param Request $request
-     */
-    public function setRequest($request)
-    {
-        $this->request = $request;
+        return filter_var($request->get(self::TIER_PRICES_KEY), FILTER_VALIDATE_BOOLEAN);
     }
 }

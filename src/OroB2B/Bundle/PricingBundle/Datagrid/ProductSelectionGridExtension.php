@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PricingBundle\Datagrid;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
@@ -24,9 +25,9 @@ class ProductSelectionGridExtension extends AbstractExtension
     protected $applied = false;
 
     /**
-     * @var Request
+     * @var RequestStack
      */
-    protected $request;
+    protected $requestStack;
 
     /**
      * @var TokenStorageInterface
@@ -39,11 +40,16 @@ class ProductSelectionGridExtension extends AbstractExtension
     protected $productListModifier;
 
     /**
+     * @param RequestStack $requestStack
      * @param TokenStorageInterface $tokenStorage
      * @param FrontendProductListModifier $productListModifier
      */
-    public function __construct(TokenStorageInterface $tokenStorage, FrontendProductListModifier $productListModifier)
-    {
+    public function __construct(
+        RequestStack $requestStack,
+        TokenStorageInterface $tokenStorage,
+        FrontendProductListModifier $productListModifier
+    ) {
+        $this->requestStack = $requestStack;
         $this->tokenStorage = $tokenStorage;
         $this->productListModifier = $productListModifier;
     }
@@ -57,8 +63,10 @@ class ProductSelectionGridExtension extends AbstractExtension
             return;
         }
 
-        if ($this->request) {
-            $currency = $this->request->get(self::CURRENCY_KEY, null);
+        /** @var Request $request */
+        $request = $this->requestStack->getCurrentRequest();
+        if ($request) {
+            $currency = $request->get(self::CURRENCY_KEY, null);
         } else {
             $currency = null;
         }
@@ -76,16 +84,8 @@ class ProductSelectionGridExtension extends AbstractExtension
     public function isApplicable(DatagridConfiguration $config)
     {
         return !$this->applied
-            && static::SUPPORTED_GRID === $config->getName()
-            && ($token = $this->tokenStorage->getToken())
-            && $token->getUser() instanceof AccountUser;
-    }
-
-    /**
-     * @param Request $request
-     */
-    public function setRequest($request)
-    {
-        $this->request = $request;
+        && static::SUPPORTED_GRID === $config->getName()
+        && ($token = $this->tokenStorage->getToken())
+        && $token->getUser() instanceof AccountUser;
     }
 }

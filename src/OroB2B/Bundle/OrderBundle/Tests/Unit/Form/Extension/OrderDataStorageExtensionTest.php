@@ -3,6 +3,8 @@
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -20,11 +22,19 @@ class OrderDataStorageExtensionTestCase extends AbstractProductDataStorageExtens
     {
         parent::setUp();
 
-        $this->extension = new OrderDataStorageExtension($this->storage, $this->doctrineHelper, $this->productClass);
-        $this->extension->setRequest($this->request);
-        $this->extension->setDataClass('OroB2B\Bundle\OrderBundle\Entity\Order');
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $this->request = $this->getMock('Symfony\Component\HttpFoundation\Request');
 
+        $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
         $this->entity = new Order();
+        $this->extension = new OrderDataStorageExtension(
+            $requestStack,
+            $this->storage,
+            $this->doctrineHelper,
+            $this->productClass
+        );
+        $this->extension->setDataClass('OroB2B\Bundle\OrderBundle\Entity\Order');
     }
 
     public function testBuild()

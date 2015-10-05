@@ -2,9 +2,10 @@
 
 namespace OroB2B\Bundle\OrderBundle\Model;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -12,8 +13,8 @@ use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
 
 class OrderRequestHandler
 {
-    /** @var Request */
-    protected $request;
+    /** @var RequestStack */
+    protected $requestStack;
 
     /** @var ManagerRegistry */
     protected $registry;
@@ -26,14 +27,16 @@ class OrderRequestHandler
 
     /**
      * @param ManagerRegistry $registry
+     * @param RequestStack $requestStack
      * @param string $accountClass
      * @param string $accountUserClass
-     */
-    public function __construct(ManagerRegistry $registry, $accountClass, $accountUserClass)
+     **/
+    public function __construct(ManagerRegistry $registry, RequestStack $requestStack, $accountClass, $accountUserClass)
     {
         $this->registry = $registry;
         $this->accountClass = $accountClass;
         $this->accountUserClass = $accountUserClass;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -46,6 +49,7 @@ class OrderRequestHandler
         if ($accountId) {
             $account = $this->findEntity($this->accountClass, $accountId);
         }
+
         return $account;
     }
 
@@ -59,6 +63,7 @@ class OrderRequestHandler
         if ($accountUserId) {
             $accountUser = $this->findEntity($this->accountUserClass, $accountUserId);
         }
+
         return $accountUser;
     }
 
@@ -69,15 +74,17 @@ class OrderRequestHandler
      */
     protected function getFromRequest($var, $default = null)
     {
-        if (!$this->request) {
+        /** @var Request $request */
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
             return $default;
         }
 
-        $request = $this->request->get(OrderType::NAME);
-        if (!is_array($request) || !array_key_exists($var, $request)) {
+        $orderType = $request->get(OrderType::NAME);
+        if (!is_array($orderType) || !array_key_exists($var, $orderType)) {
             return $default;
         } else {
-            return $request[$var];
+            return $orderType[$var];
         }
     }
 
@@ -89,13 +96,5 @@ class OrderRequestHandler
     protected function findEntity($entityClass, $id)
     {
         return $this->registry->getManagerForClass($entityClass)->find($entityClass, $id);
-    }
-
-    /**
-     * @param Request $request
-     */
-    public function setRequest($request)
-    {
-        $this->request = $request;
     }
 }

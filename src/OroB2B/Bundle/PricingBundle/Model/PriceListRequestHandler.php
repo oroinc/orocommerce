@@ -2,6 +2,9 @@
 
 namespace OroB2B\Bundle\PricingBundle\Model;
 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
@@ -28,11 +31,13 @@ class PriceListRequestHandler extends AbstractPriceListRequestHandler
     protected $priceLists = [];
 
     /**
+     * @param RequestStack $requestStack
      * @param ManagerRegistry $registry
      * @param string $priceListClass
      */
-    public function __construct(ManagerRegistry $registry, $priceListClass)
+    public function __construct(RequestStack $requestStack, ManagerRegistry $registry, $priceListClass)
     {
+        parent::__construct($requestStack);
         $this->registry = $registry;
         $this->priceListClass = $priceListClass;
     }
@@ -42,7 +47,9 @@ class PriceListRequestHandler extends AbstractPriceListRequestHandler
      */
     public function getPriceList()
     {
-        if (!$this->request) {
+        /** @var Request $request */
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
             return $this->getDefaultPriceList();
         }
 
@@ -68,11 +75,13 @@ class PriceListRequestHandler extends AbstractPriceListRequestHandler
      */
     public function getPriceListId()
     {
-        if (!$this->request) {
+        /** @var Request $request */
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
             return false;
         }
 
-        $value = $this->request->get(self::PRICE_LIST_KEY);
+        $value = $request->get(self::PRICE_LIST_KEY);
 
         if (is_bool($value)) {
             return false;
@@ -93,11 +102,14 @@ class PriceListRequestHandler extends AbstractPriceListRequestHandler
     {
         $priceListCurrencies = $this->getPriceList()->getCurrencies();
 
-        if (!$this->request) {
+        /** @var Request $request */
+        $request = $this->requestStack->getCurrentRequest();
+
+        if (!$request) {
             return $priceListCurrencies;
         }
 
-        $currencies = $this->request->get(self::PRICE_LIST_CURRENCY_KEY);
+        $currencies = $request->get(self::PRICE_LIST_CURRENCY_KEY);
         if (null === $currencies) {
             return $priceListCurrencies;
         }

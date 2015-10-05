@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Model;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
@@ -55,13 +56,17 @@ class FrontendPriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
+
         $this->handler = new FrontendPriceListRequestHandler(
+            $requestStack,
             $this->session,
             $this->securityFacade,
             $this->priceListTreeHandler
         );
-
-        $this->request = $this->getMock('Symfony\Component\HttpFoundation\Request');
     }
 
     protected function tearDown()
@@ -153,14 +158,14 @@ class FrontendPriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetPriceListCurrenciesWithRequest($paramValue, array $currencies = [], array $expected = [])
     {
-        $this->handler->setRequest($this->request);
-
         $this->request->expects($this->atLeastOnce())
             ->method('get')
-            ->willReturnMap([
-                [FrontendPriceListRequestHandler::PRICE_LIST_CURRENCY_KEY, null, false, $paramValue],
-                [FrontendPriceListRequestHandler::SAVE_STATE_KEY, null, false, false]
-            ]);
+            ->willReturnMap(
+                [
+                    [FrontendPriceListRequestHandler::PRICE_LIST_CURRENCY_KEY, null, false, $paramValue],
+                    [FrontendPriceListRequestHandler::SAVE_STATE_KEY, null, false, false],
+                ]
+            );
 
         $this->priceListTreeHandler->expects($this->once())
             ->method('getPriceList')
@@ -209,14 +214,14 @@ class FrontendPriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPriceListCurrenciesWithRequestAndSaveState()
     {
-        $this->handler->setRequest($this->request);
-
         $this->request->expects($this->exactly(2))
             ->method('get')
-            ->willReturnMap([
-                [FrontendPriceListRequestHandler::PRICE_LIST_CURRENCY_KEY, null, false, 'EUR'],
-                [FrontendPriceListRequestHandler::SAVE_STATE_KEY, null, false, true]
-            ]);
+            ->willReturnMap(
+                [
+                    [FrontendPriceListRequestHandler::PRICE_LIST_CURRENCY_KEY, null, false, 'EUR'],
+                    [FrontendPriceListRequestHandler::SAVE_STATE_KEY, null, false, true],
+                ]
+            );
 
         $this->priceListTreeHandler->expects($this->once())
             ->method('getPriceList')
@@ -242,14 +247,14 @@ class FrontendPriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetShowTierPricesWithRequest($paramValue, $expected)
     {
-        $this->handler->setRequest($this->request);
-
         $this->request->expects($this->atLeastOnce())
             ->method('get')
-            ->willReturnMap([
-                [FrontendPriceListRequestHandler::TIER_PRICES_KEY, null, false, $paramValue],
-                [FrontendPriceListRequestHandler::SAVE_STATE_KEY, null, false, false]
-            ]);
+            ->willReturnMap(
+                [
+                    [FrontendPriceListRequestHandler::TIER_PRICES_KEY, null, false, $paramValue],
+                    [FrontendPriceListRequestHandler::SAVE_STATE_KEY, null, false, false]
+                ]
+            );
 
         $this->assertEquals($expected, $this->handler->getShowTierPrices());
     }
@@ -292,14 +297,14 @@ class FrontendPriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetShowTierPricesWithRequestAndSaveState()
     {
-        $this->handler->setRequest($this->request);
-
         $this->request->expects($this->exactly(3))
             ->method('get')
-            ->willReturnMap([
-                [FrontendPriceListRequestHandler::TIER_PRICES_KEY, null, false, '1'],
-                [FrontendPriceListRequestHandler::SAVE_STATE_KEY, null, false, true]
-            ]);
+            ->willReturnMap(
+                [
+                    [FrontendPriceListRequestHandler::TIER_PRICES_KEY, null, false, '1'],
+                    [FrontendPriceListRequestHandler::SAVE_STATE_KEY, null, false, true]
+                ]
+            );
 
         $this->session->expects($this->once())
             ->method('set')
