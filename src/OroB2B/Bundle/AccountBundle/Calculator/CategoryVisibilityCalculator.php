@@ -90,20 +90,37 @@ class CategoryVisibilityCalculator implements ContainerAwareInterface
         $visibleIds = [];
 
         foreach ($visibilities as $category) {
+            $this->setDefaultValues($category);
             $id = $category['id'];
             $result[$id] = [];
-            // calculation order is import ant because of result dependency
+
             $result[$id][self::TO_ALL] = $this->calculateVisibleToAll($category, $result);
             $result[$id][self::TO_GROUP] = $this->calculateVisibleToGroup($category, $result);
             $result[$id][self::TO_ACCOUNT] = $this->calculateVisibleToAccount($category, $result);
 
-            // todo refactor: move Visibility constants to model
+            // todo refactor: move visibility constants to model class to prevent string constant usage below
             if ('visible' === $result[$id][self::TO_ACCOUNT]) {
                 $visibleIds[] = $id;
             }
         }
 
         return $visibleIds;
+    }
+
+    /**
+     * @param $category
+     */
+    protected function setDefaultValues(&$category)
+    {
+        if (null === $category[self::TO_ALL]) {
+            $category[self::TO_ALL] = CategoryVisibility::getDefault();
+        }
+        if (null === $category[self::TO_GROUP]) {
+            $category[self::TO_GROUP] = AccountGroupCategoryVisibility::getDefault();
+        }
+        if (null === $category[self::TO_ACCOUNT]) {
+            $category[self::TO_ACCOUNT] = AccountCategoryVisibility::getDefault();
+        }
     }
 
     /**
@@ -115,8 +132,7 @@ class CategoryVisibilityCalculator implements ContainerAwareInterface
     protected function calculateVisibleToAll($category, $result)
     {
         switch ($category[self::TO_ALL]) {
-            // CategoryVisibility::PARENT_CATEGORY
-            case null:
+            case CategoryVisibility::PARENT_CATEGORY:
                 if (null !== $category['parent_id']) {
                     return $result[$category['parent_id']][self::TO_ALL];
                 } else {
@@ -143,8 +159,7 @@ class CategoryVisibilityCalculator implements ContainerAwareInterface
     {
         $id = $category['id'];
         switch ($category[self::TO_GROUP]) {
-            // AccountGroupCategoryVisibility::CATEGORY
-            case null:
+            case AccountGroupCategoryVisibility::CATEGORY:
                 return $result[$id][self::TO_ALL];
             case AccountGroupCategoryVisibility::PARENT_CATEGORY:
                 if (null !== $category['parent_id']) {
@@ -171,8 +186,7 @@ class CategoryVisibilityCalculator implements ContainerAwareInterface
     {
         $id = $category['id'];
         switch ($category[self::TO_ACCOUNT]) {
-            // AccountCategoryVisibility::ACCOUNT_GROUP
-            case null:
+            case AccountCategoryVisibility::ACCOUNT_GROUP:
                 return $result[$id][self::TO_GROUP];
             case AccountCategoryVisibility::CATEGORY:
                 return $result[$id][self::TO_ALL];

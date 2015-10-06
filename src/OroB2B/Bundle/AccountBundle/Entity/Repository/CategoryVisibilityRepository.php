@@ -5,43 +5,46 @@ namespace OroB2B\Bundle\AccountBundle\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+
 class CategoryVisibilityRepository extends EntityRepository
 {
     /**
-     * @param null $accountId
+     * @param Account $account
      * @return array
      */
-    public function getVisibilityToAll($accountId = null)
+    public function getVisibilityToAll(Account $account)
     {
-        $qb = $this->createQueryBuilder('category');
-        $qb->select('category.id as id, category.parentCategory as parent_category FROM OroB2BCatalogBundle:Category');
-
+        $qb = $this->_em->createQueryBuilder();
+        $qb->select('category.id as id, IDENTITY(category.parentCategory) as parent_category'); //,
+        $qb->from('OroB2BCatalogBundle:Category', 'category');
         $qb->leftJoin(
-            'OroB2BAccountBundle:Visibility:CategoryVisibility',
+            'OroB2BAccountBundle:Visibility\CategoryVisibility',
             'categoryVisibility',
             Join::WITH,
-            $qb->expr()->eq('categoryVisibility.category.id', 'category.id')
+            'IDENTITY(categoryVisibility.category) = category.id'
         );
         $qb->addSelect('categoryVisibility.visibility AS to_all');
-
+//
         $qb->leftJoin(
-            'OroB2BAccountBundle:Visibility:AccountCategoryVisibility',
+            'OroB2BAccountBundle:Visibility\AccountCategoryVisibility',
             'accountCategoryVisibility',
             Join::WITH,
-            $qb->expr()->eq('accountCategoryVisibility.category', 'category.id')
+            'IDENTITY(accountCategoryVisibility.category) = category.id '.
+            'and accountCategoryVisibility.account = :account'
         );
+        $qb->setParameter('account', $account);
         $qb->addSelect('accountCategoryVisibility.visibility AS to_account');
 
         $qb->leftJoin(
-            'OroB2BAccountBundle:Visibility:AccountGroupCategoryVisibility',
+            'OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility',
             'accountGroupCategoryVisibility',
             Join::WITH,
-            $qb->expr()->eq('accountGroupCategoryVisibility.category', 'category.id')
+            'IDENTITY(accountGroupCategoryVisibility.category) = category.id '.
+            'and accountGroupCategoryVisibility.accountGroup = :accountGroup'
         );
+        $qb->setParameter('accountGroup', $account->getGroup());
         $qb->addSelect('accountGroupCategoryVisibility.visibility AS to_group');
-
-        $qb->where('accountCategoryVisibility.account = :account')
-        ->setParameter('account', $accountId);
 
         // parent categories should be first for optimized calculation because of some visibility dependency to parent
         $qb->orderBy('category.level', 'ASC');

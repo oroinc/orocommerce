@@ -1,9 +1,9 @@
-'expected data':
-    -
+inheritance:
+    expected:
         visible: [1,2,4,6,8,9,10,11,13,14,15,16,17,18,19]
         invisible: [3,5,7,12,20]
-    - visible
-    -
+    configValue: visible
+    source:
         -
             id: 1
             parent_id: null
@@ -126,8 +126,8 @@
             to_account: hidden
 
 empty:
-    -
+    expected:
         visible: []
         invisible: []
-    - visible
-    - []
+    configValue: visible
+    source: []
