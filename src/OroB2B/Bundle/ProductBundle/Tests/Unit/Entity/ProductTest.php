@@ -31,7 +31,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
             ['variantFields', ['field'], []],
-            ['enableStatus', true, false]
+            ['status', Product::STATUS_ENABLED, Product::STATUS_DISABLED]
         ];
 
         $this->assertPropertyAccessors(new Product(), $properties);
@@ -292,5 +292,16 @@ class ProductTest extends \PHPUnit_Framework_TestCase
             'no default description' => [[]],
             'several default descriptions' => [[new LocalizedFallbackValue(), new LocalizedFallbackValue()]],
         ];
+    }
+
+    /**
+     *
+     * @expectedException \InvalidArgumentException
+     * @@expectedExceptionMessageRegExp #.*is not a valid status#
+     */
+    public function testSetInvalidStatusShouldThrowInvalidArgumentException()
+    {
+        $product = new Product();
+        $product->setStatus('Invalid Status');
     }
 }
