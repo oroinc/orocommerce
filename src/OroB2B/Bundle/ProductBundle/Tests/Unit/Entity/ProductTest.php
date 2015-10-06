@@ -30,7 +30,8 @@ class ProductTest extends \PHPUnit_Framework_TestCase
             ['organization', new Organization()],
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
-            ['variantFields', ['field'], []]
+            ['variantFields', ['field'], []],
+            ['statusEnable', true, false]
         ];
 
         $this->assertPropertyAccessors(new Product(), $properties);
