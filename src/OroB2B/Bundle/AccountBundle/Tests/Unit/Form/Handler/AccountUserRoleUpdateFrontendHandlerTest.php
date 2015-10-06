@@ -10,6 +10,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 use Oro\Bundle\SecurityBundle\Model\AclPrivilege;
 use Oro\Bundle\SecurityBundle\Model\AclPrivilegeIdentity;
+use Oro\Bundle\SecurityBundle\Acl\Domain\ObjectIdentityFactory;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -110,13 +111,15 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
      * @param AccountUserRole $role
      * @param AccountUserRole $expectedRole
      * @param AccountUser $accountUser
-     *
+     * @param array $existingPrivileges
+
      * @dataProvider successDataPrivilegesProvider
      */
     public function testOnSuccessSetPrivileges(
         AccountUserRole $role,
         AccountUserRole $expectedRole,
-        AccountUser $accountUser
+        AccountUser $accountUser,
+        array $existingPrivileges
     ) {
         $request = new Request();
         $request->setMethod('GET');
@@ -137,16 +140,7 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
         $handler->createForm($role);
 
         $roleSecurityIdentity = new RoleSecurityIdentity($expectedRole);
-
-        $privilege = new AclPrivilege();
-        $privilege->setExtensionKey('entity');
-        $privilege->setIdentity(new AclPrivilegeIdentity('entity:\stdClass', 'VIEW'));
-
-        $privilege2 = new AclPrivilege();
-        $privilege2->setExtensionKey('action');
-        $privilege2->setIdentity(new AclPrivilegeIdentity('action:todo', 'FULL'));
-
-        $privilegeCollection = new ArrayCollection([$privilege, $privilege2]);
+        $privilegeCollection = new ArrayCollection($existingPrivileges);
 
         $this->privilegeRepository->expects($this->any())
             ->method('getPrivileges')
@@ -156,16 +150,40 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
         $this->aclManager->expects($this->once())->method('getSid')->with($expectedRole)
             ->willReturn($roleSecurityIdentity);
 
-        $this->ownershipConfigProvider->expects($this->once())->method('hasConfig')->willReturn(true);
+        $this->ownershipConfigProvider->expects($this->exactly(3))->method('hasConfig')->willReturn(true);
 
         $privilegeForm = $this->getMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->any())->method('get')
             ->with($this->logicalOr($this->equalTo('action'), $this->equalTo('entity')))
             ->willReturn($privilegeForm);
-        $form->expects($this->any())->method('setData')->withConsecutive(
-            new ArrayCollection([$privilege]),
-            new ArrayCollection([$privilege2])
-        );
+
+        $privilegeForm->expects($this->exactly(2))->method('setData')
+            ->withConsecutive(
+                [
+                    $this->callback(
+                        function (ArrayCollection $privileges) use ($existingPrivileges) {
+                            $expected = [$existingPrivileges['valid'], $existingPrivileges['root']];
+                            $this->assertSameSize($expected, $privileges);
+
+                            return $privileges->getValues() === $expected;
+                        }
+                    )
+                ],
+                [
+                    $this->callback(
+                        function (ArrayCollection $privileges) use ($existingPrivileges) {
+                            $expected = [$existingPrivileges['action']];
+                            $this->assertSameSize($expected, $privileges);
+
+                            return $privileges->getValues() === $expected;
+                        }
+                    )
+                ]
+            );
+
+        $metadata = $this->getMock('Oro\Bundle\SecurityBundle\Owner\Metadata\OwnershipMetadataInterface');
+        $metadata->expects($this->exactly(2))->method('hasOwner')->willReturnOnConsecutiveCalls(true, false);
+        $this->chainMetadataProvider->expects($this->any())->method('getMetadata')->willReturn($metadata);
 
         $handler->process($role);
     }
@@ -179,16 +197,36 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
         $account = new Account();
         $accountUser->setAccount($account);
 
+        $privilege = new AclPrivilege();
+        $privilege->setExtensionKey('entity');
+        $privilege->setIdentity(new AclPrivilegeIdentity('entity:\stdClass', 'VIEW'));
+
+        $privilege2 = new AclPrivilege();
+        $privilege2->setExtensionKey('action');
+        $privilege2->setIdentity(new AclPrivilegeIdentity('action:todo', 'FULL'));
+
+        $privilege3 = new AclPrivilege();
+        $privilege3->setExtensionKey('entity');
+        $privilege3->setIdentity(new AclPrivilegeIdentity('entity:\stdClassNoOwnership', 'VIEW'));
+
+        $privilege4 = new AclPrivilege();
+        $privilege4->setExtensionKey('entity');
+        $privilege4->setIdentity(
+            new AclPrivilegeIdentity('entity:' . ObjectIdentityFactory::ROOT_IDENTITY_TYPE, 'VIEW')
+        );
+
         return [
             'edit predefined role should use privileges form predefined' => [
                 (new AccountUserRole()),
                 (new AccountUserRole()),
                 $accountUser,
+                ['valid' => $privilege, 'action' => $privilege2, 'no_owner' => $privilege3, 'root' => $privilege4],
             ],
             'edit account role should use own privileges' => [
                 (new AccountUserRole())->setAccount($account),
                 (new AccountUserRole())->setAccount($account),
                 $accountUser,
+                ['valid' => $privilege, 'action' => $privilege2, 'no_owner' => $privilege3, 'root' => $privilege4],
             ],
         ];
     }
