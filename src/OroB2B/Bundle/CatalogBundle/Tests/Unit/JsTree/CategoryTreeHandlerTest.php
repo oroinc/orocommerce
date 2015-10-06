@@ -236,7 +236,7 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->categoryVisibilityStorage->expects($categoryVisibilityData ? $this->once() : $this->never())
             ->method('getData')
-            ->with($user instanceof AccountUser ? $user->getAccount()->getId() : null)
+            ->with($user instanceof AccountUser ? $user->getAccount() : null)
             ->willReturn($categoryVisibilityData);
 
         $result = $this->categoryTreeHandler->createTree();
