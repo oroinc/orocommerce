@@ -17,15 +17,17 @@ class CategoryVisibilityTest extends \PHPUnit_Framework_TestCase
     public function testAccessors()
     {
         $entity = new CategoryVisibility();
-
+        $category = new Category();
         $this->assertPropertyAccessors(
             $entity,
             [
                 ['id', 1],
-                ['category', new Category()],
+                ['category', $category],
                 ['visibility', CategoryVisibility::PARENT_CATEGORY],
             ]
         );
+        $entity->setTargetEntity($category);
+        $this->assertEquals($entity->getTargetEntity(), $category);
         $this->assertEquals(CategoryVisibility::PARENT_CATEGORY, $entity->getDefault());
 
         $this->assertInternalType('array', $entity->getVisibilityList());
