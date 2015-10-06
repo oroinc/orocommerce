@@ -47,12 +47,12 @@ class QuoteControllerTest extends WebTestCase
         static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 302);
 
         $crawler = $this->client->followRedirect();
-        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        static::assertStringStartsWith(
-            $this->getUrl('orob2b_sale_quote_create'),
-            $this->client->getRequest()->getRequestUri()
-        );
+        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 302);
+
         static::assertEquals(true, $this->client->getRequest()->get(ProductDataStorage::STORAGE_KEY));
+
+        $crawler = $this->client->followRedirect();
+        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $lineItems = $crawler->filter('[data-ftid=orob2b_sale_quote_quoteProducts]');
         static::assertNotEmpty($lineItems);
