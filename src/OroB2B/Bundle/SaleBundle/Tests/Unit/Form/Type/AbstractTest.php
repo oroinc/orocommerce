@@ -343,9 +343,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
             );
         }
 
-        if (null !== $priceType) {
-            $quoteProductOffer->setPriceType($priceType);
-        }
+        $quoteProductOffer->setPriceType($priceType);
 
         if (null !== $price) {
             $quoteProductOffer->setPrice($price);
