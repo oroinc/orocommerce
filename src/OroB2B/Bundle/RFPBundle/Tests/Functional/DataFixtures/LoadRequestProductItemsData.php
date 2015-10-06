@@ -5,8 +5,11 @@ namespace OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use Oro\Bundle\CurrencyBundle\Model\OptionalPrice as Price;
+
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
@@ -70,6 +73,7 @@ class LoadRequestProductItemsData extends AbstractFixture implements DependentFi
             ->setRequestProduct($requestProduct)
             ->setProductUnit($unit)
             ->setQuantity(25)
+            ->setPrice(Price::create(10, 'USD'))
         ;
 
         $requestProduct->addRequestProductItem($requestProductItem);

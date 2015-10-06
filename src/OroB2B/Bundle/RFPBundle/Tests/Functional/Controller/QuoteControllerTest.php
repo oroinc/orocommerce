@@ -13,6 +13,9 @@ use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
  */
 class QuoteControllerTest extends WebTestCase
 {
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->initClient([], static::generateBasicAuthHeader());
