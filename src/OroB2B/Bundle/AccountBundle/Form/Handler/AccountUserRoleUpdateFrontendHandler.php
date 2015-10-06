@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\AccountBundle\Form\Handler;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\UserBundle\Entity\AbstractRole;
 
@@ -22,6 +23,18 @@ class AccountUserRoleUpdateFrontendHandler extends AbstractAccountUserRoleHandle
      * @var AccountUser
      */
     protected $loggedAccountUser;
+
+    /** @var  RequestStack */
+    protected $requestStack;
+
+    /**
+     * @param RequestStack $requestStack
+     */
+    public function setRequestStack($requestStack)
+    {
+        $this->requestStack = $requestStack;
+        $this->request = $requestStack->getCurrentRequest();
+    }
 
     /**
      * @var AccountUserRole

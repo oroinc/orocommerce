@@ -159,7 +159,7 @@ services:
         class: %orob2b_account.form.handler.update_account_user_role.class%
         scope: prototype
         calls:
-            - [setRequest, [@request]]
+            - [setRequestStack, [@request_stack]]
             - [setOwnershipConfigProvider, [@oro_entity_config.provider.ownership]]
             - [setChainMetadataProvider, [@oro_security.owner.metadata_provider.chain]]
             - [setDoctrineHelper, [@oro_entity.doctrine_helper]]

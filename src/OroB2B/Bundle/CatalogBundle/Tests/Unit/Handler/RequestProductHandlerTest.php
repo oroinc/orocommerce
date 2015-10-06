@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Handler;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 use OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler;
 
@@ -20,7 +21,11 @@ class RequestProductHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $this->request = $this->getMock('Symfony\Component\HttpFoundation\Request');
 
-        $this->requestProductHandler = new RequestProductHandler();
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
+
+        $this->requestProductHandler = new RequestProductHandler($requestStack);
     }
 
     /**
@@ -31,7 +36,6 @@ class RequestProductHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetCategoryId($value, $expected)
     {
-        $this->requestProductHandler->setRequest($this->request);
         $this->request->expects($this->once())
             ->method('get')
             ->with(RequestProductHandler::CATEGORY_ID_KEY)
@@ -42,8 +46,8 @@ class RequestProductHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetCategoryIdWithoutRequest()
     {
-        $this->requestProductHandler->setRequest(null);
-        $this->assertFalse($this->requestProductHandler->getCategoryId());
+        $requestProductHandler = new RequestProductHandler(new RequestStack());
+        $this->assertFalse($requestProductHandler->getCategoryId());
     }
 
     /**
@@ -107,7 +111,6 @@ class RequestProductHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetIncludeSubcategoriesChoice($value, $expected)
     {
-        $this->requestProductHandler->setRequest($this->request);
         $this->request->expects($this->once())
             ->method('get')
             ->with(RequestProductHandler::INCLUDE_SUBCATEGORIES_KEY)
@@ -168,17 +171,17 @@ class RequestProductHandlerTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'value' => 'test',
-                'expected' => RequestProductHandler::INCLUDE_SUBCATEGORIES_DEFAULT_VALUE
+                'expected' => RequestProductHandler::INCLUDE_SUBCATEGORIES_DEFAULT_VALUE,
             ],
         ];
     }
 
     public function testGetIncludeSubcategoriesChoiceWithEmptyRequest()
     {
-        $this->requestProductHandler->setRequest(null);
+        $requestProductHandler = new RequestProductHandler(new RequestStack());
         $this->assertEquals(
             RequestProductHandler::INCLUDE_SUBCATEGORIES_DEFAULT_VALUE,
-            $this->requestProductHandler->getIncludeSubcategoriesChoice()
+            $requestProductHandler->getIncludeSubcategoriesChoice()
         );
     }
 }
