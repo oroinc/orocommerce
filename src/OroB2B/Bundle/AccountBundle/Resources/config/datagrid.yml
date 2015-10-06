@@ -739,7 +739,7 @@ datagrid:
                 label: orob2b.account.visibility.accountcategoryvisibility.entity_label
                 frontend_type: select
                 editable: true
-                choices: @orob2b_account.formatter.choice.account_category_visibility->formatChoices()
+                choicesSource: %orob2b_account.entity.account_category_visibility.class%
         sorters:
             columns:
                 name:
@@ -759,7 +759,7 @@ datagrid:
                     options:
                         field_options:
                             multiple: true
-                            choices: @orob2b_account.formatter.choice.account_category_visibility->formatChoices()
+                            choicesSource: %orob2b_account.entity.account_category_visibility.class%
         options:
             cellSelection:
                 dataField: id
@@ -790,7 +790,7 @@ datagrid:
                 label: orob2b.account.visibility.accountgroupcategoryvisibility.entity_label
                 frontend_type: select
                 editable: true
-                choices: @orob2b_account.formatter.choice.account_group_category_visibility->formatChoices()
+                choicesSource: %orob2b_account.entity.account_group_category_visibility.class%
         sorters:
             columns:
                 name:
@@ -810,7 +810,7 @@ datagrid:
                     options:
                         field_options:
                             multiple: true
-                            choices: @orob2b_account.formatter.choice.account_group_category_visibility->formatChoices()
+                            choicesSource: %orob2b_account.entity.account_group_category_visibility.class%
         options:
             cellSelection:
                 dataField: id

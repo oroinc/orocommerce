@@ -5,13 +5,14 @@ namespace OroB2B\Bundle\AccountBundle\EventListener;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
+use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Event\OrmResultBefore;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Formatter\ChoiceFormatter;
+use OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class CategoryVisibilityGridListener
@@ -27,9 +28,9 @@ class CategoryVisibilityGridListener
     protected $registry;
 
     /**
-     * @var ChoiceFormatter
+     * @var VisibilityChoicesProvider
      */
-    protected $choiceFormatter;
+    protected $visibilityChoicesProvider;
 
     /**
      * @var string
@@ -38,12 +39,12 @@ class CategoryVisibilityGridListener
 
     /**
      * @param ManagerRegistry $registry
-     * @param ChoiceFormatter $choiceFormatter
+     * @param VisibilityChoicesProvider $visibilityChoicesProvider
      */
-    public function __construct(ManagerRegistry $registry, ChoiceFormatter $choiceFormatter)
+    public function __construct(ManagerRegistry $registry, VisibilityChoicesProvider $visibilityChoicesProvider)
     {
         $this->registry = $registry;
-        $this->choiceFormatter = $choiceFormatter;
+        $this->visibilityChoicesProvider = $visibilityChoicesProvider;
     }
 
     /**
@@ -58,11 +59,19 @@ class CategoryVisibilityGridListener
     {
         $category = $this->getCategory($event->getParameters()->get('category_id'));
         $config = $event->getConfig();
+        $this->setVisibilityChoices($category, $config, '[columns][visibility]');
+        $this->setVisibilityChoices($category, $config, '[filters][columns][visibility][options][field_options]');
+    }
 
-        $choices = $config->offsetGetByPath('[columns][visibility][choices]');
-        $choices = $this->choiceFormatter->filterChoices($choices, $category);
+    protected function setVisibilityChoices($category, DatagridConfiguration $config, $path)
+    {
+        $pathConfig = $config->offsetGetByPath($path);
 
-        $config->offsetSetByPath('[columns][visibility][choices]', $choices);
+        $pathConfig['choices'] = $this->visibilityChoicesProvider
+            ->getFormattedChoices($pathConfig['choicesSource'], $category);
+        unset($pathConfig['choicesSource']);
+
+        $config->offsetSetByPath($path, $pathConfig);
     }
 
     /**

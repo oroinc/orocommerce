@@ -131,14 +131,18 @@ class AccountCategoryVisibility implements VisibilityInterface
     /**
      * {@inheritdoc}
      */
-    public static function getVisibilityList()
+    public static function getVisibilityList(Category $category = null)
     {
-        return [
+        $visibilityList = [
             self::ACCOUNT_GROUP,
             self::CATEGORY,
             self::PARENT_CATEGORY,
             self::HIDDEN,
             self::VISIBLE
         ];
+        if ($category instanceof Category && !$category->getParentCategory()) {
+            unset($visibilityList[array_search(self::PARENT_CATEGORY, $visibilityList)]);
+        }
+        return $visibilityList;
     }
 }

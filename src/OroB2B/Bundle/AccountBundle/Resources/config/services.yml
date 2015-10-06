@@ -74,7 +74,7 @@ parameters:
 
     orob2b.account.catalog.visibility.change_set.validatior.class: OroB2B\Bundle\AccountBundle\Validator\Constraints\VisibilityChangeSetValidator
 
-    orob2b_account.formatter.choice.class: OroB2B\Bundle\AccountBundle\Formatter\ChoiceFormatter
+    orob2b_account.provider.visibility_choices.class: OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider
 
 services:
     orob2b_account.security.account_user_provider:
@@ -461,7 +461,7 @@ services:
         class: %orob2b_account.event_listener.category_visibility_grid_listener.class%
         arguments:
             - @doctrine
-            - @orob2b_account.formatter.choice
+            - @orob2b_account.provider.visibility_choices
         calls:
             - [ setCategoryClassName, [ %orob2b_catalog.category.class% ]]
         tags:
@@ -480,24 +480,6 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: orob2b.account.catalog.visibility.change_set.validatior }
 
-    orob2b_account.formatter.choice:
-        class: %orob2b_account.formatter.choice.class%
+    orob2b_account.provider.visibility_choices:
+        class: %orob2b_account.provider.visibility_choices.class%
         arguments: [ @translator ]
-
-    orob2b_account.formatter.choice.category_visibility:
-        parent: orob2b_account.formatter.choice
-        calls:
-            - [ setTranslationPattern, [ 'orob2b.account.visibility.categoryvisibility.choice.%s' ] ]
-            - [ setChoices, [[%orob2b_account.entity.category_visibility.class%, 'getVisibilityList']] ]
-
-    orob2b_account.formatter.choice.account_category_visibility:
-        parent: orob2b_account.formatter.choice
-        calls:
-            - [ setTranslationPattern, [ 'orob2b.account.visibility.accountcategoryvisibility.choice.%s' ] ]
-            - [ setChoices, [[%orob2b_account.entity.account_category_visibility.class%, 'getVisibilityList']] ]
-
-    orob2b_account.formatter.choice.account_group_category_visibility:
-        parent: orob2b_account.formatter.choice
-        calls:
-            - [ setTranslationPattern, [ 'orob2b.account.visibility.accountgroupcategoryvisibility.choice.%s' ] ]
-            - [ setChoices, [[%orob2b_account.entity.account_group_category_visibility.class%, 'getVisibilityList']] ]

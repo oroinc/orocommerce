@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormEvents;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 
-use OroB2B\Bundle\AccountBundle\Formatter\ChoiceFormatter;
+use OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
 use OroB2B\Bundle\AccountBundle\Validator\Constraints\VisibilityChangeSet;
 use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSetDataListener;
 use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSubmitListener;
@@ -23,28 +23,31 @@ class CategoryFormExtension extends AbstractTypeExtension
     protected $postSubmitListener;
 
     /** @var string */
+    protected $categoryVisibilityClass;
+
+    /** @var string */
     protected $accountClass;
 
     /** @var string */
     protected $accountGroupClass;
 
-    /** @var ChoiceFormatter */
-    protected $categoryVisibilityFormatter;
+    /** @var VisibilityChoicesProvider */
+    protected $visibilityChoicesProvider;
 
     /**
      * @param CategoryPostSetDataListener $postSetDataListener
      * @param CategoryPostSubmitListener $postSubmitListener
-     * @param ChoiceFormatter $categoryVisibilityFormatter
+     * @param VisibilityChoicesProvider $visibilityChoicesProvider
      */
     public function __construct(
         CategoryPostSetDataListener $postSetDataListener,
         CategoryPostSubmitListener $postSubmitListener,
-        ChoiceFormatter $categoryVisibilityFormatter
+        VisibilityChoicesProvider $visibilityChoicesProvider
     ) {
         $this->postSetDataListener = $postSetDataListener;
         $this->postSubmitListener = $postSubmitListener;
 
-        $this->categoryVisibilityFormatter = $categoryVisibilityFormatter;
+        $this->visibilityChoicesProvider = $visibilityChoicesProvider;
     }
 
     /**
@@ -61,8 +64,7 @@ class CategoryFormExtension extends AbstractTypeExtension
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $category = isset($options['data']) ? $options['data'] : null;
-        $choices = $this->categoryVisibilityFormatter->formatChoices();
-        $choices = $this->categoryVisibilityFormatter->filterChoices($choices, $category);
+        $choices = $this->visibilityChoicesProvider->getFormattedChoices($this->categoryVisibilityClass, $category);
         $builder
             ->add(
                 'categoryVisibility',
@@ -93,6 +95,14 @@ class CategoryFormExtension extends AbstractTypeExtension
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this->postSetDataListener, 'onPostSetData']);
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this->postSubmitListener, 'onPostSubmit']);
+    }
+
+    /**
+     * @param string $categoryVisibilityClass
+     */
+    public function setCategoryVisibilityClass($categoryVisibilityClass)
+    {
+        $this->categoryVisibilityClass = $categoryVisibilityClass;
     }
 
     /**

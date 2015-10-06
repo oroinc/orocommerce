@@ -21,7 +21,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\EventListener\CategoryVisibilityGridListener;
-use OroB2B\Bundle\AccountBundle\Formatter\ChoiceFormatter;
+use OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class CategoryVisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
@@ -32,9 +32,9 @@ class CategoryVisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
     protected $registry;
 
     /**
-     * @var ChoiceFormatter
+     * @var VisibilityChoicesProvider
      */
-    protected $choiceFormatter;
+    protected $visibilityChoicesProvider;
 
     /**
      * @var string
@@ -53,11 +53,10 @@ class CategoryVisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface $translator */
         $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
 
-        $this->choiceFormatter = new ChoiceFormatter($translator);
-        $this->choiceFormatter->setChoices(CategoryVisibility::getVisibilityList());
+        $this->visibilityChoicesProvider = new VisibilityChoicesProvider($translator);
         $this->categoryClass = 'OroB2B\Bundle\CatalogBundle\Entity\Category';
 
-        $this->listener = new CategoryVisibilityGridListener($this->registry, $this->choiceFormatter);
+        $this->listener = new CategoryVisibilityGridListener($this->registry, $this->visibilityChoicesProvider);
         $this->listener->setCategoryClassName($this->categoryClass);
     }
 
@@ -97,15 +96,37 @@ class CategoryVisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
         $parameters = new ParameterBag();
         $parameters->set('category_id', $categoryId);
 
-        $path = '[columns][visibility][choices]';
-        $choices = $this->choiceFormatter->formatChoices();
+        $columnsPath = '[columns][visibility]';
+        $filtersPath = '[filters][columns][visibility][options][field_options]';
+
+        $pathConfig = [
+            'choicesSource' => 'OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility',
+        ];
+
         $config = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration')
             ->disableOriginalConstructor()
             ->getMock();
-        $config->expects($this->exactly(1))
+        $config->expects($this->exactly(2))
             ->method('offsetGetByPath')
-            ->with($path)
-            ->willReturn($choices);
+            ->willReturnMap(
+                [
+                    [$columnsPath, null, $pathConfig],
+                    [$filtersPath, null, $pathConfig],
+                ]
+            );
+        $config->expects($this->exactly(2))
+            ->method('offsetSetByPath')
+            ->willReturnCallback(
+                function ($path, $config) use ($category, $columnsPath, $filtersPath) {
+                    $this->assertTrue(in_array($path, [$columnsPath, $filtersPath]));
+                    $this->assertArrayHasKey('choices', $config);
+                    if ($category && !$category->getParentCategory()) {
+                        $this->assertArrayNotHasKey(CategoryVisibility::PARENT_CATEGORY, $config['choices']);
+                    } else {
+                        $this->assertArrayHasKey(CategoryVisibility::PARENT_CATEGORY, $config['choices']);
+                    }
+                }
+            );
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|PreBuild $preBuild */
         $preBuild = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Event\PreBuild')
@@ -117,10 +138,6 @@ class CategoryVisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
         $preBuild->expects($this->exactly(1))
             ->method('getParameters')
             ->willReturn($parameters);
-
-        $config->expects($this->once())
-            ->method('offsetSetByPath')
-            ->with($path, $this->choiceFormatter->filterChoices($choices, $category));
 
         return $preBuild;
     }

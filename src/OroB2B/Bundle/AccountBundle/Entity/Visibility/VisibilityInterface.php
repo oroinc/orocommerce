@@ -24,7 +24,8 @@ interface VisibilityInterface
     public function getVisibility();
 
     /**
+     * @param Category|null $category
      * @return array
      */
-    public static function getVisibilityList();
+    public static function getVisibilityList(Category $category = null);
 }
