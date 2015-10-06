@@ -232,7 +232,7 @@ orob2b.account:
             entity_plural_label: Account Product Visibilities
             id.label: ID
             account.label: Account
-            category.label: Product
+            product.label: Product
             visibility.label: Visibility
             choice:
                 category: Category
@@ -246,7 +246,7 @@ orob2b.account:
             entity_plural_label: Account Group Product Visibilities
             id.label: ID
             account_group.label: Account Group
-            category.label: Product
+            product.label: Product
             visibility.label: Visibility
             choice:
                 category: Category
@@ -258,7 +258,7 @@ orob2b.account:
             entity_label: Visibility to All
             entity_plural_label: Product Visibilities
             id.label: ID
-            category.label: Product
+            product.label: Product
             visibility.label: Visibility
             choice:
                 config: Config
