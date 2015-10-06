@@ -16,18 +16,17 @@ class WebSettingsType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add(
-                'oro_installer_websettings_backend_prefix',
-                'text',
-                [
-                    'label' => 'orob2b_frontend.form.install_configuration.web_settings.backend_prefix',
-                    'constraints' => [
-                        new Assert\NotBlank(),
-                        new Assert\Regex(['pattern' => '~^/\w+$~', 'message' => 'orob2b_frontend.regex.backend_prefix'])
-                    ],
-                ]
-            );
+        $builder->add(
+            'oro_installer_websettings_backend_prefix',
+            'text',
+            [
+                'label' => 'orob2b_frontend.form.install_configuration.web_settings.backend_prefix',
+                'constraints' => [
+                    new Assert\NotBlank(),
+                    new Assert\Regex(['pattern' => '~^/\w+$~', 'message' => 'orob2b_frontend.regex.backend_prefix'])
+                ],
+            ]
+        );
     }
 
     /**

@@ -17,14 +17,13 @@ class ConfigureTypeExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add(
-                'websettings',
-                WebSettingsType::NAME,
-                array(
-                    'label' => 'orob2b_frontend.form.install_configuration.web_settings.header'
-                )
-            );
+        $builder->add(
+            'websettings',
+            WebSettingsType::NAME,
+            [
+                'label' => 'orob2b_frontend.form.install_configuration.web_settings.header'
+            ]
+        );
     }
 
     /**
