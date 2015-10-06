@@ -26,7 +26,8 @@ class Configuration implements ConfigurationInterface
                 'registration_allowed' => ['type' => 'boolean', 'value' => true],
                 'confirmation_required' => ['type' => 'boolean', 'value' => true],
                 'send_password_in_welcome_email' => ['type' => 'boolean', 'value' => false],
-                'category_visibility' => ['value' => CategoryVisibility::VISIBLE]
+                'category_visibility' => ['value' => CategoryVisibility::VISIBLE],
+                'product_visibility' => ['value' => ProductVisibility::VISIBLE],
             ]
         );
 

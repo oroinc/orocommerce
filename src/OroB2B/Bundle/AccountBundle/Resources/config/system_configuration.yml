@@ -14,7 +14,8 @@ oro_system_configuration:
             page_reload: true
         catalog_category_settings:
             title: orob2b.account.catalog.visibility.label
-
+        catalog_product_settings:
+            title: orob2b.account.catalog.visibility.label
     fields:
         oro_b2b_account.default_account_owner:
             ui_only: true
@@ -58,6 +59,15 @@ oro_system_configuration:
                 required: true
                 constraints:
                     - NotBlank: ~
+        oro_b2b_account.product_visibility:
+            data_type: string
+            type: orob2b_account_catalog_default_visibility
+            priority: 10
+            options:
+                label: orob2b.account.catalog.visibility.form_label
+                required: true
+                constraints:
+                    - NotBlank: ~
     tree:
         system_configuration:
             platform:
@@ -83,3 +93,7 @@ oro_system_configuration:
                                         priority: 100
                                         children:
                                             - oro_b2b_account.category_visibility
+                                    catalog_product_settings:
+                                        priority: 200
+                                        children:
+                                            - oro_b2b_account.product_visibility
