@@ -94,12 +94,12 @@ class ProductControllerTest extends WebTestCase
 
         $this->assertEquals(self::TEST_SKU, $result['sku']);
 
-        $id = $result['id'];
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
-
+        $id = (int)$result['id'];
+        $product = $this->getContainer()->get('doctrine')->getRepository('OroB2BProductBundle:Product')->find($id);
         $locale = $this->getLocale();
-        $product = $this->getContainer()->get('doctrine')->getManager()->find('OroB2BProductBundle:Product', $id);
         $localizedName = $this->getLocalizedName($product, $locale);
+
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
@@ -120,6 +120,13 @@ class ProductControllerTest extends WebTestCase
                 'names' => [
                     'values' => [
                         'default' => self::DEFAULT_NAME_ALTERED,
+                        'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
+                    ],
+                    'ids' => [$locale->getId() => $localizedName->getId()],
+                ],
+                'descriptions' => [
+                    'values' => [
+                        'default' => self::DEFAULT_DESCRIPTION,
                         'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
                     ],
                     'ids' => [$locale->getId() => $localizedName->getId()],
@@ -244,14 +251,11 @@ class ProductControllerTest extends WebTestCase
         $result = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
 
         $id = (int)$result['id'];
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
-
+        $product = $this->getContainer()->get('doctrine')->getRepository('OroB2BProductBundle:Product')->find($id);
         $locale = $this->getLocale();
-        $product = $this->getContainer()->get('doctrine')->getManager()->find('OroB2BProductBundle:Product', $id);
-
-        $this->assertInstanceOf('OroB2B\Bundle\ProductBundle\Entity\Product', $product);
-
         $localizedName = $this->getLocalizedName($product, $locale);
+
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
@@ -265,13 +269,17 @@ class ProductControllerTest extends WebTestCase
                 'inventoryStatus' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
                 'visibility' => Product::VISIBILITY_NOT_VISIBLE,
                 'status' => Product::STATUS_ENABLED,
-                'unitPrecisions' => [
-                    ['unit' => self::FIRST_UNIT_CODE, 'precision' => self::FIRST_UNIT_PRECISION],
-                    ['unit' => self::SECOND_UNIT_CODE, 'precision' => self::SECOND_UNIT_PRECISION],
-                ],
+                'unitPrecisions' => $form->getPhpValues()['orob2b_product']['unitPrecisions'],
                 'names' => [
                     'values' => [
                         'default' => self::DEFAULT_NAME_ALTERED,
+                        'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
+                    ],
+                    'ids' => [$locale->getId() => $localizedName->getId()],
+                ],
+                'descriptions' => [
+                    'values' => [
+                        'default' => self::DEFAULT_DESCRIPTION,
                         'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
                     ],
                     'ids' => [$locale->getId() => $localizedName->getId()],
