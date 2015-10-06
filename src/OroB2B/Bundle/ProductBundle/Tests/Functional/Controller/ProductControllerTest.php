@@ -269,10 +269,7 @@ class ProductControllerTest extends WebTestCase
                 'inventoryStatus' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
                 'visibility' => Product::VISIBILITY_NOT_VISIBLE,
                 'status' => Product::STATUS_ENABLED,
-                'unitPrecisions' => [
-                    ['unit' => self::FIRST_UNIT_CODE, 'precision' => self::FIRST_UNIT_PRECISION],
-                    ['unit' => self::SECOND_UNIT_CODE, 'precision' => self::SECOND_UNIT_PRECISION],
-                ],
+                'unitPrecisions' => $form->getPhpValues()['orob2b_product']['unitPrecisions'],
                 'names' => [
                     'values' => [
                         'default' => self::DEFAULT_NAME_ALTERED,
