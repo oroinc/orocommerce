@@ -17,6 +17,7 @@ use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
@@ -36,6 +37,9 @@ class LoadQuoteDemoData extends AbstractFixture implements
      */
     protected $container;
 
+    /** @var array */
+    protected $priceLists = [];
+
     /**
      * {@inheritdoc}
      */
@@ -54,7 +58,8 @@ class LoadQuoteDemoData extends AbstractFixture implements
             'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
             'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
             'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
-            'OroB2B\Bundle\RFPBundle\Migrations\Data\Demo\ORM\LoadRequestDemoData',
+            'OroB2B\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData',
+            'OroB2B\Bundle\RFPBundle\Migrations\Data\Demo\ORM\LoadRequestDemoData'
         ];
     }
 
@@ -91,7 +96,8 @@ class LoadQuoteDemoData extends AbstractFixture implements
                 ->setValidUntil($validUntil)
                 ->setAccountUser($accountUser)
                 ->setAccount($account)
-                ->setLocked(rand(0, 1));
+                ->setLocked(rand(0, 1))
+                ->setPriceList($this->getPriceList($manager, 'Default Price List'));
 
             if (1 === rand(1, 3)) {
                 $quote->setRequest($requests[rand(1, count($requests) - 1)]);
@@ -143,7 +149,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
 
         $types = [
             QuoteProduct::TYPE_REQUESTED,
-            QuoteProduct::TYPE_NOT_AVAILABLE,
+            //QuoteProduct::TYPE_NOT_AVAILABLE,
         ];
 
         $priceTypes = [
@@ -303,6 +309,21 @@ class LoadQuoteDemoData extends AbstractFixture implements
         }
 
         return $user;
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @param string $name
+     * @return PriceList
+     */
+    protected function getPriceList(ObjectManager $manager, $name)
+    {
+        if (!array_key_exists($name, $this->priceLists)) {
+            $this->priceLists[$name] = $manager->getRepository('OroB2BPricingBundle:PriceList')
+                ->findOneBy(['name' => $name]);
+        }
+
+        return $this->priceLists[$name];
     }
 
     /**

@@ -24,6 +24,7 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductType;
@@ -32,6 +33,8 @@ use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductRequestCollectionType;
 
 class QuoteProductTypeTest extends AbstractTest
 {
+    use QuantityTypeTrait;
+
     /**
      * @var QuoteProductType
      */
@@ -545,6 +548,7 @@ class QuoteProductTypeTest extends AbstractTest
                     $quoteProductOfferType->getName()           => $quoteProductOfferType,
                     $quoteProductRequestType->getName()         => $quoteProductRequestType,
                     $productUnitSelectionType->getName()        => $productUnitSelectionType,
+                    QuantityTypeTrait::$name                    => $this->getQuantityType(),
                 ],
                 []
             ),

@@ -7,8 +7,8 @@
     border-top: 0;
 }
 
-.quote-lineitem-requested-quantity input[type="number"],
-.quote-lineitem-offers-quantity input[type="number"] {
+.quote-lineitem-requested-quantity input[type="text"],
+.quote-lineitem-offers-quantity input[type="text"] {
     width: 40px !important;
 }
 
@@ -26,6 +26,15 @@
 .sale-quoteproductitem-widget-price select,
 .quote-lineitem-offers-price select {
     width: 80px !important;
+}
+
+.quote-lineitem-offers-price table {
+    position: relative;
+}
+
+.quote-lineitem-offers-price input[type="text"] {
+    text-align: right;
+    padding-left: 17px;
 }
 
 .sale-quoteproductitem-widget-quantity input {
@@ -66,9 +75,13 @@ td.quote-lineitem-notes {
     margin-top: 4px;
 }
 
+.quote-lineitem-offers-items .quote-lineitem-offers-item .quote-lineitem-offers-price input[type="text"] {
+    float: left;
+}
+
 .quote-lineitem-offers-items .quote-lineitem-offers-item .quote-lineitem-offers-price table td {
     border: 0;
-    padding-top: 0;
+    padding: 0;
 }
 
 .quote-lineitem-offers-price td:first-child {
@@ -76,7 +89,7 @@ td.quote-lineitem-notes {
 }
 
 table.quote-lineitem-offers {
-    width: 540px;
+    width: 560px;
 }
 
 .oro-item-collection .quote-lineitem-offers-remove .removeRow:after {
@@ -160,7 +173,9 @@ td.quote-product-offer-price {
 span.quote-product-offer-quantity-unit {
     margin-left: 5px;
 }
-
+.quote-lineitems table.grid {
+    overflow: auto;
+}
 .quote-lineitem-product-row > div,
 .quote-lineitem-product-replacement-row,.quote-lineitem-product-replacement-row > div {
     display: none;
@@ -175,3 +190,4 @@ span.quote-product-offer-quantity-unit {
 .quote-lineitem-product-row input[type="text"] {
     width: 275px !important;
 }
+

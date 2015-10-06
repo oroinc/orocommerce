@@ -2,16 +2,16 @@
 
 namespace OroB2B\Bundle\PricingBundle\Form\Handler;
 
-use Doctrine\Common\Persistence\ObjectManager;
-
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+
+use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class PriceListHandler
 {
@@ -21,9 +21,9 @@ class PriceListHandler
     protected $form;
 
     /**
-     * @var Request
+     * @var RequestStack
      */
-    protected $request;
+    protected $requestStack;
 
     /**
      * @var ObjectManager
@@ -32,13 +32,13 @@ class PriceListHandler
 
     /**
      * @param FormInterface $form
-     * @param Request $request
+     * @param RequestStack $requestStack
      * @param ObjectManager $manager
      */
-    public function __construct(FormInterface $form, Request $request, ObjectManager $manager)
+    public function __construct(FormInterface $form, RequestStack $requestStack, ObjectManager $manager)
     {
         $this->form = $form;
-        $this->request = $request;
+        $this->requestStack = $requestStack;
         $this->manager = $manager;
     }
 
@@ -49,9 +49,9 @@ class PriceListHandler
     public function process(PriceList $priceList)
     {
         $this->form->setData($priceList);
-
-        if (in_array($this->request->getMethod(), ['POST', 'PUT'], true)) {
-            $this->form->submit($this->request);
+        $request = $this->requestStack->getCurrentRequest();
+        if (in_array($request->getMethod(), ['POST', 'PUT'], true)) {
+            $this->form->submit($request);
 
             if ($this->form->isValid()) {
                 $this->onSuccess(

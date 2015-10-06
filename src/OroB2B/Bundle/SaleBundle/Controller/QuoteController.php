@@ -3,7 +3,9 @@
 namespace OroB2B\Bundle\SaleBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -15,6 +17,7 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
+use OroB2B\Bundle\SaleBundle\Provider\QuoteProductPriceProvider;
 
 class QuoteController extends Controller
 {
@@ -126,7 +129,23 @@ class QuoteController extends Controller
                     'parameters'    => ['id' => $quote->getId()]
                 ];
             },
-            $this->get('translator')->trans('orob2b.sale.controller.quote.saved.message')
+            $this->get('translator')->trans('orob2b.sale.controller.quote.saved.message'),
+            null,
+            function (Quote $quote, FormInterface $form, Request $request) {
+                return [
+                    'form' => $form->createView(),
+                    'tierPrices' => $this->getQuoteProductPriceProvider()->getTierPrices($quote),
+                    'matchedPrices' => $this->getQuoteProductPriceProvider()->getMatchedPrices($quote),
+                ];
+            }
         );
+    }
+
+    /**
+     * @return QuoteProductPriceProvider
+     */
+    protected function getQuoteProductPriceProvider()
+    {
+        return $this->get('orob2b_sale.provider.quote_product_price');
     }
 }

@@ -17,6 +17,7 @@ orob2b:
             account_user.label: 'Account User'
             locked.label: 'Locked'
             not_locked.label: 'Not Locked'
+            price_list.label: 'Price List'
 
             sections:
                 general: 'General'
