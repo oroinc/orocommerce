@@ -59,6 +59,13 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
      * @var string
      *
      * @ORM\Column(name="first_name", type="string", length=255)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $firstName;
 
@@ -66,6 +73,13 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
      * @var string
      *
      * @ORM\Column(name="last_name", type="string", length=255)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $lastName;
 
@@ -73,6 +87,13 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
      * @var string
      *
      * @ORM\Column(name="email", type="string", length=255)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $email;
 
@@ -80,6 +101,13 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
      * @var string
      *
      * @ORM\Column(name="phone", type="string", length=255)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $phone;
 
@@ -87,6 +115,13 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
      * @var string
      *
      * @ORM\Column(name="company", type="string", length=255)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $company;
 
@@ -94,6 +129,13 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
      * @var string
      *
      * @ORM\Column(name="role", type="string", length=255)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $role;
 
@@ -101,6 +143,13 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
      * @var string
      *
      * @ORM\Column(name="body", type="text")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $body;
 
@@ -108,6 +157,13 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
      * @var RequestStatus
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\RFPBundle\Entity\RequestStatus")
      * @ORM\JoinColumn(name="status_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $status;
 
@@ -115,6 +171,13 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
      * @var Collection|RequestProduct[]
      *
      * @ORM\OneToMany(targetEntity="RequestProduct", mappedBy="request", cascade={"ALL"}, orphanRemoval=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $requestProducts;
 
@@ -150,13 +213,6 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
      * @var \DateTime
      *
      * @ORM\Column(name="created_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.created_at"
-     *          }
-     *      }
-     * )
      */
     protected $createdAt;
 
@@ -164,13 +220,6 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
      * @var \DateTime
      *
      * @ORM\Column(name="updated_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          }
-     *      }
-     * )
      */
     protected $updatedAt;
 
