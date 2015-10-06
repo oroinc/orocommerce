@@ -20,6 +20,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class OroB2BAccountBundleInstaller implements
     Installation,

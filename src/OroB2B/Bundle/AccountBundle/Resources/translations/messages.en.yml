@@ -227,6 +227,44 @@ orob2b.account:
                 visible: Visible
                 hidden: Hidden
 
+        accountproductvisibility:
+            entity_label: Visibility to Products
+            entity_plural_label: Account Product Visibilities
+            id.label: ID
+            account.label: Account
+            category.label: Product
+            visibility.label: Visibility
+            choice:
+                category: Category
+                config: Config
+                hidden: Hidden
+                visible: Visible
+                account_group: Account Group
+
+        accountgroupproductvisibility:
+            entity_label: Visibility to Account Groups
+            entity_plural_label: Account Group Product Visibilities
+            id.label: ID
+            account_group.label: Account Group
+            category.label: Product
+            visibility.label: Visibility
+            choice:
+                category: Category
+                config: Config
+                hidden: Hidden
+                visible: Visible
+
+        productvisibility:
+            entity_label: Visibility to All
+            entity_plural_label: Product Visibilities
+            id.label: ID
+            category.label: Product
+            visibility.label: Visibility
+            choice:
+                config: Config
+                visible: Visible
+                hidden: Hidden
+
     catalog:
         visibility:
             label: Default Visibility to Accounts
