@@ -21,7 +21,7 @@ orob2b:
         is_variant.label: Is Variant
         variant_links.label: Product Variant Links
 
-        status_enable:
+        enable_status:
             enable: Enable
             disable: Disable
 
