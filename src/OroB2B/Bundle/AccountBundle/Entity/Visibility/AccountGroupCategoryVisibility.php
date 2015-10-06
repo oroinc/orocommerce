@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroupAwareInterface;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 /**
@@ -14,7 +15,7 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
  * @ORM\Table(name="orob2b_acc_grp_ctgr_visibility")
  * @Config
  */
-class AccountGroupCategoryVisibility implements VisibilityInterface
+class AccountGroupCategoryVisibility implements VisibilityInterface, AccountGroupAwareInterface
 {
     const PARENT_CATEGORY = 'parent_category';
     const CATEGORY = 'category';
@@ -138,5 +139,24 @@ class AccountGroupCategoryVisibility implements VisibilityInterface
             self::HIDDEN,
             self::VISIBLE
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTargetEntity()
+    {
+        return $this->category;
+    }
+
+    /**
+     * @param Category $category
+     * @return $this
+     */
+    public function setTargetEntity($category)
+    {
+        $this->setCategory($category);
+
+        return $this;
     }
 }

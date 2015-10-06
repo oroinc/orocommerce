@@ -24,4 +24,15 @@ interface VisibilityInterface
      * @return array
      */
     public static function getVisibilityList();
+
+    /**
+     * @return object
+     */
+    public function getTargetEntity();
+
+    /**
+     * @param object $entity
+     * @return $this
+     */
+    public function setTargetEntity($entity);
 }
