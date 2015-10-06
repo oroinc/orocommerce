@@ -326,6 +326,10 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
         array $expectedUsersWithoutRole,
         $changeAccountProcessed = true
     ) {
+        // Array of persisted users
+        /** @var AccountUser[] $persistedUsers */
+        $persistedUsers = [];
+
         $request = new Request();
         $request->setMethod('POST');
 
