@@ -43,6 +43,9 @@ class LoadProducts extends AbstractFixture
         $name = new LocalizedFallbackValue();
         $name->setString($sku);
 
+        $description = new LocalizedFallbackValue();
+        $description->setString($sku);
+
         $product = new Product();
         $product->setSku($sku);
 
@@ -52,6 +55,7 @@ class LoadProducts extends AbstractFixture
         $product->setOwner($businessUnit);
         $product->setOrganization($organization);
         $product->addName($name);
+        $product->addDescription($description);
         $manager->persist($product);
         $this->addReference($sku, $product);
 
