@@ -17,14 +17,22 @@ define(function(require) {
         options: {
             accountFieldId: '#accountFieldId',
             datagridName: 'account-users-datagrid',
-            originalValue: null
+            originalValue: null,
+            previousValueDataAttribute: 'previousValue'
         },
+
+        /**
+         * @property {jQuery.Element}
+         */
+        accountField: null,
 
         /**
          * @inheritDoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
+
+            this.accountField = this.options._sourceElement.find(this.options.accountFieldId);
 
             this.options._sourceElement
                 .on('change', this.options.accountFieldId, _.bind(this.onAccountSelectorChange, this));
@@ -38,9 +46,17 @@ define(function(require) {
             }
 
             if (value !== this.options.originalValue) {
-                this._getAccountConfirmDialog(function() {
-                    this._updateAccountUserGrid(value);
-                });
+                this._getAccountConfirmDialog(
+                    function() {
+                        this._updateAccountUserGrid(value);
+                        this.accountField.data(this.options.previousValueDataAttribute, value);
+                    },
+                    function() {
+                        this.accountField
+                            .select2('val', this.accountField.data(this.options.previousValueDataAttribute));
+                        this.accountField.data(this.options.previousValueDataAttribute, this.options.originalValue);
+                    }
+                );
             }
         },
 
@@ -64,14 +80,18 @@ define(function(require) {
          * Show account confirmation dialog
          *
          * @param {function()} okCallback
+         * @param {function()} cancelCallback
          * @private
          */
-        _getAccountConfirmDialog: function(okCallback) {
+        _getAccountConfirmDialog: function(okCallback, cancelCallback) {
             if (!this.changeAccountConfirmDialog) {
                 this.changeAccountConfirmDialog = this._createChangeAccountConfirmationDialog();
             }
 
-            this.changeAccountConfirmDialog.off('ok').on('ok', _.bind(okCallback, this));
+            this.changeAccountConfirmDialog
+                .off('ok').on('ok', _.bind(okCallback, this))
+                .off('cancel').on('cancel', _.bind(cancelCallback, this));
+
             this.changeAccountConfirmDialog.open();
         },
 
