@@ -33,31 +33,43 @@ define(function(require) {
             this.options = _.defaults(options || {}, this.options);
 
             this.accountField = this.options._sourceElement.find(this.options.accountFieldId);
+            this.accountField.data(this.options.previousValueDataAttribute, this.options.originalValue);
 
             this.options._sourceElement
                 .on('change', this.options.accountFieldId, _.bind(this.onAccountSelectorChange, this));
         },
 
+        /**
+         * @param {jQuery.Event} e
+         */
         onAccountSelectorChange: function(e) {
             var value = e.target.value;
 
-            if (!value) {
-                this._updateAccountUserGrid(value);
+            if (value === this.options.originalValue) {
+                this._updateGridAndSaveParameters(value);
+
+                return;
             }
 
-            if (value !== this.options.originalValue) {
-                this._getAccountConfirmDialog(
-                    function() {
-                        this._updateAccountUserGrid(value);
-                        this.accountField.data(this.options.previousValueDataAttribute, value);
-                    },
-                    function() {
-                        this.accountField
-                            .select2('val', this.accountField.data(this.options.previousValueDataAttribute));
-                        this.accountField.data(this.options.previousValueDataAttribute, this.options.originalValue);
-                    }
-                );
-            }
+            this._getAccountConfirmDialog(
+                function() {
+                    this._updateGridAndSaveParameters(value);
+                },
+                function() {
+                    this.accountField
+                        .select2('val', this.accountField.data(this.options.previousValueDataAttribute));
+                    this.accountField.data(this.options.previousValueDataAttribute, this.options.originalValue);
+                }
+            );
+        },
+
+        /**
+         * @param {String} value
+         * @private
+         */
+        _updateGridAndSaveParameters: function(value) {
+            this._updateAccountUserGrid(value);
+            this.accountField.data(this.options.previousValueDataAttribute, value);
         },
 
         dispose: function() {
