@@ -9,7 +9,7 @@ parameters:
     orob2b_frontend.placeholder.filter.class: OroB2B\Bundle\FrontendBundle\Placeholder\FrontendFilter
     orob2b_frontend.request.frontend_helper.class: OroB2B\Bundle\FrontendBundle\Request\FrontendHelper
     orob2b_frontend.form.type.extension.configuration.web.class: OroB2B\Bundle\FrontendBundle\Form\Extension\ConfigureTypeExtension
-    orob2b_frontend.form.type.configuration.web.class: OroB2B\Bundle\FrontendBundle\Form\Type\Configuration\WebType
+    orob2b_frontend.form.type.install_configuration.web_settings.class: OroB2B\Bundle\FrontendBundle\Form\Type\Configuration\WebSettingsType
 
 services:
     orob2b_frontend.listener.frontend_route_collection:
@@ -25,7 +25,7 @@ services:
     orob2b_frontend.listener.route_collection:
         class: %orob2b_frontend.listener.route_collection.class%
         arguments:
-            - %backend_prefix%
+            - %websettings_backend_prefix%
         tags:
             - { name: kernel.event_listener, event: oro_distribution.route_collection.expose, method: onCollectionAutoload, priority: 120 }
             - { name: kernel.event_listener, event: oro_distribution.route_collection.autoload, method: onCollectionAutoload, priority: 120 }
@@ -75,7 +75,7 @@ services:
     orob2b_frontend.request.frontend_helper:
         class: %orob2b_frontend.request.frontend_helper.class%
         arguments:
-            - %backend_prefix%
+            - %websettings_backend_prefix%
 
     orob2b_frontend.activity_list.placeholder.filter:
         class: %orob2b_frontend.activity_list.placeholder.filter.class%
@@ -86,10 +86,10 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro.ui.grouping_chain_widget.before, method: isAllowedButton, priority: 10 }
 
-    orob2b_frontend.form.type.configuration.web:
-        class: %orob2b_frontend.form.type.configuration.web.class%
+    orob2b_frontend.form.type.install_configuration.web_settings:
+        class: %orob2b_frontend.form.type.install_configuration.web_settings.class%
         tags:
-            - { name: form.type, alias: orob2b_frontend_configuration_web }
+            - { name: form.type, alias: orob2b_frontend_install_configuration_web_settings }
 
     orob2b_frontend.form.type.extension.configuration.web:
         class: %orob2b_frontend.form.type.extension.configuration.web.class%
