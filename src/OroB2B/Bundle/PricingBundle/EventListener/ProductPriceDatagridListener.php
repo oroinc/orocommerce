@@ -2,17 +2,21 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
+use Doctrine\ORM\Query\Expr;
+
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
+use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 
 use OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
 class ProductPriceDatagridListener
 {
@@ -32,6 +36,11 @@ class ProductPriceDatagridListener
     protected $priceListRequestHandler;
 
     /**
+     * @var string
+     */
+    protected $priceListClass;
+
+    /**
      * @param TranslatorInterface $translator
      * @param DoctrineHelper $doctrineHelper
      * @param AbstractPriceListRequestHandler $priceListRequestHandler
@@ -47,6 +56,14 @@ class ProductPriceDatagridListener
     }
 
     /**
+     * @param string $priceListClass
+     */
+    public function setPriceListClass($priceListClass)
+    {
+        $this->priceListClass = $priceListClass;
+    }
+
+    /**
      * @param BuildBefore $event
      */
     public function onBuildBefore(BuildBefore $event)
@@ -58,6 +75,7 @@ class ProductPriceDatagridListener
 
         $config = $event->getConfig();
 
+        $units = $this->getAllUnits();
         foreach ($currencies as $currencyIsoCode) {
             $columnName = $this->buildColumnName($currencyIsoCode);
             $column = [
@@ -78,6 +96,11 @@ class ProductPriceDatagridListener
             ];
 
             $config->offsetSetByPath(sprintf('[filters][columns][%s]', $columnName), $filter);
+
+            // add prices for units
+            foreach ($units as $unit) {
+                $this->addProductPriceRelation($config, $unit, $currencyIsoCode);
+            }
         }
     }
 
@@ -128,11 +151,14 @@ class ProductPriceDatagridListener
 
     /**
      * @param string $currencyIsoCode
+     * @param string $unitCode
      * @return string
      */
-    protected function buildColumnName($currencyIsoCode)
+    protected function buildColumnName($currencyIsoCode, $unitCode = null)
     {
-        return 'price_column_' . strtolower($currencyIsoCode);
+        $result = 'price_column_' . strtolower($currencyIsoCode);
+
+        return $unitCode ? sprintf('%s_%s', $result, strtolower($unitCode)) : $result;
     }
 
     /**
@@ -168,5 +194,90 @@ class ProductPriceDatagridListener
         }
 
         return $groupedPrices;
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     * @param ProductUnit $unit
+     * @param $currency
+     */
+    protected function addProductPriceRelation(DatagridConfiguration $config, ProductUnit $unit, $currency)
+    {
+        $joinAlias = $this->buildColumnName($currency, $unit);
+        $columnName = $joinAlias . '_value';
+        $priceList = $this->getPriceList();
+        // select
+        $this->addConfigElement($config, '[source][query][select]', sprintf('%s.value as %s', $joinAlias, $columnName));
+        $config->offsetSetByPath('[source][query][groupBy]', 'product.id');
+
+        $expr = new Expr();
+        $joinExpr = $expr
+            ->andX(sprintf('%s.product = product.id', $joinAlias))
+            ->add($expr->eq(sprintf('%s.currency', $joinAlias), $expr->literal($currency)))
+            ->add($expr->eq(sprintf('%s.unit', $joinAlias), $expr->literal($unit)))
+            ->add($expr->eq(sprintf('%s.priceList', $joinAlias), $expr->literal($priceList->getId())))
+        ;
+
+        // left join
+        $leftJoin = [
+            'join' => $this->priceListClass,
+            'alias' => $joinAlias,
+            'conditionType' => Expr\Join::WITH,
+            'condition' => (string) $joinExpr,
+        ];
+        $this->addConfigElement($config, '[source][query][join][left]', $leftJoin);
+
+        // column
+        $column = [
+            'label' => $this->translator->trans(
+                'orob2b.pricing.productprice.price_%unit%_in_%currency%',
+                [
+                    '%currency%' => $currency,
+                    '%unit%' =>  $unit->getCode(),
+                ]
+            ),
+        ];
+
+        $this->addConfigElement($config, '[columns]', $column, $columnName);
+
+        // sorter
+        $sorter = ['data_name' => $columnName];
+        $this->addConfigElement($config, '[sorters][columns]', $sorter, $columnName);
+
+        // filter
+        $filter = [
+            'type' => 'product-price',
+            'data_name' => $columnName,
+        ];
+
+        $this->addConfigElement($config, '[filters][columns]', $filter, $columnName);
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     * @param string $path
+     * @param mixed $element
+     * @param mixed $key
+     */
+    protected function addConfigElement(DatagridConfiguration $config, $path, $element, $key = null)
+    {
+        $select = $config->offsetGetByPath($path);
+        if ($key) {
+            $select[$key] = $element;
+        } else {
+            $select[] = $element;
+        }
+        $config->offsetSetByPath($path, $select);
+    }
+
+    /**
+     * @return ProductUnit[]
+     */
+    protected function getAllUnits()
+    {
+        return $this->doctrineHelper
+            ->getEntityRepository('OroB2BProductBundle:ProductUnit')
+            ->findBy([], ['code' => 'ASC'])
+        ;
     }
 }
