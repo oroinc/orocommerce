@@ -84,7 +84,7 @@ class AccountProductVisibility implements VisibilityInterface, AccountAwareInter
     }
 
     /**
-     * @return Account
+     * {@inheritdoc}
      */
     public function getAccount()
     {
@@ -92,9 +92,7 @@ class AccountProductVisibility implements VisibilityInterface, AccountAwareInter
     }
 
     /**
-     * @param Account $account
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setAccount(Account $account)
     {
