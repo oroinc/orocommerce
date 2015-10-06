@@ -84,7 +84,7 @@ class AccountCategoryVisibility implements VisibilityInterface, AccountAwareInte
     }
 
     /**
-     * @return Account
+     * {@inheritdoc}
      */
     public function getAccount()
     {
@@ -92,9 +92,7 @@ class AccountCategoryVisibility implements VisibilityInterface, AccountAwareInte
     }
 
     /**
-     * @param Account $account
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function setAccount(Account $account)
     {
@@ -144,7 +142,7 @@ class AccountCategoryVisibility implements VisibilityInterface, AccountAwareInte
     }
 
     /**
-     * {@inheritdoc}
+     * @return Category
      */
     public function getTargetEntity()
     {
