@@ -7,8 +7,8 @@
     border-top: 0;
 }
 
-.quote-lineitem-requested-quantity input[type="number"],
-.quote-lineitem-offers-quantity input[type="number"] {
+.quote-lineitem-requested-quantity input[type="text"],
+.quote-lineitem-offers-quantity input[type="text"] {
     width: 40px !important;
 }
 
@@ -26,6 +26,15 @@
 .sale-quoteproductitem-widget-price select,
 .quote-lineitem-offers-price select {
     width: 80px !important;
+}
+
+.quote-lineitem-offers-price table {
+    position: relative;
+}
+
+.quote-lineitem-offers-price input[type="text"] {
+    text-align: right;
+    padding-left: 17px;
 }
 
 .sale-quoteproductitem-widget-quantity input {
@@ -66,9 +75,13 @@ td.quote-lineitem-notes {
     margin-top: 4px;
 }
 
+.quote-lineitem-offers-items .quote-lineitem-offers-item .quote-lineitem-offers-price input[type="text"] {
+    float: left;
+}
+
 .quote-lineitem-offers-items .quote-lineitem-offers-item .quote-lineitem-offers-price table td {
     border: 0;
-    padding-top: 0;
+    padding: 0;
 }
 
 .quote-lineitem-offers-price td:first-child {
@@ -76,7 +89,7 @@ td.quote-lineitem-notes {
 }
 
 table.quote-lineitem-offers {
-    width: 540px;
+    width: 560px;
 }
 
 .oro-item-collection .quote-lineitem-offers-remove .removeRow:after {
@@ -102,4 +115,65 @@ table.quote-lineitem-offers {
 .quote-lineitem-notes-seller-active .quote-lineitem-notes-add-btn {
     visibility: hidden;
     margin-top: 1px;
+}
+
+.quote-to-order-widget {
+    padding-bottom: 10px;
+}
+
+td.quote-product-offer-product-sku,
+td.quote-product-offer-product-name,
+td.quote-product-offer-customer-notes,
+td.quote-product-offer-seller-notes,
+td.quote-product-offer-price {
+    padding-top: 11px !important;
+}
+
+td.quote-product-offer-select-offer {
+    width: 260px;
+}
+
+td.quote-product-offer-select-offer table {
+    table-layout: fixed;
+}
+
+td.quote-product-offer-select-offer td {
+    border: none;
+}
+
+td.quote-product-offer-select-offer td input {
+    margin-top: 0 !important;
+}
+
+td.quote-product-offer-select-offer td.quote-product-offer-select-offer-choice {
+    width: 16px;
+    padding: 5px 0 !important;
+    vertical-align: middle !important;
+}
+
+td.quote-product-offer-select-offer td.quote-product-offer-select-offer-label {
+    min-width: 125px;
+    width: 125px;
+    word-break: break-all;
+}
+
+td.quote-product-offer-quantity {
+    width: 160px;
+    text-align: center;
+}
+
+td.quote-product-offer-quantity input {
+    width: 40px;
+}
+
+td.quote-product-offer-price {
+    min-width: 100px;
+}
+
+span.quote-product-offer-quantity-unit {
+    margin-left: 5px;
+}
+
+.quote-lineitems table.grid {
+    overflow: auto;
 }

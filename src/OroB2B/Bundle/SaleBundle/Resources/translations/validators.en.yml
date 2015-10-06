@@ -11,3 +11,9 @@ orob2b:
         quoteproductoffer:
             product_unit:
                 blank: 'Unit of measurement cannot be empty.'
+            configurable:
+                offer:
+                    blank: 'Please enter valid quantity'
+                quantity:
+                    equal: 'Quantity should be equal to offered quantity'
+                    less: 'Quantity should be grater than or equal to offered quantity'

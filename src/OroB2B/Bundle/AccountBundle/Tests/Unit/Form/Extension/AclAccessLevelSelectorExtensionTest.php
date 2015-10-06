@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormView;
 
 use Oro\Bundle\SecurityBundle\Form\Type\AclAccessLevelSelectorType;
 
+use OroB2B\Bundle\AccountBundle\Acl\Resolver\RoleTranslationPrefixResolver;
 use OroB2B\Bundle\AccountBundle\Form\Extension\AclAccessLevelSelectorExtension;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleType;
@@ -14,13 +15,28 @@ use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleType;
 class AclAccessLevelSelectorExtensionTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|RoleTranslationPrefixResolver
+     */
+    protected $roleTranslationPrefixResolver;
+
+    /**
      * @var AclAccessLevelSelectorExtension
      */
     protected $extension;
 
     protected function setUp()
     {
-        $this->extension = new AclAccessLevelSelectorExtension();
+        $this->roleTranslationPrefixResolver = $this
+            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Acl\Resolver\RoleTranslationPrefixResolver')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->extension = new AclAccessLevelSelectorExtension($this->roleTranslationPrefixResolver);
+    }
+
+    protected function tearDown()
+    {
+        unset($this->roleTranslationPrefixResolver, $this->extension);
     }
 
     public function testGetExtendedType()
@@ -37,6 +53,8 @@ class AclAccessLevelSelectorExtensionTest extends \PHPUnit_Framework_TestCase
      * @param string|null $roleFormName
      * @param string|null $expectedPrefix
      * @dataProvider finishViewDataProvider
+     *
+     * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function testFinishView(
         $hasPermissionForm = false,
@@ -47,6 +65,10 @@ class AclAccessLevelSelectorExtensionTest extends \PHPUnit_Framework_TestCase
         $roleFormName = null,
         $expectedPrefix = null
     ) {
+        $this->roleTranslationPrefixResolver->expects($expectedPrefix ? $this->once() : $this->never())
+            ->method('getPrefix')
+            ->willReturn($expectedPrefix);
+
         $roleForm = null;
         if ($hasRoleForm) {
             $type = $this->getMock('Symfony\Component\Form\ResolvedFormTypeInterface');
@@ -143,7 +165,7 @@ class AclAccessLevelSelectorExtensionTest extends \PHPUnit_Framework_TestCase
                 true,
                 true,
                 FrontendAccountUserRoleType::NAME,
-                'orob2b.account.security.access-level.'
+                'orob2b.account.security.frontend.access-level.'
             ],
         ];
     }

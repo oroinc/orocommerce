@@ -3,117 +3,65 @@
 namespace OroB2B\Bundle\ProductBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Schema\SchemaException;
 
-use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
-use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
-class OroB2BProductBundle implements
-    Migration,
-    ExtendExtensionAwareInterface,
-    NoteExtensionAwareInterface,
-    AttachmentExtensionAwareInterface
+class OroB2BProductBundle implements Migration
 {
+    const PRODUCT_VARIANT_LINK_TABLE_NAME = 'orob2b_product_variant_link';
     const PRODUCT_TABLE_NAME = 'orob2b_product';
-    const MAX_PRODUCT_IMAGE_SIZE_IN_MB = 10;
-    const MAX_PRODUCT_ATTACHMENT_SIZE_IN_MB = 5;
-
-    /** @var ExtendExtension */
-    protected $extendExtension;
-
-    /** @var NoteExtension */
-    protected $noteExtension;
-
-    /** @var AttachmentExtension */
-    protected $attachmentExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
-    {
-        $this->attachmentExtension = $attachmentExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setNoteExtension(NoteExtension $noteExtension)
-    {
-        $this->noteExtension = $noteExtension;
-    }
 
     /**
      * {@inheritdoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->updateProductTable($schema);
-        $this->addNoteAssociations($schema);
-        $this->addAttachmentAssociations($schema);
-    }
-
-    /**
-     * @param Schema $schema
-     * @throws SchemaException
-     */
-    protected function updateProductTable(Schema $schema)
-    {
-        $this->extendExtension->addEnumField(
-            $schema,
-            self::PRODUCT_TABLE_NAME,
-            'inventory_status',
-            'prod_inventory_status'
-        );
-
-        $this->extendExtension->addEnumField(
-            $schema,
-            self::PRODUCT_TABLE_NAME,
-            'visibility',
-            'prod_visibility'
-        );
+        $this->updateOroB2BProductTable($schema);
+        $this->createOroB2BProductVariantLinkTable($schema);
+        $this->addOroB2BProductVariantLinkForeignKeys($schema);
     }
 
     /**
      * @param Schema $schema
      */
-    protected function addNoteAssociations(Schema $schema)
+    protected function createOroB2BProductVariantLinkTable(Schema $schema)
     {
-        $this->noteExtension->addNoteAssociation($schema, self::PRODUCT_TABLE_NAME);
+        $table = $schema->createTable(self::PRODUCT_VARIANT_LINK_TABLE_NAME);
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('product_id', 'integer', ['notnull' => true]);
+        $table->addColumn('parent_product_id', 'integer', ['notnull' => true]);
+        $table->addColumn('visible', 'boolean', ['default' => true]);
+        $table->setPrimaryKey(['id']);
     }
 
     /**
      * @param Schema $schema
      */
-    protected function addAttachmentAssociations(Schema $schema)
+    protected function addOroB2BProductVariantLinkForeignKeys(Schema $schema)
     {
-        $this->attachmentExtension->addImageRelation(
-            $schema,
-            self::PRODUCT_TABLE_NAME,
-            'image',
-            [],
-            self::MAX_PRODUCT_IMAGE_SIZE_IN_MB
+        $table = $schema->getTable(self::PRODUCT_VARIANT_LINK_TABLE_NAME);
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::PRODUCT_TABLE_NAME),
+            ['product_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::PRODUCT_TABLE_NAME),
+            ['parent_product_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
 
-        $this->attachmentExtension->addAttachmentAssociation(
-            $schema,
-            self::PRODUCT_TABLE_NAME,
-            [],
-            self::MAX_PRODUCT_ATTACHMENT_SIZE_IN_MB
-        );
+    /**
+     * @param Schema $schema
+     */
+    protected function updateOroB2BProductTable(Schema $schema)
+    {
+        $table = $schema->getTable(self::PRODUCT_TABLE_NAME);
+        $table->addColumn('has_variants', 'boolean', ['default' => false]);
+        $table->addColumn('variant_fields', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
     }
 }

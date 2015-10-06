@@ -7,10 +7,6 @@ use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 
 /**
- * @method AbstractEnumValue getInventoryStatus()
- * @method Account setInventoryStatus(AbstractEnumValue $enumId)
- * @method AbstractEnumValue getVisibility()
- * @method Account setVisibility(AbstractEnumValue $enumId)
  * @method AbstractEnumValue getInternalRating()
  * @method Account setInternalRating(AbstractEnumValue $enumId)
  */

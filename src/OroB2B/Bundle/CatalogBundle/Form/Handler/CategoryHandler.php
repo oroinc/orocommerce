@@ -24,12 +24,15 @@ class CategoryHandler
     protected $manager;
 
     /**
-     * @param FormInterface $form
-     * @param Request       $request
-     * @param ObjectManager $manager
+     * @param FormInterface            $form
+     * @param Request                  $request
+     * @param ObjectManager            $manager
      */
-    public function __construct(FormInterface $form, Request $request, ObjectManager $manager)
-    {
+    public function __construct(
+        FormInterface $form,
+        Request $request,
+        ObjectManager $manager
+    ) {
         $this->form = $form;
         $this->request = $request;
         $this->manager = $manager;
@@ -44,7 +47,7 @@ class CategoryHandler
     {
         $this->form->setData($category);
 
-        if (in_array($this->request->getMethod(), array('POST', 'PUT'))) {
+        if (in_array($this->request->getMethod(), ['POST', 'PUT'])) {
             $this->form->submit($this->request);
             if ($this->form->isValid()) {
                 $appendProducts = $this->form->get('appendProducts')->getData();

@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Autocomplete;
 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -19,15 +21,14 @@ class ProductPriceListAwareSearchHandlerTest extends WebTestCase
 {
     const TEST_ENTITY_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $testProperties = ['sku'];
 
-    /**
-     * @var ProductPriceListAwareSearchHandler
-     */
+    /** @var ProductPriceListAwareSearchHandler */
     protected $searchHandler;
+
+    /** @var  Request|\PHPUnit_Framework_MockObject_MockObject */
+    protected $request;
 
     protected function setUp()
     {
@@ -75,6 +76,7 @@ class ProductPriceListAwareSearchHandlerTest extends WebTestCase
 
         $modifier = new FrontendProductListModifier($tokenStorage, $priceListTreeHandler);
 
+        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
         $request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
             ->disableOriginalConstructor()
             ->getMock();
@@ -82,13 +84,16 @@ class ProductPriceListAwareSearchHandlerTest extends WebTestCase
             ->method('get')
             ->with('currency')
             ->will($this->returnValue($currency));
+        /** @var RequestStack $requestStack */
+        $requestStack = $this->getRequestStack($request);
+
 
         $searchHandler = new ProductPriceListAwareSearchHandler(
             self::TEST_ENTITY_CLASS,
             $this->testProperties,
-            $modifier
+            $modifier,
+            $requestStack
         );
-        $searchHandler->setRequest($request);
         $searchHandler->setAclHelper($this->getContainer()->get('oro_security.acl_helper'));
 
         $searchHandler->initDoctrinePropertiesByManagerRegistry($this->getContainer()->get('doctrine'));
@@ -170,12 +175,26 @@ class ProductPriceListAwareSearchHandlerTest extends WebTestCase
         $modifier = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\FrontendProductListModifier')
             ->disableOriginalConstructor()
             ->getMock();
-
+        $requestStack = new RequestStack();
         $searchHandler = new ProductPriceListAwareSearchHandler(
             self::TEST_ENTITY_CLASS,
             $this->testProperties,
-            $modifier
+            $modifier,
+            $requestStack
         );
         $searchHandler->search('test', 1, 10);
+    }
+
+    /**
+     * @param Request $request
+     * @return \PHPUnit_Framework_MockObject_MockObject|RequestStack
+     */
+    protected function getRequestStack(Request $request)
+    {
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($request);
+
+        return $requestStack;
     }
 }

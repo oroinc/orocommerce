@@ -2,10 +2,11 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Model;
 
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Request;
+
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
-
-use Symfony\Component\HttpFoundation\Request;
 
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderType;
 use OroB2B\Bundle\OrderBundle\Model\OrderRequestHandler;
@@ -51,8 +52,16 @@ class OrderRequestHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->request = $this->getMock('Symfony\Component\HttpFoundation\Request');
 
-        $this->handler = new OrderRequestHandler($this->registry, $this->accountClass, $this->accountUserClass);
-        $this->handler->setRequest($this->request);
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
+
+        $this->handler = new OrderRequestHandler(
+            $this->registry,
+            $requestStack,
+            $this->accountClass,
+            $this->accountUserClass
+        );
     }
 
     protected function tearDown()
@@ -67,8 +76,6 @@ class OrderRequestHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetWithoutRequest($method)
     {
-        $this->handler->setRequest(null);
-
         $this->registry->expects($this->never())->method('getManagerForClass');
         $this->assertNull($this->handler->$method());
     }
