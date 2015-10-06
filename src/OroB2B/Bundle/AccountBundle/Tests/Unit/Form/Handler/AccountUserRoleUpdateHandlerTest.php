@@ -338,9 +338,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
         $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
         $appendForm = $this->getMock('Symfony\Component\Form\FormInterface');
-        $appendForm->expects($this->once())
-            ->method('getData')
-            ->willReturn($appendUsers);
+        $appendForm->expects($this->once())->method('getData')->willReturn($appendUsers);
 
         $removeForm = $this->getMock('Symfony\Component\Form\FormInterface');
         $removeForm->expects($this->once())
@@ -357,9 +355,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
                     $role->setOrganization($newAccount->getOrganization());
                 }
             );
-        $form->expects($this->once())
-            ->method('isValid')
-            ->willReturn(true);
+        $form->expects($this->once())->method('isValid')->willReturn(true);
         $form->expects($this->any())
             ->method('get')
             ->willReturnMap(
@@ -369,9 +365,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
                 ]
             );
 
-        $this->formFactory->expects($this->once())
-            ->method('create')
-            ->willReturn($form);
+        $this->formFactory->expects($this->once())->method('create')->willReturn($form);
 
         $objectManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
 
