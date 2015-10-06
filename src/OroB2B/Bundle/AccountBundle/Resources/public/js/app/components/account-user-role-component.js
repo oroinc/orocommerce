@@ -18,16 +18,6 @@ define(function(require) {
         targetElement: null,
 
         /**
-         * @property {Object}
-         */
-        appendElement: null,
-
-        /**
-         * @property {Object}
-         */
-        removeElement: null,
-
-        /**
          * @property {String}
          */
         datagridName: null,
@@ -49,8 +39,6 @@ define(function(require) {
          */
         initialize: function(options) {
             this.targetElement = $('#' + options.accountFieldId);
-            this.appendElement = $('#' + options.appendFieldId);
-            this.removeElement = $('#' + options.removeFieldId);
             this.datagridName = options.datagridName;
             var previousValue = this.originalValue = this.targetElement.val();
             var self = this;
@@ -160,20 +148,6 @@ define(function(require) {
 
             // Add param to know this request is change account action
             mediator.trigger('datagrid:setParam:' + this.datagridName, 'changeAccountAction', 1);
-
-            // Show current roles when current and original has same values or account removed
-            if (showRoles) {
-                mediator.trigger('datagrid:removeParam:' + this.datagridName, 'hideHasRole');
-            } else {
-                mediator.trigger('datagrid:setParam:' + this.datagridName, 'hideHasRole', 1);
-            }
-
-            mediator.trigger('datagrid:removeParam:' + this.datagridName, 'data_in');
-            mediator.trigger('datagrid:removeParam:' + this.datagridName, 'data_not_in');
-
-            this.appendElement.val(null);
-            this.removeElement.val(null);
-
             mediator.trigger('datagrid:doReset:' + this.datagridName);
         }
     });

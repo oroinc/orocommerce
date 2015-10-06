@@ -97,7 +97,16 @@ class AccountUserRoleUpdateHandler extends AbstractAccountUserRoleHandler
         ) {
             // Remove assigned users
             $assignedUsers = $roleRepository->getAssignedUsers($role);
-            $removeUsers = array_replace($removeUsers, $assignedUsers);
+
+            $removeUsers = array_replace(
+                $removeUsers,
+                array_filter(
+                    $assignedUsers,
+                    function (AccountUser $accountUser) use ($role) {
+                        return $accountUser->getAccount() !== $role->getAccount();
+                    }
+                )
+            );
 
             $appendNewUsers = array_diff($appendUsers, $removeUsers);
             $removeNewUsers = array_diff($removeUsers, $appendUsers);

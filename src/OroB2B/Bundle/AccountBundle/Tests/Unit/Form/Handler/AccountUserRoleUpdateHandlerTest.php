@@ -15,6 +15,8 @@ use Oro\Bundle\SecurityBundle\Model\AclPrivilege;
 use Oro\Bundle\SecurityBundle\Model\AclPrivilegeIdentity;
 use Oro\Bundle\SecurityBundle\Acl\Extension\EntityMaskBuilder;
 
+use Oro\Component\Testing\Unit\EntityTrait;
+
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType;
@@ -27,6 +29,8 @@ use OroB2B\Bundle\AccountBundle\Owner\Metadata\FrontendOwnershipMetadataProvider
  */
 class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHandlerTestCase
 {
+    use EntityTrait;
+
     protected function setUp()
     {
         parent::setUp();
@@ -376,7 +380,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
             ->willReturnCallback(
                 function ($entity) use (&$persistedUsers) {
                     if ($entity instanceof AccountUser) {
-                        $persistedUsers[spl_object_hash($entity)] = $entity;
+                        $persistedUsers[$entity->getEmail()] = $entity;
                     }
                 }
             );
@@ -404,11 +408,13 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
         $handler->process($role);
 
         foreach ($expectedUsersWithRole as $expectedUser) {
-            $this->assertEquals($persistedUsers[spl_object_hash($expectedUser)]->getRole($role->getRole()), $role);
+            $this->assertContains($expectedUser->getEmail(), $persistedUsers, $expectedUser->getUsername());
+            $this->assertEquals($persistedUsers[$expectedUser->getEmail()]->getRole($role->getRole()), $role);
         }
 
         foreach ($expectedUsersWithoutRole as $expectedUser) {
-            $this->assertEquals($persistedUsers[spl_object_hash($expectedUser)]->getRole($role->getRole()), null);
+            $this->assertContains($expectedUser->getEmail(), $persistedUsers, $expectedUser->getUsername());
+            $this->assertEquals($persistedUsers[$expectedUser->getEmail()]->getRole($role->getRole()), null);
         }
     }
 
@@ -417,76 +423,79 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
      */
     public function processWithAccountProvider()
     {
-        $newAccount1 = new Account();
+        $oldAccount = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 1]);
+        $newAccount1 = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 10]);
         $role1 = $this->createAccountUserRole('test role1', 1);
-        $role1->setAccount(null);
-        $users1 = $this->createUsersWithRole($role1, 6, $newAccount1);
+        $users1 =
+            $this->createUsersWithRole($role1, 6, $newAccount1) + $this->createUsersWithRole($role1, 2, $oldAccount, 6);
 
-        $newAccount2 = new Account();
+        $newAccount2 = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 20]);
+        $oldAcc2 = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 21]);
         $role2 = $this->createAccountUserRole('test role2', 2);
-        $role2->setAccount(new Account());
-        $users2 = $this->createUsersWithRole($role2, 6, $newAccount2);
+        $role2->setAccount($oldAcc2);
+        $users2 =
+            $this->createUsersWithRole($role2, 6, $newAccount2) + $this->createUsersWithRole($role2, 2, $oldAcc2, 6);
 
         $role3 = $this->createAccountUserRole('test role3', 3);
-        $role3->setAccount(new Account());
+        $role3->setAccount($this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 31]));
         $users3 = $this->createUsersWithRole($role3, 6, $role3->getAccount());
 
-        $newAccount4 = new Account();
+        $newAccount4 = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 41]);
         $role4 = $this->createAccountUserRole('test role4', 4);
-        $role4->setAccount(new Account());
+        $role4->setAccount($this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 40]));
         $users4 = $this->createUsersWithRole($role4, 6, $newAccount4);
 
-        $newAccount5 = new Account();
+        $newAccount5 = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 50]);
         $role5 = $this->createAccountUserRole('test role5');
-        $role5->setAccount(new Account());
+        $role5->setAccount($this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 51]));
         $users5 = $this->createUsersWithRole($role5, 6, $newAccount5);
 
         return [
             'set account for role without account (assigned users should be removed except appendUsers)'      => [
                 'role'                     => $role1,
                 'newAccount'               => $newAccount1,
-                'appendUsers'              => [$users1[0], $users1[4], $users1[5]],
-                'removedUsers'             => [$users1[2], $users1[3]],
-                'assignedUsers'            => [$users1[0], $users1[1], $users1[2], $users1[3]],
-                'expectedUsersWithRole'    => [$users1[4], $users1[5]], // $users0 not changed, because already has role
-                'expectedUsersWithoutRole' => [$users1[1], $users1[2], $users1[3]],
+                'appendUsers'              => [$users1[1], $users1[5], $users1[6]],
+                'removedUsers'             => [$users1[3], $users1[4]],
+                'assignedUsers'            => [$users1[1], $users1[2], $users1[3], $users1[4], $users1[7]],
+                'expectedUsersWithRole'    => [$users1[5], $users1[6]], // $users[1] already has role
+                'expectedUsersWithoutRole' => [$users1[7], $users1[3], $users1[4]],
             ],
             'set another account for role with account (assigned users should be removed except appendUsers)' => [
                 'role'                     => $role2,
                 'newAccount'               => $newAccount2,
-                'appendUsers'              => [$users2[0], $users2[4], $users2[5]],
-                'removedUsers'             => [$users2[2], $users2[3]],
-                'assignedUsers'            => [$users2[0], $users2[1], $users2[2], $users2[3]],
-                'expectedUsersWithRole'    => [$users2[4], $users2[5]], // $users0 not changed, because already has role
-                'expectedUsersWithoutRole' => [$users2[1], $users2[2], $users2[3]],
+                'appendUsers'              => [$users2[1], $users2[5], $users2[6]],
+                'removedUsers'             => [$users2[3], $users2[4]],
+                'assignedUsers'            => [$users2[1], $users2[2], $users2[3], $users2[4], $users1[7], $users1[8]],
+                'expectedUsersWithRole'    => [$users2[5], $users2[6]], // $users0 not changed, because already has role
+                'expectedUsersWithoutRole' => [$users1[7], $users1[8], $users2[3], $users2[4]],
             ],
             'add/remove users for role with account (account not changed)'                                    => [
                 'role'                     => $role3,
                 'newAccount'               => $role3->getAccount(),
-                'appendUsers'              => [$users3[4], $users3[5]],
-                'removedUsers'             => [$users3[2], $users3[3]],
-                'assignedUsers'            => [$users3[0], $users3[1], $users3[2], $users3[3]],
-                'expectedUsersWithRole'    => [$users3[4], $users3[5]],
-                'expectedUsersWithoutRole' => [$users3[2], $users3[3]],
+                'appendUsers'              => [$users3[5], $users3[6]],
+                'removedUsers'             => [$users3[3], $users3[4]],
+                'assignedUsers'            => [$users3[1], $users3[2], $users3[3], $users3[4]],
+                'expectedUsersWithRole'    => [$users3[5], $users3[6]],
+                'expectedUsersWithoutRole' => [$users3[3], $users3[4]],
                 'changeAccountProcessed'   => false,
             ],
             'remove account for role with account (assigned users should not be removed)'                     => [
                 'role'                     => $role4,
                 'newAccount'               => $newAccount4,
-                'appendUsers'              => [$users4[0], $users4[4], $users4[5]],
-                'removedUsers'             => [$users4[2], $users4[3]],
-                'assignedUsers'            => [$users4[0], $users4[1], $users4[2], $users4[3]],
-                'expectedUsersWithRole'    => [$users4[4], $users4[5]],
-                'expectedUsersWithoutRole' => [$users4[2], $users4[3]],
+                'appendUsers'              => [$users4[1], $users4[5], $users4[6]],
+                'removedUsers'             => [$users4[3], $users4[4]],
+                'assignedUsers'            => [$users4[1], $users4[2], $users4[3], $users4[4]],
+                'expectedUsersWithRole'    => [$users4[5], $users4[6]],
+                'expectedUsersWithoutRole' => [$users4[3], $users4[4]],
             ],
             'change account logic shouldn\'t be processed (role without ID)'                                  => [
                 'role'                     => $role5,
                 'newAccount'               => $newAccount5,
-                'appendUsers'              => [$users5[0], $users5[4], $users5[5]],
-                'removedUsers'             => [$users5[2], $users5[3]],
-                'assignedUsers'            => [$users5[0], $users5[1], $users5[2], $users5[3]],
-                'expectedUsersWithRole'    => [$users5[4], $users5[5]],
-                'expectedUsersWithoutRole' => [$users5[2], $users5[3]],
+                'appendUsers'              => [$users5[1], $users5[5], $users5[6]],
+                'removedUsers'             => [$users5[3], $users5[4]],
+                'assignedUsers'            => [$users5[1], $users5[2], $users5[3], $users5[4]],
+                'expectedUsersWithRole'    => [$users5[5], $users5[6]],
+                'expectedUsersWithoutRole' => [$users5[3], $users5[4]],
                 'changeAccountProcessed'   => false,
             ],
         ];

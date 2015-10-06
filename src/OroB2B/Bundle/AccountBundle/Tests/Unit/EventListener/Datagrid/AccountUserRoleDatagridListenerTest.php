@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
+namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
@@ -9,7 +9,7 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\EventListener\DatagridListenerFrontend;
+use OroB2B\Bundle\AccountBundle\EventListener\Datagrid\AccountUserRoleDatagridListener;
 
 class DatagridListenerFrontendTest extends \PHPUnit_Framework_TestCase
 {
@@ -17,7 +17,7 @@ class DatagridListenerFrontendTest extends \PHPUnit_Framework_TestCase
     const ACCOUNT_ID = 1;
 
     /**
-     * @var DatagridListenerFrontend
+     * @var AccountUserRoleDatagridListener
      */
     protected $listener;
 
@@ -47,7 +47,7 @@ class DatagridListenerFrontendTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new DatagridListenerFrontend($this->securityFacade);
+        $this->listener = new AccountUserRoleDatagridListener($this->securityFacade);
     }
 
     protected function tearDown()

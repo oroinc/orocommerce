@@ -1,17 +1,17 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
+namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 
-use OroB2B\Bundle\AccountBundle\EventListener\DatagridListener;
+use OroB2B\Bundle\AccountBundle\EventListener\Datagrid\WebsiteDatagridListener;
 
-class DatagridListenerTest extends \PHPUnit_Framework_TestCase
+class WebsiteDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var DatagridListener
+     * @var WebsiteDatagridListener
      */
     protected $listener;
 
@@ -34,20 +34,20 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
             ],
         ],
         'columns' => [
-            DatagridListener::ACCOUNT_USER_ROLE_COLUMN => [
+            WebsiteDatagridListener::ACCOUNT_USER_ROLE_COLUMN => [
                 'label' => 'orob2b.account.accountuserrole.entity_label'
             ],
         ],
         'sorters' => [
             'columns' => [
-                DatagridListener::ACCOUNT_USER_ROLE_COLUMN => [
+                WebsiteDatagridListener::ACCOUNT_USER_ROLE_COLUMN => [
                     'data_name' => 'account_user_role_label'
                 ],
             ],
         ],
         'filters' => [
             'columns' => [
-                DatagridListener::ACCOUNT_USER_ROLE_COLUMN => [
+                WebsiteDatagridListener::ACCOUNT_USER_ROLE_COLUMN => [
                     'type' => 'entity',
                     'data_name' => 'accountUserRole.id',
                     'options' => [
@@ -64,7 +64,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->listener = new DatagridListener();
+        $this->listener = new WebsiteDatagridListener();
     }
 
     protected function tearDown()
