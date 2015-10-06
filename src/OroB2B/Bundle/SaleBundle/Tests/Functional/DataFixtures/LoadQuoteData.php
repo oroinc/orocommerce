@@ -135,7 +135,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
                 ->setQid($item['qid'])
                 ->setOwner($user)
                 ->setOrganization($user->getOrganization())
-                ->setShipUntil(new \DateTime())
+                ->setShipUntil(new \DateTime('+10 day'))
                 ->setPoNumber($poNumber)
             ;
 

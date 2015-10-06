@@ -97,7 +97,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
                 ->setAccountUser($accountUser)
                 ->setAccount($account)
                 ->setLocked(rand(0, 1))
-                ->setShipUntil(new \DateTime())
+                ->setShipUntil(new \DateTime('+10 day'))
                 ->setPoNumber($poNumber)
                 ->setPriceList($this->getPriceList($manager, 'Default Price List'));
 

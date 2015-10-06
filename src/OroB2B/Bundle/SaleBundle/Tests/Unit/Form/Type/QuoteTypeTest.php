@@ -124,6 +124,7 @@ class QuoteTypeTest extends AbstractTest
 
     /**
      * @return array
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function submitProvider()
     {
