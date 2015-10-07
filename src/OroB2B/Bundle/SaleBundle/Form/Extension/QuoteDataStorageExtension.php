@@ -47,10 +47,9 @@ class QuoteDataStorageExtension extends AbstractProductDataStorageExtension
         $defaultUnit = $this->getDefaultUnit($product);
 
         foreach ($itemsData as $subitemData) {
-
             $quoteProductRequest = new QuoteProductRequest();
             $quoteProductOffer = new QuoteProductOffer();
-            
+
             $quoteProductOffer->setAllowIncrements(true);
 
             $this->fillEntityData($quoteProductRequest, $subitemData);
