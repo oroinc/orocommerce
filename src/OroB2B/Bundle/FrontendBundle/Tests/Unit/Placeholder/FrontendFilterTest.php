@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\FrontendBundle\Tests\Unit\Placeholder;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
 use OroB2B\Bundle\FrontendBundle\Placeholder\FrontendFilter;
@@ -27,12 +28,14 @@ class FrontendFilterTest extends \PHPUnit_Framework_TestCase
         $this->helper = $this->getMockBuilder('OroB2B\Bundle\FrontendBundle\Request\FrontendHelper')
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->filter = new FrontendFilter($this->helper);
     }
 
     public function testNoRequestBehaviour()
     {
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn(null);
+        $this->filter = new FrontendFilter($this->helper, $requestStack);
         $this->assertTrue($this->filter->isBackendRoute());
         $this->assertFalse($this->filter->isFrontendRoute());
     }
@@ -44,13 +47,15 @@ class FrontendFilterTest extends \PHPUnit_Framework_TestCase
     public function testIsBackendIsFrontend($isFrontend)
     {
         $request = new Request();
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($request);
+        $this->filter = new FrontendFilter($this->helper, $requestStack);
 
         $this->helper->expects($this->any())
             ->method('isFrontendRequest')
             ->with($request)
             ->willReturn($isFrontend);
-
-        $this->filter->setRequest($request);
 
         $this->assertSame(!$isFrontend, $this->filter->isBackendRoute());
         $this->assertSame($isFrontend, $this->filter->isFrontendRoute());

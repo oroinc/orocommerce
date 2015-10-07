@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Datagrid\Extension;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
@@ -31,7 +32,10 @@ class AccountUserByAccountExtensionTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->extension = new AccountUserByAccountExtension();
-        $this->extension->setRequest($this->request);
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
+        $this->extension->setRequestStack($requestStack);
     }
 
     /**

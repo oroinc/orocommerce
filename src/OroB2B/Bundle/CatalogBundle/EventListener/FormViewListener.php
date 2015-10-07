@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\CatalogBundle\EventListener;
 
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -25,18 +25,23 @@ class FormViewListener
     protected $doctrineHelper;
 
     /**
-     * @var Request
+     * @var RequestStack
      */
-    protected $request;
+    protected $requestStack;
 
     /**
      * @param TranslatorInterface $translator
-     * @param DoctrineHelper      $doctrineHelper
+     * @param DoctrineHelper $doctrineHelper
+     * @param RequestStack $requestStack
      */
-    public function __construct(TranslatorInterface $translator, DoctrineHelper $doctrineHelper)
-    {
-        $this->translator     = $translator;
+    public function __construct(
+        TranslatorInterface $translator,
+        DoctrineHelper $doctrineHelper,
+        RequestStack $requestStack
+    ) {
+        $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -44,11 +49,13 @@ class FormViewListener
      */
     public function onProductView(BeforeListRenderEvent $event)
     {
-        if (!$this->request) {
+        $request = $this->requestStack->getCurrentRequest();
+
+        if (!$request) {
             return;
         }
 
-        $productId = (int)$this->request->get('id');
+        $productId = (int)$request->get('id');
         if (!$productId) {
             return;
         }
@@ -80,14 +87,6 @@ class FormViewListener
             ['form' => $event->getFormView()]
         );
         $this->addCategoryBlock($event->getScrollData(), $template);
-    }
-
-    /**
-     * @param Request $request
-     */
-    public function setRequest($request)
-    {
-        $this->request = $request;
     }
 
     /**

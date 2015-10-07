@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Model;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Model\Stub\PriceListRequestHandlerStub as PriceListRequestHandler;
 
@@ -13,9 +14,20 @@ class AbstractPriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected $handler;
 
+    /**
+     * @var Request|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $request;
+
+
     protected function setUp()
     {
-        $this->handler = new PriceListRequestHandler();
+        $this->request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
+
+        $this->handler = new PriceListRequestHandler($requestStack);
     }
 
     protected function tearDown()
@@ -36,11 +48,7 @@ class AbstractPriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetShowTierPricesWithoutParam($value, $expected)
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Request $request */
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
-        $this->handler->setRequest($request);
-
-        $request->expects($this->once())
+        $this->request->expects($this->once())
             ->method('get')
             ->with(PriceListRequestHandler::TIER_PRICES_KEY)
             ->willReturn($value);
@@ -103,11 +111,7 @@ class AbstractPriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetShowTierPrices()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Request $request */
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
-        $this->handler->setRequest($request);
-
-        $request->expects($this->once())->method('get')->with(PriceListRequestHandler::TIER_PRICES_KEY)
+        $this->request->expects($this->once())->method('get')->with(PriceListRequestHandler::TIER_PRICES_KEY)
             ->willReturn(true);
 
         $this->assertTrue($this->handler->getShowTierPrices());

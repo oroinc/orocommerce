@@ -262,3 +262,167 @@ datagrid:
                 link:          view_link
                 icon:          eye-open
                 rowAction:     true
+
+    orob2b_product-product_variants:
+        options:
+            entityHint:        parentProduct
+            entity_pagination: true
+        source:
+            acl_resource: orob2b_product_view
+            type:         orm
+            query:
+                select:
+                    - product.id
+                    - product.sku
+                    - productNames.string as productName
+                    - productInventoryStatus.id as inventoryStatusId
+                    - productInventoryStatus.name as inventoryStatusName
+                    - productStatus.id as statusId
+                    - productStatus.name as statusName
+                join:
+                    left:
+                        - { join: product.inventory_status, alias: productInventoryStatus}
+                        - { join: product.status, alias: productStatus}
+                    inner:
+                        -
+                            join: product.names
+                            alias: productNames
+                            conditionType: WITH
+                            condition: productNames.locale IS NULL
+            bind_parameters:
+                - parentProduct
+        properties:
+            id: ~
+        sorters:
+            columns:
+                id:
+                    data_name: product.id
+                sku:
+                    data_name: product.sku
+                productName:
+                    data_name: productName
+                status:
+                    data_name: statusName
+                inventoryStatus:
+                    data_name: inventoryStatusName
+        filters:
+            columns:
+                id:
+                    type:      string
+                    data_name: product.id
+                sku:
+                    type:      string
+                    data_name: product.sku
+                productName:
+                    type:      string
+                    data_name: productName
+                status:
+                    type:      enum
+                    data_name: statusId
+                    enum_code: prod_status
+                inventoryStatus:
+                    type:      enum
+                    data_name: inventoryStatusId
+                    enum_code: prod_inventory_status
+
+    orob2b_product-product_variants-product_edit:
+        extends: orob2b_product-product_variants
+        options:
+            rowSelection:
+                dataField: id
+                columnName: isVariant
+                selectors:
+                    included: '#productAppendVariants'
+                    excluded: '#productRemoveVariants'
+        source:
+            query:
+                select:
+                    - >
+                         (CASE
+                               WHEN (currentVariantLink.id IS NOT NULL OR product.id IN (:data_in)) AND product.id NOT IN (:data_not_in)
+                               THEN true
+                               ELSE false
+                          END) as isVariant
+                from:
+                    - { table: %orob2b_product.product.class%, alias: product }
+                join:
+                    left:
+                        -
+                            join: %orob2b_product.product_variant_link.class%
+                            alias: currentVariantLink
+                            conditionType: WITH
+                            condition: currentVariantLink.product = product.id AND currentVariantLink.parentProduct = :parentProduct
+                where:
+                    and:
+                        - product.id <> :parentProduct
+        columns:
+            isVariant:
+                label: orob2b.product.is_variant.label
+                editable: true
+                frontend_type: boolean
+            id:
+                label:         orob2b.product.id.label
+            sku:
+                label:         orob2b.product.sku.label
+            productName:
+                label:         orob2b.product.names.label
+            status:
+                label:         orob2b.product.status.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BProductBundle:Product:Datagrid/status.html.twig
+            inventoryStatus:
+                label:         orob2b.product.inventory_status.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BProductBundle:Product:Datagrid/inventoryStatus.html.twig
+        sorters:
+            columns:
+                isVariant:
+                    data_name: isVariant
+            default:
+                sku: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+
+    orob2b_product-product_variants-product_view:
+        extends: orob2b_product-product_variants
+        source:
+            query:
+                select:
+                    - productVariantLink.visible as visible
+                from:
+                    - { table: %orob2b_product.product_variant_link.class%, alias: productVariantLink }
+                join:
+                    inner:
+                        - { join: productVariantLink.product, alias: product }
+                where:
+                    and:
+                        - productVariantLink.parentProduct = :parentProduct
+        columns:
+            id:
+                label:         orob2b.product.id.label
+            sku:
+                label:         orob2b.product.sku.label
+            productName:
+                label:         orob2b.product.names.label
+            visible:
+                label:         orob2b.product.productvariantlink.visible.label
+                frontend_type: boolean
+            status:
+                label:         orob2b.product.status.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BProductBundle:Product:Datagrid/status.html.twig
+            inventoryStatus:
+                label:         orob2b.product.inventory_status.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BProductBundle:Product:Datagrid/inventoryStatus.html.twig
+        properties:
+            id: ~
+        sorters:
+            columns:
+                visible:
+                    data_name: visible
+            default:
+                visible: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                sku: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC

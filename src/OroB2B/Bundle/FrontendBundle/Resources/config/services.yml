@@ -68,8 +68,7 @@ services:
         class: %orob2b_frontend.placeholder.filter.class%
         arguments:
             - @orob2b_frontend.request.frontend_helper
-        calls:
-            - [setRequest, ["@?request="]]
+            - @request_stack
 
     orob2b_frontend.request.frontend_helper:
         class: %orob2b_frontend.request.frontend_helper.class%

@@ -2,9 +2,10 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Model;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
@@ -17,9 +18,10 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var PriceListRequestHandler */
     protected $handler;
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
-     */
+    /** @var  Request|\PHPUnit_Framework_MockObject_MockObject */
+    protected $request;
+
+    /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
     protected $repository;
 
     protected function setUp()
@@ -32,7 +34,12 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()->getMock();
         $em->expects($this->any())->method('getRepository')->willReturn($this->repository);
 
-        $this->handler = new PriceListRequestHandler($registry, '\stdClass');
+        $this->request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
+
+        $this->handler = new PriceListRequestHandler($requestStack, $registry, '\stdClass');
     }
 
     protected function tearDown()
@@ -51,10 +58,6 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $priceList = $this->getPriceList(2);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Request $request */
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
-        $this->handler->setRequest($request);
-
         $this->repository->expects($this->once())->method('getDefault')->willReturn($priceList);
         $this->repository->expects($this->never())->method('find');
         $this->assertSame($priceList, $this->handler->getPriceList());
@@ -64,11 +67,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $priceList = $this->getPriceList(2);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Request $request */
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
-        $this->handler->setRequest($request);
-
-        $request->expects($this->exactly(2))->method('get')->with(PriceListRequestHandler::PRICE_LIST_KEY)
+        $this->request->expects($this->exactly(2))->method('get')->with(PriceListRequestHandler::PRICE_LIST_KEY)
             ->willReturn($priceList->getId());
 
         $this->repository->expects($this->once())->method('find')->with($priceList->getId())->willReturn($priceList);
@@ -83,11 +82,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $priceList = $this->getPriceList(2);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Request $request */
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
-        $this->handler->setRequest($request);
-
-        $request->expects($this->once())->method('get')->with(PriceListRequestHandler::PRICE_LIST_KEY)
+        $this->request->expects($this->once())->method('get')->with(PriceListRequestHandler::PRICE_LIST_KEY)
             ->willReturn($priceList->getId());
 
         $this->repository->expects($this->once())->method('find')->with($priceList->getId())->willReturn(null);
@@ -117,11 +112,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
     ) {
         $priceList = $this->getPriceList(2, $currencies);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Request $request */
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
-        $this->handler->setRequest($request);
-
-        $request->expects($this->atLeastOnce())->method('get')->will(
+        $this->request->expects($this->atLeastOnce())->method('get')->will(
             $this->returnValueMap(
                 [
                     [PriceListRequestHandler::PRICE_LIST_KEY, null, false, $priceList->getId()],
@@ -186,11 +177,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetPriceListId($value, $expected)
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Request $request */
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
-        $request->expects($this->atLeastOnce())->method('get')->willReturn($value);
-
-        $this->handler->setRequest($request);
+        $this->request->expects($this->atLeastOnce())->method('get')->willReturn($value);
         $this->assertEquals($expected, $this->handler->getPriceListId());
     }
 

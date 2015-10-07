@@ -170,6 +170,11 @@ define(function(require) {
                         self.unitSelector.append($('<option/>').val(code).text(label));
                     }
                 });
+                self.unitSelector.find('option[value=""]').hide();
+                self.unitSelector.val(_.keys(units)[0]);
+            } else {
+                self.unitSelector.find('option[value=""]').show();
+                self.unitSelector.val('');
             }
 
             this.unitSelector.trigger('change');
