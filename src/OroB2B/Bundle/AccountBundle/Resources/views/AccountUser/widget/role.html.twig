@@ -1,0 +1,16 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroEmailBundle::actions.html.twig' as EmailActions %}
+{% import 'OroEmailBundle::macros.html.twig' as Email %}
+
+<div class="widget-content">
+    <div class="row-fluid form-horizontal">
+        <div class="responsive-block">
+            {% set hasRoles = form.roles is defined %}
+            {% if hasRoles %}
+                <div class="form-horizontal" id="roles-list">
+                    {{ form_row(form.roles, {attr: { class: 'horizontal' } }) }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

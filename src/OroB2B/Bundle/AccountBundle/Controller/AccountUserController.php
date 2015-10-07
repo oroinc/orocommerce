@@ -2,7 +2,9 @@
 
 namespace OroB2B\Bundle\AccountBundle\Controller;
 
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -65,6 +67,23 @@ class AccountUserController extends Controller
         return [
             'entity' => $accountUser
         ];
+    }
+
+    /**
+     * @Route("/role/{accountUserId}", name="orob2b_account_account_user_role", requirements={"accountUserId"="\d+"})
+     * @Method({"GET"})
+     * @Template
+     * @AclAncestor("orob2b_account_account_user_view")
+     *
+     * @ParamConverter("accountUser", class="OroB2BAccountBundle:AccountUser", options={"id" = "accountUserId"})
+     *
+     * @param AccountUser $accountUser
+     * @param Request     $request
+     * @return array
+     */
+    public function roleAction(AccountUser $accountUser, Request $request)
+    {
+        return $this->update($accountUser, $request);
     }
 
     /**
