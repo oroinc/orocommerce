@@ -145,9 +145,9 @@ class CategoryVisibilityCalculator implements ContainerAwareInterface
             case CategoryVisibility::VISIBLE:
             case CategoryVisibility::HIDDEN:
                 return $category[self::TO_ALL];
+            default:
+                throw new InvalidVisibilityValueException;
         }
-
-        throw new InvalidVisibilityValueException;
     }
 
     /**
@@ -172,9 +172,9 @@ class CategoryVisibilityCalculator implements ContainerAwareInterface
             case AccountGroupCategoryVisibility::VISIBLE:
             case AccountGroupCategoryVisibility::HIDDEN:
                 return $category[self::TO_GROUP];
+            default:
+                throw new InvalidVisibilityValueException;
         }
-
-        throw new InvalidVisibilityValueException;
     }
 
     /**
@@ -201,9 +201,9 @@ class CategoryVisibilityCalculator implements ContainerAwareInterface
             case AccountCategoryVisibility::VISIBLE:
             case AccountCategoryVisibility::HIDDEN:
                 return $category[self::TO_ACCOUNT];
+            default:
+                throw new InvalidVisibilityValueException;
         }
-
-        throw new InvalidVisibilityValueException;
     }
 
     /**
