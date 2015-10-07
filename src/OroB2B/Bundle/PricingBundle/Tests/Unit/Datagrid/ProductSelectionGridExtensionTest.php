@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Datagrid;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
@@ -14,20 +15,17 @@ use OroB2B\Bundle\PricingBundle\Model\FrontendProductListModifier;
 
 class ProductSelectionGridExtensionTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TokenStorageInterface
-     */
+    /** @var TokenStorageInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $tokenStorage;
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FrontendProductListModifier
-     */
+    /** @var FrontendProductListModifier|\PHPUnit_Framework_MockObject_MockObject */
     protected $productListModifier;
 
-    /**
-     * @var ProductSelectionGridExtension
-     */
+    /** @var ProductSelectionGridExtension */
     protected $extension;
+
+    /** @var  Request|\PHPUnit_Framework_MockObject_MockObject */
+    protected $request;
 
     protected function setUp()
     {
@@ -38,7 +36,16 @@ class ProductSelectionGridExtensionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->extension = new ProductSelectionGridExtension($this->tokenStorage, $this->productListModifier);
+        $this->request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
+
+        $this->extension = new ProductSelectionGridExtension(
+            $requestStack,
+            $this->tokenStorage,
+            $this->productListModifier
+        );
     }
 
     /**
@@ -89,11 +96,7 @@ class ProductSelectionGridExtensionTest extends \PHPUnit_Framework_TestCase
     public function testVisitDatasource($currency)
     {
         if ($currency) {
-            /** @var \PHPUnit_Framework_MockObject_MockObject|Request $request */
-            $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
-            $this->extension->setRequest($request);
-
-            $request->expects($this->once())
+            $this->request->expects($this->once())
                 ->method('get')
                 ->with(ProductSelectionGridExtension::CURRENCY_KEY)
                 ->willReturn($currency);
@@ -126,7 +129,7 @@ class ProductSelectionGridExtensionTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $dataSource->expects($this->once())
             ->method('getQueryBuilder')
-            ->will($this->returnValue($qb, $currency));
+            ->will($this->returnValue($qb));
 
         $this->productListModifier->expects($this->once())
             ->method('applyPriceListLimitations')

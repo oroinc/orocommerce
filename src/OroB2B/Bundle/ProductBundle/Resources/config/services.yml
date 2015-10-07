@@ -2,6 +2,7 @@ parameters:
     orob2b_product.product.class: OroB2B\Bundle\ProductBundle\Entity\Product
     orob2b_product.product_unit.class: OroB2B\Bundle\ProductBundle\Entity\ProductUnit
     orob2b_product.product_unit_precision.class: OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision
+    orob2b_product.product_variant_link.class: OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink
     orob2b_product.product.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_product.service.rounding.class: OroB2B\Bundle\ProductBundle\Rounding\RoundingService
     orob2b_product.service.visibility_checker.class: OroB2B\Bundle\ProductBundle\Visibility\VisibilityChecker
@@ -15,6 +16,9 @@ parameters:
     orob2b_product.service.product_data_storage.class: OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage
     orob2b_product.validator.product_unit_holder.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductUnitHolderValidator
     orob2b_product.validator.product_by_sku.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator
+    orob2b_product.provider.custom_field_provider.class: OroB2B\Bundle\ProductBundle\Provider\CustomFieldProvider
+    orob2b_product.event_listener.product_variant_custom_fields_datagrid.class: OroB2B\Bundle\ProductBundle\EventListener\ProductVariantCustomFieldsDatagridListener
+    orob2b_product.validator.unique_variant_links.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator
 
     orob2b_product.component_processor.registry.class: OroB2B\Bundle\ProductBundle\Model\ComponentProcessorRegistry
     orob2b_product.processor.data_storage_aware.class: OroB2B\Bundle\ProductBundle\Model\DataStorageAwareProcessor
@@ -147,3 +151,26 @@ services:
             - @orob2b_product.component_processor.registry
         tags:
             - { name: oro_menu.builder, alias: frontend_menu }
+
+    orob2b_product.provider.custom_field_provider:
+        class: %orob2b_product.provider.custom_field_provider.class%
+        arguments:
+            - @oro_entity_config.provider.extend
+            - @oro_entity_config.provider.entity
+
+    orob2b_product.event_listener.product_variant_custom_fields_datagrid:
+        class: %orob2b_product.event_listener.product_variant_custom_fields_datagrid.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+            - @orob2b_product.provider.custom_field_provider
+            - %orob2b_product.product.class%
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.orob2b_product-product_variants-product_view, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.orob2b_product-product_variants-product_view, method: onResultAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.orob2b_product-product_variants-product_edit, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.orob2b_product-product_variants-product_edit, method: onResultAfter }
+
+    orob2b_product.validator.unique_variant_links:
+        class: %orob2b_product.validator.unique_variant_links.class%
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_product_unique_variant_links }

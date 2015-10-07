@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -34,20 +34,23 @@ class FormViewListener
     protected $frontendPriceListRequestHandler;
 
     /**
-     * @var Request
+     * @var RequestStack
      */
-    protected $request;
+    protected $requestStack;
 
     /**
+     * @param RequestStack $requestStack
      * @param TranslatorInterface $translator
      * @param DoctrineHelper $doctrineHelper
      * @param FrontendPriceListRequestHandler $frontendPriceListRequestHandler
      */
     public function __construct(
+        RequestStack $requestStack,
         TranslatorInterface $translator,
         DoctrineHelper $doctrineHelper,
         FrontendPriceListRequestHandler $frontendPriceListRequestHandler
     ) {
+        $this->requestStack = $requestStack;
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
         $this->frontendPriceListRequestHandler = $frontendPriceListRequestHandler;
@@ -58,11 +61,12 @@ class FormViewListener
      */
     public function onAccountView(BeforeListRenderEvent $event)
     {
-        if (!$this->request) {
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
             return;
         }
 
-        $accountId = (int)$this->request->get('id');
+        $accountId = (int)$request->get('id');
         /** @var Account $account */
         $account = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:Account', $accountId);
         $priceList = $this->getPriceListRepository()->getPriceListByAccount($account);
@@ -81,11 +85,12 @@ class FormViewListener
      */
     public function onAccountGroupView(BeforeListRenderEvent $event)
     {
-        if (!$this->request) {
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
             return;
         }
 
-        $groupId = (int)$this->request->get('id');
+        $groupId = (int)$request->get('id');
         /** @var AccountGroup $group */
         $group = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:AccountGroup', $groupId);
         $priceList = $this->getPriceListRepository()->getPriceListByAccountGroup($group);
@@ -116,11 +121,12 @@ class FormViewListener
      */
     public function onProductView(BeforeListRenderEvent $event)
     {
-        if (!$this->request) {
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
             return;
         }
 
-        $productId = (int)$this->request->get('id');
+        $productId = (int)$request->get('id');
         /** @var Product $product */
         $product = $this->doctrineHelper->getEntityReference('OroB2BProductBundle:Product', $productId);
 
@@ -136,11 +142,12 @@ class FormViewListener
      */
     public function onFrontendProductView(BeforeListRenderEvent $event)
     {
-        if (!$this->request) {
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
             return;
         }
 
-        $productId = (int)$this->request->get('id');
+        $productId = (int)$request->get('id');
 
         /** @var Product $product */
         $product = $this->doctrineHelper->getEntityReference('OroB2BProductBundle:Product', $productId);
@@ -171,14 +178,6 @@ class FormViewListener
             ['form' => $event->getFormView()]
         );
         $this->addProductPricesBlock($event->getScrollData(), $template);
-    }
-
-    /**
-     * @param Request $request
-     */
-    public function setRequest($request)
-    {
-        $this->request = $request;
     }
 
     /**

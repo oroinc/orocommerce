@@ -69,10 +69,9 @@ services:
         class: %orob2b_order.model.order_request_handler.class%
         arguments:
             - @doctrine
+            - @request_stack
             - %orob2b_account.entity.account.class%
             - %orob2b_account.entity.account_user.class%
-        calls:
-            - [setRequest, ["@?request="]]
 
     orob2b_order.model.order_currency_handler:
         class: %orob2b_order.model.order_currency_handler.class%
@@ -84,8 +83,7 @@ services:
         arguments:
             - @translator
             - @oro_entity.doctrine_helper
-        calls:
-            - [setRequest, ["@?request="]]
+            - @request_stack
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-user-view, method: onAccountUserView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onAccountView }
