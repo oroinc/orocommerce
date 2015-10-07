@@ -141,7 +141,7 @@ class ProductPriceFilter extends NumberRangeFilter
      */
     public function parseData($data)
     {
-        if (false == ($data = parent::parseData($data))) {
+        if (false === ($data = parent::parseData($data))) {
             return false;
         }
 
