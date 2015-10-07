@@ -43,7 +43,7 @@ class CategoryVisibilityCalculatorTest extends \PHPUnit_Framework_TestCase
         $this->container = $this->getMock('\Symfony\Component\DependencyInjection\ContainerInterface');
         $this->container->expects($this->any())
             ->method('get')
-            ->with('oro_config.global')
+            ->with('oro_config.manager')
             ->willReturn($this->configManager);
 
         $this->calculator = new CategoryVisibilityCalculator($this->managerRegistry);
@@ -77,10 +77,18 @@ class CategoryVisibilityCalculatorTest extends \PHPUnit_Framework_TestCase
             ->with($account)
             ->willReturn($visibilities);
 
-        $this->managerRegistry->expects($this->any())
-            ->method('getRepository')
+        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $em->expects($this->once())
+                ->method('getRepository')
+                ->with('OroB2BAccountBundle:Visibility\CategoryVisibility')
+                ->willReturn($repo);
+        $this->managerRegistry->expects($this->once())
+            ->method('getManagerForClass')
             ->with('OroB2BAccountBundle:Visibility\CategoryVisibility')
-            ->willReturn($repo);
+            ->willReturn($em);
 
         $actual = $this->calculator->getVisibility($account);
         $this->assertEquals($expected, $actual);

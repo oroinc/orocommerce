@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\AccountBundle\Calculator;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Util\ClassUtils;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -62,7 +61,9 @@ class CategoryVisibilityCalculator implements ContainerAwareInterface
     public function getVisibility(Account $account = null)
     {
         /** @var \OroB2B\Bundle\AccountBundle\Entity\Repository\CategoryVisibilityRepository $repo */
-        $repo = $this->getRepository('OroB2BAccountBundle:Visibility\CategoryVisibility');
+        $repo = $this->managerRegistry->getManagerForClass(
+            'OroB2BAccountBundle:Visibility\CategoryVisibility'
+        )->getRepository('OroB2BAccountBundle:Visibility\CategoryVisibility');
         $visibilities = $repo->getVisibilityToAll($account);
         $visibleIds = $this->calculateVisible($visibilities);
         $ids = array_map(
@@ -84,7 +85,7 @@ class CategoryVisibilityCalculator implements ContainerAwareInterface
      * @return array
      * @throws \Exception
      */
-    public function calculateVisible($visibilities)
+    protected function calculateVisible($visibilities)
     {
         $result = [];
         $visibleIds = [];
@@ -133,14 +134,14 @@ class CategoryVisibilityCalculator implements ContainerAwareInterface
     {
         switch ($category[self::TO_ALL]) {
             case CategoryVisibility::PARENT_CATEGORY:
-                if (null !== $category['parent_id']) {
-                    return $result[$category['parent_id']][self::TO_ALL];
+                if (null !== $category['parent_category']) {
+                    return $result[$category['parent_category']][self::TO_ALL];
                 } else {
-                    return $this->getConfigValue(self::CATEGORY_VISIBILITY_CONFIG_VALUE_KEY);
+                    return $this->getCategoryVisibilityConfigValue();
                 }
                 break;
             case CategoryVisibility::CONFIG:
-                return $this->getConfigValue(self::CATEGORY_VISIBILITY_CONFIG_VALUE_KEY);
+                return $this->getCategoryVisibilityConfigValue();
             case CategoryVisibility::VISIBLE:
             case CategoryVisibility::HIDDEN:
                 return $category[self::TO_ALL];
@@ -162,10 +163,10 @@ class CategoryVisibilityCalculator implements ContainerAwareInterface
             case AccountGroupCategoryVisibility::CATEGORY:
                 return $result[$id][self::TO_ALL];
             case AccountGroupCategoryVisibility::PARENT_CATEGORY:
-                if (null !== $category['parent_id']) {
-                    return $result[$category['parent_id']][self::TO_GROUP];
+                if (null !== $category['parent_category']) {
+                    return $result[$category['parent_category']][self::TO_GROUP];
                 } else {
-                    return $this->getConfigValue(self::CATEGORY_VISIBILITY_CONFIG_VALUE_KEY);
+                    return $this->getCategoryVisibilityConfigValue();
                 }
                 break;
             case AccountGroupCategoryVisibility::VISIBLE:
@@ -191,10 +192,10 @@ class CategoryVisibilityCalculator implements ContainerAwareInterface
             case AccountCategoryVisibility::CATEGORY:
                 return $result[$id][self::TO_ALL];
             case AccountCategoryVisibility::PARENT_CATEGORY:
-                if (null !== $category['parent_id']) {
-                    return $result[$category['parent_id']][self::TO_ACCOUNT];
+                if (null !== $category['parent_category']) {
+                    return $result[$category['parent_category']][self::TO_ACCOUNT];
                 } else {
-                    return $this->getConfigValue(self::CATEGORY_VISIBILITY_CONFIG_VALUE_KEY);
+                    return $this->getCategoryVisibilityConfigValue();
                 }
                 break;
             case AccountCategoryVisibility::VISIBLE:
@@ -206,35 +207,15 @@ class CategoryVisibilityCalculator implements ContainerAwareInterface
     }
 
     /**
-     * @return string
-     */
-    protected function getDefaultConfigValue()
-    {
-        return CategoryVisibility::VISIBLE;
-    }
-
-    /***
-     * @param string $persistentObject The name of the persistent object.
-     * @param string $persistentManagerName The object manager name (null for the default one).
-     *
-     * @return \Doctrine\Common\Persistence\ObjectRepository
-     */
-    protected function getRepository($persistentObject, $persistentManagerName = null)
-    {
-        return $this->managerRegistry->getRepository($persistentObject, $persistentManagerName);
-    }
-
-    /**
-     * @param string $name
      * @return array|string
      */
-    protected function getConfigValue($name)
+    protected function getCategoryVisibilityConfigValue()
     {
         if (!$this->configManager) {
-            $this->configManager = $this->container->get('oro_config.global');
+            $this->configManager = $this->container->get('oro_config.manager');
         }
 
-        return $this->configManager->get($name);
+        return $this->configManager->get(self::CATEGORY_VISIBILITY_CONFIG_VALUE_KEY);
     }
 
     /**
