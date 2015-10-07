@@ -337,35 +337,19 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
         $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
-        $appendForm = $this->getMock('Symfony\Component\Form\FormInterface');
-        $appendForm->expects($this->once())->method('getData')->willReturn($appendUsers);
+        $this->setUpMocksForProcessWithAccount(
+            $role,
+            $request,
+            $appendUsers,
+            $removedUsers,
+            $assignedUsers,
+            $newAccount,
+            $changeAccountProcessed
+        );
 
-        $removeForm = $this->getMock('Symfony\Component\Form\FormInterface');
-        $removeForm->expects($this->once())
-            ->method('getData')
-            ->willReturn($removedUsers);
-
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $form->expects($this->once())
-            ->method('submit')
-            ->with($request)
-            ->willReturnCallback(
-                function () use ($role, $newAccount) {
-                    $role->setAccount($newAccount);
-                    $role->setOrganization($newAccount->getOrganization());
-                }
-            );
-        $form->expects($this->once())->method('isValid')->willReturn(true);
-        $form->expects($this->any())
-            ->method('get')
-            ->willReturnMap(
-                [
-                    ['appendUsers', $appendForm],
-                    ['removeUsers', $removeForm],
-                ]
-            );
-
-        $this->formFactory->expects($this->once())->method('create')->willReturn($form);
+        // Array of persisted users
+        /** @var AccountUser[] $persistedUsers */
+        $persistedUsers = [];
 
         $objectManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
 
@@ -383,11 +367,6 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
             ->method('getManagerForClass')
             ->with(get_class($role))
             ->willReturn($objectManager);
-
-        $this->roleRepository->expects($changeAccountProcessed ? $this->once() : $this->never())
-            ->method('getAssignedUsers')
-            ->with($role)
-            ->willReturn($assignedUsers);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|AccountUserRoleUpdateHandler $handler */
         $handler = $this->getMockBuilder('\OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateHandler')
@@ -685,5 +664,65 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
             }
         }
         return $privileges;
+    }
+
+    /**
+     * @param AccountUserRole $role
+     * @param Request         $request
+     * @param array           $appendUsers
+     * @param array           $removedUsers
+     * @param array           $assignedUsers
+     * @param Account|null    $newAccount
+     * @param bool            $changeAccountProcessed
+     */
+    protected function setUpMocksForProcessWithAccount(
+        AccountUserRole $role,
+        Request $request,
+        array $appendUsers,
+        array $removedUsers,
+        array $assignedUsers,
+        $newAccount,
+        $changeAccountProcessed
+    ) {
+        $appendForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $appendForm->expects($this->once())
+            ->method('getData')
+            ->willReturn($appendUsers);
+
+        $removeForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $removeForm->expects($this->once())
+            ->method('getData')
+            ->willReturn($removedUsers);
+
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form->expects($this->once())
+            ->method('submit')
+            ->with($request)
+            ->willReturnCallback(
+                function () use ($role, $newAccount) {
+                    $role->setAccount($newAccount);
+                    $role->setOrganization($newAccount->getOrganization());
+                }
+            );
+        $form->expects($this->once())
+            ->method('isValid')
+            ->willReturn(true);
+        $form->expects($this->any())
+            ->method('get')
+            ->willReturnMap(
+                [
+                    ['appendUsers', $appendForm],
+                    ['removeUsers', $removeForm],
+                ]
+            );
+
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($form);
+
+        $this->roleRepository->expects($changeAccountProcessed ? $this->once() : $this->never())
+            ->method('getAssignedUsers')
+            ->with($role)
+            ->willReturn($assignedUsers);
     }
 }

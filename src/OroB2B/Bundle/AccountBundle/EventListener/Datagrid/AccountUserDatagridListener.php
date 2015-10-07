@@ -51,10 +51,6 @@ class AccountUserDatagridListener
             [sprintf(self::HAS_ROLE_SELECT, $condition)]
         );
 
-        if (!$parameters->has(ParameterBag::ADDITIONAL_PARAMETERS)) {
-            return;
-        }
-
         $additionalParameters = $parameters->get(ParameterBag::ADDITIONAL_PARAMETERS, []);
         if (!is_array($additionalParameters)) {
             return;
