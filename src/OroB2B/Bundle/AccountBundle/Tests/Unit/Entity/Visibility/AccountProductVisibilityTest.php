@@ -8,7 +8,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
-class AccountCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
+class AccountProductVisibilityTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
 
