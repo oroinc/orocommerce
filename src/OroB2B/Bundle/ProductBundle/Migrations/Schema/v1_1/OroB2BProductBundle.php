@@ -7,9 +7,10 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroB2BProductBundle implements Migration, ExtendExtensionAwareInterface
+class OroB2BProductBundle implements Migration, ExtendExtensionAwareInterface, OrderedMigrationInterface
 {
     const PRODUCT_VARIANT_LINK_TABLE_NAME = 'orob2b_product_variant_link';
     const PRODUCT_TABLE_NAME = 'orob2b_product';
@@ -25,6 +26,14 @@ class OroB2BProductBundle implements Migration, ExtendExtensionAwareInterface
     public function setExtendExtension(ExtendExtension $extendExtension)
     {
         $this->extendExtension = $extendExtension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 10;
     }
 
     /**
@@ -88,9 +97,8 @@ class OroB2BProductBundle implements Migration, ExtendExtensionAwareInterface
     protected function renameStatusEnumToStatusString(Schema $schema, QueryBag $queries)
     {
         // rename status column
-        $productTable = $schema->getTable('orob2b_product');
-        $productTable->renameColumn('status_id', 'status');
-        $productTable->changeColumn('status', ['type' => 'string', 'length' => 16]);
+        $table = $schema->getTable(self::PRODUCT_TABLE_NAME);
+        $table->addColumn('product_status', 'string', ['length' => 16, 'notnull' => false]);
 
         // drop status enum table
         $enumStatusTable = $this->extendExtension->getNameGenerator()->generateEnumTableName('prod_status');

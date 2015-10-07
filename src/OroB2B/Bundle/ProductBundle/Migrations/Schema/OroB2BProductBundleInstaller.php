@@ -110,7 +110,7 @@ class OroB2BProductBundleInstaller implements
         $table->addColumn('updated_at', 'datetime', []);
         $table->addColumn('has_variants', 'boolean', ['default' => false]);
         $table->addColumn('variant_fields', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
-        $table->addColumn('status', 'string', ['length' => 16]);
+        $table->addColumn('product_status', 'string', ['length' => 16]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['sku']);
         $table->addIndex(['created_at'], 'idx_orob2b_product_created_at', []);

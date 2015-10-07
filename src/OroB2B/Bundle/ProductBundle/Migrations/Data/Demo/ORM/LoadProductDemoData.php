@@ -68,7 +68,7 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
                 ->setSku($row['sku'])
                 ->setInventoryStatus($inventoryStatuses[1])
                 ->setVisibility($visibilities[0])
-                ->setStatus(Product::STATUS_ENABLED)
+                ->setProductStatus(Product::STATUS_ENABLED)
                 ->addName($name)
                 ->addDescription($description);
 
