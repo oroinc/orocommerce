@@ -84,7 +84,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
         $event->setUser($user);
         $this->categoryVisibilityStorage->expects($categoryVisibilityData ? $this->once() : $this->never())
             ->method('getData')
-            ->with($user instanceof AccountUser ? $user->getAccount()->getId() : null)
+            ->with($user instanceof AccountUser ? $user->getAccount() : null)
             ->willReturn($categoryVisibilityData);
 
         $this->listener->onCreateAfter($event);

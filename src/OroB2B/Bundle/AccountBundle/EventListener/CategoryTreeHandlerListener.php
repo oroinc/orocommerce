@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\AccountBundle\EventListener;
 use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\AccountBundle\Storage\CategoryVisibilityStorage;
@@ -31,19 +32,19 @@ class CategoryTreeHandlerListener
         if ($user instanceof User) {
             return;
         }
-        $accountId = $user instanceof AccountUser ? $user->getAccount()->getId() : null;
-        $categories = $this->filterCategories($event->getCategories(), $accountId);
+        $account = $user instanceof AccountUser ? $user->getAccount() : null;
+        $categories = $this->filterCategories($event->getCategories(), $account);
         $event->setCategories($categories);
     }
 
     /**
      * @param array|Category[] $categories
-     * @param int|null $accountId
+     * @param Account|null $account
      * @return array
      */
-    protected function filterCategories(array $categories, $accountId)
+    protected function filterCategories(array $categories, $account)
     {
-        $visibilityData = $this->categoryVisibilityStorage->getData($accountId);
+        $visibilityData = $this->categoryVisibilityStorage->getData($account);
 
         $isVisible = $visibilityData->isVisible();
         $ids = $visibilityData->getIds();
