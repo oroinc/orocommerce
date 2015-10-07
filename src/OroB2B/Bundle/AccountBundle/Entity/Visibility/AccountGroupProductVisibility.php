@@ -103,9 +103,10 @@ class AccountGroupProductVisibility implements VisibilityInterface, AccountGroup
     }
 
     /**
-     * {@inheritdoc}
+     * @param Product|null $product
+     * @return string
      */
-    public static function getDefault()
+    public static function getDefault($product = null)
     {
         return self::CATEGORY;
     }
@@ -129,9 +130,10 @@ class AccountGroupProductVisibility implements VisibilityInterface, AccountGroup
     }
 
     /**
-     * {@inheritdoc}
+     * @param Product|null $product
+     * @return array
      */
-    public static function getVisibilityList()
+    public static function getVisibilityList($product = null)
     {
         return [
             self::CATEGORY,
