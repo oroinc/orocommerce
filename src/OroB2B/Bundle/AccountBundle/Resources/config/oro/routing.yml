@@ -45,6 +45,11 @@ orob2b_account_acl_permission:
     type: annotation
     prefix: /account/acl
 
+orob2b_account_product_visibility:
+    resource: "@OroB2BAccountBundle/Controller/ProductVisibilityController.php"
+    type: annotation
+    prefix: /account/product/visibility
+
 orob2b_account_frontend_account_user_profile:
     resource: "@OroB2BAccountBundle/Controller/Frontend/AccountUserProfileController.php"
     type: annotation
