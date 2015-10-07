@@ -15,7 +15,7 @@ services:
             - %orob2b_catalog.category.class%
             - @doctrine
             - @oro_security.security_facade
-            - @orob2b_account.storage.category_visibility_storage
+            - @event_dispatcher
 
     orob2b_catalog.category.manager.api:
         class: %orob2b_catalog.category.manager.api.class%

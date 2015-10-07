@@ -3,15 +3,14 @@
 namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\JsTree;
 
 use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Storage\CategoryVisibilityData;
-use OroB2B\Bundle\AccountBundle\Storage\CategoryVisibilityStorage;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use OroB2B\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;
@@ -30,8 +29,8 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade */
     protected $securityFacade;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|CategoryVisibilityStorage */
-    protected $categoryVisibilityStorage;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|EventDispatcher */
+    protected $eventDispatcher;
 
     /** @var CategoryTreeHandler */
     protected $categoryTreeHandler;
@@ -78,16 +77,12 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->categoryVisibilityStorage = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Storage\CategoryVisibilityStorage')
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcher');
         $this->categoryTreeHandler = new CategoryTreeHandler(
             'OroB2BCatalogBundle:Category',
             $this->managerRegistry,
             $this->securityFacade,
-            $this->categoryVisibilityStorage
+            $this->eventDispatcher
         );
     }
 
@@ -97,7 +92,7 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
             $this->managerRegistry,
             $this->repository,
             $this->securityFacade,
-            $this->categoryVisibilityStorage,
+            $this->eventDispatcher,
             $this->categoryTreeHandler
         );
     }
@@ -217,7 +212,6 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
     public function testCreateTree(
         $categories,
         array $expected,
-        CategoryVisibilityData $categoryVisibilityData = null,
         UserInterface $user = null
     ) {
         $this->managerRegistry->expects($this->any())
@@ -233,11 +227,6 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
         $this->securityFacade->expects($this->once())
             ->method('getLoggedUser')
             ->willReturn($user);
-
-        $this->categoryVisibilityStorage->expects($categoryVisibilityData ? $this->once() : $this->never())
-            ->method('getData')
-            ->with($user instanceof AccountUser ? $user->getAccount() : null)
-            ->willReturn($categoryVisibilityData);
 
         $result = $this->categoryTreeHandler->createTree();
         $this->assertEquals($expected, $result);
@@ -271,34 +260,8 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
                     ['id' => 14, 'text' => 'Phone 03', 'parent' => '11', 'state' => ['opened' => false]],
                     ['id' => 15, 'text' => 'Phone 04', 'parent' => '11', 'state' => ['opened' => false]]
                 ],
-                'categoryVisibilityData' => null,
                 'user' => new User()
             ],
-            'tree for anonymous user with visible ids' => [
-                'categories' => $this->categoriesCollection,
-                'expected' => [
-                    ['id' => 1, 'text' => 'Root', 'parent' => '#', 'state' => ['opened' => true]],
-                    ['id' => 2, 'text' => 'TV', 'parent' => '1', 'state' => ['opened' => false]]
-                ],
-                'categoryVisibilityData' => new CategoryVisibilityData([1,2, 6,7,12,13,14,15], true),
-                'user' => null
-            ],
-            'tree for account user with invisible ids' => [
-                'categories' => $this->categoriesCollection,
-                'expected' => [
-                    ['id' => 1, 'text' => 'Root', 'parent' => '#', 'state' => ['opened' => true]],
-                    ['id' => 2, 'text' => 'TV', 'parent' => '1', 'state' => ['opened' => false]],
-                    ['id' => 4, 'text' => 'LCD TV', 'parent' => '2', 'state' => ['opened' => false]],
-                    ['id' => 5, 'text' => 'Plasma TV', 'parent' => '2', 'state' => ['opened' => false]],
-                    ['id' => 6, 'text' => 'FullHD TV', 'parent' => '4', 'state' => ['opened' => false]],
-                    ['id' => 7, 'text' => '4K TV', 'parent' => '4', 'state' => ['opened' => false]],
-                    ['id' => 8, 'text' => '3D TV', 'parent' => '5', 'state' => ['opened' => false]],
-                    ['id' => 9, 'text' => 'QHD TV', 'parent' => '5', 'state' => ['opened' => false]],
-                ],
-                'categoryVisibilityData' => new CategoryVisibilityData([3], false),
-                'user' => (new AccountUser)
-                    ->setAccount($this->createEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 42))
-            ]
         ];
     }
 
