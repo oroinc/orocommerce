@@ -32,7 +32,7 @@ class OroB2BProductBundle implements Migration, ExtendExtensionAwareInterface
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->removeStatusEnum($schema, $queries);
+        $this->renameStatusEnumToStatusString($schema, $queries);
         $this->updateOroB2BProductTable($schema);
         $this->createOroB2BProductVariantLinkTable($schema);
         $this->addOroB2BProductVariantLinkForeignKeys($schema);
@@ -79,20 +79,18 @@ class OroB2BProductBundle implements Migration, ExtendExtensionAwareInterface
         $table = $schema->getTable(self::PRODUCT_TABLE_NAME);
         $table->addColumn('has_variants', 'boolean', ['default' => false]);
         $table->addColumn('variant_fields', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
-        $table->addColumn('status', 'string', ['length' => 16]);
     }
 
     /**
      * @param Schema $schema
      * @param QueryBag $queries
      */
-    protected function removeStatusEnum(Schema $schema, QueryBag $queries)
+    protected function renameStatusEnumToStatusString(Schema $schema, QueryBag $queries)
     {
-        // drop status enum field
+        // rename status column
         $productTable = $schema->getTable('orob2b_product');
-        if ($productTable->hasColumn('status_id')) {
-            $productTable->dropColumn('status_id');
-        }
+        $productTable->renameColumn('status_id', 'status');
+        $productTable->changeColumn('status', ['type' => 'string', 'length' => 16]);
 
         // drop status enum table
         $enumStatusTable = $this->extendExtension->getNameGenerator()->generateEnumTableName('prod_status');
