@@ -70,6 +70,8 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     const VISIBILITY_VISIBLE = 'visible';
     const VISIBILITY_NOT_VISIBLE = 'not_visible';
 
+    protected $validStatus = [self::STATUS_DISABLED, self::STATUS_ENABLED];
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -100,6 +102,20 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @ORM\Column(name="has_variants", type="boolean", nullable=false, options={"default"=false})
      */
     protected $hasVariants = false;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="status", type="string", nullable=false, options={"default"="disabled"})
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     *  )
+     */
+    protected $status = self::STATUS_DISABLED;
 
     /**
      * @var array
@@ -334,6 +350,32 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     public function setUpdatedAt($updatedAt)
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param string $status
+     *
+     * @return Product
+     */
+    public function setStatus($status)
+    {
+        if (!in_array($status, $this->validStatus)) {
+            throw new \InvalidArgumentException(sprintf(
+                "'%s' is not a valid status.", $status
+            ));
+        }
+
+        $this->status = $status;
 
         return $this;
     }
