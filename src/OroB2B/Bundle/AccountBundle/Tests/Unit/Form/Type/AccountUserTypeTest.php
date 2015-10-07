@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
@@ -71,7 +72,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
         $accountUserRoleSelectType = new EntitySelectTypeStub(
             $this->getRoles(),
             AccountUserRoleSelectType::NAME,
-            new AccountUserRoleSelectType()
+            new AccountUserRoleSelectType($this->createTranslator())
         );
         $addressEntityType = new EntityType($this->getAddresses(), 'test_address_entity');
         $accountSelectType = new AccountSelectTypeStub($this->getAccounts(), AccountSelectType::NAME);
@@ -305,5 +306,22 @@ class AccountUserTypeTest extends FormIntegrationTestCase
         $method->setValue($entity, $id);
 
         return $entity;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     */
+    private function createTranslator()
+    {
+        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(
+                function ($message) {
+                    return $message . '.trans';
+                }
+            );
+
+        return $translator;
     }
 }

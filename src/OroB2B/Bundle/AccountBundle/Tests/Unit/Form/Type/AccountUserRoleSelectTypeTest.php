@@ -2,14 +2,21 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use OroB2B\Bundle\AccountBundle\Tests\Unit\Fixtures\TestEntity;
+use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType;
 
 class AccountUserRoleSelectTypeTest extends FormIntegrationTestCase
 {
+    const ROLE_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountUserRole';
+
     /** @var  AccountUserRoleSelectType */
     protected $formType;
 
@@ -19,33 +26,86 @@ class AccountUserRoleSelectTypeTest extends FormIntegrationTestCase
     public function setUp()
     {
         parent::setUp();
-        $this->formType = new AccountUserRoleSelectType();
-        $this->roleClass = 'RoleClass';
-        $this->formType->setRoleClass($this->roleClass);
+        $translator = $this->createTranslator();
+        $this->formType = new AccountUserRoleSelectType($translator);
+        $this->formType->setRoleClass(self::ROLE_CLASS);
     }
 
-    public function testConfigureOptions()
+    public function tearDown()
     {
-        /** @var $resolver OptionsResolver|\PHPUnit_Framework_MockObject_MockObject */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
-        $resolver->expects($this->once())
-            ->method('setDefaults')
-            ->with([
-                'class' => $this->roleClass,
-                'multiple' => true,
-                'expanded' => true,
-                'required' => true
-            ]);
-        $this->formType->configureOptions($resolver);
+        unset($this->formType);
+        parent::tearDown();
     }
 
-    public function testGetName()
+    /**
+     * @return array
+     */
+    protected function getExtensions()
     {
-        $this->assertEquals($this->formType->getName(), AccountUserRoleSelectType::NAME);
+        $entityType = new EntityType([]);
+
+        return [
+            new PreloadedExtension(
+                [
+                    $entityType->getName() => $entityType
+                ],
+                []
+            )
+        ];
     }
 
-    public function testGetParent()
+    public function testDefaultOptions()
     {
-        $this->assertEquals($this->formType->getParent(), 'entity');
+        $form = $this->factory->create($this->formType);
+
+        $expectedOptions = [
+            'class' => self::ROLE_CLASS,
+            'multiple' => true,
+            'expanded' => true,
+            'required' => true,
+        ];
+
+        $formOptions = $form->getConfig()->getOptions();
+
+        $this->assertArraySubset($expectedOptions, $formOptions);
+        $this->assertArrayHasKey('choice_label', $formOptions);
+        $this->assertInternalType('callable', $formOptions['choice_label']);
+
+        $roleWithoutAccount = new AccountUserRole();
+        $roleWithoutAccount->setLabel('roleWithoutAccount');
+        $this->assertEquals(
+            'roleWithoutAccount (orob2b.account.accountuserrole.type.predefined.label.trans)',
+            $formOptions['choice_label']($roleWithoutAccount)
+        );
+
+        $account = new Account();
+        $roleWithAccount = new AccountUserRole();
+        $roleWithAccount->setAccount($account);
+        $roleWithAccount->setLabel('roleWithAccount');
+        $this->assertEquals(
+            'roleWithAccount (orob2b.account.accountuserrole.type.customizable.label.trans)',
+            $formOptions['choice_label']($roleWithAccount)
+        );
+
+        $testEntity = new TestEntity('TestEntityValue');
+        $this->assertEquals('TestEntityValue', $formOptions['choice_label']($testEntity));
+
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     */
+    private function createTranslator()
+    {
+        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(
+                function ($message) {
+                    return $message . '.trans';
+                }
+            );
+
+        return $translator;
     }
 }

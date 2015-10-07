@@ -110,7 +110,7 @@ class AccountUserRoleRepositoryTest extends WebTestCase
         $actual = $this->repository
             ->getAvailableRolesByAccountUserQueryBuilder(
                 $accountUser->getAccount(),
-                $accountUser->getOrganization()->getId()
+                $accountUser->getOrganization()
             )
             ->getQuery()
             ->getResult();
