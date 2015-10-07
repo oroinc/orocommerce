@@ -1,0 +1,9 @@
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
+{{ form_row(form.productVisibility) }}
+
+{{ form_row(form.visibilityForAccountGroup, {'id': 'accountgroup-category-visibility-changeset'}) }}
+{{ dataGrid.renderGrid('account-group-category-visibility-grid', {category_id: entity.id}) }}
+
+{{ form_row(form.visibilityForAccount, {'id': 'account-category-visibility-changeset'}) }}
+{{ dataGrid.renderGrid('account-category-visibility-grid', {category_id: entity.id}) }}

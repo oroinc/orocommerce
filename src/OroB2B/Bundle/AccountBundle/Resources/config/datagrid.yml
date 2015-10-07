@@ -855,7 +855,111 @@ datagrid:
                 selector: '#accountgroup-category-visibility-changeset'
         properties:
             id: ~
+#####
 
+    account-product-visibility-grid:
+        source:
+            type:              orm
+            query:
+                select:
+                    - account.id
+                    - account.name
+                    - accountProductVisibility
+                from:
+                    - { table: %orob2b_account.entity.account.class%, alias: account }
+                join:
+                    left:
+                        - { join: %orob2b_account.entity.account_product_visibility.class%, alias: accountProductVisibility, conditionType: WITH, condition: 'accountProductVisibility.account = account AND accountProductVisibility.product = :product_id' }
+            bind_parameters:
+                - product_id
+        columns:
+            name:
+                label: orob2b.account.name.label
+            visibility:
+                label: orob2b.account.visibility.accountproductvisibility.entity_label
+                frontend_type: select
+                editable: true
+                choices: @orob2b_account.formatter.choice.account_product_visibility->formatChoices()
+        sorters:
+            columns:
+                name:
+                    data_name: account.name
+                visibility:
+                    data_name: accountProductVisibility.visibility
+            default:
+                name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                name:
+                    type:      string
+                    data_name: account.name
+                visibility:
+                    type: choice
+                    data_name: accountProductVisibility.visibility
+                    options:
+                        field_options:
+                            multiple: true
+                            choices: @orob2b_account.formatter.choice.account_product_visibility->formatChoices()
+        options:
+            cellSelection:
+                dataField: id
+                columnName:
+                    - visibility
+                selector: '#account-product-visibility-changeset'
+        properties:
+            id: ~
+
+    account-group-product-visibility-grid:
+        source:
+            type:              orm
+            query:
+                select:
+                    - accountGroup.id
+                    - accountGroup.name
+                from:
+                    - { table: %orob2b_account.entity.account_group.class%, alias: accountGroup }
+                join:
+                    left:
+                        - { join: %orob2b_account.entity.account_group_product_visibility.class%, alias: accountGroupProductVisibility, conditionType: WITH, condition: 'accountGroupProductVisibility.accountGroup = accountGroup AND accountGroupProductVisibility.product = :product_id' }
+            bind_parameters:
+                - category_id
+        columns:
+            name:
+                label: orob2b.account.name.label
+            visibility:
+                label: orob2b.account.visibility.accountgroupcategoryvisibility.entity_label
+                frontend_type: select
+                editable: true
+                choices: @orob2b_account.formatter.choice.account_group_category_visibility->formatChoices()
+        sorters:
+            columns:
+                name:
+                    data_name: accountGroup.name
+                visibility:
+                    data_name: accountGroupCategoryVisibility.visibility
+            default:
+                name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                name:
+                    type:      string
+                    data_name: accountGroup.name
+                visibility:
+                    type: choice
+                    data_name: accountGroupCategoryVisibility.visibility
+                    options:
+                        field_options:
+                            multiple: true
+                            choices: @orob2b_account.formatter.choice.account_group_category_visibility->formatChoices()
+        options:
+            cellSelection:
+                dataField: id
+                columnName:
+                    - visibility
+                selector: '#accountgroup-category-visibility-changeset'
+        properties:
+            id: ~
+####
     frontend-account-account-user-grid:
         extends: account-account-user-grid-base
         source:
