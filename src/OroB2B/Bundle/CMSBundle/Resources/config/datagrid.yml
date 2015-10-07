@@ -1,0 +1,39 @@
+datagrid:
+    cms-login-page-grid:
+        options:
+            entity_pagination: true
+            entityHint:        login page
+        source:
+            acl_resource: orob2b_cms_loginpage_view
+            type:         orm
+            query:
+                select:
+                    - loginPage.id
+                from:
+                    - { table: %orob2b_cms.loginpage.class%, alias: loginPage }
+        columns:
+            id: ~
+        properties:
+            id: ~
+            view_link:
+                type:   url
+                route:  orob2b_cms_loginpage_view
+                params: [ id ]
+            update_link:
+                type:   url
+                route:  orob2b_cms_loginpage_update
+                params: [ id ]
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  orob2b_cms_loginpage_view
+                rowAction:     true
+            update:
+                type:          navigate
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          edit
+                acl_resource:  orob2b_cms_loginpage_update

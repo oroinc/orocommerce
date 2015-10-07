@@ -55,7 +55,7 @@ define(function(require) {
         typeReplacement: null,
 
         /**
-         * @property {array}
+         * @property {Object}
          */
         units: {},
 
@@ -282,6 +282,7 @@ define(function(require) {
                 if (null === $(select).val() && firstValue) {
                     $(select).val(firstValue);
                 }
+                $(select).val(currentValue).change();
                 $(select).addClass(self.options.syncClass);
 
                 if (!force) {

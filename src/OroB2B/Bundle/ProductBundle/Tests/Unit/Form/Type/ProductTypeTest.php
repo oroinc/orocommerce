@@ -8,6 +8,8 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType as OroCollectionType;
+use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
 
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
@@ -16,11 +18,14 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Extension\IntegerExtension;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductCustomFieldsChoiceType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductVariantLinksType;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductCustomFieldsChoiceType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubEnumSelectType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubImageType;
@@ -39,6 +44,14 @@ class ProductTypeTest extends FormIntegrationTestCase
      * @var RoundingService|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $roundingService;
+
+    /**
+     * @var array
+     */
+    protected $exampleCustomFields = [
+        'size'  => 'Size Label',
+        'color' => 'Color Label'
+    ];
 
     /**
      * {@inheritDoc}
@@ -89,6 +102,11 @@ class ProductTypeTest extends FormIntegrationTestCase
                         ProductUnitSelectionType::NAME
                     ),
                     LocalizedFallbackValueCollectionType::NAME => new StubLocalizedFallbackValueCollectionType(),
+                    ProductCustomFieldsChoiceType::NAME => new StubProductCustomFieldsChoiceType(
+                        $this->exampleCustomFields
+                    ),
+                    EntityIdentifierType::NAME => new StubEntityIdentifierType([]),
+                    ProductVariantLinksType::NAME => new ProductVariantLinksType()
                 ],
                 [
                     'form' => [
@@ -137,23 +155,23 @@ class ProductTypeTest extends FormIntegrationTestCase
      */
     public function submitProvider()
     {
-        $defaultProduct = new StubProduct();
-
         return [
             'simple product' => [
-                'defaultData'   => $defaultProduct,
+                'defaultData'   => $this->createDefaultProductEntity(),
                 'submittedData' => [
                     'sku' => 'test sku',
                     'unitPrecisions' => [],
                     'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
-                    'status' => Product::STATUS_DISABLED
+                    'status' => Product::STATUS_DISABLED,
+                    'hasVariants' => true,
+                    'variantFields' => array_keys($this->exampleCustomFields)
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(),
                 'rounding' => false
             ],
             'product with unitPrecisions' => [
-                'defaultData'   => $defaultProduct,
+                'defaultData'   => $this->createDefaultProductEntity(),
                 'submittedData' => [
                     'sku' => 'test sku',
                     'unitPrecisions' => [
@@ -164,13 +182,15 @@ class ProductTypeTest extends FormIntegrationTestCase
                     ],
                     'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
                     'visible' => 1,
-                    'status' => Product::STATUS_DISABLED
+                    'status' => Product::STATUS_DISABLED,
+                    'hasVariants' => true,
+                    'variantFields' => array_keys($this->exampleCustomFields)
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(true),
                 'rounding' => false
             ],
             'product with names and descriptions' => [
-                'defaultData'   => $defaultProduct,
+                'defaultData'   => $this->createDefaultProductEntity(),
                 'submittedData' => [
                     'sku' => 'test sku',
                     'unitPrecisions' => [],
@@ -185,23 +205,46 @@ class ProductTypeTest extends FormIntegrationTestCase
                         ['text' => 'first description'],
                         ['text' => 'second description'],
                     ],
+                    'hasVariants' => true,
+                    'variantFields' => array_keys($this->exampleCustomFields)
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(false, true),
+                'rounding' => false
+            ],
+            'simple product without hasVariants' => [
+                'defaultData'   => $this->createDefaultProductEntity(false),
+                'submittedData' => [
+                    'sku' => 'test sku',
+                    'unitPrecisions' => [],
+                    'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
+                    'visible' => 1,
+                    'status' => Product::STATUS_DISABLED,
+                    'hasVariants' => false,
+                ],
+                'expectedData'  => $this->createExpectedProductEntity(false, false, false),
                 'rounding' => false
             ],
         ];
     }
 
     /**
-     * @param boolean $withProductUnitPrecision
-     * @param boolean $withNamesAndDescriptions
-     * @return Product
+     * @param bool|false $withProductUnitPrecision
+     * @param bool|false $withNamesAndDescriptions
+     * @param bool|true $hasVariants
+     * @return StubProduct
      */
     protected function createExpectedProductEntity(
         $withProductUnitPrecision = false,
-        $withNamesAndDescriptions = false
+        $withNamesAndDescriptions = false,
+        $hasVariants = true
     ) {
         $expectedProduct = new StubProduct();
+
+        $expectedProduct->setHasVariants($hasVariants);
+
+        if ($hasVariants) {
+            $expectedProduct->setVariantFields(array_keys($this->exampleCustomFields));
+        }
 
         $productUnit = new ProductUnit();
         $productUnit->setCode('kg');
@@ -233,6 +276,7 @@ class ProductTypeTest extends FormIntegrationTestCase
 
         $this->assertTrue($form->has('sku'));
         $this->assertTrue($form->has('unitPrecisions'));
+        $this->assertTrue($form->has('hasVariants'));
     }
 
     public function testGetName()
@@ -252,5 +296,17 @@ class ProductTypeTest extends FormIntegrationTestCase
             ->setText($text);
 
         return $value;
+    }
+
+    /**
+     * @param bool|true $hasVariants
+     * @return StubProduct
+     */
+    protected function createDefaultProductEntity($hasVariants = true)
+    {
+        $defaultProduct = new StubProduct();
+        $defaultProduct->setHasVariants($hasVariants);
+
+        return $defaultProduct;
     }
 }

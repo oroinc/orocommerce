@@ -32,11 +32,14 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
     const CURRENCY1 = 'USD';
     const CURRENCY2 = 'EUR';
 
+    const PRICE1 = 1.00;
+    const PRICE2 = 2.00;
+
     /**
      * @var array
      */
-    protected $items = [
-        [
+    public static $items = [
+        self::QUOTE1 => [
             'qid'       => self::QUOTE1,
             'products'  => [
                 self::PRODUCT1 => [
@@ -44,15 +47,17 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
                         'priceType' => QuoteProductOffer::PRICE_TYPE_UNIT,
                         'quantity'  => 1,
                         'unit'      => self::UNIT1,
-                        'price'     => 1,
+                        'price'     => self::PRICE1,
                         'currency'  => self::CURRENCY1,
+                        'allow_increments' => true
                     ],
                     [
                         'priceType' => QuoteProductOffer::PRICE_TYPE_UNIT,
                         'quantity'  => 2,
                         'unit'      => self::UNIT2,
-                        'price'     => 2,
+                        'price'     => self::PRICE2,
                         'currency'  => self::CURRENCY1,
+                        'allow_increments' => false
                     ],
                 ],
                 self::PRODUCT2 => [
@@ -62,39 +67,40 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
                         'unit'      => self::UNIT3,
                         'price'     => 3,
                         'currency'  => self::CURRENCY1,
+                        'allow_increments' => false
                     ]
                 ],
             ],
         ],
-        [
+        self::QUOTE2 => [
             'qid'           => self::QUOTE2,
             'account'       => LoadUserData::ACCOUNT1,
             'products'      => [],
         ],
-        [
+        self::QUOTE3 => [
             'qid'           => self::QUOTE3,
             'account'       => LoadUserData::ACCOUNT1,
             'accountUser'   => LoadUserData::ACCOUNT1_USER1,
             'products'      => [],
         ],
-        [
+        self::QUOTE4 => [
             'qid'           => self::QUOTE4,
             'account'       => LoadUserData::ACCOUNT1,
             'accountUser'   => LoadUserData::ACCOUNT1_USER2,
             'products'      => [],
         ],
-        [
+        self::QUOTE5 => [
             'qid'           => self::QUOTE5,
             'account'       => LoadUserData::ACCOUNT1,
             'accountUser'   => LoadUserData::ACCOUNT1_USER3,
             'products'      => [],
         ],
-        [
+        self::QUOTE6 => [
             'qid'           => self::QUOTE6,
             'account'       => LoadUserData::ACCOUNT2,
             'products'      => [],
         ],
-        [
+        self::QUOTE7 => [
             'qid'           => self::QUOTE7,
             'account'       => LoadUserData::ACCOUNT2,
             'accountUser'   => LoadUserData::ACCOUNT2_USER1,
@@ -120,7 +126,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
     {
         $user = $this->getUser($manager);
 
-        foreach ($this->items as $item) {
+        foreach (self::$items as $item) {
             /* @var $quote Quote */
             $quote = new Quote();
             $quote
@@ -165,10 +171,10 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
             $product->setProductSku($sku);
         }
 
-        foreach ($items as $item) {
+        foreach ($items as $index => $item) {
             $productOffer = new QuoteProductOffer();
             $productOffer
-                ->setAllowIncrements(false)
+                ->setAllowIncrements($item['allow_increments'])
                 ->setQuantity($item['quantity'])
                 ->setPriceType($item['priceType'])
                 ->setPrice((new Price())->setValue($item['price'])->setCurrency($item['currency']))
@@ -181,6 +187,9 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
             }
 
             $manager->persist($productOffer);
+
+            // e.g sale.quote.1.product.1.offer.1
+            $this->addReference($quote->getQid() . '.' . $sku . '.offer.' . ($index + 1), $productOffer);
 
             $product->addQuoteProductOffer($productOffer);
         }

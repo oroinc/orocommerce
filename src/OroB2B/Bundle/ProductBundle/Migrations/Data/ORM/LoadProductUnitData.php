@@ -14,13 +14,29 @@ class LoadProductUnitData extends AbstractFixture
      */
     protected $productUnits = [
         [
+            'code'             => 'each',
+            'defaultPrecision' => 0,
+        ],
+        [
+            'code'             => 'hour',
+            'defaultPrecision' => 0,
+        ],
+        [
             'code'             => 'item',
             'defaultPrecision' => 0,
         ],
         [
             'code'             => 'kg',
             'defaultPrecision' => 3,
-        ]
+        ],
+        [
+            'code'             => 'piece',
+            'defaultPrecision' => 0,
+        ],
+        [
+            'code'             => 'set',
+            'defaultPrecision' => 0,
+        ],
     ];
 
     /**

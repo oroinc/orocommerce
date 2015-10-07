@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
@@ -56,7 +57,12 @@ class PriceListHandlerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->entity = new PriceList();
-        $this->handler = new PriceListHandler($this->form, $this->request, $this->manager);
+        $this->request = new Request();
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
+
+        $this->handler = new PriceListHandler($this->form, $requestStack, $this->manager);
     }
 
     /**

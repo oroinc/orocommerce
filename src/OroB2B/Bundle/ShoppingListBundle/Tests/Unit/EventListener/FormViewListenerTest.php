@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\EventListener;
 
+use Symfony\Component\HttpFoundation\RequestStack;
+
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -12,14 +14,22 @@ class FormViewListenerTest extends FormViewListenerTestCase
     /** @var FormViewListener */
     protected $listener;
 
+    /** @var  RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+    protected $request;
+
     /**
      * {@inheritDoc}
      */
     protected function setUp()
     {
         parent::setUp();
+        $this->request = $this->getRequest();
 
-        $this->listener = new FormViewListener($this->translator, $this->doctrineHelper);
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
+
+        $this->listener = new FormViewListener($requestStack, $this->translator, $this->doctrineHelper);
     }
 
     public function testFrontendProductViewWithoutRequest()
@@ -34,10 +44,8 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $event = $this->getBeforeListRenderEventMock();
         $event->expects($this->never())->method($this->anything());
 
-        $request = $this->getRequest();
-        $request->expects($this->once())->method('get')->willReturn(null);
+        $this->request->expects($this->once())->method('get')->willReturn(null);
 
-        $this->listener->setRequest($request);
         $this->listener->onFrontendProductView($event);
     }
 
@@ -48,13 +56,11 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $event = $this->getBeforeListRenderEventMock();
         $event->expects($this->never())->method($this->anything());
 
-        $request = $this->getRequest();
-        $request->expects($this->once())->method('get')->willReturn($id);
+        $this->request->expects($this->once())->method('get')->willReturn($id);
 
         $this->doctrineHelper->expects($this->once())->method('getEntityReference')
             ->with($this->isType('string'), $id)->willReturn(null);
 
-        $this->listener->setRequest($request);
         $this->listener->onFrontendProductView($event);
     }
 
@@ -65,8 +71,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $event = $this->getBeforeListRenderEvent();
 
-        $request = $this->getRequest();
-        $request->expects($this->once())->method('get')->willReturn($id);
+        $this->request->expects($this->once())->method('get')->willReturn($id);
 
         $this->doctrineHelper->expects($this->once())->method('getEntityReference')
             ->with($this->isType('string'), $id)->willReturn($product);
@@ -86,7 +91,6 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $event->expects($this->once())->method('getEnvironment')->willReturn($environment);
 
-        $this->listener->setRequest($request);
         $this->listener->onFrontendProductView($event);
     }
 }

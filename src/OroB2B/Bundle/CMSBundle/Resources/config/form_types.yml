@@ -1,6 +1,7 @@
 parameters:
     orob2b_cms.form.type.slug.class: OroB2B\Bundle\CMSBundle\Form\Type\SlugType
     orob2b_cms.form.type.page.class: OroB2B\Bundle\CMSBundle\Form\Type\PageType
+    orob2b_cms.form.type.loginpage.class: OroB2B\Bundle\CMSBundle\Form\Type\LoginPageType
 
 services:
     orob2b_cms.form.type.slug:
@@ -14,3 +15,8 @@ services:
             - [setDataClass, [%orob2b_cms.page.class%]]
         tags:
             - { name: form.type, alias: orob2b_cms_page }
+
+    orob2b_cms.form.type.loginpage:
+        class: %orob2b_cms.form.type.loginpage.class%
+        tags:
+            - { name: form.type, alias: orob2b_cms_login_page }

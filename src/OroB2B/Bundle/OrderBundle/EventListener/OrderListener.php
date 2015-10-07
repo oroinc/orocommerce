@@ -30,11 +30,8 @@ class OrderListener
         /** @var Order $entity */
         $entity = $args->getEntity();
 
-        if (!$entity instanceof Order) {
-            return;
+        if ($entity instanceof Order && !$entity->getIdentifier()) {
+            $entity->setIdentifier($this->idGenerator->generate($entity));
         }
-
-        $id = $this->idGenerator->generate($entity);
-        $entity->setIdentifier($id);
     }
 }

@@ -15,12 +15,13 @@ use Oro\Bundle\UserBundle\Entity\User;
 use OroB2B\Bundle\AccountBundle\Entity\AccountOwnerAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
 
 /**
  * @ORM\Table(name="orob2b_sale_quote")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\SaleBundle\Entity\Repository\QuoteRepository")
  * @ORM\EntityListeners({"OroB2B\Bundle\SaleBundle\Entity\Listener\QuoteListener"})
  * @ORM\HasLifecycleCallbacks()
  * @Config(
@@ -161,6 +162,14 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      * @ORM\Column(type="boolean")
      */
     protected $locked = false;
+
+    /**
+     * @var PriceList
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList")
+     * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="SET NULL")
+     **/
+    protected $priceList;
 
     /**
      * Constructor
@@ -481,5 +490,37 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
         }
 
         return null;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasOfferVariants()
+    {
+        foreach ($this->quoteProducts as $quoteProduct) {
+            if ($quoteProduct->hasOfferVariants()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @return PriceList|null
+     */
+    public function getPriceList()
+    {
+        return $this->priceList;
+    }
+
+    /**
+     * @param PriceList|null $priceList
+     * @return Quote
+     */
+    public function setPriceList(PriceList $priceList = null)
+    {
+        $this->priceList = $priceList;
+
+        return $this;
     }
 }

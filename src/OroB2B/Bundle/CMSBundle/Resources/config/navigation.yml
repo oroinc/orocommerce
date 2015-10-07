@@ -15,6 +15,14 @@ oro_menu_config:
                 routes:      ['/^orob2b_cms_page/']
                 description: 'orob2b.cms.menu.page_list.description'
 
+        login_page_list:
+            label:           'orob2b.cms.loginpage.entity_plural_label'
+            route:           'orob2b_cms_loginpage_index'
+            extras:
+                position:    101
+                routes:      ['/^orob2b_cms_loginpage/']
+                description: 'orob2b.cms.menu.loginpage_list.description'
+
         shortcut_page_list:
             label:           'orob2b.cms.page.entity_plural_label'
             route:           'orob2b_cms_page_index'
@@ -26,6 +34,7 @@ oro_menu_config:
                 marketing_tab:
                     children:
                         page_list: ~
+                        login_page_list: ~
         shortcuts:
             children:
                 shortcut_pages_list: ~
@@ -33,7 +42,12 @@ oro_menu_config:
 oro_titles:
     orob2b_cms_page_index:  ~
     orob2b_cms_page_view:   '%%title%%'
-    orob2b_cms_page_update: '%%title%% - Edit'
-    orob2b_cms_page_create: 'Create Page'
+    orob2b_cms_page_update: '%%title%% - oro.ui.edit'
+    orob2b_cms_page_create: 'oro.ui.create_entity'
+
+    orob2b_cms_loginpage_index:  ~
+    orob2b_cms_loginpage_view:   '%%title%%'
+    orob2b_cms_loginpage_update: 'oro.ui.edit'
+    orob2b_cms_loginpage_create: 'oro.ui.create'
 
     orob2b_cms_frontend_page_view: '%%title%%'
