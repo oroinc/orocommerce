@@ -115,9 +115,15 @@
     {% set hasRoles = form.roles is defined %}
     {% if hasRoles %}
         {% set userRoles %}
+            {% set widgetOptions = {} %}
+            {% if entity.id %}
+                {% set widgetOptions = widgetOptions|merge({
+                    accountUserId: entity.id
+                }) %}
+            {% endif %}
             {{ oro_widget_render({
                 'widgetType': 'block',
-                'url': path('orob2b_account_account_user_role', { accountUserId: entity.id }),
+                'url': path('orob2b_account_account_user_roles', widgetOptions),
                 'alias': roleWidgetAlias
             }) }}
         {% endset %}

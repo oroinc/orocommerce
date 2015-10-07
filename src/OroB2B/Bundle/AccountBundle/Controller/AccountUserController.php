@@ -70,20 +70,20 @@ class AccountUserController extends Controller
     }
 
     /**
-     * @Route("/role/{accountUserId}", name="orob2b_account_account_user_role", requirements={"accountUserId"="\d+"})
+     * @Route("/roles/{accountUserId}", name="orob2b_account_account_user_roles", defaults={"accountUserId" = "null"})
      * @Method({"GET"})
      * @Template
      * @AclAncestor("orob2b_account_account_user_view")
      *
      * @ParamConverter("accountUser", class="OroB2BAccountBundle:AccountUser", options={"id" = "accountUserId"})
      *
-     * @param AccountUser $accountUser
      * @param Request     $request
+     * @param AccountUser $accountUser
      * @return array
      */
-    public function roleAction(AccountUser $accountUser, Request $request)
+    public function roleAction(Request $request, AccountUser $accountUser = null)
     {
-        return $this->update($accountUser, $request);
+        return $this->update($accountUser ?: new AccountUser(), $request);
     }
 
     /**
