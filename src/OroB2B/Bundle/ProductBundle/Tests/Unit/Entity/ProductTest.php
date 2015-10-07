@@ -293,15 +293,4 @@ class ProductTest extends \PHPUnit_Framework_TestCase
             'several default descriptions' => [[new LocalizedFallbackValue(), new LocalizedFallbackValue()]],
         ];
     }
-
-    /**
-     *
-     * @expectedException \InvalidArgumentException
-     * @@expectedExceptionMessageRegExp #.*is not a valid status#
-     */
-    public function testSetInvalidStatusShouldThrowInvalidArgumentException()
-    {
-        $product = new Product();
-        $product->setStatus('Invalid Status');
-    }
 }
