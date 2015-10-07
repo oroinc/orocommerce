@@ -4,8 +4,8 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
-
 use Oro\Component\Testing\Unit\EntityTrait;
+
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\EventListener\CategoryTreeHandlerListener;
 use OroB2B\Bundle\AccountBundle\Storage\CategoryVisibilityData;
