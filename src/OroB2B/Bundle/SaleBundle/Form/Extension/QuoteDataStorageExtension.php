@@ -23,45 +23,71 @@ class QuoteDataStorageExtension extends AbstractProductDataStorageExtension
             return;
         }
 
-        $quoteProductOffer = new QuoteProductOffer();
-        $quoteProductRequest = new QuoteProductRequest();
         $quoteProduct = new QuoteProduct();
-
         $quoteProduct
             ->setProduct($product)
-            ->addQuoteProductRequest($quoteProductRequest)
-            ->addQuoteProductOffer($quoteProductOffer);
+        ;
 
         $this->fillEntityData($quoteProduct, $itemData);
 
-        if (array_key_exists(ProductDataStorage::PRODUCT_QUANTITY_KEY, $itemData)) {
-            $quoteProductOffer->setQuantity($itemData[ProductDataStorage::PRODUCT_QUANTITY_KEY]);
-            $quoteProductRequest->setQuantity($itemData[ProductDataStorage::PRODUCT_QUANTITY_KEY]);
-
+        if (!empty($itemData['requestProductItems'])) {
+            $this->addItems($product, $quoteProduct, $itemData['requestProductItems']);
         }
 
-        $this->fillEntityData($quoteProductOffer, $itemData);
-        $this->fillEntityData($quoteProductRequest, $itemData);
+        $entity->addQuoteProduct($quoteProduct);
+    }
 
-        if (!$quoteProductOffer->getProductUnit()) {
-            /** @var ProductUnitPrecision $unitPrecision */
-            $unitPrecision = $product->getUnitPrecisions()->first();
-            if (!$unitPrecision) {
-                return;
+    /**
+     * @param Product $product
+     * @param QuoteProduct $quoteProduct
+     * @param array $itemsData
+     */
+    protected function addItems(Product $product, QuoteProduct $quoteProduct, array $itemsData)
+    {
+        $defaultUnit = $this->getDefaultUnit($product);
+
+        foreach ($itemsData as $subitemData) {
+
+            $quoteProductRequest = new QuoteProductRequest();
+            $quoteProductOffer = new QuoteProductOffer();
+            
+            $quoteProductOffer->setAllowIncrements(true);
+
+            $this->fillEntityData($quoteProductRequest, $subitemData);
+            $this->fillEntityData($quoteProductOffer, $subitemData);
+
+            if (!$quoteProductRequest->getProductUnit() && !$defaultUnit) {
+                continue;
             }
 
-            /** @var ProductUnit $unit */
-            $unit = $unitPrecision->getUnit();
-            if (!$unit) {
-                return;
+            if (!$quoteProductRequest->getProductUnit()) {
+                $quoteProductRequest->setProductUnit($defaultUnit);
+                $quoteProductOffer->setProductUnit($defaultUnit);
             }
 
-            $quoteProductOffer->setProductUnit($unit);
-            $quoteProductRequest->setProductUnit($unit);
+            $quoteProduct->addQuoteProductRequest($quoteProductRequest);
+            $quoteProduct->addQuoteProductOffer($quoteProductOffer);
+        }
+    }
+
+    /**
+     * @param Product $product
+     * @return ProductUnit|null
+     */
+    protected function getDefaultUnit(Product $product)
+    {
+        /* @var $unitPrecision ProductUnitPrecision */
+        $unitPrecision = $product->getUnitPrecisions()->first();
+        if (!$unitPrecision) {
+            return;
         }
 
-        if ($quoteProductOffer->getProductUnit()) {
-            $entity->addQuoteProduct($quoteProduct);
+        /* @var $unit ProductUnit */
+        $unit = $unitPrecision->getUnit();
+        if (!$unit) {
+            return;
         }
+
+        return $unit;
     }
 }

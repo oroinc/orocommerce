@@ -46,24 +46,31 @@ class QuoteController extends Controller
         ];
 
         foreach ($rfpRequest->getRequestProducts() as $requestProduct) {
+            $items = [];
             foreach ($requestProduct->getRequestProductItems() as $requestProductItem) {
                 $productUnitCode = $requestProductItem->getProductUnit()
                     ? $requestProductItem->getProductUnit()->getCode()
                     : null
                 ;
-                $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = [
-                    ProductDataStorage::PRODUCT_SKU_KEY => $requestProduct->getProduct()->getSku(),
-                    ProductDataStorage::PRODUCT_QUANTITY_KEY => $requestProductItem->getQuantity(),
-                    'commentAccount' => $requestProduct->getComment(),
+
+                $items[] = [
+                    'price' => $requestProductItem->getPrice(),
+                    'quantity' => $requestProductItem->getQuantity(),
                     'productUnit' => $productUnitCode,
                     'productUnitCode' => $productUnitCode,
-                    'type' => QuoteProduct::TYPE_REQUESTED,
-                    'price' => $requestProductItem->getPrice(),
                     'requestProductItem' => $requestProductItem->getId(),
-                    'requestProduct' => $requestProduct->getId(),
-                    'allowIncrements' => true,
                 ];
+
             }
+
+            $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = [
+                ProductDataStorage::PRODUCT_SKU_KEY => $requestProduct->getProduct()->getSku(),
+                ProductDataStorage::PRODUCT_QUANTITY_KEY => null,
+                'type' => QuoteProduct::TYPE_REQUESTED,
+                'commentAccount' => $requestProduct->getComment(),
+                'requestProduct' => $requestProduct->getId(),
+                'requestProductItems' => $items,
+            ];
         }
 
         $storage->set($data);

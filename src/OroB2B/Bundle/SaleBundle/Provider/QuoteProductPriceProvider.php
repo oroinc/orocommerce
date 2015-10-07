@@ -106,21 +106,25 @@ class QuoteProductPriceProvider
 
         /** @var QuoteProduct $quoteProduct */
         foreach ($quote->getQuoteProducts() as $quoteProduct) {
-            if ($quoteProduct->getProduct()) {
-                $product = $quoteProduct->getProduct();
-            } else {
+            if (!$quoteProduct->getProduct()) {
                 continue;
             }
+
+            $product = $quoteProduct->getProduct();
+
             /** @var QuoteProductOffer $quoteProductOffer */
             foreach ($quoteProduct->getQuoteProductOffers() as $quoteProductOffer) {
-                if ($quoteProductOffer->getProductUnit() && $quoteProductOffer->getQuantity()) {
-                    $productsPriceCriteria[] = new ProductPriceCriteria(
-                        $product,
-                        $quoteProductOffer->getProductUnit(),
-                        $quoteProductOffer->getQuantity(),
-                        $quoteProductOffer->getPrice()->getCurrency()
-                    );
+                if (!$quoteProductOffer->getProductUnit() || !$quoteProductOffer->getQuantity()
+                    || !$quoteProductOffer->getPrice()) {
+                    continue;
                 }
+
+                $productsPriceCriteria[] = new ProductPriceCriteria(
+                    $product,
+                    $quoteProductOffer->getProductUnit(),
+                    $quoteProductOffer->getQuantity(),
+                    $quoteProductOffer->getPrice()->getCurrency()
+                );
             }
         }
 
