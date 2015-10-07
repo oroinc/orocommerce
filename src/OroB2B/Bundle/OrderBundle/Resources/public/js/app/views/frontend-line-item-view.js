@@ -4,11 +4,11 @@ define(function(require) {
     var FrontendLineItemView;
     var $ = require('jquery');
     var _ = require('underscore');
-    var NumberFormatter = require('orolocale/js/formatter/number');
+    var ProductPricesComponent = require('orob2bpricing/js/app/components/product-prices-component');
     var LineItemAbstractView = require('orob2border/js/app/views/line-item-abstract-view');
 
     /**
-     * @export orob2border/js/app/views/line-item-view
+     * @export orob2border/js/app/views/frontend-line-item-view
      * @extends oroui.app.views.base.View
      * @class orob2border.app.views.LineItemView
      */
@@ -19,15 +19,11 @@ define(function(require) {
         $priceValueText: null,
 
         /**
-         * @property {Boolean}
-         */
-        initialized: false,
-
-        /**
          * @inheritDoc
          */
         initialize: function() {
             this.options = $.extend(true, {
+                currency: null,
                 unitLoaderRouteName: 'orob2b_pricing_frontend_units_by_pricelist',
                 selectors: {
                     priceValueText: 'div.order-line-item-price-value'
@@ -50,7 +46,7 @@ define(function(require) {
         },
 
         /**
-         * Doing something after loading child components
+         * @inheritDoc
          */
         handleLayoutInit: function() {
             this.$priceValueText = $(this.$el.find(this.options.selectors.priceValueText));
@@ -63,29 +59,24 @@ define(function(require) {
                 this.fieldsByName.productUnit
             ]);
 
-            this.initialized = true;
+            this.initPrices();
+        },
+
+        initPrices: function() {
+            this.subview('productPricesComponents', new ProductPricesComponent({
+                _sourceElement: this.$el,
+                $product: this.fieldsByName.product,
+                $priceValue: this.$priceValueText,
+                $productUnit: this.fieldsByName.productUnit,
+                $quantity: this.fieldsByName.quantity,
+                $currency: this.options.currency,
+                disabled: this.options.disabled
+            }));
         },
 
         /**
-         * @inheritdoc
+         * @inheritDoc
          */
-        setMatchedPrices: function(matchedPrices) {
-            FrontendLineItemView.__super__.setMatchedPrices.apply(this, arguments);
-
-            if (!this.options.disabled && this.initialized) {
-                var matchedPrice = this.getMatchedPriceValue();
-                var price = this.$priceValueText.data('price');
-
-                if (!matchedPrice && parseFloat(price) > 0.0) {
-                    matchedPrice = price;
-                }
-
-                this.$priceValueText.text(NumberFormatter.formatCurrency(matchedPrice, this.options.currency));
-            }
-
-            this.renderTierPrices();
-        },
-
         resetData: function() {
             FrontendLineItemView.__super__.resetData.apply(this, arguments);
 

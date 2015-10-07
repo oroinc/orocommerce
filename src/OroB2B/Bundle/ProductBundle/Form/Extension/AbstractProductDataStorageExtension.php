@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\ProductBundle\Form\Extension;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -17,8 +17,8 @@ use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
 {
-    /** @var Request */
-    protected $request;
+    /** @var RequestStack */
+    protected $requestStack;
 
     /** @var ProductDataStorage */
     protected $storage;
@@ -42,26 +42,21 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
     protected $productRepository;
 
     /**
+     * @param RequestStack $requestStack
      * @param ProductDataStorage $storage
      * @param DoctrineHelper $doctrineHelper
      * @param string $productClass
      */
-    public function __construct(ProductDataStorage $storage, DoctrineHelper $doctrineHelper, $productClass)
-    {
+    public function __construct(
+        RequestStack $requestStack,
+        ProductDataStorage $storage,
+        DoctrineHelper $doctrineHelper,
+        $productClass
+    ) {
+        $this->requestStack = $requestStack;
         $this->storage = $storage;
         $this->doctrineHelper = $doctrineHelper;
         $this->productClass = $productClass;
-    }
-
-    /**
-     * @param Request $request
-     * @return $this
-     */
-    public function setRequest($request)
-    {
-        $this->request = $request;
-
-        return $this;
     }
 
     /**
@@ -80,7 +75,7 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if ($this->request->get(ProductDataStorage::STORAGE_KEY)) {
+        if ($this->requestStack->getCurrentRequest()->get(ProductDataStorage::STORAGE_KEY)) {
             $entity = isset($options['data']) ? $options['data'] : null;
             if ($entity instanceof $this->dataClass && !$this->doctrineHelper->getSingleEntityIdentifier($entity)) {
                 $this->fillData($entity);

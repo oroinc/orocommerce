@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
@@ -12,6 +14,7 @@ use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 
 class PriceListProductPriceType extends AbstractType
 {
@@ -53,7 +56,7 @@ class PriceListProductPriceType extends AbstractType
                 [
                     'required' => true,
                     'label' => 'orob2b.pricing.productprice.unit.label',
-                    'placeholder' => 'orob2b.pricing.productprice.unit.choose',
+                    'placeholder' => 'orob2b.product.form.product_required',
                 ]
             )
             ->add(
@@ -74,8 +77,35 @@ class PriceListProductPriceType extends AbstractType
                     'compact' => true,
                     'label' => 'orob2b.pricing.productprice.price.label',
                     'additional_currencies' => $additionalCurrencies,
+                    'currency_empty_value' => false,
                 ]
             );
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function preSetData(FormEvent $event)
+    {
+        $data = $event->getData();
+        if ($data instanceof ProductPrice && $data->getId()) {
+            $event->getForm()
+                ->remove('unit')
+                ->add(
+                    'unit',
+                    ProductUnitSelectionType::NAME,
+                    [
+                        'required' => true,
+                        'label' => 'orob2b.pricing.productprice.unit.label',
+                        'placeholder' => false,
+                        'query_builder' => function (ProductUnitRepository $repository) use ($data) {
+                            return $repository->getProductUnitsQueryBuilder($data->getProduct());
+                        }
+                    ]
+                );
+        }
     }
 
     /**

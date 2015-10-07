@@ -133,6 +133,10 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
 
         $form = $this->factory->create($this->formType, $defaultData, []);
 
+        // unit placeholder must not be available for specific entity
+        $unitPlaceholder = $form->get('unit')->getConfig()->getOption('placeholder');
+        $defaultData->getId() ? $this->assertNull($unitPlaceholder) : $this->assertNotNull($unitPlaceholder);
+
         $this->assertEquals($defaultData, $form->getData());
 
         $form->submit($submittedData);
@@ -171,16 +175,19 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
         $defaultProductPrice = new ProductPrice();
         $defaultProductPrice->setPriceList($priceList);
 
+        $defaultProductPriceWithId = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\ProductPrice', 1);
+        $defaultProductPriceWithId->setPriceList($priceList);
+
         return [
             'product price without data' => [
-                'defaultData'   => $defaultProductPrice,
+                'defaultData'   => $defaultProductPriceWithId,
                 'submittedData' => [
                     'product'  => null,
                     'quantity'  => null,
                     'unit'  => null,
                     'price'  => null,
                 ],
-                'expectedData'  => clone $defaultProductPrice,
+                'expectedData'  => clone $defaultProductPriceWithId,
                 'rounding'      => false
             ],
             'product price with data' => [

@@ -108,7 +108,6 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     public function getMatchingPriceAction(Request $request)
     {
         $lineItems = $request->get('items', []);
-        $currency = $request->get('currency');
         $priceListId = $request->get('pricelist');
 
         $priceList = null;
@@ -119,11 +118,11 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
             );
         }
 
-        $productUnitQuantities = $this->prepareProductUnitQuantities($lineItems);
+        $productsPriceCriteria = $this->prepareProductsPriceCriteria($lineItems);
 
         /** @var Price[] $matchedPrice */
         $matchedPrice = $this->get('orob2b_pricing.provider.product_price')
-            ->getMatchedPrices($productUnitQuantities, $currency, $priceList);
+            ->getMatchedPrices($productsPriceCriteria, $priceList);
 
         return new JsonResponse($this->formatMatchedPrices($matchedPrice));
     }
