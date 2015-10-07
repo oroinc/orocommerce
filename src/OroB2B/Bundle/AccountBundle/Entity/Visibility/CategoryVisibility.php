@@ -74,11 +74,16 @@ class CategoryVisibility implements VisibilityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param Category|null $category
+     * @return string
      */
-    public static function getDefault()
+    public static function getDefault($category = null)
     {
-        return self::PARENT_CATEGORY;
+        if ($category instanceof Category && !$category->getParentCategory()) {
+            return self::CONFIG;
+        } else {
+            return self::PARENT_CATEGORY;
+        }
     }
 
     /**
@@ -100,16 +105,21 @@ class CategoryVisibility implements VisibilityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param Category|null $category
+     * @return array
      */
-    public static function getVisibilityList()
+    public static function getVisibilityList($category = null)
     {
-        return [
+        $visibilityList = [
             self::PARENT_CATEGORY,
             self::CONFIG,
             self::HIDDEN,
             self::VISIBLE
         ];
+        if ($category instanceof Category && !$category->getParentCategory()) {
+            unset($visibilityList[array_search(self::PARENT_CATEGORY, $visibilityList)]);
+        }
+        return $visibilityList;
     }
 
     /**

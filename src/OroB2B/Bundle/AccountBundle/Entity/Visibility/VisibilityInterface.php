@@ -5,9 +5,10 @@ namespace OroB2B\Bundle\AccountBundle\Entity\Visibility;
 interface VisibilityInterface
 {
     /**
+     * @param object|null $target
      * @return string
      */
-    public static function getDefault();
+    public static function getDefault($target = null);
 
     /**
      * @param string $visibility
@@ -21,9 +22,10 @@ interface VisibilityInterface
     public function getVisibility();
 
     /**
+     * @param object|null $target
      * @return array
      */
-    public static function getVisibilityList();
+    public static function getVisibilityList($target = null);
 
     /**
      * @return object
