@@ -135,11 +135,11 @@ class AccountProductVisibility implements VisibilityInterface, AccountAwareInter
     public static function getVisibilityList($product = null)
     {
         return [
-            self::ACCOUNT_GROUP,
             self::CATEGORY,
             self::CONFIG,
-            self::HIDDEN,
+            self::ACCOUNT_GROUP,
             self::VISIBLE,
+            self::HIDDEN,
         ];
     }
 

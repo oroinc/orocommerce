@@ -106,8 +106,8 @@ class ProductVisibility implements VisibilityInterface
     {
         return [
             self::CONFIG,
-            self::HIDDEN,
             self::VISIBLE,
+            self::HIDDEN,
         ];
     }
 

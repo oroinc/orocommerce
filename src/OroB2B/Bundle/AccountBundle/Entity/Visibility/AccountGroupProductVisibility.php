@@ -138,8 +138,8 @@ class AccountGroupProductVisibility implements VisibilityInterface, AccountGroup
         return [
             self::CATEGORY,
             self::CONFIG,
-            self::HIDDEN,
             self::VISIBLE,
+            self::HIDDEN,
         ];
     }
 
