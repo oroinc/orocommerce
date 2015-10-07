@@ -14,6 +14,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Exception\InvalidVisibilityValueException;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class CategoryVisibilityCalculator implements ContainerAwareInterface
 {
@@ -68,7 +69,7 @@ class CategoryVisibilityCalculator implements ContainerAwareInterface
         $visibleIds = $this->calculateVisible($visibilities);
         $ids = array_map(
             function ($visibility) {
-                return $visibility['id'];
+                return $visibility['categoryEntity']->getId();
             },
             $visibilities
         );
@@ -90,14 +91,16 @@ class CategoryVisibilityCalculator implements ContainerAwareInterface
         $result = [];
         $visibleIds = [];
 
-        foreach ($visibilities as $category) {
-            $this->setDefaultValues($category);
-            $id = $category['id'];
+        foreach ($visibilities as $visibility) {
+            $this->setDefaultValues($visibility);
+            /** @var Category $category */
+            $category = $visibility['categoryEntity'];
+            $id = $category->getId();
             $result[$id] = [];
 
-            $result[$id][self::TO_ALL] = $this->calculateVisibleToAll($category, $result);
-            $result[$id][self::TO_GROUP] = $this->calculateVisibleToGroup($category, $result);
-            $result[$id][self::TO_ACCOUNT] = $this->calculateVisibleToAccount($category, $result);
+            $result[$id][self::TO_ALL] = $this->calculateVisibleToAll($visibility, $result);
+            $result[$id][self::TO_GROUP] = $this->calculateVisibleToGroup($visibility, $result);
+            $result[$id][self::TO_ACCOUNT] = $this->calculateVisibleToAccount($visibility, $result);
 
             // todo refactor: move visibility constants to model class to prevent string constant usage below
             if ('visible' === $result[$id][self::TO_ACCOUNT]) {
@@ -109,33 +112,38 @@ class CategoryVisibilityCalculator implements ContainerAwareInterface
     }
 
     /**
-     * @param $category
+     * @param $visibility
      */
-    protected function setDefaultValues(&$category)
+    protected function setDefaultValues(&$visibility)
     {
-        if (null === $category[self::TO_ALL]) {
-            $category[self::TO_ALL] = CategoryVisibility::getDefault();
+        /** @var Category $category */
+        $category = $visibility['categoryEntity'];
+
+        if (null === $visibility[self::TO_ALL]) {
+            $visibility[self::TO_ALL] = CategoryVisibility::getDefault($category);
         }
-        if (null === $category[self::TO_GROUP]) {
-            $category[self::TO_GROUP] = AccountGroupCategoryVisibility::getDefault();
+        if (null === $visibility[self::TO_GROUP]) {
+            $visibility[self::TO_GROUP] = AccountGroupCategoryVisibility::getDefault($category);
         }
-        if (null === $category[self::TO_ACCOUNT]) {
-            $category[self::TO_ACCOUNT] = AccountCategoryVisibility::getDefault();
+        if (null === $visibility[self::TO_ACCOUNT]) {
+            $visibility[self::TO_ACCOUNT] = AccountCategoryVisibility::getDefault($category);
         }
     }
 
     /**
-     * @param $category
+     * @param $visibility
      * @param $result
      * @return null|string
      * @throws InvalidVisibilityValueException
      */
-    protected function calculateVisibleToAll($category, $result)
+    protected function calculateVisibleToAll($visibility, $result)
     {
-        switch ($category[self::TO_ALL]) {
+        /** @var Category $category */
+        $category = $visibility['categoryEntity'];
+        switch ($visibility[self::TO_ALL]) {
             case CategoryVisibility::PARENT_CATEGORY:
-                if (null !== $category['parent_category']) {
-                    return $result[$category['parent_category']][self::TO_ALL];
+                if (null !== $category->getParentCategory()) {
+                    return $result[$category->getParentCategory()->getId()][self::TO_ALL];
                 } else {
                     return $this->getCategoryVisibilityConfigValue();
                 }
@@ -144,63 +152,67 @@ class CategoryVisibilityCalculator implements ContainerAwareInterface
                 return $this->getCategoryVisibilityConfigValue();
             case CategoryVisibility::VISIBLE:
             case CategoryVisibility::HIDDEN:
-                return $category[self::TO_ALL];
+                return $visibility[self::TO_ALL];
             default:
                 throw new InvalidVisibilityValueException;
         }
     }
 
     /**
-     * @param $category
+     * @param $visibility
      * @param $result
      * @return null|string
      * @throws InvalidVisibilityValueException
      */
-    protected function calculateVisibleToGroup($category, $result)
+    protected function calculateVisibleToGroup($visibility, $result)
     {
-        $id = $category['id'];
-        switch ($category[self::TO_GROUP]) {
+        /** @var Category $category */
+        $category = $visibility['categoryEntity'];
+
+        switch ($visibility[self::TO_GROUP]) {
             case AccountGroupCategoryVisibility::CATEGORY:
-                return $result[$id][self::TO_ALL];
+                return $result[$category->getId()][self::TO_ALL];
             case AccountGroupCategoryVisibility::PARENT_CATEGORY:
-                if (null !== $category['parent_category']) {
-                    return $result[$category['parent_category']][self::TO_GROUP];
+                if (null !== $category->getParentCategory()) {
+                    return $result[$category->getParentCategory()->getId()][self::TO_GROUP];
                 } else {
                     return $this->getCategoryVisibilityConfigValue();
                 }
                 break;
             case AccountGroupCategoryVisibility::VISIBLE:
             case AccountGroupCategoryVisibility::HIDDEN:
-                return $category[self::TO_GROUP];
+                return $visibility[self::TO_GROUP];
             default:
                 throw new InvalidVisibilityValueException;
         }
     }
 
     /**
-     * @param $category
+     * @param $visibility
      * @param $result
      * @return null|string
      * @throws InvalidVisibilityValueException
      */
-    protected function calculateVisibleToAccount($category, $result)
+    protected function calculateVisibleToAccount($visibility, $result)
     {
-        $id = $category['id'];
-        switch ($category[self::TO_ACCOUNT]) {
+        /** @var Category $category */
+        $category = $visibility['categoryEntity'];
+
+        switch ($visibility[self::TO_ACCOUNT]) {
             case AccountCategoryVisibility::ACCOUNT_GROUP:
-                return $result[$id][self::TO_GROUP];
+                return $result[$category->getId()][self::TO_GROUP];
             case AccountCategoryVisibility::CATEGORY:
-                return $result[$id][self::TO_ALL];
+                return $result[$category->getId()][self::TO_ALL];
             case AccountCategoryVisibility::PARENT_CATEGORY:
-                if (null !== $category['parent_category']) {
-                    return $result[$category['parent_category']][self::TO_ACCOUNT];
+                if (null !== $category->getParentCategory()) {
+                    return $result[$category->getParentCategory()->getId()][self::TO_ACCOUNT];
                 } else {
                     return $this->getCategoryVisibilityConfigValue();
                 }
                 break;
             case AccountCategoryVisibility::VISIBLE:
             case AccountCategoryVisibility::HIDDEN:
-                return $category[self::TO_ACCOUNT];
+                return $visibility[self::TO_ACCOUNT];
             default:
                 throw new InvalidVisibilityValueException;
         }
