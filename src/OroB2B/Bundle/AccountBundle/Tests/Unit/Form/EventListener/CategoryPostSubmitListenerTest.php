@@ -15,6 +15,9 @@ use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSubmitListener;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
 {
     const CATEGORY_ID = 123;
@@ -77,14 +80,19 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
         $this->listener->onPostSubmit($event);
     }
 
-    public function testOnPostSubmitRemoveDefault()
+    /**
+     * @param Category $category
+     * @param string $visibility
+     * @dataProvider onPostSubmitRemoveDefaultDataProvider
+     */
+    public function testOnPostSubmitRemoveDefault(Category $category, $visibility)
     {
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())->method('isValid')->willReturn(true);
         $form->expects($this->exactly(3))->method('get')->willReturn($form);
         $form->expects($this->exactly(3))->method('getData')->willReturnOnConsecutiveCalls(
-            CategoryVisibility::PARENT_CATEGORY,
+            $visibility,
             new ArrayCollection(),
             new ArrayCollection()
         );
@@ -98,18 +106,38 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
             ->method('getForm')
             ->willReturn($form);
 
-        /** @var Category $category */
-        $category = $this->getEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', self::CATEGORY_ID);
         $event->expects($this->once())
             ->method('getData')
             ->willReturn($category);
 
-        $this->prepareCategoryVisibilityRepository($category, CategoryVisibility::PARENT_CATEGORY);
+        $this->prepareCategoryVisibilityRepository($category, $visibility);
 
         $this->em->expects($this->once())->method('remove');
         $this->em->expects($this->once())->method('flush');
 
         $this->listener->onPostSubmit($event);
+    }
+
+    /**
+     * @return array
+     */
+    public function onPostSubmitRemoveDefaultDataProvider()
+    {
+        /** @var Category $rootCategory */
+        $rootCategory = $this->getEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', self::CATEGORY_ID);
+        $subCategory = clone($rootCategory);
+        $subCategory->setParentCategory($rootCategory);
+
+        return [
+            'root' => [
+                'category' => $rootCategory,
+                'visibility' => CategoryVisibility::CONFIG,
+            ],
+            'sub' => [
+                'category' => $subCategory,
+                'visibility' => CategoryVisibility::PARENT_CATEGORY,
+            ],
+        ];
     }
 
     public function testOnPostSubmitWithEmptyData()
