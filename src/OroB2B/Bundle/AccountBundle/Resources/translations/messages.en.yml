@@ -274,6 +274,11 @@ orob2b.account:
             visible.label: Visible
             hidden.label: Hidden
 
+    product:
+        visibility:
+            label: Default Visibility to Accounts
+            product_configuration_label: Products
+
     menu:
         customers_tab.label: 'Customers'
         account_list.description: 'List of Accounts'

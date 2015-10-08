@@ -8,6 +8,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 
 class Configuration implements ConfigurationInterface
 {
