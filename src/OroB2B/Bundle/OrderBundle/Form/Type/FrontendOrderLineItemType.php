@@ -190,4 +190,9 @@ class FrontendOrderLineItemType extends AbstractOrderLineItemType
 
         return $choices;
     }
+
+    /** {@inheritdoc} */
+    protected function getItemTemplateSections()
+    {
+    }
 }

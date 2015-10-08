@@ -124,10 +124,16 @@ abstract class AbstractOrderLineItemType extends AbstractType
             $view->vars['page_component_options'] = $options['page_component_options'];
         }
         $view->vars['page_component_options']['currency'] = $options['currency'];
+        $view->vars['sections'] = (array)$this->getItemTemplateSections();
     }
 
     /**
      * @param FormInterface $form
      */
     abstract protected function updateAvailableUnits(FormInterface $form);
+
+    /**
+     * @return array
+     */
+    abstract protected function getItemTemplateSections();
 }

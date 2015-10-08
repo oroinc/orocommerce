@@ -63,10 +63,15 @@
                     <tr>
                         <th class="order-line-item-sku"><span>{{ 'orob2b.product.sku.label'|trans }}</span></th>
                         <th class="order-line-item-type"><span>{{ 'orob2b.product.entity_label'|trans }}</span></th>
-                        <th class="order-line-item-quantity"><span>{{ 'orob2b.order.orderlineitem.quantity.label'|trans }}</span></th>
-                        <th class="order-line-item-price"><span>{{ 'orob2b.order.orderlineitem.price.label'|trans }}</span></th>
-                        <th class="order-line-item-ship_by"><span>{{ 'orob2b.order.orderlineitem.ship_by.label'|trans }}</span></th>
-                        <th class="order-line-item-comment"><span>{{ 'orob2b.order.orderlineitem.comment.label'|trans }}</span></th>
+                        {% if form.vars.prototype.vars.sections is defined and form.vars.prototype.vars.sections|length %}
+                            {% set classFormat = 'order-line-item-%s' %}
+                            {% set labelFormat = 'orob2b.order.orderlineitem.%s.label' %}
+                            {% for section in form.vars.prototype.vars.sections|keys %}
+                                <th class="{{ classFormat|format(section) }}">
+                                    <span>{{ labelFormat|format(section)|trans }}</span>
+                                </th>
+                            {% endfor %}
+                        {% endif %}
                         {% if form.vars.allow_delete %}
                             <th class="order-line-item-actions"></th>
                         {% endif %}
@@ -116,32 +121,45 @@
         {{ form_errors(form.product) }}
         {{ form_errors(form.freeFormProduct) }}
     </td>
-    <td class="order-line-item-quantity">
-        <div class="fields-row">
-            {{ form_widget(form.quantity) }}
-            {{ form_widget(form.productUnit) }}
-        </div>
-        {{ form_errors(form.quantity) }}
-        {{ form_errors(form.productUnit) }}
-    </td>
-    <td class="order-line-item-price">
-        <div class="fields-row">
-            {{ form_widget(form.price) }}
-            {{ form_widget(form.priceType) }}
-        </div>
-        {{ form_errors(form.price) }}
-        {{ form_errors(form.priceType) }}
-    </td>
-    <td class="order-line-item-ship_by">
-        {{ form_widget(form.shipBy) }}
-        {{ form_errors(form.shipBy) }}
-    </td>
-    <td class="order-line-item-comment">
-        <div data-page-component-module="orob2border/js/app/components/notes-component" style="display: none;">
-            {{ form_widget(form.comment) }}
-        </div>
-    </td>
+
+    {% if form.vars.sections is defined and form.vars.sections|length %}
+        {% set classFormat = 'order-line-item-%s' %}
+        {% set labelFormat = 'orob2b.order.orderlineitem.%s.label' %}
+        {% for key, childs in form.vars.sections %}
+            <td class="{{ 'order-line-item-%s'|format(key) }}">
+                <div class="fields-row">
+                    {% for key, child in childs %}
+                        {{ _self.render_line_item_form_widget(form, key, child) }}
+                    {% endfor %}
+                </div>
+                {% for key, child in childs %}
+                    {{ _self.render_line_item_form_errors(form, key, child) }}
+                {% endfor %}
+            </td>
+        {% endfor %}
+    {% endif %}
 {% endblock %}
+
+{% macro render_line_item_form_widget(form, key, child) %}
+    {% if child is iterable %}
+        <div
+            {% if child.page_component is defined %} data-page-component-module="{{ child.page_component }}"
+                {% if child.page_component_options is defined %} data-page-component-options="{{ child.page_component_options }}"{% endif %}
+            {% endif %}>
+            {{ form_widget(form[key]) }}
+        </div>
+    {% else %}
+        {{ form_widget(form[child]) }}
+    {% endif %}
+{% endmacro %}
+
+{% macro render_line_item_form_errors(form, key, child) %}
+    {% if child is iterable %}
+        {{ form_errors(form[key]) }}
+    {% else %}
+        {{ form_errors(form[child]) }}
+    {% endif %}
+{% endmacro %}
 
 {% block orob2b_order_line_item_frontend_widget %}
     {% set isFreeFormProduct = form.vars.value is not empty and form.vars.value.product is empty and form.vars.value.freeFormProduct is not empty %}

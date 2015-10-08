@@ -110,7 +110,7 @@ class OrderLineItemType extends AbstractOrderLineItemType
                     'required' => true,
                     'label' => 'orob2b.order.orderlineitem.price.label',
                     'hide_currency' => true,
-                    'default_currency' => $options['currency']
+                    'default_currency' => $options['currency'],
                 ]
             )
             ->add('priceType', 'hidden');
@@ -144,15 +144,32 @@ class OrderLineItemType extends AbstractOrderLineItemType
                 'required' => true,
                 'query_builder' => function (ProductUnitRepository $er) use ($item) {
                     return $er->getProductUnitsQueryBuilder($item->getProduct());
-                }
+                },
             ]
         );
     }
 
+    /**
+     * @return array
+     */
     protected function getFreeFormUnits()
     {
         $units = $this->registry->getRepository($this->productUnitClass)->findBy([], ['code' => 'ASC']);
         $units = $this->productUnitFormatter->formatChoices($units);
+
         return $units;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getItemTemplateSections()
+    {
+        return [
+            'quantity' => ['quantity', 'productUnit'],
+            'price' => ['price', 'priceType'],
+            'ship_by' => ['shipBy'],
+            'comment' => ['comment' => ['page_component' => 'orob2border/js/app/components/notes-component']],
+        ];
     }
 }
