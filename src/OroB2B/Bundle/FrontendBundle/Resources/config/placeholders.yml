@@ -51,4 +51,4 @@ items:
         applicable: @orob2b_frontend.activity_list.placeholder.filter->isApplicable($entity$, Oro\Bundle\ActivityBundle\EntityConfig\ActivityScope::UPDATE_PAGE)
         template: OroActivityListBundle:ActivityList:activities.html.twig
     web_settings:
-        template: OroB2BFrontendBundle:InstallConfiguration:web_settings.html.twig
+        template: OroB2BFrontendBundle:InstallConfiguration:web.html.twig

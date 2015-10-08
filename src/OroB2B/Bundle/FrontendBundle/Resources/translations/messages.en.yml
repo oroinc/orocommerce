@@ -3,6 +3,6 @@ orob2b_frontend:
         save_flash_success: Saved successfully
     form:
         install_configuration:
-            web_settings:
+            web:
                 header: Web settings
                 backend_prefix: Backend prefix

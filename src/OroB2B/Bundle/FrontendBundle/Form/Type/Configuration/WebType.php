@@ -6,21 +6,20 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class WebSettingsType extends AbstractType
+class WebType extends AbstractType
 {
-    const NAME = 'orob2b_frontend_install_configuration_web_settings';
+    const NAME = 'orob2b_frontend_install_configuration_web';
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
+     * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add(
-            'oro_installer_websettings_backend_prefix',
+            'oro_installer_web_backend_prefix',
             'text',
             [
-                'label' => 'orob2b_frontend.form.install_configuration.web_settings.backend_prefix',
+                'label' => 'orob2b_frontend.form.install_configuration.web.backend_prefix',
                 'constraints' => [
                     new Assert\NotBlank(),
                     new Assert\Regex(['pattern' => '~^/\w+$~', 'message' => 'orob2b_frontend.regex.backend_prefix'])
@@ -30,7 +29,7 @@ class WebSettingsType extends AbstractType
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getName()
     {
