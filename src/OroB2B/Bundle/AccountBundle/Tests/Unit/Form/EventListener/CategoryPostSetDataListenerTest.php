@@ -58,20 +58,45 @@ class CategoryPostSetDataListenerTest extends AbstractCategoryListenerTestCase
         $this->listener->onPostSetData($event);
     }
 
-    public function testOnPostSetDataWithDefaultCategoryVisibility()
+    /**
+     * @param Category $category
+     * @param string $visibility
+     * @dataProvider onPostSetDataWithDefaultCategoryVisibilityDataProvider
+     */
+    public function testOnPostSetDataWithDefaultCategoryVisibility(Category $category, $visibility)
     {
         /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')->disableOriginalConstructor()->getMock();
-        /** @var Category $category */
-        $category = $this->getEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', 1);
         $event->expects($this->once())->method('getData')->willReturn($category);
         $event->expects($this->any())->method('getForm')->willReturn($this->form);
 
-        $this->setCategoryVisibilityExpectations($category);
+        $this->setCategoryVisibilityExpectations($category, null, $visibility);
         $this->setAccountCategoryVisibilityExpectations($category);
         $this->setAccountGroupCategoryVisibilityExpectations($category);
 
         $this->listener->onPostSetData($event);
+    }
+
+    /**
+     * @return array
+     */
+    public function onPostSetDataWithDefaultCategoryVisibilityDataProvider()
+    {
+        /** @var Category $rootCategory */
+        $rootCategory = $this->getEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', 1);
+        $subCategory = clone($rootCategory);
+        $subCategory->setParentCategory($rootCategory);
+
+        return [
+            'root' => [
+                'category' => $rootCategory,
+                'visibility' => CategoryVisibility::CONFIG,
+            ],
+            'sub' => [
+                'category' => $subCategory,
+                'visibility' => CategoryVisibility::PARENT_CATEGORY,
+            ],
+        ];
     }
 
     /**

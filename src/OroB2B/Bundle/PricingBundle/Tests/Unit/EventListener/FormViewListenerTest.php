@@ -4,10 +4,10 @@ namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Datagrid;
 
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
-
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
@@ -23,11 +23,6 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 class FormViewListenerTest extends FormViewListenerTestCase
 {
     /**
-     * @var FormViewListener
-     */
-    protected $listener;
-
-    /**
      * @var FrontendPriceListRequestHandler|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $frontendPriceListRequestHandler;
@@ -40,31 +35,29 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler')
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->listener = new FormViewListener(
-            $this->translator,
-            $this->doctrineHelper,
-            $this->frontendPriceListRequestHandler
-        );
     }
 
     protected function tearDown()
     {
-        unset($this->doctrineHelper, $this->listener, $this->translator, $this->frontendPriceListRequestHandler);
+        unset($this->doctrineHelper, $this->translator, $this->frontendPriceListRequestHandler);
     }
 
     public function testOnViewNoRequest()
     {
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+
+        $listener = $this->getListener($requestStack);
         $this->doctrineHelper->expects($this->never())
             ->method('getEntityReference');
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
         $env = $this->getMock('\Twig_Environment');
         $event = $this->createEvent($env);
-        $this->listener->onAccountView($event);
-        $this->listener->onAccountGroupView($event);
-        $this->listener->onProductView($event);
-        $this->listener->onFrontendProductView($event);
+        $listener->onAccountView($event);
+        $listener->onAccountGroupView($event);
+        $listener->onProductView($event);
+        $listener->onFrontendProductView($event);
     }
 
     /**
@@ -89,7 +82,13 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $priceList = new PriceList();
         $templateHtml = 'template_html';
 
-        $this->listener->setRequest(new Request(['id' => $accountId]));
+        $request = new Request(['id' => $accountId]);
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
+
+        /** @var FormViewListener $listener */
+        $listener = $this->getListener($requestStack);
 
         $priceRepository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository')
             ->disableOriginalConstructor()
@@ -116,7 +115,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->willReturn($templateHtml);
 
         $event = $this->createEvent($environment);
-        $this->listener->onAccountView($event);
+        $listener->onAccountView($event);
         $scrollData = $event->getScrollData()->getData();
 
         if ($isPriceListExist) {
@@ -140,7 +139,13 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $priceList = new PriceList();
         $templateHtml = 'template_html';
 
-        $this->listener->setRequest(new Request(['id' => $accountGroupId]));
+        $request = new Request(['id' => $accountGroupId]);
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
+
+        /** @var FormViewListener $listener */
+        $listener = $this->getListener($requestStack);
 
         $priceRepository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository')
             ->disableOriginalConstructor()
@@ -167,7 +172,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->willReturn($templateHtml);
 
         $event = $this->createEvent($environment);
-        $this->listener->onAccountGroupView($event);
+        $listener->onAccountGroupView($event);
         $scrollData = $event->getScrollData()->getData();
 
         if ($isPriceListExist) {
@@ -184,7 +189,11 @@ class FormViewListenerTest extends FormViewListenerTestCase
     {
         $formView = new FormView();
         $templateHtml = 'template_html';
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
 
+        /** @var FormViewListener $listener */
+        $listener = $this->getListener($requestStack);
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
         $environment = $this->getMock('\Twig_Environment');
         $environment->expects($this->once())
@@ -193,7 +202,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->willReturn($templateHtml);
 
         $event = $this->createEvent($environment, $formView);
-        $this->listener->onEntityEdit($event);
+        $listener->onEntityEdit($event);
         $scrollData = $event->getScrollData()->getData();
 
         $this->assertEquals(
@@ -208,7 +217,13 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $product = new Product();
         $templateHtml = 'template_html';
 
-        $this->listener->setRequest(new Request(['id' => $productId]));
+        $request = new Request(['id' => $productId]);
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
+
+        /** @var FormViewListener $listener */
+        $listener = $this->getListener($requestStack);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
@@ -223,7 +238,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->willReturn($templateHtml);
 
         $event = $this->createEvent($environment);
-        $this->listener->onProductView($event);
+        $listener->onProductView($event);
         $scrollData = $event->getScrollData()->getData();
 
         $this->assertScrollDataPriceBlock($scrollData, $templateHtml);
@@ -240,7 +255,13 @@ class FormViewListenerTest extends FormViewListenerTestCase
         /** @var PriceList $priceList */
         $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 42);
 
-        $this->listener->setRequest(new Request(['id' => $product->getId()]));
+        $request = new Request(['id' => $product->getId()]);
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
+
+        /** @var FormViewListener $listener */
+        $listener = $this->getListener($requestStack);
 
         $productPriceRepository = $this
             ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
@@ -272,7 +293,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->willReturn($templateHtml);
 
         $event = $this->createEvent($environment);
-        $this->listener->onFrontendProductView($event);
+        $listener->onFrontendProductView($event);
         $scrollData = $event->getScrollData()->getData();
 
         $this->assertEquals(
@@ -294,7 +315,12 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->willReturn($templateHtml);
 
         $event = $this->createEvent($environment, $formView);
-        $this->listener->onProductEdit($event);
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+
+        /** @var FormViewListener $listener */
+        $listener = $this->getListener($requestStack);
+        $listener->onProductEdit($event);
         $scrollData = $event->getScrollData()->getData();
 
         $this->assertScrollDataPriceBlock($scrollData, $templateHtml);
@@ -351,5 +377,19 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $reflection->setValue($entity, $id);
 
         return $entity;
+    }
+
+    /**
+     * @param RequestStack $requestStack
+     * @return FormViewListener
+     */
+    protected function getListener(RequestStack $requestStack)
+    {
+        return new FormViewListener(
+            $requestStack,
+            $this->translator,
+            $this->doctrineHelper,
+            $this->frontendPriceListRequestHandler
+        );
     }
 }

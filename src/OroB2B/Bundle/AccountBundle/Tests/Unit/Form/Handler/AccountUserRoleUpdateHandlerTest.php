@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Handler;
 
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Acl\Domain\RoleSecurityIdentity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Acl\Domain\ObjectIdentity;
@@ -72,6 +73,9 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
         return $names;
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testSetRolePrivileges()
     {
         $role = new AccountUserRole('TEST');
@@ -83,6 +87,10 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
 
         $request = new Request();
         $request->setMethod('GET');
+
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
         $firstEntityPrivilege = $this->createPrivilege('entity', 'entity:' . $firstClass, 'VIEW');
         $firstEntityConfig = $this->createClassConfigMock(true);
@@ -167,7 +175,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
                 ]
             );
 
-        $this->handler->setRequest($request);
+        $this->handler->setRequestStack($requestStack);
         $this->handler->createForm($role);
         $this->handler->process($role);
     }
@@ -179,6 +187,10 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
     {
         $request = new Request();
         $request->setMethod('POST');
+
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
         $role = new AccountUserRole('TEST');
         $roleSecurityIdentity = new RoleSecurityIdentity($role);
@@ -279,7 +291,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
         $handler = new AccountUserRoleUpdateHandler($this->formFactory, $this->privilegeConfig);
 
         $this->setRequirementsForHandler($handler);
-        $handler->setRequest($request);
+        $handler->setRequestStack($requestStack);
 
         $handler->createForm($role);
         $handler->process($role);
@@ -312,6 +324,10 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
 
         $request = new Request();
         $request->setMethod('POST');
+
+        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
         $appendForm = $this->getMock('Symfony\Component\Form\FormInterface');
         $appendForm->expects($this->once())
@@ -378,7 +394,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
             ->getMock();
 
         $this->setRequirementsForHandler($handler);
-        $handler->setRequest($request);
+        $handler->setRequestStack($requestStack);
 
         $handler->createForm($role);
         $handler->process($role);
