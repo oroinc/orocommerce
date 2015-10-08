@@ -2,8 +2,8 @@
 
 {{ form_row(form.productVisibility) }}
 
-{{ form_row(form.visibilityForAccountGroup, {'id': 'accountgroup-category-visibility-changeset'}) }}
-{{ dataGrid.renderGrid('account-group-category-visibility-grid', {category_id: entity.id}) }}
+{{ form_row(form.visibilityForAccountGroup, {'id': 'accountgroup-product-visibility-changeset'}) }}
+{{ dataGrid.renderGrid('account-group-product-visibility-grid', {product_id: entity.id}) }}
 
-{{ form_row(form.visibilityForAccount, {'id': 'account-category-visibility-changeset'}) }}
-{{ dataGrid.renderGrid('account-category-visibility-grid', {category_id: entity.id}) }}
+{{ form_row(form.visibilityForAccount, {'id': 'account-product-visibility-changeset'}) }}
+{{ dataGrid.renderGrid('account-product-visibility-grid', {product_id: entity.id}) }}

@@ -20,12 +20,14 @@ use Oro\Component\TestUtils\ORM\Mocks\EntityManagerMock;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\EventListener\CategoryVisibilityGridListener;
+use OroB2B\Bundle\AccountBundle\EventListener\VisibilityGridListener;
 use OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
-class CategoryVisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
+class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
 {
+
+    const VISIBILITY_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility';
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
      */
@@ -42,7 +44,7 @@ class CategoryVisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
     protected $categoryClass;
 
     /**
-     * @var CategoryVisibilityGridListener
+     * @var VisibilityGridListener
      */
     protected $listener;
 
@@ -56,8 +58,7 @@ class CategoryVisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
         $this->visibilityChoicesProvider = new VisibilityChoicesProvider($translator);
         $this->categoryClass = 'OroB2B\Bundle\CatalogBundle\Entity\Category';
 
-        $this->listener = new CategoryVisibilityGridListener($this->registry, $this->visibilityChoicesProvider);
-        $this->listener->setCategoryClassName($this->categoryClass);
+        $this->listener = new VisibilityGridListener($this->registry, $this->visibilityChoicesProvider);
     }
 
     public function testOnPreBuild()
@@ -81,6 +82,7 @@ class CategoryVisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
             ->with($this->categoryClass)
             ->willReturn($repository);
 
+
         $this->listener->onPreBuild($this->getPreBuild(null, null));
         $this->listener->onPreBuild($this->getPreBuild(1, $rootCategory));
         $this->listener->onPreBuild($this->getPreBuild(2, $subCategory));
@@ -98,18 +100,20 @@ class CategoryVisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
 
         $columnsPath = '[columns][visibility]';
         $filtersPath = '[filters][columns][visibility][options][field_options]';
+        $targetClassPath = '[options][visibilityTarget]';
 
-        $pathConfig = [
-            'choicesSource' => 'OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility',
-        ];
+        $pathConfig = [];
+
 
         $config = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration')
             ->disableOriginalConstructor()
             ->getMock();
+
         $config->expects($this->exactly(2))
             ->method('offsetGetByPath')
             ->willReturnMap(
                 [
+                    [$targetClassPath, null, self::VISIBILITY_CLASS],
                     [$columnsPath, null, $pathConfig],
                     [$filtersPath, null, $pathConfig],
                 ]
@@ -193,7 +197,7 @@ class CategoryVisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param string       $gridName
+     * @param string $gridName
      * @param ParameterBag $bag
      *
      * @return OrmResultBefore
@@ -207,7 +211,7 @@ class CategoryVisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param string       $gridName
+     * @param string $gridName
      * @param ParameterBag $bag
      *
      * @return \PHPUnit_Framework_MockObject_MockObject|DatagridInterface
@@ -255,13 +259,16 @@ class CategoryVisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
             return $bag;
         }
 
-        $bag->set('_filter', [
-            'visibility' => [
-                'value' => [
-                    $visibilityFilterValue
-                ]
+        $bag->set(
+            '_filter',
+            [
+                'visibility' => [
+                    'value' => [
+                        $visibilityFilterValue,
+                    ],
+                ],
             ]
-        ]);
+        );
 
         return $bag;
     }

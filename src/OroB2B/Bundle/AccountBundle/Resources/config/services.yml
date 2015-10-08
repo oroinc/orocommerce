@@ -50,7 +50,7 @@ parameters:
     orob2b_account.event_listener.account_datagrid.class: OroB2B\Bundle\AccountBundle\EventListener\AccountDatagridListener
     orob2b_account.event_listener.ormdatasource_acl.class: OroB2B\Bundle\AccountBundle\EventListener\OrmDatasourceAclListener
     orob2b_account.event_listener.form_view.class: OroB2B\Bundle\AccountBundle\EventListener\FormViewListener
-    orob2b_account.event_listener.category_visibility_grid_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryVisibilityGridListener
+    orob2b_account.event_listener.visibility_grid_listener.class: OroB2B\Bundle\AccountBundle\EventListener\VisibilityGridListener
     orob2b_account.event_listener.system_config.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigListener
 
     orob2b_account.acl.group_provider.class: OroB2B\Bundle\AccountBundle\Acl\Group\AclGroupProvider
@@ -460,18 +460,20 @@ services:
         tags:
             - { name: oro_ui.content_provider }
 
-    orob2b_account.event_listener.category_visibility_grid_listener:
-        class: %orob2b_account.event_listener.category_visibility_grid_listener.class%
+    orob2b_account.event_listener.visibility_grid_listener:
+        class: %orob2b_account.event_listener.visibility_grid_listener.class%
         arguments:
             - @doctrine
             - @orob2b_account.provider.visibility_choices
-        calls:
-            - [ setCategoryClassName, [ %orob2b_catalog.category.class% ]]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.account-category-visibility-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.account-group-category-visibility-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before.account-category-visibility-grid, method: onResultBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before.account-group-category-visibility-grid, method: onResultBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.account-product-visibility-grid, method: onPreBuild }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.account-group-product-visibility-grid, method: onPreBuild }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before.account-product-visibility-grid, method: onResultBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before.account-group-product-visibility-grid, method: onResultBefore }
 
     orob2b_account.account_delete_handler:
         class: %orob2b_account.account_delete_handler.class%
