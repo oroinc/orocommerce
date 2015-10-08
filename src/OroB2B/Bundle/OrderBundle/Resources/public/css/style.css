@@ -59,6 +59,10 @@
 .order-line-item-price {
     width: 150px;
 }
+.order-line-item-price .fields-row {
+    position: relative;
+}
+
 .order-line-item-comment div[data-page-component-module] {
     display: none;
 }
