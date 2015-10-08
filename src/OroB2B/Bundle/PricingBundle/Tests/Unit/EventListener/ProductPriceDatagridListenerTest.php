@@ -81,6 +81,36 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
         unset($this->doctrineHelper, $this->translator, $this->priceListRequestHandler, $this->listener);
     }
 
+    public function testSetProductPriceClass()
+    {
+        $listener = new ProductPriceDatagridListener(
+            $this->translator,
+            $this->doctrineHelper,
+            $this->priceListRequestHandler
+        );
+        $this->assertNull($this->getProperty($listener, 'productPriceClass'));
+        $listener->setProductPriceClass('OroB2BPricingBundle:ProductPrice');
+        $this->assertEquals(
+            'OroB2BPricingBundle:ProductPrice',
+            $this->getProperty($listener, 'productPriceClass')
+        );
+    }
+
+    public function testSetProductUnitClass()
+    {
+        $listener = new ProductPriceDatagridListener(
+            $this->translator,
+            $this->doctrineHelper,
+            $this->priceListRequestHandler
+        );
+        $this->assertNull($this->getProperty($listener, 'productUnitClass'));
+        $listener->setProductUnitClass('OroB2BProductBundle:ProductUnit');
+        $this->assertEquals(
+            'OroB2BProductBundle:ProductUnit',
+            $this->getProperty($listener, 'productUnitClass')
+        );
+    }
+
     /**
      * @param int|null $priceListId
      * @param array $priceCurrencies
@@ -416,5 +446,18 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($repository);
 
         return $repository;
+    }
+
+    /**
+     * @param object $object
+     * @param string $property
+     * @return mixed $value
+     */
+    protected function getProperty($object, $property)
+    {
+        $reflection = new \ReflectionProperty(get_class($object), $property);
+        $reflection->setAccessible(true);
+
+        return $reflection->getValue($object);
     }
 }
