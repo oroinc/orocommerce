@@ -95,7 +95,7 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
      * @param mixed $expectedData
      * @param bool $isExisting
      */
-    public function testSubmit($defaultData, $submittedData, $expectedData, $isExisting)
+    public function testSubmit($defaultData, $submittedData, $expectedData)
     {
         $form = $this->factory->create($this->type, $defaultData, []);
 
@@ -104,19 +104,6 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
         $this->addRoundingServiceExpect();
 
         $form->submit($submittedData);
-
-        if ($isExisting) {
-            $repo = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
-                ->disableOriginalConstructor()
-                ->getMock();
-            $repo->expects($this->once())
-                ->method('getProductUnitsQueryBuilder')
-                ->will($this->returnValue(null));
-
-            $closure = $form->get('unit')->getConfig()->getOptions()['query_builder'];
-            $this->assertNotEmpty($closure);
-            $this->assertNull($closure($repo));
-        }
 
         $this->assertEmpty($form->getErrors(true)->count());
         $this->assertTrue($form->isValid());

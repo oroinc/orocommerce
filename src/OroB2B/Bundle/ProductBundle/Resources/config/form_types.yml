@@ -46,7 +46,8 @@ services:
     orob2b_product.form.type.product_unit_selection:
         class: %orob2b_product.form.type.product_unit_selection.class%
         arguments:
-            - @doctrine.orm.entity_manager
+            - @orob2b_product.formatter.product_unit_label
+            - @translator
         calls:
             - [setEntityClass, [%orob2b_product.product_unit.class%]]
         tags:

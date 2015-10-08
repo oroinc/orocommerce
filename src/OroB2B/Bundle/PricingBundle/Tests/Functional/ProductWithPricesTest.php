@@ -68,6 +68,10 @@ class ProductWithPricesTest extends WebTestCase
                 [
                     'unit'      => self::FIRST_UNIT_CODE,
                     'precision' => self::FIRST_UNIT_PRECISION
+                ],
+                [
+                    'unit'      => self::SECOND_UNIT_CODE,
+                    'precision' => self::SECOND_UNIT_PRECISION
                 ]
             ],
             'prices' => [
@@ -146,8 +150,6 @@ class ProductWithPricesTest extends WebTestCase
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
         $form['orob2b_product[sku]'] = self::TEST_SKU;
-        $form['orob2b_product[unitPrecisions][0][unit]'] = self::SECOND_UNIT_CODE;
-        $form['orob2b_product[unitPrecisions][0][precision]'] = self::SECOND_UNIT_PRECISION;
         $form['orob2b_product[prices][0][priceList]'] = $priceList->getId();
         $form['orob2b_product[prices][0][quantity]'] = self::SECOND_QUANTITY;
         $form['orob2b_product[prices][0][unit]'] = self::SECOND_UNIT_CODE;

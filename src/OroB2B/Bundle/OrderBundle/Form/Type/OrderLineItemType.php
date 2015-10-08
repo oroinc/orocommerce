@@ -141,10 +141,7 @@ class OrderLineItemType extends AbstractOrderLineItemType
             ProductUnitSelectionType::NAME,
             [
                 'label' => 'orob2b.product.productunit.entity_label',
-                'required' => true,
-                'query_builder' => function (ProductUnitRepository $er) use ($item) {
-                    return $er->getProductUnitsQueryBuilder($item->getProduct());
-                }
+                'required' => true
             ]
         );
     }

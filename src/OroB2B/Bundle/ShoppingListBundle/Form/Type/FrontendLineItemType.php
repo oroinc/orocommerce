@@ -35,10 +35,7 @@ class FrontendLineItemType extends AbstractType
                 ProductUnitSelectionType::NAME,
                 [
                     'required' => true,
-                    'label' => 'orob2b.shoppinglist.lineitem.unit.label',
-                    'query_builder' => function (ProductUnitRepository $repository) use ($product) {
-                        return $repository->getProductUnitsQueryBuilder($product);
-                    },
+                    'label' => 'orob2b.shoppinglist.lineitem.unit.label'
                 ]
             )
             ->add(

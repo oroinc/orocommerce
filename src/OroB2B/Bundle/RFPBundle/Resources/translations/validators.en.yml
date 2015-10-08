@@ -8,4 +8,4 @@ orob2b:
 
         requestproductitem:
             unit:
-                blank: 'Unit of measurement cannot be empty.'
+                blank: 'Please enter valid unit of measurement'

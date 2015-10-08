@@ -10,7 +10,7 @@ orob2b:
 
         quoteproductoffer:
             product_unit:
-                blank: 'Unit of measurement cannot be empty.'
+                blank: 'Please enter valid unit of measurement'
             configurable:
                 offer:
                     blank: 'Please enter valid quantity'

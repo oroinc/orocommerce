@@ -99,10 +99,7 @@ class PriceListProductPriceType extends AbstractType
                     [
                         'required' => true,
                         'label' => 'orob2b.pricing.productprice.unit.label',
-                        'placeholder' => false,
-                        'query_builder' => function (ProductUnitRepository $repository) use ($data) {
-                            return $repository->getProductUnitsQueryBuilder($data->getProduct());
-                        }
+                        'placeholder' => false
                     ]
                 );
         }
