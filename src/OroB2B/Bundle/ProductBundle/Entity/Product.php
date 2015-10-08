@@ -104,7 +104,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     /**
      * @var bool
      *
-     * @ORM\Column(name="product_status", type="string", nullable=false, length=16)
+     * @ORM\Column(name="status", type="string", nullable=false, length=16)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -113,7 +113,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *      }
      *  )
      */
-    protected $productStatus = self::STATUS_DISABLED;
+    protected $status = self::STATUS_DISABLED;
 
     /**
      * @var array
@@ -355,9 +355,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     /**
      * @return string
      */
-    public function getProductStatus()
+    public function getStatus()
     {
-        return $this->productStatus;
+        return $this->status;
     }
 
     /**
@@ -365,9 +365,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *
      * @return Product
      */
-    public function setProductStatus($status)
+    public function setStatus($status)
     {
-        $this->productStatus = $status;
+        $this->status = $status;
 
         return $this;
     }

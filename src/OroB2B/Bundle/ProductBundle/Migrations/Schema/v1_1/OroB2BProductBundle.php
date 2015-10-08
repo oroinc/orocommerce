@@ -96,17 +96,17 @@ class OroB2BProductBundle implements Migration, ExtendExtensionAwareInterface, O
      */
     protected function renameStatusEnumToStatusString(Schema $schema, QueryBag $queries)
     {
-        // rename status column
+        // create new status column
         $table = $schema->getTable(self::PRODUCT_TABLE_NAME);
-        $table->addColumn('product_status', 'string', ['length' => 16, 'notnull' => false]);
+        $table->addColumn('status', 'string', ['length' => 16, 'notnull' => false]);
+
+        // move data from old to new column
+        $queries->addPostQuery(sprintf('UPDATE %s SET status = status_id', self::PRODUCT_TABLE_NAME));
 
         // drop status enum table
         $enumStatusTable = $this->extendExtension->getNameGenerator()->generateEnumTableName('prod_status');
         if ($schema->hasTable($enumStatusTable)) {
             $schema->dropTable($enumStatusTable);
         }
-
-        // remove status enum field data
-        $queries->addQuery(new RemoveStatusEnumQuery());
     }
 }
