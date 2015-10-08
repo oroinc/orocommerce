@@ -4,11 +4,11 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity\Visibility;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
-class AccountCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
+class AccountProductVisibilityTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
 
@@ -17,23 +17,23 @@ class AccountCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
      */
     public function testAccessors()
     {
-        $entity = new AccountCategoryVisibility();
+        $entity = new AccountProductVisibility();
 
-        $category = new Category();
+        $product = new Product();
         $this->assertPropertyAccessors(
             $entity,
             [
                 ['id', 1],
-                ['category', $category],
+                ['product', $product],
                 ['account', new Account()],
-                ['visibility', AccountCategoryVisibility::CATEGORY],
+                ['visibility', AccountProductVisibility::CATEGORY],
             ]
         );
 
-        $entity->setTargetEntity($category);
-        $this->assertEquals($entity->getTargetEntity(), $category);
+        $entity->setTargetEntity($product);
+        $this->assertEquals($entity->getTargetEntity(), $product);
 
-        $this->assertEquals(AccountCategoryVisibility::ACCOUNT_GROUP, $entity->getDefault());
+        $this->assertEquals(AccountProductVisibility::CATEGORY, $entity->getDefault());
 
         $this->assertInternalType('array', $entity->getVisibilityList());
         $this->assertNotEmpty($entity->getVisibilityList());

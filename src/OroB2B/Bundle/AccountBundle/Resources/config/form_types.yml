@@ -241,10 +241,11 @@ services:
         arguments:
             - @orob2b_account.form.listener.category.post_set_data
             - @orob2b_account.form.listener.category.post_submit
-            - @orob2b_account.formatter.choice.category_visibility
+            - @orob2b_account.provider.visibility_choices
         tags:
             - { name: form.type_extension, alias: orob2b_catalog_category }
         calls:
+            - [setCategoryVisibilityClass, [%orob2b_account.entity.category_visibility.class%]]
             - [setAccountClass,[%orob2b_account.entity.account.class%]]
             - [setAccountGroupClass,[%orob2b_account.entity.account_group.class%]]
 

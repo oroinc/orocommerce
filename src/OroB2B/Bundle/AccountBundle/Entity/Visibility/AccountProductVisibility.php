@@ -8,17 +8,17 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAwareInterface;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Repository\AccountCategoryVisibilityRepository")
- * @ORM\Table(name="orob2b_acc_category_visibility")
+ * @ORM\Entity
+ * @ORM\Table(name="orob2b_acc_product_visibility")
  * @Config
  */
-class AccountCategoryVisibility implements VisibilityInterface, AccountAwareInterface
+class AccountProductVisibility implements VisibilityInterface, AccountAwareInterface
 {
-    const PARENT_CATEGORY = 'parent_category';
     const CATEGORY = 'category';
+    const CONFIG = 'config';
     const ACCOUNT_GROUP = 'account_group';
     const VISIBLE = 'visible';
     const HIDDEN = 'hidden';
@@ -33,12 +33,12 @@ class AccountCategoryVisibility implements VisibilityInterface, AccountAwareInte
     protected $id;
 
     /**
-     * @var Category
+     * @var Product
      *
-     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CatalogBundle\Entity\Category")
-     * @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\Product")
+     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
      */
-    protected $category;
+    protected $product;
 
     /**
      * @var Account
@@ -64,21 +64,21 @@ class AccountCategoryVisibility implements VisibilityInterface, AccountAwareInte
     }
 
     /**
-     * @return Category
+     * @return Product
      */
-    public function getCategory()
+    public function getProduct()
     {
-        return $this->category;
+        return $this->product;
     }
 
     /**
-     * @param Category $category
+     * @param Product $product
      *
      * @return $this
      */
-    public function setCategory(Category $category)
+    public function setProduct(Product $product)
     {
-        $this->category = $category;
+        $this->product = $product;
 
         return $this;
     }
@@ -102,12 +102,12 @@ class AccountCategoryVisibility implements VisibilityInterface, AccountAwareInte
     }
 
     /**
-     * @param Category|null $category
+     * @param Product|null $product
      * @return string
      */
-    public static function getDefault($category = null)
+    public static function getDefault($product = null)
     {
-        return self::ACCOUNT_GROUP;
+        return self::CATEGORY;
     }
 
     /**
@@ -129,40 +129,35 @@ class AccountCategoryVisibility implements VisibilityInterface, AccountAwareInte
     }
 
     /**
-     * @param Category|null $category
+     * @param Product|null $product
      * @return array
      */
-    public static function getVisibilityList($category = null)
+    public static function getVisibilityList($product = null)
     {
-        $visibilityList = [
-            self::ACCOUNT_GROUP,
+        return [
             self::CATEGORY,
-            self::PARENT_CATEGORY,
-            self::HIDDEN,
+            self::CONFIG,
+            self::ACCOUNT_GROUP,
             self::VISIBLE,
+            self::HIDDEN,
         ];
-        if ($category instanceof Category && !$category->getParentCategory()) {
-            unset($visibilityList[array_search(self::PARENT_CATEGORY, $visibilityList)]);
-        }
-
-        return $visibilityList;
     }
 
     /**
-     * @return Category
+     * {@inheritdoc}
      */
     public function getTargetEntity()
     {
-        return $this->category;
+        return $this->product;
     }
 
     /**
-     * @param Category $category
+     * @param Product $product
      * @return $this
      */
-    public function setTargetEntity($category)
+    public function setTargetEntity($product)
     {
-        $this->setCategory($category);
+        $this->setProduct($product);
 
         return $this;
     }
