@@ -27,7 +27,6 @@ use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
  *      }
  * )
  * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class QuoteProduct implements ProductHolderInterface
 {
