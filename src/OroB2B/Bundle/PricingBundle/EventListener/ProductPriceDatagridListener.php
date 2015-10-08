@@ -90,27 +90,13 @@ class ProductPriceDatagridListener
         $config = $event->getConfig();
 
         $units = $this->getAllUnits();
+
+        // add prices for currencies
         foreach ($currencies as $currencyIsoCode) {
-            $columnName = $this->buildColumnName($currencyIsoCode);
-            $column = [
-                'label' => $this->translator->trans(
-                    'orob2b.pricing.productprice.price_in_%currency%',
-                    ['%currency%' => $currencyIsoCode]
-                ),
-                'type' => 'twig',
-                'template' => 'OroB2BPricingBundle:Datagrid:Column/productPrice.html.twig',
-                'frontend_type' => 'html',
-            ];
+            $this->addProductPriceCurrencyColumn($config, $currencyIsoCode);
+        }
 
-            $config->offsetSetByPath(sprintf('[columns][%s]', $columnName), $column);
-
-            $filter = [
-                'type' => 'product-price',
-                'data_name' => $currencyIsoCode
-            ];
-
-            $config->offsetSetByPath(sprintf('[filters][columns][%s]', $columnName), $filter);
-
+        foreach ($currencies as $currencyIsoCode) {
             // add prices for units
             foreach ($units as $unit) {
                 $this->addProductPriceCurrencyUnitColumn($config, $unit, $currencyIsoCode);
@@ -161,11 +147,11 @@ class ProductPriceDatagridListener
                     $record->addData([$priceUnitColumn => $price]);
                 }
 
-                $columnName = $this->buildColumnName($currencyIsoCode);
+                $priceColumn = $this->buildDataName($this->buildColumnName($currencyIsoCode));
                 if (isset($groupedPrices[$productId][$currencyIsoCode])) {
-                    $priceContainer[$columnName] = $groupedPrices[$productId][$currencyIsoCode];
+                    $priceContainer[$priceColumn] = $groupedPrices[$productId][$currencyIsoCode];
                 } else {
-                    $priceContainer[$columnName] = [];
+                    $priceContainer[$priceColumn] = [];
                 }
             }
             if ($priceContainer) {
@@ -228,6 +214,60 @@ class ProductPriceDatagridListener
         }
 
         return $groupedPrices;
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     * @param $currency
+     */
+    protected function addProductPriceCurrencyColumn(DatagridConfiguration $config, $currency)
+    {
+        $joinAlias = $this->buildColumnName($currency);
+        $columnName = $this->buildDataName($joinAlias);
+        $priceList = $this->getPriceList();
+
+        // select
+        $this->addConfigElement($config, '[source][query][select]', sprintf('%s.value as %s', $joinAlias, $columnName));
+        $config->offsetSetByPath('[source][query][groupBy]', 'product.id');
+
+        // left join
+        $expr = new Expr();
+        $joinExpr = $expr
+            ->andX(sprintf('%s.product = product.id', $joinAlias))
+            ->add($expr->eq(sprintf('%s.currency', $joinAlias), $expr->literal($currency)))
+            ->add($expr->eq(sprintf('%s.priceList', $joinAlias), $expr->literal($priceList->getId())))
+        ;
+        $leftJoin = [
+            'join' => $this->productPriceClass,
+            'alias' => $joinAlias,
+            'conditionType' => Expr\Join::WITH,
+            'condition' => (string) $joinExpr,
+        ];
+        $this->addConfigElement($config, '[source][query][join][left]', $leftJoin);
+
+        $column = [
+            'label' => $this->translator->trans(
+                'orob2b.pricing.productprice.price_in_%currency%',
+                ['%currency%' => $currency]
+            ),
+            'type' => 'twig',
+            'template' => 'OroB2BPricingBundle:Datagrid:Column/productPrice.html.twig',
+            'frontend_type' => 'html',
+        ];
+
+        $this->addConfigElement($config, '[columns]', $column, $columnName);
+
+        // sorter
+        $sorter = ['data_name' => $columnName];
+        $this->addConfigElement($config, '[sorters][columns]', $sorter, $columnName);
+
+        // filter
+        $filter = [
+            'type' => 'product-price',
+            'data_name' => $columnName,
+        ];
+
+        $this->addConfigElement($config, '[filters][columns]', $filter, $columnName);
     }
 
     /**
