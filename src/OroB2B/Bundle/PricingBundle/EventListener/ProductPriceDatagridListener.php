@@ -113,7 +113,7 @@ class ProductPriceDatagridListener
 
             // add prices for units
             foreach ($units as $unit) {
-                $this->addProductPriceRelation($config, $unit, $currencyIsoCode);
+                $this->addProductPriceCurrencyUnitColumn($config, $unit, $currencyIsoCode);
             }
         }
     }
@@ -235,7 +235,7 @@ class ProductPriceDatagridListener
      * @param ProductUnit $unit
      * @param $currency
      */
-    protected function addProductPriceRelation(DatagridConfiguration $config, ProductUnit $unit, $currency)
+    protected function addProductPriceCurrencyUnitColumn(DatagridConfiguration $config, ProductUnit $unit, $currency)
     {
         $joinAlias = $this->buildColumnName($currency, $unit);
         $columnName = $this->buildDataName($joinAlias);
