@@ -5,8 +5,6 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
-    var mediator = require('oroui/js/mediator');
-    var layout = require('oroui/js/layout');
     var BaseView = require('oroui/js/app/views/base/view');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var routing = require('routing');
@@ -25,10 +23,10 @@ define(function(require) {
         options: {
             classNotesSellerActive: 'quote-lineitem-notes-seller-active',
             productSelect: '.quote-lineitem-product-select input[type="hidden"]',
+            productSkuLabel: '.quote-lineitem-product-sku-label',
             productReplacementSelect: '.quote-lineitem-product-replacement-select input[type="hidden"]',
             typeSelect: '.quote-lineitem-product-type-select',
             unitsSelect: '.quote-lineitem-offer-unit-select',
-            classQuoteProductBlockActive: 'quote-lineitem-block-active',
             productFreeFormInput: '.quote-lineitem-product-freeform-input',
             productReplacementFreeFormInput: '.quote-lineitem-productreplacement-freeform-input',
             unitsRoute: 'orob2b_product_unit_product_units',
@@ -63,6 +61,11 @@ define(function(require) {
          * @property {int}
          */
         typeReplacement: null,
+
+        /**
+         * @property {Boolean}
+         */
+        isFreeForm: false,
 
         /**
          * @property {Object}
@@ -107,11 +110,6 @@ define(function(require) {
         /**
          * @property {Object}
          */
-        $itemsCollectionContainer: null,
-
-        /**
-         * @property {Object}
-         */
         $requestsOnlyContainer: null,
 
         /**
@@ -145,6 +143,8 @@ define(function(require) {
             this.typeOffer = options.typeOffer;
             this.typeReplacement = options.typeReplacement;
 
+            this.isFreeForm = options.isFreeForm || false;
+
             this.loadingMask = new LoadingMaskView({container: this.$el});
 
             this.delegate('click', '.removeLineItem', this.removeRow);
@@ -153,7 +153,6 @@ define(function(require) {
             this.$productReplacementSelect = this.$el.find(this.options.productReplacementSelect);
             this.$typeSelect = this.$el.find(this.options.typeSelect);
             this.$addItemButton = this.$el.find(this.options.addItemButton);
-            this.$itemsCollectionContainer = this.$el.find(this.options.itemsCollectionContainer);
             this.$itemsContainer = this.$el.find(this.options.itemsContainer);
             this.$productReplacementContainer = this.$el.find(this.options.productReplacementContainer);
             this.$notesContainer = this.$el.find(this.options.notesContainer);
@@ -176,10 +175,13 @@ define(function(require) {
 
             this.checkAddButton();
             this.checkAddNotes();
+
+            this.updateValidation();
         },
 
         checkAddButton: function() {
-            this.$addItemButton.toggle(Boolean(this.getProductId()));
+            var enabled = Boolean(this.getProductId()) || this.isFreeForm;
+            this.$addItemButton.toggle(enabled);
         },
 
         removeRow: function() {
@@ -202,6 +204,8 @@ define(function(require) {
             if (this.$itemsContainer.children().length) {
                 this.updateContent(true);
             }
+
+            this.updateSkuLabel();
         },
 
         /**
@@ -212,9 +216,7 @@ define(function(require) {
         onTypeChanged: function(e) {
             var typeValue = parseInt(this.$typeSelect.val());
 
-            this.$productReplacementContainer.toggleClass(
-                this.options.classQuoteProductBlockActive, this.typeReplacement === typeValue
-            );
+            this.$productReplacementContainer.toggle(this.typeReplacement === typeValue);
             this.$requestsOnlyContainer.toggle(this.typeOffer !== typeValue);
 
             this.$productSelect.trigger('change');
@@ -304,7 +306,6 @@ define(function(require) {
                 if (null === $(select).val() && firstValue) {
                     $(select).val(firstValue);
                 }
-                $(select).val(currentValue).change();
                 $(select).addClass(self.options.syncClass);
 
                 if (!force) {
@@ -358,12 +359,15 @@ define(function(require) {
          */
         onFreeFormLinkClick: function(e) {
             e.preventDefault();
-            var $rowElem = $(e.target).closest(this.options.fieldsRowContainer);
-            $rowElem.find(this.options.productFormContainer)
-                .removeClass(this.options.classQuoteProductBlockActive)
-                .find('input').val('').change()
-            ;
-            $rowElem.find(this.options.freeFormContainer).addClass(this.options.classQuoteProductBlockActive);
+
+            this.clearInputs();
+
+            this.$el.find(this.options.productFormContainer).hide();
+            this.$el.find(this.options.freeFormContainer).show();
+
+            this.isFreeForm = true;
+
+            this.checkAddButton();
         },
 
         /**
@@ -373,9 +377,32 @@ define(function(require) {
          */
         onProductSelectLinkClick: function(e) {
             e.preventDefault();
-            var $rowElem = $(e.target).closest(this.options.fieldsRowContainer);
-            $rowElem.find(this.options.productFormContainer).addClass(this.options.classQuoteProductBlockActive);
-            $rowElem.find(this.options.freeFormContainer).removeClass(this.options.classQuoteProductBlockActive);
+
+            this.clearInputs();
+
+            this.$el.find(this.options.productFormContainer).show();
+            this.$el.find(this.options.freeFormContainer).hide();
+
+            this.isFreeForm = false;
+
+            this.checkAddButton();
+        },
+
+        clearInputs: function() {
+            this.$el.find(this.options.productFormContainer)
+                .find('input').val('').change()
+            ;
+            this.$el.find(this.options.freeFormContainer)
+                .find('input').val('')
+            ;
+
+            this.updateSkuLabel();
+        },
+
+        updateSkuLabel: function() {
+            var productData = this.$el.find(this.options.productSelect).select2('data') || {};
+
+            this.$el.find(this.options.productSkuLabel).html(productData.sku || '');
         },
 
         /**
@@ -402,10 +429,7 @@ define(function(require) {
                 required: {
                     param: true,
                     depends: function(element) {
-                        return !self.isProductReplacement() &&
-                            $(element)
-                                .closest(self.options.freeFormContainer)
-                                .hasClass(self.options.classQuoteProductBlockActive);
+                        return !self.isProductReplacement() && self.isFreeForm;
                     }
                 },
                 messages: {
@@ -417,10 +441,7 @@ define(function(require) {
                 required: {
                     param: true,
                     depends: function(element) {
-                        return self.isProductReplacement() &&
-                            $(element)
-                                .closest(self.options.freeFormContainer)
-                                .hasClass(self.options.classQuoteProductBlockActive);
+                        return self.isProductReplacement() && self.isFreeForm;
                     }
                 },
                 messages: {
@@ -432,9 +453,7 @@ define(function(require) {
                 required: {
                     param: true,
                     depends: function(element) {
-                        return !self.isProductReplacement() && $(element)
-                            .closest(self.options.productFormContainer)
-                            .hasClass(self.options.classQuoteProductBlockActive);
+                        return !self.isProductReplacement() && !self.isFreeForm;
                     }
                 },
                 messages: {
@@ -446,10 +465,7 @@ define(function(require) {
                 required: {
                     param: true,
                     depends: function(element) {
-                        return self.isProductReplacement() &&
-                            $(element)
-                                .closest(self.options.productFormContainer)
-                                .hasClass(self.options.classQuoteProductBlockActive);
+                        return self.isProductReplacement() && !self.isFreeForm;
                     }
                 },
                 messages: {

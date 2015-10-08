@@ -189,6 +189,7 @@ class QuoteProductTypeTest extends AbstractTest
                         'typeOffer'         => QuoteProduct::TYPE_OFFER,
                         'typeReplacement'   => QuoteProduct::TYPE_NOT_AVAILABLE,
                         'compactUnits' => false,
+                        'isFreeForm' => false,
                     ],
                 ],
             ],
@@ -214,6 +215,7 @@ class QuoteProductTypeTest extends AbstractTest
                         'typeOffer' => QuoteProduct::TYPE_OFFER,
                         'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
                         'compactUnits' => false,
+                        'isFreeForm' => false,
                     ],
                 ],
             ],
@@ -254,6 +256,7 @@ class QuoteProductTypeTest extends AbstractTest
                         'typeOffer' => QuoteProduct::TYPE_OFFER,
                         'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
                         'compactUnits' => false,
+                        'isFreeForm' => false,
                     ],
                 ],
             ],
@@ -294,6 +297,67 @@ class QuoteProductTypeTest extends AbstractTest
                         'typeOffer' => QuoteProduct::TYPE_OFFER,
                         'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
                         'compactUnits' => true,
+                        'isFreeForm' => false,
+                    ],
+                ],
+            ],
+            'product free form' => [
+                'input'     => [
+                    'vars' => [
+                        'value' => (new QuoteProduct())
+                            ->setFreeFormProduct('free form title'),
+                    ],
+                    'allUnits' => [
+                        'unit3',
+                        'unit4',
+                    ],
+                    'options' => [
+                        'compact_units' => true,
+                    ],
+                ],
+                'expected'  => [
+                    'value' => (new QuoteProduct())
+                        ->setFreeFormProduct('free form title'),
+                    'componentOptions' => [
+                        'units' => [],
+                        'allUnits' => [
+                            'unit3-formatted2-short',
+                            'unit4-formatted2-short',
+                        ],
+                        'typeOffer' => QuoteProduct::TYPE_OFFER,
+                        'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
+                        'compactUnits' => true,
+                        'isFreeForm' => true,
+                    ],
+                ],
+            ],
+            'replacement free form' => [
+                'input'     => [
+                    'vars' => [
+                        'value' => (new QuoteProduct())
+                            ->setFreeFormProductReplacement('free form title'),
+                    ],
+                    'allUnits' => [
+                        'unit3',
+                        'unit4',
+                    ],
+                    'options' => [
+                        'compact_units' => true,
+                    ],
+                ],
+                'expected'  => [
+                    'value' => (new QuoteProduct())
+                        ->setFreeFormProductReplacement('free form title'),
+                    'componentOptions' => [
+                        'units' => [],
+                        'allUnits' => [
+                            'unit3-formatted2-short',
+                            'unit4-formatted2-short',
+                        ],
+                        'typeOffer' => QuoteProduct::TYPE_OFFER,
+                        'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
+                        'compactUnits' => true,
+                        'isFreeForm' => true,
                     ],
                 ],
             ],

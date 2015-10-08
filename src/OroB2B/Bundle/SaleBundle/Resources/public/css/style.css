@@ -173,21 +173,27 @@ td.quote-product-offer-price {
 span.quote-product-offer-quantity-unit {
     margin-left: 5px;
 }
+
 .quote-lineitems table.grid {
     overflow: auto;
 }
-.quote-lineitem-product-row > div,
-.quote-lineitem-product-replacement-row,.quote-lineitem-product-replacement-row > div {
-    display: none;
+
+td.quote-lineitem-product-sku {
+    width: 160px;
 }
 
-.quote-lineitem-product-row > div.quote-lineitem-block-active,
-.quote-lineitem-product-replacement-row.quote-lineitem-block-active,
-.quote-lineitem-product-replacement-row > div.quote-lineitem-block-active {
-    display: block;
+.quote-lineitem-product-sku-row .quote-lineitem-product-free-form input[type="text"] {
+    width: 120px;
+}
+
+.quote-lineitem-product-sku-label label {
+    line-height: 31px;
 }
 
 .quote-lineitem-product-row input[type="text"] {
     width: 275px !important;
 }
 
+.quote-lineitem-product-select-link {
+    display: block;
+}

@@ -14,6 +14,7 @@
             <table class="grid table-hover table table-bordered table-condensed">
                 <thead>
                 <tr>
+                    <th><span>{{ 'orob2b.sale.quote.lineitem.product_sku'|trans }}</span></th>
                     <th><span>{{ 'orob2b.sale.quote.lineitem.product'|trans }}</span></th>
                     <th><span>{{ 'orob2b.sale.quote.lineitem.requested.label'|trans }}</span></th>
                     <th><span>{{ 'orob2b.sale.quote.lineitem.offers.label'|trans }}</span></th>
@@ -66,31 +67,38 @@
     {% set isProductReplacementFreeForm = form.vars.value.isProductReplacementFreeForm()|default(false) %}
     {% set isProductReplacement = form.vars.value.isTypeNotAvailable()|default(false) %}
 
+    <td class="quote-lineitem-product-sku">
+        <div class="fields-row quote-lineitem-product-sku-row">
+            <div class="quote-lineitem-product-form{% if isProductFreeForm %} hide{% endif %}">
+                <label class="quote-lineitem-product-sku-label">{{ form.vars.value.productSku|default('') }}</label>
+            </div>
+            <div class="quote-lineitem-product-free-form{% if not isProductFreeForm %} hide{% endif %}">
+                {{ form_widget(form.productSku) }}
+                {{ form_errors(form.productSku) }}
+            </div>
+        </div>
+    </td>
     <td class="quote-lineitem-product">
-        <div class="fields-row quote-lineitem-product-row{% if not isProductReplacement %} quote-lineitem-block-active{% endif %}">
-            <div class="quote-lineitem-product-select quote-lineitem-product-form{% if not isProductFreeForm %} quote-lineitem-block-active{% endif %}">
+        <div class="fields-row quote-lineitem-product-row{% if isProductReplacement %} hide{% endif %}">
+            <div class="quote-lineitem-product-select quote-lineitem-product-form{% if isProductFreeForm %} hide{% endif %}">
                 {{ form_widget(form.product) }}
                 {{ form_errors(form.product) }}
                 <a class="quote-lineitem-free-form-link" href="javascript: void(0);">{{ 'orob2b.sale.quoteproduct.select.free_form'|trans }}</a>
             </div>
-            <div class="quote-lineitem-product-free-form{% if isProductFreeForm %} quote-lineitem-block-active{% endif %}">
-                {{ form_label(form.productSku) }}
-                {{ form_widget(form.productSku) }}
-                {{ form_errors(form.productSku) }}
-                {{ form_label(form.freeFormProduct) }}
+            <div class="quote-lineitem-product-free-form{% if not isProductFreeForm %} hide{% endif %}">
                 {{ form_widget(form.freeFormProduct, {attr: attr|merge({class: 'quote-lineitem-product-freeform-input'})}) }}
                 {{ form_errors(form.freeFormProduct) }}
-                <br/><a class="quote-lineitem-product-select-link" href="javascript: void(0);">{{ 'orob2b.sale.quoteproduct.select.product'|trans }}</a>
+                <a class="quote-lineitem-product-select-link" href="javascript: void(0);">{{ 'orob2b.sale.quoteproduct.select.product'|trans }}</a>
             </div>
         </div>
 
-        <div class="fields-row quote-lineitem-product-replacement-row{% if isProductReplacement %} quote-lineitem-block-active{% endif %}">
-            <div class="quote-lineitem-product-replacement-select quote-lineitem-product-form{% if not isProductReplacementFreeForm %} quote-lineitem-block-active{% endif %}">
+        <div class="fields-row quote-lineitem-product-replacement-row{% if not isProductReplacement %} hide{% endif %}">
+            <div class="quote-lineitem-product-replacement-select quote-lineitem-product-form{% if isProductReplacementFreeForm %} hide{% endif %}">
                 {{ form_widget(form.productReplacement) }}
                 {{ form_errors(form.productReplacement) }}
                 <a class="quote-lineitem-free-form-link" href="javascript: void(0);">{{ 'orob2b.sale.quoteproduct.select.free_form'|trans }}</a>
             </div>
-            <div class="quote-lineitem-product-free-form{% if isProductReplacementFreeForm %} quote-lineitem-block-active{% endif %}">
+            <div class="quote-lineitem-product-free-form{% if not isProductReplacementFreeForm %} hide{% endif %}">
                 {{ form_label(form.productReplacementSku) }}
                 {{ form_widget(form.productReplacementSku) }}
                 {{ form_errors(form.productReplacementSku) }}
