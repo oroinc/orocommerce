@@ -35,6 +35,7 @@ parameters:
 
     orob2b_account.form.extension.category_type.class: OroB2B\Bundle\AccountBundle\Form\Extension\CategoryFormExtension
     orob2b_account.form.type.catalog_visibility.class: OroB2B\Bundle\AccountBundle\Form\Type\CatalogVisibilityType
+    orob2b_account.form.type.product_visibility.class: OroB2B\Bundle\AccountBundle\Form\Type\ProductVisibilityType
 
     orob2b_account.form.extension.select_or_create_inline.class: OroB2B\Bundle\AccountBundle\Form\Extension\OroEntitySelectOrCreateInlineExtension
     orob2b_account.form.extension.frontend_product_select.class: OroB2B\Bundle\AccountBundle\Form\Extension\FrontendProductSelectExtension
@@ -252,6 +253,11 @@ services:
         class: %orob2b_account.form.type.catalog_visibility.class%
         tags:
             - { name: form.type, alias: orob2b_account_catalog_default_visibility }
+
+    orob2b_account.form.type.product_visibility:
+        class: %orob2b_account.form.type.product_visibility.class%
+        tags:
+            - { name: form.type, alias: orob2b_account_product_default_visibility }
 
     orob2b_account.form.extension.select_or_create_inline:
         class: %orob2b_account.form.extension.select_or_create_inline.class%
