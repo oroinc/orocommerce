@@ -229,7 +229,7 @@ class QuoteProductType extends AbstractType
     {
         $units = $this->registry->getManagerForClass($this->productUnitClass)
             ->getRepository($this->productUnitClass)
-            ->findBy([], ['code' => 'ASC'])
+            ->getAllUnits()
         ;
 
         return $this->labelFormatter->formatChoices($units, $isCompactUnits);

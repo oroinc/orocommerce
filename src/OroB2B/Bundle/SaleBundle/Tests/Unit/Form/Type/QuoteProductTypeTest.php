@@ -23,6 +23,7 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
@@ -56,7 +57,7 @@ class QuoteProductTypeTest extends AbstractTest
     protected $manager;
 
     /**
-     * @var ObjectRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductUnitRepository|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $repository;
 
@@ -70,7 +71,10 @@ class QuoteProductTypeTest extends AbstractTest
             ->getMock()
         ;
 
-        $this->repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $this->repository = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
 
         $this->manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
         $this->manager->expects($this->any())
@@ -147,7 +151,7 @@ class QuoteProductTypeTest extends AbstractTest
     public function testFinishView(array $inputData, array $expectedData)
     {
         $this->repository->expects($this->once())
-            ->method('findBy')
+            ->method('getAllUnits')
             ->willReturn($inputData['allUnits'])
         ;
 
