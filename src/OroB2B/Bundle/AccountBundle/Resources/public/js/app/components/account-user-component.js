@@ -6,10 +6,7 @@ define(function(require) {
     var AccountUser;
     var BaseComponent = require('oroui/js/app/components/base/component');
     var _ = require('underscore');
-    //var $ = require('jquery');
-    /*    var mediator = require('oroui/js/mediator');
-    var __ = require('orotranslation/js/translator');
-    var Modal = require('oroui/js/modal');*/
+    var routing = require('routing');
     var widgetManager = require('oroui/js/widget-manager');
 
     AccountUser = BaseComponent.extend({
@@ -19,7 +16,8 @@ define(function(require) {
          */
         options: {
             widgetAlias: null,
-            accountFormId: null
+            accountFormId: null,
+            accountUserId: null
         },
 
         /**
@@ -48,8 +46,24 @@ define(function(require) {
             AccountUser.__super__.dispose.call(this);
         },
 
-        reloadRoleWidget: function() {
+        reloadRoleWidget: function(e) {
+            var accountUserId = this.options.accountUserId;
+            var accountId = e.target.value;
+
             widgetManager.getWidgetInstanceByAlias(this.options.widgetAlias, function(widget) {
+                var url;
+                if (accountUserId) {
+                    url = routing.generate('orob2b_account_account_user_get_roles_with_user', {
+                        accountId: accountId,
+                        accountUserId: accountUserId
+                    });
+                } else {
+                    url = routing.generate('orob2b_account_account_user_by_account_roles', {
+                        accountId: accountId
+                    });
+                }
+
+                widget.setUrl(url);
                 widget.render();
             });
         }
