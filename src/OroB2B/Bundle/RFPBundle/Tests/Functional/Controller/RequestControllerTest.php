@@ -30,17 +30,18 @@ class RequestControllerTest extends WebTestCase
 
     public function testIndex()
     {
-        $dateObj    = new \DateTime();
-        $date       = $dateObj->format('Y-m-d');
-
         $this->client->request('GET', $this->getUrl('orob2b_rfp_request_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains(LoadRequestData::FIRST_NAME, $result->getContent());
-        $this->assertContains(LoadRequestData::LAST_NAME, $result->getContent());
-        $this->assertContains(LoadRequestData::EMAIL, $result->getContent());
-        $this->assertContains(LoadRequestData::PO_NUMBER, $result->getContent());
-        $this->assertContains($date, $result->getContent());
+
+        $this->assertContainsRequestData(
+            LoadRequestData::FIRST_NAME,
+            LoadRequestData::LAST_NAME,
+            LoadRequestData::EMAIL,
+            LoadRequestData::PO_NUMBER,
+            $this->getFormatDate('Y-m-d'),
+            $result->getContent()
+        );
     }
 
     /**
@@ -52,8 +53,9 @@ class RequestControllerTest extends WebTestCase
             'rfp-requests-grid',
             [
                 'rfp-requests-grid[_filter][firstName][value]' => LoadRequestData::FIRST_NAME,
-                'rfp-requests-grid[_filter][LastName][value]' => LoadRequestData::LAST_NAME,
+                'rfp-requests-grid[_filter][lastName][value]' => LoadRequestData::LAST_NAME,
                 'rfp-requests-grid[_filter][email][value]' => LoadRequestData::EMAIL,
+                'rfp-requests-grid[_filter][poNumber][value]' => LoadRequestData::PO_NUMBER,
             ]
         );
 
@@ -74,6 +76,15 @@ class RequestControllerTest extends WebTestCase
             $result->getContent()
         );
 
+        $this->assertContainsRequestData(
+            LoadRequestData::FIRST_NAME,
+            LoadRequestData::LAST_NAME,
+            LoadRequestData::EMAIL,
+            LoadRequestData::PO_NUMBER,
+            $this->getFormatDate('M j, Y'),
+            $result->getContent()
+        );
+
         return $id;
     }
 
@@ -83,9 +94,6 @@ class RequestControllerTest extends WebTestCase
      */
     public function testInfo($id)
     {
-        $dateObj    = new \DateTime();
-        $date       = $dateObj->format('M j, Y');
-
         $this->client->request(
             'GET',
             $this->getUrl('orob2b_rfp_request_info', ['id' => $id]),
@@ -94,11 +102,15 @@ class RequestControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains(LoadRequestData::FIRST_NAME, $result->getContent());
-        $this->assertContains(LoadRequestData::LAST_NAME, $result->getContent());
-        $this->assertContains(LoadRequestData::EMAIL, $result->getContent());
-        $this->assertContains(LoadRequestData::PO_NUMBER, $result->getContent());
-        $this->assertContains($date, $result->getContent());
+
+        $this->assertContainsRequestData(
+            LoadRequestData::FIRST_NAME,
+            LoadRequestData::LAST_NAME,
+            LoadRequestData::EMAIL,
+            LoadRequestData::PO_NUMBER,
+            $this->getFormatDate('M j, Y'),
+            $result->getContent()
+        );
     }
 
     /**
@@ -162,10 +174,20 @@ class RequestControllerTest extends WebTestCase
      */
     public function testUpdate($id)
     {
+        $updatedFirstName = LoadRequestData::FIRST_NAME . '_update';
+        $updatedLastName = LoadRequestData::LAST_NAME . '_update';
+        $updatedEmail = LoadRequestData::EMAIL . '_update';
+        $updatedPoNumber = LoadRequestData::PO_NUMBER . '_update';
+
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_update', ['id' => $id]));
 
         $form = $crawler->selectButton('Save and Close')->form();
         $form->remove('orob2b_rfp_request[requestProducts][0]');
+
+        $form['orob2b_rfp_request[firstName]'] = $updatedFirstName;
+        $form['orob2b_rfp_request[lastName]'] = $updatedLastName;
+        $form['orob2b_rfp_request[email]'] = $updatedEmail;
+        $form['orob2b_rfp_request[poNumber]'] = $updatedPoNumber;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -173,6 +195,15 @@ class RequestControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('Request has been saved', $crawler->html());
+
+        $this->assertContainsRequestData(
+            $updatedFirstName,
+            $updatedLastName,
+            $updatedEmail,
+            $updatedPoNumber,
+            $this->getFormatDate('M j, Y'),
+            $result->getContent()
+        );
     }
 
     /**
@@ -214,5 +245,34 @@ class RequestControllerTest extends WebTestCase
             ],
             1
         );
+    }
+
+    /**
+     * @param string $firstName
+     * @param string $lastName
+     * @param string $email
+     * @param string $poNumber
+     * @param string $date
+     * @param string $html
+     */
+    protected function assertContainsRequestData($firstName, $lastName, $email, $poNumber, $date, $html)
+    {
+        $this->assertContains($firstName, $html);
+        $this->assertContains($lastName, $html);
+        $this->assertContains($email, $html);
+        $this->assertContains($poNumber, $html);
+        $this->assertContains($date, $html);
+    }
+
+    /**
+     * @param string $format
+     * @return string
+     */
+    private function getFormatDate($format)
+    {
+        $dateObj    = new \DateTime();
+        $date       = $dateObj->format($format);
+
+        return $date;
     }
 }

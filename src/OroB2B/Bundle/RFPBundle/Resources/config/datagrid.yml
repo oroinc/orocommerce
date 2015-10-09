@@ -308,6 +308,8 @@ datagrid:
                 select:
                     - request.id
                     - request.createdAt
+                    - request.poNumber
+                    - request.shipUntil
                     - CONCAT(requestAccountUser.firstName, ' ', requestAccountUser.lastName) as accountUserName
                     - requestStatus.name as statusName
                 from:

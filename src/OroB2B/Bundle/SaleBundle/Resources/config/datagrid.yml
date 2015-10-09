@@ -161,6 +161,8 @@ datagrid:
                     - quoteAccountUser.username as accountUserName
                     - quote.createdAt
                     - quote.validUntil
+                    - quote.poNumber
+                    - quote.shipUntil
                 from:
                     - { table: %orob2b_sale.entity.quote.class%, alias: quote }
                 join:
