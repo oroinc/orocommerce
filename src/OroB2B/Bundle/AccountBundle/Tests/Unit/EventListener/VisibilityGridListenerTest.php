@@ -19,7 +19,6 @@ use Oro\Component\TestUtils\ORM\Mocks\EntityManagerMock;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\EventListener\VisibilityGridListener;
 use OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
@@ -28,6 +27,13 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
 {
 
     const VISIBILITY_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility';
+
+    const TARGET_CLASS = 'OroB2B\Bundle\CatalogBundle\Entity\Category';
+
+    const ACCOUNT_CATEGORY_VISIBILITY_GRID = 'account-category-visibility-grid';
+    const ACCOUNT_GROUP_CATEGORY_VISIBILITY_GRID = 'account-group-product-visibility-grid';
+
+
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
      */
@@ -59,6 +65,11 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
         $this->categoryClass = 'OroB2B\Bundle\CatalogBundle\Entity\Category';
 
         $this->listener = new VisibilityGridListener($this->registry, $this->visibilityChoicesProvider);
+        $this->listener->addSubscribedGridConfig(
+            self::ACCOUNT_CATEGORY_VISIBILITY_GRID,
+            self::VISIBILITY_CLASS,
+            self::TARGET_CLASS
+        );
     }
 
     public function testOnPreBuild()
@@ -96,7 +107,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
     protected function getPreBuild($categoryId, $category)
     {
         $parameters = new ParameterBag();
-        $parameters->set('category_id', $categoryId);
+        $parameters->set('target_entity_id', $categoryId);
 
         $columnsPath = '[columns][visibility]';
         $filtersPath = '[filters][columns][visibility][options][field_options]';
@@ -131,6 +142,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
                     }
                 }
             );
+        $config->expects($this->once())->method('getName')->willReturn(self::ACCOUNT_CATEGORY_VISIBILITY_GRID);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|PreBuild $preBuild */
         $preBuild = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Event\PreBuild')
@@ -149,38 +161,22 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnResultBefore()
     {
         $event = $this->getOrmResultBeforeEvent(
-            CategoryVisibilityGridListener::ACCOUNT_CATEGORY_VISIBILITY_GRID,
-            $this->getParameterBag(AccountCategoryVisibility::PARENT_CATEGORY)
+            self::ACCOUNT_CATEGORY_VISIBILITY_GRID,
+            $this->getParameterBag(AccountCategoryVisibility::getDefault())
         );
 
         $expected = (string)(new Expr())->orX(
-            (new Expr())->isNull(CategoryVisibilityGridListener::ACCOUNT_CATEGORY_VISIBILITY_ALIAS)
+            (new Expr())->isNull(VisibilityGridListener::VISIBILITY_FIELD)
         );
         $this->listener->onResultBefore($event);
-
-        $this->assertStringEndsWith($expected, $event->getQuery()->getDQL());
-    }
-
-    public function testOnResultBeforeForGroups()
-    {
-        $event = $this->getOrmResultBeforeEvent(
-            CategoryVisibilityGridListener::ACCOUNT_GROUP_CATEGORY_VISIBILITY_GRID,
-            $this->getParameterBag(AccountGroupCategoryVisibility::PARENT_CATEGORY)
-        );
-
-        $expected = (string)(new Expr())->orX(
-            (new Expr())->isNull(CategoryVisibilityGridListener::ACCOUNT_GROUP_CATEGORY_VISIBILITY_ALIAS)
-        );
-        $this->listener->onResultBefore($event);
-
         $this->assertStringEndsWith($expected, $event->getQuery()->getDQL());
     }
 
     public function testOnResultBeforeNotFilteredByDefault()
     {
         $event = $this->getOrmResultBeforeEvent(
-            CategoryVisibilityGridListener::ACCOUNT_CATEGORY_VISIBILITY_GRID,
-            $this->getParameterBag(AccountCategoryVisibility::CATEGORY)
+            self::ACCOUNT_CATEGORY_VISIBILITY_GRID,
+            $this->getParameterBag($this->getNotDefaultAccountCategoryVisibility())
         );
         $this->listener->onResultBefore($event);
         $this->assertNull($event->getQuery()->getDQL());
@@ -189,7 +185,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnResultBeforeNoFilter()
     {
         $event = $this->getOrmResultBeforeEvent(
-            CategoryVisibilityGridListener::ACCOUNT_CATEGORY_VISIBILITY_GRID,
+            self::ACCOUNT_CATEGORY_VISIBILITY_GRID,
             $this->getParameterBag()
         );
         $this->listener->onResultBefore($event);
@@ -219,7 +215,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
     protected function getDatagrid($gridName, ParameterBag $bag)
     {
         $qb = new QueryBuilder($this->getEntityManager());
-        $qb->where(sprintf("%s IN(1)", CategoryVisibilityGridListener::ACCOUNT_GROUP_CATEGORY_VISIBILITY_ALIAS));
+        $qb->where(sprintf("%s IN(1)", VisibilityGridListener::VISIBILITY_FIELD));
 
         /** @var OrmDatasource|\PHPUnit_Framework_MockObject_MockObject $dataSource */
         $dataSource = $this
@@ -282,5 +278,17 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
         $connection = $this->getMockBuilder('Doctrine\DBAL\Connection')->disableOriginalConstructor()->getMock();
 
         return EntityManagerMock::create($connection);
+    }
+
+    /**
+     * @return string
+     */
+    protected function getNotDefaultAccountCategoryVisibility()
+    {
+        foreach (AccountCategoryVisibility::getVisibilityList() as $visibility) {
+            if (AccountCategoryVisibility::getDefault() != $visibility) {
+                return $visibility;
+            }
+        };
     }
 }

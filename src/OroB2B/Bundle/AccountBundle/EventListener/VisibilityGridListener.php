@@ -27,9 +27,10 @@ class VisibilityGridListener
     protected $visibilityChoicesProvider;
 
     /**
-     * @var string
+     * @var array
      */
-    protected $visibilityClass;
+    protected $subscribedGridConfig;
+
 
     /**
      * @param ManagerRegistry $registry
@@ -41,19 +42,56 @@ class VisibilityGridListener
         $this->visibilityChoicesProvider = $visibilityChoicesProvider;
     }
 
+    /**
+     * @param string $datagrid
+     * @param string $visibilityEntityClass
+     * @param string $targetEntityClass
+     */
+    public function addSubscribedGridConfig($datagrid, $visibilityEntityClass, $targetEntityClass)
+    {
+        $this->subscribedGridConfig[$datagrid] =
+            [
+                'visibilityEntityClass' => $visibilityEntityClass,
+                'targetEntityClass' => $targetEntityClass,
+            ];
+    }
+
+    /**
+     * @param PreBuild $event
+     */
     public function onPreBuild(PreBuild $event)
     {
         $config = $event->getConfig();
-        $this->visibilityClass = $config->offsetGetByPath('[options][visibilityTarget]');
-        $entity = $this->getEntity($event->getParameters()->get('target_entity_id'));
-        $this->setVisibilityChoices($entity, $config, '[columns][visibility]');
-        $this->setVisibilityChoices($entity, $config, '[filters][columns][visibility][options][field_options]');
+        $datagridName = $config->getName();
+        $visibilityClass = $this->subscribedGridConfig[$datagridName]['visibilityEntityClass'];
+        $targetEntity = $this->getEntity(
+            $event->getParameters()->get('target_entity_id'),
+            $this->subscribedGridConfig[$datagridName]['targetEntityClass']
+        );
+        $this->setVisibilityChoices(
+            $targetEntity,
+            $config,
+            '[columns][visibility]',
+            $visibilityClass
+        );
+        $this->setVisibilityChoices(
+            $targetEntity,
+            $config,
+            '[filters][columns][visibility][options][field_options]',
+            $visibilityClass
+        );
     }
 
-    protected function setVisibilityChoices($entity, DatagridConfiguration $config, $path)
+    /**
+     * @param object $targetEntity
+     * @param DatagridConfiguration $config
+     * @param string $path
+     * @param string $visibilityClass
+     */
+    protected function setVisibilityChoices($targetEntity, DatagridConfiguration $config, $path, $visibilityClass)
     {
         $pathConfig = $config->offsetGetByPath($path);
-        $pathConfig['choices'] = $this->visibilityChoicesProvider->getFormattedChoices($this->visibilityClass, $entity);
+        $pathConfig['choices'] = $this->visibilityChoicesProvider->getFormattedChoices($visibilityClass, $targetEntity);
         $config->offsetSetByPath($path, $pathConfig);
     }
 
@@ -62,7 +100,12 @@ class VisibilityGridListener
      */
     public function onResultBefore(OrmResultBefore $event)
     {
-        if (!$this->isFilteredByDefaultValue($event->getDatagrid()->getParameters())) {
+        $x = $event->getDatagrid()->getName();
+        if (!$this->isFilteredByDefaultValue(
+            $event->getDatagrid()->getParameters(),
+            $this->subscribedGridConfig[$event->getDatagrid()->getName()]['visibilityEntityClass']
+        )
+        ) {
             return;
         }
         /** @var OrmDatasource $dataSource */
@@ -89,17 +132,17 @@ class VisibilityGridListener
 
     /**
      * @param ParameterBag $params
-     *
+     * @param string $visibilityClass
      * @return bool
      */
-    protected function isFilteredByDefaultValue(ParameterBag $params)
+    protected function isFilteredByDefaultValue(ParameterBag $params, $visibilityClass)
     {
         if (!$params->get('_filter')) {
             return false;
         }
 
         foreach ($params->get('_filter')['visibility']['value'] as $value) {
-            if ($this->isDefaultValue($value)) {
+            if ($this->isDefaultValue($value, $visibilityClass)) {
                 return true;
             }
         }
@@ -110,25 +153,29 @@ class VisibilityGridListener
     /**
      * @param string $value
      *
+     * @param string $visibilityClass
      * @return bool
      */
-    protected function isDefaultValue($value)
+    protected function isDefaultValue($value, $visibilityClass)
     {
         /** @var string $defaultValue */
-        $defaultValue = call_user_func([$this->visibilityClass, 'getDefault']);
+        $defaultValue = call_user_func([$visibilityClass, 'getDefault']);
 
         return $defaultValue === $value;
     }
 
     /**
      * @param integer|null $entityId
-     * @return object|null
+     * @param string $entityClassName
+     * @return null|object
      */
-    protected function getEntity($entityId)
+    protected function getEntity($entityId, $entityClassName)
     {
         $entity = null;
         if ($entityId) {
-            $entity = $this->registry->getRepository('OroB2BCatalogBundle:Category')->find($entityId);
+            $entity = $this->registry
+                ->getRepository($entityClassName)
+                ->find($entityId);
         }
 
         return $entity;
