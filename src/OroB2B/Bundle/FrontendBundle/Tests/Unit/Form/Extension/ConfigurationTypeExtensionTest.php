@@ -2,14 +2,16 @@
 
 namespace OroB2B\Bundle\FrontendBundle\Tests\Unit\Form\Extension;
 
-use OroB2B\Bundle\FrontendBundle\Form\Extension\ConfigurationTypeExtension;
-use Oro\Bundle\InstallerBundle\Form\Type\ConfigurationType;
-use OroB2B\Bundle\FrontendBundle\Form\Type\Configuration\WebType;
-use OroB2B\Bundle\FrontendBundle\Tests\Unit\Form\Extension\Stub\ConfigurationTypeStub;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+
+use Oro\Bundle\InstallerBundle\Form\Type\ConfigurationType;
+
+use OroB2B\Bundle\FrontendBundle\Form\Extension\ConfigurationTypeExtension;
+use OroB2B\Bundle\FrontendBundle\Form\Type\Configuration\WebType;
+use OroB2B\Bundle\FrontendBundle\Tests\Unit\Form\Extension\Stub\ConfigurationTypeStub;
 
 class ConfigurationTypeExtensionTest extends FormIntegrationTestCase
 {
@@ -109,14 +111,6 @@ class ConfigurationTypeExtensionTest extends FormIntegrationTestCase
      * Test getExtendedType
      */
     public function testGetExtendedType()
-    {
-        $this->assertEquals($this->configurationTypeExtension->getExtendedType(), ConfigurationType::NAME);
-    }
-
-    /**
-     * Test getName
-     */
-    public function testGetName()
     {
         $this->assertEquals(ConfigurationType::NAME, $this->configurationTypeExtension->getExtendedType());
     }
