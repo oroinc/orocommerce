@@ -11,6 +11,9 @@ use Symfony\Component\HttpFoundation\Request;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
+use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
 class LineItemHandler
 {
@@ -34,17 +37,20 @@ class LineItemHandler
      * @param Request $request
      * @param Registry $registry
      * @param ShoppingListManager $shoppingListManager
+     * @param RoundingService $roundingService
      */
     public function __construct(
         FormInterface $form,
         Request $request,
         Registry $registry,
-        ShoppingListManager $shoppingListManager
+        ShoppingListManager $shoppingListManager,
+        RoundingService $roundingService = null
     ) {
         $this->form = $form;
         $this->request = $request;
         $this->registry = $registry;
         $this->shoppingListManager = $shoppingListManager;
+        $this->roundingService = $roundingService;
     }
 
     /**
@@ -78,6 +84,14 @@ class LineItemHandler
                 if ($existingLineItem) {
                     $this->updateExistingLineItem($lineItem, $existingLineItem);
                 } else {
+                    $lineItem->setQuantity(
+                        $this->roundQuantity(
+                            $lineItem->getQuantity(),
+                            $lineItem->getProductUnit(),
+                            $lineItem->getProduct()
+                        )
+                    );
+
                     $manager->persist($lineItem);
                 }
 
@@ -115,7 +129,13 @@ class LineItemHandler
      */
     protected function updateExistingLineItem(LineItem $lineItem, LineItem $existingLineItem)
     {
-        $existingLineItem->setQuantity($lineItem->getQuantity() + $existingLineItem->getQuantity());
+        $newQuantity = $this->roundQuantity(
+            $lineItem->getQuantity() + $existingLineItem->getQuantity(),
+            $existingLineItem->getProductUnit(),
+            $existingLineItem->getProduct()
+        );
+
+        $existingLineItem->setQuantity($newQuantity);
         $existingLineItemNote = $existingLineItem->getNotes();
         $newNotes = $lineItem->getNotes();
         $notes = trim(implode(' ', [$existingLineItemNote, $newNotes]));
@@ -123,5 +143,26 @@ class LineItemHandler
             $existingLineItem->setNotes($notes);
         }
         $this->savedId = $existingLineItem->getId();
+    }
+
+    /**
+     * @param $quantity
+     * @param Product $product
+     * @param ProductUnit $unit
+     * @return float|int
+     * @throws \OroB2B\Bundle\ProductBundle\Exception\InvalidRoundingTypeException
+     */
+    protected function roundQuantity($quantity, ProductUnit $unit = null, Product $product = null)
+    {
+        if ($this->roundingService) {
+            $productUnit = $product ? $product->getUnitPrecision($unit->getCode()) : null;
+            if ($unit) {
+                $precision = $productUnit ? $productUnit->getPrecision() : $unit->getDefaultPrecision();
+
+                return $this->roundingService->round($quantity, $precision);
+            }
+        }
+
+        return $quantity;
     }
 }
