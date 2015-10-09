@@ -30,7 +30,7 @@ class ProductTest extends \PHPUnit_Framework_TestCase
             ['organization', new Organization()],
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
-            ['productStatus', Product::STATUS_ENABLED, Product::STATUS_DISABLED]
+            ['status', Product::STATUS_ENABLED, Product::STATUS_DISABLED]
         ];
 
         $this->assertPropertyAccessors(new Product(), $properties);

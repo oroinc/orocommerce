@@ -104,7 +104,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     /**
      * @var bool
      *
-     * @ORM\Column(name="status", type="string", nullable=false, length=16)
+     * @ORM\Column(name="status", type="string", length=16, nullable=false)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
