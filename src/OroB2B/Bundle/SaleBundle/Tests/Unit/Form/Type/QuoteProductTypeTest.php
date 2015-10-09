@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
 
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
