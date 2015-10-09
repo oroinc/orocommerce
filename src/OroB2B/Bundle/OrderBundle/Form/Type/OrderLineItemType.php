@@ -159,17 +159,4 @@ class OrderLineItemType extends AbstractOrderLineItemType
 
         return $units;
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getItemTemplateSections()
-    {
-        return [
-            'quantity' => ['quantity', 'productUnit'],
-            'price' => ['price', 'priceType'],
-            'ship_by' => ['shipBy'],
-            'comment' => ['comment' => ['page_component' => 'orob2border/js/app/components/notes-component']],
-        ];
-    }
 }

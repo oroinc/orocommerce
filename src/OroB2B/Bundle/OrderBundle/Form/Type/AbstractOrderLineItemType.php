@@ -2,6 +2,9 @@
 
 namespace OroB2B\Bundle\OrderBundle\Form\Type;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Criteria;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -124,7 +127,11 @@ abstract class AbstractOrderLineItemType extends AbstractType
             $view->vars['page_component_options'] = $options['page_component_options'];
         }
         $view->vars['page_component_options']['currency'] = $options['currency'];
-        $view->vars['sections'] = (array)$this->getItemTemplateSections();
+
+        $sections = $this->getItemTemplateSections();
+        $criteria = Criteria::create();
+        $criteria->orderBy(['order' => Criteria::ASC]);
+        $view->vars['sections'] = $sections->matching($criteria);
     }
 
     /**
@@ -133,7 +140,20 @@ abstract class AbstractOrderLineItemType extends AbstractType
     abstract protected function updateAvailableUnits(FormInterface $form);
 
     /**
-     * @return array
+     * @return ArrayCollection
      */
-    abstract protected function getItemTemplateSections();
+    protected function getItemTemplateSections()
+    {
+        return new ArrayCollection(
+            [
+                'quantity' => ['data' => ['quantity' => [], 'productUnit' => []], 'order' => 10],
+                'price' => ['data' => ['price' => [], 'priceType' => []], 'order' => 20],
+                'ship_by' => ['data' => ['shipBy' => []], 'order' => 30],
+                'comment' => [
+                    'data' => ['comment' => ['page_component' => 'orob2border/js/app/components/notes-component']],
+                    'order' => 40,
+                ],
+            ]
+        );
+    }
 }
