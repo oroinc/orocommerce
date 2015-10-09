@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\DataAuditBundle\Entity\AbstractAudit;
@@ -19,6 +20,17 @@ class Audit extends AbstractAudit
      * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
      */
     protected $accountUser;
+
+    /**
+     * @var AuditField[]|Collection
+     *
+     * @ORM\OneToMany(
+     *      targetEntity="OroB2B\Bundle\AccountBundle\Entity\AuditField",
+     *      mappedBy="audit",
+     *      cascade={"persist"}
+     * )
+     */
+    protected $fields;
 
     /**
      * {@inheritdoc}
