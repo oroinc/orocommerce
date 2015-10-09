@@ -2,16 +2,18 @@
 
 namespace OroB2B\Bundle\AccountBundle\EventListener;
 
-use Doctrine\ORM\Query\Expr\Andx;
-use Doctrine\ORM\Query\Expr\Orx;
-use Doctrine\ORM\Query\Parameter;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
+use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
+use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Event\OrmResultBefore;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class CategoryVisibilityGridListener
 {
@@ -21,13 +23,63 @@ class CategoryVisibilityGridListener
     const ACCOUNT_GROUP_CATEGORY_VISIBILITY_ALIAS = 'accountGroupCategoryVisibility.visibility';
 
     /**
+     * @var ManagerRegistry
+     */
+    protected $registry;
+
+    /**
+     * @var VisibilityChoicesProvider
+     */
+    protected $visibilityChoicesProvider;
+
+    /**
+     * @var string
+     */
+    protected $categoryClass;
+
+    /**
+     * @param ManagerRegistry $registry
+     * @param VisibilityChoicesProvider $visibilityChoicesProvider
+     */
+    public function __construct(ManagerRegistry $registry, VisibilityChoicesProvider $visibilityChoicesProvider)
+    {
+        $this->registry = $registry;
+        $this->visibilityChoicesProvider = $visibilityChoicesProvider;
+    }
+
+    /**
+     * @param string $categoryClass
+     */
+    public function setCategoryClassName($categoryClass)
+    {
+        $this->categoryClass = $categoryClass;
+    }
+
+    public function onPreBuild(PreBuild $event)
+    {
+        $category = $this->getCategory($event->getParameters()->get('category_id'));
+        $config = $event->getConfig();
+        $this->setVisibilityChoices($category, $config, '[columns][visibility]');
+        $this->setVisibilityChoices($category, $config, '[filters][columns][visibility][options][field_options]');
+    }
+
+    protected function setVisibilityChoices($category, DatagridConfiguration $config, $path)
+    {
+        $pathConfig = $config->offsetGetByPath($path);
+
+        $pathConfig['choices'] = $this->visibilityChoicesProvider
+            ->getFormattedChoices($pathConfig['choicesSource'], $category);
+        unset($pathConfig['choicesSource']);
+
+        $config->offsetSetByPath($path, $pathConfig);
+    }
+
+    /**
      * @param OrmResultBefore $event
      */
     public function onResultBefore(OrmResultBefore $event)
     {
-        if (!$this->canHandleGrid($event->getDatagrid()->getName())
-            || !$this->isFilteredByDefaultValue($event->getDatagrid()->getParameters())
-        ) {
+        if (!$this->isFilteredByDefaultValue($event->getDatagrid()->getParameters())) {
             return;
         }
 
@@ -51,23 +103,6 @@ class CategoryVisibilityGridListener
             ], $parts)
         );
         $event->getQuery()->setDQL($dataSource->getQueryBuilder()->getQuery()->getDQL());
-    }
-
-    /**
-     * @param string $gridName
-     *
-     * @return bool
-     */
-    protected function canHandleGrid($gridName)
-    {
-        return in_array(
-            $gridName,
-            [
-                self::ACCOUNT_CATEGORY_VISIBILITY_GRID,
-                self::ACCOUNT_GROUP_CATEGORY_VISIBILITY_GRID
-            ],
-            true
-        );
     }
 
     /**
@@ -132,5 +167,18 @@ class CategoryVisibilityGridListener
             self::ACCOUNT_CATEGORY_VISIBILITY_ALIAS,
             self::ACCOUNT_GROUP_CATEGORY_VISIBILITY_ALIAS
         ];
+    }
+
+    /**
+     * @param integer|null $categoryId
+     * @return Category|null
+     */
+    protected function getCategory($categoryId)
+    {
+        $category = null;
+        if ($categoryId) {
+            $category = $this->registry->getRepository($this->categoryClass)->find($categoryId);
+        }
+        return $category;
     }
 }
