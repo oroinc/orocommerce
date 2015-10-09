@@ -17,7 +17,9 @@ class OroB2BAccountBundle implements Migration
         $schema->dropTable('orob2b_audit_field');
         $schema->dropTable('orob2b_audit');
 
-        $schema->getTable('oro_audit')
+        $auditTable = $schema->getTable('oro_audit');
+        $auditTable->addColumn('account_user_id', 'integer', ['notnull' => false]);
+        $auditTable
             ->addForeignKeyConstraint(
                 $schema->getTable('orob2b_account_user'),
                 ['account_user_id'],
