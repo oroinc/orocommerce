@@ -349,10 +349,12 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                     [
                         'id' => 1,
                         'name' => 'first',
+                        'price_column_usd_unit1_value' => 15,
                     ],
                     [
                         'id' => 2,
                         'name' => 'second',
+                        'price_column_eur_unit1_value' => 22,
                     ],
                     [
                         'id' => 3,
@@ -371,6 +373,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                         'name' => 'first',
                         'price_column_usd' => [$this->createPrice(1, 10, 'USD')],
                         'price_column_eur' => [$this->createPrice(1, 11, 'EUR'), $this->createPrice(1, 12, 'EUR')],
+                        'price_column_usd_unit1_value' => Price::create(15, 'USD'),
                         'showTierPrices' => true
                     ],
                     [
@@ -378,6 +381,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                         'name' => 'second',
                         'price_column_usd' => [$this->createPrice(2, 20, 'USD')],
                         'price_column_eur' => [],
+                        'price_column_eur_unit1_value' => Price::create(22, 'EUR'),
                         'showTierPrices' => true
                     ],
                     [
