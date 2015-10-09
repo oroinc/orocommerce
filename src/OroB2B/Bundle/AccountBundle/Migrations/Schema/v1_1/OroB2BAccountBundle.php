@@ -4,12 +4,10 @@ namespace OroB2B\Bundle\AccountBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroB2BAccountBundle implements Migration, ExtendExtensionAwareInterface
+class OroB2BAccountBundle implements Migration
 {
     const ORO_B2B_CATEGORY_VISIBILITY_TABLE_NAME = 'orob2b_category_visibility';
     const ORO_B2B_ACCOUNT_CATEGORY_VISIBILITY_TABLE_NAME = 'orob2b_acc_category_visibility';
@@ -17,9 +15,6 @@ class OroB2BAccountBundle implements Migration, ExtendExtensionAwareInterface
     const ORO_B2B_CATEGORY_TABLE_NAME = 'orob2b_catalog_category';
     const ORO_B2B_ACCOUNT_TABLE_NAME = 'orob2b_account';
     const ORO_B2B_ACCOUNT_GROUP_TABLE_NAME = 'orob2b_account_group';
-
-    /** @var ExtendExtension */
-    protected $extendExtension;
 
     /**
      * {@inheritdoc}
@@ -38,14 +33,6 @@ class OroB2BAccountBundle implements Migration, ExtendExtensionAwareInterface
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function setExtendExtension(ExtendExtension $extendExtension)
-    {
-        $this->extendExtension = $extendExtension;
-    }
-
-    /**
      * Create orob2b_category_visibility table
      *
      * @param Schema $schema
@@ -57,13 +44,6 @@ class OroB2BAccountBundle implements Migration, ExtendExtensionAwareInterface
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
         $table->setPrimaryKey(['id']);
-
-        $this->extendExtension->addEnumField(
-            $schema,
-            self::ORO_B2B_CATEGORY_VISIBILITY_TABLE_NAME,
-            'visibility',
-            'category_visibility'
-        );
     }
 
     /**
@@ -79,13 +59,6 @@ class OroB2BAccountBundle implements Migration, ExtendExtensionAwareInterface
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
         $table->setPrimaryKey(['id']);
-
-        $this->extendExtension->addEnumField(
-            $schema,
-            self::ORO_B2B_ACCOUNT_CATEGORY_VISIBILITY_TABLE_NAME,
-            'visibility',
-            'acc_ctgry_visibility'
-        );
     }
 
     /**
@@ -101,13 +74,6 @@ class OroB2BAccountBundle implements Migration, ExtendExtensionAwareInterface
         $table->addColumn('account_group_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
         $table->setPrimaryKey(['id']);
-
-        $this->extendExtension->addEnumField(
-            $schema,
-            self::ORO_B2B_ACCOUNT_GROUP_CATEGORY_VISIBILITY_TABLE_NAME,
-            'visibility',
-            'acc_grp_ctgry_vsblity'
-        );
     }
 
     /**
