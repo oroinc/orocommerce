@@ -76,6 +76,8 @@ parameters:
 
     orob2b_account.provider.visibility_choices.class: OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider
 
+    orob2b_account.audit.discriminator_map_listener.class: OroB2B\Bundle\AccountBundle\Audit\DiscriminatorMapListener
+
 services:
     orob2b_account.security.account_user_provider:
         class: %orob2b_account.security.account_user_provider.class%
@@ -483,3 +485,10 @@ services:
     orob2b_account.provider.visibility_choices:
         class: %orob2b_account.provider.visibility_choices.class%
         arguments: [ @translator ]
+
+    orob2b_account.audit.discriminator_map_listener:
+        class: %orob2b_account.audit.discriminator_map_listener.class%
+        arguments:
+            - { orob2b_audit: %orob2b_account.entity.audit.class%, orob2b_audit_field: %orob2b_account.entity.audit_field.class% }
+        tags:
+            - { name: doctrine.event_listener, event: loadClassMetadata }

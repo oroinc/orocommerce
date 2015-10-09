@@ -5,10 +5,11 @@ namespace OroB2B\Bundle\AccountBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\DataAuditBundle\Entity\AbstractAuditField;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="orob2b_audit_field")
+ * @Config(mode="hidden")
  */
 class AuditField extends AbstractAuditField
 {
