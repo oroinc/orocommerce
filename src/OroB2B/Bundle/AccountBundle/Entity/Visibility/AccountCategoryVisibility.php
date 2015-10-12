@@ -105,7 +105,7 @@ class AccountCategoryVisibility implements VisibilityInterface
     /**
      * {@inheritdoc}
      */
-    public static function getDefault(Category $category)
+    public static function getDefault($target = null)
     {
         return self::ACCOUNT_GROUP;
     }
@@ -131,8 +131,11 @@ class AccountCategoryVisibility implements VisibilityInterface
     /**
      * {@inheritdoc}
      */
-    public static function getVisibilityList(Category $category)
+    public static function getVisibilityList($target = null)
     {
+        if (null === $target) {
+            throw new \InvalidArgumentException();
+        }
         $visibilityList = [
             self::ACCOUNT_GROUP,
             self::CATEGORY,
@@ -140,8 +143,8 @@ class AccountCategoryVisibility implements VisibilityInterface
             self::HIDDEN,
             self::VISIBLE
         ];
-        if ($category instanceof Category && !$category->getParentCategory()) {
-            unset($visibilityList[array_search(self::PARENT_CATEGORY, $visibilityList)]);
+        if ($target instanceof Category && !$target->getParentCategory()) {
+            unset($visibilityList[array_search(self::PARENT_CATEGORY, $visibilityList, true)]);
         }
 
         return $visibilityList;

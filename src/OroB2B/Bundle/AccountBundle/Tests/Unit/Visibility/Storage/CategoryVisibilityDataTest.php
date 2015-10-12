@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Storage;
+namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity\Visibility\Storage;
 
 use OroB2B\Bundle\AccountBundle\Visibility\Storage\CategoryVisibilityData;
 

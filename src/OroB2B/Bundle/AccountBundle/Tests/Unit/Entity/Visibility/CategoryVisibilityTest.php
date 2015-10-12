@@ -41,4 +41,20 @@ class CategoryVisibilityTest extends \PHPUnit_Framework_TestCase
         $this->assertInternalType('array', $visibilityList);
         $this->assertNotEmpty($visibilityList);
     }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testGetDefaultWithNoArguments()
+    {
+        CategoryVisibility::getDefault();
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testGetVisibilityListWithNoArguments()
+    {
+        CategoryVisibility::getVisibilityList();
+    }
 }
