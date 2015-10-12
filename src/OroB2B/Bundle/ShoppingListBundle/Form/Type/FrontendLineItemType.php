@@ -8,8 +8,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
-use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 
 class FrontendLineItemType extends AbstractType
 {
@@ -25,10 +23,6 @@ class FrontendLineItemType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        /** @var LineItem $formData */
-        $formData = $builder->getForm()->getData();
-        $product = $formData->getProduct();
-
         $builder
             ->add(
                 'unit',
@@ -44,7 +38,7 @@ class FrontendLineItemType extends AbstractType
                 [
                     'required' => true,
                     'label' => 'orob2b.shoppinglist.lineitem.quantity.label',
-                    'product' => $product,
+                    'product_holder' => $builder->getData(),
                     'product_unit_field' => 'unit',
                 ]
             );

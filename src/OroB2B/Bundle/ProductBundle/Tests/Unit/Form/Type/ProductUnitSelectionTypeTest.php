@@ -22,6 +22,9 @@ use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitHolderType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
 {
     /** @var ProductUnitSelectionType */

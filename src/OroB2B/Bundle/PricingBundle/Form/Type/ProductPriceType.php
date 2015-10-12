@@ -12,7 +12,6 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
@@ -31,9 +30,6 @@ class ProductPriceType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        /** @var Product $product */
-        $product = $options['product'];
-
         $builder
             ->add(
                 'priceList',
@@ -68,7 +64,7 @@ class ProductPriceType extends AbstractType
                 QuantityType::NAME,
                 [
                     'label' => 'orob2b.pricing.quantity.label',
-                    'product' => $product,
+                    'product' => $options['product'],
                     'product_unit_field' => 'unit',
                 ]
             );

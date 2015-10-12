@@ -48,12 +48,6 @@ class QuoteProductOfferType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        /** @var QuoteProductOffer $quoteProductOffer */
-        $quoteProductOffer = null;
-        if (array_key_exists('data', $options)) {
-            $quoteProductOffer = $options['data'];
-        }
-
         $builder
             ->add(
                 'price',
@@ -99,7 +93,7 @@ class QuoteProductOfferType extends AbstractType
                 [
                     'required' => true,
                     'label' => 'orob2b.sale.quoteproductoffer.quantity.label',
-                    'product' => $quoteProductOffer ? $quoteProductOffer->getQuoteProduct() : null,
+                    'product_holder' => $builder->getData(),
                     'default_data' => 1,
                 ]
             );

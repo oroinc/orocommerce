@@ -10,6 +10,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
 use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
 /**
@@ -36,7 +37,7 @@ use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
  *      }
  * )
  */
-class ProductPrice implements ProductUnitHolderInterface
+class ProductPrice implements ProductUnitHolderInterface, ProductHolderInterface
 {
     /**
      * @var integer
@@ -174,7 +175,7 @@ class ProductPrice implements ProductUnitHolderInterface
     }
 
     /**
-     * @return Product
+     * {@inheritdoc}
      */
     public function getProduct()
     {
@@ -194,7 +195,7 @@ class ProductPrice implements ProductUnitHolderInterface
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getProductSku()
     {

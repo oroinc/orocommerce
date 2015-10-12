@@ -10,7 +10,6 @@ use Oro\Bundle\CurrencyBundle\Form\Type\OptionalPriceType as PriceType;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
 
 class RequestProductItemType extends AbstractType
 {
@@ -34,12 +33,6 @@ class RequestProductItemType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        /** @var RequestProductItem $requestProductItem */
-        $requestProductItem = null;
-        if (array_key_exists('data', $options)) {
-            $requestProductItem = $options['data'];
-        }
-
         $builder
             ->add(
                 'price',
@@ -65,7 +58,7 @@ class RequestProductItemType extends AbstractType
                 [
                     'required' => false,
                     'label' => 'orob2b.rfp.requestproductitem.quantity.label',
-                    'product' => $requestProductItem ? $requestProductItem->getRequestProduct() : null,
+                    'product_holder' => $builder->getData(),
                     'default_data' => 1,
                 ]
             );

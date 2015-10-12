@@ -10,6 +10,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use OroB2B\Bundle\OrderBundle\Model\ExtendOrderLineItem;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
 use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
 /**
@@ -29,7 +30,7 @@ use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
  * )
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class OrderLineItem extends ExtendOrderLineItem implements ProductUnitHolderInterface
+class OrderLineItem extends ExtendOrderLineItem implements ProductUnitHolderInterface, ProductHolderInterface
 {
     const PRICE_TYPE_UNIT = 10;
     const PRICE_TYPE_BUNDLED = 20;
@@ -198,9 +199,7 @@ class OrderLineItem extends ExtendOrderLineItem implements ProductUnitHolderInte
     }
 
     /**
-     * Get product
-     *
-     * @return Product
+     * {@inheritdoc}
      */
     public function getProduct()
     {
@@ -221,9 +220,7 @@ class OrderLineItem extends ExtendOrderLineItem implements ProductUnitHolderInte
     }
 
     /**
-     * Get productSku
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getProductSku()
     {
@@ -294,9 +291,7 @@ class OrderLineItem extends ExtendOrderLineItem implements ProductUnitHolderInte
     }
 
     /**
-     * Get productUnit
-     *
-     * @return ProductUnit
+     * {@inheritdoc}
      */
     public function getProductUnit()
     {
@@ -317,9 +312,7 @@ class OrderLineItem extends ExtendOrderLineItem implements ProductUnitHolderInte
     }
 
     /**
-     * Get productUnitCode
-     *
-     * @return ProductUnit
+     * {@inheritdoc}
      */
     public function getProductUnitCode()
     {

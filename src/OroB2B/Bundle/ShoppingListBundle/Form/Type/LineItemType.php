@@ -58,7 +58,7 @@ class LineItemType extends AbstractType
                 [
                     'required' => true,
                     'label' => 'orob2b.shoppinglist.lineitem.quantity.label',
-                    'product' => $data ? $data->getProduct() : null,
+                    'product_holder' => $data,
                     'product_unit_field' => 'unit',
                 ]
             )
