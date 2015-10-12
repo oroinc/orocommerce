@@ -42,6 +42,8 @@ class ProductWithPricesTest extends WebTestCase
      */
     protected function setUp()
     {
+        $this->markTestSkipped('Should be fixed in scope of BB-1300');
+
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
     }
