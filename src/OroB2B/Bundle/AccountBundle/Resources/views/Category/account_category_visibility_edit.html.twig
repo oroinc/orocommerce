@@ -26,11 +26,11 @@
         </div>
         <div class="tab-pane" id="AccountGroupCategoryVisibility">
             {{ form_row(form.visibilityForAccountGroup, {'id': 'accountgroup-category-visibility-changeset'}) }}
-            {{ dataGrid.renderGrid('account-group-category-visibility-grid', {category_id: entity.id}) }}
+            {{ dataGrid.renderGrid('account-group-category-visibility-grid', {target_entity_id: entity.id}) }}
         </div>
         <div class="tab-pane" id="AccountCategoryVisibility">
             {{ form_row(form.visibilityForAccount, {'id': 'account-category-visibility-changeset'}) }}
-            {{ dataGrid.renderGrid('account-category-visibility-grid', {category_id: entity.id}) }}
+            {{ dataGrid.renderGrid('account-category-visibility-grid', {target_entity_id: entity.id}) }}
         </div>
     </div>
 
