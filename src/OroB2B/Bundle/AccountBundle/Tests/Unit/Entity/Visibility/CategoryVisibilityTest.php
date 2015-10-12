@@ -26,9 +26,19 @@ class CategoryVisibilityTest extends \PHPUnit_Framework_TestCase
                 ['visibility', CategoryVisibility::PARENT_CATEGORY],
             ]
         );
-        $this->assertEquals(CategoryVisibility::PARENT_CATEGORY, $entity->getDefault());
+        $entity->setCategory(new Category());
+        $this->assertEquals(
+            CategoryVisibility::CONFIG,
+            CategoryVisibility::getDefault($entity->getCategory())
+        );
 
-        $this->assertInternalType('array', $entity->getVisibilityList());
-        $this->assertNotEmpty($entity->getVisibilityList());
+        $entity->setCategory((new Category())->setParentCategory(new Category()));
+        $this->assertEquals(
+            CategoryVisibility::PARENT_CATEGORY,
+            CategoryVisibility::getDefault($entity->getCategory())
+        );
+        $visibilityList = CategoryVisibility::getVisibilityList($entity->getCategory());
+        $this->assertInternalType('array', $visibilityList);
+        $this->assertNotEmpty($visibilityList);
     }
 }

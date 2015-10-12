@@ -104,7 +104,7 @@ class AccountGroupCategoryVisibility implements VisibilityInterface
     /**
      * {@inheritdoc}
      */
-    public static function getDefault(Category $category = null)
+    public static function getDefault(Category $category)
     {
         return self::CATEGORY;
     }
@@ -130,7 +130,7 @@ class AccountGroupCategoryVisibility implements VisibilityInterface
     /**
      * {@inheritdoc}
      */
-    public static function getVisibilityList(Category $category = null)
+    public static function getVisibilityList(Category $category)
     {
         $visibilityList = [
             self::CATEGORY,

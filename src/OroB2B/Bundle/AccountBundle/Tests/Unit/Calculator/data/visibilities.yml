@@ -24,7 +24,7 @@ inheritance:
             to_account: null
         -
             id: 4
-            parent_category: 4
+            parent_category: 3
             to_all: visible
             to_group: null
             to_account: null
@@ -111,7 +111,7 @@ inheritance:
             parent_category: 17
             to_all: null
             to_group: null
-            to_account: null
+            to_account: category
         -
             id: 19
             parent_category: 17
@@ -131,3 +131,70 @@ empty:
         invisible: []
     configValue: visible
     source: []
+
+rootWithDefaultValues:
+    expected:
+        visible: [1,2,3]
+        invisible: []
+    configValue: visible
+    source:
+        -
+            id: 1
+            parent_category: null
+            to_all: parent_category
+            to_group: null
+            to_account: null
+        -
+            id: 2
+            parent_category: null
+            to_all: null
+            to_group: parent_category
+            to_account: null
+        -
+            id: 3
+            parent_category: null
+            to_all: null
+            to_group: null
+            to_account: parent_category
+
+invalidVisibilityToAll:
+    expected:
+        visible: []
+        invisible: [1]
+    configValue: hidden
+    source:
+        -
+            id: 1
+            parent_category: null
+            to_all: test
+            to_group: null
+            to_account: null
+    expectedException: true
+
+invalidVisibilityToGroup:
+    expected:
+        visible: []
+        invisible: [1]
+    configValue: hidden
+    source:
+        -
+            id: 1
+            parent_category: null
+            to_all: null
+            to_group: test
+            to_account: null
+    expectedException: true
+
+invalidVisibilityToAccount:
+    expected:
+        visible: []
+        invisible: [1]
+    configValue: hidden
+    source:
+        -
+            id: 1
+            parent_category: null
+            to_all: null
+            to_group: null
+            to_account: test
+    expectedException: true

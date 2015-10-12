@@ -49,6 +49,7 @@ parameters:
     orob2b_account.event_listener.form_view.class: OroB2B\Bundle\AccountBundle\EventListener\FormViewListener
     orob2b_account.event_listener.category_visibility_grid_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryVisibilityGridListener
     orob2b_account.event_listener.system_config.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigListener
+    orob2b_account.event_listener.system_config.category_visibility.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigCategoryVisibilityListener
     orob2b_account.event_listener.frontend_datagrid.class: OroB2B\Bundle\AccountBundle\EventListener\DatagridListenerFrontend
     orob2b_account.event_listener.category_visibility_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryVisibilityListener
     orob2b_account.event_listener.category_tree_handler_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryTreeHandlerListener
@@ -78,9 +79,9 @@ parameters:
 
     orob2b_account.provider.visibility_choices.class: OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider
 
-    orob2b_account.storage.category_visibility_storage.class: OroB2B\Bundle\AccountBundle\Storage\CategoryVisibilityStorage
+    orob2b_account.storage.category_visibility_storage.class: OroB2B\Bundle\AccountBundle\Visibility\Storage\CategoryVisibilityStorage
 
-    orob2b_account.calculator.category_visibility_calculator: OroB2B\Bundle\AccountBundle\Calculator\CategoryVisibilityCalculator
+    orob2b_account.calculator.category_visibility_calculator: OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityCalculator
 
 services:
     orob2b_account.security.account_user_provider:
@@ -336,6 +337,13 @@ services:
             - %oro_user.entity.class%
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }
+
+    orob2b_account.event_listener.system_config.category_visibility:
+        class: %orob2b_account.event_listener.system_config.category_visibility.class%
+        arguments:
+            - @orob2b_account.storage.category_visibility_storage
+        tags:
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }
 
     orob2b_frontend.listener.ormdatasource_acl:

@@ -16,7 +16,7 @@ class CategoryVisibilityRepository extends EntityRepository
     public function getVisibilityToAll(Account $account)
     {
         $qb = $this->_em->createQueryBuilder();
-        $qb->select('category.id as id, IDENTITY(category.parentCategory) as parent_category'); //,
+        $qb->select('partial category.{id, parentCategory} as categoryEntity');
         $qb->from('OroB2BCatalogBundle:Category', 'category');
         $qb->leftJoin(
             'OroB2BAccountBundle:Visibility\CategoryVisibility',
@@ -25,7 +25,7 @@ class CategoryVisibilityRepository extends EntityRepository
             'IDENTITY(categoryVisibility.category) = category.id'
         );
         $qb->addSelect('categoryVisibility.visibility AS to_all');
-//
+
         $qb->leftJoin(
             'OroB2BAccountBundle:Visibility\AccountCategoryVisibility',
             'accountCategoryVisibility',
@@ -49,6 +49,6 @@ class CategoryVisibilityRepository extends EntityRepository
         // parent categories should be first for optimized calculation because of some visibility dependency to parent
         $qb->orderBy('category.level', 'ASC');
 
-        return $qb->getQuery()->getArrayResult();
+        return $qb->getQuery()->getResult();
     }
 }

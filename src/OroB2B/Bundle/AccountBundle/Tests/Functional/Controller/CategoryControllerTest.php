@@ -126,10 +126,10 @@ class CategoryControllerTest extends WebTestCase
         $this->assertNotCount(0, $accountGroupCategoryVisibilityRepo->findAll());
 
         $this->submitForm(
-            (new CategoryVisibility())->getDefault(),
-            json_encode([$this->account->getId() => ['visibility' => (new AccountCategoryVisibility())->getDefault()]]),
+            CategoryVisibility::getDefault(),
+            json_encode([$this->account->getId() => ['visibility' => AccountCategoryVisibility::getDefault()]]),
             json_encode(
-                [$this->group->getId() => ['visibility' => (new AccountGroupCategoryVisibility())->getDefault()]]
+                [$this->group->getId() => ['visibility' => AccountGroupCategoryVisibility::getDefault()]]
             )
         );
 

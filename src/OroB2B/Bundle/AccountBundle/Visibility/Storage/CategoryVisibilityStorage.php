@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Storage;
+namespace OroB2B\Bundle\AccountBundle\Visibility\Storage;
 
 use Doctrine\Common\Cache\CacheProvider;
 
-use OroB2B\Bundle\AccountBundle\Calculator\CategoryVisibilityCalculator;
+use OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityCalculator;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 
 class CategoryVisibilityStorage
@@ -46,7 +46,7 @@ class CategoryVisibilityStorage
      */
     public function clearData(array $accountIds = null)
     {
-        if (empty($accountIds)) {
+        if ($accountIds === null) {
             $this->cacheProvider->deleteAll();
         } else {
             foreach ($accountIds as $accountId) {

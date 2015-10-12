@@ -6,10 +6,10 @@ use Doctrine\Common\Cache\CacheProvider;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 
-use OroB2B\Bundle\AccountBundle\Calculator\CategoryVisibilityCalculator;
+use OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityCalculator;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Storage\CategoryVisibilityData;
-use OroB2B\Bundle\AccountBundle\Storage\CategoryVisibilityStorage;
+use OroB2B\Bundle\AccountBundle\Visibility\Storage\CategoryVisibilityData;
+use OroB2B\Bundle\AccountBundle\Visibility\Storage\CategoryVisibilityStorage;
 
 class CategoryVisibilityStorageTest extends \PHPUnit_Framework_TestCase
 {
@@ -35,7 +35,9 @@ class CategoryVisibilityStorageTest extends \PHPUnit_Framework_TestCase
             ->setMethods(['deleteAll', 'delete', 'fetch', 'save'])
             ->getMockForAbstractClass();
 
-        $this->calculator = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Calculator\CategoryVisibilityCalculator')
+        $this->calculator = $this->getMockBuilder(
+            'OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityCalculator'
+        )
             ->disableOriginalConstructor()
             ->getMock();
 
