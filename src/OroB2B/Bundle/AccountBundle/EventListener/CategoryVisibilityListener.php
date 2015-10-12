@@ -11,7 +11,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Storage\CategoryVisibilityStorage;
+use OroB2B\Bundle\AccountBundle\Visibility\Storage\CategoryVisibilityStorage;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 

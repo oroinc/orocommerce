@@ -7,13 +7,17 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
-use OroB2B\Bundle\AccountBundle\Calculator\CategoryVisibilityCalculator;
+use OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityCalculator;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class CategoryVisibilityCalculatorTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /**
      * @var CategoryVisibilityCalculator
      */
@@ -56,10 +60,13 @@ class CategoryVisibilityCalculatorTest extends \PHPUnit_Framework_TestCase
      * @param array $expected
      * @param string $configValue
      * @param array $visibilities
+     * @param bool $expectedException
      */
-    public function testCalculateVisible($expected, $configValue, $visibilities)
+    public function testCalculateVisible($expected, $configValue, $visibilities, $expectedException = false)
     {
         $account = new Account();
+
+        $this->prepareVisibilities($visibilities);
 
         $this->configManager->expects($this->any())
             ->method('get')
@@ -82,13 +89,17 @@ class CategoryVisibilityCalculatorTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $em->expects($this->once())
-                ->method('getRepository')
-                ->with('OroB2BAccountBundle:Visibility\CategoryVisibility')
-                ->willReturn($repo);
+            ->method('getRepository')
+            ->with('OroB2BAccountBundle:Visibility\CategoryVisibility')
+            ->willReturn($repo);
         $this->managerRegistry->expects($this->once())
             ->method('getManagerForClass')
             ->with('OroB2BAccountBundle:Visibility\CategoryVisibility')
             ->willReturn($em);
+
+        if ($expectedException) {
+            $this->setExpectedException('\OroB2B\Bundle\AccountBundle\Exception\InvalidVisibilityValueException');
+        }
 
         $actual = $this->calculator->getVisibility($account);
         $this->assertEquals($expected, $actual);
@@ -102,5 +113,26 @@ class CategoryVisibilityCalculatorTest extends \PHPUnit_Framework_TestCase
         $filePath = __DIR__.DIRECTORY_SEPARATOR.'data'.DIRECTORY_SEPARATOR.'visibilities.yml';
 
         return Yaml::parse($filePath);
+    }
+
+    /**
+     * @param array $visibilities
+     * @return array
+     */
+    public function prepareVisibilities(array &$visibilities)
+    {
+        foreach ($visibilities as &$visibility) {
+            /** @var Category $category */
+            $category = $this->createEntity('\OroB2B\Bundle\CatalogBundle\Entity\Category', $visibility['id']);
+            if (null !== $visibility['parent_category']) {
+                $parentCategory = $this->createEntity(
+                    '\OroB2B\Bundle\CatalogBundle\Entity\Category',
+                    $visibility['parent_category']
+                );
+                $category->setParentCategory($parentCategory);
+            }
+            $visibility['categoryEntity'] = $category;
+            unset($visibility['id'], $visibility['parent_category']);
+        }
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Storage;
+namespace OroB2B\Bundle\AccountBundle\Visibility\Storage;
 
 class CategoryVisibilityData
 {

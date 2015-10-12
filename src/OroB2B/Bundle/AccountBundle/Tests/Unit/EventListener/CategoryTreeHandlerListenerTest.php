@@ -8,8 +8,8 @@ use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\EventListener\CategoryTreeHandlerListener;
-use OroB2B\Bundle\AccountBundle\Storage\CategoryVisibilityData;
-use OroB2B\Bundle\AccountBundle\Storage\CategoryVisibilityStorage;
+use OroB2B\Bundle\AccountBundle\Visibility\Storage\CategoryVisibilityData;
+use OroB2B\Bundle\AccountBundle\Visibility\Storage\CategoryVisibilityStorage;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
 
@@ -52,7 +52,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->categoryVisibilityStorage = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Storage\CategoryVisibilityStorage')
+            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Visibility\Storage\CategoryVisibilityStorage')
             ->disableOriginalConstructor()
             ->getMock();
 

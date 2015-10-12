@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Calculator;
+namespace OroB2B\Bundle\AccountBundle\Visibility\Calculator;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 

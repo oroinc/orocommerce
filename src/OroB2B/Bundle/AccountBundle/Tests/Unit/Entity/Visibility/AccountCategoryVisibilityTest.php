@@ -28,6 +28,7 @@ class AccountCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
                 ['visibility', AccountCategoryVisibility::CATEGORY],
             ]
         );
+        $entity->setCategory(new Category());
         $this->assertEquals(
             AccountCategoryVisibility::ACCOUNT_GROUP,
             AccountCategoryVisibility::getDefault($entity->getCategory())
