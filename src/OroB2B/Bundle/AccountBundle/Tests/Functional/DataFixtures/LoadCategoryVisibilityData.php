@@ -20,18 +20,21 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 class LoadCategoryVisibilityData extends AbstractFixture implements DependentFixtureInterface
 {
+    /** @var ObjectManager */
+    protected $em;
+
     /**
      * {@inheritdoc}
      */
     public function load(ObjectManager $manager)
     {
+        $this->em = $manager;
         $categories = $this->getCategoryVisibilityData();
 
         $this->addCategories($manager, $categories);
 
         $manager->flush();
     }
-
 
     /**
      * {@inheritdoc}
@@ -54,11 +57,11 @@ class LoadCategoryVisibilityData extends AbstractFixture implements DependentFix
         $user = $this->getReference(LoadAccountUserData::EMAIL);
         $account = $user->getAccount();
 
-        foreach ($categories as $category_name => $categoryData) {
+        foreach ($categories as $categoryName => $categoryData) {
             $category = new Category();
-            $this->setTitle($category, $category_name);
+            $this->setTitle($category, $categoryName);
 
-            if ($categoryData['parent_category'] == 'root') {
+            if ($categoryData['parent_category'] === 'root') {
                 /** @var CategoryRepository $categoryRepository */
                 $categoryRepository = $manager->getRepository('OroB2BCatalogBundle:Category');
                 $parentCategory = $categoryRepository->getMasterCatalogRoot();
@@ -69,28 +72,18 @@ class LoadCategoryVisibilityData extends AbstractFixture implements DependentFix
             $category->setParentCategory($parentCategory);
 
             if (isset($categoryData['to_all'])) {
-                $this->setCategoryVisibility($manager, $category, $categoryData['to_all']);
+                $this->setCategoryVisibility($category, $categoryData['to_all']);
             }
 
             if ($categoryData['to_group']) {
-                $this->setAccountGroupCategoryVisibility(
-                    $manager,
-                    $category,
-                    $account->getGroup(),
-                    $categoryData['to_group']
-                );
+                $this->setAccountGroupCategoryVisibility($category, $account->getGroup(), $categoryData['to_group']);
             }
 
             if ($categoryData['to_account']) {
-                $this->setAccountCategoryVisibility(
-                    $manager,
-                    $category,
-                    $account,
-                    $categoryData['to_account']
-                );
+                $this->setAccountCategoryVisibility($category, $account, $categoryData['to_account']);
             }
 
-            $this->addReference($category_name, $category);
+            $this->addReference($categoryName, $category);
 
             $manager->persist($category);
         }
@@ -109,27 +102,24 @@ class LoadCategoryVisibilityData extends AbstractFixture implements DependentFix
     }
 
     /**
-     * @param ObjectManager $manager
      * @param Category $category
      * @param string $visibilityToAll
      */
-    protected function setCategoryVisibility(ObjectManager $manager, Category $category, $visibilityToAll)
+    protected function setCategoryVisibility(Category $category, $visibilityToAll)
     {
         $categoryVisibility = new CategoryVisibility();
         $categoryVisibility->setCategory($category);
         $categoryVisibility->setVisibility($visibilityToAll);
 
-        $manager->persist($categoryVisibility);
+        $this->em->persist($categoryVisibility);
     }
 
     /**
-     * @param ObjectManager $manager
      * @param Category $category
      * @param AccountGroup $accountGroup
      * @param string $visibilityToAccountGroup
      */
     protected function setAccountGroupCategoryVisibility(
-        ObjectManager $manager,
         Category $category,
         AccountGroup $accountGroup,
         $visibilityToAccountGroup
@@ -140,17 +130,15 @@ class LoadCategoryVisibilityData extends AbstractFixture implements DependentFix
         $accountGroupCategoryVisibility->setAccountGroup($accountGroup);
         $accountGroupCategoryVisibility->setVisibility($visibilityToAccountGroup);
 
-        $manager->persist($accountGroupCategoryVisibility);
+        $this->em->persist($accountGroupCategoryVisibility);
     }
 
     /**
-     * @param ObjectManager $manager
      * @param Category $category
      * @param Account $account
      * @param string $visibilityToAccount
      */
     protected function setAccountCategoryVisibility(
-        ObjectManager $manager,
         Category $category,
         Account $account,
         $visibilityToAccount
@@ -160,7 +148,7 @@ class LoadCategoryVisibilityData extends AbstractFixture implements DependentFix
         $accountGroupCategoryVisibility->setAccount($account);
         $accountGroupCategoryVisibility->setVisibility($visibilityToAccount);
 
-        $manager->persist($accountGroupCategoryVisibility);
+        $this->em->persist($accountGroupCategoryVisibility);
     }
 
     /**

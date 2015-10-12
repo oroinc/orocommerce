@@ -26,14 +26,6 @@ class LoadAccountUserData extends AbstractFixture implements DependentFixtureInt
     protected $container;
 
     /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
-    /**
      * @var array
      */
     protected $users = [
@@ -43,7 +35,7 @@ class LoadAccountUserData extends AbstractFixture implements DependentFixtureInt
             'email' => self::EMAIL,
             'enabled' => true,
             'password' => self::PASSWORD,
-            'account' => 'account.level_1'
+            'account' => 'account.level_1.3'
         ],
         [
             'first_name' => 'First',
@@ -77,6 +69,14 @@ class LoadAccountUserData extends AbstractFixture implements DependentFixtureInt
             'password' => 'pass'
         ],
     ];
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
+    }
 
     /**
      * @param ObjectManager $manager

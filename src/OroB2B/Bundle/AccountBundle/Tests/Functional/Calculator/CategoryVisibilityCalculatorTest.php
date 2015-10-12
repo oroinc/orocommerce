@@ -200,7 +200,7 @@ class CategoryVisibilityCalculatorTest extends WebTestCase
         $accountGroupVisibility->setVisibility($visibility);
 
         $em->persist($accountGroupVisibility);
-        $em->flush($accountGroupVisibility);
+        $em->flush();
     }
 
     /**
@@ -230,7 +230,7 @@ class CategoryVisibilityCalculatorTest extends WebTestCase
         $accountGroupVisibility->setVisibility($visibility);
 
         $em->persist($accountGroupVisibility);
-        $em->flush($accountGroupVisibility);
+        $em->flush();
     }
 
     /**
@@ -244,7 +244,7 @@ class CategoryVisibilityCalculatorTest extends WebTestCase
             ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountCategoryVisibility');
 
         /** @var Account $account */
-        $account = $this->getReference('account.level_1');
+        $account = $this->getReference('account.level_1.3');
         $accountVisibility = $em
             ->getRepository('OroB2BAccountBundle:Visibility\AccountCategoryVisibility')
             ->findOneBy(['category' => $category, 'account' => $account]);
@@ -252,7 +252,7 @@ class CategoryVisibilityCalculatorTest extends WebTestCase
         $accountVisibility->setVisibility($visibility);
 
         $em->persist($accountVisibility);
-        $em->flush($accountVisibility);
+        $em->flush();
     }
 
     /**
@@ -275,12 +275,19 @@ class CategoryVisibilityCalculatorTest extends WebTestCase
     {
         $treeData = $this->getTreeData();
 
+        $treeCategoryIds = array_map(
+            function ($data) {
+                return $data->text;
+            },
+            json_decode($treeData)->data
+        );
+
         foreach ($visibleCategories as $categoryName) {
-            $this->assertContains($categoryName, $treeData);
+            $this->assertContains($categoryName, $treeCategoryIds);
         }
 
         foreach ($invisibleCategories as $categoryName) {
-            $this->assertNotContains($categoryName, $treeData);
+            $this->assertNotContains($categoryName, $treeCategoryIds);
         }
     }
 }
