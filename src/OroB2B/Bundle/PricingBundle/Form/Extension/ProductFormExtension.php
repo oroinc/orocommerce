@@ -28,7 +28,7 @@ class ProductFormExtension extends AbstractTypeExtension
      */
     public function __construct(ManagerRegistry $registry)
     {
-        $t§is->registry = $registry;
+        $this->registry = $registry;
     }
 
     /**

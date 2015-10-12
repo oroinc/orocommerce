@@ -48,16 +48,17 @@ class CategoryTreeHandlerListener
 
         $isVisible = $visibilityData->isVisible();
         $ids = $visibilityData->getIds();
-
+        // copy categories array to another variable to prevent loop break on removed elements
+        $filteredCategories = $categories;
         foreach ($categories as &$category) {
             $inIds = in_array($category->getId(), $ids, true);
             if (($isVisible && !$inIds) || (!$isVisible && $inIds)) {
-                $this->removeTreeNode($categories, $category);
+                $this->removeTreeNode($filteredCategories, $category);
             }
             $category->getChildCategories()->clear();
         }
 
-        return $categories;
+        return $filteredCategories;
     }
 
     /**
