@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Storage;
+namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Visibility\Storage;
 
 use Doctrine\Common\Cache\CacheProvider;
 
