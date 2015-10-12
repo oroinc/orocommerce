@@ -45,6 +45,7 @@ class CategoryVisibilityCalculatorTest extends WebTestCase
         return [
             [
                 'visibleCategories' => [
+                    'Product Catalog',
                     'category_1_2',
                     'category_1_2_6',
                     'category_1_2_6_8',
@@ -85,6 +86,7 @@ class CategoryVisibilityCalculatorTest extends WebTestCase
         return [
             [
                 'visibleCategories' => [
+                    'Product Catalog',
                     'category_1_2',
                     'category_1_2_9',
                     'category_1_10',
@@ -127,6 +129,7 @@ class CategoryVisibilityCalculatorTest extends WebTestCase
         return [
             [
                 'visibleCategories' => [
+                    'Product Catalog',
                     'category_1_2',
                     'category_1_2_6',
                     'category_1_2_6_8',
@@ -165,6 +168,7 @@ class CategoryVisibilityCalculatorTest extends WebTestCase
         return [
             [
                 'visibleCategories' => [
+                    'Product Catalog',
                     'category_1_2',
                     'category_1_2_6',
                     'category_1_2_6_8',
@@ -275,19 +279,21 @@ class CategoryVisibilityCalculatorTest extends WebTestCase
     {
         $treeData = $this->getTreeData();
 
-        $treeCategoryIds = array_map(
+        $treeCategories = array_map(
             function ($data) {
                 return $data->text;
             },
             json_decode($treeData)->data
         );
 
+        $this->assertCount(count($visibleCategories), $treeCategories);
+
         foreach ($visibleCategories as $categoryName) {
-            $this->assertContains($categoryName, $treeCategoryIds);
+            $this->assertContains($categoryName, $treeCategories);
         }
 
         foreach ($invisibleCategories as $categoryName) {
-            $this->assertNotContains($categoryName, $treeCategoryIds);
+            $this->assertNotContains($categoryName, $treeCategories);
         }
     }
 }
