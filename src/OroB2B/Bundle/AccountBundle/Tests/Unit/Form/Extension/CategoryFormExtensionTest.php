@@ -16,7 +16,7 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as EntityIden
 use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSetDataListener;
 use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSubmitListener;
 use OroB2B\Bundle\AccountBundle\Form\Extension\CategoryFormExtension;
-use OroB2B\Bundle\AccountBundle\Formatter\ChoiceFormatter;
+use OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityChangesetTypeStub;
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocaleCollectionType;
@@ -35,8 +35,8 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
     /** @var CategoryPostSubmitListener|\PHPUnit_Framework_MockObject_MockObject */
     protected $categoryPostSubmitListener;
 
-    /** @var ChoiceFormatter|\PHPUnit_Framework_MockObject_MockObject */
-    protected $categoryVisibilityFormatter;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|VisibilityChoicesProvider */
+    protected $visibilityChoicesProvider;
 
     /** @var CategoryFormExtension|\PHPUnit_Framework_MockObject_MockObject */
     protected $categoryFormExtension;
@@ -54,15 +54,15 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->categoryVisibilityFormatter = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Formatter\ChoiceFormatter')
+        $this->visibilityChoicesProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->categoryFormExtension = new CategoryFormExtension(
             $this->categoryPostSetDataListener,
             $this->categoryPostSubmitListener,
-            $this->categoryVisibilityFormatter
+            $this->visibilityChoicesProvider
         );
         $this->categoryFormExtension->setAccountGroupClass(self::ACCOUNT_GROUP_CLASS);
         $this->categoryFormExtension->setAccountClass(self::ACCOUNT_CLASS);
@@ -98,7 +98,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $this->categoryVisibilityFormatter->expects($this->once())->method('formatChoices')->willReturn([]);
+        $this->visibilityChoicesProvider->expects($this->once())->method('getFormattedChoices')->willReturn([]);
 
         $form = $this->factory->create(CategoryType::NAME);
         $this->assertTrue($form->has('categoryVisibility'));
