@@ -55,14 +55,25 @@ class CategoryVisibilityGridListener
         $this->categoryClass = $categoryClass;
     }
 
+    /**
+     * @param PreBuild $event
+     */
     public function onPreBuild(PreBuild $event)
     {
         $category = $this->getCategory($event->getParameters()->get('category_id'));
+        if (null === $category) {
+            return;
+        }
         $config = $event->getConfig();
         $this->setVisibilityChoices($category, $config, '[columns][visibility]');
         $this->setVisibilityChoices($category, $config, '[filters][columns][visibility][options][field_options]');
     }
 
+    /**
+     * @param Category $category
+     * @param DatagridConfiguration $config
+     * @param string $path
+     */
     protected function setVisibilityChoices($category, DatagridConfiguration $config, $path)
     {
         $pathConfig = $config->offsetGetByPath($path);

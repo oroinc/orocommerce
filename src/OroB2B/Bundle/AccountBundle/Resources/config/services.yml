@@ -49,12 +49,15 @@ parameters:
     orob2b_account.event_listener.form_view.class: OroB2B\Bundle\AccountBundle\EventListener\FormViewListener
     orob2b_account.event_listener.category_visibility_grid_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryVisibilityGridListener
     orob2b_account.event_listener.system_config.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigListener
+    orob2b_account.event_listener.system_config.category_visibility.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigCategoryVisibilityListener
+    orob2b_account.event_listener.frontend_datagrid.class: OroB2B\Bundle\AccountBundle\EventListener\DatagridListenerFrontend
+    orob2b_account.event_listener.category_visibility_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryVisibilityListener
+    orob2b_account.event_listener.category_tree_handler_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryTreeHandlerListener
 
     orob2b_account.acl.group_provider.class: OroB2B\Bundle\AccountBundle\Acl\Group\AclGroupProvider
     orob2b_account.acl.resolver.role_translation_prefix.class: OroB2B\Bundle\AccountBundle\Acl\Resolver\RoleTranslationPrefixResolver
     orob2b_account.account_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_account.account_user_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
-    orob2b_account.event_listener.frontend_datagrid.class: OroB2B\Bundle\AccountBundle\EventListener\DatagridListenerFrontend
     #Twig
     orob2b_account.twig.account_extension.class: OroB2B\Bundle\AccountBundle\Twig\AccountExtension
     #Voters
@@ -75,6 +78,10 @@ parameters:
     orob2b.account.catalog.visibility.change_set.validatior.class: OroB2B\Bundle\AccountBundle\Validator\Constraints\VisibilityChangeSetValidator
 
     orob2b_account.provider.visibility_choices.class: OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider
+
+    orob2b_account.storage.category_visibility_storage.class: OroB2B\Bundle\AccountBundle\Visibility\Storage\CategoryVisibilityStorage
+
+    orob2b_account.calculator.category_visibility_calculator: OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityCalculator
 
 services:
     orob2b_account.security.account_user_provider:
@@ -332,6 +339,13 @@ services:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
             - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }
 
+    orob2b_account.event_listener.system_config.category_visibility:
+        class: %orob2b_account.event_listener.system_config.category_visibility.class%
+        arguments:
+            - @orob2b_account.storage.category_visibility_storage
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }
+
     orob2b_frontend.listener.ormdatasource_acl:
         class: %orob2b_account.event_listener.ormdatasource_acl.class%
         arguments:
@@ -483,3 +497,41 @@ services:
     orob2b_account.provider.visibility_choices:
         class: %orob2b_account.provider.visibility_choices.class%
         arguments: [ @translator ]
+
+    orob2b_account.storage.category_visibility_storage.cache:
+        public: false
+        parent: oro.file_cache.abstract
+        calls:
+            - [ setNamespace, [ "orob2b_account.storage.category_visibility_storage.cache" ] ]
+
+    orob2b_account.calculator.category_visibility_calculator:
+        class: %orob2b_account.calculator.category_visibility_calculator%
+        arguments:
+            - @doctrine
+        calls:
+            - [setContainer, [@service_container]]
+            
+    orob2b_account.storage.category_visibility_storage:
+        class: %orob2b_account.storage.category_visibility_storage.class%
+        arguments:
+            - @orob2b_account.storage.category_visibility_storage.cache
+            - @orob2b_account.calculator.category_visibility_calculator
+
+    orob2b_account.event_listener.category_visibility_listener:
+        class: %orob2b_account.event_listener.category_visibility_listener.class%
+        arguments:
+            - @orob2b_account.storage.category_visibility_storage
+        tags:
+            - { name: doctrine.event_listener, event: postPersist }
+            - { name: doctrine.event_listener, event: postUpdate }
+            - { name: doctrine.event_listener, event: postRemove }
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: postFlush }
+            - { name: doctrine.event_listener, event: onClear }
+
+    orob2b_account.event_listener.category_tree_handler_listener:
+        class: %orob2b_account.event_listener.category_tree_handler_listener.class%
+        arguments:
+            - @orob2b_account.storage.category_visibility_storage
+        tags:
+            - {name: kernel.event_listener, event: orob2b_catalog.category.tree.create_after, method: onCreateAfter }
