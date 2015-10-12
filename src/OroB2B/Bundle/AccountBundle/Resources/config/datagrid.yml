@@ -760,14 +760,14 @@ datagrid:
                 select:
                     - account.id
                     - account.name
-                    - accountCategoryVisibility
+                    - visibilityAlias
                 from:
                     - { table: %orob2b_account.entity.account.class%, alias: account }
                 join:
                     left:
-                        - { join: %orob2b_account.entity.account_category_visibility.class%, alias: accountCategoryVisibility, conditionType: WITH, condition: 'accountCategoryVisibility.account = account AND accountCategoryVisibility.category = :category_id' }
+                        - { join: %orob2b_account.entity.account_category_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.account = account AND visibilityAlias.category = :target_entity_id' }
             bind_parameters:
-                - category_id
+                - target_entity_id
         columns:
             name:
                 label: orob2b.account.name.label
@@ -775,13 +775,12 @@ datagrid:
                 label: orob2b.account.visibility.accountcategoryvisibility.entity_label
                 frontend_type: select
                 editable: true
-                choicesSource: %orob2b_account.entity.account_category_visibility.class%
         sorters:
             columns:
                 name:
                     data_name: account.name
                 visibility:
-                    data_name: accountCategoryVisibility.visibility
+                    data_name: visibilityAlias.visibility
             default:
                 name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
         filters:
@@ -791,11 +790,10 @@ datagrid:
                     data_name: account.name
                 visibility:
                     type: choice
-                    data_name: accountCategoryVisibility.visibility
+                    data_name: visibilityAlias.visibility
                     options:
                         field_options:
                             multiple: true
-                            choicesSource: %orob2b_account.entity.account_category_visibility.class%
         options:
             cellSelection:
                 dataField: id
@@ -816,9 +814,9 @@ datagrid:
                     - { table: %orob2b_account.entity.account_group.class%, alias: accountGroup }
                 join:
                     left:
-                        - { join: %orob2b_account.entity.account_group_category_visibility.class%, alias: accountGroupCategoryVisibility, conditionType: WITH, condition: 'accountGroupCategoryVisibility.accountGroup = accountGroup AND accountGroupCategoryVisibility.category = :category_id' }
+                        - { join: %orob2b_account.entity.account_group_category_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.accountGroup = accountGroup AND visibilityAlias.category = :target_entity_id' }
             bind_parameters:
-                - category_id
+                - target_entity_id
         columns:
             name:
                 label: orob2b.account.name.label
@@ -826,13 +824,12 @@ datagrid:
                 label: orob2b.account.visibility.accountgroupcategoryvisibility.entity_label
                 frontend_type: select
                 editable: true
-                choicesSource: %orob2b_account.entity.account_group_category_visibility.class%
         sorters:
             columns:
                 name:
                     data_name: accountGroup.name
                 visibility:
-                    data_name: accountGroupCategoryVisibility.visibility
+                    data_name: visibilityAlias.visibility
             default:
                 name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
         filters:
@@ -842,17 +839,115 @@ datagrid:
                     data_name: accountGroup.name
                 visibility:
                     type: choice
-                    data_name: accountGroupCategoryVisibility.visibility
+                    data_name: visibilityAlias.visibility
                     options:
                         field_options:
                             multiple: true
-                            choicesSource: %orob2b_account.entity.account_group_category_visibility.class%
         options:
             cellSelection:
                 dataField: id
                 columnName:
                     - visibility
                 selector: '#accountgroup-category-visibility-changeset'
+        properties:
+            id: ~
+
+    account-product-visibility-grid:
+        source:
+            type:              orm
+            query:
+                select:
+                    - account.id
+                    - account.name
+                    - visibilityAlias
+                from:
+                    - { table: %orob2b_account.entity.account.class%, alias: account }
+                join:
+                    left:
+                        - { join: %orob2b_account.entity.account_product_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.account = account AND visibilityAlias.product = :target_entity_id' }
+            bind_parameters:
+                - target_entity_id
+        columns:
+            name:
+                label: orob2b.account.name.label
+            visibility:
+                label: orob2b.account.visibility.accountproductvisibility.entity_label
+                frontend_type: select
+                editable: true
+        sorters:
+            columns:
+                name:
+                    data_name: account.name
+                visibility:
+                    data_name: visibilityAlias.visibility
+            default:
+                name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                name:
+                    type:      string
+                    data_name: account.name
+                visibility:
+                    type: choice
+                    data_name: visibilityAlias.visibility
+                    options:
+                        field_options:
+                            multiple: true
+        options:
+            cellSelection:
+                dataField: id
+                columnName:
+                    - visibility
+                selector: '#account-product-visibility-changeset'
+        properties:
+            id: ~
+
+    account-group-product-visibility-grid:
+        source:
+            type:              orm
+            query:
+                select:
+                    - accountGroup.id
+                    - accountGroup.name
+                from:
+                    - { table: %orob2b_account.entity.account_group.class%, alias: accountGroup }
+                join:
+                    left:
+                        - { join: %orob2b_account.entity.account_group_product_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.accountGroup = accountGroup AND visibilityAlias.product = :target_entity_id' }
+            bind_parameters:
+                - target_entity_id
+        columns:
+            name:
+                label: orob2b.account.name.label
+            visibility:
+                label: orob2b.account.visibility.accountgroupproductvisibility.entity_label
+                frontend_type: select
+                editable: true
+        sorters:
+            columns:
+                name:
+                    data_name: accountGroup.name
+                visibility:
+                    data_name: visibilityAlias.visibility
+            default:
+                name: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                name:
+                    type:      string
+                    data_name: accountGroup.name
+                visibility:
+                    type: choice
+                    data_name: visibilityAlias.visibility
+                    options:
+                        field_options:
+                            multiple: true
+        options:
+            cellSelection:
+                dataField: id
+                columnName:
+                    - visibility
+                selector: '#accountgroup-product-visibility-changeset'
         properties:
             id: ~
 
@@ -915,4 +1010,3 @@ datagrid:
                 icon:          trash
                 acl_resource:  orob2b_account_frontend_account_user_delete
         action_configuration: [@orob2b_account.datagrid.action_permission_provider, "getUserPermissions"]
-        

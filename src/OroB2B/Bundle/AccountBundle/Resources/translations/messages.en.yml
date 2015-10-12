@@ -188,6 +188,8 @@ orob2b.account:
         region_code.label:       State ISO code
 
     visibility:
+        to_all:
+            label: Visibility to All
         accountcategoryvisibility:
             entity_label: Visibility to Accounts
             entity_plural_label: Account Category Visibilities

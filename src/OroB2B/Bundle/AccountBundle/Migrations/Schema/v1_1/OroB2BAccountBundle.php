@@ -7,6 +7,9 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class OroB2BAccountBundle implements Migration
 {
     const ORO_B2B_ACCOUNT_TABLE_NAME = 'orob2b_account';
