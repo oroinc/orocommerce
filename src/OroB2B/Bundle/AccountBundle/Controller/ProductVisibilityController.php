@@ -15,7 +15,7 @@ class ProductVisibilityController
     /**
      * @Route("/edit/{id}", name="orob2b_account_product_visibility_edit", requirements={"id"="\d+"})
      * @Template
-     * @AclAncestor("orob2b_product_visibility_edit)
+     * @AclAncestor("orob2b_product_visibility_edit")
      *
      * @param Product $product
      * @return array
