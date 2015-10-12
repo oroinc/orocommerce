@@ -46,6 +46,11 @@ define(function(require) {
             AccountUser.__super__.dispose.call(this);
         },
 
+        /**
+         * Reload widget with roles
+         *
+         * @param {Event} e
+         */
         reloadRoleWidget: function(e) {
             var accountUserId = this.options.accountUserId;
             var accountId = e.target.value;

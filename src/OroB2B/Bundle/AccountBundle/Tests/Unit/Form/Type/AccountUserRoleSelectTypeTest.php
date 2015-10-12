@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
 
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Fixtures\TestEntity;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -11,6 +10,7 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
+use OroB2B\Bundle\AccountBundle\Tests\Unit\Fixtures\TestEntity;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType;
 
 class AccountUserRoleSelectTypeTest extends FormIntegrationTestCase

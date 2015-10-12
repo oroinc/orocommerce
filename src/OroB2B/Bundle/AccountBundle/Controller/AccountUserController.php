@@ -202,6 +202,7 @@ class AccountUserController extends Controller
     {
         if ($account) {
             $accountUser->setAccount($account);
+            $accountUser->setOrganization($account->getOrganization());
         } else {
             $accountUser->setAccount(null);
         }
