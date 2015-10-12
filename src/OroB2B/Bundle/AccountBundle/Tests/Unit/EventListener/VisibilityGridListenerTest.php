@@ -111,7 +111,6 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
 
         $columnsPath = '[columns][visibility]';
         $filtersPath = '[filters][columns][visibility][options][field_options]';
-        $targetClassPath = '[options][visibilityTarget]';
 
         $pathConfig = [];
 
@@ -124,7 +123,6 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('offsetGetByPath')
             ->willReturnMap(
                 [
-                    [$targetClassPath, null, self::VISIBILITY_CLASS],
                     [$columnsPath, null, $pathConfig],
                     [$filtersPath, null, $pathConfig],
                 ]
@@ -281,7 +279,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     protected function getNotDefaultAccountCategoryVisibility()
     {
@@ -290,5 +288,6 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
                 return $visibility;
             }
         };
+        return null;
     }
 }

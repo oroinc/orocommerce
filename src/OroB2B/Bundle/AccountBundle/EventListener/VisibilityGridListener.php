@@ -100,7 +100,6 @@ class VisibilityGridListener
      */
     public function onResultBefore(OrmResultBefore $event)
     {
-        $x = $event->getDatagrid()->getName();
         if (!$this->isFilteredByDefaultValue(
             $event->getDatagrid()->getParameters(),
             $this->subscribedGridConfig[$event->getDatagrid()->getName()]['visibilityEntityClass']

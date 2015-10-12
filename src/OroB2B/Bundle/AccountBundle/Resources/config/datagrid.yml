@@ -752,7 +752,7 @@ datagrid:
                 route: orob2b_account_frontend_account_user_role_update
             delete_link:
                 route: orob2b_api_frontend_account_delete_accountuserrole
-###
+
     account-category-visibility-grid:
         source:
             type:              orm
@@ -1010,4 +1010,3 @@ datagrid:
                 icon:          trash
                 acl_resource:  orob2b_account_frontend_account_user_delete
         action_configuration: [@orob2b_account.datagrid.action_permission_provider, "getUserPermissions"]
-        
