@@ -9,6 +9,12 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
 
 class StubProductUnitSelectionType extends StubEntityType
 {
+    /** {@inheritdoc} */
+    public function __construct(array $choices = [], $name = ProductUnitSelectionType::NAME)
+    {
+        parent::__construct($choices, $name);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -20,11 +26,5 @@ class StubProductUnitSelectionType extends StubEntityType
                 'choice_list' => $this->choiceList,
             ]
         );
-    }
-
-    /** {@inheritdoc} */
-    public function getName()
-    {
-        return ProductUnitSelectionType::NAME;
     }
 }

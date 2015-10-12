@@ -88,12 +88,7 @@ class ProductUnitSelectionType extends AbstractType
         $options['choices_updated'] = true;
 
         $formParent
-            ->remove($form->getName())
-            ->add(
-                $form->getName(),
-                $form->getConfig()->getType()->getName(),
-                ['choices' => $this->getProductUnits($product), 'choices_updated' => true]
-            );
+            ->add($form->getName(), $form->getConfig()->getType()->getName(), $options);
     }
 
     /**

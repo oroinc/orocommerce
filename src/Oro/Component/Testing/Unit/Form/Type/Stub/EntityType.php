@@ -19,7 +19,7 @@ class EntityType extends AbstractType
      * @param array $choices
      * @param string $name
      */
-    public function __construct(array $choices = [], $name = 'entity')
+    public function __construct(array $choices, $name = 'entity')
     {
         $this->name = $name;
 

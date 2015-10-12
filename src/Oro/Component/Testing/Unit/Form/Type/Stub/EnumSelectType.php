@@ -12,7 +12,7 @@ class EnumSelectType extends EntityType
     /**
      * @param array $choices
      */
-    public function __construct(array $choices = [])
+    public function __construct(array $choices)
     {
         $choices = $this->getEnumChoices($choices);
         parent::__construct($choices, static::NAME);
