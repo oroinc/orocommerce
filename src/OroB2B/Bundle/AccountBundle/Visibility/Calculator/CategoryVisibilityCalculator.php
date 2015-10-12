@@ -13,7 +13,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Exception\InvalidVisibilityValueException;
+use OroB2B\Bundle\AccountBundle\Visibility\Exception\InvalidVisibilityValueException;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class CategoryVisibilityCalculator implements ContainerAwareInterface

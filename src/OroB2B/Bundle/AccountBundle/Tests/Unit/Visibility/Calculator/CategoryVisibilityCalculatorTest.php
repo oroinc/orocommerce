@@ -98,7 +98,9 @@ class CategoryVisibilityCalculatorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($em);
 
         if ($expectedException) {
-            $this->setExpectedException('\OroB2B\Bundle\AccountBundle\Exception\InvalidVisibilityValueException');
+            $this->setExpectedException(
+                '\OroB2B\Bundle\AccountBundle\Visibility\Exception\InvalidVisibilityValueException'
+            );
         }
 
         $actual = $this->calculator->getVisibility($account);
