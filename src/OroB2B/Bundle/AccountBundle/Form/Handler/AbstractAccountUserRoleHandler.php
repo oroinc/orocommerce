@@ -5,12 +5,13 @@ namespace OroB2B\Bundle\AccountBundle\Form\Handler;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\EntityConfigBundle\Provider\ConfigProviderInterface;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\SecurityBundle\Acl\Extension\EntityMaskBuilder;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
 use Oro\Bundle\UserBundle\Entity\AbstractRole;
 use Oro\Bundle\UserBundle\Form\Handler\AclRoleHandler;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType;
@@ -18,7 +19,7 @@ use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType;
 abstract class AbstractAccountUserRoleHandler extends AclRoleHandler
 {
     /**
-     * @var ConfigProviderInterface
+     * @var ConfigProvider
      */
     protected $ownershipConfigProvider;
 
@@ -33,9 +34,14 @@ abstract class AbstractAccountUserRoleHandler extends AclRoleHandler
     protected $doctrineHelper;
 
     /**
-     * @param ConfigProviderInterface $provider
+     * @var Account
      */
-    public function setOwnershipConfigProvider(ConfigProviderInterface $provider)
+    protected $originalAccount;
+
+    /**
+     * @param ConfigProvider $provider
+     */
+    public function setOwnershipConfigProvider(ConfigProvider $provider)
     {
         $this->ownershipConfigProvider = $provider;
     }
