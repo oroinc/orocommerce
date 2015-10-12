@@ -282,10 +282,14 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
 
     /**
      * @param AccountUser $accountUser
+     *
+     * @return $this
      */
     public function removeAccountUser(AccountUser $accountUser)
     {
         $this->accountUsers->removeElement($accountUser);
+
+        return $this;
     }
 
     /**
