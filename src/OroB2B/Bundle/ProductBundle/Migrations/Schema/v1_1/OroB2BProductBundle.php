@@ -4,19 +4,44 @@ namespace OroB2B\Bundle\ProductBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroB2BProductBundle implements Migration
+class OroB2BProductBundle implements Migration, ExtendExtensionAwareInterface, OrderedMigrationInterface
 {
     const PRODUCT_VARIANT_LINK_TABLE_NAME = 'orob2b_product_variant_link';
     const PRODUCT_TABLE_NAME = 'orob2b_product';
+
+    /**
+     * @var ExtendExtension
+     */
+    protected $extendExtension;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setExtendExtension(ExtendExtension $extendExtension)
+    {
+        $this->extendExtension = $extendExtension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 10;
+    }
 
     /**
      * {@inheritdoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
+        $this->renameStatusEnumToStatusString($schema, $queries);
         $this->updateOroB2BProductTable($schema);
         $this->createOroB2BProductVariantLinkTable($schema);
         $this->addOroB2BProductVariantLinkForeignKeys($schema);
@@ -63,5 +88,25 @@ class OroB2BProductBundle implements Migration
         $table = $schema->getTable(self::PRODUCT_TABLE_NAME);
         $table->addColumn('has_variants', 'boolean', ['default' => false]);
         $table->addColumn('variant_fields', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    protected function renameStatusEnumToStatusString(Schema $schema, QueryBag $queries)
+    {
+        // create new status column
+        $table = $schema->getTable(self::PRODUCT_TABLE_NAME);
+        $table->addColumn('status', 'string', ['length' => 16, 'notnull' => false]);
+
+        // move data from old to new column
+        $queries->addPostQuery(sprintf('UPDATE %s SET status = status_id', self::PRODUCT_TABLE_NAME));
+
+        // drop status enum table
+        $enumStatusTable = $this->extendExtension->getNameGenerator()->generateEnumTableName('prod_status');
+        if ($schema->hasTable($enumStatusTable)) {
+            $schema->dropTable($enumStatusTable);
+        }
     }
 }

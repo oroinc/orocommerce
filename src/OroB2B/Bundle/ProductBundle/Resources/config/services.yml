@@ -28,6 +28,8 @@ parameters:
 
     orob2b_product.menu.frontend.quick_add.class: OroB2B\Bundle\ProductBundle\Menu\Frontend\QuickAddMenuBuilder
 
+    orob2b_product.event_listener.command.platform_update.class: OroB2B\Bundle\ProductBundle\EventListener\PlatformUpdateCommandListener
+
 services:
     orob2b_product.product.manager.api:
         class: %orob2b_product.product.manager.api.class%
@@ -174,3 +176,10 @@ services:
         class: %orob2b_product.validator.unique_variant_links.class%
         tags:
             - { name: validator.constraint_validator, alias: orob2b_product_unique_variant_links }
+
+    orob2b_product.event_listener.command.platform_update:
+        class: %orob2b_product.event_listener.command.platform_update.class%
+        arguments:
+            - @oro_entity_config.config_model_manager
+        tags:
+            - { name: kernel.event_listener, event: console.command, name: onConsoleCommand }
