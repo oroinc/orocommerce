@@ -248,7 +248,7 @@ class CategoryVisibilityCalculatorTest extends WebTestCase
             ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountCategoryVisibility');
 
         /** @var Account $account */
-        $account = $this->getReference('account.level_1.3');
+        $account = $this->getReference('account.level_1');
         $accountVisibility = $em
             ->getRepository('OroB2BAccountBundle:Visibility\AccountCategoryVisibility')
             ->findOneBy(['category' => $category, 'account' => $account]);

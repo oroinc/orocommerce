@@ -35,7 +35,7 @@ class LoadAccountUserData extends AbstractFixture implements DependentFixtureInt
             'email' => self::EMAIL,
             'enabled' => true,
             'password' => self::PASSWORD,
-            'account' => 'account.level_1.3'
+            'account' => 'account.level_1'
         ],
         [
             'first_name' => 'First',

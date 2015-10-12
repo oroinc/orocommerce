@@ -89,8 +89,6 @@ class FrontendOwnerTreeProvider extends AbstractOwnerTreeProvider
             }
         }
 
-        $tree->buildTree();
-
         // map users
         foreach ($accountUsers as $user) {
             $account = $user->getAccount();
