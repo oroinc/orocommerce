@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 
 use OroB2B\Bundle\AccountBundle\EventListener\SystemConfigCategoryVisibilityListener;
-use OroB2B\Bundle\AccountBundle\Storage\CategoryVisibilityStorage;
+use OroB2B\Bundle\AccountBundle\Visibility\Storage\CategoryVisibilityStorage;
 
 class SystemConfigCategoryVisibilityListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -25,7 +25,7 @@ class SystemConfigCategoryVisibilityListenerTest extends \PHPUnit_Framework_Test
     protected function setUp()
     {
         $this->categoryVisibilityStorage = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Storage\CategoryVisibilityStorage')
+            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Visibility\Storage\CategoryVisibilityStorage')
             ->disableOriginalConstructor()
             ->getMock();
 

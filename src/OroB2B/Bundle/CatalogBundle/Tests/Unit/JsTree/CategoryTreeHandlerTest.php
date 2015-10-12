@@ -10,7 +10,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-use OroB2B\Bundle\AccountBundle\Storage\CategoryVisibilityData;
+use OroB2B\Bundle\AccountBundle\Visibility\Storage\CategoryVisibilityData;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use OroB2B\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;

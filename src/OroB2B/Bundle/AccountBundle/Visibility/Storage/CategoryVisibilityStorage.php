@@ -1,10 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Storage;
+namespace OroB2B\Bundle\AccountBundle\Visibility\Storage;
 
 use Doctrine\Common\Cache\CacheProvider;
 
-use OroB2B\Bundle\AccountBundle\Calculator\CategoryVisibilityCalculator;
+use OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityCalculator;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 
 class CategoryVisibilityStorage
 {
@@ -30,12 +31,12 @@ class CategoryVisibilityStorage
     }
 
     /**
-     * @param int|null $accountId
+     * @param Account|null $account
      * @return CategoryVisibilityData
      */
-    public function getData($accountId = null)
+    public function getData(Account $account = null)
     {
-        $data = $this->getDataFromCache($accountId);
+        $data = $this->getDataFromCache($account);
 
         return new CategoryVisibilityData($data[self::IDS], $data[self::VISIBILITY]);
     }
@@ -45,7 +46,7 @@ class CategoryVisibilityStorage
      */
     public function clearData(array $accountIds = null)
     {
-        if (empty($accountIds)) {
+        if ($accountIds === null) {
             $this->cacheProvider->deleteAll();
         } else {
             foreach ($accountIds as $accountId) {
@@ -55,15 +56,16 @@ class CategoryVisibilityStorage
     }
 
     /**
-     * @param int|null $accountId
+     * @param Account|null $account
      * @return array
      */
-    protected function getDataFromCache($accountId = null)
+    protected function getDataFromCache(Account $account = null)
     {
+        $accountId = (null !== $account) ? $account->getId() : null;
         $data = $this->cacheProvider->fetch($accountId);
 
         if (!$data) {
-            $calculatedData = $this->calculator->getVisibility($accountId);
+            $calculatedData = $this->calculator->getVisibility($account);
             $data = $this->formatData($calculatedData);
             $this->cacheProvider->save($accountId ?: self::ANONYMOUS_CACHE_KEY, $data);
         }

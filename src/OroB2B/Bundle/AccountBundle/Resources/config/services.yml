@@ -79,9 +79,9 @@ parameters:
 
     orob2b_account.provider.visibility_choices.class: OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider
 
-    orob2b_account.storage.category_visibility_storage.class: OroB2B\Bundle\AccountBundle\Storage\CategoryVisibilityStorage
+    orob2b_account.storage.category_visibility_storage.class: OroB2B\Bundle\AccountBundle\Visibility\Storage\CategoryVisibilityStorage
 
-    orob2b_account.calculator.category_visibility_calculator: OroB2B\Bundle\AccountBundle\Calculator\CategoryVisibilityCalculator
+    orob2b_account.calculator.category_visibility_calculator: OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityCalculator
 
 services:
     orob2b_account.security.account_user_provider:
@@ -506,7 +506,11 @@ services:
 
     orob2b_account.calculator.category_visibility_calculator:
         class: %orob2b_account.calculator.category_visibility_calculator%
-
+        arguments:
+            - @doctrine
+        calls:
+            - [setContainer, [@service_container]]
+            
     orob2b_account.storage.category_visibility_storage:
         class: %orob2b_account.storage.category_visibility_storage.class%
         arguments:

@@ -5,9 +5,10 @@ namespace OroB2B\Bundle\AccountBundle\EventListener;
 use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\AccountBundle\Storage\CategoryVisibilityStorage;
+use OroB2B\Bundle\AccountBundle\Visibility\Storage\CategoryVisibilityStorage;
 
 class CategoryTreeHandlerListener
 {
@@ -31,32 +32,33 @@ class CategoryTreeHandlerListener
         if ($user instanceof User) {
             return;
         }
-        $accountId = $user instanceof AccountUser ? $user->getAccount()->getId() : null;
-        $categories = $this->filterCategories($event->getCategories(), $accountId);
+        $account = $user instanceof AccountUser ? $user->getAccount() : null;
+        $categories = $this->filterCategories($event->getCategories(), $account);
         $event->setCategories($categories);
     }
 
     /**
      * @param array|Category[] $categories
-     * @param int|null $accountId
+     * @param Account|null $account
      * @return array
      */
-    protected function filterCategories(array $categories, $accountId)
+    protected function filterCategories(array $categories, $account)
     {
-        $visibilityData = $this->categoryVisibilityStorage->getData($accountId);
+        $visibilityData = $this->categoryVisibilityStorage->getData($account);
 
         $isVisible = $visibilityData->isVisible();
         $ids = $visibilityData->getIds();
-
+        // copy categories array to another variable to prevent loop break on removed elements
+        $filteredCategories = $categories;
         foreach ($categories as &$category) {
             $inIds = in_array($category->getId(), $ids, true);
             if (($isVisible && !$inIds) || (!$isVisible && $inIds)) {
-                $this->removeTreeNode($categories, $category);
+                $this->removeTreeNode($filteredCategories, $category);
             }
             $category->getChildCategories()->clear();
         }
 
-        return $categories;
+        return $filteredCategories;
     }
 
     /**
