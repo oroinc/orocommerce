@@ -44,7 +44,7 @@ class LoadAccounts extends AbstractFixture implements DependentFixtureInterface
             $manager,
             'account.level_1',
             null,
-            $this->getAccountGroup('account_group.group3')
+            $this->getAccountGroup('account_group.group1')
         );
 
         $levelTwoFirst = $this->createAccount($manager, 'account.level_1.1', $levelOne);

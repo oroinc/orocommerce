@@ -4,34 +4,19 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Calculator;
 
 use Oro\Component\Testing\WebTestCase;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 /**
  * @dbIsolation
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class CategoryVisibilityCalculatorTest extends WebTestCase
 {
-    /** @var AccountUser */
-    protected $user;
-
-    protected $visibleCategories = [
-        'category_1_2',
-        'category_1_2_6',
-        'category_1_2_6_8',
-        'category_1_2_9',
-        'category_1_10',
-    ];
-
-    protected $invisibleCategories = [
-        'category_1_2_3',
-        'category_1_2_3_4',
-        'category_1_2_3_5',
-        //'category_1_2_6_7'
-    ];
-
     protected function setUp()
     {
         $this->initClient(
@@ -42,57 +27,229 @@ class CategoryVisibilityCalculatorTest extends WebTestCase
         $this->loadFixtures(['OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData']);
     }
 
-    public function testCheckCalculatedCategories()
+    /**
+     * @dataProvider checkCalculatedCategoriesDataProvider
+     * @param array $visibleCategories
+     * @param array $invisibleCategories
+     */
+    public function testCheckCalculatedCategories(array $visibleCategories, array $invisibleCategories)
     {
-        $treeData = $this->getTreeData();
-
-        foreach ($this->visibleCategories as $categoryName) {
-            $this->assertContains($categoryName, $treeData);
-        }
-
-        foreach ($this->invisibleCategories as $categoryName) {
-            $this->assertNotContains($categoryName, $treeData);
-        }
+        $this->assertTreeCategories($visibleCategories, $invisibleCategories);
     }
 
-    public function testChangeVisibility()
+    /**
+     * @return array
+     */
+    public function checkCalculatedCategoriesDataProvider()
     {
-        $this->changeVisibility();
-        $treeData = $this->getTreeData();
-
-        foreach ($this->visibleCategories as $categoryName) {
-            $this->assertContains($categoryName, $treeData);
-        }
-
-        foreach ($this->invisibleCategories as $categoryName) {
-            $this->assertNotContains($categoryName, $treeData);
-        }
+        return [
+            [
+                'visibleCategories' => [
+                    'category_1_2',
+                    'category_1_2_6',
+                    'category_1_2_6_8',
+                    'category_1_2_9',
+                    'category_1_10',
+                ],
+                'invisibleCategories' => [
+                    'category_1_2_3',
+                    'category_1_2_3_4',
+                    'category_1_2_3_5',
+                    'category_1_2_6_7'
+                ]
+            ]
+        ];
     }
 
-    protected function changeVisibility()
+    /**
+     * @dataProvider changeAccountGroupCategoryVisibilityToHiddenDataProvider
+     * @param array $visibleCategories
+     * @param array $invisibleCategories
+     */
+    public function testChangeAccountGroupCategoryVisibilityToHidden(
+        array $visibleCategories,
+        array $invisibleCategories
+    ) {
+        /** @var Category $category */
+        $category = $this->getReference('category_1_2_6');
+        $this->createAccountGroupCategoryVisibility($category, AccountGroupCategoryVisibility::HIDDEN);
+
+        $this->assertTreeCategories($visibleCategories, $invisibleCategories);
+    }
+
+    /**
+     * @return array
+     */
+    public function changeAccountGroupCategoryVisibilityToHiddenDataProvider()
+    {
+        return [
+            [
+                'visibleCategories' => [
+                    'category_1_2',
+                    'category_1_2_9',
+                    'category_1_10',
+                ],
+                'invisibleCategories' => [
+                    'category_1_2_3',
+                    'category_1_2_3_4',
+                    'category_1_2_3_5',
+                    'category_1_2_6',
+                    'category_1_2_6_8',
+                    'category_1_2_6_7'
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * @depends testChangeAccountGroupCategoryVisibilityToHidden
+     * @dataProvider changeAccountGroupCategoryVisibilityToVisibleDataProvider
+     * @param array $visibleCategories
+     * @param array $invisibleCategories
+     */
+    public function testChangeAccountGroupCategoryVisibilityToVisible(
+        array $visibleCategories,
+        array $invisibleCategories
+    ) {
+        /** @var Category $category */
+        $category = $this->getReference('category_1_2_6');
+
+        $this->updateAccountGroupCategoryVisibility($category, AccountGroupCategoryVisibility::VISIBLE);
+
+        $this->assertTreeCategories($visibleCategories, $invisibleCategories);
+    }
+
+    /**
+     * @return array
+     */
+    public function changeAccountGroupCategoryVisibilityToVisibleDataProvider()
+    {
+        return [
+            [
+                'visibleCategories' => [
+                    'category_1_2',
+                    'category_1_2_6',
+                    'category_1_2_6_8',
+                    'category_1_2_9',
+                    'category_1_10',
+                ],
+                'invisibleCategories' => [
+                    'category_1_2_3',
+                    'category_1_2_3_4',
+                    'category_1_2_3_5',
+                    'category_1_2_6_7'
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * @dataProvider changeAccountCategoryVisibilityDataProvider
+     * @param array $visibleCategories
+     * @param array $invisibleCategories
+     */
+    public function testChangeAccountCategoryVisibility(array $visibleCategories, array $invisibleCategories)
+    {
+        /** @var Category $category */
+        $category = $this->getReference('category_1_10');
+        $this->updateAccountCategoryVisibility($category, AccountCategoryVisibility::HIDDEN);
+
+        $this->assertTreeCategories($visibleCategories, $invisibleCategories);
+    }
+
+    /**
+     * @return array
+     */
+    public function changeAccountCategoryVisibilityDataProvider()
+    {
+        return [
+            [
+                'visibleCategories' => [
+                    'category_1_2',
+                    'category_1_2_6',
+                    'category_1_2_6_8',
+                    'category_1_2_9'
+                ],
+                'invisibleCategories' => [
+                    'category_1_2_3',
+                    'category_1_2_3_4',
+                    'category_1_2_3_5',
+                    'category_1_2_6_7',
+                    'category_1_10'
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * @param Category $category
+     * @param string $visibility
+     */
+    protected function createAccountGroupCategoryVisibility(Category $category, $visibility)
+    {
+        $em = $this->getContainer()
+            ->get('doctrine')
+            ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility');
+
+        $accountGroupVisibility = new AccountGroupCategoryVisibility();
+
+        /** @var AccountGroup $accountGroup */
+        $accountGroup = $this->getReference('account_group.group1');
+        $accountGroupVisibility->setAccountGroup($accountGroup);
+        $accountGroupVisibility->setCategory($category);
+        $accountGroupVisibility->setVisibility($visibility);
+
+        $em->persist($accountGroupVisibility);
+        $em->flush($accountGroupVisibility);
+    }
+
+    /**
+     * @param Category $category
+     * @param string $visibility
+     */
+    protected function updateAccountGroupCategoryVisibility(
+        Category $category,
+        $visibility
+    ) {
+        $em = $this->getContainer()
+            ->get('doctrine')
+            ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility');
+
+        /** @var AccountGroup $accountGroup */
+        $accountGroup = $this->getReference('account_group.group1');
+
+        $accountGroupVisibility = $em
+            ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility')
+            ->findOneBy(
+                [
+                    'category' => $category,
+                    'accountGroup' => $accountGroup
+                ]
+            );
+
+        $accountGroupVisibility->setVisibility($visibility);
+
+        $em->persist($accountGroupVisibility);
+        $em->flush($accountGroupVisibility);
+    }
+
+    /**
+     * @param Category $category
+     * @param string $visibility
+     */
+    protected function updateAccountCategoryVisibility(Category $category, $visibility)
     {
         $em = $this->getContainer()
             ->get('doctrine')
             ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountCategoryVisibility');
 
-//        $accountVisibility = $em->getRepository('OroB2BAccountBundle:Visibility\AccountCategoryVisibility')
-//            ->findOneBy(['category' => 6, 'account' => 3]);
+        /** @var Account $account */
+        $account = $this->getReference('account.level_1');
+        $accountVisibility = $em
+            ->getRepository('OroB2BAccountBundle:Visibility\AccountCategoryVisibility')
+            ->findOneBy(['category' => $category, 'account' => $account]);
 
-        $accountVisibility = new AccountCategoryVisibility();
-
-        /** @var AccountUser $user */
-        $user = $this->getReference(LoadAccountUserData::EMAIL);
-//        $user = $em->getRepository('OroB2BAccountBundle:AccountUser')
-//            ->findOneBy(['email' => LoadAccountUserData::EMAIL]);
-
-//        $category = $em->getRepository('OroB2BCatalogBundle:Category')
-//            ->find(6);
-        /** @var Category $category */
-        $category = $this->getReference('category_1_2_6');
-
-        $accountVisibility->setAccount($user->getAccount());
-        $accountVisibility->setCategory($category);
-        $accountVisibility->setVisibility(AccountCategoryVisibility::HIDDEN);
+        $accountVisibility->setVisibility($visibility);
 
         $em->persist($accountVisibility);
         $em->flush($accountVisibility);
@@ -108,5 +265,22 @@ class CategoryVisibilityCalculatorTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         return $crawler->filter('.category.b2b-tree div')->attr('data-page-component-options');
+    }
+
+    /**
+     * @param array $visibleCategories
+     * @param array $invisibleCategories
+     */
+    protected function assertTreeCategories(array $visibleCategories, array $invisibleCategories)
+    {
+        $treeData = $this->getTreeData();
+
+        foreach ($visibleCategories as $categoryName) {
+            $this->assertContains($categoryName, $treeData);
+        }
+
+        foreach ($invisibleCategories as $categoryName) {
+            $this->assertNotContains($categoryName, $treeData);
+        }
     }
 }
