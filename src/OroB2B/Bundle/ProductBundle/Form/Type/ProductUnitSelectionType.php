@@ -26,11 +26,6 @@ class ProductUnitSelectionType extends AbstractType
     protected $translator;
 
     /**
-     * @var array
-     */
-    protected $options;
-
-    /**
      * @var ProductUnitLabelFormatter
      */
     protected $productUnitFormatter;
@@ -53,7 +48,6 @@ class ProductUnitSelectionType extends AbstractType
     /** {@inheritdoc} */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $this->options = $options;
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'setAcceptableUnits']);
     }
 
@@ -63,7 +57,9 @@ class ProductUnitSelectionType extends AbstractType
     public function setAcceptableUnits(FormEvent $event)
     {
         $form = $event->getForm();
-        if ($form->getConfig()->getOptions()['choices_updated']) {
+        $options = $form->getConfig()->getOptions();
+
+        if ($options['choices_updated']) {
             return;
         }
 
@@ -88,22 +84,16 @@ class ProductUnitSelectionType extends AbstractType
             return;
         }
 
-        $choices = $this->getProductUnits($product);
-        if (!$choices) {
-            return;
-        }
-
-        $typeName = $form->getConfig()->getType()->getName();
-        $options = $form->getConfig()->getOptions();
-        $options['choices'] = $choices;
+        $options['choices'] = $this->getProductUnits($product);
         $options['choices_updated'] = true;
-        foreach ($formParent->all() as $key => $field) {
-            if ($field === $form) {
-                $formParent->remove($key);
-                $formParent->add($key, $typeName, $options);
-                break;
-            }
-        }
+
+        $formParent
+            ->remove($form->getName())
+            ->add(
+                $form->getName(),
+                $form->getConfig()->getType()->getName(),
+                ['choices' => $this->getProductUnits($product), 'choices_updated' => true]
+            );
     }
 
     /**
@@ -143,7 +133,7 @@ class ProductUnitSelectionType extends AbstractType
                 'compact' => false,
                 'choices_updated' => false,
                 'required' => true,
-                'empty_label' => 'orob2b.product.productunit.removed'
+                'empty_label' => 'orob2b.product.productunit.removed',
             ]
         );
     }
@@ -166,11 +156,6 @@ class ProductUnitSelectionType extends AbstractType
 
         $productHolder = $productUnitHolder->getProductHolder();
         if (!$productHolder || !$productHolder->getProduct()) {
-            if (isset($options['loader'])) {
-                $choices = $options['loader']->getEntities();
-                $this->setChoicesViews($view, $choices, $options);
-            }
-
             return;
         }
 
@@ -181,10 +166,10 @@ class ProductUnitSelectionType extends AbstractType
 
         if (!$productUnit || ($product && !in_array($productUnit, $choices, true))) {
             $emptyValueTitle = $this->translator->trans(
-                $this->options['empty_label'],
+                $options['empty_label'],
                 ['{title}' => $productUnitHolder->getProductUnitCode()]
             );
-            $choicesViews[] = new ChoiceView(null, null, $emptyValueTitle, ['selected' => true]);
+            $view->vars['choices'] = [new ChoiceView(null, null, $emptyValueTitle, ['selected' => true])];
         }
 
         $this->setChoicesViews($view, $choices, $options);

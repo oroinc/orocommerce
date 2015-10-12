@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -80,7 +79,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                 ],
                 []
             ),
-            new ValidatorExtension(Validation::createValidator())
+            new ValidatorExtension(Validation::createValidator()),
         ];
     }
 
@@ -100,7 +99,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                             'compact' => false,
                             'choices_updated' => false,
                             'required' => true,
-                            'empty_label' => 'orob2b.product.productunit.removed'
+                            'empty_label' => 'orob2b.product.productunit.removed',
                         ],
                         $options
                     );
@@ -174,13 +173,13 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
             'without compact option' => [
                 'inputOptions' => [],
                 'expectedOptions' => [
-                    'compact' => false
+                    'compact' => false,
                 ],
                 'expectedLabels' => [
                     'orob2b.product_unit.test01.label.full',
                     'orob2b.product_unit.test02.label.full',
                 ],
-                'submittedData' => 'test01'
+                'submittedData' => 'test01',
             ],
             'with compact option' => [
                 'inputOptions' => [
@@ -193,8 +192,8 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                     'orob2b.product_unit.test01.label.short',
                     'orob2b.product_unit.test02.label.short',
                 ],
-                'submittedData' => 'test02'
-            ]
+                'submittedData' => 'test02',
+            ],
         ];
     }
 
@@ -242,8 +241,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
 
         $form->setParent($formParent);
 
-        $view = new FormView();
-        //$view = $form->createView();
+        $view = $form->createView();
         $this->formType->finishView($view, $form, $form->getConfig()->getOptions());
 
         if (isset($view->vars['choices'])) {
@@ -283,7 +281,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'empty_value' => null,
-                    'choices' => null,
+                    'choices' => array_combine($this->units, $this->units),
                 ],
             ],
             'without parent form' => [
@@ -298,9 +296,9 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'empty_value' => null,
-                    'choices' => null
+                    'choices' => array_combine($this->units, $this->units),
                 ],
-                false
+                false,
             ],
             'filled item' => [
                 'inputData' => [
@@ -314,7 +312,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'empty_value' => null,
-                    'choices' => null,
+                    'choices' => array_combine($this->units, $this->units),
                 ],
             ],
             'existing product' => [
@@ -329,7 +327,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'choices' => [
-                        'code' => 'orob2b.product_unit.code.label.full'
+                        'code' => 'orob2b.product_unit.code.label.full',
                     ],
                 ],
             ],
@@ -347,7 +345,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'choices' => [
-                        'code' => 'orob2b.product_unit.code.label.short'
+                        'code' => 'orob2b.product_unit.code.label.short',
                     ],
                 ],
             ],
@@ -362,7 +360,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                     ),
                 ],
                 'expectedData' => [
-                    'choices' => null,
+                    'choices' => array_combine($this->units, $this->units),
                 ],
             ],
         ];
@@ -429,5 +427,42 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
             ->willReturn($productSku);
 
         return $productHolder;
+    }
+
+    public function testPostSetData()
+    {
+        $productUnit = new ProductUnit();
+        $code = 'sku';
+        $productUnit->setCode($code);
+        $unitPrecision = new ProductUnitPrecision();
+        $unitPrecision->setUnit($productUnit);
+        $productHolder = $this->createProductHolder(1, $code, (new Product())->addUnitPrecision($unitPrecision));
+        $productUnitHolder = $this->createProductUnitHolder(1, $code, $productUnit, $productHolder);
+
+        $form = $this->factory->create($this->formType);
+        $parentForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $parentForm->expects($this->once())->method('getData')->willReturn($productUnitHolder);
+        $form->setParent($parentForm);
+
+        $parentForm->expects($this->once())->method('add')->with(
+            $this->isType('string'),
+            $this->isType('string'),
+            $this->logicalAnd(
+                $this->isType('array'),
+                $this->callback(
+                    function (array $options) use ($productUnit) {
+                        $this->assertArrayHasKey('choices_updated', $options);
+                        $this->assertTrue($options['choices_updated']);
+
+                        $this->assertArrayHasKey('choices', $options);
+                        $this->assertEquals([$productUnit], $options['choices']);
+
+                        return true;
+                    }
+                )
+            )
+        );
+
+        $form->setData($productUnitHolder);
     }
 }

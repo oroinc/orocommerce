@@ -14,6 +14,7 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Exception\InvalidRoundingTypeException;
 
 class LineItemHandler
 {
@@ -100,7 +101,7 @@ class LineItemHandler
 
                 return true;
             } else {
-                $manager->rollBack();
+                $manager->rollback();
             }
         }
 
@@ -150,17 +151,23 @@ class LineItemHandler
      * @param Product $product
      * @param ProductUnit $unit
      * @return float|int
-     * @throws \OroB2B\Bundle\ProductBundle\Exception\InvalidRoundingTypeException
+     * @throws InvalidRoundingTypeException
      */
     protected function roundQuantity($quantity, ProductUnit $unit = null, Product $product = null)
     {
-        if ($this->roundingService) {
-            $productUnit = $product ? $product->getUnitPrecision($unit->getCode()) : null;
-            if ($unit) {
-                $precision = $productUnit ? $productUnit->getPrecision() : $unit->getDefaultPrecision();
+        if (!$unit) {
+            return $quantity;
+        }
 
-                return $this->roundingService->round($quantity, $precision);
+        if ($this->roundingService) {
+            if ($product) {
+                $productUnit = $product->getUnitPrecision($unit->getCode());
+                if ($productUnit) {
+                    return $this->roundingService->round($quantity, $productUnit->getPrecision());
+                }
             }
+
+            return $this->roundingService->round($quantity, $unit->getDefaultPrecision());
         }
 
         return $quantity;

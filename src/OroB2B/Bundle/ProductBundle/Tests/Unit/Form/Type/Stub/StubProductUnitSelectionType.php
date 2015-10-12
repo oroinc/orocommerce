@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
 
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
@@ -13,9 +14,17 @@ class StubProductUnitSelectionType extends StubEntityType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'compact' => false,
-            'choice_list' => $this->choiceList
-        ]);
+        $resolver->setDefaults(
+            [
+                'compact' => false,
+                'choice_list' => $this->choiceList,
+            ]
+        );
+    }
+
+    /** {@inheritdoc} */
+    public function getName()
+    {
+        return ProductUnitSelectionType::NAME;
     }
 }

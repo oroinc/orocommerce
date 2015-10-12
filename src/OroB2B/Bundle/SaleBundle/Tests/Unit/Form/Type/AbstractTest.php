@@ -14,7 +14,7 @@ use Oro\Bundle\CurrencyBundle\Form\Type\OptionalPriceType;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
 
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
@@ -210,15 +210,12 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected function prepareProductUnitSelectionType()
     {
-        $productUnitSelectionType = new EntityType(
+        return new StubProductUnitSelectionType(
             [
-                'kg'    => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'kg', 'code'),
-                'item'  => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code'),
-            ],
-            ProductUnitSelectionType::NAME
+                'kg' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'kg', 'code'),
+                'item' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code'),
+            ]
         );
-
-        return $productUnitSelectionType;
     }
 
     /**

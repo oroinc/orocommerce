@@ -14,9 +14,7 @@ use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductUnitHolder;
-use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductUnitHolderValidator;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
@@ -54,18 +52,6 @@ abstract class AbstractTest extends FormIntegrationTestCase
      * @return array
      */
     abstract public function submitProvider();
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getValidators()
-    {
-        $productUnitHolderConstraint = new ProductUnitHolder();
-
-        return [
-            $productUnitHolderConstraint->validatedBy() => new ProductUnitHolderValidator(),
-        ];
-    }
 
     /**
      * @return RequestProductItemType
@@ -149,15 +135,12 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected function prepareProductUnitSelectionType()
     {
-        $productUnitSelectionType = new EntityType(
+        return new StubProductUnitSelectionType(
             [
-                'kg'    => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'kg', 'code'),
-                'item'  => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code'),
-            ],
-            ProductUnitSelectionType::NAME
+                'kg' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'kg', 'code'),
+                'item' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code'),
+            ]
         );
-
-        return $productUnitSelectionType;
     }
 
     /**

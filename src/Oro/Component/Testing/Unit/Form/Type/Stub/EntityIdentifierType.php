@@ -11,7 +11,7 @@ class EntityIdentifierType extends EntityType
     /**
      * @param array $choices
      */
-    public function __construct(array $choices)
+    public function __construct(array $choices = [])
     {
         parent::__construct($choices, BaseEntityIdentifierType::NAME);
     }

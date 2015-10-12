@@ -17,7 +17,7 @@ class EntitySelectTypeStub extends EntityTypeStub
      * @param string $name
      * @param AbstractType|null $formType
      */
-    public function __construct(array $choices, $name, $formType = null)
+    public function __construct(array $choices = [], $name, $formType = null)
     {
         parent::__construct($choices, $name);
 
