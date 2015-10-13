@@ -36,7 +36,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'phone' => '2-(999)507-4625',
             'company' => 'Google',
             'role' => 'CEO',
-            'body' => self::REQUEST1,
+            'note' => self::REQUEST1,
         ],
         self::REQUEST2 => [
             'first_name' => self::FIRST_NAME,
@@ -45,7 +45,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'phone' => '2-(999)507-4625',
             'company' => 'Google',
             'role' => 'CEO',
-            'body' => self::REQUEST2,
+            'note' => self::REQUEST2,
             'account' => LoadUserData::ACCOUNT1,
             'accountUser' => LoadUserData::ACCOUNT1_USER1,
         ],
@@ -56,7 +56,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'phone' => '2-(999)507-4625',
             'company' => 'Google',
             'role' => 'CEO',
-            'body' => self::REQUEST3,
+            'note' => self::REQUEST3,
             'account' => LoadUserData::ACCOUNT1,
             'accountUser' => LoadUserData::ACCOUNT1_USER2,
         ],
@@ -67,7 +67,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'phone' => '2-(999)507-4625',
             'company' => 'Google',
             'role' => 'CEO',
-            'body' => self::REQUEST4,
+            'note' => self::REQUEST4,
             'account' => LoadUserData::ACCOUNT1,
             'accountUser' => LoadUserData::ACCOUNT1_USER3,
         ],
@@ -78,7 +78,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'phone' => '2-(999)507-4625',
             'company' => 'Google',
             'role' => 'CEO',
-            'body' => self::REQUEST5,
+            'note' => self::REQUEST5,
             'account' => LoadUserData::ACCOUNT2,
             'accountUser' => LoadUserData::ACCOUNT2_USER1,
         ],
@@ -89,7 +89,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'phone' => '2-(999)507-4625',
             'company' => 'Google',
             'role' => 'CEO',
-            'body' => self::REQUEST6,
+            'note' => self::REQUEST6,
             'account' => LoadUserData::ACCOUNT2,
             'accountUser' => LoadUserData::ACCOUNT2_USER1,
         ],
@@ -100,7 +100,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'phone' => '2-(999)507-4625',
             'company' => 'Google',
             'role' => 'CEO',
-            'body' => self::REQUEST7,
+            'note' => self::REQUEST7,
             'account' => LoadUserData::ACCOUNT1,
             'accountUser' => LoadUserData::ACCOUNT1_USER1,
         ],
@@ -111,7 +111,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'phone' => '2-(999)507-4625',
             'company' => 'Google',
             'role' => 'CEO',
-            'body' => self::REQUEST8,
+            'note' => self::REQUEST8,
             'account' => LoadUserData::ACCOUNT1,
             'accountUser' => LoadUserData::ACCOUNT1_USER1,
         ],
@@ -151,7 +151,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
                 ->setPhone($rawRequest['phone'])
                 ->setCompany($rawRequest['company'])
                 ->setRole($rawRequest['role'])
-                ->setBody($rawRequest['body'])
+                ->setNote($rawRequest['note'])
                 ->setStatus($status)
                 ->setOrganization($organization)
             ;

@@ -32,9 +32,9 @@ OroB2B\Bundle\RFPBundle\Entity\Request:
             target_type:            text
             target_fields:          [role]
         -
-            name:                   body
+            name:                   note
             target_type:            text
-            target_fields:          [body]
+            target_fields:          [note]
         -
             name:                   status
             relation_type:          many-to-one

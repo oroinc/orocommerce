@@ -135,18 +135,18 @@
         }]) %}
     {% endif %}
 
-    {% set requestContent %}
+    {% set noteContent %}
         <div class="row-fluid form-horizontal">
             <div class="responsive-block">
-                {{ entity.body|nl2br }}
+                {{ entity.note|nl2br }}
             </div>
         </div>
     {% endset %}
 
     {% set dataBlocks = dataBlocks|merge([{
-        'title': 'orob2b.rfp.sections.body'|trans,
+        'title': 'orob2b.rfp.sections.note'|trans,
         'class': 'active',
-        'subblocks': [{'data' : [requestContent]}]
+        'subblocks': [{'data' : [noteContent]}]
     }]) %}
 
     {% set id = 'request-view' %}
