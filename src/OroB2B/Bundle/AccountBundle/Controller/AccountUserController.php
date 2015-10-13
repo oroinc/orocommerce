@@ -74,7 +74,7 @@ class AccountUserController extends Controller
      * @Route("/get-roles/with-user/{accountUserId}/{accountId}",
      *      name="orob2b_account_account_user_get_roles_with_user",
      *      requirements={"accountId"="\d+", "accountUserId"="\d+"},
-     *      defaults={"accountId"="null"}
+     *      defaults={"accountId"=null}
      * )
      * @Method({"GET"})
      * @Template("OroB2BAccountBundle:AccountUser:widget/roles.html.twig")
@@ -97,7 +97,7 @@ class AccountUserController extends Controller
      * @Route("/get-roles/with-account/{accountId}",
      *      name="orob2b_account_account_user_by_account_roles",
      *      requirements={"accountId"="\d+"},
-     *      defaults={"accountId"="null"}
+     *      defaults={"accountId"=null}
      * )
      * @Method({"GET"})
      * @Template("OroB2BAccountBundle:AccountUser:widget/roles.html.twig")
