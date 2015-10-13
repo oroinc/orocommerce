@@ -2,20 +2,58 @@
 
 namespace OroB2B\Bundle\CatalogBundle\JsTree;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
+use Doctrine\Common\Persistence\ManagerRegistry;
+
+use Oro\Bundle\SecurityBundle\SecurityFacade;
+
+use OroB2B\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Component\Tree\Handler\AbstractTreeHandler;
 
 class CategoryTreeHandler extends AbstractTreeHandler
 {
+    /** @var SecurityFacade */
+    protected $securityFacade;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
+     * {@inheritdoc}
+     *
+     * @param SecurityFacade $securityFacade
+     */
+    public function __construct(
+        $entityClass,
+        ManagerRegistry $managerRegistry,
+        SecurityFacade $securityFacade,
+        EventDispatcherInterface $eventDispatcher
+    ) {
+        parent::__construct($entityClass, $managerRegistry);
+
+        $this->securityFacade = $securityFacade;
+        $this->eventDispatcher = $eventDispatcher;
+    }
+
     /**
      * @return array
      */
     public function createTree()
     {
-        $tree = $this->getEntityRepository()
-            ->getChildrenWithTitles(null, false, 'left', 'ASC');
+        $categories = $this->getEntityRepository()->getChildrenWithTitles(null, false, 'left', 'ASC');
 
-        return $this->formatTree($tree);
+        $event = new CategoryTreeCreateAfterEvent($categories);
+        $event->setUser($this->securityFacade->getLoggedUser());
+        $this->eventDispatcher->dispatch(CategoryTreeCreateAfterEvent::NAME, $event);
+        $categories = $event->getCategories();
+
+        $categories = $this->formatTree($categories);
+
+        return $categories;
     }
 
     /**

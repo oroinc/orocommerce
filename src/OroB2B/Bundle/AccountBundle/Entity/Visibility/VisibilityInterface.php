@@ -7,10 +7,10 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 interface VisibilityInterface
 {
     /**
-     * @param Category|null $category
+     * @param object|null $target
      * @return string
      */
-    public static function getDefault(Category $category = null);
+    public static function getDefault($target = null);
 
     /**
      * @param string $visibility
@@ -24,8 +24,8 @@ interface VisibilityInterface
     public function getVisibility();
 
     /**
-     * @param Category|null $category
+     * @param object|null $target
      * @return array
      */
-    public static function getVisibilityList(Category $category = null);
+    public static function getVisibilityList($target = null);
 }
