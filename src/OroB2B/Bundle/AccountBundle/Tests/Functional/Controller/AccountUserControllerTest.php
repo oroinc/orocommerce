@@ -9,6 +9,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
+use OroB2B\Bundle\AccountBundle\Migrations\Data\ORM\LoadAccountUserRoles;
 
 /**
  * @dbIsolation
@@ -62,7 +63,9 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $account = $this->getAccountRepository()->findOneBy([]);
 
         /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUserRole $role */
-        $role = $this->getUserRoleRepository()->findOneBy([]);
+        $role = $this->getUserRoleRepository()->findOneBy(
+            ['role' => AccountUserRole::PREFIX_ROLE . LoadAccountUserRoles::ADMINISTRATOR]
+        );
 
         $this->assertNotNull($account);
         $this->assertNotNull($role);
@@ -118,7 +121,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
     }
 
     /**
-     * @depend testCreate
+     * @depends testCreate
      * @return integer
      */
     public function testUpdate()
