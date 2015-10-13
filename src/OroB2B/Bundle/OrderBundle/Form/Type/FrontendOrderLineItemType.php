@@ -190,4 +190,13 @@ class FrontendOrderLineItemType extends AbstractOrderLineItemType
 
         return $choices;
     }
+
+    /** {@inheritdoc} */
+    protected function getItemTemplateSections()
+    {
+        $sections = parent::getItemTemplateSections();
+        $sections->set('price', ['data' => [], 'order' => 20]);
+
+        return $sections;
+    }
 }

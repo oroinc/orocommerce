@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
@@ -109,11 +111,19 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
         $possibleOptions = [
             [
                 'options' => ['currency' => 'USD'],
-                'expected' => ['page_component' => null, 'page_component_options' => ['currency' => 'USD']]
+                'expected' => [
+                    'page_component' => null,
+                    'page_component_options' => ['currency' => 'USD'],
+                    'sections' => $this->getExpectedSections(),
+                ],
             ],
             [
                 'options' => ['currency' => 'USD', 'page_component' => 'test', 'page_component_options' => ['v2']],
-                'expected' => ['page_component' => 'test', 'page_component_options' => ['v2', 'currency' => 'USD']]
+                'expected' => [
+                    'page_component' => 'test',
+                    'page_component_options' => ['v2', 'currency' => 'USD'],
+                    'sections' => $this->getExpectedSections(),
+                ],
             ]
         ];
 
@@ -122,6 +132,11 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
             $this->assertBuildView($view, $optionsData['expected']);
         }
     }
+
+    /**
+     * @return ArrayCollection
+     */
+    abstract protected function getExpectedSections();
 
     /**
      * @param FormView $view
