@@ -50,4 +50,17 @@ trait EntityTrait
 
         return $this->propertyAccessor;
     }
+
+    /**
+     * @param string $className
+     * @param int $id
+     *
+     * @return object
+     *
+     * @deprecated Use createEntity instead
+     */
+    protected function createEntity($className, $id)
+    {
+        return $this->getEntity($className, ['id' => $id]);
+    }
 }

@@ -40,11 +40,15 @@ define(function (require) {
          * Change options in selects
          */
         onChange: function () {
-            var self = this;
+            var self = this,
+                units = this.getUnits();
 
             _.each(this.getSelects(), function (select) {
-                if (self.clearOptions(select) || self.addOptions(select)) {
-                    $(select).trigger('change');
+                var $select = $(select);
+                var clearChangeRequired = self.clearOptions(units, $select);
+                var addChangeRequired = self.addOptions(units, $select);
+                if (clearChangeRequired || addChangeRequired) {
+                    $select.trigger('change');
                 }
             });
         },
@@ -52,15 +56,15 @@ define(function (require) {
         /**
          * Clear options from selects
          *
-         * @param {jQuery.Element} select
+         * @param {Array} units
+         * @param {jQuery.Element} $select
          *
          * @return {Boolean}
          */
-        clearOptions: function (select) {
-            var units = this.getUnits(),
-                updateRequired = false;
+        clearOptions: function (units, $select) {
+            var updateRequired = false;
 
-            _.each($(select).find('option'), function (option) {
+            _.each($select.find('option'), function (option) {
                 if (!option.value) {
                     return;
                 }
@@ -78,21 +82,33 @@ define(function (require) {
         /**
          * Add options based on units configuration
          *
-         * @param {jQuery.Element} select
+         * @param {Array} units
+         * @param {jQuery.Element} $select
          *
          * @return {Boolean}
          */
-        addOptions: function (select) {
-            var units = this.getUnits(),
-                updateRequired = false;
+        addOptions: function (units, $select) {
+            var updateRequired = false,
+                emptyOption = $select.find('option[value=""]');
+
+            if (_.isEmpty(units)) {
+                emptyOption.show();
+            } else {
+                emptyOption.hide();
+            }
 
             _.each(units, function (text, value) {
-                if (!$(select).find("option[value='" + value + "']").length) {
-                    $(select).append($('<option/>').val(value).text(text));
-
+                if (!$select.find("option[value='" + value + "']").length) {
+                    $select.append('<option value="' + value + '">' + text + '</option>');
                     updateRequired = true;
                 }
             });
+
+            if ($select.val() == '' && !_.isEmpty(units)) {
+                var value = _.keys(units)[0];
+                $select.val(value);
+                updateRequired = true;
+            }
 
             return updateRequired;
         },
