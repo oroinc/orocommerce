@@ -6,8 +6,12 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\CurrencyBundle\Model\OptionalPrice as Price;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
+use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
+use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 
 class LoadRequestData extends AbstractFixture implements DependentFixtureInterface
@@ -125,6 +129,8 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
         return [
             'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData',
             'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestStatusData',
+            'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadProductData',
+            'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisionData'
         ];
     }
 
@@ -163,10 +169,84 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
                 $request->setAccountUser($this->getReference($rawRequest['accountUser']));
             }
 
+            $this->processRequestProducts($request, $manager);
+
             $manager->persist($request);
             $this->addReference($key, $request);
         }
 
         $manager->flush();
+    }
+
+    /**
+     * @param Request $request
+     * @param ObjectManager $manager
+     */
+    protected function processRequestProducts(Request $request, ObjectManager $manager)
+    {
+        $products = $this->getProducts($manager);
+        $currencies = $this->getCurrencies();
+
+        $unitPrecisions = $manager->getRepository('OroB2BProductBundle:ProductUnitPrecision')->findAll();
+
+        $numLineItems = rand(1, 10);
+        for ($i = 0; $i < $numLineItems; $i++) {
+            $product = $products[array_rand($products)];
+
+            if (!count($unitPrecisions)) {
+                continue;
+            }
+
+            $requestProduct = new RequestProduct();
+            $requestProduct->setProduct($product);
+            $requestProduct->setComment(sprintf('Notes %s', $i));
+            $numProductItems = rand(1, 10);
+            for ($j = 0; $j < $numProductItems; $j++) {
+                $productUnit = $unitPrecisions[array_rand($unitPrecisions)]->getUnit();
+
+                $currency = $currencies[rand(0, count($currencies) - 1)];
+                $requestProductItem = new RequestProductItem();
+                $requestProductItem
+                    ->setPrice(Price::create(rand(1, 100), $currency))
+                    ->setQuantity(rand(1, 100))
+                    ->setProductUnit($productUnit)
+                ;
+                $requestProduct->addRequestProductItem($requestProductItem);
+            }
+            $request->addRequestProduct($requestProduct);
+        }
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @return Product[]
+     */
+    protected function getProducts(ObjectManager $manager)
+    {
+        $products = $manager->getRepository('OroB2BProductBundle:Product')->findBy([], null, 10);
+
+        if (0 === count($products)) {
+            throw new \LogicException('There are no products in system');
+        }
+
+        return $products;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getCurrencies()
+    {
+        $currencies = $this->container->get('oro_config.manager')->get('oro_currency.allowed_currencies');
+
+        if (!$currencies) {
+            $currencies = (array)$this->container->get('oro_locale.settings')->getCurrency();
+        }
+
+        if (!$currencies) {
+            throw new \LogicException('There are no currencies in system');
+        }
+
+        return $currencies;
     }
 }
