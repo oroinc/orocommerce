@@ -169,6 +169,11 @@ class ProductUnitSelectionType extends AbstractProductAwareType
 
         $productHolder = $productUnitHolder->getProductHolder();
         if (!$productHolder || !$productHolder->getProduct()) {
+            /** @var ChoiceView $choiceView */
+            foreach ($view->vars['choices'] as $choiceView) {
+                $choiceView->label = $this->productUnitFormatter->format($choiceView->value, $options['compact']);
+            }
+
             return;
         }
 

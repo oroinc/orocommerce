@@ -317,7 +317,10 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'empty_value' => null,
-                    'choices' => array_combine($this->units, $this->units),
+                    'choices' => array_combine(
+                        $this->units,
+                        ['orob2b.pro02duct_unit.test01.label.full', 'orob2b.product_unit.test01.label.full']
+                    ),
                 ],
             ],
             'existing product' => [
@@ -365,7 +368,10 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                     ),
                 ],
                 'expectedData' => [
-                    'choices' => array_combine($this->units, $this->units),
+                    'choices' => array_combine(
+                        $this->units,
+                        ['orob2b.pro02duct_unit.test01.label.full', 'orob2b.product_unit.test01.label.full']
+                    ),
                 ],
             ],
         ];
