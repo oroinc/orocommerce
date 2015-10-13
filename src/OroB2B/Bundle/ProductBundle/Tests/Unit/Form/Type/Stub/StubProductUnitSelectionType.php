@@ -2,10 +2,11 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
+
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
 class StubProductUnitSelectionType extends StubEntityType
 {
