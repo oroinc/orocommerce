@@ -81,11 +81,25 @@ class CategoryVisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
             ->with($this->categoryClass)
             ->willReturn($repository);
 
-        $this->listener->onPreBuild($this->getPreBuild(null, null));
+
         $this->listener->onPreBuild($this->getPreBuild(1, $rootCategory));
         $this->listener->onPreBuild($this->getPreBuild(2, $subCategory));
     }
 
+    public function testOnPreBuildWithEmptyCategory()
+    {
+        $parameters = new ParameterBag();
+        $parameters->set('category_id', null);
+        /** @var \PHPUnit_Framework_MockObject_MockObject|PreBuild $preBuild */
+        $preBuild = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Event\PreBuild')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $preBuild->expects($this->exactly(1))
+            ->method('getParameters')
+            ->willReturn($parameters);
+        $this->listener->onPreBuild($preBuild);
+    }
+    
     /**
      * @param int|null $categoryId
      * @param Category|null $category
