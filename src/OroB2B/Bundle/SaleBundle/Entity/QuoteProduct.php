@@ -230,7 +230,11 @@ class QuoteProduct implements ProductHolderInterface
      */
     public function getProduct()
     {
-        return $this->product;
+        if ($this->isTypeNotAvailable()) {
+            return $this->productReplacement;
+        } else {
+            return $this->product;
+        }
     }
 
     /**
@@ -253,7 +257,11 @@ class QuoteProduct implements ProductHolderInterface
      */
     public function getProductSku()
     {
-        return $this->productSku;
+        if ($this->isTypeNotAvailable()) {
+            return $this->productReplacementSku;
+        } else {
+            return $this->productSku;
+        }
     }
 
     /**

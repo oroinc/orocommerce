@@ -49,6 +49,7 @@ class LineItemType extends AbstractType
                 [
                     'required' => true,
                     'label' => 'orob2b.shoppinglist.lineitem.unit.label',
+                    'product_holder' => $data,
                     'placeholder' => 'orob2b.product.form.product_required'
                 ]
             )
@@ -92,6 +93,7 @@ class LineItemType extends AbstractType
                 'required' => true,
                 'label' => 'orob2b.shoppinglist.lineitem.unit.label',
                 'placeholder' => null,
+                'product_holder' => $entity,
             ]
         );
     }

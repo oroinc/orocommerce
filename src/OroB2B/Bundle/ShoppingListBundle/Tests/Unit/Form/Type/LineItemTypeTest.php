@@ -10,13 +10,14 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\LineItemType;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
 class LineItemTypeTest extends AbstractFormIntegrationTestCase
 {
@@ -58,10 +59,7 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
             ]
         );
 
-        $productUnitSelection = new EntityType(
-            $this->prepareProductUnitSelectionChoices(),
-            ProductUnitSelectionType::NAME
-        );
+        $productUnitSelection = new StubProductUnitSelectionType($this->prepareProductUnitSelectionChoices());
         $productSelectType = new ProductSelectTypeStub();
 
         return [
@@ -93,7 +91,6 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
      * @param mixed $defaultData
      * @param mixed $submittedData
      * @param mixed $expectedData
-     * @param bool $isExisting
      */
     public function testSubmit($defaultData, $submittedData, $expectedData)
     {

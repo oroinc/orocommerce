@@ -42,7 +42,7 @@ OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest:
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
         productUnit:
             - NotBlank:
-                message: 'orob2b.sale.quoteproductoffer.product_unit.blank'
+                message: 'orob2b.product.productunit.invalid'
         productUnitCode:
             - NotBlank:
                 groups: [ Import ]
@@ -50,8 +50,6 @@ OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest:
             - Valid: ~
 
 OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer:
-    constraints:
-        - OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProductOffer: ~
     properties:
         quoteProduct:
             - NotBlank: ~
@@ -63,7 +61,7 @@ OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer:
             - NotBlank: ~
         productUnit:
             - NotBlank:
-                message: 'orob2b.sale.quoteproductoffer.product_unit.blank'
+                message: 'orob2b.product.productunit.invalid'
         productUnitCode:
             - NotBlank:
                 groups: [ Import ]

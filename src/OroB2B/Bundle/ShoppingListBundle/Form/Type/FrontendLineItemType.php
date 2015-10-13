@@ -29,7 +29,8 @@ class FrontendLineItemType extends AbstractType
                 ProductUnitSelectionType::NAME,
                 [
                     'required' => true,
-                    'label' => 'orob2b.shoppinglist.lineitem.unit.label'
+                    'label' => 'orob2b.shoppinglist.lineitem.unit.label',
+                    'product_holder' => $builder->getData(),
                 ]
             )
             ->add(

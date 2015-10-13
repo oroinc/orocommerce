@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
@@ -90,23 +92,23 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
-        $resolver->expects(static::once())
+        $resolver->expects(static::exactly(2))
             ->method('setDefaults')
             ->with(static::isType('array'))
-            ->willReturnCallback(
-                function (array $options) {
-                    static::assertEquals(
-                        [
-                            'class' => 'OroB2B\Bundle\ProductBundle\Entity\ProductUnit',
-                            'property' => 'code',
-                            'compact' => false,
-                            'choices_updated' => false,
-                            'required' => true,
-                            'empty_label' => 'orob2b.product.productunit.removed',
-                        ],
-                        $options
-                    );
-                }
+            ->willReturnOnConsecutiveCalls(
+                [
+                    'product' => null,
+                    'product_holder' => null,
+                    'product_field' => 'product',
+                ],
+                [
+                    'class' => 'OroB2B\Bundle\ProductBundle\Entity\ProductUnit',
+                    'property' => 'code',
+                    'compact' => false,
+                    'choices_updated' => false,
+                    'required' => true,
+                    'empty_label' => 'orob2b.product.productunit.removed',
+                ]
             );
 
         $this->formType->configureOptions($resolver);
@@ -432,7 +434,64 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         return $productHolder;
     }
 
-    public function testPostSetData()
+    /**
+     * @dataProvider postSetDataProvider
+     * @param mixed $productUnitHolder
+     * @param mixed $productHolder
+     * @param mixed $productUnit
+     * @param array $options
+     * @param bool $expectedFieldOverride
+     */
+    public function testPostSetData(
+        $productUnitHolder,
+        $productHolder,
+        $productUnit,
+        array $options = [],
+        $expectedFieldOverride = false
+    ) {
+        $form = $this->factory->create($this->formType, $productUnitHolder, $options);
+
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $parentForm */
+        $parentForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $parentForm->expects($this->any())->method('has')->willReturn($expectedFieldOverride);
+
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $productForm */
+        $productForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form->setParent($parentForm);
+
+        if ($expectedFieldOverride) {
+            $productForm->expects($this->once())->method('getData')->willReturn($productHolder);
+            $parentForm->expects($this->once())->method('get')->willReturn($productForm);
+            $parentForm->expects($this->once())->method('add')->with(
+                $this->isType('string'),
+                $this->isType('string'),
+                $this->logicalAnd(
+                    $this->isType('array'),
+                    $this->callback(
+                        function (array $options) use ($productUnit) {
+                            $this->assertArrayHasKey('choices_updated', $options);
+                            $this->assertTrue($options['choices_updated']);
+
+                            $this->assertArrayHasKey('choices', $options);
+                            $this->assertEquals([$productUnit], $options['choices']);
+
+                            return true;
+                        }
+                    )
+                )
+            );
+        } else {
+            $parentForm->expects($this->never())->method('add');
+        }
+
+        $event = new FormEvent($form, null);
+        $this->formType->setAcceptableUnits($event);
+    }
+
+    /**
+     * @return array
+     */
+    public function postSetDataProvider()
     {
         $productUnit = new ProductUnit();
         $code = 'sku';
@@ -442,30 +501,54 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         $productHolder = $this->createProductHolder(1, $code, (new Product())->addUnitPrecision($unitPrecision));
         $productUnitHolder = $this->createProductUnitHolder(1, $code, $productUnit, $productHolder);
 
-        $form = $this->factory->create($this->formType);
-        $parentForm = $this->getMock('Symfony\Component\Form\FormInterface');
-        $parentForm->expects($this->once())->method('getData')->willReturn($productUnitHolder);
-        $form->setParent($parentForm);
+        return [
+            'already updated' => [
+                $productUnitHolder,
+                $productHolder,
+                $productUnit,
+                ['choices_updated' => true],
+                false,
+            ],
+            'product found' => [$productUnitHolder, $productHolder, $productUnit, [], true,],
+            'product not found' => [null, null, null, [], false,],
+        ];
+    }
 
-        $parentForm->expects($this->once())->method('add')->with(
-            $this->isType('string'),
-            $this->isType('string'),
-            $this->logicalAnd(
-                $this->isType('array'),
-                $this->callback(
-                    function (array $options) use ($productUnit) {
-                        $this->assertArrayHasKey('choices_updated', $options);
-                        $this->assertTrue($options['choices_updated']);
+    /**
+     * @dataProvider preSubmitDataProvider
+     * @param mixed $product
+     * @param mixed $data
+     * @param string $expectedError
+     */
+    public function testPreSubmit($product, $data, $expectedError = '')
+    {
+        $form = $this->factory->create($this->formType, null, ['product' => $product]);
 
-                        $this->assertArrayHasKey('choices', $options);
-                        $this->assertEquals([$productUnit], $options['choices']);
+        $event = new FormEvent($form, $data);
+        $this->formType->validateUnits($event);
 
-                        return true;
-                    }
-                )
-            )
-        );
+        $this->assertEquals($expectedError, (string)$form->getErrors(true, true));
+    }
 
-        $form->setData($productUnitHolder);
+    /**
+     * @return array
+     */
+    public function preSubmitDataProvider()
+    {
+        $productUnit = new ProductUnit();
+        $code = 'valid';
+        $productUnit->setCode($code);
+        $unitPrecision = new ProductUnitPrecision();
+        $unitPrecision->setUnit($productUnit);
+        $product = new Product();
+        $product->addUnitPrecision($unitPrecision);
+
+        return [
+            'product not found' => [null, 'valid'],
+            'product without units' => [new Product(), 'valid', 'ERROR: orob2b.product.productunit.invalid' . PHP_EOL],
+            'submit invalid' => [$product, 'not_valid', 'ERROR: orob2b.product.productunit.invalid' . PHP_EOL],
+            'submit valid' => [$product, 'valid'],
+            'empty data' => [$product, null, 'ERROR: orob2b.product.productunit.invalid' . PHP_EOL],
+        ];
     }
 }

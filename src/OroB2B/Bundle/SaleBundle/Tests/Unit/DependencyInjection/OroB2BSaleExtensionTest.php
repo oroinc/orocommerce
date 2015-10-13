@@ -14,8 +14,6 @@ class OroB2BSaleExtensionTest extends ExtensionTestCase
         $expectedParameters = [
             'orob2b_sale.entity.quote.class',
             'orob2b_sale.quote.manager.api.class',
-            // validators
-            'orob2b_sale.validator.quote_product_unit.class',
             // form types
             'orob2b_sale.form.type.quote_product.class',
             'orob2b_sale.form.type.quote_product_offer.class',
@@ -28,8 +26,6 @@ class OroB2BSaleExtensionTest extends ExtensionTestCase
 
         $expectedDefinitions = [
             'orob2b_sale.quote.manager.api',
-            // validators
-            'orob2b_sale.validator.quote_product_unit',
             // form types
             'orob2b_sale.form.type.quote_product',
             'orob2b_sale.form.type.quote_product_offer',

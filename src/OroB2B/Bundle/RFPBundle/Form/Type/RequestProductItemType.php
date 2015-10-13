@@ -58,7 +58,6 @@ class RequestProductItemType extends AbstractType
                 [
                     'required' => false,
                     'label' => 'orob2b.rfp.requestproductitem.quantity.label',
-                    'product_holder' => $builder->getData(),
                     'default_data' => 1,
                 ]
             );

@@ -20,14 +20,14 @@ OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency:
 
 OroB2B\Bundle\PricingBundle\Entity\ProductPrice:
     constraints:
-        - OroB2B\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnits: ~
         - OroB2B\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrency: ~
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
             fields:  [ product, priceList, quantity, unit, currency ]
             message: orob2b.pricing.validators.product_price.unique_entity.message
     properties:
         product:
-            - NotBlank: ~
+            - NotBlank:
+                message: 'orob2b.pricing.validators.product_price.not_existing_product.message'
         productSku:
             - NotBlank: ~
         priceList:
@@ -40,4 +40,5 @@ OroB2B\Bundle\PricingBundle\Entity\ProductPrice:
             - NotBlank: ~
             - Valid: ~
         unit:
-            - NotBlank: ~
+            - NotBlank:
+                message: 'orob2b.product.productunit.invalid'

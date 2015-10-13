@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormView;
@@ -13,10 +13,11 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
-class ProductUnitSelectionType extends AbstractType
+class ProductUnitSelectionType extends AbstractProductAwareType
 {
     const NAME = 'orob2b_product_unit_selection';
 
@@ -49,6 +50,7 @@ class ProductUnitSelectionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'setAcceptableUnits']);
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'validateUnits']);
     }
 
     /**
@@ -68,18 +70,7 @@ class ProductUnitSelectionType extends AbstractType
             return;
         }
 
-        /* @var $productUnitHolder ProductUnitHolderInterface */
-        $productUnitHolder = $formParent->getData();
-        if (!$productUnitHolder) {
-            return;
-        }
-
-        $productHolder = $productUnitHolder->getProductHolder();
-        if (!$productHolder) {
-            return;
-        }
-
-        $product = $productHolder->getProduct();
+        $product = $this->getProduct($form);
         if (!$product) {
             return;
         }
@@ -87,13 +78,38 @@ class ProductUnitSelectionType extends AbstractType
         $options['choices'] = $this->getProductUnits($product);
         $options['choices_updated'] = true;
 
-        $formParent
-            ->add($form->getName(), $form->getConfig()->getType()->getName(), $options);
+        $formParent->add($form->getName(), self::NAME, $options);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function validateUnits(FormEvent $event)
+    {
+        $form = $event->getForm();
+        $product = $this->getProduct($form);
+        if (!$product) {
+            return;
+        }
+
+        $units = $this->getProductUnits($product);
+        $data = $event->getData();
+        foreach ($units as $unit) {
+            if ($unit->getCode() === $data) {
+                return;
+            }
+        }
+
+        $form->addError(
+            new FormError(
+                $this->translator->trans('orob2b.product.productunit.invalid', [], 'validators')
+            )
+        );
     }
 
     /**
      * @param Product $product
-     * @return array
+     * @return ProductUnit[]
      */
     protected function getProductUnits(Product $product = null)
     {
@@ -121,6 +137,8 @@ class ProductUnitSelectionType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
+        parent::configureOptions($resolver);
+
         $resolver->setDefaults(
             [
                 'class' => $this->entityClass,

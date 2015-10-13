@@ -25,8 +25,6 @@ use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductRequestType;
 use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter;
 
-use OroB2B\Bundle\SaleBundle\Validator\Constraints;
-
 abstract class AbstractTest extends FormIntegrationTestCase
 {
     const QP_TYPE1          = QuoteProduct::TYPE_REQUESTED;
@@ -108,17 +106,6 @@ abstract class AbstractTest extends FormIntegrationTestCase
      * @return array
      */
     abstract public function submitProvider();
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getValidators()
-    {
-        $quoteProductOfferConstraint = new Constraints\QuoteProductOffer();
-        return [
-            $quoteProductOfferConstraint->validatedBy() => new Constraints\QuoteProductOfferValidator(),
-        ];
-    }
 
     /**
      * @return QuoteProductOfferType

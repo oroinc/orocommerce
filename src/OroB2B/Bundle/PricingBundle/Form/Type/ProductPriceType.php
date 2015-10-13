@@ -47,6 +47,7 @@ class ProductPriceType extends AbstractType
                 [
                     'label' => 'orob2b.pricing.unit.label',
                     'empty_value' => false,
+                    'product' => $options['product'],
                     'constraints' => [new NotBlank()],
                 ]
             )

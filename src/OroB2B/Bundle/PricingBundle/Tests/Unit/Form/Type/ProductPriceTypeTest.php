@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -79,10 +80,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
             ]
         );
 
-        $productUnitSelection = new EntityType(
-            $this->prepareProductUnitSelectionChoices(),
-            ProductUnitSelectionType::NAME
-        );
+        $productUnitSelection = new StubProductUnitSelectionType($this->prepareProductUnitSelectionChoices());
 
         $priceType = new PriceType();
         $priceType->setDataClass('Oro\Bundle\CurrencyBundle\Model\Price');

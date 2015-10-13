@@ -93,7 +93,6 @@ class QuoteProductOfferType extends AbstractType
                 [
                     'required' => true,
                     'label' => 'orob2b.sale.quoteproductoffer.quantity.label',
-                    'product_holder' => $builder->getData(),
                     'default_data' => 1,
                 ]
             );

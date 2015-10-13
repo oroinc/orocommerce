@@ -37,14 +37,21 @@ abstract class AbstractProductAwareType extends AbstractType
     protected function getProduct(FormInterface $form)
     {
         $options = $form->getConfig()->getOptions();
-        $parent = $form->getParent();
-
         $productField = $options['product_field'];
 
-        if ($parent->has($productField)) {
+        $parent = $form->getParent();
+        while ($parent && !$parent->has($productField)) {
+            $parent = $parent->getParent();
+        }
+
+        if ($parent && $parent->has($productField)) {
             $productData = $parent->get($productField)->getData();
             if ($productData instanceof Product) {
                 return $productData;
+            }
+
+            if ($productData instanceof ProductHolderInterface) {
+                return $productData->getProduct();
             }
         }
 

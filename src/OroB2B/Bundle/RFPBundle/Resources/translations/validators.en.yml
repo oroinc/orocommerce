@@ -5,7 +5,3 @@ orob2b:
                 blank: 'Product cannot be empty.'
             request_product_items:
                 blank: 'Please add one or more requests.'
-
-        requestproductitem:
-            unit:
-                blank: 'Please enter valid unit of measurement'
