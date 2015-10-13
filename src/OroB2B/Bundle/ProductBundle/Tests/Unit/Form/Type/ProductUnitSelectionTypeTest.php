@@ -540,15 +540,38 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         $productUnit->setCode($code);
         $unitPrecision = new ProductUnitPrecision();
         $unitPrecision->setUnit($productUnit);
-        $product = new Product();
+        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 1);
         $product->addUnitPrecision($unitPrecision);
 
         return [
             'product not found' => [null, 'valid'],
-            'product without units' => [new Product(), 'valid', 'ERROR: orob2b.product.productunit.invalid' . PHP_EOL],
+            'product without units' => [
+                $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 1),
+                'valid',
+                'ERROR: orob2b.product.productunit.invalid' . PHP_EOL,
+            ],
             'submit invalid' => [$product, 'not_valid', 'ERROR: orob2b.product.productunit.invalid' . PHP_EOL],
             'submit valid' => [$product, 'valid'],
             'empty data' => [$product, null, 'ERROR: orob2b.product.productunit.invalid' . PHP_EOL],
+            'new product' => [new Product(), null],
         ];
+    }
+
+    /**
+     * @param string $className
+     * @param int $id
+     *
+     * @return object
+     */
+    protected function getEntity($className, $id)
+    {
+        $entity = new $className;
+
+        $reflectionClass = new \ReflectionClass($className);
+        $method = $reflectionClass->getProperty('id');
+        $method->setAccessible(true);
+        $method->setValue($entity, $id);
+
+        return $entity;
     }
 }

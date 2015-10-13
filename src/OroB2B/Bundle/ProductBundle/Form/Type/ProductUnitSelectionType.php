@@ -88,7 +88,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
     {
         $form = $event->getForm();
         $product = $this->getProduct($form);
-        if (!$product) {
+        if (!$product || !$product->getId()) {
             return;
         }
 
