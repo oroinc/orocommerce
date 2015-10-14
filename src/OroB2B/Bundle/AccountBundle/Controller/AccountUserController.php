@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Controller;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -68,6 +69,47 @@ class AccountUserController extends Controller
     }
 
     /**
+     * @Route("/get-roles/{accountUserId}/{accountId}",
+     *      name="orob2b_account_account_user_roles",
+     *      requirements={"accountId"="\d+", "accountUserId"="\d+"},
+     *      defaults={"accountId"=0, "accountUserId"=0}
+     * )
+     * @Template("OroB2BAccountBundle:AccountUser:widget/roles.html.twig")
+     * @AclAncestor("orob2b_account_account_user_view")
+     *
+     * @param string $accountUserId
+     * @param string $accountId
+     * @return array
+     */
+    public function getRolesAction($accountUserId, $accountId)
+    {
+        /** @var DoctrineHelper $doctrineHelper */
+        $doctrineHelper = $this->get('oro_entity.doctrine_helper');
+
+        if ($accountUserId) {
+            $accountUser = $doctrineHelper->getEntityReference(
+                $this->getParameter('orob2b_account.entity.account_user.class'),
+                $accountUserId
+            );
+        } else {
+            $accountUser = new AccountUser();
+        }
+
+        $account = null;
+        if ($accountId) {
+            $account = $doctrineHelper->getEntityReference(
+                $this->getParameter('orob2b_account.entity.account.class'),
+                $accountId
+            );
+        }
+        $accountUser->setAccount($account);
+
+        $form = $this->createForm(AccountUserType::NAME, $accountUser);
+
+        return ['form' => $form->createView()];
+    }
+
+    /**
      * Create account user form
      *
      * @Route("/create", name="orob2b_account_account_user_create")
@@ -98,7 +140,7 @@ class AccountUserController extends Controller
      *      permission="EDIT"
      * )
      * @param AccountUser $accountUser
-     * @param Request $request
+     * @param Request     $request
      * @return array|RedirectResponse
      */
     public function updateAction(AccountUser $accountUser, Request $request)
@@ -108,7 +150,7 @@ class AccountUserController extends Controller
 
     /**
      * @param AccountUser $accountUser
-     * @param Request $request
+     * @param Request     $request
      * @return array|RedirectResponse
      */
     protected function update(AccountUser $accountUser, Request $request)
@@ -126,13 +168,13 @@ class AccountUserController extends Controller
             $form,
             function (AccountUser $accountUser) {
                 return [
-                    'route' => 'orob2b_account_account_user_update',
+                    'route'      => 'orob2b_account_account_user_update',
                     'parameters' => ['id' => $accountUser->getId()]
                 ];
             },
             function (AccountUser $accountUser) {
                 return [
-                    'route' => 'orob2b_account_account_user_view',
+                    'route'      => 'orob2b_account_account_user_view',
                     'parameters' => ['id' => $accountUser->getId()]
                 ];
             },
