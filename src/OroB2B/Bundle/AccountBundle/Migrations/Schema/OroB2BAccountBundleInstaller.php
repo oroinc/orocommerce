@@ -98,7 +98,7 @@ class OroB2BAccountBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_2';
     }
 
     /**
@@ -408,8 +408,8 @@ class OroB2BAccountBundleInstaller implements
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
-        $table->addColumn('role', 'string', ['length' => 64]);
-        $table->addColumn('label', 'string', ['length' => 64]);
+        $table->addColumn('role', 'string', ['length' => 255]);
+        $table->addColumn('label', 'string', ['length' => 255]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['role']);
         $table->addUniqueIndex(['account_id', 'label'], 'orob2b_account_user_role_account_id_label_idx');

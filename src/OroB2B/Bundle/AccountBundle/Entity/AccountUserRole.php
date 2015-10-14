@@ -66,7 +66,7 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=64, unique=true, nullable=false)
+     * @ORM\Column(type="string", length=255, unique=true, nullable=false)
      */
     protected $role;
 
@@ -89,7 +89,7 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=64)
+     * @ORM\Column(type="string", length=255)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
