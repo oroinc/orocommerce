@@ -117,6 +117,11 @@ class AccountUserTypeTest extends FormIntegrationTestCase
 
         $form = $this->factory->create($this->formType, $defaultData, []);
 
+        $this->assertTrue($form->has('roles'));
+        $options = $form->get('roles')->getConfig()->getOptions();
+        $this->assertArrayHasKey('query_builder', $options);
+        $this->assertQueryBuilderCallback($options['query_builder']);
+
         $this->assertEquals($defaultData, $form->getData());
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
@@ -201,26 +206,6 @@ class AccountUserTypeTest extends FormIntegrationTestCase
                     'expectedData' => $alteredExistingAccountUserWithAddresses,
                 ]
             ];
-    }
-
-
-    public function testPreSubmitQueryBuilder()
-    {
-        $this->securityFacade->expects($this->once())
-            ->method('isGranted')
-            ->with('orob2b_account_account_user_role_view')
-            ->will($this->returnValue(true));
-
-        $this->securityFacade->expects($this->exactly(2))->method('getOrganization')->willReturn(new Organization());
-
-        $accountUser = new AccountUser();
-
-        $form = $this->factory->create($this->formType, null, ['data' => $accountUser]);
-        $form->setData($accountUser);
-        $this->assertTrue($form->has('roles'));
-        $options = $form->get('roles')->getConfig()->getOptions();
-        $this->assertArrayHasKey('query_builder', $options);
-        $this->assertQueryBuilderCallback($options['query_builder']);
     }
 
     /**

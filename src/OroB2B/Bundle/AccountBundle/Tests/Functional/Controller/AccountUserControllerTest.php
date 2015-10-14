@@ -84,7 +84,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $form['orob2b_account_account_user[account]'] = $account->getId();
         $form['orob2b_account_account_user[passwordGenerate]'] = $isPasswordGenerate;
         $form['orob2b_account_account_user[sendEmail]'] = $isSendEmail;
-        $form['orob2b_account_account_user[roles]'] = [$role->getId()];
+        $form['orob2b_account_account_user[roles][0]']->tick();
 
         $this->client->submit($form);
 
@@ -231,7 +231,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $notExpectedRoles[] = $foreignRole;
         $manager->flush();
 
-        $this->client->request('GET', $this->getUrl('orob2b_account_account_user_by_account_roles', []));
+        $this->client->request('GET', $this->getUrl('orob2b_account_account_user_roles', []));
         $response = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($response, 200);
@@ -243,7 +243,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
 
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_account_user_by_account_roles', ['accountId' => $foreignAccount->getId()])
+            $this->getUrl('orob2b_account_account_user_roles', ['accountId' => $foreignAccount->getId()])
         );
 
         $response = $this->client->getResponse();
@@ -275,7 +275,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_account_account_user_get_roles_with_user',
+                'orob2b_account_account_user_roles',
                 [
                     'accountUserId' => $accountUser->getId(),
                     'accountId'     => $userAccount->getId()
@@ -296,7 +296,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_account_account_user_get_roles_with_user',
+                'orob2b_account_account_user_roles',
                 [
                     'accountUserId' => $accountUser->getId()
                 ]
