@@ -10,7 +10,6 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Fixtures\TestEntity;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleSelectType;
 
 class AccountUserRoleSelectTypeTest extends FormIntegrationTestCase
@@ -88,9 +87,9 @@ class AccountUserRoleSelectTypeTest extends FormIntegrationTestCase
             $formOptions['choice_label']($roleWithAccount)
         );
 
-        $testEntity = new TestEntity('TestEntityValue');
+        $testEntity = new Account();
+        $testEntity->setName('TestEntityValue');
         $this->assertEquals('TestEntityValue', $formOptions['choice_label']($testEntity));
-
     }
 
     /**

@@ -76,10 +76,10 @@ class FrontendAccountUserRoleSelectType extends AbstractType
             /** @var $repo AccountUserRoleRepository */
             $repo = $this->registry->getManagerForClass($this->roleClass)
                 ->getRepository($this->roleClass);
-            /** @var  $qb QueryBuilder */
+            /** @var $qb QueryBuilder */
             $qb = $repo->getAvailableRolesByAccountUserQueryBuilder(
-                $loggedUser->getAccount(),
-                $loggedUser->getOrganization()
+                $loggedUser->getOrganization(),
+                $loggedUser->getAccount()
             );
 
             return new ORMQueryBuilderLoader($qb);

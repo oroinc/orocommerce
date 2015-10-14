@@ -2,9 +2,8 @@
 
 namespace OroB2B\Bundle\AccountBundle\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -14,7 +13,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserType;
 use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserHandler;
@@ -71,49 +69,44 @@ class AccountUserController extends Controller
     }
 
     /**
-     * @Route("/get-roles/with-user/{accountUserId}/{accountId}",
-     *      name="orob2b_account_account_user_get_roles_with_user",
+     * @Route("/get-roles/{accountUserId}/{accountId}",
+     *      name="orob2b_account_account_user_roles",
      *      requirements={"accountId"="\d+", "accountUserId"="\d+"},
-     *      defaults={"accountId"=null}
+     *      defaults={"accountId"=0, "accountUserId"=0}
      * )
-     * @Method({"GET"})
      * @Template("OroB2BAccountBundle:AccountUser:widget/roles.html.twig")
      * @AclAncestor("orob2b_account_account_user_view")
      *
-     * @ParamConverter("accountUser", class="OroB2BAccountBundle:AccountUser", options={"id" = "accountUserId"})
-     * @ParamConverter("account", class="OroB2BAccountBundle:Account", options={"id" = "accountId"})
-     *
-     * @param AccountUser $accountUser
-     * @param Account     $account
-     * @param Request     $request
+     * @param string $accountUserId
+     * @param string $accountId
      * @return array
      */
-    public function getRolesWithUserAction(Request $request, AccountUser $accountUser, Account $account = null)
+    public function getRolesAction($accountUserId, $accountId)
     {
-        return $this->getRoles($request, $accountUser, $account);
-    }
+        /** @var DoctrineHelper $doctrineHelper */
+        $doctrineHelper = $this->get('oro_entity.doctrine_helper');
 
-    /**
-     * @Route("/get-roles/with-account/{accountId}",
-     *      name="orob2b_account_account_user_by_account_roles",
-     *      requirements={"accountId"="\d+"},
-     *      defaults={"accountId"=null}
-     * )
-     * @Method({"GET"})
-     * @Template("OroB2BAccountBundle:AccountUser:widget/roles.html.twig")
-     * @AclAncestor("orob2b_account_account_user_view")
-     *
-     * @ParamConverter("account", class="OroB2BAccountBundle:Account", options={"id" = "accountId"})
-     *
-     * @param Account $account
-     * @param Request $request
-     * @return array
-     */
-    public function getRolesWithAccountAction(Request $request, Account $account = null)
-    {
-        $accountUser = new AccountUser();
+        if ($accountUserId) {
+            $accountUser = $doctrineHelper->getEntityReference(
+                $this->getParameter('orob2b_account.entity.account_user.class'),
+                $accountUserId
+            );
+        } else {
+            $accountUser = new AccountUser();
+        }
 
-        return $this->getRoles($request, $accountUser, $account);
+        $account = null;
+        if ($accountId) {
+            $account = $doctrineHelper->getEntityReference(
+                $this->getParameter('orob2b_account.entity.account.class'),
+                $accountId
+            );
+        }
+        $accountUser->setAccount($account);
+
+        $form = $this->createForm(AccountUserType::NAME, $accountUser);
+
+        return ['form' => $form->createView()];
     }
 
     /**
@@ -190,23 +183,5 @@ class AccountUserController extends Controller
         );
 
         return $result;
-    }
-
-    /**
-     * @param Request      $request
-     * @param AccountUser  $accountUser
-     * @param Account|null $account
-     * @return array|RedirectResponse
-     */
-    protected function getRoles(Request $request, AccountUser $accountUser, Account $account = null)
-    {
-        if ($account) {
-            $accountUser->setAccount($account);
-            $accountUser->setOrganization($account->getOrganization());
-        } else {
-            $accountUser->setAccount(null);
-        }
-
-        return $this->update($accountUser, $request);
     }
 }

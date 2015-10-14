@@ -60,7 +60,7 @@ class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
             ->getMock();
         $repo->expects($this->any())
             ->method('getAvailableRolesByAccountUserQueryBuilder')
-            ->with($account, $organization)
+            ->with($organization, $account)
             ->willReturn($this->qb);
         /** @var $em ObjectManager|\PHPUnit_Framework_MockObject_MockObject */
         $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');

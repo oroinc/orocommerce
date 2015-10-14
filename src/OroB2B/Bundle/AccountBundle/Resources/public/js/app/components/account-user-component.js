@@ -21,17 +21,12 @@ define(function(require) {
         },
 
         /**
-         * @property {Object}
-         */
-        accountForm: null,
-
-        /**
          * @inheritDoc
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-            this.accountForm = this.options._sourceElement.find(this.options.accountFormId);
-            this.accountForm.on('change', _.bind(this.reloadRoleWidget, this));
+            this.options._sourceElement
+                .on('change', this.options.accountFormId, _.bind(this.reloadRoleWidget, this));
         },
 
         /**
@@ -42,7 +37,7 @@ define(function(require) {
                 return;
             }
 
-            this.accountForm.off('change');
+            this.options._sourceElement.off('change');
             AccountUser.__super__.dispose.call(this);
         },
 
@@ -56,19 +51,14 @@ define(function(require) {
             var accountId = e.target.value;
 
             widgetManager.getWidgetInstanceByAlias(this.options.widgetAlias, function(widget) {
-                var url;
+                var params = {accountId: accountId};
                 if (accountUserId) {
-                    url = routing.generate('orob2b_account_account_user_get_roles_with_user', {
-                        accountId: accountId,
-                        accountUserId: accountUserId
-                    });
-                } else {
-                    url = routing.generate('orob2b_account_account_user_by_account_roles', {
-                        accountId: accountId
-                    });
+                    params.accountUserId = accountUserId;
                 }
 
-                widget.setUrl(url);
+                widget.setUrl(
+                    routing.generate('orob2b_account_account_user_roles', params)
+                );
                 widget.render();
             });
         }

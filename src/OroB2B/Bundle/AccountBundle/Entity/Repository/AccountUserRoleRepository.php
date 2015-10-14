@@ -5,6 +5,9 @@ namespace OroB2B\Bundle\AccountBundle\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
+
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -19,6 +22,7 @@ class AccountUserRoleRepository extends EntityRepository
     public function getDefaultAccountUserRoleByWebsite(Website $website)
     {
         $qb = $this->createQueryBuilder('accountUserRole');
+
         return $qb
             ->innerJoin('accountUserRole.websites', 'website')
             ->andWhere($qb->expr()->eq('website', ':website'))
@@ -92,25 +96,35 @@ class AccountUserRoleRepository extends EntityRepository
     }
 
     /**
-     * @param $account
-     * @param $organization
-     *
+     * @param OrganizationInterface $organization
+     * @param mixed $account
      * @return QueryBuilder
      */
-    public function getAvailableRolesByAccountUserQueryBuilder($account, $organization)
+    public function getAvailableRolesByAccountUserQueryBuilder(OrganizationInterface $organization, $account)
     {
+        if ($account instanceof Account) {
+            $account = $account->getId();
+        }
+
         $qb = $this->createQueryBuilder('accountUserRole');
+
+        $expr = $qb->expr()->isNull('accountUserRole.account');
+        if ($account) {
+            $expr = $qb->expr()->orX(
+                $expr,
+                $qb->expr()->eq('accountUserRole.account', ':account')
+            );
+            $qb->setParameter('account', (int)$account);
+        }
+
         $qb->where(
             $qb->expr()->andX(
-                $qb->expr()->orX(
-                    $qb->expr()->isNull('accountUserRole.account'),
-                    $qb->expr()->eq('accountUserRole.account', ':account')
-                ),
+                $expr,
                 $qb->expr()->eq('accountUserRole.organization', ':organization')
             )
         );
-        $qb->setParameter('account', $account);
         $qb->setParameter('organization', $organization);
+
         return $qb;
     }
 }

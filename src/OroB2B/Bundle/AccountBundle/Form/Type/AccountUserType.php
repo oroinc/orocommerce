@@ -221,8 +221,8 @@ class AccountUserType extends AbstractType
             [
                 'query_builder' => function (AccountUserRoleRepository $repository) use ($data) {
                     return $repository->getAvailableRolesByAccountUserQueryBuilder(
-                        $data->getAccount(),
-                        $data->getOrganization()
+                        $data->getOrganization(),
+                        $data->getAccount()
                     );
                 }
             ]
@@ -242,9 +242,14 @@ class AccountUserType extends AbstractType
             AccountUserRoleSelectType::NAME,
             [
                 'query_builder' => function (AccountUserRoleRepository $repository) use ($data) {
+                    $account = null;
+                    if (array_key_exists('account', $data)) {
+                        $account = $data['account'];
+                    }
+
                     return $repository->getAvailableRolesByAccountUserQueryBuilder(
-                        $data['account'],
-                        $this->securityFacade->getOrganization()->getId()
+                        $this->securityFacade->getOrganization(),
+                        $account
                     );
                 }
             ]

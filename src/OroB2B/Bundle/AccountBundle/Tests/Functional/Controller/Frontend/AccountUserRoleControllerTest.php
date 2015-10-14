@@ -176,9 +176,6 @@ class AccountUserRoleControllerTest extends WebTestCase
 
     public function testUpdateFromPredefined()
     {
-        //TODO: see BB-1134
-        $this->markTestSkipped('Must be fixed in scope with BB-1134');
-
         $currentUserRoles = $this->currentUser->getRoles();
         $oldRoleId = $this->predefinedRole->getId();
 

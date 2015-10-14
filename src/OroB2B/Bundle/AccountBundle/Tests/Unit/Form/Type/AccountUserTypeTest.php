@@ -11,6 +11,7 @@ use Symfony\Component\Validator\Validation;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as AccountSelectTypeStub;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -112,6 +113,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
                 ->with('orob2b_account_account_user_role_view')
                 ->will($this->returnValue(true));
         }
+        $this->securityFacade->expects($this->exactly(2))->method('getOrganization')->willReturn(new Organization());
 
         $form = $this->factory->create($this->formType, $defaultData, []);
 
@@ -119,6 +121,11 @@ class AccountUserTypeTest extends FormIntegrationTestCase
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
         $this->assertEquals($expectedData, $form->getData());
+
+        $this->assertTrue($form->has('roles'));
+        $options = $form->get('roles')->getConfig()->getOptions();
+        $this->assertArrayHasKey('query_builder', $options);
+        $this->assertQueryBuilderCallback($options['query_builder']);
     }
 
     /**
@@ -141,6 +148,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
         $existingAccountUser->setPassword('123456');
         $existingAccountUser->setAccount($this->getAccount(1));
         $existingAccountUser->addAddress($this->getAddresses()[1]);
+        $existingAccountUser->setOrganization(new Organization());
 
         $alteredExistingAccountUser = clone $existingAccountUser;
         $alteredExistingAccountUser->setAccount($this->getAccount(2));
@@ -193,6 +201,41 @@ class AccountUserTypeTest extends FormIntegrationTestCase
                     'expectedData' => $alteredExistingAccountUserWithAddresses,
                 ]
             ];
+    }
+
+
+    public function testPreSubmitQueryBuilder()
+    {
+        $this->securityFacade->expects($this->once())
+            ->method('isGranted')
+            ->with('orob2b_account_account_user_role_view')
+            ->will($this->returnValue(true));
+
+        $this->securityFacade->expects($this->exactly(2))->method('getOrganization')->willReturn(new Organization());
+
+        $accountUser = new AccountUser();
+
+        $form = $this->factory->create($this->formType, null, ['data' => $accountUser]);
+        $form->setData($accountUser);
+        $this->assertTrue($form->has('roles'));
+        $options = $form->get('roles')->getConfig()->getOptions();
+        $this->assertArrayHasKey('query_builder', $options);
+        $this->assertQueryBuilderCallback($options['query_builder']);
+    }
+
+    /**
+     * @param \Closure $callable
+     */
+    protected function assertQueryBuilderCallback($callable)
+    {
+        $this->assertInternalType('callable', $callable);
+
+        $repository = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $repository->expects($this->once())->method('getAvailableRolesByAccountUserQueryBuilder');
+
+        $callable($repository);
     }
 
     /**

@@ -109,8 +109,8 @@ class AccountUserRoleRepositoryTest extends WebTestCase
         /** @var AccountUserRole[] $actual */
         $actual = $this->repository
             ->getAvailableRolesByAccountUserQueryBuilder(
-                $accountUser->getAccount(),
-                $accountUser->getOrganization()
+                $accountUser->getOrganization(),
+                $accountUser->getAccount()
             )
             ->getQuery()
             ->getResult();
