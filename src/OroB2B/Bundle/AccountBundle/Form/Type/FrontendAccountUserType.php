@@ -16,7 +16,9 @@ class FrontendAccountUserType extends AbstractType
 {
     const NAME = 'orob2b_account_frontend_account_user';
 
-    /** @var  SecurityFacade */
+    /**
+     * @var SecurityFacade
+     */
     protected $securityFacade;
 
     /**
@@ -66,10 +68,11 @@ class FrontendAccountUserType extends AbstractType
         if (!$user instanceof AccountUser) {
             return;
         }
-        $account = $user->getAccount();
+
         /** @var AccountUser $data */
         $data = $event->getData();
-        $data->setAccount($account);
+        $data->setAccount($user->getAccount());
+        $data->setOrganization($user->getOrganization());
     }
 
     /**

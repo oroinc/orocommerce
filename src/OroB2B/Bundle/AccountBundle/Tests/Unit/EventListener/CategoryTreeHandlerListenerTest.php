@@ -131,7 +131,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
                 ],
                 'categoryVisibilityData' => new CategoryVisibilityData([3], false),
                 'user' => (new AccountUser)
-                    ->setAccount($this->createEntity('OroB2B\Bundle\AccountBundle\Entity\Account', 42))
+                    ->setAccount($this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => 42]))
             ]
         ];
     }
@@ -146,7 +146,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit_Framework_TestCase
         $categoriesCollection = [];
         foreach ($categories as $item) {
             /** @var Category $category */
-            $category = $this->createEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', $item['id']);
+            $category = $this->getEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', ['id' => $item['id']]);
 
             $category->setParentCategory($this->getParent($item['parent'], $categoriesCollection));
             $categoriesCollection[$category->getId()] = $category;

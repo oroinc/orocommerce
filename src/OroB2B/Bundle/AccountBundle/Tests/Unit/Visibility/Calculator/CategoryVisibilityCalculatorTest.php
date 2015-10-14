@@ -125,11 +125,11 @@ class CategoryVisibilityCalculatorTest extends \PHPUnit_Framework_TestCase
     {
         foreach ($visibilities as &$visibility) {
             /** @var Category $category */
-            $category = $this->createEntity('\OroB2B\Bundle\CatalogBundle\Entity\Category', $visibility['id']);
+            $category = $this->getEntity('\OroB2B\Bundle\CatalogBundle\Entity\Category', ['id' => $visibility['id']]);
             if (null !== $visibility['parent_category']) {
-                $parentCategory = $this->createEntity(
+                $parentCategory = $this->getEntity(
                     '\OroB2B\Bundle\CatalogBundle\Entity\Category',
-                    $visibility['parent_category']
+                    ['id' => $visibility['parent_category']]
                 );
                 $category->setParentCategory($parentCategory);
             }

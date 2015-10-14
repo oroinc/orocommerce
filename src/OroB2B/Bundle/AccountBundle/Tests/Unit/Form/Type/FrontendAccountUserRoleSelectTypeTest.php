@@ -10,6 +10,7 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\QueryBuilder;
 
+use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
@@ -21,6 +22,7 @@ use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRoleSelectType;
 
 class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
 {
+    use EntityTrait;
     /**
      * @var FrontendAccountUserRoleSelectType
      */
@@ -38,8 +40,10 @@ class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
     protected function setUp()
     {
         $account = $this->createAccount(1, 'account');
+        $organization = $this->createOrganization(1);
         $user = new AccountUser();
         $user->setAccount($account);
+        $user->setOrganization($organization);
         $this->qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
             ->disableOriginalConstructor()
             ->getMock();
@@ -56,7 +60,7 @@ class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
             ->getMock();
         $repo->expects($this->any())
             ->method('getAvailableRolesByAccountUserQueryBuilder')
-            ->with($user)
+            ->with($organization, $account)
             ->willReturn($this->qb);
         /** @var $em ObjectManager|\PHPUnit_Framework_MockObject_MockObject */
         $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
@@ -120,17 +124,21 @@ class FrontendAccountUserRoleSelectTypeTest extends FormIntegrationTestCase
      * @param string $name
      * @return Account
      */
-    protected static function createAccount($id, $name)
+    protected function createAccount($id, $name)
     {
-        $account = new Account();
-
-        $reflection = new \ReflectionProperty(get_class($account), 'id');
-        $reflection->setAccessible(true);
-        $reflection->setValue($account, $id);
-
+        $account = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => $id]);
         $account->setName($name);
 
         return $account;
+    }
+
+    /**
+     * @param int $id
+     * @return Account
+     */
+    protected function createOrganization($id)
+    {
+        return $this->getEntity('Oro\Bundle\OrganizationBundle\Entity\Organization', ['id' => $id]);
     }
 
     /**
