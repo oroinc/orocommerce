@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Controller;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -10,6 +9,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
