@@ -13,6 +13,7 @@ use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as EntityIdentifierTypeStub;
 
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
 use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSetDataListener;
 use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSubmitListener;
@@ -93,7 +94,11 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
 
     public function testBuildForm()
     {
-        $form = $this->factory->create(CategoryType::NAME);
+        $form = $this->factory->create(
+            CategoryType::NAME,
+            new Category(),
+            ['data_class' => 'OroB2B\Bundle\CatalogBundle\Entity\Category']
+        );
         $this->assertTrue($form->has('visibility'));
     }
 
