@@ -12,42 +12,30 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSubmitListener;
+use OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityPostSubmitListener;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
+class VisibilityPostSubmitListenerTest extends VisibilityAbstractListenerTestCase
 {
     const CATEGORY_ID = 123;
 
-    /** @var CategoryPostSubmitListener */
+    /** @var VisibilityPostSubmitListener */
     protected $listener;
 
-    /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject */
-    protected $form;
-
-    public function setUp()
-    {
-        $this->form = $this->getMock('Symfony\Component\Form\FormInterface');
-
-        parent::setUp();
-    }
-
     /**
-     * @return CategoryPostSubmitListener
+     * @return VisibilityPostSubmitListener
      */
     public function getListener()
     {
-        return new CategoryPostSubmitListener($this->registry);
+        return new VisibilityPostSubmitListener($this->registry);
     }
 
     public function testInvalidForm()
     {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $form->expects($this->once())->method('isValid')->willReturn(false);
+        $this->form->expects($this->once())->method('isValid')->willReturn(false);
         /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = $this->getMockBuilder('\Symfony\Component\Form\FormEvent')
             ->disableOriginalConstructor()
@@ -55,8 +43,8 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
 
         $event->expects($this->once())
             ->method('getForm')
-            ->willReturn($form);
-        $event->expects($this->never())->method('getData');
+            ->willReturn($this->form);
+        $this->form->expects($this->once())->method('getData');
         $this->listener->onPostSubmit($event);
     }
 
@@ -66,9 +54,8 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
 
         /** @var Category $category */
         $category = $this->getEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', self::CATEGORY_ID);
-        $event->expects($this->once())
-            ->method('getData')
-            ->willReturn($category);
+        $this->form->expects($this->atLeast(1))->method('getData')->willReturn($category);
+        $event->expects($this->any())->method('getForm')->willReturn($this->form);
 
         $this->prepareCategoryVisibilityRepository($category);
         $this->prepareAccountVisibilityRepository();
@@ -87,15 +74,18 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
      */
     public function testOnPostSubmitRemoveDefault(Category $category, $visibility)
     {
+        $this->accountCategoryVisibilityRepository->expects($this->any())->method('findBy')->willReturn([]);
+        $this->accountGroupCategoryVisibilityRepository->expects($this->any())->method('findBy')->willReturn([]);
+
+        $this->form->expects($this->once())->method('isValid')->willReturn(true);
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $form->expects($this->once())->method('isValid')->willReturn(true);
-        $form->expects($this->exactly(3))->method('get')->willReturn($form);
-        $form->expects($this->exactly(3))->method('getData')->willReturnOnConsecutiveCalls(
+        $form->method('getData')->willReturnOnConsecutiveCalls(
             $visibility,
             new ArrayCollection(),
             new ArrayCollection()
         );
+        $this->form->expects($this->exactly(3))->method('get')->willReturn($form);
 
         /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = $this->getMockBuilder('\Symfony\Component\Form\FormEvent')
@@ -104,9 +94,9 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
 
         $event->expects($this->once())
             ->method('getForm')
-            ->willReturn($form);
+            ->willReturn($this->form);
 
-        $event->expects($this->once())
+        $this->form->expects($this->atLeast(1))
             ->method('getData')
             ->willReturn($category);
 
@@ -142,18 +132,17 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
 
     public function testOnPostSubmitWithEmptyData()
     {
+        $this->form->expects($this->once())->method('isValid')->willReturn(true);
         /** @var \PHPUnit_Framework_MockObject_MockObject|FormEvent $event */
         $event = $this->getMockBuilder('\Symfony\Component\Form\FormEvent')
             ->disableOriginalConstructor()
             ->getMock();
-        $event->expects($this->once())
+        $this->form->expects($this->once())
             ->method('getData')
             ->willReturn(null);
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
         $event->expects($this->once())
-            ->method('getForm')->willReturn($form);
-        $form->expects($this->once())->method('isValid')->willReturn(true);
+            ->method('getForm')->willReturn($this->form);
+
         $this->listener->onPostSubmit($event);
     }
 
@@ -179,10 +168,8 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
                 'OroB2B\Bundle\AccountBundle\Entity\AccountGroup'
             );
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $form->expects($this->once())->method('isValid')->willReturn(true);
-        $form->expects($this->exactly(3))
+        $this->form->expects($this->once())->method('isValid')->willReturn(true);
+        $this->form->expects($this->exactly(3))
             ->method('get')
             ->willReturnMap(
                 [
@@ -196,7 +183,7 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
             ->getMock();
         $event->expects($this->once())
             ->method('getForm')
-            ->willReturn($form);
+            ->willReturn($this->form);
 
         return $event;
     }
@@ -297,7 +284,7 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
         );
 
         $this->accountCategoryVisibilityRepository->expects($this->once())
-            ->method('findForAccounts')
+            ->method('findBy')
             ->willReturn($accountCategoryVisibilities);
     }
 
@@ -321,11 +308,11 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
         );
 
         $this->accountGroupCategoryVisibilityRepository->expects($this->once())
-            ->method('findForAccountGroups')
+            ->method('findBy')
             ->willReturn($accountGroupCategoryVisibilities);
     }
 
-    public function testProcessCategoryVisibilityWithEmptyCategoryVisibility()
+    public function testSaveFormAllDataWithEmptyCategoryVisibility()
     {
         $category = $this->getEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', self::CATEGORY_ID);
         $visibility = CategoryVisibility::VISIBLE;
@@ -346,10 +333,19 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
                 )
             );
 
+        $this->form->expects($this->atLeast(1))
+            ->method('getData')
+            ->willReturn($category);
+
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form->method('getData')->willReturn($visibility);
+        $this->form->expects($this->once())->method('get')->willReturn($form);
+
         $reflectionClass = new \ReflectionClass($this->listener);
-        $method = $reflectionClass->getMethod('processCategoryVisibility');
+        $method = $reflectionClass->getMethod('saveFormAllData');
         $method->setAccessible(true);
-        $method->invoke($this->listener, $category, $visibility);
+        $method->invoke($this->listener, $this->form);
     }
 
     public function testProcessAccountVisibilityWithEmptyAccountCategoryVisibility()
@@ -367,7 +363,7 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
         $accountChangeSet = new ArrayCollection($data);
 
         $this->accountCategoryVisibilityRepository->expects($this->atLeastOnce())
-            ->method('findForAccounts')
+            ->method('findBy')
             ->willReturn(new ArrayCollection([]));
 
         $this->em->expects($this->once())
@@ -382,10 +378,19 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
                 )
             );
 
+        $this->form->expects($this->atLeast(1))
+            ->method('getData')
+            ->willReturn($category);
+
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form->method('getData')->willReturn($accountChangeSet);
+        $this->form->expects($this->once())->method('get')->willReturn($form);
+
         $reflectionClass = new \ReflectionClass($this->listener);
-        $method = $reflectionClass->getMethod('processAccountVisibility');
+        $method = $reflectionClass->getMethod('saveFormAccountData');
         $method->setAccessible(true);
-        $method->invoke($this->listener, $category, $accountChangeSet);
+        $method->invoke($this->listener, $this->form);
     }
 
     public function testProcessAccountGroupVisibilityWithEmptyAccountGroupCategoryVisibility()
@@ -403,7 +408,7 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
         $accountGroupChangeSet = new ArrayCollection($data);
 
         $this->accountGroupCategoryVisibilityRepository->expects($this->atLeastOnce())
-            ->method('findForAccountGroups')
+            ->method('findBy')
             ->willReturn(new ArrayCollection([]));
 
         $this->em->expects($this->once())
@@ -418,10 +423,19 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
                 )
             );
 
+        $this->form->expects($this->atLeast(1))
+            ->method('getData')
+            ->willReturn($category);
+
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form->method('getData')->willReturn($accountGroupChangeSet);
+        $this->form->expects($this->once())->method('get')->willReturn($form);
+
         $reflectionClass = new \ReflectionClass($this->listener);
-        $method = $reflectionClass->getMethod('processAccountGroupVisibility');
+        $method = $reflectionClass->getMethod('saveFormAccountGroupData');
         $method->setAccessible(true);
-        $method->invoke($this->listener, $category, $accountGroupChangeSet);
+        $method->invoke($this->listener, $this->form);
     }
 
     /**
