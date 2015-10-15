@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\UnitProvider;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use OroB2B\Bundle\ProductBundle\Provider\ProductStatusProvider;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 

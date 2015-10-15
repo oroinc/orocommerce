@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Provider;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class ProductStatusProvider
