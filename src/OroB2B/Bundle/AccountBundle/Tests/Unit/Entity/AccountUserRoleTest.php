@@ -6,6 +6,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -50,6 +51,7 @@ class AccountUserRoleTest extends \PHPUnit_Framework_TestCase
     {
         static::assertPropertyCollections(new AccountUserRole(), [
             ['websites', new Website()],
+            ['accountUsers', new AccountUser()],
         ]);
 
         static::assertPropertyAccessors(new AccountUserRole(), [
