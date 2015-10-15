@@ -94,8 +94,6 @@ class CategoryControllerTest extends WebTestCase
 
     public function testSubmitInvalidData()
     {
-        //TODO: see BB-1370
-        $this->markTestSkipped('Must be fixed in scope with BB-1370');
         $crawler = $this->submitForm(
             'wrong Visibility',
             '{"wrong_id":{"visibility":"hidden"}}',

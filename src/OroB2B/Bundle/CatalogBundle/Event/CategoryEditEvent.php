@@ -2,10 +2,12 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Event;
 
+use Oro\Bundle\SoapBundle\Controller\Api\FormAwareInterface;
+
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\Form\FormInterface;
 
-class CategoryEditEvent extends Event
+class CategoryEditEvent extends Event implements FormAwareInterface
 {
     const NAME = 'orob2b.catalog.category_edit';
 

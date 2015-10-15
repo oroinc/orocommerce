@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Form\Handler;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
@@ -14,9 +14,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class CategoryHandler
 {
-    /**
-     * @var FormInterface
-     */
+    /** @var FormInterface */
     protected $form;
 
     /** @var Request */
@@ -25,20 +23,20 @@ class CategoryHandler
     /** @var ObjectManager */
     protected $manager;
 
-    /** @var  EventDispatcher */
+    /** @var  EventDispatcherInterface */
     protected $eventDispatcher;
 
     /**
      * @param FormInterface $form
      * @param Request $request
      * @param ObjectManager $manager
-     * @param EventDispatcher $eventDispatcher
+     * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
         FormInterface $form,
         Request $request,
         ObjectManager $manager,
-        EventDispatcher $eventDispatcher
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->form = $form;
         $this->request = $request;
