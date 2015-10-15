@@ -9,8 +9,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 
-use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSetDataListener;
-use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSubmitListener;
+use OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityPostSetDataListener;
+use OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityPostSubmitListener;
 use OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
 use OroB2B\Bundle\AccountBundle\Validator\Constraints\VisibilityChangeSet;
 
@@ -18,11 +18,11 @@ class EntityVisibilityType extends AbstractType
 {
     const NAME = 'orob2b_account_entity_visibility_type';
 
-    /** @var CategoryPostSetDataListener */
-    protected $postSetDataListener;
+    /** @var VisibilityPostSetDataListener */
+    protected $visibilityPostSetDataListener;
 
-    /** @var CategoryPostSubmitListener */
-    protected $postSubmitListener;
+    /** @var VisibilityPostSubmitListener */
+    protected $visibilityPostSubmitListener;
 
     /** @var VisibilityChoicesProvider */
     protected $visibilityChoicesProvider;
@@ -34,20 +34,17 @@ class EntityVisibilityType extends AbstractType
     protected $accountGroupClass;
 
     /**
-     * @param CategoryPostSetDataListener $postSetDataListener
-     * @param CategoryPostSubmitListener $postSubmitListener
+     * @param VisibilityPostSetDataListener $visibilityPostSetDataListener
+     * @param VisibilityPostSubmitListener $visibilityPostSubmitListener
      * @param VisibilityChoicesProvider $visibilityChoicesProvider
      */
     public function __construct(
-        CategoryPostSetDataListener $postSetDataListener,
-        CategoryPostSubmitListener $postSubmitListener,
+        VisibilityPostSetDataListener $visibilityPostSetDataListener,
+        VisibilityPostSubmitListener $visibilityPostSubmitListener,
         VisibilityChoicesProvider $visibilityChoicesProvider
     ) {
-        /**
-         * TODO: CategoryPostSetDataListener/CategoryPostSubmitListener to PostSetDataListener/PostSubmitListener
-         */
-        $this->postSetDataListener = $postSetDataListener;
-        $this->postSubmitListener = $postSubmitListener;
+        $this->visibilityPostSetDataListener = $visibilityPostSetDataListener;
+        $this->visibilityPostSubmitListener = $visibilityPostSubmitListener;
         $this->visibilityChoicesProvider = $visibilityChoicesProvider;
     }
 
@@ -63,9 +60,10 @@ class EntityVisibilityType extends AbstractType
         );
         $resolver->setRequired(
             [
-                'visibilityToAllClass',
-                'visibilityToAccountGroupClass',
-                'visibilityToAccountClass',
+                'targetEntityField',
+                'allClass',
+                'accountGroupClass',
+                'accountClass',
             ]
         );
     }
@@ -86,7 +84,7 @@ class EntityVisibilityType extends AbstractType
         $builder->setMapped(false);
 
         $target = isset($options['data']) ? $options['data'] : null;
-        $choices = $this->visibilityChoicesProvider->getFormattedChoices($options['visibilityToAllClass'], $target);
+        $choices = $this->visibilityChoicesProvider->getFormattedChoices($options['allClass'], $target);
 
         $builder
             ->add(
@@ -116,8 +114,8 @@ class EntityVisibilityType extends AbstractType
                 ]
             );
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this->postSetDataListener, 'onPostSetData']);
-        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this->postSubmitListener, 'onPostSubmit']);
+        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this->visibilityPostSetDataListener, 'onPostSetData']);
+        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this->visibilityPostSubmitListener, 'onPostSubmit']);
     }
 
     /**

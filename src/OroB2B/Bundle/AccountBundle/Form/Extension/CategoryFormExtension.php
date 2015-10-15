@@ -38,9 +38,10 @@ class CategoryFormExtension extends AbstractTypeExtension
                 EntityVisibilityType::NAME,
                 [
                     'data' => $options['data'],
-                    'visibilityToAllClass' => $this->visibilityToAllClass,
-                    'visibilityToAccountGroupClass' => $this->visibilityToAccountGroupClass,
-                    'visibilityToAccountClass' => $this->visibilityToAccountClass,
+                    'targetEntityField' => 'category',
+                    'allClass' => $this->visibilityToAllClass,
+                    'accountGroupClass' => $this->visibilityToAccountGroupClass,
+                    'accountClass' => $this->visibilityToAccountClass,
                 ]
             );
     }
