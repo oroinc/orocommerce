@@ -42,7 +42,7 @@ class CategoryVisibilityStorageTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->storage = new CategoryVisibilityStorage($this->cacheProvider, $this->calculator);
-        $this->account = $this->createEntity('OroB2B\Bundle\AccountBundle\Entity\Account', self::ACCOUNT_ID);
+        $this->account = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => self::ACCOUNT_ID]);
     }
 
     protected function tearDown()
@@ -53,7 +53,7 @@ class CategoryVisibilityStorageTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider getDataProvider
      *
-     * @param Account|null account
+     * @param Account|null $account
      * @param array|null $cacheValue
      * @param array|null $calcValue
      * @param array $expectedCacheValue

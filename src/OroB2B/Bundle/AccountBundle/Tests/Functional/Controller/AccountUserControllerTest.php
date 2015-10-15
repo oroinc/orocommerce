@@ -4,8 +4,16 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller;
 
 use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
 
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
+use OroB2B\Bundle\AccountBundle\Migrations\Data\ORM\LoadAccountUserRoles;
+
 /**
  * @dbIsolation
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class AccountUserControllerTest extends AbstractUserControllerTest
 {
@@ -42,19 +50,22 @@ class AccountUserControllerTest extends AbstractUserControllerTest
      * @dataProvider createDataProvider
      * @param string $email
      * @param string $password
-     * @param bool $isPasswordGenerate
-     * @param bool $isSendEmail
-     * @param int $emailsCount
+     * @param bool   $isPasswordGenerate
+     * @param bool   $isSendEmail
+     * @param int    $emailsCount
      */
     public function testCreate($email, $password, $isPasswordGenerate, $isSendEmail, $emailsCount)
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_account_user_create'));
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         /** @var \OroB2B\Bundle\AccountBundle\Entity\Account $account */
         $account = $this->getAccountRepository()->findOneBy([]);
 
         /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUserRole $role */
-        $role = $this->getUserRoleRepository()->findOneBy([]);
+        $role = $this->getUserRoleRepository()->findOneBy(
+            ['role' => AccountUserRole::PREFIX_ROLE . LoadAccountUserRoles::ADMINISTRATOR]
+        );
 
         $this->assertNotNull($account);
         $this->assertNotNull($role);
@@ -73,7 +84,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $form['orob2b_account_account_user[account]'] = $account->getId();
         $form['orob2b_account_account_user[passwordGenerate]'] = $isPasswordGenerate;
         $form['orob2b_account_account_user[sendEmail]'] = $isSendEmail;
-        $form['orob2b_account_account_user[roles]'] = [$role->getId()];
+        $form['orob2b_account_account_user[roles][0]']->tick();
 
         $this->client->submit($form);
 
@@ -110,7 +121,7 @@ class AccountUserControllerTest extends AbstractUserControllerTest
     }
 
     /**
-     * @depend testCreate
+     * @depends testCreate
      * @return integer
      */
     public function testUpdate()
@@ -119,8 +130,8 @@ class AccountUserControllerTest extends AbstractUserControllerTest
             'account-account-user-grid',
             [
                 'account-account-user-grid[_filter][firstName][value]' => self::FIRST_NAME,
-                'account-account-user-grid[_filter][LastName][value]' => self::LAST_NAME,
-                'account-account-user-grid[_filter][email][value]' => self::EMAIL
+                'account-account-user-grid[_filter][LastName][value]'  => self::LAST_NAME,
+                'account-account-user-grid[_filter][email][value]'     => self::EMAIL
             ]
         );
 
@@ -206,6 +217,175 @@ class AccountUserControllerTest extends AbstractUserControllerTest
         $this->assertContains(self::UPDATED_EMAIL, $result->getContent());
         $this->assertContains($user->getAccount()->getName(), $result->getContent());
         $this->assertContains($role->getLabel(), $result->getContent());
+    }
+
+    public function testGetRolesWithAccountAction()
+    {
+        $manager = $this->getObjectManager();
+
+        $foreignAccount = $this->createAccount('Foreign account');
+        $foreignRole = $this->createAccountUserRole('Custom foreign role');
+        $foreignRole->setAccount($foreignAccount);
+
+        $expectedRoles[] = $this->createAccountUserRole('Predefined test role');
+        $notExpectedRoles[] = $foreignRole;
+        $manager->flush();
+
+        $this->client->request('GET', $this->getUrl('orob2b_account_account_user_roles', []));
+        $response = $this->client->getResponse();
+
+        $this->assertHtmlResponseStatusCodeEquals($response, 200);
+        $this->assertRoles($expectedRoles, $notExpectedRoles, $response->getContent());
+
+        // With account parameter
+        $expectedRoles = $notExpectedRoles = [];
+        $expectedRoles[] = $foreignRole;
+
+        $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_account_account_user_roles', ['accountId' => $foreignAccount->getId()])
+        );
+
+        $response = $this->client->getResponse();
+
+        $this->assertRoles($expectedRoles, $notExpectedRoles, $response->getContent());
+    }
+
+    public function testGetRolesWithUserAction()
+    {
+        $manager = $this->getObjectManager();
+
+        $foreignAccount = $this->createAccount('User foreign account');
+        $notExpectedRoles[] = $foreignRole = $this->createAccountUserRole('Custom user foreign role');
+        $foreignRole->setAccount($foreignAccount);
+
+        $userAccount = $this->createAccount('User account');
+        $expectedRoles[] = $userRole = $this->createAccountUserRole('Custom user role');
+        $userRole->setAccount($userAccount);
+
+        $accountUser = $this->createAccountUser('test@example.com');
+        $accountUser->setAccount($userAccount);
+        $accountUser->addRole($userRole);
+
+        $expectedRoles[] = $predefinedRole = $this->createAccountUserRole('User predefined role');
+        $accountUser->addRole($predefinedRole);
+
+        $manager->flush();
+
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                'orob2b_account_account_user_roles',
+                [
+                    'accountUserId' => $accountUser->getId(),
+                    'accountId'     => $userAccount->getId()
+                ]
+            )
+        );
+
+        $response = $this->client->getResponse();
+
+        $this->assertHtmlResponseStatusCodeEquals($response, 200);
+        $this->assertRoles($expectedRoles, $notExpectedRoles, $response->getContent(), $accountUser);
+
+        // Without account parameter
+        $expectedRoles = $notExpectedRoles = [];
+        $notExpectedRoles[] = $userRole;
+        $expectedRoles[] = $predefinedRole;
+
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                'orob2b_account_account_user_roles',
+                [
+                    'accountUserId' => $accountUser->getId()
+                ]
+            )
+        );
+
+        $response = $this->client->getResponse();
+
+        $this->assertHtmlResponseStatusCodeEquals($response, 200);
+        $this->assertRoles($expectedRoles, $notExpectedRoles, $response->getContent(), $accountUser);
+    }
+
+    /**
+     * @param string $name
+     * @return Account
+     */
+    protected function createAccount($name)
+    {
+        $account = new Account();
+        $account->setName($name);
+        $account->setOrganization($this->getDefaultOrganization());
+        $this->getObjectManager()->persist($account);
+
+        return $account;
+    }
+
+    /**
+     * @param string $name
+     * @return AccountUserRole
+     */
+    protected function createAccountUserRole($name)
+    {
+        $role = new AccountUserRole($name);
+        $role->setLabel($name);
+        $role->setOrganization($this->getDefaultOrganization());
+        $this->getObjectManager()->persist($role);
+
+        return $role;
+    }
+
+    /**
+     * @param string $email
+     * @return AccountUser
+     */
+    protected function createAccountUser($email)
+    {
+        $accountUser = new AccountUser();
+        $accountUser->setEmail($email);
+        $accountUser->setPassword('password');
+        $accountUser->setOrganization($this->getDefaultOrganization());
+        $this->getObjectManager()->persist($accountUser);
+
+        return $accountUser;
+    }
+
+    /**
+     * @return Organization
+     */
+    protected function getDefaultOrganization()
+    {
+        return $this->getObjectManager()->getRepository('OroOrganizationBundle:Organization')->findOneBy([]);
+    }
+
+    /**
+     * @param AccountUserRole[] $expectedRoles
+     * @param AccountUserRole[] $notExpectedRoles
+     * @param string            $content
+     * @param AccountUser|null  $accountUser
+     */
+    protected function assertRoles(
+        array $expectedRoles,
+        array $notExpectedRoles,
+        $content,
+        AccountUser $accountUser = null
+    ) {
+        $shouldBeChecked = 0;
+        /** @var AccountUserRole $expectedRole */
+        foreach ($expectedRoles as $expectedRole) {
+            $this->assertContains($expectedRole->getLabel(), $content);
+            if ($accountUser && $accountUser->hasRole($expectedRole)) {
+                $shouldBeChecked++;
+            }
+        }
+        $this->assertEquals($shouldBeChecked, substr_count($content, 'checked="checked"'));
+
+        /** @var AccountUserRole $notExpectedRole */
+        foreach ($notExpectedRoles as $notExpectedRole) {
+            $this->assertNotContains($notExpectedRole->getLabel(), $content);
+        }
     }
 
     /**

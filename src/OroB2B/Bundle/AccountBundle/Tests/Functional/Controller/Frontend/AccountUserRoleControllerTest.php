@@ -2,6 +2,9 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\SecurityBundle\Acl\Domain\ObjectIdentityFactory;
+use Oro\Bundle\SecurityBundle\Acl\Extension\EntityMaskBuilder;
+use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 use Oro\Component\Testing\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData as OroLoadAccountUserData;
 
@@ -45,6 +48,29 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $this->currentUser = $this->getCurrentUser();
         $this->predefinedRole = $this->getPredefinedRole();
+
+        $this->warmUpAces();
+    }
+
+    protected function warmUpAces()
+    {
+        $classes = [
+            $this->getContainer()->getParameter('orob2b_account.entity.account_user.class'),
+            $this->getContainer()->getParameter('orob2b_account.entity.account_user_role.class'),
+        ];
+
+        /** @var AclManager $aclManager */
+        $aclManager = $this->getContainer()->get('oro_security.acl.manager');
+        foreach ($classes as $class) {
+            $aclManager->setPermission(
+                $aclManager->getSid(ObjectIdentityFactory::ROOT_IDENTITY_TYPE),
+                $aclManager->getOid(
+                    'entity:' . $class
+                ),
+                EntityMaskBuilder::MASK_VIEW_SYSTEM
+            );
+        }
+        $aclManager->flush();
     }
 
     public function testCreate()
@@ -138,7 +164,7 @@ class AccountUserRoleControllerTest extends WebTestCase
         /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUser $user */
         $user = $this->getCurrentUser();
 
-        $this->assertEquals($user->getRole($role->getRole()), $role);
+        $this->assertEquals($role, $user->getRole($role->getRole()));
 
         return $id;
     }
@@ -174,11 +200,11 @@ class AccountUserRoleControllerTest extends WebTestCase
         $this->assertEquals($this->currentUser->getEmail(), $result['email']);
     }
 
+    /**
+     * @depends testView
+     */
     public function testUpdateFromPredefined()
     {
-        //TODO: see BB-1134
-        $this->markTestSkipped('Must be fixed in scope with BB-1134');
-
         $currentUserRoles = $this->currentUser->getRoles();
         $oldRoleId = $this->predefinedRole->getId();
 
@@ -263,7 +289,7 @@ class AccountUserRoleControllerTest extends WebTestCase
     protected function getPredefinedRole()
     {
         return $this->getUserRoleRepository()
-            ->findOneBy(['label' => LoadAccountUserRoleData::ROLE_WITHOUT_ACCOUNT]);
+            ->findOneBy(['label' => LoadAccountUserRoleData::ROLE_EMPTY]);
     }
 
     /**

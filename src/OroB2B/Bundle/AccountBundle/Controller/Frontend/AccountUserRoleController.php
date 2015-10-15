@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AccountBundle\Controller\Frontend;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -11,7 +12,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 
 class AccountUserRoleController extends Controller
@@ -31,7 +31,7 @@ class AccountUserRoleController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_account.entity.account_user_role.class')
+            'entity_class' => $this->container->getParameter('orob2b_account.entity.account_user_role.class'),
         ];
     }
 
@@ -52,13 +52,11 @@ class AccountUserRoleController extends Controller
      */
     public function viewAction(AccountUserRole $role)
     {
-        $handler = $this->get('orob2b_account.form.handler.view_account_user_role');
-        $handler->createForm($role);
-        $handler->process($role);
+        $privileges = $this->get('orob2b_account.helper.account_user_role_privileges.frontend')->collect($role);
 
         return [
             'entity' => $role,
-            'form'   => $handler->createView()
+            'privileges' => $privileges
         ];
     }
 
@@ -77,23 +75,22 @@ class AccountUserRoleController extends Controller
      */
     public function createAction()
     {
-        $accountUserRole = $this->createNewRole();
-
-        return $this->update($accountUserRole);
+        return $this->update(new AccountUserRole());
     }
 
     /**
      * @Route("/update/{id}", name="orob2b_account_frontend_account_user_role_update", requirements={"id"="\d+"})
      * @Template("OroB2BAccountBundle:AccountUserRole/Frontend:update.html.twig")
      * @param AccountUserRole $role
+     * @param Request $request
      * @return array
      */
-    public function updateAction(AccountUserRole $role)
+    public function updateAction(AccountUserRole $role, Request $request)
     {
         $securityFacade = $this->get('oro_security.security_facade');
 
         if ($role->isPredefined()) {
-            if ($this->get('request')->isMethod(Request::METHOD_GET)) {
+            if ($request->isMethod(Request::METHOD_GET)) {
                 $this->addFlash(
                     'warning',
                     $this->get('translator')
@@ -119,52 +116,33 @@ class AccountUserRoleController extends Controller
     protected function update(AccountUserRole $role)
     {
         $handler = $this->get('orob2b_account.form.handler.update_account_user_role_frontend');
-        if ($role->isPredefined()) {
-            $newRole = $this->createNewRole($role);
-        } else {
-            $newRole = $role;
-        }
-        $form = $handler->createForm($newRole);
+        $form = $handler->createForm($role);
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
-            $role,
+            $form->getData(),
             $form,
-            function () use ($newRole) {
+            function (AccountUserRole $role) {
                 return [
                     'route' => 'orob2b_account_frontend_account_user_role_update',
-                    'parameters' => ['id' => $newRole->getId()]
+                    'parameters' => ['id' => $role->getId()],
                 ];
             },
-            function () use ($newRole) {
+            function (AccountUserRole $role) {
                 return [
                     'route' => 'orob2b_account_frontend_account_user_role_view',
-                    'parameters' => ['id' => $newRole->getId()]
+                    'parameters' => ['id' => $role->getId()],
                 ];
             },
             $this->get('translator')->trans('orob2b.account.controller.accountuserrole.saved.message'),
-            $handler
+            $handler,
+            function (AccountUserRole $entity, FormInterface $form, Request $request) use ($role) {
+                return [
+                    'form' => $form->createView(),
+                    'entity' => $entity,
+                    'isWidgetContext' => (bool)$request->get('_wid', false),
+                    'predefined_role_id' => $role->getId(),
+                ];
+            }
         );
-    }
-
-    /**
-     * @param AccountUserRole $role
-     * @return AccountUserRole
-     */
-    protected function createNewRole(AccountUserRole $role = null)
-    {
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->getUser();
-
-        if ($role) {
-            $newRole = clone $role;
-        } else {
-            $accountUserClass = $this->container->getParameter('orob2b_account.entity.account_user_role.class');
-            $newRole = new $accountUserClass();
-        }
-
-        $newRole->setAccount($accountUser->getAccount())
-            ->setOrganization($accountUser->getOrganization());
-
-        return $newRole;
     }
 }
