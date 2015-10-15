@@ -4,11 +4,13 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Formatter;
 
 use Symfony\Bundle\FrameworkBundle\Tests\Templating\Helper\Fixtures\StubTranslator;
 
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
 
 class VisibilityChoicesProviderTest extends \PHPUnit_Framework_TestCase
 {
     const VISIBILITY_CLASS = '\OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility';
+
     /**
      * @var VisibilityChoicesProvider
      */
@@ -22,19 +24,19 @@ class VisibilityChoicesProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetFormattedChoices()
     {
-        $actual = $this->formatter->getFormattedChoices(self::VISIBILITY_CLASS);
+        $actual = $this->formatter->getFormattedChoices(self::VISIBILITY_CLASS, $this->createCategory());
         $expected = [
             'parent_category' => '[trans]orob2b.account.visibility.categoryvisibility.choice.parent_category[/trans]',
-            'config' =>'[trans]orob2b.account.visibility.categoryvisibility.choice.config[/trans]',
+            'config' => '[trans]orob2b.account.visibility.categoryvisibility.choice.config[/trans]',
             'hidden' => '[trans]orob2b.account.visibility.categoryvisibility.choice.hidden[/trans]',
-            'visible' =>'[trans]orob2b.account.visibility.categoryvisibility.choice.visible[/trans]',
+            'visible' => '[trans]orob2b.account.visibility.categoryvisibility.choice.visible[/trans]',
         ];
         $this->assertEquals($expected, $actual);
     }
 
     public function testGetChoices()
     {
-        $actual = $this->formatter->getChoices(self::VISIBILITY_CLASS);
+        $actual = $this->formatter->getChoices(self::VISIBILITY_CLASS, $this->createCategory());
         $expected = [
             'parent_category',
             'config',
@@ -58,5 +60,13 @@ class VisibilityChoicesProviderTest extends \PHPUnit_Framework_TestCase
     {
         $actual = $this->formatter->format('test.%s', 'test_1');
         $this->assertEquals('[trans]test.test_1[/trans]', $actual);
+    }
+
+    /**
+     * @return $this
+     */
+    protected function createCategory()
+    {
+        return (new Category())->setParentCategory(new Category());
     }
 }
