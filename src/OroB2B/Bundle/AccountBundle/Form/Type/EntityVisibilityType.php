@@ -96,7 +96,7 @@ class EntityVisibilityType extends AbstractType
                     'required' => true,
                     'mapped' => false,
                     'label' => 'orob2b.account.visibility.to_all.label',
-                    'choices' => $choices
+                    'choices' => $choices,
                 ]
             )
             ->add(
