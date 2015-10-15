@@ -5,11 +5,13 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as AccountSelectTypeStub;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
@@ -71,7 +73,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
         $accountUserRoleSelectType = new EntitySelectTypeStub(
             $this->getRoles(),
             AccountUserRoleSelectType::NAME,
-            new AccountUserRoleSelectType()
+            new AccountUserRoleSelectType($this->createTranslator())
         );
         $addressEntityType = new EntityType($this->getAddresses(), 'test_address_entity');
         $accountSelectType = new AccountSelectTypeStub($this->getAccounts(), AccountSelectType::NAME);
@@ -111,13 +113,24 @@ class AccountUserTypeTest extends FormIntegrationTestCase
                 ->with('orob2b_account_account_user_role_view')
                 ->will($this->returnValue(true));
         }
+        $this->securityFacade->expects($this->exactly(2))->method('getOrganization')->willReturn(new Organization());
 
         $form = $this->factory->create($this->formType, $defaultData, []);
+
+        $this->assertTrue($form->has('roles'));
+        $options = $form->get('roles')->getConfig()->getOptions();
+        $this->assertArrayHasKey('query_builder', $options);
+        $this->assertQueryBuilderCallback($options['query_builder']);
 
         $this->assertEquals($defaultData, $form->getData());
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
         $this->assertEquals($expectedData, $form->getData());
+
+        $this->assertTrue($form->has('roles'));
+        $options = $form->get('roles')->getConfig()->getOptions();
+        $this->assertArrayHasKey('query_builder', $options);
+        $this->assertQueryBuilderCallback($options['query_builder']);
     }
 
     /**
@@ -140,6 +153,7 @@ class AccountUserTypeTest extends FormIntegrationTestCase
         $existingAccountUser->setPassword('123456');
         $existingAccountUser->setAccount($this->getAccount(1));
         $existingAccountUser->addAddress($this->getAddresses()[1]);
+        $existingAccountUser->setOrganization(new Organization());
 
         $alteredExistingAccountUser = clone $existingAccountUser;
         $alteredExistingAccountUser->setAccount($this->getAccount(2));
@@ -192,6 +206,21 @@ class AccountUserTypeTest extends FormIntegrationTestCase
                     'expectedData' => $alteredExistingAccountUserWithAddresses,
                 ]
             ];
+    }
+
+    /**
+     * @param \Closure $callable
+     */
+    protected function assertQueryBuilderCallback($callable)
+    {
+        $this->assertInternalType('callable', $callable);
+
+        $repository = $this->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $repository->expects($this->once())->method('getAvailableRolesByAccountUserQueryBuilder');
+
+        $callable($repository);
     }
 
     /**
@@ -305,5 +334,22 @@ class AccountUserTypeTest extends FormIntegrationTestCase
         $method->setValue($entity, $id);
 
         return $entity;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     */
+    private function createTranslator()
+    {
+        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(
+                function ($message) {
+                    return $message . '.trans';
+                }
+            );
+
+        return $translator;
     }
 }

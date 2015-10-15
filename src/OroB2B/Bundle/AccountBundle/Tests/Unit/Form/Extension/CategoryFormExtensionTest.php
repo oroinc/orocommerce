@@ -28,6 +28,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
 {
     const ACCOUNT_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Account';
     const ACCOUNT_GROUP_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\AccountGroup';
+    const CATEGORY_VISIBILITY_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility';
 
     /** @var CategoryPostSetDataListener|\PHPUnit_Framework_MockObject_MockObject */
     protected $categoryPostSetDataListener;
@@ -66,6 +67,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
         );
         $this->categoryFormExtension->setAccountGroupClass(self::ACCOUNT_GROUP_CLASS);
         $this->categoryFormExtension->setAccountClass(self::ACCOUNT_CLASS);
+        $this->categoryFormExtension->setCategoryVisibilityClass(self::CATEGORY_VISIBILITY_CLASS);
 
         parent::setUp();
     }
