@@ -32,8 +32,7 @@ class ProductType extends AbstractType
     }
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
+     * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -49,11 +48,9 @@ class ProductType extends AbstractType
             )
             ->add(
                 'status',
-                'oro_enum_select',
+                'orob2b_product_status',
                 [
-                    'label'     => 'orob2b.product.status.label',
-                    'enum_code' => 'prod_status',
-                    'configs'   => ['allowClear' => false]
+                    'label' => 'orob2b.product.status.label'
                 ]
             )
             ->add(
