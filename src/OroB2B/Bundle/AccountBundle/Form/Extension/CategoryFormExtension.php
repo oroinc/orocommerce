@@ -2,17 +2,14 @@
 
 namespace OroB2B\Bundle\AccountBundle\Form\Extension;
 
-use OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 
-use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
-
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
+use OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
 
 class CategoryFormExtension extends AbstractTypeExtension
 {
-
     /** @var string */
     protected $visibilityToAllClass;
 
