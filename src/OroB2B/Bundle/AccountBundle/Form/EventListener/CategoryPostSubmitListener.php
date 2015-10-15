@@ -37,11 +37,11 @@ class CategoryPostSubmitListener extends AbstractCategoryListener
         }
 
         /** @var string $visibilityCode */
-        $visibilityCode = $form->get('categoryVisibility')->getData();
+        $visibilityCode = $form->get('all')->getData();
         /** @var ArrayCollection $accountChangeSet */
-        $accountChangeSet = $form->get('visibilityForAccount')->getData();
+        $accountChangeSet = $form->get('account')->getData();
         /** @var ArrayCollection $accountGroupChangeSet */
-        $accountGroupChangeSet = $form->get('visibilityForAccountGroup')->getData();
+        $accountGroupChangeSet = $form->get('accountGroup')->getData();
 
         if ($visibilityCode) {
             $this->processCategoryVisibility($category, $visibilityCode);

@@ -240,16 +240,12 @@ services:
 
     orob2b_account.form.extension.category_type:
         class: %orob2b_account.form.extension.category_type.class%
-        arguments:
-            - @orob2b_account.form.listener.category.post_set_data
-            - @orob2b_account.form.listener.category.post_submit
-            - @orob2b_account.provider.visibility_choices
         tags:
             - { name: form.type_extension, alias: orob2b_catalog_category }
         calls:
-            - [setCategoryVisibilityClass, [%orob2b_account.entity.category_visibility.class%]]
-            - [setAccountClass,[%orob2b_account.entity.account.class%]]
-            - [setAccountGroupClass,[%orob2b_account.entity.account_group.class%]]
+            - [setVisibilityToAllClass, [%orob2b_account.entity.category_visibility.class%]]
+            - [setVisibilityToAccountGroupClass,[%orob2b_account.entity.account_group_category_visibility.class%]]
+            - [setVisibilityToAccountClass,[%orob2b_account.entity.account_category_visibility.class%]]
 
     orob2b_account.form.type.catalog_visibility:
         class: %orob2b_account.form.type.catalog_visibility.class%

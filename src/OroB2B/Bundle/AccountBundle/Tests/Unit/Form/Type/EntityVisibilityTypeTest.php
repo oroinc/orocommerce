@@ -105,8 +105,8 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
 
         $form = $this->factory->create($this->formType, [], $options);
 
-        $this->assertTrue($form->has('categoryVisibility'));
-        $this->assertTrue($form->has('visibilityForAccount'));
-        $this->assertTrue($form->has('visibilityForAccountGroup'));
+        $this->assertTrue($form->has('all'));
+        $this->assertTrue($form->has('account'));
+        $this->assertTrue($form->has('accountGroup'));
     }
 }

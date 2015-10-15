@@ -88,22 +88,19 @@ class EntityVisibilityType extends AbstractType
         $target = isset($options['data']) ? $options['data'] : null;
         $choices = $this->visibilityChoicesProvider->getFormattedChoices($options['visibilityToAllClass'], $target);
 
-        /**
-         * TODO: rename fields to toAll, toAccount, toAccountGroup
-         */
         $builder
             ->add(
-                'categoryVisibility',
+                'all',
                 'choice',
                 [
                     'required' => true,
                     'mapped' => false,
                     'label' => 'orob2b.account.visibility.to_all.label',
-                    'choices' => $choices
+                    'choices' => $choices,
                 ]
             )
             ->add(
-                'visibilityForAccount',
+                'account',
                 EntityChangesetType::NAME,
                 [
                     'class' => $this->accountClass,
@@ -111,7 +108,7 @@ class EntityVisibilityType extends AbstractType
                 ]
             )
             ->add(
-                'visibilityForAccountGroup',
+                'accountGroup',
                 EntityChangesetType::NAME,
                 [
                     'class' => $this->accountGroupClass,

@@ -45,7 +45,7 @@ class CategoryPostSetDataListener extends AbstractCategoryListener
         } else {
             $visibility = CategoryVisibility::getDefault($category);
         }
-        $form->get('categoryVisibility')->setData($visibility);
+        $form->get('all')->setData($visibility);
     }
 
     /**
@@ -69,7 +69,7 @@ class CategoryPostSetDataListener extends AbstractCategoryListener
         }
 
         if (count($accountCategoryVisibilityData) > 0) {
-            $form->get('visibilityForAccount')->setData($accountCategoryVisibilityData);
+            $form->get('account')->setData($accountCategoryVisibilityData);
         }
     }
 
@@ -94,7 +94,7 @@ class CategoryPostSetDataListener extends AbstractCategoryListener
         }
 
         if (count($accountGroupCategoryVisibilityData) > 0) {
-            $form->get('visibilityForAccountGroup')->setData($accountGroupCategoryVisibilityData);
+            $form->get('accountGroup')->setData($accountGroupCategoryVisibilityData);
         }
     }
 }

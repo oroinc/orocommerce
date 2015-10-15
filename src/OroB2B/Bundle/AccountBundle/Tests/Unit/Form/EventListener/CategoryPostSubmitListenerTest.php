@@ -186,9 +186,9 @@ class CategoryPostSubmitListenerTest extends AbstractCategoryListenerTestCase
             ->method('get')
             ->willReturnMap(
                 [
-                    ['categoryVisibility', $categoryFormMock],
-                    ['visibilityForAccount', $visibilityForAccountFormMock],
-                    ['visibilityForAccountGroup', $visibilityForAccountGroupFormMock],
+                    ['all', $categoryFormMock],
+                    ['account', $visibilityForAccountFormMock],
+                    ['accountGroup', $visibilityForAccountGroupFormMock],
                 ]
             );
         $event = $this->getMockBuilder('\Symfony\Component\Form\FormEvent')
