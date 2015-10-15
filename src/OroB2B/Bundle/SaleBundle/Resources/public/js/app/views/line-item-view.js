@@ -25,6 +25,8 @@ define(function(require) {
             productSelect: '.quote-lineitem-product-select input[type="hidden"]',
             productSkuLabel: '.quote-lineitem-product-sku-label',
             productReplacementSelect: '.quote-lineitem-product-replacement-select input[type="hidden"]',
+            offersQuantitySelector: '.quote-lineitem-offers-quantity input',
+            offersPriceValueSelector: '.quote-lineitem-offers-price input:first',
             typeSelect: '.quote-lineitem-product-type-select',
             unitsSelect: '.quote-lineitem-offer-unit-select',
             productFreeFormInput: '.quote-lineitem-product-freeform-input',
@@ -206,6 +208,9 @@ define(function(require) {
             }
 
             this.updateSkuLabel();
+
+            var $quantitySelector = this.$el.find(this.options.offersQuantitySelector);
+            $quantitySelector.trigger('change');
         },
 
         /**
@@ -395,6 +400,16 @@ define(function(require) {
             this.$el.find(this.options.freeFormContainer)
                 .find('input').val('')
             ;
+
+            var self = this;
+
+            var widgets = this.$el.find(this.options.itemWidget);
+
+            $.each(widgets, function(index, widget) {
+                var $priceValue = $(widget).find(self.options.offersPriceValueSelector);
+
+                $priceValue.addClass('matched-price');
+            });
 
             this.updateSkuLabel();
         },
