@@ -6,7 +6,6 @@ parameters:
     orob2b_product.product.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_product.service.rounding.class: OroB2B\Bundle\ProductBundle\Rounding\RoundingService
     orob2b_product.service.visibility_checker.class: OroB2B\Bundle\ProductBundle\Visibility\VisibilityChecker
-    orob2b_product.service.available_status.class: OroB2B\Bundle\ProductBundle\Status\AvailableProductStatus
     orob2b_product.formatter.product_unit_value.class: OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter
     orob2b_product.formatter.product_unit_label.class: OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter
     orob2b_product.twig.product_unit_value.class: OroB2B\Bundle\ProductBundle\Twig\ProductUnitValueExtension
@@ -18,6 +17,7 @@ parameters:
     orob2b_product.validator.product_unit_holder.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductUnitHolderValidator
     orob2b_product.validator.product_by_sku.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator
     orob2b_product.provider.custom_field_provider.class: OroB2B\Bundle\ProductBundle\Provider\CustomFieldProvider
+    orob2b_product.provider.product_status_provider.class: OroB2B\Bundle\ProductBundle\Provider\ProductStatusProvider
     orob2b_product.event_listener.product_variant_custom_fields_datagrid.class: OroB2B\Bundle\ProductBundle\EventListener\ProductVariantCustomFieldsDatagridListener
     orob2b_product.validator.unique_variant_links.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator
 
@@ -111,11 +111,6 @@ services:
         arguments:
             - @session
 
-    orob2b_product.service.available_status:
-        class: %orob2b_product.service.available_status.class%
-        arguments:
-            - @translator
-
     orob2b_product.validator.product_unit_holder:
         class: %orob2b_product.validator.product_unit_holder.class%
         tags:
@@ -165,6 +160,9 @@ services:
         arguments:
             - @oro_entity_config.provider.extend
             - @oro_entity_config.provider.entity
+
+    orob2b_product.provider.product_status_provider:
+        class: %orob2b_product.provider.product_status_provider.class%
 
     orob2b_product.event_listener.product_variant_custom_fields_datagrid:
         class: %orob2b_product.event_listener.product_variant_custom_fields_datagrid.class%
