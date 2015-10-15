@@ -9,7 +9,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class ProductStatusProviderTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var  ProductStatusProvider $productStatusProvider */
+    /** @var ProductStatusProvider $productStatusProvider */
     protected $productStatusProvider;
 
     public function setup()
