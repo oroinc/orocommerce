@@ -17,6 +17,7 @@ parameters:
     orob2b_product.validator.product_unit_holder.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductUnitHolderValidator
     orob2b_product.validator.product_by_sku.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator
     orob2b_product.provider.custom_field_provider.class: OroB2B\Bundle\ProductBundle\Provider\CustomFieldProvider
+    orob2b_product.provider.product_status_provider.class: OroB2B\Bundle\ProductBundle\Provider\ProductStatusProvider
     orob2b_product.event_listener.product_variant_custom_fields_datagrid.class: OroB2B\Bundle\ProductBundle\EventListener\ProductVariantCustomFieldsDatagridListener
     orob2b_product.validator.unique_variant_links.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator
 
@@ -159,6 +160,9 @@ services:
         arguments:
             - @oro_entity_config.provider.extend
             - @oro_entity_config.provider.entity
+
+    orob2b_product.provider.product_status_provider:
+        class: %orob2b_product.provider.product_status_provider.class%
 
     orob2b_product.event_listener.product_variant_custom_fields_datagrid:
         class: %orob2b_product.event_listener.product_variant_custom_fields_datagrid.class%

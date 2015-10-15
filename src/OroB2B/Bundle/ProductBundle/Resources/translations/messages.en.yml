@@ -22,8 +22,8 @@ orob2b:
         variant_links.label: Product Variant Links
 
         status:
-            enable: Enable
-            disable: Disable
+            enabled: Enabled
+            disabled: Disabled
 
         visibility:
             visible.label: Yes
