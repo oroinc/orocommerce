@@ -4,9 +4,11 @@ namespace OroB2B\Bundle\CatalogBundle\Form\Handler;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
+use OroB2B\Bundle\CatalogBundle\Event\CategoryEditEvent;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
@@ -23,19 +25,25 @@ class CategoryHandler
     /** @var ObjectManager */
     protected $manager;
 
+    /** @var  EventDispatcher */
+    protected $eventDispatcher;
+
     /**
-     * @param FormInterface            $form
-     * @param Request                  $request
-     * @param ObjectManager            $manager
+     * @param FormInterface $form
+     * @param Request $request
+     * @param ObjectManager $manager
+     * @param EventDispatcher $eventDispatcher
      */
     public function __construct(
         FormInterface $form,
         Request $request,
-        ObjectManager $manager
+        ObjectManager $manager,
+        EventDispatcher $eventDispatcher
     ) {
         $this->form = $form;
         $this->request = $request;
         $this->manager = $manager;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -50,6 +58,7 @@ class CategoryHandler
         if (in_array($this->request->getMethod(), ['POST', 'PUT'])) {
             $this->form->submit($this->request);
             if ($this->form->isValid()) {
+                $this->eventDispatcher->dispatch(CategoryEditEvent::NAME, new CategoryEditEvent($this->form));
                 $appendProducts = $this->form->get('appendProducts')->getData();
                 $removeProducts = $this->form->get('removeProducts')->getData();
                 $this->onSuccess($category, $appendProducts, $removeProducts);
@@ -62,7 +71,7 @@ class CategoryHandler
     }
 
     /**
-     * @param Category  $category
+     * @param Category $category
      * @param Product[] $appendProducts
      * @param Product[] $removeProducts
      */
@@ -76,7 +85,7 @@ class CategoryHandler
     }
 
     /**
-     * @param Category  $category
+     * @param Category $category
      * @param Product[] $products
      */
     protected function appendProducts(Category $category, array $products)
@@ -96,7 +105,7 @@ class CategoryHandler
     }
 
     /**
-     * @param Category  $category
+     * @param Category $category
      * @param Product[] $products
      */
     protected function removeProducts(Category $category, array $products)
