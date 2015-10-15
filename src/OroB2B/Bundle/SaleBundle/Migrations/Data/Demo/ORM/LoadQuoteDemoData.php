@@ -74,14 +74,14 @@ class LoadQuoteDemoData extends AbstractFixture implements
 
         for ($i = 0; $i < 20; $i++) {
             /* @var $account Account */
-            $account = $accounts[rand(0, count($accounts) - 1)];
+            $account = $accounts[array_rand($accounts)];
 
             if (!$account) {
                 $accountUser = null;
             } else {
                 $accountUsers = array_merge([null], $account->getUsers()->getValues());
                 /* @var $accountUser AccountUser */
-                $accountUser = $accountUsers[rand(0, count($accountUsers) - 1)];
+                $accountUser = $accountUsers[array_rand($accountUsers)];
             }
 
             // set date in future
@@ -158,7 +158,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
 
         if ($quote->getRequest()) {
             foreach ($quote->getRequest()->getRequestProducts() as $requestProduct) {
-                $type = $types[rand(0, count($types) - 1)];
+                $type = $types[array_rand($types)];
 
                 $quoteProduct = $this->createQuoteProduct($requestProduct->getProduct(), $type);
 
@@ -176,16 +176,17 @@ class LoadQuoteDemoData extends AbstractFixture implements
 
         foreach ($quote->getQuoteProducts() as $quoteProduct) {
             $unitPrecisions = $quoteProduct->getProduct()->getUnitPrecisions();
+
+            if (!count($unitPrecisions)) {
+                continue;
+            }
+
             $numProductOffers = rand(1, 3);
             for ($j = 0; $j < $numProductOffers; $j++) {
-                if (!count($unitPrecisions)) {
-                    continue;
-                }
+                $productUnit = $unitPrecisions[array_rand($unitPrecisions)]->getUnit();
 
-                $productUnit = $unitPrecisions[rand(0, count($unitPrecisions) - 1)]->getUnit();
-
-                $currency = $currencies[rand(0, count($currencies) - 1)];
-                $priceType = $priceTypes[rand(0, count($priceTypes) - 1)];
+                $currency = $currencies[array_rand($currencies)];
+                $priceType = $priceTypes[array_rand($priceTypes)];
 
                 $quoteProductOffer = new QuoteProductOffer();
                 $quoteProductOffer
@@ -198,7 +199,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
                 if ($quoteProduct->isTypeNotAvailable()) {
                     $productReplacement = $products[rand(1, count($products) - 1)];
                     $unitPrecisionsRepl = $productReplacement->getUnitPrecisions();
-                    $productUnitRepl = $unitPrecisionsRepl[rand(0, count($unitPrecisionsRepl) - 1)]->getUnit();
+                    $productUnitRepl = $unitPrecisionsRepl[array_rand($unitPrecisionsRepl)]->getUnit();
                     $quoteProduct->setProductReplacement($productReplacement);
                     $quoteProductOffer->setProductUnit($productUnitRepl);
                 }

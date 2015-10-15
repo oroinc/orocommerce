@@ -193,10 +193,6 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
         for ($i = 0; $i < $numLineItems; $i++) {
             $product = $products[array_rand($products)];
 
-            if (!count($unitPrecisions)) {
-                continue;
-            }
-
             $requestProduct = new RequestProduct();
             $requestProduct->setProduct($product);
             $requestProduct->setComment(sprintf('Notes %s', $i));
@@ -204,7 +200,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             for ($j = 0; $j < $numProductItems; $j++) {
                 $productUnit = $unitPrecisions[array_rand($unitPrecisions)]->getUnit();
 
-                $currency = $currencies[rand(0, count($currencies) - 1)];
+                $currency = $currencies[array_rand($currencies)];
                 $requestProductItem = new RequestProductItem();
                 $requestProductItem
                     ->setPrice(Price::create(rand(1, 100), $currency))
