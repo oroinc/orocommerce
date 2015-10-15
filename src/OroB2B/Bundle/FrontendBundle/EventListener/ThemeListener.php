@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\FrontendBundle\EventListener;
 
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 use Oro\Bundle\ThemeBundle\Model\ThemeRegistry;
@@ -33,8 +34,11 @@ class ThemeListener
      * @param FrontendHelper $helper
      * @param boolean $installed
      */
-    public function __construct(ThemeRegistry $themeRegistry, FrontendHelper $helper, $installed)
-    {
+    public function __construct(
+        ThemeRegistry $themeRegistry,
+        FrontendHelper $helper,
+        $installed
+    ) {
         $this->themeRegistry = $themeRegistry;
         $this->helper = $helper;
         $this->installed = $installed;
@@ -55,6 +59,24 @@ class ThemeListener
 
         if ($this->helper->isFrontendRequest($event->getRequest())) {
             $this->themeRegistry->setActiveTheme(self::FRONTEND_THEME);
+        }
+    }
+
+    /**
+     * @param GetResponseForControllerResultEvent $event
+     */
+    public function onKernelView(GetResponseForControllerResultEvent $event)
+    {
+        $request = $event->getRequest();
+
+        if (!$this->helper->isFrontendRequest($request)) {
+            return;
+        }
+
+        if ($request->attributes->get('_theme')) {
+            $request->attributes->remove('_template');
+        } else {
+            $request->attributes->remove('_layout');
         }
     }
 }
