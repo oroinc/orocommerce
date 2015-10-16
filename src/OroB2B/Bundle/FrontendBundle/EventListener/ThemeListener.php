@@ -67,7 +67,15 @@ class ThemeListener
      */
     public function onKernelView(GetResponseForControllerResultEvent $event)
     {
+        if (!$this->installed) {
+            return;
+        }
+
         $request = $event->getRequest();
+
+        if ($event->getRequestType() !== HttpKernelInterface::MASTER_REQUEST) {
+            return;
+        }
 
         if (!$this->helper->isFrontendRequest($request)) {
             return;
