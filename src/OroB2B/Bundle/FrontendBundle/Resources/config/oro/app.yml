@@ -2,3 +2,5 @@ twig:
     globals:
         commerce:
             layout: OroB2BFrontendBundle::base.html.twig
+oro_layout:
+    active_theme: default
