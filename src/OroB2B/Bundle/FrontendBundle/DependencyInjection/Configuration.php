@@ -20,7 +20,7 @@ class Configuration implements ConfigurationInterface
         SettingsBuilder::append(
             $rootNode,
             [
-                'theme' => ['type' => 'string', 'value' => ''],
+                'frontend_theme' => ['type' => 'string', 'value' => ''],
             ]
         );
 

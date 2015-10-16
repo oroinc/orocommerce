@@ -7,12 +7,12 @@ oro_system_configuration:
             title: orob2b_frontend.system_configuration.groups.theme_settings.title
 
     fields:
-        oro_b2b_frontend.theme:
+        oro_b2b_frontend.frontend_theme:
             data_type: string
             type: orob2b_frontend_theme_select
             priority: 100
             options:
-                label: orob2b_frontend.system_configuration.fields.theme.label
+                label: orob2b_frontend.system_configuration.fields.frontend_theme.label
 
     tree:
         system_configuration:
@@ -26,4 +26,4 @@ oro_system_configuration:
                                     theme_settings:
                                         priority: 200
                                         children:
-                                            - oro_b2b_frontend.theme
+                                            - oro_b2b_frontend.frontend_theme

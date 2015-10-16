@@ -8,4 +8,4 @@ orob2b_frontend:
             frontend.title: 'Frontend'
             theme_settings.title: 'Theme Settings'
         fields:
-            theme.label: 'Theme'
+            frontend_theme.label: 'Theme'
