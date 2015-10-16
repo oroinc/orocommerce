@@ -121,14 +121,6 @@ table.quote-lineitem-offers {
     padding-bottom: 10px;
 }
 
-td.quote-product-offer-product-sku,
-td.quote-product-offer-product-name,
-td.quote-product-offer-customer-notes,
-td.quote-product-offer-seller-notes,
-td.quote-product-offer-price {
-    padding-top: 11px !important;
-}
-
 td.quote-product-offer-select-offer {
     width: 260px;
 }

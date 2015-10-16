@@ -40,10 +40,23 @@ class OrderController extends Controller
                 'accountUser' => $request->getAccountUser()->getId(),
                 'account' => $request->getAccount()->getId(),
             ],
+            'withOffers' => 1
         ];
         foreach ($request->getRequestProducts() as $lineItem) {
+            $offers = [];
+            foreach ($lineItem->getRequestProductItems() as $productItem) {
+                $offers[] = [
+                    'quantity' => $productItem->getQuantity(),
+                    'unit' => $productItem->getProductUnitCode(),
+                    'currency' => $productItem->getPrice()->getCurrency(),
+                    'price' => $productItem->getPrice()->getValue(),
+                ];
+            }
+
             $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = [
-                'comment' => $lineItem->getRequest(),
+                ProductDataStorage::PRODUCT_SKU_KEY => $lineItem->getProduct()->getSku(),
+                'comment' => $lineItem->getComment(),
+                'offers' => $offers,
             ];
         }
         $storage->set($data);

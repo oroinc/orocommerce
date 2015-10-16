@@ -131,6 +131,9 @@
                     {{ overrides[sectionName] }}
                 {% elseif sections.data is defined and sections.data is iterable %}
                     <div class="fields-row">
+                        {% if sectionName == 'quantity' and form.vars.offers is defined and form.vars.offers is not empty %}
+                            {{ _self.offers_widget(form.vars.offers) }}
+                        {% endif %}
                         {% for subSectionName, subSection in sections.data %}
                             <div
                                 {% if subSection.page_component is defined %} data-page-component-module="{{ subSection.page_component }}"
@@ -147,6 +150,28 @@
             </td>
         {% endfor %}
     {% endif %}
+{% endmacro %}
+
+{% macro offers_widget(offers) %}
+    <div class="order-line-item-quantity-offers">
+        <table>
+            <tbody>
+                {% for offer in offers %}
+                    <tr>
+                        <td class="order-line-item-quantity-offer-choice">
+                            <input type="radio" value="{{ offer.quantity }}" data-unit="{{ offer.unit }}" data-currency="{{ offer.currency }}" data-price="{{ offer.price }}">
+                        </td>
+                        <td class="order-line-item-quantity-offer-quantity">
+                            {{ offer.quantity }} {{ offer.unit }}
+                        </td>
+                        <td class="order-line-item-quantity-offer-price">
+                            {{ offer.price }} {{ offer.currency }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endmacro %}
 
 {% block orob2b_order_line_item_frontend_widget %}

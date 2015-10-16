@@ -41,6 +41,9 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
     /** @var ProductRepository */
     protected $productRepository;
 
+    /** @var array */
+    protected $data;
+
     /**
      * @param RequestStack $requestStack
      * @param ProductDataStorage $storage
@@ -89,6 +92,7 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
     protected function fillData($entity)
     {
         $data = $this->storage->get();
+        $this->data = $data;
         $this->storage->remove();
 
         if (!$data) {
