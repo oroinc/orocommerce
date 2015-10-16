@@ -83,7 +83,7 @@ class ThemeListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->configManager->expects($this->any())
             ->method('get')
-            ->with(ThemeListener::DEFAULT_LAYOUT_THEME_CONFIG_KEY)
+            ->with(ThemeListener::DEFAULT_LAYOUT_THEME_CONFIG_VALUE_KEY)
             ->willReturn('test_layout_theme');
 
         $listener = new ThemeListener($this->themeRegistry, $this->helper, $this->configManager, $installed);

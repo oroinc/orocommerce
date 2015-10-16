@@ -14,7 +14,7 @@ use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
 class ThemeListener
 {
     const FRONTEND_THEME = 'demo';
-    const DEFAULT_LAYOUT_THEME_CONFIG_KEY = 'trololo';
+    const DEFAULT_LAYOUT_THEME_CONFIG_VALUE_KEY = 'oro_b2b_frontend.frontend_theme';
 
     /**
      * @var ThemeRegistry
@@ -71,7 +71,7 @@ class ThemeListener
             // set oro theme
             $this->themeRegistry->setActiveTheme(self::FRONTEND_THEME);
             // set layout theme
-            $layoutTheme = $this->configManager->get(self::DEFAULT_LAYOUT_THEME_CONFIG_KEY);
+            $layoutTheme = $this->configManager->get(self::DEFAULT_LAYOUT_THEME_CONFIG_VALUE_KEY);
             $request = $event->getRequest();
             $request->attributes->set('_theme', $layoutTheme);
         }
