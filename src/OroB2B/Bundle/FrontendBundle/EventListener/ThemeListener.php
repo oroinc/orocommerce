@@ -69,6 +69,10 @@ class ThemeListener
     {
         $request = $event->getRequest();
 
+        if (!$this->installed) {
+            return;
+        }
+
         if ($event->getRequestType() !== HttpKernelInterface::MASTER_REQUEST) {
             return;
         }
