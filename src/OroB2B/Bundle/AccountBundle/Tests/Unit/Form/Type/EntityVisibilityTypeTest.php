@@ -9,8 +9,8 @@ use Symfony\Component\Validator\Validation;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 
-use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSetDataListener;
-use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSubmitListener;
+use OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityPostSetDataListener;
+use OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityPostSubmitListener;
 use OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
 use OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
 
@@ -26,11 +26,11 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|CategoryPostSetDataListener */
-    protected $postSetDataListener;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|VisibilityPostSetDataListener */
+    protected $visibilityPostSetDataListener;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|CategoryPostSubmitListener */
-    protected $postSubmitListener;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|VisibilityPostSubmitListener */
+    protected $visibilityPostSubmitListener;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|VisibilityChoicesProvider */
     protected $visibilityChoicesProvider;
@@ -39,13 +39,13 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->postSetDataListener = $this->getMockBuilder(
-            'OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSetDataListener'
+        $this->visibilityPostSetDataListener = $this->getMockBuilder(
+            'OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityPostSetDataListener'
         )
             ->disableOriginalConstructor()
             ->getMock();
-        $this->postSubmitListener = $this->getMockBuilder(
-            'OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSubmitListener'
+        $this->visibilityPostSubmitListener = $this->getMockBuilder(
+            'OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityPostSubmitListener'
         )
             ->disableOriginalConstructor()
             ->getMock();
@@ -56,8 +56,8 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
             ->getMock();
 
         $this->formType = new EntityVisibilityType(
-            $this->postSetDataListener,
-            $this->postSubmitListener,
+            $this->visibilityPostSetDataListener,
+            $this->visibilityPostSubmitListener,
             $this->visibilityChoicesProvider
         );
         $this->formType->setAccountGroupClass(self::ACCOUNT_GROUP_CLASS);
@@ -85,7 +85,12 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
      */
     protected function tearDown()
     {
-        unset($this->formType, $this->postSetDataListener, $this->postSubmitListener, $this->visibilityChoicesProvider);
+        unset(
+            $this->formType,
+            $this->visibilityPostSetDataListener,
+            $this->visibilityPostSubmitListener,
+            $this->visibilityChoicesProvider
+        );
     }
 
     public function testGetName()
@@ -98,9 +103,10 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
         $this->visibilityChoicesProvider->expects($this->once())->method('getFormattedChoices')->willReturn([]);
 
         $options = [
-            'visibilityToAllClass' => '',
-            'visibilityToAccountGroupClass' => '',
-            'visibilityToAccountClass' => '',
+            'targetEntityField' => '',
+            'allClass' => '',
+            'accountGroupClass' => '',
+            'accountClass' => '',
         ];
 
         $form = $this->factory->create($this->formType, [], $options);
