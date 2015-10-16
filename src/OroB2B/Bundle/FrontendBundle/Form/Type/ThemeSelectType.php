@@ -10,8 +10,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Oro\Component\Layout\Extension\Theme\Model\Theme;
 use Oro\Component\Layout\Extension\Theme\Model\ThemeManager;
 
-use OroB2B\Bundle\FrontendBundle\EventListener\ThemeListener;
-
 class ThemeSelectType extends AbstractType
 {
     const NAME = 'orob2b_frontend_theme_select';
@@ -81,7 +79,7 @@ class ThemeSelectType extends AbstractType
     protected function getChoices()
     {
         $choices = [
-            '' => ThemeListener::FRONTEND_THEME
+            '' => 'orob2b_frontend.theme.demo.title'
         ];
 
         foreach ($this->getThemes() as $theme) {
