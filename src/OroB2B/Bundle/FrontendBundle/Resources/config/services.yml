@@ -43,6 +43,7 @@ services:
             - %installed%
         tags:
             - {name: kernel.event_listener, event: kernel.request, method: onKernelRequest}
+            - {name: kernel.event_listener, event: kernel.view, method: onKernelView, priority: 20 }
 
     orob2b_frontend.assetic.configuration:
         class: %oro_assetic.configuration.class%

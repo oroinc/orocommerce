@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\FrontendBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 use Oro\Bundle\ThemeBundle\Model\ThemeRegistry;
@@ -34,10 +35,12 @@ class ThemeListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->themeRegistry = new ThemeRegistry([
-            'oro' => [],
-            'demo' => [],
-        ]);
+        $this->themeRegistry = new ThemeRegistry(
+            [
+                'oro' => [],
+                'demo' => [],
+            ]
+        );
 
         $this->kernel = $this->getMock('Symfony\Component\HttpKernel\HttpKernelInterface');
     }
@@ -102,6 +105,68 @@ class ThemeListenerTest extends \PHPUnit_Framework_TestCase
                 'isFrontendRequest' => false,
                 'expectedTheme' => 'oro'
             ],
+        ];
+    }
+
+    /**
+     * @dataProvider onKernelViewProvider
+     *
+     * @param bool $isFrontendRequest
+     * @param bool $hasTheme
+     * @param bool|string $deletedAnnotation
+     */
+    public function testOnKernelView($isFrontendRequest, $hasTheme, $deletedAnnotation)
+    {
+        $this->themeRegistry->setActiveTheme('oro');
+
+        $request = new Request();
+        $request->attributes->set('_template', true);
+        $request->attributes->set('_layout', true);
+        if ($hasTheme) {
+            $request->attributes->set('_theme', 'test');
+        }
+        $event = new GetResponseForControllerResultEvent(
+            $this->kernel,
+            $request,
+            HttpKernelInterface::MASTER_REQUEST,
+            []
+        );
+
+        $this->helper->expects($this->any())
+            ->method('isFrontendRequest')
+            ->with($request)
+            ->willReturn($isFrontendRequest);
+
+        $listener = new ThemeListener($this->themeRegistry, $this->helper, true);
+
+        $listener->onKernelView($event);
+
+        if ($deletedAnnotation) {
+            $this->assertFalse($request->attributes->has($deletedAnnotation));
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function onKernelViewProvider()
+    {
+        return [
+            'backend' => [
+                'isFrontendRequest' => false,
+                'hasTheme' => false,
+                'deletedAnnotation' => false
+            ],
+            'frontend without layout theme' => [
+                'isFrontendRequest' => true,
+                'hasTheme' => false,
+                'deletedAnnotations' => '_layout'
+            ],
+            'frontend with layout theme' => [
+                'isFrontendRequest' => true,
+                'hasTheme' => true,
+                'deletedAnnotations' => '_template'
+            ]
         ];
     }
 }
