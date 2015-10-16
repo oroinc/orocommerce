@@ -47,6 +47,7 @@ orob2b:
             unit.label: Unit
             precision.label: Precision
             representation: "{{ label }} with precision {{ precision }} decimal places"
+            unit_precision_required: Please select a unit precision first...
 
         productvariantlink:
             entity_label: Product Variant Link

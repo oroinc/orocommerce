@@ -100,9 +100,17 @@ class VisibilityGridListener
      */
     public function onResultBefore(OrmResultBefore $event)
     {
+        $parameters = $event->getDatagrid()->getParameters();
+        $datagridName = $event->getDatagrid()->getName();
+        $targetEntity = $this->getEntity(
+            $parameters->get('target_entity_id'),
+            $this->subscribedGridConfig[$datagridName]['targetEntityClass']
+        );
+
         if (!$this->isFilteredByDefaultValue(
-            $event->getDatagrid()->getParameters(),
-            $this->subscribedGridConfig[$event->getDatagrid()->getName()]['visibilityEntityClass']
+            $targetEntity,
+            $parameters,
+            $this->subscribedGridConfig[$datagridName]['visibilityEntityClass']
         )
         ) {
             return;
@@ -130,18 +138,19 @@ class VisibilityGridListener
     }
 
     /**
+     * @param object $targetEntity
      * @param ParameterBag $params
      * @param string $visibilityClass
      * @return bool
      */
-    protected function isFilteredByDefaultValue(ParameterBag $params, $visibilityClass)
+    protected function isFilteredByDefaultValue($targetEntity, ParameterBag $params, $visibilityClass)
     {
         if (!$params->get('_filter')) {
             return false;
         }
 
         foreach ($params->get('_filter')['visibility']['value'] as $value) {
-            if ($this->isDefaultValue($value, $visibilityClass)) {
+            if ($this->isDefaultValue($targetEntity, $value, $visibilityClass)) {
                 return true;
             }
         }
@@ -152,13 +161,14 @@ class VisibilityGridListener
     /**
      * @param string $value
      *
+     * @param object $targetEntity
      * @param string $visibilityClass
      * @return bool
      */
-    protected function isDefaultValue($value, $visibilityClass)
+    protected function isDefaultValue($targetEntity, $value, $visibilityClass)
     {
         /** @var string $defaultValue */
-        $defaultValue = call_user_func([$visibilityClass, 'getDefault']);
+        $defaultValue = call_user_func([$visibilityClass, 'getDefault'], $targetEntity);
 
         return $defaultValue === $value;
     }
