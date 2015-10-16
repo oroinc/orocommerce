@@ -111,11 +111,12 @@ class ThemeListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider onKernelViewProvider
      *
+     * @param string $requestType
      * @param bool $isFrontendRequest
      * @param bool $hasTheme
      * @param bool|string $deletedAnnotation
      */
-    public function testOnKernelView($isFrontendRequest, $hasTheme, $deletedAnnotation)
+    public function testOnKernelView($requestType, $isFrontendRequest, $hasTheme, $deletedAnnotation)
     {
         $this->themeRegistry->setActiveTheme('oro');
 
@@ -128,7 +129,7 @@ class ThemeListenerTest extends \PHPUnit_Framework_TestCase
         $event = new GetResponseForControllerResultEvent(
             $this->kernel,
             $request,
-            HttpKernelInterface::MASTER_REQUEST,
+            $requestType,
             []
         );
 
@@ -141,7 +142,7 @@ class ThemeListenerTest extends \PHPUnit_Framework_TestCase
 
         $listener->onKernelView($event);
 
-        if ($deletedAnnotation) {
+        if ($deletedAnnotation && $requestType === HttpKernelInterface::MASTER_REQUEST) {
             $this->assertFalse($request->attributes->has($deletedAnnotation));
         }
     }
@@ -152,21 +153,42 @@ class ThemeListenerTest extends \PHPUnit_Framework_TestCase
     public function onKernelViewProvider()
     {
         return [
-            'backend' => [
+            'backend sub-request' => [
+                'requestType' => HttpKernelInterface::SUB_REQUEST,
                 'isFrontendRequest' => false,
                 'hasTheme' => false,
                 'deletedAnnotation' => false
             ],
-            'frontend without layout theme' => [
+            'backend master request' => [
+                'requestType' => HttpKernelInterface::MASTER_REQUEST,
+                'isFrontendRequest' => false,
+                'hasTheme' => false,
+                'deletedAnnotation' => false
+            ],
+            'frontend master request without layout theme' => [
+                'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'isFrontendRequest' => true,
                 'hasTheme' => false,
                 'deletedAnnotations' => '_layout'
             ],
-            'frontend with layout theme' => [
+            'frontend sub-request without layout theme' => [
+                'requestType' => HttpKernelInterface::SUB_REQUEST,
+                'isFrontendRequest' => true,
+                'hasTheme' => false,
+                'deletedAnnotations' => '_layout'
+            ],
+            'frontend master request with layout theme' => [
+                'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'isFrontendRequest' => true,
                 'hasTheme' => true,
                 'deletedAnnotations' => '_template'
-            ]
+            ],
+            'frontend sub-request with layout theme' => [
+                'requestType' => HttpKernelInterface::SUB_REQUEST,
+                'isFrontendRequest' => true,
+                'hasTheme' => true,
+                'deletedAnnotations' => '_template'
+            ],
         ];
     }
 }
