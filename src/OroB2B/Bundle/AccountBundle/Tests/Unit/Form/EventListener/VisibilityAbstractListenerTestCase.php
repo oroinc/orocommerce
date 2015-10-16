@@ -2,15 +2,15 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\EventListener;
 
+use Symfony\Component\Form\FormInterface;
+
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityRepository;
 
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountCategoryVisibilityRepository;
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupCategoryVisibilityRepository;
-use OroB2B\Bundle\AccountBundle\Form\EventListener\AbstractCategoryListener;
+use OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityAbstractListener;
 
-abstract class AbstractCategoryListenerTestCase extends \PHPUnit_Framework_TestCase
+abstract class VisibilityAbstractListenerTestCase extends \PHPUnit_Framework_TestCase
 {
     const CATEGORY_VISIBILITY_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility';
     const ACCOUNT_CATEGORY_VISIBILITY_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility';
@@ -20,16 +20,19 @@ abstract class AbstractCategoryListenerTestCase extends \PHPUnit_Framework_TestC
     /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
     protected $registry;
 
-    /** @var AbstractCategoryListener */
+    /** @var VisibilityAbstractListener */
     protected $listener;
+
+    /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $form;
 
     /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
     protected $categoryVisibilityRepository;
 
-    /** @var AccountCategoryVisibilityRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
     protected $accountCategoryVisibilityRepository;
 
-    /** @var AccountGroupCategoryVisibilityRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
     protected $accountGroupCategoryVisibilityRepository;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager */
@@ -44,12 +47,12 @@ abstract class AbstractCategoryListenerTestCase extends \PHPUnit_Framework_TestC
             ->getMock();
 
         $this->accountCategoryVisibilityRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\Repository\AccountCategoryVisibilityRepository')
+            ->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->accountGroupCategoryVisibilityRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupCategoryVisibilityRepository')
+            ->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -68,11 +71,21 @@ abstract class AbstractCategoryListenerTestCase extends \PHPUnit_Framework_TestC
 
         $this->listener = $this->getListener();
 
-        $this->listener->setCategoryVisibilityClass(self::CATEGORY_VISIBILITY_CLASS);
-        $this->listener->setAccountCategoryVisibilityClass(self::ACCOUNT_CATEGORY_VISIBILITY_CLASS);
-        $this->listener->setAccountGroupCategoryVisibilityClass(self::ACCOUNT_GROUP_CATEGORY_VISIBILITY_CLASS);
+        $formConfig = $this->getMock('Symfony\Component\Form\FormConfigInterface');
+        $formConfig->expects($this->any())->method('getOption')
+            ->willReturnMap(
+                [
+                    ['targetEntityField', null, 'category'],
+                    ['allClass', null, self::CATEGORY_VISIBILITY_CLASS],
+                    ['accountClass', null, self::ACCOUNT_CATEGORY_VISIBILITY_CLASS],
+                    ['accountGroupClass', null, self::ACCOUNT_GROUP_CATEGORY_VISIBILITY_CLASS],
+                ]
+            );
+
+        $this->form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $this->form->expects($this->any())->method('getConfig')->willReturn($formConfig);
     }
 
-    /** @return AbstractCategoryListener */
+    /** @return VisibilityAbstractListener */
     abstract public function getListener();
 }

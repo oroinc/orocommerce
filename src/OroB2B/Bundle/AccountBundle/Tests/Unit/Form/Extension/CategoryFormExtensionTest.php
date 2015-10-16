@@ -15,8 +15,8 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as EntityIden
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
-use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSetDataListener;
-use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSubmitListener;
+use OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityPostSetDataListener;
+use OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityPostSubmitListener;
 use OroB2B\Bundle\AccountBundle\Form\Extension\CategoryFormExtension;
 use OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityChangesetTypeStub;
@@ -49,16 +49,16 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
         /** @var ManagerRegistry $registry */
         $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
 
-        /** @var CategoryPostSetDataListener|\PHPUnit_Framework_MockObject_MockObject $categoryPostSetDataListener */
-        $categoryPostSetDataListener = $this->getMockBuilder(
-            'OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSetDataListener'
+        /** @var VisibilityPostSetDataListener|\PHPUnit_Framework_MockObject_MockObject $postSetDataListener */
+        $postSetDataListener = $this->getMockBuilder(
+            'OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityPostSetDataListener'
         )
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var CategoryPostSubmitListener|\PHPUnit_Framework_MockObject_MockObject $categoryPostSubmitListener */
-        $categoryPostSubmitListener = $this->getMockBuilder(
-            'OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSubmitListener'
+        /** @var VisibilityPostSubmitListener|\PHPUnit_Framework_MockObject_MockObject $postSubmitListener */
+        $postSubmitListener = $this->getMockBuilder(
+            'OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityPostSubmitListener'
         )
             ->disableOriginalConstructor()
             ->getMock();
@@ -73,8 +73,8 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     EntityVisibilityType::NAME => new EntityVisibilityType(
-                        $categoryPostSetDataListener,
-                        $categoryPostSubmitListener,
+                        $postSetDataListener,
+                        $postSubmitListener,
                         $visibilityChoicesProvider
                     ),
                     CategoryType::NAME => new CategoryType(),
