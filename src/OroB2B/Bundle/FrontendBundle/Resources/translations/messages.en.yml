@@ -3,3 +3,9 @@ orob2b_frontend:
         save_flash_success: Saved successfully
     theme:
         demo.title: 'OroPlatform theme'
+    system_configuration:
+        groups:
+            frontend.title: 'Frontend'
+            theme_settings.title: 'Theme Settings'
+        fields:
+            frontend_theme.label: 'Theme'
