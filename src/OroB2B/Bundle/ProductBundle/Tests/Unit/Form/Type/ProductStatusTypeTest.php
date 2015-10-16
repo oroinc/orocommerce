@@ -52,5 +52,10 @@ class ProductStatusTypeTest extends FormIntegrationTestCase
             $this->productStatusProvider->getAvailableProductStatuses(),
             $form->getConfig()->getOptions()['choices']
         );
+
+        $this->assertEquals(
+            Product::STATUS_DISABLED,
+            $form->getConfig()->getOptions()['preferred_choices']
+        );
     }
 }

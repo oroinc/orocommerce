@@ -105,7 +105,7 @@ class ProductDuplicator
         $productCopy = clone $product;
 
         $productCopy->setSku($this->skuIncrementor->increment($product->getSku()));
-        $productCopy->setStatus($this->getDisabledStatus());
+        $productCopy->setStatus(Product::STATUS_DISABLED);
 
         $this->cloneChildObjects($product, $productCopy);
 
@@ -146,15 +146,5 @@ class ProductDuplicator
 
             $this->doctrineHelper->getEntityManager($attachmentCopy)->persist($attachmentCopy);
         }
-    }
-
-    /**
-     * @return AbstractEnumValue
-     */
-    protected function getDisabledStatus()
-    {
-        $className = ExtendHelper::buildEnumValueClassName('prod_status');
-
-        return $this->doctrineHelper->getEntityRepository($className)->find(Product::STATUS_DISABLED);
     }
 }

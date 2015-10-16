@@ -12,7 +12,6 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class ProductType extends AbstractType
 {
@@ -48,7 +47,7 @@ class ProductType extends AbstractType
             )
             ->add(
                 'status',
-                'orob2b_product_status',
+                ProductStatusType::NAME,
                 [
                     'label' => 'orob2b.product.status.label'
                 ]
