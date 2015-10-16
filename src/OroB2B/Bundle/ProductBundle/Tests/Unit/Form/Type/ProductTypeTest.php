@@ -310,6 +310,10 @@ class ProductTypeTest extends FormIntegrationTestCase
         $defaultProduct = new StubProduct();
         $defaultProduct->setHasVariants($hasVariants);
 
+        if ($hasVariants) {
+            $defaultProduct->setVariantFields(array_keys($this->exampleCustomFields));
+        }
+
         return $defaultProduct;
     }
 }
