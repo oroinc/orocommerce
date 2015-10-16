@@ -6,6 +6,7 @@ use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class ProductVisibilityTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,6 +24,7 @@ class ProductVisibilityTest extends \PHPUnit_Framework_TestCase
             [
                 ['id', 1],
                 ['product', $product],
+                ['website', new Website()],
                 ['visibility', ProductVisibility::CONFIG],
             ]
         );

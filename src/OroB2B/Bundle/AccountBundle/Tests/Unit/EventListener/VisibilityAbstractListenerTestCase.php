@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
 
 use OroB2B\Bundle\AccountBundle\EventListener\VisibilityAbstractListener;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\Form\FormInterface;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -36,6 +37,9 @@ abstract class VisibilityAbstractListenerTestCase extends \PHPUnit_Framework_Tes
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager */
     protected $em;
+
+    /** @var  Website */
+    protected $website;
 
     protected function setUp()
     {
@@ -71,10 +75,12 @@ abstract class VisibilityAbstractListenerTestCase extends \PHPUnit_Framework_Tes
         $this->listener = $this->getListener();
 
         $formConfig = $this->getMock('Symfony\Component\Form\FormConfigInterface');
+        $this->website = new Website();
         $formConfig->expects($this->any())->method('getOption')
             ->willReturnMap(
                 [
                     ['targetEntityField', null, 'category'],
+                    ['website', null, $this->website],
                     ['allClass', null, self::CATEGORY_VISIBILITY_CLASS],
                     ['accountClass', null, self::ACCOUNT_CATEGORY_VISIBILITY_CLASS],
                     ['accountGroupClass', null, self::ACCOUNT_GROUP_CATEGORY_VISIBILITY_CLASS],
@@ -87,4 +93,17 @@ abstract class VisibilityAbstractListenerTestCase extends \PHPUnit_Framework_Tes
 
     /** @return VisibilityAbstractListener */
     abstract public function getListener();
+
+    /**
+     * @param array $criteria
+     * @return array
+     */
+    protected function addWebsiteCriteria(array $criteria)
+    {
+        if ($this->website) {
+            $criteria = array_merge($criteria, ['website' => $this->website]);
+        }
+
+        return $criteria;
+    }
 }

@@ -7,6 +7,7 @@ use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountProductVisibilityTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,6 +27,7 @@ class AccountProductVisibilityTest extends \PHPUnit_Framework_TestCase
                 ['id', 1],
                 ['product', $product],
                 ['account', new Account()],
+                ['website', new Website()],
                 ['visibility', AccountProductVisibility::CATEGORY],
             ]
         );

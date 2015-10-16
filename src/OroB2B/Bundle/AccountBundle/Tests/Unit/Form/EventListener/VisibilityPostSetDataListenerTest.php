@@ -153,9 +153,10 @@ class VisibilityPostSetDataListenerTest extends VisibilityAbstractListenerTestCa
         CategoryVisibility $categoryVisibility = null,
         $expectedVisibility = CategoryVisibility::PARENT_CATEGORY
     ) {
+        $criteria = $this->addWebsiteCriteria(['category' => $category]);
         $this->categoryVisibilityRepository->expects($this->once())
             ->method('findOneBy')
-            ->with(['category' => $category])
+            ->with($criteria)
             ->willReturn($categoryVisibility);
 
         /** @var  FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
@@ -171,9 +172,10 @@ class VisibilityPostSetDataListenerTest extends VisibilityAbstractListenerTestCa
     protected function setAccountCategoryVisibilityExpectations(Category $category)
     {
         $accountCategoryVisibility = $this->getAccountCategoryVisibility();
+        $criteria = $this->addWebsiteCriteria(['category' => $category]);
         $this->accountCategoryVisibilityRepository->expects($this->once())
             ->method('findBy')
-            ->with(['category' => $category])
+            ->with($criteria)
             ->willReturn([$accountCategoryVisibility]);
         /** @var  FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
@@ -197,9 +199,10 @@ class VisibilityPostSetDataListenerTest extends VisibilityAbstractListenerTestCa
     protected function setAccountGroupCategoryVisibilityExpectations(Category $category)
     {
         $accountGroupCategoryVisibility = $this->getAccountGroupCategoryVisibility();
+        $criteria = $this->addWebsiteCriteria(['category' => $category]);
         $this->accountGroupCategoryVisibilityRepository->expects($this->once())
             ->method('findBy')
-            ->with(['category' => $category])
+            ->with($criteria)
             ->willReturn([$accountGroupCategoryVisibility]);
         /** @var  FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->getMock('Symfony\Component\Form\FormInterface');

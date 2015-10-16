@@ -7,6 +7,7 @@ use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
+use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Symfony\Component\Form\FormInterface;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountAwareInterface;
@@ -34,12 +35,13 @@ abstract class VisibilityAbstractListener
     protected function findFormFieldData($form, $field)
     {
         $targetEntity = $form->getData();
-        $targetEntityField = $form->getConfig()->getOption('targetEntityField');
-        $criteria = [
-            $targetEntityField => $targetEntity
-        ];
-
-        $visibilityClassName = $form->getConfig()->getOption($field.'Class');
+        $config = $form->getConfig();
+        $targetEntityField = $config->getOption('targetEntityField');
+        $criteria = [$targetEntityField => $targetEntity];
+        if ($website = $config->getOption('website')) {
+            $criteria = array_merge($criteria, ['website' => $website]);
+        }
+        $visibilityClassName = $form->getConfig()->getOption($field . 'Class');
         if ($field === 'all') {
             return $this->getEntityRepository($visibilityClassName)->findOneBy($criteria);
         } else {
@@ -62,21 +64,27 @@ abstract class VisibilityAbstractListener
                 $visibilitiesById[$visibilityEntity->getAccount()->getId()] = $visibilityEntity;
             }
         }
+
         return $visibilitiesById;
     }
 
     /**
      * @param FormInterface $form
      * @param string $field
-     * @return VisibilityInterface
+     * @return VisibilityInterface|WebsiteAwareInterface
      */
     protected function createFormFieldData($form, $field)
     {
         $targetEntity = $form->getData();
-        $visibilityClassName = $form->getConfig()->getOption($field.'Class');
-        /** @var VisibilityInterface $visibility */
+        $config = $form->getConfig();
+        $visibilityClassName = $config->getOption($field . 'Class');
+        /** @var VisibilityInterface|WebsiteAwareInterface $visibility */
         $visibility = new $visibilityClassName();
+        if ($visibility instanceof WebsiteAwareInterface) {
+            $visibility->setWebsite($config->getOption('website'));
+        }
         $visibility->setTargetEntity($targetEntity);
+
         return $visibility;
     }
 
