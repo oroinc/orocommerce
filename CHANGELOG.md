@@ -1,3 +1,8 @@
 Initial Code Release
 ====================
-This is the initial code release. The changes made in the following releases will be described in this file.
+
+1.0.0-alpha.2
+-------------
+
+- `backend_prefix` parameter name was changed to `web_backend_prefix`
+- "Backend prefix" field is now available during installation via Web Installer
