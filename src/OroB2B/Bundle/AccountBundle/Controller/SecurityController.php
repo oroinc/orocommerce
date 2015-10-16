@@ -15,7 +15,7 @@ class SecurityController extends Controller
     /**
      * @Route("/login", name="orob2b_account_account_user_security_login")
      * @Template
-     * @Layout(vars={"last_username", "csft_token", "error"}})
+     * @Layout(vars={"last_username", "csrf_token", "error"})
      */
     public function loginAction()
     {
