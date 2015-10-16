@@ -1,32 +1,40 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\EventListener;
+namespace OroB2B\Bundle\AccountBundle\EventListener;
 
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormEvent;
+
+use Oro\Bundle\SoapBundle\Controller\Api\FormAwareInterface;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroupAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
 
 class VisibilityPostSubmitListener extends VisibilityAbstractListener
 {
     /**
-     * @param FormEvent $event
+     * @param FormAwareInterface $event
      */
-    public function onPostSubmit(FormEvent $event)
+    public function onPostSubmit(FormAwareInterface $event)
     {
         $form = $event->getForm();
-        $targetEntity = $form->getData();
-        if (!$form->isValid() || !is_object($targetEntity) || !$targetEntity->getId()) {
+
+        if (!$form->has(EntityVisibilityType::VISIBILITY)) {
+            return;
+        }
+        $visibilityForm = $form->get(EntityVisibilityType::VISIBILITY);
+
+        $targetEntity = $visibilityForm->getData();
+        if (!$visibilityForm->isValid() || !is_object($targetEntity) || !$targetEntity->getId()) {
             return;
         }
 
-        $this->saveFormAllData($form);
-        $this->saveFormAccountGroupData($form);
-        $this->saveFormAccountData($form);
+        $this->saveFormAllData($visibilityForm);
+        $this->saveFormAccountGroupData($visibilityForm);
+        $this->saveFormAccountData($visibilityForm);
 
         $this->getEntityManager($targetEntity)->flush();
     }

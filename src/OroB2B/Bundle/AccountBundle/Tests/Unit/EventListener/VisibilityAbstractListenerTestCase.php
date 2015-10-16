@@ -1,14 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\EventListener;
+namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
 
+use OroB2B\Bundle\AccountBundle\EventListener\VisibilityAbstractListener;
 use Symfony\Component\Form\FormInterface;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityRepository;
-
-use OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityAbstractListener;
 
 abstract class VisibilityAbstractListenerTestCase extends \PHPUnit_Framework_TestCase
 {

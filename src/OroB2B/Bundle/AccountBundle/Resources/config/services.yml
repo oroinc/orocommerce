@@ -52,6 +52,9 @@ parameters:
     orob2b_account.event_listener.form_view.class: OroB2B\Bundle\AccountBundle\EventListener\FormViewListener
     orob2b_account.event_listener.visibility_grid_listener.class: OroB2B\Bundle\AccountBundle\EventListener\VisibilityGridListener
     orob2b_account.event_listener.system_config.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigListener
+    orob2b_account.event_listener.visibility.form_handler.class: OroB2B\Bundle\AccountBundle\EventListener\VisibilityPostSubmitListener
+
+    orob2b_account.visibility.listener.abstract.class: OroB2B\Bundle\AccountBundle\EventListener\VisibilityAbstractListener
 
     orob2b_account.acl.group_provider.class: OroB2B\Bundle\AccountBundle\Acl\Group\AclGroupProvider
     orob2b_account.acl.resolver.role_translation_prefix.class: OroB2B\Bundle\AccountBundle\Acl\Resolver\RoleTranslationPrefixResolver
@@ -479,6 +482,18 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.account-group-product-visibility-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before.account-product-visibility-grid, method: onResultBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before.account-group-product-visibility-grid, method: onResultBefore }
+
+    orob2b_account.visibility.listener.abstract:
+        class: %orob2b_account.visibility.listener.abstract.class%
+        abstract: true
+        arguments:
+            - @doctrine
+
+    orob2b_account.event_listener.visibility.form_handler:
+        class: %orob2b_account.event_listener.visibility.form_handler.class%
+        parent: orob2b_account.visibility.listener.abstract
+        tags:
+            - { name: kernel.event_listener, event: orob2b.catalog.category_edit, method: onPostSubmit }
 
     orob2b_account.account_delete_handler:
         class: %orob2b_account.account_delete_handler.class%

@@ -12,6 +12,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityPostSetDataListener;
+use OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener\VisibilityAbstractListenerTestCase;
 
 class VisibilityPostSetDataListenerTest extends VisibilityAbstractListenerTestCase
 {
