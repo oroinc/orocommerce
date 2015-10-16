@@ -8,6 +8,7 @@ use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 use Oro\Bundle\ThemeBundle\Model\ThemeRegistry;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\FrontendBundle\EventListener\ThemeListener;
 use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
@@ -29,6 +30,11 @@ class ThemeListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected $kernel;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager
+     */
+    protected $configManager;
+
     protected function setUp()
     {
         $this->helper = $this->getMockBuilder('OroB2B\Bundle\FrontendBundle\Request\FrontendHelper')
@@ -43,13 +49,18 @@ class ThemeListenerTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->kernel = $this->getMock('Symfony\Component\HttpKernel\HttpKernelInterface');
+
+        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     /**
      * @param boolean $installed
      * @param int $requestType
      * @param boolean $isFrontendRequest
-     * @param string $expectedTheme
+     * @param string $expectedOroTheme
+     * @param string $expectedLayoutTheme
      *
      * @dataProvider onKernelRequestProvider
      */
@@ -57,7 +68,8 @@ class ThemeListenerTest extends \PHPUnit_Framework_TestCase
         $installed,
         $requestType,
         $isFrontendRequest,
-        $expectedTheme
+        $expectedOroTheme,
+        $expectedLayoutTheme
     ) {
         $this->themeRegistry->setActiveTheme('oro');
 
@@ -69,10 +81,16 @@ class ThemeListenerTest extends \PHPUnit_Framework_TestCase
             ->with($request)
             ->willReturn($isFrontendRequest);
 
-        $listener = new ThemeListener($this->themeRegistry, $this->helper, $installed);
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->with(ThemeListener::DEFAULT_LAYOUT_THEME_CONFIG_KEY)
+            ->willReturn('test_layout_theme');
+
+        $listener = new ThemeListener($this->themeRegistry, $this->helper, $this->configManager, $installed);
         $listener->onKernelRequest($event);
 
-        $this->assertEquals($expectedTheme, $this->themeRegistry->getActiveTheme()->getName());
+        $this->assertEquals($expectedOroTheme, $this->themeRegistry->getActiveTheme()->getName());
+        $this->assertEquals($expectedLayoutTheme, $request->attributes->get('_theme'));
     }
 
     /**
@@ -85,25 +103,29 @@ class ThemeListenerTest extends \PHPUnit_Framework_TestCase
                 'installed' => false,
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'isFrontendRequest' => true,
-                'expectedTheme' => 'oro'
+                'expectedOroTheme' => 'oro',
+                'expectedLayoutTheme' => null
             ],
             'not master request' => [
                 'installed' => true,
                 'requestType' => HttpKernelInterface::SUB_REQUEST,
                 'isFrontendRequest' => true,
-                'expectedTheme' => 'oro'
+                'expectedOroTheme' => 'oro',
+                'expectedLayoutTheme' => null
             ],
             'frontend' => [
                 'installed' => true,
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'isFrontendRequest' => true,
-                'expectedTheme' => 'demo'
+                'expectedOroTheme' => 'demo',
+                'expectedLayoutTheme' => 'test_layout_theme'
             ],
             'backend' => [
                 'installed' => true,
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'isFrontendRequest' => false,
-                'expectedTheme' => 'oro'
+                'expectedOroTheme' => 'oro',
+                'expectedLayoutTheme' => null
             ],
         ];
     }
@@ -137,7 +159,7 @@ class ThemeListenerTest extends \PHPUnit_Framework_TestCase
             ->with($request)
             ->willReturn($isFrontendRequest);
 
-        $listener = new ThemeListener($this->themeRegistry, $this->helper, true);
+        $listener = new ThemeListener($this->themeRegistry, $this->helper, $this->configManager, true);
 
         $listener->onKernelView($event);
 
