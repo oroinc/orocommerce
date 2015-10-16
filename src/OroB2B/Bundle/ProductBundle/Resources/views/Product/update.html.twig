@@ -1,4 +1,5 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 
 {% oro_title_set({params : {"%sku%": entity.sku|default('N/A'|trans) , "%name%": (entity.id ? entity.defaultName.string : '')|default('N/A'|trans) } }) %}
 
@@ -50,20 +51,31 @@
 
 {% block content_data %}
     {% set id = 'product-edit' %}
+    {% set productHasVariants = entity.getHasVariants %}
+
+    {% set generalData = [
+        form_row(form.sku),
+        form_row(form.hasVariants)
+    ] %}
+
+    {% if productHasVariants and form.variantFields.vars.choices|length != 0 %}
+        {% set generalData = generalData|merge([form_row(form.variantFields)]) %}
+    {% endif %}
+
+    {% set generalData = generalData|merge([
+        form_row(form.names),
+        form_row(form.status),
+        form_row(form.inventoryStatus),
+        form_row(form.image),
+        form_row(form.unitPrecisions)
+    ]) %}
 
     {% set generalBlock = {
         'title': 'orob2b.product.sections.general'|trans,
         'class': 'active',
         'subblocks': [{
             'title': '',
-            'data': [
-                form_row(form.sku),
-                form_row(form.names),
-                form_row(form.status),
-                form_row(form.inventoryStatus),
-                form_row(form.image),
-                form_row(form.unitPrecisions),
-            ]
+            'data': generalData
         },
         {
             'title': '',
@@ -99,6 +111,22 @@
                 'title': '',
                 'useSpan': false,
                 'data' : additionalData
+            }]
+        }] ) %}
+    {% endif %}
+
+    {% if productHasVariants %}
+        {% set variantLinksForm = form.variantLinks %}
+        {% set dataBlocks = dataBlocks|merge([{
+            'title' : 'orob2b.product.sections.productVariants'|trans,
+            'subblocks': [{
+                'title' : null,
+                'useSpan': false,
+                'data' : [
+                    form_widget(variantLinksForm.appendVariants, {'id': 'productAppendVariants'}),
+                    form_widget(variantLinksForm.removeVariants, {'id': 'productRemoveVariants'}),
+                    dataGrid.renderGrid('orob2b_product-product_variants-product_edit', {'parentProduct': entity.id}, { cssClass: 'inner-grid' })
+                ]
             }]
         }] ) %}
     {% endif %}

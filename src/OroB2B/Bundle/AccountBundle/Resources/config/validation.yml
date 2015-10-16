@@ -89,9 +89,9 @@ OroB2B\Bundle\AccountBundle\Entity\AccountUserRole:
             - NotBlank: ~
             - Length:
                 min: 3
-                max: 64
+                max: 255
         label:
             - NotBlank: ~
             - Length:
                 min: 3
-                max: 64
+                max: 255

@@ -6,6 +6,8 @@ orob2b:
         id.label: Id
         sku.label: SKU
         quantity.label: Quantity
+        has_variants.label: Has Variants
+        variant_fields.label: Variant Fields
         inventory_status.label: Inventory Status
         visibility.label: Visible to Accounts
         status.label: Status
@@ -16,14 +18,18 @@ orob2b:
         names.label: Name
         descriptions.label: Description
         removed: '{title} - removed'
+        is_variant.label: Is Variant
+        variant_links.label: Product Variant Links
 
         visibility:
             visible.label: Yes
             not_visible.label: No
             as_defined_in_system_config.label: As Defined in System Configuration
 
-        form.choose: 'Choose Product...'
-        form.add_row: 'Add row'
+        form:
+            choose: Choose Product...
+            product_required: Please select a product first...
+        form.add_row: Add row
 
         productunit:
             entity_label: Product Unit
@@ -31,7 +37,7 @@ orob2b:
             entity_description: Represents product units information
             code.label: Code
             default_precision.label: Default Precision
-            form.choose: 'Choose Unit...'
+            form.choose: Choose Unit...
             removed: '{title} - removed'
 
         productunitprecision:
@@ -41,6 +47,15 @@ orob2b:
             unit.label: Unit
             precision.label: Precision
             representation: "{{ label }} with precision {{ precision }} decimal places"
+            unit_precision_required: Please select a unit precision first...
+
+        productvariantlink:
+            entity_label: Product Variant Link
+            entity_plural_label: Product Variant Links
+            id.label: Id
+            visible.label: Visible
+            parent_product.label: Parent Product
+            product.label: Product
 
         menu:
             products_tab.label: Products
@@ -63,6 +78,7 @@ orob2b:
             general: General
             additional: Additional
             visibility: Visibility
+            productVariants: Product Variants
 
         widgets:
             product_information: Product Information

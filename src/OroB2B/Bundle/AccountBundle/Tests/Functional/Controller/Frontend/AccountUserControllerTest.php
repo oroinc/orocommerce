@@ -6,6 +6,7 @@ use Symfony\Bundle\SwiftmailerBundle\DataCollector\MessageDataCollector;
 
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\Controller\AbstractUserControllerTest;
 
@@ -57,13 +58,17 @@ class AccountUserControllerTest extends AbstractUserControllerTest
     {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_frontend_account_user_create'));
 
+        /** @var AccountUser $loggedUser */
         $loggedUser = $this->getContainer()->get('oro_security.security_facade')->getLoggedUser();
 
         $this->assertInstanceOf('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $loggedUser);
 
         /** @var AccountUserRole[] $roles */
         $roles = $this->getUserRoleRepository()
-            ->getAvailableRolesByAccountUserQueryBuilder($loggedUser)
+            ->getAvailableRolesByAccountUserQueryBuilder(
+                $loggedUser->getOrganization(),
+                $loggedUser->getAccount()
+            )
             ->getQuery()
             ->getResult();
 

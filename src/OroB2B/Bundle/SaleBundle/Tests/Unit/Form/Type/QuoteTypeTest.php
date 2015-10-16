@@ -12,6 +12,7 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
+use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
@@ -20,6 +21,7 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductRemovedSelectType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
@@ -33,6 +35,8 @@ use OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type\Stub\EntityType as StubEntityT
 
 class QuoteTypeTest extends AbstractTest
 {
+    use QuantityTypeTrait;
+
     /**
      * @var QuoteType
      */
@@ -189,6 +193,14 @@ class QuoteTypeTest extends AbstractTest
             AccountUserSelectType::NAME
         );
 
+        $priceListSelectType = new StubEntityType(
+            [
+                1 => $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 1),
+                2 => $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 2),
+            ],
+            PriceListSelectType::NAME
+        );
+
         $priceType                  = $this->preparePriceType();
         $entityType                 = $this->prepareProductEntityType();
         $productSelectType          = new ProductSelectTypeStub();
@@ -228,6 +240,8 @@ class QuoteTypeTest extends AbstractTest
                     $productUnitSelectionType->getName()        => $productUnitSelectionType,
                     $accountSelectType->getName()               => $accountSelectType,
                     $accountUserSelectType->getName()           => $accountUserSelectType,
+                    $priceListSelectType->getName()             => $priceListSelectType,
+                    QuantityTypeTrait::$name                    => $this->getQuantityType(),
                 ],
                 []
             ),
