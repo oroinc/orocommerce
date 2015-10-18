@@ -275,7 +275,7 @@ class CategoryTreeHandlerTest extends \PHPUnit_Framework_TestCase
             $categoryTitle = new LocalizedFallbackValue();
             $categoryTitle->setString($item['title']);
 
-            $category = $this->createEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', $item['id']);
+            $category = $this->getEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', ['id' => $item['id']]);
             $category->addTitle($categoryTitle);
             $category->setParentCategory($this->getParent($item['parent']));
 
