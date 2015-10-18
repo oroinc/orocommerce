@@ -33,6 +33,9 @@ class OrderController extends Controller
      */
     protected function saveToStorage(Request $request)
     {
+        $currencyFormatter = $this->get('oro_locale.formatter.number');
+        $valueFormatter = $this->get('orob2b_product.formatter.product_unit_value');
+
         /** @var ProductDataStorage $storage */
         $storage = $this->get('orob2b_product.service.product_data_storage');
         $data = [
@@ -50,6 +53,14 @@ class OrderController extends Controller
                     'unit' => $productItem->getProductUnitCode(),
                     'currency' => $productItem->getPrice()->getCurrency(),
                     'price' => $productItem->getPrice()->getValue(),
+                    'quantityFormatted' => $valueFormatter->formatShort(
+                        $productItem->getQuantity(),
+                        $productItem->getProductUnit()
+                    ),
+                    'priceFormatted' => $currencyFormatter->formatCurrency(
+                        $productItem->getPrice()->getValue(),
+                        $productItem->getPrice()->getCurrency()
+                    ),
                 ];
             }
 

@@ -120,7 +120,12 @@
         {{ form_errors(form.freeFormProduct) }}
     </td>
 
-    {{ _self.render_form_sections(form.vars.sections, form) }}
+    {#{ dump(form.parent.vars.prototype.vars) }#}
+    {% if form.vars.offers is defined and form.vars.offers is not empty %}
+        {{ _self.render_form_sections(form.vars.sections, form, {'offers': _self.offers_widget(form.vars.offers)}) }}
+    {% else %}
+        {{ _self.render_form_sections(form.vars.sections, form) }}
+    {% endif %}
 {% endblock %}
 
 {% macro render_form_sections(sections, form, overrides) %}
@@ -131,9 +136,6 @@
                     {{ overrides[sectionName] }}
                 {% elseif sections.data is defined and sections.data is iterable %}
                     <div class="fields-row">
-                        {% if sectionName == 'quantity' and form.vars.offers is defined and form.vars.offers is not empty %}
-                            {{ _self.offers_widget(form.vars.offers) }}
-                        {% endif %}
                         {% for subSectionName, subSection in sections.data %}
                             <div
                                 {% if subSection.page_component is defined %} data-page-component-module="{{ subSection.page_component }}"
@@ -162,10 +164,10 @@
                             <input type="radio" value="{{ offer.quantity }}" data-unit="{{ offer.unit }}" data-currency="{{ offer.currency }}" data-price="{{ offer.price }}">
                         </td>
                         <td class="order-line-item-quantity-offer-quantity">
-                            {{ offer.quantity }} {{ offer.unit }}
+                            {{ offer.quantityFormatted }}
                         </td>
                         <td class="order-line-item-quantity-offer-price">
-                            {{ offer.price }} {{ offer.currency }}
+                            {{ offer.priceFormatted }}
                         </td>
                     </tr>
                 {% endfor %}
