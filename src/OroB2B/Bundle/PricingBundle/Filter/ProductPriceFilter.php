@@ -9,13 +9,13 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
 use Oro\Bundle\FilterBundle\Datasource\Orm\OrmFilterDatasourceAdapter;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
-use Oro\Bundle\FilterBundle\Filter\NumberFilter;
+use Oro\Bundle\FilterBundle\Filter\NumberRangeFilter;
 
 use OroB2B\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler;
 
-class ProductPriceFilter extends NumberFilter
+class ProductPriceFilter extends NumberRangeFilter
 {
     /**
      * @var ProductUnitLabelFormatter
@@ -62,27 +62,20 @@ class ProductPriceFilter extends NumberFilter
             return false;
         }
 
-        $price = $data['value'];
-        $type = $data['type'];
-
         $this->qbPrepare($ds, $data['unit']);
 
         $joinAlias = $this->getJoinAlias();
-        $parameterName = $ds->generateParameterName($this->getName());
 
         $this->applyFilterToClause(
             $ds,
-            $this->buildComparisonExpr(
+            $this->buildRangeComparisonExpr(
                 $ds,
-                $type,
+                $data['type'],
                 $joinAlias . '.value',
-                $parameterName
+                $data['value'],
+                $data['value_end']
             )
         );
-
-        if (!in_array($type, [FilterUtility::TYPE_EMPTY, FilterUtility::TYPE_NOT_EMPTY], true)) {
-            $ds->setParameter($parameterName, $price);
-        }
 
         return true;
     }
@@ -146,13 +139,11 @@ class ProductPriceFilter extends NumberFilter
      */
     public function parseData($data)
     {
-        if (!is_array($data) || !array_key_exists('value', $data)) {
+        if (false === ($data = parent::parseData($data))) {
             return false;
         }
 
-        $data['type'] = isset($data['type']) ? $data['type'] : null;
-
-        if (!is_numeric($data['value'])) {
+        if (empty($data['unit'])) {
             return false;
         }
 

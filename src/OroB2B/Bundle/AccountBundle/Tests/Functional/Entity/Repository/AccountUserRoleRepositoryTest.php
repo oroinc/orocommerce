@@ -88,7 +88,7 @@ class AccountUserRoleRepositoryTest extends WebTestCase
     public function testRoleWithoutUserAndWebsite()
     {
         /** @var AccountUserRole $role */
-        $role = $this->getReference(LoadAccountUserRoleData::ROLE_WITHOUT_USER_AND_WEBSITE);
+        $role = $this->getReference(LoadAccountUserRoleData::ROLE_EMPTY);
 
         $hasAssignedUsers = $this->repository->hasAssignedUsers($role);
         $this->assertFalse($hasAssignedUsers);
@@ -108,7 +108,10 @@ class AccountUserRoleRepositoryTest extends WebTestCase
         $accountUser = $this->getReference($accountUser);
         /** @var AccountUserRole[] $actual */
         $actual = $this->repository
-            ->getAvailableRolesByAccountUserQueryBuilder($accountUser)
+            ->getAvailableRolesByAccountUserQueryBuilder(
+                $accountUser->getOrganization(),
+                $accountUser->getAccount()
+            )
             ->getQuery()
             ->getResult();
         $this->assertCount(count($expectedAccountUserRoles) +  self::$defaultRolesCount, $actual);
@@ -133,8 +136,7 @@ class AccountUserRoleRepositoryTest extends WebTestCase
                     LoadAccountUserRoleData::ROLE_WITH_ACCOUNT,
                     LoadAccountUserRoleData::ROLE_WITH_ACCOUNT_USER,
                     LoadAccountUserRoleData::ROLE_WITH_WEBSITE,
-                    LoadAccountUserRoleData::ROLE_WITHOUT_USER_AND_WEBSITE,
-                    LoadAccountUserRoleData::ROLE_WITHOUT_ACCOUNT
+                    LoadAccountUserRoleData::ROLE_EMPTY,
                 ]
             ],
             'user from account without custom roles' => [
@@ -142,8 +144,7 @@ class AccountUserRoleRepositoryTest extends WebTestCase
                 [
                     LoadAccountUserRoleData::ROLE_WITH_ACCOUNT_USER,
                     LoadAccountUserRoleData::ROLE_WITH_WEBSITE,
-                    LoadAccountUserRoleData::ROLE_WITHOUT_USER_AND_WEBSITE,
-                    LoadAccountUserRoleData::ROLE_WITHOUT_ACCOUNT
+                    LoadAccountUserRoleData::ROLE_EMPTY,
                 ]
             ]
         ];

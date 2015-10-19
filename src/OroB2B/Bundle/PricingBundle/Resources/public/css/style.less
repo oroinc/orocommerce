@@ -78,22 +78,24 @@
 }
 
 .product-price-filter {
-  .value-field-frame {
-    margin-right: 0 !important;
-
-    input[type=text]  {
-      width: 100px !important;
+  .choice-filter {
+    display: inline-block;
+    width: auto;
+  }
+  .filter-end {
+    input[type=text] {
       border-right-width: 1px !important;
     }
   }
-
+  .value-field-frame {
+    margin-right: 0 !important;
+  }
   .product-price-unit-filter {
+    display: inline-block;
     margin-bottom: 0;
   }
-
-  .product-price-unit-filter,
-  .choice-filter{
-    display: inline-block;
-    width: auto;
+  .filter-update {
+    float: right;
+    margin-bottom: 4px;
   }
 }
