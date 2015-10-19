@@ -60,7 +60,6 @@ class QuoteController extends Controller
                     'productUnitCode' => $productUnitCode,
                     'requestProductItem' => $requestProductItem->getId(),
                 ];
-
             }
 
             $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = [

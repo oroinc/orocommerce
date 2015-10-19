@@ -114,8 +114,10 @@ class QuoteProductPriceProvider
 
             /** @var QuoteProductOffer $quoteProductOffer */
             foreach ($quoteProduct->getQuoteProductOffers() as $quoteProductOffer) {
-                if (!$quoteProductOffer->getProductUnit() || !$quoteProductOffer->getQuantity()
-                    || !$quoteProductOffer->getPrice()) {
+                if (!$quoteProductOffer->getProductUnit() ||
+                    !$quoteProductOffer->getQuantity() ||
+                    !$quoteProductOffer->getPrice()
+                ) {
                     continue;
                 }
 

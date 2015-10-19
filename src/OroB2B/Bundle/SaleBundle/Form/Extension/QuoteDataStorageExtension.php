@@ -6,7 +6,6 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Extension\AbstractProductDataStorageExtension;
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
@@ -24,9 +23,7 @@ class QuoteDataStorageExtension extends AbstractProductDataStorageExtension
         }
 
         $quoteProduct = new QuoteProduct();
-        $quoteProduct
-            ->setProduct($product)
-        ;
+        $quoteProduct->setProduct($product);
 
         $this->fillEntityData($quoteProduct, $itemData);
 
@@ -46,16 +43,16 @@ class QuoteDataStorageExtension extends AbstractProductDataStorageExtension
     {
         $defaultUnit = $this->getDefaultUnit($product);
 
-        foreach ($itemsData as $subitemData) {
+        foreach ($itemsData as $subItemData) {
             $quoteProductRequest = new QuoteProductRequest();
             $quoteProductOffer = new QuoteProductOffer();
 
             $quoteProductOffer->setAllowIncrements(true);
 
-            $this->fillEntityData($quoteProductRequest, $subitemData);
-            $this->fillEntityData($quoteProductOffer, $subitemData);
+            $this->fillEntityData($quoteProductRequest, $subItemData);
+            $this->fillEntityData($quoteProductOffer, $subItemData);
 
-            if (!$quoteProductRequest->getProductUnit() && !$defaultUnit) {
+            if (!$defaultUnit && !$quoteProductRequest->getProductUnit()) {
                 continue;
             }
 
@@ -78,13 +75,13 @@ class QuoteDataStorageExtension extends AbstractProductDataStorageExtension
         /* @var $unitPrecision ProductUnitPrecision */
         $unitPrecision = $product->getUnitPrecisions()->first();
         if (!$unitPrecision) {
-            return;
+            return null;
         }
 
         /* @var $unit ProductUnit */
         $unit = $unitPrecision->getUnit();
         if (!$unit) {
-            return;
+            return null;
         }
 
         return $unit;

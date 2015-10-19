@@ -21,7 +21,7 @@ class QuoteControllerTest extends WebTestCase
         $this->initClient([], static::generateBasicAuthHeader());
 
         if (!$this->client->getContainer()->hasParameter('orob2b_sale.entity.quote.class')) {
-            static::markTestSkipped('SaleBundle disabled');
+            static::markTestSkipped('OroB2BSaleBundle is not installed');
         }
 
         $this->loadFixtures(
