@@ -237,6 +237,7 @@ orob2b.account:
             account.label: Account
             product.label: Product
             visibility.label: Visibility
+            website.label: Website
             choice:
                 category: Category
                 config: Config
@@ -251,6 +252,7 @@ orob2b.account:
             account_group.label: Account Group
             product.label: Product
             visibility.label: Visibility
+            website.label: Website
             choice:
                 category: Category
                 config: Config
@@ -263,6 +265,7 @@ orob2b.account:
             id.label: ID
             product.label: Product
             visibility.label: Visibility
+            website.label: Website
             choice:
                 config: Config
                 visible: Visible
