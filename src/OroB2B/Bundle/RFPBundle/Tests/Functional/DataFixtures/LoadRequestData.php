@@ -40,7 +40,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'phone' => '2-(999)507-4625',
             'company' => 'Google',
             'role' => 'CEO',
-            'body' => self::REQUEST1,
+            'note' => self::REQUEST1,
         ],
         self::REQUEST2 => [
             'first_name' => self::FIRST_NAME,
@@ -49,7 +49,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'phone' => '2-(999)507-4625',
             'company' => 'Google',
             'role' => 'CEO',
-            'body' => self::REQUEST2,
+            'note' => self::REQUEST2,
             'account' => LoadUserData::ACCOUNT1,
             'accountUser' => LoadUserData::ACCOUNT1_USER1,
         ],
@@ -60,7 +60,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'phone' => '2-(999)507-4625',
             'company' => 'Google',
             'role' => 'CEO',
-            'body' => self::REQUEST3,
+            'note' => self::REQUEST3,
             'account' => LoadUserData::ACCOUNT1,
             'accountUser' => LoadUserData::ACCOUNT1_USER2,
         ],
@@ -71,7 +71,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'phone' => '2-(999)507-4625',
             'company' => 'Google',
             'role' => 'CEO',
-            'body' => self::REQUEST4,
+            'note' => self::REQUEST4,
             'account' => LoadUserData::ACCOUNT1,
             'accountUser' => LoadUserData::ACCOUNT1_USER3,
         ],
@@ -82,7 +82,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'phone' => '2-(999)507-4625',
             'company' => 'Google',
             'role' => 'CEO',
-            'body' => self::REQUEST5,
+            'note' => self::REQUEST5,
             'account' => LoadUserData::ACCOUNT2,
             'accountUser' => LoadUserData::ACCOUNT2_USER1,
         ],
@@ -93,7 +93,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'phone' => '2-(999)507-4625',
             'company' => 'Google',
             'role' => 'CEO',
-            'body' => self::REQUEST6,
+            'note' => self::REQUEST6,
             'account' => LoadUserData::ACCOUNT2,
             'accountUser' => LoadUserData::ACCOUNT2_USER1,
         ],
@@ -104,7 +104,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'phone' => '2-(999)507-4625',
             'company' => 'Google',
             'role' => 'CEO',
-            'body' => self::REQUEST7,
+            'note' => self::REQUEST7,
             'account' => LoadUserData::ACCOUNT1,
             'accountUser' => LoadUserData::ACCOUNT1_USER1,
         ],
@@ -115,7 +115,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'phone' => '2-(999)507-4625',
             'company' => 'Google',
             'role' => 'CEO',
-            'body' => self::REQUEST8,
+            'note' => self::REQUEST8,
             'account' => LoadUserData::ACCOUNT1,
             'accountUser' => LoadUserData::ACCOUNT1_USER1,
         ],
@@ -157,7 +157,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
                 ->setPhone($rawRequest['phone'])
                 ->setCompany($rawRequest['company'])
                 ->setRole($rawRequest['role'])
-                ->setBody($rawRequest['body'])
+                ->setNote($rawRequest['note'])
                 ->setStatus($status)
                 ->setOrganization($organization)
             ;
@@ -193,10 +193,6 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
         for ($i = 0; $i < $numLineItems; $i++) {
             $product = $products[array_rand($products)];
 
-            if (!count($unitPrecisions)) {
-                continue;
-            }
-
             $requestProduct = new RequestProduct();
             $requestProduct->setProduct($product);
             $requestProduct->setComment(sprintf('Notes %s', $i));
@@ -204,7 +200,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             for ($j = 0; $j < $numProductItems; $j++) {
                 $productUnit = $unitPrecisions[array_rand($unitPrecisions)]->getUnit();
 
-                $currency = $currencies[rand(0, count($currencies) - 1)];
+                $currency = $currencies[array_rand($currencies)];
                 $requestProductItem = new RequestProductItem();
                 $requestProductItem
                     ->setPrice(Price::create(rand(1, 100), $currency))

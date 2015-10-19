@@ -123,7 +123,7 @@ class ShoppingListCreateRfpHandler
             ->setEmail($this->user->getEmail())
             ->setPhone('')
             ->setRole('')
-            ->setBody('')
+            ->setNote('')
             ->setCompany($this->user->getOrganization() ? $this->user->getOrganization()->getName() : '')
             ->setAccountUser($this->user)
             ->setAccount($this->user->getAccount())

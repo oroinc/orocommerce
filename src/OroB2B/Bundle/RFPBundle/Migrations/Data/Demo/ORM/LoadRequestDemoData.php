@@ -76,7 +76,7 @@ class LoadRequestDemoData extends AbstractFixture implements
         while (($data = fgetcsv($handler, 5000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
-            $accountUser = $accountUsers[rand(0, count($accountUsers) - 1)];
+            $accountUser = $accountUsers[array_rand($accountUsers)];
 
             $request = new Request();
             $request
@@ -86,12 +86,12 @@ class LoadRequestDemoData extends AbstractFixture implements
                 ->setPhone($row['phone'])
                 ->setCompany($row['company'])
                 ->setRole($row['role'])
-                ->setBody($row['body'])
+                ->setNote($row['note'])
                 ->setAccountUser($accountUser)
                 ->setAccount($accountUser ? $accountUser->getAccount() : null)
             ;
 
-            $status = $statuses[rand(0, count($statuses) - 1)];
+            $status = $statuses[array_rand($statuses)];
             $request->setStatus($status);
             $request->setOrganization($organization);
 
@@ -157,7 +157,7 @@ class LoadRequestDemoData extends AbstractFixture implements
         $currencies = $this->getCurrencies();
         $numLineItems = rand(1, 10);
         for ($i = 0; $i < $numLineItems; $i++) {
-            $product = $products[rand(0, count($products) - 1)];
+            $product = $products[array_rand($products)];
             $unitPrecisions = $product->getUnitPrecisions();
 
             if (!count($unitPrecisions)) {
@@ -169,9 +169,9 @@ class LoadRequestDemoData extends AbstractFixture implements
             $requestProduct->setComment(sprintf('Notes %s', $i));
             $numProductItems = rand(1, 10);
             for ($j = 0; $j < $numProductItems; $j++) {
-                $productUnit = $unitPrecisions[rand(0, count($unitPrecisions) - 1)]->getUnit();
+                $productUnit = $unitPrecisions[array_rand($unitPrecisions)]->getUnit();
 
-                $currency = $currencies[rand(0, count($currencies) - 1)];
+                $currency = $currencies[array_rand($currencies)];
                 $requestProductItem = new RequestProductItem();
                 $requestProductItem
                     ->setPrice(Price::create(rand(1, 100), $currency))

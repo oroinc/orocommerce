@@ -9,7 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
-use OroB2B\Bundle\RFPBundle\Entity\Request;
+use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 
 class OrderController extends Controller
 {
@@ -17,21 +17,22 @@ class OrderController extends Controller
      * @Route("/create/{id}", name="orob2b_rfp_request_create_order", requirements={"id"="\d+"})
      * @AclAncestor("orob2b_order_create")
      *
-     * @param Request $request
+     * @param RFPRequest $request
      *
      * @return array
      */
-    public function createAction(Request $request)
+    public function createAction(RFPRequest $request)
     {
         $this->saveToStorage($request);
         return $this->redirect(
             $this->generateUrl('orob2b_order_create', [ProductDataStorage::STORAGE_KEY => true])
         );
     }
+
     /**
-     * @param Request $request
+     * @param RFPRequest $request
      */
-    protected function saveToStorage(Request $request)
+    protected function saveToStorage(RFPRequest $request)
     {
         $currencyFormatter = $this->get('oro_locale.formatter.number');
         $valueFormatter = $this->get('orob2b_product.formatter.product_unit_value');

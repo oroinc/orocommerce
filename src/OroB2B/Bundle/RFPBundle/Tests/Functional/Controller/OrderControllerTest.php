@@ -41,7 +41,7 @@ class OrderControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 302);
 
-        $crawler = $this->client->followRedirect();
+        $this->client->followRedirect();
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertStringStartsWith(
             $this->getUrl('orob2b_order_create'),

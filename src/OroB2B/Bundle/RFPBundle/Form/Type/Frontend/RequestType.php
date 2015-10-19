@@ -89,8 +89,8 @@ class RequestType extends AbstractType
             ->add('role', 'text', [
                 'label' => 'orob2b.rfp.request.role.label'
             ])
-            ->add('body', 'textarea', [
-                'label' => 'orob2b.rfp.request.body.label'
+            ->add('note', 'textarea', [
+                'label' => 'orob2b.rfp.request.note.label'
             ])
             ->add('requestProducts', RequestProductCollectionType::NAME, [
                 'options' => [

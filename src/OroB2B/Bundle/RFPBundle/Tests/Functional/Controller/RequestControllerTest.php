@@ -171,6 +171,7 @@ class RequestControllerTest extends WebTestCase
      */
     public function testCreateQuote($id)
     {
+        $this->markTestSkipped('Due to BB-1363');
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_request_view', ['id' => $id]));
 
         $form = $crawler->selectButton('Create Quote')->form();

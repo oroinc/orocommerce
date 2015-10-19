@@ -159,7 +159,7 @@ class RequestTypeTest extends AbstractTest
                     'phone'     => '+38 (044) 247-68-00',
                     'company'   => 'company',
                     'role'      => 'role',
-                    'body'      => 'body',
+                    'note'      => 'note',
                     'requestProducts' => [
                         [
                             'product'   => 2,
@@ -175,7 +175,7 @@ class RequestTypeTest extends AbstractTest
                     ],
                 ],
                 'expectedData'  => $this
-                    ->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', '+38 (044) 247-68-00')
+                    ->getRequest('FirstName', 'LastName', $email, 'note', 'company', 'role', '+38 (044) 247-68-00')
                     ->addRequestProduct($requestProduct)->setStatus(
                         (new RequestStatus())->setName(RequestStatus::OPEN)
                     ),

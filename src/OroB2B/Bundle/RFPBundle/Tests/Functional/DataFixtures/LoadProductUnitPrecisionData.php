@@ -40,14 +40,13 @@ class LoadProductUnitPrecisionData extends AbstractFixture implements DependentF
      */
     public function load(ObjectManager $manager)
     {
+        $productUnits = $manager->getRepository('OroB2BProductBundle:ProductUnit')->findAll();
+
         foreach ($this->products as $productUnitPrecisionKey => $productName) {
             $product = $this->getReference($productName);
-
-            $productUnits = $manager->getRepository('OroB2BProductBundle:ProductUnit')->findAll();
             $productUnit = $productUnits[array_rand($productUnits)];
 
-            $productUnitPrecision = new ProductUnitPrecision();
-            $productUnitPrecision
+            $productUnitPrecision = (new ProductUnitPrecision())
                 ->setProduct($product)
                 ->setUnit($productUnit)
                 ->setPrecision($productUnit->getDefaultPrecision());

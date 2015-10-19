@@ -37,7 +37,7 @@ class LoadWebsiteDefaultRoles extends AbstractFixture implements DependentFixtur
 
         $allRoles = $manager->getRepository('OroB2BAccountBundle:AccountUserRole')->findAll();
         foreach ($websites as $website) {
-            $role = $allRoles[mt_rand(0, count($allRoles) - 1)];
+            $role = $allRoles[array_rand($allRoles)];
             $role->addWebsite($website);
 
             $manager->persist($role);
