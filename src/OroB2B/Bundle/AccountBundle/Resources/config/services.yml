@@ -523,7 +523,7 @@ services:
         class: %orob2b_account.event_listener.visibility.form_handler.class%
         parent: orob2b_account.visibility.listener.abstract
         calls:
-            - [ setVisibilityField, [%orob2b_account.form.visibility.field%]]
+            - [ setVisibilityField, ['visibility']]
         tags:
             - { name: kernel.event_listener, event: orob2b_catalog.category.edit, method: onPostSubmit }
 

@@ -11,11 +11,12 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroupAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
 
 class VisibilityPostSubmitListener extends VisibilityAbstractListener
 {
     /** @var string */
-    protected $visibilityField;
+    protected $visibilityField = EntityVisibilityType::VISIBILITY;
 
     /**
      * @param AfterFormProcessEvent $event
@@ -24,9 +25,6 @@ class VisibilityPostSubmitListener extends VisibilityAbstractListener
     {
         $form = $event->getForm();
 
-        if (!$form->has($this->visibilityField)) {
-            return;
-        }
         $visibilityForm = $form->get($this->visibilityField);
 
         $targetEntity = $visibilityForm->getData();
