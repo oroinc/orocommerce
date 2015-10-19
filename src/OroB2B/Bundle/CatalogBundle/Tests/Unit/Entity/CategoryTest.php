@@ -71,6 +71,7 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
     public function testTitleAccessors()
     {
         $category = $this->category;
+        $this->assertEmpty($category->getTitles()->toArray());
 
         $firstTitle = $this->createLocalizedValue();
 
@@ -96,6 +97,7 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
     public function testShortDescriptionAccessors()
     {
         $category = $this->category;
+        $this->assertEmpty($category->getShortDescription()->toArray());
 
         $firstShortDescription = $this->createLocalizedValue();
 
@@ -124,6 +126,7 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
     public function testLongDescriptionAccessors()
     {
         $category = $this->category;
+        $this->assertEmpty($category->getLongDescription()->toArray());
 
         $firstLongDescription = $this->createLocalizedValue();
 
