@@ -9,7 +9,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Repository\CategoryVisibilityRepository")
  * @ORM\Table(name="orob2b_category_visibility")
  * @Config
  */
@@ -75,9 +75,16 @@ class CategoryVisibility implements VisibilityInterface
     /**
      * {@inheritdoc}
      */
-    public static function getDefault()
+    public static function getDefault($target = null)
     {
-        return self::PARENT_CATEGORY;
+        if (null === $target) {
+            throw new \InvalidArgumentException();
+        }
+        if ($target instanceof Category && !$target->getParentCategory()) {
+            return self::CONFIG;
+        } else {
+            return self::PARENT_CATEGORY;
+        }
     }
 
     /**
@@ -101,13 +108,21 @@ class CategoryVisibility implements VisibilityInterface
     /**
      * {@inheritdoc}
      */
-    public static function getVisibilityList()
+    public static function getVisibilityList($target = null)
     {
-        return [
+        if (null === $target) {
+            throw new \InvalidArgumentException();
+        }
+        $visibilityList = [
             self::PARENT_CATEGORY,
             self::CONFIG,
             self::HIDDEN,
             self::VISIBLE
         ];
+        if ($target instanceof Category && !$target->getParentCategory()) {
+            unset($visibilityList[array_search(self::PARENT_CATEGORY, $visibilityList, true)]);
+        }
+
+        return $visibilityList;
     }
 }

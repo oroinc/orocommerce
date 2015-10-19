@@ -1,0 +1,12 @@
+<div class="widget-content">
+    <div class="row-fluid form-horizontal">
+        <div class="responsive-block">
+            {% set hasRoles = form.roles is defined %}
+            {% if hasRoles %}
+                <div class="form-horizontal" id="roles-list">
+                    {{ form_row(form.roles, {attr: { class: 'horizontal' } }) }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>

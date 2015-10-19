@@ -565,44 +565,6 @@ datagrid:
 
     account-account-users-grid-update-basic:
         extends: account-account-users-grid-basic
-        source:
-            query:
-                select:
-                    - >
-                        (CASE WHEN (:role IS NOT NULL) THEN
-                            CASE WHEN (:role MEMBER OF user.roles OR user.id IN (:data_in)) AND user.id NOT IN (:data_not_in) AND (:hideHasRole = FALSE)
-                            THEN true ELSE false END
-                        ELSE
-                            CASE WHEN user.id IN (:data_in) AND user.id NOT IN (:data_not_in) AND (:hideHasRole = FALSE)
-                            THEN true ELSE false END
-                        END) as hasRole
-                where:
-                    or:
-                        - :account IS NULL AND :newAccount IS NULL AND :changeAccountAction = FALSE
-                        - :newAccount IS NULL AND :changeAccountAction = TRUE
-                        - :account IS NOT NULL AND :newAccount IS NULL AND :changeAccountAction = FALSE AND user.account = :account
-                        - :newAccount IS NOT NULL AND user.account = :newAccount AND :changeAccountAction = TRUE
-            bind_parameters:
-                -
-                    name: role
-                    default: NULL
-                -
-                    name: account
-                    default: NULL
-                -
-                    name: newAccount
-                    path: _parameters.newAccount
-                    default: NULL
-                -
-                    name: changeAccountAction
-                    path: _parameters.changeAccountAction
-                    default: FALSE
-                    type: boolean
-                -
-                    name: hideHasRole
-                    path: _parameters.hideHasRole
-                    default: FALSE
-                    type: boolean
         columns:
             hasRole:
                 label: orob2b.account.accountuser.has_role.label
@@ -775,7 +737,7 @@ datagrid:
                 label: orob2b.account.visibility.accountcategoryvisibility.entity_label
                 frontend_type: select
                 editable: true
-                choices: @orob2b_account.formatter.choice.account_category_visibility->formatChoices()
+                choicesSource: %orob2b_account.entity.account_category_visibility.class%
         sorters:
             columns:
                 name:
@@ -795,7 +757,7 @@ datagrid:
                     options:
                         field_options:
                             multiple: true
-                            choices: @orob2b_account.formatter.choice.account_category_visibility->formatChoices()
+                            choicesSource: %orob2b_account.entity.account_category_visibility.class%
         options:
             cellSelection:
                 dataField: id
@@ -826,7 +788,7 @@ datagrid:
                 label: orob2b.account.visibility.accountgroupcategoryvisibility.entity_label
                 frontend_type: select
                 editable: true
-                choices: @orob2b_account.formatter.choice.account_group_category_visibility->formatChoices()
+                choicesSource: %orob2b_account.entity.account_group_category_visibility.class%
         sorters:
             columns:
                 name:
@@ -846,7 +808,7 @@ datagrid:
                     options:
                         field_options:
                             multiple: true
-                            choices: @orob2b_account.formatter.choice.account_group_category_visibility->formatChoices()
+                            choicesSource: %orob2b_account.entity.account_group_category_visibility.class%
         options:
             cellSelection:
                 dataField: id
