@@ -37,9 +37,10 @@ abstract class VisibilityAbstractListener
         $targetEntity = $form->getData();
         $config = $form->getConfig();
         $targetEntityField = $config->getOption('targetEntityField');
-        $criteria = [$targetEntityField => $targetEntity];
+        $criteria = [];
+        $criteria[$targetEntityField] = $targetEntity;
         if ($website = $config->getOption('website')) {
-            $criteria = array_merge($criteria, ['website' => $website]);
+            $criteria['website'] = $website;
         }
         $visibilityClassName = $form->getConfig()->getOption($field . 'Class');
         if ($field === 'all') {

@@ -101,7 +101,7 @@ abstract class VisibilityAbstractListenerTestCase extends \PHPUnit_Framework_Tes
     protected function addWebsiteCriteria(array $criteria)
     {
         if ($this->website) {
-            $criteria = array_merge($criteria, ['website' => $this->website]);
+            $criteria['website'] = $this->website;
         }
 
         return $criteria;
