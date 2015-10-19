@@ -198,10 +198,10 @@ class VisibilityPostSubmitListenerTest extends VisibilityAbstractListenerTestCas
             ->getMock();
         $categoryVisibility->expects($this->any())->method('setVisibility')->with($visibility);
         $categoryVisibility->expects($this->any())->method('getVisibility')->willReturn($visibility);
-
+        $criteria = $this->addWebsiteCriteria(['category' => $category]);
         $this->categoryVisibilityRepository->expects($this->once())
             ->method('findOneBy')
-            ->with(['category' => $category])
+            ->with($criteria)
             ->willReturn($categoryVisibility);
     }
 
@@ -296,10 +296,10 @@ class VisibilityPostSubmitListenerTest extends VisibilityAbstractListenerTestCas
     {
         $category = $this->getEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', self::CATEGORY_ID);
         $visibility = CategoryVisibility::VISIBLE;
-
+        $criteria = $this->addWebsiteCriteria(['category' => $category]);
         $this->categoryVisibilityRepository->expects($this->once())
             ->method('findOneBy')
-            ->with(['category' => $category])
+            ->with($criteria)
             ->willReturn(null);
 
         $this->em->expects($this->once())
