@@ -36,6 +36,7 @@ orob2b:
                     notify_and_lock_warning: 'Once you click on "Notify and Lock" this email will be sent to the customer and the quote will be locked for further edits.'
 
             lineitem:
+                product_sku: SKU
                 product: 'Product'
                 requested:
                     label: ''

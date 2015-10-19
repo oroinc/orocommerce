@@ -50,6 +50,25 @@ class ProductUnitRepositoryTest extends WebTestCase
     }
 
     /**
+     * @param array $expectedData
+     *
+     * @dataProvider getAllUnitsProvider
+     */
+    public function testGetAllUnits(array $expectedData)
+    {
+        $units = $this->getRepository()->getAllUnits();
+
+        $units = array_map(
+            function (ProductUnit $unit) {
+                return $unit->getCode();
+            },
+            $units
+        );
+
+        $this->assertEquals($expectedData, $units);
+    }
+
+    /**
      * @return array
      */
     public function productUnitsDataProvider()
@@ -57,6 +76,28 @@ class ProductUnitRepositoryTest extends WebTestCase
         return [
             ['product.1', ['product_unit.bottle', 'product_unit.liter']],
             ['product.2', ['product_unit.bottle', 'product_unit.box', 'product_unit.liter']]
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getAllUnitsProvider()
+    {
+        return [
+            [
+                'expected' => [
+                    'bottle',
+                    'box',
+                    'each',
+                    'hour',
+                    'item',
+                    'kg',
+                    'liter',
+                    'piece',
+                    'set',
+                ],
+            ],
         ];
     }
 

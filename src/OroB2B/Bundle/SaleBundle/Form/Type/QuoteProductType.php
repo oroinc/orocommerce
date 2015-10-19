@@ -105,6 +105,8 @@ class QuoteProductType extends AbstractType
         /* @var $products Product[] */
         $products = [];
 
+        $isFreeForm = false;
+
         if ($view->vars['value']) {
             /* @var $quoteProduct QuoteProduct */
             $quoteProduct = $view->vars['value'];
@@ -118,6 +120,8 @@ class QuoteProductType extends AbstractType
                 $product = $quoteProduct->getProductReplacement();
                 $products[$product->getId()] = $product;
             }
+
+            $isFreeForm = $quoteProduct->isProductFreeForm() || $quoteProduct->isProductReplacementFreeForm();
         }
 
         foreach ($products as $product) {
@@ -137,6 +141,7 @@ class QuoteProductType extends AbstractType
             'typeOffer' => QuoteProduct::TYPE_OFFER,
             'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
             'compactUnits' => $options['compact_units'],
+            'isFreeForm' => $isFreeForm,
         ];
     }
 
@@ -224,7 +229,7 @@ class QuoteProductType extends AbstractType
     {
         $units = $this->registry->getManagerForClass($this->productUnitClass)
             ->getRepository($this->productUnitClass)
-            ->findBy([], ['code' => 'ASC'])
+            ->getAllUnits()
         ;
 
         return $this->labelFormatter->formatChoices($units, $isCompactUnits);

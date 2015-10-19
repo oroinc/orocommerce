@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
 
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
@@ -23,6 +22,7 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
@@ -56,7 +56,7 @@ class QuoteProductTypeTest extends AbstractTest
     protected $manager;
 
     /**
-     * @var ObjectRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductUnitRepository|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $repository;
 
@@ -70,7 +70,10 @@ class QuoteProductTypeTest extends AbstractTest
             ->getMock()
         ;
 
-        $this->repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $this->repository = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
 
         $this->manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
         $this->manager->expects($this->any())
@@ -147,7 +150,7 @@ class QuoteProductTypeTest extends AbstractTest
     public function testFinishView(array $inputData, array $expectedData)
     {
         $this->repository->expects($this->once())
-            ->method('findBy')
+            ->method('getAllUnits')
             ->willReturn($inputData['allUnits'])
         ;
 
@@ -189,6 +192,7 @@ class QuoteProductTypeTest extends AbstractTest
                         'typeOffer'         => QuoteProduct::TYPE_OFFER,
                         'typeReplacement'   => QuoteProduct::TYPE_NOT_AVAILABLE,
                         'compactUnits' => false,
+                        'isFreeForm' => false,
                     ],
                 ],
             ],
@@ -214,6 +218,7 @@ class QuoteProductTypeTest extends AbstractTest
                         'typeOffer' => QuoteProduct::TYPE_OFFER,
                         'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
                         'compactUnits' => false,
+                        'isFreeForm' => false,
                     ],
                 ],
             ],
@@ -254,6 +259,7 @@ class QuoteProductTypeTest extends AbstractTest
                         'typeOffer' => QuoteProduct::TYPE_OFFER,
                         'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
                         'compactUnits' => false,
+                        'isFreeForm' => false,
                     ],
                 ],
             ],
@@ -294,6 +300,67 @@ class QuoteProductTypeTest extends AbstractTest
                         'typeOffer' => QuoteProduct::TYPE_OFFER,
                         'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
                         'compactUnits' => true,
+                        'isFreeForm' => false,
+                    ],
+                ],
+            ],
+            'product free form' => [
+                'input'     => [
+                    'vars' => [
+                        'value' => (new QuoteProduct())
+                            ->setFreeFormProduct('free form title'),
+                    ],
+                    'allUnits' => [
+                        'unit3',
+                        'unit4',
+                    ],
+                    'options' => [
+                        'compact_units' => true,
+                    ],
+                ],
+                'expected'  => [
+                    'value' => (new QuoteProduct())
+                        ->setFreeFormProduct('free form title'),
+                    'componentOptions' => [
+                        'units' => [],
+                        'allUnits' => [
+                            'unit3-formatted2-short',
+                            'unit4-formatted2-short',
+                        ],
+                        'typeOffer' => QuoteProduct::TYPE_OFFER,
+                        'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
+                        'compactUnits' => true,
+                        'isFreeForm' => true,
+                    ],
+                ],
+            ],
+            'replacement free form' => [
+                'input'     => [
+                    'vars' => [
+                        'value' => (new QuoteProduct())
+                            ->setFreeFormProductReplacement('free form title'),
+                    ],
+                    'allUnits' => [
+                        'unit3',
+                        'unit4',
+                    ],
+                    'options' => [
+                        'compact_units' => true,
+                    ],
+                ],
+                'expected'  => [
+                    'value' => (new QuoteProduct())
+                        ->setFreeFormProductReplacement('free form title'),
+                    'componentOptions' => [
+                        'units' => [],
+                        'allUnits' => [
+                            'unit3-formatted2-short',
+                            'unit4-formatted2-short',
+                        ],
+                        'typeOffer' => QuoteProduct::TYPE_OFFER,
+                        'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
+                        'compactUnits' => true,
+                        'isFreeForm' => true,
                     ],
                 ],
             ],
