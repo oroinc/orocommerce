@@ -14,6 +14,8 @@ services:
         arguments:
             - %orob2b_catalog.category.class%
             - @doctrine
+            - @oro_security.security_facade
+            - @event_dispatcher
 
     orob2b_catalog.category.manager.api:
         class: %orob2b_catalog.category.manager.api.class%

@@ -102,10 +102,10 @@ class AccountCategoryVisibility implements VisibilityInterface, AccountAwareInte
     }
 
     /**
-     * @param Category|null $category
+     * @param Category $category
      * @return string
      */
-    public static function getDefault($category = null)
+    public static function getDefault($category)
     {
         return self::ACCOUNT_GROUP;
     }
@@ -129,10 +129,10 @@ class AccountCategoryVisibility implements VisibilityInterface, AccountAwareInte
     }
 
     /**
-     * @param Category|null $category
+     * @param Category $category
      * @return array
      */
-    public static function getVisibilityList($category = null)
+    public static function getVisibilityList($category)
     {
         $visibilityList = [
             self::ACCOUNT_GROUP,
@@ -144,7 +144,6 @@ class AccountCategoryVisibility implements VisibilityInterface, AccountAwareInte
         if ($category instanceof Category && !$category->getParentCategory()) {
             unset($visibilityList[array_search(self::PARENT_CATEGORY, $visibilityList)]);
         }
-
         return $visibilityList;
     }
 
@@ -153,7 +152,7 @@ class AccountCategoryVisibility implements VisibilityInterface, AccountAwareInte
      */
     public function getTargetEntity()
     {
-        return $this->category;
+        return $this->getCategory();
     }
 
     /**
@@ -162,8 +161,6 @@ class AccountCategoryVisibility implements VisibilityInterface, AccountAwareInte
      */
     public function setTargetEntity($category)
     {
-        $this->setCategory($category);
-
-        return $this;
+        return $this->setCategory($category);
     }
 }

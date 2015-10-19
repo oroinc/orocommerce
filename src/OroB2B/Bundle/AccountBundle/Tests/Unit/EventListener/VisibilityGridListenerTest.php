@@ -93,8 +93,6 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
             ->with($this->categoryClass)
             ->willReturn($repository);
 
-
-        $this->listener->onPreBuild($this->getPreBuild(null, null));
         $this->listener->onPreBuild($this->getPreBuild(1, $rootCategory));
         $this->listener->onPreBuild($this->getPreBuild(2, $subCategory));
     }
@@ -113,7 +111,6 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
         $filtersPath = '[filters][columns][visibility][options][field_options]';
 
         $pathConfig = [];
-
 
         $config = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration')
             ->disableOriginalConstructor()
@@ -160,12 +157,13 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
     {
         $event = $this->getOrmResultBeforeEvent(
             self::ACCOUNT_CATEGORY_VISIBILITY_GRID,
-            $this->getParameterBag(AccountCategoryVisibility::getDefault())
+            $this->getParameterBag(AccountCategoryVisibility::getDefault(new Category()))
         );
 
         $expected = (string)(new Expr())->orX(
             (new Expr())->isNull(VisibilityGridListener::VISIBILITY_FIELD)
         );
+
         $this->listener->onResultBefore($event);
         $this->assertStringEndsWith($expected, $event->getQuery()->getDQL());
     }
@@ -253,6 +251,21 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
             return $bag;
         }
 
+        $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $repository->expects($this->exactly(1))
+            ->method('find')
+            ->willReturnMap(
+                [
+                    [1, null, null, new Category()],
+                ]
+            );
+        $this->registry->expects($this->exactly(1))
+            ->method('getRepository')
+            ->with($this->categoryClass)
+            ->willReturn($repository);
+
         $bag->set(
             '_filter',
             [
@@ -263,6 +276,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
                 ],
             ]
         );
+        $bag->set('target_entity_id', 1);
 
         return $bag;
     }
@@ -283,8 +297,9 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getNotDefaultAccountCategoryVisibility()
     {
-        foreach (AccountCategoryVisibility::getVisibilityList() as $visibility) {
-            if (AccountCategoryVisibility::getDefault() != $visibility) {
+        $category = new Category();
+        foreach (AccountCategoryVisibility::getVisibilityList($category) as $visibility) {
+            if (AccountCategoryVisibility::getDefault($category) != $visibility) {
                 return $visibility;
             }
         };

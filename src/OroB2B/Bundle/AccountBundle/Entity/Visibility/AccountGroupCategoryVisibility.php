@@ -103,10 +103,10 @@ class AccountGroupCategoryVisibility implements VisibilityInterface, AccountGrou
     }
 
     /**
-     * @param Category|null $category
+     * @param Category $category
      * @return string
      */
-    public static function getDefault($category = null)
+    public static function getDefault($category)
     {
         return self::CATEGORY;
     }
@@ -130,10 +130,10 @@ class AccountGroupCategoryVisibility implements VisibilityInterface, AccountGrou
     }
 
     /**
-     * @param Category|null $category
+     * @param Category $category
      * @return array
      */
-    public static function getVisibilityList($category = null)
+    public static function getVisibilityList($category)
     {
         $visibilityList = [
             self::CATEGORY,
@@ -152,7 +152,7 @@ class AccountGroupCategoryVisibility implements VisibilityInterface, AccountGrou
      */
     public function getTargetEntity()
     {
-        return $this->category;
+        return $this->getCategory();
     }
 
     /**
@@ -161,8 +161,6 @@ class AccountGroupCategoryVisibility implements VisibilityInterface, AccountGrou
      */
     public function setTargetEntity($category)
     {
-        $this->setCategory($category);
-
-        return $this;
+        return $this->setCategory($category);
     }
 }

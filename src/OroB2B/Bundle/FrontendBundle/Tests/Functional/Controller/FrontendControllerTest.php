@@ -38,6 +38,6 @@ class FrontendControllerTest extends WebTestCase
      */
     protected function getBackendPrefix()
     {
-        return $this->getContainer()->getParameter('backend_prefix');
+        return $this->getContainer()->getParameter('web_backend_prefix');
     }
 }

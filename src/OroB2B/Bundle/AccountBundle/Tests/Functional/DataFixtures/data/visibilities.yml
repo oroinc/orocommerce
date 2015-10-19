@@ -1,0 +1,45 @@
+category_1_2:
+    parent_category: root
+    to_all: null
+    to_group: hidden
+    to_account: parent_category
+category_1_2_3:
+    parent_category: category_1_2
+    to_all: config
+    to_group: parent_category
+    to_account: null
+category_1_2_3_4:
+    parent_category: category_1_2_3
+    to_all: visible
+    to_group: null
+    to_account: null
+category_1_2_3_5:
+    parent_category: category_1_2_3
+    to_all: hidden
+    to_group: null
+    to_account: null
+category_1_2_6:
+    parent_category: category_1_2
+    to_all: visible
+    to_group: null
+    to_account: null
+category_1_2_6_7:
+    parent_category: category_1_2_6
+    to_all: null
+    to_group: parent_category
+    to_account: hidden
+category_1_2_6_8:
+    parent_category: category_1_2_6
+    to_all: hidden
+    to_group: parent_category
+    to_account: null
+category_1_2_9:
+    parent_category: category_1_2
+    to_all: hidden
+    to_group: null
+    to_account: visible
+category_1_10:
+    parent_category: root
+    to_all: visible
+    to_group: parent_category
+    to_account: parent_category

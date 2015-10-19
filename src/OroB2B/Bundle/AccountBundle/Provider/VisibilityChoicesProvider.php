@@ -21,10 +21,10 @@ class VisibilityChoicesProvider
 
     /**
      * @param string $sourceClass
-     * @param object|null $target
+     * @param object $target
      * @return array
      */
-    public function getFormattedChoices($sourceClass, $target = null)
+    public function getFormattedChoices($sourceClass, $target)
     {
         $choices = $this->getChoices($sourceClass, $target);
 
@@ -37,10 +37,10 @@ class VisibilityChoicesProvider
 
     /**
      * @param string $sourceClass
-     * @param object|null $target
-     * @return mixed
+     * @param object $target
+     * @return array
      */
-    public function getChoices($sourceClass, $target = null)
+    public function getChoices($sourceClass, $target)
     {
         return call_user_func([$sourceClass, 'getVisibilityList'], $target);
     }

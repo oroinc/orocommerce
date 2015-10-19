@@ -50,7 +50,7 @@ class ProductPriceType extends AbstractType
                 ProductUnitSelectionType::NAME,
                 [
                     'label' => 'orob2b.pricing.unit.label',
-                    'empty_value' => false,
+                    'empty_value' => 'orob2b.product.productunitprecision.unit_precision_required',
                     'constraints' => [new NotBlank()],
                 ]
             )
