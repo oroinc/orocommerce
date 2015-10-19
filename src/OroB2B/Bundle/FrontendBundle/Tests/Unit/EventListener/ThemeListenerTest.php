@@ -133,12 +133,13 @@ class ThemeListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider onKernelViewProvider
      *
+     * @param bool $installed
      * @param string $requestType
      * @param bool $isFrontendRequest
      * @param bool $hasTheme
      * @param bool|string $deletedAnnotation
      */
-    public function testOnKernelView($requestType, $isFrontendRequest, $hasTheme, $deletedAnnotation)
+    public function testOnKernelView($installed, $requestType, $isFrontendRequest, $hasTheme, $deletedAnnotation)
     {
         $this->themeRegistry->setActiveTheme('oro');
 
@@ -160,7 +161,7 @@ class ThemeListenerTest extends \PHPUnit_Framework_TestCase
             ->with($request)
             ->willReturn($isFrontendRequest);
 
-        $listener = new ThemeListener($this->themeRegistry, $this->helper, $this->configManager, true);
+        $listener = new ThemeListener($this->themeRegistry, $this->helper, $this->configManager, $installed);
 
         $listener->onKernelView($event);
 
@@ -175,37 +176,50 @@ class ThemeListenerTest extends \PHPUnit_Framework_TestCase
     public function onKernelViewProvider()
     {
         return [
+            'not installed application' => [
+                'installed' => false,
+                'requestType' => HttpKernelInterface::MASTER_REQUEST,
+                'isFrontendRequest' => false,
+                'hasTheme' => false,
+                'deletedAnnotation' => false
+            ],
             'backend sub-request' => [
+                'installed' => true,
                 'requestType' => HttpKernelInterface::SUB_REQUEST,
                 'isFrontendRequest' => false,
                 'hasTheme' => false,
                 'deletedAnnotation' => false
             ],
             'backend master request' => [
+                'installed' => true,
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'isFrontendRequest' => false,
                 'hasTheme' => false,
                 'deletedAnnotation' => false
             ],
             'frontend master request without layout theme' => [
+                'installed' => true,
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'isFrontendRequest' => true,
                 'hasTheme' => false,
                 'deletedAnnotations' => '_layout'
             ],
             'frontend sub-request without layout theme' => [
+                'installed' => true,
                 'requestType' => HttpKernelInterface::SUB_REQUEST,
                 'isFrontendRequest' => true,
                 'hasTheme' => false,
                 'deletedAnnotations' => '_layout'
             ],
             'frontend master request with layout theme' => [
+                'installed' => true,
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'isFrontendRequest' => true,
                 'hasTheme' => true,
                 'deletedAnnotations' => '_template'
             ],
             'frontend sub-request with layout theme' => [
+                'installed' => true,
                 'requestType' => HttpKernelInterface::SUB_REQUEST,
                 'isFrontendRequest' => true,
                 'hasTheme' => true,
