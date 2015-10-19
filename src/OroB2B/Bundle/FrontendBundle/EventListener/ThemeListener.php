@@ -71,8 +71,8 @@ class ThemeListener
             // set oro theme
             $this->themeRegistry->setActiveTheme(self::FRONTEND_THEME);
             // set layout theme
-            $layoutTheme = $this->configManager->get(self::DEFAULT_LAYOUT_THEME_CONFIG_VALUE_KEY);
             $request = $event->getRequest();
+            $layoutTheme = $this->configManager->get(self::DEFAULT_LAYOUT_THEME_CONFIG_VALUE_KEY);
             $request->attributes->set('_theme', $layoutTheme);
         }
     }
