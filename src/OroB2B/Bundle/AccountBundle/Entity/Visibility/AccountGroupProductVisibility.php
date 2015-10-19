@@ -9,13 +9,15 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroupAwareInterface;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="orob2b_acc_grp_prod_visibility")
  * @Config
  */
-class AccountGroupProductVisibility implements VisibilityInterface, AccountGroupAwareInterface
+class AccountGroupProductVisibility implements VisibilityInterface, AccountGroupAwareInterface, WebsiteAwareInterface
 {
     const CATEGORY = 'category';
     const CONFIG = 'config';
@@ -38,6 +40,14 @@ class AccountGroupProductVisibility implements VisibilityInterface, AccountGroup
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $product;
+
+    /**
+     * @var Website
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE")
+     */
+    protected $website;
 
     /**
      * @var AccountGroup
@@ -158,6 +168,24 @@ class AccountGroupProductVisibility implements VisibilityInterface, AccountGroup
     public function setTargetEntity($product)
     {
         $this->setProduct($product);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getWebsite()
+    {
+        return $this->website;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setWebsite(Website $website)
+    {
+        $this->website = $website;
 
         return $this;
     }

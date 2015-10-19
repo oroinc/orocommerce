@@ -26,8 +26,6 @@ parameters:
     orob2b_account.account_delete_handler.class: OroB2B\Bundle\AccountBundle\Handler\UserDeleteHandler
 
     orob2b_account.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
-    orob2b_account.account_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
-    orob2b_account.account_user_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
     orob2b_account.form.autocomplete.parent_account.search_handler.class: OroB2B\Bundle\AccountBundle\Autocomplete\ParentAccountSearchHandler
     orob2b_account.form.autocomplete.account_account_user.search_handler.class: OroB2B\Bundle\AccountBundle\Autocomplete\AccountAccountUserSearchHandler
@@ -54,9 +52,12 @@ parameters:
     orob2b_account.event_listener.system_config.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigListener
     orob2b_account.event_listener.form_view.class: OroB2B\Bundle\AccountBundle\EventListener\FormViewListener
     orob2b_account.event_listener.visibility_grid_listener.class: OroB2B\Bundle\AccountBundle\EventListener\VisibilityGridListener
-    orob2b_account.event_listener.system_config.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigListener
+
+    orob2b_account.event_listener.visibility.form_handler.class: OroB2B\Bundle\AccountBundle\EventListener\VisibilityPostSubmitListener
+
+    orob2b_account.visibility.listener.abstract.class: OroB2B\Bundle\AccountBundle\EventListener\VisibilityAbstractListener
+
     orob2b_account.event_listener.system_config.category_visibility.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigCategoryVisibilityListener
-    orob2b_account.event_listener.frontend_datagrid.class: OroB2B\Bundle\AccountBundle\EventListener\DatagridListenerFrontend
     orob2b_account.event_listener.category_visibility_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryVisibilityListener
     orob2b_account.event_listener.category_tree_handler_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryTreeHandlerListener
     orob2b_account.event_listener.product_duplicate_listener.class: OroB2B\Bundle\AccountBundle\EventListener\ProductDuplicateListener
@@ -523,6 +524,20 @@ services:
             - [ setClassName, [ %orob2b_account.entity.account_user.class% ] ]
 
 
+    orob2b_account.visibility.listener.abstract:
+        class: %orob2b_account.visibility.listener.abstract.class%
+        abstract: true
+        arguments:
+            - @doctrine
+
+    orob2b_account.event_listener.visibility.form_handler:
+        class: %orob2b_account.event_listener.visibility.form_handler.class%
+        parent: orob2b_account.visibility.listener.abstract
+        calls:
+            - [ setVisibilityField, ['visibility']]
+        tags:
+            - { name: kernel.event_listener, event: orob2b_catalog.category.edit, method: onPostSubmit }
+
     orob2b_account.account_delete_handler:
         class: %orob2b_account.account_delete_handler.class%
         arguments:
@@ -559,7 +574,7 @@ services:
             - @doctrine
         calls:
             - [setContainer, [@service_container]]
-            
+
     orob2b_account.storage.category_visibility_storage:
         class: %orob2b_account.storage.category_visibility_storage.class%
         arguments:

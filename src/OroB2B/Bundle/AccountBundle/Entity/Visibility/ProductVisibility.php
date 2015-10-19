@@ -7,13 +7,15 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="orob2b_product_visibility")
  * @Config
  */
-class ProductVisibility implements VisibilityInterface
+class ProductVisibility implements VisibilityInterface, WebsiteAwareInterface
 {
     const CONFIG = 'config';
     const VISIBLE = 'visible';
@@ -35,6 +37,14 @@ class ProductVisibility implements VisibilityInterface
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $product;
+
+    /**
+     * @var Website
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
+     * @ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE")
+     */
+    protected $website;
 
     /**
      * @var string
@@ -126,6 +136,24 @@ class ProductVisibility implements VisibilityInterface
     public function setTargetEntity($product)
     {
         $this->setProduct($product);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getWebsite()
+    {
+        return $this->website;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setWebsite(Website $website)
+    {
+        $this->website = $website;
 
         return $this;
     }

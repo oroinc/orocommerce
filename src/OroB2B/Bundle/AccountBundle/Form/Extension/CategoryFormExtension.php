@@ -34,7 +34,7 @@ class CategoryFormExtension extends AbstractTypeExtension
     {
         $builder
             ->add(
-                'visibility',
+                EntityVisibilityType::VISIBILITY,
                 EntityVisibilityType::NAME,
                 [
                     'data' => $options['data'],

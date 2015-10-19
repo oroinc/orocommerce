@@ -1,18 +1,20 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\EventListener;
+namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormEvent;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
+
+use OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
+use OroB2B\Bundle\AccountBundle\EventListener\VisibilityPostSubmitListener;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
-use OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityPostSubmitListener;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 /**
@@ -30,20 +32,16 @@ class VisibilityPostSubmitListenerTest extends VisibilityAbstractListenerTestCas
      */
     public function getListener()
     {
-        return new VisibilityPostSubmitListener($this->registry);
+        $listener = new VisibilityPostSubmitListener($this->registry);
+        $listener->setVisibilityField(EntityVisibilityType::VISIBILITY);
+
+        return $listener;
     }
 
     public function testInvalidForm()
     {
         $this->form->expects($this->once())->method('isValid')->willReturn(false);
-        /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder('\Symfony\Component\Form\FormEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $event->expects($this->once())
-            ->method('getForm')
-            ->willReturn($this->form);
+        $event = $this->getFormAvareEventMock();
         $this->form->expects($this->once())->method('getData');
         $this->listener->onPostSubmit($event);
     }
@@ -87,14 +85,7 @@ class VisibilityPostSubmitListenerTest extends VisibilityAbstractListenerTestCas
         );
         $this->form->expects($this->exactly(3))->method('get')->willReturn($form);
 
-        /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder('\Symfony\Component\Form\FormEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $event->expects($this->once())
-            ->method('getForm')
-            ->willReturn($this->form);
+        $event = $this->getFormAvareEventMock();
 
         $this->form->expects($this->atLeast(1))
             ->method('getData')
@@ -133,21 +124,15 @@ class VisibilityPostSubmitListenerTest extends VisibilityAbstractListenerTestCas
     public function testOnPostSubmitWithEmptyData()
     {
         $this->form->expects($this->once())->method('isValid')->willReturn(true);
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormEvent $event */
-        $event = $this->getMockBuilder('\Symfony\Component\Form\FormEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->getFormAvareEventMock();
         $this->form->expects($this->once())
             ->method('getData')
             ->willReturn(null);
-        $event->expects($this->once())
-            ->method('getForm')->willReturn($this->form);
-
         $this->listener->onPostSubmit($event);
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|FormEvent
+     * @return AfterFormProcessEvent|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getEventMock()
     {
@@ -178,12 +163,7 @@ class VisibilityPostSubmitListenerTest extends VisibilityAbstractListenerTestCas
                     ['accountGroup', $visibilityForAccountGroupFormMock],
                 ]
             );
-        $event = $this->getMockBuilder('\Symfony\Component\Form\FormEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $event->expects($this->once())
-            ->method('getForm')
-            ->willReturn($this->form);
+        $event = $this->getFormAvareEventMock();
 
         return $event;
     }
@@ -218,10 +198,10 @@ class VisibilityPostSubmitListenerTest extends VisibilityAbstractListenerTestCas
             ->getMock();
         $categoryVisibility->expects($this->any())->method('setVisibility')->with($visibility);
         $categoryVisibility->expects($this->any())->method('getVisibility')->willReturn($visibility);
-
+        $criteria = $this->addWebsiteCriteria(['category' => $category]);
         $this->categoryVisibilityRepository->expects($this->once())
             ->method('findOneBy')
-            ->with(['category' => $category])
+            ->with($criteria)
             ->willReturn($categoryVisibility);
     }
 
@@ -316,10 +296,10 @@ class VisibilityPostSubmitListenerTest extends VisibilityAbstractListenerTestCas
     {
         $category = $this->getEntity('OroB2B\Bundle\CatalogBundle\Entity\Category', self::CATEGORY_ID);
         $visibility = CategoryVisibility::VISIBLE;
-
+        $criteria = $this->addWebsiteCriteria(['category' => $category]);
         $this->categoryVisibilityRepository->expects($this->once())
             ->method('findOneBy')
-            ->with(['category' => $category])
+            ->with($criteria)
             ->willReturn(null);
 
         $this->em->expects($this->once())
@@ -506,5 +486,26 @@ class VisibilityPostSubmitListenerTest extends VisibilityAbstractListenerTestCas
         $method->setValue($entity, $id);
 
         return $entity;
+    }
+
+    /**
+     * @return AfterFormProcessEvent|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getFormAvareEventMock()
+    {
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form->expects($this->any())->method('has')->with(EntityVisibilityType::VISIBILITY)->willReturn(true);
+        $form->expects($this->once())
+            ->method('get')
+            ->with(EntityVisibilityType::VISIBILITY)
+            ->willReturn($this->form);
+        /** @var AfterFormProcessEvent |\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder('Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $event->expects($this->any())->method('getForm')->willReturn($form);
+
+        return $event;
     }
 }
