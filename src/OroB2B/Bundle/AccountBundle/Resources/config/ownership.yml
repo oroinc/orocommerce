@@ -20,7 +20,7 @@ services:
     orob2b_account.owner.frontend_ownership_metadata_provider.cache:
         parent: oro.cache.abstract
         calls:
-            - [ setNamespace, [ "oro_acl_entity_ownership.frontend.cache" ] ]
+            - [ setNamespace, [ 'oro_acl_entity_ownership_frontend' ] ]
 
     orob2b_account.owner.decision_maker:
         public: false
@@ -39,4 +39,4 @@ services:
     orob2b_account.owner.frontend_ownership_tree_provider.cache:
         parent: oro.cache.abstract
         calls:
-            - [ setNamespace, [ "oro_acl_owner_tree.frontend.cache" ] ]
+            - [ setNamespace, [ 'oro_acl_owner_tree_frontend' ] ]

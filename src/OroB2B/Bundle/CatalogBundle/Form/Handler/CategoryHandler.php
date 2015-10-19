@@ -8,7 +8,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\CatalogBundle\Event\CategoryEditEvent;
+use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
+
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
@@ -56,7 +57,10 @@ class CategoryHandler
         if (in_array($this->request->getMethod(), ['POST', 'PUT'])) {
             $this->form->submit($this->request);
             if ($this->form->isValid()) {
-                $this->eventDispatcher->dispatch(CategoryEditEvent::NAME, new CategoryEditEvent($this->form));
+                $this->eventDispatcher->dispatch(
+                    'orob2b_catalog.category.edit',
+                    new AfterFormProcessEvent($this->form, $category)
+                );
                 $appendProducts = $this->form->get('appendProducts')->getData();
                 $removeProducts = $this->form->get('removeProducts')->getData();
                 $this->onSuccess($category, $appendProducts, $removeProducts);

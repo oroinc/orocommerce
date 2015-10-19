@@ -3,11 +3,10 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormEvent;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-use Oro\Bundle\SoapBundle\Controller\Api\FormAwareInterface;
+use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 
 use OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
 use OroB2B\Bundle\AccountBundle\EventListener\VisibilityPostSubmitListener;
@@ -33,7 +32,10 @@ class VisibilityPostSubmitListenerTest extends VisibilityAbstractListenerTestCas
      */
     public function getListener()
     {
-        return new VisibilityPostSubmitListener($this->registry);
+        $listener = new VisibilityPostSubmitListener($this->registry);
+        $listener->setVisibilityField(EntityVisibilityType::VISIBILITY);
+
+        return $listener;
     }
 
     public function testInvalidForm()
@@ -130,7 +132,7 @@ class VisibilityPostSubmitListenerTest extends VisibilityAbstractListenerTestCas
     }
 
     /**
-     * @return FormAwareInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return AfterFormProcessEvent|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getEventMock()
     {
@@ -487,7 +489,7 @@ class VisibilityPostSubmitListenerTest extends VisibilityAbstractListenerTestCas
     }
 
     /**
-     * @return FormAwareInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return AfterFormProcessEvent|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function getFormAvareEventMock()
     {
@@ -498,8 +500,8 @@ class VisibilityPostSubmitListenerTest extends VisibilityAbstractListenerTestCas
             ->method('get')
             ->with(EntityVisibilityType::VISIBILITY)
             ->willReturn($this->form);
-        /** @var FormAwareInterface |\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder('Oro\Bundle\SoapBundle\Controller\Api\FormAwareInterface')
+        /** @var AfterFormProcessEvent |\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder('Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent')
             ->disableOriginalConstructor()
             ->getMock();
         $event->expects($this->any())->method('getForm')->willReturn($form);

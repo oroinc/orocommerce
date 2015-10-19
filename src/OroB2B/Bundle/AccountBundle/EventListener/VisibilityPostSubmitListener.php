@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\AccountBundle\EventListener;
 
 use Symfony\Component\Form\FormInterface;
 
-use Oro\Bundle\SoapBundle\Controller\Api\FormAwareInterface;
+use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAwareInterface;
@@ -15,17 +15,17 @@ use OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
 
 class VisibilityPostSubmitListener extends VisibilityAbstractListener
 {
+    /** @var string */
+    protected $visibilityField = EntityVisibilityType::VISIBILITY;
+
     /**
-     * @param FormAwareInterface $event
+     * @param AfterFormProcessEvent $event
      */
-    public function onPostSubmit(FormAwareInterface $event)
+    public function onPostSubmit(AfterFormProcessEvent $event)
     {
         $form = $event->getForm();
 
-        if (!$form->has(EntityVisibilityType::VISIBILITY)) {
-            return;
-        }
-        $visibilityForm = $form->get(EntityVisibilityType::VISIBILITY);
+        $visibilityForm = $form->get($this->visibilityField);
 
         $targetEntity = $visibilityForm->getData();
         if (!$visibilityForm->isValid() || !is_object($targetEntity) || !$targetEntity->getId()) {
@@ -118,5 +118,13 @@ class VisibilityPostSubmitListener extends VisibilityAbstractListener
         } elseif ($visibilityEntity->getVisibility()) {
             $em->remove($visibilityEntity);
         }
+    }
+
+    /**
+     * @param string $visibilityField
+     */
+    public function setVisibilityField($visibilityField)
+    {
+        $this->visibilityField = $visibilityField;
     }
 }
