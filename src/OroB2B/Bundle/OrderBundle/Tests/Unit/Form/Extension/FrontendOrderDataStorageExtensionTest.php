@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\OrderBundle\Form\Extension\OrderDataStorageExtension;
+use OroB2B\Bundle\OrderBundle\Form\Extension\FrontendOrderDataStorageExtension;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Extension\AbstractProductDataStorageExtensionTestCase;
@@ -27,7 +27,7 @@ class FrontendOrderDataStorageExtensionTest extends AbstractProductDataStorageEx
 
         $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
         $this->entity = new Order();
-        $this->extension = new OrderDataStorageExtension(
+        $this->extension = new FrontendOrderDataStorageExtension(
             $requestStack,
             $this->storage,
             $this->doctrineHelper,

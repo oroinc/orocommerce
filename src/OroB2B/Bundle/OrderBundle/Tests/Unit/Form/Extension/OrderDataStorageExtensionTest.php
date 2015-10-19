@@ -5,6 +5,8 @@ namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Extension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Form\Extension\OrderDataStorageExtension;
@@ -39,12 +41,18 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
     public function testBuild()
     {
         $sku = 'TEST';
-        $qty = 3;
         $data = [
             ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                 [
                     ProductDataStorage::PRODUCT_SKU_KEY => $sku,
-                    ProductDataStorage::PRODUCT_QUANTITY_KEY => $qty,
+                    'offers' => [
+                        'quantity' => 1,
+                        'unit' => 'kg',
+                        'currency' => 'USD',
+                        'price' => 30,
+                        'quantityFormatted' => '1 kg',
+                        'priceFormatted' => '$30',
+                    ],
                 ],
             ]
         ];
@@ -72,34 +80,24 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         $this->assertEquals($product->getSku(), $lineItem->getProductSku());
         $this->assertEquals($productUnit, $lineItem->getProductUnit());
         $this->assertEquals($productUnit->getCode(), $lineItem->getProductUnitCode());
-        $this->assertEquals($qty, $lineItem->getQuantity());
     }
 
-    public function testBuildWithoutUnit()
+    public function testSortSections()
     {
-        $sku = 'TEST';
-        $qty = 3;
-        $data = [
-            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                [
-                    ProductDataStorage::PRODUCT_SKU_KEY => $sku,
-                    ProductDataStorage::PRODUCT_QUANTITY_KEY => $qty,
-                ],
+        $sections = new ArrayCollection(
+            [
+                'item3' => [ 'order' => 30 ],
+                'item2' => [ 'order' => 20 ],
+                'item1' => [ 'order' => 10 ]
             ]
-        ];
-        $order = new Order();
+        );
 
-        $product = $this->getProductEntity($sku);
+        $reflector = new \ReflectionClass('OroB2B\Bundle\OrderBundle\Form\Extension\OrderDataStorageExtension');
+        $method = $reflector->getMethod('sortSections');
+        $method->setAccessible(true);
 
-        $this->assertMetadataCalled();
-        $this->assertRequestGetCalled();
-        $this->assertStorageCalled($data);
-        $this->assertProductRepositoryCalled($product);
+        $sectionsSorted = $method->invokeArgs($this->extension, array($sections));
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface $builder */
-        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
-        $this->extension->buildForm($builder, ['data' => $order]);
-
-        $this->assertEmpty($order->getLineItems());
+        $this->assertEquals(10, $sectionsSorted->first()['order']);
     }
 }
