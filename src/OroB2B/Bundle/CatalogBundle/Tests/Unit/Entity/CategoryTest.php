@@ -9,6 +9,9 @@ use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class CategoryTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
