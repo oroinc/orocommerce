@@ -35,6 +35,8 @@ use OroB2B\Component\Tree\Entity\TreeTrait;
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()
+ *
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class Category
 {
