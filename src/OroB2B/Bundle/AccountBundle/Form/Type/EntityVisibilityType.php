@@ -18,11 +18,10 @@ class EntityVisibilityType extends AbstractType
 {
     const NAME = 'orob2b_account_entity_visibility_type';
 
+    const VISIBILITY = 'visibility';
+
     /** @var VisibilityPostSetDataListener */
     protected $visibilityPostSetDataListener;
-
-    /** @var VisibilityPostSubmitListener */
-    protected $visibilityPostSubmitListener;
 
     /** @var VisibilityChoicesProvider */
     protected $visibilityChoicesProvider;
@@ -35,16 +34,13 @@ class EntityVisibilityType extends AbstractType
 
     /**
      * @param VisibilityPostSetDataListener $visibilityPostSetDataListener
-     * @param VisibilityPostSubmitListener $visibilityPostSubmitListener
      * @param VisibilityChoicesProvider $visibilityChoicesProvider
      */
     public function __construct(
         VisibilityPostSetDataListener $visibilityPostSetDataListener,
-        VisibilityPostSubmitListener $visibilityPostSubmitListener,
         VisibilityChoicesProvider $visibilityChoicesProvider
     ) {
         $this->visibilityPostSetDataListener = $visibilityPostSetDataListener;
-        $this->visibilityPostSubmitListener = $visibilityPostSubmitListener;
         $this->visibilityChoicesProvider = $visibilityChoicesProvider;
     }
 
@@ -115,7 +111,6 @@ class EntityVisibilityType extends AbstractType
             );
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this->visibilityPostSetDataListener, 'onPostSetData']);
-        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this->visibilityPostSubmitListener, 'onPostSubmit']);
     }
 
     /**

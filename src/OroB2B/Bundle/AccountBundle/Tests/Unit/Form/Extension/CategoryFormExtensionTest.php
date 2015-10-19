@@ -56,12 +56,6 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var VisibilityPostSubmitListener|\PHPUnit_Framework_MockObject_MockObject $postSubmitListener */
-        $postSubmitListener = $this->getMockBuilder(
-            'OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityPostSubmitListener'
-        )
-            ->disableOriginalConstructor()
-            ->getMock();
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|VisibilityChoicesProvider $visibilityChoicesProvider */
         $visibilityChoicesProvider = $this
@@ -74,7 +68,6 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
                 [
                     EntityVisibilityType::NAME => new EntityVisibilityType(
                         $postSetDataListener,
-                        $postSubmitListener,
                         $visibilityChoicesProvider
                     ),
                     CategoryType::NAME => new CategoryType(),
