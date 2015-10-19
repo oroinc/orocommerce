@@ -443,7 +443,7 @@ define(function(require) {
             self.$el.find(self.options.productFreeFormInput).rules('add', {
                 required: {
                     param: true,
-                    depends: function(element) {
+                    depends: function() {
                         return !self.isProductReplacement() && self.isFreeForm;
                     }
                 },
@@ -455,7 +455,7 @@ define(function(require) {
             self.$el.find(self.options.productReplacementFreeFormInput).rules('add', {
                 required: {
                     param: true,
-                    depends: function(element) {
+                    depends: function() {
                         return self.isProductReplacement() && self.isFreeForm;
                     }
                 },
@@ -467,7 +467,7 @@ define(function(require) {
             self.$productSelect.rules('add', {
                 required: {
                     param: true,
-                    depends: function(element) {
+                    depends: function() {
                         return !self.isProductReplacement() && !self.isFreeForm;
                     }
                 },
@@ -479,7 +479,7 @@ define(function(require) {
             self.$productReplacementSelect.rules('add', {
                 required: {
                     param: true,
-                    depends: function(element) {
+                    depends: function() {
                         return self.isProductReplacement() && !self.isFreeForm;
                     }
                 },
