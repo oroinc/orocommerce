@@ -23,3 +23,10 @@ orob2b_sale_frontend_quote:
     prefix: /account/quote
     options:
         frontend: true
+
+orob2b_sale_frontend_quote_product_ajax:
+    resource: "@OroB2BSaleBundle/Controller/Frontend/AjaxQuoteProductController.php"
+    type: annotation
+    prefix: /account/quoteproduct
+    options:
+        frontend: true

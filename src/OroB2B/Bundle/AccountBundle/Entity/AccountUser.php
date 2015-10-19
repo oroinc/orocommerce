@@ -77,7 +77,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     /**
      * @var AccountUserRole[]|Collection
      *
-     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUserRole")
+     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUserRole", inversedBy="accountUsers")
      * @ORM\JoinTable(
      *      name="orob2b_acc_user_access_role",
      *      joinColumns={

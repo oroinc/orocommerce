@@ -133,7 +133,7 @@ class OrderControllerTest extends WebTestCase
                     'value' => 100,
                     'currency' => 'USD'
                 ],
-                'priceType' => 'per unit',
+                'priceType' => OrderLineItem::PRICE_TYPE_UNIT,
                 'shipBy' => $date
             ]
         ];
@@ -231,7 +231,7 @@ class OrderControllerTest extends WebTestCase
                     'value' => 200,
                     'currency' => 'USD'
                 ],
-                'priceType' => 'bundle',
+                'priceType' => OrderLineItem::PRICE_TYPE_BUNDLED,
                 'shipBy' => $date
             ],
             [
@@ -243,7 +243,7 @@ class OrderControllerTest extends WebTestCase
                     'value' => 10,
                     'currency' => 'USD'
                 ],
-                'priceType' => 'per unit',
+                'priceType' => OrderLineItem::PRICE_TYPE_UNIT,
                 'shipBy' => $date
             ]
         ];
@@ -389,8 +389,8 @@ class OrderControllerTest extends WebTestCase
                         ->extract('value')[0],
                 ],
                 'priceType' => $crawler
-                    ->filter('select[name="orob2b_order_type[lineItems]['. $i .'][priceType]"] :selected')
-                    ->html(),
+                    ->filter('input[name="orob2b_order_type[lineItems]['. $i .'][priceType]"]')
+                    ->extract('value')[0],
                 'shipBy' => $crawler->filter('input[name="orob2b_order_type[lineItems]['. $i .'][shipBy]"]')
                     ->extract('value')[0]
             ];

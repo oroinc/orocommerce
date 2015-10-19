@@ -6,7 +6,7 @@ use Doctrine\Common\Cache\CacheProvider;
 
 use Oro\Bundle\EntityBundle\ORM\EntityClassResolver;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
-use Oro\Bundle\EntityConfigBundle\Provider\ConfigProviderInterface;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\AbstractMetadataProvider;
 
@@ -27,7 +27,7 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
     protected $basicLevelClass;
 
     /**
-     * @var ConfigProviderInterface
+     * @var ConfigProvider
      */
     private $securityConfigProvider;
 
@@ -57,7 +57,7 @@ class FrontendOwnershipMetadataProvider extends AbstractMetadataProvider
     }
 
     /**
-     * @return ConfigProviderInterface
+     * @return ConfigProvider
      */
     protected function getSecurityConfigProvider()
     {

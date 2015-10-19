@@ -16,7 +16,7 @@ use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Model\Subtotal;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Model\ProductUnitQuantity;
+use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -185,15 +185,15 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
      */
     protected function getPrice(Product $product, ProductUnit $productUnit, $quantity, $currency, PriceList $priceList)
     {
-        $productUnitQuantity = new ProductUnitQuantity($product, $productUnit, $quantity);
-        $identifier = $productUnitQuantity->getIdentifier();
+        $productPriceCriteria = new ProductPriceCriteria($product, $productUnit, $quantity, $currency);
+        $identifier = $productPriceCriteria->getIdentifier();
 
-        if (!isset($this->prices[$priceList->getId()][$currency][$identifier])) {
-            $prices = $this->productPriceProvider->getMatchedPrices([$productUnitQuantity], $currency, $priceList);
-            $this->prices[$priceList->getId()][$currency][$identifier] = $prices[$identifier];
+        if (!isset($this->prices[$priceList->getId()][$identifier])) {
+            $prices = $this->productPriceProvider->getMatchedPrices([$productPriceCriteria], $priceList);
+            $this->prices[$priceList->getId()][$identifier] = $prices[$identifier];
         }
 
-        $price = $this->prices[$priceList->getId()][$currency][$identifier];
+        $price = $this->prices[$priceList->getId()][$identifier];
 
         return $price ?: Price::create(mt_rand(10, 1000), $currency);
     }

@@ -13,6 +13,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Event\ProductGridWidgetRenderEvent;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
 
 class ProductController extends Controller
 {
@@ -156,7 +157,7 @@ class ProductController extends Controller
     {
         return $this->get('orob2b_product.service.product_update_handler')->handleUpdate(
             $product,
-            $this->get('orob2b_product.form.product'),
+            $this->createForm(ProductType::NAME, $product),
             function (Product $product) {
                 return [
                     'route' => 'orob2b_product_update',

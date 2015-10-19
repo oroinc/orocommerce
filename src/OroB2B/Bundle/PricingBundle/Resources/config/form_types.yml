@@ -46,14 +46,10 @@ services:
 
     orob2b_pricing.form.type.price_list_product_price:
         class: %orob2b_pricing.form.type.price_list_product_price.class%
-        arguments:
-            - @doctrine
-            - @orob2b_product.service.rounding
         tags:
             - { name: form.type, alias: orob2b_pricing_price_list_product_price }
         calls:
             - [setDataClass, [%orob2b_pricing.entity.product_price.class%]]
-            - [setProductClass, [%orob2b_product.product.class%]]
 
     orob2b_pricing.form.type.product_price_filter:
         class: %orob2b_pricing.form.type.product_price_filter.class%
@@ -87,6 +83,5 @@ services:
         class: %orob2b_pricing.form.extension.product_type.class%
         arguments:
             - @doctrine
-            - @orob2b_product.service.rounding
         tags:
             - { name: form.type_extension, alias: orob2b_product }

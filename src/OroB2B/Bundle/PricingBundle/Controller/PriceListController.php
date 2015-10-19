@@ -111,7 +111,7 @@ class PriceListController extends Controller
         $form = $this->createForm(PriceListType::NAME, $priceList);
         $handler = new PriceListHandler(
             $form,
-            $this->getRequest(),
+            $this->get('request_stack'),
             $this->getDoctrine()->getManagerForClass('OroB2BPricingBundle:PriceList')
         );
 

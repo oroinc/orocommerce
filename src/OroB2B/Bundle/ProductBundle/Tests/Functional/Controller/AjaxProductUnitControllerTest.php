@@ -29,7 +29,9 @@ class AjaxProductUnitControllerTest extends WebTestCase
         $data = json_decode($result->getContent(), true);
 
         $this->assertArrayHasKey('units', $data);
-        $this->assertEquals(['bottle', 'box', 'item', 'kg', 'liter'], array_keys($data['units']));
+        $this->assertArrayHasKey('bottle', $data['units']);
+        $this->assertArrayHasKey('box', $data['units']);
+        $this->assertArrayHasKey('liter', $data['units']);
     }
 
     /**

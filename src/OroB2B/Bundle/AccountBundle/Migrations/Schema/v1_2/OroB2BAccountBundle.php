@@ -3,9 +3,12 @@
 namespace OroB2B\Bundle\AccountBundle\Migrations\Schema\v1_2;
 
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Types\Type;
 
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+
+use OroB2B\Bundle\AccountBundle\Migrations\Schema\OroB2BAccountBundleInstaller;
 
 class OroB2BAccountBundle implements Migration
 {
@@ -14,33 +17,8 @@ class OroB2BAccountBundle implements Migration
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->updateOroB2BAuditFieldTable($schema);
-    }
-
-    /**
-     * @param Schema $schema
-     */
-    protected function updateOroB2BAuditFieldTable(Schema $schema)
-    {
-        $table = $schema->getTable('orob2b_audit_field');
-        $table->addColumn('visible', 'boolean', ['default' => '1']);
-        $table->addColumn('old_datetimetz', 'datetimetz', ['notnull' => false]);
-        $table->addColumn('old_object', 'object', ['notnull' => false, 'comment' => '(DC2Type:object)']);
-        $table->addColumn('old_array', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
-        $table->addColumn(
-            'old_simplearray',
-            'simple_array',
-            ['notnull' => false, 'comment' => '(DC2Type:simple_array)']
-        );
-        $table->addColumn('old_jsonarray', 'json_array', ['notnull' => false]);
-        $table->addColumn('new_datetimetz', 'datetimetz', ['notnull' => false]);
-        $table->addColumn('new_object', 'object', ['notnull' => false, 'comment' => '(DC2Type:object)']);
-        $table->addColumn('new_array', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
-        $table->addColumn(
-            'new_simplearray',
-            'simple_array',
-            ['notnull' => false, 'comment' => '(DC2Type:simple_array)']
-        );
-        $table->addColumn('new_jsonarray', 'json_array', ['notnull' => false]);
+        $table = $schema->getTable(OroB2BAccountBundleInstaller::ORO_B2B_ACCOUNT_USER_ROLE_TABLE_NAME);
+        $table->getColumn('role')->setType(Type::getType(Type::STRING))->setOptions(['length' => 255]);
+        $table->getColumn('label')->setType(Type::getType(Type::STRING))->setOptions(['length' => 255]);
     }
 }
