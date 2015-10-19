@@ -35,6 +35,8 @@ parameters:
     orob2b_account.form.type.catalog_visibility.class: OroB2B\Bundle\AccountBundle\Form\Type\CatalogVisibilityType
     orob2b_account.form.type.product_visibility.class: OroB2B\Bundle\AccountBundle\Form\Type\ProductVisibilityType
 
+    orob2b_account.form.visibility.field: visibility
+
     orob2b_account.form.extension.select_or_create_inline.class: OroB2B\Bundle\AccountBundle\Form\Extension\OroEntitySelectOrCreateInlineExtension
     orob2b_account.form.extension.frontend_product_select.class: OroB2B\Bundle\AccountBundle\Form\Extension\FrontendProductSelectExtension
     orob2b_account.form.extension.address.class: OroB2B\Bundle\AccountBundle\Form\Extension\AddressExtension
