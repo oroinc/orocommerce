@@ -15,12 +15,11 @@ OroB2B\Bundle\SaleBundle\Entity\Quote:
             - Valid: ~
 
 OroB2B\Bundle\SaleBundle\Entity\QuoteProduct:
+    constraints:
+        - OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProduct: ~
     properties:
         quote:
             - NotBlank: ~
-        product:
-            - NotBlank:
-                message: 'orob2b.sale.quoteproduct.product.blank'
         productSku:
             - NotBlank:
                 groups: [ Import ]
