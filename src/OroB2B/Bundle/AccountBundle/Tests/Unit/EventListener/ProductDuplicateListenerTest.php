@@ -3,9 +3,9 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\Common\Util\ClassUtils;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
@@ -55,8 +55,8 @@ class ProductDuplicateListenerTest extends \PHPUnit_Framework_TestCase
         $visibilityToAccount = new AccountProductVisibility();
         $visibilityToAccountGroup = new AccountGroupProductVisibility();
 
-        /** @var ObjectRepository|\PHPUnit_Framework_MockObject_MockObject $repoAll */
-        $repoVisibilityAll = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectRepository')
+        /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject $repoAll */
+        $repoVisibilityAll = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $repoVisibilityAccount = clone $repoVisibilityAll;
@@ -76,12 +76,12 @@ class ProductDuplicateListenerTest extends \PHPUnit_Framework_TestCase
             ->method('findBy')
             ->with(['product' => $sourceProduct])
             ->willReturn([$visibilityToAccountGroup]);
-        /** @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject $manager */
-        $manager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
+        /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $manager */
+        $manager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $manager->expects($this->any())->method('getRepository')->willReturnMap(
+        $manager->expects($this->exactly(3))->method('getRepository')->willReturnMap(
             [
                 [self::VISIBILITY_TO_ALL_CLASS, $repoVisibilityAll],
                 [self::VISIBILITY_TO_ACCOUNT_CLASS, $repoVisibilityAccount],
@@ -97,13 +97,9 @@ class ProductDuplicateListenerTest extends \PHPUnit_Framework_TestCase
         $duplicatedVisibilityToAccount->setProduct($product);
         $duplicatedVisibilityToAccountGroup->setProduct($product);
 
-        $manager->expects($this->any())->method('persist')->willReturnMap(
-            [
-                [$duplicatedVisibilityToAll],
-                [$duplicatedVisibilityToAccount],
-                [$duplicatedVisibilityToAccountGroup],
-            ]
-        );
+        $manager->expects($this->at(1))->method('persist')->with($duplicatedVisibilityToAll);
+        $manager->expects($this->at(3))->method('persist')->with($duplicatedVisibilityToAccount);
+        $manager->expects($this->at(5))->method('persist')->with($duplicatedVisibilityToAccountGroup);
 
         $this->doctrine
             ->expects($this->once())
