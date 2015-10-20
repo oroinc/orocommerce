@@ -9,6 +9,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @dbIsolation
@@ -42,8 +43,6 @@ class ProductWithPricesTest extends WebTestCase
      */
     protected function setUp()
     {
-        $this->markTestSkipped('Should be fixed in scope of BB-1300');
-
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
     }
@@ -82,7 +81,8 @@ class ProductWithPricesTest extends WebTestCase
                     'quantity'  => self::FIRST_QUANTITY,
                     'unit'      => self::FIRST_UNIT_CODE
                 ]
-            ]
+            ],
+            'status' => Product::STATUS_ENABLED
         ];
 
         $formData['names']['values']['default'] = self::DEFAULT_NAME;
