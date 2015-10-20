@@ -189,7 +189,10 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
      */
     protected function assertMetadataCalled(array $mappings = [])
     {
-        $metadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
+        /* @var $metadata ClassMetadata|\PHPUnit_Framework_MockObject_MockObject */
+        $metadata = $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadata')
+            ->disableOriginalConstructor()
+            ->getMock();
         $metadata->expects($this->any())->method('hasAssociation')->will(
             $this->returnCallback(
                 function ($property) use ($mappings) {
