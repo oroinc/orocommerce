@@ -101,7 +101,7 @@ class QuoteProduct implements ProductHolderInterface
      *
      * @ORM\Column(name="type", type="smallint", nullable=true)
      */
-    protected $type;
+    protected $type = self::TYPE_REQUESTED;
 
     /**
      * @var string
