@@ -36,6 +36,7 @@ orob2b:
                     notify_and_lock_warning: 'Once you click on "Notify and Lock" this email will be sent to the customer and the quote will be locked for further edits.'
 
             lineitem:
+                product_sku: SKU
                 product: 'Product'
                 requested:
                     label: ''
@@ -67,6 +68,8 @@ orob2b:
             comment_account.label: 'Customer Notes'
             product.removed: '{title} - removed'
             product_replacement.removed: '{title} - removed'
+            free_form_product.label: 'Product (free-form)'
+            free_form_product_replacement.label: 'Product Replacement (free-form)'
             type:
                 label: 'Type'
                 requested: 'Requested'
@@ -76,6 +79,9 @@ orob2b:
                 product: 'Product'
                 type: 'Type'
                 quote_product_items: 'Offers'
+            select:
+                product: Select product
+                free_form: Free-form entry
 
         quoteproductoffer:
             item: '{0}{units}, {price} per {unit}|{1}{units} or more, {price} per {unit}'
