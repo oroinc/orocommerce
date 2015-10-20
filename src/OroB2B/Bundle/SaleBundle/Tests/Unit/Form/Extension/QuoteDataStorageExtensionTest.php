@@ -5,10 +5,10 @@ namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Extension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+use Oro\Bundle\CurrencyBundle\Model\Price;
+
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-
-use Oro\Bundle\CurrencyBundle\Model\Price;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -16,14 +16,12 @@ use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Extension\AbstractProductDataStorageExtensionTestCase;
 
 use OroB2B\Bundle\RFPBundle\Entity\Request;
-use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
-
+use OroB2B\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use OroB2B\Bundle\SaleBundle\Form\Extension\QuoteDataStorageExtension;
 
 class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionTestCase
