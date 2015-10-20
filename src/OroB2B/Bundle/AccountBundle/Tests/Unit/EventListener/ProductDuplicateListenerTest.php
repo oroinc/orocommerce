@@ -36,6 +36,7 @@ class ProductDuplicateListenerTest extends \PHPUnit_Framework_TestCase
         $this->productDuplicateListener->setVisibilityToAllClassName(self::VISIBILITY_TO_ALL_CLASS);
         $this->productDuplicateListener->setVisibilityAccountClassName(self::VISIBILITY_TO_ACCOUNT_CLASS);
         $this->productDuplicateListener->setVisibilityAccountGroupClassName(self::VISIBILITY_TO_ACCOUNT_GROUP_CLASS);
+        $this->productDuplicateListener->setFieldName('product');
     }
 
     public function testOnDuplicateProduct()

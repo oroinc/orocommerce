@@ -524,6 +524,7 @@ services:
             - [ setVisibilityToAllClassName, [ %orob2b_account.entity.product_visibility.class% ] ]
             - [ setVisibilityAccountGroupClassName, [ %orob2b_account.entity.account_group_product_visibility.class% ] ]
             - [ setVisibilityAccountClassName, [ %orob2b_account.entity.account_product_visibility.class% ] ]
+            - [ setFieldName, ['product'] ]
 
     orob2b_account.visibility.listener.abstract:
         class: %orob2b_account.visibility.listener.abstract.class%

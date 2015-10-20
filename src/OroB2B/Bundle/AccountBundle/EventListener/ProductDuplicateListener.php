@@ -11,10 +11,11 @@ use OroB2B\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 
 class ProductDuplicateListener
 {
-    const FIELD_NAME = 'product';
+    /** @var  string */
+    protected $fieldName;
 
     /** @var Registry */
-    protected $doctrine;
+    protected $registry;
 
     /** @var string */
     protected $visibilityToAllClassName;
@@ -30,7 +31,7 @@ class ProductDuplicateListener
      */
     public function __construct(Registry $registry)
     {
-        $this->doctrine = $registry;
+        $this->registry = $registry;
     }
 
     /**
@@ -40,24 +41,21 @@ class ProductDuplicateListener
     {
         $product = $event->getProduct();
         $sourceProduct = $event->getSourceProduct();
-        $manager = $this->doctrine->getManagerForClass(ClassUtils::getClass($product));
+        $manager = $this->registry->getManagerForClass(ClassUtils::getClass($product));
         $this->duplicateVisibility(
             $this->visibilityToAllClassName,
-            self::FIELD_NAME,
             $product,
             $sourceProduct,
             $manager
         );
         $this->duplicateVisibility(
             $this->visibilityAccountClassName,
-            self::FIELD_NAME,
             $product,
             $sourceProduct,
             $manager
         );
         $this->duplicateVisibility(
             $this->visibilityAccountGroupClassName,
-            self::FIELD_NAME,
             $product,
             $sourceProduct,
             $manager
@@ -67,15 +65,14 @@ class ProductDuplicateListener
 
     /**
      * @param string $className
-     * @param string $fieldName
      * @param object $entity
      * @param object $sourceEntity
      * @param ObjectManager $manager
      */
-    protected function duplicateVisibility($className, $fieldName, $entity, $sourceEntity, $manager)
+    protected function duplicateVisibility($className, $entity, $sourceEntity, $manager)
     {
         /** @var VisibilityInterface[] $visibilities */
-        $visibilities = $manager->getRepository($className)->findBy([$fieldName => $sourceEntity]);
+        $visibilities = $manager->getRepository($className)->findBy([$this->fieldName => $sourceEntity]);
         foreach ($visibilities as $visibility) {
             $duplicateVisibility = clone $visibility;
             $duplicateVisibility->setTargetEntity($entity);
@@ -105,5 +102,13 @@ class ProductDuplicateListener
     public function setVisibilityAccountGroupClassName($visibilityAccountGroupClassName)
     {
         $this->visibilityAccountGroupClassName = $visibilityAccountGroupClassName;
+    }
+
+    /**
+     * @param string $fieldName
+     */
+    public function setFieldName($fieldName)
+    {
+        $this->fieldName = $fieldName;
     }
 }
