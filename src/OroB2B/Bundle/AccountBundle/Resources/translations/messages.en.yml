@@ -189,6 +189,7 @@ orob2b.account:
         region_code.label:       State ISO code
 
     visibility:
+        event.saved.message: Product visibility has been saved
         to_all:
             label: Visibility to All
         accountcategoryvisibility:
