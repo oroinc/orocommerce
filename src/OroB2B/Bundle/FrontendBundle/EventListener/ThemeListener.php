@@ -6,6 +6,7 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ThemeBundle\Model\ThemeRegistry;
 
 use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
@@ -13,6 +14,7 @@ use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
 class ThemeListener
 {
     const FRONTEND_THEME = 'demo';
+    const DEFAULT_LAYOUT_THEME_CONFIG_VALUE_KEY = 'oro_b2b_frontend.frontend_theme';
 
     /**
      * @var ThemeRegistry
@@ -30,17 +32,25 @@ class ThemeListener
     protected $installed;
 
     /**
+     * @var ConfigManager
+     */
+    protected $configManager;
+
+    /**
      * @param ThemeRegistry $themeRegistry
      * @param FrontendHelper $helper
+     * @param ConfigManager $configManager
      * @param boolean $installed
      */
     public function __construct(
         ThemeRegistry $themeRegistry,
         FrontendHelper $helper,
+        ConfigManager $configManager,
         $installed
     ) {
         $this->themeRegistry = $themeRegistry;
         $this->helper = $helper;
+        $this->configManager = $configManager;
         $this->installed = $installed;
     }
 
@@ -58,7 +68,12 @@ class ThemeListener
         }
 
         if ($this->helper->isFrontendRequest($event->getRequest())) {
+            // set oro theme
             $this->themeRegistry->setActiveTheme(self::FRONTEND_THEME);
+            // set layout theme
+            $request = $event->getRequest();
+            $layoutTheme = $this->configManager->get(self::DEFAULT_LAYOUT_THEME_CONFIG_VALUE_KEY);
+            $request->attributes->set('_theme', $layoutTheme);
         }
     }
 
