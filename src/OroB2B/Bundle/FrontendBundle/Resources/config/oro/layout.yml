@@ -2,4 +2,5 @@ oro_layout:
     themes:
         default:
             label: Default theme
+            description: Default theme. Based on layouts.
             groups: [ commerce ]
