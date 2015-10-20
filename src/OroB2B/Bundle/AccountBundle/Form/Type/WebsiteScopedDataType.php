@@ -51,13 +51,12 @@ class WebsiteScopedDataType extends AbstractType
     {
         $resolver->setRequired([
             'type',
-            'skipChildren'
         ]);
 
         $resolver->setDefaults([
-            //'csrf_protection'   => false,
-            'preloaded_websites' => null,
-            'options' => null
+            'preloaded_websites' => [],
+            'options' => null,
+            'skipChildren' => false
         ]);
     }
 
