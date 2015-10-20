@@ -26,6 +26,6 @@ class OrderController extends Controller
     {
         $this->get('orob2b_shopping_list.service.product_data_storage')->saveToStorage($shoppingList);
 
-        $this->redirectToRoute('orob2b_order_frontend_create', [ProductDataStorage::STORAGE_KEY => true]);
+        return $this->redirectToRoute('orob2b_order_frontend_create', [ProductDataStorage::STORAGE_KEY => true]);
     }
 }
