@@ -1,0 +1,6 @@
+"product","website","all","account","accountGroup","visibility"
+"HSTUC","Default","true","","","hidden"
+"HSTUC","Default","","Company A","","visible"
+"HSTUC","Default","","","All Customers","category"
+"HSTUC","Default","","","Partners","visible"
+"HSTUC","Default","","","Wholesale Accounts","visible"
