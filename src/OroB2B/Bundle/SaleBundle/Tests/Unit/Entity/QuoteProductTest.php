@@ -19,8 +19,10 @@ class QuoteProductTest extends AbstractTest
             ['id', 123],
             ['quote', new Quote()],
             ['product', new Product()],
+            ['freeFormProduct', 'free form product'],
             ['productSku', 'sku'],
             ['productReplacement', new Product()],
+            ['freeFormProductReplacement', 'free form product replacement'],
             ['productReplacementSku', 'sku-replacement'],
             ['type', QuoteProduct::TYPE_OFFER],
             ['comment', 'Seller notes'],
@@ -43,26 +45,56 @@ class QuoteProductTest extends AbstractTest
         $this->assertEquals($value, $product->getEntityIdentifier());
     }
 
+    public function testUpdateProducts()
+    {
+        $product = (new Product())->setSku('product-sku');
+        $replacement = (new Product())->setSku('replacement-sku');
+
+        $quoteProduct = new QuoteProduct();
+
+        $this->assertNull($quoteProduct->getProductSku());
+        $this->assertNull($quoteProduct->getFreeFormProduct());
+        $this->assertNull($quoteProduct->getProductReplacementSku());
+        $this->assertNull($quoteProduct->getFreeFormProductReplacement());
+
+        $this->setProperty($quoteProduct, 'product', $product);
+        $this->setProperty($quoteProduct, 'productReplacement', $replacement);
+
+        $quoteProduct->updateProducts();
+
+        $this->assertSame('product-sku', $quoteProduct->getProductSku());
+        $this->assertSame((string)$product, $quoteProduct->getFreeFormProduct());
+        $this->assertSame('replacement-sku', $quoteProduct->getProductReplacementSku());
+        $this->assertSame((string)$replacement, $quoteProduct->getFreeFormProductReplacement());
+    }
+
     public function testSetProduct()
     {
         $product = new QuoteProduct();
 
         $this->assertNull($product->getProductSku());
+        $this->assertNull($product->getFreeFormProduct());
 
         $product->setProduct((new Product)->setSku('test-sku'));
 
         $this->assertEquals('test-sku', $product->getProductSku());
+        $this->assertEquals((string)(new Product)->setSku('test-sku'), $product->getFreeFormProduct());
     }
 
     public function testSetProductReplacement()
     {
         $product = new QuoteProduct();
 
-        $this->assertNull($product->getProductSku());
+        $this->assertNull($product->getProductReplacementSku());
+        $this->assertNull($product->getFreeFormProductReplacement());
 
         $product->setProductReplacement((new Product)->setSku('test-sku-replacement'));
 
         $this->assertEquals('test-sku-replacement', $product->getProductReplacementSku());
+        $this->assertEquals(
+            (string)(new Product)->setSku('test-sku-replacement'),
+            $product->getFreeFormProductReplacement()
+        );
     }
 
     public function testAddQuoteProductOffer()
@@ -210,6 +242,179 @@ class QuoteProductTest extends AbstractTest
             'one incremented offer' => [
                 'offers' => [$firstNotIncrementedOffer, $secondNotIncrementedOffer, $incrementedOffer],
                 'expected' => true,
+            ],
+        ];
+    }
+
+    /**
+     * @param array $inputData
+     * @param bool $expectedResult
+     *
+     * @dataProvider freeFormProvider
+     */
+    public function testIsProductFreeForm(array $inputData, $expectedResult)
+    {
+        $quoteProduct = new QuoteProduct();
+
+        $quoteProduct
+            ->setFreeFormProduct($inputData['title'])
+            ->setProduct($inputData['product'])
+        ;
+
+        $this->assertEquals($expectedResult, $quoteProduct->isProductFreeForm());
+    }
+
+    /**
+     * @param array $inputData
+     * @param bool $expectedResult
+     *
+     * @dataProvider freeFormProvider
+     */
+    public function testIsProductReplacementFreeForm(array $inputData, $expectedResult)
+    {
+        $quoteProduct = new QuoteProduct();
+
+        $quoteProduct
+            ->setFreeFormProductReplacement($inputData['title'])
+            ->setProductReplacement($inputData['product'])
+        ;
+
+        $this->assertEquals($expectedResult, $quoteProduct->isProductReplacementFreeForm());
+    }
+
+    /**
+     * @param array $inputData
+     * @param string $expectedResult
+     *
+     * @dataProvider getProductNameProvider
+     */
+    public function testGetProductName(array $inputData, $expectedResult)
+    {
+        $quoteProduct = new QuoteProduct();
+
+        if ($inputData['isProductReplacement']) {
+            $quoteProduct
+                ->setType(QuoteProduct::TYPE_NOT_AVAILABLE)
+                ->setFreeFormProductReplacement($inputData['productTitle'])
+                ->setProductReplacement($inputData['product']);
+        } else {
+            $quoteProduct
+                ->setFreeFormProduct($inputData['productTitle'])
+                ->setProduct($inputData['product']);
+        }
+
+        $this->assertEquals($expectedResult, $quoteProduct->getProductName());
+    }
+
+
+    /**
+     * @return array
+     */
+    public function freeFormProvider()
+    {
+        return [
+            '!product & !product title' => [
+                'input' => [
+                    'product' => null,
+                    'title' => null,
+                ],
+                'expected' => false,
+            ],
+            '!product & product title' => [
+                'input' => [
+                    'product' => null,
+                    'title' => 'free form title',
+                ],
+                'expected' => true,
+            ],
+            '!product & product title2' => [
+                'input' => [
+                    'product' => null,
+                    'title' => '0',
+                ],
+                'expected' => true,
+            ],
+            'product & !product title' => [
+                'input' => [
+                    'product' => new Product(),
+                    'title' => null,
+                ],
+                'expected' => false,
+            ],
+            'product & !product title2' => [
+                'input' => [
+                    'product' => new Product(),
+                    'title' => '',
+                ],
+                'expected' => false,
+            ],
+            'product & product title' => [
+                'input' => [
+                    'product' => new Product(),
+                    'title' => 'free form title',
+                ],
+                'expected' => false,
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getProductNameProvider()
+    {
+        $product1 = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\Product');
+        $product1->expects($this->any())
+            ->method('__toString')
+            ->willReturn('Product 1');
+        ;
+        $product2 = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\Product');
+        $product2->expects($this->any())
+            ->method('__toString')
+            ->willReturn('Product 2');
+        ;
+
+        return [
+            'no products' => [
+                'input' => [
+                    'product' => null,
+                    'isProductReplacement' => false,
+                    'productTitle' => null,
+                    'productReplacementTitle' => null,
+                ],
+                'expected' => '',
+            ],
+            'product' => [
+                'input' => [
+                    'product' => $product1,
+                    'isProductReplacement' => false,
+                    'productTitle' => null,
+                ],
+                'expected' => 'Product 1',
+            ],
+            'productReplacement' => [
+                'input' => [
+                    'product' => $product2,
+                    'isProductReplacement' => true,
+                    'productTitle' => null,
+                ],
+                'expected' => 'Product 2',
+            ],
+            'product free form' => [
+                'input' => [
+                    'product' => null,
+                    'isProductReplacement' => false,
+                    'productTitle' => 'Free Form Product 1',
+                ],
+                'expected' => 'Free Form Product 1',
+            ],
+            'productReplacement free form' => [
+                'input' => [
+                    'product' => null,
+                    'isProductReplacement' => true,
+                    'productTitle' => 'Free Form Product 2',
+                ],
+                'expected' => 'Free Form Product 2',
             ],
         ];
     }

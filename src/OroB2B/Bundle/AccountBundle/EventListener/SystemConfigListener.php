@@ -7,9 +7,10 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 
+use OroB2B\Bundle\AccountBundle\DependencyInjection\OroB2BAccountExtension;
+
 class SystemConfigListener
 {
-    const SECTION = 'oro_b2b_account';
     const SETTING = 'default_account_owner';
 
     /**
@@ -67,7 +68,7 @@ class SystemConfigListener
      */
     protected function getSettingsKey()
     {
-        $settingsKey = implode(ConfigManager::SECTION_VIEW_SEPARATOR, [self::SECTION, self::SETTING]);
+        $settingsKey = implode(ConfigManager::SECTION_VIEW_SEPARATOR, [OroB2BAccountExtension::ALIAS, self::SETTING]);
 
         return $settingsKey;
     }

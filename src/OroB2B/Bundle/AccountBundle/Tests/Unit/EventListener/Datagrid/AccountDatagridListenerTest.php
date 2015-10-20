@@ -1,21 +1,20 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
+namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
-use OroB2B\Bundle\AccountBundle\EventListener\AccountDatagridListener;
+use OroB2B\Bundle\AccountBundle\EventListener\Datagrid\AccountDatagridListener;
 use OroB2B\Bundle\AccountBundle\Security\AccountUserProvider;
 
 /**
  * @dbIsolation
  */
-class AccountDatagridListenerTest extends WebTestCase
+class AccountDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var AccountDatagridListener

@@ -126,10 +126,12 @@ class CategoryControllerTest extends WebTestCase
         $this->assertNotCount(0, $accountGroupCategoryVisibilityRepo->findAll());
 
         $this->submitForm(
-            (new CategoryVisibility())->getDefault(),
-            json_encode([$this->account->getId() => ['visibility' => (new AccountCategoryVisibility())->getDefault()]]),
+            CategoryVisibility::getDefault($this->category),
             json_encode(
-                [$this->group->getId() => ['visibility' => (new AccountGroupCategoryVisibility())->getDefault()]]
+                [$this->account->getId() => ['visibility' => AccountCategoryVisibility::getDefault($this->category)]]
+            ),
+            json_encode(
+                [$this->group->getId() => ['visibility' => AccountGroupCategoryVisibility::getDefault($this->category)]]
             )
         );
 
@@ -191,7 +193,7 @@ class CategoryControllerTest extends WebTestCase
             if (!$pos = strpos($key, '[')) {
                 continue;
             }
-            $key = '[' . substr($key, 0, $pos) . ']' . substr($key, $pos);
+            $key = '['.substr($key, 0, $pos).']'.substr($key, $pos);
             $accessor->setValue($parameters, $key, $val);
         }
 
