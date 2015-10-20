@@ -110,8 +110,7 @@ class ThemeSelectTypeTest extends \PHPUnit_Framework_TestCase
         ];
 
         $this->assertArrayHasKey('themes-metadata', $view->vars);
-        $this->assertJson($view->vars['themes-metadata']);
-        $this->assertEquals(json_encode($expectedMetadata), $view->vars['themes-metadata']);
+        $this->assertEquals($expectedMetadata, $view->vars['themes-metadata']);
     }
 
     /**
