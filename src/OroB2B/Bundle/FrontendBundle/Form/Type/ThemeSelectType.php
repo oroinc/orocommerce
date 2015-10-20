@@ -71,7 +71,7 @@ class ThemeSelectType extends AbstractType
                 'description' => $theme->getDescription()
             ];
         }
-        $view->vars['themes-metadata'] = json_encode($metadata);
+        $view->vars['themes-metadata'] = $metadata;
     }
 
     /**
