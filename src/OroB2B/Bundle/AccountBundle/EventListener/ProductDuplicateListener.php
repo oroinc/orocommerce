@@ -3,9 +3,9 @@
 namespace OroB2B\Bundle\AccountBundle\EventListener;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Util\ClassUtils;
+
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 
