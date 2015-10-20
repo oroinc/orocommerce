@@ -5,12 +5,11 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
-    var mediator = require('oroui/js/mediator');
-    var layout = require('oroui/js/layout');
     var BaseView = require('oroui/js/app/views/base/view');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var routing = require('routing');
     var messenger = require('oroui/js/messenger');
+    require('jquery.validate');
 
     /**
      * @export orob2bsale/js/app/views/line-item-view
@@ -24,12 +23,22 @@ define(function(require) {
         options: {
             classNotesSellerActive: 'quote-lineitem-notes-seller-active',
             productSelect: '.quote-lineitem-product-select input[type="hidden"]',
+            productSkuLabel: '.quote-lineitem-product-sku-label',
             productReplacementSelect: '.quote-lineitem-product-replacement-select input[type="hidden"]',
+            offersQuantitySelector: '.quote-lineitem-offers-quantity input',
+            offersPriceValueSelector: '.quote-lineitem-offers-price input:first',
             typeSelect: '.quote-lineitem-product-type-select',
             unitsSelect: '.quote-lineitem-offer-unit-select',
+            productFreeFormInput: '.quote-lineitem-product-freeform-input',
+            productReplacementFreeFormInput: '.quote-lineitem-productreplacement-freeform-input',
             unitsRoute: 'orob2b_product_unit_product_units',
             compactUnits: false,
             addItemButton: '.add-list-item',
+            productSelectLink: '.quote-lineitem-product-select-link',
+            freeFormLink: '.quote-lineitem-free-form-link',
+            productFormContainer: '.quote-lineitem-product-form',
+            freeFormContainer: '.quote-lineitem-product-free-form',
+            fieldsRowContainer: '.fields-row',
             notesContainer: '.quote-lineitem-notes',
             addNotesButton: '.quote-lineitem-notes-add-btn',
             removeNotesButton: '.quote-lineitem-notes-remove-btn',
@@ -37,10 +46,11 @@ define(function(require) {
             itemsContainer: '.quote-lineitem-offers-items',
             itemWidget: '.quote-lineitem-offers-item',
             syncClass: 'synchronized',
-            productReplacementContainer: '.sale-quoteproduct-product-replacement-select',
+            productReplacementContainer: '.quote-lineitem-product-replacement-row',
             sellerNotesContainer: '.quote-lineitem-notes-seller',
             requestsOnlyContainer: '.sale-quoteproductrequest-only',
             errorMessage: 'Sorry, unexpected error was occurred',
+            allUnits: {},
             units: {}
         },
 
@@ -55,14 +65,24 @@ define(function(require) {
         typeReplacement: null,
 
         /**
+         * @property {Boolean}
+         */
+        isFreeForm: false,
+
+        /**
          * @property {Object}
          */
         units: {},
 
         /**
+         * @property {array}
+         */
+        allUnits: {},
+
+        /**
          * @property {Object}
          */
-        $container: null,
+        $el: null,
 
         /**
          * @property {Object}
@@ -88,11 +108,6 @@ define(function(require) {
          * @property {Object}
          */
         $itemsContainer: null,
-
-        /**
-         * @property {Object}
-         */
-        $itemsCollectionContainer: null,
 
         /**
          * @property {Object}
@@ -125,9 +140,12 @@ define(function(require) {
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
             this.units = _.defaults(this.units, options.units);
+            this.allUnits = _.defaults(this.allUnits, options.allUnits);
 
             this.typeOffer = options.typeOffer;
             this.typeReplacement = options.typeReplacement;
+
+            this.isFreeForm = options.isFreeForm || false;
 
             this.loadingMask = new LoadingMaskView({container: this.$el});
 
@@ -137,7 +155,6 @@ define(function(require) {
             this.$productReplacementSelect = this.$el.find(this.options.productReplacementSelect);
             this.$typeSelect = this.$el.find(this.options.typeSelect);
             this.$addItemButton = this.$el.find(this.options.addItemButton);
-            this.$itemsCollectionContainer = this.$el.find(this.options.itemsCollectionContainer);
             this.$itemsContainer = this.$el.find(this.options.itemsContainer);
             this.$productReplacementContainer = this.$el.find(this.options.productReplacementContainer);
             this.$notesContainer = this.$el.find(this.options.notesContainer);
@@ -150,6 +167,8 @@ define(function(require) {
                 .on('change', this.options.typeSelect, _.bind(this.onTypeChanged, this))
                 .on('click', this.options.addNotesButton, _.bind(this.onAddNotesClick, this))
                 .on('click', this.options.removeNotesButton, _.bind(this.onRemoveNotesClick, this))
+                .on('click', this.options.freeFormLink, _.bind(this.onFreeFormLinkClick, this))
+                .on('click', this.options.productSelectLink, _.bind(this.onProductSelectLinkClick, this))
                 .on('content:changed', _.bind(this.onContentChanged, this))
             ;
 
@@ -158,10 +177,13 @@ define(function(require) {
 
             this.checkAddButton();
             this.checkAddNotes();
+
+            this.updateValidation();
         },
 
         checkAddButton: function() {
-            this.$addItemButton.toggle(Boolean(this.getProductId()));
+            var enabled = Boolean(this.getProductId()) || this.isFreeForm;
+            this.$addItemButton.toggle(enabled);
         },
 
         removeRow: function() {
@@ -184,6 +206,11 @@ define(function(require) {
             if (this.$itemsContainer.children().length) {
                 this.updateContent(true);
             }
+
+            this.updateSkuLabel();
+
+            var $quantitySelector = this.$el.find(this.options.offersQuantitySelector);
+            $quantitySelector.trigger('change');
         },
 
         /**
@@ -213,8 +240,10 @@ define(function(require) {
          * @param {Boolean} force
          */
         updateContent: function(force) {
+            this.updateValidation();
+
             var productId = this.getProductId();
-            var productUnits = this.units[productId];
+            var productUnits = productId ? this.units[productId] : this.allUnits;
 
             if (!productId || productUnits) {
                 this.updateProductUnits(productUnits, force || false);
@@ -282,7 +311,6 @@ define(function(require) {
                 if (null === $(select).val() && firstValue) {
                     $(select).val(firstValue);
                 }
-                $(select).val(currentValue).change();
                 $(select).addClass(self.options.syncClass);
 
                 if (!force) {
@@ -330,12 +358,135 @@ define(function(require) {
         },
 
         /**
+         * Handle Free Form for Product click
+         *
+         * @param {jQuery.Event} e
+         */
+        onFreeFormLinkClick: function(e) {
+            e.preventDefault();
+
+            this.clearInputs();
+
+            this.$el.find(this.options.productFormContainer).hide();
+            this.$el.find(this.options.freeFormContainer).show();
+
+            this.isFreeForm = true;
+
+            this.checkAddButton();
+        },
+
+        /**
+         * Handle Product Form click
+         *
+         * @param {jQuery.Event} e
+         */
+        onProductSelectLinkClick: function(e) {
+            e.preventDefault();
+
+            this.clearInputs();
+
+            this.$el.find(this.options.productFormContainer).show();
+            this.$el.find(this.options.freeFormContainer).hide();
+
+            this.isFreeForm = false;
+
+            this.checkAddButton();
+        },
+
+        clearInputs: function() {
+            this.$el.find(this.options.productFormContainer)
+                .find('input').val('').change()
+            ;
+            this.$el.find(this.options.freeFormContainer)
+                .find('input').val('')
+            ;
+
+            var self = this;
+
+            var widgets = this.$el.find(this.options.itemWidget);
+
+            $.each(widgets, function(index, widget) {
+                var $priceValue = $(widget).find(self.options.offersPriceValueSelector);
+
+                $priceValue.addClass('matched-price');
+            });
+
+            this.updateSkuLabel();
+        },
+
+        updateSkuLabel: function() {
+            var productData = this.$el.find(this.options.productSelect).select2('data') || {};
+
+            this.$el.find(this.options.productSkuLabel).html(productData.sku || '');
+        },
+
+        /**
          * Get Product Id
          */
         getProductId: function() {
-            var isTypeReplacement = this.typeReplacement === parseInt(this.$typeSelect.val());
+            return this.isProductReplacement() ? this.$productReplacementSelect.val() : this.$productSelect.val();
+        },
 
-            return isTypeReplacement ? this.$productReplacementSelect.val() : this.$productSelect.val();
+        /**
+         * Check that Product is Replacement
+         */
+        isProductReplacement: function() {
+            return this.typeReplacement === parseInt(this.$typeSelect.val());
+        },
+
+        /**
+         * Validation for products
+         */
+        updateValidation: function() {
+            var self = this;
+
+            self.$el.find(self.options.productFreeFormInput).rules('add', {
+                required: {
+                    param: true,
+                    depends: function() {
+                        return !self.isProductReplacement() && self.isFreeForm;
+                    }
+                },
+                messages: {
+                    required: 'orob2b.sale.quoteproduct.free_form_product.blank'
+                }
+            });
+
+            self.$el.find(self.options.productReplacementFreeFormInput).rules('add', {
+                required: {
+                    param: true,
+                    depends: function() {
+                        return self.isProductReplacement() && self.isFreeForm;
+                    }
+                },
+                messages: {
+                    required: 'orob2b.sale.quoteproduct.free_form_product.blank'
+                }
+            });
+
+            self.$productSelect.rules('add', {
+                required: {
+                    param: true,
+                    depends: function() {
+                        return !self.isProductReplacement() && !self.isFreeForm;
+                    }
+                },
+                messages: {
+                    required: 'orob2b.sale.quoteproduct.product.blank'
+                }
+            });
+
+            self.$productReplacementSelect.rules('add', {
+                required: {
+                    param: true,
+                    depends: function() {
+                        return self.isProductReplacement() && !self.isFreeForm;
+                    }
+                },
+                messages: {
+                    required: 'orob2b.sale.quoteproduct.product.blank'
+                }
+            });
         },
 
         dispose: function() {
