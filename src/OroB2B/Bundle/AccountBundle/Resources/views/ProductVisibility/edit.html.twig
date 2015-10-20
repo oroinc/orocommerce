@@ -1,5 +1,66 @@
-{% extends 'OroUIBundle:actions:index.html.twig' %}
+{% extends 'OroUIBundle:actions:update.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 
-{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% oro_title_set({params : {"%sku%": entity.sku|default('N/A'|trans) , "%name%": (entity.id ? entity.defaultName.string : '')|default('N/A'|trans) } }) %}
 
-{% set pageTitle = 'orob2b.account.product.visibility.label'|trans %}
+{% set formAction = path('orob2b_account_product_visibility_edit', { 'id': entity.id })  %}
+
+{% block navButtons %}
+    {% set html = UI.saveAndCloseButton() %}
+    {% if entity.id or resource_granted('orob2b_product_update') %}
+        {% set html = html ~ UI.saveAndStayButton() %}
+    {% endif %}
+    {{ UI.dropdownSaveButton({'html': html}) }}
+{% endblock navButtons %}
+
+{% block pageHeader %}
+    {% if entity.id %}
+        {% set breadcrumbs = {
+            'entity':      entity,
+            'indexPath':   path('orob2b_product_index'),
+            'indexLabel': 'orob2b.product.entity_plural_label'|trans,
+            'entityTitle': entity.sku ~ ' - ' ~ entity.defaultName
+        } %}
+        {{ parent() }}
+    {% endif %}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set id = 'product-visibility-edit' %}
+
+    {% set websiteProductVisibilityTabsWidget %}
+        <div class="responsive-cell">
+            {% set tabs = [] %}
+            {% for website in form.vars.websites %}
+                {% set tab = {
+                    'alias': website.id,
+                    'widgetType': 'block',
+                    'label': website.name|trans,
+                    'url': path(
+                        'orob2b_account_product_visibility_website',
+                        { productId: entity.id,  id: website.id}
+                    )
+                } %}
+                {% set tabs = tabs|merge([tab]) %}
+            {% endfor %}
+
+            {{ tabPanel(tabs) }}
+        </div>
+    {% endset %}
+    
+    {% set dataBlocks = [
+        {
+            'title': 'Product visibility',
+            'subblocks': [
+                {'data' : [websiteProductVisibilityTabsWidget] }
+            ]
+        }
+    ] %}
+    
+    {% set data = {
+        'formErrors': form_errors(form),
+        'dataBlocks': dataBlocks
+    }%}
+
+    {{ parent() }}
+{% endblock content_data %}
