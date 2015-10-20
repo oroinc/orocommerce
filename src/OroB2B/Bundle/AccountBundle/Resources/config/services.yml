@@ -521,8 +521,9 @@ services:
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product.duplicate.after, method: onDuplicateProduct }
         calls:
-            - [ setClassName, [ %orob2b_account.entity.account_user.class% ] ]
-
+            - [ setVisibilityToAllClassName, [ %orob2b_account.entity.product_visibility.class% ] ]
+            - [ setVisibilityAccountGroupClassName, [ %orob2b_account.entity.account_group_product_visibility.class% ] ]
+            - [ setVisibilityAccountClassName, [ %orob2b_account.entity.account_product_visibility.class% ] ]
 
     orob2b_account.visibility.listener.abstract:
         class: %orob2b_account.visibility.listener.abstract.class%
