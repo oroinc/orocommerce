@@ -67,10 +67,11 @@ class ThemeSelectType extends AbstractType
             $metadata[$theme->getName()] = [
                 'icon' => $theme->getIcon(),
                 'logo' => $theme->getLogo(),
-                'screenshot' => $theme->getScreenshot()
+                'screenshot' => $theme->getScreenshot(),
+                'description' => $theme->getDescription()
             ];
         }
-        $view->vars['themes-metadata'] = json_encode($metadata);
+        $view->vars['themes-metadata'] = $metadata;
     }
 
     /**

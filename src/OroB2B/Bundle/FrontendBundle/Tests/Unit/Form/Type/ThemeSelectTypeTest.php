@@ -49,8 +49,8 @@ class ThemeSelectTypeTest extends \PHPUnit_Framework_TestCase
     public function testConfigureOptions()
     {
         $themes = [
-            $this->getTheme('theme1', 'label1', 'icon1', 'logo1', 'screenshot1'),
-            $this->getTheme('theme2', 'label2', 'icon2', 'logo2', 'screenshot2')
+            $this->getTheme('theme1', 'label1', 'icon1', 'logo1', 'screenshot1', 'description1'),
+            $this->getTheme('theme2', 'label2', 'icon2', 'logo2', 'screenshot2', 'description2')
         ];
 
         $expectedChoices = [
@@ -78,8 +78,8 @@ class ThemeSelectTypeTest extends \PHPUnit_Framework_TestCase
     public function testFinishView()
     {
         $themes = [
-            $this->getTheme('theme1', 'label1', 'icon1', 'logo1', 'screenshot1'),
-            $this->getTheme('theme2', 'label2', 'icon2', 'logo2', 'screenshot2')
+            $this->getTheme('theme1', 'label1', 'icon1', 'logo1', 'screenshot1', 'description1'),
+            $this->getTheme('theme2', 'label2', 'icon2', 'logo2', 'screenshot2', 'description2')
         ];
 
         $this->themeManager->expects($this->once())
@@ -98,18 +98,19 @@ class ThemeSelectTypeTest extends \PHPUnit_Framework_TestCase
             'theme1' => [
                 'icon' => 'icon1',
                 'logo' => 'logo1',
-                'screenshot' => 'screenshot1'
+                'screenshot' => 'screenshot1',
+                'description' => 'description1'
             ],
             'theme2' => [
                 'icon' => 'icon2',
                 'logo' => 'logo2',
-                'screenshot' => 'screenshot2'
+                'screenshot' => 'screenshot2',
+                'description' => 'description2'
             ]
         ];
 
         $this->assertArrayHasKey('themes-metadata', $view->vars);
-        $this->assertJson($view->vars['themes-metadata']);
-        $this->assertEquals(json_encode($expectedMetadata), $view->vars['themes-metadata']);
+        $this->assertEquals($expectedMetadata, $view->vars['themes-metadata']);
     }
 
     /**
@@ -118,15 +119,17 @@ class ThemeSelectTypeTest extends \PHPUnit_Framework_TestCase
      * @param string $icon
      * @param string $logo
      * @param string $screenshot
+     * @param string $description
      * @return Theme
      */
-    protected function getTheme($name, $label, $icon, $logo, $screenshot)
+    protected function getTheme($name, $label, $icon, $logo, $screenshot, $description)
     {
         $theme = new Theme($name);
         $theme->setLabel($label);
         $theme->setIcon($icon);
         $theme->setLogo($logo);
         $theme->setScreenshot($screenshot);
+        $theme->setDescription($description);
 
         return $theme;
     }
