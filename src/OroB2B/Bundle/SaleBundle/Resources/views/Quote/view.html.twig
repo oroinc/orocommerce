@@ -114,11 +114,7 @@
                                     {% endif %}
                                 </td>
                                 <td rowspan="{{ numSubItems }}">
-                                    {% if quoteProduct.isTypeNotAvailable %}
-                                        {{ quoteProduct.productReplacement }}
-                                    {% else %}
-                                        {{ quoteProduct.product }}
-                                    {% endif %}
+                                    {{ quoteProduct.productName }}
                                 </td>
                             {% endif %}
                             <td class="quote-line_item-quantity quote-line_item-quantity-{% if loop.first %}first{% else %}not_first{% endif %}">

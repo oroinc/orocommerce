@@ -66,6 +66,7 @@ services:
         arguments:
             - @orob2b_product.formatter.product_unit_label
             - @translator
+            - @doctrine
         calls:
             - [setEntityClass, [%orob2b_product.product_unit.class%]]
         tags:
