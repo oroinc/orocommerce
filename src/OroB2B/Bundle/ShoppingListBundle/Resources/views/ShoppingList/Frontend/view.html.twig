@@ -24,17 +24,18 @@
             }) }}
         </div>
     {% endif %}
-    {% if resource_granted('orob2b_shoppinglist_frontend_shoppinglist_createrfp') %}
-        {% set formCreateRfpAction = path('orob2b_shoppinglist_frontend_shoppinglist_createrfp', { 'id': entity.id }) %}
-        <form id="{{ formCreateRfp.vars.id }}" class="pull-left" name="{{ formCreateRfp.vars.name }}" action="{{ formCreateRfpAction }}" method="post">
-            <div class="btn-group">
-                {{ form_widget(formCreateRfp) }}
-                <button type="submit" class="no-hash btn">
-                    <i class="icon-edit hide-text"></i>{{ 'orob2b.frontend.shoppinglist.btn.request_quote_create_rfp'|trans }}
-                </button>
-            </div>
-        </form>
+
+    {% if resource_granted('orob2b_rfp_frontend_request_create') %}
+        <div class="btn-group">
+            {{ UI.link({
+                path: path('orob2b_shoppinglist_frontend_request_create', {id: entity.id}),
+                label: 'orob2b.frontend.shoppinglist.btn.request_quote_create_rfp'|trans,
+                class: 'btn',
+                iCss: 'icon-briefcase',
+            }) }}
+        </div>
     {% endif %}
+
     {% if resource_granted('EDIT', entity) %}
         {{ UI.editButton({
             'path' : path('orob2b_shopping_list_frontend_update', { 'id': entity.id }),
