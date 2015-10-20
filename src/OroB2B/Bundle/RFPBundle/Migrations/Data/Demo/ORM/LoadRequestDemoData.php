@@ -76,7 +76,7 @@ class LoadRequestDemoData extends AbstractFixture implements
         while (($data = fgetcsv($handler, 5000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
-            $accountUser = $accountUsers[array_rand($accountUsers)];
+            $accountUser = $accountUsers[rand(0, count($accountUsers) - 1)];
 
             $request = new Request();
             $request
@@ -91,7 +91,7 @@ class LoadRequestDemoData extends AbstractFixture implements
                 ->setAccount($accountUser ? $accountUser->getAccount() : null)
             ;
 
-            $status = $statuses[array_rand($statuses)];
+            $status = $statuses[rand(0, count($statuses) - 1)];
             $request->setStatus($status);
             $request->setOrganization($organization);
 
@@ -157,7 +157,7 @@ class LoadRequestDemoData extends AbstractFixture implements
         $currencies = $this->getCurrencies();
         $numLineItems = rand(1, 10);
         for ($i = 0; $i < $numLineItems; $i++) {
-            $product = $products[array_rand($products)];
+            $product = $products[rand(0, count($products) - 1)];
             $unitPrecisions = $product->getUnitPrecisions();
 
             if (!count($unitPrecisions)) {
@@ -169,9 +169,9 @@ class LoadRequestDemoData extends AbstractFixture implements
             $requestProduct->setComment(sprintf('Notes %s', $i));
             $numProductItems = rand(1, 10);
             for ($j = 0; $j < $numProductItems; $j++) {
-                $productUnit = $unitPrecisions[array_rand($unitPrecisions)]->getUnit();
+                $productUnit = $unitPrecisions[rand(0, count($unitPrecisions) - 1)]->getUnit();
 
-                $currency = $currencies[array_rand($currencies)];
+                $currency = $currencies[rand(0, count($currencies) - 1)];
                 $requestProductItem = new RequestProductItem();
                 $requestProductItem
                     ->setPrice(Price::create(rand(1, 100), $currency))

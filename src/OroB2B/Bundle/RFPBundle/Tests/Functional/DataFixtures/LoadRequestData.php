@@ -200,7 +200,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             for ($j = 0; $j < $numProductItems; $j++) {
                 $productUnit = $unitPrecisions[array_rand($unitPrecisions)]->getUnit();
 
-                $currency = $currencies[array_rand($currencies)];
+                $currency = $currencies[rand(0, count($currencies) - 1)];
                 $requestProductItem = new RequestProductItem();
                 $requestProductItem
                     ->setPrice(Price::create(rand(1, 100), $currency))

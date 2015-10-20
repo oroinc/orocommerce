@@ -74,14 +74,14 @@ class LoadQuoteDemoData extends AbstractFixture implements
 
         for ($i = 0; $i < 20; $i++) {
             /* @var $account Account */
-            $account = $accounts[array_rand($accounts)];
+            $account = $accounts[rand(0, count($accounts) - 1)];
 
             if (!$account) {
                 $accountUser = null;
             } else {
                 $accountUsers = array_merge([null], $account->getUsers()->getValues());
                 /* @var $accountUser AccountUser */
-                $accountUser = $accountUsers[array_rand($accountUsers)];
+                $accountUser = $accountUsers[rand(0, count($accountUsers) - 1)];
             }
 
             // set date in future
@@ -158,7 +158,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
 
         if ($quote->getRequest()) {
             foreach ($quote->getRequest()->getRequestProducts() as $requestProduct) {
-                $type = $types[array_rand($types)];
+                $type = $types[rand(0, count($types) - 1)];
 
                 $quoteProduct = $this->createQuoteProduct($requestProduct->getProduct(), $type);
 
@@ -183,10 +183,10 @@ class LoadQuoteDemoData extends AbstractFixture implements
 
             $numProductOffers = rand(1, 3);
             for ($j = 0; $j < $numProductOffers; $j++) {
-                $productUnit = $unitPrecisions[array_rand($unitPrecisions)]->getUnit();
+                $productUnit = $unitPrecisions[rand(0, count($unitPrecisions) - 1)]->getUnit();
 
-                $currency = $currencies[array_rand($currencies)];
-                $priceType = $priceTypes[array_rand($priceTypes)];
+                $currency = $currencies[rand(0, count($currencies) - 1)];
+                $priceType = $priceTypes[rand(0, count($priceTypes) - 1)];
 
                 $quoteProductOffer = new QuoteProductOffer();
                 $quoteProductOffer
@@ -199,7 +199,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
                 if ($quoteProduct->isTypeNotAvailable()) {
                     $productReplacement = $products[rand(1, count($products) - 1)];
                     $unitPrecisionsRepl = $productReplacement->getUnitPrecisions();
-                    $productUnitRepl = $unitPrecisionsRepl[array_rand($unitPrecisionsRepl)]->getUnit();
+                    $productUnitRepl = $unitPrecisionsRepl[rand(0, count($unitPrecisionsRepl) - 1)]->getUnit();
                     $quoteProduct->setProductReplacement($productReplacement);
                     $quoteProductOffer->setProductUnit($productUnitRepl);
                 }
