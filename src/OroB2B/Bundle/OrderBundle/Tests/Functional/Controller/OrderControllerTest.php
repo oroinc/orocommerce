@@ -231,7 +231,7 @@ class OrderControllerTest extends WebTestCase
                     'value' => 200,
                     'currency' => 'USD'
                 ],
-                'priceType' => OrderLineItem::PRICE_TYPE_BUNDLED,
+                'priceType' => OrderLineItem::PRICE_TYPE_UNIT,
                 'shipBy' => $date
             ],
             [
