@@ -14,6 +14,8 @@ services:
         arguments:
             - %orob2b_catalog.category.class%
             - @doctrine
+            - @oro_security.security_facade
+            - @event_dispatcher
 
     orob2b_catalog.category.manager.api:
         class: %orob2b_catalog.category.manager.api.class%
@@ -27,8 +29,7 @@ services:
         arguments:
             - @translator
             - @oro_entity.doctrine_helper
-        calls:
-            - [setRequest, ["@?request="]]
+            - @request_stack
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
@@ -55,5 +56,5 @@ services:
 
     orob2b_catalog.handler.request_product:
         class: %orob2b_catalog.handler.request_product.class%
-        calls:
-            - [setRequest, ["@?request="]]
+        arguments:
+            - @request_stack

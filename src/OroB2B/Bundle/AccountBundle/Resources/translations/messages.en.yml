@@ -104,6 +104,7 @@ orob2b.account:
         type.label:                      'Type'
         type.predefined.label:           'Predefined'
         type.customizable.label:         'Customizable'
+        account_users.label:             'Account Users'
         frontend.edit-predifined-role.message:   'Predefined roles cannot be edited directly. We copied all the original data so that you can save it as a new user role for your organization. All users will be moved from the original role to this new role after you click on "Save".'
 
     accountuseraddress:
@@ -186,6 +187,55 @@ orob2b.account:
         country_iso3_code.label: Country ISO3 code
         region_name.label:       State name
         region_code.label:       State ISO code
+
+    visibility:
+        accountcategoryvisibility:
+            entity_label: Visibility to Accounts
+            entity_plural_label: Account Category Visibilities
+            id.label: ID
+            account.label: Account
+            category.label: Category
+            visibility.label: Visibility
+            choice:
+                account_group: Account Group
+                category: Visibility to All
+                parent_category: Parent Category
+                hidden: Hidden
+                visible: Visible
+
+        accountgroupcategoryvisibility:
+            entity_label: Visibility to Account Groups
+            entity_plural_label: Account Group Category Visibilities
+            id.label: ID
+            account_group.label: Account Group
+            category.label: Category
+            visibility.label: Visibility
+            choice:
+                category: Visibility to All
+                parent_category: Parent Category
+                hidden: Hidden
+                visible: Visible
+
+        categoryvisibility:
+            entity_label: Visibility to All
+            entity_plural_label: Category Visibilities
+            id.label: ID
+            category.label: Category
+            visibility.label: Visibility
+            choice:
+                parent_category: Parent Category
+                config: Config
+                visible: Visible
+                hidden: Hidden
+
+    catalog:
+        visibility:
+            label: Default Visibility to Accounts
+            form_label: Visibility
+            product_configuration_label: Product Catalog
+            catalog_configuration_label: Categories
+            visible.label: Visible
+            hidden.label: Hidden
 
     menu:
         customers_tab.label: 'Customers'

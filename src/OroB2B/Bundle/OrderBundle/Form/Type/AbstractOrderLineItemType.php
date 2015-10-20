@@ -12,6 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
 
 abstract class AbstractOrderLineItemType extends AbstractType
 {
@@ -33,21 +34,29 @@ abstract class AbstractOrderLineItemType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /** @var OrderLineItem $orderLineItem */
+        $orderLineItem = null;
+        if (array_key_exists('data', $options)) {
+            $orderLineItem = $options['data'];
+        }
+
         $builder
-            ->add(
-                'quantity',
-                'integer',
-                [
-                    'required' => true,
-                    'label' => 'orob2b.order.orderlineitem.quantity.label',
-                ]
-            )
             ->add(
                 'productUnit',
                 ProductUnitSelectionType::NAME,
                 [
                     'label' => 'orob2b.product.productunit.entity_label',
                     'required' => true,
+                ]
+            )
+            ->add(
+                'quantity',
+                QuantityType::NAME,
+                [
+                    'required' => true,
+                    'label' => 'orob2b.order.orderlineitem.quantity.label',
+                    'default_data' => 1,
+                    'product' => $orderLineItem ? $orderLineItem->getProduct() : null
                 ]
             )
             ->add(
@@ -66,17 +75,6 @@ abstract class AbstractOrderLineItemType extends AbstractType
                     'label' => 'orob2b.order.orderlineitem.comment.label',
                 ]
             );
-
-        // Set quantity to 1 by default
-        $builder->get('quantity')->addEventListener(
-            FormEvents::PRE_SET_DATA,
-            function (FormEvent $event) {
-                $data = $event->getData();
-                if (!$data) {
-                    $event->setData(1);
-                }
-            }
-        );
 
         $builder->addEventListener(
             FormEvents::POST_SET_DATA,
@@ -103,7 +101,7 @@ abstract class AbstractOrderLineItemType extends AbstractType
                 'intention' => 'order_line_item',
                 'page_component' => 'oroui/js/app/components/view-component',
                 'page_component_options' => [],
-                'currency' => null
+                'currency' => null,
             ]
         );
         $resolver->setAllowedTypes('page_component_options', 'array');

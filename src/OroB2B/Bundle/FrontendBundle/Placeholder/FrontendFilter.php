@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\FrontendBundle\Placeholder;
 
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
 
@@ -14,24 +14,18 @@ class FrontendFilter
     protected $helper;
 
     /**
-     * @var Request
+     * @var RequestStack
      */
-    protected $request;
+    protected $requestStack;
 
     /**
      * @param FrontendHelper $helper
+     * @param RequestStack $requestStack
      */
-    public function __construct(FrontendHelper $helper)
+    public function __construct(FrontendHelper $helper, RequestStack $requestStack)
     {
         $this->helper = $helper;
-    }
-
-    /**
-     * @param Request|null $request
-     */
-    public function setRequest(Request $request = null)
-    {
-        $this->request = $request;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -39,11 +33,12 @@ class FrontendFilter
      */
     public function isFrontendRoute()
     {
-        if (!$this->request) {
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
             return false;
         }
 
-        return $this->helper->isFrontendRequest($this->request);
+        return $this->helper->isFrontendRequest($request);
     }
 
     /**
@@ -51,10 +46,11 @@ class FrontendFilter
      */
     public function isBackendRoute()
     {
-        if (!$this->request) {
+        $request = $this->requestStack->getCurrentRequest();
+        if (!$request) {
             return true;
         }
 
-        return !$this->helper->isFrontendRequest($this->request);
+        return !$this->helper->isFrontendRequest($request);
     }
 }

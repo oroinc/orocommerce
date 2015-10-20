@@ -45,6 +45,19 @@
 {% block content_data %}
     {% set id = 'account-user-role-edit' %}
 
+    {% set accountSelectorComponentOptions = {
+        accountFieldId: '#' ~ form.account.vars.id,
+        datagridName: 'account-account-users-grid-update',
+        originalValue: form.account.vars.value
+    } %}
+
+    {% set accountSelector %}
+        <div data-page-component-module="orob2baccount/js/app/components/account-user-role-component"
+             data-page-component-options="{{ accountSelectorComponentOptions|json_encode }}">
+            {{ form_row(form.account) }}
+        </div>
+    {% endset %}
+
     {% set dataBlocks = [
         {
             'title': 'orob2b.account.sections.general'|trans,
@@ -53,21 +66,14 @@
                 {
                     'data': [
                         form_row(form.label),
-                        form_row(form.account, {id: 'roleAccount'})
+                        accountSelector
                     ]
                 }
             ]
         }
     ] %}
 
-    <span data-page-component-module="orob2baccount/js/app/components/account-user-role-component"
-          data-page-component-options="{{ {
-              accountFieldId: 'roleAccount',
-              appendFieldId: 'roleAppendUsers',
-              removeFieldId: 'roleRemoveUsers',
-              datagridName: 'account-account-users-grid-update',
-              role: entity.id
-          }|json_encode }}"></span>
+
 
     {% for name, config in form.vars.privilegeConfig %}
         {% set dataBlocks = dataBlocks|merge([{
@@ -92,7 +98,7 @@
             'data' : [
                 form_widget(form.appendUsers, {'id': 'roleAppendUsers'}),
                 form_widget(form.removeUsers, {'id': 'roleRemoveUsers'}),
-                dataGrid.renderGrid('account-account-users-grid-update', {role: entity.id, account: entity.account ? entity.account.id : null}, { cssClass: 'inner-grid' })
+                dataGrid.renderGrid('account-account-users-grid-update', {role: entity.id, account: entity.account.id|default(null)}, { cssClass: 'inner-grid' })
             ]
         }]
     }] ) %}

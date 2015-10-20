@@ -61,13 +61,13 @@ define(function(require) {
                 )
             );
 
-            this.prepareCurrencySelect(true);
+            this.prepareCurrencySelect(false);
             this.$elem.on(
                 'change',
                 options.priceListSelector,
                 _.bind(
                     function() {
-                        this.prepareCurrencySelect(false);
+                        this.prepareCurrencySelect(true);
                     },
                     this
                 )
@@ -77,19 +77,22 @@ define(function(require) {
         /**
          * Prepare currency list select for selected price list
          *
-         *  @param {Boolean} skipClear
+         *  @param {Boolean} selectFirst
          */
-        prepareCurrencySelect: function(skipClear) {
+        prepareCurrencySelect: function(selectFirst) {
             var priceListId = this.$priceListSelect.val();
             var self = this;
 
             if (!priceListId) {
+                this.$currencySelect.find('option[value=""]').show();
                 this.$currencySelect.attr('disabled', 'disabled');
+                this.$currencySelect.val('');
+                this.$currencySelect.trigger('change');
                 return;
             }
 
             if (_.has(this.currencies, priceListId)) {
-                this.handleCurrencies(this.currencies[priceListId], skipClear);
+                this.handleCurrencies(this.currencies[priceListId], selectFirst);
             } else {
                 $.ajax({
                     url: routing.generate(this.options.currenciesRoute, {'id': priceListId}),
@@ -101,7 +104,7 @@ define(function(require) {
                         var priceListCurrencies = _.keys(response);
                         self.currencies[priceListId] = priceListCurrencies;
                         self.$elem.closest(self.options.container).data('currencies', self.currencies);
-                        self.handleCurrencies(priceListCurrencies, skipClear);
+                        self.handleCurrencies(priceListCurrencies, selectFirst);
                     },
                     complete: function() {
                         self.loadingMaskView.hide();
@@ -115,11 +118,13 @@ define(function(require) {
 
         /**
          * @param {array} priceListCurrencies
-         * @param {Boolean} skipClear
+         * @param {Boolean} selectFirst
          */
-        handleCurrencies: function(priceListCurrencies, skipClear) {
+        handleCurrencies: function(priceListCurrencies, selectFirst) {
             // Add empty key for empty value placeholder
-            priceListCurrencies.unshift('');
+            if (priceListCurrencies.indexOf('') === -1) {
+                priceListCurrencies.unshift('');
+            }
 
             var newOptions = _.filter(
                 this.systemSupportedCurrencyOptions,
@@ -129,10 +134,11 @@ define(function(require) {
             );
 
             this.$currencySelect.html(newOptions);
+            this.$currencySelect.find('option[value=""]').hide();
             this.$currencySelect.removeAttr('disabled');
 
-            if (!skipClear) {
-                this.$currencySelect.val('');
+            if (selectFirst) {
+                this.$currencySelect.val(priceListCurrencies[1]);
                 this.$currencySelect.trigger('change');
             }
         },
