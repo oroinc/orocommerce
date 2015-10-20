@@ -2,16 +2,17 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Controller\Frontend;
 
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
-
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Controller\OrderController as BaseOrderController;
 
-class OrderController extends BaseOrderController
+class OrderController extends Controller
 {
     /**
      * @Route("/create/{id}", name="orob2b_shopping_list_frontend_create_order", requirements={"id"="\d+"})
@@ -19,14 +20,12 @@ class OrderController extends BaseOrderController
      *
      * @param ShoppingList $shoppingList
      *
-     * @return array
+     * @return RedirectResponse
      */
     public function createAction(ShoppingList $shoppingList)
     {
-        $this->saveToStorage($shoppingList);
+        $this->get('orob2b_shopping_list.service.product_data_storage')->saveToStorage($shoppingList);
 
-        return $this->redirect(
-            $this->generateUrl('orob2b_order_frontend_create', [ProductDataStorage::STORAGE_KEY => true])
-        );
+        $this->redirectToRoute('orob2b_order_frontend_create', [ProductDataStorage::STORAGE_KEY => true]);
     }
 }

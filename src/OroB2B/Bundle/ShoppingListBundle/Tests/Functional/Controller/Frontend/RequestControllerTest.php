@@ -22,7 +22,7 @@ class RequestControllerTest extends WebTestCase
         );
 
         if (!$this->client->getContainer()->hasParameter('orob2b_rfp.entity.request.class')) {
-            static::markTestSkipped('RFPBundle disabled');
+            static::markTestSkipped('OroB2BRFPBundle is not installed');
         }
 
         $this->loadFixtures(

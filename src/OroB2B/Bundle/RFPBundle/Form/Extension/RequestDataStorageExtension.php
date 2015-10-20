@@ -7,6 +7,7 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Extension\AbstractProductDataStorageExtension;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
@@ -25,11 +26,11 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
         $requestProductItem = new RequestProductItem();
         $requestProduct = new RequestProduct();
 
+        $this->fillEntityData($requestProduct, $itemData);
+
         $requestProduct
             ->setProduct($product)
             ->addRequestProductItem($requestProductItem);
-
-        $this->fillEntityData($requestProduct, $itemData);
 
         if (array_key_exists(ProductDataStorage::PRODUCT_QUANTITY_KEY, $itemData)) {
             $requestProductItem->setQuantity($itemData[ProductDataStorage::PRODUCT_QUANTITY_KEY]);
