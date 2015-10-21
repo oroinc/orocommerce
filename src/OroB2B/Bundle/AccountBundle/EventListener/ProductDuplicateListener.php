@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\EventListener;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Util\ClassUtils;
 
@@ -14,7 +14,7 @@ class ProductDuplicateListener
     /** @var  string */
     protected $fieldName;
 
-    /** @var Registry */
+    /** @var ManagerRegistry */
     protected $registry;
 
     /** @var string */
@@ -27,9 +27,9 @@ class ProductDuplicateListener
     protected $visibilityAccountGroupClassName;
 
     /**
-     * @param Registry $registry
+     * @param ManagerRegistry $registry
      */
-    public function __construct(Registry $registry)
+    public function __construct(ManagerRegistry $registry)
     {
         $this->registry = $registry;
     }
