@@ -160,7 +160,7 @@ class ProductRowCollectionTypeTest extends FormIntegrationTestCase
                     ]
                 ],
                 'options' => [
-                    'row_count_initial' => 5
+                    'row_count' => 5
                 ]
             ]
         ];
