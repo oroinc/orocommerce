@@ -74,7 +74,7 @@
         {% endif %}
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
         {% set id = id ~ '_collection' %}
-        {% set row_count = form.vars.row_count %}
+        {% set row_count = form.vars.row_count_initial %}
         <div class="row-oro add-products">
             {% set prototype_name = form.vars.prototype_name %}
             <div {{ block('widget_container_attributes') }}>
