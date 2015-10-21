@@ -11,6 +11,7 @@ use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Event\OrmResultBefore;
 
 use OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
+use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 class VisibilityGridListener
 {
@@ -64,10 +65,32 @@ class VisibilityGridListener
         $config = $event->getConfig();
         $datagridName = $config->getName();
         $visibilityClass = $this->subscribedGridConfig[$datagridName]['visibilityEntityClass'];
+        $params = $event->getParameters();
         $targetEntity = $this->getEntity(
-            $event->getParameters()->get('target_entity_id'),
+            $params->get('target_entity_id'),
             $this->subscribedGridConfig[$datagridName]['targetEntityClass']
         );
+        if (is_a($visibilityClass, 'OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface', true)) {
+            $selectorPath = '[options][cellSelection][selector]';
+            $scopePath = '[scope]';
+            $websiteId = $params->get('website_id');
+            $config->offsetSetByPath(
+                $selectorPath,
+                sprintf(
+                    '%s-%d',
+                    $config->offsetGetByPath($selectorPath),
+                    $websiteId
+                )
+            );
+            $config->offsetSetByPath(
+                $scopePath,
+                sprintf(
+                    '%s-%d',
+                    $config->offsetGetByPath($scopePath),
+                    $websiteId
+                )
+            );
+        }
         $this->setVisibilityChoices(
             $targetEntity,
             $config,

@@ -52,8 +52,10 @@ parameters:
     orob2b_account.event_listener.system_config.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigListener
     orob2b_account.event_listener.form_view.class: OroB2B\Bundle\AccountBundle\EventListener\FormViewListener
     orob2b_account.event_listener.visibility_grid_listener.class: OroB2B\Bundle\AccountBundle\EventListener\VisibilityGridListener
-
-    orob2b_account.event_listener.visibility.form_handler.class: OroB2B\Bundle\AccountBundle\EventListener\VisibilityPostSubmitListener
+    orob2b_account.event_listener.system_config.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigListener
+    orob2b_account.event_listener.abstract_visibility_post_submit.form_handler.class: OroB2B\Bundle\AccountBundle\EventListener\AbstractVisibilityPostSubmitListener
+    orob2b_account.event_listener.category_visibility.form_handler.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryVisibilityPostSubmitListener
+    orob2b_account.event_listener.product_visibility.form_handler.class: OroB2B\Bundle\AccountBundle\EventListener\ProductVisibilityPostSubmitListener
 
     orob2b_account.visibility.listener.abstract.class: OroB2B\Bundle\AccountBundle\EventListener\VisibilityAbstractListener
 
@@ -519,13 +521,21 @@ services:
         arguments:
             - @doctrine
 
-    orob2b_account.event_listener.visibility.form_handler:
-        class: %orob2b_account.event_listener.visibility.form_handler.class%
+    orob2b_account.event_listener.abstract_visibility_post_submit.form_handler:
+        class: %orob2b_account.event_listener.abstract_visibility_post_submit.form_handler.class%
         parent: orob2b_account.visibility.listener.abstract
-        calls:
-            - [ setVisibilityField, ['visibility']]
+
+    orob2b_account.event_listener.category_visibility.form_handler:
+        class: %orob2b_account.event_listener.category_visibility.form_handler.class%
+        parent: orob2b_account.event_listener.abstract_visibility_post_submit.form_handler
         tags:
             - { name: kernel.event_listener, event: orob2b_catalog.category.edit, method: onPostSubmit }
+
+    orob2b_account.event_listener.product_visibility.form_handler:
+        class: %orob2b_account.event_listener.product_visibility.form_handler.class%
+        parent: orob2b_account.event_listener.abstract_visibility_post_submit.form_handler
+        tags:
+            - { name: kernel.event_listener, event: orob2b_product.product.edit, method: onPostSubmit }
 
     orob2b_account.account_delete_handler:
         class: %orob2b_account.account_delete_handler.class%

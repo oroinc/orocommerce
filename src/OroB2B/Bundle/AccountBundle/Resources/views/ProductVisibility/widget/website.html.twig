@@ -1,1 +1,16 @@
-{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
+<div class="widget-content">
+    <br />
+    <div id="product-visibility-all">
+        {{ form_row(form.children[website.id].all) }}
+    </div>
+    <div id="product-visibility-account-group">
+        {{ form_row(form.children[website.id].accountGroup, {'id': 'accountgroup-product-visibility-changeset'~'-'~website.id}) }}
+        {{ dataGrid.renderGrid('account-group-product-visibility-grid', {target_entity_id: entity.id, website_id: website.id}) }}
+    </div>
+    <div id="product-visibility-account">
+        {{ form_row(form.children[website.id].account, {'id': 'account-product-visibility-changeset'~'-'~website.id}) }}
+        {{ dataGrid.renderGrid('account-product-visibility-grid', {target_entity_id: entity.id, website_id: website.id}) }}
+    </div>
+</div>
