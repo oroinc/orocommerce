@@ -4,6 +4,9 @@ namespace OroB2B\Bundle\AccountBundle\EventListener;
 
 use Symfony\Component\Form\FormInterface;
 
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
@@ -18,9 +21,14 @@ abstract class AbstractVisibilityPostSubmitListener extends VisibilityAbstractLi
 
     /**
      * @param FormInterface $visibilityForm
+     * @param Product|Category $targetEntity
      */
-    protected function saveForm(FormInterface $visibilityForm)
+    protected function saveForm(FormInterface $visibilityForm, $targetEntity)
     {
+        if (!$visibilityForm->isValid() || !is_object($targetEntity) || !$targetEntity->getId()) {
+            return;
+        }
+
         $this->saveFormAllData($visibilityForm);
         $this->saveFormAccountGroupData($visibilityForm);
         $this->saveFormAccountData($visibilityForm);

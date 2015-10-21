@@ -62,6 +62,7 @@ parameters:
     orob2b_account.event_listener.system_config.category_visibility.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigCategoryVisibilityListener
     orob2b_account.event_listener.category_visibility_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryVisibilityListener
     orob2b_account.event_listener.category_tree_handler_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryTreeHandlerListener
+    orob2b_account.event_listener.product_duplicate_listener.class: OroB2B\Bundle\AccountBundle\EventListener\ProductDuplicateListener
 
     # Datagrid Listeners
     orob2b_account.event_listener.datagrid.account_user.class: OroB2B\Bundle\AccountBundle\EventListener\Datagrid\AccountUserDatagridListener
@@ -514,6 +515,18 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.account-group-product-visibility-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before.account-product-visibility-grid, method: onResultBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before.account-group-product-visibility-grid, method: onResultBefore }
+
+    orob2b_account.event_listener.product_duplicate_listener:
+        class: %orob2b_account.event_listener.product_duplicate_listener.class%
+        arguments:
+            - @doctrine
+        tags:
+            - { name: kernel.event_listener, event: orob2b_product.product.duplicate.after, method: onDuplicateProduct }
+        calls:
+            - [ setVisibilityToAllClassName, [ %orob2b_account.entity.product_visibility.class% ] ]
+            - [ setVisibilityAccountGroupClassName, [ %orob2b_account.entity.account_group_product_visibility.class% ] ]
+            - [ setVisibilityAccountClassName, [ %orob2b_account.entity.account_product_visibility.class% ] ]
+            - [ setFieldName, ['product'] ]
 
     orob2b_account.visibility.listener.abstract:
         class: %orob2b_account.visibility.listener.abstract.class%
