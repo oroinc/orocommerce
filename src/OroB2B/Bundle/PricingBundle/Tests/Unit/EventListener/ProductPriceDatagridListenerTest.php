@@ -200,18 +200,18 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                         'columns' => [
                             'price_column_usd_value' => [
                                 'type' => 'product-price',
-                                'data_name' => 'price_column_usd_value'
+                                'data_name' => 'USD'
                             ],
                             'price_column_eur_value' => [
                                 'type' => 'product-price',
-                                'data_name' => 'price_column_eur_value'
+                                'data_name' => 'EUR'
                             ],
                             'price_column_usd_unit1_value' => [
-                                'type' => 'product-price',
+                                'type' => 'number-range',
                                 'data_name' => 'price_column_usd_unit1_value'
                             ],
                             'price_column_eur_unit1_value' => [
-                                'type' => 'product-price',
+                                'type' => 'number-range',
                                 'data_name' => 'price_column_eur_unit1_value'
                             ],
                         ],
@@ -235,12 +235,11 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                     'source' => [
                         'query' => [
                             'select' => [
-                                0 => 'price_column_usd.value as price_column_usd_value',
-                                1 => 'price_column_eur.value as price_column_eur_value',
+                                0 => 'min(price_column_usd.value) as price_column_usd_value',
+                                1 => 'min(price_column_eur.value) as price_column_eur_value',
                                 2 => 'price_column_usd_unit1.value as price_column_usd_unit1_value',
                                 3 => 'price_column_eur_unit1.value as price_column_eur_unit1_value',
                             ],
-                            'groupBy' => 'product.id',
                             'join' => [
                                 'left' => [
                                     0 => [
@@ -249,7 +248,8 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                                         'conditionType' => 'WITH',
                                         'condition' => 'price_column_usd.product = product.id ' .
                                             'AND price_column_usd.currency = \'USD\' ' .
-                                            'AND price_column_usd.priceList = 1',
+                                            'AND price_column_usd.priceList = 1 ' .
+                                            'AND price_column_usd.quantity = 1',
                                     ],
                                     1 => [
                                         'join' => 'OroB2BPricingBundle:ProductPrice',
@@ -257,7 +257,8 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                                         'conditionType' => 'WITH',
                                         'condition' => 'price_column_eur.product = product.id ' .
                                             'AND price_column_eur.currency = \'EUR\' ' .
-                                            'AND price_column_eur.priceList = 1',
+                                            'AND price_column_eur.priceList = 1 ' .
+                                            'AND price_column_eur.quantity = 1',
                                     ],
                                     2 => [
                                         'join' => 'OroB2BPricingBundle:ProductPrice',
@@ -266,7 +267,8 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                                         'condition' => 'price_column_usd_unit1.product = product.id ' .
                                             'AND price_column_usd_unit1.currency = \'USD\' ' .
                                             'AND price_column_usd_unit1.unit = \'unit1\' ' .
-                                            'AND price_column_usd_unit1.priceList = 1',
+                                            'AND price_column_usd_unit1.priceList = 1 ' .
+                                            'AND price_column_usd_unit1.quantity = 1',
                                     ],
                                     3 => [
                                         'join' => 'OroB2BPricingBundle:ProductPrice',
@@ -275,7 +277,8 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                                         'condition' => 'price_column_eur_unit1.product = product.id ' .
                                             'AND price_column_eur_unit1.currency = \'EUR\' ' .
                                             'AND price_column_eur_unit1.unit = \'unit1\' ' .
-                                            'AND price_column_eur_unit1.priceList = 1',
+                                            'AND price_column_eur_unit1.priceList = 1 ' .
+                                            'AND price_column_eur_unit1.quantity = 1',
                                     ],
                                 ],
                             ],
@@ -354,6 +357,8 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function onResultAfterDataProvider()
     {
+        $unit = $this->getUnit('unit1');
+
         return [
             'no request' => [],
             'no price list id' => [
@@ -386,21 +391,21 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
                 'prices' => [
-                    $this->createPrice(1, 10, 'USD'),
+                    $this->createPrice(1, 10, 'USD', $unit),
                     $this->createPrice(1, 11, 'EUR'),
-                    $this->createPrice(1, 12, 'EUR'),
+                    $this->createPrice(1, 12, 'EUR', $unit),
                     $this->createPrice(2, 20, 'USD'),
                 ],
                 'expectedResults' => [
                     [
                         'id' => 1,
                         'name' => 'first',
-                        'price_column_usd_value' => [$this->createPrice(1, 10, 'USD')],
+                        'price_column_usd_value' => [$this->createPrice(1, 10, 'USD', $unit)],
                         'price_column_eur_value' => [
                             $this->createPrice(1, 11, 'EUR'),
-                            $this->createPrice(1, 12, 'EUR')
+                            $this->createPrice(1, 12, 'EUR', $unit)
                         ],
-                        'price_column_usd_unit1_value' => Price::create(15, 'USD'),
+                        'price_column_usd_unit1_value' => [$this->createPrice(1, 10, 'USD', $unit)],
                         'showTierPrices' => true
                     ],
                     [
@@ -408,7 +413,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                         'name' => 'second',
                         'price_column_usd_value' => [$this->createPrice(2, 20, 'USD')],
                         'price_column_eur_value' => [],
-                        'price_column_eur_unit1_value' => Price::create(22, 'EUR'),
+                        'price_column_eur_unit1_value' => [],
                         'showTierPrices' => true
                     ],
                     [
@@ -443,7 +448,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
      * @param string $currency
      * @return ProductPrice
      */
-    protected function createPrice($productId, $value, $currency)
+    protected function createPrice($productId, $value, $currency, $unit = null)
     {
         $product = new Product();
 
@@ -454,6 +459,9 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $price = new ProductPrice();
         $price->setProduct($product)
             ->setPrice(Price::create($value, $currency));
+        if ($unit) {
+            $price->setUnit($unit);
+        }
 
         return $price;
     }
@@ -463,13 +471,12 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getRepository()
     {
-        $unit1 = (new ProductUnit())->setCode('unit1');
         $repository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $repository->expects($this->any())
             ->method('findBy')
-            ->willReturn([$unit1]);
+            ->willReturn([$this->getUnit('unit1')]);
 
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityRepository')
@@ -490,5 +497,14 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $reflection->setAccessible(true);
 
         return $reflection->getValue($object);
+    }
+
+    /**
+     * @param string $unitCode
+     * @return ProductUnit
+     */
+    protected function getUnit($unitCode)
+    {
+        return (new ProductUnit())->setCode($unitCode);
     }
 }

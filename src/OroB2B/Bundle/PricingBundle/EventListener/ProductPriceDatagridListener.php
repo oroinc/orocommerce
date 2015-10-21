@@ -6,7 +6,6 @@ use Doctrine\ORM\Query\Expr;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
@@ -129,6 +128,7 @@ class ProductPriceDatagridListener
         $priceList = $this->getPriceList();
         $showTierPrices = $this->priceListRequestHandler->getShowTierPrices();
         $prices = $priceRepository->findByPriceListIdAndProductIds($priceList->getId(), $productIds, $showTierPrices);
+        $pricesByUnits = $this->getPricesByUnits($prices);
         $groupedPrices = $this->groupPrices($prices);
 
         foreach ($records as $record) {
@@ -139,12 +139,10 @@ class ProductPriceDatagridListener
             foreach ($currencies as $currencyIsoCode) {
                 foreach ($units as $unit) {
                     $priceUnitColumn = $this->buildDataName($this->buildColumnName($currencyIsoCode, $unit));
-                    $value = $record->getValue($priceUnitColumn);
-                    if (null === $value) {
-                        continue;
-                    }
-                    $price = Price::create($value, $currencyIsoCode);
-                    $record->addData([$priceUnitColumn => $price]);
+                    $priceUnitData = isset($pricesByUnits[$productId][$currencyIsoCode][$unit->getCode()])
+                        ? $pricesByUnits[$productId][$currencyIsoCode][$unit->getCode()]
+                        : [];
+                    $record->addData([$priceUnitColumn => $priceUnitData]);
                 }
 
                 $priceColumn = $this->buildDataName($this->buildColumnName($currencyIsoCode));
@@ -227,8 +225,11 @@ class ProductPriceDatagridListener
         $priceList = $this->getPriceList();
 
         // select
-        $this->addConfigElement($config, '[source][query][select]', sprintf('%s.value as %s', $joinAlias, $columnName));
-        $config->offsetSetByPath('[source][query][groupBy]', 'product.id');
+        $this->addConfigElement(
+            $config,
+            '[source][query][select]',
+            sprintf('min(%s.value) as %s', $joinAlias, $columnName)
+        );
 
         // left join
         $expr = new Expr();
@@ -236,6 +237,7 @@ class ProductPriceDatagridListener
             ->andX(sprintf('%s.product = product.id', $joinAlias))
             ->add($expr->eq(sprintf('%s.currency', $joinAlias), $expr->literal($currency)))
             ->add($expr->eq(sprintf('%s.priceList', $joinAlias), $expr->literal($priceList->getId())))
+            ->add($expr->eq(sprintf('%s.quantity', $joinAlias), 1))
         ;
         $leftJoin = [
             'join' => $this->productPriceClass,
@@ -264,7 +266,7 @@ class ProductPriceDatagridListener
         // filter
         $filter = [
             'type' => 'product-price',
-            'data_name' => $columnName,
+            'data_name' => $currency,
         ];
 
         $this->addConfigElement($config, '[filters][columns]', $filter, $columnName);
@@ -282,8 +284,11 @@ class ProductPriceDatagridListener
         $priceList = $this->getPriceList();
 
         // select
-        $this->addConfigElement($config, '[source][query][select]', sprintf('%s.value as %s', $joinAlias, $columnName));
-        $config->offsetSetByPath('[source][query][groupBy]', 'product.id');
+        $this->addConfigElement(
+            $config,
+            '[source][query][select]',
+            sprintf('%s.value as %s', $joinAlias, $columnName)
+        );
 
         // left join
         $expr = new Expr();
@@ -292,6 +297,7 @@ class ProductPriceDatagridListener
             ->add($expr->eq(sprintf('%s.currency', $joinAlias), $expr->literal($currency)))
             ->add($expr->eq(sprintf('%s.unit', $joinAlias), $expr->literal($unit)))
             ->add($expr->eq(sprintf('%s.priceList', $joinAlias), $expr->literal($priceList->getId())))
+            ->add($expr->eq(sprintf('%s.quantity', $joinAlias), 1))
         ;
         $leftJoin = [
             'join' => $this->productPriceClass,
@@ -323,7 +329,7 @@ class ProductPriceDatagridListener
 
         // filter
         $filter = [
-            'type' => 'product-price',
+            'type' => 'number-range',
             'data_name' => $columnName,
         ];
 
@@ -356,5 +362,24 @@ class ProductPriceDatagridListener
             ->getEntityRepository($this->productUnitClass)
             ->findBy([], ['code' => 'ASC'])
         ;
+    }
+
+    /**
+     * @param ProductPrice[] $productPrices
+     * @return array
+     */
+    protected function getPricesByUnits(array $productPrices)
+    {
+        $result = [];
+        foreach ($productPrices as $productPrice) {
+            if (null === $productPrice->getUnit()) {
+                continue;
+            }
+            $currency = $productPrice->getPrice()->getCurrency();
+            $unitCode = $productPrice->getUnit()->getCode();
+            $result[$productPrice->getProduct()->getId()][$currency][$unitCode][] = $productPrice;
+        }
+
+        return $result;
     }
 }
