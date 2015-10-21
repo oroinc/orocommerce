@@ -3,12 +3,10 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
+
 use OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
 use OroB2B\Bundle\AccountBundle\EventListener\ProductVisibilityPostSubmitListener;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use Symfony\Component\Form\Form;
-use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormInterface;
 
 /**
@@ -44,17 +42,15 @@ class ProductVisibilityPostSubmitListenerTest extends VisibilityAbstractListener
      */
     protected function getFormAwareEventMock()
     {
-        /** @var Product $category */
-        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', self::PRODUCT_ID);
-        
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $visibilityForm = $this->getMock('Symfony\Component\Form\FormInterface');
 
-        /** @var FormConfigInterface|\PHPUnit_Framework_MockObject_MockObject $formConfigInterface */
-        $formConfigInterface = $this->getMock('Symfony\Component\Form\FormConfigInterface');
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
 
-        $form = new Form($formConfigInterface);
-        $form->add($visibilityForm);
+        $form->expects($this->any())
+            ->method('all')
+            ->willReturn([$visibilityForm]);
 
         /** @var AfterFormProcessEvent |\PHPUnit_Framework_MockObject_MockObject $event */
         $event = $this->getMockBuilder('Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent')
@@ -66,23 +62,5 @@ class ProductVisibilityPostSubmitListenerTest extends VisibilityAbstractListener
             ->willReturn($form);
 
         return $event;
-    }
-
-    /**
-     * @param string $className
-     * @param int $id
-     *
-     * @return object
-     */
-    protected function getEntity($className, $id)
-    {
-        $entity = new $className;
-
-        $reflectionClass = new \ReflectionClass($className);
-        $method = $reflectionClass->getProperty('id');
-        $method->setAccessible(true);
-        $method->setValue($entity, $id);
-
-        return $entity;
     }
 }

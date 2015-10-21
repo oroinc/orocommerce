@@ -7,6 +7,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class EntityVisibilityType extends TextType
 {
+    const NAME = 'orob2b_account_entity_visibility_type';
+
     /**
      * @param OptionsResolver $resolver
      */
