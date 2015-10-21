@@ -276,3 +276,5 @@ services:
             - @doctrine
         tags:
             - { name: form.type, alias: orob2b_account_website_scoped_data_type }
+        calls:
+            - [setWebsiteClass,[%orob2b_website.website.class%]]

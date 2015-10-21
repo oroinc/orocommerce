@@ -16,11 +16,7 @@ class CategoryVisibilityPostSubmitListener extends AbstractVisibilityPostSubmitL
         $visibilityForm = $form->get($this->visibilityField);
         $targetEntity = $visibilityForm->getData();
 
-        if (!$visibilityForm->isValid() || !is_object($targetEntity) || !$targetEntity->getId()) {
-            return;
-        }
-
-        $this->saveForm($visibilityForm);
+        $this->saveForm($visibilityForm, $targetEntity);
 
         $this->getEntityManager($targetEntity)->flush();
     }

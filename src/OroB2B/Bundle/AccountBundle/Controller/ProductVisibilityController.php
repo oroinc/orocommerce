@@ -23,7 +23,7 @@ class ProductVisibilityController extends Controller
     /**
      * @Route("/edit/{id}", name="orob2b_account_product_visibility_edit", requirements={"id"="\d+"})
      * @Template
-     * @AclAncestor("orob2b_product_visibility_edit")
+     * @AclAncestor("orob2b_product_update")
      *
      * @param Request $request
      * @param Product $product
@@ -73,7 +73,7 @@ class ProductVisibilityController extends Controller
      * )
      * @ParamConverter("product", options={"id" = "productId"})
      * @Template("OroB2BAccountBundle:ProductVisibility/widget:website.html.twig")
-     * @AclAncestor("orob2b_website_view")
+     * @AclAncestor("orob2b_product_update")
      *
      * @param Product $product
      * @param Website $website
