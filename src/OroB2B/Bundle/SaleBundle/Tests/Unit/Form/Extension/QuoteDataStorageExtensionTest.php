@@ -180,7 +180,7 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
     }
 
     /**
-     * @return type
+     * @return array
      */
     public function buildProvider()
     {

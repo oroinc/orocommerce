@@ -189,7 +189,7 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
      */
     protected function assertMetadataCalled(array $mappings = [])
     {
-        /* @var $metadata ClassMetadata|\PHPUnit_Framework_MockObject_MockObject */
+        /** @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject $metadata */
         $metadata = $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadata')
             ->disableOriginalConstructor()
             ->getMock();
@@ -250,17 +250,13 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
 
     /**
      * @param string $className
-     * @param int $id
+     * @param int|string $id
      * @param string $primaryKey
      * @return object
      */
     public function getEntity($className, $id, $primaryKey = 'id')
     {
         static $entities = [];
-
-        if (!isset($entities[$className])) {
-            $entities[$className] = [];
-        }
 
         if (!isset($entities[$className][$id])) {
             $ident = $this->getPrimaryKey($className, $primaryKey);
