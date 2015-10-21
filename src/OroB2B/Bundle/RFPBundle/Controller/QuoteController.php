@@ -11,7 +11,6 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
-use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 
 class QuoteController extends Controller
 {
@@ -42,6 +41,7 @@ class QuoteController extends Controller
             ProductDataStorage::ENTITY_DATA_KEY => [
                 'accountUser' => $rfpRequest->getAccountUser() ? $rfpRequest->getAccountUser()->getId() : null,
                 'account' => $rfpRequest->getAccount() ? $rfpRequest->getAccount()->getId() : null,
+                'request' => $rfpRequest->getId(),
             ],
         ];
 
@@ -65,9 +65,7 @@ class QuoteController extends Controller
             $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = [
                 ProductDataStorage::PRODUCT_SKU_KEY => $requestProduct->getProduct()->getSku(),
                 ProductDataStorage::PRODUCT_QUANTITY_KEY => null,
-                'type' => QuoteProduct::TYPE_REQUESTED,
                 'commentAccount' => $requestProduct->getComment(),
-                'requestProduct' => $requestProduct->getId(),
                 'requestProductItems' => $items,
             ];
         }
