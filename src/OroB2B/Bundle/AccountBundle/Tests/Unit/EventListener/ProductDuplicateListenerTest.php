@@ -3,9 +3,9 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\Common\Util\ClassUtils;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
@@ -55,8 +55,8 @@ class ProductDuplicateListenerTest extends \PHPUnit_Framework_TestCase
         $visibilityToAccount = new AccountProductVisibility();
         $visibilityToAccountGroup = new AccountGroupProductVisibility();
 
-        /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject $repoAll */
-        $repoVisibilityAll = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+        /** @var ObjectRepository|\PHPUnit_Framework_MockObject_MockObject $repoAll */
+        $repoVisibilityAll = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectRepository')
             ->disableOriginalConstructor()
             ->getMock();
         $repoVisibilityAccount = clone $repoVisibilityAll;
@@ -76,8 +76,8 @@ class ProductDuplicateListenerTest extends \PHPUnit_Framework_TestCase
             ->method('findBy')
             ->with(['product' => $sourceProduct])
             ->willReturn([$visibilityToAccountGroup]);
-        /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $manager */
-        $manager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+        /** @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject $manager */
+        $manager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
             ->disableOriginalConstructor()
             ->getMock();
 
