@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\WebsiteBundle\Tests\Unit\Entity\Repository;
+namespace OroB2B\Bundle\WebsiteBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
