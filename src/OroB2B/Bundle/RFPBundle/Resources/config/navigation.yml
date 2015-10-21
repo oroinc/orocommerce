@@ -1,5 +1,11 @@
 oro_menu_config:
     items:
+        sales_tab:
+            label: 'orob2b.menu.sales_tab.label'
+            uri:   '#'
+            extras:
+                position: 300
+
         frontend_request:
             label:           'orob2b.frontend.rfp.request.entity_plural_label'
             route:           'orob2b_rfp_frontend_request_index'
