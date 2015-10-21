@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Form\Type;
 
-use Doctrine\ORM\EntityManager;
-use OroB2B\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -13,7 +11,9 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
 
+use OroB2B\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class WebsiteScopedDataType extends AbstractType
