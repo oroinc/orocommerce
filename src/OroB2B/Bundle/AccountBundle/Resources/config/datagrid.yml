@@ -815,6 +815,7 @@ datagrid:
             id: ~
 
     account-product-visibility-grid:
+        scope: website
         source:
             type:              orm
             query:
@@ -866,6 +867,7 @@ datagrid:
             id: ~
 
     account-group-product-visibility-grid:
+        scope: website
         source:
             type:              orm
             query:

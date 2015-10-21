@@ -72,12 +72,22 @@ class VisibilityGridListener
         );
         if (is_a($visibilityClass, 'OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface', true)) {
             $selectorPath = '[options][cellSelection][selector]';
+            $scopePath = '[scope]';
+            $websiteId = $params->get('website_id');
             $config->offsetSetByPath(
                 $selectorPath,
                 sprintf(
                     '%s-%d',
                     $config->offsetGetByPath($selectorPath),
-                    $params->get('website_id')
+                    $websiteId
+                )
+            );
+            $config->offsetSetByPath(
+                $scopePath,
+                sprintf(
+                    '%s-%d',
+                    $config->offsetGetByPath($scopePath),
+                    $websiteId
                 )
             );
         }
