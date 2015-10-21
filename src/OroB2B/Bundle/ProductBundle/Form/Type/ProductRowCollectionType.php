@@ -82,14 +82,6 @@ class ProductRowCollectionType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function buildView(FormView $view, FormInterface $form, array $options)
-    {
-        $view->vars['row_count'] = $options['row_count'];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return self::NAME;

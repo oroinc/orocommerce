@@ -68,16 +68,6 @@ class ProductRowCollectionTypeTest extends FormIntegrationTestCase
 
         $this->assertEquals($defaultData, $form->getData());
 
-        if ($options) {
-            $view = new FormView();
-            $this->formType->buildView($view, $form, $options);
-
-            foreach ($options as $key => $value) {
-                $this->assertArrayHasKey($key, $view->vars);
-                $this->assertEquals($value, $view->vars[$key]);
-            }
-        }
-
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
         $this->assertEquals($expectedData, $form->getData());
@@ -159,9 +149,7 @@ class ProductRowCollectionTypeTest extends FormIntegrationTestCase
                         'productQuantity' => '50'
                     ]
                 ],
-                'options' => [
-                    'row_count' => 5
-                ]
+                'options' => []
             ]
         ];
     }
