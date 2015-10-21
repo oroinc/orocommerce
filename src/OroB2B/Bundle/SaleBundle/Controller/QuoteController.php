@@ -67,6 +67,9 @@ class QuoteController extends Controller
      *     permission="CREATE",
      *     class="OroB2BSaleBundle:Quote"
      * )
+     *
+     * @param Request $request
+     * @return array|RedirectResponse
      */
     public function createAction(Request $request)
     {
