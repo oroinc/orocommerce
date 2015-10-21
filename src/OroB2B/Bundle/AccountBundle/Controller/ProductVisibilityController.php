@@ -6,26 +6,63 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
+use Symfony\Component\HttpFoundation\Request;
+
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
+use OroB2B\Bundle\AccountBundle\Form\Type\WebsiteScopedDataType;
+use OroB2B\Bundle\AccountBundle\Form\Handler\WebsiteScopedDataHandler;
 
-class ProductVisibilityController
+class ProductVisibilityController extends Controller
 {
     /**
      * @Route("/edit/{id}", name="orob2b_account_product_visibility_edit", requirements={"id"="\d+"})
      * @Template
-     * @AclAncestor("orob2b_product_visibility_edit")
+     * @AclAncestor("orob2b_product_update")
      *
+     * @param Request $request
      * @param Product $product
      * @return array
      */
-    public function editAction(Product $product)
+    public function editAction(Request $request, Product $product)
     {
-        return [
-            'entity' => $product,
-        ];
+        $form = $this->createWebsiteScopedDataForm(
+            $product,
+            [
+                $this->getDoctrine()->getRepository('OroB2BWebsiteBundle:Website')->getDefaultWebsite()
+            ],
+            true
+        );
+
+        $handler = new WebsiteScopedDataHandler(
+            $form,
+            $request,
+            $this->get('event_dispatcher')
+        );
+
+        return $this->get('oro_form.model.update_handler')->handleUpdate(
+            $product,
+            $form,
+            function (Product $product) {
+                return [
+                    'route' => 'orob2b_account_product_visibility_edit',
+                    'parameters' => ['id' => $product->getId()],
+                ];
+            },
+            function (Product $product) {
+                return [
+                    'route' => 'orob2b_product_view',
+                    'parameters' => ['id' => $product->getId()],
+                ];
+            },
+            $this->get('translator')->trans('orob2b.account.visibility.event.saved.message'),
+            $handler
+        );
     }
 
     /**
@@ -36,7 +73,7 @@ class ProductVisibilityController
      * )
      * @ParamConverter("product", options={"id" = "productId"})
      * @Template("OroB2BAccountBundle:ProductVisibility/widget:website.html.twig")
-     * @AclAncestor("orob2b_website_view")
+     * @AclAncestor("orob2b_product_update")
      *
      * @param Product $product
      * @param Website $website
@@ -44,9 +81,42 @@ class ProductVisibilityController
      */
     public function websiteWidgetAction(Product $product, Website $website)
     {
+        /** @var Form $form */
+        $form = $this->createWebsiteScopedDataForm($product, [$website]);
+
         return [
-            'product' => $product,
-            'website' => $website,
+            'form' => $form->createView(),
+            'entity' => $product,
+            'website' => $website
         ];
+    }
+
+    /**
+     * @param Product $product
+     * @param array $preloaded_websites
+     * @param bool $skipChildren
+     * @return Form
+     */
+    protected function createWebsiteScopedDataForm(Product $product, array $preloaded_websites, $skipChildren = false)
+    {
+        return $this->createForm(
+            WebsiteScopedDataType::NAME,
+            $product,
+            [
+                'ownership_disabled' => true,
+                'preloaded_websites' => $preloaded_websites,
+                'type' => EntityVisibilityType::NAME,
+                'skipChildren' => $skipChildren,
+                'options' => [
+                    'targetEntityField' => 'product',
+                    'allClass' => $this
+                        ->getParameter('orob2b_account.entity.product_visibility.class'),
+                    'accountGroupClass' => $this
+                        ->getParameter('orob2b_account.entity.account_group_product_visibility.class'),
+                    'accountClass' => $this
+                        ->getParameter('orob2b_account.entity.account_product_visibility.class'),
+                ]
+            ]
+        );
     }
 }

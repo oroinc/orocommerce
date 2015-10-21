@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 
 use OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
-use OroB2B\Bundle\AccountBundle\EventListener\VisibilityPostSubmitListener;
+use OroB2B\Bundle\AccountBundle\EventListener\CategoryVisibilityPostSubmitListener;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
@@ -20,19 +20,19 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class VisibilityPostSubmitListenerTest extends VisibilityAbstractListenerTestCase
+class CategoryVisibilityPostSubmitListenerTest extends VisibilityAbstractListenerTestCase
 {
     const CATEGORY_ID = 123;
 
-    /** @var VisibilityPostSubmitListener */
+    /** @var CategoryVisibilityPostSubmitListener */
     protected $listener;
 
     /**
-     * @return VisibilityPostSubmitListener
+     * @return CategoryVisibilityPostSubmitListener
      */
     public function getListener()
     {
-        $listener = new VisibilityPostSubmitListener($this->registry);
+        $listener = new CategoryVisibilityPostSubmitListener($this->registry);
         $listener->setVisibilityField(EntityVisibilityType::VISIBILITY);
 
         return $listener;
@@ -41,7 +41,7 @@ class VisibilityPostSubmitListenerTest extends VisibilityAbstractListenerTestCas
     public function testInvalidForm()
     {
         $this->form->expects($this->once())->method('isValid')->willReturn(false);
-        $event = $this->getFormAvareEventMock();
+        $event = $this->getFormAwareEventMock();
         $this->form->expects($this->once())->method('getData');
         $this->listener->onPostSubmit($event);
     }
@@ -78,14 +78,14 @@ class VisibilityPostSubmitListenerTest extends VisibilityAbstractListenerTestCas
         $this->form->expects($this->once())->method('isValid')->willReturn(true);
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $form->method('getData')->willReturnOnConsecutiveCalls(
+        $form->expects($this->any())->method('getData')->willReturnOnConsecutiveCalls(
             $visibility,
             new ArrayCollection(),
             new ArrayCollection()
         );
         $this->form->expects($this->exactly(3))->method('get')->willReturn($form);
 
-        $event = $this->getFormAvareEventMock();
+        $event = $this->getFormAwareEventMock();
 
         $this->form->expects($this->atLeast(1))
             ->method('getData')
@@ -124,7 +124,7 @@ class VisibilityPostSubmitListenerTest extends VisibilityAbstractListenerTestCas
     public function testOnPostSubmitWithEmptyData()
     {
         $this->form->expects($this->once())->method('isValid')->willReturn(true);
-        $event = $this->getFormAvareEventMock();
+        $event = $this->getFormAwareEventMock();
         $this->form->expects($this->once())
             ->method('getData')
             ->willReturn(null);
@@ -163,7 +163,7 @@ class VisibilityPostSubmitListenerTest extends VisibilityAbstractListenerTestCas
                     ['accountGroup', $visibilityForAccountGroupFormMock],
                 ]
             );
-        $event = $this->getFormAvareEventMock();
+        $event = $this->getFormAwareEventMock();
 
         return $event;
     }
@@ -319,7 +319,7 @@ class VisibilityPostSubmitListenerTest extends VisibilityAbstractListenerTestCas
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $form->method('getData')->willReturn($visibility);
+        $form->expects($this->any())->method('getData')->willReturn($visibility);
         $this->form->expects($this->once())->method('get')->willReturn($form);
 
         $reflectionClass = new \ReflectionClass($this->listener);
@@ -364,7 +364,7 @@ class VisibilityPostSubmitListenerTest extends VisibilityAbstractListenerTestCas
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $form->method('getData')->willReturn($accountChangeSet);
+        $form->expects($this->any())->method('getData')->willReturn($accountChangeSet);
         $this->form->expects($this->once())->method('get')->willReturn($form);
 
         $reflectionClass = new \ReflectionClass($this->listener);
@@ -409,7 +409,7 @@ class VisibilityPostSubmitListenerTest extends VisibilityAbstractListenerTestCas
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
-        $form->method('getData')->willReturn($accountGroupChangeSet);
+        $form->expects($this->any())->method('getData')->willReturn($accountGroupChangeSet);
         $this->form->expects($this->once())->method('get')->willReturn($form);
 
         $reflectionClass = new \ReflectionClass($this->listener);
@@ -491,7 +491,7 @@ class VisibilityPostSubmitListenerTest extends VisibilityAbstractListenerTestCas
     /**
      * @return AfterFormProcessEvent|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function getFormAvareEventMock()
+    protected function getFormAwareEventMock()
     {
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
