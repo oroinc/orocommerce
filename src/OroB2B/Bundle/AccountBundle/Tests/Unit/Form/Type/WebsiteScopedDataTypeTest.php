@@ -50,7 +50,7 @@ class WebsiteScopedDataTypeTest extends FormIntegrationTestCase
 
         $em->expects($this->any())
             ->method('getReference')
-            ->with('OroB2BWebsiteBundle:Website', self::WEBSITE_ID)
+            ->with('TestWebsiteClass', self::WEBSITE_ID)
             ->willReturn($website);
 
         $repository = $this->getMockBuilder('OroB2B\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository')
@@ -68,15 +68,16 @@ class WebsiteScopedDataTypeTest extends FormIntegrationTestCase
 
         $registry->expects($this->any())
             ->method('getRepository')
-            ->with('OroB2BWebsiteBundle:Website')
+            ->with('TestWebsiteClass')
             ->willReturn($repository);
 
         $registry->expects($this->any())
             ->method('getManagerForClass')
-            ->with('OroB2BWebsiteBundle:Website')
+            ->with('TestWebsiteClass')
             ->willReturn($em);
 
         $this->formType = new WebsiteScopedDataType($registry);
+        $this->formType->setWebsiteClass('TestWebsiteClass');
     }
 
     /**
