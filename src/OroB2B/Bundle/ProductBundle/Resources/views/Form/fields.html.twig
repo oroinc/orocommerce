@@ -74,7 +74,6 @@
         {% endif %}
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
         {% set id = id ~ '_collection' %}
-        {% set row_count = form.vars.row_count %}
         <div class="row-oro add-products">
             {% set prototype_name = form.vars.prototype_name %}
             <div {{ block('widget_container_attributes') }}>
@@ -94,7 +93,7 @@
                             {{ _self.orob2b_product_row_collection_item_prototype(child) }}
                         {% endfor %}
                     {% elseif show_form_when_empty and prototype_html is defined %}
-                        {% for i in 0..(row_count-1) %}
+                        {% for i in 0..(form.vars.row_count_initial - 1) %}
                             {{ prototype_html|replace({(prototype_name): i})|raw }}
                         {% endfor %}
                     {% endif %}
