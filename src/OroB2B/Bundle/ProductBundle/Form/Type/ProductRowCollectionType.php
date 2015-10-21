@@ -21,6 +21,8 @@ class ProductRowCollectionType extends AbstractType
 
     const ROW_COUNT = 5;
 
+    const ROW_COUNT_ADD = 5;
+
     /**
      * {@inheritdoc}
      */
@@ -74,7 +76,8 @@ class ProductRowCollectionType extends AbstractType
                 'type' => ProductRowType::NAME,
                 'required' => false,
                 'handle_primary' => false,
-                'row_count' => self::ROW_COUNT
+                'row_count' => self::ROW_COUNT,
+                'row_count_add' => self::ROW_COUNT_ADD
             ]
         );
     }
