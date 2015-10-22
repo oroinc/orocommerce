@@ -11,7 +11,9 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
 
+use OroB2B\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class WebsiteScopedDataType extends AbstractType
@@ -27,6 +29,11 @@ class WebsiteScopedDataType extends AbstractType
      * @return Website[]
      */
     protected $websites;
+
+    /**
+     * @var string
+     */
+    protected $websiteCLass;
 
     /**
      * {@inheritdoc}
@@ -51,13 +58,12 @@ class WebsiteScopedDataType extends AbstractType
     {
         $resolver->setRequired([
             'type',
-            'skipChildren'
         ]);
 
         $resolver->setDefaults([
-            //'csrf_protection'   => false,
-            'preloaded_websites' => null,
-            'options' => null
+            'preloaded_websites' => [],
+            'options' => null,
+            'skipChildren' => false
         ]);
     }
 
@@ -99,9 +105,11 @@ class WebsiteScopedDataType extends AbstractType
         $formOptions['options']['ownership_disabled'] = true;
 
         foreach ($data as $websiteId => $value) {
-            $formOptions['options']['website'] = $this->registry
-                ->getManagerForClass('OroB2BWebsiteBundle:Website')
-                ->getReference('OroB2BWebsiteBundle:Website', $websiteId);
+            /** @var EntityManager $em */
+            $em = $this->registry->getManagerForClass($this->websiteCLass);
+
+            $formOptions['options']['website'] = $em
+                ->getReference($this->websiteCLass, $websiteId);
 
             $form->add(
                 $websiteId,
@@ -139,9 +147,19 @@ class WebsiteScopedDataType extends AbstractType
     protected function getWebsites()
     {
         if (null === $this->websites) {
-            $this->websites = $this->registry->getRepository('OroB2BWebsiteBundle:Website')->getAllWebsites();
+            /** @var WebsiteRepository $repository */
+            $repository = $this->registry->getRepository($this->websiteCLass);
+            $this->websites = $repository->getAllWebsites();
         }
 
         return $this->websites;
+    }
+
+    /**
+     * @param string $websiteCLass
+     */
+    public function setWebsiteClass($websiteCLass)
+    {
+        $this->websiteCLass = $websiteCLass;
     }
 }

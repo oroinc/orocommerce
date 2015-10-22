@@ -20,7 +20,7 @@ class WebsiteScopedDataHandler
     /** @var Request */
     protected $request;
 
-    /** @var  EventDispatcherInterface */
+    /** @var EventDispatcherInterface */
     protected $eventDispatcher;
 
     /**

@@ -14,12 +14,8 @@ class ProductVisibilityPostSubmitListener extends AbstractVisibilityPostSubmitLi
         $form = $event->getForm();
         $targetEntity = $form->getData();
 
-        foreach ($form as $visibilityForm) {
-            if (!$visibilityForm->isValid() || !is_object($targetEntity) || !$targetEntity->getId()) {
-                return;
-            }
-
-            $this->saveForm($visibilityForm);
+        foreach ($form->all() as $visibilityForm) {
+            $this->saveForm($visibilityForm, $targetEntity);
         }
 
         $this->getEntityManager($targetEntity)->flush();

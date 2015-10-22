@@ -3,11 +3,14 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
@@ -26,14 +29,22 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
 {
 
-    const VISIBILITY_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility';
+    const CATEGORY_VISIBILITY_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility';
+    const PRODUCT_VISIBILITY_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility';
 
-    const TARGET_CLASS = 'OroB2B\Bundle\CatalogBundle\Entity\Category';
+    const CATEGORY_CLASS = 'OroB2B\Bundle\CatalogBundle\Entity\Category';
+    const PRODUCT_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
 
     const ACCOUNT_CATEGORY_VISIBILITY_GRID = 'account-category-visibility-grid';
-    const ACCOUNT_GROUP_CATEGORY_VISIBILITY_GRID = 'account-group-product-visibility-grid';
+    const ACCOUNT_GROUP_CATEGORY_VISIBILITY_GRID = 'account-group-category-visibility-grid';
 
+    const ACCOUNT_PRODUCT_VISIBILITY_GRID = 'account-product-visibility-grid';
+    const ACCOUNT_GROUP_PRODUCT_VISIBILITY_GRID = 'account-group-product-visibility-grid';
 
+    const COLUMNS_PATH = '[columns][visibility]';
+    const FILTERS_PATH = '[filters][columns][visibility][options][field_options]';
+    const SELECTOR_PATH = '[options][cellSelection][selector]';
+    const SCOPE_PATH = '[scope]';
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
      */
@@ -67,12 +78,18 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener = new VisibilityGridListener($this->registry, $this->visibilityChoicesProvider);
         $this->listener->addSubscribedGridConfig(
             self::ACCOUNT_CATEGORY_VISIBILITY_GRID,
-            self::VISIBILITY_CLASS,
-            self::TARGET_CLASS
+            self::CATEGORY_VISIBILITY_CLASS,
+            self::CATEGORY_CLASS
+        );
+
+        $this->listener->addSubscribedGridConfig(
+            self::ACCOUNT_GROUP_PRODUCT_VISIBILITY_GRID,
+            self::PRODUCT_VISIBILITY_CLASS,
+            self::PRODUCT_CLASS
         );
     }
 
-    public function testOnPreBuild()
+    public function testOnPreBuildWithCategory()
     {
         $rootCategory = new Category();
         $subCategory = (new Category())->setParentCategory($rootCategory);
@@ -93,25 +110,24 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
             ->with($this->categoryClass)
             ->willReturn($repository);
 
-        $this->listener->onPreBuild($this->getPreBuild(1, $rootCategory));
-        $this->listener->onPreBuild($this->getPreBuild(2, $subCategory));
+        $this->listener->onPreBuild($this->getPreBuildWithCategory(1, $rootCategory));
+        $this->listener->onPreBuild($this->getPreBuildWithCategory(2, $subCategory));
     }
+
 
     /**
      * @param int|null $categoryId
      * @param Category|null $category
      * @return \PHPUnit_Framework_MockObject_MockObject|PreBuild
      */
-    protected function getPreBuild($categoryId, $category)
+    protected function getPreBuildWithCategory($categoryId, $category)
     {
         $parameters = new ParameterBag();
         $parameters->set('target_entity_id', $categoryId);
 
-        $columnsPath = '[columns][visibility]';
-        $filtersPath = '[filters][columns][visibility][options][field_options]';
-
         $pathConfig = [];
 
+        /** @var DatagridConfiguration|\PHPUnit_Framework_MockObject_MockObject $config */
         $config = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration')
             ->disableOriginalConstructor()
             ->getMock();
@@ -120,15 +136,24 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
             ->method('offsetGetByPath')
             ->willReturnMap(
                 [
-                    [$columnsPath, null, $pathConfig],
-                    [$filtersPath, null, $pathConfig],
+                    [self::COLUMNS_PATH, null, $pathConfig],
+                    [self::FILTERS_PATH, null, $pathConfig],
                 ]
             );
         $config->expects($this->exactly(2))
             ->method('offsetSetByPath')
             ->willReturnCallback(
-                function ($path, $config) use ($category, $columnsPath, $filtersPath) {
-                    $this->assertTrue(in_array($path, [$columnsPath, $filtersPath]));
+                function ($path, $config) use ($category) {
+                    $this->assertContains(
+                        $path,
+                        [VisibilityGridListenerTest::COLUMNS_PATH, VisibilityGridListenerTest::FILTERS_PATH]
+                    );
+
+                    $this->assertNotContains(
+                        $path,
+                        [VisibilityGridListenerTest::SCOPE_PATH, VisibilityGridListenerTest::SELECTOR_PATH]
+                    );
+
                     $this->assertArrayHasKey('choices', $config);
                     if ($category && !$category->getParentCategory()) {
                         $this->assertArrayNotHasKey(CategoryVisibility::PARENT_CATEGORY, $config['choices']);
@@ -139,18 +164,91 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
             );
         $config->expects($this->once())->method('getName')->willReturn(self::ACCOUNT_CATEGORY_VISIBILITY_GRID);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|PreBuild $preBuild */
-        $preBuild = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Event\PreBuild')
+        return $this->getPreBuildEvent($config, $parameters);
+    }
+
+    public function testOnPreBuildWithProduct()
+    {
+        $parameters = new ParameterBag();
+        $product = new Product();
+        $productId = 1;
+        $websiteId = 1;
+        $parameters->set('target_entity_id', $productId);
+        $parameters->set('website_id', $websiteId);
+
+        /** @var DatagridConfiguration|\PHPUnit_Framework_MockObject_MockObject $config */
+        $config = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration')
             ->disableOriginalConstructor()
             ->getMock();
-        $preBuild->expects($this->exactly(1))
-            ->method('getConfig')
-            ->willReturn($config);
-        $preBuild->expects($this->exactly(1))
-            ->method('getParameters')
-            ->willReturn($parameters);
 
-        return $preBuild;
+        $config->expects($this->once())->method('getName')->willReturn(self::ACCOUNT_GROUP_PRODUCT_VISIBILITY_GRID);
+
+        /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
+        $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $repository->expects($this->once())
+            ->method('find')
+            ->with($productId)
+            ->willReturn($product);
+
+        $this->registry->expects($this->once())
+            ->method('getRepository')
+            ->with(self::PRODUCT_CLASS)
+            ->willReturn($repository);
+
+        $selector = '#selector';
+        $scope = 'website';
+
+        $config->expects($this->exactly(4))
+            ->method('offsetGetByPath')
+            ->willReturnMap(
+                [
+                    [self::SELECTOR_PATH, null, $selector],
+                    [self::SCOPE_PATH, null, $scope],
+                    [self::COLUMNS_PATH, null, []],
+                    [self::FILTERS_PATH, null, []],
+                ]
+            );
+
+        $config->expects($this->exactly(4))
+            ->method('offsetSetByPath')
+            ->willReturnCallback(
+                function ($path, $config) use ($websiteId, $selector, $scope, $product) {
+                    $this->assertContains(
+                        $path,
+                        [
+                            VisibilityGridListenerTest::SELECTOR_PATH,
+                            VisibilityGridListenerTest::SCOPE_PATH,
+                            VisibilityGridListenerTest::COLUMNS_PATH,
+                            VisibilityGridListenerTest::FILTERS_PATH,
+                        ]
+                    );
+                    $this->assertContains(
+                        $config,
+                        [
+                            sprintf(
+                                '%s-%d',
+                                $selector,
+                                $websiteId
+                            ),
+                            sprintf(
+                                '%s-%d',
+                                $scope,
+                                $websiteId
+                            ),
+                            [
+                                'choices' => $this->visibilityChoicesProvider->getFormattedChoices(
+                                    VisibilityGridListenerTest::PRODUCT_VISIBILITY_CLASS,
+                                    $product
+                                ),
+                            ],
+                        ]
+                    );
+                }
+            );
+        $event = $this->getPreBuildEvent($config, $parameters);
+        $this->listener->onPreBuild($event);
     }
 
     public function testOnResultBefore()
@@ -200,6 +298,27 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
             $this->getDatagrid($gridName, $bag),
             new Query($this->getEntityManager())
         );
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     * @param ParameterBag $parameters
+     * @return PreBuild|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getPreBuildEvent(DatagridConfiguration $config, ParameterBag $parameters)
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|PreBuild $preBuild */
+        $preBuild = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Event\PreBuild')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $preBuild->expects($this->exactly(1))
+            ->method('getConfig')
+            ->willReturn($config);
+        $preBuild->expects($this->exactly(1))
+            ->method('getParameters')
+            ->willReturn($parameters);
+
+        return $preBuild;
     }
 
     /**
