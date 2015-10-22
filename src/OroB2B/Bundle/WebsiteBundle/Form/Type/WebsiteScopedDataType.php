@@ -62,8 +62,7 @@ class WebsiteScopedDataType extends AbstractType
 
         $resolver->setDefaults([
             'preloaded_websites' => [],
-            'options' => null,
-            'skipChildren' => false
+            'options' => null
         ]);
     }
 

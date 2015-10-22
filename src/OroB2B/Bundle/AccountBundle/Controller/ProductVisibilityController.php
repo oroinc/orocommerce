@@ -39,11 +39,7 @@ class ProductVisibilityController extends Controller
             true
         );
 
-        $handler = new WebsiteScopedDataHandler(
-            $form,
-            $request,
-            $this->get('event_dispatcher')
-        );
+        $handler = new WebsiteScopedDataHandler($form, $request, $this->get('event_dispatcher'));
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $product,
@@ -94,10 +90,9 @@ class ProductVisibilityController extends Controller
     /**
      * @param Product $product
      * @param array $preloaded_websites
-     * @param bool $skipChildren
      * @return Form
      */
-    protected function createWebsiteScopedDataForm(Product $product, array $preloaded_websites, $skipChildren = false)
+    protected function createWebsiteScopedDataForm(Product $product, array $preloaded_websites)
     {
         return $this->createForm(
             WebsiteScopedDataType::NAME,
@@ -106,7 +101,6 @@ class ProductVisibilityController extends Controller
                 'ownership_disabled' => true,
                 'preloaded_websites' => $preloaded_websites,
                 'type' => EntityVisibilityType::NAME,
-                'skipChildren' => $skipChildren,
                 'options' => [
                     'targetEntityField' => 'product',
                     'allClass' => $this

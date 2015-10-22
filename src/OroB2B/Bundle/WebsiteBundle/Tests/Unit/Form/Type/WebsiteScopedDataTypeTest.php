@@ -150,17 +150,14 @@ class WebsiteScopedDataTypeTest extends FormIntegrationTestCase
         return [
             [
                 'children' => ['1' => 'test'],
-                'skipChildren' => true,
                 'expected' => []
             ],
             [
                 'children' => ['1' => 'test', 'not_int' => 'test'],
-                'skipChildren' => true,
                 'expected' => ['not_int' => 'test']
             ],
             [
                 'children' => ['1' => 'test', 'not_int' => 'test'],
-                'skipChildren' => false,
                 'expected' => ['1' => 'test', 'not_int' => 'test']
             ],
         ];
