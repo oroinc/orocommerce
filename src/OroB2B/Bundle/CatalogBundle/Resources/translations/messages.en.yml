@@ -1,17 +1,19 @@
 orob2b:
     catalog:
         category:
-            entity_label:           'Category'
-            entity_plural_label:    'Categories'
-            id.label:               'ID'
-            titles.label:           'Title'
-            left.label:             'Tree left index'
-            level.label:            'Tree level'
-            right.label:            'Tree right index'
-            root.label:             'Tree root'
-            child_categories.label: 'Child categories'
-            parent_category.label:  'Parent category'
-            products.label:         'Products'
+            entity_label:                'Category'
+            entity_plural_label:         'Categories'
+            id.label:                    'ID'
+            titles.label:                'Title'
+            short_description.label:     'Short Description'
+            long_description.label:      'Long Description'
+            left.label:                  'Tree left index'
+            level.label:                 'Tree level'
+            right.label:                 'Tree right index'
+            root.label:                  'Tree root'
+            child_categories.label:      'Child categories'
+            parent_category.label:       'Parent category'
+            products.label:              'Products'
             include_subcategories.label: 'Include Sub-Categories'
 
         sections:
