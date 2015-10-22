@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Form\Type;
+namespace OroB2B\Bundle\WebsiteBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -18,7 +18,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class WebsiteScopedDataType extends AbstractType
 {
-    const NAME = 'orob2b_account_website_scoped_data_type';
+    const NAME = 'orob2b_website_scoped_data_type';
 
     /**
      * @var ManagerRegistry
@@ -125,20 +125,6 @@ class WebsiteScopedDataType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['websites'] = $this->getWebsites();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function finishView(FormView $view, FormInterface $form, array $options)
-    {
-        if ($options['skipChildren']) {
-            foreach ($view->children as $key => $value) {
-                if (filter_var($key, FILTER_VALIDATE_INT)) {
-                    unset($view->children[$key]);
-                }
-            }
-        }
     }
 
     /**

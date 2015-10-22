@@ -15,7 +15,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
-use OroB2B\Bundle\AccountBundle\Form\Type\WebsiteScopedDataType;
+use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 use OroB2B\Bundle\AccountBundle\Form\Handler\WebsiteScopedDataHandler;
 
 class ProductVisibilityController extends Controller
@@ -85,7 +85,7 @@ class ProductVisibilityController extends Controller
         $form = $this->createWebsiteScopedDataForm($product, [$website]);
 
         return [
-            'form' => $form->createView(),
+            'form' => $form->createView()[$website->getId()],
             'entity' => $product,
             'website' => $website
         ];
