@@ -61,39 +61,39 @@ class ProductPriceFilterTest extends WebTestCase
         return [
             'equal 10 USD per liter' => [
                 'filter' => [
-                    'products-grid[_filter][price_column_usd][value]' => 10,
-                    'products-grid[_filter][price_column_usd][type]'  => null,
-                    'products-grid[_filter][price_column_usd][unit]'  => 'liter'
+                    'products-grid[_filter][price_column_usd_value][value]' => 10,
+                    'products-grid[_filter][price_column_usd_value][type]'  => null,
+                    'products-grid[_filter][price_column_usd_value][unit]'  => 'liter'
                 ],
                 'priceListReference' => 'price_list_1',
                 'expected' => ['product.1']
             ],
             'greater equal 10 USD per liter' => [
                 'filter' => [
-                    'products-grid[_filter][price_column_usd][value]' => 10,
-                    'products-grid[_filter][price_column_usd][type]'  => NumberFilterType::TYPE_GREATER_EQUAL,
-                    'products-grid[_filter][price_column_usd][unit]'  => 'liter'
+                    'products-grid[_filter][price_column_usd_value][value]' => 10,
+                    'products-grid[_filter][price_column_usd_value][type]'  => NumberFilterType::TYPE_GREATER_EQUAL,
+                    'products-grid[_filter][price_column_usd_value][unit]'  => 'liter'
                 ],
                 'priceListReference' => 'price_list_1',
                 'expected' => ['product.1', 'product.2']
             ],
             'less 10 USD per liter' => [
                 'filter' => [
-                    'products-grid[_filter][price_column_usd][value]' => 10,
-                    'products-grid[_filter][price_column_usd][type]'  => NumberFilterType::TYPE_LESS_THAN,
-                    'products-grid[_filter][price_column_usd][unit]'  => 'liter'
+                    'products-grid[_filter][price_column_usd_value][value]' => 10,
+                    'products-grid[_filter][price_column_usd_value][type]'  => NumberFilterType::TYPE_LESS_THAN,
+                    'products-grid[_filter][price_column_usd_value][unit]'  => 'liter'
                 ],
                 'priceListReference' => 'price_list_1',
                 'expected' => ['product.3']
             ],
             'greater 10 USD per liter AND less 20 EUR per bottle' => [
                 'filter' => [
-                    'products-grid[_filter][price_column_usd][value]' => 10,
-                    'products-grid[_filter][price_column_usd][type]'  => NumberFilterType::TYPE_GREATER_EQUAL,
-                    'products-grid[_filter][price_column_usd][unit]'  => 'liter',
-                    'products-grid[_filter][price_column_eur][value]' => 20,
-                    'products-grid[_filter][price_column_eur][type]'  => NumberFilterType::TYPE_LESS_THAN,
-                    'products-grid[_filter][price_column_eur][unit]'  => 'bottle'
+                    'products-grid[_filter][price_column_usd_value][value]' => 10,
+                    'products-grid[_filter][price_column_usd_value][type]'  => NumberFilterType::TYPE_GREATER_EQUAL,
+                    'products-grid[_filter][price_column_usd_value][unit]'  => 'liter',
+                    'products-grid[_filter][price_column_eur_value][value]' => 20,
+                    'products-grid[_filter][price_column_eur_value][type]'  => NumberFilterType::TYPE_LESS_THAN,
+                    'products-grid[_filter][price_column_eur_value][unit]'  => 'bottle'
                 ],
                 'priceListReference' => 'price_list_1',
                 'expected' => ['product.1']
