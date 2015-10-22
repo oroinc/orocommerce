@@ -9,6 +9,7 @@ parameters:
     orob2b_shopping_list.handler.shopping_list_line_item.class: OroB2B\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler
     orob2b_shopping_list.processor.quick_add.class:  OroB2B\Bundle\ShoppingListBundle\Processor\QuickAddProcessor
     orob2b_shopping_list.service.message_generator.class: OroB2B\Bundle\ShoppingListBundle\Generator\MessageGenerator
+    orob2b_shopping_list.service.product_data_storage.class: OroB2B\Bundle\ShoppingListBundle\Storage\ProductDataStorage
 
 services:
     orob2b_shopping_list.validator.line_item:
@@ -75,3 +76,8 @@ services:
             - [setProductClass, [%orob2b_product.product.class%]]
         tags:
             - { name: orob2b_product.quick_add_processor }
+
+    orob2b_shopping_list.service.product_data_storage:
+        class: %orob2b_shopping_list.service.product_data_storage.class%
+        arguments:
+            - @orob2b_product.service.product_data_storage

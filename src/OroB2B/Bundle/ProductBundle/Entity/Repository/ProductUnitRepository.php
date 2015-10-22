@@ -22,6 +22,14 @@ class ProductUnitRepository extends EntityRepository
     }
 
     /**
+     * @return ProductUnit[]
+     */
+    public function getAllUnits()
+    {
+        return $this->findBy([], ['code' => 'ASC']);
+    }
+
+    /**
      * @param Product $product
      *
      * @return QueryBuilder

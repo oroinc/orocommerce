@@ -8,11 +8,14 @@ use Symfony\Component\Security\Core\SecurityContext;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
+use Oro\Bundle\LayoutBundle\Annotation\Layout;
+
 class SecurityController extends Controller
 {
     /**
      * @Route("/login", name="orob2b_account_account_user_security_login")
      * @Template
+     * @Layout(vars={"last_username", "csrf_token", "error"})
      */
     public function loginAction()
     {
