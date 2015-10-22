@@ -232,7 +232,7 @@ orob2b.account:
                 hidden: Hidden
 
         accountproductvisibility:
-            entity_label: Visibility to Products
+            entity_label: Visibility to Accounts
             entity_plural_label: Account Product Visibilities
             id.label: ID
             account.label: Account

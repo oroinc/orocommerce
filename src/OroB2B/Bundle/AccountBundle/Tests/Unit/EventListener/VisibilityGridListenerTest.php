@@ -9,8 +9,6 @@ use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
@@ -19,16 +17,17 @@ use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Event\OrmResultBefore;
 use Oro\Component\TestUtils\ORM\Mocks\EntityManagerMock;
+use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\EventListener\VisibilityGridListener;
 use OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
 {
-
     const CATEGORY_VISIBILITY_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility';
     const PRODUCT_VISIBILITY_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility';
 
@@ -45,6 +44,10 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
     const FILTERS_PATH = '[filters][columns][visibility][options][field_options]';
     const SELECTOR_PATH = '[options][cellSelection][selector]';
     const SCOPE_PATH = '[scope]';
+    
+    const PRODUCT_ID = 123;
+    const WEBSITE_ID = 42;
+    
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
      */
@@ -171,10 +174,9 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
     {
         $parameters = new ParameterBag();
         $product = new Product();
-        $productId = 1;
-        $websiteId = 1;
-        $parameters->set('target_entity_id', $productId);
-        $parameters->set('website_id', $websiteId);
+
+        $parameters->set('target_entity_id', self::PRODUCT_ID);
+        $parameters->set('website_id', self::WEBSITE_ID);
 
         /** @var DatagridConfiguration|\PHPUnit_Framework_MockObject_MockObject $config */
         $config = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration')
@@ -189,7 +191,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $repository->expects($this->once())
             ->method('find')
-            ->with($productId)
+            ->with(self::PRODUCT_ID)
             ->willReturn($product);
 
         $this->registry->expects($this->once())
@@ -214,7 +216,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
         $config->expects($this->exactly(4))
             ->method('offsetSetByPath')
             ->willReturnCallback(
-                function ($path, $config) use ($websiteId, $selector, $scope, $product) {
+                function ($path, $config) use ($selector, $scope, $product) {
                     $this->assertContains(
                         $path,
                         [
@@ -230,12 +232,12 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
                             sprintf(
                                 '%s-%d',
                                 $selector,
-                                $websiteId
+                                self::WEBSITE_ID
                             ),
                             sprintf(
                                 '%s-%d',
                                 $scope,
-                                $websiteId
+                                self::WEBSITE_ID
                             ),
                             [
                                 'choices' => $this->visibilityChoicesProvider->getFormattedChoices(
