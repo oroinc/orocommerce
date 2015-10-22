@@ -30,3 +30,9 @@
 .btn.frontend-favorite-button.gold-icon:hover i:before {
     color:#ffd631
 }
+
+.widget-subtitle {
+    margin-left: 15px;
+    margin-top: 25px;
+    color: #777
+}
