@@ -10,10 +10,9 @@ use Symfony\Component\DependencyInjection\Loader;
 class OroB2BFrontendExtension extends Extension
 {
     const ALIAS = 'oro_b2b_frontend';
-
+    
     /**
-     * @param array $configs
-     * @param ContainerBuilder $container
+     * {@inheritdoc}
      */
     public function load(array $configs, ContainerBuilder $container)
     {
