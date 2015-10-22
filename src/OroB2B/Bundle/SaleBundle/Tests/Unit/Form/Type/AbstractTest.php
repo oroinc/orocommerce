@@ -114,8 +114,11 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected function getValidators()
     {
+        $quoteProductConstraint = new Constraints\QuoteProduct();
         $quoteProductOfferConstraint = new Constraints\QuoteProductOffer();
+
         return [
+            $quoteProductConstraint->validatedBy() => new Constraints\QuoteProductValidator(),
             $quoteProductOfferConstraint->validatedBy() => new Constraints\QuoteProductOfferValidator(),
         ];
     }
@@ -343,9 +346,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
             );
         }
 
-        if (null !== $priceType) {
-            $quoteProductOffer->setPriceType($priceType);
-        }
+        $quoteProductOffer->setPriceType($priceType);
 
         if (null !== $price) {
             $quoteProductOffer->setPrice($price);

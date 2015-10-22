@@ -2,12 +2,16 @@
 
 namespace OroB2B\Bundle\AccountBundle\DependencyInjection;
 
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 
-class OroB2BAccountExtension extends Extension
+use Oro\Bundle\SecurityBundle\DependencyInjection\Extension\SecurityExtensionHelper;
+use Oro\Component\DependencyInjection\ExtendedContainerBuilder;
+
+class OroB2BAccountExtension extends Extension implements PrependExtensionInterface
 {
     const ALIAS = 'oro_b2b_account';
 
@@ -25,6 +29,16 @@ class OroB2BAccountExtension extends Extension
         $loader->load('ownership.yml');
 
         $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function prepend(ContainerBuilder $container)
+    {
+        /** @var ExtendedContainerBuilder $container */
+        SecurityExtensionHelper::makeFirewallLatest($container, 'frontend_secure');
+        SecurityExtensionHelper::makeFirewallLatest($container, 'frontend');
     }
 
     /**
