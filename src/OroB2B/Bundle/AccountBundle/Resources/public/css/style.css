@@ -32,8 +32,23 @@
 }
 
 .widget-subtitle {
-    margin-left: 15px;
-    margin-top: 0;
-    padding-top: 20px;
-    color: #777
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background: #fafafa none repeat scroll 0 0;
+    border-color: #e5e5e5;
+    border-image: none;
+    border-style: solid;
+    border-width: 1px 0;
+    color: #777777;
+    font-size: 13px;
+    font-weight: normal;
+    line-height: 13px;
+    margin-top: 0 !important;
+    padding: 6px 20px;
+}
+
+.widget-subtitle.indented {
+    margin-top: 50px !important;
 }
