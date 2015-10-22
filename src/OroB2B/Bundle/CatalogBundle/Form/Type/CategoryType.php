@@ -8,6 +8,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
+use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
 
@@ -42,8 +43,7 @@ class CategoryType extends AbstractType
     }
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
+     * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -58,8 +58,50 @@ class CategoryType extends AbstractType
                 LocalizedFallbackValueCollectionType::NAME,
                 [
                     'label' => 'orob2b.catalog.category.titles.label',
-                    'required' => false,
+                    'required' => true,
                     'options' => ['constraints' => [new NotBlank()]],
+                ]
+            )
+            ->add(
+                'shortDescription',
+                LocalizedFallbackValueCollectionType::NAME,
+                [
+                    'label' => 'orob2b.catalog.category.short_description.label',
+                    'required' => false,
+                    'field' => 'text',
+                    'type' => OroRichTextType::NAME,
+                    'options' => [
+                        'wysiwyg_options' => [
+                            'statusbar' => true,
+                            'resize' => true,
+                            'width' => 500,
+                            'height' => 200,
+                            'plugins' => array_merge(OroRichTextType::$defaultPlugins, ['fullscreen']),
+                            'toolbar' =>
+                                [reset(OroRichTextType::$toolbars[OroRichTextType::TOOLBAR_DEFAULT]) . ' | fullscreen'],
+                        ],
+                    ],
+                ]
+            )
+            ->add(
+                'longDescription',
+                LocalizedFallbackValueCollectionType::NAME,
+                [
+                    'label' => 'orob2b.catalog.category.long_description.label',
+                    'required' => false,
+                    'field' => 'text',
+                    'type' => OroRichTextType::NAME,
+                    'options' => [
+                        'wysiwyg_options' => [
+                            'statusbar' => true,
+                            'resize' => true,
+                            'width' => 500,
+                            'height' => 200,
+                            'plugins' => array_merge(OroRichTextType::$defaultPlugins, ['fullscreen']),
+                            'toolbar' =>
+                                [reset(OroRichTextType::$toolbars[OroRichTextType::TOOLBAR_DEFAULT]) . ' | fullscreen'],
+                        ],
+                    ],
                 ]
             )
             ->add(
@@ -85,7 +127,7 @@ class CategoryType extends AbstractType
     }
 
     /**
-     * @param OptionsResolver $resolver
+     * {@inheritdoc}
      */
     public function configureOptions(OptionsResolver $resolver)
     {
@@ -97,7 +139,7 @@ class CategoryType extends AbstractType
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getName()
     {
