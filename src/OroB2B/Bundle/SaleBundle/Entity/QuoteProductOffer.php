@@ -44,7 +44,7 @@ class QuoteProductOffer extends BaseQuoteProductItem
      *
      * @ORM\Column(name="price_type", type="smallint")
      */
-    protected $priceType;
+    protected $priceType = self::PRICE_TYPE_UNIT;
 
     /**
      * @var bool
