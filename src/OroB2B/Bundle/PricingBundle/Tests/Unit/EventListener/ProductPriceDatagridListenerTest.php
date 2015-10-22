@@ -42,6 +42,9 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected $priceListRequestHandler;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
@@ -76,6 +79,9 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->setProductUnitClass('OroB2BProductBundle:ProductUnit');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function tearDown()
     {
         unset($this->doctrineHelper, $this->translator, $this->priceListRequestHandler, $this->listener);
@@ -150,6 +156,8 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     *
      * @return array
      */
     public function onBuildBeforeDataProvider()
