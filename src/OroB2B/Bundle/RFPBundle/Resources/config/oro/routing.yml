@@ -8,6 +8,11 @@ orob2b_rfp_request_status:
     type:         annotation
     prefix:       /rfp/request_status
 
+orob2b_rfp_quote:
+    resource:     "@OroB2BRFPBundle/Controller/QuoteController.php"
+    type:         annotation
+    prefix:       /rfp/quote
+
 orob2b_rfp_bundle_api:
     resource:     "@OroB2BRFPBundle/Resources/config/oro/routing_api.yml"
     prefix:       api/rest/{version}/
