@@ -179,25 +179,25 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                 'priceCurrencies' => ['USD', 'EUR'],
                 'expectedConfig' => [
                     'columns' => [
-                        'price_column_usd_value' => [
+                        'price_column_usd' => [
                             'label' => 'orob2b.pricing.productprice.price_in_USD.trans',
                             'type' => 'twig',
                             'template' => 'OroB2BPricingBundle:Datagrid:Column/productPrice.html.twig',
                             'frontend_type' => 'html',
                         ],
-                        'price_column_eur_value' => [
+                        'price_column_eur' => [
                             'label' => 'orob2b.pricing.productprice.price_in_EUR.trans',
                             'type' => 'twig',
                             'template' => 'OroB2BPricingBundle:Datagrid:Column/productPrice.html.twig',
                             'frontend_type' => 'html',
                         ],
-                        'price_column_usd_unit1_value' => [
+                        'price_column_usd_unit1' => [
                             'label' => 'orob2b.pricing.productprice.price_unit1_in_USD.trans',
                             'type' => 'twig',
                             'template' => 'OroB2BPricingBundle:Datagrid:Column/productUnitPrice.html.twig',
                             'frontend_type' => 'html',
                         ],
-                        'price_column_eur_unit1_value' => [
+                        'price_column_eur_unit1' => [
                             'label' => 'orob2b.pricing.productprice.price_unit1_in_EUR.trans',
                             'type' => 'twig',
                             'template' => 'OroB2BPricingBundle:Datagrid:Column/productUnitPrice.html.twig',
@@ -206,87 +206,87 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                     ],
                     'filters' => [
                         'columns' => [
-                            'price_column_usd_value' => [
+                            'price_column_usd' => [
                                 'type' => 'product-price',
                                 'data_name' => 'USD'
                             ],
-                            'price_column_eur_value' => [
+                            'price_column_eur' => [
                                 'type' => 'product-price',
                                 'data_name' => 'EUR'
                             ],
-                            'price_column_usd_unit1_value' => [
+                            'price_column_usd_unit1' => [
                                 'type' => 'number-range',
-                                'data_name' => 'price_column_usd_unit1_value'
+                                'data_name' => 'price_column_usd_unit1'
                             ],
-                            'price_column_eur_unit1_value' => [
+                            'price_column_eur_unit1' => [
                                 'type' => 'number-range',
-                                'data_name' => 'price_column_eur_unit1_value'
+                                'data_name' => 'price_column_eur_unit1'
                             ],
                         ],
                     ],
                     'sorters' => [
                         'columns' => [
-                            'price_column_usd_value' => [
-                                'data_name' => 'price_column_usd_value'
+                            'price_column_usd' => [
+                                'data_name' => 'price_column_usd'
                             ],
-                            'price_column_eur_value' => [
-                                'data_name' => 'price_column_eur_value'
+                            'price_column_eur' => [
+                                'data_name' => 'price_column_eur'
                             ],
-                            'price_column_usd_unit1_value' => [
-                                'data_name' => 'price_column_usd_unit1_value'
+                            'price_column_usd_unit1' => [
+                                'data_name' => 'price_column_usd_unit1'
                             ],
-                            'price_column_eur_unit1_value' => [
-                                'data_name' => 'price_column_eur_unit1_value'
+                            'price_column_eur_unit1' => [
+                                'data_name' => 'price_column_eur_unit1'
                             ],
                         ]
                     ],
                     'source' => [
                         'query' => [
                             'select' => [
-                                0 => 'min(price_column_usd.value) as price_column_usd_value',
-                                1 => 'min(price_column_eur.value) as price_column_eur_value',
-                                2 => 'price_column_usd_unit1.value as price_column_usd_unit1_value',
-                                3 => 'price_column_eur_unit1.value as price_column_eur_unit1_value',
+                                0 => 'min(price_column_usd_table.value) as price_column_usd',
+                                1 => 'min(price_column_eur_table.value) as price_column_eur',
+                                2 => 'price_column_usd_unit1_table.value as price_column_usd_unit1',
+                                3 => 'price_column_eur_unit1_table.value as price_column_eur_unit1',
                             ],
                             'join' => [
                                 'left' => [
                                     0 => [
                                         'join' => 'OroB2BPricingBundle:ProductPrice',
-                                        'alias' => 'price_column_usd',
+                                        'alias' => 'price_column_usd_table',
                                         'conditionType' => 'WITH',
-                                        'condition' => 'price_column_usd.product = product.id ' .
-                                            'AND price_column_usd.currency = \'USD\' ' .
-                                            'AND price_column_usd.priceList = 1 ' .
-                                            'AND price_column_usd.quantity = 1',
+                                        'condition' => 'price_column_usd_table.product = product.id ' .
+                                            'AND price_column_usd_table.currency = \'USD\' ' .
+                                            'AND price_column_usd_table.priceList = 1 ' .
+                                            'AND price_column_usd_table.quantity = 1',
                                     ],
                                     1 => [
                                         'join' => 'OroB2BPricingBundle:ProductPrice',
-                                        'alias' => 'price_column_eur',
+                                        'alias' => 'price_column_eur_table',
                                         'conditionType' => 'WITH',
-                                        'condition' => 'price_column_eur.product = product.id ' .
-                                            'AND price_column_eur.currency = \'EUR\' ' .
-                                            'AND price_column_eur.priceList = 1 ' .
-                                            'AND price_column_eur.quantity = 1',
+                                        'condition' => 'price_column_eur_table.product = product.id ' .
+                                            'AND price_column_eur_table.currency = \'EUR\' ' .
+                                            'AND price_column_eur_table.priceList = 1 ' .
+                                            'AND price_column_eur_table.quantity = 1',
                                     ],
                                     2 => [
                                         'join' => 'OroB2BPricingBundle:ProductPrice',
-                                        'alias' => 'price_column_usd_unit1',
+                                        'alias' => 'price_column_usd_unit1_table',
                                         'conditionType' => 'WITH',
-                                        'condition' => 'price_column_usd_unit1.product = product.id ' .
-                                            'AND price_column_usd_unit1.currency = \'USD\' ' .
-                                            'AND price_column_usd_unit1.unit = \'unit1\' ' .
-                                            'AND price_column_usd_unit1.priceList = 1 ' .
-                                            'AND price_column_usd_unit1.quantity = 1',
+                                        'condition' => 'price_column_usd_unit1_table.product = product.id ' .
+                                            'AND price_column_usd_unit1_table.currency = \'USD\' ' .
+                                            'AND price_column_usd_unit1_table.unit = \'unit1\' ' .
+                                            'AND price_column_usd_unit1_table.priceList = 1 ' .
+                                            'AND price_column_usd_unit1_table.quantity = 1',
                                     ],
                                     3 => [
                                         'join' => 'OroB2BPricingBundle:ProductPrice',
-                                        'alias' => 'price_column_eur_unit1',
+                                        'alias' => 'price_column_eur_unit1_table',
                                         'conditionType' => 'WITH',
-                                        'condition' => 'price_column_eur_unit1.product = product.id ' .
-                                            'AND price_column_eur_unit1.currency = \'EUR\' ' .
-                                            'AND price_column_eur_unit1.unit = \'unit1\' ' .
-                                            'AND price_column_eur_unit1.priceList = 1 ' .
-                                            'AND price_column_eur_unit1.quantity = 1',
+                                        'condition' => 'price_column_eur_unit1_table.product = product.id ' .
+                                            'AND price_column_eur_unit1_table.currency = \'EUR\' ' .
+                                            'AND price_column_eur_unit1_table.unit = \'unit1\' ' .
+                                            'AND price_column_eur_unit1_table.priceList = 1 ' .
+                                            'AND price_column_eur_unit1_table.quantity = 1',
                                     ],
                                 ],
                             ],
@@ -386,12 +386,12 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                     [
                         'id' => 1,
                         'name' => 'first',
-                        'price_column_usd_unit1_value' => 15,
+                        'price_column_usd_unit1' => 15,
                     ],
                     [
                         'id' => 2,
                         'name' => 'second',
-                        'price_column_eur_unit1_value' => 22,
+                        'price_column_eur_unit1' => 22,
                     ],
                     [
                         'id' => 3,
@@ -408,27 +408,27 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                     [
                         'id' => 1,
                         'name' => 'first',
-                        'price_column_usd_value' => [$this->createPrice(1, 10, 'USD', $unit)],
-                        'price_column_eur_value' => [
+                        'price_column_usd' => [$this->createPrice(1, 10, 'USD', $unit)],
+                        'price_column_eur' => [
                             $this->createPrice(1, 11, 'EUR'),
                             $this->createPrice(1, 12, 'EUR', $unit)
                         ],
-                        'price_column_usd_unit1_value' => [$this->createPrice(1, 10, 'USD', $unit)],
+                        'price_column_usd_unit1' => [$this->createPrice(1, 10, 'USD', $unit)],
                         'showTierPrices' => true
                     ],
                     [
                         'id' => 2,
                         'name' => 'second',
-                        'price_column_usd_value' => [$this->createPrice(2, 20, 'USD')],
-                        'price_column_eur_value' => [],
-                        'price_column_eur_unit1_value' => [],
+                        'price_column_usd' => [$this->createPrice(2, 20, 'USD')],
+                        'price_column_eur' => [],
+                        'price_column_eur_unit1' => [],
                         'showTierPrices' => true
                     ],
                     [
                         'id' => 3,
                         'name' => 'third',
-                        'price_column_usd_value' => [],
-                        'price_column_eur_value' => [],
+                        'price_column_usd' => [],
+                        'price_column_eur' => [],
                         'showTierPrices' => true
                     ],
                 ],

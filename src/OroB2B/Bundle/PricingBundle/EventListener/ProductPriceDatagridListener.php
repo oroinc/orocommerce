@@ -138,14 +138,17 @@ class ProductPriceDatagridListener
             $priceContainer = [];
             foreach ($currencies as $currencyIsoCode) {
                 foreach ($units as $unit) {
-                    $priceUnitColumn = $this->buildDataName($this->buildColumnName($currencyIsoCode, $unit));
-                    $priceUnitData = isset($pricesByUnits[$productId][$currencyIsoCode][$unit->getCode()])
-                        ? $pricesByUnits[$productId][$currencyIsoCode][$unit->getCode()]
-                        : [];
-                    $record->addData([$priceUnitColumn => $priceUnitData]);
+                    $priceUnitColumn = $this->buildColumnName($currencyIsoCode, $unit);
+
+                    $data = [$priceUnitColumn => []];
+                    if (isset($pricesByUnits[$productId][$currencyIsoCode][$unit->getCode()])) {
+                        $data = [$priceUnitColumn => $pricesByUnits[$productId][$currencyIsoCode][$unit->getCode()]];
+                    }
+
+                    $record->addData($data);
                 }
 
-                $priceColumn = $this->buildDataName($this->buildColumnName($currencyIsoCode));
+                $priceColumn = $this->buildColumnName($currencyIsoCode);
                 if (isset($groupedPrices[$productId][$currencyIsoCode])) {
                     $priceContainer[$priceColumn] = $groupedPrices[$productId][$currencyIsoCode];
                 } else {
@@ -171,12 +174,12 @@ class ProductPriceDatagridListener
     }
 
     /**
-     * @param $columnName
+     * @param string $columnName
      * @return string
      */
-    protected function buildDataName($columnName)
+    protected function buildJoinAlias($columnName)
     {
-        return $columnName . '_value';
+        return $columnName . '_table';
     }
 
     /**
@@ -220,8 +223,8 @@ class ProductPriceDatagridListener
      */
     protected function addProductPriceCurrencyColumn(DatagridConfiguration $config, $currency)
     {
-        $joinAlias = $this->buildColumnName($currency);
-        $columnName = $this->buildDataName($joinAlias);
+        $columnName = $this->buildColumnName($currency);
+        $joinAlias = $this->buildJoinAlias($columnName);
         $priceList = $this->getPriceList();
 
         // select
@@ -260,16 +263,15 @@ class ProductPriceDatagridListener
         $this->addConfigElement($config, '[columns]', $column, $columnName);
 
         // sorter
-        $sorter = ['data_name' => $columnName];
-        $this->addConfigElement($config, '[sorters][columns]', $sorter, $columnName);
+        $this->addConfigElement($config, '[sorters][columns]', ['data_name' => $columnName], $columnName);
 
         // filter
-        $filter = [
-            'type' => 'product-price',
-            'data_name' => $currency,
-        ];
-
-        $this->addConfigElement($config, '[filters][columns]', $filter, $columnName);
+        $this->addConfigElement(
+            $config,
+            '[filters][columns]',
+            ['type' => 'product-price', 'data_name' => $currency],
+            $columnName
+        );
     }
 
     /**
@@ -279,8 +281,8 @@ class ProductPriceDatagridListener
      */
     protected function addProductPriceCurrencyUnitColumn(DatagridConfiguration $config, ProductUnit $unit, $currency)
     {
-        $joinAlias = $this->buildColumnName($currency, $unit);
-        $columnName = $this->buildDataName($joinAlias);
+        $columnName = $this->buildColumnName($currency, $unit);
+        $joinAlias = $this->buildJoinAlias($columnName);
         $priceList = $this->getPriceList();
 
         // select
@@ -324,16 +326,15 @@ class ProductPriceDatagridListener
         $this->addConfigElement($config, '[columns]', $column, $columnName);
 
         // sorter
-        $sorter = ['data_name' => $columnName];
-        $this->addConfigElement($config, '[sorters][columns]', $sorter, $columnName);
+        $this->addConfigElement($config, '[sorters][columns]', ['data_name' => $columnName], $columnName);
 
         // filter
-        $filter = [
-            'type' => 'number-range',
-            'data_name' => $columnName,
-        ];
-
-        $this->addConfigElement($config, '[filters][columns]', $filter, $columnName);
+        $this->addConfigElement(
+            $config,
+            '[filters][columns]',
+            ['type' => 'number-range', 'data_name' => $columnName],
+            $columnName
+        );
     }
 
     /**
@@ -354,18 +355,15 @@ class ProductPriceDatagridListener
     }
 
     /**
-     * @return ProductUnit[]
+     * @return array|ProductUnit[]
      */
     protected function getAllUnits()
     {
-        return $this->doctrineHelper
-            ->getEntityRepository($this->productUnitClass)
-            ->findBy([], ['code' => 'ASC'])
-        ;
+        return $this->doctrineHelper->getEntityRepository($this->productUnitClass)->findBy([], ['code' => 'ASC']);
     }
 
     /**
-     * @param ProductPrice[] $productPrices
+     * @param array|ProductPrice[] $productPrices
      * @return array
      */
     protected function getPricesByUnits(array $productPrices)
