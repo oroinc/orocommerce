@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -39,6 +41,11 @@ class ProductUnitRemovedSelectionType extends AbstractType
     protected $productUnitFormatter;
 
     /**
+     * @var ManagerRegistry
+     */
+    protected $registry;
+
+    /**
      * @param string $entityClass
      */
     public function setEntityClass($entityClass)
@@ -49,11 +56,16 @@ class ProductUnitRemovedSelectionType extends AbstractType
     /**
      * @param ProductUnitLabelFormatter $productUnitFormatter
      * @param TranslatorInterface $translator
+     * @param ManagerRegistry $registry
      */
-    public function __construct(ProductUnitLabelFormatter $productUnitFormatter, TranslatorInterface $translator)
-    {
+    public function __construct(
+        ProductUnitLabelFormatter $productUnitFormatter,
+        TranslatorInterface $translator,
+        ManagerRegistry $registry
+    ) {
         $this->productUnitFormatter = $productUnitFormatter;
         $this->translator = $translator;
+        $this->registry = $registry;
     }
 
     /**
@@ -137,12 +149,16 @@ class ProductUnitRemovedSelectionType extends AbstractType
      */
     protected function getProductUnits(Product $product = null)
     {
-        $choices = [];
-
         if ($product) {
+            $choices = [];
             foreach ($product->getUnitPrecisions() as $unitPrecision) {
                 $choices[] = $unitPrecision->getUnit();
             }
+        } else {
+            $choices = $this->registry->getManagerForClass($this->entityClass)
+                ->getRepository($this->entityClass)
+                ->findBy([], ['code' => 'ASC'])
+            ;
         }
 
         return $choices;

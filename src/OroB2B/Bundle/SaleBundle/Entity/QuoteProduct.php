@@ -14,6 +14,7 @@ use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
 /**
  * @ORM\Table(name="orob2b_sale_quote_product")
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks()
  * @Config(
  *      defaultValues={
  *          "entity"={
@@ -26,6 +27,7 @@ use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
  *      }
  * )
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class QuoteProduct implements ProductHolderInterface
 {
@@ -61,7 +63,14 @@ class QuoteProduct implements ProductHolderInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="product_sku", type="string", length=255)
+     * @ORM\Column(name="free_form_product", type="string", length=255, nullable=true)
+     */
+    protected $freeFormProduct;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="product_sku", type="string", length=255, nullable=true)
      */
     protected $productSku;
 
@@ -76,6 +85,13 @@ class QuoteProduct implements ProductHolderInterface
     /**
      * @var string
      *
+     * @ORM\Column(name="free_form_product_replacement", type="string", length=255, nullable=true)
+     */
+    protected $freeFormProductReplacement;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="product_replacement_sku", type="string", length=255, nullable=true)
      */
     protected $productReplacementSku;
@@ -85,7 +101,7 @@ class QuoteProduct implements ProductHolderInterface
      *
      * @ORM\Column(name="type", type="smallint", nullable=true)
      */
-    protected $type;
+    protected $type = self::TYPE_REQUESTED;
 
     /**
      * @var string
@@ -122,6 +138,22 @@ class QuoteProduct implements ProductHolderInterface
     {
         $this->quoteProductOffers   = new ArrayCollection();
         $this->quoteProductRequests = new ArrayCollection();
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function updateProducts()
+    {
+        if ($this->product) {
+            $this->productSku = $this->product->getSku();
+            $this->freeFormProduct = (string) $this->product;
+        }
+        if ($this->productReplacement) {
+            $this->productReplacementSku = $this->productReplacement->getSku();
+            $this->freeFormProductReplacement = (string) $this->productReplacement;
+        }
     }
 
     /**
@@ -175,6 +207,43 @@ class QuoteProduct implements ProductHolderInterface
     }
 
     /**
+     * Check that free form used for product
+     *
+     * @return boolean
+     */
+    public function isProductFreeForm()
+    {
+        return (!$this->product) && ('' !== trim($this->freeFormProduct));
+    }
+
+    /**
+     * Check that free form used for productReplacement
+     *
+     * @return boolean
+     */
+    public function isProductReplacementFreeForm()
+    {
+        return (!$this->productReplacement) && ('' !== trim($this->freeFormProductReplacement));
+    }
+
+    /**
+     * Get actual Product name
+     * @return string
+     */
+    public function getProductName()
+    {
+        if ($this->isTypeNotAvailable()) {
+            return $this->isProductReplacementFreeForm()
+                ? $this->freeFormProductReplacement
+                : (string) $this->productReplacement;
+        }
+
+        return $this->isProductFreeForm()
+            ? $this->freeFormProduct
+            : (string) $this->product;
+    }
+
+    /**
      * Get id
      *
      * @return integer
@@ -216,9 +285,7 @@ class QuoteProduct implements ProductHolderInterface
     public function setProduct(Product $product = null)
     {
         $this->product = $product;
-        if ($product) {
-            $this->productSku = $product->getSku();
-        }
+        $this->updateProducts();
 
         return $this;
     }
@@ -231,6 +298,25 @@ class QuoteProduct implements ProductHolderInterface
     public function getProduct()
     {
         return $this->product;
+    }
+
+    /**
+     * @param string $freeFormProduct
+     * @return QuoteProduct
+     */
+    public function setFreeFormProduct($freeFormProduct)
+    {
+        $this->freeFormProduct = $freeFormProduct;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFreeFormProduct()
+    {
+        return $this->freeFormProduct;
     }
 
     /**
@@ -265,9 +351,7 @@ class QuoteProduct implements ProductHolderInterface
     public function setProductReplacement(Product $productReplacement = null)
     {
         $this->productReplacement = $productReplacement;
-        if ($productReplacement) {
-            $this->productReplacementSku = $productReplacement->getSku();
-        }
+        $this->updateProducts();
 
         return $this;
     }
@@ -280,6 +364,25 @@ class QuoteProduct implements ProductHolderInterface
     public function getProductReplacement()
     {
         return $this->productReplacement;
+    }
+
+    /**
+     * @param string $freeFormProductReplacement
+     * @return QuoteProduct
+     */
+    public function setFreeFormProductReplacement($freeFormProductReplacement)
+    {
+        $this->freeFormProductReplacement = $freeFormProductReplacement;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFreeFormProductReplacement()
+    {
+        return $this->freeFormProductReplacement;
     }
 
     /**
