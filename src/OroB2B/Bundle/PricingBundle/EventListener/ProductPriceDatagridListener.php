@@ -216,7 +216,7 @@ class ProductPriceDatagridListener
 
     /**
      * @param DatagridConfiguration $config
-     * @param $currency
+     * @param string $currency
      */
     protected function addProductPriceCurrencyColumn(DatagridConfiguration $config, $currency)
     {
@@ -275,7 +275,7 @@ class ProductPriceDatagridListener
     /**
      * @param DatagridConfiguration $config
      * @param ProductUnit $unit
-     * @param $currency
+     * @param string $currency
      */
     protected function addProductPriceCurrencyUnitColumn(DatagridConfiguration $config, ProductUnit $unit, $currency)
     {
