@@ -177,3 +177,23 @@ span.quote-product-offer-quantity-unit {
 .quote-lineitems table.grid {
     overflow: auto;
 }
+
+td.quote-lineitem-product-sku {
+    width: 160px;
+}
+
+.quote-lineitem-product-sku-row .quote-lineitem-product-free-form input[type="text"] {
+    width: 120px;
+}
+
+.quote-lineitem-product-sku-label label {
+    line-height: 31px;
+}
+
+.quote-lineitem-product-row input[type="text"] {
+    width: 275px !important;
+}
+
+.quote-lineitem-product-select-link {
+    display: block;
+}

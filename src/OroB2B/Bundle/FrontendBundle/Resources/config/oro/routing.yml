@@ -4,6 +4,11 @@ _frontend:
     options:
         frontend: true
 
+orob2b_installer:
+    resource: "@OroInstallerBundle/Resources/config/oro/routing.yml"
+    options:
+        frontend: true
+
 orob2b_frontend_datagrid_index:
     path: /datagrid/{gridName}
     defaults: { _controller: OroDataGridBundle:Grid:get }

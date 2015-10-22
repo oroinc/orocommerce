@@ -62,9 +62,6 @@ class ProductPriceFilter extends NumberRangeFilter
             return false;
         }
 
-        $price = $data['value'];
-        $type = $data['type'];
-
         $this->qbPrepare($ds, $data['unit']);
 
         $joinAlias = $this->getJoinAlias();
@@ -73,9 +70,10 @@ class ProductPriceFilter extends NumberRangeFilter
             $ds,
             $this->buildRangeComparisonExpr(
                 $ds,
-                $type,
+                $data['type'],
                 $joinAlias . '.value',
-                $price
+                $data['value'],
+                $data['value_end']
             )
         );
 

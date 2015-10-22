@@ -3,6 +3,8 @@ orob2b:
         quoteproduct:
             product:
                 blank: 'Product cannot be empty.'
+            free_form_product:
+                blank: 'Please provide Product title.'
             product_replacement:
                 blank: 'Product cannot be empty.'
             quote_product_items:

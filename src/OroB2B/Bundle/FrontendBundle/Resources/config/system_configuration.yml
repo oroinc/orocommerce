@@ -1,0 +1,29 @@
+oro_system_configuration:
+    groups:
+        frontend:
+            title: orob2b_frontend.system_configuration.groups.frontend.title
+            icon: 'icon-picture'
+        theme_settings:
+            title: orob2b_frontend.system_configuration.groups.theme_settings.title
+
+    fields:
+        oro_b2b_frontend.frontend_theme:
+            data_type: string
+            type: orob2b_frontend_theme_select
+            priority: 100
+            options:
+                label: orob2b_frontend.system_configuration.fields.frontend_theme.label
+
+    tree:
+        system_configuration:
+            platform:
+                children:
+                    frontend_application:
+                        children:
+                            frontend:
+                                priority: 200
+                                children:
+                                    theme_settings:
+                                        priority: 200
+                                        children:
+                                            - oro_b2b_frontend.frontend_theme
