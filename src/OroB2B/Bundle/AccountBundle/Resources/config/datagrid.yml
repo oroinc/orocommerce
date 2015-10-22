@@ -815,6 +815,7 @@ datagrid:
             id: ~
 
     account-product-visibility-grid:
+        scope: website
         source:
             type:              orm
             query:
@@ -826,9 +827,10 @@ datagrid:
                     - { table: %orob2b_account.entity.account.class%, alias: account }
                 join:
                     left:
-                        - { join: %orob2b_account.entity.account_product_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.account = account AND visibilityAlias.product = :target_entity_id' }
+                        - { join: %orob2b_account.entity.account_product_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.account = account AND visibilityAlias.product = :target_entity_id  AND visibilityAlias.website = :website_id' }
             bind_parameters:
                 - target_entity_id
+                - website_id
         columns:
             name:
                 label: orob2b.account.name.label
@@ -865,6 +867,7 @@ datagrid:
             id: ~
 
     account-group-product-visibility-grid:
+        scope: website
         source:
             type:              orm
             query:
@@ -875,9 +878,10 @@ datagrid:
                     - { table: %orob2b_account.entity.account_group.class%, alias: accountGroup }
                 join:
                     left:
-                        - { join: %orob2b_account.entity.account_group_product_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.accountGroup = accountGroup AND visibilityAlias.product = :target_entity_id' }
+                        - { join: %orob2b_account.entity.account_group_product_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.accountGroup = accountGroup AND visibilityAlias.product = :target_entity_id AND visibilityAlias.website = :website_id' }
             bind_parameters:
                 - target_entity_id
+                - website_id
         columns:
             name:
                 label: orob2b.account.name.label
