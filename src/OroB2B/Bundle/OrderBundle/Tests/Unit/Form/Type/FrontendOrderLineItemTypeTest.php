@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Symfony\Component\Form\FormInterface;
@@ -97,8 +98,27 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
         $this->formType->buildView($view, $form, $options);
 
         $this->assertEquals($expected, $view->vars['disallow_delete']);
+        $this->assertEquals($this->getExpectedSections(), $view->vars['sections']);
 
         $this->assertDefaultBuildViewCalled();
+    }
+
+    /** {@inheritdoc} */
+    protected function getExpectedSections()
+    {
+        return new ArrayCollection(
+            [
+                'quantity' => ['data' => ['quantity' => [], 'productUnit' => []], 'order' => 10],
+                'price' => ['data' => [], 'order' => 20],
+                'ship_by' => ['data' => ['shipBy' => []], 'order' => 30],
+                'comment' => [
+                    'data' => [
+                        'comment' => ['page_component' => 'orob2border/js/app/components/notes-component'],
+                    ],
+                    'order' => 40,
+                ],
+            ]
+        );
     }
 
     /**

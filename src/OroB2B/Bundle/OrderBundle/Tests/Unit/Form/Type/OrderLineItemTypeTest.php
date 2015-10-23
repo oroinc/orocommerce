@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Symfony\Component\Form\PreloadedExtension;
@@ -158,5 +159,23 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
     public function testBuildView()
     {
         $this->assertDefaultBuildViewCalled();
+    }
+
+    /** {@inheritdoc} */
+    protected function getExpectedSections()
+    {
+        return new ArrayCollection(
+            [
+                'quantity' => ['data' => ['quantity' => [], 'productUnit' => []], 'order' => 10],
+                'price' => ['data' => ['price' => [], 'priceType' => []], 'order' => 20],
+                'ship_by' => ['data' => ['shipBy' => []], 'order' => 30],
+                'comment' => [
+                    'data' => [
+                        'comment' => ['page_component' => 'orob2border/js/app/components/notes-component'],
+                    ],
+                    'order' => 40,
+                ],
+            ]
+        );
     }
 }
