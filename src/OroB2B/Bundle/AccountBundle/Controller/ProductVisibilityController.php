@@ -15,7 +15,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
-use OroB2B\Bundle\AccountBundle\Form\Type\WebsiteScopedDataType;
+use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 use OroB2B\Bundle\AccountBundle\Form\Handler\WebsiteScopedDataHandler;
 
 class ProductVisibilityController extends Controller
@@ -35,15 +35,10 @@ class ProductVisibilityController extends Controller
             $product,
             [
                 $this->getDoctrine()->getRepository('OroB2BWebsiteBundle:Website')->getDefaultWebsite()
-            ],
-            true
+            ]
         );
 
-        $handler = new WebsiteScopedDataHandler(
-            $form,
-            $request,
-            $this->get('event_dispatcher')
-        );
+        $handler = new WebsiteScopedDataHandler($form, $request, $this->get('event_dispatcher'));
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $product,
@@ -85,7 +80,7 @@ class ProductVisibilityController extends Controller
         $form = $this->createWebsiteScopedDataForm($product, [$website]);
 
         return [
-            'form' => $form->createView(),
+            'form' => $form->createView()[$website->getId()],
             'entity' => $product,
             'website' => $website
         ];
@@ -94,10 +89,9 @@ class ProductVisibilityController extends Controller
     /**
      * @param Product $product
      * @param array $preloaded_websites
-     * @param bool $skipChildren
      * @return Form
      */
-    protected function createWebsiteScopedDataForm(Product $product, array $preloaded_websites, $skipChildren = false)
+    protected function createWebsiteScopedDataForm(Product $product, array $preloaded_websites)
     {
         return $this->createForm(
             WebsiteScopedDataType::NAME,
@@ -106,7 +100,6 @@ class ProductVisibilityController extends Controller
                 'ownership_disabled' => true,
                 'preloaded_websites' => $preloaded_websites,
                 'type' => EntityVisibilityType::NAME,
-                'skipChildren' => $skipChildren,
                 'options' => [
                     'targetEntityField' => 'product',
                     'allClass' => $this

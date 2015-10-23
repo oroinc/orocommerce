@@ -284,10 +284,6 @@ orob2b.account:
     product:
         visibility:
             label: Product Visibility
-
-    product:
-        visibility:
-            label: Default Visibility to Accounts
             product_configuration_label: Products
 
     menu:
