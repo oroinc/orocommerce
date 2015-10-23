@@ -19,8 +19,8 @@ class ProductVisibility implements VisibilityInterface, WebsiteAwareInterface
 {
     const CATEGORY = 'category';
     const CONFIG = 'config';
-    const VISIBLE = 'visible';
     const HIDDEN = 'hidden';
+    const VISIBLE = 'visible';
 
     /**
      * @var integer
@@ -118,8 +118,8 @@ class ProductVisibility implements VisibilityInterface, WebsiteAwareInterface
         return [
             self::CATEGORY,
             self::CONFIG,
-            self::VISIBLE,
             self::HIDDEN,
+            self::VISIBLE,
         ];
     }
 
