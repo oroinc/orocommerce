@@ -17,6 +17,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  */
 class ProductVisibility implements VisibilityInterface, WebsiteAwareInterface
 {
+    const CATEGORY = 'category';
     const CONFIG = 'config';
     const VISIBLE = 'visible';
     const HIDDEN = 'hidden';
@@ -87,7 +88,7 @@ class ProductVisibility implements VisibilityInterface, WebsiteAwareInterface
      */
     public static function getDefault($product)
     {
-        return self::CONFIG;
+        return self::CATEGORY;
     }
 
     /**
@@ -115,6 +116,7 @@ class ProductVisibility implements VisibilityInterface, WebsiteAwareInterface
     public static function getVisibilityList($product)
     {
         return [
+            self::CATEGORY,
             self::CONFIG,
             self::VISIBLE,
             self::HIDDEN,
