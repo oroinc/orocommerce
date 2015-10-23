@@ -35,8 +35,7 @@ class ProductVisibilityController extends Controller
             $product,
             [
                 $this->getDoctrine()->getRepository('OroB2BWebsiteBundle:Website')->getDefaultWebsite()
-            ],
-            true
+            ]
         );
 
         $handler = new WebsiteScopedDataHandler($form, $request, $this->get('event_dispatcher'));
