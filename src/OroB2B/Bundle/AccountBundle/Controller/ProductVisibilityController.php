@@ -21,7 +21,7 @@ use OroB2B\Bundle\AccountBundle\Form\Handler\WebsiteScopedDataHandler;
 class ProductVisibilityController extends Controller
 {
     /**
-     * @Route("/edit/{id}", name="orob2b_account_product_visibility_edit", requirements={"id"="\d+"})
+     * @Route("/edit/{id}", name="orob2b_product_visibility_edit", requirements={"id"="\d+"})
      * @Template
      * @AclAncestor("orob2b_product_update")
      *
@@ -45,7 +45,7 @@ class ProductVisibilityController extends Controller
             $form,
             function (Product $product) {
                 return [
-                    'route' => 'orob2b_account_product_visibility_edit',
+                    'route' => 'orob2b_product_visibility_edit',
                     'parameters' => ['id' => $product->getId()],
                 ];
             },
@@ -63,7 +63,7 @@ class ProductVisibilityController extends Controller
     /**
      * @Route(
      *      "/edit/{productId}/website/{id}",
-     *      name="orob2b_account_product_visibility_website",
+     *      name="orob2b_product_visibility_website",
      *      requirements={"productId"="\d+", "id"="\d+"}
      * )
      * @ParamConverter("product", options={"id" = "productId"})
