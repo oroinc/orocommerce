@@ -85,19 +85,8 @@
         }]
     } %}
 
-    {% set visibilityBlock = {
-        'title': 'orob2b.product.sections.visibility'|trans,
-        'subblocks': [{
-            'title': '',
-            'data': [
-                form_row(form.visibility)
-            ]
-        }]
-    } %}
-
     {% set dataBlocks = [
-        generalBlock,
-        visibilityBlock
+        generalBlock
     ] %}
 
     {% set additionalData = [] %}
