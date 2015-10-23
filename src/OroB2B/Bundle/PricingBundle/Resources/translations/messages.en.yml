@@ -42,6 +42,7 @@ orob2b.pricing:
         import: Import Product Prices
         show_tier_prices.label: Show Tier Prices
         price_in_%currency%: 'Price (%currency%)'
+        price_%unit%_in_%currency%: 'Price (%currency%/%unit%)'
 
         action:
             save: Save
