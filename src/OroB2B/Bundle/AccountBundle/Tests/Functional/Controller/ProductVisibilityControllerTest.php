@@ -18,6 +18,7 @@ use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProducts;
+use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 use OroB2B\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
 use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData as TestFixturesLoadWebsiteData;
 
@@ -30,7 +31,6 @@ class ProductVisibilityControllerTest extends WebTestCase
     const ACCOUNT_KEY = 'account';
     const ACCOUNT_GROUP_KEY = 'accountGroup';
     const VISIBILITY_KEY = 'visibility';
-    const FORM_TYPE_NAME = 'orob2b_account_website_scoped_data_type';
     const VISIBLE = 'visible';
     const HIDDEN = 'hidden';
     const PRODUCT_VISIBILITY_CLASS = 'OroB2BAccountBundle:Visibility\ProductVisibility';
@@ -106,7 +106,7 @@ class ProductVisibilityControllerTest extends WebTestCase
         $parameters = $this->explodeArrayPaths($form->getValues());
 
         //first tab checks
-        $defaultWebsiteParams = $parameters[self::FORM_TYPE_NAME][$this->websiteIds[0]];
+        $defaultWebsiteParams = $parameters[WebsiteScopedDataType::NAME][$this->websiteIds[0]];
         $this->assertEquals(
             $defaultWebsiteParams[self::ALL_KEY],
             $this->visibilityToAllDefaultWebsite
@@ -221,7 +221,7 @@ class ProductVisibilityControllerTest extends WebTestCase
         $counter = 0;
 
         // Test exits tabs
-        $crawler->filterXPath('//div[@class="oro-tabs"]//li')->each(
+        $crawler->filter('.oro-tabs ul li.tab')->each(
             function (Crawler $node) use (&$counter, $websiteTitles) {
                 $this->assertContains($websiteTitles[$counter], $node->text());
                 $options = json_decode($node->filterXPath('//a/@data-page-component-options')->text(), true);
@@ -229,21 +229,22 @@ class ProductVisibilityControllerTest extends WebTestCase
                 $counter++;
             }
         );
-        $parameters[self::FORM_TYPE_NAME] =
-            [
-                $this->websiteIds[0] => [
-                    self::ALL_KEY => $this->visibilityToAllDefaultWebsite,
-                    self::ACCOUNT_KEY => $this->visibilityToAccountDefaultWebsite,
-                    self::ACCOUNT_GROUP_KEY => $this->visibilityToAccountGroupDefaultWebsite,
-                ],
-                $this->websiteIds[1] => [
-                    self::ALL_KEY => $this->visibilityToAllNotDefaultWebsite,
-                    self::ACCOUNT_KEY => $this->visibilityToAccountNotDefaultWebsite,
-                    self::ACCOUNT_GROUP_KEY => $this->visibilityToAccountGroupNotDefaultWebsite,
-                ],
-                '_token' => $crawler->filterXPath(sprintf('//input[@name="%s[_token]"]/@value', self::FORM_TYPE_NAME))
-                    ->text(),
-            ];
+        $parameters[WebsiteScopedDataType::NAME] = [
+            $this->websiteIds[0] => [
+                self::ALL_KEY => $this->visibilityToAllDefaultWebsite,
+                self::ACCOUNT_KEY => $this->visibilityToAccountDefaultWebsite,
+                self::ACCOUNT_GROUP_KEY => $this->visibilityToAccountGroupDefaultWebsite,
+            ],
+            $this->websiteIds[1] => [
+                self::ALL_KEY => $this->visibilityToAllNotDefaultWebsite,
+                self::ACCOUNT_KEY => $this->visibilityToAccountNotDefaultWebsite,
+                self::ACCOUNT_GROUP_KEY => $this->visibilityToAccountGroupNotDefaultWebsite,
+            ],
+            '_token' => $crawler->filterXPath(
+                sprintf('//input[@name="%s[_token]"]/@value', WebsiteScopedDataType::NAME)
+            )
+                ->text(),
+        ];
         $crawler = $this->client->request(
             'POST',
             $this->getUrl('orob2b_account_product_visibility_edit', ['id' => $this->product->getId()]),
@@ -275,7 +276,7 @@ class ProductVisibilityControllerTest extends WebTestCase
                 ->filterXPath(
                     sprintf(
                         '//select[@name="%s[%d][all]"]/option[@selected]/@value',
-                        self::FORM_TYPE_NAME,
+                        WebsiteScopedDataType::NAME,
                         $websiteId
                     )
                 )
