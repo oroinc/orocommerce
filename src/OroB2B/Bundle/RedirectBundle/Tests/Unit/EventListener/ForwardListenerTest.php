@@ -35,7 +35,6 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected $frontendHelper;
 
-
     /**
      * @var \Symfony\Component\HttpKernel\HttpKernelInterface|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -61,6 +60,7 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
      * @param boolean $installed
      * @param string $requestType
      * @param boolean $existingController
+     * @param boolean $isFrontendRoute
      * @param array $slugParams
      * @param array $expected
      */
@@ -68,16 +68,23 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
         $installed,
         $requestType,
         $existingController,
+        $isFrontendRoute,
         array $slugParams,
         array $expected
     ) {
         $this->listener = new ForwardListener($this->router, $this->registry, $this->frontendHelper, $installed);
-
+        $this->listener->setDeniedUrlPatterns(['^/(deniedRoute)/']);
         $request = Request::create('http://localhost'.$slugParams['url']);
         if ($existingController) {
             $request->attributes->add(['_controller' => 'ExistingController']);
         }
         $event = new GetResponseEvent($this->kernel, $request, $requestType);
+
+        $this->frontendHelper->expects($this->any())
+            ->method('isFrontendRequest')
+            ->with($request)
+            ->willReturn($isFrontendRoute);
+
 
         $slug = new Slug();
         $slug->setRouteName($slugParams['route_name']);
@@ -103,10 +110,11 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
     public function onKernelRequestDataProvider()
     {
         return [
-            'with existing slug' => [
+            'frontend with existing slug' => [
                 'installed' => true,
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'existingController' => false,
+                'isFrontendRoute' => true,
                 'slugParams' => [
                     'url' => '/',
                     'route_name' => 'test_route',
@@ -119,10 +127,11 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
                     '_route_params' => ['id' => '1']
                 ]
             ],
-            'with subrequest' => [
+            'frontend with subrequest' => [
                 'installed' => true,
                 'requestType' => HttpKernelInterface::SUB_REQUEST,
                 'existingController' => false,
+                'isFrontendRoute' => true,
                 'slugParams' => [
                     'url' => '/',
                     'route_name' => 'test_route',
@@ -130,10 +139,11 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
                 ],
                 'expected' => []
             ],
-            'with existing controller' => [
+            'frontend with existing controller' => [
                 'installed' => true,
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'existingController' => true,
+                'isFrontendRoute' => true,
                 'slugParams' => [
                     'url' => '/',
                     'route_name' => 'test_route',
@@ -143,10 +153,11 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
                     '_controller' => 'ExistingController',
                 ]
             ],
-            'with closing slash' => [
+            'frontend with closing slash' => [
                 'installed' => true,
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'existingController' => false,
+                'isFrontendRoute' => true,
                 'slugParams' => [
                     'url' => '/test/',
                     'route_name' => 'test_route',
@@ -159,10 +170,11 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
                     '_route_params' => ['id' => '1']
                 ],
             ],
-            'without existing slug' => [
+            'frontend without existing slug' => [
                 'installed' => true,
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'existingController' => false,
+                'isFrontendRoute' => true,
                 'slugParams' => [
                     'url' => '/missing-slug',
                     'route_name' => 'test_route',
@@ -170,17 +182,42 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
                 ],
                 'expected' => [],
             ],
-            'not installed application' => [
+            'frontend not installed application' => [
                 'installed' => false,
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'existingController' => false,
+                'isFrontendRoute' => true,
                 'slugParams' => [
                     'url' => '/test/',
                     'route_name' => 'test_route',
                     'route_parameters' => ['id' => '1']
                 ],
                 'expected' => [],
-            ]
+            ],
+            'backend with existing slug' => [
+                'installed' => true,
+                'requestType' => HttpKernelInterface::MASTER_REQUEST,
+                'existingController' => false,
+                'isFrontendRoute' => false,
+                'slugParams' => [
+                    'url' => '/',
+                    'route_name' => 'test_route',
+                    'route_parameters' => ['id' => '1']
+                ],
+                'expected' => [],
+            ],
+            'denied route' => [
+                'installed' => true,
+                'requestType' => HttpKernelInterface::MASTER_REQUEST,
+                'existingController' => false,
+                'isFrontendRoute' => true,
+                'slugParams' => [
+                    'url' => '/deniedRoute/test',
+                    'route_name' => 'test_route',
+                    'route_parameters' => ['id' => '1']
+                ],
+                'expected' => [],
+            ],
         ];
     }
 

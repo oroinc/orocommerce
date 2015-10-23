@@ -87,14 +87,6 @@ class ForwardListener
     }
 
     /**
-     * @param string $pattern
-     */
-    public function addDeniedUrlPattern($pattern)
-    {
-        $this->deniedUrlPatterns[] = $pattern;
-    }
-
-    /**
      * @param Request $request
      * @return bool
      */
