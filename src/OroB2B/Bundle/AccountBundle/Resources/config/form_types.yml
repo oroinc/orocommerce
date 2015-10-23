@@ -39,7 +39,6 @@ parameters:
     orob2b_account.form.extension.address.class: OroB2B\Bundle\AccountBundle\Form\Extension\AddressExtension
 
     orob2b_account.form.type.entity_visibility_type.class: OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType
-    orob2b_account.form.type.websiite_entity_visibility_type.class: OroB2B\Bundle\AccountBundle\Form\Type\WebsiteScopedDataType
 
 services:
     orob2b_account.form.type.account:
@@ -269,12 +268,3 @@ services:
         calls:
             - [setAccountClass,[%orob2b_account.entity.account.class%]]
             - [setAccountGroupClass,[%orob2b_account.entity.account_group.class%]]
-
-    orob2b_account.form.type.websiite_entity_visibility_type:
-        class: %orob2b_account.form.type.websiite_entity_visibility_type.class%
-        arguments:
-            - @doctrine
-        tags:
-            - { name: form.type, alias: orob2b_account_website_scoped_data_type }
-        calls:
-            - [setWebsiteClass,[%orob2b_website.website.class%]]

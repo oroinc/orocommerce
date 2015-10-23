@@ -32,6 +32,12 @@
         <div class="responsive-cell">
             {% set tabs = [] %}
             {% for website in form.vars.websites %}
+                {% set content = '' %}
+                {% if form.children[website.id] is defined  %}
+                    {% set content %}
+                        {% include 'OroB2BAccountBundle:ProductVisibility/widget:website.html.twig' with {form: form.children[website.id]} %}
+                    {% endset %}
+                {% endif %}
                 {% set tab = {
                     'alias': website.id,
                     'widgetType': 'block',
@@ -39,12 +45,13 @@
                     'url': path(
                         'orob2b_account_product_visibility_website',
                         { productId: entity.id,  id: website.id}
-                    )
+                    ),
+                    'content': content
                 } %}
                 {% set tabs = tabs|merge([tab]) %}
             {% endfor %}
 
-            {{ tabPanel(tabs) }}
+            {{ tabPanel(tabs, {'useDropdown': true}) }}
         </div>
     {% endset %}
     

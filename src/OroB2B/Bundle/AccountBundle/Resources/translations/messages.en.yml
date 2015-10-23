@@ -232,7 +232,7 @@ orob2b.account:
                 hidden: Hidden
 
         accountproductvisibility:
-            entity_label: Visibility to Products
+            entity_label: Visibility to Accounts
             entity_plural_label: Account Product Visibilities
             id.label: ID
             account.label: Account
@@ -240,11 +240,11 @@ orob2b.account:
             visibility.label: Visibility
             website.label: Website
             choice:
+                account_group: Account Group
+                current_product: Current Product
                 category: Category
-                config: Config
                 hidden: Hidden
                 visible: Visible
-                account_group: Account Group
 
         accountgroupproductvisibility:
             entity_label: Visibility to Account Groups
@@ -255,8 +255,8 @@ orob2b.account:
             visibility.label: Visibility
             website.label: Website
             choice:
+                current_product: Current Product
                 category: Category
-                config: Config
                 hidden: Hidden
                 visible: Visible
 
@@ -268,6 +268,7 @@ orob2b.account:
             visibility.label: Visibility
             website.label: Website
             choice:
+                category: Category
                 config: Config
                 visible: Visible
                 hidden: Hidden
@@ -283,10 +284,6 @@ orob2b.account:
     product:
         visibility:
             label: Product Visibility
-
-    product:
-        visibility:
-            label: Default Visibility to Accounts
             product_configuration_label: Products
 
     menu:

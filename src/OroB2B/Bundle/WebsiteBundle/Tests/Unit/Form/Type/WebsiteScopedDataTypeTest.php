@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type;
+namespace OroB2B\Bundle\WebsiteBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -11,7 +11,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\SearchBundle\Tests\Unit\Fixture\Entity\Product;
 
-use OroB2B\Bundle\AccountBundle\Form\Type\WebsiteScopedDataType;
+use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityVisibilityType;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -143,26 +143,6 @@ class WebsiteScopedDataTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @dataProvider finishViewDataProvider
-     * @param array $children
-     * @param bool $skipChildren
-     * @param array $expected
-     */
-    public function testFinishView(array $children, $skipChildren, array $expected)
-    {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
-
-        $formView = new FormView();
-        $this->setFormViewChildren($formView, $children);
-        $this->formType->finishView($formView, $form, [
-            'skipChildren' => $skipChildren
-        ]);
-
-        $this->assertEquals($expected, $formView->children);
-    }
-
-    /**
      * @return array
      */
     public function finishViewDataProvider()
@@ -170,17 +150,14 @@ class WebsiteScopedDataTypeTest extends FormIntegrationTestCase
         return [
             [
                 'children' => ['1' => 'test'],
-                'skipChildren' => true,
                 'expected' => []
             ],
             [
                 'children' => ['1' => 'test', 'not_int' => 'test'],
-                'skipChildren' => true,
                 'expected' => ['not_int' => 'test']
             ],
             [
                 'children' => ['1' => 'test', 'not_int' => 'test'],
-                'skipChildren' => false,
                 'expected' => ['1' => 'test', 'not_int' => 'test']
             ],
         ];

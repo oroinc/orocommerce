@@ -19,11 +19,11 @@ use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  */
 class AccountProductVisibility implements VisibilityInterface, AccountAwareInterface, WebsiteAwareInterface
 {
-    const CATEGORY = 'category';
-    const CONFIG = 'config';
     const ACCOUNT_GROUP = 'account_group';
-    const VISIBLE = 'visible';
+    const CURRENT_PRODUCT = 'current_product';
+    const CATEGORY = 'category';
     const HIDDEN = 'hidden';
+    const VISIBLE = 'visible';
 
     /**
      * @var integer
@@ -117,7 +117,7 @@ class AccountProductVisibility implements VisibilityInterface, AccountAwareInter
      */
     public static function getDefault($product)
     {
-        return self::CATEGORY;
+        return self::ACCOUNT_GROUP;
     }
 
     /**
@@ -145,11 +145,11 @@ class AccountProductVisibility implements VisibilityInterface, AccountAwareInter
     public static function getVisibilityList($product)
     {
         return [
-            self::CATEGORY,
-            self::CONFIG,
             self::ACCOUNT_GROUP,
-            self::VISIBLE,
+            self::CURRENT_PRODUCT,
+            self::CATEGORY,
             self::HIDDEN,
+            self::VISIBLE,
         ];
     }
 

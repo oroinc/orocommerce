@@ -30,7 +30,7 @@ class ProductVisibilityTest extends \PHPUnit_Framework_TestCase
         );
         $entity->setTargetEntity($product);
         $this->assertEquals($entity->getTargetEntity(), $product);
-        $this->assertEquals(ProductVisibility::CONFIG, $entity->getDefault($product));
+        $this->assertEquals(ProductVisibility::CATEGORY, $entity->getDefault($product));
 
         $this->assertInternalType('array', $entity->getVisibilityList($product));
         $this->assertNotEmpty($entity->getVisibilityList($product));

@@ -15,6 +15,8 @@ use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
+use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteType;
 use OroB2B\Bundle\SaleBundle\Provider\QuoteProductPriceProvider;
@@ -65,10 +67,27 @@ class QuoteController extends Controller
      *     permission="CREATE",
      *     class="OroB2BSaleBundle:Quote"
      * )
+     *
+     * @param Request $request
+     * @return array|RedirectResponse
      */
-    public function createAction()
+    public function createAction(Request $request)
     {
-        return $this->update(new Quote());
+        $quote = new Quote();
+
+        if (!$request->get(ProductDataStorage::STORAGE_KEY, false)) {
+            return $this->update($quote);
+        }
+
+        $this->createForm(QuoteType::NAME, $quote);
+
+        $quoteClass = $this->container->getParameter('orob2b_sale.entity.quote.class');
+        $em = $this->get('doctrine')->getManagerForClass($quoteClass);
+
+        $em->persist($quote);
+        $em->flush();
+
+        return $this->redirectToRoute('orob2b_sale_quote_update', ['id' => $quote->getId()]);
     }
 
     /**
