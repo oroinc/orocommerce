@@ -11,6 +11,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 use OroB2B\Bundle\RedirectBundle\Entity\Slug;
 use OroB2B\Bundle\RedirectBundle\EventListener\ForwardListener;
+use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
 
 class ForwardListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -29,6 +30,17 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected $registry;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|FrontendHelper
+     */
+    protected $frontendHelper;
+
+
+    /**
+     * @var \Symfony\Component\HttpKernel\HttpKernelInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $kernel;
+
     protected function setUp()
     {
         $this->router = $this->getMockBuilder('Symfony\Bundle\FrameworkBundle\Routing\Router')
@@ -36,6 +48,12 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+
+        $this->frontendHelper = $this->getMockBuilder('OroB2B\Bundle\FrontendBundle\Request\FrontendHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->kernel = $this->getMock('Symfony\Component\HttpKernel\HttpKernelInterface');
     }
 
     /**
@@ -43,87 +61,32 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
      * @param boolean $installed
      * @param string $requestType
      * @param boolean $existingController
-     * @param array $slug_params
+     * @param array $slugParams
      * @param array $expected
      */
     public function testOnKernelRequest(
         $installed,
         $requestType,
         $existingController,
-        array $slug_params,
+        array $slugParams,
         array $expected
     ) {
-        $this->listener = new ForwardListener($this->router, $this->registry, $installed);
+        $this->listener = new ForwardListener($this->router, $this->registry, $this->frontendHelper, $installed);
 
-        /**
-         * @var \Symfony\Component\HttpKernel\HttpKernelInterface|\PHPUnit_Framework_MockObject_MockObject $kernel
-         */
-        $kernel = $this->getMock('Symfony\Component\HttpKernel\HttpKernelInterface');
-        $request = Request::create('http://localhost'. $slug_params['url']);
+        $request = Request::create('http://localhost'.$slugParams['url']);
         if ($existingController) {
             $request->attributes->add(['_controller' => 'ExistingController']);
         }
-        $event = new GetResponseEvent($kernel, $request, $requestType);
+        $event = new GetResponseEvent($this->kernel, $request, $requestType);
 
         $slug = new Slug();
-        $slug->setRouteName($slug_params['route_name']);
-        $slug->setUrl($slug_params['url']);
-        $slug->setRouteParameters($slug_params['route_parameters']);
+        $slug->setRouteName($slugParams['route_name']);
+        $slug->setUrl($slugParams['url']);
+        $slug->setRouteParameters($slugParams['route_parameters']);
 
         if ($requestType === HttpKernelInterface::MASTER_REQUEST) {
-            $slugRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-                ->disableOriginalConstructor()
-                ->getMock();
-
-            if ($slug_params['url'] !== '/') {
-                $slug_params['url'] = rtrim($slug_params['url'], '/');
-            }
-
-            if ($slug_params['url'] === '/missing-slug') {
-                $slugRepository->expects($this->any())
-                    ->method('findOneBy')
-                    ->with(['url' => $slug_params['url']])
-                    ->will($this->returnValue(null));
-            } else {
-                $slugRepository->expects($this->any())
-                    ->method('findOneBy')
-                    ->with(['url' => $slug_params['url']])
-                    ->will($this->returnValue($slug));
-            }
-
-            $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
-                ->disableOriginalConstructor()
-                ->getMock();
-
-            $em->expects($this->any())
-                ->method('getRepository')
-                ->with('OroB2BRedirectBundle:Slug')
-                ->will($this->returnValue($slugRepository));
-
-            $this->registry->expects($this->any())
-                ->method('getManagerForClass')
-                ->with('OroB2BRedirectBundle:Slug')
-                ->will($this->returnValue($em));
-
-            $route = $this->getMockBuilder('Symfony\Component\Routing\Route')
-                ->disableOriginalConstructor()
-                ->getMock();
-
-            $route->expects($this->any())
-                ->method('getDefault')
-                ->with('_controller')
-                ->will($this->returnValue('TestController'));
-
-            $routeCollection = $this->getMock('Symfony\Component\Routing\RouteCollection');
-
-            $routeCollection->expects($this->any())
-                ->method('get')
-                ->with('test_route')
-                ->will($this->returnValue($route));
-
-            $this->router->expects($this->any())
-                ->method('getRouteCollection')
-                ->will($this->returnValue($routeCollection));
+            $this->mockSlugRepository($slugParams, $slug);
+            $this->mockRouteCollection();
         }
 
         $this->listener->onKernelRequest($event);
@@ -219,5 +182,69 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
                 'expected' => [],
             ]
         ];
+    }
+
+    /**
+     * @param array $slugParams
+     * @param $slug
+     */
+    protected function mockSlugRepository(array $slugParams, $slug)
+    {
+        $slugRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        if ($slugParams['url'] !== '/') {
+            $slugParams['url'] = rtrim($slugParams['url'], '/');
+        }
+
+        if ($slugParams['url'] === '/missing-slug') {
+            $slugRepository->expects($this->any())
+                ->method('findOneBy')
+                ->with(['url' => $slugParams['url']])
+                ->will($this->returnValue(null));
+        } else {
+            $slugRepository->expects($this->any())
+                ->method('findOneBy')
+                ->with(['url' => $slugParams['url']])
+                ->will($this->returnValue($slug));
+        }
+
+        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $em->expects($this->any())
+            ->method('getRepository')
+            ->with('OroB2BRedirectBundle:Slug')
+            ->will($this->returnValue($slugRepository));
+
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->with('OroB2BRedirectBundle:Slug')
+            ->will($this->returnValue($em));
+    }
+
+    protected function mockRouteCollection()
+    {
+        $route = $this->getMockBuilder('Symfony\Component\Routing\Route')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $route->expects($this->any())
+            ->method('getDefault')
+            ->with('_controller')
+            ->will($this->returnValue('TestController'));
+
+        $routeCollection = $this->getMock('Symfony\Component\Routing\RouteCollection');
+
+        $routeCollection->expects($this->any())
+            ->method('get')
+            ->with('test_route')
+            ->will($this->returnValue($route));
+
+        $this->router->expects($this->any())
+            ->method('getRouteCollection')
+            ->will($this->returnValue($routeCollection));
     }
 }
