@@ -3,7 +3,7 @@
 
 {% oro_title_set({params : {"%sku%": entity.sku|default('N/A'|trans) , "%name%": (entity.id ? entity.defaultName.string : '')|default('N/A'|trans) } }) %}
 
-{% set formAction = path('orob2b_account_product_visibility_edit', { 'id': entity.id })  %}
+{% set formAction = path('orob2b_product_visibility_edit', { 'id': entity.id })  %}
 
 {% block navButtons %}
     {% set html = UI.saveAndCloseButton() %}
@@ -43,7 +43,7 @@
                     'widgetType': 'block',
                     'label': website.name|trans,
                     'url': path(
-                        'orob2b_account_product_visibility_website',
+                        'orob2b_product_visibility_website',
                         { productId: entity.id,  id: website.id}
                     ),
                     'content': content
