@@ -81,9 +81,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
     {
         /** @var ManagerRegistry $registry */
         $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $oroRichText = $this->getMockBuilder('Oro\Bundle\FormBundle\Form\Type\OroRichTextType')
-            ->disableOriginalConstructor()->getMock();
-
+        
         return [
             new PreloadedExtension(
                 [
