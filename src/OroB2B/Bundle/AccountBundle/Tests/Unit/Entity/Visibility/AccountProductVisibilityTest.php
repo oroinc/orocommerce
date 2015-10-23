@@ -35,7 +35,7 @@ class AccountProductVisibilityTest extends \PHPUnit_Framework_TestCase
         $entity->setTargetEntity($product);
         $this->assertEquals($entity->getTargetEntity(), $product);
 
-        $this->assertEquals(AccountProductVisibility::CATEGORY, $entity->getDefault($product));
+        $this->assertEquals(AccountProductVisibility::ACCOUNT_GROUP, $entity->getDefault($product));
 
         $this->assertInternalType('array', $entity->getVisibilityList($product));
         $this->assertNotEmpty($entity->getVisibilityList($product));
