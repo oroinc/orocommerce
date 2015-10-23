@@ -136,6 +136,7 @@ datagrid:
                 join:
                     left:
                         - { join: product.visibility, alias: productVisibility}
+                groupBy: product.id
         columns:
             visibility:
                 label:         orob2b.product.visibility.label
