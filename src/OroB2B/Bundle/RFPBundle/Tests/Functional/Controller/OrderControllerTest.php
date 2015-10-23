@@ -49,10 +49,9 @@ class OrderControllerTest extends WebTestCase
         );
         $this->assertEquals(true, $this->client->getRequest()->get(ProductDataStorage::STORAGE_KEY));
 
-        //TODO: uncomment after implement issue BB-1338
-//        $content = $crawler->filter('[data-ftid=orob2b_order_type_lineItems]')->html();
-//        foreach ($request->getRequestProducts() as $lineItem) {
-//            $this->assertContains($lineItem->getProduct()->getSku(), $content);
-//        }
+        $content = $crawler->filter('[data-ftid=orob2b_order_type_lineItems]')->html();
+        foreach ($request->getRequestProducts() as $lineItem) {
+            $this->assertContains($lineItem->getProduct()->getSku(), $content);
+        }
     }
 }
