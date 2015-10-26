@@ -9,6 +9,8 @@ datagrid:
                     - product.id
                     - product.sku
                     - productNames.string as name
+                    - productInventoryStatus.id as inventoryStatusId
+                    - productInventoryStatus.name as inventoryStatusName
                     - product.createdAt
                     - product.updatedAt
                     - >
@@ -32,6 +34,8 @@ datagrid:
                             alias: productCategory
                             conditionType: WITH
                             condition: 'productCategory = :category_id'
+                        - { join: product.inventory_status, alias: productInventoryStatus}
+                        - { join: product.status, alias: productStatus}
                     inner:
                         -
                             join: product.names
@@ -49,6 +53,16 @@ datagrid:
                 label:         orob2b.product.sku.label
             name:
                 label:         orob2b.product.names.label
+            inventoryStatus:
+                label:         orob2b.product.inventory_status.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BProductBundle:Product:Datagrid/inventoryStatus.html.twig
+            status:
+                label:         orob2b.product.status.label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BProductBundle:Product:Datagrid/status.html.twig
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -65,6 +79,10 @@ datagrid:
                     data_name: product.sku
                 name:
                     data_name: name
+                inventoryStatus:
+                    data_name: inventoryStatusName
+                status:
+                    data_name: statusName
                 createdAt:
                     data_name: product.createdAt
                 updatedAt:
@@ -82,6 +100,14 @@ datagrid:
                 name:
                     type:      string
                     data_name: name
+                inventoryStatus:
+                    type:      enum
+                    data_name: inventoryStatusId
+                    enum_code: prod_inventory_status
+                status:
+                    type:      enum
+                    data_name: statusId
+                    enum_code: prod_status
                 createdAt:
                     type:      datetime
                     data_name: product.createdAt
