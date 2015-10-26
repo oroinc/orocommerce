@@ -6,8 +6,9 @@ use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigEntityValueQuery;
 
-class AddPriceListRelation implements Migration
+class OroB2BSaleBundle implements Migration
 {
     /**
      * {@inheritdoc}
@@ -21,6 +22,15 @@ class AddPriceListRelation implements Migration
             ['price_list_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+
+        $queries->addQuery(
+            new UpdateEntityConfigEntityValueQuery(
+                'OroB2B\Bundle\RFPBundle\Entity\Request',
+                'grouping',
+                'groups',
+                null
+            )
         );
     }
 }
