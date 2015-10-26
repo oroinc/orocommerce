@@ -71,8 +71,12 @@ class ProductVisibilityControllerTest extends WebTestCase
     /** @var  string */
     protected $visibilityToAccountGroupNotDefaultWebsite;
 
-    /** @var  string[] */
-    protected $visibilityClassNames;
+    /** @var  array */
+    protected $visibilityClassNames = [
+        self::PRODUCT_VISIBILITY_CLASS,
+        self::ACCOUNT_PRODUCT_VISIBILITY_CLASS,
+        self::ACCOUNT_GROUP_PRODUCT_VISIBILITY_CLASS,
+    ];
 
     protected function setUp()
     {
@@ -84,11 +88,7 @@ class ProductVisibilityControllerTest extends WebTestCase
                 'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
             ]
         );
-        $this->visibilityClassNames = [
-            self::PRODUCT_VISIBILITY_CLASS,
-            self::ACCOUNT_PRODUCT_VISIBILITY_CLASS,
-            self::ACCOUNT_GROUP_PRODUCT_VISIBILITY_CLASS,
-        ];
+
         $this->product = $this->getReference(LoadProducts::PRODUCT_1);
         $this->account = $this->getReference(LoadAccounts::DEFAULT_ACCOUNT_NAME);
         $this->group = $this->getReference(LoadGroups::GROUP1);
