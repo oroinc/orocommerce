@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller;
 
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -69,6 +71,9 @@ class ProductVisibilityControllerTest extends WebTestCase
     /** @var  string */
     protected $visibilityToAccountGroupNotDefaultWebsite;
 
+    /** @var  string[] */
+    protected $visibilityClassNames;
+
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -79,7 +84,11 @@ class ProductVisibilityControllerTest extends WebTestCase
                 'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
             ]
         );
-
+        $this->visibilityClassNames = [
+            self::PRODUCT_VISIBILITY_CLASS,
+            self::ACCOUNT_PRODUCT_VISIBILITY_CLASS,
+            self::ACCOUNT_GROUP_PRODUCT_VISIBILITY_CLASS,
+        ];
         $this->product = $this->getReference(LoadProducts::PRODUCT_1);
         $this->account = $this->getReference(LoadAccounts::DEFAULT_ACCOUNT_NAME);
         $this->group = $this->getReference(LoadGroups::GROUP1);
@@ -155,16 +164,18 @@ class ProductVisibilityControllerTest extends WebTestCase
         $em = $this->client->getContainer()->get('doctrine')->getManager();
         $duplicatedProduct = $em->getRepository('OroB2BProductBundle:Product')
             ->findOneBySku(sprintf('%s-1', $this->product->getSku()));
-        $classNames = [
-            self::PRODUCT_VISIBILITY_CLASS,
-            self::ACCOUNT_PRODUCT_VISIBILITY_CLASS,
-            self::ACCOUNT_GROUP_PRODUCT_VISIBILITY_CLASS,
-        ];
-        foreach ($classNames as $className) {
+        foreach ($this->visibilityClassNames as $className) {
+            /** @var VisibilityInterface[]|WebsiteAwareInterface[] $visibilities */
             $visibilities = $em->getRepository($className)->findBy(['product' => $duplicatedProduct]);
             $this->assertCount(2, $visibilities);
+
+            foreach ($visibilities as $duplicatedVisibility) {
+                /** @var VisibilityInterface $visibilitySourceProduct */
+                $visibilitySourceProduct = $em->getRepository($className)
+                    ->findOneBy(['product' => $this->product, 'website' => $duplicatedVisibility->getWebsite()]);
+                $this->assertEquals($visibilitySourceProduct->getVisibility(), $duplicatedVisibility->getVisibility());
+            }
         }
-        $em->flush();
     }
 
     /**
@@ -172,9 +183,7 @@ class ProductVisibilityControllerTest extends WebTestCase
      */
     public function testDeleteVisibilityOnSetDefault()
     {
-        $this->assertCount(4, $this->getEntitiesByClass(self::PRODUCT_VISIBILITY_CLASS));
-        $this->assertCount(4, $this->getEntitiesByClass(self::ACCOUNT_PRODUCT_VISIBILITY_CLASS));
-        $this->assertCount(4, $this->getEntitiesByClass(self::ACCOUNT_GROUP_PRODUCT_VISIBILITY_CLASS));
+        $this->assertCountVisibilities(4);
 
         $this->visibilityToAllDefaultWebsite = ProductVisibility::getDefault($this->product);
         $this->visibilityToAccountDefaultWebsite = json_encode(
@@ -190,21 +199,20 @@ class ProductVisibilityControllerTest extends WebTestCase
 
         $this->submitForm();
 
-        $this->assertCount(3, $this->getEntitiesByClass(self::PRODUCT_VISIBILITY_CLASS));
-        $this->assertCount(3, $this->getEntitiesByClass(self::ACCOUNT_PRODUCT_VISIBILITY_CLASS));
-        $this->assertCount(3, $this->getEntitiesByClass(self::ACCOUNT_GROUP_PRODUCT_VISIBILITY_CLASS));
+        $this->assertCountVisibilities(3);
     }
 
     /**
-     * @param string $class
-     * @return array
+     * @param integer $count
      */
-    protected function getEntitiesByClass($class)
+    protected function assertCountVisibilities($count)
     {
         /** @var EntityManager $em */
         $em = $this->client->getContainer()->get('doctrine')->getManager();
 
-        return $em->getRepository($class)->findAll();
+        foreach ($this->visibilityClassNames as $className) {
+            $this->assertCount($count, $em->getRepository($className)->findAll());
+        }
     }
 
     /**
