@@ -16,6 +16,7 @@ parameters:
     orob2b_product.validator.product_unit_holder.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductUnitHolderValidator
     orob2b_product.validator.product_by_sku.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator
     orob2b_product.provider.custom_field_provider.class: OroB2B\Bundle\ProductBundle\Provider\CustomFieldProvider
+    orob2b_product.provider.product_status_provider.class: OroB2B\Bundle\ProductBundle\Provider\ProductStatusProvider
     orob2b_product.event_listener.product_variant_custom_fields_datagrid.class: OroB2B\Bundle\ProductBundle\EventListener\ProductVariantCustomFieldsDatagridListener
     orob2b_product.validator.unique_variant_links.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator
 
@@ -26,6 +27,8 @@ parameters:
     orob2b_product.event_listener.product_grid_widget.class: OroB2B\Bundle\ProductBundle\EventListener\ProductGridWidgetRenderEventListener
 
     orob2b_product.menu.frontend.quick_add.class: OroB2B\Bundle\ProductBundle\Menu\Frontend\QuickAddMenuBuilder
+
+    orob2b_product.event_listener.command.platform_update.class: OroB2B\Bundle\ProductBundle\EventListener\PlatformUpdateCommandListener
 
 services:
     orob2b_product.product.manager.api:
@@ -152,6 +155,9 @@ services:
             - @oro_entity_config.provider.extend
             - @oro_entity_config.provider.entity
 
+    orob2b_product.provider.product_status_provider:
+        class: %orob2b_product.provider.product_status_provider.class%
+
     orob2b_product.event_listener.product_variant_custom_fields_datagrid:
         class: %orob2b_product.event_listener.product_variant_custom_fields_datagrid.class%
         arguments:
@@ -168,3 +174,10 @@ services:
         class: %orob2b_product.validator.unique_variant_links.class%
         tags:
             - { name: validator.constraint_validator, alias: orob2b_product_unique_variant_links }
+
+    orob2b_product.event_listener.command.platform_update:
+        class: %orob2b_product.event_listener.command.platform_update.class%
+        arguments:
+            - @oro_entity_config.config_model_manager
+        tags:
+            - { name: kernel.event_listener, event: console.command, name: onConsoleCommand }
