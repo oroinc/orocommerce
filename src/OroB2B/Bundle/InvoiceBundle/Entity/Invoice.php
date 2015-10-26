@@ -350,7 +350,7 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
     }
 
     /**
-     * @return string|null
+     * @return mixed
      */
     public function getPoNumber()
     {
@@ -358,10 +358,10 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
     }
 
     /**
-     * @param string|null $poNumber
+     * @param mixed $poNumber
      * @return $this
      */
-    public function setPoNumber($poNumber = null)
+    public function setPoNumber($poNumber)
     {
         $this->poNumber = $poNumber;
 
