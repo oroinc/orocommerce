@@ -30,3 +30,18 @@
 .btn.frontend-favorite-button.gold-icon:hover i:before {
     color:#ffd631
 }
+
+.widget-subtitle {
+    border: 1px solid #e5e5e5;
+    margin-top: 0 !important;
+    background: #fafafa;
+    padding: 6px 20px;
+    color: #777777;
+    font-size: 13px;
+    font-weight: normal;
+    line-height: 13px;
+}
+
+.widget-subtitle.indented {
+    margin-top: 50px !important;
+}

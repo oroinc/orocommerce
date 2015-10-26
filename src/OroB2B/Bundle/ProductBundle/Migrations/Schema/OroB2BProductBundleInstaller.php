@@ -268,13 +268,6 @@ class OroB2BProductBundleInstaller implements
         $this->extendExtension->addEnumField(
             $schema,
             self::PRODUCT_TABLE_NAME,
-            'visibility',
-            'prod_visibility'
-        );
-
-        $this->extendExtension->addEnumField(
-            $schema,
-            self::PRODUCT_TABLE_NAME,
             'status',
             'prod_status'
         );

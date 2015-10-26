@@ -9,7 +9,6 @@ orob2b:
         has_variants.label: Has Variants
         variant_fields.label: Variant Fields
         inventory_status.label: Inventory Status
-        visibility.label: Visible to Accounts
         status.label: Status
         owner.label: Owner
         organization.label: Organization
@@ -20,11 +19,6 @@ orob2b:
         removed: '{title} - removed'
         is_variant.label: Is Variant
         variant_links.label: Product Variant Links
-
-        visibility:
-            visible.label: Yes
-            not_visible.label: No
-            as_defined_in_system_config.label: As Defined in System Configuration
 
         form:
             choose: Choose Product...
@@ -77,7 +71,6 @@ orob2b:
         sections:
             general: General
             additional: Additional
-            visibility: Visibility
             productVariants: Product Variants
 
         widgets:
@@ -92,10 +85,8 @@ orob2b:
             groups:
                 product.title: 'Product'
                 product_unit_settings.title: 'Product Unit Settings'
-                default_visibility.title: Default Visibility
             fields:
                 unit_rounding_type.label: 'Unit Rounding Type'
-                visibility.label: Visible to Accounts
 
         grid:
             action:
