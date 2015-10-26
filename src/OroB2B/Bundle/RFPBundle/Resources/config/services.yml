@@ -9,7 +9,7 @@ parameters:
 
     orob2b_rfp.event_listener.request_frontend_datagrid.class: OroB2B\Bundle\RFPBundle\EventListener\RequestFrontendDatagridListener
 
-    orob2b_rfp.service.product_data_storage.class: OroB2B\src\OroB2B\Bundle\RFPBundle\Storage\ProductDataStorage
+    orob2b_rfp.service.product_data_storage.class: OroB2B\Bundle\RFPBundle\Storage\ProductDataStorage
 
 services:
     orob2b_rfp.datagrid.action_permission_provider:
