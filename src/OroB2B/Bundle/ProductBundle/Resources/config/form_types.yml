@@ -8,6 +8,7 @@ parameters:
     orob2b_product.form.type.product_unit_precision.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType
     orob2b_product.form.type.product_unit_precision_collection.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType
     orob2b_product.form.type.product_select.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType
+    orob2b_product.form.type.product_autocomplete.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductAutocompleteType
     orob2b_product.form.type.product_removed_select.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType
     orob2b_product.form.type.quick_add.class: OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType
     orob2b_product.form.type.product_row.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductRowType
@@ -87,6 +88,11 @@ services:
         class: %orob2b_product.form.type.product_select.class%
         tags:
             - { name: form.type, alias: orob2b_product_select }
+
+    orob2b_product.form.type.product_autocomplete:
+        class: %orob2b_product.form.type.product_autocomplete.class%
+        tags:
+            - { name: form.type, alias: orob2b_product_autocomplete }
 
     orob2b_product.form.type.product_removed_select:
         class: %orob2b_product.form.type.product_removed_select.class%
