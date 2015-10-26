@@ -45,7 +45,10 @@ use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
  *              "type"="ACL",
  *              "group_name"="commerce"
  *          },
- *          "grouping"={"groups"={"activity"}}
+ *          "grouping"={"groups"={"activity"}},
+ *          "dataaudit"={
+ *              "auditable"=true
+ *          }
  *      }
  * )
  */
@@ -64,6 +67,13 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      * @var string
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $qid;
 
@@ -87,6 +97,13 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
      * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $accountUser;
 
@@ -95,6 +112,13 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account"),
      * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      **/
     protected $account;
 
@@ -103,6 +127,13 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
      * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $organization;
 
@@ -111,6 +142,13 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\RFPBundle\Entity\Request")
      * @ORM\JoinColumn(name="request_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $request;
 
@@ -146,6 +184,13 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      * @var \DateTime
      *
      * @ORM\Column(name="valid_until", type="datetime", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $validUntil;
 
@@ -160,6 +205,13 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      * @var string
      *
      * @ORM\Column(type="boolean")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $locked = false;
 
@@ -168,6 +220,13 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\PricingBundle\Entity\PriceList")
      * @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      **/
     protected $priceList;
 

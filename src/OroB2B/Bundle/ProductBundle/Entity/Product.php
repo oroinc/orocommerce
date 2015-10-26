@@ -98,6 +98,13 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @var bool
      *
      * @ORM\Column(name="has_variants", type="boolean", nullable=false, options={"default"=false})
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $hasVariants = false;
 
@@ -105,6 +112,13 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @var array
      *
      * @ORM\Column(name="variant_fields", type="array", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $variantFields = [];
 
@@ -156,6 +170,13 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
      * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $organization;
 
@@ -163,6 +184,13 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @var Collection|ProductUnitPrecision[]
      *
      * @ORM\OneToMany(targetEntity="ProductUnitPrecision", mappedBy="product", cascade={"ALL"}, orphanRemoval=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $unitPrecisions;
 
@@ -213,6 +241,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      */
     protected $variantLinks;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct()
     {
         parent::__construct();

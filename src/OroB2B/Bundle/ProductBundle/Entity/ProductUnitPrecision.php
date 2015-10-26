@@ -112,4 +112,12 @@ class ProductUnitPrecision
     {
         return $this->precision;
     }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->getUnit()->getCode() . ' ' . $this->getPrecision();
+    }
 }

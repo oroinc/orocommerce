@@ -31,6 +31,9 @@ use OroB2B\Component\Tree\Entity\TreeTrait;
  *          },
  *          "activity"={
  *              "show_on_page"="\Oro\Bundle\ActivityBundle\EntityConfig\ActivityScope::UPDATE_PAGE"
+ *          },
+ *          "dataaudit"={
+ *              "auditable"=true
  *          }
  *      }
  * )
@@ -75,6 +78,13 @@ class Category
      * @Gedmo\TreeParent
      * @ORM\ManyToOne(targetEntity="Category", inversedBy="childCategories")
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $parentCategory;
 
@@ -83,6 +93,13 @@ class Category
      *
      * @ORM\OneToMany(targetEntity="Category", mappedBy="parentCategory", cascade={"persist"})
      * @ORM\OrderBy({"left" = "ASC"})
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $childCategories;
 
@@ -130,6 +147,9 @@ class Category
      */
     protected $products;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct()
     {
         $this->titles          = new ArrayCollection();
