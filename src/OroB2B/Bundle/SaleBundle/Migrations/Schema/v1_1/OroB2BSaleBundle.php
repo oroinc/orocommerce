@@ -26,7 +26,7 @@ class OroB2BSaleBundle implements Migration
 
         $queries->addQuery(
             new UpdateEntityConfigEntityValueQuery(
-                'OroB2B\Bundle\RFPBundle\Entity\Request',
+                'OroB2B\Bundle\SaleBundle\Entity\Quote',
                 'grouping',
                 'groups',
                 null
