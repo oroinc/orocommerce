@@ -74,8 +74,7 @@ class ProductRowCollectionType extends AbstractType
                 'type' => ProductRowType::NAME,
                 'required' => false,
                 'handle_primary' => false,
-                'row_count' => self::ROW_COUNT,
-                'row_count_add' => self::ROW_COUNT_ADD
+                'row_count_add' => self::ROW_COUNT_ADD,
                 'row_count_initial' => self::ROW_COUNT_INITIAL
             ]
         );
