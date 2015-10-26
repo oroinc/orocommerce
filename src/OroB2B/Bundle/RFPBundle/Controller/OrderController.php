@@ -23,54 +23,8 @@ class OrderController extends Controller
      */
     public function createAction(RFPRequest $request)
     {
-        $this->saveToStorage($request);
-        return $this->redirect(
-            $this->generateUrl('orob2b_order_create', [ProductDataStorage::STORAGE_KEY => true])
-        );
-    }
+        $this->get('orob2b_rfp.service.product_data_storage')->saveToStorage($request);
 
-    /**
-     * @param RFPRequest $request
-     */
-    protected function saveToStorage(RFPRequest $request)
-    {
-        $currencyFormatter = $this->get('oro_locale.formatter.number');
-        $valueFormatter = $this->get('orob2b_product.formatter.product_unit_value');
-
-        /** @var ProductDataStorage $storage */
-        $storage = $this->get('orob2b_product.service.product_data_storage');
-        $data = [
-            ProductDataStorage::ENTITY_DATA_KEY => [
-                'accountUser' => $request->getAccountUser()->getId(),
-                'account' => $request->getAccount()->getId(),
-            ],
-            'withOffers' => 1
-        ];
-        foreach ($request->getRequestProducts() as $lineItem) {
-            $offers = [];
-            foreach ($lineItem->getRequestProductItems() as $productItem) {
-                $offers[] = [
-                    'quantity' => $productItem->getQuantity(),
-                    'unit' => $productItem->getProductUnitCode(),
-                    'currency' => $productItem->getPrice()->getCurrency(),
-                    'price' => $productItem->getPrice()->getValue(),
-                    'quantityFormatted' => $valueFormatter->formatShort(
-                        $productItem->getQuantity(),
-                        $productItem->getProductUnit()
-                    ),
-                    'priceFormatted' => $currencyFormatter->formatCurrency(
-                        $productItem->getPrice()->getValue(),
-                        $productItem->getPrice()->getCurrency()
-                    ),
-                ];
-            }
-
-            $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = [
-                ProductDataStorage::PRODUCT_SKU_KEY => $lineItem->getProduct()->getSku(),
-                'comment' => $lineItem->getComment(),
-                'offers' => $offers,
-            ];
-        }
-        $storage->set($data);
+        return $this->redirectToRoute('orob2b_order_create', [ProductDataStorage::STORAGE_KEY => true]);
     }
 }
