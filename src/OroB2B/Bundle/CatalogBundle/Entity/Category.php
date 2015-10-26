@@ -398,7 +398,7 @@ class Category
     /**
      * @return Collection|LocalizedFallbackValue[]
      */
-    public function getShortDescription()
+    public function getShortDescriptions()
     {
         return $this->shortDescription;
     }
@@ -450,7 +450,7 @@ class Category
     /**
      * @return Collection|LocalizedFallbackValue[]
      */
-    public function getLongDescription()
+    public function getLongDescriptions()
     {
         return $this->longDescription;
     }

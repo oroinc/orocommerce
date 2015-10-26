@@ -63,7 +63,7 @@ class CategoryType extends AbstractType
                 ]
             )
             ->add(
-                'shortDescription',
+                'shortDescriptions',
                 LocalizedFallbackValueCollectionType::NAME,
                 [
                     'label' => 'orob2b.catalog.category.short_description.label',
@@ -84,7 +84,7 @@ class CategoryType extends AbstractType
                 ]
             )
             ->add(
-                'longDescription',
+                'longDescriptions',
                 LocalizedFallbackValueCollectionType::NAME,
                 [
                     'label' => 'orob2b.catalog.category.long_description.label',

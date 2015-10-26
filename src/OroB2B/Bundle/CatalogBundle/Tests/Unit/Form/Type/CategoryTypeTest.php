@@ -61,7 +61,7 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
         $builder->expects($this->at(2))
             ->method('add')
             ->with(
-                'shortDescription',
+                'shortDescriptions',
                 LocalizedFallbackValueCollectionType::NAME,
                 $this->getOroRichTextTypeConfiguration('orob2b.catalog.category.short_description.label')
             )
@@ -70,7 +70,7 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
         $builder->expects($this->at(3))
             ->method('add')
             ->with(
-                'longDescription',
+                'longDescriptions',
                 LocalizedFallbackValueCollectionType::NAME,
                 $this->getOroRichTextTypeConfiguration('orob2b.catalog.category.long_description.label')
             )
