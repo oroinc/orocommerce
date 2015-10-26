@@ -12,6 +12,7 @@ datagrid:
                     - productInventoryStatus.id as inventoryStatusId
                     - productInventoryStatus.name as inventoryStatusName
                     - productStatus.id as statusId
+                    - productStatus.name as statusName
                     - product.createdAt
                     - product.updatedAt
                     - >
