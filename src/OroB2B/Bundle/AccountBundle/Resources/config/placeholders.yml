@@ -45,6 +45,11 @@ placeholders:
             entity_pagination_frontend_edit:
                 order: 100
 
+    view_navButtons_after:
+        items:
+            product_visibility_button:
+                order: 100
+
 items:
     frontend_menu:
         template: OroB2BAccountBundle:Menu:frontendMenu.html.twig
@@ -76,3 +81,6 @@ items:
     entity_pagination_frontend_edit:
         template: OroB2BAccountBundle:EntityPagination:editPagination.html.twig
         applicable: @orob2b_account.placeholder.filter->isUserApplicable()
+    product_visibility_button:
+        template: OroB2BAccountBundle:ProductVisibility:button.html.twig
+        applicable: @oro_ui.placeholder.filter->isInstanceOf($entity$, %orob2b_product.product.class%)
