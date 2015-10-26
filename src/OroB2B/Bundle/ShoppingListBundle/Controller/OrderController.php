@@ -2,9 +2,10 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
@@ -19,42 +20,12 @@ class OrderController extends Controller
      *
      * @param ShoppingList $shoppingList
      *
-     * @return array
+     * @return RedirectResponse
      */
     public function createAction(ShoppingList $shoppingList)
     {
-        $this->saveToStorage($shoppingList);
+        $this->get('orob2b_shopping_list.service.product_data_storage')->saveToStorage($shoppingList);
 
-        return $this->redirect(
-            $this->generateUrl('orob2b_order_create', [ProductDataStorage::STORAGE_KEY => true])
-        );
-    }
-
-    /**
-     * @param ShoppingList $shoppingList
-     */
-    protected function saveToStorage(ShoppingList $shoppingList)
-    {
-        /** @var ProductDataStorage $storage */
-        $storage = $this->get('orob2b_product.service.product_data_storage');
-
-        $data = [
-            ProductDataStorage::ENTITY_DATA_KEY => [
-                'accountUser' => $shoppingList->getAccountUser()->getId(),
-                'account' => $shoppingList->getAccount()->getId(),
-            ],
-        ];
-
-        foreach ($shoppingList->getLineItems() as $lineItem) {
-            $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = [
-                ProductDataStorage::PRODUCT_SKU_KEY => $lineItem->getProduct()->getSku(),
-                ProductDataStorage::PRODUCT_QUANTITY_KEY => $lineItem->getQuantity(),
-                'comment' => $lineItem->getNotes(),
-                'productUnit' => $lineItem->getUnit()->getCode(),
-                'productUnitCode' => $lineItem->getUnit()->getCode(),
-            ];
-        }
-
-        $storage->set($data);
+        return $this->redirectToRoute('orob2b_order_create', [ProductDataStorage::STORAGE_KEY => true]);
     }
 }

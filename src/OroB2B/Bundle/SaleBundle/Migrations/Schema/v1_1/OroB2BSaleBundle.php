@@ -24,6 +24,11 @@ class OroB2BSaleBundle implements Migration
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
 
+        $table = $schema->getTable('orob2b_sale_quote_product');
+        $table->addColumn('free_form_product', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('free_form_product_replacement', 'string', ['notnull' => false, 'length' => 255]);
+        $table->changeColumn('product_sku', ['notnull' => false]);
+
         $queries->addQuery(
             new UpdateEntityConfigEntityValueQuery(
                 'OroB2B\Bundle\SaleBundle\Entity\Quote',

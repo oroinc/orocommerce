@@ -6,6 +6,8 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\SaleBundle\Validator\Constraints;
 use OroB2B\Bundle\SaleBundle\Entity;
 
@@ -33,21 +35,38 @@ class QuoteProductOfferValidator extends ConstraintValidator
 
         if ($quoteProduct->isTypeNotAvailable()) {
             $product = $quoteProduct->getProductReplacement();
+            $isProductFreeForm = $quoteProduct->isProductReplacementFreeForm();
         } else {
             $product = $quoteProduct->getProduct();
+            $isProductFreeForm = $quoteProduct->isProductFreeForm();
         }
 
+        if (null === ($productUnit = $quoteProductOffer->getProductUnit())) {
+            $this->addViolation($constraint);
+            return;
+        }
+
+        if (!$isProductFreeForm) {
+            $this->validateProductForm($constraint, $product, $productUnit);
+        }
+    }
+
+    /**
+     * @param Constraints\QuoteProductOffer $constraint
+     * @param Product $product
+     * @param ProductUnit $productUnit
+     */
+    protected function validateProductForm(
+        Constraints\QuoteProductOffer $constraint,
+        Product $product = null,
+        ProductUnit $productUnit = null
+    ) {
         if (null === $product) {
             $this->addViolation($constraint);
             return;
         }
 
         if ([] === ($allowedUnits = $product->getAvailableUnitCodes())) {
-            $this->addViolation($constraint);
-            return;
-        }
-
-        if (null === ($productUnit = $quoteProductOffer->getProductUnit())) {
             $this->addViolation($constraint);
             return;
         }
