@@ -12,6 +12,8 @@ orob2b:
         account_user.label: Account User
         organization.label: Organization
         line_items.label: Line Items
+        currency.label: Currency
+        payment_due_date.label: 'Payment Due Date'
 
 
         invoicelineitem:
@@ -26,4 +28,5 @@ orob2b:
             invoice.label: Invoice
             product.label: Product
             product_unit.label: Product Unit
+            price.label: Price
 
