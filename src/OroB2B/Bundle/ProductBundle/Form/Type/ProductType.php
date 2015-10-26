@@ -100,15 +100,6 @@ class ProductType extends AbstractType
                 ]
             )
             ->add(
-                'visibility',
-                'oro_enum_select',
-                [
-                    'label'     => 'orob2b.product.visibility.label',
-                    'enum_code' => 'prod_visibility',
-                    'configs'   => ['allowClear' => false]
-                ]
-            )
-            ->add(
                 'unitPrecisions',
                 ProductUnitPrecisionCollectionType::NAME,
                 [

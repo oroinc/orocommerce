@@ -265,12 +265,6 @@ class OroB2BProductBundleInstaller implements
             'inventory_status',
             'prod_inventory_status'
         );
-        $this->extendExtension->addEnumField(
-            $schema,
-            self::PRODUCT_TABLE_NAME,
-            'visibility',
-            'prod_visibility'
-        );
     }
 
     /**

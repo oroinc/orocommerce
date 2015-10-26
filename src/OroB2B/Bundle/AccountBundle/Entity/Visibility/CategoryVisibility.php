@@ -73,14 +73,12 @@ class CategoryVisibility implements VisibilityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param Category $category
+     * @return string
      */
-    public static function getDefault($target = null)
+    public static function getDefault($category)
     {
-        if (null === $target) {
-            throw new \InvalidArgumentException();
-        }
-        if ($target instanceof Category && !$target->getParentCategory()) {
+        if ($category instanceof Category && !$category->getParentCategory()) {
             return self::CONFIG;
         } else {
             return self::PARENT_CATEGORY;
@@ -106,23 +104,37 @@ class CategoryVisibility implements VisibilityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param Category $category
+     * @return array
      */
-    public static function getVisibilityList($target = null)
+    public static function getVisibilityList($category)
     {
-        if (null === $target) {
-            throw new \InvalidArgumentException();
-        }
         $visibilityList = [
             self::PARENT_CATEGORY,
             self::CONFIG,
             self::HIDDEN,
             self::VISIBLE
         ];
-        if ($target instanceof Category && !$target->getParentCategory()) {
-            unset($visibilityList[array_search(self::PARENT_CATEGORY, $visibilityList, true)]);
+        if ($category instanceof Category && !$category->getParentCategory()) {
+            unset($visibilityList[array_search(self::PARENT_CATEGORY, $visibilityList)]);
         }
-
         return $visibilityList;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTargetEntity()
+    {
+        return $this->getCategory();
+    }
+
+    /**
+     * @param Category $category
+     * @return $this
+     */
+    public function setTargetEntity($category)
+    {
+        return $this->setCategory($category);
     }
 }

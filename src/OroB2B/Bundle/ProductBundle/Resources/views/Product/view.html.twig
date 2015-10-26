@@ -62,9 +62,6 @@
     {% set productDescription %}
         {{ UI.renderHtmlProperty('orob2b.product.descriptions.label'|trans, entity.defaultDescription) }}
     {% endset %}
-    {% set productVisibility %}
-        {{ UI.renderHtmlProperty('orob2b.product.visibility.label'|trans, entity.visibility) }}
-    {% endset %}
 
     {% set dataBlocks = [
         {
@@ -74,11 +71,7 @@
                 {'data' : [productInformationWidget]},
                 {'data' : [productDescription]}
             ]
-        },
-        {
-            'title': 'orob2b.product.sections.visibility'|trans,
-            'subblocks': [{'data' : [productVisibility]}]
-        },
+        }
     ] %}
 
     {% if entity.getHasVariants %}

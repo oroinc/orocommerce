@@ -2,17 +2,21 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
+use Doctrine\ORM\Query\Expr;
+
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
+use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 
 use OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
 class ProductPriceDatagridListener
 {
@@ -32,6 +36,16 @@ class ProductPriceDatagridListener
     protected $priceListRequestHandler;
 
     /**
+     * @var string
+     */
+    protected $productPriceClass;
+
+    /**
+     * @var string
+     */
+    protected $productUnitClass;
+
+    /**
      * @param TranslatorInterface $translator
      * @param DoctrineHelper $doctrineHelper
      * @param AbstractPriceListRequestHandler $priceListRequestHandler
@@ -47,6 +61,22 @@ class ProductPriceDatagridListener
     }
 
     /**
+     * @param string $productPriceClass
+     */
+    public function setProductPriceClass($productPriceClass)
+    {
+        $this->productPriceClass = $productPriceClass;
+    }
+
+    /**
+     * @param string $productUnitClass
+     */
+    public function setProductUnitClass($productUnitClass)
+    {
+        $this->productUnitClass = $productUnitClass;
+    }
+
+    /**
      * @param BuildBefore $event
      */
     public function onBuildBefore(BuildBefore $event)
@@ -58,26 +88,18 @@ class ProductPriceDatagridListener
 
         $config = $event->getConfig();
 
+        $units = $this->getAllUnits();
+
+        // add prices for currencies
         foreach ($currencies as $currencyIsoCode) {
-            $columnName = $this->buildColumnName($currencyIsoCode);
-            $column = [
-                'label' => $this->translator->trans(
-                    'orob2b.pricing.productprice.price_in_%currency%',
-                    ['%currency%' => $currencyIsoCode]
-                ),
-                'type' => 'twig',
-                'template' => 'OroB2BPricingBundle:Datagrid:Column/productPrice.html.twig',
-                'frontend_type' => 'html',
-            ];
+            $this->addProductPriceCurrencyColumn($config, $currencyIsoCode);
+        }
 
-            $config->offsetSetByPath(sprintf('[columns][%s]', $columnName), $column);
-
-            $filter = [
-                'type' => 'product-price',
-                'data_name' => $currencyIsoCode
-            ];
-
-            $config->offsetSetByPath(sprintf('[filters][columns][%s]', $columnName), $filter);
+        foreach ($currencies as $currencyIsoCode) {
+            // add prices for units
+            foreach ($units as $unit) {
+                $this->addProductPriceCurrencyUnitColumn($config, $unit, $currencyIsoCode);
+            }
         }
     }
 
@@ -90,6 +112,7 @@ class ProductPriceDatagridListener
         if (!$currencies) {
             return;
         }
+        $units = $this->getAllUnits();
 
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
@@ -100,11 +123,12 @@ class ProductPriceDatagridListener
         }
 
         /** @var ProductPriceRepository $priceRepository */
-        $priceRepository = $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:ProductPrice');
+        $priceRepository = $this->doctrineHelper->getEntityRepository($this->productPriceClass);
 
         $priceList = $this->getPriceList();
         $showTierPrices = $this->priceListRequestHandler->getShowTierPrices();
         $prices = $priceRepository->findByPriceListIdAndProductIds($priceList->getId(), $productIds, $showTierPrices);
+        $pricesByUnits = $this->getPricesByUnits($prices);
         $groupedPrices = $this->groupPrices($prices);
 
         foreach ($records as $record) {
@@ -113,11 +137,22 @@ class ProductPriceDatagridListener
             $productId = $record->getValue('id');
             $priceContainer = [];
             foreach ($currencies as $currencyIsoCode) {
-                $columnName = $this->buildColumnName($currencyIsoCode);
+                foreach ($units as $unit) {
+                    $priceUnitColumn = $this->buildColumnName($currencyIsoCode, $unit);
+
+                    $data = [$priceUnitColumn => []];
+                    if (isset($pricesByUnits[$productId][$currencyIsoCode][$unit->getCode()])) {
+                        $data = [$priceUnitColumn => $pricesByUnits[$productId][$currencyIsoCode][$unit->getCode()]];
+                    }
+
+                    $record->addData($data);
+                }
+
+                $priceColumn = $this->buildColumnName($currencyIsoCode);
                 if (isset($groupedPrices[$productId][$currencyIsoCode])) {
-                    $priceContainer[$columnName] = $groupedPrices[$productId][$currencyIsoCode];
+                    $priceContainer[$priceColumn] = $groupedPrices[$productId][$currencyIsoCode];
                 } else {
-                    $priceContainer[$columnName] = [];
+                    $priceContainer[$priceColumn] = [];
                 }
             }
             if ($priceContainer) {
@@ -128,11 +163,23 @@ class ProductPriceDatagridListener
 
     /**
      * @param string $currencyIsoCode
+     * @param string $unitCode
      * @return string
      */
-    protected function buildColumnName($currencyIsoCode)
+    protected function buildColumnName($currencyIsoCode, $unitCode = null)
     {
-        return 'price_column_' . strtolower($currencyIsoCode);
+        $result = 'price_column_' . strtolower($currencyIsoCode);
+
+        return $unitCode ? sprintf('%s_%s', $result, strtolower($unitCode)) : $result;
+    }
+
+    /**
+     * @param string $columnName
+     * @return string
+     */
+    protected function buildJoinAlias($columnName)
+    {
+        return $columnName . '_table';
     }
 
     /**
@@ -168,5 +215,169 @@ class ProductPriceDatagridListener
         }
 
         return $groupedPrices;
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     * @param string $currency
+     */
+    protected function addProductPriceCurrencyColumn(DatagridConfiguration $config, $currency)
+    {
+        $columnName = $this->buildColumnName($currency);
+        $joinAlias = $this->buildJoinAlias($columnName);
+        $priceList = $this->getPriceList();
+
+        // select
+        $this->addConfigElement(
+            $config,
+            '[source][query][select]',
+            sprintf('min(%s.value) as %s', $joinAlias, $columnName)
+        );
+
+        // left join
+        $expr = new Expr();
+        $joinExpr = $expr
+            ->andX(sprintf('%s.product = product.id', $joinAlias))
+            ->add($expr->eq(sprintf('%s.currency', $joinAlias), $expr->literal($currency)))
+            ->add($expr->eq(sprintf('%s.priceList', $joinAlias), $expr->literal($priceList->getId())))
+            ->add($expr->eq(sprintf('%s.quantity', $joinAlias), 1))
+        ;
+        $leftJoin = [
+            'join' => $this->productPriceClass,
+            'alias' => $joinAlias,
+            'conditionType' => Expr\Join::WITH,
+            'condition' => (string) $joinExpr,
+        ];
+        $this->addConfigElement($config, '[source][query][join][left]', $leftJoin);
+
+        $column = [
+            'label' => $this->translator->trans(
+                'orob2b.pricing.productprice.price_in_%currency%',
+                ['%currency%' => $currency]
+            ),
+            'type' => 'twig',
+            'template' => 'OroB2BPricingBundle:Datagrid:Column/productPrice.html.twig',
+            'frontend_type' => 'html',
+        ];
+
+        $this->addConfigElement($config, '[columns]', $column, $columnName);
+
+        // sorter
+        $this->addConfigElement($config, '[sorters][columns]', ['data_name' => $columnName], $columnName);
+
+        // filter
+        $this->addConfigElement(
+            $config,
+            '[filters][columns]',
+            ['type' => 'product-price', 'data_name' => $currency],
+            $columnName
+        );
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     * @param ProductUnit $unit
+     * @param string $currency
+     */
+    protected function addProductPriceCurrencyUnitColumn(DatagridConfiguration $config, ProductUnit $unit, $currency)
+    {
+        $columnName = $this->buildColumnName($currency, $unit);
+        $joinAlias = $this->buildJoinAlias($columnName);
+        $priceList = $this->getPriceList();
+
+        // select
+        $this->addConfigElement(
+            $config,
+            '[source][query][select]',
+            sprintf('%s.value as %s', $joinAlias, $columnName)
+        );
+
+        // left join
+        $expr = new Expr();
+        $joinExpr = $expr
+            ->andX(sprintf('%s.product = product.id', $joinAlias))
+            ->add($expr->eq(sprintf('%s.currency', $joinAlias), $expr->literal($currency)))
+            ->add($expr->eq(sprintf('%s.unit', $joinAlias), $expr->literal($unit)))
+            ->add($expr->eq(sprintf('%s.priceList', $joinAlias), $expr->literal($priceList->getId())))
+            ->add($expr->eq(sprintf('%s.quantity', $joinAlias), 1))
+        ;
+        $leftJoin = [
+            'join' => $this->productPriceClass,
+            'alias' => $joinAlias,
+            'conditionType' => Expr\Join::WITH,
+            'condition' => (string) $joinExpr,
+        ];
+        $this->addConfigElement($config, '[source][query][join][left]', $leftJoin);
+
+        // column
+        $column = [
+            'label' => $this->translator->trans(
+                'orob2b.pricing.productprice.price_%unit%_in_%currency%',
+                [
+                    '%currency%' => $currency,
+                    '%unit%' =>  $unit->getCode(),
+                ]
+            ),
+            'type' => 'twig',
+            'template' => 'OroB2BPricingBundle:Datagrid:Column/productUnitPrice.html.twig',
+            'frontend_type' => 'html',
+        ];
+
+        $this->addConfigElement($config, '[columns]', $column, $columnName);
+
+        // sorter
+        $this->addConfigElement($config, '[sorters][columns]', ['data_name' => $columnName], $columnName);
+
+        // filter
+        $this->addConfigElement(
+            $config,
+            '[filters][columns]',
+            ['type' => 'number-range', 'data_name' => $columnName],
+            $columnName
+        );
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     * @param string $path
+     * @param mixed $element
+     * @param mixed $key
+     */
+    protected function addConfigElement(DatagridConfiguration $config, $path, $element, $key = null)
+    {
+        $select = $config->offsetGetByPath($path);
+        if ($key) {
+            $select[$key] = $element;
+        } else {
+            $select[] = $element;
+        }
+        $config->offsetSetByPath($path, $select);
+    }
+
+    /**
+     * @return array|ProductUnit[]
+     */
+    protected function getAllUnits()
+    {
+        return $this->doctrineHelper->getEntityRepository($this->productUnitClass)->findBy([], ['code' => 'ASC']);
+    }
+
+    /**
+     * @param array|ProductPrice[] $productPrices
+     * @return array
+     */
+    protected function getPricesByUnits(array $productPrices)
+    {
+        $result = [];
+        foreach ($productPrices as $productPrice) {
+            if (null === $productPrice->getUnit()) {
+                continue;
+            }
+            $currency = $productPrice->getPrice()->getCurrency();
+            $unitCode = $productPrice->getUnit()->getCode();
+            $result[$productPrice->getProduct()->getId()][$currency][$unitCode][] = $productPrice;
+        }
+
+        return $result;
     }
 }
