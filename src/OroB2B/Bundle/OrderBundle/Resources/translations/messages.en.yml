@@ -131,3 +131,6 @@ orob2b:
 
         navigation:
             view: 'Order #%identifier%'
+
+        system_configuration:
+            product_visibility: 'Visibility For Product'
