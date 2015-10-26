@@ -11,11 +11,13 @@ use Symfony\Component\Validator\Validation;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
+use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as EntityIdentifierTypeStub;
 use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSetDataListener;
 use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSubmitListener;
 use OroB2B\Bundle\AccountBundle\Form\Extension\CategoryFormExtension;
+use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Extension\Stub\OroRichTextTypeStub;
 use OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityChangesetTypeStub;
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
@@ -79,7 +81,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
     {
         /** @var ManagerRegistry $registry */
         $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-
+        
         return [
             new PreloadedExtension(
                 [
@@ -88,7 +90,8 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
                     LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionType($registry),
                     LocalizedPropertyType::NAME => new LocalizedPropertyType(),
                     LocaleCollectionType::NAME => new LocaleCollectionTypeStub(),
-                    EntityChangesetType::NAME => new EntityChangesetTypeStub()
+                    EntityChangesetType::NAME => new EntityChangesetTypeStub(),
+                    OroRichTextType::NAME => new OroRichTextTypeStub()
                 ],
                 [
                     CategoryType::NAME => [$this->categoryFormExtension],

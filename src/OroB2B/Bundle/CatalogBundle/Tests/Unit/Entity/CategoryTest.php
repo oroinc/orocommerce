@@ -56,11 +56,11 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Doctrine\Common\Collections\Collection', $category->getProducts());
         $this->assertEmpty($category->getProducts()->toArray());
 
-        $this->assertInstanceOf('Doctrine\Common\Collections\Collection', $category->getShortDescription());
-        $this->assertEmpty($category->getShortDescription()->toArray());
+        $this->assertInstanceOf('Doctrine\Common\Collections\Collection', $category->getShortDescriptions());
+        $this->assertEmpty($category->getShortDescriptions()->toArray());
 
-        $this->assertInstanceOf('Doctrine\Common\Collections\Collection', $category->getLongDescription());
-        $this->assertEmpty($category->getLongDescription()->toArray());
+        $this->assertInstanceOf('Doctrine\Common\Collections\Collection', $category->getLongDescriptions());
+        $this->assertEmpty($category->getLongDescriptions()->toArray());
 
         $now = new \DateTime();
 
@@ -100,7 +100,7 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
     public function testShortDescriptionAccessors()
     {
         $category = $this->category;
-        $this->assertEmpty($category->getShortDescription()->toArray());
+        $this->assertEmpty($category->getShortDescriptions()->toArray());
 
         $firstShortDescription = $this->createLocalizedValue();
 
@@ -112,24 +112,24 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             [$firstShortDescription, $secondShortDescription],
-            array_values($category->getShortDescription()->toArray())
+            array_values($category->getShortDescriptions()->toArray())
         );
 
         $this->assertEquals(
             2,
-            count($category->getShortDescription()->toArray())
+            count($category->getShortDescriptions()->toArray())
         );
 
         $category->removeShortDescription($firstShortDescription)
             ->removeShortDescription($firstShortDescription);
 
-        $this->assertEquals([$secondShortDescription], array_values($category->getShortDescription()->toArray()));
+        $this->assertEquals([$secondShortDescription], array_values($category->getShortDescriptions()->toArray()));
     }
 
     public function testLongDescriptionAccessors()
     {
         $category = $this->category;
-        $this->assertEmpty($category->getLongDescription()->toArray());
+        $this->assertEmpty($category->getLongDescriptions()->toArray());
 
         $firstLongDescription = $this->createLocalizedValue();
 
@@ -141,18 +141,18 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             [$firstLongDescription, $secondLongDescription],
-            array_values($category->getLongDescription()->toArray())
+            array_values($category->getLongDescriptions()->toArray())
         );
 
         $this->assertEquals(
             2,
-            count($category->getLongDescription()->toArray())
+            count($category->getLongDescriptions()->toArray())
         );
 
         $category->removeLongDescription($firstLongDescription)
             ->removeLongDescription($firstLongDescription);
 
-        $this->assertEquals([$secondLongDescription], array_values($category->getLongDescription()->toArray()));
+        $this->assertEquals([$secondLongDescription], array_values($category->getLongDescriptions()->toArray()));
     }
 
     public function testChildCategoryAccessors()
