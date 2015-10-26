@@ -1,8 +1,9 @@
 <?php
 
-namespace OroB2B\src\OroB2B\Bundle\RFPBundle\Storage;
+namespace OroB2B\Bundle\RFPBundle\Storage;
 
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
+
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage as Storage;
