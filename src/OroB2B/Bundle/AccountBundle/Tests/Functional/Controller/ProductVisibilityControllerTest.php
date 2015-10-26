@@ -30,9 +30,11 @@ class ProductVisibilityControllerTest extends WebTestCase
     const ALL_KEY = 'all';
     const ACCOUNT_KEY = 'account';
     const ACCOUNT_GROUP_KEY = 'accountGroup';
+
     const VISIBILITY_KEY = 'visibility';
     const VISIBLE = 'visible';
     const HIDDEN = 'hidden';
+
     const PRODUCT_VISIBILITY_CLASS = 'OroB2BAccountBundle:Visibility\ProductVisibility';
     const ACCOUNT_PRODUCT_VISIBILITY_CLASS = 'OroB2BAccountBundle:Visibility\AccountProductVisibility';
     const ACCOUNT_GROUP_PRODUCT_VISIBILITY_CLASS = 'OroB2BAccountBundle:Visibility\AccountGroupProductVisibility';
@@ -161,9 +163,6 @@ class ProductVisibilityControllerTest extends WebTestCase
         foreach ($classNames as $className) {
             $visibilities = $em->getRepository($className)->findBy(['product' => $duplicatedProduct]);
             $this->assertCount(2, $visibilities);
-            foreach ($visibilities as $visibility) {
-                $em->remove($visibility);
-            }
         }
         $em->flush();
     }
@@ -173,15 +172,9 @@ class ProductVisibilityControllerTest extends WebTestCase
      */
     public function testDeleteVisibilityOnSetDefault()
     {
-        /** @var EntityManager $em */
-        $em = $this->client->getContainer()->get('doctrine')->getManager();
-        $productVisibilityRepo = $em->getRepository(self::PRODUCT_VISIBILITY_CLASS);
-        $accountProductVisibilityRepo = $em->getRepository(self::ACCOUNT_PRODUCT_VISIBILITY_CLASS);
-        $accountGroupProductVisibilityRepo = $em->getRepository(self::ACCOUNT_GROUP_PRODUCT_VISIBILITY_CLASS);
-
-        $this->assertCount(2, $productVisibilityRepo->findAll());
-        $this->assertCount(2, $accountProductVisibilityRepo->findAll());
-        $this->assertCount(2, $accountGroupProductVisibilityRepo->findAll());
+        $this->assertCount(4, $this->getEntitiesByClass(self::PRODUCT_VISIBILITY_CLASS));
+        $this->assertCount(4, $this->getEntitiesByClass(self::ACCOUNT_PRODUCT_VISIBILITY_CLASS));
+        $this->assertCount(4, $this->getEntitiesByClass(self::ACCOUNT_GROUP_PRODUCT_VISIBILITY_CLASS));
 
         $this->visibilityToAllDefaultWebsite = ProductVisibility::getDefault($this->product);
         $this->visibilityToAccountDefaultWebsite = json_encode(
@@ -195,15 +188,23 @@ class ProductVisibilityControllerTest extends WebTestCase
             ]
         );
 
-        $this->visibilityToAllNotDefaultWebsite = $this->visibilityToAllDefaultWebsite;
-        $this->visibilityToAccountDefaultWebsite = $this->visibilityToAccountNotDefaultWebsite;
-        $this->visibilityToAccountGroupDefaultWebsite = $this->visibilityToAccountGroupNotDefaultWebsite;
-
         $this->submitForm();
 
-        $this->assertCount(0, $productVisibilityRepo->findAll());
-        $this->assertCount(0, $accountProductVisibilityRepo->findAll());
-        $this->assertCount(0, $accountGroupProductVisibilityRepo->findAll());
+        $this->assertCount(3, $this->getEntitiesByClass(self::PRODUCT_VISIBILITY_CLASS));
+        $this->assertCount(3, $this->getEntitiesByClass(self::ACCOUNT_PRODUCT_VISIBILITY_CLASS));
+        $this->assertCount(3, $this->getEntitiesByClass(self::ACCOUNT_GROUP_PRODUCT_VISIBILITY_CLASS));
+    }
+
+    /**
+     * @param string $class
+     * @return array
+     */
+    protected function getEntitiesByClass($class)
+    {
+        /** @var EntityManager $em */
+        $em = $this->client->getContainer()->get('doctrine')->getManager();
+
+        return $em->getRepository($class)->findAll();
     }
 
     /**
@@ -247,7 +248,7 @@ class ProductVisibilityControllerTest extends WebTestCase
         ];
         $crawler = $this->client->request(
             'POST',
-            $this->getUrl('orob2b_account_product_visibility_edit', ['id' => $this->product->getId()]),
+            $this->getUrl('orob2b_product_visibility_edit', ['id' => $this->product->getId()]),
             $parameters
         );
         $response = $this->client->getResponse();
@@ -266,7 +267,7 @@ class ProductVisibilityControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_account_product_visibility_website',
+                'orob2b_product_visibility_website',
                 ['productId' => $productId, 'id' => $websiteId]
             )
         );
@@ -331,7 +332,7 @@ class ProductVisibilityControllerTest extends WebTestCase
         $this->client->followRedirects();
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_account_product_visibility_edit', ['id' => $this->product->getId()])
+            $this->getUrl('orob2b_product_visibility_edit', ['id' => $this->product->getId()])
         );
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
