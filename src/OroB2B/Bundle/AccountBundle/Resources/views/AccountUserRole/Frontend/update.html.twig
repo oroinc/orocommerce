@@ -3,7 +3,12 @@
 
 {% form_theme form with 'OroFormBundle:Form:fields.html.twig' %}
 
-{% set formAction = entity.id ? path('orob2b_account_frontend_account_user_role_update', {id: entity.id}) : path('orob2b_account_frontend_account_user_role_create') %}
+{% set formAction = path('orob2b_account_frontend_account_user_role_create') %}
+{% if entity.id is defined and entity.id %}
+    {% set formAction = path('orob2b_account_frontend_account_user_role_update', {id: entity.id}) %}
+{% elseif predefined_role_id is defined and predefined_role_id %}
+    {% set formAction = path('orob2b_account_frontend_account_user_role_update', {id: predefined_role_id}) %}
+{% endif %}
 
 {% oro_title_set({params : {"%label%": entity.label|default('N/A'|trans), '%entityName%': 'orob2b.account.accountuserrole.entity_label'|trans} }) %}
 
@@ -82,7 +87,15 @@
             'data' : [
                 form_widget(form.appendUsers, {'id': 'roleAppendUsers'}),
                 form_widget(form.removeUsers, {'id': 'roleRemoveUsers'}),
-                dataGrid.renderGrid('account-account-users-grid-frontend-update', {role: entity.id, account: entity.account }, { cssClass: 'inner-grid' })
+                dataGrid.renderGrid(
+                    'account-account-users-grid-frontend-update',
+                    {
+                        role: entity.id,
+                        account: entity.account,
+                        '_parameters' : {'data_in': form.appendUsers.vars.value|split(',')|default([])},
+                    },
+                    { cssClass: 'inner-grid' }
+                )
             ]
         }]
     }] ) %}

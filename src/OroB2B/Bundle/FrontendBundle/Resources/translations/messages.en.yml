@@ -1,3 +1,16 @@
 orob2b_frontend:
     widget_form_component:
         save_flash_success: Saved successfully
+    form:
+        install_configuration:
+            web:
+                header: Web settings
+                backend_prefix: Backend prefix
+    theme:
+        demo.title: 'OroPlatform theme'
+    system_configuration:
+        groups:
+            frontend.title: 'Frontend'
+            theme_settings.title: 'Theme Settings'
+        fields:
+            frontend_theme.label: 'Theme'

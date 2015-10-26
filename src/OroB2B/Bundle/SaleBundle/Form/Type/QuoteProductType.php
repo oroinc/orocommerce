@@ -2,17 +2,16 @@
 
 namespace OroB2B\Bundle\SaleBundle\Form\Type;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
@@ -39,23 +38,36 @@ class QuoteProductType extends AbstractType
     protected $translator;
 
     /**
+     * @var ManagerRegistry
+     */
+    protected $registry;
+
+    /**
      * @var string
      */
     protected $dataClass;
 
     /**
+     * @var string
+     */
+    protected $productUnitClass;
+
+    /**
      * @param TranslatorInterface $translator
      * @param ProductUnitLabelFormatter $labelFormatter
      * @param QuoteProductFormatter $formatter
+     * @param ManagerRegistry $registry
      */
     public function __construct(
         TranslatorInterface $translator,
         ProductUnitLabelFormatter $labelFormatter,
-        QuoteProductFormatter $formatter
+        QuoteProductFormatter $formatter,
+        ManagerRegistry $registry
     ) {
         $this->translator = $translator;
         $this->labelFormatter = $labelFormatter;
         $this->formatter = $formatter;
+        $this->registry = $registry;
     }
 
     /**
@@ -64,6 +76,14 @@ class QuoteProductType extends AbstractType
     public function setDataClass($dataClass)
     {
         $this->dataClass = $dataClass;
+    }
+
+    /**
+     * @param string $productUnitClass
+     */
+    public function setProductUnitClass($productUnitClass)
+    {
+        $this->productUnitClass = $productUnitClass;
     }
 
     /**
@@ -85,6 +105,8 @@ class QuoteProductType extends AbstractType
         /* @var $products Product[] */
         $products = [];
 
+        $isFreeForm = false;
+
         if ($view->vars['value']) {
             /* @var $quoteProduct QuoteProduct */
             $quoteProduct = $view->vars['value'];
@@ -98,6 +120,8 @@ class QuoteProductType extends AbstractType
                 $product = $quoteProduct->getProductReplacement();
                 $products[$product->getId()] = $product;
             }
+
+            $isFreeForm = $quoteProduct->isProductFreeForm() || $quoteProduct->isProductReplacementFreeForm();
         }
 
         foreach ($products as $product) {
@@ -111,14 +135,14 @@ class QuoteProductType extends AbstractType
             }
         }
 
-        $componentOptions = [
+        $view->vars['componentOptions'] = [
             'units' => $units,
+            'allUnits' => $this->getAllUnits($options['compact_units']),
             'typeOffer' => QuoteProduct::TYPE_OFFER,
             'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
             'compactUnits' => $options['compact_units'],
+            'isFreeForm' => $isFreeForm,
         ];
-
-        $view->vars['componentOptions'] = $componentOptions;
     }
 
     /**
@@ -127,15 +151,31 @@ class QuoteProductType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('product', ProductRemovedSelectType::NAME, [
-                'required' => true,
+            ->add('product', ProductSelectType::NAME, [
+                'required' => false,
                 'label' => 'orob2b.product.entity_label',
                 'create_enabled' => false,
+            ])
+            ->add('productSku', 'text', [
+                'required' => false,
+                'label' => 'orob2b.product.sku.label',
             ])
             ->add('productReplacement', ProductSelectType::NAME, [
                 'required' => false,
                 'label' => 'orob2b.sale.quoteproduct.product_replacement.label',
                 'create_enabled' => false,
+            ])
+            ->add('productReplacementSku', 'text', [
+                'required' => false,
+                'label' => 'orob2b.product.sku.label',
+            ])
+            ->add('freeFormProduct', 'text', [
+                'required' => false,
+                'label' => 'orob2b.product.entity_label',
+            ])
+            ->add('freeFormProductReplacement', 'text', [
+                'required' => false,
+                'label' => 'orob2b.sale.quoteproduct.product_replacement.label',
             ])
             ->add('quoteProductOffers', QuoteProductOfferCollectionType::NAME, [
                 'add_label' => 'orob2b.sale.quoteproductoffer.add_label',
@@ -155,9 +195,7 @@ class QuoteProductType extends AbstractType
                 'required' => false,
                 'label' => 'orob2b.sale.quoteproduct.comment.label',
             ])
-
         ;
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
     }
 
     /**
@@ -184,35 +222,16 @@ class QuoteProductType extends AbstractType
     }
 
     /**
-     * @param FormEvent $event
+     * @param bool $isCompactUnits
+     * @return array
      */
-    public function preSetData(FormEvent $event)
+    protected function getAllUnits($isCompactUnits)
     {
-        /* @var $quoteProduct QuoteProduct */
-        $quoteProduct = $event->getData();
+        $units = $this->registry->getManagerForClass($this->productUnitClass)
+            ->getRepository($this->productUnitClass)
+            ->getAllUnits()
+        ;
 
-        if (!$quoteProduct || null === $quoteProduct->getId()) {
-            return;
-        }
-
-        $form = $event->getForm();
-
-        if ($quoteProduct->isTypeNotAvailable() && !$quoteProduct->getProductReplacement()) {
-            $options = [
-                'create_enabled' => false,
-                'required' => false,
-                'label' => 'orob2b.sale.quoteproduct.product_replacement.label',
-            ];
-
-            $emptyValueTitle = $this->translator->trans('orob2b.product.removed', [
-                '{title}' => $quoteProduct->getProductReplacementSku(),
-            ]);
-
-            $options['configs'] = [
-                'placeholder' => $emptyValueTitle,
-            ];
-
-            $form->add('productReplacement', ProductSelectType::NAME, $options);
-        }
+        return $this->labelFormatter->formatChoices($units, $isCompactUnits);
     }
 }
