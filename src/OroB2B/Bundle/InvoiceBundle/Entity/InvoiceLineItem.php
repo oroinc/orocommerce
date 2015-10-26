@@ -43,7 +43,7 @@ class InvoiceLineItem extends ExtendInvoiceLineItem
      * @var Product
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="SET NULL", nullable=true)
      */
     protected $product;
 
@@ -72,7 +72,7 @@ class InvoiceLineItem extends ExtendInvoiceLineItem
      * @var ProductUnit
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\ProductUnit")
-     * @ORM\JoinColumn(name="product_unit_id", referencedColumnName="code", onDelete="SET NULL")
+     * @ORM\JoinColumn(name="product_unit_id", referencedColumnName="code", onDelete="SET NULL", nullable=true)
      */
     protected $productUnit;
 
@@ -82,6 +82,13 @@ class InvoiceLineItem extends ExtendInvoiceLineItem
      * @ORM\Column(name="product_unit_code", type="string", length=255, nullable=true)
      */
     protected $productUnitCode;
+
+    /**
+     * @var float
+     *
+     * @ORM\Column(name="price", type="money", nullable=true)
+     */
+    protected $price;
 
     /**
      * @var Invoice
@@ -100,7 +107,7 @@ class InvoiceLineItem extends ExtendInvoiceLineItem
     }
 
     /**
-     * @return Product
+     * @return Product|null
      */
     public function getProduct()
     {
@@ -108,10 +115,10 @@ class InvoiceLineItem extends ExtendInvoiceLineItem
     }
 
     /**
-     * @param Product $product
+     * @param Product|null $product
      * @return $this
      */
-    public function setProduct($product)
+    public function setProduct(Product $product = null)
     {
         $this->product = $product;
         return $this;
@@ -222,6 +229,24 @@ class InvoiceLineItem extends ExtendInvoiceLineItem
     public function setInvoice($invoice)
     {
         $this->invoice = $invoice;
+        return $this;
+    }
+
+    /**
+     * @return float
+     */
+    public function getPrice()
+    {
+        return $this->price;
+    }
+
+    /**
+     * @param float $price
+     * @return $this
+     */
+    public function setPrice($price)
+    {
+        $this->price = $price;
         return $this;
     }
 }

@@ -46,20 +46,18 @@ class OroB2BInvoiceBundleInstaller implements Installation
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
-        $table->addColumn('account_id', 'integer', []);
+        $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('invoice_number', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('invoice_date', 'date', []);
         $table->addColumn('po_number', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->addColumn('serialized_data', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
+        $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
+        $table->addColumn('payment_due_date', 'date', []);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['invoice_number'], 'UNIQ_1CB885202DA68207');
-        $table->addIndex(['user_owner_id'], 'IDX_1CB885209EB185F9', []);
         $table->addIndex(['created_at'], 'orob2b_invoice_created_at_index', []);
-        $table->addIndex(['organization_id'], 'IDX_1CB8852032C8A3DE', []);
-        $table->addIndex(['account_id'], 'IDX_1CB885209B6B5FBA', []);
-        $table->addIndex(['account_user_id'], 'IDX_1CB885206E45C7DD', []);
     }
 
     /**
@@ -78,10 +76,13 @@ class OroB2BInvoiceBundleInstaller implements Installation
         $table->addColumn('free_form_product', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('quantity', 'float', ['notnull' => false]);
         $table->addColumn('product_unit_code', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('serialized_data', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
+        $table->addColumn(
+            'price',
+            'money',
+            ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
+        );
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['product_id'], 'IDX_1F380AA24584665A', []);
-        $table->addIndex(['product_unit_id'], 'IDX_1F380AA229646BBD', []);
-        $table->addIndex(['invoice_id'], 'IDX_1F380AA22989F1FD', []);
     }
 
     /**

@@ -108,7 +108,7 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
      * @var User
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\UserBundle\Entity\User")
-     * @ORM\JoinColumn(name="user_owner_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\JoinColumn(name="user_owner_id", referencedColumnName="id", onDelete="SET NULL", nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -123,7 +123,7 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
      * @var OrganizationInterface
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
-     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL", nullable=true)
      */
     protected $organization;
 
@@ -131,7 +131,7 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
      * @var Account
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
-     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
+     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $account;
 
@@ -156,6 +156,19 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
      * )
      */
     protected $poNumber;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="currency", type="string", length=3, nullable=true)
+     */
+    protected $currency;
+
+    /**
+     * @var \DateTime
+     * @ORM\Column(name="payment_due_date", type="date")
+     */
+    protected $paymentDueDate;
 
     /**
      * @var ArrayCollection
@@ -261,7 +274,7 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
     }
 
     /**
-     * @return User
+     * @return User|null
      */
     public function getOwner()
     {
@@ -269,10 +282,10 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
     }
 
     /**
-     * @param User $owner
+     * @param User|null $owner
      * @return $this
      */
-    public function setOwner($owner)
+    public function setOwner(User $owner = null)
     {
         $this->owner = $owner;
 
@@ -280,7 +293,7 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
     }
 
     /**
-     * @return OrganizationInterface
+     * @return OrganizationInterface|null
      */
     public function getOrganization()
     {
@@ -288,10 +301,10 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
     }
 
     /**
-     * @param OrganizationInterface $organization
+     * @param OrganizationInterface|null $organization
      * @return $this
      */
-    public function setOrganization(OrganizationInterface $organization)
+    public function setOrganization(OrganizationInterface $organization = null)
     {
         $this->organization = $organization;
 
@@ -310,7 +323,7 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
      * @param Account $account
      * @return $this
      */
-    public function setAccount($account)
+    public function setAccount(Account $account)
     {
         $this->account = $account;
 
@@ -318,7 +331,7 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
     }
 
     /**
-     * @return AccountUser
+     * @return AccountUser|null
      */
     public function getAccountUser()
     {
@@ -326,10 +339,10 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param AccountUser|null $accountUser
      * @return $this
      */
-    public function setAccountUser($accountUser)
+    public function setAccountUser(AccountUser $accountUser = null)
     {
         $this->accountUser = $accountUser;
 
@@ -337,7 +350,7 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getPoNumber()
     {
@@ -345,10 +358,10 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
     }
 
     /**
-     * @param string $poNumber
+     * @param string|null $poNumber
      * @return $this
      */
-    public function setPoNumber($poNumber)
+    public function setPoNumber($poNumber = null)
     {
         $this->poNumber = $poNumber;
 
@@ -378,11 +391,60 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
      */
     public function addLineItem(InvoiceLineItem $lineItem)
     {
-        if ($this->hasLineItem($lineItem)) {
-            $this->lineItems[] = $lineItem;
+        if (!$this->hasLineItem($lineItem)) {
+            $this->lineItems->add($lineItem);
             $lineItem->setInvoice($this);
         }
 
+        return $this;
+    }
+
+    /**
+     * @param InvoiceLineItem $lineItem
+     * @return $this
+     */
+    public function removeLineItem(InvoiceLineItem $lineItem)
+    {
+        if ($this->hasLineItem($lineItem)) {
+            $this->lineItems->removeElement($lineItem);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getPaymentDueDate()
+    {
+        return $this->paymentDueDate;
+    }
+
+    /**
+     * @param \DateTime $paymentDueDate
+     * @return $this
+     */
+    public function setPaymentDueDate($paymentDueDate)
+    {
+        $this->paymentDueDate = $paymentDueDate;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrency()
+    {
+        return $this->currency;
+    }
+
+    /**
+     * @param string $currency
+     * @return $this
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
         return $this;
     }
 
