@@ -98,6 +98,20 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     protected $hasVariants = false;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="status", type="string", length=16, nullable=false)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     *  )
+     */
+    protected $status = self::STATUS_DISABLED;
+
+    /**
      * @var array
      *
      * @ORM\Column(name="variant_fields", type="array", nullable=true)
@@ -330,6 +344,26 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     public function setUpdatedAt($updatedAt)
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param string $status
+     *
+     * @return Product
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
 
         return $this;
     }

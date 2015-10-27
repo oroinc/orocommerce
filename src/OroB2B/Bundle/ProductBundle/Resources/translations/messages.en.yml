@@ -20,6 +20,15 @@ orob2b:
         is_variant.label: Is Variant
         variant_links.label: Product Variant Links
 
+        status:
+            enabled: Enabled
+            disabled: Disabled
+
+        visibility:
+            visible.label: Yes
+            not_visible.label: No
+            as_defined_in_system_config.label: As Defined in System Configuration
+
         form:
             choose: Choose Product...
             product_required: Please select a product first...

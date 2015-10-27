@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Handler;
 
 use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Security\Acl\Model\AclCacheInterface;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -60,6 +61,9 @@ abstract class AbstractAccountUserRoleUpdateHandlerTestCase extends \PHPUnit_Fra
      * @var \PHPUnit_Framework_MockObject_MockObject|AccountUserRoleRepository
      */
     protected $roleRepository;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|AclCacheInterface */
+    protected $aclCache;
 
     /**
      * @var AccountUserRoleUpdateHandler
@@ -121,6 +125,10 @@ abstract class AbstractAccountUserRoleUpdateHandlerTestCase extends \PHPUnit_Fra
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityRepository')
             ->willReturn($this->roleRepository);
+
+        $this->aclCache = $this->getMockBuilder('Symfony\Component\Security\Acl\Model\AclCacheInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     /**
