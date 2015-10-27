@@ -6,3 +6,7 @@ orob2b_frontend:
             web:
                 header: Web settings
                 backend_prefix: Backend prefix
+    dataaudit:
+        history: History
+        history.title: %item% history
+        administrator: Administrator
