@@ -1,6 +1,5 @@
 parameters:
     orob2b_product.form.type.product.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductType
-    orob2b_product.form.type.product_default_visibility_type.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductDefaultVisibilityType
     orob2b_product.form.type.product_unit_rounding_type.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRoundingTypeType
     orob2b_product.form.type.product_unit_selection.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
     orob2b_product.form.type.quantity_type.class: OroB2B\Bundle\ProductBundle\Form\Type\QuantityType
@@ -16,6 +15,7 @@ parameters:
     orob2b_product.form.type.extension.integer.class: OroB2B\Bundle\ProductBundle\Form\Extension\IntegerExtension
     orob2b_product.form.type.custom_entity_fields_choice.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductCustomFieldsChoiceType
     orob2b_product.form.type.product_variant_links.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductVariantLinksType
+    orob2b_product.form.type.product_status.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductStatusType
 
 services:
     # Product form types
@@ -95,11 +95,6 @@ services:
         tags:
             - { name: form.type, alias: orob2b_product_removed_select }
 
-    orob2b_product.form.type.default_visibility:
-        class: %orob2b_product.form.type.product_default_visibility_type.class%
-        tags:
-            - { name: form.type, alias: orob2b_product_default_visibility }
-
     orob2b_product.form.type.quick_add:
         class: %orob2b_product.form.type.quick_add.class%
         tags:
@@ -131,3 +126,10 @@ services:
         class: %orob2b_product.form.type.product_variant_links.class%
         tags:
             - { name: form.type, alias: orob2b_product_variant_links }
+
+    orob2b_product.form.type.product_status:
+        class: %orob2b_product.form.type.product_status.class%
+        arguments:
+            - @orob2b_product.provider.product_status_provider
+        tags:
+            - { name: form.type, alias: orob2b_product_status }
