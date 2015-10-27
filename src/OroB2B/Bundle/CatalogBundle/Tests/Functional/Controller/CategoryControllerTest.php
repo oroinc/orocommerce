@@ -440,11 +440,16 @@ class CategoryControllerTest extends WebTestCase
     protected function assertFormDefaultLocalized($formValues, $title, $shortDescription, $longDescription)
     {
         $this->assertEquals($title, $formValues['orob2b_catalog_category[titles][values][default]']);
+
         $this->assertEquals(
             $shortDescription,
             $formValues['orob2b_catalog_category[shortDescriptions][values][default]']
         );
-        $this->assertEquals($longDescription, $formValues['orob2b_catalog_category[longDescriptions][values][default]']);
+
+        $this->assertEquals(
+            $longDescription,
+            $formValues['orob2b_catalog_category[longDescriptions][values][default]']
+        );
     }
 
     /**
