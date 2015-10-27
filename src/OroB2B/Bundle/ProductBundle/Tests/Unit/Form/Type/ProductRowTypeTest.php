@@ -2,14 +2,17 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
 
+use Oro\Bundle\FormBundle\Form\Type\OroEntityAutocompleteType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductRowType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
 
 class ProductRowTypeTest extends FormIntegrationTestCase
 {
@@ -78,6 +81,13 @@ class ProductRowTypeTest extends FormIntegrationTestCase
     protected function getExtensions()
     {
         return [
+            new PreloadedExtension(
+                [
+                    ProductAutocompleteType::NAME => new ProductAutocompleteType(),
+                    OroEntityAutocompleteType::NAME => new OroEntityAutocompleteType(),
+                ],
+                []
+            ),
             $this->getValidatorExtension(true)
         ];
     }
@@ -162,7 +172,7 @@ class ProductRowTypeTest extends FormIntegrationTestCase
             ]
         ];
     }
-    
+
     public function testGetName()
     {
         $this->assertEquals(ProductRowType::NAME, $this->formType->getName());
