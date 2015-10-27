@@ -112,3 +112,36 @@
 .notes-widget-edit {
     margin-bottom: 10px;
 }
+
+.order-line-item-quantity-offers {
+    width: 176px;
+}
+
+.order-line-item-quantity-offers table {
+    table-layout: fixed;
+}
+
+.order-line-item-quantity-offers tr,
+.order-line-item-quantity-offers td  {
+    border: none;
+}
+
+.order-line-item-quantity-offers td input {
+    margin-top: 0 !important;
+}
+
+.order-line-item-quantity-offers td.order-line-item-quantity-offer-choice {
+    width: 16px;
+    padding: 5px 0 !important;
+    vertical-align: middle !important;
+}
+
+.order-line-item-quantity-offers td.order-line-item-quantity-offer-quantity {
+    min-width: 60px;
+    width: 60px;
+}
+
+.order-line-item-quantity-offers td.order-line-item-quantity-offer-price {
+    min-width: 60px;
+    width: 60px;
+}

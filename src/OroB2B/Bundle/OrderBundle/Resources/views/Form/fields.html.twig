@@ -120,7 +120,12 @@
         {{ form_errors(form.freeFormProduct) }}
     </td>
 
-    {{ _self.render_form_sections(form.vars.sections, form) }}
+    {% set overrides = {} %}
+    {% if form.vars.offers is defined and form.vars.offers is not empty %}
+        {% set overrides = overrides|merge({'offers': _self.offers_widget(form.vars.offers)}) %}
+    {% endif %}
+
+    {{ _self.render_form_sections(form.vars.sections, form, overrides) }}
 {% endblock %}
 
 {% macro render_form_sections(sections, form, overrides) %}
@@ -147,6 +152,28 @@
             </td>
         {% endfor %}
     {% endif %}
+{% endmacro %}
+
+{% macro offers_widget(offers) %}
+    <div class="order-line-item-quantity-offers">
+        <table>
+            <tbody>
+                {% for offer in offers %}
+                    <tr>
+                        <td class="order-line-item-quantity-offer-choice">
+                            <input type="radio" value="{{ offer.quantity }}" data-unit="{{ offer.unit }}" data-currency="{{ offer.currency }}" data-price="{{ offer.price }}">
+                        </td>
+                        <td class="order-line-item-quantity-offer-quantity">
+                            {{ offer.quantityFormatted }}
+                        </td>
+                        <td class="order-line-item-quantity-offer-price">
+                            {{ offer.priceFormatted }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endmacro %}
 
 {% block orob2b_order_line_item_frontend_widget %}

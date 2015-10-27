@@ -5,16 +5,14 @@ namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Extension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\OrderBundle\Form\Extension\OrderDataStorageExtension;
+use OroB2B\Bundle\OrderBundle\Form\Extension\FrontendOrderDataStorageExtension;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Extension\AbstractProductDataStorageExtensionTestCase;
 
-class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionTestCase
+class FrontendOrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionTestCase
 {
     /**
      * {@inheritdoc}
@@ -29,7 +27,7 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
 
         $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
         $this->entity = new Order();
-        $this->extension = new OrderDataStorageExtension(
+        $this->extension = new FrontendOrderDataStorageExtension(
             $requestStack,
             $this->storage,
             $this->doctrineHelper,
@@ -41,18 +39,12 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
     public function testBuild()
     {
         $sku = 'TEST';
+        $qty = 3;
         $data = [
             ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                 [
                     ProductDataStorage::PRODUCT_SKU_KEY => $sku,
-                    'offers' => [
-                        'quantity' => 1,
-                        'unit' => 'kg',
-                        'currency' => 'USD',
-                        'price' => 30,
-                        'quantityFormatted' => '1 kg',
-                        'priceFormatted' => '$30',
-                    ],
+                    ProductDataStorage::PRODUCT_QUANTITY_KEY => $qty,
                 ],
             ]
         ];
@@ -80,24 +72,34 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         $this->assertEquals($product->getSku(), $lineItem->getProductSku());
         $this->assertEquals($productUnit, $lineItem->getProductUnit());
         $this->assertEquals($productUnit->getCode(), $lineItem->getProductUnitCode());
+        $this->assertEquals($qty, $lineItem->getQuantity());
     }
 
-    public function testSortSections()
+    public function testBuildWithoutUnit()
     {
-        $sections = new ArrayCollection(
-            [
-                'item3' => [ 'order' => 30 ],
-                'item2' => [ 'order' => 20 ],
-                'item1' => [ 'order' => 10 ]
+        $sku = 'TEST';
+        $qty = 3;
+        $data = [
+            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                [
+                    ProductDataStorage::PRODUCT_SKU_KEY => $sku,
+                    ProductDataStorage::PRODUCT_QUANTITY_KEY => $qty,
+                ],
             ]
-        );
+        ];
+        $order = new Order();
 
-        $reflector = new \ReflectionClass('OroB2B\Bundle\OrderBundle\Form\Extension\OrderDataStorageExtension');
-        $method = $reflector->getMethod('sortSections');
-        $method->setAccessible(true);
+        $product = $this->getProductEntity($sku);
 
-        $sectionsSorted = $method->invokeArgs($this->extension, array($sections));
+        $this->assertMetadataCalled();
+        $this->assertRequestGetCalled();
+        $this->assertStorageCalled($data);
+        $this->assertProductRepositoryCalled($product);
 
-        $this->assertEquals(10, $sectionsSorted->first()['order']);
+        /** @var \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface $builder */
+        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
+        $this->extension->buildForm($builder, ['data' => $order]);
+
+        $this->assertEmpty($order->getLineItems());
     }
 }

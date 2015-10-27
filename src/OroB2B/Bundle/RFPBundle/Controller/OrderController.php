@@ -23,30 +23,8 @@ class OrderController extends Controller
      */
     public function createAction(RFPRequest $request)
     {
-        $this->saveToStorage($request);
-        return $this->redirect(
-            $this->generateUrl('orob2b_order_create', [ProductDataStorage::STORAGE_KEY => true])
-        );
-    }
+        $this->get('orob2b_rfp.service.product_data_storage')->saveToStorage($request);
 
-    /**
-     * @param RFPRequest $request
-     */
-    protected function saveToStorage(RFPRequest $request)
-    {
-        /** @var ProductDataStorage $storage */
-        $storage = $this->get('orob2b_product.service.product_data_storage');
-        $data = [
-            ProductDataStorage::ENTITY_DATA_KEY => [
-                'accountUser' => $request->getAccountUser()->getId(),
-                'account' => $request->getAccount()->getId(),
-            ],
-        ];
-        foreach ($request->getRequestProducts() as $lineItem) {
-            $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = [
-                'comment' => $lineItem->getRequest(),
-            ];
-        }
-        $storage->set($data);
+        return $this->redirectToRoute('orob2b_order_create', [ProductDataStorage::STORAGE_KEY => true]);
     }
 }

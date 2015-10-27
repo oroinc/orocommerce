@@ -71,6 +71,7 @@ orob2b:
             ship_by.label: 'Ship By'
             free_form_product.label: Product (free-form)
             from_external_source.label: Created from External Source
+            offers.label: 'Offers'
             price_type:
                 label: 'Price Type'
                 bundled: 'bundle'
@@ -105,6 +106,7 @@ orob2b:
             additional: Additional
             subtotals: Order Totals
             order_line_items: 'Line Items'
+            offers: 'Offers'
 
         security:
             permission:
