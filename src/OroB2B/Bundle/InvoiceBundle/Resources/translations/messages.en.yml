@@ -1,0 +1,32 @@
+orob2b:
+    invoice:
+        entity_label: Invoice
+        entity_plural_label: Invoices
+        id.label: ID
+        invoice_date.label: Invoice date
+        invoice_number.label: Invoice Number
+        identifier.label: Order Number
+        po_number.label: PO Number
+        owner.label: Owner
+        account.label: Account
+        account_user.label: Account User
+        organization.label: Organization
+        line_items.label: Line Items
+        currency.label: Currency
+        payment_due_date.label: 'Payment Due Date'
+
+
+        invoicelineitem:
+            entity_label: 'Invoice Line Item'
+            entity_plural_label: 'Order Line Items'
+            id.label: ID
+            free_form_product.label: Product (free-form)
+            product.label: 'Product'
+            product_sku.label: 'Product SKU'
+            product_unit_code.label: 'Product Unit Code'
+            quantity.label: QTY
+            invoice.label: Invoice
+            product.label: Product
+            product_unit.label: Product Unit
+            price.label: Price
+
