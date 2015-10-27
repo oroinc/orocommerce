@@ -7,6 +7,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
+use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
@@ -51,13 +52,31 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
                 LocalizedFallbackValueCollectionType::NAME,
                 [
                     'label' => 'orob2b.catalog.category.titles.label',
-                    'required' => false,
+                    'required' => true,
                     'options' => ['constraints' => [new NotBlank()]],
                 ]
             )
             ->will($this->returnSelf());
 
         $builder->expects($this->at(2))
+            ->method('add')
+            ->with(
+                'shortDescriptions',
+                LocalizedFallbackValueCollectionType::NAME,
+                $this->getOroRichTextTypeConfiguration('orob2b.catalog.category.short_description.label')
+            )
+            ->will($this->returnSelf());
+
+        $builder->expects($this->at(3))
+            ->method('add')
+            ->with(
+                'longDescriptions',
+                LocalizedFallbackValueCollectionType::NAME,
+                $this->getOroRichTextTypeConfiguration('orob2b.catalog.category.long_description.label')
+            )
+            ->will($this->returnSelf());
+
+        $builder->expects($this->at(4))
             ->method('add')
             ->with(
                 'appendProducts',
@@ -71,7 +90,7 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
             )
             ->will($this->returnSelf());
 
-        $builder->expects($this->at(3))
+        $builder->expects($this->at(5))
             ->method('add')
             ->with(
                 'removeProducts',
@@ -108,5 +127,30 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
     public function testGetName()
     {
         $this->assertEquals(CategoryType::NAME, $this->type->getName());
+    }
+
+    /**
+     * @param string $label
+     * @return array
+     */
+    protected function getOroRichTextTypeConfiguration($label)
+    {
+        return [
+            'label' => $label,
+            'required' => false,
+            'field' => 'text',
+            'type' => OroRichTextType::NAME,
+            'options' => [
+                'wysiwyg_options' => [
+                    'statusbar' => true,
+                    'resize' => true,
+                    'width' => 500,
+                    'height' => 200,
+                    'plugins' => array_merge(OroRichTextType::$defaultPlugins, ['fullscreen']),
+                    'toolbar' =>
+                        [reset(OroRichTextType::$toolbars[OroRichTextType::TOOLBAR_DEFAULT]) . ' | fullscreen'],
+                ],
+            ]
+        ];
     }
 }
