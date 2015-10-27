@@ -35,7 +35,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
     {
         parent::setUp();
 
-        $this->handler = new AccountUserRoleUpdateHandler($this->formFactory, $this->privilegeConfig);
+        $this->handler = new AccountUserRoleUpdateHandler($this->formFactory, $this->aclCache, $this->privilegeConfig);
         $this->setRequirementsForHandler($this->handler);
     }
 
@@ -296,7 +296,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
         $this->chainMetadataProvider->expects($this->once())
             ->method('stopProviderEmulation');
 
-        $handler = new AccountUserRoleUpdateHandler($this->formFactory, $this->privilegeConfig);
+        $handler = new AccountUserRoleUpdateHandler($this->formFactory, $this->aclCache, $this->privilegeConfig);
 
         $this->setRequirementsForHandler($handler);
         $handler->setRequestStack($requestStack);
@@ -371,7 +371,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
         /** @var \PHPUnit_Framework_MockObject_MockObject|AccountUserRoleUpdateHandler $handler */
         $handler = $this->getMockBuilder('\OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateHandler')
             ->setMethods(['processPrivileges'])
-            ->setConstructorArgs([$this->formFactory, $this->privilegeConfig])
+            ->setConstructorArgs([$this->formFactory, $this->aclCache, $this->privilegeConfig])
             ->getMock();
 
         $this->setRequirementsForHandler($handler);
@@ -524,7 +524,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
             'action' => ['types' => ['action'], 'fix_values' => false, 'show_default' => true],
             'default' => ['types' => ['(default)'], 'fix_values' => true, 'show_default' => false],
         ];
-        $handler = new AccountUserRoleUpdateHandler($this->formFactory, $privilegeConfig);
+        $handler = new AccountUserRoleUpdateHandler($this->formFactory, $this->aclCache, $privilegeConfig);
         $this->setRequirementsForHandler($handler);
 
         $role = new AccountUserRole('ROLE_ADMIN');
