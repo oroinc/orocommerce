@@ -29,7 +29,7 @@ class InvoiceEntityTest extends WebTestCase
         $entityManager = $this->getContainer()->get('doctrine')->getManager();
 
         $invoice = new Invoice();
-        //TODO: Will be changed to prePersist and preUpdate events
+        //TODO: Will be changed to prePersist and preUpdate events in BB-1349
         $invoice->setCreatedAt(new \DateTime());
         $invoice->setUpdatedAt(new \DateTime());
         $invoice->setPaymentDueDate(new \DateTime());
@@ -45,7 +45,6 @@ class InvoiceEntityTest extends WebTestCase
         return $invoice;
     }
 
-
     public function testInvoiceNumberGenerator()
     {
         $entityManager = $this->getContainer()->get('doctrine')->getManager();
@@ -59,7 +58,7 @@ class InvoiceEntityTest extends WebTestCase
 
         $this->assertEquals($invoice->getId(), $invoice->getInvoiceNumber());
 
-        $invoiceNumber = uniqid('invoice-');
+        $invoiceNumber = uniqid('invoice-', true);
         $invoice = $this->createNewInvoice();
         $invoice->setInvoiceNumber($invoiceNumber);
 
@@ -71,10 +70,9 @@ class InvoiceEntityTest extends WebTestCase
         $this->assertEquals($invoiceNumber, $invoice->getInvoiceNumber());
     }
 
-
     public function testEntityFields()
     {
-        $this->markTestIncomplete('Entity fields test not done yet');
+        $this->markTestIncomplete('Entity fields test will be done in BB-1330');
         $entityManager = $this->getContainer()->get('doctrine')->getManager();
 
         $product = $entityManager

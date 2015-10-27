@@ -56,7 +56,7 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
      */
     protected $id;
 
-    //TODO: Use Proper Trait
+    //TODO: Proper trait will be used after BB-1349
     /**
      * @var \DateTime
      *
