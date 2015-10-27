@@ -66,7 +66,7 @@ class CategoryType extends AbstractType
                 'shortDescriptions',
                 LocalizedFallbackValueCollectionType::NAME,
                 [
-                    'label' => 'orob2b.catalog.category.short_description.label',
+                    'label' => 'orob2b.catalog.category.short_descriptions.label',
                     'required' => false,
                     'field' => 'text',
                     'type' => OroRichTextType::NAME,
@@ -87,7 +87,7 @@ class CategoryType extends AbstractType
                 'longDescriptions',
                 LocalizedFallbackValueCollectionType::NAME,
                 [
-                    'label' => 'orob2b.catalog.category.long_description.label',
+                    'label' => 'orob2b.catalog.category.long_descriptions.label',
                     'required' => false,
                     'field' => 'text',
                     'type' => OroRichTextType::NAME,

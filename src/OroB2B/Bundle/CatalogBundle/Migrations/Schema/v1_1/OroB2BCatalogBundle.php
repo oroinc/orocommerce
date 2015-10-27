@@ -38,7 +38,6 @@ class OroB2BCatalogBundle implements Migration
         $table = $schema->createTable(self::ORO_B2B_CATALOG_CATEGORY_SHORT_DESCRIPTION_TABLE_NAME);
         $table->addColumn('category_id', 'integer', []);
         $table->addColumn('localized_value_id', 'integer', []);
-        $table->addIndex(['category_id'], 'idx_a2b14ef512469de2', []);
         $table->addUniqueIndex(['localized_value_id'], 'uniq_a2b14ef5eb576e89');
         $table->setPrimaryKey(['category_id', 'localized_value_id']);
     }
@@ -54,7 +53,6 @@ class OroB2BCatalogBundle implements Migration
         $table->addColumn('category_id', 'integer', []);
         $table->addColumn('localized_value_id', 'integer', []);
         $table->addUniqueIndex(['localized_value_id'], 'uniq_4f7c279feb576e89');
-        $table->addIndex(['category_id'], 'idx_4f7c279f12469de2', []);
         $table->setPrimaryKey(['category_id', 'localized_value_id']);
     }
 

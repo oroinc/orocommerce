@@ -9,16 +9,16 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
+use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
-use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as EntityIdentifierTypeStub;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Extension\Stub\OroRichTextTypeStub;
 use OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
 use OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityPostSetDataListener;
 use OroB2B\Bundle\AccountBundle\Form\Extension\CategoryFormExtension;
-use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Extension\Stub\OroRichTextTypeStub;
 use OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityChangesetTypeStub;
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
@@ -77,7 +77,6 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
                     LocaleCollectionType::NAME => new LocaleCollectionTypeStub(),
                     EntityChangesetType::NAME => new EntityChangesetTypeStub(),
                     OroRichTextType::NAME => new OroRichTextTypeStub()
-
                 ],
                 [
                     CategoryType::NAME => [$this->categoryFormExtension],

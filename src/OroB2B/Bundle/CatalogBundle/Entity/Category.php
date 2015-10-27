@@ -177,13 +177,13 @@ class Category
      */
     public function __construct()
     {
-        $this->titles           = new ArrayCollection();
-        $this->childCategories  = new ArrayCollection();
-        $this->products         = new ArrayCollection();
-        $this->createdAt        = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->updatedAt        = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->titles            = new ArrayCollection();
+        $this->childCategories   = new ArrayCollection();
+        $this->products          = new ArrayCollection();
         $this->shortDescriptions = new ArrayCollection();
         $this->longDescriptions  = new ArrayCollection();
+        $this->createdAt         = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->updatedAt         = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 
     /**
@@ -436,15 +436,15 @@ class Category
      */
     public function getDefaultShortDescription()
     {
-        $shortDescriptions = $this->shortDescriptions->filter(function (LocalizedFallbackValue $shortDescription) {
+        $shortDescription = $this->shortDescriptions->filter(function (LocalizedFallbackValue $shortDescription) {
             return null === $shortDescription->getLocale();
         });
 
-        if ($shortDescriptions->count() !== 1) {
+        if ($shortDescription->count() !== 1) {
             throw new \LogicException('There must be only one default short description');
         }
 
-        return $shortDescriptions->first();
+        return $shortDescription->first();
     }
 
     /**
@@ -488,14 +488,14 @@ class Category
      */
     public function getDefaultLongDescription()
     {
-        $longDescriptions = $this->longDescriptions->filter(function (LocalizedFallbackValue $longDescription) {
+        $longDescription = $this->longDescriptions->filter(function (LocalizedFallbackValue $longDescription) {
             return null === $longDescription->getLocale();
         });
 
-        if ($longDescriptions->count() != 1) {
+        if ($longDescription->count() != 1) {
             throw new \LogicException('There must be only one default long description');
         }
 
-        return $longDescriptions->first();
+        return $longDescription->first();
     }
 }
