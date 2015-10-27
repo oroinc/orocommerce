@@ -20,7 +20,7 @@ class InvoiceEventListener
      * @param InvoiceNumberGeneratorInterface $numberGenerator
      * @return $this
      */
-    public function setInvoiceNumberGenerator($numberGenerator)
+    public function setInvoiceNumberGenerator(InvoiceNumberGeneratorInterface $numberGenerator)
     {
         $this->invoiceNumberGenerator = $numberGenerator;
 
