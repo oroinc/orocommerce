@@ -13,6 +13,8 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 /**
  * @dbIsolation
+ *
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class CategoryControllerTest extends WebTestCase
 {
