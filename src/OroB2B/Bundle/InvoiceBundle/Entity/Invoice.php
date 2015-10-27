@@ -40,7 +40,9 @@ use OroB2B\Bundle\InvoiceBundle\Model\ExtendInvoice;
  *          }
  *      }
  * )
+ * @ORM\EntityListeners({ "OroB2B\Bundle\InvoiceBundle\EventListener\ORM\InvoiceEventListener" })
  * @ORM\HasLifecycleCallbacks()
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Invoice extends ExtendInvoice implements OrganizationAwareInterface
 {
@@ -54,7 +56,7 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
      */
     protected $id;
 
-    //TODO: Use Proper Trait
+    //TODO: Proper trait will be used after BB-1349
     /**
      * @var \DateTime
      *
