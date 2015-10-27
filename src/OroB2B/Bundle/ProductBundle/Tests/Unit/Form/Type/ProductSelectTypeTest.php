@@ -5,6 +5,8 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductSelectTypeTest extends \PHPUnit_Framework_TestCase
@@ -38,6 +40,7 @@ class ProductSelectTypeTest extends \PHPUnit_Framework_TestCase
             ->with(
                 $this->callback(
                     function (array $options) {
+                        $this->assertArrayHasKey('data_parameters', $options);
                         $this->assertArrayHasKey('autocomplete_alias', $options);
                         $this->assertArrayHasKey('create_form_route', $options);
                         $this->assertArrayHasKey('configs', $options);
@@ -59,5 +62,27 @@ class ProductSelectTypeTest extends \PHPUnit_Framework_TestCase
             );
 
         $this->type->configureOptions($resolver);
+    }
+
+    public function testFinishView()
+    {
+        $dataParameters = [
+            'scope' => 'test'
+        ];
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+
+        $formView = new FormView();
+        $this->type->finishView($formView, $form, [
+            'data_parameters' => $dataParameters
+        ]);
+
+        $this->assertArrayHasKey('attr', $formView->vars);
+        $this->assertArrayHasKey('data-select2_query_additional_params', $formView->vars['attr']);
+        $this->assertEquals(
+            json_encode($dataParameters),
+            $formView->vars['attr']['data-select2_query_additional_params']
+        );
     }
 }
