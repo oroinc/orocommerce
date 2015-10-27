@@ -41,8 +41,8 @@ use OroB2B\Bundle\InvoiceBundle\Model\ExtendInvoice;
  *      }
  * )
  * @ORM\EntityListeners({ "OroB2B\Bundle\InvoiceBundle\EventListener\ORM\InvoiceEventListener" })
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  * @ORM\HasLifecycleCallbacks()
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Invoice extends ExtendInvoice implements OrganizationAwareInterface
 {
