@@ -79,11 +79,11 @@ class ForwardListener
     }
 
     /**
-     * @param array $deniedUrlPatterns
+     * @param string $deniedUrlPattern
      */
-    public function setDeniedUrlPatterns(array $deniedUrlPatterns = [])
+    public function addDeniedUrlPatterns($deniedUrlPattern)
     {
-        $this->deniedUrlPatterns = $deniedUrlPatterns;
+        $this->deniedUrlPatterns[] = $deniedUrlPattern;
     }
 
     /**

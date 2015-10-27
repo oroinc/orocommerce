@@ -73,7 +73,7 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
         array $expected
     ) {
         $this->listener = new ForwardListener($this->router, $this->registry, $this->frontendHelper, $installed);
-        $this->listener->setDeniedUrlPatterns(['^/(deniedRoute)/']);
+        $this->listener->addDeniedUrlPatterns('^/(deniedRoute)/');
         $request = Request::create('http://localhost'.$slugParams['url']);
         if ($existingController) {
             $request->attributes->add(['_controller' => 'ExistingController']);
@@ -84,7 +84,6 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
             ->method('isFrontendRequest')
             ->with($request)
             ->willReturn($isFrontendRoute);
-
 
         $slug = new Slug();
         $slug->setRouteName($slugParams['route_name']);
@@ -115,11 +114,7 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'existingController' => false,
                 'isFrontendRoute' => true,
-                'slugParams' => [
-                    'url' => '/',
-                    'route_name' => 'test_route',
-                    'route_parameters' => ['id' => '1']
-                ],
+                'slugParams' => ['url' => '/', 'route_name' => 'test_route', 'route_parameters' => ['id' => '1']],
                 'expected' => [
                     '_route' => 'test_route',
                     '_controller' => 'TestController',
@@ -132,11 +127,7 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
                 'requestType' => HttpKernelInterface::SUB_REQUEST,
                 'existingController' => false,
                 'isFrontendRoute' => true,
-                'slugParams' => [
-                    'url' => '/',
-                    'route_name' => 'test_route',
-                    'route_parameters' => ['id' => '1']
-                ],
+                'slugParams' => ['url' => '/', 'route_name' => 'test_route', 'route_parameters' => ['id' => '1']],
                 'expected' => []
             ],
             'frontend with existing controller' => [
@@ -144,25 +135,15 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'existingController' => true,
                 'isFrontendRoute' => true,
-                'slugParams' => [
-                    'url' => '/',
-                    'route_name' => 'test_route',
-                    'route_parameters' => ['id' => '1']
-                ],
-                'expected' => [
-                    '_controller' => 'ExistingController',
-                ]
+                'slugParams' => ['url' => '/', 'route_name' => 'test_route', 'route_parameters' => ['id' => '1']],
+                'expected' => ['_controller' => 'ExistingController']
             ],
             'frontend with closing slash' => [
                 'installed' => true,
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'existingController' => false,
                 'isFrontendRoute' => true,
-                'slugParams' => [
-                    'url' => '/test/',
-                    'route_name' => 'test_route',
-                    'route_parameters' => ['id' => '1']
-                ],
+                'slugParams' => ['url' => '/test/', 'route_name' => 'test_route', 'route_parameters' => ['id' => '1']],
                 'expected' => [
                     '_route' => 'test_route',
                     '_controller' => 'TestController',
@@ -187,11 +168,7 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'existingController' => false,
                 'isFrontendRoute' => true,
-                'slugParams' => [
-                    'url' => '/test/',
-                    'route_name' => 'test_route',
-                    'route_parameters' => ['id' => '1']
-                ],
+                'slugParams' => ['url' => '/test/', 'route_name' => 'test_route', 'route_parameters' => ['id' => '1']],
                 'expected' => [],
             ],
             'backend with existing slug' => [
@@ -199,11 +176,7 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
                 'requestType' => HttpKernelInterface::MASTER_REQUEST,
                 'existingController' => false,
                 'isFrontendRoute' => false,
-                'slugParams' => [
-                    'url' => '/',
-                    'route_name' => 'test_route',
-                    'route_parameters' => ['id' => '1']
-                ],
+                'slugParams' => ['url' => '/', 'route_name' => 'test_route', 'route_parameters' => ['id' => '1']],
                 'expected' => [],
             ],
             'denied route' => [
@@ -223,7 +196,7 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param array $slugParams
-     * @param $slug
+     * @param string $slug
      */
     protected function mockSlugRepository(array $slugParams, $slug)
     {

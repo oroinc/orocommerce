@@ -14,7 +14,7 @@ services:
             - @orob2b_frontend.request.frontend_helper
             - %installed%
         calls:
-            - [setDeniedUrlPatterns, [['^/(_(profiler|wdt)|css|images|js)/']]]
+            - [addDeniedUrlPatterns, ['^/(_(profiler|wdt)|css|images|js)/']]
         tags:
             - {name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 64}
 
