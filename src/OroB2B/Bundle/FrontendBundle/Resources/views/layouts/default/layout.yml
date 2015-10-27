@@ -1,0 +1,21 @@
+layout:
+    actions:
+        - @setBlockTheme:
+            themes: 'OroB2BFrontendBundle:layouts:default/layout.html.twig'
+        - @addTree:
+            items:
+                head:
+                    blockType:   head
+                    options:
+                        title:   Hello World!
+                body:
+                    blockType: body
+                content:
+                    blockType: text
+                    options:
+                        text: { @value: 'Hello World!' }
+            tree:
+                root:
+                    head: ~
+                    body:
+                        content: ~
