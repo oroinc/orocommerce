@@ -11,6 +11,7 @@ parameters:
     orob2b_frontend.form.type.extension.configuration.web.class: OroB2B\Bundle\FrontendBundle\Form\Extension\ConfigurationTypeExtension
     orob2b_frontend.form.type.install_configuration.web.class: OroB2B\Bundle\FrontendBundle\Form\Type\Configuration\WebType
     orob2b_frontend.event_listener.frontend_dataaudit_history_grid_listener.class: Oro\Bundle\DataAuditBundle\EventListener\AuditHistoryGridListener
+    orob2b_frontend.form.type.theme_select.class: OroB2B\Bundle\FrontendBundle\Form\Type\ThemeSelectType
 
 services:
     orob2b_frontend.listener.frontend_route_collection:
@@ -43,9 +44,11 @@ services:
         arguments:
             - @oro_theme.registry
             - @orob2b_frontend.request.frontend_helper
+            - @oro_config.global
             - %installed%
         tags:
             - {name: kernel.event_listener, event: kernel.request, method: onKernelRequest}
+            - {name: kernel.event_listener, event: kernel.view, method: onKernelView, priority: 20 }
 
     orob2b_frontend.assetic.configuration:
         class: %oro_assetic.configuration.class%
@@ -103,3 +106,10 @@ services:
             - [objectClass, objectId]
         tags:
           - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-audit-history-grid, method: onBuildAfter }
+
+    orob2b_frontend.form.type.theme_select:
+        class: %orob2b_frontend.form.type.theme_select.class%
+        arguments:
+            - @oro_layout.theme_manager
+        tags:
+            - { name: form.type, alias: 'orob2b_frontend_theme_select' }

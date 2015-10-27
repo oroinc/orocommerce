@@ -1,20 +1,20 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Unit\Form\Type\Filter;
+namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Filter;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
 
-use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType;
+use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberRangeFilterType;
 use Oro\Bundle\FilterBundle\Tests\Unit\Fixtures\CustomFormExtension;
-use Oro\Bundle\FilterBundle\Tests\Unit\Form\Type\Filter\NumberFilterTypeTest;
+use Oro\Bundle\FilterBundle\Tests\Unit\Form\Type\Filter\NumberRangeFilterTypeTest;
 
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
-class ProductPriceFilterTypeTest extends NumberFilterTypeTest
+class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
@@ -27,7 +27,7 @@ class ProductPriceFilterTypeTest extends NumberFilterTypeTest
     protected function setUp()
     {
         $translator = $this->createMockTranslator();
-        $this->formExtensions[] = new CustomFormExtension([new NumberFilterType($translator)]);
+        $this->formExtensions[] = new CustomFormExtension([new NumberRangeFilterType($translator)]);
 
         parent::setUp();
 
@@ -89,20 +89,12 @@ class ProductPriceFilterTypeTest extends NumberFilterTypeTest
     /**
      * {@inheritDoc}
      */
-    public function setDefaultOptionsDataProvider()
+    public function configureOptionsProvider()
     {
         return [
             [
                 'defaultOptions' => [
-                    'data_type'         => NumberFilterType::DATA_DECIMAL,
-                    'operator_choices'  => [
-                        NumberFilterType::TYPE_EQUAL         => 'oro.filter.form.label_type_equal',
-                        NumberFilterType::TYPE_NOT_EQUAL     => 'oro.filter.form.label_type_not_equal',
-                        NumberFilterType::TYPE_GREATER_EQUAL => 'oro.filter.form.label_type_greater_equal',
-                        NumberFilterType::TYPE_GREATER_THAN  => 'oro.filter.form.label_type_greater_than',
-                        NumberFilterType::TYPE_LESS_EQUAL    => 'oro.filter.form.label_type_less_equal',
-                        NumberFilterType::TYPE_LESS_THAN     => 'oro.filter.form.label_type_less_than',
-                    ]
+                    'data_type' => NumberRangeFilterType::DATA_DECIMAL,
                 ]
             ]
         ];
@@ -126,6 +118,6 @@ class ProductPriceFilterTypeTest extends NumberFilterTypeTest
 
     public function testGetParent()
     {
-        $this->assertEquals(NumberFilterType::NAME, $this->type->getParent());
+        $this->assertEquals(NumberRangeFilterType::NAME, $this->type->getParent());
     }
 }

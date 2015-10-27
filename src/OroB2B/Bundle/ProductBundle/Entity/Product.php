@@ -66,10 +66,6 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     const INVENTORY_STATUS_OUT_OF_STOCK = 'out_of_stock';
     const INVENTORY_STATUS_DISCONTINUED = 'discontinued';
 
-    const VISIBILITY_BY_CONFIG = 'by_config';
-    const VISIBILITY_VISIBLE = 'visible';
-    const VISIBILITY_NOT_VISIBLE = 'not_visible';
-
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -100,6 +96,20 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @ORM\Column(name="has_variants", type="boolean", nullable=false, options={"default"=false})
      */
     protected $hasVariants = false;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="status", type="string", length=16, nullable=false)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     *  )
+     */
+    protected $status = self::STATUS_DISABLED;
 
     /**
      * @var array
@@ -334,6 +344,26 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     public function setUpdatedAt($updatedAt)
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param string $status
+     *
+     * @return Product
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
 
         return $this;
     }

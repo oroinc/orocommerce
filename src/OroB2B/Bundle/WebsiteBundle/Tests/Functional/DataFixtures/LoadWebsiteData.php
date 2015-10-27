@@ -13,12 +13,15 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterface
 {
+    const WEBSITE1 = 'US';
+    const WEBSITE2 = 'Canada';
+
     /**
      * @var array
      */
     protected $webSites = [
-        ['name' => 'US', 'url' => 'www.us.com', 'locales' => ['en_US']],
-        ['name' => 'Canada', 'url' => 'www.canada.com', 'locales' => ['en_CA']]
+        ['name' => self::WEBSITE1, 'url' => 'www.us.com', 'locales' => ['en_US']],
+        ['name' => self::WEBSITE2, 'url' => 'www.canada.com', 'locales' => ['en_CA']],
     ];
 
     /**

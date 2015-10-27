@@ -50,7 +50,29 @@ class ProductUnitRemovedSelectionTypeTest extends FormIntegrationTestCase
             })
         ;
         $productUnitLabelFormatter = new ProductUnitLabelFormatter($this->translator);
-        $this->formType = new ProductUnitRemovedSelectionType($productUnitLabelFormatter, $this->translator);
+
+        $repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+
+        $unit = new ProductUnit();
+        $unit->setCode('unit1');
+        $repository->expects(static::any())
+            ->method('findBy')
+            ->willReturn([$unit])
+        ;
+
+        $manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $manager->expects(static::any())
+            ->method('getRepository')
+            ->willReturn($repository)
+        ;
+
+        $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $registry->expects(static::any())
+            ->method('getManagerForClass')
+            ->willReturn($manager)
+        ;
+
+        $this->formType = new ProductUnitRemovedSelectionType($productUnitLabelFormatter, $this->translator, $registry);
         $this->formType->setEntityClass('OroB2B\Bundle\ProductBundle\Entity\ProductUnit');
 
         parent::setUp();
@@ -181,7 +203,9 @@ class ProductUnitRemovedSelectionTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'empty_value' => null,
-                    'choices' => [],
+                    'choices' => [
+                        'unit1' => 'orob2b.product_unit.unit1.label.full',
+                    ],
                 ],
             ],
             'existing product' => [
@@ -232,7 +256,9 @@ class ProductUnitRemovedSelectionTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'empty_value' => 'orob2b.product.productunit.removed:sku',
-                    'choices' => [],
+                    'choices' => [
+                        'unit1' => 'orob2b.product_unit.unit1.label.full',
+                    ],
                 ],
             ],
         ];

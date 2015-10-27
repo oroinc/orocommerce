@@ -10,3 +10,11 @@ orob2b_frontend:
         history: History
         history.title: %item% history
         administrator: Administrator
+    theme:
+        demo.title: 'OroPlatform theme'
+    system_configuration:
+        groups:
+            frontend.title: 'Frontend'
+            theme_settings.title: 'Theme Settings'
+        fields:
+            frontend_theme.label: 'Theme'
