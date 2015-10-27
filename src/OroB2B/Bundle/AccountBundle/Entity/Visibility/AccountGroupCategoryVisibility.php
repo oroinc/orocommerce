@@ -7,14 +7,15 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroupAwareInterface;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 /**
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupCategoryVisibilityRepository")
+ * @ORM\Entity
  * @ORM\Table(name="orob2b_acc_grp_ctgr_visibility")
  * @Config
  */
-class AccountGroupCategoryVisibility implements VisibilityInterface
+class AccountGroupCategoryVisibility implements VisibilityInterface, AccountGroupAwareInterface
 {
     const PARENT_CATEGORY = 'parent_category';
     const CATEGORY = 'category';
@@ -102,9 +103,10 @@ class AccountGroupCategoryVisibility implements VisibilityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param Category $category
+     * @return string
      */
-    public static function getDefault($target = null)
+    public static function getDefault($category)
     {
         return self::CATEGORY;
     }
@@ -128,22 +130,37 @@ class AccountGroupCategoryVisibility implements VisibilityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param Category $category
+     * @return array
      */
-    public static function getVisibilityList($target = null)
+    public static function getVisibilityList($category)
     {
-        if (null === $target) {
-            throw new \InvalidArgumentException();
-        }
         $visibilityList = [
             self::CATEGORY,
             self::PARENT_CATEGORY,
             self::HIDDEN,
             self::VISIBLE
         ];
-        if ($target instanceof Category && !$target->getParentCategory()) {
-            unset($visibilityList[array_search(self::PARENT_CATEGORY, $visibilityList, true)]);
+        if ($category instanceof Category && !$category->getParentCategory()) {
+            unset($visibilityList[array_search(self::PARENT_CATEGORY, $visibilityList)]);
         }
         return $visibilityList;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTargetEntity()
+    {
+        return $this->getCategory();
+    }
+
+    /**
+     * @param Category $category
+     * @return $this
+     */
+    public function setTargetEntity($category)
+    {
+        return $this->setCategory($category);
     }
 }
