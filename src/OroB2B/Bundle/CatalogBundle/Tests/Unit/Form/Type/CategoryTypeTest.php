@@ -63,7 +63,7 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
             ->with(
                 'shortDescriptions',
                 LocalizedFallbackValueCollectionType::NAME,
-                $this->getOroRichTextTypeConfiguration('orob2b.catalog.category.short_description.label')
+                $this->getOroRichTextTypeConfiguration('orob2b.catalog.category.short_descriptions.label')
             )
             ->will($this->returnSelf());
 
@@ -72,7 +72,7 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
             ->with(
                 'longDescriptions',
                 LocalizedFallbackValueCollectionType::NAME,
-                $this->getOroRichTextTypeConfiguration('orob2b.catalog.category.long_description.label')
+                $this->getOroRichTextTypeConfiguration('orob2b.catalog.category.long_descriptions.label')
             )
             ->will($this->returnSelf());
 
