@@ -17,6 +17,7 @@ parameters:
     orob2b_product.validator.product_by_sku.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator
     orob2b_product.provider.custom_field_provider.class: OroB2B\Bundle\ProductBundle\Provider\CustomFieldProvider
     orob2b_product.event_listener.product_variant_custom_fields_datagrid.class: OroB2B\Bundle\ProductBundle\EventListener\ProductVariantCustomFieldsDatagridListener
+    orob2b_product.event_listener.products_limited_by_statuses_datagrid.class: OroB2B\Bundle\ProductBundle\EventListener\ProductsLimitedByStatusesDatagridEventListener
     orob2b_product.validator.unique_variant_links.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator
 
     orob2b_product.component_processor.registry.class: OroB2B\Bundle\ProductBundle\Model\ComponentProcessorRegistry
@@ -26,6 +27,8 @@ parameters:
     orob2b_product.event_listener.product_grid_widget.class: OroB2B\Bundle\ProductBundle\EventListener\ProductGridWidgetRenderEventListener
 
     orob2b_product.menu.frontend.quick_add.class: OroB2B\Bundle\ProductBundle\Menu\Frontend\QuickAddMenuBuilder
+
+
 
 services:
     orob2b_product.product.manager.api:

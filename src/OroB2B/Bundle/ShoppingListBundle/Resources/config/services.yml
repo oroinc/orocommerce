@@ -81,3 +81,8 @@ services:
         class: %orob2b_shopping_list.service.product_data_storage.class%
         arguments:
             - @orob2b_product.service.product_data_storage
+
+    orob2b_shopping_list.products_limited_by_statuses_datagrid:
+        class: %orob2b_product.event_listener.products_limited_by_statuses_datagrid.class%
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-select-grid-on-shopping-list, method: onBuildBefore }

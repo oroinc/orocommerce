@@ -369,3 +369,5 @@ datagrid:
                 accountUserName:
                     type:      string
                     data_name: accountUserName
+    products-select-grid-on-order:
+        extends: products-select-grid-base
