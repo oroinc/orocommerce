@@ -19,31 +19,24 @@ class AccountCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
     {
         $entity = new AccountCategoryVisibility();
 
+        $category = new Category();
         $this->assertPropertyAccessors(
             $entity,
             [
                 ['id', 1],
-                ['category', new Category()],
+                ['category', $category],
                 ['account', new Account()],
                 ['visibility', AccountCategoryVisibility::CATEGORY],
             ]
         );
-        $entity->setCategory(new Category());
-        $this->assertEquals(
-            AccountCategoryVisibility::ACCOUNT_GROUP,
-            AccountCategoryVisibility::getDefault($entity->getCategory())
-        );
 
-        $visibilityList = AccountCategoryVisibility::getVisibilityList($entity->getCategory());
+        $entity->setTargetEntity($category);
+        $this->assertEquals($entity->getTargetEntity(), $category);
+
+        $this->assertEquals(AccountCategoryVisibility::ACCOUNT_GROUP, $entity->getDefault($category));
+
+        $visibilityList = AccountCategoryVisibility::getVisibilityList($category);
         $this->assertInternalType('array', $visibilityList);
         $this->assertNotEmpty($visibilityList);
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     */
-    public function testGetVisibilityListWithNoArguments()
-    {
-        AccountCategoryVisibility::getVisibilityList();
     }
 }

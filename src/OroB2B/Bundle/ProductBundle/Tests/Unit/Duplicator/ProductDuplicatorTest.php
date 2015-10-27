@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Duplicator;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\Connection;
-use Doctrine\ORM\EntityRepository;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -13,8 +12,6 @@ use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\AttachmentBundle\Provider\AttachmentProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Duplicator\ProductDuplicator;
@@ -28,6 +25,7 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
 {
     const PRODUCT_SKU = 'SKU-1';
     const PRODUCT_COPY_SKU = 'SKU-2';
+    const PRODUCT_STATUS = Product::STATUS_DISABLED;
     const UNIT_PRECISION_CODE_1 = 'kg';
     const UNIT_PRECISION_DEFAULT_PRECISION_1 = 2;
     const UNIT_PRECISION_CODE_2 = 'mg';
@@ -68,16 +66,6 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
     protected $attachmentProvider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|EntityRepository
-     */
-    protected $productStatusRepository;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|AbstractEnumValue
-     */
-    protected $productStatusDisabled;
-
-    /**
      * @var \PHPUnit_Framework_MockObject_MockObject|Connection
      */
     protected $connection;
@@ -110,20 +98,9 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
         $this->attachmentProvider = $this->getMockBuilder('Oro\Bundle\AttachmentBundle\Provider\AttachmentProvider')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->productStatusRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->productStatusDisabled = $this->getMockBuilder('Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue')
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
         $this->connection = $this->getMockBuilder('Doctrine\DBAL\Connection')
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepository')
-            ->with(ExtendHelper::buildEnumValueClassName('prod_status'))
-            ->will($this->returnValue($this->productStatusRepository));
 
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityManager')
@@ -133,11 +110,6 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
         $this->objectManager->expects($this->any())
             ->method('getConnection')
             ->will($this->returnValue($this->connection));
-
-        $this->productStatusRepository->expects($this->once())
-            ->method('find')
-            ->with(Product::STATUS_DISABLED)
-            ->will($this->returnValue($this->productStatusDisabled));
 
         $this->duplicator = new ProductDuplicator(
             $this->doctrineHelper,
@@ -212,7 +184,7 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
         $productCopyUnitPrecisions = $productCopy->getUnitPrecisions();
 
         $this->assertEquals(self::PRODUCT_COPY_SKU, $productCopy->getSku());
-        $this->assertEquals($this->productStatusDisabled, $productCopy->getStatus());
+        $this->assertEquals(self::PRODUCT_STATUS, $productCopy->getStatus());
         $this->assertCount(2, $productCopyUnitPrecisions);
         $this->assertEquals(self::UNIT_PRECISION_CODE_1, $productCopyUnitPrecisions[0]->getUnit()->getCode());
         $this->assertEquals(
