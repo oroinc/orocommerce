@@ -69,8 +69,3 @@ services:
 
     orob2b_sale.service.quote_product_offer_matcher:
         class: %orob2b_sale.service.quote_product_offer_matcher.class%
-
-    orob2b_sale.products_limited_by_statuses_datagrid:
-        class: %orob2b_product.event_listener.products_limited_by_statuses_datagrid.class%
-        tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.products-select-grid-on-quotes, method: onBuildBefore }

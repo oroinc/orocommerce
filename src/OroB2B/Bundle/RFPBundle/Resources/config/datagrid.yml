@@ -278,9 +278,6 @@ datagrid:
                 link:          delete_link
         action_configuration: [@orob2b_rfp.datagrid.action_permission_provider, "getRequestStatusDefinitionPermissions"]
 
-    products-select-grid-on-rfq:
-        extends: products-select-grid-base
-
     frontend-requests-grid:
         extended_entity_name: %orob2b_rfp.entity.request.class%
         options:

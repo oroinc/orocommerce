@@ -28,8 +28,6 @@ parameters:
 
     orob2b_product.menu.frontend.quick_add.class: OroB2B\Bundle\ProductBundle\Menu\Frontend\QuickAddMenuBuilder
 
-
-
 services:
     orob2b_product.product.manager.api:
         class: %orob2b_product.product.manager.api.class%
@@ -171,3 +169,8 @@ services:
         class: %orob2b_product.validator.unique_variant_links.class%
         tags:
             - { name: validator.constraint_validator, alias: orob2b_product_unique_variant_links }
+
+    orob2b_order.products_limited_by_statuses_datagrid:
+        class: %orob2b_product.event_listener.products_limited_by_statuses_datagrid.class%
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.products-select-grid, method: onBuildAfter }

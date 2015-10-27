@@ -127,9 +127,6 @@ datagrid:
                 icon:          trash
                 acl_resource:  orob2b_sale_quote_delete
 
-    products-select-grid-on-quotes:
-        extends: products-select-grid-base
-
     frontend-quotes-grid:
         extended_entity_name: %orob2b_sale.entity.quote.class%
         options:

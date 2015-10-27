@@ -2,15 +2,19 @@
 
 namespace OroB2B\Bundle\ProductBundle\EventListener;
 
-use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
+use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 
 class ProductsLimitedByStatusesDatagridEventListener
 {
     /**
-     * @param BuildBefore $event
+     * @param BuildAfter $event
      */
-    public function onBuildBefore(BuildBefore $event)
+    public function onBuildAfter(BuildAfter $event)
     {
-        //TODO: Limitation
+        /** @var OrmDatasource $dataSource */
+        $dataSource = $event->getDatagrid()->getAcceptedDatasource();
+        $qb = $dataSource->getQueryBuilder();
+        //TODO: Limitation QueryBuilder by Modifier
     }
 }

@@ -90,9 +90,6 @@ datagrid:
                 acl_resource:  orob2b_shopping_list_view
                 rowAction:     true
 
-    products-select-grid-on-shopping-list:
-        extends: products-select-grid-base
-
     frontend-shopping-list-grid:
         extended_entity_name:  %orob2b_shopping_list.entity.shopping_list.class%
         options:
