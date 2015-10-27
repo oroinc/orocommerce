@@ -150,7 +150,7 @@ class Category
      *      }
      * )
      */
-    protected $shortDescription;
+    protected $shortDescriptions;
 
     /**
      * @var Collection|LocalizedFallbackValue[]
@@ -170,7 +170,7 @@ class Category
      *      }
      * )
      */
-    protected $longDescription;
+    protected $longDescriptions;
 
     /**
      * Constructor
@@ -182,8 +182,8 @@ class Category
         $this->products         = new ArrayCollection();
         $this->createdAt        = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->updatedAt        = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->shortDescription = new ArrayCollection();
-        $this->longDescription  = new ArrayCollection();
+        $this->shortDescriptions = new ArrayCollection();
+        $this->longDescriptions  = new ArrayCollection();
     }
 
     /**
@@ -400,7 +400,7 @@ class Category
      */
     public function getShortDescriptions()
     {
-        return $this->shortDescription;
+        return $this->shortDescriptions;
     }
 
     /**
@@ -410,8 +410,8 @@ class Category
      */
     public function addShortDescription(LocalizedFallbackValue $shortDescription)
     {
-        if (!$this->shortDescription->contains($shortDescription)) {
-            $this->shortDescription->add($shortDescription);
+        if (!$this->shortDescriptions->contains($shortDescription)) {
+            $this->shortDescriptions->add($shortDescription);
         }
 
         return $this;
@@ -424,8 +424,8 @@ class Category
      */
     public function removeShortDescription(LocalizedFallbackValue $shortDescription)
     {
-        if ($this->shortDescription->contains($shortDescription)) {
-            $this->shortDescription->removeElement($shortDescription);
+        if ($this->shortDescriptions->contains($shortDescription)) {
+            $this->shortDescriptions->removeElement($shortDescription);
         }
 
         return $this;
@@ -436,15 +436,15 @@ class Category
      */
     public function getDefaultShortDescription()
     {
-        $shortDescription = $this->shortDescription->filter(function (LocalizedFallbackValue $shortDescription) {
+        $shortDescriptions = $this->shortDescriptions->filter(function (LocalizedFallbackValue $shortDescription) {
             return null === $shortDescription->getLocale();
         });
 
-        if ($shortDescription->count() !== 1) {
+        if ($shortDescriptions->count() !== 1) {
             throw new \LogicException('There must be only one default short description');
         }
 
-        return $shortDescription->first();
+        return $shortDescriptions->first();
     }
 
     /**
@@ -452,7 +452,7 @@ class Category
      */
     public function getLongDescriptions()
     {
-        return $this->longDescription;
+        return $this->longDescriptions;
     }
 
     /**
@@ -462,8 +462,8 @@ class Category
      */
     public function addLongDescription(LocalizedFallbackValue $longDescription)
     {
-        if (!$this->longDescription->contains($longDescription)) {
-            $this->longDescription->add($longDescription);
+        if (!$this->longDescriptions->contains($longDescription)) {
+            $this->longDescriptions->add($longDescription);
         }
 
         return $this;
@@ -476,8 +476,8 @@ class Category
      */
     public function removeLongDescription(LocalizedFallbackValue $longDescription)
     {
-        if ($this->longDescription->contains($longDescription)) {
-            $this->longDescription->removeElement($longDescription);
+        if ($this->longDescriptions->contains($longDescription)) {
+            $this->longDescriptions->removeElement($longDescription);
         }
 
         return $this;
@@ -488,14 +488,14 @@ class Category
      */
     public function getDefaultLongDescription()
     {
-        $longDescription = $this->longDescription->filter(function (LocalizedFallbackValue $longDescription) {
+        $longDescriptions = $this->longDescriptions->filter(function (LocalizedFallbackValue $longDescription) {
             return null === $longDescription->getLocale();
         });
 
-        if ($longDescription->count() != 1) {
+        if ($longDescriptions->count() != 1) {
             throw new \LogicException('There must be only one default long description');
         }
 
-        return $longDescription->first();
+        return $longDescriptions->first();
     }
 }
