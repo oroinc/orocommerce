@@ -71,6 +71,7 @@ class OroB2BAccountBundle implements Migration
                 ['id'],
                 ['onDelete' => 'CASCADE', 'onUpdate' => null]
             );
+
         $table = $schema->getTable(OroB2BAccountBundleInstaller::ORO_B2B_ACCOUNT_USER_ROLE_TABLE_NAME);
         $table->getColumn('role')->setType(Type::getType(Type::STRING))->setOptions(['length' => 255]);
         $table->getColumn('label')->setType(Type::getType(Type::STRING))->setOptions(['length' => 255]);
