@@ -1,0 +1,7 @@
+invoice,productSku,freeFormProduct,quantity,productUnit,price
+INV142657,1276,Sample product,1,each,9.99
+INV142657,HCCM,,3,piece,9.99
+INV142342,1345,Sample product 2,1,each,19.99
+INV142342,HSTUC,,3,piece,19.99
+INV142834,1885,Sample product 3,1,each,29.99
+INV142834,HLCU,,3,piece,29.99
