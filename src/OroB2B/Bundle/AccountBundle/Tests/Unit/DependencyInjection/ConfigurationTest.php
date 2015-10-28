@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\DependencyInjection;
 
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use Symfony\Component\Config\Definition\Processor;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
@@ -63,6 +64,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                         ],
                         'category_visibility' => [
                             'value' => CategoryVisibility::VISIBLE,
+                            'scope' => 'app'
+                        ],
+                        'product_visibility' => [
+                            'value' => ProductVisibility::VISIBLE,
                             'scope' => 'app'
                         ]
                     ]
