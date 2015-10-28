@@ -568,15 +568,14 @@ services:
 
     orob2b_account.audit.discriminator_map_listener:
         class: %orob2b_account.audit.discriminator_map_listener.class%
-        arguments:
-            - { orob2b_audit: %orob2b_account.entity.audit.class%, orob2b_audit_field: %orob2b_account.entity.audit_field.class% }
+        calls:
+            - [ addClass, [ orob2b_audit, %orob2b_account.entity.audit.class% ] ]
+            - [ addClass, [ orob2b_audit_field, %orob2b_account.entity.audit_field.class% ] ]
         tags:
             - { name: doctrine.event_listener, event: loadClassMetadata }
 
     orob2b_account.audit.commit_order:
         class: %orob2b_account.audit.commit_order.class%
-        arguments:
-            - @doctrine
         calls:
             - [ addDependency, [ %orob2b_account.entity.audit_field.class%, %orob2b_account.entity.audit.class% ] ]
         tags:

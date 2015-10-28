@@ -13,11 +13,12 @@ class DiscriminatorMapListener
     protected $supportedClassNames = [];
 
     /**
-     * @param string[] $supportedClassNames
+     * @param string $key
+     * @param string $supportedClassName
      */
-    public function __construct(array $supportedClassNames = [])
+    public function addClass($key, $supportedClassName)
     {
-        $this->supportedClassNames = $supportedClassNames;
+        $this->supportedClassNames[$key] = $supportedClassName;
     }
 
     /**
@@ -25,6 +26,10 @@ class DiscriminatorMapListener
      */
     public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
     {
+        if (!$this->supportedClassNames) {
+            return;
+        }
+
         /** @var ClassMetadataInfo $metadata */
         $metadata = $eventArgs->getClassMetadata();
 
