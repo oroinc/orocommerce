@@ -51,7 +51,6 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         $headers = fgetcsv($handler, 1000, ',');
 
         $inventoryStatuses = $this->getAllEnumValuesByCode($manager, 'prod_inventory_status');
-        $statuses = $this->getAllEnumValuesByCode($manager, 'prod_status');
 
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
@@ -67,7 +66,7 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
                 ->setOrganization($organization)
                 ->setSku($row['sku'])
                 ->setInventoryStatus($inventoryStatuses[1])
-                ->setStatus($statuses[1])
+                ->setStatus(Product::STATUS_ENABLED)
                 ->addName($name)
                 ->addDescription($description);
 

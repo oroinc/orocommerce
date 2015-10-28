@@ -12,7 +12,6 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class ProductType extends AbstractType
 {
@@ -32,8 +31,7 @@ class ProductType extends AbstractType
     }
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
+     * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -49,11 +47,9 @@ class ProductType extends AbstractType
             )
             ->add(
                 'status',
-                'oro_enum_select',
+                ProductStatusType::NAME,
                 [
-                    'label'     => 'orob2b.product.status.label',
-                    'enum_code' => 'prod_status',
-                    'configs'   => ['allowClear' => false]
+                    'label' => 'orob2b.product.status.label'
                 ]
             )
             ->add(

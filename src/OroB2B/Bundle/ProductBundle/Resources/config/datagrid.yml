@@ -14,14 +14,12 @@ datagrid:
                     - product.updatedAt
                     - productInventoryStatus.id as inventoryStatusId
                     - productInventoryStatus.name as inventoryStatusName
-                    - productStatus.id as statusId
-                    - productStatus.name as statusName
+                    - product.status
                 from:
                     - { table: %orob2b_product.product.class%, alias: product }
                 join:
                     left:
                         - { join: product.inventory_status, alias: productInventoryStatus}
-                        - { join: product.status, alias: productStatus}
                     inner:
                         -
                             join: product.names
@@ -40,9 +38,8 @@ datagrid:
                 template:      OroB2BProductBundle:Product:Datagrid/inventoryStatus.html.twig
             status:
                 label:         orob2b.product.status.label
-                type:          twig
-                frontend_type: html
-                template:      OroB2BProductBundle:Product:Datagrid/status.html.twig
+                frontend_type: select
+                choices:       @orob2b_product.provider.product_status_provider->getAvailableProductStatuses
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -60,7 +57,7 @@ datagrid:
                 inventoryStatus:
                     data_name: inventoryStatusName
                 status:
-                    data_name: statusName
+                    data_name: product.status
                 createdAt:
                     data_name: product.createdAt
                 updatedAt:
@@ -80,9 +77,11 @@ datagrid:
                     data_name: inventoryStatusId
                     enum_code: prod_inventory_status
                 status:
-                    type:      enum
-                    data_name: statusId
-                    enum_code: prod_status
+                    data_name: product.status
+                    type: choice
+                    options:
+                        field_options:
+                            choices: @orob2b_product.provider.product_status_provider->getAvailableProductStatuses
                 createdAt:
                     type:      datetime
                     data_name: product.createdAt
@@ -227,12 +226,10 @@ datagrid:
                     - productNames.string as productName
                     - productInventoryStatus.id as inventoryStatusId
                     - productInventoryStatus.name as inventoryStatusName
-                    - productStatus.id as statusId
-                    - productStatus.name as statusName
+                    - product.status
                 join:
                     left:
                         - { join: product.inventory_status, alias: productInventoryStatus}
-                        - { join: product.status, alias: productStatus}
                     inner:
                         -
                             join: product.names
@@ -252,7 +249,7 @@ datagrid:
                 productName:
                     data_name: productName
                 status:
-                    data_name: statusName
+                    data_name: product.status
                 inventoryStatus:
                     data_name: inventoryStatusName
         filters:
@@ -267,9 +264,11 @@ datagrid:
                     type:      string
                     data_name: productName
                 status:
-                    type:      enum
-                    data_name: statusId
-                    enum_code: prod_status
+                    data_name: product.status
+                    type: choice
+                    options:
+                        field_options:
+                            choices: @orob2b_product.provider.product_status_provider->getAvailableProductStatuses
                 inventoryStatus:
                     type:      enum
                     data_name: inventoryStatusId
@@ -318,9 +317,8 @@ datagrid:
                 label:         orob2b.product.names.label
             status:
                 label:         orob2b.product.status.label
-                type:          twig
-                frontend_type: html
-                template:      OroB2BProductBundle:Product:Datagrid/status.html.twig
+                frontend_type: select
+                choices:       @orob2b_product.provider.product_status_provider->getAvailableProductStatuses
             inventoryStatus:
                 label:         orob2b.product.inventory_status.label
                 type:          twig
@@ -359,9 +357,8 @@ datagrid:
                 frontend_type: boolean
             status:
                 label:         orob2b.product.status.label
-                type:          twig
-                frontend_type: html
-                template:      OroB2BProductBundle:Product:Datagrid/status.html.twig
+                frontend_type: select
+                choices:       @orob2b_product.provider.product_status_provider->getAvailableProductStatuses
             inventoryStatus:
                 label:         orob2b.product.inventory_status.label
                 type:          twig

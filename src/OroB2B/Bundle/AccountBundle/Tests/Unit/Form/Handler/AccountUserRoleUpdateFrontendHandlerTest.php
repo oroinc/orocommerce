@@ -69,7 +69,11 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
             )
             ->willReturn($form);
 
-        $handler = new AccountUserRoleUpdateFrontendHandler($this->formFactory, $this->privilegeConfig);
+        $handler = new AccountUserRoleUpdateFrontendHandler(
+            $this->formFactory,
+            $this->aclCache,
+            $this->privilegeConfig
+        );
 
         $this->setRequirementsForHandler($handler);
         $handler->setRequest($request);
@@ -127,7 +131,11 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
         $this->formFactory->expects($this->once())->method('create')->willReturn($form);
 
-        $handler = new AccountUserRoleUpdateFrontendHandler($this->formFactory, $this->privilegeConfig);
+        $handler = new AccountUserRoleUpdateFrontendHandler(
+            $this->formFactory,
+            $this->aclCache,
+            $this->privilegeConfig
+        );
 
         $this->setRequirementsForHandler($handler);
         $handler->setRequest($request);
@@ -239,7 +247,11 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
         $request = new Request();
         $request->setMethod('POST');
 
-        $handler = new AccountUserRoleUpdateFrontendHandler($this->formFactory, $this->privilegeConfig);
+        $handler = new AccountUserRoleUpdateFrontendHandler(
+            $this->formFactory,
+            $this->aclCache,
+            $this->privilegeConfig
+        );
 
         $this->setRequirementsForHandler($handler);
         $handler->setRequest($request);
