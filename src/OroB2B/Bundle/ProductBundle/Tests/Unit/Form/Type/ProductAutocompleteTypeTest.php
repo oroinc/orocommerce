@@ -43,8 +43,8 @@ class ProductAutocompleteTypeTest extends \PHPUnit_Framework_TestCase
                         $this->assertEquals(
                             [
                                 'alias' => 'orob2b_product',
-                                'result_template_twig' =>
-                                    'OroB2BProductBundle:Product:Autocomplete/autocomplete_result.html.twig',
+                                'selection_template_twig' =>
+                                    'OroB2BProductBundle:Product:Autocomplete/autocomplete_selection.html.twig',
                                 'componentModule' => 'orob2bproduct/js/app/components/product-autocomplete-component',
                             ],
                             $options['autocomplete']
