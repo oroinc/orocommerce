@@ -93,13 +93,6 @@ class Category
      *
      * @ORM\OneToMany(targetEntity="Category", mappedBy="parentCategory", cascade={"persist"})
      * @ORM\OrderBy({"left" = "ASC"})
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
     protected $childCategories;
 
