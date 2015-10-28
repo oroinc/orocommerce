@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\ProductBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Oro\Bundle\FormBundle\Form\Type\OroEntityAutocompleteType;
+use Oro\Bundle\FormBundle\Form\Type\OroAutocompleteType;
 
 class ProductAutocompleteType extends AbstractType
 {
@@ -24,7 +24,7 @@ class ProductAutocompleteType extends AbstractType
      */
     public function getParent()
     {
-        return OroEntityAutocompleteType::NAME;
+        return OroAutocompleteType::NAME;
     }
 
     /**

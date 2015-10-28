@@ -7,7 +7,7 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
 
-use Oro\Bundle\FormBundle\Form\Type\OroEntityAutocompleteType;
+use Oro\Bundle\FormBundle\Form\Type\OroAutocompleteType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
@@ -84,7 +84,7 @@ class ProductRowTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     ProductAutocompleteType::NAME => new ProductAutocompleteType(),
-                    OroEntityAutocompleteType::NAME => new OroEntityAutocompleteType(),
+                    OroAutocompleteType::NAME => new OroAutocompleteType(),
                 ],
                 []
             ),

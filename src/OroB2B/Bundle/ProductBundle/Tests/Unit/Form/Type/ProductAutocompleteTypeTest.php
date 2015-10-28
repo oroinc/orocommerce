@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Oro\Bundle\FormBundle\Form\Type\OroEntityAutocompleteType;
+use Oro\Bundle\FormBundle\Form\Type\OroAutocompleteType;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
 
@@ -27,7 +27,7 @@ class ProductAutocompleteTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testGetParent()
     {
-        $this->assertEquals(OroEntityAutocompleteType::NAME, $this->type->getParent());
+        $this->assertEquals(OroAutocompleteType::NAME, $this->type->getParent());
     }
 
     public function testConfigureOptions()
