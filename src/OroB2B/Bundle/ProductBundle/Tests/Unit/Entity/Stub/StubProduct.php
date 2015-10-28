@@ -23,12 +23,7 @@ class StubProduct extends Product
      * @var mixed
      */
     private $image = [];
-
-    /**
-     * @var AbstractEnumValue
-     */
-    private $status;
-
+    
     /**
      * @var string
      */
@@ -54,25 +49,6 @@ class StubProduct extends Product
     public function setVisibility($visibility)
     {
         $this->visibility = $visibility;
-
-        return $this;
-    }
-
-    /**
-     * @return AbstractEnumValue
-     */
-    public function getStatus()
-    {
-        return $this->status;
-    }
-
-    /**
-     * @param AbstractEnumValue $status
-     * @return $this
-     */
-    public function setStatus(AbstractEnumValue $status)
-    {
-        $this->status = $status;
 
         return $this;
     }

@@ -20,15 +20,6 @@ oro_system_configuration:
                 required: true
                 constraints:
                     - NotBlank: ~
-        orob2b_product.default_visibility:
-            data_type: string
-            type: orob2b_product_default_visibility
-            priority: 10
-            options:
-                label: orob2b.product.system_configuration.fields.visibility.label
-                required: true
-                constraints:
-                    - NotBlank: ~
 
     tree:
         system_configuration:
@@ -39,10 +30,6 @@ oro_system_configuration:
                             product:
                                 priority: 220
                                 children:
-                                    default_visibility:
-                                        priority: 100
-                                        children:
-                                            - orob2b_product.default_visibility
                                     product_unit_settings:
                                         priority: 100
                                         children:

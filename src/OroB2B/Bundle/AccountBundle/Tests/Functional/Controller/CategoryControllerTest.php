@@ -68,7 +68,7 @@ class CategoryControllerTest extends WebTestCase
         );
 
         $selectedCatalogVisibility = $crawler
-            ->filterXPath('//select[@name="orob2b_catalog_category[categoryVisibility]"]/option[@selected]/@value')
+            ->filterXPath('//select[@name="orob2b_catalog_category[visibility][all]"]/option[@selected]/@value')
             ->text();
 
         $this->assertEquals($categoryVisibility, $selectedCatalogVisibility);
@@ -162,9 +162,11 @@ class CategoryControllerTest extends WebTestCase
         $parameters['orob2b_catalog_category'] = array_merge(
             [
                 '_token' => $token,
-                'categoryVisibility' => $categoryVisibility,
-                'visibilityForAccount' => $visibilityForAccount,
-                'visibilityForAccountGroup' => $visibilityForAccountGroup,
+                'visibility' => [
+                    'all' => $categoryVisibility,
+                    'account' => $visibilityForAccount,
+                    'accountGroup' => $visibilityForAccountGroup,
+                ],
             ],
             $parameters['orob2b_catalog_category']
         );

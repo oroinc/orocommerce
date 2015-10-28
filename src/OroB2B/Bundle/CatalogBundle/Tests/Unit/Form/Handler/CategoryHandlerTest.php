@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Form\Handler;
 
+use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Component\Testing\Unit\FormHandlerTestCase;
@@ -17,12 +18,15 @@ class CategoryHandlerTest extends FormHandlerTestCase
      */
     protected $entity;
 
+    /** @var  EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $eventDispatcher;
+
     protected function setUp()
     {
         parent::setUp();
-
+        $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
         $this->entity = new Category();
-        $this->handler = new CategoryHandler($this->form, $this->request, $this->manager);
+        $this->handler = new CategoryHandler($this->form, $this->request, $this->manager, $this->eventDispatcher);
     }
 
     /**
@@ -59,6 +63,13 @@ class CategoryHandlerTest extends FormHandlerTestCase
 
     public function testProcessValidData()
     {
+
+        $event = new AfterFormProcessEvent($this->form, $this->entity);
+        $this->eventDispatcher
+            ->expects($this->once())
+            ->method('dispatch')
+            ->with('orob2b_catalog.category.edit', $event);
+
         $this->form->expects($this->once())
             ->method('setData')
             ->with($this->entity);
@@ -88,6 +99,10 @@ class CategoryHandlerTest extends FormHandlerTestCase
 
     protected function assertAppendRemoveProducts()
     {
+        $this->eventDispatcher->expects($this->once())->method('dispatch')->with(
+            'orob2b_catalog.category.edit',
+            new AfterFormProcessEvent($this->form, $this->entity)
+        );
         $appendProducts = $this->getMockBuilder('Symfony\Component\Form\Form')
             ->disableOriginalConstructor()
             ->getMock();

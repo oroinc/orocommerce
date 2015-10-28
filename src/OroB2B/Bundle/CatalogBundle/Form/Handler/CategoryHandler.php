@@ -2,19 +2,20 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Form\Handler;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 use Doctrine\Common\Persistence\ObjectManager;
+
+use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class CategoryHandler
 {
-    /**
-     * @var FormInterface
-     */
+    /** @var FormInterface */
     protected $form;
 
     /** @var Request */
@@ -23,19 +24,25 @@ class CategoryHandler
     /** @var ObjectManager */
     protected $manager;
 
+    /** @var  EventDispatcherInterface */
+    protected $eventDispatcher;
+
     /**
-     * @param FormInterface            $form
-     * @param Request                  $request
-     * @param ObjectManager            $manager
+     * @param FormInterface $form
+     * @param Request $request
+     * @param ObjectManager $manager
+     * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
         FormInterface $form,
         Request $request,
-        ObjectManager $manager
+        ObjectManager $manager,
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->form = $form;
         $this->request = $request;
         $this->manager = $manager;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -50,6 +57,10 @@ class CategoryHandler
         if (in_array($this->request->getMethod(), ['POST', 'PUT'])) {
             $this->form->submit($this->request);
             if ($this->form->isValid()) {
+                $this->eventDispatcher->dispatch(
+                    'orob2b_catalog.category.edit',
+                    new AfterFormProcessEvent($this->form, $category)
+                );
                 $appendProducts = $this->form->get('appendProducts')->getData();
                 $removeProducts = $this->form->get('removeProducts')->getData();
                 $this->onSuccess($category, $appendProducts, $removeProducts);
@@ -62,7 +73,7 @@ class CategoryHandler
     }
 
     /**
-     * @param Category  $category
+     * @param Category $category
      * @param Product[] $appendProducts
      * @param Product[] $removeProducts
      */
@@ -76,7 +87,7 @@ class CategoryHandler
     }
 
     /**
-     * @param Category  $category
+     * @param Category $category
      * @param Product[] $products
      */
     protected function appendProducts(Category $category, array $products)
@@ -96,7 +107,7 @@ class CategoryHandler
     }
 
     /**
-     * @param Category  $category
+     * @param Category $category
      * @param Product[] $products
      */
     protected function removeProducts(Category $category, array $products)

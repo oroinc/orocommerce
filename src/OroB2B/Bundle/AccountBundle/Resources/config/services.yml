@@ -18,13 +18,14 @@ parameters:
     orob2b_account.entity.category_visibility.class: OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility
     orob2b_account.entity.account_category_visibility.class: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility
     orob2b_account.entity.account_group_category_visibility.class: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility
+    orob2b_account.entity.product_visibility.class: OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility
+    orob2b_account.entity.account_product_visibility.class: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility
+    orob2b_account.entity.account_group_product_visibility.class: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility
 
     orob2b_account.account_tree_handler.class: OroB2B\Bundle\AccountBundle\JsTree\AccountTreeHandler
     orob2b_account.account_delete_handler.class: OroB2B\Bundle\AccountBundle\Handler\UserDeleteHandler
 
     orob2b_account.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
-    orob2b_account.account_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
-    orob2b_account.account_user_address.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
     orob2b_account.form.autocomplete.parent_account.search_handler.class: OroB2B\Bundle\AccountBundle\Autocomplete\ParentAccountSearchHandler
     orob2b_account.form.autocomplete.account_account_user.search_handler.class: OroB2B\Bundle\AccountBundle\Autocomplete\AccountAccountUserSearchHandler
@@ -50,12 +51,18 @@ parameters:
     orob2b_account.event_listener.ormdatasource_acl.class: OroB2B\Bundle\AccountBundle\EventListener\OrmDatasourceAclListener
     orob2b_account.event_listener.system_config.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigListener
     orob2b_account.event_listener.form_view.class: OroB2B\Bundle\AccountBundle\EventListener\FormViewListener
-    orob2b_account.event_listener.category_visibility_grid_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryVisibilityGridListener
+    orob2b_account.event_listener.visibility_grid_listener.class: OroB2B\Bundle\AccountBundle\EventListener\VisibilityGridListener
     orob2b_account.event_listener.system_config.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigListener
+    orob2b_account.event_listener.abstract_visibility_post_submit.form_handler.class: OroB2B\Bundle\AccountBundle\EventListener\AbstractVisibilityPostSubmitListener
+    orob2b_account.event_listener.category_visibility.form_handler.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryVisibilityPostSubmitListener
+    orob2b_account.event_listener.product_visibility.form_handler.class: OroB2B\Bundle\AccountBundle\EventListener\ProductVisibilityPostSubmitListener
+
+    orob2b_account.visibility.listener.abstract.class: OroB2B\Bundle\AccountBundle\EventListener\VisibilityAbstractListener
+
     orob2b_account.event_listener.system_config.category_visibility.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigCategoryVisibilityListener
-    orob2b_account.event_listener.frontend_datagrid.class: OroB2B\Bundle\AccountBundle\EventListener\DatagridListenerFrontend
     orob2b_account.event_listener.category_visibility_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryVisibilityListener
     orob2b_account.event_listener.category_tree_handler_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryTreeHandlerListener
+    orob2b_account.event_listener.product_duplicate_listener.class: OroB2B\Bundle\AccountBundle\EventListener\ProductDuplicateListener
 
     # Datagrid Listeners
     orob2b_account.event_listener.datagrid.account_user.class: OroB2B\Bundle\AccountBundle\EventListener\Datagrid\AccountUserDatagridListener
@@ -489,18 +496,59 @@ services:
         tags:
             - { name: oro_ui.content_provider }
 
-    orob2b_account.event_listener.category_visibility_grid_listener:
-        class: %orob2b_account.event_listener.category_visibility_grid_listener.class%
+    orob2b_account.event_listener.visibility_grid_listener:
+        class: %orob2b_account.event_listener.visibility_grid_listener.class%
         arguments:
             - @doctrine
             - @orob2b_account.provider.visibility_choices
         calls:
-            - [ setCategoryClassName, [ %orob2b_catalog.category.class% ]]
+            - [ addSubscribedGridConfig, { datagrid: account-group-category-visibility-grid, visibilityEntityClass: %orob2b_account.entity.account_group_category_visibility.class%, targetEntityClass: %orob2b_catalog.category.class% }]
+            - [ addSubscribedGridConfig, { datagrid: account-category-visibility-grid, visibilityEntityClass: %orob2b_account.entity.account_category_visibility.class%, targetEntityClass: %orob2b_catalog.category.class% }]
+            - [ addSubscribedGridConfig, { datagrid: account-group-product-visibility-grid, visibilityEntityClass: %orob2b_account.entity.product_visibility.class%, targetEntityClass: %orob2b_product.product.class% }]
+            - [ addSubscribedGridConfig, { datagrid: account-product-visibility-grid, visibilityEntityClass: %orob2b_account.entity.account_group_product_visibility.class%, targetEntityClass: %orob2b_product.product.class% }]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.account-category-visibility-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.account-group-category-visibility-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before.account-category-visibility-grid, method: onResultBefore }
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before.account-group-category-visibility-grid, method: onResultBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.account-product-visibility-grid, method: onPreBuild }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.account-group-product-visibility-grid, method: onPreBuild }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before.account-product-visibility-grid, method: onResultBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before.account-group-product-visibility-grid, method: onResultBefore }
+
+    orob2b_account.event_listener.product_duplicate_listener:
+        class: %orob2b_account.event_listener.product_duplicate_listener.class%
+        arguments:
+            - @doctrine
+        tags:
+            - { name: kernel.event_listener, event: orob2b_product.product.duplicate.after, method: onDuplicateProduct }
+        calls:
+            - [ setVisibilityToAllClassName, [ %orob2b_account.entity.product_visibility.class% ] ]
+            - [ setVisibilityAccountGroupClassName, [ %orob2b_account.entity.account_group_product_visibility.class% ] ]
+            - [ setVisibilityAccountClassName, [ %orob2b_account.entity.account_product_visibility.class% ] ]
+            - [ setFieldName, ['product'] ]
+
+    orob2b_account.visibility.listener.abstract:
+        class: %orob2b_account.visibility.listener.abstract.class%
+        abstract: true
+        arguments:
+            - @doctrine
+
+    orob2b_account.event_listener.abstract_visibility_post_submit.form_handler:
+        class: %orob2b_account.event_listener.abstract_visibility_post_submit.form_handler.class%
+        parent: orob2b_account.visibility.listener.abstract
+
+    orob2b_account.event_listener.category_visibility.form_handler:
+        class: %orob2b_account.event_listener.category_visibility.form_handler.class%
+        parent: orob2b_account.event_listener.abstract_visibility_post_submit.form_handler
+        tags:
+            - { name: kernel.event_listener, event: orob2b_catalog.category.edit, method: onPostSubmit }
+
+    orob2b_account.event_listener.product_visibility.form_handler:
+        class: %orob2b_account.event_listener.product_visibility.form_handler.class%
+        parent: orob2b_account.event_listener.abstract_visibility_post_submit.form_handler
+        tags:
+            - { name: kernel.event_listener, event: orob2b_product.product.edit, method: onPostSubmit }
 
     orob2b_account.account_delete_handler:
         class: %orob2b_account.account_delete_handler.class%
@@ -538,7 +586,7 @@ services:
             - @doctrine
         calls:
             - [setContainer, [@service_container]]
-            
+
     orob2b_account.storage.category_visibility_storage:
         class: %orob2b_account.storage.category_visibility_storage.class%
         arguments:
