@@ -1,0 +1,86 @@
+datagrid:
+    invoices-grid:
+        source:
+            type: orm
+            query:
+                select:
+                    - invoice.invoiceNumber
+                    - invoice.invoiceDate
+                    - invoice.paymentDueDate
+                    - invoice.currency
+                    - invoice.createdAt
+                    - invoice.updatedAt
+                    - CONCAT(invoice_owner.firstName, ' ', invoice_owner.lastName) as owner
+                    - CONCAT(accountUser.firstName, ' ', accountUser.lastName) as accountUserName
+                    - account.name as accountName
+                join:
+                    left:
+                        - { join: invoice.owner, alias: invoice_owner }
+                        - { join: invoice.accountUser, alias: accountUser }
+                        - { join: invoice.account, alias: account }
+                from:
+                    - { table: %orob2b_invoice.entity.invoice.class%, alias: invoice }
+        columns:
+            invoiceNumber:
+                label:         orob2b.invoice.invoice_number.label
+            accountName:
+                label:         orob2b.invoice.account.label
+            accountUserName:
+                label:         orob2b.invoice.account_user.label
+            invoiceDate:
+                label:         orob2b.invoice.invoice_date.label
+                frontend_type: date
+            paymentDueDate:
+                label:         orob2b.invoice.payment_due_date.label
+                frontend_type: date
+            currency:
+                label:         orob2b.invoice.currency.label
+            owner:
+                label:         orob2b.order.owner.label
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
+        sorters:
+            columns:
+                accountName:
+                    data_name: invoice.account
+                accountUserName:
+                    data_name: accountUserName
+                owner:
+                    data_name: invoice.owner
+                invoiceDate:
+                    data_name: invoice.invoiceDate
+                paymentDueDate:
+                    data_name: invoice.paymentDueDate
+                createdAt:
+                    data_name: invoice.createdAt
+                updatedAt:
+                    data_name: invoice.updatedAt
+            default:
+                createdAt: DESC
+        filters:
+            columns:
+                accountName:
+                    type:      string
+                    data_name: accountName
+                accountUserName:
+                    type:      string
+                    data_name: accountUserName
+                owner:
+                    type:      string
+                    data_name: owner
+                invoiceDate:
+                    type:      date
+                    data_name: invoice.invoiceDate
+                paymentDueDate:
+                    type:      date
+                    data_name: invoice.paymentDueDate
+                createdAt:
+                    type:      datetime
+                    data_name: invoice.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: invoice.updatedAt

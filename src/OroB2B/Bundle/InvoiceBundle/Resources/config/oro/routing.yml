@@ -1,0 +1,5 @@
+orob2b_order:
+    resource:     "@OroB2BInvoiceBundle/Controller/InvoiceController.php"
+    type:         annotation
+    prefix:       /invoice
+
