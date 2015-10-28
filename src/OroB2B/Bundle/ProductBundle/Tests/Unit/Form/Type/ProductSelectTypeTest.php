@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
+
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
 use Symfony\Component\Form\FormInterface;
@@ -74,14 +75,16 @@ class ProductSelectTypeTest extends \PHPUnit_Framework_TestCase
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
 
         $formView = new FormView();
-        $this->type->finishView($formView, $form, [
-            'data_parameters' => $dataParameters
-        ]);
+        $this->type->finishView(
+            $formView,
+            $form,
+            ['data_parameters' => $dataParameters]
+        );
 
         $this->assertArrayHasKey('attr', $formView->vars);
         $this->assertArrayHasKey('data-select2_query_additional_params', $formView->vars['attr']);
         $this->assertEquals(
-            json_encode($dataParameters),
+            json_encode(['data_parameters' => $dataParameters]),
             $formView->vars['attr']['data-select2_query_additional_params']
         );
     }
