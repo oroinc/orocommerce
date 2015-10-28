@@ -223,7 +223,7 @@ class BaseQuoteProductItem implements ProductUnitHolderInterface, ProductHolderI
     /**
      * Get productUnitCode
      *
-     * @return ProductUnit
+     * @return string
      */
     public function getProductUnitCode()
     {

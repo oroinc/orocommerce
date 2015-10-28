@@ -12,8 +12,14 @@ parameters:
     #Formatters
     orob2b_sale.formatter.quote_product.class: OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter
     orob2b_sale.formatter.quote_product_offer.class: OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter
+
+    #Validators
+    orob2b_sale.validator.quote_product.class: OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProductValidator
+    orob2b_sale.validator.quote_product_unit.class: OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProductOfferValidator
+
     #Twig extensions
     orob2b_sale.twig.quote.class: OroB2B\Bundle\SaleBundle\Twig\QuoteExtension
+
 services:
     orob2b_sale.quote.manager.api:
         class: %orob2b_sale.quote.manager.api.class%
@@ -27,6 +33,16 @@ services:
             arguments:
                 - @orob2b_pricing.provider.product_price
                 - @orob2b_pricing.model.frontend.price_list_request_handler
+
+    orob2b_sale.validator.quote_product:
+        class: %orob2b_sale.validator.quote_product.class%
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_sale.validator.quote_product }
+
+    orob2b_sale.validator.quote_product_unit:
+        class: %orob2b_sale.validator.quote_product_unit.class%
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_sale.validator.quote_product_unit }
 
     orob2b_sale.twig.quote:
         class: %orob2b_sale.twig.quote.class%

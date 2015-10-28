@@ -9,6 +9,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @dbIsolation
@@ -84,7 +85,8 @@ class ProductWithPricesTest extends WebTestCase
                     'quantity'  => self::FIRST_QUANTITY,
                     'unit'      => self::FIRST_UNIT_CODE
                 ]
-            ]
+            ],
+            'status' => Product::STATUS_ENABLED
         ];
 
         $formData['names']['values']['default'] = self::DEFAULT_NAME;

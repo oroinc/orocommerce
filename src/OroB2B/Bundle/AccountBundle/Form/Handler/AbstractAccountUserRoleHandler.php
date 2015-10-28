@@ -14,7 +14,6 @@ use Oro\Bundle\UserBundle\Form\Handler\AclRoleHandler;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserRoleType;
 
 abstract class AbstractAccountUserRoleHandler extends AclRoleHandler
@@ -121,60 +120,30 @@ abstract class AbstractAccountUserRoleHandler extends AclRoleHandler
     }
 
     /**
-     * {@inheritDoc}
+     * @param AccountUserRole $role
+     * @return ArrayCollection[]
      */
-    protected function onSuccess(AbstractRole $role, array $appendUsers, array $removeUsers)
+    public function getAccountUserRolePrivileges(AccountUserRole $role)
     {
-        $this->fixUsersByAccount($role, $appendUsers, $removeUsers);
-        parent::onSuccess($role, $appendUsers, $removeUsers);
+        $sortedPrivileges= [];
+        $privileges = $this->getRolePrivileges($role);
+
+        $this->loadPrivilegeConfigPermissions(true);
+
+        foreach ($this->privilegeConfig as $fieldName => $config) {
+            $sortedPrivileges[$fieldName] = $this->filterPrivileges($privileges, $config['types']);
+            $this->applyOptions($sortedPrivileges[$fieldName], $config);
+        }
+
+        return $sortedPrivileges;
     }
 
     /**
-     * {@inheritDoc}
+     * @param AccountUserRole $role
+     * @return array
      */
-    public function process(AbstractRole $role)
+    public function getAccountUserRolePrivilegeConfig(AccountUserRole $role)
     {
-        $this->originalAccount = $role->getAccount();
-
-        return parent::process($role);
-    }
-
-    /**
-     * @param AccountUserRole|AbstractRole $role
-     * @param array                        $appendUsers
-     * @param array                        $removeUsers
-     */
-    protected function fixUsersByAccount(AccountUserRole $role, array &$appendUsers, array &$removeUsers)
-    {
-        /** @var AccountUserRoleRepository $roleRepository */
-        $roleRepository = $this->doctrineHelper->getEntityRepository($role);
-
-        // Role moved to another account OR account added
-        if ($role->getId() && (
-                ($this->originalAccount !== $role->getAccount() &&
-                    $this->originalAccount !== null && $role->getAccount() !== null) ||
-                ($this->originalAccount === null && $role->getAccount() !== null)
-            )
-        ) {
-            // Remove assigned users
-            $assignedUsers = $roleRepository->getAssignedUsers($role);
-            $removeUsers = array_replace($removeUsers, $assignedUsers);
-
-            $appendNewUsers = array_diff($appendUsers, $removeUsers);
-            $removeNewUsers = array_diff($removeUsers, $appendUsers);
-
-            $removeUsers = $removeNewUsers;
-            $appendUsers = $appendNewUsers;
-        }
-
-        if ($role->getAccount()) {
-            // Security check
-            $appendUsers = array_filter(
-                $appendUsers,
-                function (AccountUser $user) use ($role) {
-                    return $user->getAccount() === $role->getAccount();
-                }
-            );
-        }
+        return $this->privilegeConfig;
     }
 }

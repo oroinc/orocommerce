@@ -63,61 +63,12 @@ abstract class AbstractAddressTest extends \PHPUnit_Framework_TestCase
         static::assertPropertyCollections($this->address, [['types', $this->billingType]]);
     }
 
-    public function testAddType()
+    public function testProperties()
     {
-        $this->address->addType($this->billingType);
-        $types = $this->address->getTypes();
-        $this->assertCount(1, $types);
-        $this->assertEquals($this->billingType, $types->first());
-    }
-
-    public function testSetTypes()
-    {
-        $this->assertCount(0, $this->address->getTypes());
-        $this->assertInstanceOf(
-            $this->addressEntityClass,
-            $this->address->setTypes(new ArrayCollection([$this->billingType]))
-        );
-        $this->assertCount(1, $this->address->getTypes());
-
-        // addressesToTypes should be cleared
-        $this->address->setTypes(new ArrayCollection([$this->shippingType]));
-        $this->assertCount(1, $this->address->getTypes());
-    }
-
-    public function testGetTypes()
-    {
-        $types = new ArrayCollection([$this->billingType, $this->shippingType]);
-        $this->address->setTypes($types);
-        $this->assertEquals($types, $this->address->getTypes());
-    }
-
-    public function testOwner()
-    {
-        $owner = new User();
-        $this->address->setOwner($owner);
-        $this->assertEquals($owner, $this->address->getOwner());
-    }
-
-    public function testSystemOrganization()
-    {
-        $organization = new Organization();
-        $this->address->setOrganization($organization);
-        $this->assertEquals($organization, $this->address->getOrganization());
-    }
-
-    public function testRemoveTypes()
-    {
-        $testTypes = new ArrayCollection([$this->billingType, $this->shippingType]);
-        $this->address->setTypes($testTypes);
-        $this->assertInstanceOf(
-            $this->addressEntityClass,
-            $this->address->removeType($this->billingType)
-        );
-
-        $types = $this->address->getTypes();
-        $this->assertCount(1, $types);
-        $this->assertEquals($this->shippingType, $types->first());
+        static::assertPropertyAccessors($this->address, [
+            ['systemOrganization', new Organization()],
+            ['owner', new User()],
+        ]);
     }
 
     public function testGetDefaults()

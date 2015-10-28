@@ -24,6 +24,7 @@ use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductRequestType;
 use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter;
+use OroB2B\Bundle\SaleBundle\Validator\Constraints;
 
 abstract class AbstractTest extends FormIntegrationTestCase
 {
@@ -108,6 +109,21 @@ abstract class AbstractTest extends FormIntegrationTestCase
     abstract public function submitProvider();
 
     /**
+     * <<<<<<< HEAD
+     * =======
+     * {@inheritdoc}
+     */
+    protected function getValidators()
+    {
+        $quoteProductConstraint = new Constraints\QuoteProduct();
+
+        return [
+            $quoteProductConstraint->validatedBy() => new Constraints\QuoteProductValidator(),
+        ];
+    }
+
+    /**
+>>>>>>> master
      * @return QuoteProductOfferType
      */
     protected function prepareQuoteProductOfferType()
@@ -327,9 +343,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
             );
         }
 
-        if (null !== $priceType) {
-            $quoteProductOffer->setPriceType($priceType);
-        }
+        $quoteProductOffer->setPriceType($priceType);
 
         if (null !== $price) {
             $quoteProductOffer->setPrice($price);

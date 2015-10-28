@@ -49,18 +49,14 @@
         }
     ] %}
 
-    {% for name, config in form.vars.privilegeConfig %}
+    {% for privilegeConfigName, privilegeConfig in privileges.privilegesConfig %}
+        {% set privilegeDataBLock %}
+            {% include '@OroB2BAccount/AccountUserRole/privileges.html.twig' %}
+        {% endset %}
+
         {% set dataBlocks = dataBlocks|merge([{
-            'title': config.label|trans,
-            'subblocks': [
-                {
-                    'title': '',
-                    'useSpan': false,
-                    'data': [
-                        form_widget(form.children[name])
-                    ]
-                }
-            ]
+            'title': privilegeConfig.label|trans,
+            'subblocks': [{'data' : [privilegeDataBLock]}]
         }]) %}
     {% endfor %}
 

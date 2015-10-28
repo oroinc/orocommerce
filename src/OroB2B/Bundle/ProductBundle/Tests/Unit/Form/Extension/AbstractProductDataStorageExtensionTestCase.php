@@ -2,6 +2,9 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Extension;
 
+use Doctrine\Common\Util\ClassUtils;
+use Doctrine\ORM\Mapping\ClassMetadata;
+
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -186,7 +189,10 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
      */
     protected function assertMetadataCalled(array $mappings = [])
     {
-        $metadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
+        /** @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject $metadata */
+        $metadata = $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadata')
+            ->disableOriginalConstructor()
+            ->getMock();
         $metadata->expects($this->any())->method('hasAssociation')->will(
             $this->returnCallback(
                 function ($property) use ($mappings) {
@@ -211,19 +217,72 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
     }
 
     /**
+     * @param array $mappings
+     */
+    public function initEntityMetadata(array $mappings = [])
+    {
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityMetadata')
+            ->willReturnCallback(function ($object) use ($mappings) {
+
+                $class = is_object($object) ? ClassUtils::getClass($object) : ClassUtils::getRealClass($object);
+
+                $metadata = new ClassMetadata($class);
+                $metadata->setIdentifier([null]);
+
+                if (!isset($mappings[$class])) {
+                    return $metadata;
+                }
+
+                $reflectionClass = new \ReflectionClass($metadata);
+                foreach ($mappings[$class] as $property => $value) {
+                    $method = $reflectionClass->getProperty($property);
+                    $method->setValue($metadata, $value);
+                }
+
+                return $metadata;
+            });
+
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityReference')
+            ->willReturnCallback([$this, 'getEntity']);
+    }
+
+    /**
      * @param string $className
-     * @param int $id
+     * @param int|string $id
+     * @param string $primaryKey
      * @return object
      */
-    public function getEntity($className, $id)
+    public function getEntity($className, $id, $primaryKey = 'id')
     {
-        $entity = new $className;
-        $reflectionClass = new \ReflectionClass($className);
-        $method = $reflectionClass->getProperty('id');
-        $method->setAccessible(true);
-        $method->setValue($entity, $id);
+        static $entities = [];
 
-        return $entity;
+        if (!isset($entities[$className][$id])) {
+            $ident = $this->getPrimaryKey($className, $primaryKey);
+
+            $entity = new $className;
+            $reflectionClass = new \ReflectionClass($className);
+            $method = $reflectionClass->getProperty($ident);
+            $method->setAccessible(true);
+            $method->setValue($entity, $id);
+
+            $entities[$className][$id] = $entity;
+        }
+
+        return $entities[$className][$id];
+    }
+
+    /**
+     * @param string $className
+     * @param string $default
+     * @return string
+     */
+    protected function getPrimaryKey($className, $default = 'id')
+    {
+        $ident = $this->doctrineHelper->getEntityMetadata($className)->getSingleIdentifierFieldName();
+
+        return $ident ?: $default;
     }
 
     public function testExtendedType()

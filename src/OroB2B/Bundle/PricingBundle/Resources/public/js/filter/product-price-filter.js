@@ -3,8 +3,8 @@ define([
     'jquery',
     'underscore',
     'orotranslation/js/translator',
-    'oro/filter/number-filter'
-], function($, _, __, NumberFilter) {
+    'oro/filter/number-range-filter'
+], function($, _, __, NumberRangeFilter) {
     'use strict';
 
     var ProductPriceFilter;
@@ -14,9 +14,9 @@ define([
      *
      * @export  oro/filter/product-price-filter
      * @class   oro.filter.ProductPriceFilter
-     * @extends oro.filter.NumberFilter
+     * @extends oro.filter.NumberRangeFilter
      */
-    ProductPriceFilter = NumberFilter.extend({
+    ProductPriceFilter = NumberRangeFilter.extend({
         /**
          * @property
          */
@@ -32,21 +32,21 @@ define([
          */
         criteriaValueSelectors: {
             unit: 'input[name="unit"]',
-            type: 'input.name_input',
-            value: 'input[name="value"]'
+            type: 'input.name_input'
         },
 
         /**
          * @inheritDoc
          */
         initialize: function() {
-            this.emptyValue = {
-                unit: (_.isEmpty(this.unitChoices) ? '' : _.first(this.unitChoices).value),
-                type: (_.isEmpty(this.choices) ? '' : _.first(this.choices).value),
-                value: ''
-            };
+            ProductPriceFilter.__super__.initialize.apply(this, arguments);
 
-            return ProductPriceFilter.__super__.initialize.apply(this, arguments);
+            _.defaults(this.emptyValue, {
+                unit: (_.isEmpty(this.unitChoices) ? '' : _.first(this.unitChoices).value),
+                type: (_.isEmpty(this.choices) ? '' : _.first(this.choices).value)
+            });
+
+            _.defaults(this.criteriaValueSelectors, ProductPriceFilter.__super__.criteriaValueSelectors);
         },
 
         /**
@@ -91,7 +91,7 @@ define([
         _getCriteriaHint: function() {
             var value = (arguments.length > 0) ? this._getDisplayValue(arguments[0]) : this._getDisplayValue();
 
-            if (!value.value) {
+            if (this.isEmptyValue()) {
                 return this.placeholder;
             }
 
@@ -105,6 +105,17 @@ define([
             hintValue += ' ' + __('orob2b.pricing.filter.product_price.per') + ' ' + unitOption;
 
             return hintValue;
+        },
+
+        /**
+         * @inheritDoc
+         */
+        _updateValueField: function() {
+            ProductPriceFilter.__super__._updateValueField.apply(this, arguments);
+
+            var type = this.$(this.criteriaValueSelectors.type).val();
+
+            this.$('.product-price-unit-filter-separator').toggle(!this.isEmptyType(type));
         },
 
         /**

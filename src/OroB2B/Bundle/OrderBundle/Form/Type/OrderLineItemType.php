@@ -113,7 +113,9 @@ class OrderLineItemType extends AbstractOrderLineItemType
                     'default_currency' => $options['currency']
                 ]
             )
-            ->add('priceType', 'hidden');
+            ->add('priceType', 'hidden', [
+                'data' => OrderLineItem::PRICE_TYPE_UNIT,
+            ]);
     }
 
     /**

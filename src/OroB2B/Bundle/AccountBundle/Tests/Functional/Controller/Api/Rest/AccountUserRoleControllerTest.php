@@ -29,7 +29,7 @@ class AccountUserRoleControllerTest extends WebTestCase
     {
         /** @var \OroB2B\Bundle\AccountBundle\Entity\AccountUserRole $userRole */
         $userRole = $this->getUserRoleRepository()
-            ->findOneBy(['label' => LoadAccountUserRoleData::ROLE_WITHOUT_USER_AND_WEBSITE]);
+            ->findOneBy(['label' => LoadAccountUserRoleData::ROLE_EMPTY]);
 
         $this->assertNotNull($userRole);
 

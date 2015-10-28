@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Controller;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
@@ -14,6 +13,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Event\ProductGridWidgetRenderEvent;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
 
 class ProductController extends Controller
 {
