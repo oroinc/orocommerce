@@ -9,7 +9,6 @@ orob2b:
         has_variants.label: Has Variants
         variant_fields.label: Variant Fields
         inventory_status.label: Inventory Status
-        visibility.label: Visible to Accounts
         status.label: Status
         owner.label: Owner
         organization.label: Organization
@@ -20,6 +19,10 @@ orob2b:
         removed: '{title} - removed'
         is_variant.label: Is Variant
         variant_links.label: Product Variant Links
+
+        status:
+            enabled: Enabled
+            disabled: Disabled
 
         visibility:
             visible.label: Yes
@@ -47,6 +50,7 @@ orob2b:
             unit.label: Unit
             precision.label: Precision
             representation: "{{ label }} with precision {{ precision }} decimal places"
+            unit_precision_required: Please select a unit precision first...
 
         productvariantlink:
             entity_label: Product Variant Link
@@ -76,7 +80,6 @@ orob2b:
         sections:
             general: General
             additional: Additional
-            visibility: Visibility
             productVariants: Product Variants
 
         widgets:
@@ -91,10 +94,8 @@ orob2b:
             groups:
                 product.title: 'Product'
                 product_unit_settings.title: 'Product Unit Settings'
-                default_visibility.title: Default Visibility
             fields:
                 unit_rounding_type.label: 'Unit Rounding Type'
-                visibility.label: Visible to Accounts
 
         grid:
             action:

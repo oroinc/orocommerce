@@ -66,7 +66,7 @@ class OroB2BSaleBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_0';
+        return 'v1_1';
     }
 
     /**
@@ -175,9 +175,11 @@ class OroB2BSaleBundleInstaller implements
         $table->addColumn('product_id', 'integer', ['notnull' => false]);
         $table->addColumn('product_replacement_id', 'integer', ['notnull' => false]);
         $table->addColumn('quote_id', 'integer', ['notnull' => false]);
-        $table->addColumn('product_sku', 'string', ['length' => 255]);
+        $table->addColumn('product_sku', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('product_replacement_sku', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('type', 'smallint', ['notnull' => false]);
+        $table->addColumn('free_form_product', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('free_form_product_replacement', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('comment', 'text', ['notnull' => false]);
         $table->addColumn('comment_account', 'text', ['notnull' => false]);
         $table->setPrimaryKey(['id']);

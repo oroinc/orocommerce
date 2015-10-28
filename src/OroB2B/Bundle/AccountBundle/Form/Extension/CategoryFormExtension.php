@@ -4,51 +4,20 @@ namespace OroB2B\Bundle\AccountBundle\Form\Extension;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvents;
 
-use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
-
-use OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
-use OroB2B\Bundle\AccountBundle\Validator\Constraints\VisibilityChangeSet;
-use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSetDataListener;
-use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSubmitListener;
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
+use OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
 
 class CategoryFormExtension extends AbstractTypeExtension
 {
-    /** @var CategoryPostSetDataListener */
-    protected $postSetDataListener;
-
-    /** @var CategoryPostSubmitListener */
-    protected $postSubmitListener;
+    /** @var string */
+    protected $visibilityToAllClass;
 
     /** @var string */
-    protected $categoryVisibilityClass;
+    protected $visibilityToAccountGroupClass;
 
     /** @var string */
-    protected $accountClass;
-
-    /** @var string */
-    protected $accountGroupClass;
-
-    /** @var VisibilityChoicesProvider */
-    protected $visibilityChoicesProvider;
-
-    /**
-     * @param CategoryPostSetDataListener $postSetDataListener
-     * @param CategoryPostSubmitListener $postSubmitListener
-     * @param VisibilityChoicesProvider $visibilityChoicesProvider
-     */
-    public function __construct(
-        CategoryPostSetDataListener $postSetDataListener,
-        CategoryPostSubmitListener $postSubmitListener,
-        VisibilityChoicesProvider $visibilityChoicesProvider
-    ) {
-        $this->postSetDataListener = $postSetDataListener;
-        $this->postSubmitListener = $postSubmitListener;
-
-        $this->visibilityChoicesProvider = $visibilityChoicesProvider;
-    }
+    protected $visibilityToAccountClass;
 
     /**
      * {@inheritdoc}
@@ -63,61 +32,41 @@ class CategoryFormExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $category = isset($options['data']) ? $options['data'] : null;
-        $choices = $this->visibilityChoicesProvider->getFormattedChoices($this->categoryVisibilityClass, $category);
         $builder
             ->add(
-                'categoryVisibility',
-                'choice',
+                EntityVisibilityType::VISIBILITY,
+                EntityVisibilityType::NAME,
                 [
-                    'required' => true,
-                    'mapped' => false,
-                    'label' => 'orob2b.account.visibility.categoryvisibility.entity_label',
-                    'choices' => $choices
-                ]
-            )
-            ->add(
-                'visibilityForAccount',
-                EntityChangesetType::NAME,
-                [
-                    'class' => $this->accountClass,
-                    'constraints' => [new VisibilityChangeSet(['entityClass' => $this->accountClass])],
-                ]
-            )
-            ->add(
-                'visibilityForAccountGroup',
-                EntityChangesetType::NAME,
-                [
-                    'class' => $this->accountGroupClass,
-                    'constraints' => [new VisibilityChangeSet(['entityClass' => $this->accountGroupClass])],
+                    'data' => $options['data'],
+                    'targetEntityField' => 'category',
+                    'allClass' => $this->visibilityToAllClass,
+                    'accountGroupClass' => $this->visibilityToAccountGroupClass,
+                    'accountClass' => $this->visibilityToAccountClass,
                 ]
             );
-
-        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this->postSetDataListener, 'onPostSetData']);
-        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this->postSubmitListener, 'onPostSubmit']);
     }
 
     /**
-     * @param string $categoryVisibilityClass
+     * @param string $visibilityToAllClass
      */
-    public function setCategoryVisibilityClass($categoryVisibilityClass)
+    public function setVisibilityToAllClass($visibilityToAllClass)
     {
-        $this->categoryVisibilityClass = $categoryVisibilityClass;
+        $this->visibilityToAllClass = $visibilityToAllClass;
     }
 
     /**
-     * @param string $accountClass
+     * @param string $visibilityToAccountGroupClass
      */
-    public function setAccountClass($accountClass)
+    public function setVisibilityToAccountGroupClass($visibilityToAccountGroupClass)
     {
-        $this->accountClass = $accountClass;
+        $this->visibilityToAccountGroupClass = $visibilityToAccountGroupClass;
     }
 
     /**
-     * @param string $accountGroupClass
+     * @param string $visibilityToAccountClass
      */
-    public function setAccountGroupClass($accountGroupClass)
+    public function setVisibilityToAccountClass($visibilityToAccountClass)
     {
-        $this->accountGroupClass = $accountGroupClass;
+        $this->visibilityToAccountClass = $visibilityToAccountClass;
     }
 }

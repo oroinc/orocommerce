@@ -66,7 +66,7 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=64, unique=true, nullable=false)
+     * @ORM\Column(type="string", length=255, unique=true, nullable=false)
      */
     protected $role;
 
@@ -89,7 +89,7 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=64)
+     * @ORM\Column(type="string", length=255)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -117,6 +117,13 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
     protected $websites;
 
     /**
+     * @var AccountUser[]|Collection
+     *
+     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser", mappedBy="roles")
+     */
+    protected $accountUsers;
+
+    /**
      * @param string|null $role
      */
     public function __construct($role = null)
@@ -126,6 +133,7 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
         }
 
         $this->websites = new ArrayCollection();
+        $this->accountUsers = new ArrayCollection();
     }
 
     /**
@@ -255,5 +263,40 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
         $this->id = null;
         $this->setRole($this->getLabel());
         $this->websites = new ArrayCollection();
+        $this->accountUsers = new ArrayCollection();
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     *
+     * @return $this
+     */
+    public function addAccountUser(AccountUser $accountUser)
+    {
+        if (!$this->accountUsers->contains($accountUser)) {
+            $this->accountUsers[] = $accountUser;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     *
+     * @return $this
+     */
+    public function removeAccountUser(AccountUser $accountUser)
+    {
+        $this->accountUsers->removeElement($accountUser);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|AccountUser[]
+     */
+    public function getAccountUsers()
+    {
+        return $this->accountUsers;
     }
 }

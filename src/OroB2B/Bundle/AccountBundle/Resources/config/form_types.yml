@@ -19,13 +19,10 @@ parameters:
     orob2b_account.form.type.frontend.account_user.password_request.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserPasswordRequestType
     orob2b_account.form.type.frontend.account_user.password_reset.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserPasswordResetType
 
-    orob2b_account.form.handler.view_account_user_role.class: OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleViewHandler
     orob2b_account.form.handler.update_account_user_role.class: OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateHandler
     orob2b_account.form.handler.update_account_user_role_frontend.class: OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateFrontendHandler
 
-    orob2b_account.form.listener.category.abstract.class: OroB2B\Bundle\AccountBundle\Form\EventListener\AbstractCategoryListener
-    orob2b_account.form.listener.category.post_set_data.class: OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSetDataListener
-    orob2b_account.form.listener.category.post_submit.class: OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryPostSubmitListener
+    orob2b_account.form.listener.visibility.post_set_data.class: OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityPostSetDataListener
 
     orob2b_account.form.type.account_user_typed_address.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserTypedAddressType
     orob2b_account.form.type.typed_address.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountTypedAddressType
@@ -35,10 +32,13 @@ parameters:
 
     orob2b_account.form.extension.category_type.class: OroB2B\Bundle\AccountBundle\Form\Extension\CategoryFormExtension
     orob2b_account.form.type.catalog_visibility.class: OroB2B\Bundle\AccountBundle\Form\Type\CatalogVisibilityType
+    orob2b_account.form.type.product_visibility.class: OroB2B\Bundle\AccountBundle\Form\Type\ProductVisibilityType
 
     orob2b_account.form.extension.select_or_create_inline.class: OroB2B\Bundle\AccountBundle\Form\Extension\OroEntitySelectOrCreateInlineExtension
     orob2b_account.form.extension.frontend_product_select.class: OroB2B\Bundle\AccountBundle\Form\Extension\FrontendProductSelectExtension
     orob2b_account.form.extension.address.class: OroB2B\Bundle\AccountBundle\Form\Extension\AddressExtension
+
+    orob2b_account.form.type.entity_visibility_type.class: OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType
 
 services:
     orob2b_account.form.type.account:
@@ -88,6 +88,8 @@ services:
 
     orob2b_account.form.type.account_user_role_select:
         class: %orob2b_account.form.type.account_user_role_select.class%
+        arguments:
+            - @translator
         calls:
             - [setRoleClass, [%orob2b_account.entity.account_user_role.class%]]
         tags:
@@ -155,11 +157,6 @@ services:
         tags:
             - { name: form.type, alias: orob2b_account_account_user_password_reset }
 
-    orob2b_account.form.handler.view_account_user_role:
-        parent: orob2b_account.form.handler.update_account_user_role
-        class: %orob2b_account.form.handler.view_account_user_role.class%
-        scope: prototype
-
     orob2b_account.form.handler.update_account_user_role:
         parent: oro_user.form.handler.abstract.acl_role
         class: %orob2b_account.form.handler.update_account_user_role.class%
@@ -177,7 +174,7 @@ services:
         class: %orob2b_account.form.handler.update_account_user_role_frontend.class%
         scope: prototype
         calls:
-            - [setSecurityFacade, [@oro_security.security_facade]]
+            - [setTokenStorage, [@security.token_storage]]
 
     orob2b_account.form.type.typed_address:
         class: %orob2b_account.form.type.typed_address.class%
@@ -217,41 +214,28 @@ services:
         tags:
             - { name: form.type_extension, alias: oro_acl_access_level_selector }
 
-    orob2b_account.form.listener.category.abstract:
-        class: %orob2b_account.form.listener.category.abstract.class%
-        abstract: true
-        arguments:
-            - @doctrine
-        calls:
-            - [setCategoryVisibilityClass, [%orob2b_account.entity.category_visibility.class%]]
-            - [setAccountCategoryVisibilityClass, [%orob2b_account.entity.account_category_visibility.class%]]
-            - [setAccountGroupCategoryVisibilityClass, [%orob2b_account.entity.account_group_category_visibility.class%]]
-
     orob2b_account.form.listener.category.post_set_data:
-        class: %orob2b_account.form.listener.category.post_set_data.class%
-        parent: orob2b_account.form.listener.category.abstract
-
-    orob2b_account.form.listener.category.post_submit:
-        class: %orob2b_account.form.listener.category.post_submit.class%
-        parent: orob2b_account.form.listener.category.abstract
+        class: %orob2b_account.form.listener.visibility.post_set_data.class%
+        parent: orob2b_account.visibility.listener.abstract
 
     orob2b_account.form.extension.category_type:
         class: %orob2b_account.form.extension.category_type.class%
-        arguments:
-            - @orob2b_account.form.listener.category.post_set_data
-            - @orob2b_account.form.listener.category.post_submit
-            - @orob2b_account.provider.visibility_choices
         tags:
             - { name: form.type_extension, alias: orob2b_catalog_category }
         calls:
-            - [setCategoryVisibilityClass, [%orob2b_account.entity.category_visibility.class%]]
-            - [setAccountClass,[%orob2b_account.entity.account.class%]]
-            - [setAccountGroupClass,[%orob2b_account.entity.account_group.class%]]
+            - [setVisibilityToAllClass, [%orob2b_account.entity.category_visibility.class%]]
+            - [setVisibilityToAccountGroupClass,[%orob2b_account.entity.account_group_category_visibility.class%]]
+            - [setVisibilityToAccountClass,[%orob2b_account.entity.account_category_visibility.class%]]
 
     orob2b_account.form.type.catalog_visibility:
         class: %orob2b_account.form.type.catalog_visibility.class%
         tags:
             - { name: form.type, alias: orob2b_account_catalog_default_visibility }
+
+    orob2b_account.form.type.product_visibility:
+        class: %orob2b_account.form.type.product_visibility.class%
+        tags:
+            - { name: form.type, alias: orob2b_account_product_default_visibility }
 
     orob2b_account.form.extension.select_or_create_inline:
         class: %orob2b_account.form.extension.select_or_create_inline.class%
@@ -273,3 +257,14 @@ services:
             - @security.token_storage
         tags:
             - { name: form.type_extension, alias: "oro_address" }
+
+    orob2b_account.form.type.entity_visibility_type:
+        class: %orob2b_account.form.type.entity_visibility_type.class%
+        arguments:
+            - @orob2b_account.form.listener.category.post_set_data
+            - @orob2b_account.provider.visibility_choices
+        tags:
+            - { name: form.type, alias: orob2b_account_entity_visibility_type }
+        calls:
+            - [setAccountClass,[%orob2b_account.entity.account.class%]]
+            - [setAccountGroupClass,[%orob2b_account.entity.account_group.class%]]
