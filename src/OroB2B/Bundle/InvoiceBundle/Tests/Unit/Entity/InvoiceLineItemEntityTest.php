@@ -1,6 +1,7 @@
 <?php
 namespace OroB2B\Bundle\InvoiceBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
 use OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
@@ -24,7 +25,7 @@ class InvoiceLineItemEntityTest extends \PHPUnit_Framework_TestCase
             ['quantity', 10],
             ['productUnit', new ProductUnit()],
             ['productUnitCode', 'product-unit-code'],
-            ['price', 9.99],
+            ['price', Price::create(9.99, 'USD'), false],
             ['invoice', new Invoice()],
         ];
 
