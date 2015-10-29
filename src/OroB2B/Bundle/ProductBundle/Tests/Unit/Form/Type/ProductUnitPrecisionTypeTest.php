@@ -6,6 +6,7 @@ use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
@@ -15,6 +16,7 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
 {
@@ -31,10 +33,30 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
     protected $units = ['item', 'kg'];
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     */
+    protected $translator;
+
+    /**
+     * @var ProductUnitLabelFormatter
+     */
+    protected $productUnitLabelFormatter;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
+        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator
+            ->expects(static::any())
+            ->method('trans')
+            ->willReturnCallback(
+                function ($id, array $params) {
+                    return isset($params['{title}']) ? $id . ':' . $params['{title}'] : $id;
+                }
+            );
+        $this->productUnitLabelFormatter = new ProductUnitLabelFormatter($this->translator);
         $this->formType = new ProductUnitPrecisionType();
         $this->formType->setDataClass(self::DATA_CLASS);
         parent::setUp();
@@ -49,7 +71,10 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    ProductUnitSelectionType::NAME => new ProductUnitSelectionType(),
+                    ProductUnitSelectionType::NAME => new ProductUnitSelectionType(
+                        $this->productUnitLabelFormatter,
+                        $this->translator
+                    ),
                     'entity' => $entityType
                 ],
                 [

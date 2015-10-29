@@ -21,6 +21,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
@@ -74,10 +75,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
             ]
         );
 
-        $productUnitSelection = new EntityType(
-            $this->prepareProductUnitSelectionChoices(),
-            ProductUnitSelectionType::NAME
-        );
+        $productUnitSelection = new StubProductUnitSelectionType($this->prepareProductUnitSelectionChoices());
 
         return [
             new PreloadedExtension(

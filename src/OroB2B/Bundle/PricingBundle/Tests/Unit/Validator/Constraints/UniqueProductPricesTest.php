@@ -8,6 +8,8 @@ use Symfony\Component\Validator\Constraint;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\PricingBundle\Validator\Constraints\UniqueProductPrices;
 use OroB2B\Bundle\PricingBundle\Validator\Constraints\UniqueProductPricesValidator;
@@ -71,6 +73,7 @@ class UniqueProductPricesTest extends \PHPUnit_Framework_TestCase
             $this->createPriceList(2, 10, 'kg', 'USD'),
             $this->createPriceList(1, 100, 'kg', 'USD'),
             $this->createPriceList(1, 10, 'item', 'USD'),
+            $this->createPriceList(1, 10, 'kg'),
             $this->createPriceList(1, 10, 'kg', 'EUR')
         ]);
 
@@ -118,23 +121,34 @@ class UniqueProductPricesTest extends \PHPUnit_Framework_TestCase
      * @param string $currency
      * @return ProductPrice
      */
-    protected function createPriceList($priceListId, $quantity, $unitCode, $currency)
+    protected function createPriceList($priceListId, $quantity, $unitCode, $currency = null)
     {
         $unit = new ProductUnit();
         $unit->setCode($unitCode);
 
-        $price = new Price();
-        $price
-            ->setValue(100)
-            ->setCurrency($currency);
+        /** @var Product $product */
+        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 42);
+        $product->setSku('sku');
+
+        /** @var PriceList $priceList */
+        $priceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', $priceListId);
+        $priceList->setName('price_list_' . $priceListId);
 
         $productPrice = new ProductPrice();
         $productPrice
-            ->setProduct($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 42))
-            ->setPriceList($this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', $priceListId))
+            ->setProduct($product)
+            ->setPriceList($priceList)
             ->setQuantity($quantity)
-            ->setUnit($unit)
-            ->setPrice($price);
+            ->setUnit($unit);
+
+        if ($currency) {
+            $price = new Price();
+            $price
+                ->setValue(100)
+                ->setCurrency($currency);
+
+            $productPrice->setPrice($price);
+        }
 
         return $productPrice;
     }

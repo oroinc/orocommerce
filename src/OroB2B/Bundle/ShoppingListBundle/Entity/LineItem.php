@@ -13,6 +13,8 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
+use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use OroB2B\Bundle\ShoppingListBundle\Model\ExtendLineItem;
 
 /**
@@ -48,7 +50,10 @@ use OroB2B\Bundle\ShoppingListBundle\Model\ExtendLineItem;
  *      }
  * )
  */
-class LineItem extends ExtendLineItem implements OrganizationAwareInterface
+class LineItem extends ExtendLineItem implements
+    OrganizationAwareInterface,
+    ProductUnitHolderInterface,
+    ProductHolderInterface
 {
     /**
      * @var integer
@@ -303,5 +308,53 @@ class LineItem extends ExtendLineItem implements OrganizationAwareInterface
         $this->accountUser = $user;
 
         return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityIdentifier()
+    {
+        return $this->id;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductHolder()
+    {
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductUnit()
+    {
+        return $this->getUnit();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductUnitCode()
+    {
+        $unit = $this->getUnit();
+        if (!$unit) {
+            return null;
+        }
+
+        return $unit->getCode();
+    }
+
+    /** {@inheritdoc} */
+    public function getProductSku()
+    {
+        $product = $this->getProduct();
+        if ($product) {
+            return $product->getSku();
+        }
+
+        return null;
     }
 }
