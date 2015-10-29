@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 
-use OroB2B\Bundle\ProductBundle\Event\ProductSelectQueryDbEvent;
+use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
 class ProductsLimitedByStatusesDatagridEventListener
@@ -41,6 +41,6 @@ class ProductsLimitedByStatusesDatagridEventListener
         if (!$request || !$params = $request->get(ProductSelectType::DATA_PARAMETERS)) {
             $params = [];
         }
-        $this->eventDispatcher->dispatch(ProductSelectQueryDbEvent::NAME, new ProductSelectQueryDbEvent($qb, $params));
+        $this->eventDispatcher->dispatch(ProductSelectDBQueryEvent::NAME, new ProductSelectDBQueryEvent($qb, $params));
     }
 }

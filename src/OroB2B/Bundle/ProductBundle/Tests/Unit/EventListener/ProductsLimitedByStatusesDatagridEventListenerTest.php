@@ -12,7 +12,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 
-use OroB2B\Bundle\ProductBundle\Event\ProductSelectQueryDbEvent;
+use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
 use OroB2B\Bundle\ProductBundle\EventListener\ProductsLimitedByStatusesDatagridEventListener;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
@@ -39,8 +39,8 @@ class ProductsLimitedByStatusesDatagridEventListenerTest extends \PHPUnit_Framew
         $listener = $this->createListener();
         $event = $this->createEvent();
         $this->eventDispatcher->expects($this->once())->method('dispatch')->with(
-            ProductSelectQueryDbEvent::NAME,
-            new ProductSelectQueryDbEvent($this->qb, $expectedParamsResult)
+            ProductSelectDBQueryEvent::NAME,
+            new ProductSelectDBQueryEvent($this->qb, $expectedParamsResult)
         );
         $listener->onBuildAfter($event);
     }

@@ -85,7 +85,7 @@ class ProductSelectTypeTest extends \PHPUnit_Framework_TestCase
         if (!empty($dataParameters)) {
             $this->assertArrayHasKey('data-select2_query_additional_params', $attr);
             $this->assertEquals(
-                json_encode($dataParameters),
+                json_encode(['data_parameters' => $dataParameters]),
                 $formView->vars['attr']['data-select2_query_additional_params']
             );
         } else {
@@ -101,9 +101,7 @@ class ProductSelectTypeTest extends \PHPUnit_Framework_TestCase
         return [
             'with data parameters' => [
                 'dataParameters' => [
-                    'visibility_data' => [
-                        'scope' => 'test'
-                    ]
+                    'scope' => 'test'
                 ]
             ],
             'without data parameters' => [

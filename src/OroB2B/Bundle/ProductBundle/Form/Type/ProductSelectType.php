@@ -12,6 +12,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 class ProductSelectType extends AbstractType
 {
     const NAME = 'orob2b_product_select';
+    const DATA_PARAMETERS = 'data_parameters';
 
     /**
      * {@inheritdoc}
@@ -20,7 +21,7 @@ class ProductSelectType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_parameters' => [],
+                self::DATA_PARAMETERS => [],
                 'autocomplete_alias' => 'orob2b_product_visibility_limited',
                 'create_form_route' => 'orob2b_product_create',
                 'configs' => [
@@ -37,8 +38,10 @@ class ProductSelectType extends AbstractType
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        if (!empty($options['data_parameters'])) {
-            $view->vars['attr']['data-select2_query_additional_params'] = json_encode($options['data_parameters']);
+        if (!empty($options[self::DATA_PARAMETERS])) {
+            $view->vars['attr']['data-select2_query_additional_params'] = json_encode(
+                [self::DATA_PARAMETERS => $options[self::DATA_PARAMETERS]]
+            );
         }
     }
 
