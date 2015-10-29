@@ -56,7 +56,7 @@ class ProductRepositoryTest extends WebTestCase
     {
         return [
             'product, 0, 10' => [
-                'search' => 'product',
+                'search' => 'duct',
                 'firstResult' => 0,
                 'maxResult' => 10,
                 'expected' => [
@@ -66,7 +66,7 @@ class ProductRepositoryTest extends WebTestCase
                 ]
             ],
             'product, 1, 1' => [
-                'search' => 'product',
+                'search' => 'oduct',
                 'firstResult' => 1,
                 'maxResult' => 1,
                 'expected' => [
