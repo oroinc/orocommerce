@@ -175,6 +175,9 @@ services:
 
     orob2b_product.event_listener.products_limited_by_statuses_datagrid:
         class: %orob2b_product.event_listener.products_limited_by_statuses_datagrid.class%
+        arguments:
+            - @request_stack
+            - @event_dispatcher
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.products-select-grid, method: onBuildAfter }
 
