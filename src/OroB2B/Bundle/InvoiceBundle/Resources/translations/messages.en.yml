@@ -36,4 +36,6 @@ orob2b:
             product.label: Product
             product_unit.label: Product Unit
             price.label: Price
+            value.label: 'Price Value'
+            currency.label: 'Price Currency'
 

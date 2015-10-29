@@ -92,6 +92,10 @@ datagrid:
                 route:         orob2b_invoice_view
                 type:  url
                 params: [ id ]
+            delete_link:
+                route:         orob2b_api_delete_invoice
+                type: url
+                params: [ id ]
         actions:
             view:
                 type:          navigate
@@ -100,3 +104,8 @@ datagrid:
                 icon:          eye-open
                 rowAction:     true
                 acl_resource:  orob2b_invoice_view
+            delete:
+                type:          delete
+                label:         oro.grid.action.delete
+                link:          delete_link
+                icon:          trash
