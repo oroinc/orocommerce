@@ -155,6 +155,9 @@ class QuoteProductType extends AbstractType
                 'required' => false,
                 'label' => 'orob2b.product.entity_label',
                 'create_enabled' => false,
+                'data_parameters' => [
+                    'scope' => 'quote'
+                ]
             ])
             ->add('productSku', 'text', [
                 'required' => false,
