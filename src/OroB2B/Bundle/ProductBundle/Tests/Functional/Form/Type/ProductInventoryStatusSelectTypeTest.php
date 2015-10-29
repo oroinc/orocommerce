@@ -7,7 +7,6 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductInventoryStatusSelectType;
 
 /**
@@ -66,9 +65,9 @@ class ProductInventoryStatusSelectTypeTest extends WebTestCase
             ],
             'valid data' => [
                 'submitData' => [
-                    Product::INVENTORY_STATUS_OUT_OF_STOCK,
-                    Product::INVENTORY_STATUS_IN_STOCK,
-                    Product::INVENTORY_STATUS_DISCONTINUED,
+                    'in_stock',
+                    'out_of_stock',
+                    'discontinued'
                 ],
                 'isValid' => true
             ],
