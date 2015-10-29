@@ -12,7 +12,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 
-use OroB2B\Bundle\ProductBundle\Event\ProductSelectQueryEvent;
+use OroB2B\Bundle\ProductBundle\Event\ProductSelectQueryDbEvent;
 use OroB2B\Bundle\ProductBundle\EventListener\ProductsLimitedByStatusesDatagridEventListener;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
@@ -28,45 +28,37 @@ class ProductsLimitedByStatusesDatagridEventListenerTest extends \PHPUnit_Framew
     /** @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject $qb */
     protected $qb;
 
-    /** @var  ProductsLimitedByStatusesDatagridEventListener */
-    protected $listener;
-
-    public function testOnBuildAfter()
-    {
-        $this->request = new Request();
-        $params = ['some' => 'data'];
-        $this->request->request->set(ProductSelectType::DATA_PARAMETERS, $params);
-        $this->setListener();
-        $event = $this->getEvent();
-        $this->eventDispatcher->expects($this->once())->method('dispatch')->with(
-            ProductSelectQueryEvent::NAME,
-            new ProductSelectQueryEvent($this->qb, $params)
-        );
-        $this->listener->onBuildAfter($event);
-    }
-
     /**
-     * @dataProvider onBuildAfterWithoutRequestOrParamsDataProvider
+     * @dataProvider testOnBuildAfterDataProvider
+     * @param Request|null $request
+     * @param array $expectedParamsResult
      */
-    public function testOnBuildAfterWithoutRequestOrParams($request)
+    public function testOnBuildAfter($request, array $expectedParamsResult)
     {
         $this->request = $request;
-        $this->setListener();
+        $listener = $this->createListener();
         $event = $this->getEvent();
-        $this->eventDispatcher->expects($this->never())->method('dispatch');
-        $this->listener->onBuildAfter($event);
+        $this->eventDispatcher->expects($this->once())->method('dispatch')->with(
+            ProductSelectQueryDbEvent::NAME,
+            new ProductSelectQueryDbEvent($this->qb, $expectedParamsResult)
+        );
+        $listener->onBuildAfter($event);
     }
 
-    public function onBuildAfterWithoutRequestOrParamsDataProvider()
+    public function testOnBuildAfterDataProvider()
     {
         $emptyParamsRequest = new Request();
         $emptyParamsRequest->request->set(ProductSelectType::DATA_PARAMETERS, []);
+        $params = ['some' => 'param'];
+        $notEmptyParamsRequest = new Request();
+        $notEmptyParamsRequest->request->set(ProductSelectType::DATA_PARAMETERS, $params);
 
         return
             [
-                'withoutRequest' => ['request' => null],
-                'withoutParams' => ['request' => new Request()],
-                'withEmptyParams' => ['request' => $emptyParamsRequest],
+                'withoutRequest' => ['request' => null, 'expectedParamsResult' => []],
+                'withoutParams' => ['request' => new Request(), 'expectedParamsResult' => []],
+                'withEmptyParams' => ['request' => $emptyParamsRequest, 'expectedParamsResult' => []],
+                'withNotEmptyParams' => ['request' => $notEmptyParamsRequest, 'expectedParamsResult' => $params],
             ];
     }
 
@@ -88,12 +80,16 @@ class ProductsLimitedByStatusesDatagridEventListenerTest extends \PHPUnit_Framew
         return new BuildAfter($dataGrid);
     }
 
-    protected function setListener()
+    /**
+     * @return ProductsLimitedByStatusesDatagridEventListener
+     */
+    protected function createListener()
     {
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
         $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
-        $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
+        $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($this->request);
         $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
-        $this->listener = new ProductsLimitedByStatusesDatagridEventListener($requestStack, $this->eventDispatcher);
+
+        return new ProductsLimitedByStatusesDatagridEventListener($requestStack, $this->eventDispatcher);
     }
 }

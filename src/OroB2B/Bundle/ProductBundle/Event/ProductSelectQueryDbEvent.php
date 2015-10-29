@@ -6,7 +6,7 @@ use Doctrine\ORM\QueryBuilder;
 
 use Symfony\Component\EventDispatcher\Event;
 
-class ProductSelectQueryEvent extends Event
+class ProductSelectQueryDbEvent extends Event
 {
     const NAME = 'orob2b_product.product_select.db.query';
 
@@ -16,7 +16,10 @@ class ProductSelectQueryEvent extends Event
     /** @var  array */
     protected $dataParameters;
 
-
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param array $dataParameters
+     */
     public function __construct(QueryBuilder $queryBuilder, array $dataParameters)
     {
         $this->queryBuilder = $queryBuilder;
@@ -37,5 +40,21 @@ class ProductSelectQueryEvent extends Event
     public function getDataParameters()
     {
         return $this->dataParameters;
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     */
+    public function setQueryBuilder($queryBuilder)
+    {
+        $this->queryBuilder = $queryBuilder;
+    }
+
+    /**
+     * @param array $dataParameters
+     */
+    public function setDataParameters($dataParameters)
+    {
+        $this->dataParameters = $dataParameters;
     }
 }

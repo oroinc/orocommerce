@@ -2,14 +2,14 @@
 
 namespace OroB2B\Bundle\ProductBundle\EventListener;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 
-use OroB2B\Bundle\ProductBundle\Event\ProductSelectQueryEvent;
+use OroB2B\Bundle\ProductBundle\Event\ProductSelectQueryDbEvent;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
 class ProductsLimitedByStatusesDatagridEventListener
 {
@@ -38,8 +38,9 @@ class ProductsLimitedByStatusesDatagridEventListener
         $dataSource = $event->getDatagrid()->getAcceptedDatasource();
         $qb = $dataSource->getQueryBuilder();
         $request = $this->requestStack->getCurrentRequest();
-        if ($request && $params = $request->get(ProductSelectType::DATA_PARAMETERS)) {
-            $this->eventDispatcher->dispatch(ProductSelectQueryEvent::NAME, new ProductSelectQueryEvent($qb, $params));
+        if (!$request || !$params = $request->get(ProductSelectType::DATA_PARAMETERS)) {
+            $params = [];
         }
+        $this->eventDispatcher->dispatch(ProductSelectQueryDbEvent::NAME, new ProductSelectQueryDbEvent($qb, $params));
     }
 }
