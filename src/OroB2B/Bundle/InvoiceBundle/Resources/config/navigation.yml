@@ -5,7 +5,6 @@ oro_menu_config:
             route:           'orob2b_invoice_index'
             extras:
                 position:    401
-                description: 'orob2b.invoice.menu.order_list.description'
 
     tree:
         application_menu:
