@@ -68,10 +68,11 @@ class OroB2BInvoiceBundle implements Migration
         $table->addColumn('quantity', 'float', ['notnull' => false]);
         $table->addColumn('product_unit_code', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn(
-            'price',
+            'value',
             'money',
             ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );
+        $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 255]);
         $table->setPrimaryKey(['id']);
     }
 

@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
+use Oro\Bundle\CurrencyBundle\Model\Price;
 use OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -74,7 +75,12 @@ class LoadInvoiceLineItemDemoData extends AbstractFixture implements ContainerAw
                 $lineItem = new InvoiceLineItem();
                 $lineItem->setInvoice($invoice);
                 $lineItem->setQuantity($invoiceLineItemData['quantity']);
-                $lineItem->setPrice($invoiceLineItemData['price']);
+                $lineItem->setPrice(
+                    Price::create((float)$invoiceLineItemData['price'], $invoice->getCurrency())
+                );
+                $lineItem->setProductUnit(
+                    $manager->getReference('OroB2BProductBundle:ProductUnit', $invoiceLineItemData['productUnit'])
+                );
 
                 if (!empty($invoiceLineItemData['freeFormProduct'])) {
                     $lineItem->setFreeFormProduct($invoiceLineItemData['freeFormProduct']);

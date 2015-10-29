@@ -5,7 +5,6 @@ orob2b:
         id.label: ID
         invoice_date.label: Invoice date
         invoice_number.label: Invoice Number
-        identifier.label: Order Number
         po_number.label: PO Number
         owner.label: Owner
         account.label: Account
@@ -15,10 +14,18 @@ orob2b:
         currency.label: Currency
         payment_due_date.label: 'Payment Due Date'
 
+        widgets:
+            invoice_information: Invoice Information
+        navigation:
+                    view: 'Invoice #%identifier%'
+                    sections:
+                        general: General
+                        invoice_line_items: Invoice items
+
 
         invoicelineitem:
-            entity_label: 'Invoice Line Item'
-            entity_plural_label: 'Order Line Items'
+            entity_label: 'Invoice Item'
+            entity_plural_label: 'Invoice Items'
             id.label: ID
             free_form_product.label: Product (free-form)
             product.label: 'Product'

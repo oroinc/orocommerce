@@ -1,9 +1,11 @@
 datagrid:
     invoices-grid:
         source:
+            acl_resource: orob2b_invoice_view
             type: orm
             query:
                 select:
+                    - invoice.id
                     - invoice.invoiceNumber
                     - invoice.invoiceDate
                     - invoice.paymentDueDate
@@ -36,7 +38,7 @@ datagrid:
             currency:
                 label:         orob2b.invoice.currency.label
             owner:
-                label:         orob2b.order.owner.label
+                label:         orob2b.invoice.owner.label
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -84,3 +86,17 @@ datagrid:
                 updatedAt:
                     type:      datetime
                     data_name: invoice.updatedAt
+        properties:
+            id: ~
+            view_link:
+                route:         orob2b_invoice_view
+                type:  url
+                params: [ id ]
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                rowAction:     true
+                acl_resource:  orob2b_invoice_view

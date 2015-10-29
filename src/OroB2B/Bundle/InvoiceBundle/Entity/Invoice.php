@@ -455,6 +455,8 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
      */
     public function prePersist()
     {
-        $this->invoiceDate = new \DateTime('now', new \DateTimeZone('UTC'));
+        if (empty($this->invoiceDate)) {
+            $this->invoiceDate = new \DateTime('now', new \DateTimeZone('UTC'));
+        }
     }
 }
