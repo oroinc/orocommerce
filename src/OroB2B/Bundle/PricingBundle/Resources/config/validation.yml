@@ -40,4 +40,5 @@ OroB2B\Bundle\PricingBundle\Entity\ProductPrice:
             - NotBlank: ~
             - Valid: ~
         unit:
-            - NotBlank: ~
+            - NotBlank:
+                message: 'orob2b.product.productunit.invalid'

@@ -9,7 +9,6 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
@@ -50,6 +49,7 @@ class LineItemType extends AbstractType
                 [
                     'required' => true,
                     'label' => 'orob2b.shoppinglist.lineitem.unit.label',
+                    'product_holder' => $data,
                     'placeholder' => 'orob2b.product.form.product_required'
                 ]
             )
@@ -59,7 +59,7 @@ class LineItemType extends AbstractType
                 [
                     'required' => true,
                     'label' => 'orob2b.shoppinglist.lineitem.quantity.label',
-                    'product' => $data ? $data->getProduct() : null,
+                    'product_holder' => $data,
                     'product_unit_field' => 'unit',
                 ]
             )
@@ -93,9 +93,7 @@ class LineItemType extends AbstractType
                 'required' => true,
                 'label' => 'orob2b.shoppinglist.lineitem.unit.label',
                 'placeholder' => null,
-                'query_builder' => function (ProductUnitRepository $er) use ($entity) {
-                    return $er->getProductUnitsQueryBuilder($entity->getProduct());
-                },
+                'product_holder' => $entity,
             ]
         );
     }

@@ -34,12 +34,6 @@ abstract class AbstractOrderLineItemType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        /** @var OrderLineItem $orderLineItem */
-        $orderLineItem = null;
-        if (array_key_exists('data', $options)) {
-            $orderLineItem = $options['data'];
-        }
-
         $builder
             ->add(
                 'productUnit',
@@ -56,7 +50,7 @@ abstract class AbstractOrderLineItemType extends AbstractType
                     'required' => true,
                     'label' => 'orob2b.order.orderlineitem.quantity.label',
                     'default_data' => 1,
-                    'product' => $orderLineItem ? $orderLineItem->getProduct() : null
+                    'product_holder' => $builder->getData()
                 ]
             )
             ->add(
