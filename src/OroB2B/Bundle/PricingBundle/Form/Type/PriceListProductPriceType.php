@@ -14,7 +14,6 @@ use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 
 class PriceListProductPriceType extends AbstractType
 {
@@ -65,7 +64,7 @@ class PriceListProductPriceType extends AbstractType
                 [
                     'required' => true,
                     'label' => 'orob2b.pricing.productprice.quantity.label',
-                    'product' => $data ? $data->getProduct() : null,
+                    'product_holder' => $data,
                     'product_unit_field' => 'unit'
                 ]
             )
@@ -99,10 +98,7 @@ class PriceListProductPriceType extends AbstractType
                     [
                         'required' => true,
                         'label' => 'orob2b.pricing.productprice.unit.label',
-                        'placeholder' => false,
-                        'query_builder' => function (ProductUnitRepository $repository) use ($data) {
-                            return $repository->getProductUnitsQueryBuilder($data->getProduct());
-                        }
+                        'placeholder' => false
                     ]
                 );
         }

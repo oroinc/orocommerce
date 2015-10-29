@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\RFPBundle\Migrations\Schema\v1_1;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
 
+use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigEntityValueQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
@@ -33,6 +34,15 @@ class OroB2BRFPBundle implements Migration, RenameExtensionAwareInterface
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->renameRequestTableFields($schema, $queries);
+
+        $queries->addQuery(
+            new UpdateEntityConfigEntityValueQuery(
+                'OroB2B\Bundle\RFPBundle\Entity\Request',
+                'grouping',
+                'groups',
+                null
+            )
+        );
     }
 
     /**

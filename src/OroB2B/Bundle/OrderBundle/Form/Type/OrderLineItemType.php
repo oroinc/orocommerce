@@ -12,7 +12,6 @@ use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
@@ -144,9 +143,6 @@ class OrderLineItemType extends AbstractOrderLineItemType
             [
                 'label' => 'orob2b.product.productunit.entity_label',
                 'required' => true,
-                'query_builder' => function (ProductUnitRepository $er) use ($item) {
-                    return $er->getProductUnitsQueryBuilder($item->getProduct());
-                },
             ]
         );
     }
