@@ -21,6 +21,11 @@ oro_system_configuration:
             type: oro_user_select
             options:
                 label: orob2b.rfp.system_configuration.default_user_for_notifications
+        oro_b2b_rfp.product_visibility:
+            data_type: array
+            type: orob2b_product_inventory_status_select
+            options:
+                label: orob2b.rfp.system_configuration.product_visibility
 
     tree:
         system_configuration:
@@ -34,3 +39,10 @@ oro_system_configuration:
                                         children:
                                             - oro_b2b_rfp.default_request_status
                                             - oro_b2b_rfp.default_user_for_notifications
+                    catalog:
+                        children:
+                            product_settings:
+                                children:
+                                    catalog_product_settings:
+                                        children:
+                                            - oro_b2b_rfp.product_visibility

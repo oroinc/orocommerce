@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\DependencyInjection;
+namespace OroB2B\Bundle\ShoppingListBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -18,13 +18,11 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder();
 
-        $rootNode = $treeBuilder->root('oro_b2b_rfp');
+        $rootNode = $treeBuilder->root('oro_b2b_shopping_list');
 
         SettingsBuilder::append(
             $rootNode,
             [
-                'default_request_status' => ['value' => 'open'],
-                'default_user_for_notifications' => null,
                 'product_visibility' => [
                     'value' => [
                         Product::INVENTORY_STATUS_IN_STOCK,
