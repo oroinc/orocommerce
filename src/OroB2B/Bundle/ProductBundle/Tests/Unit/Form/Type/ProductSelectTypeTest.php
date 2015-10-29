@@ -45,7 +45,7 @@ class ProductSelectTypeTest extends \PHPUnit_Framework_TestCase
                         $this->assertArrayHasKey('autocomplete_alias', $options);
                         $this->assertArrayHasKey('create_form_route', $options);
                         $this->assertArrayHasKey('configs', $options);
-                        $this->assertEquals('orob2b_product', $options['autocomplete_alias']);
+                        $this->assertEquals('orob2b_product_visibility_limited', $options['autocomplete_alias']);
                         $this->assertEquals('orob2b_product_create', $options['create_form_route']);
                         $this->assertEquals(
                             [
@@ -65,27 +65,50 @@ class ProductSelectTypeTest extends \PHPUnit_Framework_TestCase
         $this->type->configureOptions($resolver);
     }
 
-    public function testFinishView()
+    /**
+     * @dataProvider finishViewDataProvider
+     * @param array $dataParameters
+     */
+    public function testFinishView(array $dataParameters)
     {
-        $dataParameters = [
-            'scope' => 'test'
-        ];
-
         /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
 
         $formView = new FormView();
-        $this->type->finishView(
-            $formView,
-            $form,
-            ['data_parameters' => $dataParameters]
-        );
+        $this->type->finishView($formView, $form, [
+            'data_parameters' => $dataParameters
+        ]);
 
         $this->assertArrayHasKey('attr', $formView->vars);
-        $this->assertArrayHasKey('data-select2_query_additional_params', $formView->vars['attr']);
-        $this->assertEquals(
-            json_encode(['data_parameters' => $dataParameters]),
-            $formView->vars['attr']['data-select2_query_additional_params']
-        );
+        $attr = $formView->vars['attr'];
+
+        if (!empty($dataParameters)) {
+            $this->assertArrayHasKey('data-select2_query_additional_params', $attr);
+            $this->assertEquals(
+                json_encode($dataParameters),
+                $formView->vars['attr']['data-select2_query_additional_params']
+            );
+        } else {
+            $this->assertEmpty($attr);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function finishViewDataProvider()
+    {
+        return [
+            'with data parameters' => [
+                'dataParameters' => [
+                    'visibility_data' => [
+                        'scope' => 'test'
+                    ]
+                ]
+            ],
+            'without data parameters' => [
+                'dataParameters' => []
+            ],
+        ];
     }
 }
