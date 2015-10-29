@@ -29,6 +29,7 @@ class ProductInventoryStatusSelectType extends AbstractType
     {
         $this->registry = $registry;
     }
+
     /**
      * {@inheritdoc}
      */
