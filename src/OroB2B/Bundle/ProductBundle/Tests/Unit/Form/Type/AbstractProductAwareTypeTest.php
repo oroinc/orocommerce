@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 use Symfony\Component\Form\PreloadedExtension;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\AbstractProductAwareType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubAbstractProductAwareType;

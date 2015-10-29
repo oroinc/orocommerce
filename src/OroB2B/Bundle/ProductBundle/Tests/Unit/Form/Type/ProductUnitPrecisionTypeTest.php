@@ -6,6 +6,7 @@ use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
@@ -40,7 +41,6 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
      * @var ProductUnitLabelFormatter
      */
     protected $productUnitLabelFormatter;
-
 
     /**
      * {@inheritdoc}

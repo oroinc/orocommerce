@@ -109,8 +109,6 @@ abstract class AbstractTest extends FormIntegrationTestCase
     abstract public function submitProvider();
 
     /**
-     * <<<<<<< HEAD
-     * =======
      * {@inheritdoc}
      */
     protected function getValidators()
@@ -123,7 +121,6 @@ abstract class AbstractTest extends FormIntegrationTestCase
     }
 
     /**
->>>>>>> master
      * @return QuoteProductOfferType
      */
     protected function prepareQuoteProductOfferType()

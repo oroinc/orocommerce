@@ -2,8 +2,9 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\AbstractProductAwareType;
 use Symfony\Component\Form\FormInterface;
+
+use OroB2B\Bundle\ProductBundle\Form\Type\AbstractProductAwareType;
 
 class StubAbstractProductAwareType extends AbstractProductAwareType
 {
