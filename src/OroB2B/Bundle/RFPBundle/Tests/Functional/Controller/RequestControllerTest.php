@@ -252,8 +252,8 @@ class RequestControllerTest extends WebTestCase
      */
     private function getFormatDate($format)
     {
-        $dateObj    = new \DateTime();
-        $date       = $dateObj->format($format);
+        $dateObj = new \DateTime();
+        $date = $dateObj->format($format);
 
         return $date;
     }

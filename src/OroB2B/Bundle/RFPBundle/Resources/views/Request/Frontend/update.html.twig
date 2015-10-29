@@ -59,7 +59,9 @@
                     form_row(form.phone),
                     form_row(form.company),
                     form_row(form.role),
-                    form_row(form.body)
+                    form_row(form.body),
+                    form_row(form.poNumber),
+                    form_row(form.shipUntil)
                 ]
             }]
         },
@@ -75,11 +77,7 @@
     ]
     %}
 
-    {% set additionalData = [
-        form_row(form.poNumber),
-        form_row(form.shipUntil)
-    ] %}
-
+    {% set additionalData = [] %}
     {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
         {% set additionalData = additionalData|merge([form_row(child)]) %}
     {% endfor %}
