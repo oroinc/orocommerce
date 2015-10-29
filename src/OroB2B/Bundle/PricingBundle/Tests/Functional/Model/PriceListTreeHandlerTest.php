@@ -96,7 +96,7 @@ class PriceListTreeHandlerTest extends WebTestCase
     public function testDefaultIfNotFound()
     {
         $accountUser = new AccountUser();
-        $accountUser->setAccount($this->getAccount('account.level_1'));
+        $accountUser->setAccount($this->getAccount('account.level_1_1'));
 
         $this->websiteManager->expects($this->once())->method('getCurrentWebsite')->willReturn(null);
 

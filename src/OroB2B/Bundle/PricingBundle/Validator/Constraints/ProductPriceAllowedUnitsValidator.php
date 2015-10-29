@@ -33,7 +33,7 @@ class ProductPriceAllowedUnitsValidator extends ConstraintValidator
             $availableUnits[] = $unitPrecision->getUnit();
         }
 
-        if (!in_array($priceUnit, $availableUnits)) {
+        if (!in_array($priceUnit, $availableUnits, true)) {
             if ($priceUnit instanceof ProductUnit && $priceUnit->getCode()) {
                 $this->context->addViolationAt(
                     'unit',

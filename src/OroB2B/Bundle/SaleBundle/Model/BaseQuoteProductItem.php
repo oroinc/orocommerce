@@ -8,6 +8,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\CurrencyBundle\Model\Price;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
 use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 
@@ -28,7 +29,7 @@ use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
  *      }
  * )
  */
-class BaseQuoteProductItem implements ProductUnitHolderInterface
+class BaseQuoteProductItem implements ProductUnitHolderInterface, ProductHolderInterface
 {
     /**
      * @var int
@@ -222,7 +223,7 @@ class BaseQuoteProductItem implements ProductUnitHolderInterface
     /**
      * Get productUnitCode
      *
-     * @return ProductUnit
+     * @return string
      */
     public function getProductUnitCode()
     {
@@ -252,5 +253,26 @@ class BaseQuoteProductItem implements ProductUnitHolderInterface
     public function getPrice()
     {
         return $this->price;
+    }
+
+    /** {@inheritdoc} */
+    public function getProduct()
+    {
+        if ($this->quoteProduct) {
+            return $this->quoteProduct->getProduct();
+        }
+
+        return null;
+    }
+
+    /** {@inheritdoc} */
+    public function getProductSku()
+    {
+        $product = $this->getProduct();
+        if ($product) {
+            return $product->getSku();
+        }
+
+        return null;
     }
 }

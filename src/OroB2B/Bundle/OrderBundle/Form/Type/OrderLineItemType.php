@@ -113,7 +113,9 @@ class OrderLineItemType extends AbstractOrderLineItemType
                     'default_currency' => $options['currency']
                 ]
             )
-            ->add('priceType', 'hidden');
+            ->add('priceType', 'hidden', [
+                'data' => OrderLineItem::PRICE_TYPE_UNIT,
+            ]);
     }
 
     /**
@@ -141,10 +143,7 @@ class OrderLineItemType extends AbstractOrderLineItemType
             ProductUnitSelectionType::NAME,
             [
                 'label' => 'orob2b.product.productunit.entity_label',
-                'required' => true,
-                'query_builder' => function (ProductUnitRepository $er) use ($item) {
-                    return $er->getProductUnitsQueryBuilder($item->getProduct());
-                }
+                'required' => true
             ]
         );
     }

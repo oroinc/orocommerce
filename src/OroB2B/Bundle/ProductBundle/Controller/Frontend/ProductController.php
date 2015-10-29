@@ -7,6 +7,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
 
+use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
@@ -19,6 +20,7 @@ class ProductController extends Controller
      *
      * @Route("/", name="orob2b_product_frontend_product_index")
      * @Template("OroB2BProductBundle:Product\Frontend:index.html.twig")
+     * @Layout(vars={"entity_class", "widgetRouteParameters"})
      * @AclAncestor("orob2b_product_frontend_view")
      *
      * @return array

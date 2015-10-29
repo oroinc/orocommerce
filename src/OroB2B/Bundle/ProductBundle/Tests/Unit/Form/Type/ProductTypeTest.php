@@ -24,12 +24,14 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductVariantLinksType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductStatusType;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductCustomFieldsChoiceType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubEnumSelectType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubImageType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct;
+use OroB2B\Bundle\ProductBundle\Provider\ProductStatusProvider;
 
 class ProductTypeTest extends FormIntegrationTestCase
 {
@@ -106,7 +108,8 @@ class ProductTypeTest extends FormIntegrationTestCase
                         $this->exampleCustomFields
                     ),
                     EntityIdentifierType::NAME => new StubEntityIdentifierType([]),
-                    ProductVariantLinksType::NAME => new ProductVariantLinksType()
+                    ProductVariantLinksType::NAME => new ProductVariantLinksType(),
+                    ProductStatusType::NAME => new ProductStatusType(new ProductStatusProvider()),
                 ],
                 [
                     'form' => [
@@ -306,6 +309,10 @@ class ProductTypeTest extends FormIntegrationTestCase
     {
         $defaultProduct = new StubProduct();
         $defaultProduct->setHasVariants($hasVariants);
+
+        if ($hasVariants) {
+            $defaultProduct->setVariantFields(array_keys($this->exampleCustomFields));
+        }
 
         return $defaultProduct;
     }

@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -18,10 +20,10 @@ use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductRemovedSelectType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
@@ -241,6 +243,9 @@ class QuoteTypeTest extends AbstractTest
             ->getMock()
         ;
 
+        /* @var $registry ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
+        $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+
         /* @var $productUnitLabelFormatter \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter */
         $productUnitLabelFormatter = $this->getMockBuilder(
             'OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter'
@@ -291,7 +296,8 @@ class QuoteTypeTest extends AbstractTest
         $quoteProductType = new QuoteProductType(
             $translator,
             $productUnitLabelFormatter,
-            $this->quoteProductFormatter
+            $this->quoteProductFormatter,
+            $registry
         );
         $quoteProductType->setDataClass('OroB2B\Bundle\SaleBundle\Entity\QuoteProduct');
 
@@ -307,7 +313,7 @@ class QuoteTypeTest extends AbstractTest
                     QuoteProductOfferCollectionType::NAME       => new QuoteProductOfferCollectionType(),
                     QuoteProductRequestCollectionType::NAME     => new QuoteProductRequestCollectionType(),
                     ProductRemovedSelectType::NAME              => new StubProductRemovedSelectType(),
-                    ProductUnitRemovedSelectionType::NAME       => new StubProductUnitRemovedSelectionType(),
+                    ProductUnitSelectionType::NAME              => new StubProductUnitSelectionType(),
                     OroDateType::NAME                           => new OroDateType(),
                     $priceType->getName()                       => $priceType,
                     $entityType->getName()                      => $entityType,

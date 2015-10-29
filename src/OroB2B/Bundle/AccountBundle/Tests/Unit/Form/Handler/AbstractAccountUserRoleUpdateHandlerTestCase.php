@@ -3,21 +3,22 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Handler;
 
 use Symfony\Component\Form\FormFactory;
+use Symfony\Component\Security\Acl\Model\AclCacheInterface;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\EntityConfigBundle\Provider\ConfigProviderInterface;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclPrivilegeRepository;
-use Oro\Bundle\UserBundle\Form\Handler\AclRoleHandler;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserRole;
 use OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateHandler;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository;
+use OroB2B\Bundle\AccountBundle\Form\Handler\AbstractAccountUserRoleHandler;
 
 abstract class AbstractAccountUserRoleUpdateHandlerTestCase extends \PHPUnit_Framework_TestCase
 {
@@ -42,7 +43,7 @@ abstract class AbstractAccountUserRoleUpdateHandlerTestCase extends \PHPUnit_Fra
     protected $chainMetadataProvider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ConfigProviderInterface
+     * @var \PHPUnit_Framework_MockObject_MockObject|ConfigProvider
      */
     protected $ownershipConfigProvider;
 
@@ -60,6 +61,9 @@ abstract class AbstractAccountUserRoleUpdateHandlerTestCase extends \PHPUnit_Fra
      * @var \PHPUnit_Framework_MockObject_MockObject|AccountUserRoleRepository
      */
     protected $roleRepository;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|AclCacheInterface */
+    protected $aclCache;
 
     /**
      * @var AccountUserRoleUpdateHandler
@@ -102,8 +106,10 @@ abstract class AbstractAccountUserRoleUpdateHandlerTestCase extends \PHPUnit_Fra
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $this->ownershipConfigProvider
-            = $this->getMock('Oro\Bundle\EntityConfigBundle\Provider\ConfigProviderInterface');
+        $this->ownershipConfigProvider =
+            $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider')
+                ->disableOriginalConstructor()
+                ->getMock();
 
         $this->roleRepository =
             $this->getMockBuilder('\OroB2B\Bundle\AccountBundle\Entity\Repository\AccountUserRoleRepository')
@@ -119,12 +125,16 @@ abstract class AbstractAccountUserRoleUpdateHandlerTestCase extends \PHPUnit_Fra
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityRepository')
             ->willReturn($this->roleRepository);
+
+        $this->aclCache = $this->getMockBuilder('Symfony\Component\Security\Acl\Model\AclCacheInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     /**
-     * @param AclRoleHandler $handler
+     * @param AbstractAccountUserRoleHandler $handler
      */
-    protected function setRequirementsForHandler(AclRoleHandler $handler)
+    protected function setRequirementsForHandler(AbstractAccountUserRoleHandler $handler)
     {
         $handler->setAclManager($this->aclManager);
         $handler->setAclPrivilegeRepository($this->privilegeRepository);
@@ -136,20 +146,22 @@ abstract class AbstractAccountUserRoleUpdateHandlerTestCase extends \PHPUnit_Fra
 
     /**
      * @param AccountUserRole $role
-     * @param int             $numberOfUsers
-     * @param Account         $account
+     * @param int $numberOfUsers
+     * @param Account $account
+     * @param int $offset
      * @return \OroB2B\Bundle\AccountBundle\Entity\AccountUser[]
      */
-    protected function createUsersWithRole(AccountUserRole $role, $numberOfUsers, Account $account = null)
+    protected function createUsersWithRole(AccountUserRole $role, $numberOfUsers, Account $account = null, $offset = 0)
     {
         /** @var AccountUser[] $users */
         $users = [];
         for ($i = 0; $i < $numberOfUsers; $i++) {
+            $userId = $offset + $i + 1;
             $user = new AccountUser();
-            $user->setUsername('user' . $i . $role->getRole());
+            $user->setUsername('user_id_' . $userId . '_role_' . $role->getRole());
             $user->setRoles([$role]);
             $user->setAccount($account);
-            $users[] = $user;
+            $users[$userId] = $user;
         }
 
         return $users;

@@ -27,9 +27,6 @@ class ProductControllerTest extends WebTestCase
     const INVENTORY_STATUS = 'In Stock';
     const UPDATED_INVENTORY_STATUS = 'Out of Stock';
 
-    const VISIBILITY = 'Yes';
-    const UPDATED_VISIBILITY = 'No';
-
     const FIRST_UNIT_CODE = 'item';
     const FIRST_UNIT_FULL_NAME = 'item';
     const FIRST_UNIT_PRECISION = '5';
@@ -65,7 +62,6 @@ class ProductControllerTest extends WebTestCase
         $form['orob2b_product[owner]'] = $this->getBusinessUnitId();
 
         $form['orob2b_product[inventoryStatus]'] = Product::INVENTORY_STATUS_IN_STOCK;
-        $form['orob2b_product[visibility]'] = Product::VISIBILITY_VISIBLE;
         $form['orob2b_product[status]'] = Product::STATUS_DISABLED;
         $form['orob2b_product[names][values][default]'] = self::DEFAULT_NAME;
         $form['orob2b_product[descriptions][values][default]'] = self::DEFAULT_DESCRIPTION;
@@ -80,7 +76,6 @@ class ProductControllerTest extends WebTestCase
         $this->assertContains('Product has been saved', $html);
         $this->assertContains(self::TEST_SKU, $html);
         $this->assertContains(self::INVENTORY_STATUS, $html);
-        $this->assertContains(self::VISIBILITY, $html);
         $this->assertContains(self::STATUS, $html);
     }
 
@@ -94,12 +89,12 @@ class ProductControllerTest extends WebTestCase
 
         $this->assertEquals(self::TEST_SKU, $result['sku']);
 
-        $id = $result['id'];
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
-
+        $id = (int)$result['id'];
+        $product = $this->getContainer()->get('doctrine')->getRepository('OroB2BProductBundle:Product')->find($id);
         $locale = $this->getLocale();
-        $product = $this->getContainer()->get('doctrine')->getManager()->find('OroB2BProductBundle:Product', $id);
         $localizedName = $this->getLocalizedName($product, $locale);
+
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
@@ -111,7 +106,6 @@ class ProductControllerTest extends WebTestCase
                 'sku' => self::UPDATED_SKU,
                 'owner' => $this->getBusinessUnitId(),
                 'inventoryStatus' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
-                'visibility' => Product::VISIBILITY_NOT_VISIBLE,
                 'status' => Product::STATUS_ENABLED,
                 'unitPrecisions' => [
                     ['unit' => self::FIRST_UNIT_CODE, 'precision' => self::FIRST_UNIT_PRECISION],
@@ -120,6 +114,13 @@ class ProductControllerTest extends WebTestCase
                 'names' => [
                     'values' => [
                         'default' => self::DEFAULT_NAME_ALTERED,
+                        'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
+                    ],
+                    'ids' => [$locale->getId() => $localizedName->getId()],
+                ],
+                'descriptions' => [
+                    'values' => [
+                        'default' => self::DEFAULT_DESCRIPTION,
                         'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
                     ],
                     'ids' => [$locale->getId() => $localizedName->getId()],
@@ -181,7 +182,6 @@ class ProductControllerTest extends WebTestCase
             $html
         );
         $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
-        $this->assertContains(self::UPDATED_VISIBILITY, $html);
         $this->assertContains(self::UPDATED_STATUS, $html);
 
         $productUnitPrecision = $this->getContainer()->get('doctrine')
@@ -217,7 +217,6 @@ class ProductControllerTest extends WebTestCase
             $html
         );
         $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
-        $this->assertContains(self::UPDATED_VISIBILITY, $html);
         $this->assertContains(self::STATUS, $html);
 
         $this->assertContains(
@@ -244,14 +243,11 @@ class ProductControllerTest extends WebTestCase
         $result = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
 
         $id = (int)$result['id'];
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
-
+        $product = $this->getContainer()->get('doctrine')->getRepository('OroB2BProductBundle:Product')->find($id);
         $locale = $this->getLocale();
-        $product = $this->getContainer()->get('doctrine')->getManager()->find('OroB2BProductBundle:Product', $id);
-
-        $this->assertInstanceOf('OroB2B\Bundle\ProductBundle\Entity\Product', $product);
-
         $localizedName = $this->getLocalizedName($product, $locale);
+
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
@@ -263,15 +259,18 @@ class ProductControllerTest extends WebTestCase
                 'sku' => self::FIRST_DUPLICATED_SKU,
                 'owner' => $this->getBusinessUnitId(),
                 'inventoryStatus' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
-                'visibility' => Product::VISIBILITY_NOT_VISIBLE,
                 'status' => Product::STATUS_ENABLED,
-                'unitPrecisions' => [
-                    ['unit' => self::FIRST_UNIT_CODE, 'precision' => self::FIRST_UNIT_PRECISION],
-                    ['unit' => self::SECOND_UNIT_CODE, 'precision' => self::SECOND_UNIT_PRECISION],
-                ],
+                'unitPrecisions' => $form->getPhpValues()['orob2b_product']['unitPrecisions'],
                 'names' => [
                     'values' => [
                         'default' => self::DEFAULT_NAME_ALTERED,
+                        'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
+                    ],
+                    'ids' => [$locale->getId() => $localizedName->getId()],
+                ],
+                'descriptions' => [
+                    'values' => [
+                        'default' => self::DEFAULT_DESCRIPTION,
                         'locales' => [$locale->getId() => ['fallback' => FallbackType::SYSTEM]],
                     ],
                     'ids' => [$locale->getId() => $localizedName->getId()],
@@ -292,7 +291,6 @@ class ProductControllerTest extends WebTestCase
             $html
         );
         $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
-        $this->assertContains(self::UPDATED_VISIBILITY, $html);
         $this->assertContains(self::STATUS, $html);
 
         $this->assertContains(

@@ -86,15 +86,27 @@ class QuoteToOrderConverter
     protected function createOrderLineItem(QuoteProductOffer $quoteProductOffer, $quantity = null)
     {
         $quoteProduct = $quoteProductOffer->getQuoteProduct();
+        $freeFormTitle = null;
+        $productSku = null;
 
-        if ($quoteProduct->getProductReplacement()) {
+        if ($quoteProduct->isTypeNotAvailable()) {
             $product = $quoteProduct->getProductReplacement();
+            if ($quoteProduct->isProductReplacementFreeForm()) {
+                $freeFormTitle = $quoteProduct->getFreeFormProductReplacement();
+                $productSku = $quoteProduct->getProductReplacementSku();
+            }
         } else {
             $product = $quoteProduct->getProduct();
+            if ($quoteProduct->isProductFreeForm()) {
+                $freeFormTitle = $quoteProduct->getFreeFormProduct();
+                $productSku = $quoteProduct->getProductSku();
+            }
         }
 
         $orderLineItem = new OrderLineItem();
         $orderLineItem
+            ->setFreeFormProduct($freeFormTitle)
+            ->setProductSku($productSku)
             ->setProduct($product)
             ->setProductUnit($quoteProductOffer->getProductUnit())
             ->setQuantity($quantity ?: $quoteProductOffer->getQuantity())

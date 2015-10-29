@@ -9,7 +9,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Repository\CategoryVisibilityRepository")
  * @ORM\Table(name="orob2b_category_visibility")
  * @Config
  */
@@ -73,11 +73,16 @@ class CategoryVisibility implements VisibilityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param Category $category
+     * @return string
      */
-    public static function getDefault()
+    public static function getDefault($category)
     {
-        return self::PARENT_CATEGORY;
+        if ($category instanceof Category && !$category->getParentCategory()) {
+            return self::CONFIG;
+        } else {
+            return self::PARENT_CATEGORY;
+        }
     }
 
     /**
@@ -99,15 +104,37 @@ class CategoryVisibility implements VisibilityInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @param Category $category
+     * @return array
      */
-    public static function getVisibilityList()
+    public static function getVisibilityList($category)
     {
-        return [
+        $visibilityList = [
             self::PARENT_CATEGORY,
             self::CONFIG,
             self::HIDDEN,
             self::VISIBLE
         ];
+        if ($category instanceof Category && !$category->getParentCategory()) {
+            unset($visibilityList[array_search(self::PARENT_CATEGORY, $visibilityList)]);
+        }
+        return $visibilityList;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTargetEntity()
+    {
+        return $this->getCategory();
+    }
+
+    /**
+     * @param Category $category
+     * @return $this
+     */
+    public function setTargetEntity($category)
+    {
+        return $this->setCategory($category);
     }
 }

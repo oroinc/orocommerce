@@ -35,7 +35,7 @@ class AccountUserRoleControllerTest extends WebTestCase
 
     public function testDeletePredefinedRole()
     {
-        $predefinedRole = $this->getRoleByLabel(LoadAccountUserRoleData::ROLE_WITHOUT_ACCOUNT);
+        $predefinedRole = $this->getRoleByLabel(LoadAccountUserRoleData::ROLE_EMPTY);
         $this->assertNotNull($predefinedRole);
 
         $this->client->request(
@@ -46,7 +46,7 @@ class AccountUserRoleControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 403);
 
-        $this->assertNotNull($this->getRoleByLabel(LoadAccountUserRoleData::ROLE_WITHOUT_ACCOUNT));
+        $this->assertNotNull($this->getRoleByLabel(LoadAccountUserRoleData::ROLE_EMPTY));
     }
 
     public function testDeleteCustomizedRole()

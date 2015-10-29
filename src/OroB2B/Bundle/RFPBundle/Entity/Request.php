@@ -37,8 +37,7 @@ use OroB2B\Bundle\RFPBundle\Model\ExtendRequest;
  *              "frontend_owner_column_name"="account_user_id",
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id"
- *          },
- *          "grouping"={"groups"={"activity"}}
+ *          }
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()

@@ -68,7 +68,7 @@ class CategoryControllerTest extends WebTestCase
         );
 
         $selectedCatalogVisibility = $crawler
-            ->filterXPath('//select[@name="orob2b_catalog_category[categoryVisibility]"]/option[@selected]/@value')
+            ->filterXPath('//select[@name="orob2b_catalog_category[visibility][all]"]/option[@selected]/@value')
             ->text();
 
         $this->assertEquals($categoryVisibility, $selectedCatalogVisibility);
@@ -126,10 +126,12 @@ class CategoryControllerTest extends WebTestCase
         $this->assertNotCount(0, $accountGroupCategoryVisibilityRepo->findAll());
 
         $this->submitForm(
-            (new CategoryVisibility())->getDefault(),
-            json_encode([$this->account->getId() => ['visibility' => (new AccountCategoryVisibility())->getDefault()]]),
+            CategoryVisibility::getDefault($this->category),
             json_encode(
-                [$this->group->getId() => ['visibility' => (new AccountGroupCategoryVisibility())->getDefault()]]
+                [$this->account->getId() => ['visibility' => AccountCategoryVisibility::getDefault($this->category)]]
+            ),
+            json_encode(
+                [$this->group->getId() => ['visibility' => AccountGroupCategoryVisibility::getDefault($this->category)]]
             )
         );
 
@@ -160,9 +162,11 @@ class CategoryControllerTest extends WebTestCase
         $parameters['orob2b_catalog_category'] = array_merge(
             [
                 '_token' => $token,
-                'categoryVisibility' => $categoryVisibility,
-                'visibilityForAccount' => $visibilityForAccount,
-                'visibilityForAccountGroup' => $visibilityForAccountGroup,
+                'visibility' => [
+                    'all' => $categoryVisibility,
+                    'account' => $visibilityForAccount,
+                    'accountGroup' => $visibilityForAccountGroup,
+                ],
             ],
             $parameters['orob2b_catalog_category']
         );
@@ -191,7 +195,7 @@ class CategoryControllerTest extends WebTestCase
             if (!$pos = strpos($key, '[')) {
                 continue;
             }
-            $key = '[' . substr($key, 0, $pos) . ']' . substr($key, $pos);
+            $key = '['.substr($key, 0, $pos).']'.substr($key, $pos);
             $accessor->setValue($parameters, $key, $val);
         }
 

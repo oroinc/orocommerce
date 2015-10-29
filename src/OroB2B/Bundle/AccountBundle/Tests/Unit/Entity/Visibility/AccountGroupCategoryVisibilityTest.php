@@ -18,19 +18,22 @@ class AccountGroupCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
     public function testAccessors()
     {
         $entity = new AccountGroupCategoryVisibility();
-
+        $category = new Category();
         $this->assertPropertyAccessors(
             new AccountGroupCategoryVisibility(),
             [
                 ['id', 1],
-                ['category', new Category()],
+                ['category', $category],
                 ['accountGroup', new AccountGroup()],
                 ['visibility', AccountGroupCategoryVisibility::CATEGORY],
             ]
         );
-        $this->assertEquals(AccountGroupCategoryVisibility::CATEGORY, $entity->getDefault());
+        $entity->setTargetEntity($category);
+        $this->assertEquals($entity->getTargetEntity(), $category);
+        $this->assertEquals(AccountGroupCategoryVisibility::CATEGORY, $entity->getDefault($category));
 
-        $this->assertInternalType('array', $entity->getVisibilityList());
-        $this->assertNotEmpty($entity->getVisibilityList());
+        $visibilityList = AccountGroupCategoryVisibility::getVisibilityList($category);
+        $this->assertInternalType('array', $visibilityList);
+        $this->assertNotEmpty($visibilityList);
     }
 }

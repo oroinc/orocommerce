@@ -71,7 +71,7 @@ class DataStorageAwareProcessorTest extends \PHPUnit_Framework_TestCase
         $data = ['data' => ['param' => 42]];
         $redirectRouteName = 'redirect_route';
         $redirectUrl = '/redirect/url';
-        $expectedResponse = new RedirectResponse($redirectUrl);
+        $expectedResponseContent = (new RedirectResponse($redirectUrl))->getContent();
 
         $this->router->expects($this->once())
             ->method('generate')
@@ -88,7 +88,10 @@ class DataStorageAwareProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->processor->setRedirectRouteName($redirectRouteName);
 
-        $this->assertEquals($expectedResponse, $this->processor->process($data, new Request()));
+        $this->assertEquals(
+            $expectedResponseContent,
+            $this->processor->process($data, new Request())->getContent()
+        );
     }
 
     public function testProcessorName()

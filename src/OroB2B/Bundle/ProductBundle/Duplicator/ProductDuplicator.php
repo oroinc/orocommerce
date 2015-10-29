@@ -7,8 +7,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\AttachmentBundle\Provider\AttachmentProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
@@ -105,7 +103,7 @@ class ProductDuplicator
         $productCopy = clone $product;
 
         $productCopy->setSku($this->skuIncrementor->increment($product->getSku()));
-        $productCopy->setStatus($this->getDisabledStatus());
+        $productCopy->setStatus(Product::STATUS_DISABLED);
 
         $this->cloneChildObjects($product, $productCopy);
 
@@ -146,15 +144,5 @@ class ProductDuplicator
 
             $this->doctrineHelper->getEntityManager($attachmentCopy)->persist($attachmentCopy);
         }
-    }
-
-    /**
-     * @return AbstractEnumValue
-     */
-    protected function getDisabledStatus()
-    {
-        $className = ExtendHelper::buildEnumValueClassName('prod_status');
-
-        return $this->doctrineHelper->getEntityRepository($className)->find(Product::STATUS_DISABLED);
     }
 }

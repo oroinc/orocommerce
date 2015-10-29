@@ -14,7 +14,7 @@ use Oro\Bundle\CurrencyBundle\Form\Type\OptionalPriceType;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
 
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
@@ -24,7 +24,6 @@ use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductRequestType;
 use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter;
-
 use OroB2B\Bundle\SaleBundle\Validator\Constraints;
 
 abstract class AbstractTest extends FormIntegrationTestCase
@@ -114,9 +113,10 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected function getValidators()
     {
-        $quoteProductOfferConstraint = new Constraints\QuoteProductOffer();
+        $quoteProductConstraint = new Constraints\QuoteProduct();
+
         return [
-            $quoteProductOfferConstraint->validatedBy() => new Constraints\QuoteProductOfferValidator(),
+            $quoteProductConstraint->validatedBy() => new Constraints\QuoteProductValidator(),
         ];
     }
 
@@ -210,15 +210,12 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected function prepareProductUnitSelectionType()
     {
-        $productUnitSelectionType = new EntityType(
+        return new StubProductUnitSelectionType(
             [
-                'kg'    => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'kg', 'code'),
-                'item'  => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code'),
-            ],
-            ProductUnitSelectionType::NAME
+                'kg' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'kg', 'code'),
+                'item' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code'),
+            ]
         );
-
-        return $productUnitSelectionType;
     }
 
     /**
@@ -343,9 +340,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
             );
         }
 
-        if (null !== $priceType) {
-            $quoteProductOffer->setPriceType($priceType);
-        }
+        $quoteProductOffer->setPriceType($priceType);
 
         if (null !== $price) {
             $quoteProductOffer->setPrice($price);

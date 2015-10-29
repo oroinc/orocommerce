@@ -2,7 +2,9 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\FormEvent;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
+
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\PreloadedExtension;
@@ -16,13 +18,13 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductRemovedSelectType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
@@ -45,6 +47,21 @@ class QuoteProductTypeTest extends AbstractTest
     protected $translator;
 
     /**
+     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $registry;
+
+    /**
+     * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $manager;
+
+    /**
+     * @var ProductUnitRepository|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $repository;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -52,6 +69,23 @@ class QuoteProductTypeTest extends AbstractTest
         $this->translator = $this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')
             ->disableOriginalConstructor()
             ->getMock()
+        ;
+
+        $this->repository = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
+
+        $this->manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $this->manager->expects($this->any())
+            ->method('getRepository')
+            ->willReturn($this->repository)
+        ;
+
+        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($this->manager)
         ;
 
         /* @var $productUnitLabelFormatter \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter */
@@ -67,13 +101,22 @@ class QuoteProductTypeTest extends AbstractTest
                 return $unitCode . '-formatted-' . ($isShort ? 'short' : 'full');
             }))
         ;
+        $productUnitLabelFormatter->expects($this->any())
+            ->method('formatChoices')
+            ->will($this->returnCallback(function ($units, $isShort) {
+                return array_map(function ($unit) use ($isShort) {
+                    return $unit . '-formatted2-' . ($isShort ? 'short' : 'full');
+                }, $units);
+            }))
+        ;
 
         parent::setUp();
 
         $this->formType = new QuoteProductType(
             $this->translator,
             $productUnitLabelFormatter,
-            $this->quoteProductFormatter
+            $this->quoteProductFormatter,
+            $this->registry
         );
         $this->formType->setDataClass('OroB2B\Bundle\SaleBundle\Entity\QuoteProduct');
     }
@@ -107,6 +150,11 @@ class QuoteProductTypeTest extends AbstractTest
      */
     public function testFinishView(array $inputData, array $expectedData)
     {
+        $this->repository->expects($this->once())
+            ->method('getAllUnits')
+            ->willReturn($inputData['allUnits'])
+        ;
+
         $view = new FormView();
 
         $view->vars = $inputData['vars'];
@@ -117,34 +165,6 @@ class QuoteProductTypeTest extends AbstractTest
         $this->formType->finishView($view, $form, $inputData['options']);
 
         $this->assertEquals($expectedData, $view->vars);
-    }
-
-    /**
-     * @param QuoteProduct $inputData
-     * @param array $expectedData
-     *
-     * @dataProvider preSetDataProvider
-     */
-    public function testPreSetData(QuoteProduct $inputData = null, array $expectedData = [])
-    {
-        $this->translator->expects($this->any())
-            ->method('trans')
-            ->will($this->returnCallback(function ($id, array $params) {
-                return $id . ':' .$params['{title}'];
-            }))
-        ;
-
-        $form = $this->factory->create($this->formType);
-
-        $this->formType->preSetData(new FormEvent($form, $inputData));
-
-        foreach ($expectedData as $field => $fieldOptions) {
-            $options = $form->get($field)->getConfig()->getOptions();
-
-            foreach ($fieldOptions as $key => $value) {
-                $this->assertEquals($value, $options[$key], $key);
-            }
-        }
     }
 
     /**
@@ -160,6 +180,7 @@ class QuoteProductTypeTest extends AbstractTest
                     'vars' => [
                         'value' => null,
                     ],
+                    'allUnits' => [],
                     'options' => [
                         'compact_units' => false,
                     ],
@@ -168,9 +189,11 @@ class QuoteProductTypeTest extends AbstractTest
                     'value' => null,
                     'componentOptions' => [
                         'units' => [],
+                        'allUnits'          => [],
                         'typeOffer'         => QuoteProduct::TYPE_OFFER,
                         'typeReplacement'   => QuoteProduct::TYPE_NOT_AVAILABLE,
                         'compactUnits' => false,
+                        'isFreeForm' => false,
                     ],
                 ],
             ],
@@ -178,6 +201,9 @@ class QuoteProductTypeTest extends AbstractTest
                 'input'     => [
                     'vars' => [
                         'value' => new QuoteProduct(),
+                    ],
+                    'allUnits' => [
+                        'unit10'
                     ],
                     'options' => [
                         'compact_units' => false,
@@ -187,9 +213,13 @@ class QuoteProductTypeTest extends AbstractTest
                     'value' => new QuoteProduct(),
                     'componentOptions' => [
                         'units' => [],
-                        'typeOffer'         => QuoteProduct::TYPE_OFFER,
-                        'typeReplacement'   => QuoteProduct::TYPE_NOT_AVAILABLE,
+                        'allUnits' => [
+                            'unit10-formatted2-full',
+                        ],
+                        'typeOffer' => QuoteProduct::TYPE_OFFER,
+                        'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
                         'compactUnits' => false,
+                        'isFreeForm' => false,
                     ],
                 ],
             ],
@@ -199,6 +229,10 @@ class QuoteProductTypeTest extends AbstractTest
                         'value' => (new QuoteProduct())
                             ->setProduct($this->createProduct(1, ['unit1', 'unit2']))
                             ->setProductReplacement($this->createProduct(2, ['unit2', 'unit3'])),
+                    ],
+                    'allUnits' => [
+                        'unit20',
+                        'unit30',
                     ],
                     'options' => [
                         'compact_units' => false,
@@ -219,9 +253,14 @@ class QuoteProductTypeTest extends AbstractTest
                                 'unit3' => 'unit3-formatted-full',
                             ],
                         ],
-                        'typeOffer'         => QuoteProduct::TYPE_OFFER,
-                        'typeReplacement'   => QuoteProduct::TYPE_NOT_AVAILABLE,
+                        'allUnits' => [
+                            'unit20-formatted2-full',
+                            'unit30-formatted2-full',
+                        ],
+                        'typeOffer' => QuoteProduct::TYPE_OFFER,
+                        'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
                         'compactUnits' => false,
+                        'isFreeForm' => false,
                     ],
                 ],
             ],
@@ -231,6 +270,10 @@ class QuoteProductTypeTest extends AbstractTest
                         'value' => (new QuoteProduct())
                             ->setProduct($this->createProduct(3, ['unit3', 'unit4']))
                             ->setProductReplacement($this->createProduct(4, ['unit4', 'unit5'])),
+                    ],
+                    'allUnits' => [
+                        'unit3',
+                        'unit4',
                     ],
                     'options' => [
                         'compact_units' => true,
@@ -251,9 +294,74 @@ class QuoteProductTypeTest extends AbstractTest
                                 'unit5' => 'unit5-formatted-short',
                             ],
                         ],
-                        'typeOffer'         => QuoteProduct::TYPE_OFFER,
-                        'typeReplacement'   => QuoteProduct::TYPE_NOT_AVAILABLE,
+                        'allUnits' => [
+                            'unit3-formatted2-short',
+                            'unit4-formatted2-short',
+                        ],
+                        'typeOffer' => QuoteProduct::TYPE_OFFER,
+                        'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
                         'compactUnits' => true,
+                        'isFreeForm' => false,
+                    ],
+                ],
+            ],
+            'product free form' => [
+                'input'     => [
+                    'vars' => [
+                        'value' => (new QuoteProduct())
+                            ->setFreeFormProduct('free form title'),
+                    ],
+                    'allUnits' => [
+                        'unit3',
+                        'unit4',
+                    ],
+                    'options' => [
+                        'compact_units' => true,
+                    ],
+                ],
+                'expected'  => [
+                    'value' => (new QuoteProduct())
+                        ->setFreeFormProduct('free form title'),
+                    'componentOptions' => [
+                        'units' => [],
+                        'allUnits' => [
+                            'unit3-formatted2-short',
+                            'unit4-formatted2-short',
+                        ],
+                        'typeOffer' => QuoteProduct::TYPE_OFFER,
+                        'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
+                        'compactUnits' => true,
+                        'isFreeForm' => true,
+                    ],
+                ],
+            ],
+            'replacement free form' => [
+                'input'     => [
+                    'vars' => [
+                        'value' => (new QuoteProduct())
+                            ->setFreeFormProductReplacement('free form title'),
+                    ],
+                    'allUnits' => [
+                        'unit3',
+                        'unit4',
+                    ],
+                    'options' => [
+                        'compact_units' => true,
+                    ],
+                ],
+                'expected'  => [
+                    'value' => (new QuoteProduct())
+                        ->setFreeFormProductReplacement('free form title'),
+                    'componentOptions' => [
+                        'units' => [],
+                        'allUnits' => [
+                            'unit3-formatted2-short',
+                            'unit4-formatted2-short',
+                        ],
+                        'typeOffer' => QuoteProduct::TYPE_OFFER,
+                        'typeReplacement' => QuoteProduct::TYPE_NOT_AVAILABLE,
+                        'compactUnits' => true,
+                        'isFreeForm' => true,
                     ],
                 ],
             ],
@@ -431,92 +539,6 @@ class QuoteProductTypeTest extends AbstractTest
     }
 
     /**
-     * @return array
-     */
-    public function preSetDataProvider()
-    {
-        return [
-            'empty item' => [
-                'inputData'     => null,
-                'expectedData'  => [
-                    'product' => [
-                        'configs'   => [
-                            'placeholder'   => null,
-                        ],
-                        'required'          => true,
-                        'create_enabled'    => false,
-                        'label'             => 'orob2b.product.entity_label',
-                    ],
-                    'productReplacement' => [
-                        'configs'   => [
-                            'placeholder'   => null,
-                        ],
-                        'required'          => false,
-                        'create_enabled'    => false,
-                        'label'             => 'orob2b.sale.quoteproduct.product_replacement.label',
-                    ],
-                ],
-            ],
-            'deleted product replacement' => [
-                'inputData'     => $this->createQuoteProduct(
-                    1,
-                    new Product(),
-                    'sku',
-                    null,
-                    'sku2',
-                    QuoteProduct::TYPE_NOT_AVAILABLE
-                ),
-                'expectedData'  => [
-                    'product' => [
-                        'configs'   => [
-                            'placeholder'   => null,
-                        ],
-                        'required'          => true,
-                        'create_enabled'    => false,
-                        'label'             => 'orob2b.product.entity_label',
-                    ],
-                    'productReplacement' => [
-                        'configs'   => [
-                            'placeholder'   => 'orob2b.product.removed:sku2',
-                        ],
-                        'required'          => false,
-                        'create_enabled'    => false,
-                        'label'             => 'orob2b.sale.quoteproduct.product_replacement.label',
-                    ],
-                ],
-            ],
-            'existing product and replacement' => [
-                'inputData'     => $this->createQuoteProduct(
-                    1,
-                    new Product(),
-                    'sku',
-                    new Product(),
-                    'sku2',
-                    QuoteProduct::TYPE_NOT_AVAILABLE
-                ),
-                'expectedData'  => [
-                    'product' => [
-                        'configs'   => [
-                            'placeholder'   => null,
-                        ],
-                        'required'          => true,
-                        'create_enabled'    => false,
-                        'label'             => 'orob2b.product.entity_label',
-                    ],
-                    'productReplacement' => [
-                        'configs'   => [
-                            'placeholder'   => null,
-                        ],
-                        'required'          => false,
-                        'create_enabled'    => false,
-                        'label'             => 'orob2b.sale.quoteproduct.product_replacement.label',
-                    ],
-                ],
-            ],
-        ];
-    }
-
-    /**
      * @param int $id
      * @param Product $product
      * @param string $productSku
@@ -586,8 +608,7 @@ class QuoteProductTypeTest extends AbstractTest
                     CollectionType::NAME                        => new CollectionType(),
                     QuoteProductOfferCollectionType::NAME       => new QuoteProductOfferCollectionType(),
                     QuoteProductRequestCollectionType::NAME     => new QuoteProductRequestCollectionType(),
-                    ProductRemovedSelectType::NAME              => new StubProductRemovedSelectType(),
-                    ProductUnitRemovedSelectionType::NAME       => new StubProductUnitRemovedSelectionType(),
+                    ProductUnitSelectionType::NAME              => new StubProductUnitSelectionType(),
                     ProductSelectType::NAME                     => new ProductSelectTypeStub(),
                     CurrencySelectionType::NAME                 => new CurrencySelectionTypeStub(),
                     $priceType->getName()                       => $priceType,
