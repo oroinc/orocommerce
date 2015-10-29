@@ -79,6 +79,9 @@ orob2b:
                 save: Save
                 cancel: Cancel
 
+        system_configuration:
+            product_visibility: Visibility for Shopping list
+
     frontend:
         shoppinglist:
             btn:

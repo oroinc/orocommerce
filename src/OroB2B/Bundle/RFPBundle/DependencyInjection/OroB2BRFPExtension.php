@@ -9,6 +9,8 @@ use Symfony\Component\DependencyInjection\Loader;
 
 class OroB2BRFPExtension extends Extension
 {
+    const ALIAS = 'oro_b2b_rfp';
+
     /**
      * {@inheritDoc}
      */
@@ -30,6 +32,6 @@ class OroB2BRFPExtension extends Extension
      */
     public function getAlias()
     {
-        return 'oro_b2b_rfp';
+        return self::ALIAS;
     }
 }

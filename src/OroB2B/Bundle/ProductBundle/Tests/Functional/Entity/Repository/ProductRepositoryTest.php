@@ -31,6 +31,61 @@ class ProductRepositoryTest extends WebTestCase
     }
 
     /**
+     * @dataProvider getSearchQueryBuilderDataProvider
+     * @param string $search
+     * @param int $firstResult
+     * @param int $maxResult
+     */
+    public function testGetSearchQueryBuilder($search, $firstResult, $maxResult, $expected)
+    {
+        $queryBuilder = $this->getRepository()->getSearchQueryBuilder($search, $firstResult, $maxResult);
+        $result = array_map(
+            function ($product) {
+                return $product['sku'];
+            },
+            $queryBuilder->getQuery()->getArrayResult()
+        );
+
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * @return array
+     */
+    public function getSearchQueryBuilderDataProvider()
+    {
+        return [
+            'product, 0, 10' => [
+                'search' => 'duct',
+                'firstResult' => 0,
+                'maxResult' => 10,
+                'expected' => [
+                    'product.1',
+                    'product.2',
+                    'product.3'
+                ]
+            ],
+            'product, 1, 1' => [
+                'search' => 'oduct',
+                'firstResult' => 1,
+                'maxResult' => 1,
+                'expected' => [
+                    'product.2'
+                ]
+            ],
+            'product, 0, 2' => [
+                'search' => 'product',
+                'firstResult' => 0,
+                'maxResult' => 2,
+                'expected' => [
+                    'product.1',
+                    'product.2'
+                ]
+            ]
+        ];
+    }
+
+    /**
      * @param string $pattern
      * @param array $expectedSkuList
      *
