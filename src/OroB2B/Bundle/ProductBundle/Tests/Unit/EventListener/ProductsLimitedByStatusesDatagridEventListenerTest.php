@@ -37,7 +37,7 @@ class ProductsLimitedByStatusesDatagridEventListenerTest extends \PHPUnit_Framew
     {
         $this->request = $request;
         $listener = $this->createListener();
-        $event = $this->getEvent();
+        $event = $this->createEvent();
         $this->eventDispatcher->expects($this->once())->method('dispatch')->with(
             ProductSelectQueryDbEvent::NAME,
             new ProductSelectQueryDbEvent($this->qb, $expectedParamsResult)
@@ -65,7 +65,7 @@ class ProductsLimitedByStatusesDatagridEventListenerTest extends \PHPUnit_Framew
     /**
      * @return BuildAfter
      */
-    protected function getEvent()
+    protected function createEvent()
     {
         $this->qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')->disableOriginalConstructor()->getMock();
         /** @var OrmDatasource|\PHPUnit_Framework_MockObject_MockObject $dataSource */
