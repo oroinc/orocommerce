@@ -72,6 +72,8 @@
                     form_row(form.priceList),
                     form_row(form.validUntil),
                     form_row(form.locked),
+                    form_row(form.poNumber),
+                    form_row(form.shipUntil)
                 ]
             }]
         },
@@ -87,11 +89,7 @@
     ]
     %}
 
-    {% set additionalData = [
-        form_row(form.poNumber),
-        form_row(form.shipUntil)
-    ] %}
-
+    {% set additionalData = [] %}
     {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
         {% set additionalData = additionalData|merge([form_row(child)]) %}
     {% endfor %}
