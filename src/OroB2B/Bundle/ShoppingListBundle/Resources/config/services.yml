@@ -81,3 +81,14 @@ services:
         class: %orob2b_shopping_list.service.product_data_storage.class%
         arguments:
             - @orob2b_product.service.product_data_storage
+
+
+    orob2b_shopping_list.event_listener.product_select_db_query:
+        class: %orob2b_product.event_listener.product_select_db_query.class%
+        arguments:
+            - @oro_config.global
+            - @orob2b_product.model.product_visibility_query_builder_modifier
+            - 'shopping_list'
+            - 'oro_b2b_shopping_list.product_visibility.value'
+        tags:
+            - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }

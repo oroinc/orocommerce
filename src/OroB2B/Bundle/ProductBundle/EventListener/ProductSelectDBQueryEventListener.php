@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ProductBundle\EventListener;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
 use OroB2B\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class ProductSelectDBQueryEventListener
 {
@@ -31,8 +32,8 @@ class ProductSelectDBQueryEventListener
     /**
      * @param ConfigManager $configManager
      * @param ProductVisibilityQueryBuilderModifier $modifier
-     * @param $scope
-     * @param $systemConfigurationPath
+     * @param string $scope
+     * @param string $systemConfigurationPath
      */
     public function __construct(
         ConfigManager $configManager,
@@ -47,12 +48,21 @@ class ProductSelectDBQueryEventListener
     }
 
     /**
-     * @param $event
+     * @param ProductSelectDBQueryEvent $event
      */
     public function onDBQuery(ProductSelectDBQueryEvent $event)
     {
         $dataParameters = $event->getDataParameters();
-        if ($dataParameters->get('scope') !== $this->scope) {
+
+        // waiting for event refactoring
+        $scope = null;
+        if ($dataParameters instanceof ParameterBag) {
+            $scope = $dataParameters->get('scope');
+        } elseif (is_array($dataParameters) && isset($dataParameters['scope'])) {
+            $scope = $dataParameters['scope'];
+        }
+
+        if ($scope !== $this->scope) {
             return;
         }
 
