@@ -1,0 +1,25 @@
+<?php
+
+namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Event;
+
+use Doctrine\ORM\QueryBuilder;
+
+use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
+
+class ProductSelectDBQueryEventTest extends \PHPUnit_Framework_TestCase
+{
+    public function testEvent()
+    {
+        $dataParameters = ['test'];
+
+        /** @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject $queryBuilder */
+        $queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $event = new ProductSelectDBQueryEvent($queryBuilder, $dataParameters);
+
+        $this->assertSame($dataParameters, $event->getDataParameters());
+        $this->assertSame($queryBuilder, $event->getQueryBuilder());
+    }
+}

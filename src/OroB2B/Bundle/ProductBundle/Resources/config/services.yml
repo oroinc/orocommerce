@@ -32,6 +32,8 @@ parameters:
 
     orob2b_product.event_listener.command.platform_update.class: OroB2B\Bundle\ProductBundle\EventListener\PlatformUpdateCommandListener
 
+    orob2b_product.autocomplete.product_visibility_limited.search_handler.class: OroB2B\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler
+
 services:
     orob2b_product.product.manager.api:
         class: %orob2b_product.product.manager.api.class%
@@ -191,3 +193,16 @@ services:
 
     orob2b_product.model.product_query_builder_modifier:
         class: %orob2b_product.model.product_query_builder_modifier.class%
+
+    orob2b_product.autocomplete.product_visibility_limited.search_handler:
+        class: %orob2b_product.autocomplete.product_visibility_limited.search_handler.class%
+        arguments:
+            - %orob2b_product.product.class%
+            - ["sku", "defaultName.string"]
+            - @request_stack
+            - @event_dispatcher
+        calls:
+            - [initDoctrinePropertiesByManagerRegistry, ["@doctrine"]]
+            - [setAclHelper,["@oro_security.acl_helper"]]
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: "orob2b_product_visibility_limited" }
