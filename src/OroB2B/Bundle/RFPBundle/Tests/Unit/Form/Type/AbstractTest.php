@@ -303,6 +303,8 @@ abstract class AbstractTest extends FormIntegrationTestCase
      * @param string $company
      * @param string $role
      * @param string $phone
+     * @param string $poNumber
+     * @param \DateTime $shipUntil
      * @return Request
      */
     protected function getRequest(
@@ -312,7 +314,9 @@ abstract class AbstractTest extends FormIntegrationTestCase
         $body = null,
         $company = null,
         $role = null,
-        $phone = null
+        $phone = null,
+        $poNumber = null,
+        $shipUntil = null
     ) {
         $request = new Request();
 
@@ -324,7 +328,8 @@ abstract class AbstractTest extends FormIntegrationTestCase
             ->setCompany($company)
             ->setRole($role)
             ->setPhone($phone)
-        ;
+            ->setPoNumber($poNumber)
+            ->setShipUntil($shipUntil);
 
         return $request;
     }
