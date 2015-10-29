@@ -25,5 +25,16 @@ class OroB2BRFPExtensionTest extends ExtensionTestCase
         $this->assertParametersLoaded($expectedParameters);
 
         $this->assertEquals('oro_b2b_rfp', $extension->getAlias());
+
+        $this->assertExtensionConfigsLoaded([OroB2BRFPExtension::ALIAS]);
+    }
+
+    /**
+     * Test Get Alias
+     */
+    public function testGetAlias()
+    {
+        $extension = new OroB2BRFPExtension();
+        $this->assertEquals(OroB2BRFPExtension::ALIAS, $extension->getAlias());
     }
 }
