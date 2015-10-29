@@ -183,6 +183,14 @@ class PriceList
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->name;
+    }
+
+    /**
      * @return int
      */
     public function getId()

@@ -4,7 +4,7 @@ OroB2B\Bundle\ShoppingListBundle\Entity\LineItem:
             groups: [update]
     properties:
         product:
-            - NotNull:
+            - NotBlank:
                 groups: [create, update, add_product]
         quantity:
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal:
@@ -12,16 +12,16 @@ OroB2B\Bundle\ShoppingListBundle\Entity\LineItem:
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
                 value: 0
                 groups: [create, update, add_product]
-            - NotNull:
+            - NotBlank:
                 groups: [create, update, add_product]
         unit:
-            - NotNull:
+            - NotBlank:
                 groups: [create, update, add_product]
         shoppingList:
-            - NotNull:
+            - NotBlank:
                 groups: [create, update]
 
 OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList:
     properties:
         label:
-            - NotNull: ~
+            - NotBlank: ~
