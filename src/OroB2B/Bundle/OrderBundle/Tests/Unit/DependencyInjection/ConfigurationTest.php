@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Unit\DependencyInjection;
+namespace OroB2B\Bundle\OrderBundle\Tests\Unit\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Processor;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\RFPBundle\DependencyInjection\Configuration;
+use OroB2B\Bundle\OrderBundle\DependencyInjection\Configuration;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,7 +18,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $builder = $configuration->getConfigTreeBuilder();
         $this->assertInstanceOf('Symfony\Component\Config\Definition\Builder\TreeBuilder', $builder);
     }
-
 
     /**
      * @dataProvider processConfigurationDataProvider
@@ -43,14 +42,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 'expected' => [
                     'settings' => [
                         'resolved' => 1,
-                        'default_request_status' => [
-                            'value' => 'open',
-                            'scope' => 'app'
-                        ],
-                        'default_user_for_notifications' => [
-                            'value' => '',
-                            'scope' => 'app'
-                        ],
                         'product_visibility' => [
                             'value' => [
                                 Product::INVENTORY_STATUS_IN_STOCK,
