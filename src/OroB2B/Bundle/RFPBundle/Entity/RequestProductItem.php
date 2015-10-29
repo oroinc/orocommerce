@@ -8,6 +8,7 @@ use Oro\Bundle\CurrencyBundle\Model\OptionalPrice as Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
 use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
 /**
@@ -26,7 +27,7 @@ use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
  * )
  * @ORM\HasLifecycleCallbacks()
  */
-class RequestProductItem implements ProductUnitHolderInterface
+class RequestProductItem implements ProductUnitHolderInterface, ProductHolderInterface
 {
     /**
      * @var int
@@ -246,5 +247,26 @@ class RequestProductItem implements ProductUnitHolderInterface
     {
         $this->value    = $this->price ? $this->price->getValue() : null;
         $this->currency = $this->price ? $this->price->getCurrency() : null;
+    }
+
+    /** {@inheritdoc} */
+    public function getProduct()
+    {
+        if ($this->requestProduct) {
+            return $this->requestProduct->getProduct();
+        }
+
+        return null;
+    }
+
+    /** {@inheritdoc} */
+    public function getProductSku()
+    {
+        $product = $this->getProduct();
+        if ($product) {
+            return $product->getSku();
+        }
+
+        return null;
     }
 }

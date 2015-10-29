@@ -19,10 +19,10 @@ use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductRemovedSelectType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
@@ -234,7 +234,7 @@ class QuoteTypeTest extends AbstractTest
                     QuoteProductOfferCollectionType::NAME       => new QuoteProductOfferCollectionType(),
                     QuoteProductRequestCollectionType::NAME     => new QuoteProductRequestCollectionType(),
                     ProductRemovedSelectType::NAME              => new StubProductRemovedSelectType(),
-                    ProductUnitRemovedSelectionType::NAME       => new StubProductUnitRemovedSelectionType(),
+                    ProductUnitSelectionType::NAME              => new StubProductUnitSelectionType(),
                     $priceType->getName()                       => $priceType,
                     $entityType->getName()                      => $entityType,
                     $userSelectType->getName()                  => $userSelectType,

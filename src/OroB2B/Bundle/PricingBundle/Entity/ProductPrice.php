@@ -10,6 +10,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
+use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
 /**
  * @ORM\Table(
@@ -35,7 +37,7 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
  *      }
  * )
  */
-class ProductPrice
+class ProductPrice implements ProductUnitHolderInterface, ProductHolderInterface
 {
     /**
      * @var integer
@@ -173,7 +175,7 @@ class ProductPrice
     }
 
     /**
-     * @return Product
+     * {@inheritdoc}
      */
     public function getProduct()
     {
@@ -193,7 +195,7 @@ class ProductPrice
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getProductSku()
     {
@@ -295,5 +297,37 @@ class ProductPrice
             $this->value    = $this->price->getValue();
             $this->currency = $this->price->getCurrency();
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityIdentifier()
+    {
+        return $this->id;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductHolder()
+    {
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductUnit()
+    {
+        return $this->getUnit();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductUnitCode()
+    {
+        return $this->getUnit()->getCode();
     }
 }
