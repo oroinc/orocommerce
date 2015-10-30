@@ -56,8 +56,6 @@ class LoadInvoiceDemoData extends AbstractFixture implements ContainerAwareInter
             $row['invoiceDate'] = \DateTime::createFromFormat('Y-m-d', $row['invoiceDate'], new \DateTimeZone('UTC'));
 
             $invoice = new Invoice();
-
-
             $invoice
                 ->setOwner($owner)
                 ->setAccount($account)
