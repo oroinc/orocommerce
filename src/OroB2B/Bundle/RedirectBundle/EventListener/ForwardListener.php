@@ -36,6 +36,11 @@ class ForwardListener
     protected $installed;
 
     /**
+     * @var bool
+     */
+    protected $environment;
+
+    /**
      * @var array
      */
     protected $deniedUrlPatterns = [];
@@ -45,13 +50,20 @@ class ForwardListener
      * @param ManagerRegistry $registry
      * @param FrontendHelper $frontendHelper
      * @param boolean $installed
+     * @param boolean $environment
      */
-    public function __construct(Router $router, ManagerRegistry $registry, FrontendHelper $frontendHelper, $installed)
-    {
+    public function __construct(
+        Router $router,
+        ManagerRegistry $registry,
+        FrontendHelper $frontendHelper,
+        $installed,
+        $environment
+    ) {
         $this->router = $router;
         $this->registry = $registry;
         $this->installed = $installed;
         $this->frontendHelper = $frontendHelper;
+        $this->environment = $environment;
     }
 
     /**
@@ -80,10 +92,11 @@ class ForwardListener
 
     /**
      * @param string $deniedUrlPattern
+     * @param bool $env
      */
-    public function addDeniedUrlPatterns($deniedUrlPattern)
+    public function addDeniedUrlPatterns($deniedUrlPattern, $env)
     {
-        $this->deniedUrlPatterns[] = $deniedUrlPattern;
+        $this->deniedUrlPatterns[$env][] = $deniedUrlPattern;
     }
 
     /**
@@ -92,12 +105,12 @@ class ForwardListener
      */
     protected function isDeniedUrl(Request $request)
     {
+        if (!array_key_exists($this->environment, $this->deniedUrlPatterns)) {
+            return false;
+        }
         $url = $request->getPathInfo();
-        foreach ($this->deniedUrlPatterns as $regexp) {
-            if (preg_match(
-                RouteCompiler::REGEX_DELIMITER.$regexp.RouteCompiler::REGEX_DELIMITER,
-                $url
-            )) {
+        foreach ($this->deniedUrlPatterns[$this->environment] as $pattern) {
+            if (strpos($pattern, $url)) {
                 return true;
             }
         }

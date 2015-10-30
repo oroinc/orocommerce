@@ -13,8 +13,9 @@ services:
             - @doctrine
             - @orob2b_frontend.request.frontend_helper
             - %installed%
+            - %kernel.environment%
         calls:
-            - [addDeniedUrlPatterns, ['^/(_(profiler|wdt)|css|images|js)/']]
+            - [addDeniedUrlPatterns, ['^/(_(profiler|wdt)|css|images|js)/'], 'dev']
         tags:
             - {name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 64}
 
