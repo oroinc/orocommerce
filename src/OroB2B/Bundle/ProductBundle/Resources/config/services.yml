@@ -208,10 +208,8 @@ services:
     orob2b_product.product.manager:
         class: %orob2b_product.product.manager.class%
         arguments:
-            - @doctrine
-            - @request_stack
             - @event_dispatcher
+            - @request_stack
+            - @doctrine
         calls:
             - [setDataClass, [%orob2b_product.product.class%]]
-
-
