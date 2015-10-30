@@ -13,7 +13,7 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntity
 
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubLocalizedFallbackValueCollectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -103,7 +103,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                         ],
                         ProductUnitSelectionType::NAME
                     ),
-                    LocalizedFallbackValueCollectionType::NAME => new StubLocalizedFallbackValueCollectionType(),
+                    LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub(),
                     ProductCustomFieldsChoiceType::NAME => new StubProductCustomFieldsChoiceType(
                         $this->exampleCustomFields
                     ),
