@@ -135,6 +135,5 @@ class ProductRepositoryTest extends WebTestCase
         );
 
         $this->assertEmpty($this->getRepository()->getProductNamesBySkus(['nonExistingSKU']));
-
     }
 }
