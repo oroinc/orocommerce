@@ -2,10 +2,12 @@
 
 namespace OroB2B\Bundle\ProductBundle\EventListener;
 
+use Symfony\Component\HttpFoundation\ParameterBag;
+
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+
 use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
 use OroB2B\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 class ProductSelectDBQueryEventListener
 {
@@ -54,7 +56,7 @@ class ProductSelectDBQueryEventListener
     {
         $dataParameters = $event->getDataParameters();
 
-        // waiting for event refactoring
+        // @TODO Will be refactored in scope BB-1443
         $scope = null;
         if ($dataParameters instanceof ParameterBag) {
             $scope = $dataParameters->get('scope');
