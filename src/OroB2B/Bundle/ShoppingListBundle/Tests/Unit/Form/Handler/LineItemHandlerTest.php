@@ -5,14 +5,15 @@ namespace OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Handler;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManagerInterface;
 
-use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
+use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
+use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
+use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 
 class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
@@ -45,6 +46,11 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
     protected $lineItem;
 
     /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|RoundingService
+     */
+    protected $roundingService;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -63,6 +69,10 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
             $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager')
                 ->disableOriginalConstructor()
                 ->getMock();
+
+        $this->roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\RoundingService')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->lineItem = $this->getMock('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem');
     }
@@ -233,7 +243,7 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param object|null $lineItem
+     * @param LineItem $lineItem
      */
     protected function addRegistryExpectations(LineItem $lineItem)
     {

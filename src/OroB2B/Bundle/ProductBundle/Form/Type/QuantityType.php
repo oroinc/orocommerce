@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -10,13 +9,12 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Range;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
 
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 
-class QuantityType extends AbstractType
+class QuantityType extends AbstractProductAwareType
 {
     const NAME = 'orob2b_quantity';
 
@@ -78,17 +76,8 @@ class QuantityType extends AbstractType
         }
 
         $options = $form->getConfig()->getOptions();
-        $product = $options['product'];
-        $productField = $options['product_field'];
-
-        if ($parent->has($productField)) {
-            $productData = $parent->get($productField)->getData();
-            if ($productData instanceof Product) {
-                $product = $productData;
-            }
-        }
-
-        if (!$product instanceof Product) {
+        $product = $this->getProduct($form);
+        if (!$product) {
             return null;
         }
 
@@ -131,18 +120,17 @@ class QuantityType extends AbstractType
     /** {@inheritdoc} */
     public function configureOptions(OptionsResolver $resolver)
     {
+        parent::configureOptions($resolver);
+
         $resolver->setDefaults(
             [
-                'product' => null,
                 'product_unit_field' => 'productUnit',
-                'product_field' => 'product',
                 'default_data' => null,
                 'constraints' => [new Range(['min' => 0]), new Decimal()],
             ]
         );
 
         $resolver->setAllowedTypes('product_unit_field', 'string');
-        $resolver->setAllowedTypes('product_field', 'string');
     }
 
     /** {@inheritDoc} */

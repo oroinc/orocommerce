@@ -89,6 +89,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
             $validUntil = new \DateTime('now');
             $addDays = sprintf('+%s days', rand(10, 100));
             $validUntil->modify($addDays);
+            $poNumber = 'CA' . rand(1000, 9999) . 'USD';
             $quote = new Quote();
             $quote
                 ->setOwner($user)
@@ -97,6 +98,8 @@ class LoadQuoteDemoData extends AbstractFixture implements
                 ->setAccountUser($accountUser)
                 ->setAccount($account)
                 ->setLocked(rand(0, 1))
+                ->setShipUntil(new \DateTime('+10 day'))
+                ->setPoNumber($poNumber)
                 ->setPriceList($this->getPriceList($manager, 'Default Price List'));
 
             if (1 === rand(1, 3)) {

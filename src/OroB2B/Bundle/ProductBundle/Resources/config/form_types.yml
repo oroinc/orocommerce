@@ -3,7 +3,6 @@ parameters:
     orob2b_product.form.type.product_unit_rounding_type.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRoundingTypeType
     orob2b_product.form.type.product_unit_selection.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
     orob2b_product.form.type.quantity_type.class: OroB2B\Bundle\ProductBundle\Form\Type\QuantityType
-    orob2b_product.form.type.product_unit_removed_selection.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType
     orob2b_product.form.type.product_unit_precision.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType
     orob2b_product.form.type.product_unit_precision_collection.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType
     orob2b_product.form.type.product_select.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType
@@ -46,7 +45,8 @@ services:
     orob2b_product.form.type.product_unit_selection:
         class: %orob2b_product.form.type.product_unit_selection.class%
         arguments:
-            - @doctrine.orm.entity_manager
+            - @orob2b_product.formatter.product_unit_label
+            - @translator
         calls:
             - [setEntityClass, [%orob2b_product.product_unit.class%]]
         tags:
@@ -59,17 +59,6 @@ services:
             - %orob2b_product.product.class%
         tags:
             - { name: form.type, alias: orob2b_quantity }
-
-    orob2b_product.form.type.product_unit_removed_selection:
-        class: %orob2b_product.form.type.product_unit_removed_selection.class%
-        arguments:
-            - @orob2b_product.formatter.product_unit_label
-            - @translator
-            - @doctrine
-        calls:
-            - [setEntityClass, [%orob2b_product.product_unit.class%]]
-        tags:
-            - { name: form.type, alias: orob2b_product_unit_removed_selection }
 
     orob2b_product.form.type.product_unit_precision:
         class: %orob2b_product.form.type.product_unit_precision.class%
