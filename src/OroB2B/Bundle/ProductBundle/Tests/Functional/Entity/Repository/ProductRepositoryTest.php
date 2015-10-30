@@ -111,4 +111,30 @@ class ProductRepositoryTest extends WebTestCase
             )
         );
     }
+
+    public function testGetProductsNamesBySku()
+    {
+        $product1 = $this->getProduct(ProductFixture::PRODUCT_1);
+        $product2 = $this->getProduct(ProductFixture::PRODUCT_2);
+        $product3 = $this->getProduct(ProductFixture::PRODUCT_3);
+
+        $this->assertEquals(
+            [
+                $product1->getSku() => ['name'=> $product1->getDefaultName()->getString()],
+                $product2->getSku() => ['name'=> $product2->getDefaultName()->getString()],
+                $product3->getSku() => ['name'=> $product3->getDefaultName()->getString()],
+            ],
+            $this->getRepository()->getProductNamesBySkus(
+                [
+                    $product3->getSku(),
+                    $product1->getSku(),
+                    $product2->getSku(),
+                    'not a sku'
+                ]
+            )
+        );
+
+        $this->assertEmpty($this->getRepository()->getProductNamesBySkus(['nonExistingSKU']));
+
+    }
 }
