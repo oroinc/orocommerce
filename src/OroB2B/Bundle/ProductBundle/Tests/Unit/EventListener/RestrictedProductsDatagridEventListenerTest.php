@@ -17,7 +17,6 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
 class RestrictedProductsDatagridEventListenerTest extends \PHPUnit_Framework_TestCase
 {
-
     /** @var  Request|\PHPUnit_Framework_MockObject_MockObject */
     protected $request;
 
@@ -68,11 +67,13 @@ class RestrictedProductsDatagridEventListenerTest extends \PHPUnit_Framework_Tes
     protected function createEvent()
     {
         $this->qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')->disableOriginalConstructor()->getMock();
+
         /** @var OrmDatasource|\PHPUnit_Framework_MockObject_MockObject $dataSource */
         $dataSource = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource')
             ->disableOriginalConstructor()
             ->getMock();
         $dataSource->expects($this->once())->method('getQueryBuilder')->willReturn($this->qb);
+
         /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $dataGrid */
         $dataGrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $dataGrid->expects($this->once())->method('getAcceptedDatasource')->willReturn($dataSource);
@@ -95,4 +96,3 @@ class RestrictedProductsDatagridEventListenerTest extends \PHPUnit_Framework_Tes
         return new RestrictedProductsDatagridEventListener($requestStack, $this->productManager, $this->request);
     }
 }
-
