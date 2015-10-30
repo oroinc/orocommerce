@@ -18,20 +18,21 @@ parameters:
     orob2b_product.provider.custom_field_provider.class: OroB2B\Bundle\ProductBundle\Provider\CustomFieldProvider
     orob2b_product.provider.product_status_provider.class: OroB2B\Bundle\ProductBundle\Provider\ProductStatusProvider
     orob2b_product.event_listener.product_variant_custom_fields_datagrid.class: OroB2B\Bundle\ProductBundle\EventListener\ProductVariantCustomFieldsDatagridListener
-    orob2b_product.event_listener.products_limited_by_statuses_datagrid.class: OroB2B\Bundle\ProductBundle\EventListener\ProductsLimitedByStatusesDatagridEventListener
+    orob2b_product.event_listener.restricted_products_datagrid.class: OroB2B\Bundle\ProductBundle\EventListener\RestrictedProductsDatagridEventListener
     orob2b_product.validator.unique_variant_links.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator
 
     orob2b_product.component_processor.registry.class: OroB2B\Bundle\ProductBundle\Model\ComponentProcessorRegistry
     orob2b_product.processor.data_storage_aware.class: OroB2B\Bundle\ProductBundle\Model\DataStorageAwareProcessor
     orob2b_product.form_handler.quick_add.class: OroB2B\Bundle\ProductBundle\Form\Handler\QuickAddHandler
+    orob2b_product.product.manager.class: OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager
 
     orob2b_product.event_listener.product_grid_widget.class: OroB2B\Bundle\ProductBundle\EventListener\ProductGridWidgetRenderEventListener
+    orob2b_product.event_listener.command.platform_update.class: OroB2B\Bundle\ProductBundle\EventListener\PlatformUpdateCommandListener
 
     orob2b_product.menu.frontend.quick_add.class: OroB2B\Bundle\ProductBundle\Menu\Frontend\QuickAddMenuBuilder
 
-    orob2b_product.event_listener.command.platform_update.class: OroB2B\Bundle\ProductBundle\EventListener\PlatformUpdateCommandListener
-
     orob2b_product.autocomplete.product_visibility_limited.search_handler.class: OroB2B\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler
+
 
 services:
     orob2b_product.product.manager.api:
@@ -173,11 +174,11 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: orob2b_product_unique_variant_links }
 
-    orob2b_product.event_listener.products_limited_by_statuses_datagrid:
-        class: %orob2b_product.event_listener.products_limited_by_statuses_datagrid.class%
+    orob2b_product.event_listener.restricted_products_datagrid:
+        class: %orob2b_product.event_listener.restricted_products_datagrid.class%
         arguments:
             - @request_stack
-            - @event_dispatcher
+            - @orob2b_product.product.manager
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.products-select-grid, method: onBuildAfter }
 
@@ -197,9 +198,20 @@ services:
             - %orob2b_product.product.class%
             - ["sku", "defaultName.string"]
             - @request_stack
-            - @event_dispatcher
+            - @orob2b_product.product.manager
         calls:
             - [initDoctrinePropertiesByManagerRegistry, ["@doctrine"]]
             - [setAclHelper,["@oro_security.acl_helper"]]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: "orob2b_product_visibility_limited" }
+
+    orob2b_product.product.manager:
+        class: %orob2b_product.product.manager.class%
+        arguments:
+            - @doctrine
+            - @request_stack
+            - @event_dispatcher
+        calls:
+            - [setDataClass, [%orob2b_product.product.class%]]
+
+
