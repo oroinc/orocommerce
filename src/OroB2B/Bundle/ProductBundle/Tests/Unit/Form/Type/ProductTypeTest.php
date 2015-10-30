@@ -28,7 +28,7 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductStatusType;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductCustomFieldsChoiceType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubEnumSelectType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\EnumSelectTypeStub;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubImageType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct;
 use OroB2B\Bundle\ProductBundle\Provider\ProductStatusProvider;
@@ -86,7 +86,7 @@ class ProductTypeTest extends FormIntegrationTestCase
         $productUnitPrecision = new ProductUnitPrecisionType();
         $productUnitPrecision->setDataClass('OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision');
 
-        $stubEnumSelectType = new StubEnumSelectType();
+        $stubEnumSelectType = new EnumSelectTypeStub();
 
         return [
             new PreloadedExtension(
