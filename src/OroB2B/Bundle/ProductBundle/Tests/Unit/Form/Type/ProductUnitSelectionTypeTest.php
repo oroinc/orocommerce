@@ -554,11 +554,11 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
             'product without units' => [
                 $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 1),
                 'valid',
-                'ERROR: orob2b.product.productunit.invalid' . PHP_EOL,
+                'ERROR: orob2b.product.productunit.invalid' . "\n",
             ],
-            'submit invalid' => [$product, 'not_valid', 'ERROR: orob2b.product.productunit.invalid' . PHP_EOL],
+            'submit invalid' => [$product, 'not_valid', 'ERROR: orob2b.product.productunit.invalid' . "\n"],
             'submit valid' => [$product, 'valid'],
-            'empty data' => [$product, null, 'ERROR: orob2b.product.productunit.invalid' . PHP_EOL],
+            'empty data' => [$product, null, 'ERROR: orob2b.product.productunit.invalid' . "\n"],
             'new product' => [new Product(), null],
         ];
     }
