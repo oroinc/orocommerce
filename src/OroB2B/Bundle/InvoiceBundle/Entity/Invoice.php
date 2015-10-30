@@ -46,7 +46,6 @@ use OroB2B\Bundle\InvoiceBundle\Model\ExtendInvoice;
  */
 class Invoice extends ExtendInvoice implements OrganizationAwareInterface
 {
-
     /**
      * @var integer
      *
@@ -455,6 +454,8 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
      */
     public function prePersist()
     {
-        $this->invoiceDate = new \DateTime('now', new \DateTimeZone('UTC'));
+        if (empty($this->invoiceDate)) {
+            $this->invoiceDate = new \DateTime('now', new \DateTimeZone('UTC'));
+        }
     }
 }

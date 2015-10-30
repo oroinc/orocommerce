@@ -7,9 +7,6 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 
-/**
- * Class OroB2BInvoiceExtension
- */
 class OroB2BInvoiceExtension extends Extension
 {
     /**

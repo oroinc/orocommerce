@@ -4,14 +4,12 @@ namespace OroB2B\Bundle\InvoiceBundle\Tests\Unit\Entity;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
 use OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
 
-/**
- * Class InvoiceEntityTest
- */
 class InvoiceEntityTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;

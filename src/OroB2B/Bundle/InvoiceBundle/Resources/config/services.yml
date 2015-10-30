@@ -1,9 +1,17 @@
 parameters:
+    orob2b_invoice.invoice.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_invoice.event_listener.orm.invoice_event_listener.class: OroB2B\Bundle\InvoiceBundle\EventListener\ORM\InvoiceEventListener
     orob2b_invoice.doctrine.orm.invoice_number_generator.class: OroB2B\Bundle\InvoiceBundle\Doctrine\ORM\SimpleInvoiceNumberGenerator
     orob2b_invoice.entity.invoice.class: OroB2B\Bundle\InvoiceBundle\Entity\Invoice
 
 services:
+   orob2b_invoice.invoice.manager.api:
+      class: %orob2b_invoice.invoice.manager.api.class%
+      parent: oro_soap.manager.entity_manager.abstract
+      arguments:
+          - %orob2b_invoice.entity.invoice.class%
+          - @doctrine.orm.entity_manager
+
    orob2b_invoice.doctrine.orm.invoice_number_generator:
       class: %orob2b_invoice.doctrine.orm.invoice_number_generator.class%
 

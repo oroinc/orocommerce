@@ -3,13 +3,11 @@
 namespace OroB2B\Bundle\InvoiceBundle\Tests\Functional\Entity;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
 use OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
 
-/**
- * Class InvoiceEntityTest
- */
 class InvoiceEntityTest extends WebTestCase
 {
 

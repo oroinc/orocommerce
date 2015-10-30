@@ -3,7 +3,10 @@
 namespace OroB2B\Bundle\InvoiceBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+
+use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+
 use OroB2B\Bundle\InvoiceBundle\Model\ExtendInvoiceLineItem;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
@@ -29,7 +32,6 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
  */
 class InvoiceLineItem extends ExtendInvoiceLineItem
 {
-
     /**
      * @var integer
      *
@@ -86,9 +88,21 @@ class InvoiceLineItem extends ExtendInvoiceLineItem
     /**
      * @var float
      *
-     * @ORM\Column(name="price", type="money", nullable=true)
+     * @ORM\Column(name="value", type="money", nullable=true)
      */
-    protected $price;
+    protected $value;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="currency", type="string", nullable=true)
+     */
+    protected $currency;
+
+    /**
+     * @var Price|null
+     */
+    protected $price = null;
 
     /**
      * @var Invoice
@@ -233,20 +247,26 @@ class InvoiceLineItem extends ExtendInvoiceLineItem
     }
 
     /**
-     * @return float
+     * @return Price
      */
     public function getPrice()
     {
+        if (is_null($this->price)) {
+            $this->price = Price::create($this->value, $this->currency);
+        }
         return $this->price;
     }
 
     /**
-     * @param float $price
+     * @param Price|null $price
      * @return $this
      */
-    public function setPrice($price)
+    public function setPrice(Price $price = null)
     {
         $this->price = $price;
+        $this->value = is_null($price) ? null : $price->getValue();
+        $this->currency = is_null($price) ? null : $price->getCurrency();
+
         return $this;
     }
 }
