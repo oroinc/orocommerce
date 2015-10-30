@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\ProductBundle\Model;
 
 use Doctrine\ORM\QueryBuilder;
 
-class ProductQueryBuilderModifier
+class ProductVisibilityQueryBuilderModifier
 {
     /**
      * @param QueryBuilder $queryBuilder

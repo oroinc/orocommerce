@@ -72,3 +72,14 @@ services:
 
     orob2b_sale.service.quote_product_offer_matcher:
         class: %orob2b_sale.service.quote_product_offer_matcher.class%
+
+    orob2b_sale.event_listener.product_select_db_query:
+        class: %orob2b_product.event_listener.product_select_db_query.class%
+        arguments:
+            - @oro_config.global
+            - @orob2b_product.model.product_visibility_query_builder_modifier
+        calls:
+            - [setScope, ['sale']]
+            - [setSystemConfigurationPath, ['oro_b2b_sale.product_visibility.value']]
+        tags:
+            - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }

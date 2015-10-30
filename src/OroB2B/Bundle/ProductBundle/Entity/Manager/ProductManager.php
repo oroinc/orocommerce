@@ -12,6 +12,8 @@ use Doctrine\ORM\QueryBuilder;
 
 use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
 
 class ProductManager
 {
@@ -27,19 +29,25 @@ class ProductManager
     /** @var  EventDispatcherInterface */
     protected $eventDispatcher;
 
+    /** @var ProductVisibilityQueryBuilderModifier  */
+    protected $productVisibilityQueryBuilderModifier;
+
     /**
      * @param EventDispatcherInterface $eventDispatcher
      * @param RequestStack $requestStack
      * @param RegistryInterface $registry
+     * @param ProductVisibilityQueryBuilderModifier $productVisibilityQueryBuilderModifier
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
         RequestStack $requestStack,
-        RegistryInterface $registry
+        RegistryInterface $registry,
+        ProductVisibilityQueryBuilderModifier $productVisibilityQueryBuilderModifier
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->requestStack = $requestStack;
         $this->registry = $registry;
+        $this->productVisibilityQueryBuilderModifier = $productVisibilityQueryBuilderModifier;
     }
 
     /**
@@ -85,6 +93,8 @@ class ProductManager
             ProductSelectDBQueryEvent::NAME,
             new ProductSelectDBQueryEvent($queryBuilder, new ParameterBag($dataParameters), $request)
         );
+
+        $this->productVisibilityQueryBuilderModifier->modifyByStatus($queryBuilder, [Product::STATUS_ENABLED]);
 
         return $queryBuilder;
     }
