@@ -38,7 +38,9 @@ class ProductVisibilityQueryBuilderModifier
 
         list($rootAlias) = $queryBuilder->getRootAliases();
 
-        $queryBuilder->andWhere($queryBuilder->expr()->in($rootAlias . '.' . $field, ':values'))
-            ->setParameter('values', $in);
+        $parameterName = uniqid($field);
+
+        $queryBuilder->andWhere($queryBuilder->expr()->in($rootAlias . '.' . $field, ':' . $parameterName))
+            ->setParameter($parameterName, $in);
     }
 }
