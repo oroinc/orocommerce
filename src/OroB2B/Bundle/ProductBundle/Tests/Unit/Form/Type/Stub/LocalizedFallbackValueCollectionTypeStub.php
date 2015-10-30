@@ -31,7 +31,7 @@ class LocalizedFallbackValueCollectionTypeStub extends AbstractType
         ]);
 
         $resolver->setNormalizer('type', function () {
-            return new StubLocalizedFallbackValueType();
+            return new LocalizedFallbackValueTypeStub();
         });
 
         $resolver->setNormalizer('options', function () {

@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class StubLocalizedFallbackValueType extends AbstractType
+class LocalizedFallbackValueTypeStub extends AbstractType
 {
     const NAME = 'stub_localized_fallback_value';
 
