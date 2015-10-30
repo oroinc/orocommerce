@@ -2,16 +2,16 @@
 
 namespace OroB2B\Bundle\ProductBundle\EventListener;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
+use OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 
-use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
-
-class ProductsLimitedByStatusesDatagridEventListener
+class RestrictedProductsDatagridEventListener
 {
     /** @var  RequestStack */
     protected $requestStack;
@@ -19,14 +19,19 @@ class ProductsLimitedByStatusesDatagridEventListener
     /** @var  EventDispatcherInterface */
     protected $eventDispatcher;
 
+    /** @var  ProductManager */
+    protected $productManager;
+
     /**
      * @param RequestStack $requestStack
-     * @param EventDispatcherInterface $eventDispatcher
+     * @param ProductManager $productManager
      */
-    public function __construct(RequestStack $requestStack, EventDispatcherInterface $eventDispatcher)
-    {
+    public function __construct(
+        RequestStack $requestStack,
+        ProductManager $productManager
+    ) {
         $this->requestStack = $requestStack;
-        $this->eventDispatcher = $eventDispatcher;
+        $this->productManager = $productManager;
     }
 
     /**
@@ -36,11 +41,11 @@ class ProductsLimitedByStatusesDatagridEventListener
     {
         /** @var OrmDatasource $dataSource */
         $dataSource = $event->getDatagrid()->getAcceptedDatasource();
-        $qb = $dataSource->getQueryBuilder();
+        $queryBuilder = $dataSource->getQueryBuilder();
         $request = $this->requestStack->getCurrentRequest();
         if (!$request || !$params = $request->get(ProductSelectType::DATA_PARAMETERS)) {
             $params = [];
         }
-        $this->eventDispatcher->dispatch(ProductSelectDBQueryEvent::NAME, new ProductSelectDBQueryEvent($qb, $params));
+        $this->productManager->restrictQueryBuilderByProductVisibility($queryBuilder, $params, $request);
     }
 }
