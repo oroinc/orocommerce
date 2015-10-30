@@ -14,7 +14,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductHolderType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductHolderTypeStub;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 
 class ProductRemovedSelectTypeTest extends FormIntegrationTestCase
@@ -95,7 +95,7 @@ class ProductRemovedSelectTypeTest extends FormIntegrationTestCase
      */
     public function testPreSetData(ProductHolderInterface $productHolder = null, array $expectedData = [])
     {
-        $formParent = $this->factory->create(new StubProductHolderType(), $productHolder);
+        $formParent = $this->factory->create(new ProductHolderTypeStub(), $productHolder);
 
         $form = $this->factory->create($this->formType);
         $form->setParent($formParent);

@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
 
-class StubProductHolderType extends AbstractType
+class ProductHolderTypeStub extends AbstractType
 {
     const NAME = 'orob2b_stub_product_holder';
 
