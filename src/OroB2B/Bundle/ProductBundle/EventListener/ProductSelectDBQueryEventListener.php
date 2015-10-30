@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\EventListener;
 
-use Symfony\Component\HttpFoundation\ParameterBag;
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
@@ -86,17 +84,7 @@ class ProductSelectDBQueryEventListener
             throw new \LogicException('Scope not configured for ProductSelectDBQueryEventListener');
         }
 
-        $dataParameters = $event->getDataParameters();
-
-        // @TODO Will be refactored in scope BB-1443
-        $scope = null;
-        if ($dataParameters instanceof ParameterBag) {
-            $scope = $dataParameters->get('scope');
-        } elseif (is_array($dataParameters) && isset($dataParameters['scope'])) {
-            $scope = $dataParameters['scope'];
-        }
-
-        if ($scope !== $this->scope) {
+        if ($event->getDataParameters()->get('scope') !== $this->scope) {
             return false;
         }
 

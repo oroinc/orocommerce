@@ -2,11 +2,11 @@
 
 namespace OroB2B\Bundle\ProductBundle\Event;
 
-use Doctrine\ORM\QueryBuilder;
-
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
+
+use Doctrine\ORM\QueryBuilder;
 
 class ProductSelectDBQueryEvent extends Event
 {
@@ -15,7 +15,7 @@ class ProductSelectDBQueryEvent extends Event
     /** @var QueryBuilder */
     protected $queryBuilder;
 
-    /** @var array */
+    /** @var ParameterBag */
     protected $dataParameters;
 
     /** @var  Request */
@@ -42,7 +42,7 @@ class ProductSelectDBQueryEvent extends Event
     }
 
     /**
-     * @return array
+     * @return ParameterBag
      */
     public function getDataParameters()
     {
