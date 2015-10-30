@@ -2,18 +2,17 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Symfony\Component\Form\PreloadedExtension;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Oro\Bundle\CurrencyBundle\Model\Price;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Form\Type\OrderLineItemType;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectEntityTypeStub;
 
 class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
 {
@@ -33,12 +32,11 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
      */
     protected function getExtensions()
     {
-        $productSelectType = new EntityType(
+        $productSelectType = new ProductSelectEntityTypeStub(
             [
                 1 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 1, 'id'),
                 2 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 2, 'id'),
-            ],
-            ProductSelectType::NAME
+            ]
         );
 
         return array_merge(

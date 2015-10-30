@@ -2,12 +2,13 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
 
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
 
-class StubProductRemovedSelectType extends AbstractType
+class ProductRemovedSelectTypeStub extends AbstractType
 {
     /**
      * {@inheritdoc}
@@ -39,6 +40,6 @@ class StubProductRemovedSelectType extends AbstractType
      */
     public function getParent()
     {
-        return 'entity';
+        return ProductSelectType::NAME;
     }
 }
