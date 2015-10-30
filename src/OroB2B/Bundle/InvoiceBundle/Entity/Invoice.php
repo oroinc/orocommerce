@@ -46,7 +46,6 @@ use OroB2B\Bundle\InvoiceBundle\Model\ExtendInvoice;
  */
 class Invoice extends ExtendInvoice implements OrganizationAwareInterface
 {
-
     /**
      * @var integer
      *

@@ -2,6 +2,9 @@
 
 namespace OroB2B\Bundle\InvoiceBundle\Migrations\Data\Demo\ORM;
 
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -9,14 +12,9 @@ use Doctrine\ORM\EntityManager;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 use Oro\Bundle\UserBundle\Entity\User;
 
-/**
- * Class LoadInvoiceDemoData
- */
 class LoadInvoiceDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
     use ContainerAwareTrait;
@@ -55,6 +53,7 @@ class LoadInvoiceDemoData extends AbstractFixture implements ContainerAwareInter
 
         while (($data = fgetcsv($handler)) !== false) {
             $row = array_combine($headers, array_values($data));
+            $row['invoiceDate'] = \DateTime::createFromFormat('Y-m-d', $row['invoiceDate'], new \DateTimeZone('UTC'));
 
             $invoice = new Invoice();
 
@@ -65,10 +64,10 @@ class LoadInvoiceDemoData extends AbstractFixture implements ContainerAwareInter
                 ->setAccountUser($account->getUsers()->first())
                 ->setOrganization($account->getOrganization())
                 ->setInvoiceNumber($row['invoiceNumber'])
-                ->setInvoiceDate(\DateTime::createFromFormat('Y-m-d', $row['invoiceDate'], new \DateTimeZone('UTC')))
-                ->setPaymentDueDate(\DateTime::createFromFormat('Y-m-d', $row['invoiceDate'], new \DateTimeZone('UTC')))
-                ->setCreatedAt(\DateTime::createFromFormat('Y-m-d', $row['invoiceDate'], new \DateTimeZone('UTC')))
-                ->setUpdatedAt(\DateTime::createFromFormat('Y-m-d', $row['invoiceDate'], new \DateTimeZone('UTC')))
+                ->setInvoiceDate($row['invoiceDate'])
+                ->setPaymentDueDate($row['invoiceDate'])
+                ->setCreatedAt($row['invoiceDate'])
+                ->setUpdatedAt($row['invoiceDate'])
                 ->setCurrency($row['currency'])
                 ->setPoNumber($row['poNumber']);
 

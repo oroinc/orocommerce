@@ -3,6 +3,13 @@ orob2b_invoice:
     type:         annotation
     prefix:       /invoice
 
-orob2b_invoice_api:
-    resource:     "@OroB2BInvoiceBundle/Controller/Api/Rest/InvoiceController.php"
-    type:         rest
+
+orob2b_invoice_bundle_api:
+    resource:     "@OroB2BInvoiceBundle/Resources/config/oro/routing_api.yml"
+    prefix:       api/rest/{version}/
+    requirements:
+        version:  latest|v1
+        _format:  json
+    defaults:
+        version:  latest
+

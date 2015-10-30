@@ -3,14 +3,12 @@ namespace OroB2B\Bundle\InvoiceBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+
 use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
 use OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 
-/**
- * Class InvoiceLineItemEntityTest
- */
 class InvoiceLineItemEntityTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;

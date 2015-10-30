@@ -2,16 +2,15 @@
 
 namespace OroB2B\Bundle\InvoiceBundle\Controller;
 
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Routing\Annotation\Route;
 
-/**
- * Class InvoiceController
- */
+use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+
+use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
+
 class InvoiceController extends Controller
 {
     /**

@@ -2,9 +2,6 @@
 
 namespace OroB2B\Bundle\InvoiceBundle\Model;
 
-/**
- * Class ExtendInvoiceLineItem
- */
 class ExtendInvoiceLineItem
 {
     /**

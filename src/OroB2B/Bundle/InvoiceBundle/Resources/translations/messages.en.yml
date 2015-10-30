@@ -17,10 +17,10 @@ orob2b:
         widgets:
             invoice_information: Invoice Information
         navigation:
-                    view: 'Invoice #%identifier%'
-                    sections:
-                        general: General
-                        invoice_line_items: Invoice items
+            view: 'Invoice #%identifier%'
+            sections:
+                general: General
+                invoice_line_items: Invoice items
 
 
         invoicelineitem:

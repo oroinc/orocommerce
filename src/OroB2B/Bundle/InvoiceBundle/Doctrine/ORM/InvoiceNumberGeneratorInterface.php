@@ -4,9 +4,6 @@ namespace OroB2B\Bundle\InvoiceBundle\Doctrine\ORM;
 
 use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
 
-/**
- * Interface InvoiceNumberGeneratorInterface
- */
 interface InvoiceNumberGeneratorInterface
 {
     /**

@@ -2,35 +2,24 @@
 
 namespace OroB2B\Bundle\InvoiceBundle\Migrations\Data\Demo\ORM;
 
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
-use Oro\Bundle\CurrencyBundle\Model\Price;
 use OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/**
- * Class LoadInvoiceLineItemDemoData
- */
+use Oro\Bundle\CurrencyBundle\Model\Price;
+
 class LoadInvoiceLineItemDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
-
-    /** @var ContainerInterface */
-    protected $container;
-
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
+    use ContainerAwareTrait;
+    
     /**
      * {@inheritdoc}
      */
@@ -61,7 +50,6 @@ class LoadInvoiceLineItemDemoData extends AbstractFixture implements ContainerAw
         while (($data = fgetcsv($handler)) !== false) {
             $row = array_combine($headers, array_values($data));
             $invoicesData[$row['invoice']][] = $row;
-
         }
 
         foreach ($invoicesData as $invoiceNumber => $invoiceData) {

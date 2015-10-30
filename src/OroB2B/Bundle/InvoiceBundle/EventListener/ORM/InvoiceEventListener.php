@@ -3,12 +3,10 @@
 namespace OroB2B\Bundle\InvoiceBundle\EventListener\ORM;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
+
 use OroB2B\Bundle\InvoiceBundle\Doctrine\ORM\InvoiceNumberGeneratorInterface;
 use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
 
-/**
- * Class InvoiceEventListener
- */
 class InvoiceEventListener
 {
     /**
