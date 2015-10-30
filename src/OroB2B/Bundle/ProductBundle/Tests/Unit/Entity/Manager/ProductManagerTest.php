@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Manager;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -31,12 +33,21 @@ class ProductManagerTest extends \PHPUnit_Framework_TestCase
     /** @var  EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $eventDispatcher;
 
+    /** @var  ProductVisibilityQueryBuilderModifier|\PHPUnit_Framework_MockObject_MockObject */
+    protected $modifier;
+
     public function setUp()
     {
         $this->requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
         $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
         $this->registry = $this->getMock('Symfony\Bridge\Doctrine\RegistryInterface');
-        $this->productManager = new ProductManager($this->eventDispatcher, $this->requestStack, $this->registry);
+        $this->modifier = $this->getMock('OroB2B\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier');
+        $this->productManager = new ProductManager(
+            $this->eventDispatcher,
+            $this->requestStack,
+            $this->registry,
+            $this->modifier
+        );
         $this->productManager->setDataClass(self::DATA_CLASS);
     }
 
@@ -61,7 +72,7 @@ class ProductManagerTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'withoutRequestParam' => ['request' => null],
-            'withRequestParam' => ['request' => new Request()],
+            'withRequestParam'    => ['request' => new Request()],
         ];
     }
 
@@ -104,5 +115,7 @@ class ProductManagerTest extends \PHPUnit_Framework_TestCase
             ProductSelectDBQueryEvent::NAME,
             new ProductSelectDBQueryEvent($queryBuilder, new ParameterBag($dataParameters), $request)
         );
+        $this->modifier->expects($this->once())->method('modifyByStatus')
+            ->with($queryBuilder, [Product::STATUS_ENABLED]);
     }
 }

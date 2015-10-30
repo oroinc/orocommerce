@@ -212,5 +212,6 @@ services:
             - @event_dispatcher
             - @request_stack
             - @doctrine
+            - @orob2b_product.model.product_visibility_query_builder_modifier
         calls:
             - [setDataClass, [%orob2b_product.product.class%]]
