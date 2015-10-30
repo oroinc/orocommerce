@@ -2,13 +2,13 @@
 
 namespace OroB2B\Bundle\ProductBundle\Entity\Manager;
 
-use Doctrine\ORM\QueryBuilder;
-
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
+
+use Doctrine\ORM\QueryBuilder;
 
 use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;

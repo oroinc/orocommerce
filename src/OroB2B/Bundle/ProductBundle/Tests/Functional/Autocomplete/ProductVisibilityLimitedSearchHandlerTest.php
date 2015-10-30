@@ -55,7 +55,6 @@ class ProductVisibilityLimitedSearchHandlerTest extends WebTestCase
             ->with(ProductSelectType::DATA_PARAMETERS)
             ->will($this->returnValue($visibilityData));
 
-        /** @var RequestStack $requestStack */
         $requestStack = $this->getRequestStack($request);
 
         $searchHandler = new ProductVisibilityLimitedSearchHandler(

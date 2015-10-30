@@ -5,11 +5,11 @@ namespace OroB2B\Bundle\ProductBundle\EventListener;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
-
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
+
+use OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
 class RestrictedProductsDatagridEventListener
 {

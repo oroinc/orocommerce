@@ -34,7 +34,7 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
         ProductManager $productManager
     ) {
         $this->requestStack = $requestStack;
-        $this->productManager=$productManager;
+        $this->productManager = $productManager;
         parent::__construct($entityName, $properties);
     }
 

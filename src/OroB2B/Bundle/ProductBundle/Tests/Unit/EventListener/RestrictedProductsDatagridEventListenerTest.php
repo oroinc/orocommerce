@@ -44,6 +44,9 @@ class RestrictedProductsDatagridEventListenerTest extends \PHPUnit_Framework_Tes
         $listener->onBuildAfter($event);
     }
 
+    /**
+     * @return array
+     */
     public function testOnBuildAfterDataProvider()
     {
         $emptyParamsRequest = new Request();
