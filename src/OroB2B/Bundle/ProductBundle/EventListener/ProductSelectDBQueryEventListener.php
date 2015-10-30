@@ -34,18 +34,28 @@ class ProductSelectDBQueryEventListener
     /**
      * @param ConfigManager $configManager
      * @param ProductVisibilityQueryBuilderModifier $modifier
-     * @param string $scope
-     * @param string $systemConfigurationPath
      */
-    public function __construct(
-        ConfigManager $configManager,
-        ProductVisibilityQueryBuilderModifier $modifier,
-        $scope,
-        $systemConfigurationPath
-    ) {
+    public function __construct(ConfigManager $configManager, ProductVisibilityQueryBuilderModifier $modifier)
+    {
         $this->configManager = $configManager;
         $this->modifier = $modifier;
+    }
+
+    /**
+     * @param string $scope
+     * @return $this
+     */
+    public function setScope($scope)
+    {
         $this->scope = $scope;
+    }
+
+    /**
+     * @param string $systemConfigurationPath
+     * @return $this
+     */
+    public function setSystemConfigurationPath($systemConfigurationPath)
+    {
         $this->systemConfigurationPath = $systemConfigurationPath;
     }
 
@@ -54,6 +64,28 @@ class ProductSelectDBQueryEventListener
      */
     public function onDBQuery(ProductSelectDBQueryEvent $event)
     {
+        if (!$this->isConditionsAcceptable($event)) {
+            return;
+        }
+
+        $inventoryStatuses = $this->configManager->get($this->systemConfigurationPath);
+        $this->modifier->modifyByInventoryStatus($event->getQueryBuilder(), $inventoryStatuses);
+    }
+
+    /**
+     * @param ProductSelectDBQueryEvent $event
+     * @return bool
+     */
+    protected function isConditionsAcceptable(ProductSelectDBQueryEvent $event)
+    {
+        if (!$this->systemConfigurationPath) {
+            throw new \LogicException('SystemConfigurationPath not configured for ProductSelectDBQueryEventListener');
+        }
+
+        if (!$this->scope) {
+            throw new \LogicException('Scope not configured for ProductSelectDBQueryEventListener');
+        }
+
         $dataParameters = $event->getDataParameters();
 
         // @TODO Will be refactored in scope BB-1443
@@ -65,10 +97,9 @@ class ProductSelectDBQueryEventListener
         }
 
         if ($scope !== $this->scope) {
-            return;
+            return false;
         }
 
-        $inventoryStatuses = $this->configManager->get($this->systemConfigurationPath);
-        $this->modifier->modifyByInventoryStatus($event->getQueryBuilder(), $inventoryStatuses);
+        return true;
     }
 }
