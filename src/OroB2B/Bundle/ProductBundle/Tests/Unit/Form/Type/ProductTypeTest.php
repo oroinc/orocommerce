@@ -27,7 +27,7 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductVariantLinksType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductStatusType;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductCustomFieldsChoiceTypeStub;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\EnumSelectTypeStub;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct;
@@ -96,7 +96,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     OroCollectionType::NAME => new OroCollectionType(),
                     ProductUnitPrecisionType::NAME => $productUnitPrecision,
                     ProductUnitPrecisionCollectionType::NAME => new ProductUnitPrecisionCollectionType(),
-                    ProductUnitSelectionType::NAME => new StubProductUnitSelectionType(
+                    ProductUnitSelectionType::NAME => new ProductUnitSelectionTypeStub(
                         [
                             'item' => (new ProductUnit())->setCode('item'),
                             'kg' => (new ProductUnit())->setCode('kg')

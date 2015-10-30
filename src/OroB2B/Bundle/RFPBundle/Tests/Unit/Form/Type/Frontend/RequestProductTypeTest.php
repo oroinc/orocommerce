@@ -14,7 +14,7 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductRemovedSelectTypeStub;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType as BaseRequestProductType;
 use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType;
@@ -168,7 +168,7 @@ class RequestProductTypeTest extends AbstractTest
                 [
                     CollectionType::NAME                    => new CollectionType(),
                     RequestProductItemCollectionType::NAME  => new RequestProductItemCollectionType(),
-                    ProductUnitSelectionType::NAME          => new StubProductUnitSelectionType(),
+                    ProductUnitSelectionType::NAME          => new ProductUnitSelectionTypeStub(),
                     ProductRemovedSelectType::NAME          => new ProductRemovedSelectTypeStub(),
                     $priceType->getName()                   => $priceType,
                     $entityType->getName()                  => $entityType,
