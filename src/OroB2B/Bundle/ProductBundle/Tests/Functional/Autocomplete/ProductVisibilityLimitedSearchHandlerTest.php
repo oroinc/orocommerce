@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Autocomplete;
+namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Autocomplete;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
+use OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler;
 
 /**
@@ -27,14 +27,14 @@ class ProductVisibilityLimitedSearchHandlerTest extends WebTestCase
     /** @var  Request|\PHPUnit_Framework_MockObject_MockObject */
     protected $request;
 
-    /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject $eventDispatcher */
-    protected $eventDispatcher;
+    /** @var ProductManager|\PHPUnit_Framework_MockObject_MockObject */
+    protected $productManager;
 
     protected function setUp()
     {
         $this->initClient();
 
-        $this->eventDispatcher = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')
+        $this->productManager = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager')
             ->disableOriginalConstructor()
             ->getMock();
     }
@@ -52,29 +52,25 @@ class ProductVisibilityLimitedSearchHandlerTest extends WebTestCase
 
         $request->expects($this->any())
             ->method('get')
-            ->with('visibility_data')
+            ->with(ProductSelectType::DATA_PARAMETERS)
             ->will($this->returnValue($visibilityData));
 
-        /** @var RequestStack $requestStack */
         $requestStack = $this->getRequestStack($request);
 
         $searchHandler = new ProductVisibilityLimitedSearchHandler(
             self::TEST_ENTITY_CLASS,
             $this->testProperties,
             $requestStack,
-            $this->eventDispatcher
+            $this->productManager
         );
 
         $searchHandler->setAclHelper($this->getContainer()->get('oro_security.acl_helper'));
 
-        if (!empty($visibilityData)) {
-            $this->eventDispatcher->expects($this->once())
-                ->method('dispatch')
-                ->with(ProductSelectDBQueryEvent::NAME);
-        } else {
-            $this->eventDispatcher->expects($this->never())
-                ->method('dispatch');
-        }
+        $this->productManager->expects($this->once())->method('restrictQueryBuilderByProductVisibility')->with(
+            $this->isInstanceOf('Doctrine\ORM\QueryBuilder'),
+            $visibilityData,
+            $request
+        );
 
         $searchHandler->initDoctrinePropertiesByManagerRegistry($this->getContainer()->get('doctrine'));
         $searchHandler->search('test', 1, 10);
@@ -88,13 +84,12 @@ class ProductVisibilityLimitedSearchHandlerTest extends WebTestCase
         return [
             'with visibility data' => [
                 'visibilityData' => [
-                    'scope' => 'rfp'
-                ]
+                    'scope' => 'rfp',
+                ],
             ],
             'without visibility data' => [
-                'visibilityData' => []
+                'visibilityData' => [],
             ],
-
         ];
     }
 
@@ -110,7 +105,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends WebTestCase
             self::TEST_ENTITY_CLASS,
             $this->testProperties,
             $requestStack,
-            $this->eventDispatcher
+            $this->productManager
         );
         $searchHandler->search('test', 1, 10);
     }

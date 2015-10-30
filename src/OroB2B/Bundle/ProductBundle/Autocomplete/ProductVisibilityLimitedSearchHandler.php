@@ -3,39 +3,38 @@
 namespace OroB2B\Bundle\ProductBundle\Autocomplete;
 
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\FormBundle\Autocomplete\SearchHandler;
 
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
 
 class ProductVisibilityLimitedSearchHandler extends SearchHandler
 {
     /** @var RequestStack */
     protected $requestStack;
 
-    /** @var EventDispatcherInterface */
-    protected $eventDispatcher;
-
     /** @var  ProductRepository */
     protected $entityRepository;
+
+    /** @var  ProductManager */
+    protected $productManager;
 
     /**
      * @param string $entityName
      * @param array $properties
      * @param RequestStack $requestStack
-     * @param EventDispatcherInterface $eventDispatcher
+     * @param ProductManager $productManager
      */
     public function __construct(
         $entityName,
         array $properties,
         RequestStack $requestStack,
-        EventDispatcherInterface $eventDispatcher
+        ProductManager $productManager
     ) {
         $this->requestStack = $requestStack;
-        $this->eventDispatcher = $eventDispatcher;
-
+        $this->productManager = $productManager;
         parent::__construct($entityName, $properties);
     }
 
@@ -57,10 +56,10 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
         $request = $this->requestStack->getCurrentRequest();
         $queryBuilder = $this->entityRepository->getSearchQueryBuilder($search, $firstResult, $maxResults);
 
-        if ($request && $request->get('visibility_data')) {
-            $event = new ProductSelectDBQueryEvent($queryBuilder, $request->get('visibility_data'));
-            $this->eventDispatcher->dispatch(ProductSelectDBQueryEvent::NAME, $event);
+        if (!$request || !$params = $request->get(ProductSelectType::DATA_PARAMETERS)) {
+            $params = [];
         }
+        $this->productManager->restrictQueryBuilderByProductVisibility($queryBuilder, $params, $request);
 
         $query = $this->aclHelper->apply($queryBuilder);
 
