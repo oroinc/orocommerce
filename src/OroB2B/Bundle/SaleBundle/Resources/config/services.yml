@@ -79,7 +79,7 @@ services:
             - @oro_config.global
             - @orob2b_product.model.product_visibility_query_builder_modifier
         calls:
-            - [setScope, ['sale']]
+            - [setScope, ['quote']]
             - [setSystemConfigurationPath, ['oro_b2b_sale.product_visibility.value']]
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
