@@ -96,7 +96,7 @@ class CategoryControllerTest extends WebTestCase
      */
     public function testLocalizedValuesCategory($id)
     {
-        $this->assertLocalizedValues($id);
+        $this->assertUpdateWithLocalizedValues($id);
     }
 
     /**
@@ -107,7 +107,7 @@ class CategoryControllerTest extends WebTestCase
      */
     public function testLocalizedValuesSubCategory($id)
     {
-        $this->assertLocalizedValues($id, self::DEFAULT_SUBCATEGORY_TITLE);
+        $this->assertUpdateWithLocalizedValues($id, self::DEFAULT_SUBCATEGORY_TITLE);
     }
 
     /**
@@ -335,7 +335,7 @@ class CategoryControllerTest extends WebTestCase
 
         //Verified that values correspond with the new ones that has been set after submit
         $this->assertFormDefaultLocalized($formValues, $newTitle, $newShortDescription, $newLongDescription);
-        $this->assertLocaleValues($formValues, $newTitle, $newShortDescription, $newLongDescription);
+        $this->assertLocalizedValues($formValues, $newTitle, $newShortDescription, $newLongDescription);
         $this->assertNull($this->getProductCategoryByProduct($testProductOne));
 
         if ($title === self::DEFAULT_CATEGORY_TITLE) {
@@ -377,7 +377,7 @@ class CategoryControllerTest extends WebTestCase
      * @param string $shortDescription
      * @param string $longDescription
      */
-    protected function assertLocalizedValues(
+    protected function assertUpdateWithLocalizedValues(
         $id,
         $title = self::DEFAULT_CATEGORY_TITLE,
         $shortDescription = self::DEFAULT_CATEGORY_SHORT_DESCRIPTION,
@@ -460,7 +460,7 @@ class CategoryControllerTest extends WebTestCase
      * @param string $shortDescription
      * @param string $longDescription
      */
-    protected function assertLocaleValues($formValues, $title, $shortDescription, $longDescription)
+    protected function assertLocalizedValues($formValues, $title, $shortDescription, $longDescription)
     {
         foreach ($this->locales as $locale) {
             $this->assertEquals(
