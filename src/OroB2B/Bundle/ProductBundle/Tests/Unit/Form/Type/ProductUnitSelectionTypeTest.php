@@ -21,7 +21,7 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
 use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitHolderType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitHolderTypeStub;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
 
 /**
@@ -146,7 +146,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
             )
         );
 
-        $formParent = $this->factory->create(new StubProductUnitHolderType(), $productUnitHolder);
+        $formParent = $this->factory->create(new ProductUnitHolderTypeStub(), $productUnitHolder);
         $form->setParent($formParent);
         $formConfig = $form->getConfig();
         foreach ($expectedOptions as $key => $value) {
@@ -239,7 +239,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create($this->formType, null, $inputData['options']);
 
         if ($withParent) {
-            $formParent = $this->factory->create(new StubProductUnitHolderType(), $inputData['productUnitHolder']);
+            $formParent = $this->factory->create(new ProductUnitHolderTypeStub(), $inputData['productUnitHolder']);
         } else {
             $formParent = null;
         }
