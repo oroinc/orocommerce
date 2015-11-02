@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Autocomplete;
+namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Autocomplete;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -14,7 +14,7 @@ use OroB2B\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandl
 /**
  * @dbIsolation
  */
-class ProductVisibilityLimitedSearchHandlerTest extends WebTestCase
+abstract class AbstractProductVisibilityLimitedSearchHandlerTest extends WebTestCase
 {
     const TEST_ENTITY_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
 
@@ -24,6 +24,12 @@ class ProductVisibilityLimitedSearchHandlerTest extends WebTestCase
     /** @var ProductManager|\PHPUnit_Framework_MockObject_MockObject $productManager */
     protected $productManager;
 
+    /** @var string  */
+    protected $scope = '';
+
+    /** @var string  */
+    protected $configPath = '';
+
     /** @var array  */
     protected $defaultConfigValue = ['in_stock', 'out_of_stock'];
 
@@ -31,7 +37,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends WebTestCase
     {
         $this->initClient();
 
-        $this->productManager = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')
+        $this->productManager = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -49,11 +55,10 @@ class ProductVisibilityLimitedSearchHandlerTest extends WebTestCase
 
     /**
      * @dataProvider searchDataProvider
-     * @param array $dataParameters
      * @param array $availableInventoryStatuses
      * @param array $expectedProducts
      */
-    public function testSearch(array $dataParameters, array $availableInventoryStatuses, array $expectedProducts)
+    public function testSearch(array $availableInventoryStatuses, array $expectedProducts)
     {
         $this->prepareConfig($availableInventoryStatuses);
 
@@ -62,7 +67,9 @@ class ProductVisibilityLimitedSearchHandlerTest extends WebTestCase
             $this->getUrl(
                 'oro_form_autocomplete_search',
                 [
-                    'data_parameters' => $dataParameters,
+                    'data_parameters' => [
+                        'scope' => $this->scope
+                    ],
                     'name' => 'orob2b_product_visibility_limited',
                     'page' => 1,
                     'per_page' => 10,
@@ -74,7 +81,11 @@ class ProductVisibilityLimitedSearchHandlerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertJsonResponseStatusCodeEquals($result, 200);
 
-        $this->assertEquals($expectedProducts, $this->getProductsFromResponse($result));
+        $actualProducts = $this->getProductsFromResponse($result);
+
+        foreach ($actualProducts as $product) {
+            $this->assertContains($product, $expectedProducts);
+        }
     }
 
     /**
@@ -84,53 +95,35 @@ class ProductVisibilityLimitedSearchHandlerTest extends WebTestCase
     {
         return [
             [
-                'dataParameters' => [
-                    'scope' => 'order'
-                ],
                 'availableInventoryStatuses' => ['in_stock', 'out_of_stock' ],
                 'expectedProducts' => [
                     'test_product_01',
-                    'test_product_02',
                     'test_product_03',
                 ]
             ],
             [
-                'dataParameters' => [
-                    'scope' => 'order'
-                ],
                 'availableInventoryStatuses' => ['in_stock'],
                 'expectedProducts' => [
-                    'test_product_01',
-                    'test_product_02',
+                    'test_product_01'
                 ]
             ],
             [
-                'dataParameters' => [
-                    'scope' => 'order'
-                ],
                 'availableInventoryStatuses' => ['out_of_stock'],
                 'expectedProducts' => [
                     'test_product_03',
                 ]
             ],
             [
-                'dataParameters' => [
-                    'scope' => 'order'
-                ],
                 'availableInventoryStatuses' => ['discontinued'],
                 'expectedProducts' => [
                     'test_product_04',
                 ]
             ],
             [
-                'dataParameters' => [
-                    'scope' => 'order'
-                ],
                 'availableInventoryStatuses' => ['in_stock', 'discontinued'],
                 'expectedProducts' => [
                     'test_product_01',
-                    'test_product_02',
-                    'test_product_04',
+                    'test_product_04'
                 ]
             ],
         ];
@@ -172,7 +165,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends WebTestCase
     protected function prepareConfig(array $availableInventoryStatuses)
     {
         $configManager = $this->getContainer()->get('oro_config.global');
-        $configManager->set('oro_b2b_order.product_visibility.value', $availableInventoryStatuses);
+        $configManager->set($this->configPath, $availableInventoryStatuses);
 
         $configManager->flush();
     }
