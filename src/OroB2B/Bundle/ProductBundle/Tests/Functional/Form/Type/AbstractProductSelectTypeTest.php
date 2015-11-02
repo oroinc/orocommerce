@@ -94,7 +94,6 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
             $this->getUrl(
                 'oro_datagrid_index',
                 ['gridName' => 'products-select-grid']
-
             ),
             [
                 ProductSelectType::DATA_PARAMETERS => [
@@ -211,8 +210,8 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
     }
 
     /** @return string */
-    public abstract function getConfigPath();
+    abstract public function getConfigPath();
 
     /** @return string */
-    public abstract function getScope();
+    abstract public function getScope();
 }
