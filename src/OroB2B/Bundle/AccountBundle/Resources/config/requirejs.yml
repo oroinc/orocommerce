@@ -11,5 +11,6 @@ config:
         'oro/select2-autocomplete-accountuser-component': 'bundles/orob2baccount/js/app/components/select2-autocomplete-accountuser-component.js'
         'oro/select2-autocomplete-account-parent-component': 'bundles/orob2baccount/js/app/components/select2-autocomplete-account-parent-component.js'
         'orob2baccount/js/app/modules/views-module': 'bundles/orob2baccount/js/app/modules/views-module.js'
+        'orob2baccount/js/app/views/account-role-view': 'bundles/orob2baccount/js/app/views/account-role-view.js'
     appmodules:
         - orob2baccount/js/app/modules/views-module

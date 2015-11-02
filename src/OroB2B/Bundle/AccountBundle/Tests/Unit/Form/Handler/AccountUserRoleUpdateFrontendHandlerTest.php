@@ -160,34 +160,11 @@ class AccountUserRoleUpdateFrontendHandlerTest extends AbstractAccountUserRoleUp
 
         $this->ownershipConfigProvider->expects($this->exactly(3))->method('hasConfig')->willReturn(true);
 
-        $privilegeForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $privilegesForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $privilegesForm->expects($this->any())
+            ->method('setData');
         $form->expects($this->any())->method('get')
-            ->with($this->logicalOr($this->equalTo('action'), $this->equalTo('entity')))
-            ->willReturn($privilegeForm);
-
-        $privilegeForm->expects($this->exactly(2))->method('setData')
-            ->withConsecutive(
-                [
-                    $this->callback(
-                        function (ArrayCollection $privileges) use ($existingPrivileges) {
-                            $expected = [$existingPrivileges['valid'], $existingPrivileges['root']];
-                            $this->assertSameSize($expected, $privileges);
-
-                            return $privileges->getValues() === $expected;
-                        }
-                    )
-                ],
-                [
-                    $this->callback(
-                        function (ArrayCollection $privileges) use ($existingPrivileges) {
-                            $expected = [$existingPrivileges['action']];
-                            $this->assertSameSize($expected, $privileges);
-
-                            return $privileges->getValues() === $expected;
-                        }
-                    )
-                ]
-            );
+            ->willReturn($privilegesForm);
 
         $metadata = $this->getMock('Oro\Bundle\SecurityBundle\Owner\Metadata\OwnershipMetadataInterface');
         $metadata->expects($this->exactly(2))->method('hasOwner')->willReturnOnConsecutiveCalls(true, false);
