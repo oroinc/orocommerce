@@ -11,8 +11,9 @@ use Oro\Bundle\FormBundle\Form\Type\OroAutocompleteType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductRowType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductRowType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductAutocompleteType;
 
 class ProductRowTypeTest extends FormIntegrationTestCase
 {
@@ -83,8 +84,7 @@ class ProductRowTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    ProductAutocompleteType::NAME => new ProductAutocompleteType(),
-                    OroAutocompleteType::NAME => new OroAutocompleteType(),
+                    ProductAutocompleteType::NAME => new StubProductAutocompleteType()
                 ],
                 []
             ),
