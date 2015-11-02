@@ -977,7 +977,8 @@ datagrid:
                 acl_resource:  orob2b_account_frontend_account_user_delete
         action_configuration: [@orob2b_account.datagrid.action_permission_provider, "getUserPermissions"]
 
-    audit-grid:
+    b2b-audit-grid:
+        extends: base-audit-grid
         source:
             query:
                 select:
@@ -1005,11 +1006,27 @@ datagrid:
                             alias: b2b_a
                             conditionType: WITH
                             condition: b2b_a.id = aa.id
+                        user:
+                            join: a.user
+                            alias: u
                         b2b_user:
                             join: b2b_a.accountUser
                             alias: b2b_u
+        columns:
+            author:
+                label: oro.dataaudit.datagrid.author
+        sorters:
+            columns:
+                author:
+                    data_name: author
+        filters:
+            columns:
+                author:
+                    type: string
+                    data_name: author
 
-    audit-history-grid:
+    b2b-audit-history-grid:
+        extends: base-audit-history-grid
         source:
             query:
                 select:
@@ -1037,6 +1054,18 @@ datagrid:
                             alias: b2b_a
                             conditionType: WITH
                             condition: b2b_a.id = a.id
+                        user:
+                            join: a1.user
+                            alias: u
                         b2b_user:
                             join: b2b_a.accountUser
                             alias: b2b_u
+        columns:
+            author:
+                label: oro.dataaudit.datagrid.author
+                type: field
+                frontend_type: string
+        sorters:
+            columns:
+                author:
+                    data_name: author
