@@ -6,6 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
@@ -22,10 +23,26 @@ class LoadProductData extends AbstractFixture
      * @var array
      */
     protected $products = [
-        ['productCode' => self::TEST_PRODUCT_01],
-        ['productCode' => self::TEST_PRODUCT_02],
-        ['productCode' => self::TEST_PRODUCT_03],
-        ['productCode' => self::TEST_PRODUCT_04],
+        [
+            'productCode' => self::TEST_PRODUCT_01,
+            'inventoryStatus' =>  Product::INVENTORY_STATUS_IN_STOCK,
+            'status' => Product::STATUS_ENABLED
+        ],
+        [
+            'productCode' => self::TEST_PRODUCT_02,
+            'inventoryStatus' =>  Product::INVENTORY_STATUS_IN_STOCK,
+            'status' => Product::STATUS_DISABLED
+        ],
+        [
+            'productCode' => self::TEST_PRODUCT_03,
+            'inventoryStatus' =>  Product::INVENTORY_STATUS_OUT_OF_STOCK,
+            'status' => Product::STATUS_ENABLED
+        ],
+        [
+            'productCode' => self::TEST_PRODUCT_04,
+            'inventoryStatus' =>  Product::INVENTORY_STATUS_DISCONTINUED,
+            'status' => Product::STATUS_ENABLED
+        ],
     ];
 
     /**
@@ -38,6 +55,14 @@ class LoadProductData extends AbstractFixture
         $businessUnit = $user->getOwner();
         $organization = $user->getOrganization();
 
+        $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
+        $enumInventoryStatuses = $manager->getRepository($inventoryStatusClassName)->findAll();
+
+        $inventoryStatuses = [];
+        foreach ($enumInventoryStatuses as $inventoryStatus) {
+            $inventoryStatuses[$inventoryStatus->getId()] = $inventoryStatus;
+        }
+
         foreach ($this->products as $item) {
             $product = new Product();
             $product->setOwner($businessUnit)
@@ -45,6 +70,8 @@ class LoadProductData extends AbstractFixture
                 ->setSku($item['productCode']);
             $name = new LocalizedFallbackValue();
             $product->addName($name);
+            $product->setInventoryStatus($inventoryStatuses[$item['inventoryStatus']]);
+            $product->setStatus($item['status']);
             $name->setString($item['productCode']);
             $manager->persist($product);
             $this->addReference($item['productCode'], $product);

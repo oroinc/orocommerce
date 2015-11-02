@@ -2,32 +2,35 @@
 
 namespace OroB2B\Bundle\ProductBundle\Event;
 
-use Doctrine\ORM\QueryBuilder;
-
 use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\Request;
+
+use Doctrine\ORM\QueryBuilder;
 
 class ProductSelectDBQueryEvent extends Event
 {
     const NAME = 'orob2b_product.product_select.db.query';
 
-    /**
-     * @var QueryBuilder
-     */
+    /** @var QueryBuilder */
     protected $queryBuilder;
 
-    /**
-     * @var array
-     */
+    /** @var ParameterBag */
     protected $dataParameters;
+
+    /** @var  Request */
+    protected $request;
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @param array $dataParameters
+     * @param ParameterBag $dataParameters
+     * @param Request $request
      */
-    public function __construct(QueryBuilder $queryBuilder, array $dataParameters)
+    public function __construct(QueryBuilder $queryBuilder, ParameterBag $dataParameters, Request $request = null)
     {
         $this->queryBuilder = $queryBuilder;
         $this->dataParameters = $dataParameters;
+        $this->request = $request;
     }
 
     /**
@@ -39,10 +42,26 @@ class ProductSelectDBQueryEvent extends Event
     }
 
     /**
-     * @return array
+     * @return ParameterBag
      */
     public function getDataParameters()
     {
         return $this->dataParameters;
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     */
+    public function setQueryBuilder($queryBuilder)
+    {
+        $this->queryBuilder = $queryBuilder;
+    }
+
+    /**
+     * @return Request
+     */
+    public function getRequest()
+    {
+        return $this->request;
     }
 }

@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
 
-class StubQuantityParentType extends AbstractType
+class QuantityParentTypeStub extends AbstractType
 {
     const NAME = 'stub_quantity_parent_type';
 

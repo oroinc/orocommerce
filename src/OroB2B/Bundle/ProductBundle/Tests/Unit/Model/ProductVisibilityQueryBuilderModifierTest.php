@@ -4,12 +4,12 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Model;
 
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr;
-use OroB2B\Bundle\ProductBundle\Model\ProductQueryBuilderModifier;
+use OroB2B\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
 
-class ProductQueryBuilderModifierTest extends \PHPUnit_Framework_TestCase
+class ProductVisibilityQueryBuilderModifierTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ProductQueryBuilderModifier
+     * @var ProductVisibilityQueryBuilderModifier
      */
     protected $productQueryBuilderModifier;
 
@@ -18,7 +18,7 @@ class ProductQueryBuilderModifierTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->productQueryBuilderModifier = new ProductQueryBuilderModifier();
+        $this->productQueryBuilderModifier = new ProductVisibilityQueryBuilderModifier();
     }
 
     /**
@@ -41,8 +41,8 @@ class ProductQueryBuilderModifierTest extends \PHPUnit_Framework_TestCase
 
         $this->productQueryBuilderModifier->$method($queryBuilder, $params);
 
-        $this->assertEquals(
-            sprintf('SELECT FROM TestEntity e WHERE e.%s IN(:values)', $field),
+        $this->assertRegExp(
+            sprintf('/^SELECT FROM TestEntity e WHERE e\.%s IN\(:%s[a-z0-9]*\)$/', $field, $field),
             $queryBuilder->getDQL()
         );
         $this->assertCount(1, $queryBuilder->getParameters());
