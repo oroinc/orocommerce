@@ -20,6 +20,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class OroB2BAccountBundleInstaller implements
     Installation,
@@ -46,10 +47,17 @@ class OroB2BAccountBundleInstaller implements
     const ORO_CALENDAR_EVENT = 'oro_calendar_event';
     const ORO_B2B_ACCOUNT_USER_ADDRESS_TABLE_NAME = 'orob2b_account_user_address';
     const ORO_B2B_ACC_USR_ADR_TO_ADR_TYPE_TABLE_NAME = 'orob2b_acc_usr_adr_to_adr_type';
+
     const ORO_B2B_CATEGORY_VISIBILITY_TABLE_NAME = 'orob2b_category_visibility';
     const ORO_B2B_ACCOUNT_CATEGORY_VISIBILITY_TABLE_NAME = 'orob2b_acc_category_visibility';
     const ORO_B2B_ACCOUNT_GROUP_CATEGORY_VISIBILITY_TABLE_NAME = 'orob2b_acc_grp_ctgr_visibility';
     const ORO_B2B_CATEGORY_TABLE_NAME = 'orob2b_catalog_category';
+
+    const ORO_B2B_PRODUCT_VISIBILITY_TABLE_NAME = 'orob2b_product_visibility';
+    const ORO_B2B_ACCOUNT_PRODUCT_VISIBILITY_TABLE_NAME = 'orob2b_acc_product_visibility';
+    const ORO_B2B_ACCOUNT_GROUP_PRODUCT_VISIBILITY_TABLE_NAME = 'orob2b_acc_grp_prod_visibility';
+    const ORO_B2B_PRODUCT_TABLE_NAME = 'orob2b_product';
+
 
     /** @var ExtendExtension */
     protected $extendExtension;
@@ -98,7 +106,7 @@ class OroB2BAccountBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_2';
+        return 'v1_1';
     }
 
     /**
@@ -136,9 +144,14 @@ class OroB2BAccountBundleInstaller implements
         $this->createOroB2BAccountUserSdbarStTable($schema);
         $this->createOroB2BAccountUserSdbarWdgTable($schema);
         $this->createOroB2BAccNavigationPagestateTable($schema);
+
         $this->createOroB2BCategoryVisibilityTable($schema);
         $this->createOroB2BAccountCategoryVisibilityTable($schema);
         $this->createOroB2BAccountGroupCategoryVisibilityTable($schema);
+
+        $this->createOroB2BProductVisibilityTable($schema);
+        $this->createOroB2BAccountProductVisibilityTable($schema);
+        $this->createOroB2BAccountGroupProductVisibilityTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroB2BAccountUserForeignKeys($schema);
@@ -159,9 +172,14 @@ class OroB2BAccountBundleInstaller implements
         $this->addOroB2BAccountUserSdbarStForeignKeys($schema);
         $this->addOroB2BAccountUserSdbarWdgForeignKeys($schema);
         $this->addOroB2BAccNavigationPagestateForeignKeys($schema);
+
         $this->addOroB2BCategoryVisibilityForeignKeys($schema);
         $this->addOroB2BAccountCategoryVisibilityForeignKeys($schema);
         $this->addOroB2BAccountGroupCategoryVisibilityForeignKeys($schema);
+
+        $this->addOroB2BProductVisibilityForeignKeys($schema);
+        $this->addOroB2BAccountProductVisibilityForeignKeys($schema);
+        $this->addOroB2BAccountGroupProductVisibilityForeignKeys($schema);
     }
 
     /**
@@ -1084,6 +1102,83 @@ class OroB2BAccountBundleInstaller implements
     }
 
     /**
+     * Create orob2b_acc_category_visibility table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BAccountCategoryVisibilityTable(Schema $schema)
+    {
+        $table = $schema->createTable(self::ORO_B2B_ACCOUNT_CATEGORY_VISIBILITY_TABLE_NAME);
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('category_id', 'integer', ['notnull' => false]);
+        $table->addColumn('account_id', 'integer', ['notnull' => false]);
+        $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
+        $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Create orob2b_acc_grp_ctgr_visibility table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BAccountGroupCategoryVisibilityTable(Schema $schema)
+    {
+        $table = $schema->createTable(self::ORO_B2B_ACCOUNT_GROUP_CATEGORY_VISIBILITY_TABLE_NAME);
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('category_id', 'integer', ['notnull' => false]);
+        $table->addColumn('account_group_id', 'integer', ['notnull' => false]);
+        $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
+        $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Create orob2b_product_visibility table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BProductVisibilityTable(Schema $schema)
+    {
+        $table = $schema->createTable(self::ORO_B2B_PRODUCT_VISIBILITY_TABLE_NAME);
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('product_id', 'integer', ['notnull' => false]);
+        $table->addColumn('website_id', 'integer', ['notnull' => false]);
+        $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
+        $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Create orob2b_acc_product_visibility table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BAccountProductVisibilityTable(Schema $schema)
+    {
+        $table = $schema->createTable(self::ORO_B2B_ACCOUNT_PRODUCT_VISIBILITY_TABLE_NAME);
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('product_id', 'integer', ['notnull' => false]);
+        $table->addColumn('website_id', 'integer', ['notnull' => false]);
+        $table->addColumn('account_id', 'integer', ['notnull' => false]);
+        $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
+        $table->setPrimaryKey(['id']);
+    }
+
+    /**
+     * Create orob2b_acc_grp_prod_visibility table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BAccountGroupProductVisibilityTable(Schema $schema)
+    {
+        $table = $schema->createTable(self::ORO_B2B_ACCOUNT_GROUP_PRODUCT_VISIBILITY_TABLE_NAME);
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('product_id', 'integer', ['notnull' => false]);
+        $table->addColumn('website_id', 'integer', ['notnull' => false]);
+        $table->addColumn('account_group_id', 'integer', ['notnull' => false]);
+        $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
+        $table->setPrimaryKey(['id']);
+    }
+
+    /**
      * Add orob2b_category_visibility foreign keys.
      *
      * @param Schema $schema
@@ -1097,21 +1192,6 @@ class OroB2BAccountBundleInstaller implements
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
-    }
-
-    /**
-     * Create orob2b_acc_category_visibility table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroB2BAccountCategoryVisibilityTable(Schema $schema)
-    {
-        $table = $schema->createTable(self::ORO_B2B_ACCOUNT_CATEGORY_VISIBILITY_TABLE_NAME);
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('category_id', 'integer', ['notnull' => false]);
-        $table->addColumn('account_id', 'integer', ['notnull' => false]);
-        $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
-        $table->setPrimaryKey(['id']);
     }
 
     /**
@@ -1137,21 +1217,6 @@ class OroB2BAccountBundleInstaller implements
     }
 
     /**
-     * Create orob2b_acc_grp_ctgr_visibility table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroB2BAccountGroupCategoryVisibilityTable(Schema $schema)
-    {
-        $table = $schema->createTable(self::ORO_B2B_ACCOUNT_GROUP_CATEGORY_VISIBILITY_TABLE_NAME);
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('category_id', 'integer', ['notnull' => false]);
-        $table->addColumn('account_group_id', 'integer', ['notnull' => false]);
-        $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
-        $table->setPrimaryKey(['id']);
-    }
-
-    /**
      * Add orob2b_acc_grp_ctgr_visibility foreign keys.
      *
      * @param Schema $schema
@@ -1162,6 +1227,84 @@ class OroB2BAccountBundleInstaller implements
         $table->addForeignKeyConstraint(
             $schema->getTable(self::ORO_B2B_CATEGORY_TABLE_NAME),
             ['category_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::ORO_B2B_ACCOUNT_GROUP_TABLE_NAME),
+            ['account_group_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add orob2b_product_visibility foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BProductVisibilityForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable(self::ORO_B2B_PRODUCT_VISIBILITY_TABLE_NAME);
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::ORO_B2B_PRODUCT_TABLE_NAME),
+            ['product_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::ORO_B2B_WEBSITE_TABLE_NAME),
+            ['website_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add orob2b_acc_product_visibility foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BAccountProductVisibilityForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable(self::ORO_B2B_ACCOUNT_PRODUCT_VISIBILITY_TABLE_NAME);
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::ORO_B2B_PRODUCT_TABLE_NAME),
+            ['product_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::ORO_B2B_WEBSITE_TABLE_NAME),
+            ['website_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::ORO_B2B_ACCOUNT_TABLE_NAME),
+            ['account_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add orob2b_acc_grp_prod_visibility foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BAccountGroupProductVisibilityForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable(self::ORO_B2B_ACCOUNT_GROUP_PRODUCT_VISIBILITY_TABLE_NAME);
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::ORO_B2B_PRODUCT_TABLE_NAME),
+            ['product_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::ORO_B2B_WEBSITE_TABLE_NAME),
+            ['website_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );

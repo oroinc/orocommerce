@@ -102,7 +102,7 @@ class AjaxLineItemControllerTest extends WebTestCase
             $existingLineItem->getProduct()->getUnitPrecision($existingLineItem->getUnit()->getCode())->getPrecision()
         );
 
-        $this->assertEquals($updatedLineItem->getQuantity(), $expectedNewQuantity);
+        $this->assertEquals($expectedNewQuantity, $updatedLineItem->getQuantity());
     }
 
     /**

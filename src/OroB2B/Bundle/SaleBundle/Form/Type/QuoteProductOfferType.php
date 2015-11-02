@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter;
 
@@ -48,12 +48,6 @@ class QuoteProductOfferType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        /** @var QuoteProductOffer $quoteProductOffer */
-        $quoteProductOffer = null;
-        if (array_key_exists('data', $options)) {
-            $quoteProductOffer = $options['data'];
-        }
-
         $builder
             ->add(
                 'price',
@@ -86,7 +80,7 @@ class QuoteProductOfferType extends AbstractType
             )
             ->add(
                 'productUnit',
-                ProductUnitRemovedSelectionType::NAME,
+                ProductUnitSelectionType::NAME,
                 [
                     'label' => 'orob2b.product.productunit.entity_label',
                     'required' => true,
@@ -99,7 +93,6 @@ class QuoteProductOfferType extends AbstractType
                 [
                     'required' => true,
                     'label' => 'orob2b.sale.quoteproductoffer.quantity.label',
-                    'product' => $quoteProductOffer ? $quoteProductOffer->getQuoteProduct() : null,
                     'default_data' => 1,
                 ]
             );

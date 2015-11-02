@@ -11,6 +11,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
@@ -19,10 +20,10 @@ use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\ProductSelectTypeStub;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductRemovedSelectType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
@@ -83,10 +84,19 @@ class QuoteTypeTest extends AbstractTest
      * @param int $accountId
      * @param QuoteProduct[] $items
      * @param bool $locked
+     * @param string $poNumber
+     * @param string $shipUntil
      * @return Quote
      */
-    protected function getQuote($ownerId, $accountUserId = null, $accountId = null, array $items = [], $locked = false)
-    {
+    protected function getQuote(
+        $ownerId,
+        $accountUserId = null,
+        $accountId = null,
+        array $items = [],
+        $locked = false,
+        $poNumber = null,
+        $shipUntil = null
+    ) {
         $quote = new Quote();
         $quote->setOwner($this->getEntity('Oro\Bundle\UserBundle\Entity\User', $ownerId));
 
@@ -103,16 +113,27 @@ class QuoteTypeTest extends AbstractTest
         }
         $quote->setLocked($locked);
 
+        if (null !== $poNumber) {
+            $quote->setPoNumber($poNumber);
+        }
+
+        if (null !== $shipUntil) {
+            $quote->setShipUntil($shipUntil);
+        }
+
         return $quote;
     }
 
     /**
      * @return array
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function submitProvider()
     {
         $quoteProductOffer = $this->getQuoteProductOffer(2, 33, 'kg', self::QPO_PRICE_TYPE1, Price::create(44, 'USD'));
         $quoteProduct = $this->getQuoteProduct(2, self::QP_TYPE1, 'comment1', 'comment2', [], [$quoteProductOffer]);
+
+        $date = '2015-10-15';
 
         return [
             'empty owner' => [
@@ -121,13 +142,15 @@ class QuoteTypeTest extends AbstractTest
                 ],
                 'expectedData'  => new Quote(),
             ],
-            'valid data' => [
+            'empty PO number' => [
                 'isValid'       => true,
                 'submittedData' => [
                     'owner' => 1,
                     'accountUser' => 1,
                     'account' => 2,
                     'locked' => false,
+                    'poNumber'  => null,
+                    'shipUntil' => null,
                     'quoteProducts' => [
                         [
                             'product'   => 2,
@@ -148,7 +171,63 @@ class QuoteTypeTest extends AbstractTest
                         ],
                     ],
                 ],
-                'expectedData'  => $this->getQuote(1, 1, 2, [$quoteProduct], false),
+                'expectedData'  => $this->getQuote(
+                    1,
+                    1,
+                    2,
+                    [$quoteProduct],
+                    false,
+                    null,
+                    null
+                ),
+                'defaultData'   => $this->getQuote(
+                    1,
+                    1,
+                    2,
+                    [$quoteProduct],
+                    false,
+                    null,
+                    null
+                ),
+            ],
+            'valid data' => [
+                'isValid'       => true,
+                'submittedData' => [
+                    'owner' => 1,
+                    'accountUser' => 1,
+                    'account' => 2,
+                    'locked' => false,
+                    'poNumber'  => 'poNumber',
+                    'shipUntil' => $date,
+                    'quoteProducts' => [
+                        [
+                            'product'   => 2,
+                            'type'      => self::QP_TYPE1,
+                            'comment'   => 'comment1',
+                            'commentAccount' => 'comment2',
+                            'quoteProductOffers' => [
+                                [
+                                    'quantity'      => 33,
+                                    'productUnit'   => 'kg',
+                                    'priceType'     => self::QPO_PRICE_TYPE1,
+                                    'price'         => [
+                                        'value'     => 44,
+                                        'currency'  => 'USD',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'expectedData'  => $this->getQuote(
+                    1,
+                    1,
+                    2,
+                    [$quoteProduct],
+                    false,
+                    'poNumber',
+                    new \DateTime($date . 'T00:00:00+0000')
+                ),
             ],
         ];
     }
@@ -234,7 +313,8 @@ class QuoteTypeTest extends AbstractTest
                     QuoteProductOfferCollectionType::NAME       => new QuoteProductOfferCollectionType(),
                     QuoteProductRequestCollectionType::NAME     => new QuoteProductRequestCollectionType(),
                     ProductRemovedSelectType::NAME              => new StubProductRemovedSelectType(),
-                    ProductUnitRemovedSelectionType::NAME       => new StubProductUnitRemovedSelectionType(),
+                    ProductUnitSelectionType::NAME              => new StubProductUnitSelectionType(),
+                    OroDateType::NAME                           => new OroDateType(),
                     $priceType->getName()                       => $priceType,
                     $entityType->getName()                      => $entityType,
                     $userSelectType->getName()                  => $userSelectType,

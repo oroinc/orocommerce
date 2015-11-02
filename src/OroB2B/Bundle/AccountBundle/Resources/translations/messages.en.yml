@@ -189,6 +189,9 @@ orob2b.account:
         region_code.label:       State ISO code
 
     visibility:
+        event.saved.message: Product visibility has been saved
+        to_all:
+            label: Visibility to All
         accountcategoryvisibility:
             entity_label: Visibility to Accounts
             entity_plural_label: Account Category Visibilities
@@ -228,6 +231,48 @@ orob2b.account:
                 visible: Visible
                 hidden: Hidden
 
+        accountproductvisibility:
+            entity_label: Visibility to Accounts
+            entity_plural_label: Account Product Visibilities
+            id.label: ID
+            account.label: Account
+            product.label: Product
+            visibility.label: Visibility
+            website.label: Website
+            choice:
+                account_group: Account Group
+                current_product: Current Product
+                category: Category
+                hidden: Hidden
+                visible: Visible
+
+        accountgroupproductvisibility:
+            entity_label: Visibility to Account Groups
+            entity_plural_label: Account Group Product Visibilities
+            id.label: ID
+            account_group.label: Account Group
+            product.label: Product
+            visibility.label: Visibility
+            website.label: Website
+            choice:
+                current_product: Current Product
+                category: Category
+                hidden: Hidden
+                visible: Visible
+
+        productvisibility:
+            entity_label: Visibility to All
+            entity_plural_label: Product Visibilities
+            id.label: ID
+            product.label: Product
+            visibility.label: Visibility
+            website.label: Website
+            choice:
+                category: Category
+                config: Config
+                visible: Visible
+                hidden: Hidden
+
     catalog:
         visibility:
             label: Default Visibility to Accounts
@@ -236,6 +281,10 @@ orob2b.account:
             catalog_configuration_label: Categories
             visible.label: Visible
             hidden.label: Hidden
+    product:
+        visibility:
+            label: Product Visibility
+            product_configuration_label: Products
 
     menu:
         customers_tab.label: 'Customers'

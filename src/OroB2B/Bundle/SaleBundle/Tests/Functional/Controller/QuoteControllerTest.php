@@ -36,6 +36,26 @@ class QuoteControllerTest extends WebTestCase
     public static $validUntilUpdated    = '2016-06-16T16:16:16+0000';
 
     /**
+     * @var string
+     */
+    public static $poNumber             = 'CA3333USD';
+
+    /**
+     * @var string
+     */
+    public static $poNumberUpdated      = 'CA5555USD';
+
+    /**
+     * @var string
+     */
+    public static $shipUntil            = '2015-09-15T00:00:00+0000';
+
+    /**
+     * @var string
+     */
+    public static $shipUntilUpdated     = '2015-09-20T00:00:00+0000';
+
+    /**
      * {@inheritdoc}
      */
     public static function setUpBeforeClass()
@@ -69,6 +89,8 @@ class QuoteControllerTest extends WebTestCase
         $form['orob2b_sale_quote[owner]']      = $owner->getId();
         $form['orob2b_sale_quote[qid]']        = self::$qid;
         $form['orob2b_sale_quote[validUntil]'] = self::$validUntil;
+        $form['orob2b_sale_quote[poNumber]']   = self::$poNumber;
+        $form['orob2b_sale_quote[shipUntil]']  = self::$shipUntil;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -107,6 +129,8 @@ class QuoteControllerTest extends WebTestCase
         $this->assertEquals(self::$qid, $row['qid']);
         $this->assertEquals($owner->getFirstName() . ' ' . $owner->getLastName(), $row['ownerName']);
         $this->assertEquals(self::$validUntil, $row['validUntil']);
+        $this->assertEquals(self::$poNumber, $row['poNumber']);
+        $this->assertEquals(self::$shipUntil, $row['shipUntil']);
 
         return $id;
     }
@@ -127,6 +151,8 @@ class QuoteControllerTest extends WebTestCase
         $form['orob2b_sale_quote[owner]']      = $owner->getId();
         $form['orob2b_sale_quote[qid]']        = self::$qidUpdated;
         $form['orob2b_sale_quote[validUntil]'] = self::$validUntilUpdated;
+        $form['orob2b_sale_quote[poNumber]']   = self::$poNumberUpdated;
+        $form['orob2b_sale_quote[shipUntil]']  = self::$shipUntilUpdated;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -149,6 +175,8 @@ class QuoteControllerTest extends WebTestCase
         $this->assertEquals(self::$qidUpdated, $row['qid']);
         $this->assertEquals($owner->getFirstName() . ' ' . $owner->getLastName(), $row['ownerName']);
         $this->assertEquals(self::$validUntilUpdated, $row['validUntil']);
+        $this->assertEquals(self::$poNumberUpdated, $row['poNumber']);
+        $this->assertEquals(self::$shipUntilUpdated, $row['shipUntil']);
 
         return $id;
     }

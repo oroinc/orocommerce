@@ -44,7 +44,7 @@ OroB2B\Bundle\OrderBundle\Entity\OrderLineItem:
             - NotBlank: ~
         productUnit:
             - NotBlank:
-                message: 'orob2b.order.orderlineitem.product_unit.blank'
+                message: 'orob2b.product.productunit.invalid'
         productUnitCode:
             - NotBlank:
                 groups: [ Import ]
