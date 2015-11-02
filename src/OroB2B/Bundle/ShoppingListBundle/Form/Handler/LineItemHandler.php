@@ -45,7 +45,7 @@ class LineItemHandler
         Request $request,
         Registry $registry,
         ShoppingListManager $shoppingListManager,
-        RoundingService $roundingService = null
+        RoundingService $roundingService
     ) {
         $this->form = $form;
         $this->request = $request;
@@ -86,7 +86,7 @@ class LineItemHandler
                     $this->updateExistingLineItem($lineItem, $existingLineItem);
                 } else {
                     $lineItem->setQuantity(
-                        $this->roundQuantity(
+                        $this->roundingService->roundQuantity(
                             $lineItem->getQuantity(),
                             $lineItem->getProductUnit(),
                             $lineItem->getProduct()
@@ -130,7 +130,7 @@ class LineItemHandler
      */
     protected function updateExistingLineItem(LineItem $lineItem, LineItem $existingLineItem)
     {
-        $newQuantity = $this->roundQuantity(
+        $newQuantity = $this->roundingService->roundQuantity(
             $lineItem->getQuantity() + $existingLineItem->getQuantity(),
             $existingLineItem->getProductUnit(),
             $existingLineItem->getProduct()
@@ -144,32 +144,5 @@ class LineItemHandler
             $existingLineItem->setNotes($notes);
         }
         $this->savedId = $existingLineItem->getId();
-    }
-
-    /**
-     * @param $quantity
-     * @param Product $product
-     * @param ProductUnit $unit
-     * @return float|int
-     * @throws InvalidRoundingTypeException
-     */
-    protected function roundQuantity($quantity, ProductUnit $unit = null, Product $product = null)
-    {
-        if (!$unit) {
-            return $quantity;
-        }
-
-        if ($this->roundingService) {
-            if ($product) {
-                $productUnit = $product->getUnitPrecision($unit->getCode());
-                if ($productUnit) {
-                    return $this->roundingService->round($quantity, $productUnit->getPrecision());
-                }
-            }
-
-            return $this->roundingService->round($quantity, $unit->getDefaultPrecision());
-        }
-
-        return $quantity;
     }
 }

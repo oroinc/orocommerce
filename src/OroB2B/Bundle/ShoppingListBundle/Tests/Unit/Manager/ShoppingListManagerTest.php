@@ -59,7 +59,21 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface $translator */
         $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
 
-        $this->manager = new ShoppingListManager($entityManager, $tokenStorage, $translator);
+        $roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\RoundingService')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $roundingService->expects($this->any())
+            ->method('roundQuantity')
+            ->will(
+                $this->returnCallback(
+                    function ($value, $unit, $product) {
+                        return round($value, 0, PHP_ROUND_HALF_UP);
+                    }
+                )
+            );
+
+        $this->manager = new ShoppingListManager($entityManager, $tokenStorage, $translator, $roundingService);
     }
 
     public function testCreateCurrent()
