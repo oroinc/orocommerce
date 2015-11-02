@@ -15,6 +15,8 @@ parameters:
     orob2b_product.form.type.custom_entity_fields_choice.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductCustomFieldsChoiceType
     orob2b_product.form.type.product_variant_links.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductVariantLinksType
     orob2b_product.form.type.product_status.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductStatusType
+    orob2b_product.form.type.quick_add_copy_paste.class: OroB2B\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType
+    orob2b_product.form.type.quick_add_import_from_file.class: OroB2B\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType
 
 services:
     # Product form types
@@ -122,3 +124,13 @@ services:
             - @orob2b_product.provider.product_status_provider
         tags:
             - { name: form.type, alias: orob2b_product_status }
+
+    orob2b_product.form.type.quick_add_copy_paste:
+        class: %orob2b_product.form.type.quick_add_copy_paste.class%
+        tags:
+            - { name: form.type, alias: 'orob2b_product_quick_add_copy_paste' }
+
+    orob2b_product.form.type.quick_add_import_from_file:
+        class: %orob2b_product.form.type.quick_add_import_from_file.class%
+        tags:
+            - { name: form.type, alias: 'orob2b_product_quick_add_import_from_file' }

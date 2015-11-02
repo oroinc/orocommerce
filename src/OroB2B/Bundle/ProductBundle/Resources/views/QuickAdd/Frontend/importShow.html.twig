@@ -1,0 +1,146 @@
+<div class="widget-content" id="import-validation">
+    <style type="text/css">
+        #import-validation {
+            padding-bottom: 1px;
+        }
+
+        .import-errors ol {
+            height: 198px;
+            overflow: auto;
+            padding-left: 25px;
+        }
+
+        .import-errors {
+            display: none;
+        }
+
+        .errors-visible .validation-info {
+            display: none;
+        }
+
+        .errors-visible .import-errors {
+            display: block;
+        }
+
+        .errors-visible .error-toggle-head {
+            display: block;
+            padding: 2px;
+            width: 100%;
+            margin: 0 0 5px 0;
+            background-color: #fafafa;
+            border-bottom: 1px solid #e5e5e5;
+        }
+    </style>
+
+    {% set counts = {
+        totalRecords: 6,
+        validItems: 3,
+        errorEntries: 3
+    } %}
+
+    {% set errors = [
+        'SKU1 does not found',
+        'SKU2 does not found',
+        'SKU3 does not found'
+    ] %}
+
+    <div class="validation-info">
+        <strong>
+            {{ 'Import validation results'|trans }}
+        </strong>
+
+        <table class="table table-condensed table-hover">
+            <thead>
+            <tr>
+                <th></th>
+                <th>
+                    <div class="pull-right">
+                        {{ 'Number of items'|trans }}
+                    </div>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>{{ 'Total number of records'|trans }}</td>
+                <td>
+                    <div class="pull-right">
+                        {{ counts.totalRecords|default(0) }}
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>{{ 'Valid items'|trans }}</td>
+                <td>
+                    <div class="pull-right">
+                        {{ counts.validItems|default(0) }}
+                    </div>
+                </td>
+            </tr>
+
+
+            <tr {% if counts.errorEntries %}class="error"{% endif %}>
+                <td>
+                    {% if counts.errorEntries > 0 %}
+                        <a href="javascript: void(0)" class="error-toggle">
+                            {{ 'Records with errors '|trans }}
+                        </a>
+                    {% else %}
+                        {{ 'Records with errors '|trans }}
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="pull-right">
+                        {{ counts.errorEntries|default(0) }}
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="btn-group pull-right add-buttons">
+
+            {% placeholder orob2b_product_quick_add_buttons  %}
+
+        </div>
+
+    </div>
+
+    {% if errors|length > 0 %}
+        {#<a href="javascript: void(0)" class="error-toggle error-toggle-head"><i class="icon-chevron-right"></i>{{ 'Errors found %errors%'|trans({'%errors%': errors|length}) }}</a>#}
+        <div class="import-errors">
+            <ol>
+                {% for error in errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ol>
+            <div class="clearfix">
+                <div class="pull-right">
+                    <a href="javascript:void(0);" class="error-toggle">{{ 'Hide'|trans }}</a>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <script type="text/javascript">
+        require(['jquery', 'orotranslation/js/translator', 'oroui/js/widget-manager', 'oroui/js/messenger'],
+                function($, __, WidgetManager, Messenger) {
+                    var container = $('#import-validation');
+                    var toggleErrors = function(e) {
+                        e.preventDefault();
+
+                        container.toggleClass('errors-visible');
+                        var icon = container.find('.error-toggle-head').find('i');
+                        if (icon.hasClass('icon-chevron-right')) {
+                            icon.removeClass('icon-chevron-right');
+                            icon.addClass('icon-chevron-down');
+                        } else {
+                            icon.removeClass('icon-chevron-down');
+                            icon.addClass('icon-chevron-right');
+                        }
+                    };
+                    container.find('.error-toggle').on('click', toggleErrors);
+                });
+    </script>
+</div>
+

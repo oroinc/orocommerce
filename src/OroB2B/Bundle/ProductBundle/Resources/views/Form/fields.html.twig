@@ -67,7 +67,7 @@
     </td>
 {% endblock %}
 
-{% block orob2b_product_row_collection_widget %}
+    {% block orob2b_product_row_collection_widget %}
     {% spaceless %}
         {% if prototype is defined %}
             {% set prototype_html = _self.orob2b_product_row_collection_item_prototype(form) %}
@@ -131,4 +131,31 @@
             </div>
         {% endif %}
     {% endspaceless %}
+{% endblock %}
+
+{% block orob2b_product_quick_add_copy_paste_widget %}
+
+    <div>
+        <h4>{{ 'orob2b.product.frontend.quick_add.copy_paste.title'|trans }}</h4>
+
+        <p>{{ 'orob2b.product.frontend.quick_add.copy_paste.description'|trans }}</p>
+
+        {{ form_widget(form.products, {
+                'attr': {
+                    'style': 'width: 300px; height: 165px;',
+                    'placeholder': 'orob2b.product.frontend.quick_add.copy_paste.placeholder'|trans
+                }
+          }
+        ) }}
+
+    </div>
+
+    <div class="btn-group pull-right">
+        <a href="javascript: void(0);"
+           data-url="{{ path('orob2b_product_frontend_import_summary') }}"
+           class="btn btn-primary import-button">
+            {{ 'orob2b.product.frontend.quick_add.continue.label'|trans }}
+        </a>
+    </div>
+
 {% endblock %}

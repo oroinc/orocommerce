@@ -109,6 +109,16 @@ orob2b:
             quick_add:
                 title: Quick Order Form
                 description: Quick add products to order, RFQ or shopping cart
+                copy_paste:
+                    title: 'Copy & Paste'
+                    description: 'Format: Item # [TAB or COMMA] Quantity'
+                    placeholder: 'Formatting Example: SKU-AAA,3'
+                    continue:
+                        label: Continue
+                import_from_file:
+                    title: Import From File
+                    description: 'Import From File description'
+                continue.label: Continue
             component_not_accessible.message: Can't process request, component not accessible
 
     product_unit.each:

@@ -22,7 +22,7 @@
         <div class="container-fluid form-container">
             <div class="responsive-section responsive-section-no-blocks">
                 <div class="row-fluid">
-                    <div class="responsive-cell responsive-cell-no-blocks">
+                    <div class="pull-left pull-left-extra">
                         <form id="{{ form.vars.id }}" name="{{ form.vars.name }}"
                             action="{{ path('orob2b_product_frontend_quick_add') }}" {{ form_enctype(form) }}
                             method="{{ form.vars.method }}"
@@ -39,9 +39,64 @@
                             </fieldset>
                         </form>
                         {{ oro_form_js_validation(form) }}
+
+                        <div>
+                            <br>
+                            <strong>
+                            <a class="import-button"
+                               href="javascript: void(0);"
+                               data-url="{{ path('orob2b_product_frontend_import') }}" >
+                                {{ 'orob2b.product.frontend.quick_add.import_from_file.title'|trans }}
+                            </a>
+                            </strong>
+                        </div>
                     </div>
+
+                    <div class="pull-left pull-left-extra">
+                        <form id="{{ copyPasteForm.vars.id }}" name="{{ copyPasteForm.vars.name }}" >
+
+                            <fieldset class="form-horizontal">
+
+                                {{ form_errors(copyPasteForm) }}
+                                {{ form_widget(copyPasteForm) }}
+                                {{ form_rest(copyPasteForm) }}
+
+                            </fieldset>
+
+                        </form>
+
+                    </div>
+
                 </div>
             </div>
         </div>
     </div>
+
+    <script type="text/javascript">
+        require(['jquery', 'orotranslation/js/translator', 'oro/dialog-widget', 'oroui/js/mediator', 'ready!app'],
+                function($, __, DialogWidget, mediator) {
+
+                    $('.import-button').on('click', function(e) {
+                        e.preventDefault();
+
+                        var widget = new DialogWidget({
+                            'url': this.dataset.url,
+                            'title': {{ importTitle|default('oro.importexport.import.label'|trans)|json_encode|raw }},
+                            'stateEnabled': false,
+                            'incrementalPosition': false,
+                            'dialogOptions': {
+                                'width': 580,
+                                'autoResize': true,
+                                'modal': true,
+                                'height': 350
+                            }
+                        });
+
+                        widget.render();
+
+                    });
+
+
+                });
+    </script>
 {% endblock content %}
