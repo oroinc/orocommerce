@@ -33,7 +33,7 @@ class ProductRowType extends AbstractType
         }
 
         $builder
-            ->add(ProductDataStorage::PRODUCT_SKU_KEY, 'text', $productSkuOptions)
+            ->add(ProductDataStorage::PRODUCT_SKU_KEY, ProductAutocompleteType::NAME, $productSkuOptions)
             ->add(
                 ProductDataStorage::PRODUCT_QUANTITY_KEY,
                 'number',
