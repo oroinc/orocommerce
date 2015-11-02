@@ -84,10 +84,6 @@ class ProductSelectDBQueryEventListener
             throw new \LogicException('Scope not configured for ProductSelectDBQueryEventListener');
         }
 
-        if ($event->getDataParameters()->get('scope') !== $this->scope) {
-            return false;
-        }
-
-        return true;
+        return $event->getDataParameters()->get('scope') === $this->scope;
     }
 }
