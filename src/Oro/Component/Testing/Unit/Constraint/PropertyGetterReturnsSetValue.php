@@ -41,7 +41,7 @@ class PropertyGetterReturnsSetValue extends \PHPUnit_Framework_Constraint
     public function toString()
     {
         return sprintf(
-            'getter %s for property %s returns its previously set value %s',
+            'getter %s for property %s returns the previously set value %s',
             $this->getterName,
             $this->propertyName,
             $this->exporter->export($this->testValue)
@@ -53,7 +53,7 @@ class PropertyGetterReturnsSetValue extends \PHPUnit_Framework_Constraint
     protected function failureDescription($other)
     {
         return sprintf(
-            'getter %s for property %s of entity %s returns its previously set value %s',
+            'getter %s for property %s of class %s returns the previously set value %s',
             $this->getterName,
             $this->propertyName,
             get_class($other),
@@ -84,7 +84,7 @@ class PropertyGetterReturnsSetValue extends \PHPUnit_Framework_Constraint
         }
         if (!method_exists($other, $this->getterName)) {
             $message = sprintf(
-                "Entity %s doesn't have a get%s() or is%s() getters for property %s",
+                "Class %s doesn't have %s() or %s() getters for property %s",
                 get_class($other),
                 'get' . ucfirst($this->propertyName),
                 'is' . ucfirst($this->propertyName),

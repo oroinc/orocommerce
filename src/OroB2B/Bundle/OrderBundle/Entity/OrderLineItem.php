@@ -10,6 +10,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use OroB2B\Bundle\OrderBundle\Model\ExtendOrderLineItem;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
+use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
 /**
  * @ORM\Table(name="orob2b_order_line_item")
@@ -28,7 +30,7 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
  * )
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class OrderLineItem extends ExtendOrderLineItem
+class OrderLineItem extends ExtendOrderLineItem implements ProductUnitHolderInterface, ProductHolderInterface
 {
     const PRICE_TYPE_UNIT = 10;
     const PRICE_TYPE_BUNDLED = 20;
@@ -197,9 +199,7 @@ class OrderLineItem extends ExtendOrderLineItem
     }
 
     /**
-     * Get product
-     *
-     * @return Product
+     * {@inheritdoc}
      */
     public function getProduct()
     {
@@ -220,9 +220,7 @@ class OrderLineItem extends ExtendOrderLineItem
     }
 
     /**
-     * Get productSku
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getProductSku()
     {
@@ -293,9 +291,7 @@ class OrderLineItem extends ExtendOrderLineItem
     }
 
     /**
-     * Get productUnit
-     *
-     * @return ProductUnit
+     * {@inheritdoc}
      */
     public function getProductUnit()
     {
@@ -316,9 +312,7 @@ class OrderLineItem extends ExtendOrderLineItem
     }
 
     /**
-     * Get productUnitCode
-     *
-     * @return ProductUnit
+     * {@inheritdoc}
      */
     public function getProductUnitCode()
     {
@@ -515,5 +509,21 @@ class OrderLineItem extends ExtendOrderLineItem
         if ($this->getProductUnit()) {
             $this->productUnitCode = $this->getProductUnit()->getCode();
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityIdentifier()
+    {
+        return $this->id;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductHolder()
+    {
+        return $this;
     }
 }
