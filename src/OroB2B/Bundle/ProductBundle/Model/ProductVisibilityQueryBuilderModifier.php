@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\ProductBundle\Model;
 
 use Doctrine\ORM\QueryBuilder;
 
-class ProductQueryBuilderModifier
+class ProductVisibilityQueryBuilderModifier
 {
     /**
      * @param QueryBuilder $queryBuilder
@@ -38,7 +38,9 @@ class ProductQueryBuilderModifier
 
         list($rootAlias) = $queryBuilder->getRootAliases();
 
-        $queryBuilder->andWhere($queryBuilder->expr()->in($rootAlias . '.' . $field, ':values'))
-            ->setParameter('values', $in);
+        $parameterName = uniqid($field);
+
+        $queryBuilder->andWhere($queryBuilder->expr()->in($rootAlias . '.' . $field, ':' . $parameterName))
+            ->setParameter($parameterName, $in);
     }
 }

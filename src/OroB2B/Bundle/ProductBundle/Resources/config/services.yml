@@ -7,7 +7,7 @@ parameters:
     orob2b_product.service.rounding.class: OroB2B\Bundle\ProductBundle\Rounding\RoundingService
     orob2b_product.formatter.product_unit_value.class: OroB2B\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter
     orob2b_product.formatter.product_unit_label.class: OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter
-    orob2b_product.model.product_query_builder_modifier.class: OroB2B\Bundle\ProductBundle\Model\ProductQueryBuilderModifier
+    orob2b_product.model.product_visibility_query_builder_modifier.class: OroB2B\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier
     orob2b_product.twig.product_unit_value.class: OroB2B\Bundle\ProductBundle\Twig\ProductUnitValueExtension
     orob2b_product.twig.product_unit_label.class: OroB2B\Bundle\ProductBundle\Twig\ProductUnitLabelExtension
     orob2b_product.service.duplicator.class: OroB2B\Bundle\ProductBundle\Duplicator\ProductDuplicator
@@ -19,6 +19,7 @@ parameters:
     orob2b_product.provider.product_status_provider.class: OroB2B\Bundle\ProductBundle\Provider\ProductStatusProvider
     orob2b_product.event_listener.product_variant_custom_fields_datagrid.class: OroB2B\Bundle\ProductBundle\EventListener\ProductVariantCustomFieldsDatagridListener
     orob2b_product.event_listener.restricted_products_datagrid.class: OroB2B\Bundle\ProductBundle\EventListener\RestrictedProductsDatagridEventListener
+    orob2b_product.event_listener.product_select_db_query.class: OroB2B\Bundle\ProductBundle\EventListener\ProductSelectDBQueryEventListener
     orob2b_product.validator.unique_variant_links.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator
 
     orob2b_product.component_processor.registry.class: OroB2B\Bundle\ProductBundle\Model\ComponentProcessorRegistry
@@ -189,8 +190,8 @@ services:
         tags:
             - { name: kernel.event_listener, event: console.command, name: onConsoleCommand }
 
-    orob2b_product.model.product_query_builder_modifier:
-        class: %orob2b_product.model.product_query_builder_modifier.class%
+    orob2b_product.model.product_visibility_query_builder_modifier:
+        class: %orob2b_product.model.product_visibility_query_builder_modifier.class%
 
     orob2b_product.autocomplete.product_visibility_limited.search_handler:
         class: %orob2b_product.autocomplete.product_visibility_limited.search_handler.class%
@@ -211,5 +212,6 @@ services:
             - @event_dispatcher
             - @request_stack
             - @doctrine
+            - @orob2b_product.model.product_visibility_query_builder_modifier
         calls:
             - [setDataClass, [%orob2b_product.product.class%]]
