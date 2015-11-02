@@ -4,6 +4,8 @@ namespace Oro\Component\Testing\Unit\Form\Type\Stub;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+
 class EnumSelectType extends EntityType
 {
     const NAME = 'oro_enum_select';
@@ -39,7 +41,7 @@ class EnumSelectType extends EntityType
     }
 
     /**
-     * @param array $choices
+     * @param AbstractEnumValue[] $choices
      * @return array
      */
     protected function getEnumChoices($choices)

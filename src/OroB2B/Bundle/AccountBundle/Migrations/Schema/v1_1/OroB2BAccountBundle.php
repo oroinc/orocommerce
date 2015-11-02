@@ -3,10 +3,11 @@
 namespace OroB2B\Bundle\AccountBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Doctrine\DBAL\Types\Type;
+
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+
 use OroB2B\Bundle\AccountBundle\Migrations\Schema\OroB2BAccountBundleInstaller;
 
 /**
@@ -52,6 +53,11 @@ class OroB2BAccountBundle implements Migration
         $this->addOroB2BAccountGroupProductVisibilityForeignKeys($schema);
 
         $this->updateAuditAndRoleTables($schema);
+
+        //Update Account User Role Table
+        $table = $schema->getTable(OroB2BAccountBundleInstaller::ORO_B2B_ACCOUNT_USER_ROLE_TABLE_NAME);
+        $table->getColumn('role')->setType(Type::getType(Type::STRING))->setOptions(['length' => 255]);
+        $table->getColumn('label')->setType(Type::getType(Type::STRING))->setOptions(['length' => 255]);
     }
 
     /**
@@ -71,10 +77,6 @@ class OroB2BAccountBundle implements Migration
                 ['id'],
                 ['onDelete' => 'CASCADE', 'onUpdate' => null]
             );
-
-        $table = $schema->getTable(OroB2BAccountBundleInstaller::ORO_B2B_ACCOUNT_USER_ROLE_TABLE_NAME);
-        $table->getColumn('role')->setType(Type::getType(Type::STRING))->setOptions(['length' => 255]);
-        $table->getColumn('label')->setType(Type::getType(Type::STRING))->setOptions(['length' => 255]);
     }
 
     /**

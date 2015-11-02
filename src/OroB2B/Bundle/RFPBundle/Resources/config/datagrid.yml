@@ -18,6 +18,8 @@ datagrid:
                     - request.phone
                     - request.company
                     - request.role
+                    - request.poNumber
+                    - request.shipUntil
                     - status.label as status_label
                     - status.sortOrder as status_order
                     - request.createdAt
@@ -52,6 +54,11 @@ datagrid:
                 label:         orob2b.rfp.request.account.label
             status_label:
                 label:         orob2b.rfp.request.status.label
+            poNumber:
+                label:         orob2b.rfp.request.po_number.label
+            shipUntil:
+                label:         orob2b.rfp.request.ship_until.label
+                frontend_type: date
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -94,6 +101,10 @@ datagrid:
                     data_name: accountName
                 status_label:
                     data_name: status_order
+                poNumber:
+                    data_name: request.poNumber
+                shipUntil:
+                    data_name: request.shipUntil
                 createdAt:
                     data_name: request.createdAt
                 updatedAt:
@@ -137,6 +148,12 @@ datagrid:
                         field_options:
                             class: %orob2b_rfp.entity.request.status.class%
                             property: label
+                poNumber:
+                    type:      string
+                    data_name: request.poNumber
+                shipUntil:
+                    type:      date
+                    data_name: request.shipUntil
                 createdAt:
                     type:      datetime
                     data_name: request.createdAt
@@ -291,6 +308,8 @@ datagrid:
                 select:
                     - request.id
                     - request.createdAt
+                    - request.poNumber
+                    - request.shipUntil
                     - CONCAT(requestAccountUser.firstName, ' ', requestAccountUser.lastName) as accountUserName
                     - requestStatus.name as statusName
                 from:
@@ -306,6 +325,11 @@ datagrid:
             isDraft:
                 label:         orob2b.frontend.rfp.request.is_draft.label
                 frontend_type: boolean
+            poNumber:
+                label:         orob2b.rfp.request.po_number.label
+            shipUntil:
+                label:         orob2b.rfp.request.ship_until.label
+                frontend_type: date
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
@@ -325,6 +349,10 @@ datagrid:
             columns:
                 accountUserName:
                     data_name: accountUserName
+                poNumber:
+                    data_name: request.poNumber
+                shipUntil:
+                    data_name: request.shipUntil
                 createdAt:
                     data_name: request.createdAt
             default:
@@ -334,6 +362,12 @@ datagrid:
                 accountUserName:
                     type:      string
                     data_name: accountUserName
+                poNumber:
+                    type:      string
+                    data_name: request.poNumber
+                shipUntil:
+                    type:      date
+                    data_name: request.shipUntil
                 createdAt:
                     type:      datetime
                     data_name: request.createdAt
