@@ -35,7 +35,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
     {
         parent::setUp();
 
-        $this->handler = new AccountUserRoleUpdateHandler($this->formFactory, $this->privilegeConfig);
+        $this->handler = new AccountUserRoleUpdateHandler($this->formFactory, $this->aclCache, $this->privilegeConfig);
         $this->setRequirementsForHandler($this->handler);
     }
 
@@ -100,15 +100,15 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
         $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
-        $firstEntityPrivilege = $this->createPrivilege('entity', 'entity:' . $firstClass, 'VIEW');
+        $firstEntityPrivilege = $this->createPrivilege('entity', 'entity:' . $firstClass, 'VIEW', true);
         $firstEntityConfig = $this->createClassConfigMock(true);
 
-        $secondEntityPrivilege = $this->createPrivilege('entity', 'entity:' . $secondClass, 'VIEW');
+        $secondEntityPrivilege = $this->createPrivilege('entity', 'entity:' . $secondClass, 'VIEW', true);
         $secondEntityConfig = $this->createClassConfigMock(false);
 
-        $unknownEntityPrivilege = $this->createPrivilege('entity', 'entity:' . $unknownClass, 'VIEW');
+        $unknownEntityPrivilege = $this->createPrivilege('entity', 'entity:' . $unknownClass, 'VIEW', true);
 
-        $actionPrivilege = $this->createPrivilege('action', 'action', 'random_action');
+        $actionPrivilege = $this->createPrivilege('action', 'action', 'random_action', true);
 
         $entityForm = $this->getMock('Symfony\Component\Form\FormInterface');
         $entityForm->expects($this->once())
@@ -131,6 +131,10 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
                 }
             );
 
+        $privilegesForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $privilegesForm->expects($this->once())
+            ->method('setData');
+
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->any())
             ->method('get')
@@ -138,6 +142,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
                 [
                     ['entity', $entityForm],
                     ['action', $actionForm],
+                    ['privileges', $privilegesForm],
                 ]
             );
 
@@ -215,20 +220,55 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
             ->method('getData')
             ->willReturn([]);
 
-        $firstEntityPrivilege = $this->createPrivilege('entity', 'entity:FirstClass', 'VIEW');
-        $secondEntityPrivilege = $this->createPrivilege('entity', 'entity:SecondClass', 'VIEW');
-
         $entityForm = $this->getMock('Symfony\Component\Form\FormInterface');
-        $entityForm->expects($this->once())
-            ->method('getData')
-            ->willReturn([$firstEntityPrivilege, $secondEntityPrivilege]);
-
-        $actionPrivilege = $this->createPrivilege('action', 'action', 'random_action');
-
         $actionForm = $this->getMock('Symfony\Component\Form\FormInterface');
-        $actionForm->expects($this->once())
+
+        $privilegesData = json_encode([
+            'entity' => [
+                0 => [
+                    'identity' => [
+                        'id' =>'entity:FirstClass',
+                        'name' => 'VIEW',
+                    ],
+                    'permissions' => [
+                        'VIEW' => [
+                            'accessLevel' => 5,
+                            'name' => 'VIEW',
+                        ],
+                    ],
+                ],
+                1 => [
+                    'identity' => [
+                        'id' =>'entity:SecondClass',
+                        'name' => 'VIEW',
+                    ],
+                    'permissions' => [
+                        'VIEW' => [
+                            'accessLevel' => 5,
+                            'name' => 'VIEW',
+                        ],
+                    ],
+                ]
+            ],
+            'action' => [
+                0 => [
+                    'identity' => [
+                        'id' =>'action',
+                        'name' => 'random_action',
+                    ],
+                    'permissions' => [
+                        'random_action' => [
+                            'accessLevel' => 5,
+                            'name' => 'random_action',
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+        $privilegesForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $privilegesForm->expects($this->once())
             ->method('getData')
-            ->willReturn([$actionPrivilege]);
+            ->willReturn($privilegesData);
 
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->once())
@@ -245,6 +285,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
                     ['removeUsers', $removeForm],
                     ['entity', $entityForm],
                     ['action', $actionForm],
+                    ['privileges', $privilegesForm],
                 ]
             );
 
@@ -296,7 +337,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
         $this->chainMetadataProvider->expects($this->once())
             ->method('stopProviderEmulation');
 
-        $handler = new AccountUserRoleUpdateHandler($this->formFactory, $this->privilegeConfig);
+        $handler = new AccountUserRoleUpdateHandler($this->formFactory, $this->aclCache, $this->privilegeConfig);
 
         $this->setRequirementsForHandler($handler);
         $handler->setRequestStack($requestStack);
@@ -371,7 +412,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
         /** @var \PHPUnit_Framework_MockObject_MockObject|AccountUserRoleUpdateHandler $handler */
         $handler = $this->getMockBuilder('\OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateHandler')
             ->setMethods(['processPrivileges'])
-            ->setConstructorArgs([$this->formFactory, $this->privilegeConfig])
+            ->setConstructorArgs([$this->formFactory, $this->aclCache, $this->privilegeConfig])
             ->getMock();
 
         $this->setRequirementsForHandler($handler);
@@ -478,13 +519,17 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
      * @param string $extensionKey
      * @param string $id
      * @param string $name
+     * @param bool $setExtensionKey
      * @return AclPrivilege
      */
-    protected function createPrivilege($extensionKey, $id, $name)
+    protected function createPrivilege($extensionKey, $id, $name, $setExtensionKey = false)
     {
         $privilege = new AclPrivilege();
-        $privilege->setExtensionKey($extensionKey);
+        if ($setExtensionKey) {
+            $privilege->setExtensionKey($extensionKey);
+        }
         $privilege->setIdentity(new AclPrivilegeIdentity($id, $name));
+        $privilege->addPermission(new AclPermission($name, 5));
 
         return $privilege;
     }
@@ -524,7 +569,7 @@ class AccountUserRoleUpdateHandlerTest extends AbstractAccountUserRoleUpdateHand
             'action' => ['types' => ['action'], 'fix_values' => false, 'show_default' => true],
             'default' => ['types' => ['(default)'], 'fix_values' => true, 'show_default' => false],
         ];
-        $handler = new AccountUserRoleUpdateHandler($this->formFactory, $privilegeConfig);
+        $handler = new AccountUserRoleUpdateHandler($this->formFactory, $this->aclCache, $privilegeConfig);
         $this->setRequirementsForHandler($handler);
 
         $role = new AccountUserRole('ROLE_ADMIN');

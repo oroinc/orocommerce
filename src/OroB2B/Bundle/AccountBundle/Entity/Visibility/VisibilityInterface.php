@@ -2,15 +2,13 @@
 
 namespace OroB2B\Bundle\AccountBundle\Entity\Visibility;
 
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-
 interface VisibilityInterface
 {
     /**
-     * @param object|null $target
+     * @param object $target
      * @return string
      */
-    public static function getDefault($target = null);
+    public static function getDefault($target);
 
     /**
      * @param string $visibility
@@ -24,8 +22,19 @@ interface VisibilityInterface
     public function getVisibility();
 
     /**
-     * @param object|null $target
+     * @param object $target
      * @return array
      */
-    public static function getVisibilityList($target = null);
+    public static function getVisibilityList($target);
+
+    /**
+     * @return object
+     */
+    public function getTargetEntity();
+
+    /**
+     * @param object $entity
+     * @return $this
+     */
+    public function setTargetEntity($entity);
 }

@@ -14,7 +14,7 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 
 /**
  * @ORM\Table(name="orob2b_website")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository")
  * @Config(
  *      routeName="orob2b_website_index",
  *      routeView="orob2b_website_view",
