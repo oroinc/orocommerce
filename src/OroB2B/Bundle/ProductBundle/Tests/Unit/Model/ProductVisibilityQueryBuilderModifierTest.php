@@ -41,8 +41,8 @@ class ProductVisibilityQueryBuilderModifierTest extends \PHPUnit_Framework_TestC
 
         $this->productQueryBuilderModifier->$method($queryBuilder, $params);
 
-        $this->assertEquals(
-            sprintf('SELECT FROM TestEntity e WHERE e.%s IN(:values)', $field),
+        $this->assertRegExp(
+            sprintf('/^SELECT FROM TestEntity e WHERE e\.%s IN\(:%s.*\)$/', $field, $field),
             $queryBuilder->getDQL()
         );
         $this->assertCount(1, $queryBuilder->getParameters());
