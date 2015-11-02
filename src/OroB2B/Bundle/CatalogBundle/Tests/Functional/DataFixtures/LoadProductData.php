@@ -25,19 +25,23 @@ class LoadProductData extends AbstractFixture
     protected $products = [
         [
             'productCode' => self::TEST_PRODUCT_01,
-            'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
+            'inventoryStatus' =>  Product::INVENTORY_STATUS_IN_STOCK,
+            'status' => Product::STATUS_ENABLED
         ],
         [
             'productCode' => self::TEST_PRODUCT_02,
-            'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
+            'inventoryStatus' =>  Product::INVENTORY_STATUS_IN_STOCK,
+            'status' => Product::STATUS_DISABLED
         ],
         [
             'productCode' => self::TEST_PRODUCT_03,
-            'inventoryStatus' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
+            'inventoryStatus' =>  Product::INVENTORY_STATUS_OUT_OF_STOCK,
+            'status' => Product::STATUS_ENABLED
         ],
         [
             'productCode' => self::TEST_PRODUCT_04,
-            'inventoryStatus' => Product::INVENTORY_STATUS_DISCONTINUED,
+            'inventoryStatus' =>  Product::INVENTORY_STATUS_DISCONTINUED,
+            'status' => Product::STATUS_ENABLED
         ],
     ];
 
@@ -67,6 +71,7 @@ class LoadProductData extends AbstractFixture
             $name = new LocalizedFallbackValue();
             $product->addName($name);
             $product->setInventoryStatus($inventoryStatuses[$item['inventoryStatus']]);
+            $product->setStatus($item['status']);
             $name->setString($item['productCode']);
             $manager->persist($product);
             $this->addReference($item['productCode'], $product);
