@@ -16,6 +16,27 @@ class AccountUserRoleControllerTest extends WebTestCase
     const TEST_ROLE = 'Test account user role';
     const UPDATED_TEST_ROLE = 'Updated test account user role';
 
+    protected $privileges = [
+        'action' => [
+            0 => [
+                'identity' => [
+                    'id' => 'action:orob2b_order_address_billing_allow_manual',
+                    'name' => 'orob2b.order.security.permission.address_billing_allow_manual',
+                ],
+                'permissions' => [],
+            ],
+        ],
+        'entity' => [
+            0 => [
+                'identity' => [
+                    'id' => 'entity:OroB2B\Bundle\AccountBundle\Entity\Account',
+                    'name' => 'orob2b.account.entity_label',
+                ],
+                'permissions' => [],
+            ],
+        ],
+    ];
+
     /**
      * {@inheritDoc}
      */
@@ -36,6 +57,7 @@ class AccountUserRoleControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Save and Close')->form();
         $form['orob2b_account_account_user_role[label]'] = self::TEST_ROLE;
+        $form['orob2b_account_account_user_role[privileges]'] = json_encode($this->privileges);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -101,6 +123,7 @@ class AccountUserRoleControllerTest extends WebTestCase
                 'label' => self::UPDATED_TEST_ROLE,
                 'account' => $account->getId(),
                 'appendUsers' => $accountUser->getId(),
+                'privileges' => json_encode($this->privileges),
             ]
         ]);
         $result = $this->client->getResponse();
