@@ -88,8 +88,10 @@ services:
         arguments:
             - @oro_config.global
             - @orob2b_product.model.product_visibility_query_builder_modifier
+            - @orob2b_frontend.request.frontend_helper
         calls:
             - [setScope, ['shopping_list']]
-            - [setSystemConfigurationPath, ['oro_b2b_shopping_list.product_visibility.value']]
+            - [setSystemConfigurationPath, ['oro_b2b_shopping_list.backend_product_visibility.value']]
+            - [setRequest, [@?request=]]
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }

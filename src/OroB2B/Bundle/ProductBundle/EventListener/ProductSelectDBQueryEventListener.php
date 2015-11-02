@@ -2,8 +2,11 @@
 
 namespace OroB2B\Bundle\ProductBundle\EventListener;
 
+use Symfony\Component\HttpFoundation\Request;
+
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
+use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
 use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
 use OroB2B\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
 
@@ -25,18 +28,38 @@ class ProductSelectDBQueryEventListener
     protected $scope;
 
     /**
-     * @var string
+     * @var string|null
      */
-    protected $systemConfigurationPath;
+    protected $backendSystemConfigurationPath;
+
+    /**
+     * @var string|null
+     */
+    protected $frontendSystemConfigurationPath;
+
+    /**
+     * @var Request
+     */
+    protected $request;
+
+    /**
+     * @var FrontendHelper
+     */
+    protected $frontendHelper;
 
     /**
      * @param ConfigManager $configManager
      * @param ProductVisibilityQueryBuilderModifier $modifier
+     * @param FrontendHelper $helper
      */
-    public function __construct(ConfigManager $configManager, ProductVisibilityQueryBuilderModifier $modifier)
-    {
+    public function __construct(
+        ConfigManager $configManager,
+        ProductVisibilityQueryBuilderModifier $modifier,
+        FrontendHelper $helper
+    ) {
         $this->configManager = $configManager;
         $this->modifier = $modifier;
+        $this->frontendHelper = $helper;
     }
 
     /**
@@ -49,12 +72,16 @@ class ProductSelectDBQueryEventListener
     }
 
     /**
-     * @param string $systemConfigurationPath
+     * @param string|null $backendSystemConfigurationPath
+     * @param string|null $frontendSystemConfigurationPath
      * @return $this
      */
-    public function setSystemConfigurationPath($systemConfigurationPath)
-    {
-        $this->systemConfigurationPath = $systemConfigurationPath;
+    public function setSystemConfigurationPath(
+        $backendSystemConfigurationPath = null,
+        $frontendSystemConfigurationPath = null
+    ) {
+        $this->backendSystemConfigurationPath = $backendSystemConfigurationPath;
+        $this->frontendSystemConfigurationPath = $frontendSystemConfigurationPath;
     }
 
     /**
@@ -66,7 +93,12 @@ class ProductSelectDBQueryEventListener
             return;
         }
 
-        $inventoryStatuses = $this->configManager->get($this->systemConfigurationPath);
+        if ($this->frontendHelper->isFrontendRequest($this->request)) {
+            $inventoryStatuses = $this->configManager->get($this->frontendSystemConfigurationPath);
+        } else {
+            $inventoryStatuses = $this->configManager->get($this->backendSystemConfigurationPath);
+        }
+
         $this->modifier->modifyByInventoryStatus($event->getQueryBuilder(), $inventoryStatuses);
     }
 
@@ -76,7 +108,7 @@ class ProductSelectDBQueryEventListener
      */
     protected function isConditionsAcceptable(ProductSelectDBQueryEvent $event)
     {
-        if (!$this->systemConfigurationPath) {
+        if (!$this->backendSystemConfigurationPath && !$this->frontendSystemConfigurationPath) {
             throw new \LogicException('SystemConfigurationPath not configured for ProductSelectDBQueryEventListener');
         }
 
@@ -89,5 +121,13 @@ class ProductSelectDBQueryEventListener
         }
 
         return true;
+    }
+
+    /**
+     * @param Request $request
+     */
+    public function setRequest(Request $request = null)
+    {
+        $this->request = $request;
     }
 }
