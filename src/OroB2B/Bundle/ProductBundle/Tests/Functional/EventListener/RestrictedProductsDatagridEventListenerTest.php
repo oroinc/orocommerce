@@ -6,6 +6,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProducts;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @dbIsolation
@@ -30,7 +31,7 @@ class RestrictedProductsDatagridEventListenerTest extends WebTestCase
         $product3 = $this->getReference(LoadProducts::PRODUCT_3);
     }
 
-    public function testDatagrid()
+    public function testRestricting()
     {
         $crawler = $this->client->request(
             'GET',
@@ -40,4 +41,6 @@ class RestrictedProductsDatagridEventListenerTest extends WebTestCase
         $this->assertJsonResponseStatusCodeEquals($result, 200);
         $data = json_decode($result->getContent(), true);
     }
+
+
 }
