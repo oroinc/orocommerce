@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\ProductBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+
 use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
 /**
@@ -30,12 +32,26 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
     /**
      * @ORM\ManyToOne(targetEntity="Product", inversedBy="unitPrecisions")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "identity"=true
+     *          }
+     *      }
+     * )
      */
     protected $product;
 
     /**
      * @ORM\ManyToOne(targetEntity="ProductUnit")
      * @ORM\JoinColumn(name="unit_code", referencedColumnName="code", onDelete="CASCADE")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=10
+     *          }
+     *      }
+     * )
      */
     protected $unit;
 
@@ -43,6 +59,13 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
      * @var integer
      *
      * @ORM\Column(name="unit_precision",type="integer")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=10
+     *          }
+     *      }
+     * )
      */
     protected $precision;
 
