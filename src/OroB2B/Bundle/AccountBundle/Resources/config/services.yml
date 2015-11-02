@@ -97,6 +97,8 @@ parameters:
 
     orob2b_account.provider.visibility_choices.class: OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider
 
+    orob2b_account.audit.discriminator_map_listener.class: OroB2B\Bundle\AccountBundle\Audit\DiscriminatorMapListener
+    orob2b_account.audit.commit_order.class: OroB2B\Bundle\AccountBundle\Audit\CommitOrderListener
     orob2b_account.helper.account_user_role_privileges.class: OroB2B\Bundle\AccountBundle\Helper\AccountUserRolePrivilegesHelper
 
     orob2b_account.storage.category_visibility_storage.class: OroB2B\Bundle\AccountBundle\Visibility\Storage\CategoryVisibilityStorage
@@ -564,6 +566,21 @@ services:
         class: %orob2b_account.provider.visibility_choices.class%
         arguments: [ @translator ]
 
+    orob2b_account.audit.discriminator_map_listener:
+        class: %orob2b_account.audit.discriminator_map_listener.class%
+        calls:
+            - [ addClass, [ orob2b_audit, %orob2b_account.entity.audit.class% ] ]
+            - [ addClass, [ orob2b_audit_field, %orob2b_account.entity.audit_field.class% ] ]
+        tags:
+            - { name: doctrine.event_listener, event: loadClassMetadata }
+
+    orob2b_account.audit.commit_order:
+        class: %orob2b_account.audit.commit_order.class%
+        calls:
+            - [ addDependency, [ %orob2b_account.entity.audit_field.class%, %orob2b_account.entity.audit.class% ] ]
+        tags:
+            - { name: doctrine.event_listener, event: onFlush, priority: -10 }
+
     orob2b_account.helper.account_user_role_privileges:
         class: %orob2b_account.helper.account_user_role_privileges.class%
         arguments:
@@ -611,4 +628,3 @@ services:
             - @orob2b_account.storage.category_visibility_storage
         tags:
             - {name: kernel.event_listener, event: orob2b_catalog.category.tree.create_after, method: onCreateAfter }
-
