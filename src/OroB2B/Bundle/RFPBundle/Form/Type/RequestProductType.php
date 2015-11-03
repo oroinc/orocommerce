@@ -9,7 +9,7 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
@@ -50,7 +50,7 @@ class RequestProductType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('product', ProductSelectType::NAME, [
+            ->add('product', ProductRemovedSelectType::NAME, [
                 'required'  => true,
                 'label'     => 'orob2b.product.entity_label',
                 'create_enabled' => false,

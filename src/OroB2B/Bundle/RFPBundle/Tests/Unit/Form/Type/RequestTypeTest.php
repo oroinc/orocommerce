@@ -14,9 +14,11 @@ use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductRemovedSelectType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
 use OroB2B\Bundle\RFPBundle\Entity\Request;
@@ -466,6 +468,7 @@ class RequestTypeTest extends AbstractTest
                     CollectionType::NAME                    => new CollectionType(),
                     RequestProductCollectionType::NAME      => new RequestProductCollectionType(),
                     RequestProductItemCollectionType::NAME  => new RequestProductItemCollectionType(),
+                    ProductRemovedSelectType::NAME          => new StubProductRemovedSelectType(),
                     ProductUnitSelectionType::NAME          => new StubProductUnitSelectionType(),
                     OroDateType::NAME                       => new OroDateType(),
                     $priceType->getName()                   => $priceType,

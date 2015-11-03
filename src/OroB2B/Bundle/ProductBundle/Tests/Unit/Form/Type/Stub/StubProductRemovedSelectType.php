@@ -5,16 +5,16 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
 
-class ProductSelectTypeStub extends AbstractType
+class StubProductRemovedSelectType extends AbstractType
 {
     /**
      * {@inheritdoc}
      */
     public function getName()
     {
-        return ProductSelectType::NAME;
+        return ProductRemovedSelectType::NAME;
     }
 
     /**
@@ -23,10 +23,11 @@ class ProductSelectTypeStub extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_parameters' => [],
             'class' => 'OroB2B\Bundle\ProductBundle\Entity\Product',
             'property' => 'sku',
             'create_enabled' => true,
+            'grid_name' => 'stub_grid',
+            'grid_widget_route' => 'stub_route',
             'configs' => [
                 'placeholder' => null,
             ],

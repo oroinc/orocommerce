@@ -2,45 +2,21 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
-use Oro\Bundle\TestFrameworkBundle\Entity\Product;
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductHolderType;
 
-class ProductSelectTypeTest extends FormIntegrationTestCase
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+class ProductSelectTypeTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ProductSelectType
      */
     protected $type;
 
-    /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $translator;
-
     protected function setUp()
     {
-        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
-
-        $this->translator
-            ->expects(static::any())
-            ->method('trans')
-            ->will(static::returnCallback(function ($id, array $params) {
-                return $id . ':' . $params['{title}'];
-            }));
-
-        $this->type = new ProductSelectType($this->translator);
-
-        parent::setUp();
+        $this->type = new ProductSelectType();
     }
 
     public function testGetName()
@@ -62,17 +38,20 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
             ->with(
                 $this->callback(
                     function (array $options) {
-                        $configs = [
-                            'placeholder' => 'orob2b.product.form.choose',
-                            'result_template_twig' => 'OroB2BProductBundle:Product:Autocomplete/result.html.twig',
-                            'selection_template_twig' => 'OroB2BProductBundle:Product:Autocomplete/selection.html.twig',
-                        ];
                         $this->assertArrayHasKey('autocomplete_alias', $options);
                         $this->assertArrayHasKey('create_form_route', $options);
                         $this->assertArrayHasKey('configs', $options);
                         $this->assertEquals('orob2b_product', $options['autocomplete_alias']);
                         $this->assertEquals('orob2b_product_create', $options['create_form_route']);
-                        $this->assertEquals($configs, $options['configs']);
+                        $this->assertEquals(
+                            [
+                                'placeholder' => 'orob2b.product.form.choose',
+                                'result_template_twig' => 'OroB2BProductBundle:Product:Autocomplete/result.html.twig',
+                                'selection_template_twig'
+                                    => 'OroB2BProductBundle:Product:Autocomplete/selection.html.twig',
+                            ],
+                            $options['configs']
+                        );
 
                         return true;
                     }
@@ -80,122 +59,5 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
             );
 
         $this->type->configureOptions($resolver);
-    }
-
-    /**
-     * @param array $inputData
-     * @param boolean $withParent
-     *
-     * @dataProvider finishViewProvider
-     */
-    public function testFinishViewPlaceholderEmpty(array $inputData = [], $withParent = true)
-    {
-        $form = $this->factory->create($this->type, null);
-
-        if ($withParent) {
-            $formParent = $this->factory->create(new StubProductHolderType(), $inputData['productHolder']);
-        } else {
-            $formParent = null;
-        }
-
-        $form->setParent($formParent);
-
-        $view = $form->createView();
-        $this->type->finishView($view, $form, $form->getConfig()->getOptions());
-
-        $this->assertArrayNotHasKey('configs', $view->vars);
-    }
-
-    /**
-     * @return array
-     */
-    public function finishViewProvider()
-    {
-        return [
-            'without parent form' => [
-                'inputData' => [],
-                'withParent' => false,
-            ],
-            'with parent form with null productHolder' => [
-                'inputData' => [
-                    'productHolder' => null,
-                ],
-                'withParent' => true,
-            ],
-            'with parent form with null productHolder id' => [
-                'inputData' => [
-                    'productHolder' => $this->createProductHolder(0, 'test'),
-                ],
-                'withParent' => true,
-            ],
-            'with parent form with productHolder with product' => [
-                'inputData' => [
-                    'productHolder' => $this->createProductHolder(1, 'sku', new Product()),
-                ],
-                'withParent' => true,
-            ],
-        ];
-    }
-
-    public function testFinishViewPlaceholder()
-    {
-        $form = $this->factory->create($this->type, null);
-
-        $formParent = $this->factory->create(new StubProductHolderType(), $this->createProductHolder(1, 'sku'));
-
-        $form->setParent($formParent);
-
-        $view = $form->createView();
-        $this->type->finishView($view, $form, $form->getConfig()->getOptions());
-
-        $this->assertArrayHasKey('configs', $view->vars);
-        $this->assertArrayHasKey('placeholder', $view->vars['configs']);
-        $this->assertEquals('orob2b.product.removed:sku', $view->vars['configs']['placeholder']);
-    }
-
-    /**
-     * @param int $id
-     * @param string $productSku
-     * @param Product $product
-     * @return \PHPUnit_Framework_MockObject_MockObject|ProductHolderInterface
-     */
-    protected function createProductHolder($id, $productSku, Product $product = null)
-    {
-        /* @var $productHolder \PHPUnit_Framework_MockObject_MockObject|ProductHolderInterface */
-        $productHolder = $this->getMock('OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface');
-        $productHolder
-            ->expects($this->any())
-            ->method('getEntityIdentifier')
-            ->willReturn($id);
-        $productHolder
-            ->expects($this->any())
-            ->method('getProduct')
-            ->willReturn($product);
-        $productHolder
-            ->expects($this->any())
-            ->method('getProductSku')
-            ->willReturn($productSku);
-
-        return $productHolder;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getExtensions()
-    {
-        $productSelectType = new ProductSelectType($this->translator);
-        $entityType = new EntityType(['1'], OroEntitySelectOrCreateInlineType::NAME);
-
-        return [
-            new PreloadedExtension(
-                [
-                    $productSelectType->getName() => $productSelectType,
-                    $entityType->getName() => $entityType,
-                ],
-                []
-            ),
-            $this->getValidatorExtension(true),
-        ];
     }
 }
