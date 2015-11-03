@@ -16,7 +16,8 @@ class AjaxProductController extends Controller
     /**
      * @Route(
      *      "/names-by-skus",
-     *      name="orob2b_product_frontend_ajax_names_by_skus"
+     *      name="orob2b_product_frontend_ajax_names_by_skus",
+     *      options={"frontend"=true}
      * )
      * @Method("POST")
      *
