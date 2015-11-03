@@ -43,7 +43,7 @@ class ForwardListener
     /**
      * @var array
      */
-    protected $deniedUrlPatterns = [];
+    protected $skippedUrlPatterns = [];
 
     /**
      * @param Router $router
@@ -83,7 +83,7 @@ class ForwardListener
             return;
         }
 
-        if ($this->isDeniedUrl($request)) {
+        if ($this->isSkippedUrl($request)) {
             return;
         }
 
@@ -91,32 +91,33 @@ class ForwardListener
     }
 
     /**
-     * @param string $deniedUrlPattern
+     * @param string $skippedUrlPattern
      * @param string $env
      */
-    public function addDeniedUrlPattern($deniedUrlPattern, $env = 'prod')
+    public function addSkippedUrlPattern($skippedUrlPattern, $env = 'prod')
     {
-        $this->deniedUrlPatterns[$env][] = $deniedUrlPattern;
+        $this->skippedUrlPatterns[$env][] = $skippedUrlPattern;
     }
 
     /**
      * @param Request $request
      * @return bool
      */
-    protected function isDeniedUrl(Request $request)
+    protected function isSkippedUrl(Request $request)
     {
-        if (array_key_exists($this->environment, $this->deniedUrlPatterns)) {
+        if (!$this->frontendHelper->isFrontendRequest($request)) {
+            return true;
+        }
+
+        if (array_key_exists($this->environment, $this->skippedUrlPatterns)) {
             $url = $request->getPathInfo();
-            foreach ($this->deniedUrlPatterns[$this->environment] as $pattern) {
+            foreach ($this->skippedUrlPatterns[$this->environment] as $pattern) {
                 if (strpos($url, $pattern) !== false) {
                     return true;
                 }
             }
         }
 
-        if (!$this->frontendHelper->isFrontendRequest($request)) {
-            return true;
-        }
 
         return false;
     }

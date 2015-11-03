@@ -15,11 +15,11 @@ services:
             - %installed%
             - %kernel.environment%
         calls:
-            - [addDeniedUrlPattern, ['_profiler', 'dev']]
-            - [addDeniedUrlPattern, ['_wdt', 'dev']]
-            - [addDeniedUrlPattern, ['css', 'dev']]
-            - [addDeniedUrlPattern, ['images', 'dev']]
-            - [addDeniedUrlPattern, ['js', 'dev']]
+            - [addSkippedUrlPattern, ['_profiler', 'dev']]
+            - [addSkippedUrlPattern, ['_wdt', 'dev']]
+            - [addSkippedUrlPattern, ['css', 'dev']]
+            - [addSkippedUrlPattern, ['images', 'dev']]
+            - [addSkippedUrlPattern, ['js', 'dev']]
         tags:
             - {name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 64}
 

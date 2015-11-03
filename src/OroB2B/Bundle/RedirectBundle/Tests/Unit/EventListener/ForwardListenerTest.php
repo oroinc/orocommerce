@@ -75,7 +75,7 @@ class ForwardListenerTest extends \PHPUnit_Framework_TestCase
         array $expected
     ) {
         $this->listener = new ForwardListener($this->router, $this->registry, $this->frontendHelper, $installed, $env);
-        $this->listener->addDeniedUrlPattern('deniedRoute', 'dev');
+        $this->listener->addSkippedUrlPattern('deniedRoute', 'dev');
         $request = Request::create('http://localhost'.$slugParams['url']);
         if ($existingController) {
             $request->attributes->add(['_controller' => 'ExistingController']);
