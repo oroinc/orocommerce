@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
 class StubProductHolderType extends AbstractType
 {
@@ -18,7 +18,7 @@ class StubProductHolderType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('product', ProductRemovedSelectType::NAME, [
+            ->add('product', ProductSelectType::NAME, [
                 'label' =>  'orob2b.product.entity_label',
             ])
         ;
