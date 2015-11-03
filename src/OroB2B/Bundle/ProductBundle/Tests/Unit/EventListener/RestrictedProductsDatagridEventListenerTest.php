@@ -17,14 +17,33 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
 class RestrictedProductsDatagridEventListenerTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var  Request|\PHPUnit_Framework_MockObject_MockObject */
-    protected $request;
-
     /** @var  ProductManager|\PHPUnit_Framework_MockObject_MockObject */
     protected $productManager;
 
     /** @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject $qb */
     protected $qb;
+
+    /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
+    protected $requestStack;
+
+    /** @var RestrictedProductsDatagridEventListener */
+    protected $listener;
+
+    protected function setUp()
+    {
+        $this->qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->requestStack = $this->getMockBuilder('Symfony\Component\HttpFoundation\RequestStack')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->productManager = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->listener = new RestrictedProductsDatagridEventListener($this->requestStack, $this->productManager);
+    }
 
     /**
      * @dataProvider testOnBuildAfterDataProvider
@@ -33,15 +52,17 @@ class RestrictedProductsDatagridEventListenerTest extends \PHPUnit_Framework_Tes
      */
     public function testOnBuildAfter($request, array $expectedParamsResult)
     {
-        $this->request = $request;
-        $listener = $this->createListener();
+        $this->requestStack->expects($this->once())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
         $event = $this->createEvent();
-        $this->productManager->expects($this->once())->method('restrictQueryBuilderByProductVisibility')->with(
-            $this->qb,
-            $expectedParamsResult,
-            $this->request
-        );
-        $listener->onBuildAfter($event);
+        $this->productManager->expects($this->once())
+            ->method('restrictQueryBuilderByProductVisibility')
+            ->with(
+                $this->qb,
+                $expectedParamsResult
+            );
+        $this->listener->onBuildAfter($event);
     }
 
     /**
@@ -69,8 +90,6 @@ class RestrictedProductsDatagridEventListenerTest extends \PHPUnit_Framework_Tes
      */
     protected function createEvent()
     {
-        $this->qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')->disableOriginalConstructor()->getMock();
-
         /** @var OrmDatasource|\PHPUnit_Framework_MockObject_MockObject $dataSource */
         $dataSource = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource')
             ->disableOriginalConstructor()
@@ -82,20 +101,5 @@ class RestrictedProductsDatagridEventListenerTest extends \PHPUnit_Framework_Tes
         $dataGrid->expects($this->once())->method('getAcceptedDatasource')->willReturn($dataSource);
 
         return new BuildAfter($dataGrid);
-    }
-
-    /**
-     * @return RestrictedProductsDatagridEventListener
-     */
-    protected function createListener()
-    {
-        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
-        $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($this->request);
-        $this->productManager = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        return new RestrictedProductsDatagridEventListener($requestStack, $this->productManager, $this->request);
     }
 }
