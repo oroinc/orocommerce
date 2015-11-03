@@ -34,7 +34,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         $this->modifier = new ProductVisibilityQueryBuilderModifier();
 
         $this->queryBuilder = $this->getContainer()->get('doctrine')
-            ->getRepository('OroB2BProductBundle:Product')->createQueryBuilder('p')->orderBy('p.sku');
+            ->getRepository('OroB2BProductBundle:Product')->createQueryBuilder('p')->orderBy('p.id');
     }
 
     /**
