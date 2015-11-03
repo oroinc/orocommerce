@@ -106,9 +106,14 @@ class ProductRepository extends EntityRepository
             ->createQueryBuilder('p');
 
         $productsQueryBuilder->innerJoin('p.names', 'pn', 'WITH', $productsQueryBuilder->expr()->isNull('pn.locale'))
-            ->where($productsQueryBuilder->expr()->like('LOWER(p.sku)', ':search'))
-            ->orWhere($productsQueryBuilder->expr()->like('LOWER(pn.string)', ':search'))
+            ->where(
+                $productsQueryBuilder->expr()->orX(
+                    $productsQueryBuilder->expr()->like('LOWER(p.sku)', ':search'),
+                    $productsQueryBuilder->expr()->like('LOWER(pn.string)', ':search')
+                )
+            )
             ->setParameter('search', '%' . strtolower($search) . '%')
+            ->addOrderBy('p.id')
             ->setFirstResult($firstResult)
             ->setMaxResults($maxResults);
 
