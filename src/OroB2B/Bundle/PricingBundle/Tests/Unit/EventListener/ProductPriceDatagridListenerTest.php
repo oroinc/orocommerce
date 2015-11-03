@@ -196,12 +196,14 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                             'type' => 'twig',
                             'template' => 'OroB2BPricingBundle:Datagrid:Column/productUnitPrice.html.twig',
                             'frontend_type' => 'html',
+                            'renderable' => false,
                         ],
                         'price_column_eur_unit1' => [
                             'label' => 'orob2b.pricing.productprice.price_unit1_in_EUR.trans',
                             'type' => 'twig',
                             'template' => 'OroB2BPricingBundle:Datagrid:Column/productUnitPrice.html.twig',
                             'frontend_type' => 'html',
+                            'renderable' => false,
                         ],
                     ],
                     'filters' => [
