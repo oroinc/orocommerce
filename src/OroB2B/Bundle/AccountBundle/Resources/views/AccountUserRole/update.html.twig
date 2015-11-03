@@ -8,6 +8,20 @@
 {% oro_title_set({params : {"%label%": entity.label|default('N/A'|trans), '%entityName%': 'orob2b.account.accountuserrole.entity_label'|trans} }) %}
 
 {% block navButtons %}
+    {% set options = {
+        elSelector: '.btn-success.role-submit',
+        formName: form.vars.name,
+        formSelector: '#' ~ form.vars.id,
+        labelSelector: '#' ~ form.label.vars.id,
+        accountSelector: '#' ~ form.account.vars.id,
+        privilegesSelector: '#' ~ form.privileges.vars.id,
+        appendUsersSelector: '#roleAppendUsers',
+        removeUsersSelector: '#roleRemoveUsers',
+        tokenSelector: '#' ~ form._token.vars.id
+    } %}
+    <div data-page-component-module="orob2baccount/js/app/views/account-role-view"
+         data-page-component-options="{{ options|json_encode }}">
+    </div>
     {% if entity.id and resource_granted('DELETE', entity) %}
         {{ UI.deleteButton({
             'dataUrl': path('orob2b_api_account_delete_accountuserrole', {'id': entity.id}),
@@ -20,9 +34,9 @@
         {{ UI.buttonSeparator() }}
     {% endif %}
     {{ UI.cancelButton(path('orob2b_account_account_user_role_index')) }}
-    {% set html = UI.saveAndCloseButton() %}
+    {% set html = UI.buttonType({'type': 'button', 'class': 'btn-success role-submit', 'label': 'Save and Close'|trans}) %}
     {% if entity.id or resource_granted('orob2b_account_account_user_role_update') %}
-        {% set html = html ~ UI.saveAndStayButton() %}
+        {% set html = html ~ UI.buttonType({'type': 'button', 'class': 'btn-success main-group', 'label': 'Save'|trans}) %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
 {% endblock %}

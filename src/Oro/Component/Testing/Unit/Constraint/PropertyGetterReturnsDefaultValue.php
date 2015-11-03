@@ -34,7 +34,7 @@ class PropertyGetterReturnsDefaultValue extends \PHPUnit_Framework_Constraint
     public function toString()
     {
         return sprintf(
-            'getter %s for property %s returns its default value',
+            'getter %s for property %s returns the default value',
             $this->getterName,
             $this->propertyName
         );
@@ -45,7 +45,7 @@ class PropertyGetterReturnsDefaultValue extends \PHPUnit_Framework_Constraint
     protected function failureDescription($other)
     {
         return sprintf(
-            'getter %s for property %s of entity %s returns its default value',
+            'getter %s for property %s of class %s returns the default value',
             $this->getterName,
             $this->propertyName,
             get_class($other)
@@ -63,7 +63,7 @@ class PropertyGetterReturnsDefaultValue extends \PHPUnit_Framework_Constraint
         }
         if (!method_exists($other, $this->getterName)) {
             $message = sprintf(
-                "Entity %s doesn't have a get%s() or is%s() getters for property %s",
+                "Class %s doesn't have %s() or %s() getters for property %s",
                 get_class($other),
                 'get' . ucfirst($this->propertyName),
                 'is' . ucfirst($this->propertyName),

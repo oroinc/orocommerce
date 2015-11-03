@@ -42,6 +42,8 @@ class QuoteController extends Controller
                 'accountUser' => $rfpRequest->getAccountUser() ? $rfpRequest->getAccountUser()->getId() : null,
                 'account' => $rfpRequest->getAccount() ? $rfpRequest->getAccount()->getId() : null,
                 'request' => $rfpRequest->getId(),
+                'poNumber' => $rfpRequest->getPoNumber(),
+                'shipUntil' => $rfpRequest->getShipUntil(),
             ],
         ];
 
