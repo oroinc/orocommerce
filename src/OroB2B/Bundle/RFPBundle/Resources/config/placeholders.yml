@@ -7,6 +7,9 @@ placeholders:
     orob2b_product_quick_add_buttons:
         items:
             rfp_quick_add: ~
+    orob2b_product_quick_add_import_buttons:
+        items:
+            rfp_quick_add: ~
 
 items:
     rfp_view_buttons:

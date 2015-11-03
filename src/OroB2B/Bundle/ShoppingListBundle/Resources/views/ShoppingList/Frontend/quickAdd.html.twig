@@ -14,6 +14,7 @@
 } %}
 
 <div class="mass-action-controls btn-group"
-     data-page-component-module="orob2bshoppinglist/js/app/components/quick-add-button-component">
+     data-page-component-module="orob2bshoppinglist/js/app/components/quick-add-button-component"
+     data-page-component-options="{{ pageComponentOptions|json_encode }}">
     {{ buttons.createAddToShoppingListButton(options) }}
 </div>

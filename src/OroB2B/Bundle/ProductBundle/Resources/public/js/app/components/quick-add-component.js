@@ -14,7 +14,8 @@ define(function(require) {
         options: {
             'componentSelector': '[name$="[component]"]',
             'additionalSelector': '[name$="[additional]"]',
-            'componentButtonSelector': '.component-button'
+            'componentButtonSelector': '.component-button',
+            'componentPrefix': 'quick-add'
         },
 
         /**
@@ -32,7 +33,7 @@ define(function(require) {
 
             this.$form.on('click', this.options.componentButtonSelector, _.bind(this.fillComponentData, this));
 
-            mediator.on('quick-add:submit', this.submit, this);
+            mediator.on(this.options.componentPrefix + ':submit', this.submit, this);
         },
 
         fillComponentData: function(e) {
@@ -58,7 +59,7 @@ define(function(require) {
                 return;
             }
 
-            mediator.off('quick-add:submit', this.submit, this);
+            mediator.off(this.options.componentPrefix + ':submit', this.submit, this);
             QuickAddComponent.__super__.dispose.call(this);
         }
     });
