@@ -13,7 +13,7 @@ class ProductSelectTypeTest extends AbstractProductSelectTypeTest
     protected $scope = 'quote';
 
     /** @var string */
-    protected $configPath = 'oro_b2b_sale.backend_product_visibility.value';
+    protected $configPath = 'oro_b2b_sale.backend_product_visibility';
 
     /**
      * {@inheritdoc}
