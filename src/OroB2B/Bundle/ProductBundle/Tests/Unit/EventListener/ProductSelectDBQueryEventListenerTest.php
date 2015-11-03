@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 use Doctrine\ORM\QueryBuilder;
 
@@ -80,7 +81,7 @@ class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
             $this->frontendHelper
         );
         $productSelectDBQueryEventListener->setScope($scope);
-        $productSelectDBQueryEventListener->setSystemConfigurationPath('path');
+        $productSelectDBQueryEventListener->setBackendSystemConfigurationPath('path');
 
         $this->event->expects($this->once())
             ->method('getDataParameters')
@@ -92,11 +93,11 @@ class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider onQueryDataProvider
      * @param bool $isFrontend
+     * @param string|null $frontendPath
+     * @param string|null $backendPath
      */
-    public function testOnQuery($isFrontend)
+    public function testOnQuery($isFrontend, $frontendPath, $backendPath)
     {
-        $frontendPath = 'frontend_path';
-        $backendPath = 'backend_path';
         $scope = 'scope';
 
         $statuses = [
@@ -104,7 +105,7 @@ class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
             'status2',
         ];
 
-        $this->frontendHelper->expects($this->once())
+        $this->frontendHelper->expects($this->any())
             ->method('isFrontendRequest')
             ->willReturn($isFrontend);
 
@@ -112,25 +113,33 @@ class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getDataParameters')
             ->willReturn(new ParameterBag(['scope' => $scope]));
 
-        $this->event->expects($this->once())
+        $this->event->expects($this->any())
             ->method('getQueryBuilder')
             ->willReturn($this->queryBuilder);
 
-        if ($isFrontend) {
+        if ($isFrontend && $frontendPath) {
             $this->configManager->expects($this->once())
                 ->method('get')
                 ->with($frontendPath)
                 ->willReturn($statuses);
-        } else {
+
+            $this->modifier->expects($this->once())
+                ->method('modifyByInventoryStatus')
+                ->with($this->queryBuilder, $statuses);
+        } elseif (!$isFrontend && $backendPath) {
             $this->configManager->expects($this->once())
                 ->method('get')
                 ->with($backendPath)
                 ->willReturn($statuses);
-        }
 
-        $this->modifier->expects($this->once())
-            ->method('modifyByInventoryStatus')
-            ->with($this->queryBuilder, $statuses);
+            $this->modifier->expects($this->once())
+                ->method('modifyByInventoryStatus')
+                ->with($this->queryBuilder, $statuses);
+        } else {
+            $this->modifier->expects($this->never())
+                ->method('modifyByInventoryStatus')
+                ->with($this->queryBuilder, $statuses);
+        }
 
         $productSelectDBQueryEventListener = new ProductSelectDBQueryEventListener(
             $this->configManager,
@@ -138,10 +147,13 @@ class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
             $this->frontendHelper
         );
 
-        $productSelectDBQueryEventListener->setRequest(new Request());
+        $requestStack = new RequestStack();
+        $requestStack->push(new Request());
+        $productSelectDBQueryEventListener->setRequestStack($requestStack);
 
         $productSelectDBQueryEventListener->setScope($scope);
-        $productSelectDBQueryEventListener->setSystemConfigurationPath($backendPath, $frontendPath);
+        $productSelectDBQueryEventListener->setFrontendSystemConfigurationPath($frontendPath);
+        $productSelectDBQueryEventListener->setBackendSystemConfigurationPath($backendPath);
 
         $productSelectDBQueryEventListener->onDBQuery($this->event);
     }
@@ -153,11 +165,36 @@ class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                'isFrontend' => false
+                'isFrontend' => false,
+                'frontendPath' => 'frontend_path',
+                'backendPath' => 'backend_path',
             ],
             [
-                'isFrontend' => true
+                'isFrontend' => false,
+                'frontendPath' => null,
+                'backendPath' => 'backend_path',
             ],
+
+            [
+                'isFrontend' => true,
+                'frontendPath' => 'frontend_path',
+                'backendPath' => 'backend_path',
+            ],
+            [
+                'isFrontend' => true,
+                'frontendPath' => 'frontend_path',
+                'backendPath' => null,
+            ],
+            [
+                'isFrontend' => false,
+                'frontendPath' => 'frontend_path',
+                'backendPath' => null,
+            ],
+            [
+                'isFrontend' => true,
+                'frontendPath' => null,
+                'backendPath' => 'backend_path',
+            ]
         ];
     }
 
@@ -188,7 +225,7 @@ class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
             $this->frontendHelper
         );
 
-        $productSelectDBQueryEventListener->setSystemConfigurationPath('path');
+        $productSelectDBQueryEventListener->setBackendSystemConfigurationPath('path');
 
         $productSelectDBQueryEventListener->onDBQuery($this->event);
     }

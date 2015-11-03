@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\ProductBundle\EventListener;
 
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
@@ -30,17 +30,17 @@ class ProductSelectDBQueryEventListener
     /**
      * @var string|null
      */
-    protected $backendSystemConfigurationPath;
+    protected $backendSystemConfigurationPath = null;
 
     /**
      * @var string|null
      */
-    protected $frontendSystemConfigurationPath;
+    protected $frontendSystemConfigurationPath = null;
 
     /**
-     * @var Request
+     * @var RequestStack
      */
-    protected $request;
+    protected $requestStack;
 
     /**
      * @var FrontendHelper
@@ -72,16 +72,21 @@ class ProductSelectDBQueryEventListener
     }
 
     /**
-     * @param string|null $backendSystemConfigurationPath
      * @param string|null $frontendSystemConfigurationPath
      * @return $this
      */
-    public function setSystemConfigurationPath(
-        $backendSystemConfigurationPath = null,
-        $frontendSystemConfigurationPath = null
-    ) {
-        $this->backendSystemConfigurationPath = $backendSystemConfigurationPath;
+    public function setFrontendSystemConfigurationPath($frontendSystemConfigurationPath = null)
+    {
         $this->frontendSystemConfigurationPath = $frontendSystemConfigurationPath;
+    }
+
+    /**
+     * @param string|null $backendSystemConfigurationPath
+     * @return $this
+     */
+    public function setBackendSystemConfigurationPath($backendSystemConfigurationPath = null)
+    {
+        $this->backendSystemConfigurationPath = $backendSystemConfigurationPath;
     }
 
     /**
@@ -93,13 +98,23 @@ class ProductSelectDBQueryEventListener
             return;
         }
 
-        if ($this->frontendHelper->isFrontendRequest($this->request)) {
+        if ($this->isFrontendRequest() && $this->frontendSystemConfigurationPath) {
             $inventoryStatuses = $this->configManager->get($this->frontendSystemConfigurationPath);
-        } else {
+        } elseif (!$this->isFrontendRequest() && $this->backendSystemConfigurationPath) {
             $inventoryStatuses = $this->configManager->get($this->backendSystemConfigurationPath);
+        } else {
+            return;
         }
 
         $this->modifier->modifyByInventoryStatus($event->getQueryBuilder(), $inventoryStatuses);
+    }
+
+    /**
+     * @param RequestStack $requestStack
+     */
+    public function setRequestStack($requestStack)
+    {
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -124,10 +139,10 @@ class ProductSelectDBQueryEventListener
     }
 
     /**
-     * @param Request $request
+     * @return bool
      */
-    public function setRequest(Request $request = null)
+    protected function isFrontendRequest()
     {
-        $this->request = $request;
+        return $this->frontendHelper->isFrontendRequest($this->requestStack->getCurrentRequest());
     }
 }
