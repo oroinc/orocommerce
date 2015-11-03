@@ -34,7 +34,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         $this->modifier = new ProductVisibilityQueryBuilderModifier();
 
         $this->queryBuilder = $this->getContainer()->get('doctrine')
-            ->getRepository('OroB2BProductBundle:Product')->createQueryBuilder('p');
+            ->getRepository('OroB2BProductBundle:Product')->createQueryBuilder('p')->orderBy('p.sku');
     }
 
     /**
@@ -42,17 +42,11 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
      * @param array $statuses
      * @param array $expected
      */
-    public function testModifyByStatus($statuses, array $expected)
+    public function testModifyByStatus(array $statuses, array $expected)
     {
         $this->modifier->modifyByStatus($this->queryBuilder, $statuses);
-        $result = array_map(
-            function ($product) {
-                return $product['sku'];
-            },
-            $this->queryBuilder->getQuery()->getArrayResult()
-        );
 
-        $this->assertEquals($expected, $result);
+        $this->assertEquals($expected, $this->getProductSkus($this->queryBuilder->getQuery()->getArrayResult()));
     }
 
     /**
@@ -95,21 +89,15 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
     }
 
     /**
-     * @dataProvider modifyByStatusDataProvider
+     * @dataProvider modifyByInventoryStatusDataProvider
      * @param array $statuses
      * @param array $expected
      */
-    public function testModifyByInventoryStatus($statuses, array $expected)
+    public function testModifyByInventoryStatus(array $statuses, array $expected)
     {
-        $this->modifier->modifyByStatus($this->queryBuilder, $statuses);
-        $result = array_map(
-            function ($product) {
-                return $product['sku'];
-            },
-            $this->queryBuilder->getQuery()->getArrayResult()
-        );
+        $this->modifier->modifyByInventoryStatus($this->queryBuilder, $statuses);
 
-        $this->assertEquals($expected, $result);
+        $this->assertEquals($expected, $this->getProductSkus($this->queryBuilder->getQuery()->getArrayResult()));
     }
 
     /**
@@ -141,7 +129,6 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                 ],
                 'expected' => [
                     LoadProductData::PRODUCT_4,
-                    LoadProductData::PRODUCT_4,
                 ],
             ],
             'all products' => [
@@ -160,10 +147,21 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         ];
     }
 
+    /**
+     * @param array $products
+     * @return array
+     */
+    protected function getProductSkus(array $products)
+    {
+        return array_map(function ($product) {
+            return $product['sku'];
+        }, $products);
+    }
+
     public function testModifyByStatusesParameterNamesConflict()
     {
         $this->queryBuilder->select('p.sku');
-        $this->modifier->modifyByStatus($this->queryBuilder, [Product::STATUS_DISABLED]);
+        $this->modifier->modifyByStatus($this->queryBuilder, [Product::STATUS_ENABLED]);
         $this->modifier->modifyByInventoryStatus(
             $this->queryBuilder,
             [
@@ -171,17 +169,17 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
             ]
         );
 
-        $this->queryBuilder
-            ->andWhere('p.status in (:status)')
-            ->setParameter('status', [Product::STATUS_ENABLED, Product::STATUS_DISABLED])
-            ->andWhere('p.inventory_status in (:inventory_status)')
-            ->setParameter('inventory_status', [
+        $this->modifier->modifyByStatus($this->queryBuilder, [Product::STATUS_ENABLED, Product::STATUS_DISABLED]);
+        $this->modifier->modifyByInventoryStatus(
+            $this->queryBuilder,
+            [
                 Product::INVENTORY_STATUS_IN_STOCK,
                 Product::INVENTORY_STATUS_OUT_OF_STOCK,
                 Product::INVENTORY_STATUS_DISCONTINUED,
-            ]);
+            ]
+        );
 
         $this->assertCount(4, $this->queryBuilder->getParameters());
-        $this->assertEquals(LoadProductData::PRODUCT_2, $this->queryBuilder->getQuery()->getSingleScalarResult());
+        $this->assertEquals(LoadProductData::PRODUCT_1, $this->queryBuilder->getQuery()->getSingleScalarResult());
     }
 }
