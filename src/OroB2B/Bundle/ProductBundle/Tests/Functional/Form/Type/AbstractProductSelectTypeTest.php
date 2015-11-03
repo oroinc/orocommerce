@@ -115,6 +115,7 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
                 'availableInventoryStatuses' => ['in_stock', 'out_of_stock'],
                 'expectedProducts' => [
                     LoadProductData::TEST_PRODUCT_01,
+                    LoadProductData::TEST_PRODUCT_02,
                     LoadProductData::TEST_PRODUCT_03,
                 ],
             ],
@@ -122,6 +123,7 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
                 'availableInventoryStatuses' => ['in_stock'],
                 'expectedProducts' => [
                     LoadProductData::TEST_PRODUCT_01,
+                    LoadProductData::TEST_PRODUCT_02,
                 ],
             ],
             [
@@ -140,6 +142,7 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
                 'availableInventoryStatuses' => ['in_stock', 'discontinued'],
                 'expectedProducts' => [
                     LoadProductData::TEST_PRODUCT_01,
+                    LoadProductData::TEST_PRODUCT_02,
                     LoadProductData::TEST_PRODUCT_04,
                 ],
             ],

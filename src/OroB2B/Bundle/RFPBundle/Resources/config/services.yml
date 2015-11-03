@@ -45,6 +45,6 @@ services:
             - @orob2b_product.model.product_visibility_query_builder_modifier
         calls:
             - [setScope, ['rfp']]
-            - [setSystemConfigurationPath, ['oro_b2b_rfp.product_visibility.value']]
+            - [setSystemConfigurationPath, ['oro_b2b_rfp.backend_product_visibility']]
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
