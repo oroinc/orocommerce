@@ -18,6 +18,7 @@ class LoadProductData extends AbstractFixture
     const TEST_PRODUCT_02 = 'test_product_02';
     const TEST_PRODUCT_03 = 'test_product_03';
     const TEST_PRODUCT_04 = 'test_product_04';
+    const TEST_PRODUCT_05 = 'test_product_05';
 
     /**
      * @var array
@@ -31,7 +32,7 @@ class LoadProductData extends AbstractFixture
         [
             'productCode' => self::TEST_PRODUCT_02,
             'inventoryStatus' =>  Product::INVENTORY_STATUS_IN_STOCK,
-            'status' => Product::STATUS_DISABLED
+            'status' => Product::STATUS_ENABLED
         ],
         [
             'productCode' => self::TEST_PRODUCT_03,
@@ -42,6 +43,11 @@ class LoadProductData extends AbstractFixture
             'productCode' => self::TEST_PRODUCT_04,
             'inventoryStatus' =>  Product::INVENTORY_STATUS_DISCONTINUED,
             'status' => Product::STATUS_ENABLED
+        ],
+        [
+            'productCode' => self::TEST_PRODUCT_05,
+            'inventoryStatus' =>  Product::INVENTORY_STATUS_IN_STOCK,
+            'status' => Product::STATUS_DISABLED
         ],
     ];
 
