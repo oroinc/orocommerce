@@ -22,7 +22,7 @@ class LoadRequestProductItemsData extends AbstractFixture implements DependentFi
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProducts',
+            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
             'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits',
             'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
             'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData'

@@ -4,9 +4,9 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Event;
 
 use Doctrine\ORM\QueryBuilder;
 
-use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
 use Symfony\Component\HttpFoundation\ParameterBag;
-use Symfony\Component\HttpFoundation\Request;
+
+use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
 
 class ProductSelectDBQueryEventTest extends \PHPUnit_Framework_TestCase
 {
@@ -19,11 +19,9 @@ class ProductSelectDBQueryEventTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $request = new Request();
-        $event = new ProductSelectDBQueryEvent($queryBuilder, $dataParameters, $request);
+        $event = new ProductSelectDBQueryEvent($queryBuilder, $dataParameters);
 
         $this->assertSame($dataParameters, $event->getDataParameters());
         $this->assertSame($queryBuilder, $event->getQueryBuilder());
-        $this->assertSame($request, $event->getRequest());
     }
 }
