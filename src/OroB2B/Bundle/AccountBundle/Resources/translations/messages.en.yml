@@ -68,6 +68,7 @@ orob2b.account:
         owner.label:                 'Owner'
 
         profile:
+            company_name: 'Company Name'
             registration.title: 'Registration'
             register: 'Register'
             forgot_password: 'Forgot Your Password'

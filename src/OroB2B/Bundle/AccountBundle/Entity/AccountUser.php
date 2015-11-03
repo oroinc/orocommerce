@@ -274,10 +274,23 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      */
     public function createAccount()
     {
+        $this->createAccountWithCompanyName();
+    }
+
+    /**
+     * @param string|null $companyName
+     */
+    public function createAccountWithCompanyName($companyName = null)
+    {
         if (!$this->account) {
             $this->account = new Account();
             $this->account->setOrganization($this->organization);
-            $this->account->setName(sprintf('%s %s', $this->firstName, $this->lastName));
+
+            if (!$companyName) {
+                $companyName = sprintf('%s %s', $this->firstName, $this->lastName);
+            }
+
+            $this->account->setName($companyName);
 
             if ($this->getOwner() && !$this->account->getOwner()) {
                 $this->account->setOwner($this->getOwner(), false);

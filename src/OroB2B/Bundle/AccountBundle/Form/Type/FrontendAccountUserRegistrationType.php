@@ -48,6 +48,18 @@ class FrontendAccountUserRegistrationType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        if ($options['add_company_name']) {
+            $builder->add(
+                'companyName',
+                'text',
+                [
+                    'required' => true,
+                    'mapped' => false,
+                    'label' => 'orob2b.account.accountuser.profile.company_name'
+                ]
+            );
+        }
+
         $builder
             ->add(
                 'firstName',
@@ -87,7 +99,6 @@ class FrontendAccountUserRegistrationType extends AbstractType
             ]
         );
 
-
         $builder->addEventListener(
             FormEvents::SUBMIT,
             function (FormEvent $event) {
@@ -116,7 +127,8 @@ class FrontendAccountUserRegistrationType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => $this->dataClass,
-                'intention' => 'account_user'
+                'intention' => 'account_user',
+                'add_company_name' => null
             ]
         );
     }

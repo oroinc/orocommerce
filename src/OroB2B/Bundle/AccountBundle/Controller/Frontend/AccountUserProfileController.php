@@ -13,6 +13,9 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\UserBundle\Entity\UserManager;
+use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserManager;
@@ -57,25 +60,43 @@ class AccountUserProfileController extends Controller
     {
         $accountUser = new AccountUser();
 
+        /** @var ConfigManager $configManager */
+        $configManager = $this->get('oro_config.manager');
+        $defaultOwnerId = $configManager->get('oro_b2b_account.default_account_owner');
+        /** @var UserManager $userManager */
+        $userManager = $this->get('oro_user.manager');
         /** @var WebsiteManager $websiteManager */
         $websiteManager = $this->get('orob2b_website.manager');
         $website = $websiteManager->getCurrentWebsite();
         /** @var Organization|OrganizationInterface $websiteOrganization */
         $websiteOrganization = $website->getOrganization();
+
         if (!$websiteOrganization) {
             throw new \RuntimeException('Website organization is empty');
         }
+
         $defaultRole = $this->getDoctrine()
             ->getManagerForClass('OroB2BAccountBundle:AccountUserRole')
             ->getRepository('OroB2BAccountBundle:AccountUserRole')
             ->getDefaultAccountUserRoleByWebsite($website);
+
         if (!$defaultRole) {
             throw new \RuntimeException(sprintf('Role "%s" was not found', AccountUser::ROLE_DEFAULT));
         }
+
+        if (!$defaultOwnerId) {
+            throw new \RuntimeException('Application Owner is empty');
+        }
+
+        /** @var User $owner */
+        $owner = $userManager->getRepository()->find($defaultOwnerId);
+
         $accountUser
+            ->setOwner($owner)
             ->addOrganization($websiteOrganization)
             ->setOrganization($websiteOrganization)
-            ->addRole($defaultRole);
+            ->addRole($defaultRole)
+        ;
 
         return $accountUser;
     }
@@ -89,8 +110,21 @@ class AccountUserProfileController extends Controller
     {
         /** @var $userManager AccountUserManager */
         $userManager = $this->get('orob2b_account_user.manager');
-        $form = $this->createForm(FrontendAccountUserRegistrationType::NAME, $accountUser);
+
+        $form = $this->createForm(
+            FrontendAccountUserRegistrationType::NAME,
+            $accountUser,
+            ['add_company_name' => true]
+        );
+
+        if (!$accountUser->getAccount() && $request->getMethod() == 'POST') {
+            $formData = $request->request->get(FrontendAccountUserRegistrationType::NAME);
+            $companyName = $formData['companyName'];
+            $accountUser->createAccountWithCompanyName($companyName);
+        }
+
         $handler = new FrontendAccountUserHandler($form, $request, $userManager);
+
         if ($userManager->isConfirmationRequired()) {
             $registrationMessage = 'orob2b.account.controller.accountuser.registered_with_confirmation.message';
         } else {

@@ -76,25 +76,38 @@ class FrontendAccountUserRegistrationTypeTest extends FormIntegrationTestCase
      * @param array $submittedData
      * @param AccountUser $expectedData
      * @param User $owner
+     * @param boolean $isValid
+     * @param array $options
      */
-    public function testSubmit($defaultData, array $submittedData, $expectedData, User $owner)
-    {
-        $this->configManager->expects($this->once())
+    public function testSubmit(
+        $defaultData,
+        array $submittedData,
+        $expectedData,
+        User $owner,
+        $isValid,
+        array $options = []
+    ) {
+        $this->configManager->expects($this->any())
             ->method('get')
             ->with('oro_b2b_account.default_account_owner')
             ->willReturn(42);
 
         $repository = $this->assertUserRepositoryCall();
-        $repository->expects($this->once())
+        $repository->expects($this->any())
             ->method('find')
             ->with(42)
             ->willReturn($owner);
 
-        $form = $this->factory->create($this->formType, $defaultData, []);
+        $form = $this->factory->create($this->formType, $defaultData, $options);
+
+        if (isset($options['add_company_name'])) {
+            $this->assertTrue($form->has('companyName'));
+
+        }
 
         $this->assertEquals($defaultData, $form->getData());
         $form->submit($submittedData);
-        $this->assertTrue($form->isValid());
+        $this->assertEquals($isValid, $form->isValid());
         $this->assertEquals($expectedData, $form->getData());
     }
 
@@ -125,8 +138,23 @@ class FrontendAccountUserRegistrationTypeTest extends FormIntegrationTestCase
                     'plainPassword' => '123456'
                 ],
                 'expectedData' => $expectedEntity,
-                'owner' => $owner
+                'owner' => $owner,
+                'isValid' => true
             ],
+            'new user with company name' => [
+                'defaultData' => $entity,
+                'submittedData' => [
+                    'companyName' => 'Test Company',
+                    'firstName' => 'John',
+                    'lastName' => 'Doe',
+                    'email' => 'johndoe@example.com',
+                    'plainPassword' => '123456'
+                ],
+                'expectedData' => $expectedEntity,
+                'owner' => $owner,
+                'isValid' => true,
+                'options' => ['add_company_name' => true]
+            ]
         ];
     }
 
@@ -139,7 +167,7 @@ class FrontendAccountUserRegistrationTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->userManager->expects($this->once())
+        $this->userManager->expects($this->any())
             ->method('getRepository')
             ->willReturn($repository);
 
