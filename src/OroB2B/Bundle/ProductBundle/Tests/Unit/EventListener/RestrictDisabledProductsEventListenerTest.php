@@ -33,7 +33,6 @@ class RestrictDisabledProductsEventListenerTest extends \PHPUnit_Framework_TestC
         $this->listener = new RestrictDisabledProductsEventListener($this->modifier);
     }
 
-
     public function testOnDBQuery()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|QueryBuilder $qb */
