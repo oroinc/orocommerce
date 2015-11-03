@@ -58,8 +58,7 @@ class ProductSelectDBQueryEventListener
         ProductVisibilityQueryBuilderModifier $modifier,
         FrontendHelper $helper,
         RequestStack $requestStack
-    )
-    {
+    ) {
         $this->configManager = $configManager;
         $this->modifier = $modifier;
         $this->frontendHelper = $helper;

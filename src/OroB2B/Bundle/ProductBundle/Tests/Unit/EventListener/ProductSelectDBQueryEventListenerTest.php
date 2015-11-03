@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Request;
 
 use Doctrine\ORM\QueryBuilder;
 
@@ -13,7 +14,6 @@ use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
 use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
 use OroB2B\Bundle\ProductBundle\EventListener\ProductSelectDBQueryEventListener;
 use OroB2B\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
-use Symfony\Component\HttpFoundation\Request;
 
 class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -78,7 +78,8 @@ class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
         $productSelectDBQueryEventListener = new ProductSelectDBQueryEventListener(
             $this->configManager,
             $this->modifier,
-            $this->frontendHelper
+            $this->frontendHelper,
+            new RequestStack()
         );
         $productSelectDBQueryEventListener->setScope($scope);
         $productSelectDBQueryEventListener->setBackendSystemConfigurationPath('path');
@@ -140,16 +141,15 @@ class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
                 ->method('modifyByInventoryStatus')
                 ->with($this->queryBuilder, $statuses);
         }
+        $requestStack = new RequestStack();
+        $requestStack->push(new Request());
 
         $productSelectDBQueryEventListener = new ProductSelectDBQueryEventListener(
             $this->configManager,
             $this->modifier,
-            $this->frontendHelper
+            $this->frontendHelper,
+            $requestStack
         );
-
-        $requestStack = new RequestStack();
-        $requestStack->push(new Request());
-        $productSelectDBQueryEventListener->setRequestStack($requestStack);
 
         $productSelectDBQueryEventListener->setScope($scope);
         $productSelectDBQueryEventListener->setFrontendSystemConfigurationPath($frontendPath);
@@ -207,7 +207,8 @@ class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
         $productSelectDBQueryEventListener = new ProductSelectDBQueryEventListener(
             $this->configManager,
             $this->modifier,
-            $this->frontendHelper
+            $this->frontendHelper,
+            new RequestStack()
         );
 
         $productSelectDBQueryEventListener->onDBQuery($this->event);
@@ -222,7 +223,8 @@ class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
         $productSelectDBQueryEventListener = new ProductSelectDBQueryEventListener(
             $this->configManager,
             $this->modifier,
-            $this->frontendHelper
+            $this->frontendHelper,
+            new RequestStack()
         );
 
         $productSelectDBQueryEventListener->setBackendSystemConfigurationPath('path');
