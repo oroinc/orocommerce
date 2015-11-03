@@ -1,4 +1,11 @@
-<div class="widget-content" id="import-validation">
+{% set widgetOptions = {
+'_wid': app.request.get('_wid'),
+} %}
+<div class="widget-content"
+     data-page-component-module="orob2bfrontend/js/app/components/widget-form-component"
+     data-page-component-options="{{ widgetOptions|json_encode }}"
+     id="import-validation">
+
     <style type="text/css">
         #import-validation {
             padding-bottom: 1px;
@@ -98,11 +105,27 @@
             </tbody>
         </table>
 
-        <div class="btn-group pull-right add-buttons">
+        {% set pageComponentOptions = {
+            'componentSelector': '#' ~ 'import-form-component',
+            'additionalSelector': '#' ~ 'import-form-additional',
+            'componentPrefix': 'quick-add-import'
+        } %}
 
-            {% placeholder orob2b_product_quick_add_buttons  %}
 
-        </div>
+        <form id = "import-uniq-i" name="import-uniq-i"
+              action="{{ path('orob2b_product_frontend_quick_add') }}" method="post"
+              data-page-component-module="orob2bproduct/js/app/components/quick-add-component"
+              data-page-component-options="{{ pageComponentOptions|json_encode }}" >
+
+            <input id="import-form-component" name="form[component]" type="hidden">
+            <input id="import-form-additional" name="form[additional]" type="hidden">
+
+            <div class="btn-group pull-right add-buttons">
+
+                {% placeholder orob2b_product_quick_add_import_buttons  %}
+
+            </div>
+        </form>
 
     </div>
 
