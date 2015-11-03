@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type\Stub;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceListAwareSelectType;
 
 class StubProductPriceListAwareSelectType extends AbstractType
@@ -40,6 +41,6 @@ class StubProductPriceListAwareSelectType extends AbstractType
      */
     public function getParent()
     {
-        return 'entity';
+        return ProductSelectType::NAME;
     }
 }
