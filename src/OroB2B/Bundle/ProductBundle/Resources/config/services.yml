@@ -226,5 +226,4 @@ services:
             - @oro_config.global
             - @orob2b_product.model.product_visibility_query_builder_modifier
             - @orob2b_frontend.request.frontend_helper
-        calls:
-            - [setRequestStack, [@request_stack]]
+            - @request_stack

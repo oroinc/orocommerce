@@ -51,15 +51,19 @@ class ProductSelectDBQueryEventListener
      * @param ConfigManager $configManager
      * @param ProductVisibilityQueryBuilderModifier $modifier
      * @param FrontendHelper $helper
+     * @param RequestStack $requestStack
      */
     public function __construct(
         ConfigManager $configManager,
         ProductVisibilityQueryBuilderModifier $modifier,
-        FrontendHelper $helper
-    ) {
+        FrontendHelper $helper,
+        RequestStack $requestStack
+    )
+    {
         $this->configManager = $configManager;
         $this->modifier = $modifier;
         $this->frontendHelper = $helper;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -107,14 +111,6 @@ class ProductSelectDBQueryEventListener
         }
 
         $this->modifier->modifyByInventoryStatus($event->getQueryBuilder(), $inventoryStatuses);
-    }
-
-    /**
-     * @param RequestStack $requestStack
-     */
-    public function setRequestStack($requestStack)
-    {
-        $this->requestStack = $requestStack;
     }
 
     /**
