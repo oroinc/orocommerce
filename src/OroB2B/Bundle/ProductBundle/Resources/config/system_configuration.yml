@@ -14,6 +14,8 @@ oro_system_configuration:
             title: orob2b.product.system_configuration.groups.backend_inventory_statuses_visibility.title
         frontend_inventory_statuses_visibility:
             title: orob2b.product.system_configuration.groups.frontend_inventory_statuses_visibility.title
+        backend_inventory_statuses_visibility:
+            title: orob2b.product.system_configuration.groups.backend_inventory_statuses_visibility.title
 
     fields:
         orob2b_product.unit_rounding_type:
@@ -21,7 +23,7 @@ oro_system_configuration:
             type: orob2b_product_unit_rounding_type
             priority: 10
             options:
-                label: orob2b.product.system_configuration.fields.general_frontend_inventory_statuses_visibility.label
+                label: orob2b.product.system_configuration.fields.unit_rounding_type.label
                 tooltip: orob2b.product.form.tooltip.unit_rounding_type
                 required: true
                 constraints:
@@ -52,4 +54,3 @@ oro_system_configuration:
                                     general_frontend_visibility:
                                         children:
                                             - orob2b_product.general_frontend_product_visibility
-

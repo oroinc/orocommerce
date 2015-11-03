@@ -133,5 +133,5 @@ orob2b:
             view: 'Order #%identifier%'
 
         system_configuration:
-            backend_product_visibility: 'Visibility For Product'
-            frontend_product_visibility: 'Visibility For Product'
+            backend_product_visibility: 'Visibility For Order'
+            frontend_product_visibility: 'Visibility For Order'

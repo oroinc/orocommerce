@@ -48,9 +48,9 @@ oro_system_configuration:
                         children:
                             product_settings:
                                 children:
-                                    backend_inventory_statuses_visibility:
-                                        children:
-                                            - oro_b2b_rfp.backend_product_visibility
                                     frontend_inventory_statuses_visibility:
                                         children:
                                             - oro_b2b_rfp.frontend_product_visibility
+                                    backend_inventory_statuses_visibility:
+                                        children:
+                                            - oro_b2b_rfp.backend_product_visibility
