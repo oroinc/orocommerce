@@ -20,6 +20,7 @@ parameters:
     orob2b_product.event_listener.product_variant_custom_fields_datagrid.class: OroB2B\Bundle\ProductBundle\EventListener\ProductVariantCustomFieldsDatagridListener
     orob2b_product.event_listener.restricted_products_datagrid.class: OroB2B\Bundle\ProductBundle\EventListener\RestrictedProductsDatagridEventListener
     orob2b_product.event_listener.product_select_db_query.class: OroB2B\Bundle\ProductBundle\EventListener\ProductSelectDBQueryEventListener
+    orob2b_product.event_listener.scoped_product_select_db_query.class: OroB2B\Bundle\ProductBundle\EventListener\ScopedProductSelectDBQueryEventListener
     orob2b_product.validator.unique_variant_links.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator
 
     orob2b_product.component_processor.registry.class: OroB2B\Bundle\ProductBundle\Model\ComponentProcessorRegistry
@@ -215,3 +216,13 @@ services:
             - @orob2b_product.model.product_visibility_query_builder_modifier
         calls:
             - [setDataClass, [%orob2b_product.product.class%]]
+
+    orob2b_product.event_listener.product_select_db_query:
+        class: %orob2b_product.event_listener.product_select_db_query.class%
+        arguments:
+            - @oro_config.global
+            - @orob2b_product.model.product_visibility_query_builder_modifier
+        calls:
+            - [setSystemConfigurationPath, ['oro_b2b_product.general_frontend_product_visibility']]
+        tags:
+            - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
