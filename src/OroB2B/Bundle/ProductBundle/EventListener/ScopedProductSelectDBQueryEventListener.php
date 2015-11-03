@@ -28,16 +28,14 @@ class ScopedProductSelectDBQueryEventListener extends ProductSelectDBQueryEventL
      */
     protected function isConditionsAcceptable()
     {
-        parent::isConditionsAcceptable();
-
         if (!$this->scope) {
             throw new \LogicException('Scope not configured for ProductSelectDBQueryEventListener');
         }
 
-        if ($this->event->getDataParameters()->get('scope') !== $this->scope) {
+        if (false === parent::isConditionsAcceptable()) {
             return false;
         }
 
-        return true;
+        return $this->event->getDataParameters()->get('scope') === $this->scope;
     }
 }

@@ -223,7 +223,8 @@ services:
         arguments:
             - @oro_config.global
             - @orob2b_product.model.product_visibility_query_builder_modifier
+            - @orob2b_frontend.request.frontend_helper
         calls:
-            - [setSystemConfigurationPath, ['oro_b2b_product.general_frontend_product_visibility']]
+            - [setFrontendSystemConfigurationPath, ['oro_b2b_product.general_frontend_product_visibility']]
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
