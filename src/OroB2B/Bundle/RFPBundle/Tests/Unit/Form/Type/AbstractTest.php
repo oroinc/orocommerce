@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormTypeInterface;
 
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
@@ -14,7 +13,7 @@ use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectEntityTypeStub;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
@@ -88,9 +87,9 @@ abstract class AbstractTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return EntityType
+     * @return ProductSelectEntityTypeStub
      */
-    protected function prepareProductEntityType()
+    protected function prepareProductSelectType()
     {
         $products = [];
 
@@ -132,11 +131,11 @@ abstract class AbstractTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return EntityType
+     * @return ProductUnitSelectionTypeStub
      */
     protected function prepareProductUnitSelectionType()
     {
-        return new StubProductUnitSelectionType(
+        return new ProductUnitSelectionTypeStub(
             [
                 'kg' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'kg', 'code'),
                 'item' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code'),

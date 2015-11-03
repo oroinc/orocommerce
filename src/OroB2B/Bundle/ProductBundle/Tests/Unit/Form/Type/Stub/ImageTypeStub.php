@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractType;
 
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 
-class StubImageType extends AbstractType
+class ImageTypeStub extends AbstractType
 {
     /**
      * @return string

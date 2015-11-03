@@ -14,8 +14,8 @@ use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeS
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType;
@@ -332,7 +332,7 @@ class RequestProductTypeTest extends AbstractTest
     protected function getExtensions()
     {
         $priceType                  = $this->preparePriceType();
-        $entityType                 = $this->prepareProductEntityType();
+        $productSelectType          = $this->prepareProductSelectType();
         $optionalPriceType          = $this->prepareOptionalPriceType();
         $currencySelectionType      = new CurrencySelectionTypeStub();
         $requestProductItemType     = $this->prepareRequestProductItemType();
@@ -343,9 +343,9 @@ class RequestProductTypeTest extends AbstractTest
                 [
                     CollectionType::NAME                    => new CollectionType(),
                     RequestProductItemCollectionType::NAME  => new RequestProductItemCollectionType(),
-                    ProductUnitSelectionType::NAME          => new StubProductUnitSelectionType(),
+                    ProductUnitSelectionType::NAME          => new ProductUnitSelectionTypeStub(),
                     $priceType->getName()                   => $priceType,
-                    $entityType->getName()                  => $entityType,
+                    $productSelectType->getName()           => $productSelectType,
                     $optionalPriceType->getName()           => $optionalPriceType,
                     $requestProductItemType->getName()      => $requestProductItemType,
                     $currencySelectionType->getName()       => $currencySelectionType,

@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
-class StubProductUnitHolderType extends AbstractType
+class ProductUnitHolderTypeStub extends AbstractType
 {
     const NAME = 'orob2b_stub_product_unit_holder';
 

@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -13,7 +15,7 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductHolderType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductHolderTypeStub;
 
 class ProductSelectTypeTest extends FormIntegrationTestCase
 {
@@ -62,6 +64,7 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
             ->with(
                 $this->callback(
                     function (array $options) {
+                        $this->assertArrayHasKey('data_parameters', $options);
                         $configs = [
                             'placeholder' => 'orob2b.product.form.choose',
                             'result_template_twig' => 'OroB2BProductBundle:Product:Autocomplete/result.html.twig',
@@ -70,7 +73,7 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
                         $this->assertArrayHasKey('autocomplete_alias', $options);
                         $this->assertArrayHasKey('create_form_route', $options);
                         $this->assertArrayHasKey('configs', $options);
-                        $this->assertEquals('orob2b_product', $options['autocomplete_alias']);
+                        $this->assertEquals('orob2b_product_visibility_limited', $options['autocomplete_alias']);
                         $this->assertEquals('orob2b_product_create', $options['create_form_route']);
                         $this->assertEquals($configs, $options['configs']);
 
@@ -93,7 +96,7 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create($this->type, null);
 
         if ($withParent) {
-            $formParent = $this->factory->create(new StubProductHolderType(), $inputData['productHolder']);
+            $formParent = $this->factory->create(new ProductHolderTypeStub(), $inputData['productHolder']);
         } else {
             $formParent = null;
         }
@@ -141,7 +144,7 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
     {
         $form = $this->factory->create($this->type, null);
 
-        $formParent = $this->factory->create(new StubProductHolderType(), $this->createProductHolder(1, 'sku'));
+        $formParent = $this->factory->create(new ProductHolderTypeStub(), $this->createProductHolder(1, 'sku'));
 
         $form->setParent($formParent);
 
@@ -196,6 +199,51 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
                 []
             ),
             $this->getValidatorExtension(true),
+        ];
+    }
+
+    /**
+     * @dataProvider finishViewDataProvider
+     * @param array $dataParameters
+     */
+    public function testFinishView(array $dataParameters)
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+
+        $formView = new FormView();
+        $this->type->finishView($formView, $form, [
+            'data_parameters' => $dataParameters,
+        ]);
+
+        $this->assertArrayHasKey('attr', $formView->vars);
+        $attr = $formView->vars['attr'];
+
+        if (!empty($dataParameters)) {
+            $this->assertArrayHasKey('data-select2_query_additional_params', $attr);
+            $this->assertEquals(
+                json_encode(['data_parameters' => $dataParameters]),
+                $formView->vars['attr']['data-select2_query_additional_params']
+            );
+        } else {
+            $this->assertEmpty($attr);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function finishViewDataProvider()
+    {
+        return [
+            'with data parameters' => [
+                'dataParameters' => [
+                    'scope' => 'test',
+                ],
+            ],
+            'without data parameters' => [
+                'dataParameters' => [],
+            ],
         ];
     }
 }

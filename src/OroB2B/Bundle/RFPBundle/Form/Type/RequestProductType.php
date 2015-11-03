@@ -54,6 +54,9 @@ class RequestProductType extends AbstractType
                 'required'  => true,
                 'label'     => 'orob2b.product.entity_label',
                 'create_enabled' => false,
+                'data_parameters' => [
+                    'scope' => 'rfp'
+                ]
             ])
             ->add('requestProductItems', RequestProductItemCollectionType::NAME, [
                 'label'     => 'orob2b.rfp.requestproductitem.entity_plural_label',

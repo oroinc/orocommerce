@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -16,6 +15,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 class ProductSelectType extends AbstractType
 {
     const NAME = 'orob2b_product_select';
+    const DATA_PARAMETERS = 'data_parameters';
 
     /**
      * @var TranslatorInterface
@@ -42,7 +42,8 @@ class ProductSelectType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'autocomplete_alias' => 'orob2b_product',
+                self::DATA_PARAMETERS => [],
+                'autocomplete_alias' => 'orob2b_product_visibility_limited',
                 'create_form_route' => 'orob2b_product_create',
                 'empty_label' => 'orob2b.product.removed',
                 'configs' => [
@@ -83,6 +84,12 @@ class ProductSelectType extends AbstractType
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
+        if (!empty($options[self::DATA_PARAMETERS])) {
+            $view->vars['attr']['data-select2_query_additional_params'] = json_encode(
+                [self::DATA_PARAMETERS => $options[self::DATA_PARAMETERS]]
+            );
+        }
+
         $form = $form->getParent();
 
         /* @var $productHolder ProductHolderInterface */

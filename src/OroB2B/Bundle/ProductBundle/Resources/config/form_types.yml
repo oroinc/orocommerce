@@ -13,6 +13,7 @@ parameters:
     orob2b_product.form.type.extension.integer.class: OroB2B\Bundle\ProductBundle\Form\Extension\IntegerExtension
     orob2b_product.form.type.custom_entity_fields_choice.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductCustomFieldsChoiceType
     orob2b_product.form.type.product_variant_links.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductVariantLinksType
+    orob2b_product.form.type.product_inventory_status_select.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductInventoryStatusSelectType
     orob2b_product.form.type.product_status.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductStatusType
 
 services:
@@ -116,3 +117,10 @@ services:
             - @orob2b_product.provider.product_status_provider
         tags:
             - { name: form.type, alias: orob2b_product_status }
+
+    orob2b_product.form.type.product_inventory_status_select:
+        class: %orob2b_product.form.type.product_inventory_status_select.class%
+        arguments:
+            - @doctrine
+        tags:
+            - { name: form.type, alias: orob2b_product_inventory_status_select }

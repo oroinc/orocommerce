@@ -6,7 +6,7 @@ use Symfony\Component\Form\FormInterface;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\AbstractProductAwareType;
 
-class StubAbstractProductAwareType extends AbstractProductAwareType
+class AbstractProductAwareTypeStub extends AbstractProductAwareType
 {
     const NAME = 'product_aware';
 
