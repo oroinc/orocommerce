@@ -41,6 +41,7 @@ use OroB2B\Bundle\RFPBundle\Model\ExtendRequest;
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class Request extends ExtendRequest implements AccountOwnerAwareInterface
 {
@@ -57,6 +58,13 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
      * @var string
      *
      * @ORM\Column(name="first_name", type="string", length=255)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $firstName;
 
@@ -64,6 +72,13 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
      * @var string
      *
      * @ORM\Column(name="last_name", type="string", length=255)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $lastName;
 
@@ -71,6 +86,13 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
      * @var string
      *
      * @ORM\Column(name="email", type="string", length=255)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $email;
 
@@ -78,6 +100,13 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
      * @var string
      *
      * @ORM\Column(name="phone", type="string", length=255)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $phone;
 
@@ -85,6 +114,13 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
      * @var string
      *
      * @ORM\Column(name="company", type="string", length=255)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $company;
 
@@ -92,6 +128,13 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
      * @var string
      *
      * @ORM\Column(name="role", type="string", length=255)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $role;
 
@@ -99,6 +142,13 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
      * @var string
      *
      * @ORM\Column(name="body", type="text")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $body;
 
@@ -106,6 +156,13 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
      * @var RequestStatus
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\RFPBundle\Entity\RequestStatus")
      * @ORM\JoinColumn(name="status_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $status;
 
@@ -113,8 +170,43 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
      * @var Collection|RequestProduct[]
      *
      * @ORM\OneToMany(targetEntity="RequestProduct", mappedBy="request", cascade={"ALL"}, orphanRemoval=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $requestProducts;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="po_number", type="string", length=255, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $poNumber;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="ship_until", type="date", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $shipUntil;
 
     /**
      * @var \DateTime
@@ -533,5 +625,53 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
     public function __toString()
     {
         return sprintf('%s: %s %s', $this->id, $this->firstName, $this->lastName);
+    }
+
+    /**
+     * Set poNumber
+     *
+     * @param string $poNumber
+     *
+     * @return Request
+     */
+    public function setPoNumber($poNumber)
+    {
+        $this->poNumber = $poNumber;
+
+        return $this;
+    }
+
+    /**
+     * Get poNumber
+     *
+     * @return string
+     */
+    public function getPoNumber()
+    {
+        return $this->poNumber;
+    }
+
+    /**
+     * Set shipUntil
+     *
+     * @param \DateTime $shipUntil
+     *
+     * @return Request
+     */
+    public function setShipUntil($shipUntil)
+    {
+        $this->shipUntil = $shipUntil;
+
+        return $this;
+    }
+
+    /**
+     * Get shipUntil
+     *
+     * @return \DateTime
+     */
+    public function getShipUntil()
+    {
+        return $this->shipUntil;
     }
 }

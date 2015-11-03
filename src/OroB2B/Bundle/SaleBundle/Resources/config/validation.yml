@@ -11,6 +11,11 @@ OroB2B\Bundle\SaleBundle\Entity\Quote:
         validUntil:
             - NotBlank:
                 groups: [ Import ]
+        poNumber:
+            - Length:
+                max: 255
+        shipUntil:
+            - Date: ~
         quoteProducts:
             - Valid: ~
 
