@@ -6,7 +6,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProducts as ProductFixture;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData as ProductFixture;
 
 /**
  * @dbIsolation
@@ -17,7 +17,7 @@ class ProductRepositoryTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
-        $this->loadFixtures(['OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProducts']);
+        $this->loadFixtures(['OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData']);
     }
 
     public function testFindOneBySku()
@@ -63,16 +63,17 @@ class ProductRepositoryTest extends WebTestCase
                 'expected' => [
                     'product.1',
                     'product.2',
-                    'product.3'
-                ]
+                    'product.3',
+                    'product.4',
+                ],
             ],
             'product, 1, 1' => [
                 'search' => 'oduct',
                 'firstResult' => 1,
                 'maxResult' => 1,
                 'expected' => [
-                    'product.2'
-                ]
+                    'product.2',
+                ],
             ],
             'product, 0, 2' => [
                 'search' => 'product',
@@ -80,9 +81,9 @@ class ProductRepositoryTest extends WebTestCase
                 'maxResult' => 2,
                 'expected' => [
                     'product.1',
-                    'product.2'
-                ]
-            ]
+                    'product.2',
+                ],
+            ],
         ];
     }
 
@@ -103,7 +104,12 @@ class ProductRepositoryTest extends WebTestCase
      */
     public function patternsAndSkuListProvider()
     {
-        $allProducts = [ProductFixture::PRODUCT_1, ProductFixture::PRODUCT_2, ProductFixture::PRODUCT_3];
+        $allProducts = [
+            ProductFixture::PRODUCT_1,
+            ProductFixture::PRODUCT_2,
+            ProductFixture::PRODUCT_3,
+            ProductFixture::PRODUCT_4,
+        ];
 
         return [
             'exact search 1' => [ProductFixture::PRODUCT_1, [ProductFixture::PRODUCT_1]],
