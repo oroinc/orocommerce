@@ -73,6 +73,7 @@ services:
             - ["sku", "defaultName.string"]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_product, acl_resource: orob2b_product_view }
+            - { name: oro_form.autocomplete.search_handler, alias: orob2b_product_frontend, acl_resource: orob2b_product_frontend_view }
         lazy: true
 
     orob2b_product.service.sku_incrementor:
