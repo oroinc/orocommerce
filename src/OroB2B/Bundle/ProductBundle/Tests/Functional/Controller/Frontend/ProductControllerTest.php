@@ -6,7 +6,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProducts;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
  * @dbIsolation
@@ -21,7 +21,7 @@ class ProductControllerTest extends WebTestCase
         );
 
         $this->loadFixtures([
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProducts'
+            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData'
         ]);
     }
 
@@ -30,14 +30,14 @@ class ProductControllerTest extends WebTestCase
         $this->client->request('GET', $this->getUrl('orob2b_product_frontend_product_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains($this->getProduct(LoadProducts::PRODUCT_1)->getSku(), $result->getContent());
-        $this->assertContains($this->getProduct(LoadProducts::PRODUCT_2)->getSku(), $result->getContent());
-        $this->assertContains($this->getProduct(LoadProducts::PRODUCT_3)->getSku(), $result->getContent());
+        $this->assertContains($this->getProduct(LoadProductData::PRODUCT_1)->getSku(), $result->getContent());
+        $this->assertContains($this->getProduct(LoadProductData::PRODUCT_2)->getSku(), $result->getContent());
+        $this->assertContains($this->getProduct(LoadProductData::PRODUCT_3)->getSku(), $result->getContent());
     }
 
     public function testViewProduct()
     {
-        $product = $this->getProduct(LoadProducts::PRODUCT_1);
+        $product = $this->getProduct(LoadProductData::PRODUCT_1);
 
         $this->assertInstanceOf('OroB2B\Bundle\ProductBundle\Entity\Product', $product);
 

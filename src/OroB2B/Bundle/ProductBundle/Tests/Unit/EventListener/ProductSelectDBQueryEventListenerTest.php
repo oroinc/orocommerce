@@ -74,10 +74,13 @@ class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected function createListener()
     {
+        $requestStack = new RequestStack();
+        $requestStack->push(new Request());
         return new ProductSelectDBQueryEventListener(
             $this->configManager,
             $this->modifier,
-            $this->frontendHelper
+            $this->frontendHelper,
+            $requestStack
         );
     }
 
@@ -125,10 +128,6 @@ class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
                 ->method('modifyByInventoryStatus')
                 ->with($this->queryBuilder, $statuses);
         }
-
-        $requestStack = new RequestStack();
-        $requestStack->push(new Request());
-        $this->listener->setRequestStack($requestStack);
 
         $this->listener->setFrontendSystemConfigurationPath($frontendPath);
         $this->listener->setBackendSystemConfigurationPath($backendPath);

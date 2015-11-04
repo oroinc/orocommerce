@@ -3,6 +3,8 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 use OroB2B\Bundle\ProductBundle\EventListener\ScopedProductSelectDBQueryEventListener;
 
@@ -20,10 +22,13 @@ class ScopedProductSelectDBQueryEventListenerTest extends ProductSelectDBQueryEv
      */
     protected function createListener()
     {
+        $requestStack = new RequestStack();
+        $requestStack->push(new Request());
         $listener = new ScopedProductSelectDBQueryEventListener(
             $this->configManager,
             $this->modifier,
-            $this->frontendHelper
+            $this->frontendHelper,
+            $requestStack
         );
         $listener->setScope(self::SCOPE);
 

@@ -35,10 +35,10 @@ class ProductInventoryStatusSelectTypeTest extends WebTestCase
     /**
      * @dataProvider submitDataProvider
      *
-     * @param $submitData
-     * @param $isValid
+     * @param array $submitData
+     * @param bool $isValid
      */
-    public function testSubmit($submitData, $isValid)
+    public function testSubmit(array $submitData, $isValid)
     {
         // submit form
         $form = $this->formFactory->create(ProductInventoryStatusSelectType::NAME, []);

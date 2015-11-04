@@ -80,7 +80,7 @@ orob2b:
                 cancel: Cancel
 
         system_configuration:
-            product_visibility: Visibility for Shopping list
+            backend_product_visibility: Visibility for Shopping list
 
     frontend:
         shoppinglist:

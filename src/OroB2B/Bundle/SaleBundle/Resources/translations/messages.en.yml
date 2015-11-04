@@ -55,7 +55,7 @@ orob2b:
                 remove: 'Delete'
 
         system_configuration:
-            product_visibility: Visibility for Quote
+            backend_product_visibility: Visibility for Quote
 
         quoteproduct:
             entity_label: 'Quote Product'

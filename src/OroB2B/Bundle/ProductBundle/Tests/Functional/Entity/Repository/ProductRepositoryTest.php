@@ -6,7 +6,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProducts as ProductFixture;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData as ProductFixture;
 
 /**
  * @dbIsolation
@@ -17,12 +17,12 @@ class ProductRepositoryTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
-        $this->loadFixtures(['OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProducts']);
+        $this->loadFixtures(['OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData']);
     }
 
     public function testFindOneBySku()
     {
-        $this->assertNull($this->getRepository()->findOneBySku(uniqid()));
+        $this->assertNull($this->getRepository()->findOneBySku(uniqid('_fake_sku_', true)));
 
         $product = $this->getProduct(ProductFixture::PRODUCT_1);
         $expectedProduct = $this->getRepository()->findOneBySku(ProductFixture::PRODUCT_1);
@@ -35,8 +35,9 @@ class ProductRepositoryTest extends WebTestCase
      * @param string $search
      * @param int $firstResult
      * @param int $maxResult
+     * @param array $expected
      */
-    public function testGetSearchQueryBuilder($search, $firstResult, $maxResult, $expected)
+    public function testGetSearchQueryBuilder($search, $firstResult, $maxResult, array $expected)
     {
         $queryBuilder = $this->getRepository()->getSearchQueryBuilder($search, $firstResult, $maxResult);
         $result = array_map(
@@ -62,16 +63,18 @@ class ProductRepositoryTest extends WebTestCase
                 'expected' => [
                     'product.1',
                     'product.2',
-                    'product.3'
-                ]
+                    'product.3',
+                    'product.4',
+                    'product.5',
+                ],
             ],
             'product, 1, 1' => [
                 'search' => 'oduct',
                 'firstResult' => 1,
                 'maxResult' => 1,
                 'expected' => [
-                    'product.2'
-                ]
+                    'product.2',
+                ],
             ],
             'product, 0, 2' => [
                 'search' => 'product',
@@ -79,19 +82,18 @@ class ProductRepositoryTest extends WebTestCase
                 'maxResult' => 2,
                 'expected' => [
                     'product.1',
-                    'product.2'
-                ]
-            ]
+                    'product.2',
+                ],
+            ],
         ];
     }
 
     /**
+     * @dataProvider patternsAndSkuListProvider
      * @param string $pattern
      * @param array $expectedSkuList
-     *
-     * @dataProvider patternsAndSkuListProvider
      */
-    public function testFindAllSkuByPattern($pattern, $expectedSkuList)
+    public function testFindAllSkuByPattern($pattern, array $expectedSkuList)
     {
         $actualSkuList = $this->getRepository()->findAllSkuByPattern($pattern);
 
@@ -103,12 +105,18 @@ class ProductRepositoryTest extends WebTestCase
      */
     public function patternsAndSkuListProvider()
     {
-        $allProducts = [ProductFixture::PRODUCT_1, ProductFixture::PRODUCT_2, ProductFixture::PRODUCT_3];
+        $allProducts = [
+            ProductFixture::PRODUCT_1,
+            ProductFixture::PRODUCT_2,
+            ProductFixture::PRODUCT_3,
+            ProductFixture::PRODUCT_4,
+            ProductFixture::PRODUCT_5,
+        ];
 
         return [
             'exact search 1' => [ProductFixture::PRODUCT_1, [ProductFixture::PRODUCT_1]],
             'exact search 2' => [ProductFixture::PRODUCT_2, [ProductFixture::PRODUCT_2]],
-            'not found' => [uniqid(), []],
+            'not found' => [uniqid('_fake_', true), []],
             'mask all products 1' => ['product.%', $allProducts],
             'mask all products 2' => ['pro%', $allProducts],
             'product suffixed with 1' => ['%.1', [ProductFixture::PRODUCT_1]],
