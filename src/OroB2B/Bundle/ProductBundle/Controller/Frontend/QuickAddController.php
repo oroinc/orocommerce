@@ -30,7 +30,11 @@ class QuickAddController extends Controller
         /** @var Response|null $response */
         $response = $result['response'];
 
-        $copyPasteForm = $this->createForm(QuickAddCopyPasteType::NAME);
+        $copyPasteForm = $this->createForm(QuickAddCopyPasteType::NAME)->handleRequest($request);
+
+        if ($copyPasteForm->isValid()) {
+            die('123');
+        }
 
         return $response ?: ['form' => $form->createView(), 'copyPasteForm' => $copyPasteForm->createView()];
     }

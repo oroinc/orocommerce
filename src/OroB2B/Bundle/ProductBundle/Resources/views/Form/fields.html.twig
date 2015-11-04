@@ -148,14 +148,16 @@
           }
         ) }}
 
+        {{ form_errors(form.products) }}
+
     </div>
 
     <div class="btn-group pull-right">
-        <a href="javascript: void(0);"
+        <button type="submit"
            data-url="{{ path('orob2b_product_frontend_import_summary') }}"
-           class="btn btn-primary import-button">
+           class="btn btn-primary">
             {{ 'orob2b.product.frontend.quick_add.continue.label'|trans }}
-        </a>
+        </button>
     </div>
 
 {% endblock %}
