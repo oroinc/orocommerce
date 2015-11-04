@@ -22,7 +22,7 @@ class AjaxProductControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProducts'
+                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData'
             ]
         );
     }
