@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProducts;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
  * @dbIsolation
@@ -26,9 +26,9 @@ class AjaxProductControllerTest extends WebTestCase
     public function testProductNamesBySkus()
     {
         /** @var Product $product1 */
-        $product1 = $this->getReference(LoadProducts::PRODUCT_1);
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
         /** @var Product $product2 */
-        $product2 = $this->getReference(LoadProducts::PRODUCT_2);
+        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
 
         $skus = [
             'not a sku',
