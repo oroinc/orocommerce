@@ -233,6 +233,6 @@ services:
         parent: orob2b_order.event_listener.abstract_product_select_db_query
         class: %orob2b_product.event_listener.product_select_db_query.class%
         calls:
-            - [setFrontendSystemConfigurationPath, ['oro_b2b_product.general_frontend_product_visibility']]
+            - [setFrontendSystemConfigurationPath, ['orob2b_product.general_frontend_product_visibility']]
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
