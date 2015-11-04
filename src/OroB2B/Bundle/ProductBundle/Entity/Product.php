@@ -144,6 +144,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *      defaultValues={
      *          "entity"={
      *              "label"="oro.ui.created_at"
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -158,6 +161,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *      defaultValues={
      *          "entity"={
      *              "label"="oro.ui.updated_at"
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -175,8 +181,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *              "auditable"=true
      *          },
      *          "importexport"={
-     *              "order"=60,
-     *              "full"=false
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -191,8 +196,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=60,
-     *              "full"=false
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -285,6 +289,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      */
     protected $variantLinks;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct()
     {
         parent::__construct();
