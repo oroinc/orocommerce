@@ -14,7 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Oro\Bundle\FormBundle\Utils\FormUtils;
 
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
-use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceListAwareSelectType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
@@ -77,11 +77,14 @@ class FrontendOrderLineItemType extends AbstractOrderLineItemType
         $builder
             ->add(
                 'product',
-                ProductPriceListAwareSelectType::NAME,
+                ProductSelectType::NAME,
                 [
                     'required' => true,
                     'label' => 'orob2b.product.entity_label',
                     'create_enabled' => false,
+                    'data_parameters' => [
+                        'price_list' => 'default_account_user'
+                    ]
                 ]
             )
             ->addEventListener(
