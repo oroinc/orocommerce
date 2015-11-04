@@ -40,15 +40,15 @@
     </style>
 
     {% set counts = {
-        totalRecords: 6,
-        validItems: 3,
-        errorEntries: 3
+    totalRecords: 6,
+    validItems: 3,
+    errorEntries: 3
     } %}
 
     {% set errors = [
-        'SKU1 does not found',
-        'SKU2 does not found',
-        'SKU3 does not found'
+    'SKU1 does not found',
+    'SKU2 does not found',
+    'SKU3 does not found'
     ] %}
 
     <div class="validation-info">
@@ -105,28 +105,6 @@
             </tbody>
         </table>
 
-        {% set pageComponentOptions = {
-            'componentSelector': '#' ~ 'import-form-component',
-            'additionalSelector': '#' ~ 'import-form-additional',
-            'componentPrefix': 'quick-add-import'
-        } %}
-
-
-        <form id = "import-uniq-i" name="import-uniq-i"
-              action="{{ path('orob2b_product_frontend_quick_add') }}" method="post"
-              data-page-component-module="orob2bproduct/js/app/components/quick-add-component"
-              data-page-component-options="{{ pageComponentOptions|json_encode }}" >
-
-            <input id="import-form-component" name="form[component]" type="hidden">
-            <input id="import-form-additional" name="form[additional]" type="hidden">
-
-            <div class="btn-group pull-right add-buttons">
-
-                {% placeholder orob2b_product_quick_add_import_buttons  %}
-
-            </div>
-        </form>
-
     </div>
 
     {% if errors|length > 0 %}
@@ -165,5 +143,51 @@
                     container.find('.error-toggle').on('click', toggleErrors);
                 });
     </script>
+
+
+    {% set pageComponentOptions = {
+        'componentSelector': '#' ~ 'import-form-component',
+        'additionalSelector': '#' ~ 'import-form-additional',
+        'componentPrefix': 'quick-add-import'
+    } %}
+
+
+    <form id = "import-uniq-i" name="import-uniq-i"
+          action="{{ app.request.uri }}" method="post"
+          data-page-component-module="orob2bproduct/js/app/components/quick-add-component"
+          data-page-component-options="{{ pageComponentOptions|json_encode }}" >
+
+        <input id="import-form-component" name="form[component]" type="hidden">
+        <input id="import-form-additional" name="form[additional]" type="hidden">
+
+
+        <div class="btn-group pull-left">
+
+            <button type="reset" class="btn">Cancel</button>
+
+        </div>
+
+        <div class="btn-group pull-right">
+
+            {% placeholder orob2b_product_quick_add_import_buttons  %}
+
+        </div>
+
+
+
+        <div class="widget-actions">
+
+
+
+                {#<div class="btn-group">#}
+
+                    {#{% placeholder orob2b_product_quick_add_import_buttons  %}#}
+
+                {#</div>#}
+
+        </div>
+
+    </form>
+
 </div>
 

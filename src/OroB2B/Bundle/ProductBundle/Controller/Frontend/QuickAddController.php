@@ -64,7 +64,7 @@ class QuickAddController extends Controller
     public function importShowAction(Request $request)
     {
         return [
-            'isWidgetContext' => false
+
         ];
     }
 }
