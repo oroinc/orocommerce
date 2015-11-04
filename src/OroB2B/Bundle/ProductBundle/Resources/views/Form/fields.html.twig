@@ -52,13 +52,17 @@
 {% endmacro %}
 
 {% block orob2b_product_row_widget %}
-    <td class="fields-row">
+    <td class="fields-row add-products-sku">
         <div>
             {{ form_widget(form.productSku) }}
+            <div class="product-autocomplete-success">
+                <i class="icon-ok-circle"></i>
+            </div>
+            <div class="product-autocomplete-name"></div>
             {{ form_errors(form.productSku) }}
         </div>
     </td>
-    <td class="fields-row">
+    <td class="fields-row add-products-quantity">
         <div>
             {{ form_widget(form.productQuantity) }}
             {{ form_errors(form.productQuantity) }}
