@@ -1,5 +1,4 @@
 parameters:
-    orob2b_product.importexport.data_converter.product.class: OroB2B\Bundle\PricingBundle\ImportExport\DataConverter\ProductPriceDataConverter
 
 services:
     # Import processor
@@ -15,6 +14,6 @@ services:
     orob2b_product.importexport.processor.export.product:
         parent: oro_importexport.processor.export_abstract
 #        calls:
-#            - [setDataConverter, [@orob2b_product.importexport.data_converter.product_price]]
+#            - [setDataConverter, [~]]
         tags:
             - { name: oro_importexport.processor, type: export, entity: %orob2b_product.product.class%, alias: orob2b_product_product }
