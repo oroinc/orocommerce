@@ -114,6 +114,14 @@ class Locale
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->code;
+    }
+
+    /**
      * @return mixed
      */
     public function getId()

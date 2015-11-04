@@ -2,11 +2,14 @@
 
 namespace OroB2B\Bundle\FallbackBundle\ImportExport\Strategy;
 
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Util\ClassUtils;
+
 use Oro\Bundle\ImportExportBundle\Strategy\Import\ConfigurableAddOrReplaceStrategy;
 
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 
-abstract class LocalizedFallbackValueAwareStrategy extends ConfigurableAddOrReplaceStrategy
+class LocalizedFallbackValueAwareStrategy extends ConfigurableAddOrReplaceStrategy
 {
     /** @var string */
     protected $localizedFallbackValueClass;
@@ -20,30 +23,56 @@ abstract class LocalizedFallbackValueAwareStrategy extends ConfigurableAddOrRepl
     }
 
     /** {@inheritdoc} */
-    protected function findExistingEntity($entity, array $searchContext = [])
+    protected function beforeProcessEntity($entity)
     {
-        if (is_a($entity, $this->localizedFallbackValueClass, true)) {
-            return $this->findLocalizedFallbackValue($entity, $searchContext);
+        $existingEntity = $this->findExistingEntity($entity);
+
+        $fields = $this->fieldHelper->getFields(ClassUtils::getClass($existingEntity), true);
+        foreach ($fields as $field) {
+            if ($this->fieldHelper->isRelation($field)) {
+                $targetClassName = $field['related_entity_name'];
+                if (is_a($targetClassName, $this->localizedFallbackValueClass, true)) {
+                    $fieldName = $field['name'];
+                    $this->mapCollections(
+                        $this->fieldHelper->getObjectValue($entity, $fieldName),
+                        $this->fieldHelper->getObjectValue($existingEntity, $fieldName)
+                    );
+                }
+            }
         }
 
-        return parent::findExistingEntity($entity, $searchContext);
+        return parent::beforeProcessEntity($entity);
     }
 
     /**
-     * @param object $entity
-     * @param array $searchContext
-     * @return LocalizedFallbackValue|null
+     * @param Collection $importedCollection
+     * @param Collection $sourceCollection
      */
-    protected function findLocalizedFallbackValue($entity, array $searchContext = [])
+    protected function mapCollections(Collection $importedCollection, Collection $sourceCollection)
     {
-        $holder = $this->getLocalizedFallbackValueHolder();
-        if (!$holder) {
-            return;
-        }
+        $importedCollection
+            ->map(
+                function (LocalizedFallbackValue $importedValue) use ($sourceCollection) {
+                    $sourceValues = $sourceCollection
+                        ->filter(
+                            function (LocalizedFallbackValue $sourceValue) use ($importedValue) {
+                                if ($sourceValue->getLocale() === $importedValue->getLocale()) {
+                                    return true;
+                                }
 
-        return;
+                                return $sourceValue->getLocale()
+                                    && $importedValue->getLocale()
+                                    && $sourceValue->getLocale()->getCode() === $importedValue->getLocale()->getCode();
+                            }
+                        );
+
+                    if (!$sourceValues->isEmpty()) {
+                        /** @var LocalizedFallbackValue $sourceValue */
+                        $sourceValue = $sourceValues->first();
+
+                        $this->fieldHelper->setObjectValue($importedValue, 'id', $sourceValue->getId());
+                    }
+                }
+            );
     }
-
-    /** @return object|null */
-    abstract protected function getLocalizedFallbackValueHolder();
 }

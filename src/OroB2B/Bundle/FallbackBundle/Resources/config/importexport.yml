@@ -8,6 +8,5 @@ services:
     orob2b_fallback.importexport.strategy.localized_fallback_value_aware:
         class: %orob2b_fallback.importexport.strategy.localized_fallback_value_aware.class%
         parent: oro_importexport.strategy.configurable_add_or_replace
-        abstract: true
         calls:
             - [setLocalizedFallbackValueClass, [%orob2b_fallback.entity.localized_fallback_value.class%]]
