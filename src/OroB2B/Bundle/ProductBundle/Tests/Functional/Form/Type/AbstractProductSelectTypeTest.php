@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadProductData;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use OroB2B\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler;
@@ -39,7 +39,7 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadProductData',
+                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
             ]
         );
 
@@ -114,33 +114,36 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
             [
                 'availableInventoryStatuses' => ['in_stock', 'out_of_stock'],
                 'expectedProducts' => [
-                    LoadProductData::TEST_PRODUCT_01,
-                    LoadProductData::TEST_PRODUCT_03,
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_3,
                 ],
             ],
             [
                 'availableInventoryStatuses' => ['in_stock'],
                 'expectedProducts' => [
-                    LoadProductData::TEST_PRODUCT_01,
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
                 ],
             ],
             [
                 'availableInventoryStatuses' => ['out_of_stock'],
                 'expectedProducts' => [
-                    LoadProductData::TEST_PRODUCT_03,
+                    LoadProductData::PRODUCT_3,
                 ],
             ],
             [
                 'availableInventoryStatuses' => ['discontinued'],
                 'expectedProducts' => [
-                    LoadProductData::TEST_PRODUCT_04,
+                    LoadProductData::PRODUCT_4,
                 ],
             ],
             [
                 'availableInventoryStatuses' => ['in_stock', 'discontinued'],
                 'expectedProducts' => [
-                    LoadProductData::TEST_PRODUCT_01,
-                    LoadProductData::TEST_PRODUCT_04,
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_4,
                 ],
             ],
         ];

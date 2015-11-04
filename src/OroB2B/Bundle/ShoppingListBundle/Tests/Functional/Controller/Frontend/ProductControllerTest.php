@@ -6,7 +6,7 @@ use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 use Oro\Component\Testing\WebTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProducts;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
@@ -33,7 +33,7 @@ class ProductControllerTest extends WebTestCase
     public function testProductAddToShoppingListForm()
     {
         /** @var Product $product */
-        $product = $this->getReference(LoadProducts::PRODUCT_1);
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
 
         $crawler = $this->client->request(
             'GET',

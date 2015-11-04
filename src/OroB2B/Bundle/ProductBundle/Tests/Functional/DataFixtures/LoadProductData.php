@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures;
+namespace OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -14,34 +14,40 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class LoadProductData extends AbstractFixture
 {
-    const TEST_PRODUCT_01 = 'test_product_01';
-    const TEST_PRODUCT_02 = 'test_product_02';
-    const TEST_PRODUCT_03 = 'test_product_03';
-    const TEST_PRODUCT_04 = 'test_product_04';
+    const PRODUCT_1 = 'product.1';
+    const PRODUCT_2 = 'product.2';
+    const PRODUCT_3 = 'product.3';
+    const PRODUCT_4 = 'product.4';
+    const PRODUCT_5 = 'product.5';
 
     /**
      * @var array
      */
     protected $products = [
         [
-            'productCode' => self::TEST_PRODUCT_01,
+            'productCode' => self::PRODUCT_1,
             'inventoryStatus' =>  Product::INVENTORY_STATUS_IN_STOCK,
             'status' => Product::STATUS_ENABLED
         ],
         [
-            'productCode' => self::TEST_PRODUCT_02,
+            'productCode' => self::PRODUCT_2,
             'inventoryStatus' =>  Product::INVENTORY_STATUS_IN_STOCK,
-            'status' => Product::STATUS_DISABLED
+            'status' => Product::STATUS_ENABLED
         ],
         [
-            'productCode' => self::TEST_PRODUCT_03,
+            'productCode' => self::PRODUCT_3,
             'inventoryStatus' =>  Product::INVENTORY_STATUS_OUT_OF_STOCK,
             'status' => Product::STATUS_ENABLED
         ],
         [
-            'productCode' => self::TEST_PRODUCT_04,
+            'productCode' => self::PRODUCT_4,
             'inventoryStatus' =>  Product::INVENTORY_STATUS_DISCONTINUED,
             'status' => Product::STATUS_ENABLED
+        ],
+        [
+            'productCode' => self::PRODUCT_5,
+            'inventoryStatus' =>  Product::INVENTORY_STATUS_IN_STOCK,
+            'status' => Product::STATUS_DISABLED
         ],
     ];
 
@@ -69,10 +75,13 @@ class LoadProductData extends AbstractFixture
                 ->setOrganization($organization)
                 ->setSku($item['productCode']);
             $name = new LocalizedFallbackValue();
+            $name->setString($item['productCode']);
             $product->addName($name);
             $product->setInventoryStatus($inventoryStatuses[$item['inventoryStatus']]);
             $product->setStatus($item['status']);
-            $name->setString($item['productCode']);
+            $description = new LocalizedFallbackValue();
+            $description->setString($item['productCode']);
+            $product->addDescription($description);
             $manager->persist($product);
             $this->addReference($item['productCode'], $product);
         }

@@ -64,7 +64,7 @@ class LoadProductUnitPrecisions extends AbstractFixture implements DependentFixt
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProducts',
+            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
             'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits'
         ];
     }
