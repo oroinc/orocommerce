@@ -119,4 +119,18 @@ class ProductRepository extends EntityRepository
 
         return $productsQueryBuilder;
     }
+
+    /**
+     * @param array $skus
+     * @return QueryBuilder
+     */
+    public function getFilterSkuQueryBuilder(array $skus)
+    {
+        $queryBuilder = $this->createQueryBuilder('product');
+        $queryBuilder
+            ->select('product.sku')
+            ->where($queryBuilder->expr()->in('product.sku', ':product_skus'))
+            ->setParameter('product_skus', $skus);
+        return $queryBuilder;
+    }
 }
