@@ -333,7 +333,11 @@ class ProductPriceDatagridListener
         $this->addConfigElement(
             $config,
             '[filters][columns]',
-            ['type' => 'number-range', 'data_name' => $columnName],
+            [
+                'type' => 'number-range',
+                'data_name' => $columnName,
+                'enabled' => false,
+            ],
             $columnName
         );
     }
