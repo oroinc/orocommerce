@@ -10,8 +10,10 @@ use Symfony\Component\Validator\Validation;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductRowType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductRowCollectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductAutocompleteType;
 
 class ProductRowCollectionTypeTest extends FormIntegrationTestCase
 {
@@ -39,7 +41,8 @@ class ProductRowCollectionTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     'oro_collection' => new CollectionType(),
-                    ProductRowType::NAME => new ProductRowType()
+                    ProductRowType::NAME => new ProductRowType(),
+                    ProductAutocompleteType::NAME => new StubProductAutocompleteType(),
                 ],
                 []
             ),

@@ -40,8 +40,7 @@
         {% set allow_delete = widget.parent.vars.allow_delete %}
     {% endif %}
 
-    <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
-        data-layout="separate">
+    <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}>
         {{ form_widget(form) }}
 
         <td>
