@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Component\Testing\WebTestCase;
 
+use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
@@ -13,6 +14,12 @@ use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
  */
 class RequestControllerTest extends WebTestCase
 {
+    const PHONE = '2-(999)507-4625';
+    const COMPANY = 'google';
+    const ROLE = 'CEO';
+    const REQUEST = 'request body';
+    const PO_NUMBER = 'CA245566789KL';
+
     /**
      * {@inheritdoc}
      */
@@ -74,8 +81,11 @@ class RequestControllerTest extends WebTestCase
         }
 
         $testedIds = [];
+        $testedData = [];
+
         foreach ($data as $row) {
             $testedIds[] = (int)$row['id'];
+            $testedData[$row['id']] = $row;
         }
 
         $expectedIds = [];
@@ -83,6 +93,16 @@ class RequestControllerTest extends WebTestCase
             /** @var Request $request */
             $request = $this->getReference($row);
             $expectedIds[] = $request->getId();
+
+            $this->assertEquals($request->getPoNumber(), $testedData[$request->getId()]['poNumber']);
+            if ($request->getShipUntil()) {
+                $this->assertContains(
+                    $request->getShipUntil()->format('Y-m-d'),
+                    $testedData[$request->getId()]['shipUntil']
+                );
+            } else {
+                $this->assertEquals($request->getShipUntil(), $testedData[$request->getId()]['shipUntil']);
+            }
         }
 
         sort($expectedIds);
@@ -115,8 +135,16 @@ class RequestControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $controls = $crawler->filter('.control-group');
+        $this->assertContains($request->getFirstName(), $result->getContent());
+        $this->assertContains($request->getLastName(), $result->getContent());
+        $this->assertContains($request->getEmail(), $result->getContent());
+        $this->assertContains($request->getPoNumber(), $result->getContent());
 
+        if ($request->getShipUntil()) {
+            $this->assertContains($request->getShipUntil()->format('M j, Y'), $result->getContent());
+        }
+
+        $controls = $crawler->filter('.control-group');
         static::assertEquals($expectedData['columnsCount'], count($controls));
     }
 
@@ -143,6 +171,8 @@ class RequestControllerTest extends WebTestCase
                     'columns' => [
                         'id',
                         'isDraft',
+                        'poNumber',
+                        'shipUntil',
                         'createdAt',
                         'update_link',
                         'view_link',
@@ -167,6 +197,8 @@ class RequestControllerTest extends WebTestCase
                     'columns' => [
                         'id',
                         'isDraft',
+                        'poNumber',
+                        'shipUntil',
                         'createdAt',
                         'accountUserName',
                         'update_link',
@@ -188,6 +220,8 @@ class RequestControllerTest extends WebTestCase
                     'columns' => [
                         'id',
                         'isDraft',
+                        'poNumber',
+                        'shipUntil',
                         'createdAt',
                         'update_link',
                         'view_link',
@@ -209,6 +243,8 @@ class RequestControllerTest extends WebTestCase
                     'columns' => [
                         'id',
                         'isDraft',
+                        'poNumber',
+                        'shipUntil',
                         'createdAt',
                         'update_link',
                         'view_link',
@@ -232,7 +268,7 @@ class RequestControllerTest extends WebTestCase
                     'password' => LoadUserData::ACCOUNT1_USER1,
                 ],
                 'expected' => [
-                    'columnsCount' => 7,
+                    'columnsCount' => 9,
                 ],
             ],
             'account1 user3 (AccountUser:VIEW_LOCAL)' => [
@@ -242,9 +278,145 @@ class RequestControllerTest extends WebTestCase
                     'password' => LoadUserData::ACCOUNT1_USER2,
                 ],
                 'expected' => [
-                    'columnsCount' => 8,
+                    'columnsCount' => 10,
                 ],
             ],
         ];
+    }
+
+    /**
+     * @param array $formData
+     * @param array $expected
+     * @dataProvider createProvider
+     */
+    public function testCreate(array $formData, array $expected)
+    {
+        $authParams = static::generateBasicAuthHeader(LoadUserData::ACCOUNT1_USER1, LoadUserData::ACCOUNT1_USER1);
+        $this->initClient([], $authParams);
+
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_frontend_request_create'));
+        $form = $crawler->selectButton('Save and Close')->form();
+
+        $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('orob2b_rfp_frontend_request');
+
+        /** @var ProductPrice $productPrice */
+        $productPrice = $this->getReference('product_price.1');
+
+        $parameters = [
+            'input_action' => 'save_and_stay',
+            'orob2b_rfp_frontend_request' => $formData
+        ];
+        $parameters['orob2b_rfp_frontend_request']['_token'] = $crfToken;
+        $parameters['orob2b_rfp_frontend_request']['requestProducts'] = [
+            [
+                'product' => $productPrice->getProduct()->getId(),
+                'requestProductItems' => [
+                    [
+                        'quantity' => $productPrice->getQuantity(),
+                        'productUnit' => $productPrice->getUnit()->getCode(),
+                        'price' => [
+                            'value' => $productPrice->getPrice()->getValue(),
+                            'currency' => $productPrice->getPrice()->getCurrency()
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->request($form->getMethod(), $form->getUri(), $parameters);
+
+        $result = $this->client->getResponse();
+
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('Request has been saved', $crawler->html());
+
+        $this->assertContainsRequestData($result->getContent(), $expected);
+    }
+
+    public function testUpdate()
+    {
+        $authParams = static::generateBasicAuthHeader(LoadUserData::ACCOUNT1_USER1, LoadUserData::ACCOUNT1_USER1);
+        $this->initClient([], $authParams);
+
+        $response = $this->requestFrontendGrid(
+            'frontend-requests-grid',
+            [
+                'frontend-requests-grid[_filter][poNumber][value]' => static::PO_NUMBER
+            ]
+        );
+
+        $result = $this->getJsonResponseContent($response, 200);
+        $result = reset($result['data']);
+
+        $id = $result['id'];
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_rfp_frontend_request_update', ['id' => $id]));
+
+        $form = $crawler->selectButton('Save and Close')->form();
+
+        $form['orob2b_rfp_frontend_request[firstName]'] = LoadRequestData::FIRST_NAME . '_UPDATE';
+        $form['orob2b_rfp_frontend_request[lastName]'] = LoadRequestData::LAST_NAME . '_UPDATE';
+        $form['orob2b_rfp_frontend_request[email]'] = LoadRequestData::EMAIL . '_UPDATE';
+        $form['orob2b_rfp_frontend_request[poNumber]'] = LoadRequestData::PO_NUMBER . '_UPDATE';
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->submit($form);
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('Request has been saved', $crawler->html());
+
+        $this->assertContainsRequestData(
+            $result->getContent(),
+            [
+                LoadRequestData::FIRST_NAME . '_UPDATE',
+                LoadRequestData::LAST_NAME . '_UPDATE',
+                LoadRequestData::EMAIL . '_UPDATE',
+                LoadRequestData::PO_NUMBER . '_UPDATE'
+            ]
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function createProvider()
+    {
+        return [
+            'create' => [
+                'formData' => [
+                    'firstName' => LoadRequestData::FIRST_NAME,
+                    'lastName' => LoadRequestData::LAST_NAME,
+                    'email' => LoadRequestData::EMAIL,
+                    'phone' => static::PHONE,
+                    'role' => static::ROLE,
+                    'company' => static::COMPANY,
+                    'body' => static::REQUEST,
+                    'poNumber' => static::PO_NUMBER,
+
+                ],
+                'expected' => [
+                    'firstName' => LoadRequestData::FIRST_NAME,
+                    'lastName' => LoadRequestData::LAST_NAME,
+                    'email' => LoadRequestData::EMAIL,
+                    'phone' => static::PHONE,
+                    'role' => static::ROLE,
+                    'company' => static::COMPANY,
+                    'body' => static::REQUEST,
+                    'poNumber' => static::PO_NUMBER
+                ]
+            ],
+        ];
+    }
+
+    /**
+     * @param string $html
+     * @param        $fields
+     */
+    protected function assertContainsRequestData($html, $fields)
+    {
+        foreach ($fields as $fieldValue) {
+            $this->assertContains($fieldValue, $html);
+        }
     }
 }
