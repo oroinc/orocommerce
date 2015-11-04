@@ -7,7 +7,6 @@ parameters:
     orob2b_product.form.type.product_unit_precision_collection.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType
     orob2b_product.form.type.product_select.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType
     orob2b_product.form.type.product_autocomplete.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductAutocompleteType
-    orob2b_product.form.type.product_removed_select.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType
     orob2b_product.form.type.quick_add.class: OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType
     orob2b_product.form.type.product_row.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductRowType
     orob2b_product.form.type.product_row_collection.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductRowCollectionType
@@ -15,6 +14,7 @@ parameters:
     orob2b_product.form.type.extension.integer.class: OroB2B\Bundle\ProductBundle\Form\Extension\IntegerExtension
     orob2b_product.form.type.custom_entity_fields_choice.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductCustomFieldsChoiceType
     orob2b_product.form.type.product_variant_links.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductVariantLinksType
+    orob2b_product.form.type.product_inventory_status_select.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductInventoryStatusSelectType
     orob2b_product.form.type.product_status.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductStatusType
 
 services:
@@ -75,6 +75,8 @@ services:
 
     orob2b_product.form.type.product_select:
         class: %orob2b_product.form.type.product_select.class%
+        arguments:
+            - @translator
         tags:
             - { name: form.type, alias: orob2b_product_select }
 
@@ -82,13 +84,6 @@ services:
         class: %orob2b_product.form.type.product_autocomplete.class%
         tags:
             - { name: form.type, alias: orob2b_product_autocomplete }
-
-    orob2b_product.form.type.product_removed_select:
-        class: %orob2b_product.form.type.product_removed_select.class%
-        calls:
-            - [setTranslator, [@translator]]
-        tags:
-            - { name: form.type, alias: orob2b_product_removed_select }
 
     orob2b_product.form.type.quick_add:
         class: %orob2b_product.form.type.quick_add.class%
@@ -128,3 +123,10 @@ services:
             - @orob2b_product.provider.product_status_provider
         tags:
             - { name: form.type, alias: orob2b_product_status }
+
+    orob2b_product.form.type.product_inventory_status_select:
+        class: %orob2b_product.form.type.product_inventory_status_select.class%
+        arguments:
+            - @doctrine
+        tags:
+            - { name: form.type, alias: orob2b_product_inventory_status_select }

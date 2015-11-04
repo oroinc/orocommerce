@@ -28,15 +28,16 @@ class OroB2BOrderExtensionTest extends ExtensionTestCase
             'orob2b_order.order.manager.api'
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
+
+        $this->assertExtensionConfigsLoaded([OroB2BOrderExtension::ALIAS]);
     }
 
     /**
-     * {@inheritDoc}
+     * Test Get Alias
      */
-    protected function buildContainerMock()
+    public function testGetAlias()
     {
-        return $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
-            ->setMethods(['setDefinition', 'setParameter'])
-            ->getMock();
+        $extension = new OroB2BOrderExtension();
+        $this->assertEquals(OroB2BOrderExtension::ALIAS, $extension->getAlias());
     }
 }

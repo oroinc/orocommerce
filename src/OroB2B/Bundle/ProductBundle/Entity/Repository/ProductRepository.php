@@ -95,6 +95,32 @@ class ProductRepository extends EntityRepository
     }
 
     /**
+     * @param string $search
+     * @param int $firstResult
+     * @param int $maxResults
+     * @return QueryBuilder
+     */
+    public function getSearchQueryBuilder($search, $firstResult, $maxResults)
+    {
+        $productsQueryBuilder = $this
+            ->createQueryBuilder('p');
+
+        $productsQueryBuilder->innerJoin('p.names', 'pn', 'WITH', $productsQueryBuilder->expr()->isNull('pn.locale'))
+            ->where(
+                $productsQueryBuilder->expr()->orX(
+                    $productsQueryBuilder->expr()->like('LOWER(p.sku)', ':search'),
+                    $productsQueryBuilder->expr()->like('LOWER(pn.string)', ':search')
+                )
+            )
+            ->setParameter('search', '%' . strtolower($search) . '%')
+            ->addOrderBy('p.id')
+            ->setFirstResult($firstResult)
+            ->setMaxResults($maxResults);
+
+        return $productsQueryBuilder;
+    }
+
+    /**
      * @param array $skus
      * @return array
      */
