@@ -8,10 +8,10 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
-use OroB2B\Bundle\ProductBundle\Model\DataStorageAwareProcessor;
+use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorDataStorage;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
-class DataStorageAwareProcessorTest extends \PHPUnit_Framework_TestCase
+class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|UrlGeneratorInterface
@@ -24,7 +24,7 @@ class DataStorageAwareProcessorTest extends \PHPUnit_Framework_TestCase
     protected $storage;
 
     /**
-     * @var DataStorageAwareProcessor
+     * @var ComponentProcessorDataStorage
      */
     protected $processor;
 
@@ -44,7 +44,7 @@ class DataStorageAwareProcessorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->processor = new DataStorageAwareProcessor($this->router, $this->storage, $this->securityFacade);
+        $this->processor = new ComponentProcessorDataStorage($this->router, $this->storage, $this->securityFacade);
     }
 
     protected function tearDown()

@@ -25,8 +25,8 @@ parameters:
 
     orob2b_product.validator.unique_variant_links.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator
 
-    orob2b_product.component_processor.registry.class: OroB2B\Bundle\ProductBundle\Model\ComponentProcessorRegistry
-    orob2b_product.processor.data_storage_aware.class: OroB2B\Bundle\ProductBundle\Model\DataStorageAwareProcessor
+    orob2b_product.component_processor.registry.class: OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry
+    orob2b_product.component_processor.data_storage.class: OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorDataStorage
     orob2b_product.form_handler.quick_add.class: OroB2B\Bundle\ProductBundle\Form\Handler\QuickAddHandler
     orob2b_product.product.manager.class: OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager
 
@@ -123,8 +123,8 @@ services:
     orob2b_product.component_processor.registry:
         class: %orob2b_product.component_processor.registry.class%
 
-    orob2b_product.processor.data_storage_aware:
-        class: %orob2b_product.processor.data_storage_aware.class%
+    orob2b_product.component_processor.data_storage:
+        class: %orob2b_product.component_processor.data_storage.class%
         arguments:
             - @router
             - @orob2b_product.service.product_data_storage
