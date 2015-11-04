@@ -1,0 +1,19 @@
+parameters:
+
+services:
+    # Import processor
+    orob2b_product.importexport.processor.import.product:
+        parent: oro_importexport.processor.import_abstract
+#        calls:
+#             - [setDataConverter, [~]]
+#             - [setStrategy, [~]]
+        tags:
+            - { name: oro_importexport.processor, type: import, entity: %orob2b_product.product.class%, alias: orob2b_product_product.add_or_replace }
+
+    # Export processor
+    orob2b_product.importexport.processor.export.product:
+        parent: oro_importexport.processor.export_abstract
+#        calls:
+#            - [setDataConverter, [~]]
+        tags:
+            - { name: oro_importexport.processor, type: export, entity: %orob2b_product.product.class%, alias: orob2b_product_product }
