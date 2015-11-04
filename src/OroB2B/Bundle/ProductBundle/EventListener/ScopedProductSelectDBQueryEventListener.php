@@ -2,11 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\EventListener;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
-use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
-use OroB2B\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
-
 class ScopedProductSelectDBQueryEventListener extends ProductSelectDBQueryEventListener
 {
     /**
