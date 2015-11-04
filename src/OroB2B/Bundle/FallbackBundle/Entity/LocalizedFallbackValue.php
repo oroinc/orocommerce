@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\FallbackBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
@@ -17,7 +18,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
  *      }
  * )
  * @ORM\Entity
- * @Config
+ * @Config(mode="hidden")
  */
 class LocalizedFallbackValue
 {
@@ -27,6 +28,13 @@ class LocalizedFallbackValue
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
      */
     protected $id;
 
@@ -56,6 +64,14 @@ class LocalizedFallbackValue
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Locale")
      * @ORM\JoinColumn(name="locale_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "identity"=true,
+     *              "full"=false
+     *          }
+     *      }
+     * )
      */
     protected $locale;
 

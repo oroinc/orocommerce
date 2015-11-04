@@ -13,6 +13,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  * @ORM\Table(name="orob2b_locale")
  * @ORM\Entity
  * @Config(
+ *      mode="hidden",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-flag"
@@ -69,6 +70,9 @@ class Locale
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "identity"=true
      *          }
      *      }
      * )

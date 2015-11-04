@@ -1,0 +1,3 @@
+services:
+    orob2b_fallback.importexport.data_converter.localized_fallback_value:
+        parent: oro_importexport.data_converter.configurable
