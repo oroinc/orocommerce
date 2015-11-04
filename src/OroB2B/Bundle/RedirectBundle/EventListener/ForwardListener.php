@@ -91,6 +91,8 @@ class ForwardListener
     }
 
     /**
+     * Skipped url pattern should start with slash.
+     *
      * @param string $skippedUrlPattern
      * @param string $env
      */
@@ -112,12 +114,11 @@ class ForwardListener
         if (array_key_exists($this->environment, $this->skippedUrlPatterns)) {
             $url = $request->getPathInfo();
             foreach ($this->skippedUrlPatterns[$this->environment] as $pattern) {
-                if (strpos($url, $pattern) !== false) {
+                if (strpos($url, $pattern) === 0) {
                     return true;
                 }
             }
         }
-
 
         return false;
     }
