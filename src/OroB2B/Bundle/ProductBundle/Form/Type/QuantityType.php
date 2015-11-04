@@ -52,7 +52,7 @@ class QuantityType extends AbstractProductAwareType
     public function roundQuantity(FormEvent $event)
     {
         $scale = $this->getScale($event->getForm());
-        if (!$scale) {
+        if (null === $scale) {
             return;
         }
 
