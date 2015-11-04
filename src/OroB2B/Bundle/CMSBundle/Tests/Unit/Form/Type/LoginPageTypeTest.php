@@ -8,7 +8,7 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 
 use OroB2B\Bundle\CMSBundle\Form\Type\LoginPageType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubImageType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
 
 class LoginPageTypeTest extends FormIntegrationTestCase
 {
@@ -43,7 +43,7 @@ class LoginPageTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    ImageType::NAME => new StubImageType(),
+                    ImageType::NAME => new ImageTypeStub(),
                 ],
                 []
             )

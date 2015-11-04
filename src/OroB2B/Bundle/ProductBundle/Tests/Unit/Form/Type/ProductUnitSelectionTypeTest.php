@@ -21,8 +21,8 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
 use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitHolderType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitHolderTypeStub;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -74,7 +74,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
     protected function getExtensions()
     {
         $entityType = new EntityType($this->prepareChoices());
-        $productUnitSelectionType = new StubProductUnitSelectionType([1], ProductUnitSelectionType::NAME);
+        $productUnitSelectionType = new ProductUnitSelectionTypeStub([1], ProductUnitSelectionType::NAME);
 
         return [
             new PreloadedExtension(
@@ -146,7 +146,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
             )
         );
 
-        $formParent = $this->factory->create(new StubProductUnitHolderType(), $productUnitHolder);
+        $formParent = $this->factory->create(new ProductUnitHolderTypeStub(), $productUnitHolder);
         $form->setParent($formParent);
         $formConfig = $form->getConfig();
         foreach ($expectedOptions as $key => $value) {
@@ -239,7 +239,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create($this->formType, null, $inputData['options']);
 
         if ($withParent) {
-            $formParent = $this->factory->create(new StubProductUnitHolderType(), $inputData['productUnitHolder']);
+            $formParent = $this->factory->create(new ProductUnitHolderTypeStub(), $inputData['productUnitHolder']);
         } else {
             $formParent = null;
         }
@@ -554,11 +554,11 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
             'product without units' => [
                 $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 1),
                 'valid',
-                'ERROR: orob2b.product.productunit.invalid' . PHP_EOL,
+                'ERROR: orob2b.product.productunit.invalid' . "\n",
             ],
-            'submit invalid' => [$product, 'not_valid', 'ERROR: orob2b.product.productunit.invalid' . PHP_EOL],
+            'submit invalid' => [$product, 'not_valid', 'ERROR: orob2b.product.productunit.invalid' . "\n"],
             'submit valid' => [$product, 'valid'],
-            'empty data' => [$product, null, 'ERROR: orob2b.product.productunit.invalid' . PHP_EOL],
+            'empty data' => [$product, null, 'ERROR: orob2b.product.productunit.invalid' . "\n"],
             'new product' => [new Product(), null],
         ];
     }
