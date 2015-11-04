@@ -74,6 +74,7 @@ class OroB2BInvoiceBundle implements Migration
             ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('price_type', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
     }
 

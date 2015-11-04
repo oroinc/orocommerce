@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\InvoiceBundle\EventListener\ORM;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use OroB2B\Bundle\InvoiceBundle\Doctrine\ORM\InvoiceNumberGeneratorInterface;
 use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
 
@@ -23,6 +24,30 @@ class InvoiceEventListener
         $this->invoiceNumberGenerator = $numberGenerator;
 
         return $this;
+    }
+
+    /**
+     * @param Invoice $invoice
+     * @param LifecycleEventArgs $event
+     */
+    public function prePersist(Invoice $invoice, LifecycleEventArgs $event)
+    {
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
+        if (empty($invoice->getInvoiceDate())) {
+            $invoice->setInvoiceDate($now);
+            $invoice->setCreatedAt($now);
+            $invoice->setUpdatedAt($now);
+            $invoice->setPaymentDueDate($now);
+        }
+    }
+
+    /**
+     * @param Invoice $invoice
+     * @param PreUpdateEventArgs $event
+     */
+    public function preUpdate(Invoice $invoice, PreUpdateEventArgs $event)
+    {
+        $invoice->setUpdatedAt(new \DateTime('now', new \DateTimeZone('UTC')));
     }
 
     /**

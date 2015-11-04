@@ -21,7 +21,9 @@ orob2b:
             sections:
                 general: General
                 invoice_line_items: Invoice items
-
+        controller:
+            invoice:
+                saved.message: 'Invoice saved'
 
         invoicelineitem:
             entity_label: 'Invoice Item'

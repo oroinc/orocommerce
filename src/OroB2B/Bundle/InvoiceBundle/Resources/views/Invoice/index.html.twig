@@ -4,4 +4,10 @@
 {% set pageTitle = 'orob2b.invoice.entity_plural_label'|trans %}
 
 {% block navButtons %}
+    {% if resource_granted('orob2b_invoice_create') %}
+        {{ UI.addButton({
+            'path': path('orob2b_invoice_create'),
+            'entity_label': 'orob2b.invoice.entity_label'|trans
+        }) }}
+    {% endif %}
 {% endblock %}

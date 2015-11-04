@@ -41,7 +41,6 @@ use OroB2B\Bundle\InvoiceBundle\Model\ExtendInvoice;
  *      }
  * )
  * @ORM\EntityListeners({ "OroB2B\Bundle\InvoiceBundle\EventListener\ORM\InvoiceEventListener" })
- * @ORM\HasLifecycleCallbacks()
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class Invoice extends ExtendInvoice implements OrganizationAwareInterface
@@ -447,15 +446,5 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
     {
         $this->currency = $currency;
         return $this;
-    }
-
-    /**
-     * @ORM\PrePersist
-     */
-    public function prePersist()
-    {
-        if (empty($this->invoiceDate)) {
-            $this->invoiceDate = new \DateTime('now', new \DateTimeZone('UTC'));
-        }
     }
 }
