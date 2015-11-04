@@ -127,7 +127,7 @@ services:
             - @orob2b_product.product.manager
             - @doctrine
         calls:
-            - [setDataClass, [%orob2b_product.product.class%]]
+            - [setProductClass, [%orob2b_product.product.class%]]
 
     orob2b_product.component_processor.registry:
         class: %orob2b_product.component_processor.registry.class%

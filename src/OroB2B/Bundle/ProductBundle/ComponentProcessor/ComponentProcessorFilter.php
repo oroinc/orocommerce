@@ -2,58 +2,64 @@
 
 namespace OroB2B\Bundle\ProductBundle\ComponentProcessor;
 
-use Doctrine\ORM\Query;
-
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager;
+use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 
 class ComponentProcessorFilter
 {
+    /** @var  ProductManager */
+    protected $productManager;
+
     /** @var  ManagerRegistry */
     protected $registry;
 
     /** @var string */
-    protected $dataClass;
+    protected $productClass;
 
-    /** @var  ProductManager */
-    protected $productManager;
-
-    public function __construct(
-        ProductManager $productManager,
-        ManagerRegistry $registry
-    ) {
+    /**
+     * @param ProductManager $productManager
+     * @param ManagerRegistry $registry
+     */
+    public function __construct(ProductManager $productManager, ManagerRegistry $registry)
+    {
         $this->productManager = $productManager;
         $this->registry = $registry;
     }
 
     /**
-     * @param string $dataClass
+     * @param string $productClass
      */
-    public function setDataClass($dataClass)
+    public function setProductClass($productClass)
     {
-        $this->dataClass = $dataClass;
+        $this->productClass = $productClass;
     }
 
+    /**
+     * @param array $data
+     * @param array $dataParameters
+     * @return array
+     */
     public function filterData(array $data, array $dataParameters)
     {
-        if (empty($data['entity_items_data'])) {
-            return [];
+        $products = [];
+        foreach ($data['entity_items_data'] as $product) {
+            $products[$product['productSku']] = $product;
         }
-        $skus = array_map(
-            function ($product) {
-                return $product['productSku'];
-            },
-            $data['entity_items_data']
-        );
+        $data['entity_items_data'] = [];
 
-        $queryBuilder = $this->getRepository()->getFilterSkuQueryBuilder($skus);
+        if (empty($products)) {
+            return $data;
+        }
+
+        $queryBuilder = $this->getRepository()->getFilterSkuQueryBuilder(array_keys($products));
         $queryBuilder = $this->productManager->restrictQueryBuilderByProductVisibility($queryBuilder, $dataParameters);
 
-        $filteredSkues = $queryBuilder->getQuery()->getResult(Query::HYDRATE_ARRAY);
-        var_dump($filteredSkues);
-        exit();
+        $filteredProducts = $queryBuilder->getQuery()->getResult();
+        foreach ($filteredProducts as $product) {
+            $data['entity_items_data'][] = $products[$product['sku']];
+        }
 
         return $data;
     }
@@ -63,6 +69,6 @@ class ComponentProcessorFilter
      */
     protected function getRepository()
     {
-        return $this->registry->getManagerForClass($this->dataClass)->getRepository($this->dataClass);
+        return $this->registry->getManagerForClass($this->productClass)->getRepository($this->productClass);
     }
 }
