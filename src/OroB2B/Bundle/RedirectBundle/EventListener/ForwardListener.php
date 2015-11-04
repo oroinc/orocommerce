@@ -9,7 +9,6 @@ use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\Routing\RouteCompiler;
 
 use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
 
