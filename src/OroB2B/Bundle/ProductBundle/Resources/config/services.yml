@@ -138,6 +138,7 @@ services:
             - @router
             - @orob2b_product.service.product_data_storage
             - @oro_security.security_facade
+            - @orob2b_product.component_processor.filter
         abstract: true
 
     orob2b_product.form_handler.quick_add:

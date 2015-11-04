@@ -94,6 +94,7 @@ services:
             - [setName, ['orob2b_order_quick_add_processor']]
             - [setRedirectRouteName, ['orob2b_order_frontend_create']]
             - [setAcl, ['orob2b_order_frontend_create']]
+            - [setScope, ['order']]
         tags:
             - { name: orob2b_product.quick_add_processor }
 

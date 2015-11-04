@@ -9,6 +9,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class ComponentProcessorDataStorage implements ComponentProcessorInterface
 {
@@ -17,6 +18,9 @@ class ComponentProcessorDataStorage implements ComponentProcessorInterface
 
     /** @var ProductDataStorage */
     protected $storage;
+
+    /** @var  ComponentProcessorFilter */
+    protected $componentProcessorFilter;
 
     /** @var string */
     protected $name;
@@ -30,6 +34,9 @@ class ComponentProcessorDataStorage implements ComponentProcessorInterface
     /** @var string */
     protected $acl;
 
+    /** @var  string */
+    protected $scope;
+
     /** @var SecurityFacade */
     protected $securityFacade;
 
@@ -37,15 +44,18 @@ class ComponentProcessorDataStorage implements ComponentProcessorInterface
      * @param UrlGeneratorInterface $router
      * @param ProductDataStorage $storage
      * @param SecurityFacade $securityFacade
+     * @param ComponentProcessorFilter $componentProcessorFilter
      */
     public function __construct(
         UrlGeneratorInterface $router,
         ProductDataStorage $storage,
-        SecurityFacade $securityFacade
+        SecurityFacade $securityFacade,
+        ComponentProcessorFilter $componentProcessorFilter
     ) {
         $this->router = $router;
         $this->storage = $storage;
         $this->securityFacade = $securityFacade;
+        $this->componentProcessorFilter = $componentProcessorFilter;
     }
 
     /**
@@ -88,6 +98,14 @@ class ComponentProcessorDataStorage implements ComponentProcessorInterface
     }
 
     /**
+     * @param string $scope
+     */
+    public function setScope($scope)
+    {
+        $this->scope = $scope;
+    }
+
+    /**
      * @param string $redirectRouteName
      */
     public function setRedirectRouteName($redirectRouteName)
@@ -119,7 +137,11 @@ class ComponentProcessorDataStorage implements ComponentProcessorInterface
      */
     public function process(array $data, Request $request)
     {
-        $this->storage->set($data);
+        $restrictedData = $this->filterData($data);
+        if ($notAllowedProductSkus = $this->getNotAllowedProductSkus($data, $restrictedData)) {
+            throw new AccessDeniedException(implode(',', $notAllowedProductSkus) . 'is not allowed');
+        }
+        $this->storage->set($restrictedData);
 
         return empty($this->redirectRouteName) ? null : new RedirectResponse($this->getUrl($this->redirectRouteName));
     }
@@ -131,5 +153,44 @@ class ComponentProcessorDataStorage implements ComponentProcessorInterface
     protected function getUrl($routeName)
     {
         return $this->router->generate($routeName, [ProductDataStorage::STORAGE_KEY => true]);
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    protected function filterData(array $data)
+    {
+        return $this->componentProcessorFilter->filterData($data, ['scope' => $this->scope]);
+    }
+
+    /**
+     * @param array $data
+     * @param array $restrictedData
+     * @return array
+     */
+    protected function getNotAllowedProductSkus(array $data, array $restrictedData)
+    {
+        $notAllowedProductSkus = [];
+        $restrictedSkus = $this->getProductsFromData($restrictedData);
+        foreach ($this->getProductsFromData($data) as $sku) {
+            if (!in_array($sku, $restrictedSkus)) {
+                $notAllowedProductSkus[] = $sku;
+            }
+        }
+        return $notAllowedProductSkus;
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    protected function getProductsFromData(array $data)
+    {
+        $products = [];
+        foreach ($data['entity_items_data'] as $product) {
+            $products[$product['productSku']] = $product;
+        }
+        return $products;
     }
 }

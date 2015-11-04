@@ -58,7 +58,8 @@ class ProductSelectDBQueryEventListener
         ProductVisibilityQueryBuilderModifier $modifier,
         FrontendHelper $helper,
         RequestStack $requestStack
-    ) {
+    )
+    {
         $this->configManager = $configManager;
         $this->modifier = $modifier;
         $this->frontendHelper = $helper;
@@ -101,7 +102,9 @@ class ProductSelectDBQueryEventListener
         } else {
             return;
         }
-
+        if (!$inventoryStatuses) {
+            return;
+        }
         $this->modifier->modifyByInventoryStatus($event->getQueryBuilder(), $inventoryStatuses);
     }
 
