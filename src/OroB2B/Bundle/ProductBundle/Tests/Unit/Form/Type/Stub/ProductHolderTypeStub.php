@@ -6,11 +6,11 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
-class StubProductUnitHolderType extends AbstractType
+class ProductHolderTypeStub extends AbstractType
 {
-    const NAME = 'orob2b_stub_product_unit_holder';
+    const NAME = 'orob2b_stub_product_holder';
 
     /**
      * {@inheritdoc}
@@ -18,8 +18,8 @@ class StubProductUnitHolderType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('productUnit', ProductUnitSelectionType::NAME, [
-                'label' =>  'orob2b.productunit.entity_label',
+            ->add('product', ProductSelectType::NAME, [
+                'label' =>  'orob2b.product.entity_label',
             ])
         ;
     }
@@ -38,7 +38,7 @@ class StubProductUnitHolderType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'class' => 'OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface',
+            'class' => 'OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface',
             'create_enabled' => true,
             'configs' => [
                 'placeholder' => null,

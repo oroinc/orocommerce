@@ -42,6 +42,13 @@ class LocalizedFallbackValue
      * @var string|null
      *
      * @ORM\Column(name="fallback", type="string", length=64, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=10
+     *          }
+     *      }
+     * )
      */
     protected $fallback;
 
@@ -49,6 +56,13 @@ class LocalizedFallbackValue
      * @var string|null
      *
      * @ORM\Column(name="string", type="string", length=255, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=10
+     *          }
+     *      }
+     * )
      */
     protected $string;
 
@@ -56,6 +70,13 @@ class LocalizedFallbackValue
      * @var string|null
      *
      * @ORM\Column(name="text", type="text", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=10
+     *          }
+     *      }
+     * )
      */
     protected $text;
 

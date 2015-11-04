@@ -83,7 +83,8 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *              "auditable"=true
      *          },
      *          "importexport"={
-     *              "identity"=true
+     *              "identity"=true,
+     *              "order"=10
      *          }
      *      }
      * )
@@ -94,6 +95,13 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @var bool
      *
      * @ORM\Column(name="has_variants", type="boolean", nullable=false, options={"default"=false})
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=70
+     *          }
+     *      }
+     * )
      */
     protected $hasVariants = false;
 
@@ -105,6 +113,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=20
      *          }
      *      }
      *  )
@@ -115,6 +126,13 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @var array
      *
      * @ORM\Column(name="variant_fields", type="array", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=80
+     *          }
+     *      }
+     * )
      */
     protected $variantFields = [];
 
@@ -126,6 +144,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *      defaultValues={
      *          "entity"={
      *              "label"="oro.ui.created_at"
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -140,6 +161,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *      defaultValues={
      *          "entity"={
      *              "label"="oro.ui.updated_at"
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -155,6 +179,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -166,6 +193,13 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
      * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
      */
     protected $organization;
 
@@ -173,6 +207,14 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @var Collection|ProductUnitPrecision[]
      *
      * @ORM\OneToMany(targetEntity="ProductUnitPrecision", mappedBy="product", cascade={"ALL"}, orphanRemoval=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=40,
+     *              "full"=true
+     *          }
+     *      }
+     * )
      */
     protected $unitPrecisions;
 
@@ -191,6 +233,14 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *      },
      *      inverseJoinColumns={
      *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *      }
+     * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=30,
+     *              "full"=true
+     *          }
      *      }
      * )
      */
@@ -213,6 +263,14 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
      *      }
      * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=30,
+     *              "full"=true
+     *          }
+     *      }
+     * )
      */
     protected $descriptions;
 
@@ -220,9 +278,20 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @var Collection|ProductVariantLink[]
      *
      * @ORM\OneToMany(targetEntity="ProductVariantLink", mappedBy="parentProduct", cascade={"ALL"}, orphanRemoval=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=20,
+     *              "full"=false
+     *          }
+     *      }
+     * )
      */
     protected $variantLinks;
 
+    /**
+     * {@inheritdoc}
+     */
     public function __construct()
     {
         parent::__construct();

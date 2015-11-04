@@ -6,7 +6,7 @@ use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadProductData;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
@@ -36,7 +36,7 @@ class CategoryControllerTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([
             'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadLocaleData',
-            'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadProductData'
+            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData'
         ]);
         $this->locales = $this->getContainer()
             ->get('doctrine')
@@ -163,10 +163,10 @@ class CategoryControllerTest extends WebTestCase
         $form['orob2b_catalog_category[titles][values][default]'] = $title;
 
         if ($parentId === $this->masterCatalog->getId()) {
-            $appendProducts = $this->getProductBySku(LoadProductData::TEST_PRODUCT_01)->getId() . ', '
-                . $this->getProductBySku(LoadProductData::TEST_PRODUCT_02)->getId();
+            $appendProducts = $this->getProductBySku(LoadProductData::PRODUCT_1)->getId() . ', '
+                . $this->getProductBySku(LoadProductData::PRODUCT_2)->getId();
         } else {
-            $appendProducts = $this->getProductBySku(LoadProductData::TEST_PRODUCT_04)->getId();
+            $appendProducts = $this->getProductBySku(LoadProductData::PRODUCT_4)->getId();
         }
 
         $form['orob2b_catalog_category[appendProducts]'] = $appendProducts;
@@ -197,10 +197,10 @@ class CategoryControllerTest extends WebTestCase
         $this->assertEquals($title, $formValues['orob2b_catalog_category[titles][values][default]']);
         $this->assertContains('Add note', $crawler->html());
 
-        $testProductOne = $this->getProductBySku(LoadProductData::TEST_PRODUCT_01);
-        $testProductTwo = $this->getProductBySku(LoadProductData::TEST_PRODUCT_02);
-        $testProductThree = $this->getProductBySku(LoadProductData::TEST_PRODUCT_03);
-        $testProductFour = $this->getProductBySku(LoadProductData::TEST_PRODUCT_04);
+        $testProductOne = $this->getProductBySku(LoadProductData::PRODUCT_1);
+        $testProductTwo = $this->getProductBySku(LoadProductData::PRODUCT_2);
+        $testProductThree = $this->getProductBySku(LoadProductData::PRODUCT_3);
+        $testProductFour = $this->getProductBySku(LoadProductData::PRODUCT_4);
 
         $appendProduct = $testProductThree;
 

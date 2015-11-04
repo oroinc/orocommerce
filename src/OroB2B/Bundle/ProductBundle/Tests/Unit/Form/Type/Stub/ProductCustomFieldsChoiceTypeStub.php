@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductCustomFieldsChoiceType;
 
-class StubProductCustomFieldsChoiceType extends ProductCustomFieldsChoiceType
+class ProductCustomFieldsChoiceTypeStub extends ProductCustomFieldsChoiceType
 {
     /**
      * @var array
