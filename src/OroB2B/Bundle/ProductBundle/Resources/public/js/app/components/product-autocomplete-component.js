@@ -17,6 +17,7 @@ define(function(require) {
                 selectors: {
                     row: '.fields-row',
                     name: '.product-autocomplete-name',
+                    error: '.product-autocomplete-error',
                     success: '.product-autocomplete-success'
                 }
             };
@@ -26,6 +27,7 @@ define(function(require) {
 
             this.$row = this.$el.closest(this.options.selectors.row);
             this.$name = this.$row.find(this.options.selectors.name);
+            this.$error = this.$row.find(this.options.selectors.error);
             this.$success = this.$row.find(this.options.selectors.success);
             this.product = {
                 sku: null,
@@ -37,7 +39,7 @@ define(function(require) {
 
         change: function() {
             var self = this;
-            this.product.sku = this.product.name = null;
+            this.resetProduct();
 
             var val = this.$el.val();
             var autocompleteResult = this.resultsMapping[val] || null;
@@ -55,34 +57,49 @@ define(function(require) {
                 });
             }
 
-            this.updateProduct();
-            if (!this.product.sku) {
+            if (this.product.sku) {
+                this.updateProduct();
+            } else {
                 this.validateProduct(val);
             }
         },
 
         validateProduct: function(val) {
             var self = this;
-            $.post(routing.generate(this.options.productBySkuRoute), {
-                skus: [val]
-            }, function(response) {
-                val = self.$el.val().toUpperCase();
-                if (response[val]) {
-                    self.product.sku = val;
-                    self.product.name = response[val].name;
+            $.ajax({
+                url: routing.generate(this.options.productBySkuRoute),
+                data: {skus: [val]},
+                type: 'post',
+                success: function(response) {
+                    val = self.$el.val().toUpperCase();
+                    if (response[val]) {
+                        self.product.sku = val;
+                        self.product.name = response[val].name;
+                    }
+                    self.updateProduct();
+                },
+                error: function() {
                     self.updateProduct();
                 }
             });
         },
 
+        resetProduct: function() {
+            this.product.sku = this.product.name = null;
+
+            this.$name.html('');
+            this.$success.hide();
+            this.$error.hide();
+        },
+
         updateProduct: function() {
             if (this.product.sku) {
                 this.$el.val(this.product.sku);
+                this.$name.html(this.product.name);
                 this.$success.show();
             } else {
-                this.$success.hide();
+                this.$error.show();
             }
-            this.$name.html(this.product.name);
         }
     });
 
