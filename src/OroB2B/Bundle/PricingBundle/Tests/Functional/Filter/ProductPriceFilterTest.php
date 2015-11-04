@@ -20,7 +20,7 @@ class ProductPriceFilterTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProducts',
+            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
             'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
         ]);
     }

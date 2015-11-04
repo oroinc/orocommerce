@@ -7,7 +7,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
 
-class StubLocalizedFallbackValueCollectionType extends AbstractType
+class LocalizedFallbackValueCollectionTypeStub extends AbstractType
 {
     /**
      * {@inheritdoc}
@@ -30,14 +30,13 @@ class StubLocalizedFallbackValueCollectionType extends AbstractType
             'allow_delete' => true,
         ]);
 
-        $resolver->setNormalizers([
-            'type' => function () {
-                return new StubLocalizedFallbackValueType();
-            },
-            'options' => function () {
-                return [];
-            },
-        ]);
+        $resolver->setNormalizer('type', function () {
+            return new LocalizedFallbackValueTypeStub();
+        });
+
+        $resolver->setNormalizer('options', function () {
+            return [];
+        });
     }
 
     /**
