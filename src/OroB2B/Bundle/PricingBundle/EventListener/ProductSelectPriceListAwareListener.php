@@ -46,6 +46,6 @@ class ProductSelectPriceListAwareListener
      */
     protected function isConditionsAcceptable()
     {
-        return $this->event->getDataParameters()->get('price_list', null) === self::DEFAULT_ACCOUNT_USER;
+        return $this->event->getDataParameters()->get('price_list') === self::DEFAULT_ACCOUNT_USER;
     }
 }
