@@ -12,13 +12,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
+use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceListAwareSelectType;
+
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductRemovedSelectType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
+
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType;
@@ -27,7 +30,7 @@ use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType as FrontendReq
 use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
 use OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type\AbstractTest;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
+use OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type\Stub\StubProductPriceListAwareSelectType;
 
 class RequestTypeTest extends AbstractTest
 {
@@ -141,6 +144,7 @@ class RequestTypeTest extends AbstractTest
 
     /**
      * @return array
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function submitProvider()
     {
@@ -148,6 +152,8 @@ class RequestTypeTest extends AbstractTest
         $requestProduct     = $this->getRequestProduct(2, 'comment', [$requestProductItem]);
 
         $email      = 'test@example.com';
+        $date       = '2015-10-15';
+        $dateObj    = new \DateTime($date . 'T00:00:00+0000');
 
         return [
             'valid data' => [
@@ -160,6 +166,8 @@ class RequestTypeTest extends AbstractTest
                     'company'   => 'company',
                     'role'      => 'role',
                     'body'      => 'body',
+                    'poNumber'  => 'poNumber',
+                    'shipUntil' => $date,
                     'requestProducts' => [
                         [
                             'product'   => 2,
@@ -175,11 +183,92 @@ class RequestTypeTest extends AbstractTest
                     ],
                 ],
                 'expectedData'  => $this
-                    ->getRequest('FirstName', 'LastName', $email, 'body', 'company', 'role', '+38 (044) 247-68-00')
+                    ->getRequest(
+                        'FirstName',
+                        'LastName',
+                        $email,
+                        'body',
+                        'company',
+                        'role',
+                        '+38 (044) 247-68-00',
+                        'poNumber',
+                        $dateObj
+                    )
                     ->addRequestProduct($requestProduct)->setStatus(
                         (new RequestStatus())->setName(RequestStatus::OPEN)
                     ),
-                'defaultData'   => $this->getRequest(),
+                'defaultData'  => $this
+                    ->getRequest(
+                        'FirstName',
+                        'LastName',
+                        $email,
+                        'body',
+                        'company',
+                        'role',
+                        '+38 (044) 247-68-00',
+                        'poNumber',
+                        $dateObj
+                    )
+                    ->addRequestProduct($requestProduct)->setStatus(
+                        (new RequestStatus())->setName(RequestStatus::OPEN)
+                    ),
+            ],
+            'empty PO number' => [
+                'isValid'       => true,
+                'submittedData' => [
+                    'firstName' => 'FirstName',
+                    'lastName'  => 'LastName',
+                    'email'     => $email,
+                    'phone'     => '+38 (044) 247-68-00',
+                    'company'   => 'company',
+                    'role'      => 'role',
+                    'body'      => 'body',
+                    'poNumber'  => null,
+                    'shipUntil' => null,
+                    'requestProducts' => [
+                        [
+                            'product'   => 2,
+                            'comment'   => 'comment',
+                            'requestProductItems' => [
+                                [
+                                    'quantity' => 10,
+                                    'productUnit' => 'kg',
+                                    'price' => ['value' => 20, 'currency' => 'USD',],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'expectedData'  => $this
+                    ->getRequest(
+                        'FirstName',
+                        'LastName',
+                        $email,
+                        'body',
+                        'company',
+                        'role',
+                        '+38 (044) 247-68-00',
+                        null,
+                        null
+                    )
+                    ->addRequestProduct($requestProduct)->setStatus(
+                        (new RequestStatus())->setName(RequestStatus::OPEN)
+                    ),
+                'defaultData'  => $this
+                    ->getRequest(
+                        'FirstName',
+                        'LastName',
+                        $email,
+                        'body',
+                        'company',
+                        'role',
+                        '+38 (044) 247-68-00',
+                        null,
+                        null
+                    )
+                    ->addRequestProduct($requestProduct)->setStatus(
+                        (new RequestStatus())->setName(RequestStatus::OPEN)
+                    ),
             ],
         ];
     }
@@ -197,7 +286,7 @@ class RequestTypeTest extends AbstractTest
             ->getMock();
 
         $priceType                  = $this->preparePriceType();
-        $entityType                 = $this->prepareProductEntityType();
+        $entityType                 = $this->prepareProductSelectType();
         $optionalPriceType          = $this->prepareOptionalPriceType();
         $currencySelectionType      = new CurrencySelectionTypeStub();
         $requestProductItemType     = $this->prepareRequestProductItemType();
@@ -213,8 +302,9 @@ class RequestTypeTest extends AbstractTest
                     CollectionType::NAME                    => new CollectionType(),
                     RequestProductCollectionType::NAME      => new RequestProductCollectionType(),
                     RequestProductItemCollectionType::NAME  => new RequestProductItemCollectionType(),
-                    ProductRemovedSelectType::NAME          => new StubProductRemovedSelectType(),
-                    ProductUnitRemovedSelectionType::NAME   => new StubProductUnitRemovedSelectionType(),
+                    ProductUnitSelectionType::NAME          => new ProductUnitSelectionTypeStub(),
+                    ProductPriceListAwareSelectType::NAME   => new StubProductPriceListAwareSelectType(),
+                    OroDateType::NAME                       => new OroDateType(),
                     $priceType->getName()                   => $priceType,
                     $entityType->getName()                  => $entityType,
                     $optionalPriceType->getName()           => $optionalPriceType,

@@ -44,15 +44,18 @@ class UniqueProductPricesValidator extends ConstraintValidator
      */
     protected function getHash(ProductPrice $productPrice)
     {
-        return md5(
-            sprintf(
-                '%s_%s_%s_%s_%s',
-                $productPrice->getProduct()->getId(),
-                $productPrice->getPriceList()->getId(),
-                (float)$productPrice->getQuantity(),
-                $productPrice->getUnit()->getCode(),
-                $productPrice->getPrice()->getCurrency()
-            )
+        $key = sprintf(
+            '%s_%s_%F_%s',
+            $productPrice->getProduct(),
+            $productPrice->getPriceList(),
+            $productPrice->getQuantity(),
+            $productPrice->getUnit()
         );
+
+        if ($productPrice->getPrice()) {
+            $key .= '_' . $productPrice->getPrice()->getCurrency();
+        }
+
+        return md5($key);
     }
 }

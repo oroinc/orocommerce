@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormTypeInterface;
 
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
@@ -14,9 +13,8 @@ use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductUnitHolder;
-use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductUnitHolderValidator;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectEntityTypeStub;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
@@ -56,18 +54,6 @@ abstract class AbstractTest extends FormIntegrationTestCase
     abstract public function submitProvider();
 
     /**
-     * {@inheritdoc}
-     */
-    protected function getValidators()
-    {
-        $productUnitHolderConstraint = new ProductUnitHolder();
-
-        return [
-            $productUnitHolderConstraint->validatedBy() => new ProductUnitHolderValidator(),
-        ];
-    }
-
-    /**
      * @return RequestProductItemType
      */
     protected function prepareRequestProductItemType()
@@ -101,9 +87,9 @@ abstract class AbstractTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return EntityType
+     * @return ProductSelectEntityTypeStub
      */
-    protected function prepareProductEntityType()
+    protected function prepareProductSelectType()
     {
         $products = [];
 
@@ -115,7 +101,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
 
         $products[3] = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 3);
 
-        return new EntityType($products);
+        return new ProductSelectEntityTypeStub($products);
     }
 
     /**
@@ -145,19 +131,16 @@ abstract class AbstractTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return EntityType
+     * @return ProductUnitSelectionTypeStub
      */
     protected function prepareProductUnitSelectionType()
     {
-        $productUnitSelectionType = new EntityType(
+        return new ProductUnitSelectionTypeStub(
             [
-                'kg'    => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'kg', 'code'),
-                'item'  => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code'),
-            ],
-            ProductUnitSelectionType::NAME
+                'kg' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'kg', 'code'),
+                'item' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code'),
+            ]
         );
-
-        return $productUnitSelectionType;
     }
 
     /**
@@ -320,6 +303,8 @@ abstract class AbstractTest extends FormIntegrationTestCase
      * @param string $company
      * @param string $role
      * @param string $phone
+     * @param string $poNumber
+     * @param \DateTime $shipUntil
      * @return Request
      */
     protected function getRequest(
@@ -329,7 +314,9 @@ abstract class AbstractTest extends FormIntegrationTestCase
         $body = null,
         $company = null,
         $role = null,
-        $phone = null
+        $phone = null,
+        $poNumber = null,
+        $shipUntil = null
     ) {
         $request = new Request();
 
@@ -341,7 +328,8 @@ abstract class AbstractTest extends FormIntegrationTestCase
             ->setCompany($company)
             ->setRole($role)
             ->setPhone($phone)
-        ;
+            ->setPoNumber($poNumber)
+            ->setShipUntil($shipUntil);
 
         return $request;
     }

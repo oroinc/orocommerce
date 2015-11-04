@@ -10,8 +10,8 @@ use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
 
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -223,7 +223,7 @@ class QuoteProductRequestTypeTest extends AbstractTest
         return [
             new PreloadedExtension(
                 [
-                    ProductUnitRemovedSelectionType::NAME   => new StubProductUnitRemovedSelectionType(),
+                    ProductUnitSelectionType::NAME          => new ProductUnitSelectionTypeStub(),
                     CurrencySelectionType::NAME             => new CurrencySelectionTypeStub(),
                     $priceType->getName()                   => $priceType,
                     $optionalPriceType->getName()           => $optionalPriceType,

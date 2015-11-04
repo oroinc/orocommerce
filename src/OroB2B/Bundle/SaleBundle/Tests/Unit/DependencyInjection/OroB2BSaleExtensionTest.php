@@ -41,5 +41,16 @@ class OroB2BSaleExtensionTest extends ExtensionTestCase
             'orob2b_sale.twig.quote',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
+
+        $this->assertExtensionConfigsLoaded([OroB2BSaleExtension::ALIAS]);
+    }
+
+    /**
+     * Test Get Alias
+     */
+    public function testGetAlias()
+    {
+        $extension = new OroB2BSaleExtension();
+        $this->assertEquals(OroB2BSaleExtension::ALIAS, $extension->getAlias());
     }
 }

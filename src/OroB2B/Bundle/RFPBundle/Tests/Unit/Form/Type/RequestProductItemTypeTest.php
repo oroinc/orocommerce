@@ -8,8 +8,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRemovedSelectionType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitRemovedSelectionType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
@@ -256,7 +256,7 @@ class RequestProductItemTypeTest extends AbstractTest
         return [
             new PreloadedExtension(
                 [
-                    ProductUnitRemovedSelectionType::NAME   => new StubProductUnitRemovedSelectionType(),
+                    ProductUnitSelectionType::NAME          => new ProductUnitSelectionTypeStub(),
                     $priceType->getName()                   => $priceType,
                     $optionalPriceType->getName()           => $optionalPriceType,
                     $currencySelectionType->getName()       => $currencySelectionType,

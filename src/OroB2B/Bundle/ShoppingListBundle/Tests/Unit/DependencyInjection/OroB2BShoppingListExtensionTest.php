@@ -67,15 +67,16 @@ class OroB2BShoppingListExtensionTest extends ExtensionTestCase
             'orob2b_shopping_list.form.type.frontend_line_item_widget',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
+
+        $this->assertExtensionConfigsLoaded([OroB2BShoppingListExtension::ALIAS]);
     }
 
     /**
-     * {@inheritDoc}
+     * Test Get Alias
      */
-    protected function buildContainerMock()
+    public function testGetAlias()
     {
-        return $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
-            ->setMethods(['setDefinition', 'setParameter'])
-            ->getMock();
+        $extension = new OroB2BShoppingListExtension();
+        $this->assertEquals(OroB2BShoppingListExtension::ALIAS, $extension->getAlias());
     }
 }
