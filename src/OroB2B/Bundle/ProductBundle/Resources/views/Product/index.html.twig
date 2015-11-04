@@ -10,6 +10,14 @@
             'entity_label': 'orob2b.product.entity_label'|trans
         }) }}
     {% endif %}
+    {% include 'OroImportExportBundle:ImportExport:buttons.html.twig' with {
+        entity_class: entity_class,
+        exportProcessor: 'orob2b_product_product',
+        exportTemplateProcessor: 'orob2b_product_product',
+        importProcessor: 'orob2b_product_product.add_or_replace',
+        importTitle: 'oro.importexport.import.entity'|trans({'%entityName%': 'orob2b.product.entity_plural_label'|trans}),
+        dataGridName: gridName
+    } %}
 {% endblock %}
 
 {% block content_datagrid %}
