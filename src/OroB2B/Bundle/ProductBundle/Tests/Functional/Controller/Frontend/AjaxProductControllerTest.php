@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -14,7 +15,10 @@ class AjaxProductControllerTest extends WebTestCase
 {
     protected function setUp()
     {
-        $this->initClient();
+        $this->initClient(
+            [],
+            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
+        );
 
         $this->loadFixtures(
             [
