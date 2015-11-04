@@ -23,11 +23,6 @@ class ProductSelectDBQueryEventListener
     protected $modifier;
 
     /**
-     * @var string
-     */
-    protected $scope;
-
-    /**
      * @var string|null
      */
     protected $backendSystemConfigurationPath = null;
@@ -48,6 +43,11 @@ class ProductSelectDBQueryEventListener
     protected $frontendHelper;
 
     /**
+     * @var ProductSelectDBQueryEvent
+     */
+    protected $event;
+
+    /**
      * @param ConfigManager $configManager
      * @param ProductVisibilityQueryBuilderModifier $modifier
      * @param FrontendHelper $helper
@@ -63,15 +63,6 @@ class ProductSelectDBQueryEventListener
         $this->modifier = $modifier;
         $this->frontendHelper = $helper;
         $this->requestStack = $requestStack;
-    }
-
-    /**
-     * @param string $scope
-     * @return $this
-     */
-    public function setScope($scope)
-    {
-        $this->scope = $scope;
     }
 
     /**
@@ -97,7 +88,9 @@ class ProductSelectDBQueryEventListener
      */
     public function onDBQuery(ProductSelectDBQueryEvent $event)
     {
-        if (!$this->isConditionsAcceptable($event)) {
+        $this->event = $event;
+
+        if (!$this->isConditionsAcceptable()) {
             return;
         }
 
@@ -113,20 +106,15 @@ class ProductSelectDBQueryEventListener
     }
 
     /**
-     * @param ProductSelectDBQueryEvent $event
      * @return bool
      */
-    protected function isConditionsAcceptable(ProductSelectDBQueryEvent $event)
+    protected function isConditionsAcceptable()
     {
         if (!$this->backendSystemConfigurationPath && !$this->frontendSystemConfigurationPath) {
             throw new \LogicException('SystemConfigurationPath not configured for ProductSelectDBQueryEventListener');
         }
 
-        if (!$this->scope) {
-            throw new \LogicException('Scope not configured for ProductSelectDBQueryEventListener');
-        }
-
-        return $event->getDataParameters()->get('scope') === $this->scope;
+        return true;
     }
 
     /**

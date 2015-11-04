@@ -98,6 +98,7 @@ services:
             - { name: orob2b_product.quick_add_processor }
 
     orob2b_order.event_listener.product_select_db_query:
+        class: %orob2b_product.event_listener.scoped_product_select_db_query.class%
         parent: orob2b_order.event_listener.abstract_product_select_db_query
         calls:
             - [setScope, ['order']]
