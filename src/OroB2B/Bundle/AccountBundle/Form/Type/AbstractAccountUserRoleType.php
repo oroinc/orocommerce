@@ -66,6 +66,13 @@ abstract class AbstractAccountUserRoleType extends AbstractType
                     'multiple' => true
                 ]
             );
+        $builder->add(
+            'privileges',
+            'hidden',
+            [
+                'mapped' => false,
+            ]
+        );
 
         foreach ($options['privilege_config'] as $fieldName => $config) {
             $builder->add(

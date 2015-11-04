@@ -17,6 +17,8 @@ class OroB2BSaleBundle implements Migration
     {
         $table = $schema->getTable('orob2b_sale_quote');
         $table->addColumn('price_list_id', 'integer', ['notnull' => false]);
+        $table->addColumn('po_number', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('ship_until', 'date', ['notnull' => false]);
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_price_list'),
             ['price_list_id'],
