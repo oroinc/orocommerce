@@ -54,7 +54,7 @@ class ComponentProcessorFilter
         }
 
         $queryBuilder = $this->getRepository()->getFilterSkuQueryBuilder(array_keys($products));
-        $queryBuilder = $this->productManager->restrictQueryBuilderByProductVisibility($queryBuilder, $dataParameters);
+        $queryBuilder = $this->productManager->restrictQueryBuilder($queryBuilder, $dataParameters);
 
         $filteredProducts = $queryBuilder->getQuery()->getResult();
         foreach ($filteredProducts as $product) {

@@ -147,7 +147,7 @@ class ComponentProcessorFilterTest extends \PHPUnit_Framework_TestCase
             ->willReturn($queryBuilder);
 
         $this->getProductManager()->expects($this->once())
-            ->method('restrictQueryBuilderByProductVisibility')
+            ->method('restrictQueryBuilder')
             ->with($queryBuilder, $dataParameters)
             ->willReturn($queryBuilder);
 
