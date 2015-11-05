@@ -4,12 +4,13 @@ namespace OroB2B\Bundle\ProductBundle\ComponentProcessor;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class ComponentProcessorDataStorage implements ComponentProcessorInterface
 {
@@ -19,7 +20,7 @@ class ComponentProcessorDataStorage implements ComponentProcessorInterface
     /** @var ProductDataStorage */
     protected $storage;
 
-    /** @var  ComponentProcessorFilter */
+    /** @var ComponentProcessorFilter */
     protected $componentProcessorFilter;
 
     /** @var string */
@@ -34,28 +35,40 @@ class ComponentProcessorDataStorage implements ComponentProcessorInterface
     /** @var string */
     protected $acl;
 
-    /** @var  string */
+    /** @var string */
     protected $scope;
 
     /** @var SecurityFacade */
     protected $securityFacade;
+
+    /** @var Session */
+    protected $session;
+
+    /** @var TranslatorInterface */
+    protected $translator;
 
     /**
      * @param UrlGeneratorInterface $router
      * @param ProductDataStorage $storage
      * @param SecurityFacade $securityFacade
      * @param ComponentProcessorFilter $componentProcessorFilter
+     * @param Session $session
+     * @param TranslatorInterface $translator
      */
     public function __construct(
         UrlGeneratorInterface $router,
         ProductDataStorage $storage,
         SecurityFacade $securityFacade,
-        ComponentProcessorFilter $componentProcessorFilter
+        ComponentProcessorFilter $componentProcessorFilter,
+        Session $session,
+        TranslatorInterface $translator
     ) {
         $this->router = $router;
         $this->storage = $storage;
         $this->securityFacade = $securityFacade;
         $this->componentProcessorFilter = $componentProcessorFilter;
+        $this->session = $session;
+        $this->translator = $translator;
     }
 
     /**
@@ -137,11 +150,14 @@ class ComponentProcessorDataStorage implements ComponentProcessorInterface
      */
     public function process(array $data, Request $request)
     {
-        $restrictedData = $this->filterData($data);
-        if ($notAllowedProductSkus = $this->getNotAllowedProductSkus($data, $restrictedData)) {
-            throw new AccessDeniedException(implode(',', $notAllowedProductSkus) . 'is not allowed');
+        if ($this->scope) {
+            $inputProductSkus = $this->getProductSkus($data);
+            $data = $this->componentProcessorFilter->filterData($data, ['scope' => $this->scope]);
+            $allowedProductSkus = $this->getProductSkus($data);
+            $this->checkNotAllowedProducts($inputProductSkus, $allowedProductSkus);
         }
-        $this->storage->set($restrictedData);
+
+        $this->storage->set($data);
 
         return empty($this->redirectRouteName) ? null : new RedirectResponse($this->getUrl($this->redirectRouteName));
     }
@@ -159,38 +175,40 @@ class ComponentProcessorDataStorage implements ComponentProcessorInterface
      * @param array $data
      * @return array
      */
-    protected function filterData(array $data)
+    protected function getProductSkus(array $data)
     {
-        return $this->componentProcessorFilter->filterData($data, ['scope' => $this->scope]);
+        return array_map(
+            function ($entityItem) {
+                return $entityItem['productSku'];
+            },
+            $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY]
+        );
     }
 
     /**
-     * @param array $data
-     * @param array $restrictedData
-     * @return array
+     * @param array $inputProductSkus
+     * @param array $allowedProductSkus
      */
-    protected function getNotAllowedProductSkus(array $data, array $restrictedData)
+    protected function checkNotAllowedProducts(array $inputProductSkus, array $allowedProductSkus)
     {
-        $notAllowedProductSkus = [];
-        $restrictedSkus = $this->getProductsFromData($restrictedData);
-        foreach ($this->getProductsFromData($data) as $sku) {
-            if (!in_array($sku, $restrictedSkus)) {
-                $notAllowedProductSkus[] = $sku;
-            }
+        $notAllowedProductSkus = array_diff($inputProductSkus, $allowedProductSkus);
+        if ($notAllowedProductSkus) {
+            $this->addFlashMessage($notAllowedProductSkus);
         }
-        return $notAllowedProductSkus;
     }
 
     /**
-     * @param array $data
-     * @return array
+     * @param array $skus
      */
-    protected function getProductsFromData(array $data)
+    protected function addFlashMessage(array $skus)
     {
-        $products = [];
-        foreach ($data['entity_items_data'] as $product) {
-            $products[$product['productSku']] = $product;
+        $message = '';
+        foreach ($skus as $sku) {
+            $message .= $this->translator->trans(
+                'orob2b.product.frontend.quick_add.messages.not_added_products',
+                ['%sku%' => $sku]
+            );
         }
-        return $products;
+        $this->session->getFlashBag()->add('warning', $message);
     }
 }

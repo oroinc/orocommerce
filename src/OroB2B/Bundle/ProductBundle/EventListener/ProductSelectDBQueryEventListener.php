@@ -58,8 +58,7 @@ class ProductSelectDBQueryEventListener
         ProductVisibilityQueryBuilderModifier $modifier,
         FrontendHelper $helper,
         RequestStack $requestStack
-    )
-    {
+    ) {
         $this->configManager = $configManager;
         $this->modifier = $modifier;
         $this->frontendHelper = $helper;
@@ -103,7 +102,9 @@ class ProductSelectDBQueryEventListener
             return;
         }
         if (!$inventoryStatuses) {
-            return;
+            throw new \LogicException(
+                'SystemConfigurationPath is not configured properly for ProductSelectDBQueryEventListener'
+            );
         }
         $this->modifier->modifyByInventoryStatus($event->getQueryBuilder(), $inventoryStatuses);
     }
