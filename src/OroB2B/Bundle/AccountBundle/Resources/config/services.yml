@@ -99,6 +99,9 @@ parameters:
 
     orob2b_account.audit.discriminator_map_listener.class: OroB2B\Bundle\AccountBundle\Audit\DiscriminatorMapListener
     orob2b_account.audit.commit_order.class: OroB2B\Bundle\AccountBundle\Audit\CommitOrderListener
+
+    orob2b_account.audit.event_listener.audit_grid_listener.class: OroB2B\Bundle\AccountBundle\Audit\AuditDatagridListener
+
     orob2b_account.helper.account_user_role_privileges.class: OroB2B\Bundle\AccountBundle\Helper\AccountUserRolePrivilegesHelper
 
     orob2b_account.storage.category_visibility_storage.class: OroB2B\Bundle\AccountBundle\Visibility\Storage\CategoryVisibilityStorage
@@ -580,6 +583,14 @@ services:
             - [ addDependency, [ %orob2b_account.entity.audit_field.class%, %orob2b_account.entity.audit.class% ] ]
         tags:
             - { name: doctrine.event_listener, event: onFlush, priority: -10 }
+
+    orob2b_account.audit.event_listener.audit_grid_listener:
+        class: %orob2b_account.audit.event_listener.audit_grid_listener.class%
+        arguments:
+            - @oro_datagrid.configuration.provider
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.audit-history-grid, method: onHistoryBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.audit-grid, method: onAuditBuildBefore }
 
     orob2b_account.helper.account_user_role_privileges:
         class: %orob2b_account.helper.account_user_role_privileges.class%
