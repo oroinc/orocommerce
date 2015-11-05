@@ -14,6 +14,10 @@ orob2b:
         currency.label: Currency
         payment_due_date.label: 'Payment Due Date'
 
+        sections:
+            general: 'General information'
+            invoice_line_items: 'Invoice items'
+
         widgets:
             invoice_information: Invoice Information
         navigation:
@@ -40,4 +44,9 @@ orob2b:
             price.label: Price
             value.label: 'Price Value'
             currency.label: 'Price Currency'
+            add_label: 'Add line item'
+
+            select:
+                product: 'Select product'
+                free_form: 'Free form entry'
 

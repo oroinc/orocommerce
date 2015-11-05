@@ -105,7 +105,7 @@ datagrid:
                 route:         orob2b_invoice_view
                 type:  url
                 params: [ id ]
-            edit_link:
+            update_link:
                 route:         orob2b_invoice_update
                 type:  url
                 params: [ id ]
@@ -121,6 +121,11 @@ datagrid:
                 icon:          eye-open
                 rowAction:     true
                 acl_resource:  orob2b_invoice_view
+            update:
+                type:          navigate
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          edit
             delete:
                 type:          delete
                 label:         oro.grid.action.delete

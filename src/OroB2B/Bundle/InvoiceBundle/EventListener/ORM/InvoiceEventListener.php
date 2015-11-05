@@ -33,7 +33,7 @@ class InvoiceEventListener
     public function prePersist(Invoice $invoice, LifecycleEventArgs $event)
     {
         $now = new \DateTime('now', new \DateTimeZone('UTC'));
-        if (empty($invoice->getInvoiceDate())) {
+        if (is_null($invoice->getInvoiceDate())) {
             $invoice->setInvoiceDate($now);
             $invoice->setCreatedAt($now);
             $invoice->setUpdatedAt($now);

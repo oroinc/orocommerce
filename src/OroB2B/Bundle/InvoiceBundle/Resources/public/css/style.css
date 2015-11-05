@@ -2,8 +2,19 @@
     width: 290px;
 }
 
+.invoice-line-item-sku {
+    width: 134px !important;
+}
+
 .invoice-line-item-type input[type="text"]{
     width: 279px !important;
+}
+
+.invoice-line-item-type input[type="text"] {
+    width: 400px !important;
+}
+.invoice-line-item-type .select2-container {
+    width: 400px !important;
 }
 
 .invoice-line-item-quantity input[type="text"],
@@ -19,9 +30,6 @@
     width: 210px;
 }
 
-.invoice-line-item-ship_by {
-    width: 155px;
-}
 
 .invoice-line-item-price {
     width: 150px;
