@@ -13,6 +13,7 @@ define(function(require) {
          */
         initialize: function(options) {
             var thisOptions = {
+                product: {},
                 productBySkuRoute: 'orob2b_product_frontend_ajax_names_by_skus',
                 selectors: {
                     row: '.fields-row',
@@ -29,10 +30,12 @@ define(function(require) {
             this.$name = this.$row.find(this.options.selectors.name);
             this.$error = this.$row.find(this.options.selectors.error);
             this.$success = this.$row.find(this.options.selectors.success);
-            this.product = {
+
+            this.product = $.extend(true, {
                 sku: null,
                 name: null
-            };
+            }, this.options.product);
+            this.updateProduct();
 
             this.$el.change(_.bind(this.change, this));
         },
@@ -97,7 +100,7 @@ define(function(require) {
                 this.$el.val(this.product.sku);
                 this.$name.html(this.product.name);
                 this.$success.show();
-            } else {
+            } else if (this.$el.val().length > 0) {
                 this.$error.show();
             }
         }

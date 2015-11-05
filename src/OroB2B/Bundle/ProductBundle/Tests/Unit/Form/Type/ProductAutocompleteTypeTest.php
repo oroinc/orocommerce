@@ -2,10 +2,14 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormConfigInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\OroAutocompleteType;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
 
 class ProductAutocompleteTypeTest extends \PHPUnit_Framework_TestCase
@@ -34,7 +38,7 @@ class ProductAutocompleteTypeTest extends \PHPUnit_Framework_TestCase
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
         $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
-        $resolver->expects($this->once())
+        $resolver->expects($this->at(0))
             ->method('setDefaults')
             ->with(
                 $this->callback(
@@ -59,5 +63,34 @@ class ProductAutocompleteTypeTest extends \PHPUnit_Framework_TestCase
             );
 
         $this->type->configureOptions($resolver);
+    }
+
+    public function testBuildView()
+    {
+        $product = new Product();
+        $product->setSku('sku1');
+
+        $view = new FormView();
+
+        /** @var FormConfigInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $config = $this->getMock('Symfony\Component\Form\FormConfigInterface');
+        $config->expects($this->any())
+            ->method('getOptions')
+            ->willReturn(
+                [
+                    'product' => null,
+                    'product_field' => 'product',
+                    'product_holder' => null,
+                ]
+            );
+
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form->expects($this->any())->method('getConfig')->willReturn($config);
+
+        $view->vars['product'] = $product;
+        $this->type->buildView($view, $form, []);
+
+        $this->assertEquals(['sku' => 'sku1', 'name' => null], $view->vars['componentOptions']['product']);
     }
 }

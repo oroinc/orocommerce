@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Handler;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,6 +18,8 @@ use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 {
+    const PRODUCT_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
+
     const COMPONENT_NAME = 'component';
 
     /**
@@ -38,6 +42,11 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected $handler;
 
+    /**
+     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $managerRegistry;
+
     protected function setUp()
     {
         $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
@@ -55,7 +64,27 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->handler = new QuickAddHandler($this->translator, $this->formFactory, $this->componentRegistry);
+        $this->handler = new QuickAddHandler(
+            $this->translator,
+            $this->formFactory,
+            $this->componentRegistry,
+            $this->getManagerRegistry()
+        );
+    }
+
+    /**
+     * @return ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getManagerRegistry()
+    {
+        if (!$this->managerRegistry) {
+            $this->managerRegistry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+            /*$this->managerRegistry->expects($this->any())
+                ->method('getManagerForClass')
+                ->with(self::PRODUCT_CLASS)
+                ->willReturn($this->getManager());*/
+        }
+        return $this->managerRegistry;
     }
 
     public function testProcessGetRequest()
@@ -84,7 +113,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(QuickAddType::NAME, null, [])
+            ->with(QuickAddType::NAME, null, ['products' => []])
             ->willReturn($form);
 
         $this->assertEquals(['form' => $form, 'response' => null], $this->handler->process($request));
@@ -103,7 +132,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(QuickAddType::NAME, null, ['validation_required' => false])
+            ->with(QuickAddType::NAME, null, ['validation_required' => false, 'products' => []])
             ->willReturn($form);
 
         $processor = $this->getProcessor(false, false);
@@ -128,7 +157,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(QuickAddType::NAME, null, ['validation_required' => true])
+            ->with(QuickAddType::NAME, null, ['validation_required' => true, 'products' => []])
             ->willReturn($form);
 
         $processor = $this->getProcessor();
@@ -166,11 +195,11 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->at(0))
             ->method('create')
-            ->with(QuickAddType::NAME, null, ['validation_required' => true])
+            ->with(QuickAddType::NAME, null, ['validation_required' => true, 'products' => []])
             ->willReturn($mainForm);
         $this->formFactory->expects($this->at(1))
             ->method('create')
-            ->with(QuickAddType::NAME, null, ['validation_required' => true])
+            ->with(QuickAddType::NAME, null, ['validation_required' => true, 'products' => []])
             ->willReturn($clearForm);
 
         $processor = $this->getProcessor();
@@ -209,7 +238,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(QuickAddType::NAME, null, ['validation_required' => true])
+            ->with(QuickAddType::NAME, null, ['validation_required' => true, 'products' => []])
             ->willReturn($form);
 
         $processor = $this->getProcessor();

@@ -533,7 +533,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
             return null === $name->getLocale();
         });
 
-        if ($names->count() !== 1) {
+        if ($names->count() > 1) {
             throw new \LogicException('There must be only one default name');
         }
 

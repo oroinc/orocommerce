@@ -181,11 +181,11 @@ class ProductRepositoryTest extends WebTestCase
 
         $this->assertEquals(
             [
-                $product1->getSku() => ['name'=> $product1->getDefaultName()->getString()],
-                $product2->getSku() => ['name'=> $product2->getDefaultName()->getString()],
-                $product3->getSku() => ['name'=> $product3->getDefaultName()->getString()],
+                $product1,
+                $product2,
+                $product3,
             ],
-            $this->getRepository()->getProductNamesBySkus(
+            $this->getRepository()->getProductWithNamesBySku(
                 [
                     $product3->getSku(),
                     $product1->getSku(),
@@ -195,6 +195,6 @@ class ProductRepositoryTest extends WebTestCase
             )
         );
 
-        $this->assertEmpty($this->getRepository()->getProductNamesBySkus(['nonExistingSKU']));
+        $this->assertEmpty($this->getRepository()->getProductWithNamesBySku(['nonExistingSKU']));
     }
 }

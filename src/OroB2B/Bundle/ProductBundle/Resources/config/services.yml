@@ -136,6 +136,9 @@ services:
             - @translator
             - @form.factory
             - @orob2b_product.component_processor.registry
+            - @doctrine
+        calls:
+            - [setProductClass, [%orob2b_product.product.class%]]
 
     orob2b_product.event_listener.product_grid_widget:
         class: %orob2b_product.event_listener.product_grid_widget.class%
