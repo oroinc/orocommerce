@@ -192,7 +192,7 @@ class ComponentProcessorDataStorage implements ComponentProcessorInterface
     protected function checkNotAllowedProducts(array $inputProductSkus, array $allowedProductSkus)
     {
         $notAllowedProductSkus = array_diff($inputProductSkus, $allowedProductSkus);
-        if ($notAllowedProductSkus) {
+        if (!empty($notAllowedProductSkus)) {
             $this->addFlashMessage($notAllowedProductSkus);
         }
     }
