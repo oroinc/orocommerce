@@ -120,7 +120,8 @@ class ComponentProcessorFilterTest extends \PHPUnit_Framework_TestCase
 
         $query = $this->getMockBuilder('Doctrine\ORM\AbstractQuery')
             ->disableOriginalConstructor()
-            ->getMock();
+            ->setMethods(['getResult'])
+            ->getMockForAbstractClass();
         $query->expects($this->once())
             ->method('getResult')
             ->willReturnCallback(function () use ($skus) {
@@ -142,7 +143,7 @@ class ComponentProcessorFilterTest extends \PHPUnit_Framework_TestCase
 
         $this->getProductRepository()->expects($this->once())
             ->method('getFilterSkuQueryBuilder')
-            ->with($skus)
+            ->with(array_map('strtoupper', $skus))
             ->willReturn($queryBuilder);
 
         $this->getProductManager()->expects($this->once())

@@ -45,7 +45,7 @@ class ComponentProcessorFilter
     {
         $products = [];
         foreach ($data['entity_items_data'] as $product) {
-            $products[$product['productSku']] = $product;
+            $products[strtoupper($product['productSku'])] = $product;
         }
         $data['entity_items_data'] = [];
 
@@ -58,7 +58,7 @@ class ComponentProcessorFilter
 
         $filteredProducts = $queryBuilder->getQuery()->getResult();
         foreach ($filteredProducts as $product) {
-            $data['entity_items_data'][] = $products[$product['sku']];
+            $data['entity_items_data'][] = $products[strtoupper($product['sku'])];
         }
 
         return $data;
