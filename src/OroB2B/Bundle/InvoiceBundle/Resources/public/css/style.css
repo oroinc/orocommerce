@@ -2,6 +2,14 @@
     width: 290px;
 }
 
+.invoice-lineitems .add-list-item {
+    margin-top: 10px;
+}
+
+.invoice-lineitems table.grid {
+    overflow: visible;
+}
+
 .invoice-line-item-sku {
     width: 134px !important;
 }

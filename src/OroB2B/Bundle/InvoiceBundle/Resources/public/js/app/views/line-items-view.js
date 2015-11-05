@@ -49,16 +49,7 @@ define(function(require) {
                 matchedPricesRoute: this.options.matchedPricesRoute
             }));
 
-            this.initLayout().done(_.bind(this.handleLayoutInit, this));
-        },
-
-        /**
-         * Doing something after loading child components
-         */
-        handleLayoutInit: function() {
-            this.$el.find('.add-lineitem').mousedown(function() {
-                $(this).click();
-            });
+            this.initLayout();
         }
     });
 

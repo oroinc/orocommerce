@@ -21,7 +21,6 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
 /**
- * {@inheritdoc}
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class InvoiceLineItemType extends AbstractType
