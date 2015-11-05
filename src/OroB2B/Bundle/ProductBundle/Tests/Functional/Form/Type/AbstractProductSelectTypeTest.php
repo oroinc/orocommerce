@@ -2,13 +2,11 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Form\Type;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use OroB2B\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler;
@@ -18,56 +16,35 @@ use OroB2B\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandl
  */
 abstract class AbstractProductSelectTypeTest extends WebTestCase
 {
-    const TEST_ENTITY_CLASS = 'OroB2B\Bundle\ProductBundle\Entity\Product';
+    /** @var string */
+    protected $searchAutocompletePath;
 
-    /** @var  Request|\PHPUnit_Framework_MockObject_MockObject */
-    protected $request;
-
-    /** @var ProductManager|\PHPUnit_Framework_MockObject_MockObject $productManager */
-    protected $productManager;
+    /** @var string */
+    protected $datagridIndexPath;
 
     /** @var array */
-    protected $defaultConfigValue = ['in_stock', 'out_of_stock'];
+    protected $dataParameters;
 
-    protected function setUp()
+    public function setUp()
     {
         $this->initClient();
-
-        $this->productManager = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->loadFixtures(
-            [
-                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
-            ]
-        );
-
-        $this->prepareConfig($this->defaultConfigValue);
-    }
-
-    protected function tearDown()
-    {
-        $this->prepareConfig($this->defaultConfigValue);
     }
 
     /**
-     * @dataProvider searchDataProvider
-     * @param array $availableInventoryStatuses
+     * @dataProvider restrictionDataProvider
+     * @param array $restrictionParams
      * @param array $expectedProducts
      */
-    public function testSearch(array $availableInventoryStatuses, array $expectedProducts)
+    public function testSearchRestriction(array $restrictionParams, array $expectedProducts)
     {
-        $this->prepareConfig($availableInventoryStatuses);
+        call_user_func_array([$this, 'setUpBeforeRestriction'], $restrictionParams);
 
         $this->client->request(
             'GET',
             $this->getUrl(
-                'oro_form_autocomplete_search',
+                $this->searchAutocompletePath,
                 [
-                    ProductSelectType::DATA_PARAMETERS => [
-                        'scope' => $this->getScope(),
-                    ],
+                    ProductSelectType::DATA_PARAMETERS => $this->dataParameters,
                     'name' => 'orob2b_product_visibility_limited',
                     'page' => 1,
                     'per_page' => 10,
@@ -77,117 +54,61 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
         );
 
         $result = $this->client->getResponse();
-        $this->checkProductsFromResponse($result, 'results', $expectedProducts);
+        $this->assertResponseContainsProducts($result, 'results', $expectedProducts);
     }
 
     /**
-     * @dataProvider searchDataProvider
-     * @param array $availableInventoryStatuses
+     * @dataProvider restrictionDataProvider
+     * @param array $restrictionParams
      * @param array $expectedProducts
      */
-    public function testDatagridRestricting(array $availableInventoryStatuses, array $expectedProducts)
+    public function testDatagridRestriction(array $restrictionParams, array $expectedProducts)
     {
-        $this->prepareConfig($availableInventoryStatuses);
+        call_user_func_array([$this, 'setUpBeforeRestriction'], $restrictionParams);
 
         $this->client->request(
             'GET',
             $this->getUrl(
-                'oro_datagrid_index',
+                $this->datagridIndexPath,
                 ['gridName' => 'products-select-grid']
             ),
             [
-                ProductSelectType::DATA_PARAMETERS => [
-                    'scope' => $this->getScope(),
-                ],
+                ProductSelectType::DATA_PARAMETERS => $this->dataParameters,
             ]
         );
         $result = $this->client->getResponse();
-        $this->checkProductsFromResponse($result, 'data', $expectedProducts);
+        $this->assertResponseContainsProducts($result, 'data', $expectedProducts);
+    }
+
+    public function setUpBeforeRestriction()
+    {
     }
 
     /**
      * @return array
      */
-    public function searchDataProvider()
-    {
-        return [
-            [
-                'availableInventoryStatuses' => ['in_stock', 'out_of_stock'],
-                'expectedProducts' => [
-                    LoadProductData::PRODUCT_1,
-                    LoadProductData::PRODUCT_2,
-                    LoadProductData::PRODUCT_3,
-                ],
-            ],
-            [
-                'availableInventoryStatuses' => ['in_stock'],
-                'expectedProducts' => [
-                    LoadProductData::PRODUCT_1,
-                    LoadProductData::PRODUCT_2,
-                ],
-            ],
-            [
-                'availableInventoryStatuses' => ['out_of_stock'],
-                'expectedProducts' => [
-                    LoadProductData::PRODUCT_3,
-                ],
-            ],
-            [
-                'availableInventoryStatuses' => ['discontinued'],
-                'expectedProducts' => [
-                    LoadProductData::PRODUCT_4,
-                ],
-            ],
-            [
-                'availableInventoryStatuses' => ['in_stock', 'discontinued'],
-                'expectedProducts' => [
-                    LoadProductData::PRODUCT_1,
-                    LoadProductData::PRODUCT_2,
-                    LoadProductData::PRODUCT_4,
-                ],
-            ],
-        ];
-    }
+    abstract public function restrictionDataProvider();
 
     /**
      * @expectedException \RuntimeException
      * @expectedExceptionMessage Search handler is not fully configured
      */
-    public function testCheckAllDependenciesInjectedException()
+    public function testAllDependenciesInjectedException()
     {
         $requestStack = new RequestStack();
+
+        /** @var ProductManager|\PHPUnit_Framework_MockObject_MockObject $productManager */
+        $productManager = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $searchHandler = new ProductVisibilityLimitedSearchHandler(
             'OroB2B\Bundle\ProductBundle\Entity\Product',
             ['sku'],
             $requestStack,
-            $this->productManager
+            $productManager
         );
         $searchHandler->search('test', 1, 10);
-    }
-
-    /**
-     * @param Request $request
-     * @return \PHPUnit_Framework_MockObject_MockObject|RequestStack
-     */
-    protected function getRequestStack(Request $request)
-    {
-        /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
-        $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($request);
-
-        return $requestStack;
-    }
-
-    /**
-     * @param array $availableInventoryStatuses
-     */
-    protected function prepareConfig(array $availableInventoryStatuses)
-    {
-        $configManager = $this->getContainer()->get('oro_config.global');
-        $configManager->set($this->getConfigPath(), $availableInventoryStatuses);
-
-        $configManager->flush();
     }
 
     /**
@@ -196,7 +117,7 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
      * @param string[] $expectedProducts
      * @return array
      */
-    protected function checkProductsFromResponse(Response $result, $dataFieldName, array $expectedProducts)
+    protected function assertResponseContainsProducts(Response $result, $dataFieldName, array $expectedProducts)
     {
         $this->assertJsonResponseStatusCodeEquals($result, 200);
 
@@ -207,14 +128,34 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
             json_decode($result->getContent())->$dataFieldName
         );
 
+        $this->assertEquals(count($expectedProducts), count($actualProducts));
+
         foreach ($actualProducts as $product) {
             $this->assertContains($product, $expectedProducts);
         }
     }
 
-    /** @return string */
-    abstract public function getConfigPath();
+    /**
+     * @param string $datagridIndexPath
+     */
+    public function setDatagridIndexPath($datagridIndexPath)
+    {
+        $this->datagridIndexPath = $datagridIndexPath;
+    }
 
-    /** @return string */
-    abstract public function getScope();
+    /**
+     * @param string $searchAutocompletePath
+     */
+    public function setSearchAutocompletePath($searchAutocompletePath)
+    {
+        $this->searchAutocompletePath = $searchAutocompletePath;
+    }
+
+    /**
+     * @param array $dataParameters
+     */
+    public function setDataParameters($dataParameters)
+    {
+        $this->dataParameters = $dataParameters;
+    }
 }

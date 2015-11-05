@@ -2,32 +2,22 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Form\Type;
 
-use OroB2B\Bundle\ProductBundle\Tests\Functional\Form\Type\AbstractProductSelectTypeTest;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\Form\Type\ScopedProductSelectTypeTest;
 
 /**
  * @dbIsolation
  */
-class ProductSelectTypeTest extends AbstractProductSelectTypeTest
+class ProductSelectTypeTest extends ScopedProductSelectTypeTest
 {
-    /** @var string */
-    protected $scope = 'quote';
-
-    /** @var string */
-    protected $configPath = 'oro_b2b_sale.backend_product_visibility';
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getScope()
+    public function setUp()
     {
-        return $this->scope;
-    }
+        $this->setDatagridIndexPath('oro_datagrid_index');
+        $this->setSearchAutocompletePath('oro_form_autocomplete_search');
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getConfigPath()
-    {
-        return $this->configPath;
+        $this->setDataParameters(['scope' => 'quote']);
+
+        $this->setConfigPath('oro_b2b_sale.backend_product_visibility');
+
+        parent::setUp();
     }
 }
