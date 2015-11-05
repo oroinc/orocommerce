@@ -19,7 +19,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProducts;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 use OroB2B\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
 use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData as TestFixturesLoadWebsiteData;
@@ -83,13 +83,13 @@ class ProductVisibilityControllerTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProducts',
+                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
                 'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
             ]
         );
 
-        $this->product = $this->getReference(LoadProducts::PRODUCT_1);
+        $this->product = $this->getReference(LoadProductData::PRODUCT_1);
         $this->account = $this->getReference(LoadAccounts::DEFAULT_ACCOUNT_NAME);
         $this->group = $this->getReference(LoadGroups::GROUP1);
         $this->visibilityToAllDefaultWebsite = self::VISIBLE;

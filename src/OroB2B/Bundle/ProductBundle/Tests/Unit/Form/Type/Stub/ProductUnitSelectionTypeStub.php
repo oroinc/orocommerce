@@ -8,7 +8,7 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as StubEntityType;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 
-class StubProductUnitSelectionType extends StubEntityType
+class ProductUnitSelectionTypeStub extends StubEntityType
 {
     /** {@inheritdoc} */
     public function __construct(array $choices = [], $name = ProductUnitSelectionType::NAME)

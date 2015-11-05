@@ -4,7 +4,10 @@ namespace OroB2B\Bundle\RFPBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
+
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class Configuration implements ConfigurationInterface
 {
@@ -22,6 +25,12 @@ class Configuration implements ConfigurationInterface
             [
                 'default_request_status' => ['value' => 'open'],
                 'default_user_for_notifications' => null,
+                'product_visibility' => [
+                    'value' => [
+                        Product::INVENTORY_STATUS_IN_STOCK,
+                        Product::INVENTORY_STATUS_OUT_OF_STOCK
+                    ]
+                ]
             ]
         );
 
