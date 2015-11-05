@@ -19,9 +19,6 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\CurrencyBundle\Model\Price;
 
-/**
- * {@inheritdoc}
- */
 class InvoiceController extends Controller
 {
     /**
@@ -87,39 +84,36 @@ class InvoiceController extends Controller
      *      permission="CREATE"
      * )
      *
-     * @param Request $request
      * @return array|RedirectResponse
      */
-    public function createAction(Request $request)
+    public function createAction()
     {
         $invoice = new Invoice();
         $invoice->setCurrency($this->get('oro_locale.settings')->getCurrency());
-        return $this->update($invoice, $request);
+        return $this->update($invoice);
     }
 
     /**
-     * Create invoice form
+     * Update invoice form
      *
      * @Route("/update/{id}", name="orob2b_invoice_update")
      * @Template("OroB2BInvoiceBundle:Invoice:update.html.twig")
      * @AclAncestor("orob2b_invoice_create")
      *
      * @param Invoice $invoice
-     * @param Request $request
      *
      * @return array|RedirectResponse
      */
-    public function updateAction(Invoice $invoice, Request $request)
+    public function updateAction(Invoice $invoice)
     {
-        return $this->update($invoice, $request);
+        return $this->update($invoice);
     }
 
     /**
      * @param Invoice $invoice
-     * @param Request $request
      * @return array|RedirectResponse
      */
-    protected function update(Invoice $invoice, Request $request)
+    protected function update(Invoice $invoice)
     {
         $form = $this->createForm(InvoiceType::NAME, $invoice);
 
@@ -172,7 +166,7 @@ class InvoiceController extends Controller
 
         if ($productIds) {
             $tierPrices = $this->get('orob2b_pricing.provider.product_price')->getPriceByPriceListIdAndProductIds(
-                $this->get('orob2b_pricing.model.frontend.price_list_request_handler')->getPriceList(),
+                $this->get('orob2b_pricing.model.frontend.price_list_request_handler')->getPriceList()->getId(),
                 $productIds->toArray(),
                 $invoice->getCurrency()
             );

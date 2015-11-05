@@ -12,6 +12,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\InvoiceBundle\Model\ExtendInvoice;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Table(
@@ -185,6 +186,9 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
     public function __construct()
     {
         parent::__construct();
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->setPaymentDueDate($now);
+        $this->setInvoiceDate($now);
         $this->lineItems = new ArrayCollection();
     }
 
@@ -427,6 +431,7 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
     public function setPaymentDueDate($paymentDueDate)
     {
         $this->paymentDueDate = $paymentDueDate;
+
         return $this;
     }
 
@@ -445,6 +450,22 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
     public function setCurrency($currency)
     {
         $this->currency = $currency;
+
         return $this;
+    }
+
+    /**
+     * Checks that paymentDueDate greater that invoiceDate
+     *
+     * @param ExecutionContextInterface $context
+     */
+    public function validatePaymentDueDate(ExecutionContextInterface $context)
+    {
+        if ($this->getPaymentDueDate()->getTimestamp() < $this->getInvoiceDate()->getTimestamp()) {
+            $context
+                ->buildViolation('orob2b.invoice.validation.payment_due_date_error.label')
+                ->atPath('paymentDueDate')
+                ->addViolation();
+        }
     }
 }

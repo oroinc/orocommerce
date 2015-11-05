@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\InvoiceBundle\Form\Type;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -154,7 +155,9 @@ class InvoiceLineItemType extends AbstractType
                     'default_currency' => $options['currency'],
                 ]
             )
-            ->add('priceType', 'hidden');
+            ->add('priceType', 'hidden', [
+            'data' => InvoiceLineItem::PRICE_TYPE_UNIT,
+            ]);
     }
 
     /**

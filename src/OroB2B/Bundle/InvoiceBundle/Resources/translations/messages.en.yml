@@ -14,6 +14,9 @@ orob2b:
         currency.label: Currency
         payment_due_date.label: 'Payment Due Date'
 
+        validation:
+            payment_due_date_error.label: 'Payment due date should be greater that invoice date'
+
         sections:
             general: 'General information'
             invoice_line_items: 'Invoice items'

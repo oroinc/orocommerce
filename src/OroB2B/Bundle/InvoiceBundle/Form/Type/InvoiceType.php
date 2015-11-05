@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\InvoiceBundle\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -46,19 +47,19 @@ class InvoiceType extends AbstractType
             ])
             ->add('accountUser', AccountUserSelectType::NAME, [
                 'label'     => 'orob2b.invoice.account_user.label',
-                'required'  => true,
+                'required'  => false,
             ])
             ->add('account', AccountSelectType::NAME, [
                 'label'     => 'orob2b.invoice.account.label',
-                'required'  => false,
+                'required'  => true,
             ])
 
-            ->add('invoiceDate', OroDateTimeType::NAME, [
+            ->add('invoiceDate', OroDateType::NAME, [
                 'label'     => 'orob2b.invoice.invoice_date.label',
                 'required'  => true,
             ])
-            ->add('paymentDueDate', OroDateTimeType::NAME, [
-                'label'     => 'orob2b.invoice.invoice_date.label',
+            ->add('paymentDueDate', OroDateType::NAME, [
+                'label'     => 'orob2b.invoice.payment_due_date.label',
                 'required'  => true,
             ])
             ->add('poNumber', 'text')
