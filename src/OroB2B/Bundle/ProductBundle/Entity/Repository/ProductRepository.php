@@ -126,11 +126,14 @@ class ProductRepository extends EntityRepository
      */
     public function getFilterSkuQueryBuilder(array $skus)
     {
+        // Convert to uppercase for insensitive search in all DB
+        $upperCaseSkus = array_map("strtoupper", $skus);
+
         $queryBuilder = $this->createQueryBuilder('product');
         $queryBuilder
             ->select('product.sku')
-            ->where($queryBuilder->expr()->in('product.sku', ':product_skus'))
-            ->setParameter('product_skus', $skus);
+            ->where($queryBuilder->expr()->in('UPPER(product.sku)', ':product_skus'))
+            ->setParameter('product_skus', $upperCaseSkus);
         return $queryBuilder;
     }
 }

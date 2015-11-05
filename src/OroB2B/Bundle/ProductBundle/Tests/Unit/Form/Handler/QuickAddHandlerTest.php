@@ -51,7 +51,8 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory = $this->getMock('Symfony\Component\Form\FormFactoryInterface');
 
-        $this->componentRegistry = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry')
+        $this->componentRegistry = $this
+            ->getMockBuilder('OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry')
             ->disableOriginalConstructor()
             ->getMock();
 

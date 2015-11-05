@@ -27,7 +27,7 @@ class ProductManager
      * @param array $dataParameters
      * @return QueryBuilder
      */
-    public function restrictQueryBuilderByProductVisibility(
+    public function restrictQueryBuilder(
         QueryBuilder $queryBuilder,
         array $dataParameters
     ) {
