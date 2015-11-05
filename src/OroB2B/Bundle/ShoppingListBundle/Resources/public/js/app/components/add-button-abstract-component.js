@@ -52,15 +52,14 @@ define(function(require) {
 
         showForm: function() {
             var self = this;
-            if (!this.dialog) {
-                this.dialog = new ShoppingListWidget({});
-                this.dialog.on('formSave', _.bind(function(response) {
-                    self.reloadWidget(response);
 
-                    this.selectShoppingList(response);
-                    $('.btn[data-intention="current"]').data('id', response);
-                }, this));
-            }
+            this.dialog = new ShoppingListWidget({});
+            this.dialog.on('formSave', _.bind(function(response) {
+                self.reloadWidget(response);
+
+                this.selectShoppingList(response);
+                $('.btn[data-intention="current"]').data('id', response);
+            }, this));
 
             this.dialog.render();
         },
