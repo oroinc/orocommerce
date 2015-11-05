@@ -174,4 +174,16 @@ class ProductRepositoryTest extends WebTestCase
             )
         );
     }
+
+    public function testGetFilterSkuQueryBuilder()
+    {
+        /** @var Product $product */
+        $product = $this->getRepository()->findOneBy(['sku' => 'product.1']);
+
+        $builder = $this->getRepository()->getFilterSkuQueryBuilder([$product->getSku()]);
+        $result = $builder->getQuery()->getResult();
+
+        $this->assertCount(1, $result);
+        $this->assertEquals($product->getSku(), $result[0]['sku']);
+    }
 }

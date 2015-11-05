@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Model;
+namespace OroB2B\Bundle\ProductBundle\ComponentProcessor;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -10,7 +10,7 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
-class DataStorageAwareProcessor implements ComponentProcessorInterface
+class ComponentProcessorDataStorage implements ComponentProcessorInterface
 {
     /** @var UrlGeneratorInterface */
     protected $router;

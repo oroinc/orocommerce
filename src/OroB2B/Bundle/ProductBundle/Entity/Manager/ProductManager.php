@@ -31,11 +31,8 @@ class ProductManager
         QueryBuilder $queryBuilder,
         array $dataParameters
     ) {
-        $this->eventDispatcher->dispatch(
-            ProductSelectDBQueryEvent::NAME,
-            new ProductSelectDBQueryEvent($queryBuilder, new ParameterBag($dataParameters))
-        );
-
-        return $queryBuilder;
+        $event = new ProductSelectDBQueryEvent($queryBuilder, new ParameterBag($dataParameters));
+        $this->eventDispatcher->dispatch(ProductSelectDBQueryEvent::NAME, $event);
+        return $event->getQueryBuilder();
     }
 }

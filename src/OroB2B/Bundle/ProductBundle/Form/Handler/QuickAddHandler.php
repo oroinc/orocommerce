@@ -10,8 +10,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
-use OroB2B\Bundle\ProductBundle\Model\ComponentProcessorInterface;
-use OroB2B\Bundle\ProductBundle\Model\ComponentProcessorRegistry;
+use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
+use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 
 class QuickAddHandler
 {

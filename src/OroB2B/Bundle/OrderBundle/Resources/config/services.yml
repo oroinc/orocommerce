@@ -89,7 +89,7 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onAccountView }
 
     orob2b_order.processor.quick_add:
-        parent: orob2b_product.processor.data_storage_aware
+        parent: orob2b_product.component_processor.data_storage
         calls:
             - [setName, ['orob2b_order_quick_add_processor']]
             - [setRedirectRouteName, ['orob2b_order_frontend_create']]
