@@ -35,12 +35,13 @@ class LoadLocaleData extends AbstractFixture implements ContainerAwareInterface
         $localeSettings = $this->container->get('oro_locale.settings');
 
         $locale = new Locale();
-        $locale->setCode(
-            Intl::getLocaleBundle()->getLocaleName(
-                $localeSettings->getLanguage(),
-                $localeSettings->getLocale()
-            )
-        );
+//        $locale->setCode(
+//            Intl::getLocaleBundle()->getLocaleName(
+//                $localeSettings->getLanguage(),
+//                $localeSettings->getLocale()
+//            )
+//        );
+        $locale->setCode($localeSettings->getLocale());
 
         $manager->persist($locale);
         /** @var EntityManager $manager */

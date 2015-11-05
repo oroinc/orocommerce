@@ -246,7 +246,6 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *      defaultValues={
      *          "importexport"={
      *              "order"=30,
-     *              "full"=true
      *          }
      *      }
      * )
@@ -274,7 +273,6 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *      defaultValues={
      *          "importexport"={
      *              "order"=30,
-     *              "full"=true
      *          }
      *      }
      * )

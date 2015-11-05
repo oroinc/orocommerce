@@ -31,8 +31,7 @@ class LocalizedFallbackValue
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "excluded"=true,
-     *              "identity"=true
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -60,7 +59,7 @@ class LocalizedFallbackValue
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=10
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -74,7 +73,7 @@ class LocalizedFallbackValue
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=10
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -89,8 +88,8 @@ class LocalizedFallbackValue
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "identity"=true,
-     *              "full"=false
+     *              "full"=false,
+     *              "identity"=true
      *          }
      *      }
      * )

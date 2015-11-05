@@ -11,7 +11,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Table(name="orob2b_locale")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\WebsiteBundle\Entity\Repository\LocaleRepository")
  * @Config(
  *      mode="hidden",
  *      defaultValues={

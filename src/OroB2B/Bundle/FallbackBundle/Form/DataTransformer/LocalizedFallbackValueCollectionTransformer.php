@@ -159,7 +159,7 @@ class LocalizedFallbackValueCollectionTransformer implements DataTransformerInte
      */
     protected function findLocalizedFallbackValue($id)
     {
-        return $this->registry->getRepository('OroB2BFallbackBundle:LocalizedFallbackValue')->find($id);
+        return $this->registry->getRepository('AbstractLocalizedFallbackValueAwareDataConverter.php')->find($id);
     }
 
     /**

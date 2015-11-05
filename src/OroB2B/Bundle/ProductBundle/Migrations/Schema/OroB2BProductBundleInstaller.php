@@ -263,7 +263,12 @@ class OroB2BProductBundleInstaller implements
             $schema,
             self::PRODUCT_TABLE_NAME,
             'inventory_status',
-            'prod_inventory_status'
+            'prod_inventory_status',
+            false,
+            false,
+            [
+                'importexport' => ['process_as_scalar' => true],
+            ]
         );
     }
 
