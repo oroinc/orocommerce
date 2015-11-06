@@ -46,7 +46,7 @@ class LocalizedFallbackValue
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=10
+     *              "excluded"=true
      *          }
      *      }
      * )

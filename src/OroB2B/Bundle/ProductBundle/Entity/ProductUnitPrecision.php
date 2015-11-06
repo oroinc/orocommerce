@@ -72,7 +72,7 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=10
+     *              "order"=20
      *          }
      *      }
      * )
