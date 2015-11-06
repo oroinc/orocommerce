@@ -60,7 +60,7 @@ define(function(require) {
                 });
             }
 
-            if (this.product.sku) {
+            if (this.product.sku || !val) {
                 this.updateProduct();
             } else {
                 this.validateProduct(val);
