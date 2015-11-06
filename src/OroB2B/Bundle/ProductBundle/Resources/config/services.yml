@@ -233,7 +233,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
 
-    orob2b_order.event_listener.abstract_product_select_db_query:
+    orob2b_product.event_listener.abstract_product_select_db_query:
         abstract:  true
         arguments:
             - @oro_config.global
@@ -242,8 +242,8 @@ services:
             - @request_stack
 
     orob2b_product.event_listener.product_select_db_query:
-        parent: orob2b_order.event_listener.abstract_product_select_db_query
         class: %orob2b_product.event_listener.product_select_db_query.class%
+        parent: orob2b_product.event_listener.abstract_product_select_db_query
         calls:
             - [setFrontendSystemConfigurationPath, ['orob2b_product.general_frontend_product_visibility']]
         tags:
