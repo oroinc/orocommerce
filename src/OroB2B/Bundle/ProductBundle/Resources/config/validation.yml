@@ -17,9 +17,6 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
         status:
             - NotBlank: ~
             - Choice: { callback: getStatuses }
-        hasVariants:
-            - Type:
-                type: boolean
         variantFields:
             - Type:
                 type: array

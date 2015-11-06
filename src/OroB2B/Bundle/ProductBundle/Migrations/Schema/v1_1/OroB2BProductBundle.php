@@ -90,6 +90,7 @@ class OroB2BProductBundle implements Migration, ExtendExtensionAwareInterface, O
         $table = $schema->getTable(self::PRODUCT_TABLE_NAME);
         $table->addColumn('has_variants', 'boolean', ['default' => false]);
         $table->addColumn('variant_fields', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
+        $table->addIndex(['sku'], 'idx_orob2b_product_sku', []);
     }
 
     /**
