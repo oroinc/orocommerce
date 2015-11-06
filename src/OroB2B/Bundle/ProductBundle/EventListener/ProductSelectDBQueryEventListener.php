@@ -101,7 +101,11 @@ class ProductSelectDBQueryEventListener
         } else {
             return;
         }
-
+        if (!$inventoryStatuses) {
+            throw new \LogicException(
+                'SystemConfigurationPath is not configured properly for ProductSelectDBQueryEventListener'
+            );
+        }
         $this->modifier->modifyByInventoryStatus($event->getQueryBuilder(), $inventoryStatuses);
     }
 
