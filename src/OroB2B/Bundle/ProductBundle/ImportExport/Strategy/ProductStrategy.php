@@ -4,8 +4,8 @@ namespace OroB2B\Bundle\ProductBundle\ImportExport\Strategy;
 
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-
 use Oro\Bundle\UserBundle\Entity\User;
+
 use OroB2B\Bundle\FallbackBundle\ImportExport\Strategy\LocalizedFallbackValueAwareStrategy;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 

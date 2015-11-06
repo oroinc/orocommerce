@@ -79,6 +79,21 @@ class Locale
      */
     protected $code;
 
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", length=255, unique=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $title;
+
     /**
      * @var \DateTime $createdAt
      *
@@ -118,7 +133,7 @@ class Locale
      */
     public function __toString()
     {
-        return (string)$this->code;
+        return (string)$this->title;
     }
 
     /**
@@ -340,5 +355,25 @@ class Locale
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string $title
+     *
+     * @return Locale
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+
+        return $this;
     }
 }

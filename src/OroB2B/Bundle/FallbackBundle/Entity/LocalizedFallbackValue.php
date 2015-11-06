@@ -101,7 +101,7 @@ class LocalizedFallbackValue
      */
     public static function getFallbacks()
     {
-        return [FallbackType::SYSTEM, FallbackType::PARENT_LOCALE, null];
+        return [FallbackType::SYSTEM, FallbackType::PARENT_LOCALE, FallbackType::NONE];
     }
 
     /**
