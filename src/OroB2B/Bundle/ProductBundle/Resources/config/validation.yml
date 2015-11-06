@@ -31,6 +31,8 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
             - NotBlank: ~
         organization:
             - NotBlank: ~
+        inventory_status:
+            - NotBlank: ~
 
 OroB2B\Bundle\ProductBundle\Entity\ProductUnit:
     properties:
@@ -38,14 +40,11 @@ OroB2B\Bundle\ProductBundle\Entity\ProductUnit:
             - Length:
                 max: 255
         defaultPrecision:
-            - Type:
-                type: integer
-
-OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision:
-    properties:
-        precision:
-            - Type:
-                type: integer
+            - NotBlank: ~
+            - Range:
+                min: 0
+                max: 10
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
 
 OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink:
     properties:
