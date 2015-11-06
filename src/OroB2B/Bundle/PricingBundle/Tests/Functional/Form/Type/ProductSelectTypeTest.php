@@ -21,9 +21,6 @@ class ProductSelectTypeTest extends AbstractProductSelectTypeTest
             ]
         );
 
-        $this->setDatagridIndexPath('oro_datagrid_index');
-        $this->setSearchAutocompletePath('oro_form_autocomplete_search');
-
         $this->setDataParameters(['price_list' => ProductSelectPriceListAwareListener::DEFAULT_ACCOUNT_USER]);
 
     }
