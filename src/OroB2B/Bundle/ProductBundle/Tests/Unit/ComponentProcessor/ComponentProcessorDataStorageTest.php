@@ -189,25 +189,32 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
      * @dataProvider processorWithScopeDataProvider
      * @param string $scope
      * @param array $data
-     * @param array $restrictedData
+     * @param array $allowedData
+     * @param string $errorMessage
+     * @param string|null $errorMessageSkus
      */
-    public function testProcessorWithScope($scope, array $data, array $restrictedData)
-    {
+    public function testProcessorWithScope(
+        $scope,
+        array $data,
+        array $allowedData,
+        $errorMessage,
+        $errorMessageSkus = null
+    ) {
         $this->componentProcessorFilter->expects($this->once())
             ->method('filterData')
             ->with($data, ['scope' => $scope])
-            ->willReturn($restrictedData);
+            ->willReturn($allowedData);
 
         $this->storage->expects($this->once())
             ->method('set')
-            ->with($restrictedData);
+            ->with($allowedData);
 
         $this->processor->setScope($scope);
 
-        if ($data !== $restrictedData) {
+        if ($errorMessage) {
             $this->translator->expects($this->any())
                 ->method('trans')
-                ->with('orob2b.product.frontend.quick_add.messages.not_added_products');
+                ->with($errorMessage, ['%sku%' => $errorMessageSkus]);
 
             $flashBag = $this->getMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface');
             $flashBag->expects($this->once())
@@ -237,12 +244,31 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
                         ['productSku' => 'sku03'],
                     ],
                 ],
-                'restrictedData' => [
+                'allowedData' => [
+                    'entity_items_data' => [
+                        ['productSku' => 'sku01'],
+                    ],
+                ],
+                'errorMessage' => 'orob2b.product.frontend.quick_add.messages.not_added_products',
+                'errorMessageSkus' => 'sku02, sku03',
+            ],
+            'restricted one' => [
+                'scope' => 'test',
+                'data' => [
+                    'entity_items_data' => [
+                        ['productSku' => 'sku01'],
+                        ['productSku' => 'sku02'],
+                        ['productSku' => 'sku03'],
+                    ],
+                ],
+                'allowedData' => [
                     'entity_items_data' => [
                         ['productSku' => 'sku01'],
                         ['productSku' => 'sku02'],
                     ],
                 ],
+                'errorMessage' => 'orob2b.product.frontend.quick_add.messages.not_added_product',
+                'errorMessageSkus' => 'sku03',
             ],
             'not restricted' => [
                 'scope' => 'test',
@@ -253,13 +279,14 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
                         ['productSku' => 'sku03'],
                     ],
                 ],
-                'restrictedData' => [
+                'allowedData' => [
                     'entity_items_data' => [
                         ['productSku' => 'sku01'],
                         ['productSku' => 'sku02'],
                         ['productSku' => 'sku03'],
                     ],
                 ],
+                'errorMessage' => false,
             ],
         ];
     }
