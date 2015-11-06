@@ -1,9 +1,10 @@
-OroB2B\Bundle\FallbackBundle\Entity:
+OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue:
     properties:
-        string:
+        fallback:
             - Length:
                 max: 64
-        fallback:
+            - Choice: { callback: getFallbacks }
+        string:
             - Length:
                 max: 255
         locale:

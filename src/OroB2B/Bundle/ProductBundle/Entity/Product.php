@@ -106,7 +106,8 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=70
+     *              "order"=70,
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -137,7 +138,8 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=80
+     *              "order"=80,
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -292,7 +294,8 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *      defaultValues={
      *          "importexport"={
      *              "order"=20,
-     *              "full"=false
+     *              "full"=false,
+     *              "excluded"=true
      *          }
      *      }
      * )

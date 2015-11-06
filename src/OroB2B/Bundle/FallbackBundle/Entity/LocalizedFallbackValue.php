@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
+use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 /**
@@ -94,6 +95,14 @@ class LocalizedFallbackValue
      * )
      */
     protected $locale;
+
+    /**
+     * @return array
+     */
+    public static function getFallbacks()
+    {
+        return [FallbackType::SYSTEM, FallbackType::PARENT_LOCALE, null];
+    }
 
     /**
      * @return integer
