@@ -59,8 +59,8 @@ class LocalizedFallbackValueAwareDataConverter extends PropertyPathTitleDataConv
         if (null === $this->localeCodes) {
             /** @var LocaleRepository $localeRepository */
             $localeRepository = $this->registry->getRepository($this->localeClassName);
-            $this->localeCodes = [LocaleCodeFormatter::DEFAULT_LOCALE] +
-                ArrayUtils::arrayColumn($localeRepository->getLocaleCodes(), 'code');
+            $this->localeCodes = ArrayUtils::arrayColumn($localeRepository->getLocaleCodes(), 'code');
+            array_unshift($this->localeCodes, LocaleCodeFormatter::DEFAULT_LOCALE);
         }
 
         return $this->localeCodes;
@@ -80,7 +80,6 @@ class LocalizedFallbackValueAwareDataConverter extends PropertyPathTitleDataConv
     ) {
         if ($fullData && is_a($field['related_entity_name'], $this->localizedFallbackValueClassName, true)) {
             $localeCodes = $this->getLocaleCodes();
-            array_unshift($localeCodes, self::DEFAULT_LOCALE);
             $targetField = $this->fieldHelper->getConfigValue($entityName, $field['name'], 'fallback_field', 'string');
             $fieldName = $field['name'];
             $rules = [];
@@ -88,6 +87,25 @@ class LocalizedFallbackValueAwareDataConverter extends PropertyPathTitleDataConv
 
             $subOrder = 0;
             foreach ($localeCodes as $localeCode) {
+                $frontendHeader = $this->getHeader(
+                    $fieldName,
+                    $localeCode,
+                    self::FIELD_FALLBACK,
+                    $this->relationDelimiter
+                );
+                $backendHeader = $this->getHeader(
+                    $fieldName,
+                    $localeCode,
+                    self::FIELD_FALLBACK,
+                    $this->convertDelimiter
+                );
+                $rules[$frontendHeader] = [
+                    'value' => $backendHeader,
+                    'order' => $fieldOrder,
+                    'subOrder' => $subOrder++
+                ];
+                $backendHeaders[] = $rules[$frontendHeader];
+
                 $frontendHeader = $this->getHeader(
                     $fieldName,
                     $localeCode,

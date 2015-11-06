@@ -27,15 +27,22 @@ class LocalizedFallbackValueCollectionNormalizer extends CollectionNormalizer
         $this->localizedFallbackValueClass = $localizedFallbackValueClass;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * @param LocalizedFallbackValue $object
+     *
+     * {@inheritdoc}
+     */
     public function normalize($object, $format = null, array $context = [])
     {
         $result = [];
 
         /** @var LocalizedFallbackValue $item */
         foreach ($object as $item) {
-            $serializedItem = $this->serializer->normalize($item, $format, $context);
-            $result[LocaleCodeFormatter::format($item->getLocale())] = $serializedItem;
+            $result[LocaleCodeFormatter::format($item->getLocale())] = [
+                'fallback' => $item->getFallback(),
+                'string' => $item->getString(),
+                'text' => $item->getText()
+            ];
         }
 
         return $result;
