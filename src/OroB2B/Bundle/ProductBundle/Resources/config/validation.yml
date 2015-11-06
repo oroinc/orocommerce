@@ -14,6 +14,44 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
             - NotBlank: ~
         unitPrecisions:
             - Valid: ~
+        status:
+            - NotBlank: ~
+            - Choice: { callback: getStatuses }
+        hasVariants:
+            - Type:
+                type: boolean
+        variantFields:
+            - Type:
+                type: array
+        names:
+            - Valid: ~
+        descriptions:
+            - Valid: ~
+        owner:
+            - NotBlank: ~
+        organization:
+            - NotBlank: ~
+
+OroB2B\Bundle\ProductBundle\Entity\ProductUnit:
+    properties:
+        code:
+            - Length:
+                max: 255
+        defaultPrecision:
+            - Type:
+                type: integer
+
+OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    properties:
+        precision:
+            - Type:
+                type: integer
+
+OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink:
+    properties:
+        visible:
+            - Type:
+                type: boolean
 
 OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     constraints:

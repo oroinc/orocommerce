@@ -312,6 +312,14 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     }
 
     /**
+     * @return array
+     */
+    public static function getStatuses()
+    {
+        return [self::STATUS_ENABLED, self::STATUS_DISABLED];
+    }
+
+    /**
      * @return string
      */
     public function __toString()

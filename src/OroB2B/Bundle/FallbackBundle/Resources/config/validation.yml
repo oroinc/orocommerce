@@ -1,0 +1,10 @@
+OroB2B\Bundle\FallbackBundle\Entity:
+    properties:
+        string:
+            - Length:
+                max: 64
+        fallback:
+            - Length:
+                max: 255
+        locale:
+            - Valid: ~
