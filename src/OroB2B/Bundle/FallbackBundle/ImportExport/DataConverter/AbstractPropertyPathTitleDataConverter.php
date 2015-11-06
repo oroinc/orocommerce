@@ -97,14 +97,15 @@ abstract class AbstractPropertyPathTitleDataConverter extends AbstractTableDataC
     {
         $fieldName = $field['name'];
         if ($this->fieldHelper->isSingleRelation($field)) {
-            $conversionRules[$fieldHeader . $this->delimiter . $fieldName] = $fieldHeader . ':' . $fieldName;
+            $conversionRules[$fieldHeader . $this->delimiter . $fieldName] =
+                $fieldHeader . $this->convertDelimiter . $fieldName;
         }
 
         if ($this->fieldHelper->isMultipleRelation($field)) {
             $maxEntities = $this->relationCalculator->getMaxRelatedEntities($entityName, $fieldName);
             for ($i = 0; $i < $maxEntities; $i++) {
                 $frontendHeader = $fieldHeader . $this->delimiter . $i . $this->delimiter . $fieldName;
-                $backendRule = $fieldHeader . ':' . $i . ':' . $fieldName;
+                $backendRule = $fieldHeader . $this->convertDelimiter . $i . $this->convertDelimiter . $fieldName;
                 $conversionRules[$frontendHeader] = $backendRule;
             }
         }
