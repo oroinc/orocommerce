@@ -97,6 +97,10 @@ abstract class AbstractPropertyPathTitleDataConverter extends AbstractTableDataC
     {
         $fieldName = $field['name'];
         if ($this->fieldHelper->isSingleRelation($field)) {
+            if (is_a($field['related_entity_name'], 'Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue', true)) {
+                $fieldName = 'id';
+            }
+
             $conversionRules[$fieldHeader . $this->delimiter . $fieldName] =
                 $fieldHeader . $this->convertDelimiter . $fieldName;
         }
