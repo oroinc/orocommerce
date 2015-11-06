@@ -2,12 +2,12 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Functional\Form\Type;
 
-use OroB2B\Bundle\ProductBundle\Tests\Functional\Form\Type\FrontendScopedProductSelectTypeTest;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\Form\Type\AbstractFrontendScopedProductSelectTypeTest;
 
 /**
  * @dbIsolation
  */
-class FrontendProductSelectTypeTest extends FrontendScopedProductSelectTypeTest
+class FrontendProductSelectTypeTest extends AbstractFrontendScopedProductSelectTypeTest
 {
     public function setUp()
     {

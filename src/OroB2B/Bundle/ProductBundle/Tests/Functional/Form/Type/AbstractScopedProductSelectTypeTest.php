@@ -7,7 +7,7 @@ use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 /**
  * @dbIsolation
  */
-class ScopedProductSelectTypeTest extends AbstractProductSelectTypeTest
+abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelectTypeTest
 {
     /** @var \Oro\Bundle\ConfigBundle\Config\ConfigManager */
     protected $configManager;
