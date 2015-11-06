@@ -28,6 +28,13 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
      */
     protected $id;
 
@@ -37,7 +44,7 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "identity"=true
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -50,7 +57,8 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=10
+     *              "order"=10,
+     *              "identity"=true
      *          }
      *      }
      * )

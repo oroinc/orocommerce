@@ -2,14 +2,17 @@
 
 namespace OroB2B\Bundle\FallbackBundle\ImportExport\DataConverter;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Oro\Bundle\UIBundle\Tools\ArrayUtils;
 use OroB2B\Bundle\FallbackBundle\ImportExport\Normalizer\LocaleCodeFormatter;
 use OroB2B\Bundle\WebsiteBundle\Entity\Repository\LocaleRepository;
 
-abstract class AbstractLocalizedFallbackValueAwareDataConverter extends AbstractPropertyPathTitleDataConverter
+class LocalizedFallbackValueAwareDataConverter extends PropertyPathTitleDataConverter
 {
     const FIELD_VALUE = 'value';
     const FIELD_FALLBACK = 'fallback';
+    const DEFAULT_LOCALE = 'default';
 
     /** @var string */
     protected $localeClassName;
@@ -19,6 +22,20 @@ abstract class AbstractLocalizedFallbackValueAwareDataConverter extends Abstract
 
     /** @var string[] */
     private $localeCodes;
+
+    /** @var ManagerRegistry */
+    protected $registry;
+
+    /**
+     * @param ManagerRegistry $registry
+     * @return PropertyPathTitleDataConverter
+     */
+    public function setRegistry(ManagerRegistry $registry)
+    {
+        $this->registry = $registry;
+
+        return $this;
+    }
 
     /**
      * @param string $localeClassName
@@ -50,46 +67,60 @@ abstract class AbstractLocalizedFallbackValueAwareDataConverter extends Abstract
     }
 
     /**
-     * @param array $conversionRules
-     * @param string $fieldHeader
-     * @param string $field
-     * @param string $entityName
+     * {@inheritdoc}
      */
-    protected function processRelation(array &$conversionRules, $fieldHeader, $field, $entityName)
-    {
-        $targetClass = $field['related_entity_name'];
-
-        if (is_a($targetClass, $this->localizedFallbackValueClassName, true)
-            && $this->fieldHelper->isMultipleRelation($field)
-        ) {
+    protected function getRelatedEntityRulesAndBackendHeaders(
+        $entityName,
+        $fullData,
+        $singleRelationDeepLevel,
+        $multipleRelationDeepLevel,
+        $field,
+        $fieldHeader,
+        $fieldOrder
+    ) {
+        if ($fullData && is_a($field['related_entity_name'], $this->localizedFallbackValueClassName, true)) {
             $localeCodes = $this->getLocaleCodes();
+            array_unshift($localeCodes, self::DEFAULT_LOCALE);
             $targetField = $this->fieldHelper->getConfigValue($entityName, $field['name'], 'fallback_field', 'string');
             $fieldName = $field['name'];
+            $rules = [];
+            $backendHeaders = [];
 
+            $subOrder = 0;
             foreach ($localeCodes as $localeCode) {
-                $frontendHeader = $this->getHeader($fieldName, $localeCode, self::FIELD_FALLBACK, $this->delimiter);
-                $backendHeaders = $this->getHeader(
+                $frontendHeader = $this->getHeader(
                     $fieldName,
                     $localeCode,
-                    self::FIELD_FALLBACK,
-                    $this->convertDelimiter
+                    self::FIELD_VALUE,
+                    $this->relationDelimiter
                 );
-                $conversionRules[$frontendHeader] = $backendHeaders;
-
-                $frontendHeader = $this->getHeader($fieldName, $localeCode, self::FIELD_VALUE, $this->delimiter);
-                $backendHeaders = $this->getHeader(
+                $backendHeader = $this->getHeader(
                     $fieldName,
                     $localeCode,
                     $targetField,
                     $this->convertDelimiter
                 );
-                $conversionRules[$frontendHeader] = $backendHeaders;
+
+                $rules[$frontendHeader] = [
+                    'value' => $backendHeader,
+                    'order' => $fieldOrder,
+                    'subOrder' => $subOrder++
+                ];
+                $backendHeaders[] = $rules[$frontendHeader];
             }
 
-            return;
+            return [$rules, $backendHeaders];
         }
 
-        parent::processRelation($conversionRules, $fieldHeader, $field, $entityName);
+        return parent::getRelatedEntityRulesAndBackendHeaders(
+            $entityName,
+            $fullData,
+            $singleRelationDeepLevel,
+            $multipleRelationDeepLevel,
+            $field,
+            $fieldHeader,
+            $fieldOrder
+        );
     }
 
     /**
