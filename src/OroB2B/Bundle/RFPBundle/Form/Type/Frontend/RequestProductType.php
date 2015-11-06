@@ -43,6 +43,7 @@ class RequestProductType extends AbstractType
                     'route_name' => 'orob2b_frontend_autocomplete_search'
                 ],
                 'data_parameters' => [
+                    'scope' => 'rfp',
                     'price_list' => 'default_account_user'
                 ]
             ])
