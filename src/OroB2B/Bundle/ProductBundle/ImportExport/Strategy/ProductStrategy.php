@@ -2,9 +2,7 @@
 
 namespace OroB2B\Bundle\ProductBundle\ImportExport\Strategy;
 
-use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
-use Oro\Bundle\SecurityBundle\Owner\Metadata\OwnershipMetadataProvider;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use Oro\Bundle\UserBundle\Entity\User;
@@ -13,22 +11,11 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class ProductStrategy extends LocalizedFallbackValueAwareStrategy
 {
-    /** @var OwnershipMetadataProvider */
-    protected $ownershipMetadataProvider;
-
     /** @var SecurityFacade */
     protected $securityFacade;
 
     /** @var BusinessUnit */
     protected $owner;
-
-    /**
-     * @param mixed $ownershipMetadataProvider
-     */
-    public function setOwnershipMetadataProvider($ownershipMetadataProvider)
-    {
-        $this->ownershipMetadataProvider = $ownershipMetadataProvider;
-    }
 
     /**
      * @param SecurityFacade $securityFacade
@@ -72,9 +59,8 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
             return;
         }
 
-        $businessUnit = $user->getOwner();
-        $ownerField = $this->ownershipMetadataProvider->getMetadata(ClassUtils::getClass($entity))->getOwnerFieldName();
+        $this->owner = $this->databaseHelper->getEntityReference($user->getOwner());
 
-        $this->fieldHelper->setObjectValue($entity, $ownerField, $businessUnit);
+        $entity->setOwner($this->owner);
     }
 }

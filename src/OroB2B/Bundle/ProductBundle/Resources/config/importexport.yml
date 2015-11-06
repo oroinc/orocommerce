@@ -11,7 +11,6 @@ services:
         class: %orob2b_product.importexport.strategy.product.class%
         parent: orob2b_fallback.importexport.strategy.localized_fallback_value_aware
         calls:
-            - [setOwnershipMetadataProvider, [@oro_security.owner.ownership_metadata_provider]]
             - [setSecurityFacade, [@oro_security.security_facade]]
 
     # Import processor
