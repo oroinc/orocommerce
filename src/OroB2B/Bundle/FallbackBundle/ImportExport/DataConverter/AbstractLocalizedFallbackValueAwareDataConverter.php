@@ -2,25 +2,14 @@
 
 namespace OroB2B\Bundle\FallbackBundle\ImportExport\DataConverter;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Oro\Bundle\ImportExportBundle\Converter\AbstractTableDataConverter;
-use Oro\Bundle\ImportExportBundle\Field\FieldHelper;
-
 use Oro\Bundle\UIBundle\Tools\ArrayUtils;
 use OroB2B\Bundle\FallbackBundle\ImportExport\Normalizer\LocaleCodeFormatter;
 use OroB2B\Bundle\WebsiteBundle\Entity\Repository\LocaleRepository;
 
-abstract class AbstractLocalizedFallbackValueAwareDataConverter extends AbstractTableDataConverter
+abstract class AbstractLocalizedFallbackValueAwareDataConverter extends AbstractPropertyPathTitleDataConverter
 {
     const FIELD_VALUE = 'value';
     const FIELD_FALLBACK = 'fallback';
-
-    /** @var ManagerRegistry */
-    protected $registry;
-
-    /** @var FieldHelper */
-    protected $fieldHelper;
 
     /** @var string */
     protected $localeClassName;
@@ -32,21 +21,19 @@ abstract class AbstractLocalizedFallbackValueAwareDataConverter extends Abstract
     private $localeCodes;
 
     /**
-     * @param ManagerRegistry $registry
-     * @param FieldHelper $fieldHelper
-     * @param string $localizedFallbackValueClassName
      * @param string $localeClassName
      */
-    public function __construct(
-        ManagerRegistry $registry,
-        FieldHelper $fieldHelper,
-        $localizedFallbackValueClassName,
-        $localeClassName
-    ) {
-        $this->registry = $registry;
-        $this->fieldHelper = $fieldHelper;
-        $this->localizedFallbackValueClassName = $localizedFallbackValueClassName;
+    public function setLocaleClassName($localeClassName)
+    {
         $this->localeClassName = $localeClassName;
+    }
+
+    /**
+     * @param string $localizedFallbackValueClassName
+     */
+    public function setLocalizedFallbackValueClassName($localizedFallbackValueClassName)
+    {
+        $this->localizedFallbackValueClassName = $localizedFallbackValueClassName;
     }
 
     /** @return string[] */
@@ -61,40 +48,30 @@ abstract class AbstractLocalizedFallbackValueAwareDataConverter extends Abstract
         return $this->localeCodes;
     }
 
-    /** {@inheritdoc} */
-    protected function getBackendHeader()
-    {
-        $rules = $this->getHeaderConversionRules();
-        $headers = reset($rules);
-
-        return array_keys($headers);
-    }
-
-    /** @return string */
-    abstract protected function getHolderClassName();
-
     protected function processRelation(&$rules, &$backendHeaders, $fieldHeader, $field)
     {
         $targetClass = $field['related_entity_name'];
 
-        if (!is_a($targetClass, $this->localizedFallbackValueClassName, true)) {
+        if (is_a($targetClass, $this->localizedFallbackValueClassName, true)) {
+            if ($this->fieldHelper->isSingleRelation($field)) {
+                $rules[$fieldHeader] = ['value' => $fieldHeader, 'order' => false];
+                $backendHeaders[] = $rules[$fieldHeader];
+            }
+            if ($this->fieldHelper->isMultipleRelation($field)) {
+                $localeCodes = $this->getLocaleCodes();
+
+                foreach ($localeCodes as $localeCode) {
+                    foreach ([self::FIELD_VALUE, self::FIELD_FALLBACK] as $exportField) {
+                        $title = implode('.', [$field['name'], LocaleCodeFormatter::format($localeCode), $exportField]);
+                        $rules[$title] = ['value' => $title, 'order' => false];
+                        $backendHeaders[] = $rules[$title];
+                    }
+                }
+            }
+
             return;
         }
 
-        if ($this->fieldHelper->isSingleRelation($field)) {
-            $rules[$fieldHeader] = ['value' => $fieldHeader, 'order' => false];
-            $backendHeaders[] = $rules[$fieldHeader];
-        }
-        if ($this->fieldHelper->isMultipleRelation($field)) {
-            $localeCodes = $this->getLocaleCodes();
-
-            foreach ($localeCodes as $localeCode) {
-                foreach ([self::FIELD_VALUE, self::FIELD_FALLBACK] as $exportField) {
-                    $title = implode('.', [$field['name'], LocaleCodeFormatter::format($localeCode), $exportField]);
-                    $rules[$title] = ['value' => $title, 'order' => false];
-                    $backendHeaders[] = $rules[$title];
-                }
-            }
-        }
+        parent::processRelation($rules, $backendHeaders, $fieldHeader, $field);
     }
 }
