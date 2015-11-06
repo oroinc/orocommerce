@@ -6,8 +6,11 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
+
+use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
 
 class ForwardListener
 {
@@ -22,20 +25,44 @@ class ForwardListener
     protected $registry;
 
     /**
+     * @var FrontendHelper
+     */
+    protected $frontendHelper;
+
+    /**
      * @var bool
      */
     protected $installed;
 
     /**
+     * @var bool
+     */
+    protected $environment;
+
+    /**
+     * @var array
+     */
+    protected $skippedUrlPatterns = [];
+
+    /**
      * @param Router $router
      * @param ManagerRegistry $registry
+     * @param FrontendHelper $frontendHelper
      * @param boolean $installed
+     * @param string $environment
      */
-    public function __construct(Router $router, ManagerRegistry $registry, $installed)
-    {
+    public function __construct(
+        Router $router,
+        ManagerRegistry $registry,
+        FrontendHelper $frontendHelper,
+        $installed,
+        $environment
+    ) {
         $this->router = $router;
         $this->registry = $registry;
         $this->installed = $installed;
+        $this->frontendHelper = $frontendHelper;
+        $this->environment = $environment;
     }
 
     /**
@@ -55,6 +82,51 @@ class ForwardListener
             return;
         }
 
+        if ($this->isSkippedUrl($request)) {
+            return;
+        }
+
+        $this->forwardRequest($request);
+    }
+
+    /**
+     * Skipped url pattern should start with slash.
+     *
+     * @param string $skippedUrlPattern
+     * @param string $env
+     */
+    public function addSkippedUrlPattern($skippedUrlPattern, $env = 'prod')
+    {
+        $this->skippedUrlPatterns[$env][] = $skippedUrlPattern;
+    }
+
+    /**
+     * @param Request $request
+     * @return bool
+     */
+    protected function isSkippedUrl(Request $request)
+    {
+        if (!$this->frontendHelper->isFrontendRequest($request)) {
+            return true;
+        }
+
+        if (array_key_exists($this->environment, $this->skippedUrlPatterns)) {
+            $url = $request->getPathInfo();
+            foreach ($this->skippedUrlPatterns[$this->environment] as $pattern) {
+                if (strpos($url, $pattern) === 0) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param Request $request
+     */
+    protected function forwardRequest(Request $request)
+    {
         $slugUrl = $request->getPathInfo();
         if ($slugUrl !== '/') {
             $slugUrl = rtrim($slugUrl, '/');
