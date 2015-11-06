@@ -167,7 +167,7 @@ class ProductRowCollectionTypeTest extends FormIntegrationTestCase
                 $this->callback(
                     function (array $options) {
                         $this->assertArrayHasKey('products', $options);
-                        $this->assertInternalType('array', $options['products']);
+                        $this->assertNull($options['products']);
                         return true;
                     }
                 )

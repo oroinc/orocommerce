@@ -76,10 +76,10 @@ class ProductRowCollectionType extends AbstractType
                 'handle_primary' => false,
                 'row_count_add' => self::ROW_COUNT_ADD,
                 'row_count_initial' => self::ROW_COUNT_INITIAL,
-                'products' => [],
+                'products' => null,
             ]
         );
-        $resolver->setAllowedTypes('products', 'array');
+        $resolver->setAllowedTypes('products', ['array', 'null']);
     }
 
     /**

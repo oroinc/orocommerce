@@ -53,11 +53,11 @@ class QuickAddType extends AbstractType
         $resolver->setDefaults(
             [
                 'validation_required' => false,
-                'products' => [],
+                'products' => null,
             ]
         );
         $resolver->setAllowedTypes('validation_required', 'bool');
-        $resolver->setAllowedTypes('products', 'array');
+        $resolver->setAllowedTypes('products', ['array', 'null']);
     }
 
     /**

@@ -86,7 +86,7 @@ class ProductRowType extends AbstractProductAwareType
         if (!$product && $form->getParent()) {
             $sku = strtoupper($form->get(ProductDataStorage::PRODUCT_SKU_KEY)->getData());
             $products = $form->getParent()->getConfig()->getOption('products', []);
-            if (isset($products[$sku])) {
+            if ($products && isset($products[$sku])) {
                 $product = $products[$sku];
             }
         }
