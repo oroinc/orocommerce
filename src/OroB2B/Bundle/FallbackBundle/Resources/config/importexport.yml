@@ -1,23 +1,20 @@
 parameters:
-    orob2b_fallback.importexport.data_converter.abstact_localized_fallback_value_aware.class: OroB2B\Bundle\FallbackBundle\ImportExport\DataConverter\AbstractLocalizedFallbackValueAwareDataConverter
-    orob2b_fallback.importexport.data_converter.abstact_property_path_title.class: OroB2B\Bundle\FallbackBundle\ImportExport\DataConverter\AbstractPropertyPathTitleDataConverter
+    orob2b_fallback.importexport.data_converter.localized_fallback_value_aware.class: OroB2B\Bundle\FallbackBundle\ImportExport\DataConverter\LocalizedFallbackValueAwareDataConverter
+    orob2b_fallback.importexport.data_converter.property_path_title.class: OroB2B\Bundle\FallbackBundle\ImportExport\DataConverter\PropertyPathTitleDataConverter
     orob2b_fallback.importexport.strategy.localized_fallback_value_aware.class: OroB2B\Bundle\FallbackBundle\ImportExport\Strategy\LocalizedFallbackValueAwareStrategy
     orob2b_fallback.importexport.normalizer.localized_fallback_value_collection_normalizer: OroB2B\Bundle\FallbackBundle\ImportExport\Normalizer\LocalizedFallbackValueCollectionNormalizer
 
 services:
-    orob2b_fallback.importexport.data_converter.abstact_property_path_title:
-        class: %orob2b_fallback.importexport.data_converter.abstact_property_path_title.class%
+    orob2b_fallback.importexport.data_converter.property_path_title:
+        class: %orob2b_fallback.importexport.data_converter.property_path_title.class%
+        parent: oro_importexport.data_converter.configurable
         abstract: true
-        arguments:
-            - @doctrine
-            - @oro_importexport.field.field_helper
-            - @oro_importexport.data_converter.relation_calculator
 
-    orob2b_fallback.importexport.data_converter.abstact_localized_fallback_value_aware:
-        class: %orob2b_fallback.importexport.data_converter.abstact_localized_fallback_value_aware.class%
-        parent: orob2b_fallback.importexport.data_converter.abstact_property_path_title
-        abstract: true
+    orob2b_fallback.importexport.data_converter.localized_fallback_value_aware:
+        class: %orob2b_fallback.importexport.data_converter.localized_fallback_value_aware.class%
+        parent: orob2b_fallback.importexport.data_converter.property_path_title
         calls:
+            - [setRegistry, [@doctrine]]
             - [setLocalizedFallbackValueClassName, [%orob2b_fallback.entity.localized_fallback_value.class%]]
             - [setLocaleClassName, [%orob2b_website.locale.class%]]
 
