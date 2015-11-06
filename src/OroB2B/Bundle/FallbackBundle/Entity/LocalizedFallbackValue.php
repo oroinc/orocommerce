@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
+use OroB2B\Bundle\FallbackBundle\Model\FallbackType;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 /**
@@ -18,7 +19,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
  *      }
  * )
  * @ORM\Entity
- * @Config
+ * @Config(mode="hidden")
  */
 class LocalizedFallbackValue
 {
@@ -28,6 +29,13 @@ class LocalizedFallbackValue
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
      */
     protected $id;
 
@@ -38,7 +46,7 @@ class LocalizedFallbackValue
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=10
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -52,7 +60,7 @@ class LocalizedFallbackValue
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=10
+     *              "excluded"=false
      *          }
      *      }
      * )
@@ -66,7 +74,7 @@ class LocalizedFallbackValue
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=10
+     *              "excluded"=false
      *          }
      *      }
      * )
@@ -81,12 +89,20 @@ class LocalizedFallbackValue
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "identity"=true
+     *              "excluded"=true
      *          }
      *      }
      * )
      */
     protected $locale;
+
+    /**
+     * @return array
+     */
+    public static function getFallbacks()
+    {
+        return [FallbackType::SYSTEM, FallbackType::PARENT_LOCALE, FallbackType::NONE];
+    }
 
     /**
      * @return integer

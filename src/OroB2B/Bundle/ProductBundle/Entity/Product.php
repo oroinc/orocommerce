@@ -20,6 +20,7 @@ use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
  * @ORM\Table(
  *      name="orob2b_product",
  *      indexes={
+ *          @ORM\Index(name="idx_orob2b_product_sku", columns={"sku"}),
  *          @ORM\Index(name="idx_orob2b_product_created_at", columns={"created_at"}),
  *          @ORM\Index(name="idx_orob2b_product_updated_at", columns={"updated_at"})
  *      }
@@ -70,6 +71,13 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
      */
     protected $id;
 
@@ -98,7 +106,8 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=70
+     *              "order"=60,
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -129,7 +138,8 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=80
+     *              "order"=70,
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -210,7 +220,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=40,
+     *              "order"=30,
      *              "full"=true
      *          }
      *      }
@@ -238,8 +248,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=30,
-     *              "full"=true
+     *              "order"=40,
+     *              "full"=true,
+     *              "fallback_field"="string"
      *          }
      *      }
      * )
@@ -266,8 +277,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=30,
-     *              "full"=true
+     *              "order"=50,
+     *              "full"=true,
+     *              "fallback_field"="text"
      *          }
      *      }
      * )
@@ -281,8 +293,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "order"=20,
-     *              "full"=false
+     *              "order"=80,
+     *              "full"=false,
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -300,6 +313,14 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
         $this->names          = new ArrayCollection();
         $this->descriptions   = new ArrayCollection();
         $this->variantLinks   = new ArrayCollection();
+    }
+
+    /**
+     * @return array
+     */
+    public static function getStatuses()
+    {
+        return [self::STATUS_ENABLED, self::STATUS_DISABLED];
     }
 
     /**

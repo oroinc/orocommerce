@@ -14,6 +14,37 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
             - NotBlank: ~
         unitPrecisions:
             - Valid: ~
+        status:
+            - NotBlank: ~
+            - Choice: { callback: getStatuses }
+        names:
+            - Valid: ~
+        descriptions:
+            - Valid: ~
+        owner:
+            - NotBlank: ~
+        organization:
+            - NotBlank: ~
+        inventory_status:
+            - NotBlank: ~
+
+OroB2B\Bundle\ProductBundle\Entity\ProductUnit:
+    properties:
+        code:
+            - Length:
+                max: 255
+        defaultPrecision:
+            - NotBlank: ~
+            - Range:
+                min: 0
+                max: 10
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+
+OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink:
+    properties:
+        visible:
+            - Type:
+                type: boolean
 
 OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     constraints:

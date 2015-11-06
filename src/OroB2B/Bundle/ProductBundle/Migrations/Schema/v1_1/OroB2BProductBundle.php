@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ProductBundle\Migrations\Schema\v1_1;
 use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveEnumFieldQuery;
+use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigEntityValueQuery;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
@@ -44,7 +45,7 @@ class OroB2BProductBundle implements Migration, ExtendExtensionAwareInterface, O
     {
         $this->renameStatusEnumToStatusString($schema, $queries);
         $this->removeVisibilityEnum($schema, $queries);
-        $this->updateOroB2BProductTable($schema);
+        $this->updateOroB2BProductTable($schema, $queries);
         $this->createOroB2BProductVariantLinkTable($schema);
         $this->addOroB2BProductVariantLinkForeignKeys($schema);
     }
@@ -84,12 +85,24 @@ class OroB2BProductBundle implements Migration, ExtendExtensionAwareInterface, O
 
     /**
      * @param Schema $schema
+     * @param QueryBag $queries
      */
-    protected function updateOroB2BProductTable(Schema $schema)
+    protected function updateOroB2BProductTable(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable(self::PRODUCT_TABLE_NAME);
         $table->addColumn('has_variants', 'boolean', ['default' => false]);
         $table->addColumn('variant_fields', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
+        $table->addIndex(['sku'], 'idx_orob2b_product_sku', []);
+
+
+        $queries->addQuery(
+            new UpdateEntityConfigEntityValueQuery(
+                'OroB2B\Bundle\ProductBundle\Entity\Product',
+                'importexport',
+                'order',
+                '25'
+            )
+        );
     }
 
     /**

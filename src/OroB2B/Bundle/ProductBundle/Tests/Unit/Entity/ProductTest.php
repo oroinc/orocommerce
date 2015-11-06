@@ -292,4 +292,10 @@ class ProductTest extends \PHPUnit_Framework_TestCase
             'several default descriptions' => [[new LocalizedFallbackValue(), new LocalizedFallbackValue()]],
         ];
     }
+
+    public function testGetStatuses()
+    {
+        $this->assertInternalType('array', Product::getStatuses());
+        $this->assertNotEmpty('array', Product::getStatuses());
+    }
 }
