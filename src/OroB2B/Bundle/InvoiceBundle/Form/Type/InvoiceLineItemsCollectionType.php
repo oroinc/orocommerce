@@ -28,10 +28,10 @@ class InvoiceLineItemsCollectionType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'type'                  => InvoiceLineItemType::NAME,
-            'show_form_when_empty'  => true,
-            'error_bubbling'        => false,
-            'prototype_name'        => '__nameinvoicelineitem__'
+            'type' => InvoiceLineItemType::NAME,
+            'show_form_when_empty' => true,
+            'error_bubbling' => false,
+            'prototype_name' => '__nameinvoicelineitem__'
         ]);
     }
 

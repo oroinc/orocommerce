@@ -10,25 +10,32 @@
     overflow: visible;
 }
 
-.invoice-line-item-sku {
-    width: 134px !important;
-}
-
 .invoice-line-item-type input[type="text"]{
-    width: 279px !important;
+    width: 279px;
 }
 
-.invoice-line-item-type input[type="text"] {
-    width: 400px !important;
+.invoice-line-item-type .fields-row input[type="text"] {
+    width: 400px;
 }
-.invoice-line-item-type .select2-container {
-    width: 400px !important;
+.invoice-line-item-type .fields-row .select2-container {
+    width: 400px;
 }
 
-.invoice-line-item-quantity input[type="text"],
-.invoice-line-item-price input[type="text"] {
+.invoice-line-item-quantity .fields-row input[type="text"],
+.invoice-line-item-price .fields-row input[type="text"],
+.invoice-line-item-quantity select,
+.invoice-line-item-price select
+{
     text-align: right;
+    width: 80px;
 }
+
+.invoice-line-item-sku .invoice-line-item-type-free-form,
+.invoice-line-item-sku .invoice-line-item-type-free-form input[type="text"],
+.invoice-line-item-sku .invoice-line-item-type-product {
+    width: 80px;
+}
+
 
 .invoice-line-item-quantity input[type="text"] {
     margin-right: 3px;
@@ -39,9 +46,6 @@
 }
 
 
-.invoice-line-item-price {
-    width: 150px;
-}
 .invoice-line-item-price .fields-row {
     position: relative;
 }
@@ -50,12 +54,6 @@
     padding-left: 17px;
 }
 
-.invoice-line-item-quantity input[type="text"],
-.invoice-line-item-quantity select,
-.invoice-line-item-price input[type="text"],
-.invoice-line-item-price select {
-    width: 80px !important;
-}
 
 .invoice-line-item-quantity input[type="text"],
 .invoice-line-item-quantity .selector,
@@ -75,7 +73,7 @@
 }
 
 .invoice-line-item-remove {
-    padding-top: 7px !important;
-    text-align: right !important;
+    padding-top: 7px;
+    text-align: right;
 }
 
