@@ -75,7 +75,7 @@ abstract class AbstractPropertyPathTitleDataConverter extends AbstractTableDataC
     /** {@inheritdoc} */
     protected function getBackendHeader()
     {
-        return array_keys($this->getHeaderConversionRules());
+        return array_values($this->getHeaderConversionRules());
     }
 
     /**

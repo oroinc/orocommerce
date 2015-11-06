@@ -59,7 +59,7 @@ class LocalizedFallbackValue
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "excluded"=true
+     *              "excluded"=false
      *          }
      *      }
      * )
@@ -73,7 +73,7 @@ class LocalizedFallbackValue
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "excluded"=true
+     *              "excluded"=false
      *          }
      *      }
      * )

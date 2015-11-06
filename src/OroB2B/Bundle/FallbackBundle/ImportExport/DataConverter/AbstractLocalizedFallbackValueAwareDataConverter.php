@@ -62,22 +62,44 @@ abstract class AbstractLocalizedFallbackValueAwareDataConverter extends Abstract
             && $this->fieldHelper->isMultipleRelation($field)
         ) {
             $localeCodes = $this->getLocaleCodes();
+            $targetField = $this->fieldHelper->getConfigValue($entityName, $field['name'], 'fallback_field', 'string');
+            $fieldName = $field['name'];
 
             foreach ($localeCodes as $localeCode) {
-                foreach ([self::FIELD_VALUE, self::FIELD_FALLBACK] as $exportField) {
-                    $frontendHeader = $field['name']
-                        . $this->delimiter . LocaleCodeFormatter::format($localeCode)
-                        . $this->delimiter . $exportField;
-                    $backendHeaders = $field['name'] . ':'
-                        . LocaleCodeFormatter::format($localeCode)
-                        . ':' . $exportField;
-                    $conversionRules[$frontendHeader] = $backendHeaders;
-                }
+                $frontendHeader = $this->getHeader($fieldName, $localeCode, self::FIELD_FALLBACK, $this->delimiter);
+                $backendHeaders = $this->getHeader(
+                    $fieldName,
+                    $localeCode,
+                    self::FIELD_FALLBACK,
+                    $this->convertDelimiter
+                );
+                $conversionRules[$frontendHeader] = $backendHeaders;
+
+                $frontendHeader = $this->getHeader($fieldName, $localeCode, self::FIELD_VALUE, $this->delimiter);
+                $backendHeaders = $this->getHeader(
+                    $fieldName,
+                    $localeCode,
+                    $targetField,
+                    $this->convertDelimiter
+                );
+                $conversionRules[$frontendHeader] = $backendHeaders;
             }
 
             return;
         }
 
         parent::processRelation($conversionRules, $fieldHeader, $field, $entityName);
+    }
+
+    /**
+     * @param string $fieldName
+     * @param string $identity
+     * @param string $targetFieldName
+     * @param string $delimiter
+     * @return string
+     */
+    protected function getHeader($fieldName, $identity, $targetFieldName, $delimiter)
+    {
+        return $fieldName . $delimiter . LocaleCodeFormatter::format($identity) . $delimiter . $targetFieldName;
     }
 }
