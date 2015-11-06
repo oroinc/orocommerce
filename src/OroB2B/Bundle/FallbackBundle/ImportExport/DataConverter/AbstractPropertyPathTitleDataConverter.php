@@ -3,7 +3,9 @@
 namespace OroB2B\Bundle\FallbackBundle\ImportExport\DataConverter;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Oro\Bundle\ImportExportBundle\Converter\AbstractTableDataConverter;
+use Oro\Bundle\ImportExportBundle\Converter\RelationCalculator;
 use Oro\Bundle\ImportExportBundle\Field\FieldHelper;
 
 abstract class AbstractPropertyPathTitleDataConverter extends AbstractTableDataConverter
@@ -15,13 +17,26 @@ abstract class AbstractPropertyPathTitleDataConverter extends AbstractTableDataC
     protected $fieldHelper;
 
     /**
+     * @var RelationCalculator
+     */
+    protected $relationCalculator;
+
+    /** @var string */
+    protected $delimiter = '.';
+
+    /**
      * @param ManagerRegistry $registry
      * @param FieldHelper $fieldHelper
+     * @param RelationCalculator $relationCalculator
      */
-    public function __construct(ManagerRegistry $registry, FieldHelper $fieldHelper)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        FieldHelper $fieldHelper,
+        RelationCalculator $relationCalculator
+    ) {
         $this->registry = $registry;
         $this->fieldHelper = $fieldHelper;
+        $this->relationCalculator = $relationCalculator;
     }
 
     /**
@@ -31,8 +46,7 @@ abstract class AbstractPropertyPathTitleDataConverter extends AbstractTableDataC
      */
     protected function getHeaderConversionRules()
     {
-        $rules = [];
-        $backendHeaders = [];
+        $headerConversionRules = [];
         $entityName = $this->getEntityClass();
 
         $fields = $this->fieldHelper->getFields($entityName, true);
@@ -47,41 +61,52 @@ abstract class AbstractPropertyPathTitleDataConverter extends AbstractTableDataC
             if ($this->fieldHelper->isRelation($field)
                 && !$this->fieldHelper->processRelationAsScalar($entityName, $fieldName)
             ) {
-                $this->processRelation($rules, $backendHeaders, $fieldHeader, $field);
+                $this->processRelation($headerConversionRules, $fieldHeader, $field, $entityName);
 
                 continue;
             }
 
-            $this->processScalarField($rules, $backendHeaders, $fieldHeader);
+            $this->processScalarField($headerConversionRules, $fieldHeader);
         }
 
-        return [$rules, $backendHeaders];
+        return $headerConversionRules;
     }
 
     /** {@inheritdoc} */
     protected function getBackendHeader()
     {
-        $rules = $this->getHeaderConversionRules();
-        $headers = reset($rules);
-
-        return array_keys($headers);
+        return array_keys($this->getHeaderConversionRules());
     }
 
-    protected function processScalarField(&$rules, &$backendHeaders, $fieldHeader)
+    /**
+     * @param array $conversionRules
+     * @param string $fieldHeader
+     */
+    protected function processScalarField(array &$conversionRules, $fieldHeader)
     {
-        $rules[$fieldHeader] = ['value' => $fieldHeader, 'order' => false];
-        $backendHeaders[] = $rules[$fieldHeader];
+        $conversionRules[$fieldHeader] = $fieldHeader;
     }
 
-    protected function processRelation(&$rules, &$backendHeaders, $fieldHeader, $field)
+    /**
+     * @param array $conversionRules
+     * @param string $fieldHeader
+     * @param string $field
+     * @param string $entityName
+     */
+    protected function processRelation(array &$conversionRules, $fieldHeader, $field, $entityName)
     {
+        $fieldName = $field['name'];
         if ($this->fieldHelper->isSingleRelation($field)) {
-            $rules[$fieldHeader] = ['value' => $fieldHeader, 'order' => false];
-            $backendHeaders[] = $rules[$fieldHeader];
+            $conversionRules[$fieldHeader . $this->delimiter . $fieldName] = $fieldHeader . ':' . $fieldName;
         }
 
         if ($this->fieldHelper->isMultipleRelation($field)) {
-            // @todo: relation calculator
+            $maxEntities = $this->relationCalculator->getMaxRelatedEntities($entityName, $fieldName);
+            for ($i = 0; $i < $maxEntities; $i++) {
+                $frontendHeader = $fieldHeader . $this->delimiter . $i . $this->delimiter . $fieldName;
+                $backendRule = $fieldHeader . ':' . $i . ':' . $fieldName;
+                $conversionRules[$frontendHeader] = $backendRule;
+            }
         }
     }
 

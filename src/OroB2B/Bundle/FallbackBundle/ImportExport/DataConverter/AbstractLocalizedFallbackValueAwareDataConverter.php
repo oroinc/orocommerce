@@ -48,30 +48,36 @@ abstract class AbstractLocalizedFallbackValueAwareDataConverter extends Abstract
         return $this->localeCodes;
     }
 
-    protected function processRelation(&$rules, &$backendHeaders, $fieldHeader, $field)
+    /**
+     * @param array $conversionRules
+     * @param string $fieldHeader
+     * @param string $field
+     * @param string $entityName
+     */
+    protected function processRelation(array &$conversionRules, $fieldHeader, $field, $entityName)
     {
         $targetClass = $field['related_entity_name'];
 
-        if (is_a($targetClass, $this->localizedFallbackValueClassName, true)) {
-            if ($this->fieldHelper->isSingleRelation($field)) {
-                $rules[$fieldHeader] = ['value' => $fieldHeader, 'order' => false];
-                $backendHeaders[] = $rules[$fieldHeader];
-            }
-            if ($this->fieldHelper->isMultipleRelation($field)) {
-                $localeCodes = $this->getLocaleCodes();
+        if (is_a($targetClass, $this->localizedFallbackValueClassName, true)
+            && $this->fieldHelper->isMultipleRelation($field)
+        ) {
+            $localeCodes = $this->getLocaleCodes();
 
-                foreach ($localeCodes as $localeCode) {
-                    foreach ([self::FIELD_VALUE, self::FIELD_FALLBACK] as $exportField) {
-                        $title = implode('.', [$field['name'], LocaleCodeFormatter::format($localeCode), $exportField]);
-                        $rules[$title] = ['value' => $title, 'order' => false];
-                        $backendHeaders[] = $rules[$title];
-                    }
+            foreach ($localeCodes as $localeCode) {
+                foreach ([self::FIELD_VALUE, self::FIELD_FALLBACK] as $exportField) {
+                    $frontendHeader = $field['name']
+                        . $this->delimiter . LocaleCodeFormatter::format($localeCode)
+                        . $this->delimiter . $exportField;
+                    $backendHeaders = $field['name'] . ':'
+                        . LocaleCodeFormatter::format($localeCode)
+                        . ':' . $exportField;
+                    $conversionRules[$frontendHeader] = $backendHeaders;
                 }
             }
 
             return;
         }
 
-        parent::processRelation($rules, $backendHeaders, $fieldHeader, $field);
+        parent::processRelation($conversionRules, $fieldHeader, $field, $entityName);
     }
 }

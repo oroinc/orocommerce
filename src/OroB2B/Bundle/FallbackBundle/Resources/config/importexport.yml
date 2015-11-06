@@ -11,6 +11,7 @@ services:
         arguments:
             - @doctrine
             - @oro_importexport.field.field_helper
+            - @oro_importexport.data_converter.relation_calculator
 
     orob2b_fallback.importexport.data_converter.abstact_localized_fallback_value_aware:
         class: %orob2b_fallback.importexport.data_converter.abstact_localized_fallback_value_aware.class%
