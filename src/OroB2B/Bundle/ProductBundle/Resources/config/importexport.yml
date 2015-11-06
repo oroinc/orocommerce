@@ -1,6 +1,9 @@
 parameters:
      orob2b_product.importexport.strategy.product.class: OroB2B\Bundle\ProductBundle\ImportExport\Strategy\ProductStrategy
 
+     # Template Fixture
+     orob2b_product.importexport.template_fixture.product.class: OroB2B\Bundle\ProductBundle\ImportExport\TemplateFixture\ProductFixture
+
 services:
     orob2b_product.importexport.data_converter.product:
         parent: orob2b_fallback.importexport.data_converter.localized_fallback_value_aware
@@ -12,6 +15,12 @@ services:
         parent: orob2b_fallback.importexport.strategy.localized_fallback_value_aware
         calls:
             - [setSecurityFacade, [@oro_security.security_facade]]
+
+    # Template Fixture
+    orob2b_product.importexport.template_fixture.product:
+        class: %orob2b_product.importexport.template_fixture.product.class%
+        tags:
+            - { name: oro_importexport.template_fixture }
 
     # Import processor
     orob2b_product.importexport.processor.import.product:
@@ -30,3 +39,11 @@ services:
             - [setDataConverter, [@orob2b_product.importexport.data_converter.product]]
         tags:
             - { name: oro_importexport.processor, type: export, entity: %orob2b_product.product.class%, alias: orob2b_product_product }
+
+    # Export template
+    orob2b_product.importexport.processor.export_template.product:
+        parent: oro_importexport.processor.export_abstract
+        calls:
+            - [setDataConverter, [@orob2b_product.importexport.data_converter.product]]
+        tags:
+            - { name: oro_importexport.processor, type: export_template, entity: %orob2b_product.product.class%, alias: orob2b_product_product }
