@@ -52,11 +52,16 @@ class LocalizedFallbackValueCollectionNormalizer extends CollectionNormalizer
             return new ArrayCollection($data);
         }
         $result = new ArrayCollection();
-        foreach ($data as $item) {
+        foreach ($data as $localeCode => $item) {
+            // pass Locale::code to make LocalizedFallbackValue denormalized
+            if ($localeCode !== LocaleCodeFormatter::DEFAULT_LOCALE) {
+                $item['locale']['code'] = $localeCode;
+            }
+
             /** @var LocalizedFallbackValue $object */
             $object = $this->serializer->denormalize($item, $itemType, $format, $context);
 
-            $result->set(LocaleCodeFormatter::format($object->getLocale()), $object);
+            $result->set($localeCode, $object);
         }
 
         return $result;

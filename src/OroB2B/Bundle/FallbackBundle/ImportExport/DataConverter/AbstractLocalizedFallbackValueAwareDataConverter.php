@@ -42,7 +42,8 @@ abstract class AbstractLocalizedFallbackValueAwareDataConverter extends Abstract
         if (null === $this->localeCodes) {
             /** @var LocaleRepository $localeRepository */
             $localeRepository = $this->registry->getRepository($this->localeClassName);
-            $this->localeCodes = ArrayUtils::arrayColumn($localeRepository->getLocaleCodes(), 'code');
+            $this->localeCodes = [LocaleCodeFormatter::DEFAULT_LOCALE] +
+                ArrayUtils::arrayColumn($localeRepository->getLocaleCodes(), 'code');
         }
 
         return $this->localeCodes;

@@ -1,5 +1,6 @@
 parameters:
      orob2b_product.importexport.data_converter.product.class: OroB2B\Bundle\ProductBundle\ImportExport\DataConverter\ProductDataConverter
+     orob2b_product.importexport.strategy.product.class: OroB2B\Bundle\ProductBundle\ImportExport\Strategy\ProductStrategy
 
 services:
     orob2b_product.importexport.data_converter.product:
@@ -8,12 +9,19 @@ services:
         calls:
             - [setProductClass, [%orob2b_product.product.class%]]
 
+    orob2b_product.importexport.strategy.product:
+        class: %orob2b_product.importexport.strategy.product.class%
+        parent: orob2b_fallback.importexport.strategy.localized_fallback_value_aware
+        calls:
+            - [setOwnershipMetadataProvider, [@oro_security.owner.ownership_metadata_provider]]
+            - [setSecurityFacade, [@oro_security.security_facade]]
+
     # Import processor
     orob2b_product.importexport.processor.import.product:
         parent: oro_importexport.processor.import_abstract
         calls:
             - [setDataConverter, [@orob2b_product.importexport.data_converter.product]]
-            - [setStrategy, [@orob2b_fallback.importexport.strategy.localized_fallback_value_aware]]
+            - [setStrategy, [@orob2b_product.importexport.strategy.product]]
         tags:
             - { name: oro_importexport.processor, type: import, entity: %orob2b_product.product.class%, alias: orob2b_product_product.add_or_replace }
             - { name: oro_importexport.processor, type: import_validation, entity: %orob2b_product.product.class%, alias: orob2b_product_product.add_or_replace }

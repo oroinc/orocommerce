@@ -88,8 +88,7 @@ class LocalizedFallbackValue
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "full"=false,
-     *              "identity"=true
+     *              "excluded"=true
      *          }
      *      }
      * )

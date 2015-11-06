@@ -75,4 +75,18 @@ class LocalizedFallbackValueAwareStrategy extends ConfigurableAddOrReplaceStrate
                 }
             );
     }
+
+    /**
+     * {@inheritdoc}
+     *
+     * No need to search LocalizedFallbackValue by identity fields, consider entities without ids as new
+     */
+    protected function findEntityByIdentityValues($entityName, array $identityValues)
+    {
+        if (is_a($entityName, $this->localizedFallbackValueClass, true)) {
+            return null;
+        }
+
+        return parent::findEntityByIdentityValues($entityName, $identityValues);
+    }
 }
