@@ -4,12 +4,15 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Model;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorDataStorage;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter;
 
 class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,6 +36,21 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
      */
     private $securityFacade;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|ComponentProcessorFilter
+     */
+    protected $componentProcessorFilter;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|Session
+     */
+    protected $session;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     */
+    protected $translator;
+
     protected function setUp()
     {
         $this->router = $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
@@ -44,7 +62,25 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->processor = new ComponentProcessorDataStorage($this->router, $this->storage, $this->securityFacade);
+        $this->componentProcessorFilter = $this
+            ->getMockBuilder('OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+
+        $this->processor = new ComponentProcessorDataStorage(
+            $this->router,
+            $this->storage,
+            $this->securityFacade,
+            $this->componentProcessorFilter,
+            $this->session,
+            $this->translator
+        );
     }
 
     protected function tearDown()
@@ -147,5 +183,84 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
         $this->processor->setValidationRequired(false);
 
         $this->assertFalse($this->processor->isValidationRequired());
+    }
+
+    /**
+     * @dataProvider processorWithScopeDataProvider
+     * @param string $scope
+     * @param array $data
+     * @param array $restrictedData
+     */
+    public function testProcessorWithScope($scope, array $data, array $restrictedData)
+    {
+        $this->componentProcessorFilter->expects($this->once())
+            ->method('filterData')
+            ->with($data, ['scope' => $scope])
+            ->willReturn($restrictedData);
+
+        $this->storage->expects($this->once())
+            ->method('set')
+            ->with($restrictedData);
+
+        $this->processor->setScope($scope);
+
+        if ($data !== $restrictedData) {
+            $this->translator->expects($this->any())
+                ->method('trans')
+                ->with('orob2b.product.frontend.quick_add.messages.not_added_products');
+
+            $flashBag = $this->getMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface');
+            $flashBag->expects($this->once())
+                ->method('add')
+                ->with('warning');
+
+            $this->session->expects($this->once())
+                ->method('getFlashBag')
+                ->willReturn($flashBag);
+        }
+
+        $this->assertNull($this->processor->process($data, new Request()));
+    }
+
+    /**
+     * @return array
+     */
+    public function processorWithScopeDataProvider()
+    {
+        return [
+            'restricted' => [
+                'scope' => 'test',
+                'data' => [
+                    'entity_items_data' => [
+                        ['productSku' => 'sku01'],
+                        ['productSku' => 'sku02'],
+                        ['productSku' => 'sku03'],
+                    ],
+                ],
+                'restrictedData' => [
+                    'entity_items_data' => [
+                        ['productSku' => 'sku01'],
+                        ['productSku' => 'sku02'],
+                    ],
+                ],
+            ],
+            'not restricted' => [
+                'scope' => 'test',
+                'data' => [
+                    'entity_items_data' => [
+                        ['productSku' => 'sku01'],
+                        ['productSku' => 'sku02'],
+                        ['productSku' => 'sku03'],
+                    ],
+                ],
+                'restrictedData' => [
+                    'entity_items_data' => [
+                        ['productSku' => 'sku01'],
+                        ['productSku' => 'sku02'],
+                        ['productSku' => 'sku03'],
+                    ],
+                ],
+            ],
+        ];
     }
 }
