@@ -83,6 +83,7 @@ class FrontendOrderLineItemType extends AbstractOrderLineItemType
                     'label' => 'orob2b.product.entity_label',
                     'create_enabled' => false,
                     'data_parameters' => [
+                        'scope' => 'order',
                         'price_list' => 'default_account_user'
                     ]
                 ]

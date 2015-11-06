@@ -8,6 +8,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter;
 use OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class ComponentProcessorFilterTest extends \PHPUnit_Framework_TestCase
 {
@@ -110,7 +111,7 @@ class ComponentProcessorFilterTest extends \PHPUnit_Framework_TestCase
     {
         $skus = ['visibleSku1', 'invisibleSku1', 'visibleSku2'];
         $data = [
-            'entity_items_data' => [
+            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                 ['productSku' => $skus[0]],
                 ['productSku' => $skus[1]],
                 ['productSku' => $skus[2]],
@@ -154,8 +155,14 @@ class ComponentProcessorFilterTest extends \PHPUnit_Framework_TestCase
         $filteredData = $this->filter->filterData($data, $dataParameters);
 
         $this->assertInternalType('array', $filteredData);
-        $this->assertCount(2, $filteredData['entity_items_data']);
-        $this->assertEquals($data['entity_items_data'][0], $filteredData['entity_items_data'][0]);
-        $this->assertEquals($data['entity_items_data'][2], $filteredData['entity_items_data'][1]);
+        $this->assertCount(2, $filteredData[ProductDataStorage::ENTITY_ITEMS_DATA_KEY]);
+        $this->assertEquals(
+            $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][0],
+            $filteredData[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][0]
+        );
+        $this->assertEquals(
+            $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][2],
+            $filteredData[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][1]
+        );
     }
 }

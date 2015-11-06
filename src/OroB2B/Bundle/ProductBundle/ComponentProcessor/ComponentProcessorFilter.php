@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class ComponentProcessorFilter
 {
@@ -44,10 +45,10 @@ class ComponentProcessorFilter
     public function filterData(array $data, array $dataParameters)
     {
         $products = [];
-        foreach ($data['entity_items_data'] as $product) {
+        foreach ($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] as $product) {
             $products[strtoupper($product['productSku'])] = $product;
         }
-        $data['entity_items_data'] = [];
+        $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] = [];
 
         if (empty($products)) {
             return $data;
@@ -58,7 +59,7 @@ class ComponentProcessorFilter
 
         $filteredProducts = $queryBuilder->getQuery()->getResult();
         foreach ($filteredProducts as $product) {
-            $data['entity_items_data'][] = $products[strtoupper($product['sku'])];
+            $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = $products[strtoupper($product['sku'])];
         }
 
         return $data;
