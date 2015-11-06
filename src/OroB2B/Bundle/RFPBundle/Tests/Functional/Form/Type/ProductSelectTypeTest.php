@@ -11,11 +11,7 @@ class ProductSelectTypeTest extends ScopedProductSelectTypeTest
 {
     public function setUp()
     {
-        $this->setDatagridIndexPath('oro_datagrid_index');
-        $this->setSearchAutocompletePath('oro_form_autocomplete_search');
-
         $this->setDataParameters(['scope' => 'rfp']);
-
         $this->setConfigPath('oro_b2b_rfp.backend_product_visibility');
 
         parent::setUp();

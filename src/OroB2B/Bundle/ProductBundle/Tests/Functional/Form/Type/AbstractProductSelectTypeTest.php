@@ -17,13 +17,13 @@ use OroB2B\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandl
 abstract class AbstractProductSelectTypeTest extends WebTestCase
 {
     /** @var string */
-    protected $searchAutocompletePath;
+    protected $searchAutocompletePath = 'oro_form_autocomplete_search';
 
     /** @var string */
-    protected $datagridIndexPath;
+    protected $datagridIndexPath = 'oro_datagrid_index';
 
     /** @var array */
-    protected $dataParameters;
+    protected $dataParameters = [];
 
     public function setUp()
     {
