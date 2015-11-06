@@ -207,4 +207,53 @@ class ProductRowTypeTest extends FormIntegrationTestCase
 
         $this->assertEquals($product, $view->vars['product']);
     }
+
+    public function testGetProductFromParent()
+    {
+        $product = new Product();
+        $product->setSku('sku1');
+
+        $view = new FormView();
+
+        /** @var FormConfigInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $config = $this->getMock('Symfony\Component\Form\FormConfigInterface');
+        $config->expects($this->any())
+            ->method('getOptions')
+            ->willReturn(
+                [
+                    'product' => null,
+                    'product_field' => 'product',
+                    'product_holder' => null,
+                ]
+            );
+        $config->expects($this->once())
+            ->method('getOption')
+            ->with('products')
+            ->willReturn(
+                [
+                    'SKU1' => $product,
+                ]
+            );
+
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $parentForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $parentForm->expects($this->any())->method('getConfig')->willReturn($config);
+
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $skuField = $this->getMock('Symfony\Component\Form\FormInterface');
+        $skuField->expects($this->once())->method('getData')->willReturn('sku1');
+
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form->expects($this->any())->method('getConfig')->willReturn($config);
+        $form->expects($this->any())->method('getParent')->willReturn($parentForm);
+        $form->expects($this->once())
+            ->method('get')
+            ->with(ProductDataStorage::PRODUCT_SKU_KEY)
+            ->willReturn($skuField);
+
+        $this->formType->buildView($view, $form, []);
+
+        $this->assertEquals($product, $view->vars['product']);
+    }
 }
