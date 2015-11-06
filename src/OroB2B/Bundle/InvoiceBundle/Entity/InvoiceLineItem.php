@@ -10,6 +10,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use OroB2B\Bundle\InvoiceBundle\Model\ExtendInvoiceLineItem;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
+use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
 /**
  * @ORM\Table(
@@ -30,8 +32,11 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
  * )
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class InvoiceLineItem extends ExtendInvoiceLineItem
+class InvoiceLineItem extends ExtendInvoiceLineItem implements ProductUnitHolderInterface, ProductHolderInterface
 {
+    const PRICE_TYPE_UNIT = 10;
+    const PRICE_TYPE_BUNDLED = 20;
+
     /**
      * @var integer
      *
@@ -103,6 +108,13 @@ class InvoiceLineItem extends ExtendInvoiceLineItem
      * @var Price|null
      */
     protected $price = null;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="price_type", type="integer")
+     */
+    protected $priceType = self::PRICE_TYPE_UNIT;
 
     /**
      * @var Invoice
@@ -204,9 +216,10 @@ class InvoiceLineItem extends ExtendInvoiceLineItem
      * @param ProductUnit $productUnit
      * @return $this
      */
-    public function setProductUnit($productUnit)
+    public function setProductUnit(ProductUnit $productUnit = null)
     {
         $this->productUnit = $productUnit;
+
         return $this;
     }
 
@@ -264,9 +277,68 @@ class InvoiceLineItem extends ExtendInvoiceLineItem
     public function setPrice(Price $price = null)
     {
         $this->price = $price;
-        $this->value = is_null($price) ? null : $price->getValue();
-        $this->currency = is_null($price) ? null : $price->getCurrency();
+        $this->updateItemPrice();
 
         return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPriceType()
+    {
+        return $this->priceType;
+    }
+
+    /**
+     * @param int $priceType
+     * @return $this
+     */
+    public function setPriceType($priceType)
+    {
+        $this->priceType = $priceType;
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityIdentifier()
+    {
+        return $this->id;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductHolder()
+    {
+        return $this;
+    }
+
+    /**
+     * @ORM\PrePersist()
+     * @ORM\PreUpdate()
+     */
+    public function updateItemInformation()
+    {
+        if ($this->getProduct()) {
+            $this->productSku = $this->getProduct()->getSku();
+        }
+
+        if ($this->getProductUnit()) {
+            $this->productUnitCode = $this->getProductUnit()->getCode();
+        }
+
+        $this->updateItemPrice();
+    }
+
+    /**
+     * Splits price object into value and currency fields
+     */
+    private function updateItemPrice()
+    {
+        $this->value = is_null($this->price) ? null : $this->price->getValue();
+        $this->currency = is_null($this->price) ? null : $this->price->getCurrency();
     }
 }

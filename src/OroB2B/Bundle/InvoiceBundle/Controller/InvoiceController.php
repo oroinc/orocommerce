@@ -2,14 +2,22 @@
 
 namespace OroB2B\Bundle\InvoiceBundle\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+
+use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
+use OroB2B\Bundle\InvoiceBundle\Form\Type\InvoiceType;
+use OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
+use OroB2B\Bundle\PricingBundle\Model\ProductPriceCriteria;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-
-use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
+use Oro\Bundle\CurrencyBundle\Model\Price;
 
 class InvoiceController extends Controller
 {
@@ -62,5 +70,154 @@ class InvoiceController extends Controller
         return [
             'entity' => $invoice,
         ];
+    }
+
+    /**
+     * Create invoice form
+     *
+     * @Route("/create", name="orob2b_invoice_create")
+     * @Template("OroB2BInvoiceBundle:Invoice:update.html.twig")
+     * @Acl(
+     *      id="orob2b_invoice_create",
+     *      type="entity",
+     *      class="OroB2BInvoiceBundle:Invoice",
+     *      permission="CREATE"
+     * )
+     *
+     * @return array|RedirectResponse
+     */
+    public function createAction()
+    {
+        $invoice = new Invoice();
+        $invoice->setCurrency($this->get('oro_locale.settings')->getCurrency());
+        return $this->update($invoice);
+    }
+
+    /**
+     * Update invoice form
+     *
+     * @Route("/update/{id}", name="orob2b_invoice_update")
+     * @Template("OroB2BInvoiceBundle:Invoice:update.html.twig")
+     * @Acl(
+     *      id="orob2b_invoice_update",
+     *      type="entity",
+     *      class="OroB2BInvoiceBundle:Invoice",
+     *      permission="EDIT"
+     * )
+     * @param Invoice $invoice
+     *
+     * @return array|RedirectResponse
+     */
+    public function updateAction(Invoice $invoice)
+    {
+        return $this->update($invoice);
+    }
+
+    /**
+     * @param Invoice $invoice
+     * @return array|RedirectResponse
+     */
+    protected function update(Invoice $invoice)
+    {
+        $form = $this->createForm(InvoiceType::NAME, $invoice);
+
+        return $this->get('oro_form.model.update_handler')->handleUpdate(
+            $invoice,
+            $form,
+            function (Invoice $invoice) {
+                return [
+                    'route' => 'orob2b_invoice_update',
+                    'parameters' => ['id' => $invoice->getId()],
+                ];
+            },
+            function (Invoice $invoice) {
+                return [
+                    'route' => 'orob2b_invoice_view',
+                    'parameters' => ['id' => $invoice->getId()],
+                ];
+            },
+            $this->get('translator')->trans('orob2b.invoice.controller.invoice.saved.message'),
+            null,
+            function (Invoice $invoice, FormInterface $form, Request $request) {
+                return [
+                    'form' => $form->createView(),
+                    'entity' => $invoice,
+                    'isWidgetContext' => (bool)$request->get('_wid', false),
+                    'tierPrices' => $this->getTierPrices($invoice),
+                    'matchedPrices' => $this->getMatchedPrices($invoice),
+                ];
+            }
+        );
+    }
+
+    /**
+     * @param Invoice $invoice
+     * @return array
+     */
+    protected function getTierPrices(Invoice $invoice)
+    {
+        $tierPrices = [];
+
+        $productIds = $invoice->getLineItems()->filter(
+            function (InvoiceLineItem $lineItem) {
+                return $lineItem->getProduct() !== null;
+            }
+        )->map(
+            function (InvoiceLineItem $lineItem) {
+                return $lineItem->getProduct()->getId();
+            }
+        );
+
+        if ($productIds) {
+            $tierPrices = $this->get('orob2b_pricing.provider.product_price')->getPriceByPriceListIdAndProductIds(
+                $this->get('orob2b_pricing.model.frontend.price_list_request_handler')->getPriceList()->getId(),
+                $productIds->toArray(),
+                $invoice->getCurrency()
+            );
+        }
+
+        return $tierPrices;
+    }
+
+    /**
+     * @param Invoice $invoice
+     * @return array|\Oro\Bundle\CurrencyBundle\Model\Price[]
+     */
+    protected function getMatchedPrices(Invoice $invoice)
+    {
+        $matchedPrices = [];
+
+        $productsPriceCriteria = $invoice->getLineItems()->filter(
+            function (InvoiceLineItem $lineItem) {
+                return $lineItem->getProduct() && $lineItem->getProductUnit() && $lineItem->getQuantity();
+            }
+        )->map(
+            function (InvoiceLineItem $lineItem) use ($invoice) {
+                return new ProductPriceCriteria(
+                    $lineItem->getProduct(),
+                    $lineItem->getProductUnit(),
+                    $lineItem->getQuantity(),
+                    $invoice->getCurrency()
+                );
+            }
+        );
+
+        if ($productsPriceCriteria) {
+            $matchedPrices = $this->get('orob2b_pricing.provider.product_price')->getMatchedPrices(
+                $productsPriceCriteria->toArray()
+            );
+        }
+
+        /** @var Price $price */
+        foreach ($matchedPrices as &$price) {
+            if ($price) {
+                $price = [
+                    'value' => $price->getValue(),
+                    'currency' => $price->getCurrency()
+                ];
+            }
+        }
+
+        return $matchedPrices;
     }
 }
