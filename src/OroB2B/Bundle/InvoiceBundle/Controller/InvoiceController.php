@@ -98,8 +98,12 @@ class InvoiceController extends Controller
      *
      * @Route("/update/{id}", name="orob2b_invoice_update")
      * @Template("OroB2BInvoiceBundle:Invoice:update.html.twig")
-     * @AclAncestor("orob2b_invoice_create")
-     *
+     * @Acl(
+     *      id="orob2b_invoice_update",
+     *      type="entity",
+     *      class="OroB2BInvoiceBundle:Invoice",
+     *      permission="EDIT"
+     * )
      * @param Invoice $invoice
      *
      * @return array|RedirectResponse
