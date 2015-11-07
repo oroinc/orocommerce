@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\ProductBundle\Migrations\Schema\v1_1;
 use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveEnumFieldQuery;
-use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigEntityValueQuery;
+use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
@@ -94,13 +94,23 @@ class OroB2BProductBundle implements Migration, ExtendExtensionAwareInterface, O
         $table->addColumn('variant_fields', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->addIndex(['sku'], 'idx_orob2b_product_sku', []);
 
-
         $queries->addQuery(
-            new UpdateEntityConfigEntityValueQuery(
+            new UpdateEntityConfigFieldValueQuery(
                 'OroB2B\Bundle\ProductBundle\Entity\Product',
+                'inventory_status',
                 'importexport',
                 'order',
                 '25'
+            )
+        );
+
+        $queries->addQuery(
+            new UpdateEntityConfigFieldValueQuery(
+                'OroB2B\Bundle\ProductBundle\Entity\Product',
+                'image',
+                'importexport',
+                'excluded',
+                true
             )
         );
     }

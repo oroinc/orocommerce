@@ -21,8 +21,6 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
             - Valid: ~
         descriptions:
             - Valid: ~
-        owner:
-            - NotBlank: ~
         organization:
             - NotBlank: ~
         inventory_status:
@@ -31,6 +29,7 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
 OroB2B\Bundle\ProductBundle\Entity\ProductUnit:
     properties:
         code:
+            - NotBlank: ~
             - Length:
                 max: 255
         defaultPrecision:
@@ -51,6 +50,8 @@ OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
             fields: [ product, unit ]
     properties:
+        unit:
+            - NotBlank: ~
         precision:
             - NotBlank: ~
             - Range:

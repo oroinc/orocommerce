@@ -290,7 +290,9 @@ class OroB2BProductBundleInstaller implements
             $schema,
             self::PRODUCT_TABLE_NAME,
             'image',
-            [],
+            [
+                'importexport' => ['excluded' => true]
+            ],
             self::MAX_PRODUCT_IMAGE_SIZE_IN_MB
         );
 
