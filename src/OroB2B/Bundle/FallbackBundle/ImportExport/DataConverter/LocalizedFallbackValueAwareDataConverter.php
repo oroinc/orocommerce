@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\FallbackBundle\ImportExport\DataConverter;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\UIBundle\Tools\ArrayUtils;
+
 use OroB2B\Bundle\FallbackBundle\ImportExport\Normalizer\LocaleCodeFormatter;
 use OroB2B\Bundle\WebsiteBundle\Entity\Repository\LocaleRepository;
 

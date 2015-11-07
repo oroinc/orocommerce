@@ -25,3 +25,8 @@ OroB2B\Bundle\WebsiteBundle\Entity\Locale:
             - Length:
                 min: 2
                 max: 64
+        title:
+            - NotBlank: ~
+            - Length:
+                min: 2
+                max: 255
