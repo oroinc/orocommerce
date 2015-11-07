@@ -313,8 +313,15 @@ class ImportExportTest extends WebTestCase
 
         $exceptions = $jobResult->getFailureExceptions();
         $this->assertEmpty($exceptions, implode(PHP_EOL, $exceptions));
-        $errors = $jobResult->getContext()->getErrors();
-        $this->assertEquals($contextErrors, $jobResult->getContext()->getErrors(), implode(PHP_EOL, $errors));
+
+        // owner is not available in cli context, managed using ConsoleContextListener
+        $errors = array_filter(
+            $jobResult->getContext()->getErrors(),
+            function ($error) {
+                return strpos($error, 'owner: This value should not be blank.') === false;
+            }
+        );
+        $this->assertEquals($contextErrors, array_values($errors), implode(PHP_EOL, $errors));
     }
 
     /**
