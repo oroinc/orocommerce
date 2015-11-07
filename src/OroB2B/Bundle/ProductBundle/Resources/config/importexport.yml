@@ -39,11 +39,4 @@ services:
             - [setDataConverter, [@orob2b_product.importexport.data_converter.product]]
         tags:
             - { name: oro_importexport.processor, type: export, entity: %orob2b_product.product.class%, alias: orob2b_product_product }
-
-    # Export template
-    orob2b_product.importexport.processor.export_template.product:
-        parent: oro_importexport.processor.export_abstract
-        calls:
-            - [setDataConverter, [@orob2b_product.importexport.data_converter.product]]
-        tags:
-            - { name: oro_importexport.processor, type: export_template, entity: %orob2b_product.product.class%, alias: orob2b_product_product }
+            - { name: oro_importexport.processor, type: export_template, entity: %orob2b_product.product.class%, alias: orob2b_product_product_export_template }
