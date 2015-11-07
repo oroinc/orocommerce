@@ -21,8 +21,6 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
             - Valid: ~
         descriptions:
             - Valid: ~
-        owner:
-            - NotBlank: ~
         organization:
             - NotBlank: ~
         inventory_status:

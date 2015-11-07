@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Functional\ImportExport;
 use Akeneo\Bundle\BatchBundle\Job\DoctrineJobRepository as BatchJobRepository;
 
 use Symfony\Component\DomCrawler\Form;
+use Symfony\Component\Yaml\Yaml;
 
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
@@ -51,6 +52,7 @@ class ImportExportTest extends WebTestCase
     {
         /** @var BatchJobRepository $batchJobRepository */
         $batchJobRepository = $this->getContainer()->get('akeneo_batch.job_repository');
+
         return $batchJobRepository->getJobManager();
     }
 
@@ -73,7 +75,8 @@ class ImportExportTest extends WebTestCase
     public function strategyDataProvider()
     {
         return [
-            'add or replace' => ['orob2b_product_product.add_or_replace']];
+            'add or replace' => ['orob2b_product_product.add_or_replace'],
+        ];
     }
 
     /**
@@ -86,8 +89,8 @@ class ImportExportTest extends WebTestCase
             $this->getUrl(
                 'oro_importexport_import_form',
                 [
-                    'entity'           => 'OroB2B\Bundle\ProductBundle\Entity\Product',
-                    '_widgetContainer' => 'dialog'
+                    'entity' => 'OroB2B\Bundle\ProductBundle\Entity\Product',
+                    '_widgetContainer' => 'dialog',
                 ]
             )
         );
@@ -129,7 +132,7 @@ class ImportExportTest extends WebTestCase
                 'oro_importexport_export_instant',
                 [
                     'processorAlias' => 'orob2b_product_product',
-                    '_format' => 'json'
+                    '_format' => 'json',
                 ]
             )
         );
@@ -162,7 +165,7 @@ class ImportExportTest extends WebTestCase
                 'oro_importexport_import_process',
                 [
                     'processorAlias' => $strategy,
-                    '_format'        => 'json'
+                    '_format' => 'json',
                 ]
             )
         );
@@ -173,7 +176,7 @@ class ImportExportTest extends WebTestCase
             [
                 'success' => true,
                 'message' => 'File was successfully imported.',
-                'errorsUrl' => null
+                'errorsUrl' => null,
             ],
             $data
         );
@@ -194,6 +197,7 @@ class ImportExportTest extends WebTestCase
             );
 
         $chains = explode('/', $result['url']);
+
         return $this
             ->getContainer()
             ->get('oro_importexport.file.file_system_operator')
@@ -217,6 +221,7 @@ class ImportExportTest extends WebTestCase
 
         $result = json_decode($result->getContent(), true);
         $chains = explode('/', $result['url']);
+
         return $this
             ->getContainer()
             ->get('oro_importexport.file.file_system_operator')
@@ -233,6 +238,7 @@ class ImportExportTest extends WebTestCase
         $content = file_get_contents($fileName);
         $content = explode("\n", $content);
         $content = array_filter($content, 'strlen');
+
         return array_map('str_getcsv', $content);
     }
 
@@ -271,5 +277,53 @@ class ImportExportTest extends WebTestCase
         }
 
         return $values;
+    }
+
+    /**
+     * @param string $fileName
+     * @param array $contextErrors
+     *
+     * @dataProvider validationDataProvider
+     */
+    public function testValidation($fileName, array $contextErrors = [])
+    {
+        $reader = $this->getContainer()->get('oro_importexport.reader.csv');
+        $reflection = new \ReflectionProperty(get_class($reader), 'file');
+        $reflection->setAccessible(true);
+        $reflection->setValue($reader, null);
+        $reflection = new \ReflectionProperty(get_class($reader), 'header');
+        $reflection->setAccessible(true);
+        $reflection->setValue($reader, null);
+
+        $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . $fileName;
+
+        $configuration = [
+            'import_validation' => [
+                'processorAlias' => 'orob2b_product_product.add_or_replace',
+                'entityName' => $this->getContainer()->getParameter('orob2b_product.product.class'),
+                'filePath' => $filePath,
+            ],
+        ];
+
+        $jobResult = $this->getContainer()->get('oro_importexport.job_executor')->executeJob(
+            ProcessorRegistry::TYPE_IMPORT_VALIDATION,
+            JobExecutor::JOB_VALIDATE_IMPORT_FROM_CSV,
+            $configuration
+        );
+
+        $exceptions = $jobResult->getFailureExceptions();
+        $this->assertEmpty($exceptions, implode(PHP_EOL, $exceptions));
+        $errors = $jobResult->getContext()->getErrors();
+        $this->assertEquals($contextErrors, $jobResult->getContext()->getErrors(), implode(PHP_EOL, $errors));
+    }
+
+    /**
+     * @return array
+     */
+    public function validationDataProvider()
+    {
+        $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'import_validation.yml';
+
+        return Yaml::parse($filePath);
     }
 }

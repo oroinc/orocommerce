@@ -1,0 +1,2 @@
+sku,status,inventory_status.id,unitPrecisions.1.unit.code,unitPrecisions.1.precision
+SKU001,enabled,in_stock,not_existing_unit_code,1

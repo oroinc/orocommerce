@@ -504,9 +504,8 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      */
     public function addUnitPrecision(ProductUnitPrecision $unitPrecision)
     {
-        $existingUnitPrecision = $this->getUnitPrecision($unitPrecision->getUnit()->getCode());
-
-        if ($existingUnitPrecision) {
+        $productUnit = $unitPrecision->getUnit();
+        if ($productUnit && $existingUnitPrecision = $this->getUnitPrecision($productUnit->getCode())) {
             $existingUnitPrecision->setPrecision($unitPrecision->getPrecision());
         } else {
             $unitPrecision->setProduct($this);
