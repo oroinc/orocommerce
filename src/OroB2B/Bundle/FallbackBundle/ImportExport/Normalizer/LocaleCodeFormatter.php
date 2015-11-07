@@ -2,20 +2,26 @@
 
 namespace OroB2B\Bundle\FallbackBundle\ImportExport\Normalizer;
 
+use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
+
 class LocaleCodeFormatter
 {
     const DEFAULT_LOCALE = 'default';
 
     /**
-     * @param mixed $code
+     * @param Locale|string $locale
      * @return string
      */
-    public static function format($code)
+    public static function format($locale = null)
     {
-        if (!$code) {
+        if (!$locale) {
             return self::DEFAULT_LOCALE;
         }
 
-        return (string)$code;
+        if ($locale instanceof Locale) {
+            return (string)$locale->getCode();
+        }
+
+        return (string)$locale;
     }
 }
