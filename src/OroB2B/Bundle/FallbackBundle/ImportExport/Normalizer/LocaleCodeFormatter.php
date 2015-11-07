@@ -19,7 +19,12 @@ class LocaleCodeFormatter
         }
 
         if ($locale instanceof Locale) {
-            return (string)$locale->getCode();
+            $code = $locale->getCode();
+            if (!$code) {
+                return self::DEFAULT_LOCALE;
+            }
+
+            return (string)$code;
         }
 
         return (string)$locale;
