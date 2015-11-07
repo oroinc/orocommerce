@@ -85,10 +85,10 @@ class ImportExportTest extends WebTestCase
             'GET',
             $this->getUrl(
                 'oro_importexport_import_form',
-                array(
+                [
                     'entity'           => 'OroB2B\Bundle\ProductBundle\Entity\Product',
                     '_widgetContainer' => 'dialog'
-                )
+                ]
             )
         );
         $result = $this->client->getResponse();
@@ -127,10 +127,10 @@ class ImportExportTest extends WebTestCase
             'GET',
             $this->getUrl(
                 'oro_importexport_export_instant',
-                array(
+                [
                     'processorAlias' => 'orob2b_product_product',
                     '_format' => 'json'
-                )
+                ]
             )
         );
 
@@ -160,21 +160,21 @@ class ImportExportTest extends WebTestCase
             'GET',
             $this->getUrl(
                 'oro_importexport_import_process',
-                array(
+                [
                     'processorAlias' => $strategy,
                     '_format'        => 'json'
-                )
+                ]
             )
         );
 
         $data = $this->getJsonResponseContent($this->client->getResponse(), 200);
 
         $this->assertEquals(
-            array(
+            [
                 'success' => true,
                 'message' => 'File was successfully imported.',
                 'errorsUrl' => null
-            ),
+            ],
             $data
         );
     }
@@ -189,7 +189,7 @@ class ImportExportTest extends WebTestCase
             ->get('oro_importexport.handler.export')
             ->getExportResult(
                 JobExecutor::JOB_EXPORT_TEMPLATE_TO_CSV,
-                'orob2b_product_product',
+                'orob2b_product_product_export_template',
                 ProcessorRegistry::TYPE_EXPORT_TEMPLATE
             );
 
@@ -262,8 +262,8 @@ class ImportExportTest extends WebTestCase
 
         $values = [];
         foreach ($fields as $field) {
-            if (!in_array($field, $skippedFields)) {
-                $key = array_search($field, $data[0]);
+            if (!in_array($field, $skippedFields, true)) {
+                $key = array_search($field, $data[0], true);
                 if (false !== $key) {
                     $values[$field] = $data[1][$key];
                 }
