@@ -26,6 +26,9 @@ class LocalizedFallbackValueAwareStrategy extends ConfigurableAddOrReplaceStrate
     protected function beforeProcessEntity($entity)
     {
         $existingEntity = $this->findExistingEntity($entity);
+        if (!$existingEntity) {
+            return parent::beforeProcessEntity($entity);
+        }
 
         $fields = $this->fieldHelper->getFields(ClassUtils::getClass($existingEntity), true);
         foreach ($fields as $field) {
@@ -50,6 +53,14 @@ class LocalizedFallbackValueAwareStrategy extends ConfigurableAddOrReplaceStrate
      */
     protected function mapCollections(Collection $importedCollection, Collection $sourceCollection)
     {
+        if ($importedCollection->isEmpty()) {
+            return;
+        }
+
+        if ($sourceCollection->isEmpty()) {
+            return;
+        }
+
         $importedCollection
             ->map(
                 function (LocalizedFallbackValue $importedValue) use ($sourceCollection) {

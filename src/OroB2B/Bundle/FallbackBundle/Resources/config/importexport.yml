@@ -29,5 +29,6 @@ services:
         arguments:
             - @doctrine
             - %orob2b_fallback.entity.localized_fallback_value.class%
+            - %orob2b_website.locale.class%
         tags:
             - { name: oro_importexport.normalizer, priority: -5 }
