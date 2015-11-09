@@ -22,7 +22,7 @@ class ProductStrategyEvent extends Event
     protected $rawData = [];
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function __construct(Product $product, array $rawData)
     {
