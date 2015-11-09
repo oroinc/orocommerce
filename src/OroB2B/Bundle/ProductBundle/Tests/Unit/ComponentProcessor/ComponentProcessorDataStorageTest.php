@@ -14,6 +14,9 @@ use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorDataStorage
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -191,42 +194,26 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
      * @param array $data
      * @param array $allowedData
      * @param string $errorMessage
-     * @param string|null $errorMessageSkus
+     * @param string $errorMessageSkus
+     * @param bool|true $isRedirectRoute
      */
     public function testProcessorWithScope(
         $scope,
         array $data,
         array $allowedData,
         $errorMessage,
-        $errorMessageSkus = null
+        $errorMessageSkus,
+        $isRedirectRoute = false
     ) {
-        $this->componentProcessorFilter->expects($this->once())
-            ->method('filterData')
-            ->with($data, ['scope' => $scope])
-            ->willReturn($allowedData);
+        $this->setupProcessorScope($scope, $data, $allowedData);
 
-        $this->storage->expects($this->once())
-            ->method('set')
-            ->with($allowedData);
+        $this->setupErrorMessages($errorMessage, $errorMessageSkus);
 
-        $this->processor->setScope($scope);
-
-        if ($errorMessage) {
-            $this->translator->expects($this->any())
-                ->method('trans')
-                ->with($errorMessage, ['%sku%' => $errorMessageSkus]);
-
-            $flashBag = $this->getMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface');
-            $flashBag->expects($this->once())
-                ->method('add')
-                ->with('warning');
-
-            $this->session->expects($this->once())
-                ->method('getFlashBag')
-                ->willReturn($flashBag);
+        if ($isRedirectRoute) {
+            $this->assertProcessorReturnRedirectResponse($this->processor, $this->router, $data);
+        } else {
+            $this->assertNull($this->processor->process($data, new Request()));
         }
-
-        $this->assertNull($this->processor->process($data, new Request()));
     }
 
     /**
@@ -235,11 +222,51 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
     public function processorWithScopeDataProvider()
     {
         return [
-            'restricted' => [
+            'restricted several with redirect' => [
                 'scope' => 'test',
                 'data' => [
                     'entity_items_data' => [
                         ['productSku' => 'sku01'],
+                        ['productSku' => 'sku02'],
+                        ['productSku' => 'sku02'],
+                        ['productSku' => 'sku03'],
+                    ],
+                ],
+                'allowedData' => [
+                    'entity_items_data' => [
+                        ['productSku' => 'sku01'],
+                    ],
+                ],
+                'errorMessage' => 'orob2b.product.frontend.quick_add.messages.not_added_products',
+                'errorMessageSkus' => 'sku02, sku03',
+                'isRedirectRoute' => true,
+            ],
+            'restricted one with redirect' => [
+                'scope' => 'test',
+                'data' => [
+                    'entity_items_data' => [
+                        ['productSku' => 'sku01'],
+                        ['productSku' => 'sku01'],
+                        ['productSku' => 'sku02'],
+                        ['productSku' => 'sku03'],
+                    ],
+                ],
+                'allowedData' => [
+                    'entity_items_data' => [
+                        ['productSku' => 'sku01'],
+                        ['productSku' => 'sku02'],
+                    ],
+                ],
+                'errorMessage' => 'orob2b.product.frontend.quick_add.messages.not_added_product',
+                'errorMessageSkus' => 'sku03',
+                'isRedirectRoute' => true,
+            ],
+            'restricted several without redirect' => [
+                'scope' => 'test',
+                'data' => [
+                    'entity_items_data' => [
+                        ['productSku' => 'sku01'],
+                        ['productSku' => 'sku02'],
                         ['productSku' => 'sku02'],
                         ['productSku' => 'sku03'],
                     ],
@@ -252,10 +279,11 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
                 'errorMessage' => 'orob2b.product.frontend.quick_add.messages.not_added_products',
                 'errorMessageSkus' => 'sku02, sku03',
             ],
-            'restricted one' => [
+            'restricted one without redirect' => [
                 'scope' => 'test',
                 'data' => [
                     'entity_items_data' => [
+                        ['productSku' => 'sku01'],
                         ['productSku' => 'sku01'],
                         ['productSku' => 'sku02'],
                         ['productSku' => 'sku03'],
@@ -270,24 +298,181 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
                 'errorMessage' => 'orob2b.product.frontend.quick_add.messages.not_added_product',
                 'errorMessageSkus' => 'sku03',
             ],
-            'not restricted' => [
+        ];
+    }
+
+    /**
+     * @dataProvider processorWithScopeAllRestricted
+     * @param string $scope
+     * @param array $data
+     * @param string|null $errorMessageSkus
+     * @param bool|false $isRedirectRoute
+     */
+    public function testProcessorWithScopeAllRestricted(
+        $scope,
+        array $data,
+        $errorMessageSkus,
+        $isRedirectRoute = false
+    ) {
+        $this->setupProcessorScope($scope, $data, ['entity_items_data' => []]);
+
+        $this->setupErrorMessages('orob2b.product.frontend.quick_add.messages.not_added_products', $errorMessageSkus);
+
+        if ($isRedirectRoute) {
+            $this->processor->setRedirectRouteName('route');
+
+            $this->router->expects($this->never())
+                ->method('generate');
+        }
+
+        $this->assertNull($this->processor->process($data, new Request()));
+    }
+
+    public function processorWithScopeAllRestricted()
+    {
+        return [
+            'with redirect route' => [
                 'scope' => 'test',
                 'data' => [
                     'entity_items_data' => [
                         ['productSku' => 'sku01'],
                         ['productSku' => 'sku02'],
                         ['productSku' => 'sku03'],
+                        ['productSku' => 'sku03'],
                     ],
                 ],
-                'allowedData' => [
+                'errorMessageSkus' => 'sku01, sku02, sku03',
+                'isRedirectRoute' => true,
+            ],
+            'without redirect route' => [
+                'scope' => 'test',
+                'data' => [
                     'entity_items_data' => [
+                        ['productSku' => 'sku01'],
+                        ['productSku' => 'sku02'],
+                        ['productSku' => 'sku03'],
+                        ['productSku' => 'sku03'],
+                    ],
+                ],
+                'errorMessageSkus' => 'sku01, sku02, sku03',
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider processorWithScopeAllAllowedDataProvider
+     * @param string $scope
+     * @param array $data
+     * @param bool|false $isRedirectRoute
+     */
+    public function testProcessorWithScopeAllAllowed($scope, array $data, $isRedirectRoute = false)
+    {
+        $this->setupProcessorScope($scope, $data, $data);
+
+        $this->translator->expects($this->never())
+            ->method('trans');
+
+        $this->session->expects($this->never())
+            ->method('getFlashBag');
+
+        if ($isRedirectRoute) {
+            $this->assertProcessorReturnRedirectResponse($this->processor, $this->router, $data);
+        } else {
+            $this->assertNull($this->processor->process($data, new Request()));
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function processorWithScopeAllAllowedDataProvider()
+    {
+        return [
+            'with redirect route' => [
+                'scope' => 'test',
+                'data' => [
+                    'entity_items_data' => [
+                        ['productSku' => 'sku01'],
+                        ['productSku' => 'sku02'],
+                        ['productSku' => 'sku02'],
+                        ['productSku' => 'sku03'],
+                    ],
+                ],
+                'isRedirectRoute' => true,
+            ],
+            'without redirect route' => [
+                'scope' => 'test',
+                'data' => [
+                    'entity_items_data' => [
+                        ['productSku' => 'sku01'],
                         ['productSku' => 'sku01'],
                         ['productSku' => 'sku02'],
                         ['productSku' => 'sku03'],
                     ],
                 ],
-                'errorMessage' => false,
             ],
         ];
+    }
+
+    /**
+     * @param string $scope
+     * @param array $data
+     * @param array $allowedData
+     */
+    protected function setupProcessorScope($scope, $data, $allowedData)
+    {
+        $this->componentProcessorFilter->expects($this->once())
+            ->method('filterData')
+            ->with($data, ['scope' => $scope])
+            ->willReturn($allowedData);
+
+        $this->storage->expects($this->once())
+            ->method('set')
+            ->with($allowedData);
+
+        $this->processor->setScope($scope);
+    }
+
+    /**
+     * @param string $errorMessage
+     * @param string $errorMessageSkus
+     */
+    protected function setupErrorMessages($errorMessage, $errorMessageSkus)
+    {
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->with($errorMessage, ['%sku%' => $errorMessageSkus]);
+
+        $flashBag = $this->getMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface');
+        $flashBag->expects($this->once())
+            ->method('add')
+            ->with('warning');
+
+        $this->session->expects($this->once())
+            ->method('getFlashBag')
+            ->willReturn($flashBag);
+    }
+
+    /**
+     * @param ComponentProcessorDataStorage $processor
+     * @param \PHPUnit_Framework_MockObject_MockObject $routerMock
+     * @param array $data
+     * @param string $targetUrl
+     */
+    protected function assertProcessorReturnRedirectResponse($processor, $routerMock, $data, $targetUrl = 'url')
+    {
+        $redirectRoute = 'route';
+
+        $processor->setRedirectRouteName($redirectRoute);
+
+        $routerMock->expects($this->once())
+            ->method('generate')
+            ->with($redirectRoute, [ProductDataStorage::STORAGE_KEY => true])
+            ->willReturn($targetUrl);
+
+        $response = $this->processor->process($data, new Request());
+
+        $this->assertNotNull($response);
+        $this->assertEquals($targetUrl, $response->getTargetUrl());
     }
 }

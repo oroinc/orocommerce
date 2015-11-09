@@ -150,16 +150,31 @@ class ComponentProcessorDataStorage implements ComponentProcessorInterface
      */
     public function process(array $data, Request $request)
     {
+        $redirect = true;
+
         if ($this->scope) {
             $inputProductSkus = $this->getProductSkus($data);
             $data = $this->componentProcessorFilter->filterData($data, ['scope' => $this->scope]);
             $allowedProductSkus = $this->getProductSkus($data);
-            $this->checkNotAllowedProducts($inputProductSkus, $allowedProductSkus);
+            $notAllowedProductSkus = $this->getNotAllowedProducts($inputProductSkus, $allowedProductSkus);
+            $redirect = !$this->checkAllProductsNotAllowed($inputProductSkus, $notAllowedProductSkus);
         }
 
         $this->storage->set($data);
 
-        return empty($this->redirectRouteName) ? null : new RedirectResponse($this->getUrl($this->redirectRouteName));
+        return $this->getResponse($redirect);
+    }
+
+    /**
+     * @param bool|true $redirect
+     * @return null|RedirectResponse
+     */
+    protected function getResponse($redirect = true)
+    {
+        if (empty($this->redirectRouteName) || !$redirect) {
+            return null;
+        }
+        return new RedirectResponse($this->getUrl($this->redirectRouteName));
     }
 
     /**
@@ -188,13 +203,27 @@ class ComponentProcessorDataStorage implements ComponentProcessorInterface
     /**
      * @param array $inputProductSkus
      * @param array $allowedProductSkus
+     * @return array
      */
-    protected function checkNotAllowedProducts(array $inputProductSkus, array $allowedProductSkus)
+    protected function getNotAllowedProducts(array $inputProductSkus, array $allowedProductSkus)
     {
         $notAllowedProductSkus = array_diff($inputProductSkus, $allowedProductSkus);
+
         if (!empty($notAllowedProductSkus)) {
             $this->addFlashMessage($notAllowedProductSkus);
         }
+
+        return $notAllowedProductSkus;
+    }
+
+    /**
+     * @param $inputProductSkus
+     * @param $notAllowedProductSkus
+     * @return bool
+     */
+    protected function checkAllProductsNotAllowed($inputProductSkus, $notAllowedProductSkus)
+    {
+        return !(bool)array_diff($inputProductSkus, $notAllowedProductSkus);
     }
 
     /**
