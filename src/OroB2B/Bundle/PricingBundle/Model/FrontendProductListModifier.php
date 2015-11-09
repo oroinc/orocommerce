@@ -42,27 +42,46 @@ class FrontendProductListModifier
             $priceList = $this->priceListTreeHandler->getPriceList($user);
 
             if ($priceList) {
-                $rootAliases = $queryBuilder->getRootAliases();
-                $rootAlias = $rootAliases[0];
+                list($rootAlias) = $queryBuilder->getRootAliases();
+
+                $productPriceAlias = 'priceList_' . $queryBuilder->getParameters()->count();
 
                 // Select only products that are in specific price list
                 $limitationQb = $queryBuilder->getEntityManager()->createQueryBuilder();
-                $limitationQb->from('OroB2BPricingBundle:ProductPrice', '_productPrice')
-                    ->select('IDENTITY(_productPrice.product)')
-                    ->where($limitationQb->expr()->eq('_productPrice.priceList', ':_priceList'))
-                    ->andWhere($limitationQb->expr()->eq('_productPrice.product', $rootAlias));
+                $limitationQb->from('OroB2BPricingBundle:ProductPrice', $productPriceAlias)
+                    ->select('IDENTITY(' . $this->getParameterName($productPriceAlias, 'product') . ')')
+                    ->where($limitationQb->expr()->eq(
+                        $this->getParameterName($productPriceAlias, 'priceList'),
+                        ':' . $productPriceAlias
+                    ))
+                    ->andWhere($limitationQb->expr()->eq(
+                        $this->getParameterName($productPriceAlias, 'product'),
+                        $rootAlias
+                    ));
 
                 if ($currency) {
-                    $limitationQb
-                        ->andWhere($queryBuilder->expr()->eq('_productPrice.currency', ':currency'));
-                    $queryBuilder
-                        ->setParameter('currency', strtoupper($currency));
+                    $currencyParameterName = 'currency_' . $queryBuilder->getParameters()->count();
+
+                    $limitationQb->andWhere($queryBuilder->expr()->eq(
+                        $this->getParameterName($productPriceAlias, 'currency'),
+                        ':' . $currencyParameterName
+                    ));
+                    $queryBuilder->setParameter($currencyParameterName, strtoupper($currency));
                 }
 
-                $queryBuilder
-                    ->andWhere($queryBuilder->expr()->exists($limitationQb))
-                    ->setParameter('_priceList', $priceList);
+                $queryBuilder->andWhere($queryBuilder->expr()->exists($limitationQb))
+                    ->setParameter($productPriceAlias, $priceList);
             }
         }
+    }
+
+    /**
+     * @param string $alias
+     * @param string $parameter
+     * @return string
+     */
+    protected function getParameterName($alias, $parameter)
+    {
+        return $alias . '.' . $parameter;
     }
 }
