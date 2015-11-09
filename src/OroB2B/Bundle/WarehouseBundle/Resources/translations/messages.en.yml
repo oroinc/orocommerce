@@ -1,0 +1,8 @@
+orob2b:
+    warehouse:
+        entity_label: Warehouse
+        entity_plural_label: Warehouses
+        organization.label: Organization
+        owner.label: Owner
+        id.label: Id
+        name.label: Name
