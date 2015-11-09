@@ -26,17 +26,17 @@ class WarehouseTest extends \PHPUnit_Framework_TestCase
 
     public function testPrePersist()
     {
-        $order = new Warehouse();
-        $order->prePersist();
-        $this->assertInstanceOf('\DateTime', $order->getCreatedAt());
-        $this->assertInstanceOf('\DateTime', $order->getUpdatedAt());
+        $warehouse = new Warehouse();
+        $warehouse->prePersist();
+        $this->assertInstanceOf('\DateTime', $warehouse->getCreatedAt());
+        $this->assertInstanceOf('\DateTime', $warehouse->getUpdatedAt());
     }
 
     public function testPreUpdate()
     {
-        $order = new Warehouse();
-        $order->preUpdate();
-        $this->assertInstanceOf('\DateTime', $order->getUpdatedAt());
+        $warehouse = new Warehouse();
+        $warehouse->preUpdate();
+        $this->assertInstanceOf('\DateTime', $warehouse->getUpdatedAt());
     }
 
     public function testToString()
