@@ -12,11 +12,14 @@ parameters:
     #Formatters
     orob2b_sale.formatter.quote_product.class: OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter
     orob2b_sale.formatter.quote_product_offer.class: OroB2B\Bundle\SaleBundle\Formatter\QuoteProductOfferFormatter
+
     #Validators
     orob2b_sale.validator.quote_product.class: OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProductValidator
     orob2b_sale.validator.quote_product_unit.class: OroB2B\Bundle\SaleBundle\Validator\Constraints\QuoteProductOfferValidator
+
     #Twig extensions
     orob2b_sale.twig.quote.class: OroB2B\Bundle\SaleBundle\Twig\QuoteExtension
+
 services:
     orob2b_sale.quote.manager.api:
         class: %orob2b_sale.quote.manager.api.class%
@@ -69,3 +72,14 @@ services:
 
     orob2b_sale.service.quote_product_offer_matcher:
         class: %orob2b_sale.service.quote_product_offer_matcher.class%
+
+    orob2b_sale.event_listener.product_select_db_query:
+        class: %orob2b_product.event_listener.product_select_db_query.class%
+        arguments:
+            - @oro_config.global
+            - @orob2b_product.model.product_visibility_query_builder_modifier
+        calls:
+            - [setScope, ['quote']]
+            - [setSystemConfigurationPath, ['oro_b2b_sale.product_visibility.value']]
+        tags:
+            - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }

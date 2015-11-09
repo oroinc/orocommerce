@@ -12,11 +12,11 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
-use OroB2B\Bundle\ShoppingListBundle\Tests\Unit\Form\Type\Stub\EntityType;
 
 class FrontendLineItemTypeTest extends FormIntegrationTestCase
 {
@@ -55,10 +55,7 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $productUnitSelection = new EntityType(
-            $this->prepareProductUnitSelectionChoices(),
-            ProductUnitSelectionType::NAME
-        );
+        $productUnitSelection = new ProductUnitSelectionTypeStub($this->prepareProductUnitSelectionChoices());
 
         return [
             new PreloadedExtension(
@@ -117,16 +114,6 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
     public function testSubmit($defaultData, $submittedData, $expectedData)
     {
         $form = $this->factory->create($this->type, $defaultData, []);
-
-        $repo = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repo->expects($this->once())
-            ->method('getProductUnitsQueryBuilder')
-            ->will($this->returnValue(null));
-
-        $closure = $form->get('unit')->getConfig()->getOptions()['query_builder'];
-        $this->assertNull($closure($repo));
 
         $this->addRoundingServiceExpect();
 

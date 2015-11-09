@@ -9,8 +9,10 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubQuantityParentType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\QuantityParentTypeStub;
 
 class QuantityTypeTest extends FormIntegrationTestCase
 {
@@ -19,7 +21,7 @@ class QuantityTypeTest extends FormIntegrationTestCase
     /** @var QuantityType */
     protected $formType;
 
-    /** @var StubQuantityParentType */
+    /** @var QuantityParentTypeStub */
     protected $parentType;
 
     /**
@@ -28,7 +30,7 @@ class QuantityTypeTest extends FormIntegrationTestCase
     protected function setUp()
     {
         $this->formType = $this->getQuantityType();
-        $this->parentType = new StubQuantityParentType();
+        $this->parentType = new QuantityParentTypeStub();
 
         $this->addRoundingServiceExpect();
 
@@ -133,12 +135,18 @@ class QuantityTypeTest extends FormIntegrationTestCase
 
     /**
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function quantityDataProvider()
     {
         return [
             'product passed from parent type, product field not exists' => [
-                ['product' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 2])],
+                [
+                    'product_holder' => $this->getProductHolder(
+                        $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 2])
+                    ),
+                ],
                 [],
                 [],
                 ['\InvalidArgumentException', 'Missing "productUnit" on form'],
@@ -163,7 +171,9 @@ class QuantityTypeTest extends FormIntegrationTestCase
                 [
                     'product_field' => 'productField',
                     'product_unit_field' => 'productUnitField',
-                    'product' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 2]),
+                    'product_holder' => $this->getProductHolder(
+                        $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 2])
+                    ),
                 ],
                 ['productField' => 3],
                 [
@@ -228,6 +238,18 @@ class QuantityTypeTest extends FormIntegrationTestCase
                 ],
             ],
         ];
+    }
+
+    /**
+     * @param Product|null $product
+     * @return \PHPUnit_Framework_MockObject_MockObject|ProductHolderInterface
+     */
+    protected function getProductHolder(Product $product = null)
+    {
+        $holder = $this->getMock('OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface');
+        $holder->expects($this->any())->method('getProduct')->willReturn($product);
+
+        return $holder;
     }
 
     /**

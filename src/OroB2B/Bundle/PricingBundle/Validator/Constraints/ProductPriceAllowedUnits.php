@@ -4,6 +4,9 @@ namespace OroB2B\Bundle\PricingBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
+/**
+ * Import validation
+ */
 class ProductPriceAllowedUnits extends Constraint
 {
     /**

@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\ProductBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
+
 /**
  * @ORM\Table(
  *      name="orob2b_product_unit_precision",
@@ -16,7 +18,7 @@ use Doctrine\ORM\Mapping as ORM;
  * )
  * @ORM\Entity
  */
-class ProductUnitPrecision
+class ProductUnitPrecision implements ProductUnitHolderInterface
 {
     /**
      * @ORM\Id
@@ -111,5 +113,37 @@ class ProductUnitPrecision
     public function getPrecision()
     {
         return $this->precision;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntityIdentifier()
+    {
+        return $this->id;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductHolder()
+    {
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductUnit()
+    {
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductUnitCode()
+    {
+        return $this->getUnit()->getCode();
     }
 }
