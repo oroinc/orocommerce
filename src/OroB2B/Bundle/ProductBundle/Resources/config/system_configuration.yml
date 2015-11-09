@@ -8,10 +8,6 @@ oro_system_configuration:
             title: orob2b.product.system_configuration.groups.product_unit_settings.title
         default_visibility:
             title: orob2b.product.system_configuration.groups.default_visibility.title
-        general_frontend_visibility:
-            title: orob2b.product.system_configuration.groups.general_frontend_inventory_statuses_visibility.title
-        backend_inventory_statuses_visibility:
-            title: orob2b.product.system_configuration.groups.backend_inventory_statuses_visibility.title
         frontend_inventory_statuses_visibility:
             title: orob2b.product.system_configuration.groups.frontend_inventory_statuses_visibility.title
         backend_inventory_statuses_visibility:
@@ -51,6 +47,6 @@ oro_system_configuration:
                         children:
                             product_settings:
                                 children:
-                                    general_frontend_visibility:
+                                    frontend_inventory_statuses_visibility:
                                         children:
                                             - orob2b_product.general_frontend_product_visibility

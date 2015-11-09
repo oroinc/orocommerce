@@ -94,12 +94,11 @@ orob2b:
             groups:
                 product.title: 'Product'
                 product_unit_settings.title: 'Product Unit Settings'
-                backend_inventory_statuses_visibility.title: 'Backend Inventory Statuses Visibility'
-                frontend_inventory_statuses_visibility.title: 'Frontend Inventory Statuses Visibility'
-                general_frontend_inventory_statuses_visibility.title: 'General Frontend Inventory Statuses Visibility'
+                frontend_inventory_statuses_visibility.title: 'Allowed Inventory Statuses (Store Frontend)'
+                backend_inventory_statuses_visibility.title: 'Allowed Inventory Statuses (Management Console)'
             fields:
                 unit_rounding_type.label: 'Unit Rounding Type'
-                general_frontend_inventory_statuses_visibility.label: 'Frontend Visibility'
+                general_frontend_inventory_statuses_visibility.label: 'Visible Inventory Statuses'
 
         grid:
             action:
