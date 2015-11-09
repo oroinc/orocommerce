@@ -22,6 +22,9 @@ class ProductSelectPriceListAwareListener
      */
     protected $modifier;
 
+    /**
+     * @param FrontendProductListModifier $modifier
+     */
     public function __construct(FrontendProductListModifier $modifier)
     {
         $this->modifier = $modifier;
