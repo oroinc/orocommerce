@@ -7,6 +7,7 @@ parameters:
     orob2b_catalog.event_listener.form_view.class: OroB2B\Bundle\CatalogBundle\EventListener\FormViewListener
     orob2b_catalog.event_listener.datagrid.class: OroB2B\Bundle\CatalogBundle\EventListener\DatagridListener
     orob2b_catalog.event_listener.product_duplicate.class: OroB2B\Bundle\CatalogBundle\EventListener\ProductDuplicateListener
+    orob2b_catalog.event_listener.product_strategy.class: OroB2B\Bundle\CatalogBundle\EventListener\ProductStrategyEventListener
 
 services:
     orob2b_catalog.category_tree_handler:
@@ -53,6 +54,14 @@ services:
             - [setDoctrineHelper, [@oro_entity.doctrine_helper]]
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product.duplicate.after, method: onDuplicateAfter }
+
+    orob2b_catalog.event_listener.product_strategy:
+        class: %orob2b_catalog.event_listener.product_strategy.class%
+        arguments:
+            - @doctrine
+            - %orob2b_catalog.category.class%
+        tags:
+            - { name: kernel.event_listener, event: orob2b_product.strategy.process_after, method: onProcessAfter }
 
     orob2b_catalog.handler.request_product:
         class: %orob2b_catalog.handler.request_product.class%

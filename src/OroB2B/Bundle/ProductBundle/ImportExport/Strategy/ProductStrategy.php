@@ -8,6 +8,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\FallbackBundle\ImportExport\Strategy\LocalizedFallbackValueAwareStrategy;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
 
 class ProductStrategy extends LocalizedFallbackValueAwareStrategy
 {
@@ -29,9 +30,24 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
      * @param Product $entity
      * @return Product
      */
+    protected function beforeProcessEntity($entity)
+    {
+        $event = new ProductStrategyEvent($entity, $this->context->getValue('itemData'));
+        $this->eventDispatcher->dispatch(ProductStrategyEvent::PROCESS_BEFORE, $event);
+
+        return parent::beforeProcessEntity($entity);
+    }
+
+    /**
+     * @param Product $entity
+     * @return Product
+     */
     protected function afterProcessEntity($entity)
     {
         $this->populateOwner($entity);
+
+        $event = new ProductStrategyEvent($entity, $this->context->getValue('itemData'));
+        $this->eventDispatcher->dispatch(ProductStrategyEvent::PROCESS_AFTER, $event);
 
         return parent::afterProcessEntity($entity);
     }
