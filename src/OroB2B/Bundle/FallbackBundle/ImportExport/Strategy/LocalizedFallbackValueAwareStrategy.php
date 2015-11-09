@@ -32,19 +32,58 @@ class LocalizedFallbackValueAwareStrategy extends ConfigurableAddOrReplaceStrate
 
         $fields = $this->fieldHelper->getFields(ClassUtils::getClass($existingEntity), true);
         foreach ($fields as $field) {
-            if ($this->fieldHelper->isRelation($field)) {
-                $targetClassName = $field['related_entity_name'];
-                if (is_a($targetClassName, $this->localizedFallbackValueClass, true)) {
-                    $fieldName = $field['name'];
-                    $this->mapCollections(
-                        $this->fieldHelper->getObjectValue($entity, $fieldName),
-                        $this->fieldHelper->getObjectValue($existingEntity, $fieldName)
-                    );
-                }
+            if ($this->isLocalizedFallbackValue($field)) {
+                $fieldName = $field['name'];
+                $this->mapCollections(
+                    $this->fieldHelper->getObjectValue($entity, $fieldName),
+                    $this->fieldHelper->getObjectValue($existingEntity, $fieldName)
+                );
             }
         }
 
         return parent::beforeProcessEntity($entity);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function afterProcessEntity($entity)
+    {
+        $fields = $this->fieldHelper->getFields(ClassUtils::getClass($entity), true);
+        foreach ($fields as $field) {
+            if ($this->isLocalizedFallbackValue($field)) {
+                $this->setLocaleKeys($entity, $field);
+            }
+        }
+
+        return parent::afterProcessEntity($entity);
+    }
+
+    /**
+     * @param $field
+     * @return bool
+     */
+    protected function isLocalizedFallbackValue($field)
+    {
+        return $this->fieldHelper->isRelation($field)
+            && is_a($field['related_entity_name'], $this->localizedFallbackValueClass, true);
+    }
+
+    /**
+     * @param object $entity
+     * @param array $field
+     * @throws \Exception
+     */
+    protected function setLocaleKeys($entity, array $field)
+    {
+        /** @var Collection|LocalizedFallbackValue[] $localizedFallbackValues */
+        $localizedFallbackValues = $this->fieldHelper->getObjectValue($entity, $field['name']);
+
+        foreach ($localizedFallbackValues as $value) {
+            $code = $value->getLocale() ? $value->getLocale()->getCode() : 'default';
+            $localizedFallbackValues->removeElement($value);
+            $localizedFallbackValues->set($code, $value);
+        }
     }
 
     /**
