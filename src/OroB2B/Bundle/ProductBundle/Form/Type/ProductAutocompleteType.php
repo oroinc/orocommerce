@@ -2,12 +2,13 @@
 
 namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\OroAutocompleteType;
 
-class ProductAutocompleteType extends AbstractType
+class ProductAutocompleteType extends AbstractProductAwareType
 {
     const NAME = 'orob2b_product_autocomplete';
 
@@ -45,5 +46,22 @@ class ProductAutocompleteType extends AbstractType
                 ],
             ]
         );
+
+        parent::configureOptions($resolver);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        $product = $this->getProductFromFormOrView($form, $view);
+
+        if ($product) {
+            $view->vars['componentOptions']['product'] = [
+                'sku' => $product->getSku(),
+                'name' => (string)$product->getDefaultName(),
+            ];
+        }
     }
 }

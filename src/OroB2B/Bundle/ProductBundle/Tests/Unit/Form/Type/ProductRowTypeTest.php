@@ -2,14 +2,17 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormConfigInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
 
-use Oro\Bundle\FormBundle\Form\Type\OroAutocompleteType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductRowType;
@@ -176,5 +179,81 @@ class ProductRowTypeTest extends FormIntegrationTestCase
     public function testGetName()
     {
         $this->assertEquals(ProductRowType::NAME, $this->formType->getName());
+    }
+
+    public function testBuildView()
+    {
+        $product = new Product();
+
+        $view = new FormView();
+
+        /** @var FormConfigInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $config = $this->getMock('Symfony\Component\Form\FormConfigInterface');
+        $config->expects($this->any())
+            ->method('getOptions')
+            ->willReturn(
+                [
+                    'product' => $product,
+                    'product_field' => 'product',
+                    'product_holder' => null,
+                ]
+            );
+
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form->expects($this->any())->method('getConfig')->willReturn($config);
+
+        $this->formType->buildView($view, $form, []);
+
+        $this->assertEquals($product, $view->vars['product']);
+    }
+
+    public function testGetProductFromParent()
+    {
+        $product = new Product();
+        $product->setSku('sku1');
+
+        $view = new FormView();
+
+        /** @var FormConfigInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $config = $this->getMock('Symfony\Component\Form\FormConfigInterface');
+        $config->expects($this->any())
+            ->method('getOptions')
+            ->willReturn(
+                [
+                    'product' => null,
+                    'product_field' => 'product',
+                    'product_holder' => null,
+                ]
+            );
+        $config->expects($this->once())
+            ->method('getOption')
+            ->with('products')
+            ->willReturn(
+                [
+                    'SKU1' => $product,
+                ]
+            );
+
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $parentForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $parentForm->expects($this->any())->method('getConfig')->willReturn($config);
+
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $skuField = $this->getMock('Symfony\Component\Form\FormInterface');
+        $skuField->expects($this->once())->method('getData')->willReturn('sku1');
+
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form->expects($this->any())->method('getConfig')->willReturn($config);
+        $form->expects($this->any())->method('getParent')->willReturn($parentForm);
+        $form->expects($this->once())
+            ->method('get')
+            ->with(ProductDataStorage::PRODUCT_SKU_KEY)
+            ->willReturn($skuField);
+
+        $this->formType->buildView($view, $form, []);
+
+        $this->assertEquals($product, $view->vars['product']);
     }
 }

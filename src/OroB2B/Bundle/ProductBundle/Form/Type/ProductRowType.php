@@ -2,8 +2,9 @@
 
 namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
-use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -12,7 +13,7 @@ use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductBySku;
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero;
 
-class ProductRowType extends AbstractType
+class ProductRowType extends AbstractProductAwareType
 {
     const NAME = 'orob2b_product_row';
 
@@ -57,6 +58,7 @@ class ProductRowType extends AbstractType
             ]
         );
         $resolver->setAllowedTypes('validation_required', 'bool');
+        parent::configureOptions($resolver);
     }
 
     /**
@@ -65,5 +67,30 @@ class ProductRowType extends AbstractType
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        $view->vars['product'] = $this->getProductFromFormOrView($form, $view);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getProduct(FormInterface $form)
+    {
+        $product = parent::getProduct($form);
+        if (!$product && $form->getParent()) {
+            $sku = strtoupper($form->get(ProductDataStorage::PRODUCT_SKU_KEY)->getData());
+            $products = $form->getParent()->getConfig()->getOption('products', []);
+            if ($products && isset($products[$sku])) {
+                $product = $products[$sku];
+            }
+        }
+
+        return $product;
     }
 }

@@ -121,32 +121,24 @@ class ProductRepository extends EntityRepository
     }
 
     /**
-     * @param array $skus
-     * @return array
+     * @return QueryBuilder
      */
-    public function getProductNamesBySkus(array $skus)
+    public function getProductWithNamesQueryBuilder()
     {
-        $qb = $this
-            ->createQueryBuilder('p')
-            ->select('p.sku');
+        return $this->createQueryBuilder('product')
+            ->select('product, product_names')
+            ->innerJoin('product.names', 'product_names');
+    }
 
-        $qb->innerJoin('p.names', 'pn', 'WITH', $qb->expr()->isNull('pn.locale'));
-        $qb->addSelect('pn.string as name');
-
-        if ($skus) {
-            $qb->where($qb->expr()->in('p.sku', ':product_skus'))
-                ->setParameter('product_skus', $skus);
-        }
-
-        $productsData = $qb
-            ->getQuery()
-            ->getArrayResult();
-        $productsIdsToSku = [];
-        foreach ($productsData as $key => $productData) {
-            $productsIdsToSku[$productData['sku']] = ['name' => $productData['name']];
-            unset($productsData[$key]);
-        }
-
-        return $productsIdsToSku;
+    /**
+     * @param array $skus
+     * @return Product[]
+     */
+    public function getProductWithNamesBySku(array $skus)
+    {
+        $qb = $this->getProductWithNamesQueryBuilder();
+        $qb->where($qb->expr()->in('product.sku', ':product_skus'))
+            ->setParameter('product_skus', $skus);
+        return $qb->getQuery()->getResult();
     }
 }

@@ -3,9 +3,9 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
@@ -155,6 +155,25 @@ class ProductRowCollectionTypeTest extends FormIntegrationTestCase
                 'options' => []
             ]
         ];
+    }
+
+    public function testConfigureOptions()
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
+        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver->expects($this->once())
+            ->method('setDefaults')
+            ->with(
+                $this->callback(
+                    function (array $options) {
+                        $this->assertArrayHasKey('products', $options);
+                        $this->assertNull($options['products']);
+                        return true;
+                    }
+                )
+            );
+
+        $this->formType->configureOptions($resolver);
     }
 
     public function testGetName()

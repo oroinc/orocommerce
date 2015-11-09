@@ -25,10 +25,11 @@ class AjaxProductController extends Controller
      */
     public function productNamesBySkusAction(Request $request)
     {
+        $names = [];
         $skus = (array)$request->request->get('skus');
 
         if (0 === count($skus)) {
-            return new JsonResponse([]);
+            return new JsonResponse($names);
         }
 
         $productClass = $this->container->getParameter('orob2b_product.product.class');
@@ -37,7 +38,12 @@ class AjaxProductController extends Controller
             ->getManagerForClass($productClass)
             ->getRepository($productClass);
 
-        $names = $repo->getProductNamesBySkus($skus);
+        $products = $repo->getProductWithNamesBySku($skus);
+        foreach ($products as $product) {
+            $names[$product->getSku()] = [
+                'name' => (string)$product->getDefaultName(),
+            ];
+        }
 
         return new JsonResponse($names);
     }
