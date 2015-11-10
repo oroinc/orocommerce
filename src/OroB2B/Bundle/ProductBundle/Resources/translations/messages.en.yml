@@ -32,7 +32,7 @@ orob2b:
         form:
             choose: Choose Product...
             product_required: Please select a product first...
-        form.add_row: Add row
+        form.add_row: Add rows
 
         productunit:
             entity_label: Product Unit

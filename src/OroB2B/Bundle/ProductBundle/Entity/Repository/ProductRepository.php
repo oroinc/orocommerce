@@ -121,6 +121,28 @@ class ProductRepository extends EntityRepository
     }
 
     /**
+     * @return QueryBuilder
+     */
+    public function getProductWithNamesQueryBuilder()
+    {
+        return $this->createQueryBuilder('product')
+            ->select('product, product_names')
+            ->innerJoin('product.names', 'product_names');
+    }
+
+    /**
+     * @param array $skus
+     * @return Product[]
+     */
+    public function getProductWithNamesBySku(array $skus)
+    {
+        $qb = $this->getProductWithNamesQueryBuilder();
+        $qb->where($qb->expr()->in('product.sku', ':product_skus'))
+            ->setParameter('product_skus', $skus);
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
      * @param array $skus
      * @return QueryBuilder
      */
