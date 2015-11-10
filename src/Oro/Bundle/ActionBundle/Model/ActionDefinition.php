@@ -176,7 +176,7 @@ class ActionDefinition
      * @param array $entities
      * @return $this
      */
-    public function setEntities($entities)
+    public function setEntities(array $entities)
     {
         $this->entities = $entities;
 
@@ -195,7 +195,7 @@ class ActionDefinition
      * @param array $applications
      * @return $this
      */
-    public function setApplications($applications)
+    public function setApplications(array $applications)
     {
         $this->applications = $applications;
 
@@ -252,7 +252,7 @@ class ActionDefinition
      * @param array $routes
      * @return $this
      */
-    public function setRoutes($routes)
+    public function setRoutes(array $routes)
     {
         $this->routes = $routes;
 
@@ -271,7 +271,7 @@ class ActionDefinition
      * @param array $frontendOptionsConfiguration
      * @return $this
      */
-    public function setFrontendOptionsConfiguration($frontendOptionsConfiguration)
+    public function setFrontendOptionsConfiguration(array $frontendOptionsConfiguration)
     {
         $this->frontendOptionsConfiguration = $frontendOptionsConfiguration;
 
@@ -290,7 +290,7 @@ class ActionDefinition
      * @param array $formOptionsConfiguration
      * @return $this
      */
-    public function setFormOptionsConfiguration($formOptionsConfiguration)
+    public function setFormOptionsConfiguration(array $formOptionsConfiguration)
     {
         $this->formOptionsConfiguration = $formOptionsConfiguration;
 
@@ -309,7 +309,7 @@ class ActionDefinition
      * @param array $attributesConfiguration
      * @return $this
      */
-    public function setAttributesConfiguration($attributesConfiguration)
+    public function setAttributesConfiguration(array $attributesConfiguration)
     {
         $this->attributesConfiguration = $attributesConfiguration;
 
@@ -328,7 +328,7 @@ class ActionDefinition
      * @param array $preConditionsConfiguration
      * @return $this
      */
-    public function setPreConditionsConfiguration($preConditionsConfiguration)
+    public function setPreConditionsConfiguration(array $preConditionsConfiguration)
     {
         $this->preConditionsConfiguration = $preConditionsConfiguration;
 
@@ -347,7 +347,7 @@ class ActionDefinition
      * @param array $conditionsConfiguration
      * @return $this
      */
-    public function setConditionsConfiguration($conditionsConfiguration)
+    public function setConditionsConfiguration(array $conditionsConfiguration)
     {
         $this->conditionsConfiguration = $conditionsConfiguration;
 
@@ -366,7 +366,7 @@ class ActionDefinition
      * @param array $initStepConfiguration
      * @return $this
      */
-    public function setInitStepConfiguration($initStepConfiguration)
+    public function setInitStepConfiguration(array $initStepConfiguration)
     {
         $this->initStepConfiguration = $initStepConfiguration;
 
@@ -385,7 +385,7 @@ class ActionDefinition
      * @param array $executionStepConfiguration
      * @return $this
      */
-    public function setExecutionStepConfiguration($executionStepConfiguration)
+    public function setExecutionStepConfiguration(array $executionStepConfiguration)
     {
         $this->executionStepConfiguration = $executionStepConfiguration;
 
