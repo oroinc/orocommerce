@@ -1,3 +1,12 @@
 parameters:
+    oro_action.configuration.config.action.class: Oro\Bundle\ActionBundle\Configuration\ActionConfiguration
+    oro_action.configuration.config.action_list.class: Oro\Bundle\ActionBundle\Configuration\ActionListConfiguration
 
 services:
+    oro_action.configuration.config.action:
+        class: %oro_action.configuration.config.action.class%
+
+    oro_action.configuration.config.action_list:
+        class: %oro_action.configuration.config.action_list.class%
+        arguments:
+            - @oro_action.configuration.config.action

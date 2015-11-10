@@ -17,6 +17,16 @@ class WidgetController extends Controller
      */
     public function buttonsAction()
     {
+        $configuration = $this->container->get('oro_action.configuration.config.action_list');
+        $bundles = $this->container->getParameter('kernel.bundles');
+
+        $provider = new \Oro\Bundle\ActionBundle\Configuration\ActionConfigurationProvider($bundles, $configuration);
+
+        $conf = $provider->getWorkflowDefinitionConfiguration();
+
+        p(array('conf' => $conf));
+        exit();
+
         return [
             'actions' => [
                 [
