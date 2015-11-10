@@ -1,4 +1,9 @@
-oro_action_bundle:
-    resource:   "@OroActionBundle/Controller"
-    type:       annotation
-    prefix:     /action
+oro_action:
+    resource:     "@OroActionBundle/Controller/ActionController.php"
+    type:         annotation
+    prefix:       /action
+
+oro_action_widget:
+    resource:     "@OroActionBundle/Controller/WidgetController.php"
+    type:         annotation
+    prefix:       /actionwidget

@@ -7,14 +7,13 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-/**
- * @Route("/widget")
- */
 class WidgetController extends Controller
 {
     /**
      * @Route("/buttons", name="oro_action_widget_buttons")
      * @Template()
+     *
+     * @return array
      */
     public function buttonsAction()
     {
