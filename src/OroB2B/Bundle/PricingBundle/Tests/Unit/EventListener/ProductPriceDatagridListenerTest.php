@@ -218,11 +218,13 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                             ],
                             'price_column_usd_unit1' => [
                                 'type' => 'number-range',
-                                'data_name' => 'price_column_usd_unit1'
+                                'data_name' => 'price_column_usd_unit1',
+                                'enabled' => false
                             ],
                             'price_column_eur_unit1' => [
                                 'type' => 'number-range',
-                                'data_name' => 'price_column_eur_unit1'
+                                'data_name' => 'price_column_eur_unit1',
+                                'enabled' => false
                             ],
                         ],
                     ],
