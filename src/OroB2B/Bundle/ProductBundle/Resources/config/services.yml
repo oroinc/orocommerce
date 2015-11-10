@@ -200,7 +200,9 @@ services:
             - @request_stack
             - @orob2b_product.product.manager
         tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-products-grid, method: onBuildAfter }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.products-select-grid, method: onBuildAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.products-select-grid-frontend, method: onBuildAfter }
 
     orob2b_product.event_listener.command.platform_update:
         class: %orob2b_product.event_listener.command.platform_update.class%

@@ -150,16 +150,31 @@ class ComponentProcessorDataStorage implements ComponentProcessorInterface
      */
     public function process(array $data, Request $request)
     {
+        $redirect = true;
+
         if ($this->scope) {
             $inputProductSkus = $this->getProductSkus($data);
             $data = $this->componentProcessorFilter->filterData($data, ['scope' => $this->scope]);
             $allowedProductSkus = $this->getProductSkus($data);
             $this->checkNotAllowedProducts($inputProductSkus, $allowedProductSkus);
+            $redirect = !empty($allowedProductSkus);
         }
 
         $this->storage->set($data);
 
-        return empty($this->redirectRouteName) ? null : new RedirectResponse($this->getUrl($this->redirectRouteName));
+        return $this->getResponse($redirect);
+    }
+
+    /**
+     * @param bool|true $redirect
+     * @return null|RedirectResponse
+     */
+    protected function getResponse($redirect = true)
+    {
+        if (empty($this->redirectRouteName) || !$redirect) {
+            return null;
+        }
+        return new RedirectResponse($this->getUrl($this->redirectRouteName));
     }
 
     /**
@@ -192,6 +207,7 @@ class ComponentProcessorDataStorage implements ComponentProcessorInterface
     protected function checkNotAllowedProducts(array $inputProductSkus, array $allowedProductSkus)
     {
         $notAllowedProductSkus = array_diff($inputProductSkus, $allowedProductSkus);
+
         if (!empty($notAllowedProductSkus)) {
             $this->addFlashMessage($notAllowedProductSkus);
         }
@@ -202,13 +218,13 @@ class ComponentProcessorDataStorage implements ComponentProcessorInterface
      */
     protected function addFlashMessage(array $skus)
     {
-        $message = '';
-        foreach ($skus as $sku) {
-            $message .= $this->translator->trans(
-                'orob2b.product.frontend.quick_add.messages.not_added_products',
-                ['%sku%' => $sku]
-            );
-        }
+        $skus = array_unique($skus);
+
+        $message = $this->translator->transChoice(
+            'orob2b.product.frontend.quick_add.messages.not_added_products',
+            count($skus),
+            ['%sku%' => implode(', ', $skus)]
+        );
         $this->session->getFlashBag()->add('warning', $message);
     }
 }

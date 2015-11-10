@@ -83,8 +83,8 @@ orob2b:
             requeststatus_group_title: 'RFQ Status'
             requeststatus_default_label: 'Default RFQ Status'
             default_user_for_notifications: 'Default User For Notifications'
-            backend_product_visibility: 'Visibility For RFP'
-            frontend_product_visibility: 'Visibility For RFP'
+            backend_product_visibility: 'Can Be Added to RFQs'
+            frontend_product_visibility: 'Can Be Added to RFQs'
 
         message:
             request_status_saved: 'Request Status saved'
