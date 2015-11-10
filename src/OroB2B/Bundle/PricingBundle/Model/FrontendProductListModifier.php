@@ -44,7 +44,10 @@ class FrontendProductListModifier
             if ($priceList) {
                 list($rootAlias) = $queryBuilder->getRootAliases();
 
-                $productPriceAlias = 'priceList_' . $queryBuilder->getParameters()->count();
+                $parametersCount = $queryBuilder->getParameters()->count();
+
+                $productPriceAlias = 'productPrice_' . $parametersCount;
+                $priceListParameterName = 'priceList_' . $parametersCount;
 
                 // Select only products that are in specific price list
                 $limitationQb = $queryBuilder->getEntityManager()->createQueryBuilder();
@@ -52,7 +55,7 @@ class FrontendProductListModifier
                     ->select('IDENTITY(' . $this->getParameterName($productPriceAlias, 'product') . ')')
                     ->where($limitationQb->expr()->eq(
                         $this->getParameterName($productPriceAlias, 'priceList'),
-                        ':' . $productPriceAlias
+                        ':' . $priceListParameterName
                     ))
                     ->andWhere($limitationQb->expr()->eq(
                         $this->getParameterName($productPriceAlias, 'product'),
@@ -60,7 +63,7 @@ class FrontendProductListModifier
                     ));
 
                 if ($currency) {
-                    $currencyParameterName = 'currency_' . $queryBuilder->getParameters()->count();
+                    $currencyParameterName = 'currency_' . $parametersCount;
 
                     $limitationQb->andWhere($queryBuilder->expr()->eq(
                         $this->getParameterName($productPriceAlias, 'currency'),
@@ -70,7 +73,7 @@ class FrontendProductListModifier
                 }
 
                 $queryBuilder->andWhere($queryBuilder->expr()->exists($limitationQb))
-                    ->setParameter($productPriceAlias, $priceList);
+                    ->setParameter($priceListParameterName, $priceList);
             }
         }
     }

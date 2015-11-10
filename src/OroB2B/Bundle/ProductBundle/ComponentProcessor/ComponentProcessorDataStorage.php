@@ -156,8 +156,8 @@ class ComponentProcessorDataStorage implements ComponentProcessorInterface
             $inputProductSkus = $this->getProductSkus($data);
             $data = $this->componentProcessorFilter->filterData($data, ['scope' => $this->scope]);
             $allowedProductSkus = $this->getProductSkus($data);
-            $notAllowedProductSkus = $this->getNotAllowedProducts($inputProductSkus, $allowedProductSkus);
-            $redirect = !$this->checkAllProductsNotAllowed($inputProductSkus, $notAllowedProductSkus);
+            $this->checkNotAllowedProducts($inputProductSkus, $allowedProductSkus);
+            $redirect = !empty($allowedProductSkus);
         }
 
         $this->storage->set($data);
@@ -203,27 +203,14 @@ class ComponentProcessorDataStorage implements ComponentProcessorInterface
     /**
      * @param array $inputProductSkus
      * @param array $allowedProductSkus
-     * @return array
      */
-    protected function getNotAllowedProducts(array $inputProductSkus, array $allowedProductSkus)
+    protected function checkNotAllowedProducts(array $inputProductSkus, array $allowedProductSkus)
     {
         $notAllowedProductSkus = array_diff($inputProductSkus, $allowedProductSkus);
 
         if (!empty($notAllowedProductSkus)) {
             $this->addFlashMessage($notAllowedProductSkus);
         }
-
-        return $notAllowedProductSkus;
-    }
-
-    /**
-     * @param $inputProductSkus
-     * @param $notAllowedProductSkus
-     * @return bool
-     */
-    protected function checkAllProductsNotAllowed($inputProductSkus, $notAllowedProductSkus)
-    {
-        return !(bool)array_diff($inputProductSkus, $notAllowedProductSkus);
     }
 
     /**
