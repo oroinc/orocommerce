@@ -1,0 +1,4 @@
+oro_action_bundle:
+    resource:   "@OroActionBundle/Controller"
+    type:       annotation
+    prefix:     /action

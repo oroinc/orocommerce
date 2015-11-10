@@ -1,0 +1,12 @@
+{% if actions|length %}
+    <div class="widget-content">
+        {% for action in actions %}
+            <div class="btn-group">
+                <a href="javascript:void(0);" title="{{ action.label }}" class="btn icons-holder-text btn-primary">
+                    <i class="icon-repeat"></i>
+                    {{ action.label }}
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
