@@ -47,7 +47,7 @@ abstract class AbstractStorage implements \ArrayAccess, \IteratorAggregate, \Cou
      */
     public function offsetSet($offset, $value)
     {
-        if (!array_key_exists($offset, $this->data) || $this->data[$offset] != $value) {
+        if (!array_key_exists($offset, $this->data) || $this->data[$offset] !== $value) {
             $this->data[$offset] = $value;
             $this->modified = true;
         }
