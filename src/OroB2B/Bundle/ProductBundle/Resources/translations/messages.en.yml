@@ -113,8 +113,7 @@ orob2b:
                 title: Quick Order Form
                 description: Quick add products to order, RFQ or shopping cart
                 messages:
-                    not_added_product: "Product %sku% can’t be added."
-                    not_added_products: "Products %sku% can’t be added."
+                    not_added_products: '{1} Product %sku% can’t be added.|]1,Inf]Products %sku% can’t be added.'
             component_not_accessible.message: Can't process request, component not accessible
 
     product_unit.each:

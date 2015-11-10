@@ -218,15 +218,13 @@ class ComponentProcessorDataStorage implements ComponentProcessorInterface
      */
     protected function addFlashMessage(array $skus)
     {
-        $message = 'orob2b.product.frontend.quick_add.messages.not_added_product';
-
         $skus = array_unique($skus);
 
-        if (count($skus) > 1) {
-            $message = 'orob2b.product.frontend.quick_add.messages.not_added_products';
-        }
-
-        $message = $this->translator->trans($message, ['%sku%' => implode(', ', $skus)]);
+        $message = $this->translator->transChoice(
+            'orob2b.product.frontend.quick_add.messages.not_added_products',
+            count($skus),
+            ['%sku%' => implode(', ', $skus)]
+        );
         $this->session->getFlashBag()->add('warning', $message);
     }
 }

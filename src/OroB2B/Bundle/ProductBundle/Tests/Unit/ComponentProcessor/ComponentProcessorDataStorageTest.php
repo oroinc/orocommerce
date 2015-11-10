@@ -193,7 +193,6 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
      * @param string $scope
      * @param array $data
      * @param array $allowedData
-     * @param string $errorMessage
      * @param string $errorMessageSkus
      * @param bool|true $isRedirectRoute
      */
@@ -201,13 +200,12 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
         $scope,
         array $data,
         array $allowedData,
-        $errorMessage,
         $errorMessageSkus,
         $isRedirectRoute = false
     ) {
         $this->setupProcessorScope($scope, $data, $allowedData);
 
-        $this->setupErrorMessages($errorMessage, $errorMessageSkus);
+        $this->setupErrorMessages($errorMessageSkus);
 
         if ($isRedirectRoute) {
             $this->assertProcessorReturnRedirectResponse($this->processor, $this->router, $data);
@@ -237,7 +235,6 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
                         ['productSku' => 'sku01'],
                     ],
                 ],
-                'errorMessage' => 'orob2b.product.frontend.quick_add.messages.not_added_products',
                 'errorMessageSkus' => 'sku02, sku03',
                 'isRedirectRoute' => true,
             ],
@@ -257,7 +254,6 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
                         ['productSku' => 'sku02'],
                     ],
                 ],
-                'errorMessage' => 'orob2b.product.frontend.quick_add.messages.not_added_product',
                 'errorMessageSkus' => 'sku03',
                 'isRedirectRoute' => true,
             ],
@@ -276,7 +272,6 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
                         ['productSku' => 'sku01'],
                     ],
                 ],
-                'errorMessage' => 'orob2b.product.frontend.quick_add.messages.not_added_products',
                 'errorMessageSkus' => 'sku02, sku03',
             ],
             'restricted one without redirect' => [
@@ -295,7 +290,6 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
                         ['productSku' => 'sku02'],
                     ],
                 ],
-                'errorMessage' => 'orob2b.product.frontend.quick_add.messages.not_added_product',
                 'errorMessageSkus' => 'sku03',
             ],
         ];
@@ -316,7 +310,7 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
     ) {
         $this->setupProcessorScope($scope, $data, ['entity_items_data' => []]);
 
-        $this->setupErrorMessages('orob2b.product.frontend.quick_add.messages.not_added_products', $errorMessageSkus);
+        $this->setupErrorMessages($errorMessageSkus);
 
         if ($isRedirectRoute) {
             $this->processor->setRedirectRouteName('route');
@@ -434,14 +428,17 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param string $errorMessage
      * @param string $errorMessageSkus
      */
-    protected function setupErrorMessages($errorMessage, $errorMessageSkus)
+    protected function setupErrorMessages($errorMessageSkus)
     {
         $this->translator->expects($this->any())
-            ->method('trans')
-            ->with($errorMessage, ['%sku%' => $errorMessageSkus]);
+            ->method('transChoice')
+            ->with(
+                'orob2b.product.frontend.quick_add.messages.not_added_products',
+                count(explode(', ', $errorMessageSkus)),
+                ['%sku%' => $errorMessageSkus]
+            );
 
         $flashBag = $this->getMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface');
         $flashBag->expects($this->once())
