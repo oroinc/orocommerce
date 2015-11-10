@@ -321,6 +321,7 @@ class ProductPriceDatagridListener
             'type' => 'twig',
             'template' => 'OroB2BPricingBundle:Datagrid:Column/productUnitPrice.html.twig',
             'frontend_type' => 'html',
+            'renderable' => false,
         ];
 
         $this->addConfigElement($config, '[columns]', $column, $columnName);
@@ -332,7 +333,11 @@ class ProductPriceDatagridListener
         $this->addConfigElement(
             $config,
             '[filters][columns]',
-            ['type' => 'number-range', 'data_name' => $columnName],
+            [
+                'type' => 'number-range',
+                'data_name' => $columnName,
+                'enabled' => false,
+            ],
             $columnName
         );
     }

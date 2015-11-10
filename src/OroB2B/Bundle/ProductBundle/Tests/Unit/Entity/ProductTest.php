@@ -197,30 +197,23 @@ class ProductTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param array $names
-     * @dataProvider getDefaultNameExceptionDataProvider
-     *
      * @expectedException \LogicException
      * @expectedExceptionMessage There must be only one default name
      */
-    public function testGetDefaultNameException(array $names)
+    public function testGetDefaultNameException()
     {
         $product = new Product();
+        $names = [new LocalizedFallbackValue(), new LocalizedFallbackValue()];
         foreach ($names as $title) {
             $product->addName($title);
         }
         $product->getDefaultName();
     }
 
-    /**
-     * @return array
-     */
-    public function getDefaultNameExceptionDataProvider()
+    public function testNoDefaultName()
     {
-        return [
-            'no default name' => [[]],
-            'several default names' => [[new LocalizedFallbackValue(), new LocalizedFallbackValue()]],
-        ];
+        $product = new Product();
+        $this->assertNull($product->getDefaultName());
     }
 
     public function testGetDefaultDescription()
