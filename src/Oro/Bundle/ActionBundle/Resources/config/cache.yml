@@ -1,0 +1,5 @@
+services:
+    oro_action.cache.provider.action_configuration:
+        parent: oro.cache.abstract
+        calls:
+            - [ setNamespace, [ 'oro_action_configuration' ] ]
