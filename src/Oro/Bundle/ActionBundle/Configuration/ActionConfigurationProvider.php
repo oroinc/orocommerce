@@ -5,8 +5,6 @@ namespace Oro\Bundle\ActionBundle\Configuration;
 use Doctrine\Common\Cache\CacheProvider;
 
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Yaml\Yaml;
 
 class ActionConfigurationProvider
 {

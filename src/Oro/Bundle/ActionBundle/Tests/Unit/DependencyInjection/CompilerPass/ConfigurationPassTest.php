@@ -97,6 +97,11 @@ class ConfigurationPassTest extends \PHPUnit_Framework_TestCase
                     ],
                     'test_action2' => [
                         'label' => 'Test Action 2'
+                    ],
+                ],
+                'Oro\Bundle\ActionBundle\Tests\Unit\Fixtures\Bundles\TestBundle2\TestBundle2' => [
+                    'test_action4' => [
+                        'label' => 'Test Action 4'
                     ]
                 ]
             ],
