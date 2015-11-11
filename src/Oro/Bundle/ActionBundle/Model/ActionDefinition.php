@@ -6,7 +6,7 @@ class ActionDefinition
 {
     const EXTEND_STRATEGY_ADD = 'add';
 
-    const EXTEND_STRATEGY_REPLACE = 'create';
+    const EXTEND_STRATEGY_REPLACE = 'replace';
 
     /**
      * @var string
