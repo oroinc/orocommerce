@@ -86,17 +86,17 @@ abstract class AbstractProductImportEventListener
             return null;
         }
 
-        $this->categoriesByTitle[$categoryDefaultTitle] = $this->getEntityManager()
-            ->getReference($this->categoryClass, $category->getId());
+        $this->categoriesByTitle[$categoryDefaultTitle] = $category;
 
         return $this->categoriesByTitle[$categoryDefaultTitle];
     }
 
     /**
      * @param Product $product
+     * @param bool $includeTitles
      * @return null|Category
      */
-    protected function getCategoryByProduct(Product $product)
+    protected function getCategoryByProduct(Product $product, $includeTitles = false)
     {
         $sku = $product->getSku();
 
@@ -104,15 +104,14 @@ abstract class AbstractProductImportEventListener
             return $this->categoriesByProduct[$sku];
         }
 
-        $category = $this->getCategoryRepository()->findOneByProductSku($sku);
+        $category = $this->getCategoryRepository()->findOneByProductSku($sku, $includeTitles);
         if (!$category) {
             $this->categoriesByProduct[$sku] = null;
 
             return null;
         }
 
-        $this->categoriesByProduct[$sku] = $this->getEntityManager()
-            ->getReference($this->categoryClass, $category->getId());
+        $this->categoriesByProduct[$sku] = $category;
 
         return $this->categoriesByProduct[$sku];
     }
