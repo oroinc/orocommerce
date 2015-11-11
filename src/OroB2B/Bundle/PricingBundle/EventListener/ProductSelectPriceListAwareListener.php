@@ -66,7 +66,7 @@ class ProductSelectPriceListAwareListener
     }
 
     /**
-     * @return mixed
+     * @return int|string
      */
     protected function getPriceListParam()
     {
@@ -74,7 +74,7 @@ class ProductSelectPriceListAwareListener
     }
 
     /**
-     * @param $priceListId
+     * @param int $priceListId
      * @return \OroB2B\Bundle\PricingBundle\Entity\PriceList
      */
     protected function getPriceListById($priceListId)
