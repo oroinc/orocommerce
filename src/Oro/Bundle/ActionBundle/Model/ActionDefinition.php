@@ -10,7 +10,7 @@ class ActionDefinition
     /** @var string */
     protected $label;
 
-    /*** @var boolean */
+    /** @var boolean */
     protected $enabled = true;
 
     /** @var array */
