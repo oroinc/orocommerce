@@ -61,6 +61,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                 ],
                 'expected' => [
                     LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
                     LoadProductData::PRODUCT_3,
                     LoadProductData::PRODUCT_4,
                 ],
@@ -70,7 +71,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'disabled',
                 ],
                 'expected' => [
-                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_5,
                 ],
             ],
             'all products' => [
@@ -83,6 +84,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     LoadProductData::PRODUCT_2,
                     LoadProductData::PRODUCT_3,
                     LoadProductData::PRODUCT_4,
+                    LoadProductData::PRODUCT_5,
                 ],
             ],
         ];
@@ -113,6 +115,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                 'expected' => [
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_5,
                 ],
             ],
             'products out_of_stock' => [
@@ -142,6 +145,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     LoadProductData::PRODUCT_2,
                     LoadProductData::PRODUCT_3,
                     LoadProductData::PRODUCT_4,
+                    LoadProductData::PRODUCT_5,
                 ],
             ],
         ];
@@ -165,7 +169,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         $this->modifier->modifyByInventoryStatus(
             $this->queryBuilder,
             [
-                Product::INVENTORY_STATUS_IN_STOCK,
+                Product::INVENTORY_STATUS_OUT_OF_STOCK,
             ]
         );
 
@@ -180,6 +184,6 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         );
 
         $this->assertCount(4, $this->queryBuilder->getParameters());
-        $this->assertEquals(LoadProductData::PRODUCT_1, $this->queryBuilder->getQuery()->getSingleScalarResult());
+        $this->assertEquals(LoadProductData::PRODUCT_3, $this->queryBuilder->getQuery()->getSingleScalarResult());
     }
 }

@@ -57,7 +57,7 @@ class RestrictedProductsDatagridEventListenerTest extends \PHPUnit_Framework_Tes
             ->willReturn($request);
         $event = $this->createEvent();
         $this->productManager->expects($this->once())
-            ->method('restrictQueryBuilderByProductVisibility')
+            ->method('restrictQueryBuilder')
             ->with(
                 $this->qb,
                 $expectedParamsResult

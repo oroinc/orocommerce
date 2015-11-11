@@ -59,7 +59,7 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
         if (!$request || !$params = $request->get(ProductSelectType::DATA_PARAMETERS)) {
             $params = [];
         }
-        $this->productManager->restrictQueryBuilderByProductVisibility($queryBuilder, $params);
+        $this->productManager->restrictQueryBuilder($queryBuilder, $params);
 
         $query = $this->aclHelper->apply($queryBuilder);
 

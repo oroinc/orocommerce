@@ -25,7 +25,13 @@ class Configuration implements ConfigurationInterface
             [
                 'default_request_status' => ['value' => 'open'],
                 'default_user_for_notifications' => null,
-                'product_visibility' => [
+                'backend_product_visibility' => [
+                    'value' => [
+                        Product::INVENTORY_STATUS_IN_STOCK,
+                        Product::INVENTORY_STATUS_OUT_OF_STOCK
+                    ]
+                ],
+                'frontend_product_visibility' => [
                     'value' => [
                         Product::INVENTORY_STATUS_IN_STOCK,
                         Product::INVENTORY_STATUS_OUT_OF_STOCK
