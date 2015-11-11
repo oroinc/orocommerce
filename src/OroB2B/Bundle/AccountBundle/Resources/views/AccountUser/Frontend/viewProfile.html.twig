@@ -32,6 +32,22 @@
     {# Backend owner must be hidden on frontend  #}
 {% endblock ownerLink %}
 
+{% block pageActions %}
+    {% placeholder view_pageActions_before with {entity: entity} %}
+    {% set audit_entity_id = audit_entity_id is defined ? audit_entity_id : entity.id|default %}
+    {% if audit_entity_id %}
+        {% placeholder frontend_history_block with {
+        'entity': entity,
+        'entity_class': audit_entity_class|default(null),
+        'id': audit_entity_id,
+        'title': audit_title|default(entity.__toString is defined ? entity : null),
+        'audit_path': audit_path|default('orob2b_frontend_entity_audit'),
+        'audit_show_change_history': audit_show_change_history|default(false)
+        } %}
+    {% endif %}
+    {% placeholder view_pageActions_after with {entity: entity} %}
+{% endblock pageActions %}
+
 {% block content_data %}
     {% set accountUserInformationWidget %}
         {% include '@OroB2BAccount/AccountUser/Frontend/widget/info.html.twig' %}
@@ -51,6 +67,4 @@
     {% set data = {'dataBlocks': dataBlocks} %}
 
     {{ UI.scrollData(id, data) }}
-    {% block pageActions %}
-    {% endblock %}
 {% endblock content_data %}
