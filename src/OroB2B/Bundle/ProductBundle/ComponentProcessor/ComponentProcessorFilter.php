@@ -8,7 +8,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
-class ComponentProcessorFilter
+class ComponentProcessorFilter implements ComponentProcessorFilterInterface
 {
     /** @var  ProductManager */
     protected $productManager;
@@ -38,9 +38,7 @@ class ComponentProcessorFilter
     }
 
     /**
-     * @param array $data
-     * @param array $dataParameters
-     * @return array
+     * {@inheritdoc}
      */
     public function filterData(array $data, array $dataParameters)
     {

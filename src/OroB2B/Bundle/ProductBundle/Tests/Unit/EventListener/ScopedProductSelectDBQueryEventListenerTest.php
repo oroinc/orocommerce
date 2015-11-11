@@ -43,7 +43,6 @@ class ScopedProductSelectDBQueryEventListenerTest extends ProductSelectDBQueryEv
      */
     public function testOnQuery($isFrontend, $frontendPath, $backendPath)
     {
-
         $this->event->expects($this->any())
             ->method('getDataParameters')
             ->willReturn(new ParameterBag(['scope' => self::SCOPE]));
