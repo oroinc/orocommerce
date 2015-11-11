@@ -10,6 +10,9 @@ class ActionConfigurationProvider
 {
     const ROOT_NODE_NAME = 'actions';
 
+    /** @var ActionDefinitionListConfiguration */
+    protected $definitionConfiguration;
+
     /** @var CacheProvider */
     protected $cache;
 
@@ -20,12 +23,18 @@ class ActionConfigurationProvider
     protected $kernelBundles;
 
     /**
+     * @param ActionDefinitionListConfiguration $definitionConfiguration
      * @param CacheProvider $cache
      * @param array $rawConfiguration
      * @param array $kernelBundles
      */
-    public function __construct(CacheProvider $cache, array $rawConfiguration, array $kernelBundles)
-    {
+    public function __construct(
+        ActionDefinitionListConfiguration $definitionConfiguration,
+        CacheProvider $cache,
+        array $rawConfiguration,
+        array $kernelBundles
+    ) {
+        $this->definitionConfiguration = $definitionConfiguration;
         $this->cache = $cache;
         $this->rawConfiguration = $rawConfiguration;
         $this->kernelBundles = array_values($kernelBundles);
@@ -80,8 +89,7 @@ class ActionConfigurationProvider
         try {
             $data = [];
             if (!empty($actionConfigs)) {
-                $data = $actionConfigs;
-                //$data = $this->configuration->processConfiguration($actionConfigs);
+                $data = $this->definitionConfiguration->processConfiguration(['actions' => $actionConfigs]);
             }
         } catch (InvalidConfigurationException $exception) {
             throw new InvalidConfigurationException(
@@ -98,6 +106,6 @@ class ActionConfigurationProvider
      */
     protected function mergeActionConfigs(array $configs)
     {
-        return $configs;
+        return reset($configs);
     }
 }

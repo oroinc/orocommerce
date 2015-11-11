@@ -15,6 +15,7 @@ services:
     oro_action.configuration.provider:
         class: %oro_action.configuration.provider.class%
         arguments:
+            - @oro_action.configuration.config.action_definition_list
             - @oro_action.cache.provider
             - []
             - %kernel.bundles%
