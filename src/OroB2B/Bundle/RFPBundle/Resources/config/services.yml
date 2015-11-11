@@ -30,7 +30,7 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-requests-grid, method: onResultAfter }
 
     orob2b_rfp.processor.quick_add:
-        parent: orob2b_product.component_processor.data_storage
+        parent: orob2b_product.component_processor.data_storage_aware.processor
         calls:
             - [setName, ['orob2b_rfp_quick_add_processor']]
             - [setRedirectRouteName, ['orob2b_rfp_frontend_request_create']]

@@ -27,7 +27,7 @@ parameters:
 
     orob2b_product.component_processor.filter.class: OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter
     orob2b_product.component_processor.registry.class: OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry
-    orob2b_product.component_processor.data_storage.class: OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorDataStorage
+    orob2b_product.component_processor.data_storage_aware.processor.class: OroB2B\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor
     orob2b_product.form_handler.quick_add.class: OroB2B\Bundle\ProductBundle\Form\Handler\QuickAddHandler
     orob2b_product.product.manager.class: OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager
 
@@ -133,15 +133,16 @@ services:
     orob2b_product.component_processor.registry:
         class: %orob2b_product.component_processor.registry.class%
 
-    orob2b_product.component_processor.data_storage:
-        class: %orob2b_product.component_processor.data_storage.class%
+    orob2b_product.component_processor.data_storage_aware.processor:
+        class: %orob2b_product.component_processor.data_storage_aware.processor.class%
         arguments:
             - @router
             - @orob2b_product.service.product_data_storage
             - @oro_security.security_facade
-            - @orob2b_product.component_processor.filter
             - @session
             - @translator
+        calls:
+            - [setComponentProcessorFilter, [@orob2b_product.component_processor.filter]]
         abstract: true
 
     orob2b_product.form_handler.quick_add:

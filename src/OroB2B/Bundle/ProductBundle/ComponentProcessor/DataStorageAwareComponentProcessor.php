@@ -12,7 +12,7 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
-class ComponentProcessorDataStorage implements ComponentProcessorInterface
+class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
 {
     /** @var UrlGeneratorInterface */
     protected $router;
@@ -51,7 +51,6 @@ class ComponentProcessorDataStorage implements ComponentProcessorInterface
      * @param UrlGeneratorInterface $router
      * @param ProductDataStorage $storage
      * @param SecurityFacade $securityFacade
-     * @param ComponentProcessorFilter $componentProcessorFilter
      * @param Session $session
      * @param TranslatorInterface $translator
      */
@@ -59,16 +58,25 @@ class ComponentProcessorDataStorage implements ComponentProcessorInterface
         UrlGeneratorInterface $router,
         ProductDataStorage $storage,
         SecurityFacade $securityFacade,
-        ComponentProcessorFilter $componentProcessorFilter,
         Session $session,
         TranslatorInterface $translator
     ) {
         $this->router = $router;
         $this->storage = $storage;
         $this->securityFacade = $securityFacade;
-        $this->componentProcessorFilter = $componentProcessorFilter;
         $this->session = $session;
         $this->translator = $translator;
+    }
+
+    /**
+     * @param ComponentProcessorFilterInterface $filter
+     * @return ComponentProcessorInterface
+     */
+    public function setComponentProcessorFilter(ComponentProcessorFilterInterface $filter)
+    {
+        $this->componentProcessorFilter = $filter;
+
+        return $this;
     }
 
     /**
@@ -150,31 +158,31 @@ class ComponentProcessorDataStorage implements ComponentProcessorInterface
      */
     public function process(array $data, Request $request)
     {
-        $redirect = true;
-
-        if ($this->scope) {
-            $inputProductSkus = $this->getProductSkus($data);
-            $data = $this->componentProcessorFilter->filterData($data, ['scope' => $this->scope]);
-            $allowedProductSkus = $this->getProductSkus($data);
-            $this->checkNotAllowedProducts($inputProductSkus, $allowedProductSkus);
-            $redirect = !empty($allowedProductSkus);
-        }
+        $inputProductSkus = $this->getProductSkus($data);
+        $data = $this->filterData($data);
+        $filteredProductSkus = $this->getProductSkus($data);
+        $this->checkNotAllowedProducts($inputProductSkus, $filteredProductSkus);
+        $allowRedirect = !empty($filteredProductSkus);
 
         $this->storage->set($data);
 
-        return $this->getResponse($redirect);
+        if ($allowRedirect) {
+            return $this->getResponse();
+        }
+
+        return null;
     }
 
     /**
-     * @param bool|true $redirect
      * @return null|RedirectResponse
      */
-    protected function getResponse($redirect = true)
+    protected function getResponse()
     {
-        if (empty($this->redirectRouteName) || !$redirect) {
-            return null;
+        if ($this->redirectRouteName) {
+            return new RedirectResponse($this->getUrl($this->redirectRouteName));
         }
-        return new RedirectResponse($this->getUrl($this->redirectRouteName));
+
+        return null;
     }
 
     /**
@@ -226,5 +234,22 @@ class ComponentProcessorDataStorage implements ComponentProcessorInterface
             ['%sku%' => implode(', ', $skus)]
         );
         $this->session->getFlashBag()->add('warning', $message);
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    protected function filterData(array $data)
+    {
+        if ($this->componentProcessorFilter) {
+            $filterParameters = [];
+            if ($this->scope) {
+                $filterParameters['scope'] = $this->scope;
+            }
+            $data = $this->componentProcessorFilter->filterData($data, $filterParameters);
+        }
+
+        return $data;
     }
 }

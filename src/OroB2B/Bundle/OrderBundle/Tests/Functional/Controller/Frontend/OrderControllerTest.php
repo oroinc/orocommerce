@@ -14,7 +14,7 @@ use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderType;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorDataStorage;
+use OroB2B\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
 
 /**
  * @dbIsolation
@@ -147,7 +147,7 @@ class OrderControllerTest extends WebTestCase
             ]
         ];
 
-        /** @var ComponentProcessorDataStorage $processor */
+        /** @var DataStorageAwareComponentProcessor $processor */
         $processor = $this->getContainer()->get('orob2b_order.processor.quick_add');
 
         $this->client->followRedirects(true);

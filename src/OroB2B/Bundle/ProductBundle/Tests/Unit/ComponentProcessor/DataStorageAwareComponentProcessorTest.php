@@ -10,14 +10,14 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
-use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorDataStorage;
+use OroB2B\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
+class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|UrlGeneratorInterface
@@ -30,7 +30,7 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
     protected $storage;
 
     /**
-     * @var ComponentProcessorDataStorage
+     * @var DataStorageAwareComponentProcessor
      */
     protected $processor;
 
@@ -66,9 +66,8 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->componentProcessorFilter = $this
-            ->getMockBuilder('OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter')
-            ->disableOriginalConstructor()
-            ->getMock();
+            ->getMockBuilder('OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilterInterface')
+            ->getMockForAbstractClass();
 
         $this->session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
             ->disableOriginalConstructor()
@@ -76,14 +75,14 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
 
         $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
 
-        $this->processor = new ComponentProcessorDataStorage(
+        $this->processor = new DataStorageAwareComponentProcessor(
             $this->router,
             $this->storage,
             $this->securityFacade,
-            $this->componentProcessorFilter,
             $this->session,
             $this->translator
         );
+        $this->processor->setComponentProcessorFilter($this->componentProcessorFilter);
     }
 
     protected function tearDown()
@@ -93,7 +92,10 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessWithoutRedirectRoute()
     {
-        $data = ['data' => ['param' => 42]];
+        $data = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => ['param' => 42]];
+        $this->componentProcessorFilter->expects($this->any())
+            ->method('filterData')
+            ->will($this->returnArgument(0));
 
         $this->router->expects($this->never())
             ->method($this->anything());
@@ -107,7 +109,10 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessWithRedirectRoute()
     {
-        $data = ['data' => ['param' => 42]];
+        $this->componentProcessorFilter->expects($this->any())
+            ->method('filterData')
+            ->will($this->returnArgument(0));
+        $data = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => ['param' => 42]];
         $redirectRouteName = 'redirect_route';
         $redirectUrl = '/redirect/url';
         $expectedResponseContent = (new RedirectResponse($redirectUrl))->getContent();
@@ -223,7 +228,7 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
             'restricted several with redirect' => [
                 'scope' => 'test',
                 'data' => [
-                    'entity_items_data' => [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                         ['productSku' => 'sku01'],
                         ['productSku' => 'sku02'],
                         ['productSku' => 'sku02'],
@@ -231,7 +236,7 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
                 'allowedData' => [
-                    'entity_items_data' => [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                         ['productSku' => 'sku01'],
                     ],
                 ],
@@ -241,7 +246,7 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
             'restricted one with redirect' => [
                 'scope' => 'test',
                 'data' => [
-                    'entity_items_data' => [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                         ['productSku' => 'sku01'],
                         ['productSku' => 'sku01'],
                         ['productSku' => 'sku02'],
@@ -249,7 +254,7 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
                 'allowedData' => [
-                    'entity_items_data' => [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                         ['productSku' => 'sku01'],
                         ['productSku' => 'sku02'],
                     ],
@@ -260,7 +265,7 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
             'restricted several without redirect' => [
                 'scope' => 'test',
                 'data' => [
-                    'entity_items_data' => [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                         ['productSku' => 'sku01'],
                         ['productSku' => 'sku02'],
                         ['productSku' => 'sku02'],
@@ -268,7 +273,7 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
                 'allowedData' => [
-                    'entity_items_data' => [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                         ['productSku' => 'sku01'],
                     ],
                 ],
@@ -277,7 +282,7 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
             'restricted one without redirect' => [
                 'scope' => 'test',
                 'data' => [
-                    'entity_items_data' => [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                         ['productSku' => 'sku01'],
                         ['productSku' => 'sku01'],
                         ['productSku' => 'sku02'],
@@ -285,7 +290,7 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
                 'allowedData' => [
-                    'entity_items_data' => [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                         ['productSku' => 'sku01'],
                         ['productSku' => 'sku02'],
                     ],
@@ -308,27 +313,35 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
         $errorMessageSkus,
         $isRedirectRoute = false
     ) {
-        $this->setupProcessorScope($scope, $data, ['entity_items_data' => []]);
+        $filteredData = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => []];
+
+        $this->componentProcessorFilter->expects($this->any())
+            ->method('filterData')
+            ->will($this->returnValue($filteredData));
+
+        $this->setupProcessorScope($scope, $data, $filteredData);
 
         $this->setupErrorMessages($errorMessageSkus);
 
         if ($isRedirectRoute) {
             $this->processor->setRedirectRouteName('route');
-
-            $this->router->expects($this->never())
-                ->method('generate');
         }
+        $this->router->expects($this->never())
+            ->method('generate');
 
         $this->assertNull($this->processor->process($data, new Request()));
     }
 
+    /**
+     * @return array
+     */
     public function processorWithScopeAllRestricted()
     {
         return [
             'with redirect route' => [
                 'scope' => 'test',
                 'data' => [
-                    'entity_items_data' => [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                         ['productSku' => 'sku01'],
                         ['productSku' => 'sku02'],
                         ['productSku' => 'sku03'],
@@ -341,7 +354,7 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
             'without redirect route' => [
                 'scope' => 'test',
                 'data' => [
-                    'entity_items_data' => [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                         ['productSku' => 'sku01'],
                         ['productSku' => 'sku02'],
                         ['productSku' => 'sku03'],
@@ -385,7 +398,7 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
             'with redirect route' => [
                 'scope' => 'test',
                 'data' => [
-                    'entity_items_data' => [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                         ['productSku' => 'sku01'],
                         ['productSku' => 'sku02'],
                         ['productSku' => 'sku02'],
@@ -397,7 +410,7 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
             'without redirect route' => [
                 'scope' => 'test',
                 'data' => [
-                    'entity_items_data' => [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                         ['productSku' => 'sku01'],
                         ['productSku' => 'sku01'],
                         ['productSku' => 'sku02'],
@@ -451,7 +464,7 @@ class ComponentProcessorDataStorageTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param ComponentProcessorDataStorage $processor
+     * @param DataStorageAwareComponentProcessor $processor
      * @param \PHPUnit_Framework_MockObject_MockObject $routerMock
      * @param array $data
      * @param string $targetUrl
