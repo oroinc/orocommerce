@@ -37,13 +37,13 @@ class FrontendController extends Controller
      *      id="orob2b_frontend_dataaudit_history",
      *      type="action",
      *      label="orob2b.frontend.dataaudit.module_label",
-     *      group_name=""
+     *      group_name="commerce"
      * )
      */
     public function historyAction($entity, $id)
     {
         return array(
-            'gridName'     => 'frontend-audit-history-grid',
+            'gridName'     => 'b2b-frontend-audit-history-grid',
             'entityClass'  => $entity,
             'entityId'     => $id,
         );

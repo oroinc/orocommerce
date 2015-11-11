@@ -1,53 +1,36 @@
 datagrid:
-    frontend-audit-history-grid:
+    b2b-frontend-audit-history-grid:
+        extends: base-audit-history-grid
         source:
-            type: orm
+            acl_resource: orob2b_frontend_dataaudit_history
             query:
                 select:
-                    - a
-                    - a.id
-                    - a.loggedAt
-                from:
-                    - { table: OroDataAuditBundle:Audit, alias: a }
+                    - >
+                        COALESCE(CONCAT(
+                            CONCAT(
+                                CONCAT(b2b_u.firstName, ' '),
+                                CONCAT(b2b_u.lastName, ' ')
+                            ),
+                            CONCAT(' - ', b2b_u.email)
+                        ), 'Administrator') as author
                 join:
                     left:
-                        fields:
-                            join: a.fields
-                            alias: f
-                where:
-                    and:
-                        - a.objectClass = :objectClass AND a.objectId = :objectId
+                        b2b_audit:
+                            join: OroB2BAccountBundle:Audit
+                            alias: b2b_a
+                            conditionType: WITH
+                            condition: b2b_a.id = a.id
+                        b2b_user:
+                            join: b2b_a.accountUser
+                            alias: b2b_u
         columns:
             author:
                 label: oro.dataaudit.datagrid.author
                 type: twig
                 template: OroB2BFrontendBundle:DataAudit:author.html.twig
                 frontend_type: html
-                data_name: user
-            loggedAt:
-                label: oro.dataaudit.datagrid.logged_at
-                type: field
-                frontend_type: datetime
-            old:
-                label: oro.dataaudit.datagrid.old_values
-                type: twig
-                template: OroDataAuditBundle:Datagrid:Property/old.html.twig
-                frontend_type: html
-                data_name: data
-            new:
-                label: oro.dataaudit.datagrid.new_values
-                type: twig
-                template: OroDataAuditBundle:Datagrid:Property/new.html.twig
-                frontend_type: html
-                data_name: data
-        properties: ~
+                data_name: author
         sorters:
             columns:
                 author:
                     data_name: author
-                loggedAt:
-                    data_name: a.loggedAt
-            default:
-                loggedAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
-
-        filters: ~

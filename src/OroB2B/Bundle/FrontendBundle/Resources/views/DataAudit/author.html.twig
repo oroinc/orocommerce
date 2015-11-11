@@ -1,6 +1,6 @@
-    {% if value.hasRole('ROLE_ADMINISTRATOR') %}
+    {% if value == 'Administrator' %}
         {{ 'orob2b_frontend.dataaudit.administrator'|trans }}
     {% else %}
-        {{ value.firstName }} {{ value.lastName }} - {{ value.email }}
+        {{ value }}
     {% endif %}
 

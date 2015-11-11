@@ -541,9 +541,4 @@ class PriceList
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
-
-    public function __toString()
-    {
-        return (string) $this->getName();
-    }
 }
