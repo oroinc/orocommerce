@@ -4,88 +4,46 @@ namespace Oro\Bundle\ActionBundle\Model;
 
 class ActionDefinition
 {
-    const EXTEND_STRATEGY_ADD = 'add';
-
-    const EXTEND_STRATEGY_REPLACE = 'replace';
-
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $name;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $label;
 
-    /**
-     * @var boolean
-     */
+    /*** @var boolean */
     protected $enabled = true;
 
-    /**
-     * @var array
-     */
-    protected $entities;
+    /** @var array */
+    protected $entities = [];
 
-    /**
-     * @var array
-     */
-    protected $routes;
+    /** @var array */
+    protected $routes = [];
 
-    /**
-     * @var array
-     */
-    protected $applications;
+    /** @var array */
+    protected $applications = [];
 
-    /**
-     * @var string
-     */
-    protected $extend;
-
-    /**
-     * @var string
-     */
-    protected $extendStrategy = self::EXTEND_STRATEGY_REPLACE;
-
-    /**
-     * @var integer
-     */
+    /** @var integer */
     protected $order = 0;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $frontendOptionsConfiguration;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $formOptionsConfiguration;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $attributesConfiguration;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $preConditionsConfiguration;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $conditionsConfiguration;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $initStepConfiguration;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $executionStepConfiguration;
 
     /**
@@ -198,44 +156,6 @@ class ActionDefinition
     public function setApplications(array $applications)
     {
         $this->applications = $applications;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getExtend()
-    {
-        return $this->extend;
-    }
-
-    /**
-     * @param string $extend
-     * @return $this
-     */
-    public function setExtend($extend)
-    {
-        $this->extend = $extend;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getExtendStrategy()
-    {
-        return $this->extendStrategy;
-    }
-
-    /**
-     * @param string $extendStrategy
-     * @return $this
-     */
-    public function setExtendStrategy($extendStrategy)
-    {
-        $this->extendStrategy = $extendStrategy;
 
         return $this;
     }
