@@ -221,5 +221,6 @@ services:
         class: %orob2b_pricing.event_listener.product_select_price_list_aware.class%
         arguments:
             - @orob2b_pricing.model.frontend_product_list_modifier
+            - @doctrine
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
