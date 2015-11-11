@@ -1,6 +1,7 @@
 parameters:
     oro_action.configuration.config.action.class: Oro\Bundle\ActionBundle\Configuration\ActionConfiguration
     oro_action.configuration.config.action_list.class: Oro\Bundle\ActionBundle\Configuration\ActionListConfiguration
+    oro_action.configuration.provider.class: Oro\Bundle\ActionBundle\Configuration\ActionConfigurationProvider
 
 services:
     oro_action.configuration.config.action:
@@ -10,3 +11,10 @@ services:
         class: %oro_action.configuration.config.action_list.class%
         arguments:
             - @oro_action.configuration.config.action
+
+    oro_action.configuration.provider:
+        class: %oro_action.configuration.provider.class%
+        arguments:
+            - @oro_action.cache.provider
+            - []
+            - %kernel.bundles%
