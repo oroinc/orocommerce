@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
+
 use OroB2B\Bundle\PricingBundle\Model\FrontendProductListModifier;
 use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
 
@@ -23,11 +25,18 @@ class ProductSelectPriceListAwareListener
     protected $modifier;
 
     /**
-     * @param FrontendProductListModifier $modifier
+     * @var Registry
      */
-    public function __construct(FrontendProductListModifier $modifier)
+    protected $registry;
+
+    /**
+     * @param FrontendProductListModifier $modifier
+     * @param Registry $registry
+     */
+    public function __construct(FrontendProductListModifier $modifier, Registry $registry)
     {
         $this->modifier = $modifier;
+        $this->registry = $registry;
     }
 
     /**
@@ -41,7 +50,11 @@ class ProductSelectPriceListAwareListener
             return;
         }
 
-        $this->modifier->applyPriceListLimitations($this->event->getQueryBuilder());
+        $priceList = $this->getPriceListParam() !== self::DEFAULT_ACCOUNT_USER
+            ? $this->getPriceListById($this->getPriceListParam())
+            : null;
+        
+        $this->modifier->applyPriceListLimitations($this->event->getQueryBuilder(), null, $priceList);
     }
 
     /**
@@ -49,6 +62,25 @@ class ProductSelectPriceListAwareListener
      */
     protected function isConditionsAcceptable()
     {
-        return $this->event->getDataParameters()->get('price_list') === self::DEFAULT_ACCOUNT_USER;
+        return $this->event->getDataParameters()->has('price_list');
+    }
+
+    /**
+     * @return mixed
+     */
+    protected function getPriceListParam()
+    {
+        return $this->event->getDataParameters()->get('price_list');
+    }
+
+    /**
+     * @param $priceListId
+     * @return \OroB2B\Bundle\PricingBundle\Entity\PriceList
+     */
+    protected function getPriceListById($priceListId)
+    {
+        return $this->registry->getManagerForClass('OroB2BPricingBundle:PriceList')
+            ->getRepository('OroB2BPricingBundle:PriceList')
+            ->find($priceListId);
     }
 }

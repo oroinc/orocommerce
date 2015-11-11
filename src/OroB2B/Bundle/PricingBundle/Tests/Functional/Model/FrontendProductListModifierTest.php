@@ -3,10 +3,12 @@
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Model;
 
 use Doctrine\ORM\EntityManager;
+
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\PricingBundle\Model\FrontendProductListModifier;
 use OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler;
@@ -74,20 +76,28 @@ class FrontendProductListModifierTest extends WebTestCase
      * @dataProvider applyPriceListLimitationsDataProvider
      * @param string|null $currency
      * @param array $expectedProductSku
+     * @param PriceList|null $priceList
      */
-    public function testApplyPriceListLimitations($currency, array $expectedProductSku)
+    public function testApplyPriceListLimitations($currency, array $expectedProductSku, $priceList = null)
     {
-        $this->priceListTreeHandler->expects($this->once())
-            ->method('getPriceList')
-            ->with($this->tokenStorage->getToken()->getUser())
-            ->will($this->returnValue($this->getReference('price_list_2')));
+        if ($priceList) {
+            $priceList = $this->getReference($priceList);
+            $this->priceListTreeHandler->expects($this->never())
+                ->method('getPriceList')
+                ->with($this->tokenStorage->getToken()->getUser());
+        } else {
+            $this->priceListTreeHandler->expects($this->once())
+                ->method('getPriceList')
+                ->with($this->tokenStorage->getToken()->getUser())
+                ->will($this->returnValue($this->getReference('price_list_2')));
+        }
 
         $qb = $this->getManager()->createQueryBuilder()
             ->select('p')
             ->from('OroB2BProductBundle:Product', 'p')
             ->orderBy('p.sku');
 
-        $this->modifier->applyPriceListLimitations($qb, $currency);
+        $this->modifier->applyPriceListLimitations($qb, $currency, $priceList);
 
         /** @var Product[] $result */
         $result = $qb->getQuery()->getResult();
@@ -111,6 +121,15 @@ class FrontendProductListModifierTest extends WebTestCase
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2
                 ]
+            ],
+            'without currency with price list' => [
+                'currency' => null,
+                'expectedProductSku' => [
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_3,
+                ],
+                'priceList' => 'price_list_1'
             ],
             'with USD' => [
                 'currency' => 'USD',

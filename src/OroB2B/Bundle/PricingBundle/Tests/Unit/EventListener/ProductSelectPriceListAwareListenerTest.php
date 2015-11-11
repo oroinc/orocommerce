@@ -2,8 +2,10 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\QueryBuilder;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 use OroB2B\Bundle\PricingBundle\EventListener\ProductSelectPriceListAwareListener;
@@ -12,6 +14,8 @@ use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
 
 class ProductSelectPriceListAwareListenerTest extends \PHPUnit_Framework_TestCase
 {
+    const PRICE_LIST_ID = 42;
+
     /**
      * @var ProductSelectPriceListAwareListener
      */
@@ -33,6 +37,11 @@ class ProductSelectPriceListAwareListenerTest extends \PHPUnit_Framework_TestCas
     protected $queryBuilder;
 
     /**
+     * @var Registry|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $registry;
+
+    /**
      * {@inheritDoc}
      */
     protected function setUp()
@@ -42,33 +51,63 @@ class ProductSelectPriceListAwareListenerTest extends \PHPUnit_Framework_TestCas
             ->getMock();
 
         $this->event = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent')
-            ->disableOriginalConstructor()->getMock();
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new ProductSelectPriceListAwareListener($this->modifier);
+        $this->registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->listener = new ProductSelectPriceListAwareListener($this->modifier, $this->registry);
     }
 
     /**
      * @dataProvider onDBQueryDataProvider
      * @param bool $applicable
-     * @param string $priceListParameter
+     * @param array $parameters
      */
-    public function testOnDBQuery($applicable, $priceListParameter)
+    public function testOnDBQuery($applicable, $parameters = [], $withPriceList = false)
     {
-        $this->event->expects($this->once())
+        $this->event->expects($this->any())
             ->method('getDataParameters')
-            ->willReturn(new ParameterBag(['price_list' => $priceListParameter]));
+            ->willReturn(new ParameterBag($parameters));
 
         $this->event->expects($this->any())
             ->method('getQueryBuilder')
             ->willReturn($this->queryBuilder);
 
         if ($applicable) {
-            $this->modifier->expects($this->once())
-                ->method('applyPriceListLimitations')
-                ->with($this->queryBuilder);
+            if ($withPriceList) {
+                $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+                    ->disableOriginalConstructor()
+                    ->getMock();
+
+                $repository->expects($this->once())
+                    ->method('find')
+                    ->with(self::PRICE_LIST_ID)
+                    ->willReturn(new PriceList());
+
+                $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+                    ->disableOriginalConstructor()
+                    ->getMock();
+
+                $em->expects($this->once())
+                    ->method('getRepository')
+                    ->willReturn($repository);
+
+                $this->registry->expects($this->once())
+                    ->method('getManagerForClass')
+                    ->with('OroB2BPricingBundle:PriceList')
+                    ->willReturn($em);
+            } else {
+                $this->modifier->expects($this->once())
+                    ->method('applyPriceListLimitations')
+                    ->with($this->queryBuilder);
+            }
+
         } else {
             $this->modifier->expects($this->never())
                 ->method('applyPriceListLimitations');
@@ -83,13 +122,22 @@ class ProductSelectPriceListAwareListenerTest extends \PHPUnit_Framework_TestCas
     public function onDBQueryDataProvider()
     {
         return [
-            'applicable' => [
+            'applicable default account user' => [
                 'applicable' => true,
-                'priceListParameter' => ProductSelectPriceListAwareListener::DEFAULT_ACCOUNT_USER
+                'parameters' => ['price_list' => ProductSelectPriceListAwareListener::DEFAULT_ACCOUNT_USER],
+                'withPriceList' => false
+            ],
+            'applicable with price list' => [
+                'applicable' => true,
+                'parameters' => ['price_list' => self::PRICE_LIST_ID],
+                'withPriceList' => true
+            ],
+            'not applicable without parameters' => [
+                'applicable' => false
             ],
             'not applicable' => [
                 'applicable' => false,
-                'priceListParameter' => 'another'
+                'parameters' => ['another' => 123]
             ]
         ];
     }
