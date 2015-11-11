@@ -2,18 +2,18 @@
 
 namespace Oro\Bundle\ActionBundle\Tests\Unit\Configuration;
 
-use Oro\Bundle\ActionBundle\Configuration\ActionConfiguration;
-use Oro\Bundle\ActionBundle\Configuration\ActionListConfiguration;
+use Oro\Bundle\ActionBundle\Configuration\ActionDefinitionConfiguration;
+use Oro\Bundle\ActionBundle\Configuration\ActionDefinitionListConfiguration;
 
-class ActionListConfigurationTest extends \PHPUnit_Framework_TestCase
+class ActionDefinitionListConfigurationTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ActionConfiguration|\PHPUnit_Framework_MockObject_MockObject
+     * @var ActionDefinitionConfiguration|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $configuration;
 
     /**
-     * @var ActionListConfiguration
+     * @var ActionDefinitionListConfiguration
      */
     protected $listConfiguration;
 
@@ -22,9 +22,12 @@ class ActionListConfigurationTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->configuration = $this->getMock('Oro\Bundle\ActionBundle\Configuration\ActionConfiguration');
+        $this->configuration = $this
+            ->getMockBuilder('Oro\Bundle\ActionBundle\Configuration\ActionDefinitionConfiguration')
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->listConfiguration = new ActionListConfiguration($this->configuration);
+        $this->listConfiguration = new ActionDefinitionListConfiguration($this->configuration);
     }
 
     /**
@@ -48,7 +51,7 @@ class ActionListConfigurationTest extends \PHPUnit_Framework_TestCase
      * @param array $inputData
      *
      * @dataProvider processInvalidConfigurationProvider
-     * @expectedException Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
      */
     public function testProcessInvalidConfiguration(array $inputData)
     {

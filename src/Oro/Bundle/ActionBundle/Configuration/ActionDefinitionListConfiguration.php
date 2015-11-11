@@ -6,19 +6,17 @@ use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-class ActionListConfiguration implements ConfigurationInterface
+class ActionDefinitionListConfiguration implements ConfigurationInterface
 {
-    const NODE_ACTIONS = 'actions';
-
     /**
-     * @var ActionConfiguration
+     * @var ActionDefinitionConfiguration
      */
     protected $configuration;
 
     /**
-     * @param ActionConfiguration $configuration
+     * @param ActionDefinitionConfiguration $configuration
      */
-    public function __construct(ActionConfiguration $configuration)
+    public function __construct(ActionDefinitionConfiguration $configuration)
     {
         $this->configuration = $configuration;
     }
@@ -39,9 +37,9 @@ class ActionListConfiguration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $builder = new TreeBuilder();
-        $root = $builder->root(self::NODE_ACTIONS);
-        $root->useAttributeAsKey('id');
-        $this->configuration->addNodes($root->prototype('array')->children());
+        $root = $builder->root('configuration');
+        $root->useAttributeAsKey('name');
+        $this->configuration->addNodes($root->prototype('array'));
 
         return $builder;
     }

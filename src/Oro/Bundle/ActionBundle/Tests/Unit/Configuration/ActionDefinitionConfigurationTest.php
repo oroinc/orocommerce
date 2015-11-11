@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\ActionBundle\Tests\Unit\Configuration;
 
-use Oro\Bundle\ActionBundle\Configuration\ActionConfiguration;
+use Oro\Bundle\ActionBundle\Configuration\ActionDefinitionConfiguration;
 
-class ActionConfigurationTest extends \PHPUnit_Framework_TestCase
+class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ActionConfiguration
+     * @var ActionDefinitionConfiguration
      */
     protected $configuration;
 
@@ -16,7 +16,7 @@ class ActionConfigurationTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->configuration = new ActionConfiguration();
+        $this->configuration = new ActionDefinitionConfiguration();
     }
 
     /**
@@ -37,7 +37,7 @@ class ActionConfigurationTest extends \PHPUnit_Framework_TestCase
      * @param array $inputData
      *
      * @dataProvider processInvalidConfigurationProvider
-     * @expectedException Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
      */
     public function testProcessInvalidConfiguration(array $inputData)
     {
@@ -59,9 +59,9 @@ class ActionConfigurationTest extends \PHPUnit_Framework_TestCase
                 'expected' => [
                     'label' => 'Test Label 1',
                     'applications' => [],
-                    'extend_strategy' => 'add',
                     'entities' => [],
                     'routes' => [],
+                    'order' => 0,
                     'enabled' => true,
                 ],
             ],
@@ -70,9 +70,6 @@ class ActionConfigurationTest extends \PHPUnit_Framework_TestCase
                     'action' => [
                         'label' => 'Test Label 2',
                         'applications' => ['app1', 'app2', 'app3'],
-                        'extend' => 'parent_config_id',
-                        'extend_priority' => 100,
-                        'extend_strategy' => 'replace',
                         'entities' => ['Entity1', 'Entity2'],
                         'routes' => ['route_1', 'route_2'],
                         'order' => 15,
@@ -87,9 +84,6 @@ class ActionConfigurationTest extends \PHPUnit_Framework_TestCase
                 'expected' => [
                     'label' => 'Test Label 2',
                     'applications' => ['app1', 'app2', 'app3'],
-                    'extend' => 'parent_config_id',
-                    'extend_priority' => 100,
-                    'extend_strategy' => 'replace',
                     'entities' => ['Entity1', 'Entity2'],
                     'routes' => ['route_1', 'route_2'],
                     'order' => 15,
@@ -128,32 +122,11 @@ class ActionConfigurationTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
             ],
-            'incorrect action[extend_priority]' => [
-                'input' => [
-                    'action' => [
-                        'label' => 'Test Label',
-                        'applications' => [],
-                        'extend_priority' => 'not integer value',
-                    ],
-                ],
-            ],
-            'incorrect action[extend_strategy]' => [
-                'input' => [
-                    'action' => [
-                        'label' => 'Test Label',
-                        'applications' => [],
-                        'extend_priority' => 100,
-                        'extend_strategy' => 'not valid value',
-                    ],
-                ],
-            ],
             'incorrect action[entities]' => [
                 'input' => [
                     'action' => [
                         'label' => 'Test Label',
                         'applications' => [],
-                        'extend_priority' => 100,
-                        'extend_strategy' => 'add',
                         'entities' => 'not array value',
                     ],
                 ],
@@ -163,8 +136,6 @@ class ActionConfigurationTest extends \PHPUnit_Framework_TestCase
                     'action' => [
                         'label' => 'Test Label',
                         'applications' => [],
-                        'extend_priority' => 100,
-                        'extend_strategy' => 'add',
                         'entities' => [],
                         'routes' => 'not array value',
                     ],
@@ -175,8 +146,6 @@ class ActionConfigurationTest extends \PHPUnit_Framework_TestCase
                     'action' => [
                         'label' => 'Test Label',
                         'applications' => [],
-                        'extend_priority' => 100,
-                        'extend_strategy' => 'add',
                         'entities' => [],
                         'routes' => [],
                         'order' => 'not integer value',
@@ -188,8 +157,6 @@ class ActionConfigurationTest extends \PHPUnit_Framework_TestCase
                     'action' => [
                         'label' => 'Test Label',
                         'applications' => [],
-                        'extend_priority' => 100,
-                        'extend_strategy' => 'add',
                         'entities' => [],
                         'routes' => [],
                         'order' => 10,
@@ -202,8 +169,6 @@ class ActionConfigurationTest extends \PHPUnit_Framework_TestCase
                     'action' => [
                         'label' => 'Test Label',
                         'applications' => [],
-                        'extend_priority' => 100,
-                        'extend_strategy' => 'add',
                         'entities' => [],
                         'routes' => [],
                         'order' => 10,
