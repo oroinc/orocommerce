@@ -313,20 +313,28 @@ class DataStorageAwareComponentProcessorTest extends \PHPUnit_Framework_TestCase
         $errorMessageSkus,
         $isRedirectRoute = false
     ) {
-        $this->setupProcessorScope($scope, $data, [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => []]);
+        $filteredData = [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => []];
+
+        $this->componentProcessorFilter->expects($this->any())
+            ->method('filterData')
+            ->will($this->returnValue($filteredData));
+
+        $this->setupProcessorScope($scope, $data, $filteredData);
 
         $this->setupErrorMessages($errorMessageSkus);
 
         if ($isRedirectRoute) {
             $this->processor->setRedirectRouteName('route');
-
-            $this->router->expects($this->never())
-                ->method('generate');
         }
+        $this->router->expects($this->never())
+            ->method('generate');
 
         $this->assertNull($this->processor->process($data, new Request()));
     }
 
+    /**
+     * @return array
+     */
     public function processorWithScopeAllRestricted()
     {
         return [

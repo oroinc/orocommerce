@@ -158,15 +158,11 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
      */
     public function process(array $data, Request $request)
     {
-        $allowRedirect = true;
-
         $inputProductSkus = $this->getProductSkus($data);
         $data = $this->filterData($data);
-        if ($this->scope) {
-            $filteredProductSkus = $this->getProductSkus($data);
-            $this->checkNotAllowedProducts($inputProductSkus, $filteredProductSkus);
-            $allowRedirect = !empty($filteredProductSkus);
-        }
+        $filteredProductSkus = $this->getProductSkus($data);
+        $this->checkNotAllowedProducts($inputProductSkus, $filteredProductSkus);
+        $allowRedirect = !empty($filteredProductSkus);
 
         $this->storage->set($data);
 
