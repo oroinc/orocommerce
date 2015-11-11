@@ -5,17 +5,44 @@ layout:
         - @addTree:
             items:
                 head:
-                    blockType:   head
+                    blockType: head
                     options:
-                        title:   Hello World!
+                        title: OroCommerce
+                meta_charset:
+                    blockType: meta
+                    options:
+                        charset: "UTF-8"
+                meta_viewport:
+                    blockType: meta
+                    options:
+                        name: "viewport"
+                        content: "width=device-width, initial-scale=1"
                 body:
                     blockType: body
-                content:
-                    blockType: text
+                header:
+                    blockType: container
+                main:
+                    blockType: container
                     options:
-                        text: { @value: 'Hello World!' }
+                        attr:
+                            class: main
+                content:
+                    blockType: container
+                    options:
+                        attr:
+                            class: content
+                footer:
+                    blockType: container
+                    options:
+                        attr:
+                            class: footer
             tree:
                 root:
-                    head: ~
+                    head:
+                        meta_charset: ~
+                        meta_viewport: ~
                     body:
-                        content: ~
+                        header: ~
+                        main:
+                            content: ~
+                        footer: ~
