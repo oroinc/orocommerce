@@ -7,6 +7,7 @@ parameters:
     orob2b_pricing.form.price_list_collection.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceListCollectionType
     orob2b_pricing.form.type.product_price_filter.class: OroB2B\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType
     orob2b_pricing.form.type.product_price_list_aware_select.class: OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceListAwareSelectType
+    orob2b_pricing.form.type.price_list_select_with_priority.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType
 
     orob2b_pricing.form.extension.account_type.class: OroB2B\Bundle\PricingBundle\Form\Extension\AccountFormExtension
     orob2b_pricing.form.extension.account_group_type.class: OroB2B\Bundle\PricingBundle\Form\Extension\AccountGroupFormExtension
@@ -91,3 +92,8 @@ services:
             - @doctrine
         tags:
             - { name: form.type_extension, alias: orob2b_product }
+
+    orob2b_pricing.form.type.price_list_select_with_priority:
+        class: %orob2b_pricing.form.type.price_list_select_with_priority.class%
+        tags:
+            - { name: form.type, alias: orob2b_pricing_price_list_select_with_priority }
