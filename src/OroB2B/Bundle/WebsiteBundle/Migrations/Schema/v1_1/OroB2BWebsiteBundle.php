@@ -30,6 +30,7 @@ class OroB2BWebsiteBundle implements Migration, NoteExtensionAwareInterface
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->addIndexForCreateAndUpdateFields($schema);
+        $this->addNoteAssociations($schema);
     }
 
     /**
