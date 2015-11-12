@@ -1,0 +1,13 @@
+parameters:
+    oro_action.manager.class: Oro\Bundle\ActionBundle\Model\ActionManager
+    oro_action.expression.factory.class: Oro\Component\ConfigExpression\ExpressionFactory
+
+services:
+    oro_action.manager:
+        class: %oro_action.manager.class%
+        arguments:
+            - @doctrine
+            - @oro_action.configuration.provider
+            - @oro_action.expression.factory
+    oro_action.expression.factory:
+        parent: oro_layout.expression.factory

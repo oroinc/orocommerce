@@ -17,12 +17,20 @@ class WidgetController extends Controller
      */
     public function buttonsAction()
     {
+        /* @var $requestStack \Symfony\Component\HttpFoundation\RequestStack */
+        $requestStack = $this->get('request_stack');
+
+        $context = [
+            'route' => $requestStack->getMasterRequest()->get('_route'),
+            'entityId' => $this->getRequest()->get('entity_id'),
+            'entityClass' => $this->getRequest()->get('entity_class'),
+        ];
+
+        /* @var $manager \Oro\Bundle\ActionBundle\Model\ActionManager */
+        $manager = $this->get('oro_action.manager');
+
         return [
-            'actions' => [
-                [
-                    'label' => 'action1',
-                ]
-            ],
+            'actions' => $manager->getActions($context),
         ];
     }
 }
