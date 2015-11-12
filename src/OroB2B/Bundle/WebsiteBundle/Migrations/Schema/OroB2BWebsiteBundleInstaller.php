@@ -48,6 +48,7 @@ class OroB2BWebsiteBundleInstaller implements Installation, NoteExtensionAwareIn
         $this->addOrob2BRelatedWebsiteForeignKeys($schema);
         $this->addOrob2BWebsiteForeignKeys($schema);
         $this->addOrob2BWebsitesLocalesForeignKeys($schema);
+        $this->addNoteAssociations($schema);
     }
 
     /**
