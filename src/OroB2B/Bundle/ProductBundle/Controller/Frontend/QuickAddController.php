@@ -83,7 +83,7 @@ class QuickAddController extends Controller
      * @return array|Response
      */
     public function copyPasteAction(Request $request)
-    { fffFF();
+    {
         return [
 
         ];
