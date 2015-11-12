@@ -1,0 +1,112 @@
+[data-chosen-selectbox] {
+  @media (max-width: 991px) {
+    display: block !important;
+  }
+}
+
+.chosen-container {
+  box-sizing: border-box;
+  background: @base-background-color;
+  .radiused(.5rem);
+  
+  &.chosen-container-single {
+
+    .chosen-single {
+      color: @base-font-color;
+      padding: .6rem 1.4rem;
+      box-shadow: none;
+      background: transparent;
+      height: auto;
+      border: 0.1rem solid @base-border-color;
+
+      span {
+        color: @base-font-color;
+        text-transform: uppercase;
+      }
+
+      div {
+        width: 3rem;
+
+        b {
+          background: none !important;
+          position: relative;
+          transition: transform .2s linear;
+
+          &:before {
+            content: "";
+            display: block;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            height: 0;
+            margin: -.3rem 0 0 -.5rem;
+            border-top: .6rem solid @base-font-color-lighter;
+            border-left: .5rem solid transparent;
+            border-right: .5rem solid transparent;
+          }
+        }
+      }
+    }
+  }
+
+  &.chosen-container-active {
+
+    .chosen-single {
+      border-color: #66afe9;
+      outline: 0;
+      border: 0.1rem solid #ebebeb;
+      box-shadow: 0 1px 5px rgba(0,0,0,.15);
+
+      div {
+
+        b {
+          transform: rotate(180deg);
+        }
+      }
+    }
+  }
+
+  &.chosen-with-drop {
+    .chosen-drop {
+      border: 0.1rem solid @base-border-color;
+      border-top: 0;
+      box-shadow: 0 3px 5px rgba(0,0,0,.15);
+    }
+  }
+
+  .chosen-results {
+    color: @base-font-color;
+    margin: 0;
+    padding: 0;
+
+    li {
+      line-height: 2.4rem;
+      padding: .5rem 1.4rem;
+      text-transform: uppercase;
+
+      &.highlighted {
+        background: @theme-blue-color;
+      }
+    }
+  }
+
+  @media (max-width: 991px) {
+    display: none !important;
+  }
+}
+
+.product__select_quick-view {
+  .chosen-single {
+    span {
+      text-transform: none !important;
+    }
+  }
+
+  .chosen-results {
+
+    li {
+      text-transform: none !important;
+    }
+  }
+}
+

@@ -1,0 +1,49 @@
+  .ie {
+    .search-widget {
+      height: 5rem;
+    }
+
+    .search-widget__input {
+    height: 100%;
+    }
+
+    .product-gallery {
+
+      &.product-gallery_vertical {
+      
+        .product-gallery__carousel__list__item {
+          width: 6.8rem !important;
+          height: 6.8rem !important;
+
+          @media (max-width: 991px) {
+            width: 5rem !important;
+            height: 5rem !important;
+          }
+        }
+      }
+    }
+
+    .product__qty-input { 
+      
+      &.product__qty-input_more-info {
+        
+        .product__qty-input__count-option {
+
+          .count-minus,
+          .count-plus {
+            line-height: 3.7rem;
+            height: 3.7rem;
+          }
+        } 
+      }
+    }
+
+    .form-input {
+      input[type="text"] {
+        &.input_sm {
+          line-height: 1.4rem;
+        }
+      }
+    }
+
+  }
