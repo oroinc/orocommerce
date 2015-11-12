@@ -4,6 +4,7 @@ parameters:
     orob2b_pricing.form.type.product_price_collection.class: OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType
     orob2b_pricing.form.type.product_price.class: OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceType
     orob2b_pricing.form.type.price_list_product_price.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceListProductPriceType
+    orob2b_pricing.form.price_list_collection.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceListCollectionType
     orob2b_pricing.form.type.product_price_filter.class: OroB2B\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType
     orob2b_pricing.form.type.product_price_list_aware_select.class: OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceListAwareSelectType
 
@@ -50,6 +51,11 @@ services:
             - { name: form.type, alias: orob2b_pricing_price_list_product_price }
         calls:
             - [setDataClass, [%orob2b_pricing.entity.product_price.class%]]
+
+    orob2b_pricing.form.price_list_collection:
+        class: %orob2b_pricing.form.price_list_collection.class%
+        tags:
+            - { name: form.type, alias: orob2b_pricing_price_list_collection }
 
     orob2b_pricing.form.type.product_price_filter:
         class: %orob2b_pricing.form.type.product_price_filter.class%

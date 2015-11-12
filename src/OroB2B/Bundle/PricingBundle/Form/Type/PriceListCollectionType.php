@@ -19,7 +19,10 @@ class PriceListCollectionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'type' => ProductPriceType::NAME,
+                'website' => null,
+                'type' => PriceListSelectType::NAME,
+                'show_form_when_empty' => false,
+                'mapped' => false,
             ]
         );
     }

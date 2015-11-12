@@ -21,9 +21,9 @@ class AccountFormExtension extends AbstractPriceListExtension
             return;
         }
 
-        $priceList = $this->getPriceListRepository()->getPriceListByAccount($account);
-
-        $event->getForm()->get('priceList')->setData($priceList);
+//        $priceLists[] = $this->getPriceListRepository()->getPriceListByAccount($account);
+        $priceLists = [];
+        $event->setData($priceLists);
     }
 
     /**

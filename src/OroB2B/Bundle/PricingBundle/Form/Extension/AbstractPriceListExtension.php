@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Form\Extension;
 
+use OroB2B\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -38,20 +39,16 @@ abstract class AbstractPriceListExtension extends AbstractTypeExtension
             'priceListsByWebsites',
             WebsiteScopedDataType::NAME,
             [
-                'type' => PriceListSelectType::NAME,
+                'type' => PriceListCollectionType::NAME,
                 'label' => 'orob2b.pricing.pricelist.entity_plural_label',
                 'required' => false,
                 'mapped' => false,
                 'ownership_disabled' => true,
-                'preloaded_websites' => [],
-                'data' => $options['data'],
-                'options' => [
-                    'website' => null,
-                ],
+                'data' => []
             ]
         );
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData']);
+        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData'], 100);
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit'], 10);
     }
 
