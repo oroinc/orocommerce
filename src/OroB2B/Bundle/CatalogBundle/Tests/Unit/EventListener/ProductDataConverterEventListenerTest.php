@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\src\OroB2B\Bundle\CatalogBundle\Tests\Unit\EventListener;
+namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
 use OroB2B\Bundle\CatalogBundle\EventListener\AbstractProductImportEventListener;
 use OroB2B\Bundle\CatalogBundle\EventListener\ProductDataConverterEventListener;

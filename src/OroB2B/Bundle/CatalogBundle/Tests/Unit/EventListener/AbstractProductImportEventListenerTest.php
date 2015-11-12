@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\src\OroB2B\Bundle\CatalogBundle\Tests\Unit\EventListener;
+namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
@@ -55,7 +55,7 @@ abstract class AbstractProductImportEventListenerTest extends \PHPUnit_Framework
 
     public function tearDown()
     {
-        unset($this->registry);
+        unset($this->registry, $this->categoryRepository);
     }
 
     private function mockCategoryRepository()
