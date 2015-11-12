@@ -35,3 +35,18 @@
         {{ block('oro_collection_widget') }}
     </div>
 {% endblock %}
+
+{% block orob2b_pricing_price_list_select_with_priority_widget %}
+    <div class="float-holder">
+        <table>
+            <tr>
+                <td>{{ form_widget(form.priceList) }}</td>
+                <td>{{ form_widget(form.priority, { 'attr': {'class': 'priority'} }) }}</td>
+            </tr>
+            <tr>
+                <td>{{ form_errors(form.priceList) }}</td>
+                <td>{{ form_errors(form.priority) }}</td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}
