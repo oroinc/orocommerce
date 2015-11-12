@@ -62,6 +62,14 @@ abstract class AbstractProductImportEventListener
     }
 
     /**
+     * Clean up caches on clear UoW
+     */
+    public function onClear()
+    {
+        $this->categoriesByProduct = $this->categoriesByTitle = [];
+    }
+
+    /**
      * @param string $categoryDefaultTitle
      * @return null|Category
      */
