@@ -90,7 +90,7 @@ class ActionConfigurationProvider
         try {
             $data = [];
             if (!empty($configs)) {
-                $data = $this->definitionConfiguration->processConfiguration([self::ROOT_NODE_NAME => $configs]);
+                $data = $this->definitionConfiguration->processConfiguration($configs);
             }
         } catch (InvalidConfigurationException $exception) {
             throw new InvalidConfigurationException(
