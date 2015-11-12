@@ -2,6 +2,11 @@
 
 namespace OroB2B\Bundle\PricingBundle\Migrations\Schema\v1_1;
 
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
@@ -10,11 +15,13 @@ use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterfac
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\MigrationBundle\Migration\SqlMigrationQuery;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class AddWebsiteToPriceListRelationTables implements Migration, ContainerAwareInterface, DatabasePlatformAwareInterface
+class AddWebsiteToPriceListRelationTables implements Migration, DatabasePlatformAwareInterface, ContainerAwareInterface
 {
+    /**
+     * @var int
+     */
+    protected $defaultWebsiteId;
 
     /**
      * @var AbstractPlatform
@@ -22,9 +29,9 @@ class AddWebsiteToPriceListRelationTables implements Migration, ContainerAwareIn
     protected $platform;
 
     /**
-     * @var ContainerInterface
+     * @var Connection
      */
-    protected $container;
+    protected $connection;
 
     /**
      * {@inheritdoc}
@@ -35,11 +42,11 @@ class AddWebsiteToPriceListRelationTables implements Migration, ContainerAwareIn
     }
 
     /**
-     * @param ContainerInterface|null $container
+     * {@inheritdoc}
      */
     public function setContainer(ContainerInterface $container = null)
     {
-         $this->container = $container;
+        $this->connection = $container->get('doctrine')->getConnection();
     }
 
     /**
@@ -62,6 +69,7 @@ class AddWebsiteToPriceListRelationTables implements Migration, ContainerAwareIn
 
     /**
      * @param Schema $schema
+     * @param QueryBag $queries
      */
     protected function addWebsiteToOroB2BPriceListToAccountGroup(Schema $schema, QueryBag $queries)
     {
@@ -71,15 +79,15 @@ class AddWebsiteToPriceListRelationTables implements Migration, ContainerAwareIn
     /**
      * @param Schema $schema
      * @param QueryBag $queries
-     * @param $tableName
-     * @param $relationField
+     * @param string $tableName
+     * @param string $relationField
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     protected function addWebsiteToRelationTable(Schema $schema, QueryBag $queries, $tableName, $relationField)
     {
         $table = $schema->getTable($tableName);
         $table->dropPrimaryKey();
-        $table->addColumn('website_id', 'integer', ['default' => $this->getDefaultWebsite()->getId()]);
+        $table->addColumn('website_id', 'integer', ['default' => $this->getDefaultWebsiteId()]);
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_website'),
             ['website_id'],
@@ -92,7 +100,7 @@ class AddWebsiteToPriceListRelationTables implements Migration, ContainerAwareIn
 
     /**
      * @param Schema $schema
-     * @param $tableName
+     * @param string $tableName
      * @return SqlMigrationQuery
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
@@ -111,9 +119,17 @@ class AddWebsiteToPriceListRelationTables implements Migration, ContainerAwareIn
     /**
      * @return \OroB2B\Bundle\WebsiteBundle\Entity\Website
      */
-    protected function getDefaultWebsite()
+    protected function getDefaultWebsiteId()
     {
-        return $this->container->get('doctrine')->getManagerForClass('OroB2BWebsiteBundle:Website')
-            ->getRepository('OroB2BWebsiteBundle:Website')->getDefaultWebsite();
+        if (!$this->defaultWebsiteId) {
+            $this->defaultWebsiteId = $this->connection->createQueryBuilder()
+                ->select('id')
+                ->from('orob2b_website')
+                ->orderBy('id', Criteria::ASC)
+                ->setMaxResults(1)
+                ->execute()->fetchColumn();
+        }
+
+        return $this->defaultWebsiteId;
     }
 }
