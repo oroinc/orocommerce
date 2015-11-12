@@ -22,12 +22,18 @@ class ProductNormalizerEvent extends Event
     protected $plainData = [];
 
     /**
+     * @var array
+     */
+    protected $context;
+
+    /**
      * {@inheritdoc}
      */
-    public function __construct(Product $product, array $plainData)
+    public function __construct(Product $product, array $plainData, array $context = [])
     {
         $this->product = $product;
         $this->plainData = $plainData;
+        $this->context = $context;
     }
 
     /**
@@ -52,5 +58,13 @@ class ProductNormalizerEvent extends Event
     public function setPlainData(array $plainData)
     {
         $this->plainData = $plainData;
+    }
+
+    /**
+     * @return array
+     */
+    public function getContext()
+    {
+        return $this->context;
     }
 }

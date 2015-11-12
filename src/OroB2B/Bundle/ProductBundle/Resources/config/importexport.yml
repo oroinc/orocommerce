@@ -19,6 +19,7 @@ services:
         parent: orob2b_fallback.importexport.strategy.localized_fallback_value_aware
         calls:
             - [setSecurityFacade, [@oro_security.security_facade]]
+            - [setVariantLinkClass, [%orob2b_product.product_variant_link.class%]]
 
     orob2b_product.importexport.normalizer.product:
         class: %orob2b_product.importexport.normalizer.product.class%
