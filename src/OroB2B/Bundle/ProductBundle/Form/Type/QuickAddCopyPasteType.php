@@ -31,7 +31,7 @@ class QuickAddCopyPasteType extends AbstractType
                         'constraints' => [new NotBlank()],
                         'label' => false,
                         'data' => "HSSUC, 1\nHSTUC, 2\nHCCM, 3\nSKU1, 10\nSKU2,20\nSKU3, 30\n",
-                        'invalid_message' => 'abc'
+                        'invalid_message' => 'Invalid format'
                     ]
                 )->addModelTransformer(new TextareaToRowCollectionTransformer())
             );

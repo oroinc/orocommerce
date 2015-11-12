@@ -32,10 +32,6 @@ class QuickAddController extends Controller
 
         $copyPasteForm = $this->createForm(QuickAddCopyPasteType::NAME)->handleRequest($request);
 
-        if ($copyPasteForm->isValid()) {
-            die('123');
-        }
-
         return $response ?: ['form' => $form->createView(), 'copyPasteForm' => $copyPasteForm->createView()];
     }
 
@@ -48,10 +44,14 @@ class QuickAddController extends Controller
      */
     public function importAction(Request $request)
     {
-        $result = $this->get('orob2b_product.form_handler.quick_add_import_from_file')->process($request);
+        $form = $this->createForm(QuickAddImportFromFileType::NAME);
 
-        /** @var FormInterface $form */
-        $form = $result['form'];
+        $form->handleRequest($request);
+
+
+        if ($form->isValid()) {
+            return $this->redirectToRoute('orob2b_product_frontend_import_summary');
+        }
 
         return [
             'form' => $form->createView()
@@ -67,6 +67,8 @@ class QuickAddController extends Controller
      */
     public function importShowAction(Request $request)
     {
+
+        $result = $this->get('orob2b_product.form_handler.quick_add_import')->process($request);
         return [
 
         ];

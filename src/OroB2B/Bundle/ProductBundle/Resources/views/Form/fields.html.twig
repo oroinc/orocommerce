@@ -140,7 +140,8 @@
 
         <p>{{ 'orob2b.product.frontend.quick_add.copy_paste.description'|trans }}</p>
 
-        {{ form_widget(form.products, {
+
+        {{ form_widget(form.collection, {
                 'attr': {
                     'style': 'width: 300px; height: 165px;',
                     'placeholder': 'orob2b.product.frontend.quick_add.copy_paste.placeholder'|trans
@@ -148,14 +149,18 @@
           }
         ) }}
 
-        {{ form_errors(form.products) }}
+
+        {{ form_errors(form.collection) }}
+
+
 
     </div>
 
     <div class="btn-group pull-right">
         <button type="submit"
            data-url="{{ path('orob2b_product_frontend_import_summary') }}"
-           class="btn btn-primary">
+           data-form-id="{{ '#' ~ form.vars.id }}"
+           class="btn btn-primary copy-paste-button">
             {{ 'orob2b.product.frontend.quick_add.continue.label'|trans }}
         </button>
     </div>

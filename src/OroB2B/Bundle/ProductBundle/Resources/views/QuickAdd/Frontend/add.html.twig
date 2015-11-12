@@ -53,7 +53,7 @@
                     </div>
 
                     <div class="pull-left pull-left-extra">
-                        <form id="{{ copyPasteForm.vars.id }}" name="{{ copyPasteForm.vars.name }}" method="post">
+                        <form action="" id="{{ copyPasteForm.vars.id }}" name="{{ copyPasteForm.vars.name }}" method="post">
 
                             <fieldset class="form-horizontal">
 
@@ -64,6 +64,7 @@
                             </fieldset>
 
                         </form>
+                        {{ oro_form_js_validation(form) }}
 
                     </div>
 
@@ -81,7 +82,32 @@
 
                         var widget = new DialogWidget({
                             'url': this.dataset.url,
-                            'title': {{ importTitle|default('oro.importexport.import.label'|trans)|json_encode|raw }},
+                            'title': {{ 'Import From File'|trans|json_encode|raw }},
+                            'stateEnabled': false,
+                            'incrementalPosition': false,
+                            'dialogOptions': {
+                                'width': 680,
+                                'autoResize': true,
+                                'modal': true,
+                                'height': 350
+                            }
+                        });
+
+                        widget.render();
+
+                    });
+
+
+                });
+        require(['jquery', 'orotranslation/js/translator', 'oro/dialog-widget', 'oroui/js/mediator', 'ready!app'],
+                function($, __, DialogWidget, mediator) {
+
+                    $('.copy-paste-button').on('click', function(e) {
+                        e.preventDefault();
+
+                        var widget = new DialogWidget({
+                            'url': this.dataset.url,
+                            'title': {{ 'Import Validation'|trans|json_encode|raw }},
                             'stateEnabled': false,
                             'incrementalPosition': false,
                             'dialogOptions': {

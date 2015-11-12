@@ -31,7 +31,7 @@ class TextareaToRowCollectionTransformer implements DataTransformerInterface
         $lineNumber = 1;
 
         foreach (explode(PHP_EOL, $value) as $line) {
-            $data = preg_split('/[\t,]/', $line);
+            $data = preg_split('/[\t\,]/', $line);
             $collection->add(new QuickAddRow(
                 $lineNumber++,
                 $data[0],
