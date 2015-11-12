@@ -37,7 +37,7 @@ class ActionDefinitionListConfiguration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $builder = new TreeBuilder();
-        $root = $builder->root('configuration');
+        $root = $builder->root('actions');
         $root->useAttributeAsKey('name');
         $this->configuration->addNodes($root->prototype('array'));
 
