@@ -1,6 +1,31 @@
-{% block root_widget %}
-    <html{{ block('block_attributes') }}>
-    <!DOCTYPE>
-    {{ block('container_widget') }}
-    </html>
+{% block _wrapper_widget %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _header_widget %}
+    <header{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </header>
+{% endblock %}
+
+{% block _main_widget %}
+    <main{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </main>
+{% endblock %}
+
+{% block _content_widget %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _footer_widget %}
+    <footer{{ block('block_attributes') }}>
+        <div class="container-fluid">
+            {{ block_widget(block) }}
+        </div>
+    </footer>
 {% endblock %}
