@@ -55,6 +55,19 @@ datagrid:
             delete_link:
                 type: url
                 params: [ id ]
+
+    warehouse-grid:
+        extends: base-warehouse-grid
+        source:
+            acl_resource: orob2b_warehouse_view
+        properties:
+            id: ~
+            view_link:
+                route: orob2b_warehouse_view
+            update_link:
+                route: orob2b_warehouse_update
+            delete_link:
+                route: orob2b_api_delete_warehouse
         actions:
             view:
                 type:          navigate
@@ -74,24 +87,4 @@ datagrid:
                 label:         oro.grid.action.delete
                 link:          delete_link
                 icon:          trash
-                acl_resource:  orob2b_warehouse_delete
-
-    warehouse-grid:
-        extends: base-warehouse-grid
-        source:
-            acl_resource: orob2b_warehouse_view
-        properties:
-            id: ~
-            view_link:
-                route: orob2b_warehouse_view
-            update_link:
-                route: orob2b_warehouse_update
-            delete_link:
-                route: orob2b_api_delete_warehouse
-        actions:
-            view:
-                acl_resource:  orob2b_warehouse_view
-            update:
-                acl_resource:  orob2b_warehouse_update
-            delete:
                 acl_resource:  orob2b_warehouse_delete
