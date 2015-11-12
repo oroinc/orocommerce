@@ -6,7 +6,7 @@ services:
     oro_action.manager:
         class: %oro_action.manager.class%
         arguments:
-            - @doctrine
+            - @oro_entity.doctrine_helper
             - @oro_action.configuration.provider
             - @oro_action.expression.factory
     oro_action.expression.factory:

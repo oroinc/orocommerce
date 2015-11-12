@@ -5,10 +5,10 @@ namespace Oro\Bundle\ActionBundle\Model;
 class ActionContext extends AbstractStorage implements EntityAwareInterface
 {
     /**
-     * {@inheritdoc}
+     * @return Object
      */
     public function getEntity()
     {
-        return $this->offsetGet('data');
+        return $this->offsetGet('entity');
     }
 }

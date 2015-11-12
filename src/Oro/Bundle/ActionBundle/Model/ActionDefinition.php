@@ -98,6 +98,14 @@ class ActionDefinition
     /**
      * @return boolean
      */
+    public function getEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * @return boolean
+     */
     public function isEnabled()
     {
         return $this->enabled;

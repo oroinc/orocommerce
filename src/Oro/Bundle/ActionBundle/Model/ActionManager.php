@@ -2,22 +2,19 @@
 
 namespace Oro\Bundle\ActionBundle\Model;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
-use Doctrine\ORM\EntityManager;
-//use Doctrine\Common\Persistence\ManagerRegistry;
-//use Doctrine\Common\Persistence\ObjectManager;
-
 use Oro\Bundle\ActionBundle\Configuration\ActionConfigurationProvider;
 use Oro\Bundle\ActionBundle\Model\ActionDefinition;
+
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use Oro\Component\ConfigExpression\ExpressionFactory as ConditionFactory;
 
 class ActionManager
 {
     /**
-     * @var Registry
+     * @var DoctrineHelper
      */
-    protected $registry;
+    protected $doctrineHelper;
 
     /**
      * @var ActionConfigurationProvider
@@ -29,28 +26,111 @@ class ActionManager
      */
     protected $conditionFactory;
 
+    /**
+     * @var array
+     */
+    private $routes;
 
+    /**
+     * @var array
+     */
+    private $entities;
+
+    /**
+     * @var Action[]
+     */
+    private $actions;
+
+    /**
+     * @param DoctrineHelper $doctrineHelper
+     * @param ActionConfigurationProvider $configurationProvider
+     * @param ConditionFactory $conditionFactory
+     */
     public function __construct(
-        Registry $registry,
+        DoctrineHelper $doctrineHelper,
         ActionConfigurationProvider $configurationProvider,
         ConditionFactory $conditionFactory
     ) {
-        $this->registry = $registry;
+        $this->doctrineHelper = $doctrineHelper;
         $this->configurationProvider = $configurationProvider;
         $this->conditionFactory = $conditionFactory;
     }
 
-//    protected function findActionByContext()
-//    {
-//    }
+    /**
+     * @param array $context
+     * @return Action[]
+     */
+    public function getActions(array $context)
+    {
+        $this->normalizeContext($context);
+
+        $actionContext = $this->createActionContext($context);
+
+        if (!$this->actions) {
+            $this->prepareActions($actionContext);
+        }
+
+        return $this->findActions($context, $actionContext);
+    }
 
     /**
-     * @param array $config
+     * @param array $context
+     * @return Action[]
+     */
+    protected function findActions(array $context, ActionContext $actionContext)
+    {
+        /* @var $actions Action */
+        $actions = [];
+
+        if ($context['route']) {
+            if (array_key_exists($context['route'], $this->routes)) {
+                $actions = array_merge($actions, $this->routes[$context['route']]);
+            }
+        }
+
+        if ($context['entityClass'] && $context['entityId']) {
+            if (array_key_exists($context['entityClass'], $this->entities)) {
+                $actions = array_merge($actions, $this->entities[$context['entityClass']]);
+            }
+        }
+
+        $actions = array_filter($actions, function (Action $action) use ($actionContext) {
+            return $action->isEnabled() && $action->isAllowed($actionContext);
+        });
+
+        uasort($actions, function (Action $action1, Action $action2) {
+            return $action1->getDefinition()->getOrder() - $action2->getDefinition()->getOrder();
+        });
+
+        return $actions;
+    }
+
+    /**
+     * @param ActionContext $actionContext
+     */
+    protected function prepareActions(ActionContext $actionContext)
+    {
+        $configuration = $this->configurationProvider->getActionConfiguration();
+        foreach ($configuration as $name => $parameters) {
+            $definition = $this->assembleDefinition($name, $parameters);
+            $action = $this->createAction($definition);
+            $action->init($actionContext);
+
+            $this->mapActionRoutes($action);
+            $this->mapActionEntities($action);
+
+            $this->actions[] = $action;
+        }
+    }
+
+    /**
      * @param string $name
+     * @param array $config
      * @return ActionDefinition
      */
     protected function assembleDefinition($name, array $config)
     {
+        // TODO: use assembler
         $definition = new ActionDefinition();
         $definition
             ->setName($name)
@@ -77,109 +157,94 @@ class ActionManager
         return $definition;
     }
 
-    protected function createActionModel(ActionDefinition $definition)
+    /**
+     * @param ActionDefinition $definition
+     * @return Action
+     */
+    protected function createAction(ActionDefinition $definition)
     {
         $action = new Action($this->conditionFactory, $definition);
-        // Context ???
-        return $action;
-    }
+        $action
+            ->setEnabled($definition->getEnabled())
+            ->setName($definition->getName());
 
-    protected function findEntity($class, $identifier)
-    {
-        /* @var $manager EntityManager */
-        $manager = $this->registry->getManagerForClass($class);
-        return $manager->getReference($class, $identifier);
+        return $action;
     }
 
     /**
      * @param array $context
      * @return ActionContext
      */
-    protected function getActionContext(array $context)
+    protected function createActionContext(array $context)
     {
-        $data = [
-            'entity' => null,
-            'route' => null,
-        ];
+        $data = [];
 
-        if (isset($context['route'])) {
-            $data['route'] = $context['route'];
-        }
-
-        if (isset($context['entityClass'])) {
-            $data['entityClass'] = $context['entityClass'];
-        }
-
-        if (isset($context['entityId']) && isset($context['entityClass'])) {
-            $data['entity'] = $this->findEntity($context['entityClass'], $context['entityId']);
+        if ($context['entityClass']) {
+            $data['entity'] = $this->getEntityReference(
+                $context['entityClass'],
+                $context['entityId']
+            );
         }
 
         return new ActionContext($data);
     }
 
-//    protected $routeMap = [];
-//    protected $entityMap = [];
-
-    protected function isApplicable(ActionContext $context, Action $action)
+    /**
+     * @param Action $action
+     */
+    protected function mapActionRoutes(Action $action)
     {
-        if (!$action->getDefinition()->isEnabled()) {
-            return false;
+        foreach ($action->getDefinition()->getRoutes() as $routeName) {
+            if (!isset($this->routes[$routeName])) {
+                $this->routes[$routeName] = [];
+            }
+            $this->routes[$routeName][$action->getName()] = $action;
         }
-
-        $route = $context->offsetGet('route');
-        if ($route && in_array($route, $action->getDefinition()->getRoutes(), true)) {
-            return true;
-        }
-
-        $class = $context->offsetGet('entityClass');
-        if ($class && in_array($class, $action->getDefinition()->getEntities(), true)) {
-            return true;
-        }
-
-        return false;
     }
 
-    public function getActions(array $context)
+    /**
+     * @param Action $action
+     */
+    protected function mapActionEntities(Action $action)
     {
-        $actionContext = $this->getActionContext($context);
-
-        $actions = [];
-
-        $configuration = $this->configurationProvider->getActionConfiguration();
-        foreach ($configuration as $name => $parameters) {
-            $definition = $this->assembleDefinition($name, $parameters);
-            $action = $this->createActionModel($definition);
-
-//            if ($definition->getRoutes()) {
-//                foreach ($definition->getRoutes() as $route) {
-//                    if (!isset($this->routeMap[$route])) {
-//                        $this->routeMap[$route] = [];
-//                    }
-//                    $this->routeMap[$route][] = $action;
-//
-//                }
-//                foreach ($definition->getEntities() as $entity) {
-//                    if (!isset($this->entityMap[$entity])) {
-//                        $this->entityMap[$entity] = [];
-//                    }
-//                    $this->entityMap[$entity][] = $action;
-//
-//                }
-//            }
-
-            // FILTER by route
-
-            if (!$this->isApplicable($actionContext, $action)) {
-                continue;
+        foreach ($action->getDefinition()->getEntities() as $entityName) {
+            if (!isset($this->entities[$entityName])) {
+                $this->entities[$entityName] = [];
             }
+            $this->entities[$entityName][$action->getName()] = $action;
+        }
+    }
 
-            if (!$action->isAllowed($actionContext)) {
-                continue;
+    /**
+     * @param string $entityClass
+     * @param mixed $entityId
+     * @return Object
+     * @throws BadRequestHttpException
+     */
+    protected function getEntityReference($entityClass, $entityId)
+    {
+        try {
+            if ($entityId) {
+                $entity = $this->doctrineHelper->getEntityReference($entityClass, $entityId);
+            } else {
+                $entity = $this->doctrineHelper->createEntityInstance($entityClass);
             }
-
-            $actions[] = $action;
+        } catch (NotManageableEntityException $e) {
+            throw new BadRequestHttpException($e->getMessage(), $e);
         }
 
-        return $actions;
+        return $entity;
+    }
+
+    /**
+     * @param array $context
+     */
+    protected function normalizeContext(array &$context)
+    {
+        $context = array_merge([
+            'route' => null,
+            'entityId' => null,
+            'entityClass' => null,
+        ], $context);
     }
 }

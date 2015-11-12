@@ -18,8 +18,14 @@ class Action
     /** @var AbstractCondition[] */
     protected $preConditions;
 
-     /** @var AbstractCondition[] */
+    /** @var AbstractCondition[] */
     protected $conditions;
+
+    /** @var bool */
+    private $enabled;
+
+    /** @var string */
+    private $name;
 
     /**
      * @param ConditionFactory $conditionFactory
@@ -29,6 +35,44 @@ class Action
     {
         $this->conditionFactory = $conditionFactory;
         $this->definition = $definition;
+    }
+
+    /**
+     * @param bool $enabled
+     * @return $this
+     */
+    public function setEnabled($enabled)
+    {
+        $this->enabled = $enabled;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * @param string $name
+     * @return $this
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
     }
 
     /**
