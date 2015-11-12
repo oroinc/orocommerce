@@ -33,12 +33,12 @@ class ProductNormalizerEventListenerTest extends AbstractProductImportEventListe
         $event = new ProductNormalizerEvent($product, []);
         $this->listener->onNormalize($event);
         $this->assertEquals($product, $event->getProduct());
-        $this->assertArraySubset(
-            [
-                ProductNormalizerEventListener::CATEGORY_KEY => $this->categoriesByProduct[$product->getSku()]
-                    ->getDefaultTitle(),
-            ],
-            $event->getPlainData()
+
+        $plainData = $event->getPlainData();
+        $this->assertArrayHasKey(ProductNormalizerEventListener::CATEGORY_KEY, $plainData);
+        $this->assertEquals(
+            $this->categoriesByProduct[$product->getSku()]->getDefaultTitle(),
+            $plainData[ProductNormalizerEventListener::CATEGORY_KEY]
         );
 
         // Should be used cache
