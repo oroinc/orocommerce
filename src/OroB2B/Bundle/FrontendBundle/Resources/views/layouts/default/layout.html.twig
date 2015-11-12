@@ -1,55 +1,31 @@
-{% block root_widget %}
-    <!DOCTYPE html>
-    <html{{ block('block_attributes') }}>
-    {{ block('container_widget') }}
-    </html>
-{% endblock %}
-
-
-{% block _body_widget %}
-    <body{{ block('block_attributes') }}>
-    <div class="wrapper">
-        {{ block('container_widget') }}
+{% block _wrapper_widget %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
     </div>
-    </body>
 {% endblock %}
 
 {% block _header_widget %}
-    <!-- START HEADER -->
     <header{{ block('block_attributes') }}>
-        {{ block('container_widget') }}
+        {{ block_widget(block) }}
     </header>
-    <!-- END HEADER -->
-
 {% endblock %}
 
 {% block _main_widget %}
-    <!-- START MAIN -->
     <main{{ block('block_attributes') }}>
-        {{ block('container_widget') }}
+        {{ block_widget(block) }}
     </main>
-    <!-- END MAIN -->
-
 {% endblock %}
 
 {% block _content_widget %}
-    <!-- START CONTENT -->
     <div{{ block('block_attributes') }}>
-        {{ block('container_widget') }}
+        {{ block_widget(block) }}
     </div>
-    <!-- END CONTENT -->
-
 {% endblock %}
 
 {% block _footer_widget %}
-    <!-- START FOOTER -->
     <footer{{ block('block_attributes') }}>
         <div class="container-fluid">
-            {{ block('container_widget') }}
+            {{ block_widget(block) }}
         </div>
     </footer>
-    <!-- END FOOTER -->
-
 {% endblock %}
-
-

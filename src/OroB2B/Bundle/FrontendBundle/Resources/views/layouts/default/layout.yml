@@ -19,6 +19,11 @@ layout:
                         content: "width=device-width, initial-scale=1"
                 body:
                     blockType: body
+                wrapper:
+                    blockType: container
+                    options:
+                        attr:
+                            class: wrapper
                 header:
                     blockType: container
                 main:
@@ -42,7 +47,8 @@ layout:
                         meta_charset: ~
                         meta_viewport: ~
                     body:
-                        header: ~
-                        main:
-                            content: ~
-                        footer: ~
+                        wrapper:
+                            header: ~
+                            main:
+                                content: ~
+                            footer: ~
