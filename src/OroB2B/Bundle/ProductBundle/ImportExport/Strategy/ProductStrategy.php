@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\ProductBundle\ImportExport\Strategy;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Util\ClassUtils;
+
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -102,7 +103,6 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
 
         $entity->setOwner($this->owner);
     }
-
 
     /**
      * @param Product $existingEntity
