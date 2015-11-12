@@ -45,7 +45,7 @@
                             <strong>
                             <a class="import-button"
                                href="javascript: void(0);"
-                               data-url="{{ path('orob2b_product_frontend_import') }}" >
+                               data-url="{{ path('orob2b_product_frontend_quick_add_import') }}" >
                                 {{ 'orob2b.product.frontend.quick_add.import_from_file.title'|trans }}
                             </a>
                             </strong>
@@ -53,18 +53,48 @@
                     </div>
 
                     <div class="pull-left pull-left-extra">
-                        <form action="" id="{{ copyPasteForm.vars.id }}" name="{{ copyPasteForm.vars.name }}" method="post">
+                        <form action="{{ path('orob2b_product_frontend_quick_add_copy_paste') }}"
+                              id="{{ copyPasteForm.vars.id }}"
+                              name="{{ copyPasteForm.vars.name }}"
+                              method="post"
+                              class="copy-paste-form"
+                        >
 
                             <fieldset class="form-horizontal">
 
-                                {{ form_errors(copyPasteForm) }}
-                                {{ form_widget(copyPasteForm) }}
-                                {{ form_rest(copyPasteForm) }}
+                                <div>
+                                    <h4>{{ 'orob2b.product.frontend.quick_add.copy_paste.title'|trans }}</h4>
+
+                                    <p>{{ 'orob2b.product.frontend.quick_add.copy_paste.description'|trans }}</p>
+
+
+                                    {{ form_widget(copyPasteForm.collection, {
+                                        'attr': {
+                                            'style': 'width: 300px; height: 165px;',
+                                            'placeholder': 'orob2b.product.frontend.quick_add.copy_paste.placeholder'|trans
+                                        }
+                                    }
+                                    ) }}
+
+                                    {{ form_errors(copyPasteForm.collection) }}
+
+                                </div>
+
+                                <div class="btn-group pull-right">
+                                    <button type="submit" class="btn btn-primary copy-paste-button">
+                                        {{ 'orob2b.product.frontend.quick_add.continue.label'|trans }}
+                                    </button>
+                                </div>
+
 
                             </fieldset>
 
+                            <div class="hidden">
+                                {{ form_rest(copyPasteForm) }}
+                            </div>
+
                         </form>
-                        {{ oro_form_js_validation(form) }}
+                        {{ oro_form_js_validation(copyPasteForm) }}
 
                     </div>
 
@@ -102,11 +132,18 @@
         require(['jquery', 'orotranslation/js/translator', 'oro/dialog-widget', 'oroui/js/mediator', 'ready!app'],
                 function($, __, DialogWidget, mediator) {
 
-                    $('.copy-paste-button').on('click', function(e) {
+                    $('.copy-paste-form').on('submit', function(e) {
                         e.preventDefault();
 
+                        var form = $(e.target);
+
+                        form.validate();
+
+                        if (!form.valid()) {
+                            return false;
+                        }
+
                         var widget = new DialogWidget({
-                            'url': this.dataset.url,
                             'title': {{ 'Import Validation'|trans|json_encode|raw }},
                             'stateEnabled': false,
                             'incrementalPosition': false,
@@ -119,10 +156,18 @@
                         });
 
                         widget.render();
+                        widget.trigger('beforeContentLoad');
+
+                        $.ajax({
+                            type: form.attr('method'),
+                            url: form.attr('action'),
+                            data: form.serialize()
+                        }).done(function(data) {
+                                widget.setContent(data);
+                                widget.trigger('contentLoad');
+                        });
 
                     });
-
-
                 });
     </script>
 {% endblock content %}

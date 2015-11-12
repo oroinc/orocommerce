@@ -4,11 +4,8 @@ namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotBlank;
-
-use OroB2B\Bundle\ProductBundle\Form\DataTransformer\TextareaToRowCollectionTransformer;
 
 class QuickAddImportFromFileType extends AbstractType
 {
@@ -38,7 +35,7 @@ class QuickAddImportFromFileType extends AbstractType
                             new NotBlank()
                         ]
                     ]
-                )//->addModelTransformer(new CopyPasteToProductsTransformer())
+                )
             );
     }
 
