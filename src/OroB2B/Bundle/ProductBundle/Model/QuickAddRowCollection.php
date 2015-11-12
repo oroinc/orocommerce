@@ -11,7 +11,7 @@ class QuickAddRowCollection extends ArrayCollection
      */
     public function __toString()
     {
-        return implode(PHP_EOL, $this->filter(function (QuickAddRow $row) {
+        return implode(PHP_EOL, $this->map(function (QuickAddRow $row) {
             return sprintf('%s, %s', $row->getSku(), $row->getQuantity());
         })->toArray());
     }

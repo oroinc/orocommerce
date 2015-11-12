@@ -1,10 +1,9 @@
 {% set pageComponentOptions = {
-'_wid': app.request.get('_wid'),
-'savedId': savedId|default(null)
+    '_wid': app.request.get('_wid')
 } %}
 <div class="widget-content"
      data-page-component-module="orob2bfrontend/js/app/components/widget-form-component"
-     data-page-component-options="{{ pageComponentOptions|merge({message: 'orob2b.shoppinglist.flash.success'})|json_encode }}"
+     data-page-component-options="{{ pageComponentOptions|json_encode }}"
         >
     {% if form.vars.errors|length > 0 %}
         <div class="alert alert-error">

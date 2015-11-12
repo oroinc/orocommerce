@@ -34,13 +34,9 @@ class TextareaToRowCollectionTransformer implements DataTransformerInterface
             $data = preg_split('/[\t\,]/', $line);
             $collection->add(new QuickAddRow(
                 $lineNumber++,
-                $data[0],
-                array_key_exists(1, $data) ? $data[1] : null
+                trim($data[0]),
+                array_key_exists(1, $data) ? trim($data[1]) : null
             ));
-        }
-
-        if (!$collection->hasCompleteRows()) {
-            throw new TransformationFailedException();
         }
 
         return $collection;

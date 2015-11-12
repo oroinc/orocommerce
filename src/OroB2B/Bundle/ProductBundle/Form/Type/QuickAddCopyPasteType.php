@@ -29,14 +29,12 @@ class QuickAddCopyPasteType extends AbstractType
                     'collection',
                     'textarea',
                     [
-                        'error_bubbling' => false,
                         'constraints' => [
                                 new NotBlank(),
                                 new Regex(['message' => 'Invalid format', 'pattern' => self::FORMAT_REGEX])
                         ],
                         'label' => false,
                         'data' => "HSSUC, 1\nHSTUC, 2\nHCCM, 3\nSKU1, 10\nSKU2,20\nSKU3, 30\n",
-                        'invalid_message' => 'Invalid format'
                     ]
                 )->addModelTransformer(new TextareaToRowCollectionTransformer())
             );

@@ -31,7 +31,7 @@ class QuickAddController extends Controller
         /** @var Response|null $response */
         $response = $result['response'];
 
-        $copyPasteForm = $this->createForm(QuickAddCopyPasteType::NAME)->handleRequest($request);
+        $copyPasteForm = $this->createForm(QuickAddCopyPasteType::NAME);
 
         return $response ?: ['form' => $form->createView(), 'copyPasteForm' => $copyPasteForm->createView()];
     }
@@ -51,7 +51,7 @@ class QuickAddController extends Controller
 
 
         if ($form->isValid()) {
-            return $this->redirectToRoute('orob2b_product_frontend_import_summary');
+            return $this->redirectToRoute('orob2b_product_frontend_quick_add_validation_result');
         }
 
         return [
@@ -61,7 +61,7 @@ class QuickAddController extends Controller
 
     /**
      * @Route("/validation/result/", name="orob2b_product_frontend_quick_add_validation_result")
-     * @Template("OroB2BProductBundle:QuickAdd\Frontend:importShow.html.twig")
+     * @Template("OroB2BProductBundle:QuickAdd\Frontend:validationResult.html.twig")
      *
      * @param Request $request
      * @return array|Response
@@ -77,15 +77,17 @@ class QuickAddController extends Controller
 
     /**
      * @Route("/copy-paste/", name="orob2b_product_frontend_quick_add_copy_paste")
-     * @Template("OroB2BProductBundle:QuickAdd\Frontend:importShow.html.twig")
+     * @Template("OroB2BProductBundle:QuickAdd\Frontend:validationResult.html.twig")
      *
      * @param Request $request
      * @return array|Response
      */
     public function copyPasteAction(Request $request)
     {
-        return [
+        $copyPasteForm = $this->createForm(QuickAddCopyPasteType::NAME)->handleRequest($request);
 
+        return [
+            'form' => $copyPasteForm->createView()
         ];
     }
 }
