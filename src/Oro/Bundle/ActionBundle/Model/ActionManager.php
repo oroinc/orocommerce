@@ -165,7 +165,7 @@ class ActionManager
     {
         $action = new Action($this->conditionFactory, $definition);
         $action
-            ->setEnabled($definition->getEnabled())
+            ->setEnabled($definition->isEnabled())
             ->setName($definition->getName());
 
         return $action;
