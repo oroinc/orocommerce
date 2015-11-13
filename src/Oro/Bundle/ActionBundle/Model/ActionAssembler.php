@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ActionBundle\Model;
 
-use Oro\Bundle\WorkflowBundle\Exception\MissedRequiredOptionException;
+use Oro\Bundle\ActionBundle\Exception\MissedRequiredOptionException;
 
 use Oro\Component\ConfigExpression\ExpressionFactory as ConditionFactory;
 
@@ -58,10 +58,7 @@ class ActionAssembler
             ->setPreConditions($this->getOption($options, 'pre_conditions', []))
             ->setConditions($this->getOption($options, 'conditions', []))
             ->setInitStep($this->getOption($options, 'init_step', []))
-            ->setExecutionStep(
-                $this->getOption($options, 'execution_step', [])
-            )
-        ;
+            ->setExecutionStep($this->getOption($options, 'execution_step', []));
 
         return $actionDefinition;
     }
@@ -87,7 +84,7 @@ class ActionAssembler
      */
     protected function getOption(array $options, $key, $default = null)
     {
-        if (isset($options[$key])) {
+        if (array_key_exists($key, $options)) {
             return $options[$key];
         }
 

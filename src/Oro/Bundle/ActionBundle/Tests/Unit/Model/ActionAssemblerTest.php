@@ -28,7 +28,8 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
     /**
      * @param array $configuration
      * @param array $expected
-     * @dataProvider buildProcessDefinitionDataProvider
+     *
+     * @dataProvider assembleProvider
      */
     public function testAssemble(array $configuration, array $expected)
     {
@@ -38,16 +39,28 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException \Oro\Bundle\ActionBundle\Exception\MissedRequiredOptionException
+     */
+    public function testAssembleWithMissedRequiredOptions()
+    {
+        $configuration = [
+            'test_config' => [],
+        ];
+
+        $this->assembler->assemble($configuration);
+    }
+
+    /**
      * @return array
      */
-    public function buildProcessDefinitionDataProvider()
+    public function assembleProvider()
     {
         $definition1 = new ActionDefinition();
         $definition1
             ->setName('minimum_name')
             ->setLabel('My Label')
-            ->setEntities(['My\Entity'])
-        ;
+            ->setEntities(['My\Entity']);
+
         $definition2 = new ActionDefinition();
         $definition2
             ->setName('maximum_name')
@@ -63,8 +76,8 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
             ->setFrontendOptions(['config_frontend_options'])
             ->setInitStep(['config_init_step'])
             ->setExecutionStep(['config_execution_step'])
-            ->setOrder(77)
-        ;
+            ->setOrder(77);
+
         $conditionFactory = $this->getConditionFactory();
 
         return [
