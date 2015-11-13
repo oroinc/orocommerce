@@ -98,7 +98,7 @@ class ActionManager
 
     protected function loadActions()
     {
-        if ($this->entities !== null && $this->routes !== null) {
+        if ($this->entities !== null || $this->routes !== null) {
             return;
         }
 
