@@ -87,7 +87,7 @@ class ActionConfigurationProviderTest extends \PHPUnit_Framework_TestCase
         $this->definitionConfiguration->expects($this->once())
             ->method('processConfiguration')
             ->willReturnCallback(function (array $configs) {
-                return $configs['actions'];
+                return $configs;
             });
 
         $configurationProvider = new ActionConfigurationProvider(
