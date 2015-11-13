@@ -40,6 +40,7 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Oro\Bundle\ActionBundle\Exception\MissedRequiredOptionException
+     * @expectedExceptionMessage Option "label" is required
      */
     public function testAssembleWithMissedRequiredOptions()
     {

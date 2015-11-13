@@ -2,6 +2,6 @@
 
 namespace Oro\Bundle\ActionBundle\Exception;
 
-class MissedRequiredOptionException extends ActionException
+class MissedRequiredOptionException extends \Exception
 {
 }
