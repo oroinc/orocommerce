@@ -66,19 +66,15 @@ class ActionDefinitionListConfigurationTest extends \PHPUnit_Framework_TestCase
         return [
             'min valid configuration' => [
                 'input' => [
-                    'actions' => [
-                    ],
                 ],
                 'expected' => [
                 ],
             ],
             'full valid configuration' => [
                 'input' => [
-                    'actions' => [
-                        'action1' => [
-                        ],
-                        'action2' => [
-                        ],
+                    'action1' => [
+                    ],
+                    'action2' => [
                     ],
                 ],
                 'expected' => [
