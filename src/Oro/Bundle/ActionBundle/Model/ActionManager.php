@@ -98,13 +98,15 @@ class ActionManager
 
     protected function loadActions()
     {
-        if ($this->entities !== null && $this->routes !== null) {
+        if ($this->entities !== null || $this->routes !== null) {
             return;
         }
 
         $configuration = $this->configurationProvider->getActionConfiguration();
         $actions = $this->assembler->assemble($configuration);
 
+        $this->routes = [];
+        $this->entities = [];
         foreach ($actions as $action) {
             $this->mapActionRoutes($action);
             $this->mapActionEntities($action);
