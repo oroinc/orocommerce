@@ -3,6 +3,8 @@ actions:
         label: 'Quote Action1 (index)'
         routes:
             - orob2b_sale_quote_index
+        frontend_options:
+            icon: icon-repeat
 
     sale_quote_action2:
         label: 'Quote Action2 (view)'

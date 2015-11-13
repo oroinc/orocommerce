@@ -1,11 +1,10 @@
-{% import 'OroActionBundle::macros.html.twig' as actionsMacros %}
-
 {% if actions|length %}
     <div class="widget-content">
-        <div class="btn-group">
-            {% for action in actions %}
-                {{ actionsMacros.renderActionButton(action) }}
-            {% endfor %}
-        </div>
+        {% for action in actions %}
+            {% set params = action.definition.frontendOptions|merge({'label': action.definition.label }) %}
+            {% set template = params.template|default('OroActionBundle::Action/button.html.twig') %}
+
+            {% include template with {'params': params} %}
+        {% endfor %}
     </div>
 {% endif %}
