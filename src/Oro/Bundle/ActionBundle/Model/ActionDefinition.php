@@ -5,46 +5,46 @@ namespace Oro\Bundle\ActionBundle\Model;
 class ActionDefinition
 {
     /** @var string */
-    protected $name;
+    private $name;
 
     /** @var string */
-    protected $label;
+    private $label;
 
     /** @var boolean */
-    protected $enabled = true;
+    private $enabled = true;
 
     /** @var array */
-    protected $entities = [];
+    private $entities = [];
 
     /** @var array */
-    protected $routes = [];
+    private $routes = [];
 
     /** @var array */
-    protected $applications = [];
+    private $applications = [];
 
     /** @var integer */
-    protected $order = 0;
+    private $order = 0;
 
     /** @var array */
-    protected $frontendOptionsConfiguration;
+    private $frontendOptions = [];
 
     /** @var array */
-    protected $formOptionsConfiguration;
+    private $formOptions = [];
 
     /** @var array */
-    protected $attributesConfiguration;
+    private $attributes = [];
 
     /** @var array */
-    protected $preConditionsConfiguration;
+    private $preConditions = [];
 
     /** @var array */
-    protected $conditionsConfiguration;
+    private $conditions = [];
 
     /** @var array */
-    protected $initStepConfiguration;
+    private $initStep = [];
 
     /** @var array */
-    protected $executionStepConfiguration;
+    private $executionStep = [];
 
     /**
      * @param string $name
@@ -93,14 +93,6 @@ class ActionDefinition
         $this->enabled = $enabled;
 
         return $this;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function getEnabled()
-    {
-        return $this->enabled;
     }
 
     /**
@@ -190,18 +182,18 @@ class ActionDefinition
     /**
      * @return array
      */
-    public function getFrontendOptionsConfiguration()
+    public function getFrontendOptions()
     {
-        return $this->frontendOptionsConfiguration;
+        return $this->frontendOptions;
     }
 
     /**
-     * @param array $frontendOptionsConfiguration
+     * @param array $frontendOptions
      * @return $this
      */
-    public function setFrontendOptionsConfiguration(array $frontendOptionsConfiguration)
+    public function setFrontendOptions(array $frontendOptions)
     {
-        $this->frontendOptionsConfiguration = $frontendOptionsConfiguration;
+        $this->frontendOptions = $frontendOptions;
 
         return $this;
     }
@@ -209,18 +201,18 @@ class ActionDefinition
     /**
      * @return array
      */
-    public function getFormOptionsConfiguration()
+    public function getFormOptions()
     {
-        return $this->formOptionsConfiguration;
+        return $this->formOptions;
     }
 
     /**
-     * @param array $formOptionsConfiguration
+     * @param array $formOptions
      * @return $this
      */
-    public function setFormOptionsConfiguration(array $formOptionsConfiguration)
+    public function setFormOptions(array $formOptions)
     {
-        $this->formOptionsConfiguration = $formOptionsConfiguration;
+        $this->formOptions = $formOptions;
 
         return $this;
     }
@@ -228,18 +220,18 @@ class ActionDefinition
     /**
      * @return array
      */
-    public function getAttributesConfiguration()
+    public function getAttributes()
     {
-        return $this->attributesConfiguration;
+        return $this->attributes;
     }
 
     /**
-     * @param array $attributesConfiguration
+     * @param array $attributes
      * @return $this
      */
-    public function setAttributesConfiguration(array $attributesConfiguration)
+    public function setAttributes(array $attributes)
     {
-        $this->attributesConfiguration = $attributesConfiguration;
+        $this->attributes = $attributes;
 
         return $this;
     }
@@ -247,18 +239,18 @@ class ActionDefinition
     /**
      * @return array
      */
-    public function getPreConditionsConfiguration()
+    public function getPreConditions()
     {
-        return $this->preConditionsConfiguration;
+        return $this->preConditions;
     }
 
     /**
-     * @param array $preConditionsConfiguration
+     * @param array $preConditions
      * @return $this
      */
-    public function setPreConditionsConfiguration(array $preConditionsConfiguration)
+    public function setPreConditions(array $preConditions)
     {
-        $this->preConditionsConfiguration = $preConditionsConfiguration;
+        $this->preConditions = $preConditions;
 
         return $this;
     }
@@ -266,18 +258,18 @@ class ActionDefinition
     /**
      * @return array
      */
-    public function getConditionsConfiguration()
+    public function getConditions()
     {
-        return $this->conditionsConfiguration;
+        return $this->conditions;
     }
 
     /**
-     * @param array $conditionsConfiguration
+     * @param array $conditions
      * @return $this
      */
-    public function setConditionsConfiguration(array $conditionsConfiguration)
+    public function setConditions(array $conditions)
     {
-        $this->conditionsConfiguration = $conditionsConfiguration;
+        $this->conditions = $conditions;
 
         return $this;
     }
@@ -285,18 +277,18 @@ class ActionDefinition
     /**
      * @return array
      */
-    public function getInitStepConfiguration()
+    public function getInitStep()
     {
-        return $this->initStepConfiguration;
+        return $this->initStep;
     }
 
     /**
-     * @param array $initStepConfiguration
+     * @param array $initStep
      * @return $this
      */
-    public function setInitStepConfiguration(array $initStepConfiguration)
+    public function setInitStep(array $initStep)
     {
-        $this->initStepConfiguration = $initStepConfiguration;
+        $this->initStep = $initStep;
 
         return $this;
     }
@@ -304,18 +296,18 @@ class ActionDefinition
     /**
      * @return array
      */
-    public function getExecutionStepConfiguration()
+    public function getExecutionStep()
     {
-        return $this->executionStepConfiguration;
+        return $this->executionStep;
     }
 
     /**
-     * @param array $executionStepConfiguration
+     * @param array $executionStep
      * @return $this
      */
-    public function setExecutionStepConfiguration(array $executionStepConfiguration)
+    public function setExecutionStep(array $executionStep)
     {
-        $this->executionStepConfiguration = $executionStepConfiguration;
+        $this->executionStep = $executionStep;
 
         return $this;
     }

@@ -10,22 +10,16 @@ use Oro\Component\ConfigExpression\ExpressionFactory as ConditionFactory;
 class Action
 {
     /** @var ConditionFactory */
-    protected $conditionFactory;
+    private $conditionFactory;
 
     /** @var ActionDefinition */
-    protected $definition;
+    private $definition;
 
     /** @var AbstractCondition[] */
-    protected $preConditions;
+    private $preConditions;
 
     /** @var AbstractCondition[] */
-    protected $conditions;
-
-    /** @var bool */
-    private $enabled;
-
-    /** @var string */
-    private $name;
+    private $conditions;
 
     /**
      * @param ConditionFactory $conditionFactory
@@ -38,33 +32,11 @@ class Action
     }
 
     /**
-     * @param bool $enabled
-     * @return $this
-     */
-    public function setEnabled($enabled)
-    {
-        $this->enabled = $enabled;
-
-        return $this;
-    }
-
-    /**
      * @return bool
      */
     public function isEnabled()
     {
-        return $this->enabled;
-    }
-
-    /**
-     * @param string $name
-     * @return $this
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
+        return $this->getDefinition()->isEnabled();
     }
 
     /**
@@ -72,7 +44,7 @@ class Action
      */
     public function getName()
     {
-        return $this->name;
+        return $this->getDefinition()->getName();
     }
 
     /**
@@ -101,7 +73,7 @@ class Action
     {
         if ($this->preConditions === null) {
             $this->preConditions = [];
-            $preConditionsConfig = $this->definition->getPreConditionsConfiguration();
+            $preConditionsConfig = $this->definition->getPreConditions();
             if ($preConditionsConfig) {
                 foreach ($preConditionsConfig as $conditionConfig) {
                     $this->preConditions[] = $this->conditionFactory
@@ -120,7 +92,7 @@ class Action
     {
         if ($this->conditions === null) {
             $this->conditions = [];
-            $conditionsConfig = $this->definition->getConditionsConfiguration();
+            $conditionsConfig = $this->definition->getConditions();
             if ($conditionsConfig) {
                 foreach ($conditionsConfig as $conditionConfig) {
                     $this->conditions[] = $this->conditionFactory

@@ -22,9 +22,9 @@ class ActionManager
     protected $configurationProvider;
 
     /**
-     * @var ConditionFactory
+     * @var ActionAssembler
      */
-    protected $conditionFactory;
+    protected $assembler;
 
     /**
      * @var array
@@ -37,23 +37,23 @@ class ActionManager
     private $entities = [];
 
     /**
-     * @var Action[]
+     * @var bool
      */
-    private $actions;
+    private $loaded = false;
 
     /**
      * @param DoctrineHelper $doctrineHelper
      * @param ActionConfigurationProvider $configurationProvider
-     * @param ConditionFactory $conditionFactory
+     * @param ActionAssembler $assembler
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ActionConfigurationProvider $configurationProvider,
-        ConditionFactory $conditionFactory
+        ActionAssembler $assembler
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->configurationProvider = $configurationProvider;
-        $this->conditionFactory = $conditionFactory;
+        $this->assembler = $assembler;
     }
 
     /**
@@ -66,9 +66,7 @@ class ActionManager
 
         $actionContext = $this->createActionContext($context);
 
-        if (!$this->actions) {
-            $this->prepareActions($actionContext);
-        }
+        $this->loadActions($actionContext);
 
         return $this->findActions($context, $actionContext);
     }
@@ -108,67 +106,24 @@ class ActionManager
     /**
      * @param ActionContext $actionContext
      */
-    protected function prepareActions(ActionContext $actionContext)
+    protected function loadActions(ActionContext $actionContext)
     {
+        if ($this->loaded) {
+            return;
+        }
+
         $configuration = $this->configurationProvider->getActionConfiguration();
-        foreach ($configuration as $name => $parameters) {
-            $definition = $this->assembleDefinition($name, $parameters);
-            $action = $this->createAction($definition);
+
+        $actions = $this->assembler->assemble($configuration);
+
+        foreach ($actions as $action) {
             $action->init($actionContext);
 
             $this->mapActionRoutes($action);
             $this->mapActionEntities($action);
-
-            $this->actions[] = $action;
-        }
-    }
-
-    /**
-     * @param string $name
-     * @param array $config
-     * @return ActionDefinition
-     */
-    protected function assembleDefinition($name, array $config)
-    {
-        // TODO: use assembler
-        $definition = new ActionDefinition();
-        $definition
-            ->setName($name)
-            ->setLabel($config['label']);
-        if (isset($config['applications'])) {
-            $definition->setApplications($config['applications']);
-        }
-        if (isset($config['entities'])) {
-            $definition->setEntities($config['entities']);
-        }
-        if (isset($config['routes'])) {
-            $definition->setRoutes($config['routes']);
-        }
-        if (isset($config['order'])) {
-            $definition->setOrder($config['order']);
-        }
-        if (isset($config['enabled'])) {
-            $definition->setEnabled($config['enabled']);
-        }
-        if (isset($config['frontend_options'])) {
-            $definition->setFrontendOptionsConfiguration($config['frontend_options']);
         }
 
-        return $definition;
-    }
-
-    /**
-     * @param ActionDefinition $definition
-     * @return Action
-     */
-    protected function createAction(ActionDefinition $definition)
-    {
-        $action = new Action($this->conditionFactory, $definition);
-        $action
-            ->setEnabled($definition->getEnabled())
-            ->setName($definition->getName());
-
-        return $action;
+        $this->loaded = true;
     }
 
     /**
