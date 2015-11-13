@@ -22,9 +22,9 @@ class ActionManager
     protected $configurationProvider;
 
     /**
-     * @var ConditionFactory
+     * @var ActionAssembler
      */
-    protected $conditionFactory;
+    protected $assembler;
 
     /**
      * @var array
@@ -44,16 +44,16 @@ class ActionManager
     /**
      * @param DoctrineHelper $doctrineHelper
      * @param ActionConfigurationProvider $configurationProvider
-     * @param ConditionFactory $conditionFactory
+     * @param ActionAssembler $assembler
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ActionConfigurationProvider $configurationProvider,
-        ConditionFactory $conditionFactory
+        ActionAssembler $assembler
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->configurationProvider = $configurationProvider;
-        $this->conditionFactory = $conditionFactory;
+        $this->assembler = $assembler;
     }
 
     /**
@@ -113,8 +113,10 @@ class ActionManager
         }
 
         $configuration = $this->configurationProvider->getActionConfiguration();
-        foreach ($configuration as $name => $parameters) {
-            $action = $this->assembleAction($name, $parameters);
+
+        $actions = $this->assembler->assemble($configuration);
+
+        foreach ($actions as $action) {
             $action->init($actionContext);
 
             $this->mapActionRoutes($action);
@@ -122,40 +124,6 @@ class ActionManager
         }
 
         $this->loaded = true;
-    }
-
-    /**
-     * @param string $name
-     * @param array $config
-     * @return Action
-     */
-    protected function assembleAction($name, array $config)
-    {
-        // TODO: use assembler
-        $definition = new ActionDefinition();
-        $definition
-            ->setName($name)
-            ->setLabel($config['label']);
-        if (isset($config['applications'])) {
-            $definition->setApplications($config['applications']);
-        }
-        if (isset($config['entities'])) {
-            $definition->setEntities($config['entities']);
-        }
-        if (isset($config['routes'])) {
-            $definition->setRoutes($config['routes']);
-        }
-        if (isset($config['order'])) {
-            $definition->setOrder($config['order']);
-        }
-        if (isset($config['enabled'])) {
-            $definition->setEnabled($config['enabled']);
-        }
-        if (isset($config['frontend_options'])) {
-            $definition->setFrontendOptionsConfiguration($config['frontend_options']);
-        }
-
-        return new Action($this->conditionFactory, $definition);
     }
 
     /**
