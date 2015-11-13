@@ -76,15 +76,11 @@ services:
 
     orob2b_pricing.form.extension.account_type:
         class: %orob2b_pricing.form.extension.account_type.class%
-        arguments:
-            - @doctrine
         tags:
             - { name: form.type_extension, alias: orob2b_account_type }
 
     orob2b_pricing.form.extension.account_group_type:
         class: %orob2b_pricing.form.extension.account_group_type.class%
-        arguments:
-            - @doctrine
         tags:
             - { name: form.type_extension, alias: orob2b_account_group_type }
 
@@ -105,11 +101,11 @@ services:
         arguments:
             - @doctrine
         tags:
-            - { name: form.type_extension, alias: orob2b_pricing_account_group_website_scoped_price_lists }
+            - { name: form.type, alias: orob2b_pricing_account_group_website_scoped_price_lists }
 
     orob2b_pricing.form.type.orob2b_pricing_account_website_scoped_price_lists:
         class: %orob2b_pricing.form.type.orob2b_pricing_account_website_scoped_price_lists.class%
         arguments:
             - @doctrine
         tags:
-            - { name: form.type_extension, alias: orob2b_pricing_account_website_scoped_price_lists }
+            - { name: form.type, alias: orob2b_pricing_account_website_scoped_price_lists }
