@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PricingBundle\Form\Extension;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -36,6 +37,10 @@ abstract class AbstractPriceListExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $defaultWebsite = $this->registry
+            ->getManagerForClass('OroB2BWebsiteBundle:Website')
+            ->getRepository('OroB2BWebsiteBundle:Website')
+            ->getDefaultWebsite();
         $builder->add(
             'priceListsByWebsites',
             WebsiteScopedDataType::NAME,
@@ -45,7 +50,8 @@ abstract class AbstractPriceListExtension extends AbstractTypeExtension
                 'required' => false,
                 'mapped' => false,
                 'ownership_disabled' => true,
-                'data' => [],
+                'data' => [[new PriceListToAccount()]],
+                'preloaded_websites' => [$defaultWebsite],
             ]
         );
 

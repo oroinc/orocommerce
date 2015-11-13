@@ -60,7 +60,9 @@ class AccountPriceListController extends Controller
                 'ownership_disabled' => true,
                 'preloaded_websites' => $preloaded_websites,
                 'type' => PriceListCollectionType::NAME,
-                'options' => [],
+                'options' => [
+                    'data' => []
+                ],
                 'data' => [],
             ]
         );

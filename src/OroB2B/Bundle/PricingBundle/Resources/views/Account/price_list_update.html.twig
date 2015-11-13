@@ -3,9 +3,9 @@
     {% set tabs = [] %}
     {% for website in form.priceListsByWebsites.vars.websites %}
         {% set content = '' %}
-        {% if form.priceListsByWebsites.1 is defined  %}
+        {% if form.priceListsByWebsites[website.id] is defined  %}
             {% set content %}
-                {{ form_row(form.priceListsByWebsites.1) }}
+                {{ form_row(form.priceListsByWebsites[website.id]) }}
             {% endset %}
         {% endif %}
         {% set tab = {
