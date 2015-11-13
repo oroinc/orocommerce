@@ -32,7 +32,6 @@ class ProductStrategyEventListener extends AbstractProductImportEventListener
         $category = $this->getCategoryByProduct($product);
         if ($category) {
             $category->removeProduct($product);
-
         }
     }
 }
