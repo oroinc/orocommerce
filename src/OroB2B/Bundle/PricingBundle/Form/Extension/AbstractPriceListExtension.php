@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\Form\Extension;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -44,11 +45,11 @@ abstract class AbstractPriceListExtension extends AbstractTypeExtension
                 'required' => false,
                 'mapped' => false,
                 'ownership_disabled' => true,
-                'data' => []
+                'data' => [],
             ]
         );
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData'], 100);
+        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData']);
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit'], 10);
     }
 

@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
@@ -20,7 +19,7 @@ class PriceListCollectionType extends AbstractType
         $resolver->setDefaults(
             [
                 'website' => null,
-                'type' => PriceListSelectType::NAME,
+                'type' => PriceListSelectWithPriorityType::NAME,
                 'show_form_when_empty' => false,
                 'mapped' => false,
             ]

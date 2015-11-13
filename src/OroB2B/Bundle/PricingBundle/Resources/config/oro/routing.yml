@@ -33,3 +33,8 @@ orob2b_product_price_frontend_ajax:
     prefix:       /productprice
     options:
         frontend: true
+
+orob2b_accont_pricing:
+    resource:     "@OroB2BPricingBundle/Controller/AccountPriceListController.php"
+    type:         annotation
+    prefix:       /accountpricelist

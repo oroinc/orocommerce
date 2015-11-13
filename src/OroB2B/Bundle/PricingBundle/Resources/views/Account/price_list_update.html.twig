@@ -1,1 +1,25 @@
-{{ form_row(form.priceListsByWebsites) }}
+{#{{ form_row(form.priceListsByWebsites) }}#}
+<div class="responsive-cell">
+    {% set tabs = [] %}
+    {% for website in form.priceListsByWebsites.vars.websites %}
+        {% set content = '' %}
+        {% if form.priceListsByWebsites.1 is defined  %}
+            {% set content %}
+                {{ form_row(form.priceListsByWebsites.1) }}
+            {% endset %}
+        {% endif %}
+        {% set tab = {
+            'alias': website.id,
+            'widgetType': 'block',
+            'label': website.name|trans,
+            'url': path(
+                'orob2b_account_pricelist_website',
+                {accountId: form.priceListsByWebsites.parent.vars.value.id,  id: website.id}
+            ),
+            'content': content
+        } %}
+        {% set tabs = tabs|merge([tab]) %}
+    {% endfor %}
+
+    {{ tabPanel(tabs, {'useDropdown': true}) }}
+</div>
