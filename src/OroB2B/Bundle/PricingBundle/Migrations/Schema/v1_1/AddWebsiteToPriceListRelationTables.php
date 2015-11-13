@@ -154,7 +154,7 @@ class AddWebsiteToPriceListRelationTables implements
                 [$field],
                 ['id'],
                 ['onUpdate' => null, 'onDelete' => 'CASCADE'],
-                $this->createForeignKeyConstraintName($tableName, $this->getTableNameByFieldName($field))
+                $this->getForeignNameByFieldName($field)
             );
             $primaryKey[] = $field;
         }
@@ -163,14 +163,14 @@ class AddWebsiteToPriceListRelationTables implements
             ['price_list_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE'],
-            $this->createForeignKeyConstraintName($tableName, 'orob2b_price_list')
+            $this->getPriceListForeignKeyConstraintName($tableName)
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_website'),
             ['website_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE'],
-            $this->createForeignKeyConstraintName($tableName, 'orob2b_website')
+            $this->getWebsiteForeignKeyConstraintName($tableName)
         );
         $table->setPrimaryKey($primaryKey);
 
@@ -181,12 +181,46 @@ class AddWebsiteToPriceListRelationTables implements
 
     /**
      * @param string $tableName
-     * @param string $foreignTableName
      * @return string
      */
-    protected function createForeignKeyConstraintName($tableName, $foreignTableName)
+    protected function getForeignNameByFieldName($tableName)
     {
-        return strtoupper(implode('_', ['idx', $tableName, $foreignTableName]));
+        $aliases = [
+            'account_id' => 'fk_orob2b_price_l_to_acc_acc',
+            'account_group_id'  => 'fk_orob2b_price_l_to_a_gr_a_gr',
+        ];
+
+        return $aliases[$tableName];
+    }
+
+    /**
+     * @param string $tableName
+     * @return string
+     */
+    protected function getPriceListForeignKeyConstraintName($tableName)
+    {
+        $aliases = [
+            'orob2b_price_list_to_account' => 'fk_orob2b_price_l_to_acc_pl',
+            'orob2b_price_list_to_acc_gr'  => 'fk_orob2b_price_l_to_a_gr_pl',
+            'orob2b_price_list_to_website' => 'fk_orob2b_price_l_to_ws_pl',
+        ];
+
+        return $aliases[$tableName];
+    }
+
+    /**
+     * @param string $tableName
+     * @return string
+     */
+    protected function getWebsiteForeignKeyConstraintName($tableName)
+    {
+        $aliases = [
+            'orob2b_price_list_to_account' => 'fk_orob2b_price_l_to_acc_ws',
+            'orob2b_price_list_to_acc_gr'  => 'fk_orob2b_price_l_to_a_gr_ws',
+            'orob2b_price_list_to_website' => 'fk_orob2b_price_l_to_ws_ws',
+        ];
+
+        return $aliases[$tableName];
     }
 
     /**
