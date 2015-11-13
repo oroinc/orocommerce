@@ -19,23 +19,23 @@ class PriceListToAccountGroup extends AbstractPriceListRelation
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountGroup")
      * @ORM\JoinColumn(name="account_group_id", referencedColumnName="id", onDelete="CASCADE")
      */
-    protected $account;
+    protected $accountGroup;
 
     /**
      * @return AccountGroup
      */
-    public function getAccount()
+    public function getAccountGroup()
     {
-        return $this->account;
+        return $this->accountGroup;
     }
 
     /**
-     * @param AccountGroup $account
+     * @param AccountGroup $accountGroup
      * @return $this
      */
-    public function setAccount($account)
+    public function setAccountGroup($accountGroup)
     {
-        $this->account = $account;
+        $this->accountGroup = $accountGroup;
 
         return $this;
     }
