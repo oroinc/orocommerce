@@ -3,10 +3,11 @@
 namespace OroB2B\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 
 /**
- * @ORM\Table(name="orob2b_price_list_to_c_group")
+ * @ORM\Table(name="orob2b_price_list_to_acc_gr")
  * @ORM\Entity
  */
 class PriceListToAccountGroup extends AbstractPriceListRelation
@@ -19,4 +20,23 @@ class PriceListToAccountGroup extends AbstractPriceListRelation
      * @ORM\JoinColumn(name="account_group_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $account;
+
+    /**
+     * @return AccountGroup
+     */
+    public function getAccount()
+    {
+        return $this->account;
+    }
+
+    /**
+     * @param AccountGroup $account
+     * @return $this
+     */
+    public function setAccount($account)
+    {
+        $this->account = $account;
+
+        return $this;
+    }
 }
