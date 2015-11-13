@@ -1,7 +1,6 @@
 parameters:
     oro_action.manager.class: Oro\Bundle\ActionBundle\Model\ActionManager
     oro_action.assembler.class: Oro\Bundle\ActionBundle\Model\ActionAssembler
-    oro_action.expression.factory.class: Oro\Component\ConfigExpression\ExpressionFactory
 
 services:
     oro_action.manager:
