@@ -105,6 +105,8 @@ class ActionManager
         $configuration = $this->configurationProvider->getActionConfiguration();
         $actions = $this->assembler->assemble($configuration);
 
+        $this->routes = [];
+        $this->entities = [];
         foreach ($actions as $action) {
             $this->mapActionRoutes($action);
             $this->mapActionEntities($action);
