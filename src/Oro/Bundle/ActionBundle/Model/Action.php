@@ -10,16 +10,16 @@ use Oro\Component\ConfigExpression\ExpressionFactory as ConditionFactory;
 class Action
 {
     /** @var ConditionFactory */
-    protected $conditionFactory;
+    private $conditionFactory;
 
     /** @var ActionDefinition */
-    protected $definition;
+    private $definition;
 
     /** @var AbstractCondition[] */
-    protected $preConditions;
+    private $preConditions;
 
     /** @var AbstractCondition[] */
-    protected $conditions;
+    private $conditions;
 
     /**
      * @param ConditionFactory $conditionFactory
@@ -73,7 +73,7 @@ class Action
     {
         if ($this->preConditions === null) {
             $this->preConditions = [];
-            $preConditionsConfig = $this->definition->getPreConditionsConfiguration();
+            $preConditionsConfig = $this->definition->getPreConditions();
             if ($preConditionsConfig) {
                 foreach ($preConditionsConfig as $conditionConfig) {
                     $this->preConditions[] = $this->conditionFactory
@@ -92,7 +92,7 @@ class Action
     {
         if ($this->conditions === null) {
             $this->conditions = [];
-            $conditionsConfig = $this->definition->getConditionsConfiguration();
+            $conditionsConfig = $this->definition->getConditions();
             if ($conditionsConfig) {
                 foreach ($conditionsConfig as $conditionConfig) {
                     $this->conditions[] = $this->conditionFactory

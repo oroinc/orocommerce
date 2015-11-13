@@ -8,7 +8,6 @@ use Oro\Bundle\ActionBundle\Model\ActionDefinition;
 use Oro\Bundle\WorkflowBundle\Model\Condition\Configurable as ConfigurableCondition;
 
 use Oro\Component\ConfigExpression\ExpressionFactory;
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class ActionTest extends \PHPUnit_Framework_TestCase
 {
@@ -59,11 +58,11 @@ class ActionTest extends \PHPUnit_Framework_TestCase
 
     public function testIsApplicableIsAllowedNoConditions()
     {
-        $conditionConfiguration = null;
+        $condition = null;
 
         $this->definition->expects(static::once())
-            ->method('getConditionsConfiguration')
-            ->willReturn($conditionConfiguration);
+            ->method('getConditions')
+            ->willReturn($condition);
 
         $this->conditionFactory->expects(static::never())
             ->method(static::anything());
@@ -75,7 +74,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
     public function testIsApplicable()
     {
         $this->context['data'] = new \stdClass();
-        $conditionsConfiguration = [
+        $conditions = [
             ['test' => []],
         ];
         $condition = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Condition\Configurable')
@@ -87,12 +86,12 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             ->willReturn(false);
 
         $this->definition->expects(static::once())
-            ->method('getConditionsConfiguration')
-            ->willReturn($conditionsConfiguration);
+            ->method('getConditions')
+            ->willReturn($conditions);
 
         $this->conditionFactory->expects(static::once())
             ->method('create')
-            ->with(ConfigurableCondition::ALIAS, $conditionsConfiguration[0])
+            ->with(ConfigurableCondition::ALIAS, $conditions[0])
             ->willReturn($condition);
 
         static::assertFalse($this->action->isApplicable($this->context));
@@ -101,7 +100,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
     public function testIsAllowed()
     {
         $this->context['data'] = new \stdClass();
-        $conditionsConfiguration = [
+        $conditions = [
             ['test' => []],
         ];
         $condition = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Condition\Configurable')
@@ -113,23 +112,19 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             ->willReturn(false);
 
         $this->definition->expects(static::once())
-            ->method('getPreConditionsConfiguration')
-            ->willReturn($conditionsConfiguration);
+            ->method('getPreConditions')
+            ->willReturn($conditions);
 
         $this->conditionFactory->expects(static::once())
             ->method('create')
-            ->with(ConfigurableCondition::ALIAS, $conditionsConfiguration[0])
+            ->with(ConfigurableCondition::ALIAS, $conditions[0])
             ->willReturn($condition);
 
         static::assertFalse($this->action->isAllowed($this->context));
     }
 
-    public function testGetSetDefinition()
+    public function testGetDefinition()
     {
-        $definition = new ActionDefinition();
-        $definition->setName('name2');
-        static::assertNotEquals($definition, $this->action->getDefinition());
-        $this->action->setDefinition($definition);
-        static::assertEquals($definition, $this->action->getDefinition());
+        static::assertInstanceOf('Oro\Bundle\ActionBundle\Model\ActionDefinition', $this->action->getDefinition());
     }
 }

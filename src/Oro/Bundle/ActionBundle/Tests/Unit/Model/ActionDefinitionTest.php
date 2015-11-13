@@ -60,7 +60,7 @@ class ActionDefinitionTest extends \PHPUnit_Framework_TestCase
 
     public function testGettersAndSetters()
     {
-        $this->assertPropertyAccessors(
+        static::assertPropertyAccessors(
             $this->definition,
             [
                 ['name', 'test'],
@@ -70,13 +70,13 @@ class ActionDefinitionTest extends \PHPUnit_Framework_TestCase
                 ['routes', ['route1', 'route2']],
                 ['applications', ['application1', 'application2']],
                 ['order', 77],
-                ['frontendOptionsConfiguration', ['config1', 'config2']],
-                ['formOptionsConfiguration', ['config1', 'config2']],
-                ['attributesConfiguration', ['config1', 'config2']],
-                ['preConditionsConfiguration', ['config1', 'config2']],
-                ['conditionsConfiguration', ['config1', 'config2']],
-                ['initStepConfiguration', ['config1', 'config2']],
-                ['executionStepConfiguration', ['config1', 'config2']],
+                ['frontendOptions', ['config1', 'config2']],
+                ['formOptions', ['config1', 'config2']],
+                ['attributes', ['config1', 'config2']],
+                ['preConditions', ['config1', 'config2']],
+                ['conditions', ['config1', 'config2']],
+                ['initStep', ['config1', 'config2']],
+                ['executionStep', ['config1', 'config2']],
             ]
         );
     }
