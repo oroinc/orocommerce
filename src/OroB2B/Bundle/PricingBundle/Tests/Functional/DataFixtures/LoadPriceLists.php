@@ -9,10 +9,15 @@ use Doctrine\Common\Persistence\ObjectManager;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class LoadPriceLists extends AbstractFixture implements DependentFixtureInterface
 {
+    const DEFAULT_PRIORITY = 10;
+
     /**
      * @var array
      */
@@ -81,25 +86,38 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
                 ->setCreatedAt($now)
                 ->setUpdatedAt($now);
 
+            $defaultWebsite = $this->getDefaultWebsite();
+
             foreach ($priceListData['accounts'] as $accountReference) {
                 /** @var Account $account */
                 $account = $this->getReference($accountReference);
 
-                $priceList->addAccount($account);
+                $priceListToAccount = new PriceListToAccount();
+                $priceListToAccount->setPriority(static::DEFAULT_PRIORITY);
+                $priceListToAccount->setAccount($account);
+                $priceListToAccount->setWebsite($defaultWebsite);
+                $priceListToAccount->setPriceList($priceList);
             }
 
             foreach ($priceListData['groups'] as $accountGroupReference) {
                 /** @var AccountGroup $accountGroup */
                 $accountGroup = $this->getReference($accountGroupReference);
 
-                $priceList->addAccountGroup($accountGroup);
+                $priceListToAccountGroup = new PriceListToAccountGroup();
+                $priceListToAccountGroup->setPriority(static::DEFAULT_PRIORITY);
+                $priceListToAccountGroup->setAccountGroup($accountGroup);
+                $priceListToAccountGroup->setWebsite($defaultWebsite);
+                $priceListToAccountGroup->setPriceList($priceList);
             }
 
             foreach ($priceListData['websites'] as $websiteReference) {
                 /** @var Website $website */
                 $website = $this->getReference($websiteReference);
 
-                $priceList->addWebsite($website);
+                $priceListToWebsite = new PriceListToWebsite();
+                $priceListToWebsite->setPriority(static::DEFAULT_PRIORITY);
+                $priceListToWebsite->setWebsite($website);
+                $priceListToWebsite->setPriceList($priceList);
             }
 
             foreach ($priceListData['currencies'] as $currencyCode) {
@@ -111,6 +129,14 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
         }
 
         $manager->flush();
+    }
+
+    /**
+     * @return Website
+     */
+    protected function getDefaultWebsite()
+    {
+        return $this->getReference('US');
     }
 
     /**
