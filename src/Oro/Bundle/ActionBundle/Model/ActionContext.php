@@ -5,7 +5,7 @@ namespace Oro\Bundle\ActionBundle\Model;
 class ActionContext extends AbstractStorage implements EntityAwareInterface
 {
     /**
-     * @return Object
+     * @return object
      */
     public function getEntity()
     {

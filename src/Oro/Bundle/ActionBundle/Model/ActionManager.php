@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ActionBundle\Model;
 
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
 use Oro\Bundle\ActionBundle\Configuration\ActionConfigurationProvider;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -26,17 +28,12 @@ class ActionManager
     /**
      * @var array
      */
-    private $routes = [];
+    private $routes;
 
     /**
      * @var array
      */
-    private $entities = [];
-
-    /**
-     * @var bool
-     */
-    private $loaded = false;
+    private $entities;
 
     /**
      * @param DoctrineHelper $doctrineHelper
@@ -59,34 +56,33 @@ class ActionManager
      */
     public function getActions(array $context)
     {
-        $this->normalizeContext($context);
+        $this->loadActions();
 
+        $context = $this->normalizeContext($context);
         $actionContext = $this->createActionContext($context);
 
-        $this->loadActions($actionContext);
-
-        return $this->findActions($context, $actionContext);
+        return $this->findActions($actionContext, $context);
     }
 
     /**
+     * @param ActionContext $actionContext
      * @param array $context
      * @return Action[]
      */
-    protected function findActions(array $context, ActionContext $actionContext)
+    protected function findActions(ActionContext $actionContext, array $context)
     {
-        /* @var $actions Action */
+        /* @var $actions Action[] */
         $actions = [];
 
-        if ($context['route']) {
-            if (array_key_exists($context['route'], $this->routes)) {
-                $actions = array_merge($actions, $this->routes[$context['route']]);
-            }
+        if ($context['route'] && array_key_exists($context['route'], $this->routes)) {
+            $actions = array_merge($actions, $this->routes[$context['route']]);
         }
 
-        if ($context['entityClass'] && $context['entityId']) {
-            if (array_key_exists($context['entityClass'], $this->entities)) {
-                $actions = array_merge($actions, $this->entities[$context['entityClass']]);
-            }
+        if ($context['entityClass'] &&
+            $context['entityId'] &&
+            array_key_exists($context['entityClass'], $this->entities)
+        ) {
+            $actions = array_merge($actions, $this->entities[$context['entityClass']]);
         }
 
         $actions = array_filter($actions, function (Action $action) use ($actionContext) {
@@ -100,27 +96,19 @@ class ActionManager
         return $actions;
     }
 
-    /**
-     * @param ActionContext $actionContext
-     */
-    protected function loadActions(ActionContext $actionContext)
+    protected function loadActions()
     {
-        if ($this->loaded) {
+        if ($this->entities !== null && $this->routes !== null) {
             return;
         }
 
         $configuration = $this->configurationProvider->getActionConfiguration();
-
         $actions = $this->assembler->assemble($configuration);
 
         foreach ($actions as $action) {
-            $action->init($actionContext);
-
             $this->mapActionRoutes($action);
             $this->mapActionEntities($action);
         }
-
-        $this->loaded = true;
     }
 
     /**
@@ -129,16 +117,13 @@ class ActionManager
      */
     protected function createActionContext(array $context)
     {
-        $data = [];
+        $entity = null;
 
         if ($context['entityClass']) {
-            $data['entity'] = $this->getEntityReference(
-                $context['entityClass'],
-                $context['entityId']
-            );
+            $entity = $this->getEntityReference($context['entityClass'], $context['entityId']);
         }
 
-        return new ActionContext($data);
+        return new ActionContext($entity ? ['entity' => $entity] : []);
     }
 
     /**
@@ -147,9 +132,6 @@ class ActionManager
     protected function mapActionRoutes(Action $action)
     {
         foreach ($action->getDefinition()->getRoutes() as $routeName) {
-            if (!isset($this->routes[$routeName])) {
-                $this->routes[$routeName] = [];
-            }
             $this->routes[$routeName][$action->getName()] = $action;
         }
     }
@@ -160,9 +142,6 @@ class ActionManager
     protected function mapActionEntities(Action $action)
     {
         foreach ($action->getDefinition()->getEntities() as $entityName) {
-            if (!isset($this->entities[$entityName])) {
-                $this->entities[$entityName] = [];
-            }
             $this->entities[$entityName][$action->getName()] = $action;
         }
     }
@@ -175,14 +154,14 @@ class ActionManager
      */
     protected function getEntityReference($entityClass, $entityId)
     {
-        try {
+        $entity = null;
+
+        if ($this->doctrineHelper->isManageableEntity($entityClass)) {
             if ($entityId) {
                 $entity = $this->doctrineHelper->getEntityReference($entityClass, $entityId);
             } else {
                 $entity = $this->doctrineHelper->createEntityInstance($entityClass);
             }
-        } catch (NotManageableEntityException $e) {
-            throw new BadRequestHttpException($e->getMessage(), $e);
         }
 
         return $entity;
@@ -190,10 +169,11 @@ class ActionManager
 
     /**
      * @param array $context
+     * @return array
      */
-    protected function normalizeContext(array &$context)
+    protected function normalizeContext(array $context)
     {
-        $context = array_merge([
+        return array_merge([
             'route' => null,
             'entityId' => null,
             'entityClass' => null,
