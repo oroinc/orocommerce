@@ -26,12 +26,12 @@ class ActionManager
     /**
      * @var array
      */
-    private $routes;
+    private $routes = [];
 
     /**
      * @var array
      */
-    private $entities;
+    private $entities = [];
 
     /**
      * @var bool

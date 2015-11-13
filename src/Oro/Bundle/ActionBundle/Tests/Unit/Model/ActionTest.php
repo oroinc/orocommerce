@@ -127,4 +127,22 @@ class ActionTest extends \PHPUnit_Framework_TestCase
     {
         static::assertInstanceOf('Oro\Bundle\ActionBundle\Model\ActionDefinition', $this->action->getDefinition());
     }
+
+    public function testIsEnabled()
+    {
+        $this->definition->expects($this->once())
+            ->method('isEnabled')
+            ->willReturn(true);
+
+        $this->assertEquals(true, $this->action->isEnabled());
+    }
+
+    public function testGetName()
+    {
+        $this->definition->expects($this->once())
+            ->method('getName')
+            ->willReturn('test name');
+
+        $this->assertEquals('test name', $this->action->getName());
+    }
 }
