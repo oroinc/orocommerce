@@ -27,7 +27,7 @@ class AccountPriceListController extends Controller
      *      requirements={"accountId"="\d+", "id"="\d+"}
      * )
      * @ParamConverter("account", options={"id" = "accountId"})
-     * @Template("OroB2BAccountBundle:AccountVisibility/widget:website.html.twig")
+     * @Template("OroB2BPricingBundle:Account/widget:website.html.twig")
      * @AclAncestor("orob2b_account_update")
      *
      * @param Account $account
