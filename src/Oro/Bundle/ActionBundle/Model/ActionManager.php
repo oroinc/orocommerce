@@ -37,9 +37,9 @@ class ActionManager
     private $entities;
 
     /**
-     * @var Action[]
+     * @var bool
      */
-    private $actions;
+    private $loaded = false;
 
     /**
      * @param DoctrineHelper $doctrineHelper
@@ -66,9 +66,7 @@ class ActionManager
 
         $actionContext = $this->createActionContext($context);
 
-        if (!$this->actions) {
-            $this->prepareActions($actionContext);
-        }
+        $this->loadActions($actionContext);
 
         return $this->findActions($context, $actionContext);
     }
@@ -108,27 +106,30 @@ class ActionManager
     /**
      * @param ActionContext $actionContext
      */
-    protected function prepareActions(ActionContext $actionContext)
+    protected function loadActions(ActionContext $actionContext)
     {
+        if ($this->loaded) {
+            return;
+        }
+
         $configuration = $this->configurationProvider->getActionConfiguration();
         foreach ($configuration as $name => $parameters) {
-            $definition = $this->assembleDefinition($name, $parameters);
-            $action = $this->createAction($definition);
+            $action = $this->assembleAction($name, $parameters);
             $action->init($actionContext);
 
             $this->mapActionRoutes($action);
             $this->mapActionEntities($action);
-
-            $this->actions[] = $action;
         }
+
+        $this->loaded = true;
     }
 
     /**
      * @param string $name
      * @param array $config
-     * @return ActionDefinition
+     * @return Action
      */
-    protected function assembleDefinition($name, array $config)
+    protected function assembleAction($name, array $config)
     {
         // TODO: use assembler
         $definition = new ActionDefinition();
@@ -154,21 +155,7 @@ class ActionManager
             $definition->setFrontendOptionsConfiguration($config['frontend_options']);
         }
 
-        return $definition;
-    }
-
-    /**
-     * @param ActionDefinition $definition
-     * @return Action
-     */
-    protected function createAction(ActionDefinition $definition)
-    {
-        $action = new Action($this->conditionFactory, $definition);
-        $action
-            ->setEnabled($definition->isEnabled())
-            ->setName($definition->getName());
-
-        return $action;
+        return new Action($this->conditionFactory, $definition);
     }
 
     /**

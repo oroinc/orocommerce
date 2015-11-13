@@ -21,12 +21,6 @@ class Action
     /** @var AbstractCondition[] */
     protected $conditions;
 
-    /** @var bool */
-    private $enabled;
-
-    /** @var string */
-    private $name;
-
     /**
      * @param ConditionFactory $conditionFactory
      * @param ActionDefinition $definition
@@ -38,33 +32,11 @@ class Action
     }
 
     /**
-     * @param bool $enabled
-     * @return $this
-     */
-    public function setEnabled($enabled)
-    {
-        $this->enabled = $enabled;
-
-        return $this;
-    }
-
-    /**
      * @return bool
      */
     public function isEnabled()
     {
-        return $this->enabled;
-    }
-
-    /**
-     * @param string $name
-     * @return $this
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
+        return $this->getDefinition()->isEnabled();
     }
 
     /**
@@ -72,7 +44,7 @@ class Action
      */
     public function getName()
     {
-        return $this->name;
+        return $this->getDefinition()->getName();
     }
 
     /**
