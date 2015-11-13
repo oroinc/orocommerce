@@ -85,7 +85,6 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('price_list_id', 'integer', []);
         $table->addColumn('currency', 'string', ['length' => 3]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['price_list_id'], 'IDX_F468ECAA5688DED7', []);
     }
 
     /**
@@ -101,9 +100,6 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('account_group_id', 'integer', []);
         $table->addColumn('priority', 'integer', []);
         $table->setPrimaryKey(['price_list_id', 'website_id', 'account_group_id']);
-        $table->addIndex(['account_group_id'], 'IDX_D016F9E3869A3BF1', []);
-        $table->addIndex(['price_list_id'], 'IDX_D016F9E35688DED7', []);
-        $table->addIndex(['website_id'], 'IDX_D016F9E318F45C82', []);
     }
 
     /**
@@ -119,9 +115,6 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('account_id', 'integer', []);
         $table->addColumn('priority', 'integer', []);
         $table->setPrimaryKey(['price_list_id', 'website_id', 'account_id']);
-        $table->addIndex(['account_id'], 'IDX_B5472D719B6B5FBA', []);
-        $table->addIndex(['price_list_id'], 'IDX_B5472D715688DED7', []);
-        $table->addIndex(['website_id'], 'IDX_B5472D7118F45C82', []);
     }
 
     /**
@@ -136,8 +129,6 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('priority', 'integer', []);
         $table->setPrimaryKey(['price_list_id', 'website_id']);
-        $table->addIndex(['price_list_id'], 'IDX_8F1E26325688DED7', []);
-        $table->addIndex(['website_id'], 'IDX_8F1E263218F45C82', []);
     }
 
     /**
@@ -161,9 +152,6 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
             ['product_id', 'price_list_id', 'quantity', 'unit_code', 'currency'],
             'orob2b_pricing_price_list_uidx'
         );
-        $table->addIndex(['price_list_id'], 'IDX_BCDE766D5688DED7', []);
-        $table->addIndex(['product_id'], 'IDX_BCDE766D4584665A', []);
-        $table->addIndex(['unit_code'], 'IDX_BCDE766DFBD3D1C2', []);
     }
 
     /**
