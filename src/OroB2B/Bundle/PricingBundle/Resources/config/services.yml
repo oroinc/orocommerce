@@ -3,7 +3,6 @@ parameters:
     orob2b_pricing.entity.product_price.class: OroB2B\Bundle\PricingBundle\Entity\ProductPrice
     orob2b_pricing.entity.price_list_currency.class: OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency
 
-    orob2b_pricing.form.handler.price_list.class: OroB2B\Bundle\PricingBundle\Form\Handler\PriceListHandler
     orob2b_pricing.price_list.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_pricing.product_price.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_pricing.listener.product_unit_precision.class: OroB2B\Bundle\PricingBundle\EventListener\ProductUnitPrecisionListener
@@ -24,6 +23,7 @@ parameters:
     orob2b_pricing.event_listener.product_price_datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener
     orob2b_pricing.event_listener.frontend.product_price_datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener
     orob2b_pricing.event_listener.product_duplicate.class: OroB2B\Bundle\PricingBundle\EventListener\ProductDuplicateListener
+    orob2b_pricing.event_subscriber.system_config.class: OroB2B\Bundle\PricingBundle\EventListener\PriceListSystemConfigSubscriber
 
     orob2b_pricing.model.price_list_request_handler.abstract.class: OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler
     orob2b_pricing.model.price_list_request_handler.class: OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler
@@ -230,3 +230,11 @@ services:
             - [setAclHelper,["@oro_security.acl_helper"]]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: "orob2b_pricing_price_list_aware_products_list" }
+
+    orob2b_account.event_listener.system_config:
+            class: %orob2b_pricing.event_subscriber.system_config.class%
+            arguments:
+                - @doctrine
+                - %orob2b_pricing.entity.price_list.class%
+            tags:
+                - { name: kernel.event_subscriber }
