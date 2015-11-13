@@ -1,20 +1,18 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Form\Extension;
+namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
-use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 
-
-abstract class AbstractPriceListExtension extends AbstractTypeExtension
+abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
 {
     /**
      * @var ManagerRegistry
@@ -22,38 +20,41 @@ abstract class AbstractPriceListExtension extends AbstractTypeExtension
     protected $registry;
 
     /**
-     * @param ManagerRegistry $registry
+     * @param FormBuilderInterface $builder
+     * @param array $options
      */
-    public function __construct(ManagerRegistry $registry)
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $this->registry = $registry;
+        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData']);
+        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit'], 10);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $defaultWebsite = $this->registry
             ->getManagerForClass('OroB2BWebsiteBundle:Website')
             ->getRepository('OroB2BWebsiteBundle:Website')
             ->getDefaultWebsite();
-        $builder->add(
-            'priceListsByWebsites',
-            WebsiteScopedDataType::NAME,
+
+        $resolver->setDefaults(
             [
                 'type' => PriceListCollectionType::NAME,
                 'label' => 'orob2b.pricing.pricelist.entity_plural_label',
                 'required' => false,
                 'mapped' => false,
                 'ownership_disabled' => true,
-                'data' => [[new PriceListToAccount()]],
+                'data' => [],
                 'preloaded_websites' => [$defaultWebsite],
             ]
         );
+    }
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData']);
-        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit'], 10);
+    public function getParent()
+    {
+        return WebsiteScopedDataType::NAME;
     }
 
     /**
