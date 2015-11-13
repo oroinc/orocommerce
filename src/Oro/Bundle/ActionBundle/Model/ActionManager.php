@@ -52,6 +52,15 @@ class ActionManager
 
     /**
      * @param array $context
+     * @return bool
+     */
+    public function hasActions(array $context)
+    {
+        return count($this->getActions($context)) > 0;
+    }
+
+    /**
+     * @param array $context
      * @return Action[]
      */
     public function getActions(array $context)
