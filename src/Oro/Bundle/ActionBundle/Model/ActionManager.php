@@ -3,11 +3,8 @@
 namespace Oro\Bundle\ActionBundle\Model;
 
 use Oro\Bundle\ActionBundle\Configuration\ActionConfigurationProvider;
-use Oro\Bundle\ActionBundle\Model\ActionDefinition;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-
-use Oro\Component\ConfigExpression\ExpressionFactory as ConditionFactory;
 
 class ActionManager
 {
