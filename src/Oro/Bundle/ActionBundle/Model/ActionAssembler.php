@@ -18,6 +18,7 @@ class ActionAssembler
     {
         $this->conditionFactory = $conditionFactory;
     }
+
     /**
      * @param array $configuration
      * @return Action[]

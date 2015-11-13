@@ -18,7 +18,7 @@ class Action
     /** @var AbstractCondition[] */
     private $preConditions;
 
-     /** @var AbstractCondition[] */
+    /** @var AbstractCondition[] */
     private $conditions;
 
     /**
