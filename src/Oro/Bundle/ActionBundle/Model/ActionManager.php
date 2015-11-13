@@ -28,12 +28,12 @@ class ActionManager
     /**
      * @var array
      */
-    private $routes = [];
+    private $routes;
 
     /**
      * @var array
      */
-    private $entities = [];
+    private $entities;
 
     /**
      * @param DoctrineHelper $doctrineHelper
@@ -48,6 +48,15 @@ class ActionManager
         $this->doctrineHelper = $doctrineHelper;
         $this->configurationProvider = $configurationProvider;
         $this->assembler = $assembler;
+    }
+
+    /**
+     * @param array $context
+     * @return bool
+     */
+    public function hasActions(array $context)
+    {
+        return count($this->getActions($context)) > 0;
     }
 
     /**
@@ -180,14 +189,5 @@ class ActionManager
             'entityId' => null,
             'entityClass' => null,
         ], $context);
-    }
-
-    /**
-     * @param array $context
-     * @return bool
-     */
-    public function hasActions(array $context)
-    {
-        return count($this->getActions($context)) > 0;
     }
 }
