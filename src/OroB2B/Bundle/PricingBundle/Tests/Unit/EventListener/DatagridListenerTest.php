@@ -11,6 +11,8 @@ use OroB2B\Bundle\PricingBundle\EventListener\DatagridListener;
 class DatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
     const PRICE_LIST_CLASS = 'OroB2B\Bundle\PricingBundle\Entity\PriceList';
+    const PRICE_LIST_TO_ACCOUNT_CLASS = 'OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount';
+    const PRICE_LIST_TO_ACCOUNT_GROUP_CLASS = 'OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup';
 
     /**
      * @var DatagridListener
@@ -25,13 +27,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
             'query' => [
                 'select' => ['priceList.name as price_list_name'],
                 'join' => [
-                    'left' => [
-                        [
-                            'join' => self::PRICE_LIST_CLASS,
-                            'alias' => 'priceList',
-                            'conditionType' => 'WITH',
-                        ]
-                    ]
+                    'left' => []
                 ],
             ],
         ],
@@ -68,6 +64,8 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->listener = new DatagridListener();
         $this->listener->setPriceListClass(self::PRICE_LIST_CLASS);
+        $this->listener->setPriceListToAccountClass(self::PRICE_LIST_TO_ACCOUNT_CLASS);
+        $this->listener->setPriceListToAccountGroupClass(self::PRICE_LIST_TO_ACCOUNT_GROUP_CLASS);
     }
 
     protected function tearDown()
@@ -85,8 +83,20 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onBuildBeforeAccounts($event);
 
         $expected = $this->expectedTemplate;
-        $expected['source']['query']['join']['left'][0]['condition']
-            = 'account MEMBER OF priceList.accounts';
+        $expected['source']['query']['join']['left'] = [
+            [
+                'join' => self::PRICE_LIST_TO_ACCOUNT_CLASS,
+                'alias' => 'priceListToAccount',
+                'conditionType' => 'WITH',
+                'condition' => 'priceListToAccount.account = account',
+            ],
+            [
+                'join' => 'priceListToAccount.priceList',
+                'alias' => 'priceList',
+                'conditionType' => 'WITH',
+                'condition' => 'priceListToAccount.priceList = priceList',
+            ],
+        ];
         $this->assertEquals($expected, $config->toArray());
     }
 
@@ -100,8 +110,20 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onBuildBeforeAccountGroups($event);
 
         $expected = $this->expectedTemplate;
-        $expected['source']['query']['join']['left'][0]['condition']
-            = 'account_group MEMBER OF priceList.accountGroups';
+        $expected['source']['query']['join']['left'] = [
+            [
+                'join' => self::PRICE_LIST_TO_ACCOUNT_GROUP_CLASS,
+                'alias' => 'priceListToAccountGroup',
+                'conditionType' => 'WITH',
+                'condition' => 'priceListToAccountGroup.accountGroup = account_group',
+            ],
+            [
+                'join' => 'priceListToAccountGroup.priceList',
+                'alias' => 'priceList',
+                'conditionType' => 'WITH',
+                'condition' => 'priceListToAccountGroup.priceList = priceList',
+            ],
+        ];
         $this->assertEquals($expected, $config->toArray());
     }
 }

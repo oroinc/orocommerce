@@ -15,7 +15,17 @@ class DatagridListener
     protected $priceListClass;
 
     /**
-     * @param string $priceListClass
+     * @var string
+     */
+    protected $priceListToAccountClass;
+
+    /**
+     * @var string
+     */
+    protected $priceListToAccountGroupClass;
+
+    /**
+     * @param string $priceListClass)
      */
     public function setPriceListClass($priceListClass)
     {
@@ -23,11 +33,41 @@ class DatagridListener
     }
 
     /**
+     * @param string $priceListToAccountClass)
+     */
+    public function setPriceListToAccountClass($priceListToAccountClass)
+    {
+        $this->priceListToAccountClass = $priceListToAccountClass;
+    }
+
+    /**
+     * @param string $priceListToAccountGroupClass)
+     */
+    public function setPriceListToAccountGroupClass($priceListToAccountGroupClass)
+    {
+        $this->priceListToAccountGroupClass = $priceListToAccountGroupClass;
+    }
+
+    /**
      * @param BuildBefore $event
      */
     public function onBuildBeforeAccounts(BuildBefore $event)
     {
-        $this->addPriceListRelation($event->getConfig(), 'account MEMBER OF priceList.accounts');
+        $leftJoins = [
+            [
+                'join' => $this->priceListToAccountClass,
+                'alias' => 'priceListToAccount',
+                'conditionType' => 'WITH',
+                'condition' => 'priceListToAccount.account = account',
+            ],
+            [
+                'join' => 'priceListToAccount.priceList',
+                'alias' => 'priceList',
+                'conditionType' => 'WITH',
+                'condition' => 'priceListToAccount.priceList = priceList',
+            ],
+        ];
+        $this->addPriceListRelation($event->getConfig(), $leftJoins);
     }
 
     /**
@@ -35,27 +75,37 @@ class DatagridListener
      */
     public function onBuildBeforeAccountGroups(BuildBefore $event)
     {
-        $this->addPriceListRelation($event->getConfig(), 'account_group MEMBER OF priceList.accountGroups');
+        $leftJoins = [
+            [
+                'join' => $this->priceListToAccountGroupClass,
+                'alias' => 'priceListToAccountGroup',
+                'conditionType' => 'WITH',
+                'condition' => 'priceListToAccountGroup.accountGroup = account_group',
+            ],
+            [
+                'join' => 'priceListToAccountGroup.priceList',
+                'alias' => 'priceList',
+                'conditionType' => 'WITH',
+                'condition' => 'priceListToAccountGroup.priceList = priceList',
+            ],
+        ];
+        $this->addPriceListRelation($event->getConfig(), $leftJoins);
     }
 
     /**
      * @param DatagridConfiguration $config
-     * @param string $joinCondition
+     * @param array $leftJoins
      */
-    protected function addPriceListRelation(DatagridConfiguration $config, $joinCondition)
+    protected function addPriceListRelation(DatagridConfiguration $config, $leftJoins)
     {
         // select
         $select = 'priceList.name as ' . self::PRICE_COLUMN;
         $this->addConfigElement($config, '[source][query][select]', $select);
 
         // left join
-        $leftJoin = [
-            'join' => $this->priceListClass,
-            'alias' => 'priceList',
-            'conditionType' => 'WITH',
-            'condition' => $joinCondition
-        ];
-        $this->addConfigElement($config, '[source][query][join][left]', $leftJoin);
+        foreach ($leftJoins as $leftJoin) {
+            $this->addConfigElement($config, '[source][query][join][left]', $leftJoin);
+        }
 
         // column
         $column = ['label' => 'orob2b.pricing.pricelist.entity_label'];
@@ -74,8 +124,8 @@ class DatagridListener
                 'field_options' => [
                     'class' => $this->priceListClass,
                     'property' => 'name',
-                ]
-            ]
+                ],
+            ],
         ];
         $this->addConfigElement($config, '[filters][columns]', $filter, self::PRICE_COLUMN);
     }
