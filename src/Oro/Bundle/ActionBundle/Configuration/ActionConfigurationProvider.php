@@ -6,9 +6,16 @@ use Doctrine\Common\Cache\CacheProvider;
 
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
+use Oro\Bundle\UIBundle\Tools\ArrayUtils;
+
 class ActionConfigurationProvider
 {
     const ROOT_NODE_NAME = 'actions';
+    const EXTENDS_NODE_NAME = 'extends';
+    const REPLACES_NODE_NAME = 'replaces';
+
+    /** @var ActionDefinitionListConfiguration */
+    protected $definitionConfiguration;
 
     /** @var CacheProvider */
     protected $cache;
@@ -19,13 +26,22 @@ class ActionConfigurationProvider
     /** @var array */
     protected $kernelBundles;
 
+    /** @var array */
+    protected $processedConfigs = [];
+
     /**
+     * @param ActionDefinitionListConfiguration $definitionConfiguration
      * @param CacheProvider $cache
      * @param array $rawConfiguration
      * @param array $kernelBundles
      */
-    public function __construct(CacheProvider $cache, array $rawConfiguration, array $kernelBundles)
-    {
+    public function __construct(
+        ActionDefinitionListConfiguration $definitionConfiguration,
+        CacheProvider $cache,
+        array $rawConfiguration,
+        array $kernelBundles
+    ) {
+        $this->definitionConfiguration = $definitionConfiguration;
         $this->cache = $cache;
         $this->rawConfiguration = $rawConfiguration;
         $this->kernelBundles = array_values($kernelBundles);
@@ -40,9 +56,9 @@ class ActionConfigurationProvider
         if ($this->cache->contains(self::ROOT_NODE_NAME)) {
             $configuration = $this->cache->fetch(self::ROOT_NODE_NAME);
         } else {
-            $configuration = $this->prepareRawConfiguration();
+            $configuration = $this->resolveConfiguration();
 
-            $this->cache->deleteAll();
+            $this->cache->delete(self::ROOT_NODE_NAME);
             $this->cache->save(self::ROOT_NODE_NAME, $configuration);
         }
 
@@ -52,6 +68,41 @@ class ActionConfigurationProvider
     /**
      * @return array
      * @throws InvalidConfigurationException
+     */
+    protected function resolveConfiguration()
+    {
+        $configs = $this->prepareRawConfiguration();
+
+        foreach ($configs as $actionName => $actionConfigs) {
+            $data = array_shift($actionConfigs);
+
+            foreach ($actionConfigs as $config) {
+                $data = $this->merge($data, $config);
+            }
+
+            $configs[$actionName] = (array)$data;
+        }
+
+        foreach ($configs as $actionName => &$config) {
+            $this->resolveExtends($configs, $config, $actionName);
+        }
+
+        try {
+            $data = [];
+            if (!empty($configs)) {
+                $data = $this->definitionConfiguration->processConfiguration($configs);
+            }
+        } catch (InvalidConfigurationException $exception) {
+            throw new InvalidConfigurationException(
+                sprintf('Can\'t parse process configuration. %s', $exception->getMessage())
+            );
+        }
+
+        return $data;
+    }
+
+    /**
+     * @return array
      */
     protected function prepareRawConfiguration()
     {
@@ -65,28 +116,52 @@ class ActionConfigurationProvider
             }
 
             foreach ($actions as $actionName => $config) {
-                if (array_key_exists($actionName, $actionConfigs)) {
-                    $actionConfigs[$actionName][$bundleNumber] = $config;
+                $actionConfigs[$actionName][$bundleNumber] = $config;
+            }
+        }
+
+        return array_map(
+            function ($configs) {
+                ksort($configs);
+                return $configs;
+            },
+            $actionConfigs
+        );
+    }
+
+    /**
+     * @param array $data
+     * @param array $config
+     * @return array
+     */
+    protected function merge(array $data, array $config)
+    {
+        $replaces = empty($config[self::REPLACES_NODE_NAME]) ? [] : (array)$config[self::REPLACES_NODE_NAME];
+        unset($data[self::REPLACES_NODE_NAME], $config[self::REPLACES_NODE_NAME]);
+
+        foreach ($replaces as $key) {
+            if (empty($config[$key])) {
+                unset($data[$key]);
+            } else {
+                $data[$key] = $config[$key];
+                unset($config[$key]);
+            }
+        }
+
+        foreach ($config as $key => $value) {
+            if (is_int($key)) {
+                $data[] = $value;
+            } else {
+                if (!array_key_exists($key, $data)) {
+                    $data[$key] = $value;
                 } else {
-                    $actionConfigs[$actionName] = [$bundleNumber => $config];
+                    if (is_array($value)) {
+                        $data[$key] = $this->merge($data[$key], $value);
+                    } else {
+                        $data[$key] = $value;
+                    }
                 }
             }
-        }
-
-        foreach ($actionConfigs as $actionName => $configs) {
-            $actionConfigs[$actionName] = $this->mergeActionConfigs($configs);
-        }
-
-        try {
-            $data = [];
-            if (!empty($actionConfigs)) {
-                $data = $actionConfigs;
-                //$data = $this->configuration->processConfiguration($actionConfigs);
-            }
-        } catch (InvalidConfigurationException $exception) {
-            throw new InvalidConfigurationException(
-                sprintf('Can\'t parse process configuration. %s', $exception->getMessage())
-            );
         }
 
         return $data;
@@ -94,10 +169,37 @@ class ActionConfigurationProvider
 
     /**
      * @param array $configs
-     * @return array
+     * @param array $config
+     * @param string $actionName
+     * @throws InvalidConfigurationException
      */
-    protected function mergeActionConfigs(array $configs)
+    protected function resolveExtends(array &$configs, array &$config, $actionName)
     {
-        return $configs;
+        $this->processedConfigs[] = $actionName;
+
+        if (!array_key_exists(self::EXTENDS_NODE_NAME, $config) || empty($config[self::EXTENDS_NODE_NAME])) {
+            return;
+        }
+
+        $extends = $config[self::EXTENDS_NODE_NAME];
+        if (!array_key_exists($extends, $configs)) {
+            throw new InvalidConfigurationException(
+                sprintf('Could not found config of %s for dependant action %s.', $extends, $actionName)
+            );
+        }
+
+        $extendsConfig = &$configs[$extends];
+        if (array_key_exists(self::EXTENDS_NODE_NAME, $extendsConfig)) {
+            if (in_array($extends, $this->processedConfigs, true)) {
+                throw new InvalidConfigurationException(
+                    sprintf('Found cyclomatic extends between %s and %s actions.', $extends, $actionName)
+                );
+            }
+
+            $this->resolveExtends($configs, $extendsConfig, $extends);
+        }
+
+        $config = ArrayUtils::arrayMergeRecursiveDistinct($extendsConfig, $config);
+        unset($config[self::EXTENDS_NODE_NAME]);
     }
 }
