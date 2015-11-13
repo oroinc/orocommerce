@@ -68,20 +68,20 @@ class ActionManager
         $this->loadActions();
 
         $context = $this->normalizeContext($context);
-        $actionContext = $this->createActionContext($context);
 
-        return $this->findActions($actionContext, $context);
+        return $this->findActions($context);
     }
 
     /**
-     * @param ActionContext $actionContext
      * @param array $context
      * @return Action[]
      */
-    protected function findActions(ActionContext $actionContext, array $context)
+    protected function findActions(array $context)
     {
         /* @var $actions Action[] */
         $actions = [];
+
+        $actionContext = $this->createActionContext($context);
 
         if ($context['route'] && array_key_exists($context['route'], $this->routes)) {
             $actions = array_merge($actions, $this->routes[$context['route']]);
