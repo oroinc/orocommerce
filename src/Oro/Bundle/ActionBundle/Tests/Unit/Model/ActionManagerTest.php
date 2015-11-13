@@ -18,11 +18,11 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
     /** @var ActionConfigurationProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $configurationProvider;
 
-    /** @var ActionAssembler|\PHPUnit_Framework_MockObject_MockObject */
-    protected $assembler;
-
     /** @var ConditionFactory|\PHPUnit_Framework_MockObject_MockObject */
     protected $conditionFactory;
+
+    /** @var ActionAssembler */
+    protected $assembler;
 
     /** @var ActionManager */
     protected $manager;
@@ -46,28 +46,13 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->configurationProvider->expects($this->once())
+            ->method('getActionConfiguration')
+            ->willReturn($this->getConfiguration());
 
         $this->assembler = new ActionAssembler($this->conditionFactory);
 
         $this->manager = new ActionManager($this->doctrineHelper, $this->configurationProvider, $this->assembler);
-    }
-
-
-    /**
-     * @param array $inputData
-     * @param array $expectedData
-     *
-     * @dataProvider getActionsProvider
-     */
-    public function testGetActions(array $inputData, array $expectedData)
-    {
-        $configuration = $this->getConfiguration();
-
-        $this->configurationProvider->expects($this->once())
-            ->method('getActionConfiguration')
-            ->willReturn($configuration);
-
-        $this->assertEquals($expectedData['actions'], array_keys($this->manager->getActions($inputData['context'])));
     }
 
     /**
@@ -78,15 +63,41 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testHasActions(array $inputData, array $expectedData)
     {
-        $configuration = $this->getConfiguration();
-
-        $this->configurationProvider->expects($this->once())
-            ->method('getActionConfiguration')
-            ->willReturn($configuration);
-
         $this->assertEquals($expectedData['hasActions'], $this->manager->hasActions($inputData['context']));
     }
 
+    /**
+     * @param array $inputData
+     * @param array $expectedData
+     *
+     * @dataProvider getActionsProvider
+     */
+    public function testGetActions(array $inputData, array $expectedData)
+    {
+        $this->assertGetActions($expectedData['actions'], $inputData['context']);
+    }
+
+    /**
+     * @param array $inputData
+     * @param array $expectedData
+     *
+     * @dataProvider getActionsAndMultipleCallsProvider
+     */
+    public function testGetActionsAndMultipleCalls(array $inputData, array $expectedData)
+    {
+        $this->assertGetActions($expectedData['actions1'], $inputData['context1']);
+        $this->assertGetActions($expectedData['actions2'], $inputData['context2']);
+        $this->assertGetActions($expectedData['actions3'], $inputData['context3']);
+    }
+
+    /**
+     * @param array $expectedActions
+     * @param array $inputContext
+     */
+    protected function assertGetActions(array $expectedActions, array $inputContext)
+    {
+        $this->assertEquals($expectedActions, array_keys($this->manager->getActions($inputContext)));
+    }
 
     /**
      * @return array
@@ -174,6 +185,37 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @return array
+     */
+    public function getActionsAndMultipleCallsProvider()
+    {
+        return [
+            [
+                'input' => [
+                    'context1' => [],
+                    'context2' => [
+                        'route' => 'route1',
+                    ],
+                    'context3' => [
+                        'route' => 'route2',
+                        'entityClass' => 'entity2',
+                        'entityId' => '2',
+                    ],
+                ],
+                'expected' => [
+                    'actions1' => [],
+                    'actions2' => [
+                        'action4',
+                        'action2',
+                    ],
+                    'actions3' => [
+                        'action4',
+                    ],
+                ],
+            ],
+        ];
+    }
     /**
      * @return type
      */
