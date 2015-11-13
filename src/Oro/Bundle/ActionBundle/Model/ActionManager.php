@@ -29,7 +29,7 @@ class ActionManager
     /**
      * @var array
      */
-    private $routes;
+    private $routes = [];
 
     /**
      * @var array

@@ -48,17 +48,6 @@ class Action
     }
 
     /**
-     * @param ActionDefinition $definition
-     * @return $this
-     */
-    public function setDefinition($definition)
-    {
-        $this->definition = $definition;
-
-        return $this;
-    }
-
-    /**
      * @return ActionDefinition
      */
     public function getDefinition()

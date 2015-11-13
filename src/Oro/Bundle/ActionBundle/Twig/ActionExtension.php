@@ -14,7 +14,7 @@ class ActionExtension extends \Twig_Extension
     /** @var ActionManager */
     protected $manager;
 
-    /** @var ActionManager */
+    /** @var DoctrineHelper */
     protected $doctrineHelper;
 
     /** @var RequestStack */
@@ -51,23 +51,20 @@ class ActionExtension extends \Twig_Extension
                 [$this, 'getWidgetParameters'],
                 ['needs_context' => true]
             ),
-            new \Twig_SimpleFunction('has_actions', [$this, 'hasActions'], ['needs_context' => true]),
+            new \Twig_SimpleFunction('has_actions', [$this, 'hasActions']),
         );
     }
 
     /**
      * @param array $context
-     * @param bool $buildQuery
      * @return array
      */
-    public function getWidgetParameters(array $context, $buildQuery = true)
+    public function getWidgetParameters(array $context)
     {
         $params = ['route' => $this->requestStack->getMasterRequest()->get('_route')];
 
         if (array_key_exists('entity', $context) && is_object($context['entity'])) {
-            $identifier = $this->doctrineHelper->getEntityIdentifier($context['entity']);
-
-            $params['entityId'] = $buildQuery ? http_build_query($identifier) : $identifier;
+            $params['entityId'] = $this->doctrineHelper->getEntityIdentifier($context['entity']);
             $params['entityClass'] = get_class($context['entity']);
         } elseif (isset($context['entity_class'])) {
             $params['entityClass'] = $context['entity_class'];
@@ -77,11 +74,11 @@ class ActionExtension extends \Twig_Extension
     }
 
     /**
-     * @param array $context
+     * @param array $params
      * @return bool
      */
-    public function hasActions(array $context)
+    public function hasActions(array $params)
     {
-        return $this->manager->hasActions($this->getWidgetParameters($context, false));
+        return $this->manager->hasActions($params);
     }
 }
