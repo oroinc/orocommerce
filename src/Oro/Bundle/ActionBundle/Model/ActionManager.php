@@ -34,7 +34,7 @@ class ActionManager
     /**
      * @var array
      */
-    private $entities;
+    private $entities = [];
 
     /**
      * @var Action[]
@@ -246,5 +246,14 @@ class ActionManager
             'entityId' => null,
             'entityClass' => null,
         ], $context);
+    }
+
+    /**
+     * @param array $context
+     * @return bool
+     */
+    public function hasActions(array $context)
+    {
+        return count($this->getActions($context)) > 0;
     }
 }

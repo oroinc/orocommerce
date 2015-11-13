@@ -1,6 +1,7 @@
-{{
-    oro_widget_render({
+{% if resource_granted('oro_actions') and has_actions() %}
+    {{ oro_widget_render({
         'widgetType': 'buttons',
-        'url': path('oro_action_widget_buttons', oro_action_widget_parameters())
-    })
-}}
+        'url': path('oro_action_widget_buttons', oro_action_widget_parameters()),
+        'alias': 'actions_buttons'
+    }) }}
+{% endif %}

@@ -6,6 +6,7 @@ services:
         class: %oro_action.twig.extension.action.class%
         arguments:
             - @oro_action.manager
-            - @service_container
+            - @oro_entity.doctrine_helper
+            - @request_stack
         tags:
             - { name: twig.extension }

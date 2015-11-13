@@ -1,12 +1,11 @@
+{% import 'OroActionBundle::macros.html.twig' as actionsMacros %}
+
 {% if actions|length %}
     <div class="widget-content">
-        {% for action in actions %}
-            <div class="btn-group">
-                <a href="javascript:void(0);" title="{{ action.definition.label }}" class="btn icons-holder-text btn-primary">
-                    <i class="icon-repeat"></i>
-                    {{ action.definition.label }}
-                </a>
-            </div>
-        {% endfor %}
+        <div class="btn-group">
+            {% for action in actions %}
+                {{ actionsMacros.renderActionButton(action) }}
+            {% endfor %}
+        </div>
     </div>
 {% endif %}
