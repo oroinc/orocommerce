@@ -15,7 +15,7 @@ class ProductNormalizerEventListener extends AbstractProductImportEventListener
      */
     public function onNormalize(ProductNormalizerEvent $event)
     {
-        $category = $this->getCategoryByProduct($event->getProduct());
+        $category = $this->getCategoryByProduct($event->getProduct(), true);
         if (!$category) {
             return;
         }

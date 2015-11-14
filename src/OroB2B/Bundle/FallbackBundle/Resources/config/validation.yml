@@ -7,5 +7,3 @@ OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue:
         string:
             - Length:
                 max: 255
-        locale:
-            - Valid: ~
