@@ -6,7 +6,6 @@ parameters:
     orob2b_pricing.entity.product_price.class: OroB2B\Bundle\PricingBundle\Entity\ProductPrice
     orob2b_pricing.entity.price_list_currency.class: OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency
 
-    orob2b_pricing.form.handler.price_list.class: OroB2B\Bundle\PricingBundle\Form\Handler\PriceListHandler
     orob2b_pricing.price_list.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_pricing.product_price.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_pricing.listener.product_unit_precision.class: OroB2B\Bundle\PricingBundle\EventListener\ProductUnitPrecisionListener
@@ -118,10 +117,6 @@ services:
 
     orob2b_pricing.event_listener.datagrid:
         class: %orob2b_pricing.event_listener.datagrid.class%
-        calls:
-            - [setPriceListClass, [%orob2b_pricing.entity.price_list.class%]]
-            - [setPriceListToAccountClass, [%orob2b_pricing.entity.price_list_to_account.class%]]
-            - [setPriceListToAccountGroupClass, [%orob2b_pricing.entity.price_list_to_account_group.class%]]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-grid, method: onBuildBeforeAccounts }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-groups-grid, method: onBuildBeforeAccountGroups }

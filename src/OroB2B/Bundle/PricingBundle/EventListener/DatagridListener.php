@@ -10,52 +10,13 @@ class DatagridListener
     const PRICE_COLUMN = 'price_list_name';
 
     /**
-     * @var string
-     */
-    protected $priceListClass;
-
-    /**
-     * @var string
-     */
-    protected $priceListToAccountClass;
-
-    /**
-     * @var string
-     */
-    protected $priceListToAccountGroupClass;
-
-    /**
-     * @param string $priceListClass)
-     */
-    public function setPriceListClass($priceListClass)
-    {
-        $this->priceListClass = $priceListClass;
-    }
-
-    /**
-     * @param string $priceListToAccountClass)
-     */
-    public function setPriceListToAccountClass($priceListToAccountClass)
-    {
-        $this->priceListToAccountClass = $priceListToAccountClass;
-    }
-
-    /**
-     * @param string $priceListToAccountGroupClass)
-     */
-    public function setPriceListToAccountGroupClass($priceListToAccountGroupClass)
-    {
-        $this->priceListToAccountGroupClass = $priceListToAccountGroupClass;
-    }
-
-    /**
      * @param BuildBefore $event
      */
     public function onBuildBeforeAccounts(BuildBefore $event)
     {
         $leftJoins = [
             [
-                'join' => $this->priceListToAccountClass,
+                'join' => 'OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount',
                 'alias' => 'priceListToAccount',
                 'conditionType' => 'WITH',
                 'condition' => 'priceListToAccount.account = account',
@@ -77,7 +38,7 @@ class DatagridListener
     {
         $leftJoins = [
             [
-                'join' => $this->priceListToAccountGroupClass,
+                'join' => 'OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup',
                 'alias' => 'priceListToAccountGroup',
                 'conditionType' => 'WITH',
                 'condition' => 'priceListToAccountGroup.accountGroup = account_group',
@@ -122,7 +83,7 @@ class DatagridListener
             'options' => [
                 'field_type' => 'entity',
                 'field_options' => [
-                    'class' => $this->priceListClass,
+                    'class' => 'OroB2B\Bundle\PricingBundle\Entity\PriceList',
                     'property' => 'name',
                 ],
             ],

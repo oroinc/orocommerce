@@ -10,10 +10,6 @@ use OroB2B\Bundle\PricingBundle\EventListener\DatagridListener;
 
 class DatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
-    const PRICE_LIST_CLASS = 'OroB2B\Bundle\PricingBundle\Entity\PriceList';
-    const PRICE_LIST_TO_ACCOUNT_CLASS = 'OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount';
-    const PRICE_LIST_TO_ACCOUNT_GROUP_CLASS = 'OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup';
-
     /**
      * @var DatagridListener
      */
@@ -51,7 +47,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
                     'options' => [
                         'field_type' => 'entity',
                         'field_options' => [
-                            'class' => self::PRICE_LIST_CLASS,
+                            'class' => 'OroB2B\Bundle\PricingBundle\Entity\PriceList',
                             'property' => 'name',
                         ]
                     ]
@@ -63,9 +59,6 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->listener = new DatagridListener();
-        $this->listener->setPriceListClass(self::PRICE_LIST_CLASS);
-        $this->listener->setPriceListToAccountClass(self::PRICE_LIST_TO_ACCOUNT_CLASS);
-        $this->listener->setPriceListToAccountGroupClass(self::PRICE_LIST_TO_ACCOUNT_GROUP_CLASS);
     }
 
     protected function tearDown()
@@ -85,7 +78,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         $expected = $this->expectedTemplate;
         $expected['source']['query']['join']['left'] = [
             [
-                'join' => self::PRICE_LIST_TO_ACCOUNT_CLASS,
+                'join' => 'OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount',
                 'alias' => 'priceListToAccount',
                 'conditionType' => 'WITH',
                 'condition' => 'priceListToAccount.account = account',
@@ -112,7 +105,7 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         $expected = $this->expectedTemplate;
         $expected['source']['query']['join']['left'] = [
             [
-                'join' => self::PRICE_LIST_TO_ACCOUNT_GROUP_CLASS,
+                'join' => 'OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup',
                 'alias' => 'priceListToAccountGroup',
                 'conditionType' => 'WITH',
                 'condition' => 'priceListToAccountGroup.accountGroup = account_group',
