@@ -97,6 +97,7 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
                 $priceListToAccount->setAccount($account);
                 $priceListToAccount->setWebsite($defaultWebsite);
                 $priceListToAccount->setPriceList($priceList);
+                $manager->persist($priceListToAccount);
             }
 
             foreach ($priceListData['groups'] as $accountGroupReference) {
@@ -108,6 +109,7 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
                 $priceListToAccountGroup->setAccountGroup($accountGroup);
                 $priceListToAccountGroup->setWebsite($defaultWebsite);
                 $priceListToAccountGroup->setPriceList($priceList);
+                $manager->persist($priceListToAccountGroup);
             }
 
             foreach ($priceListData['websites'] as $websiteReference) {
@@ -118,6 +120,7 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
                 $priceListToWebsite->setPriority(static::DEFAULT_PRIORITY);
                 $priceListToWebsite->setWebsite($website);
                 $priceListToWebsite->setPriceList($priceList);
+                $manager->persist($priceListToWebsite);
             }
 
             foreach ($priceListData['currencies'] as $currencyCode) {
