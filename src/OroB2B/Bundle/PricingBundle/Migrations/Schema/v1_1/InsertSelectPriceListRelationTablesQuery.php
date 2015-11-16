@@ -4,9 +4,9 @@ namespace OroB2B\Bundle\PricingBundle\Migrations\Schema\v1_1;
 
 use Doctrine\Common\Collections\Criteria;
 
-use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Psr\Log\LoggerInterface;
 
+use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 
 class InsertSelectPriceListRelationTablesQuery extends ParametrizedMigrationQuery
