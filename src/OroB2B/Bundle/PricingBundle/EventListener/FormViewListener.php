@@ -69,15 +69,25 @@ class FormViewListener
         $accountId = (int)$request->get('id');
         /** @var Account $account */
         $account = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:Account', $accountId);
-        $priceList = $this->getPriceListRepository()->getPriceListByAccount($account);
+        $priceLists = $this->doctrineHelper
+            ->getEntityManager('OroB2BPricingBundle:PriceListToAccount')
+            ->getRepository('OroB2BPricingBundle:PriceListToAccount')
+            ->findBy(['account' => $account]);
 
-        if ($priceList) {
+        if ($priceLists) {
+
             $template = $event->getEnvironment()->render(
                 'OroB2BPricingBundle:Account:price_list_view.html.twig',
-                ['priceList' => $priceList]
+                ['priceLists' => $priceLists]
             );
             $event->getScrollData()->addSubBlockData(0, 0, $template);
         }
+    }
+
+
+    protected function groupPriceListsByWebsite(array $priceLists)
+    {
+
     }
 
     /**
@@ -92,7 +102,7 @@ class FormViewListener
 
         $groupId = (int)$request->get('id');
         /** @var AccountGroup $group */
-        $group = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:AccountGroup', $groupId);
+        $group = $this->doctrineHelper->getEntityReference('OroB2BPricingBundle:PriceListToAccountGroup', $groupId);
         $priceList = $this->getPriceListRepository()->getPriceListByAccountGroup($group);
 
         if ($priceList) {
