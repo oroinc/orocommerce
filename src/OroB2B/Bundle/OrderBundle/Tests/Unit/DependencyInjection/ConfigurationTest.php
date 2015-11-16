@@ -42,7 +42,14 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 'expected' => [
                     'settings' => [
                         'resolved' => 1,
-                        'product_visibility' => [
+                        'backend_product_visibility' => [
+                            'value' => [
+                                Product::INVENTORY_STATUS_IN_STOCK,
+                                Product::INVENTORY_STATUS_OUT_OF_STOCK
+                            ],
+                            'scope' => 'app'
+                        ],
+                        'frontend_product_visibility' => [
                             'value' => [
                                 Product::INVENTORY_STATUS_IN_STOCK,
                                 Product::INVENTORY_STATUS_OUT_OF_STOCK

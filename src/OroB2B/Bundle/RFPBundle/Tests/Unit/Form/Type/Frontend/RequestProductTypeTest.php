@@ -9,14 +9,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
-use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceListAwareSelectType;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 
-use OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type\Stub\StubProductPriceListAwareSelectType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType as BaseRequestProductType;
 use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
@@ -169,7 +167,6 @@ class RequestProductTypeTest extends AbstractTest
                     CollectionType::NAME                   => new CollectionType(),
                     RequestProductItemCollectionType::NAME => new RequestProductItemCollectionType(),
                     ProductUnitSelectionType::NAME         => new ProductUnitSelectionTypeStub(),
-                    ProductPriceListAwareSelectType::NAME  => new StubProductPriceListAwareSelectType(),
                     $priceType->getName()                  => $priceType,
                     $entityType->getName()                 => $entityType,
                     $optionalPriceType->getName()          => $optionalPriceType,

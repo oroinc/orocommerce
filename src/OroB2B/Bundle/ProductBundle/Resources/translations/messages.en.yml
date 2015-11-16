@@ -94,8 +94,11 @@ orob2b:
             groups:
                 product.title: 'Product'
                 product_unit_settings.title: 'Product Unit Settings'
+                frontend_inventory_statuses_visibility.title: 'Allowed Inventory Statuses (Store Frontend)'
+                backend_inventory_statuses_visibility.title: 'Allowed Inventory Statuses (Management Console)'
             fields:
                 unit_rounding_type.label: 'Unit Rounding Type'
+                general_frontend_inventory_statuses_visibility.label: 'Visible Inventory Statuses'
 
         grid:
             action:
@@ -109,6 +112,8 @@ orob2b:
             quick_add:
                 title: Quick Order Form
                 description: Quick add products to order, RFQ or shopping cart
+                messages:
+                    not_added_products: '{1} Product %sku% can’t be added.|]1,Inf]Products %sku% can’t be added.'
             component_not_accessible.message: Can't process request, component not accessible
 
     product_unit.each:
