@@ -5,4 +5,4 @@ layout:
             parentId: head
             blockType: stylesheets
             options:
-                styles: ['/bundles/orob2bfrontend/css/default/styles.less']
+                inputs: ['bundles/orob2bfrontend/css/default/styles.less']
