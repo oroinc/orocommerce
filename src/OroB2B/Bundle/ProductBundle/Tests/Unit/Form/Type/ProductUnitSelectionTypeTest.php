@@ -328,9 +328,9 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                     'options' => [],
                     'productUnitHolder' => $this->createProductUnitHolder(
                         1,
-                        'sku',
-                        new ProductUnit(),
-                        $this->createProductHolder(1, 'sku', (new Product())->addUnitPrecision($precision))
+                        'code',
+                        $unit,
+                        $this->createProductHolder(1, 'code', (new Product())->addUnitPrecision($precision))
                     ),
                 ],
                 'expectedData' => [
@@ -346,9 +346,9 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                     ],
                     'productUnitHolder' => $this->createProductUnitHolder(
                         1,
-                        'sku',
-                        new ProductUnit(),
-                        $this->createProductHolder(1, 'sku', (new Product())->addUnitPrecision($precision))
+                        'code',
+                        $unit,
+                        $this->createProductHolder(1, 'code', (new Product())->addUnitPrecision($precision))
                     ),
                 ],
                 'expectedData' => [
@@ -362,9 +362,9 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                     'options' => [],
                     'productUnitHolder' => $this->createProductUnitHolder(
                         1,
-                        'sku',
+                        'code',
                         null,
-                        $this->createProductHolder(1, 'sku', null)
+                        $this->createProductHolder(1, 'code', null)
                     ),
                 ],
                 'expectedData' => [
@@ -372,6 +372,23 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                         $this->units,
                         ['orob2b.product_unit.test01.label.full', 'orob2b.product_unit.test02.label.full']
                     ),
+                ],
+            ],
+            'deleted product unit' => [
+                'inputData' => [
+                    'options' => [],
+                    'productUnitHolder' => $this->createProductUnitHolder(
+                        1,
+                        'sku',
+                        (new ProductUnit())->setCode('sku'),
+                        $this->createProductHolder(1, 'sku', (new Product())->addUnitPrecision($precision))
+                    ),
+                ],
+                'expectedData' => [
+                    'choices' => [
+                        null => 'orob2b.product.productunit.removed:sku',
+                        'code' => 'orob2b.product_unit.code.label.full',
+                    ],
                 ],
             ],
         ];
