@@ -15,8 +15,8 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
 use OroB2B\Bundle\ProductBundle\Form\Handler\QuickAddHandler;
-use OroB2B\Bundle\ProductBundle\Model\ComponentProcessorRegistry;
-use OroB2B\Bundle\ProductBundle\Model\ComponentProcessorInterface;
+use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
+use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
@@ -73,7 +73,8 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->formFactory = $this->getMock('Symfony\Component\Form\FormFactoryInterface');
 
-        $this->componentRegistry = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Model\ComponentProcessorRegistry')
+        $this->componentRegistry = $this
+            ->getMockBuilder('OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -338,7 +339,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected function getProcessor($isValidationRequired = true, $isAllowed = true)
     {
-        $processor = $this->getMock('OroB2B\Bundle\ProductBundle\Model\ComponentProcessorInterface');
+        $processor = $this->getMock('OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface');
         $processor->expects($this->any())
             ->method('isValidationRequired')
             ->willReturn($isValidationRequired);
