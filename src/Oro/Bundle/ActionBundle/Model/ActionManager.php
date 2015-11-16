@@ -78,7 +78,7 @@ class ActionManager
      */
     protected function findActions(array $context)
     {
-        /* @var $actions Action[] */
+        /** @var $actions Action[] */
         $actions = [];
 
         $actionContext = $this->createActionContext($context);

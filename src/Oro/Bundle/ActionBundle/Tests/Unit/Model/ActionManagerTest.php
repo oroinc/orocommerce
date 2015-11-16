@@ -217,7 +217,7 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
         ];
     }
     /**
-     * @return type
+     * @return array
      */
     protected function getConfiguration()
     {
