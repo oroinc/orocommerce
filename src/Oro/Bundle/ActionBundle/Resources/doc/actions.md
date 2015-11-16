@@ -1,5 +1,5 @@
 Actions Documentation
-==============================
+=====================
 
 Table of Contents
 -----------------
@@ -11,13 +11,12 @@ Table of Contents
 What are Actions?
 -----------------
 
-Actions provide possibility to assign possible tasks (actions) to needed:
-
+Actions provide possibility to assign any operations to:
  - Entity classes;
  - Routes.
 
-Every active action will show button (link) on the corresponded page(s). Button will be displayed if all assigned 
-Pre conditions are met. Action will be performed after click on the button if all assigned Pre conditions 
+Every active action will show button (link) on the corresponded page(s). Button will be displayed only if all described
+Pre conditions are met. Action will be performed after click on the button if all described Pre conditions
 and Conditions are met.
 
 Main Model Classes
@@ -29,7 +28,7 @@ or routes ('acme_demo_myentity_view'). Action can be enabled or disabled.
 Other fields of the action contain information about action name, extended options, 
 order of display buttons. More options see in [Configuration](#configuration).
 
-* **ActionDefinition** - part of the Action model that contains raw data from action's configuration
+* **ActionDefinition** - part of the Action model that contains raw data from action's configuration.
 
 How it works?
 -------------
