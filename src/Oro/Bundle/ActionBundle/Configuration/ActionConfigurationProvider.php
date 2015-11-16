@@ -12,7 +12,7 @@ class ActionConfigurationProvider
 {
     const ROOT_NODE_NAME = 'actions';
     const EXTENDS_NODE_NAME = 'extends';
-    const REPLACES_NODE_NAME = 'replaces';
+    const REPLACES_NODE_NAME = 'replace';
 
     /** @var ActionDefinitionListConfiguration */
     protected $definitionConfiguration;
@@ -203,7 +203,7 @@ class ActionConfigurationProvider
         if (array_key_exists(self::EXTENDS_NODE_NAME, $extendsConfig)) {
             if (in_array($extends, $this->processedConfigs, true)) {
                 throw new InvalidConfigurationException(
-                    sprintf('Found cyclomatic extends between %s and %s actions.', $extends, $actionName)
+                    sprintf('Found circular "extends" refererences %s and %s actions.', $extends, $actionName)
                 );
             }
 

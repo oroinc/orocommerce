@@ -129,7 +129,7 @@ class ActionConfigurationProviderTest extends \PHPUnit_Framework_TestCase
                     self::BUNDLE1 => [
                         'test_action1' => [
                             'label' => 'Test Action1',
-                            'replaces' => ['test'],
+                            'replace' => ['test'],
                             'routes' => ['test_route_bundle1']
                         ],
                         'test_action2' => [
@@ -146,19 +146,19 @@ class ActionConfigurationProviderTest extends \PHPUnit_Framework_TestCase
                     ],
                     self::BUNDLE2 => [
                         'test_action1' => [
-                            'replaces' => ['routes'],
+                            'replace' => ['routes'],
                         ],
                         'test_action4' => [
                             'label' => 'Test Action4',
                             'some_config' => [
-                                'replaces' => ['sub_config1', 'sub_config3'],
+                                'replace' => ['sub_config1', 'sub_config3'],
                                 'sub_config3' => 'replaced data',
                             ]
                         ]
                     ],
                     self::BUNDLE3 => [
                         'test_action1' => [
-                            'replaces' => ['routes'],
+                            'replace' => ['routes'],
                             'routes' => ['test_route_bundle3']
                         ],
                         'test_action2' => [

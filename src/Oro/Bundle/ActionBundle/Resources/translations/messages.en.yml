@@ -1,3 +1,4 @@
 oro:
     action:
-        label: Actions
+        capabilities:
+            label: Use Actions
