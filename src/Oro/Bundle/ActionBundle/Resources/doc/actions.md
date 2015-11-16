@@ -17,23 +17,24 @@ Actions provide possibility to assign possible tasks (actions) to needed:
  - Routes.
 
 Every active action will show button (link) on the corresponded page(s). Button will be displayed if all assigned 
-pre-conditions are met. Action will be performed after click on the button if all assigned conditions are met.
+Pre conditions are met. Action will be performed after click on the button if all assigned Pre conditions 
+and Conditions are met.
 
 Main Model Classes
 ------------------
 
 * **Action** - main model that contains information about specific action. It contains the most important
-information: action related entity classes (f.e. 'Acme\Bundle\DemoBundle\Entity\MyEntity') 
+information like action related entity classes (f.e. 'Acme\Bundle\DemoBundle\Entity\MyEntity') 
 or routes ('acme_demo_myentity_view'). Action can be enabled or disabled.
 Other fields of the action contain information about action name, extended options, 
-order of display buttons. More options see in the [Configuration](#configuration).
+order of display buttons. More options see in [Configuration](#configuration).
 
 * **ActionDefinition** - part of the Action model that contains raw data from action's configuration
 
 How it works?
 -------------
 
-Each action relates to the some entity type (i.e. consists full class name) or\and routes of pages 
+Each action relates to the some entity types (i.e. consists full class name) or\and routes of pages 
 where action should be displayed. Before page loading Action Bundle chooses actions that 
 are corresponded to page's entity\route. Then these actions checking for Pre conditions. If all Pre conditions are met 
 - Action's button is displaying. After user click on the Action button - Init step (if exists) is running.
@@ -49,6 +50,8 @@ Look at the example of simple action configuration that performs some action wit
 actions:
     acme_demo_expire_myentity_action:                       # action name
         extends: entity_action_base                         # parent action if needed
+        replaces:                                           # the list of nodes that should be replaced in the parent action
+            - frontend_options
         label: adme.demo.myentity.actions.myentity_action   # label for action button
         enabled: true                                       # is action enabled
         applications:                                       # for what applications action as available (backend, frontend)
