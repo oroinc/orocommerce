@@ -23,7 +23,12 @@ trait EntityTrait
     protected function getEntity($className, array $properties = [], array $constructorArgs = null)
     {
         $reflectionClass = new \ReflectionClass($className);
-        $entity = $reflectionClass->newInstance($constructorArgs);
+
+        if ($constructorArgs) {
+            $entity = $reflectionClass->newInstance($constructorArgs);
+        } else {
+            $entity = $reflectionClass->newInstanceWithoutConstructor();
+        }
 
         foreach ($properties as $property => $value) {
             try {

@@ -45,11 +45,7 @@ class LocalizedFallbackValueCollectionNormalizer extends CollectionNormalizer
         $this->locale = new $localeClass;
     }
 
-    /**
-     * @param LocalizedFallbackValue $object
-     *
-     * {@inheritdoc}
-     */
+    /** {@inheritdoc} */
     public function normalize($object, $format = null, array $context = [])
     {
         $result = [];
