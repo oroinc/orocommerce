@@ -62,6 +62,7 @@ class OroB2BWebsiteBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('parent_id', 'integer', ['notnull' => false]);
         $table->addColumn('code', 'string', ['length' => 64]);
+        $table->addColumn('title', 'string', ['length' => 255]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
