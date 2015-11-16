@@ -85,8 +85,8 @@ class DatagridListener
                 'field_options' => [
                     'class' => 'OroB2B\Bundle\PricingBundle\Entity\PriceList',
                     'property' => 'name',
-                ],
-            ],
+                ]
+            ]
         ];
         $this->addConfigElement($config, '[filters][columns]', $filter, self::PRICE_COLUMN);
     }

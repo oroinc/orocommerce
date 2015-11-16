@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
@@ -69,7 +70,7 @@ class PriceListRepository extends EntityRepository
             ->innerJoin(
                 'OroB2BPricingBundle:PriceListToAccount',
                 'priceListToAccount',
-                'WITH',
+                Join::WITH,
                 'priceListToAccount.priceList = priceList'
             )
             ->innerJoin('priceListToAccount.account', 'account')
@@ -77,27 +78,6 @@ class PriceListRepository extends EntityRepository
             ->setParameter('account', $account)
             ->getQuery()
             ->getOneOrNullResult();
-    }
-
-    /**
-     * @param Account $account
-     * @param PriceList $priceList
-     */
-    public function setPriceListToAccount(Account $account, PriceList $priceList = null)
-    {
-        $oldPriceList = $this->getPriceListByAccount($account);
-
-        if ($oldPriceList && $priceList && $oldPriceList->getId() === $priceList->getId()) {
-            return;
-        }
-
-        if ($oldPriceList) {
-            $oldPriceList->removeAccount($account);
-        }
-
-        if ($priceList) {
-            $priceList->addAccount($account);
-        }
     }
 
     /**
@@ -110,7 +90,7 @@ class PriceListRepository extends EntityRepository
             ->innerJoin(
                 'OroB2BPricingBundle:PriceListToAccountGroup',
                 'priceListToAccountGroup',
-                'WITH',
+                Join::WITH,
                 'priceListToAccountGroup.priceList = priceList'
             )
             ->innerJoin('priceListToAccountGroup.accountGroup', 'accountGroup')
@@ -118,27 +98,6 @@ class PriceListRepository extends EntityRepository
             ->setParameter('accountGroup', $accountGroup)
             ->getQuery()
             ->getOneOrNullResult();
-    }
-
-    /**
-     * @param AccountGroup $accountGroup
-     * @param PriceList $priceList
-     */
-    public function setPriceListToAccountGroup(AccountGroup $accountGroup, PriceList $priceList = null)
-    {
-        $oldPriceList = $this->getPriceListByAccountGroup($accountGroup);
-
-        if ($oldPriceList && $priceList && $oldPriceList->getId() === $priceList->getId()) {
-            return;
-        }
-
-        if ($oldPriceList) {
-            $oldPriceList->removeAccountGroup($accountGroup);
-        }
-
-        if ($priceList) {
-            $priceList->addAccountGroup($accountGroup);
-        }
     }
 
     /**
@@ -151,7 +110,7 @@ class PriceListRepository extends EntityRepository
             ->innerJoin(
                 'OroB2BPricingBundle:PriceListToWebsite',
                 'priceListToWebsite',
-                'WITH',
+                Join::WITH,
                 'priceListToWebsite.priceList = priceList'
             )
             ->innerJoin('priceListToWebsite.website', 'website')
@@ -159,26 +118,5 @@ class PriceListRepository extends EntityRepository
             ->setParameter('website', $website)
             ->getQuery()
             ->getOneOrNullResult();
-    }
-
-    /**
-     * @param Website $website
-     * @param PriceList $priceList
-     */
-    public function setPriceListToWebsite(Website $website, PriceList $priceList = null)
-    {
-        $oldPriceList = $this->getPriceListByWebsite($website);
-
-        if ($oldPriceList && $priceList && $oldPriceList->getId() === $priceList->getId()) {
-            return;
-        }
-
-        if ($oldPriceList) {
-            $oldPriceList->removeWebsite($website);
-        }
-
-        if ($priceList) {
-            $priceList->addWebsite($website);
-        }
     }
 }
