@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadProductData;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class LoadProductUnitPrecisionData extends AbstractFixture implements DependentFixtureInterface
@@ -14,15 +14,17 @@ class LoadProductUnitPrecisionData extends AbstractFixture implements DependentF
     const PRODUCT_UNIT_PRECISION_2 = 'test.productUnitPrecision.2';
     const PRODUCT_UNIT_PRECISION_3 = 'test.productUnitPrecision.3';
     const PRODUCT_UNIT_PRECISION_4 = 'test.productUnitPrecision.4';
+    const PRODUCT_UNIT_PRECISION_5 = 'test.productUnitPrecision.5';
 
     /**
      * @var array
      */
     protected $products = [
-        self::PRODUCT_UNIT_PRECISION_1 => LoadProductData::TEST_PRODUCT_01,
-        self::PRODUCT_UNIT_PRECISION_2 => LoadProductData::TEST_PRODUCT_02,
-        self::PRODUCT_UNIT_PRECISION_3 => LoadProductData::TEST_PRODUCT_03,
-        self::PRODUCT_UNIT_PRECISION_4 => LoadProductData::TEST_PRODUCT_04,
+        self::PRODUCT_UNIT_PRECISION_1 => LoadProductData::PRODUCT_1,
+        self::PRODUCT_UNIT_PRECISION_2 => LoadProductData::PRODUCT_2,
+        self::PRODUCT_UNIT_PRECISION_3 => LoadProductData::PRODUCT_3,
+        self::PRODUCT_UNIT_PRECISION_4 => LoadProductData::PRODUCT_4,
+        self::PRODUCT_UNIT_PRECISION_5 => LoadProductData::PRODUCT_5,
     ];
 
     /**
@@ -31,7 +33,7 @@ class LoadProductUnitPrecisionData extends AbstractFixture implements DependentF
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadProductData'
+            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData'
         ];
     }
 

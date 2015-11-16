@@ -136,19 +136,15 @@ class ProductDataStorageTest extends \PHPUnit_Framework_TestCase
                             'offers'                 => [
                                 [
                                     'quantity'          => $requestProductItemQuantity,
-                                    'unit'              => $unitCode,
+                                    'unit'              => $productUnit,
                                     'currency'          => $priceCurrency,
                                     'price'             => $priceValue,
-                                    'quantityFormatted' => $requestProductItemQuantity . $unitCode,
-                                    'priceFormatted'    => $priceValue . $priceCurrency,
                                 ],
                                 [
                                     'quantity'          => $requestProductItemQuantity,
-                                    'unit'              => $unitCode,
+                                    'unit'              => $productUnit,
                                     'currency'          => null,
                                     'price'             => 0,
-                                    'quantityFormatted' => $requestProductItemQuantity . $unitCode,
-                                    'priceFormatted'    => null,
                                 ]
                             ],
                         ]

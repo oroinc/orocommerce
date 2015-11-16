@@ -40,7 +40,7 @@ class OrderDataStorageExtension extends FrontendOrderDataStorageExtension
     {
         $data = $this->data;
         if (isset($options['storage_data'])) {
-            $data = array_replace_recursive($data, $options['data']);
+            $data = array_replace_recursive($data, $options['storage_data']);
         }
         if (!$data || !isset($data['withOffers'])) {
             return;

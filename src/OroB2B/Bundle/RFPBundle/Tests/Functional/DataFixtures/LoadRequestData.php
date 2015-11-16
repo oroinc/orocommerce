@@ -136,7 +136,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
         return [
             'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData',
             'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestStatusData',
-            'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadProductData',
+            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
             'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisionData'
         ];
     }
@@ -210,9 +210,10 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             $requestProduct = new RequestProduct();
             $requestProduct->setProduct($product);
             $requestProduct->setComment(sprintf('Notes %s', $i));
+            $productUnitPrecisions = $product->getUnitPrecisions();
+            $productUnit = $productUnitPrecisions[rand(0, count($productUnitPrecisions) - 1)]->getUnit();
             $numProductItems = rand(1, 10);
             for ($j = 0; $j < $numProductItems; $j++) {
-                $productUnit = $unitPrecisions[array_rand($unitPrecisions)]->getUnit();
 
                 $currency = $currencies[rand(0, count($currencies) - 1)];
                 $requestProductItem = new RequestProductItem();

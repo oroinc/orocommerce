@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Form\FormView;
 
