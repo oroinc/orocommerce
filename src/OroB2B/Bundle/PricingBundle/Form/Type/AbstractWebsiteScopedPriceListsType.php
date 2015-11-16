@@ -42,11 +42,6 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $defaultWebsite = $this->registry
-            ->getManagerForClass('OroB2BWebsiteBundle:Website')
-            ->getRepository('OroB2BWebsiteBundle:Website')
-            ->getDefaultWebsite();
-
         $resolver->setDefaults(
             [
                 'type' => PriceListCollectionType::NAME,

@@ -22,6 +22,7 @@ class PriceListCollectionType extends AbstractType
                 'type' => PriceListSelectWithPriorityType::NAME,
                 'show_form_when_empty' => false,
                 'mapped' => false,
+                'label' => false,
             ]
         );
     }
