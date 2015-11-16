@@ -54,6 +54,9 @@ orob2b:
                 add: 'Add Product'
                 remove: 'Delete'
 
+        system_configuration:
+            backend_product_visibility: 'Can Be Added to Quotes'
+
         quoteproduct:
             entity_label: 'Quote Product'
             entity_plural_label: 'Quote Products'

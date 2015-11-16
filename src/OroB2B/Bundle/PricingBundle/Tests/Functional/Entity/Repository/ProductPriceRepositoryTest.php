@@ -118,6 +118,7 @@ class ProductPriceRepositoryTest extends WebTestCase
             'second product' => [
                 'productReference' => 'product.2',
                 'priceReferences' => [
+                    'product_price.13',
                     'product_price.11',
                     'product_price.8',
                     'product_price.3',

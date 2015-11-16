@@ -79,6 +79,9 @@ orob2b:
                 save: Save
                 cancel: Cancel
 
+        system_configuration:
+            backend_product_visibility: 'Can Be Added to Shopping Lists'
+
     frontend:
         shoppinglist:
             btn:

@@ -2,9 +2,10 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Symfony\Component\Form\FormTypeInterface;
 
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
@@ -14,7 +15,8 @@ use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductSelectEntityTypeStub;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
@@ -87,9 +89,9 @@ abstract class AbstractTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return EntityType
+     * @return ProductSelectEntityTypeStub
      */
-    protected function prepareProductEntityType()
+    protected function prepareProductSelectType()
     {
         $products = [];
 
@@ -101,7 +103,19 @@ abstract class AbstractTest extends FormIntegrationTestCase
 
         $products[3] = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 3);
 
-        return new EntityType($products);
+        return new EntityType(
+            $products,
+            ProductSelectType::NAME,
+            [
+                'data_parameters' => [],
+                'grid_name' => 'products-select-grid-frontend',
+                'grid_widget_route' => 'orob2b_account_frontend_datagrid_widget',
+                'configs'         => [
+                    'placeholder' => null,
+                ],
+            ]
+        );
+
     }
 
     /**
@@ -131,11 +145,11 @@ abstract class AbstractTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return EntityType
+     * @return ProductUnitSelectionTypeStub
      */
     protected function prepareProductUnitSelectionType()
     {
-        return new StubProductUnitSelectionType(
+        return new ProductUnitSelectionTypeStub(
             [
                 'kg' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'kg', 'code'),
                 'item' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code'),

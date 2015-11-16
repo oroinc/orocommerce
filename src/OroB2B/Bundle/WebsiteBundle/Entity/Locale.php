@@ -11,8 +11,9 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Table(name="orob2b_locale")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\WebsiteBundle\Entity\Repository\LocaleRepository")
  * @Config(
+ *      mode="hidden",
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-flag"
@@ -69,11 +70,29 @@ class Locale
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "identity"=true
      *          }
      *      }
      * )
      */
     protected $code;
+
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", length=255, unique=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $title;
 
     /**
      * @var \DateTime $createdAt
@@ -107,6 +126,14 @@ class Locale
     {
         $this->childLocales = new ArrayCollection();
         $this->websites = new ArrayCollection();
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->title;
     }
 
     /**
@@ -328,5 +355,25 @@ class Locale
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string $title
+     *
+     * @return Locale
+     */
+    public function setTitle($title)
+    {
+        $this->title = $title;
+
+        return $this;
     }
 }

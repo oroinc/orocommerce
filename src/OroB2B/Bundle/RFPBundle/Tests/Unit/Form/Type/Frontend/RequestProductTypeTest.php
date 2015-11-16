@@ -10,17 +10,15 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\ProductRemovedSelectType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductRemovedSelectType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductType as BaseRequestProductType;
 use OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
 use OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type\AbstractTest;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
 class RequestProductTypeTest extends AbstractTest
 {
@@ -154,7 +152,7 @@ class RequestProductTypeTest extends AbstractTest
             ->getMock();
 
         $priceType                  = $this->preparePriceType();
-        $entityType                 = $this->prepareProductEntityType();
+        $entityType                 = $this->prepareProductSelectType();
         $optionalPriceType          = $this->prepareOptionalPriceType();
         $currencySelectionType      = new CurrencySelectionTypeStub();
         $requestProductItemType     = $this->prepareRequestProductItemType();
@@ -166,18 +164,17 @@ class RequestProductTypeTest extends AbstractTest
         return [
             new PreloadedExtension(
                 [
-                    CollectionType::NAME                    => new CollectionType(),
-                    RequestProductItemCollectionType::NAME  => new RequestProductItemCollectionType(),
-                    ProductUnitSelectionType::NAME          => new StubProductUnitSelectionType(),
-                    ProductRemovedSelectType::NAME          => new StubProductRemovedSelectType(),
-                    $priceType->getName()                   => $priceType,
-                    $entityType->getName()                  => $entityType,
-                    $optionalPriceType->getName()           => $optionalPriceType,
-                    $requestProductType->getName()          => $requestProductType,
-                    $requestProductItemType->getName()      => $requestProductItemType,
-                    $currencySelectionType->getName()       => $currencySelectionType,
-                    $productUnitSelectionType->getName()    => $productUnitSelectionType,
-                    QuantityTypeTrait::$name                => $this->getQuantityType(),
+                    CollectionType::NAME                   => new CollectionType(),
+                    RequestProductItemCollectionType::NAME => new RequestProductItemCollectionType(),
+                    ProductUnitSelectionType::NAME         => new ProductUnitSelectionTypeStub(),
+                    $priceType->getName()                  => $priceType,
+                    $entityType->getName()                 => $entityType,
+                    $optionalPriceType->getName()          => $optionalPriceType,
+                    $requestProductType->getName()         => $requestProductType,
+                    $requestProductItemType->getName()     => $requestProductItemType,
+                    $currencySelectionType->getName()      => $currencySelectionType,
+                    $productUnitSelectionType->getName()   => $productUnitSelectionType,
+                    QuantityTypeTrait::$name               => $this->getQuantityType(),
                 ],
                 []
             ),

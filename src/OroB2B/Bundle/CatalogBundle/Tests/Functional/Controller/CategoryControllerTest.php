@@ -6,20 +6,26 @@ use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadProductData;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 /**
  * @dbIsolation
+ *
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class CategoryControllerTest extends WebTestCase
 {
     const DEFAULT_CATEGORY_TITLE = 'Category Title';
-    const UPDATED_DEFAULT_CATEGORY_TITLE = 'Updated Category Title';
     const DEFAULT_SUBCATEGORY_TITLE = 'Subcategory Title';
+    const DEFAULT_CATEGORY_SHORT_DESCRIPTION = 'Category Short Description';
+    const DEFAULT_CATEGORY_LONG_DESCRIPTION = 'Category Long Description';
+    const UPDATED_DEFAULT_CATEGORY_TITLE = 'Updated Category Title';
     const UPDATED_DEFAULT_SUBCATEGORY_TITLE = 'Updated Subcategory Title';
+    const UPDATED_DEFAULT_CATEGORY_SHORT_DESCRIPTION = 'Updated Category Short Description';
+    const UPDATED_DEFAULT_CATEGORY_LONG_DESCRIPTION = 'Updated Category Long Description';
 
     /**
      * @var Locale[]
@@ -36,7 +42,7 @@ class CategoryControllerTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([
             'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadLocaleData',
-            'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadProductData'
+            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData'
         ]);
         $this->locales = $this->getContainer()
             ->get('doctrine')
@@ -67,19 +73,7 @@ class CategoryControllerTest extends WebTestCase
     {
         $this->getContainer()->get('doctrine')->getRepository('OroB2BCatalogBundle:Category')->getMasterCatalogRoot();
 
-        return $this->assertCreate(self::DEFAULT_CATEGORY_TITLE, $this->masterCatalog->getId());
-    }
-
-    /**
-     * @depends testCreateCategory
-     *
-     * @param int $id
-     *
-     * @return int
-     */
-    public function testEditCategory($id)
-    {
-        return $this->assertEdit(self::DEFAULT_CATEGORY_TITLE, self::UPDATED_DEFAULT_CATEGORY_TITLE, $id);
+        return $this->assertCreate($this->masterCatalog->getId());
     }
 
     /**
@@ -91,7 +85,61 @@ class CategoryControllerTest extends WebTestCase
      */
     public function testCreateSubCategory($id)
     {
-        return $this->assertCreate(self::DEFAULT_SUBCATEGORY_TITLE, $id);
+        return $this->assertCreate($id, self::DEFAULT_SUBCATEGORY_TITLE);
+    }
+
+    /**
+     * @depends testCreateCategory
+     *
+     * @param int $id
+     *
+     */
+    public function testLocalizedValuesCategory($id)
+    {
+        $this->assertUpdateWithLocalizedValues($id);
+    }
+
+    /**
+     * @depends testCreateSubCategory
+     *
+     * @param int $id
+     *
+     */
+    public function testLocalizedValuesSubCategory($id)
+    {
+        $this->assertUpdateWithLocalizedValues($id, self::DEFAULT_SUBCATEGORY_TITLE);
+    }
+
+    /**
+     * @depends testCreateCategory
+     *
+     * @param int $id
+     *
+     * @return int
+     */
+    public function testEditCategory($id)
+    {
+        list($title, $shortDescription, $longDescription) = [
+            self::DEFAULT_CATEGORY_TITLE,
+            self::DEFAULT_CATEGORY_SHORT_DESCRIPTION,
+            self::DEFAULT_CATEGORY_LONG_DESCRIPTION
+        ];
+
+        list($newTitle, $newShortDescription, $newLongDescription) = [
+            self::UPDATED_DEFAULT_CATEGORY_TITLE,
+            self::UPDATED_DEFAULT_CATEGORY_SHORT_DESCRIPTION,
+            self::UPDATED_DEFAULT_CATEGORY_LONG_DESCRIPTION
+        ];
+
+        return $this->assertEdit(
+            $id,
+            $title,
+            $shortDescription,
+            $longDescription,
+            $newTitle,
+            $newShortDescription,
+            $newLongDescription
+        );
     }
 
     /**
@@ -103,7 +151,27 @@ class CategoryControllerTest extends WebTestCase
      */
     public function testEditSubCategory($id)
     {
-        return $this->assertEdit(self::DEFAULT_SUBCATEGORY_TITLE, self::UPDATED_DEFAULT_SUBCATEGORY_TITLE, $id);
+        list($title, $shortDescription, $longDescription) = [
+            self::DEFAULT_SUBCATEGORY_TITLE,
+            self::DEFAULT_CATEGORY_SHORT_DESCRIPTION,
+            self::DEFAULT_CATEGORY_LONG_DESCRIPTION
+        ];
+
+        list($newTitle, $newShortDescription, $newLongDescription) = [
+            self::UPDATED_DEFAULT_CATEGORY_TITLE,
+            self::UPDATED_DEFAULT_CATEGORY_SHORT_DESCRIPTION,
+            self::UPDATED_DEFAULT_CATEGORY_LONG_DESCRIPTION
+        ];
+
+        return $this->assertEdit(
+            $id,
+            $title,
+            $shortDescription,
+            $longDescription,
+            $newTitle,
+            $newShortDescription,
+            $newLongDescription
+        );
     }
 
     /**
@@ -146,13 +214,19 @@ class CategoryControllerTest extends WebTestCase
     }
 
     /**
-     * @param string $title
      * @param int    $parentId
+     * @param string $title
+     * @param string $shortDescription
+     * @param string $longDescription
      *
      * @return int
      */
-    protected function assertCreate($title, $parentId)
-    {
+    protected function assertCreate(
+        $parentId,
+        $title = self::DEFAULT_CATEGORY_TITLE,
+        $shortDescription = self::DEFAULT_CATEGORY_SHORT_DESCRIPTION,
+        $longDescription = self::DEFAULT_CATEGORY_LONG_DESCRIPTION
+    ) {
         $crawler = $this->client->request(
             'GET',
             $this->getUrl('orob2b_catalog_category_create', ['id' => $parentId])
@@ -161,12 +235,14 @@ class CategoryControllerTest extends WebTestCase
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
         $form['orob2b_catalog_category[titles][values][default]'] = $title;
+        $form['orob2b_catalog_category[shortDescriptions][values][default]'] = $shortDescription;
+        $form['orob2b_catalog_category[longDescriptions][values][default]'] = $longDescription;
 
         if ($parentId === $this->masterCatalog->getId()) {
-            $appendProducts = $this->getProductBySku(LoadProductData::TEST_PRODUCT_01)->getId() . ', '
-                . $this->getProductBySku(LoadProductData::TEST_PRODUCT_02)->getId();
+            $appendProducts = $this->getProductBySku(LoadProductData::PRODUCT_1)->getId() . ', '
+                . $this->getProductBySku(LoadProductData::PRODUCT_2)->getId();
         } else {
-            $appendProducts = $this->getProductBySku(LoadProductData::TEST_PRODUCT_04)->getId();
+            $appendProducts = $this->getProductBySku(LoadProductData::PRODUCT_4)->getId();
         }
 
         $form['orob2b_catalog_category[appendProducts]'] = $appendProducts;
@@ -178,53 +254,52 @@ class CategoryControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('Category has been saved', $crawler->html());
+        $this->assertContains($title, $crawler->html());
+        $this->assertContains($shortDescription, $crawler->html());
+        $this->assertContains($longDescription, $crawler->html());
 
         return $this->getCategoryIdByUri($this->client->getRequest()->getRequestUri());
     }
 
     /**
-     * @param string $title
-     * @param string $newTitle
      * @param int    $id
+     * @param string $title
+     * @param string $shortDescription
+     * @param string $longDescription
+     * @param string $newTitle
+     * @param string $newShortDescription
+     * @param string $newLongDescription
      *
      * @return int
      */
-    protected function assertEdit($title, $newTitle, $id)
-    {
+    protected function assertEdit(
+        $id,
+        $title,
+        $shortDescription,
+        $longDescription,
+        $newTitle,
+        $newShortDescription,
+        $newLongDescription
+    ) {
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_catalog_category_update', ['id' => $id]));
         $form = $crawler->selectButton('Save and Close')->form();
         $formValues = $form->getValues();
-        $this->assertEquals($title, $formValues['orob2b_catalog_category[titles][values][default]']);
         $this->assertContains('Add note', $crawler->html());
 
-        $testProductOne = $this->getProductBySku(LoadProductData::TEST_PRODUCT_01);
-        $testProductTwo = $this->getProductBySku(LoadProductData::TEST_PRODUCT_02);
-        $testProductThree = $this->getProductBySku(LoadProductData::TEST_PRODUCT_03);
-        $testProductFour = $this->getProductBySku(LoadProductData::TEST_PRODUCT_04);
+        //Verified that actual values correspond with the ones that were set during Category creation
+        $this->assertFormDefaultLocalized($formValues, $title, $shortDescription, $longDescription);
 
+        $testProductOne = $this->getProductBySku(LoadProductData::PRODUCT_1);
+        $testProductTwo = $this->getProductBySku(LoadProductData::PRODUCT_2);
+        $testProductThree = $this->getProductBySku(LoadProductData::PRODUCT_3);
+        $testProductFour = $this->getProductBySku(LoadProductData::PRODUCT_4);
         $appendProduct = $testProductThree;
-
-        if ($title === self::DEFAULT_CATEGORY_TITLE) {
-            /** @var Category $productOneCategory */
-            $productOneCategory = $this->getProductCategoryByProduct($testProductOne);
-            /** @var Category $productTwoCategory */
-            $productTwoCategory = $this->getProductCategoryByProduct($testProductTwo);
-            $this->assertEquals(
-                $title,
-                $productOneCategory->getDefaultTitle()
-            );
-
-            $this->assertEquals(
-                $title,
-                $productTwoCategory->getDefaultTitle()
-            );
-        }
 
         if ($title === self::DEFAULT_SUBCATEGORY_TITLE) {
             $appendProduct = $testProductFour;
         };
 
-        $crfToken = $this->getContainer()->get('form.csrf_provider')->generateCsrfToken('category');
+        $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('category');
         $parameters = [
             'input_action' => 'save_and_stay',
             'orob2b_catalog_category' => [
@@ -233,11 +308,18 @@ class CategoryControllerTest extends WebTestCase
                 'removeProducts' => $testProductOne->getId(),
             ]
         ];
+
         $parameters['orob2b_catalog_category']['titles']['values']['default'] = $newTitle;
+        $parameters['orob2b_catalog_category']['shortDescriptions']['values']['default'] = $newShortDescription;
+        $parameters['orob2b_catalog_category']['longDescriptions']['values']['default'] = $newLongDescription;
 
         foreach ($this->locales as $locale) {
             $parameters['orob2b_catalog_category']['titles']['values']['locales'][$locale->getId()]['value']
                 = $locale->getCode() . $newTitle;
+            $parameters['orob2b_catalog_category']['shortDescriptions']['values']['locales'][$locale->getId()]['value']
+                = $locale->getCode() . $newShortDescription;
+            $parameters['orob2b_catalog_category']['longDescriptions']['values']['locales'][$locale->getId()]['value']
+                = $locale->getCode() . $newLongDescription;
         }
 
         $this->client->followRedirects(true);
@@ -250,43 +332,151 @@ class CategoryControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save and Close')->form();
         $formValues = $form->getValues();
 
-        $this->assertEquals($newTitle, $formValues['orob2b_catalog_category[titles][values][default]']);
-
-        foreach ($this->locales as $locale) {
-            $this->assertEquals(
-                $locale->getCode() . $newTitle,
-                $formValues['orob2b_catalog_category[titles][values][locales][' . $locale->getId() . '][value]']
-            );
-        }
-
-        $this->assertNull(
-            $this->getProductCategoryByProduct($testProductOne)
-        );
+        //Verified that values correspond with the new ones that has been set after submit
+        $this->assertFormDefaultLocalized($formValues, $newTitle, $newShortDescription, $newLongDescription);
+        $this->assertLocalizedValues($formValues, $newTitle, $newShortDescription, $newLongDescription);
+        $this->assertNull($this->getProductCategoryByProduct($testProductOne));
 
         if ($title === self::DEFAULT_CATEGORY_TITLE) {
             $productTwoCategory = $this->getProductCategoryByProduct($testProductTwo);
             $productThreeCategory = $this->getProductCategoryByProduct($testProductThree);
 
-            $this->assertEquals(
+            $this->assertCategoryDefaultLocalized(
+                $productThreeCategory,
                 $newTitle,
-                $productTwoCategory->getDefaultTitle()
+                $newShortDescription,
+                $newLongDescription
             );
-            $this->assertEquals(
+
+            $this->assertCategoryDefaultLocalized(
+                $productTwoCategory,
                 $newTitle,
-                $productThreeCategory->getDefaultTitle()
+                $newShortDescription,
+                $newLongDescription
             );
         }
 
         if ($title === self::DEFAULT_SUBCATEGORY_TITLE) {
             $productFourCategory = $this->getProductCategoryByProduct($testProductFour);
 
-            $this->assertEquals(
+            $this->assertCategoryDefaultLocalized(
+                $productFourCategory,
                 $newTitle,
-                $productFourCategory->getDefaultTitle()
+                $newShortDescription,
+                $newLongDescription
             );
         }
 
         return $id;
+    }
+
+    /**
+     * @param int    $id
+     * @param string $title
+     * @param string $shortDescription
+     * @param string $longDescription
+     */
+    protected function assertUpdateWithLocalizedValues(
+        $id,
+        $title = self::DEFAULT_CATEGORY_TITLE,
+        $shortDescription = self::DEFAULT_CATEGORY_SHORT_DESCRIPTION,
+        $longDescription = self::DEFAULT_CATEGORY_LONG_DESCRIPTION
+    ) {
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_catalog_category_update', ['id' => $id]));
+        $form = $crawler->selectButton('Save and Close')->form();
+        $formValues = $form->getValues();
+
+        $this->assertEquals($title, $formValues['orob2b_catalog_category[titles][values][default]']);
+        $this->assertEquals(
+            $shortDescription,
+            $formValues['orob2b_catalog_category[shortDescriptions][values][default]']
+        );
+        $this->assertEquals(
+            $longDescription,
+            $formValues['orob2b_catalog_category[longDescriptions][values][default]']
+        );
+
+        if ($title === self::DEFAULT_CATEGORY_TITLE) {
+            $testProductOne = $this->getProductBySku(LoadProductData::PRODUCT_1);
+            $testProductTwo = $this->getProductBySku(LoadProductData::PRODUCT_2);
+
+            /** @var Category $productOneCategory */
+            $productOneCategory = $this->getProductCategoryByProduct($testProductOne);
+            /** @var Category $productTwoCategory */
+            $productTwoCategory = $this->getProductCategoryByProduct($testProductTwo);
+
+            $this->assertCategoryDefaultLocalized($productOneCategory, $title, $shortDescription, $longDescription);
+            $this->assertCategoryDefaultLocalized($productTwoCategory, $title, $shortDescription, $longDescription);
+        }
+
+        if ($title === self::DEFAULT_SUBCATEGORY_TITLE) {
+            $testProductFour = $this->getProductBySku(LoadProductData::PRODUCT_4);
+
+            /** @var Category $productOneCategory */
+            $productFourCategory = $this->getProductCategoryByProduct($testProductFour);
+
+            $this->assertCategoryDefaultLocalized($productFourCategory, $title, $shortDescription, $longDescription);
+        };
+    }
+
+    /**
+     * @param Category $category
+     * @param string $title
+     * @param string $shortDescription
+     * @param string $longDescription
+     */
+    protected function assertCategoryDefaultLocalized(Category $category, $title, $shortDescription, $longDescription)
+    {
+        $this->assertEquals($title, $category->getDefaultTitle());
+        $this->assertEquals($shortDescription, $category->getDefaultShortDescription());
+        $this->assertEquals($longDescription, $category->getDefaultLongDescription());
+    }
+
+    /**
+     * @param array  $formValues
+     * @param string $title
+     * @param string $shortDescription
+     * @param string $longDescription
+     */
+    protected function assertFormDefaultLocalized($formValues, $title, $shortDescription, $longDescription)
+    {
+        $this->assertEquals($title, $formValues['orob2b_catalog_category[titles][values][default]']);
+
+        $this->assertEquals(
+            $shortDescription,
+            $formValues['orob2b_catalog_category[shortDescriptions][values][default]']
+        );
+
+        $this->assertEquals(
+            $longDescription,
+            $formValues['orob2b_catalog_category[longDescriptions][values][default]']
+        );
+    }
+
+    /**
+     * @param array  $formValues
+     * @param string $title
+     * @param string $shortDescription
+     * @param string $longDescription
+     */
+    protected function assertLocalizedValues($formValues, $title, $shortDescription, $longDescription)
+    {
+        foreach ($this->locales as $locale) {
+            $this->assertEquals(
+                $locale->getCode().$title,
+                $formValues['orob2b_catalog_category[titles][values][locales]['.$locale->getId().'][value]']
+            );
+
+            $this->assertEquals(
+                $locale->getCode().$shortDescription,
+                $formValues['orob2b_catalog_category[shortDescriptions][values][locales]['.$locale->getId().'][value]']
+            );
+
+            $this->assertEquals(
+                $locale->getCode().$longDescription,
+                $formValues['orob2b_catalog_category[longDescriptions][values][locales]['.$locale->getId().'][value]']
+            );
+        }
     }
 
     /**

@@ -1,4 +1,6 @@
 parameters:
+    orob2b_fallback.entity.localized_fallback_value.class: OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue
+
     orob2b_fallback.form.type.fallback_property.class: OroB2B\Bundle\FallbackBundle\Form\Type\FallbackPropertyType
     orob2b_fallback.form.type.fallback_value.class: OroB2B\Bundle\FallbackBundle\Form\Type\FallbackValueType
     orob2b_fallback.form.type.locale_collection.class: OroB2B\Bundle\FallbackBundle\Form\Type\LocaleCollectionType

@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 class LoadCategoryProductData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -14,10 +15,10 @@ class LoadCategoryProductData extends AbstractFixture implements DependentFixtur
      * @var array
      */
     protected static $relations = [
-        LoadCategoryData::FIRST_LEVEL => LoadProductData::TEST_PRODUCT_01,
-        LoadCategoryData::SECOND_LEVEL1 => LoadProductData::TEST_PRODUCT_02,
-        LoadCategoryData::THIRD_LEVEL1 => LoadProductData::TEST_PRODUCT_03,
-        LoadCategoryData::THIRD_LEVEL2 => LoadProductData::TEST_PRODUCT_04,
+        LoadCategoryData::FIRST_LEVEL => LoadProductData::PRODUCT_1,
+        LoadCategoryData::SECOND_LEVEL1 => LoadProductData::PRODUCT_2,
+        LoadCategoryData::THIRD_LEVEL1 => LoadProductData::PRODUCT_3,
+        LoadCategoryData::THIRD_LEVEL2 => LoadProductData::PRODUCT_4,
     ];
 
     /** {@inheritdoc} */
@@ -25,7 +26,7 @@ class LoadCategoryProductData extends AbstractFixture implements DependentFixtur
     {
         return [
             __NAMESPACE__ . '\LoadCategoryData',
-            __NAMESPACE__ . '\LoadProductData',
+            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
         ];
     }
 
