@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Migrations\Schema\v1_1;
 
 use Doctrine\Common\Collections\Criteria;
 
+use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Psr\Log\LoggerInterface;
 
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
@@ -47,13 +48,25 @@ class InsertSelectPriceListRelationTablesQuery extends ParametrizedMigrationQuer
      */
     public function getDescription()
     {
-        return 'Copy values from old to new price list relation table with priority and website';
+        $logger = new ArrayLogger();
+        $this->migrateData($logger, true);
+        return $logger->getMessages();
     }
 
     /**
      * {@inheritdoc}
      */
     public function execute(LoggerInterface $logger)
+    {
+        $this->migrateData($logger);
+    }
+
+    /**
+     * @param LoggerInterface $logger
+     * @param bool|false $dryRun
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function migrateData(LoggerInterface $logger, $dryRun = false)
     {
         $fields = ['price_list_id'];
         $websiteId = 'website_id';
@@ -65,16 +78,12 @@ class InsertSelectPriceListRelationTablesQuery extends ParametrizedMigrationQuer
         $insertFields = implode(', ', array_merge($fields, ['website_id', 'priority']));
         $selectFields = implode(', ', array_merge($fields, [$websiteId, 100]));
 
-        $sql = <<<SQL
-  INSERT INTO
-    {$this->newTableName}
-  ($insertFields)
-    SELECT
-      $selectFields
-    FROM {$this->oldTableName};
-SQL;
+        $sql = "INSERT INTO {$this->newTableName} ($insertFields) SELECT $selectFields FROM {$this->oldTableName};";
+
         $this->logQuery($logger, $sql);
-        $this->connection->exec($sql);
+        if (!$dryRun) {
+            $this->connection->exec($sql);
+        }
     }
 
     /**
