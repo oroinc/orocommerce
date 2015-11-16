@@ -70,6 +70,7 @@ services:
         parent: orob2b_catalog.event_listener.abstract_product_import
         tags:
             - { name: kernel.event_listener, event: orob2b_product.strategy.process_after, method: onProcessAfter }
+            - { name: doctrine.event_listener, event: onClear, method: onClear }
 
     orob2b_catalog.event_listener.product_data_converter:
         class: %orob2b_catalog.event_listener.product_data_converter.class%
@@ -81,6 +82,7 @@ services:
         parent: orob2b_catalog.event_listener.abstract_product_import
         tags:
             - { name: kernel.event_listener, event: orob2b_product.normalizer.normalizer, method: onNormalize }
+            - { name: doctrine.event_listener, event: onClear, method: onClear }
 
     orob2b_catalog.handler.request_product:
         class: %orob2b_catalog.handler.request_product.class%
