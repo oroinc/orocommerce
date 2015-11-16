@@ -52,15 +52,7 @@ class WarehouseTypeTest extends FormIntegrationTestCase
                     'name' => 'Warehouse 2'
                 ],
                 'expectedData'  => ['name' => 'Warehouse 2']
-            ],
-            'warehouse_invalid' => [
-                'isValid'       => false,
-                'defaultData'   => ['name' => 'Warehouse 1'],
-                'submittedData' => [
-                    'name' => ''
-                ],
-                'expectedData'  => ['name' => ''],
-            ],
+            ]
         ];
     }
 

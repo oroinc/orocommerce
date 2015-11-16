@@ -37,7 +37,10 @@ use OroB2B\Bundle\WarehouseBundle\Model\ExtendWarehouse;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"=""
- *          }
+ *          },
+ *          "dataaudit"={
+ *              "auditable"=true
+ *          },
  *      }
  * )
  */
