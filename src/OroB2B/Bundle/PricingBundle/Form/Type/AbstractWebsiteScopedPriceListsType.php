@@ -55,7 +55,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
                 'mapped' => false,
                 'ownership_disabled' => true,
                 'data' => [],
-                'preloaded_websites' => [$defaultWebsite],
+                'preloaded_websites' => [],
             ]
         );
     }

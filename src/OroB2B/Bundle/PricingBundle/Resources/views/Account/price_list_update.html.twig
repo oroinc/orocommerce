@@ -1,24 +1,21 @@
+{% set websites = form.priceListsByWebsites.vars.websites %}
 <div class="responsive-cell">
-    {% set tabs = [] %}
-    {% for website in form.priceListsByWebsites.vars.websites %}
-        {% set content = '' %}
-        {% if form.priceListsByWebsites[website.id] is defined  %}
-            {% set content %}
-                {{ form_row(form.priceListsByWebsites[website.id]) }}
-            {% endset %}
-        {% endif %}
-        {% set tab = {
-            'alias': website.id,
-            'widgetType': 'block',
-            'label': website.name|trans,
-            'url': path(
-                'orob2b_account_pricelist_website',
-                {accountId: form.priceListsByWebsites.parent.vars.value.id,  id: website.id}
-            ),
-            'content': content
-        } %}
-        {% set tabs = tabs|merge([tab]) %}
-    {% endfor %}
-
-    {{ tabPanel(tabs, {'useDropdown': true}) }}
+    <div class="oro-tabs" id="categoryVisibilityTabs">
+        <ul class="nav nav-tabs">
+            {% for website in websites %}
+                <li {% if website.id == websites|first.id %} class="active" {% endif %}>
+                    <a href="#website{{ website.id }}" data-toggle="tab">
+                        {{ website.name|trans }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+        <div class="tab-content" id="containerAlias">
+            {% for website in websites %}
+                <div class="tab-pane{% if website.id == websites|first.id %} active{% endif %}" id="website{{ website.id }}"><br>
+                    {{ form_row(form.priceListsByWebsites[website.id]) }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 </div>
