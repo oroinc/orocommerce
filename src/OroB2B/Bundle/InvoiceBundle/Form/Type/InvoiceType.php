@@ -77,7 +77,9 @@ class InvoiceType extends AbstractType
                     'required' => true,
                 ]
             )
-            ->add('poNumber', 'text')
+            ->add('poNumber', 'text', [
+                'required' => false
+            ])
             ->add(
                 'lineItems',
                 InvoiceLineItemsCollectionType::NAME,

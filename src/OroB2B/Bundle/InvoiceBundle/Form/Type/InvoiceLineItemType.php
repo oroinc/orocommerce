@@ -17,6 +17,7 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
@@ -129,10 +130,12 @@ class InvoiceLineItemType extends AbstractType
             )
             ->add(
                 'quantity',
-                'text',
+                QuantityType::NAME,
                 [
                     'required' => true,
-                    'label' => 'orob2b.invoice.invoicelineitem.quantity.label',
+                    'label' => 'orob2b.order.invoicelineitem.quantity.label',
+                    'default_data' => 1,
+                    'product_holder' => $builder->getData(),
                 ]
             )
             ->add(
@@ -154,9 +157,13 @@ class InvoiceLineItemType extends AbstractType
                     'default_currency' => $options['currency'],
                 ]
             )
-            ->add('priceType', 'hidden', [
-            'data' => InvoiceLineItem::PRICE_TYPE_UNIT,
-            ]);
+            ->add(
+                'priceType',
+                'hidden',
+                [
+                    'empty_data' => InvoiceLineItem::PRICE_TYPE_UNIT,
+                ]
+            );
     }
 
     /**

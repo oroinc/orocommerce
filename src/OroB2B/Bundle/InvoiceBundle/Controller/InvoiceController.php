@@ -31,7 +31,7 @@ class InvoiceController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_invoice.entity.invoice.class'),
+            'gridName' => 'invoices-grid'
         ];
     }
 
