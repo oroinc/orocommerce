@@ -36,9 +36,8 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->configurationProvider = $this->getMockBuilder(
-            'Oro\Bundle\ActionBundle\Configuration\ActionConfigurationProvider'
-        )
+        $this->configurationProvider = $this
+            ->getMockBuilder('Oro\Bundle\ActionBundle\Configuration\ActionConfigurationProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -56,25 +55,48 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param array $inputData
+     * @param array $context
      * @param array $expectedData
      *
      * @dataProvider getActionsProvider
      */
-    public function testHasActions(array $inputData, array $expectedData)
+    public function testHasActions(array $context, array $expectedData)
     {
-        $this->assertEquals($expectedData['hasActions'], $this->manager->hasActions($inputData['context']));
+        $this->assertEquals($expectedData['hasActions'], $this->manager->hasActions($context));
     }
 
     /**
-     * @param array $inputData
+     * @param array $context
      * @param array $expectedData
      *
      * @dataProvider getActionsProvider
      */
-    public function testGetActions(array $inputData, array $expectedData)
+    public function testGetActions(array $context, array $expectedData)
     {
-        $this->assertGetActions($expectedData['actions'], $inputData['context']);
+        if (isset($context['entityClass'])) {
+            $this->doctrineHelper->expects($this->once())
+                ->method('isManageableEntity')
+                ->willReturn(true);
+
+            if (isset($context['entityId'])) {
+                $this->doctrineHelper->expects($this->any())
+                    ->method('getEntityReference')
+                    ->willReturnCallback(function ($className, $id) {
+                        $obj = new \stdClass();
+                        $obj->id = $id;
+
+                        return $obj;
+                    });
+            } else {
+                $this->doctrineHelper->expects($this->any())
+                    ->method('createEntityInstance')
+                    ->willReturnCallback(function ($className) {
+                        return new \stdClass();
+                    });
+            }
+        }
+
+        $this->assertGetActions($expectedData['actions'], $context);
     }
 
     /**
@@ -106,30 +128,15 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'empty context' => [
-                'input' => [
-                    'context' => [],
-                ],
+                'context' => [],
                 'expected' => [
                     'actions' => [],
                     'hasActions' => false,
                 ],
             ],
             'incorrect context parameter' => [
-                'input' => [
-                    'context' => [
-                        'entityId' => 1,
-                    ],
-                ],
-                'expected' => [
-                    'actions' => [],
-                    'hasActions' => false,
-                ],
-            ],
-            'unknown context parameter' => [
-                'input' => [
-                    'context' => [
-                        'entityId' => 1,
-                    ],
+                'context' => [
+                    'entityId' => 1,
                 ],
                 'expected' => [
                     'actions' => [],
@@ -137,10 +144,8 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             'route1' => [
-                'input' => [
-                    'context' => [
-                        'route' => 'route1',
-                    ],
+                'context' => [
+                    'route' => 'route1',
                 ],
                 'expected' => [
                     'actions' => [
@@ -150,12 +155,19 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
                     'hasActions' => true,
                 ],
             ],
+            'entity1 withut id' => [
+                'context' => [
+                    'entityClass' => 'entity1',
+                ],
+                'expected' => [
+                    'actions' => [],
+                    'hasActions' => false,
+                ],
+            ],
             'entity1' => [
-                'input' => [
-                    'context' => [
-                        'entityClass' => 'entity1',
-                        'entityId' => '1',
-                    ],
+                'context' => [
+                    'entityClass' => 'entity1',
+                    'entityId' => 1,
                 ],
                 'expected' => [
                     'actions' => [
@@ -166,12 +178,10 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             'route1 & entity1' => [
-                'input' => [
-                    'context' => [
-                        'route' => 'route1',
-                        'entityClass' => 'entity1',
-                        'entityId' => '1',
-                    ],
+                'context' => [
+                    'route' => 'route1',
+                    'entityClass' => 'entity1',
+                    'entityId' => 1,
                 ],
                 'expected' => [
                     'actions' => [
@@ -216,6 +226,7 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
             ],
         ];
     }
+
     /**
      * @return array
      */
