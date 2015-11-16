@@ -47,6 +47,17 @@ class ActionConfigurationProvider
         $this->kernelBundles = array_values($kernelBundles);
     }
 
+    public function warmUpCache()
+    {
+        $this->clearCache();
+        $this->cache->save(self::ROOT_NODE_NAME, $this->resolveConfiguration());
+    }
+
+    public function clearCache()
+    {
+        $this->cache->delete(self::ROOT_NODE_NAME);
+    }
+
     /**
      * @return array
      * @throws InvalidConfigurationException
@@ -58,7 +69,7 @@ class ActionConfigurationProvider
         } else {
             $configuration = $this->resolveConfiguration();
 
-            $this->cache->delete(self::ROOT_NODE_NAME);
+            $this->clearCache();
             $this->cache->save(self::ROOT_NODE_NAME, $configuration);
         }
 

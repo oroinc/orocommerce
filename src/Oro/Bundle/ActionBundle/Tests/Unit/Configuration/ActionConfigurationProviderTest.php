@@ -60,6 +60,36 @@ class ActionConfigurationProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($config, $configurationProvider->getActionConfiguration());
     }
 
+    public function testWarmUpCache()
+    {
+        $this->assertConfigurationCacheBuilt();
+
+        $configurationProvider = new ActionConfigurationProvider(
+            $this->definitionConfiguration,
+            $this->cacheProvider,
+            [self::BUNDLE1 => ['test_action' => ['label' => 'Test Action']]],
+            [self::BUNDLE1]
+        );
+
+        $configurationProvider->warmUpCache();
+    }
+
+    public function testClearCache()
+    {
+        $configurationProvider = new ActionConfigurationProvider(
+            $this->definitionConfiguration,
+            $this->cacheProvider,
+            [],
+            []
+        );
+
+        $this->cacheProvider->expects($this->once())
+            ->method('delete')
+            ->with(ActionConfigurationProvider::ROOT_NODE_NAME);
+
+        $configurationProvider->clearCache();
+    }
+
     /**
      * @dataProvider getActionConfigurationDataProvider
      *
@@ -72,23 +102,8 @@ class ActionConfigurationProviderTest extends \PHPUnit_Framework_TestCase
             ->method('contains')
             ->with(ActionConfigurationProvider::ROOT_NODE_NAME)
             ->willReturn(false);
-        $this->cacheProvider->expects($this->never())
-            ->method('fetch')
-            ->with(ActionConfigurationProvider::ROOT_NODE_NAME);
-        $this->cacheProvider->expects($this->once())
-            ->method('delete')
-            ->with(ActionConfigurationProvider::ROOT_NODE_NAME)
-            ->willReturn(true);
-        $this->cacheProvider->expects($this->once())
-            ->method('save')
-            ->with(ActionConfigurationProvider::ROOT_NODE_NAME)
-            ->willReturn(true);
 
-        $this->definitionConfiguration->expects($this->once())
-            ->method('processConfiguration')
-            ->willReturnCallback(function (array $configs) {
-                return $configs;
-            });
+        $this->assertConfigurationCacheBuilt();
 
         $configurationProvider = new ActionConfigurationProvider(
             $this->definitionConfiguration,
@@ -249,5 +264,26 @@ class ActionConfigurationProviderTest extends \PHPUnit_Framework_TestCase
                 'Could not found config of test_action1 for dependant action test_action2.'
             ]
         ];
+    }
+
+    protected function assertConfigurationCacheBuilt()
+    {
+        $this->cacheProvider->expects($this->never())
+            ->method('fetch')
+            ->with(ActionConfigurationProvider::ROOT_NODE_NAME);
+        $this->cacheProvider->expects($this->once())
+            ->method('delete')
+            ->with(ActionConfigurationProvider::ROOT_NODE_NAME)
+            ->willReturn(true);
+        $this->cacheProvider->expects($this->once())
+            ->method('save')
+            ->with(ActionConfigurationProvider::ROOT_NODE_NAME)
+            ->willReturn(true);
+
+        $this->definitionConfiguration->expects($this->once())
+            ->method('processConfiguration')
+            ->willReturnCallback(function (array $configs) {
+                return $configs;
+            });
     }
 }
