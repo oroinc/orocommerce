@@ -6,7 +6,7 @@ use Knp\Menu\ItemInterface;
 
 use Oro\Bundle\NavigationBundle\Menu\BuilderInterface;
 
-use OroB2B\Bundle\ProductBundle\Model\ComponentProcessorRegistry;
+use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 
 class QuickAddMenuBuilder implements BuilderInterface
 {

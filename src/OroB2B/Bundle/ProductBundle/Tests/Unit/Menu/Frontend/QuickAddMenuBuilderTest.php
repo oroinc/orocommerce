@@ -2,10 +2,8 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Menu\Frontend;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use OroB2B\Bundle\ProductBundle\Menu\Frontend\QuickAddMenuBuilder;
-use OroB2B\Bundle\ProductBundle\Model\ComponentProcessorRegistry;
+use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 
 class QuickAddMenuBuilderTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,7 +19,8 @@ class QuickAddMenuBuilderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->componentRegistry = $this->getMock('OroB2B\Bundle\ProductBundle\Model\ComponentProcessorRegistry');
+        $this->componentRegistry = $this
+            ->getMock('OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry');
 
         $this->builder = new QuickAddMenuBuilder($this->componentRegistry);
     }

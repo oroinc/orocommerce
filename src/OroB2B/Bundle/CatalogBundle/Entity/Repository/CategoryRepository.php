@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Entity\Repository;
 
+use Doctrine\ORM\Query\Expr\Join;
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
@@ -89,5 +90,22 @@ class CategoryRepository extends NestedTreeRepository
             ->where(':product MEMBER OF category.products')
             ->setParameter('product', $product)
             ->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * @param string $productSku
+     *
+     * @return Category|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findOneByProductSku($productSku)
+    {
+        $qb = $this->createQueryBuilder('category');
+
+        return $qb
+            ->innerJoin('category.products', 'p', Join::WITH, $qb->expr()->eq('p.sku', ':sku'))
+            ->setParameter('sku', $productSku)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }
