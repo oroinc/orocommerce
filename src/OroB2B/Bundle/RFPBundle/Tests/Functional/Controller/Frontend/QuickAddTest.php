@@ -8,7 +8,7 @@ use Oro\Component\Testing\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Model\DataStorageAwareProcessor;
+use OroB2B\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
 
 /**
  * @dbIsolation
@@ -49,7 +49,7 @@ class QuickAddTest extends WebTestCase
             ],
         ];
 
-        /** @var DataStorageAwareProcessor $processor */
+        /** @var DataStorageAwareComponentProcessor $processor */
         $processor = $this->getContainer()->get('orob2b_rfp.processor.quick_add');
 
         $this->client->followRedirects(true);

@@ -60,6 +60,8 @@
                     form_row(form.company),
                     form_row(form.role),
                     form_row(form.note)
+                    form_row(form.poNumber),
+                    form_row(form.shipUntil)
                 ]
             }]
         },
@@ -79,6 +81,16 @@
     {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
         {% set additionalData = additionalData|merge([form_row(child)]) %}
     {% endfor %}
+    {% if additionalData is not empty %}
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': 'orob2b.rfp.sections.additional'|trans,
+            'subblocks': [{
+                'title': '',
+                'useSpan': false,
+                'data' : additionalData
+            }]
+        }] ) %}
+    {% endif %}
 
     {% set data = {
         'formErrors': form_errors(form),

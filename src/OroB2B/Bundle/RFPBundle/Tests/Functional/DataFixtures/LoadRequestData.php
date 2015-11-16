@@ -19,6 +19,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
     const FIRST_NAME    = 'Grzegorz';
     const LAST_NAME     = 'Brzeczyszczykiewicz';
     const EMAIL         = 'test_request@example.com';
+    const PO_NUMBER     = 'CA1234USD';
 
     const REQUEST1      = 'rfp.request.1';
     const REQUEST2      = 'rfp.request.2';
@@ -41,6 +42,8 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'company' => 'Google',
             'role' => 'CEO',
             'note' => self::REQUEST1,
+            'po_number' => self::PO_NUMBER,
+            'ship_until' => true
         ],
         self::REQUEST2 => [
             'first_name' => self::FIRST_NAME,
@@ -52,6 +55,8 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'note' => self::REQUEST2,
             'account' => LoadUserData::ACCOUNT1,
             'accountUser' => LoadUserData::ACCOUNT1_USER1,
+            'po_number' => self::PO_NUMBER,
+            'ship_until' => true
         ],
         self::REQUEST3 => [
             'first_name' => self::FIRST_NAME,
@@ -118,6 +123,8 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'note' => self::REQUEST8,
             'account' => LoadUserData::ACCOUNT1,
             'accountUser' => LoadUserData::ACCOUNT1_USER1,
+            'po_number' => self::PO_NUMBER,
+            'ship_until' => true
         ],
     ];
 
@@ -159,8 +166,8 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
                 ->setRole($rawRequest['role'])
                 ->setNote($rawRequest['note'])
                 ->setStatus($status)
-                ->setOrganization($organization)
-            ;
+                ->setOrganization($organization);
+
             if (!empty($rawRequest['account'])) {
                 $request->setAccount($this->getReference($rawRequest['account']));
             }
@@ -170,6 +177,13 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             }
 
             $this->processRequestProducts($request, $manager);
+            if (isset($rawRequest['ship_until'])) {
+                $request->setShipUntil(new \DateTime());
+            }
+
+            if (isset($rawRequest['po_number'])) {
+                $request->setPoNumber($rawRequest['po_number']);
+            }
 
             $manager->persist($request);
             $this->addReference($key, $request);

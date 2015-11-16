@@ -17,10 +17,13 @@ orob2b:
             account_user.label: 'Account User'
             locked.label: 'Locked'
             not_locked.label: 'Not Locked'
+            po_number.label: 'PO Number'
+            ship_until.label: 'Do Not Ship Later Than'
             price_list.label: 'Price List'
 
             sections:
                 general: 'General'
+                additional: 'Additional'
                 quote_products: 'Line Items'
 
             widgets:
@@ -50,6 +53,9 @@ orob2b:
                 notes: 'Notes'
                 add: 'Add Product'
                 remove: 'Delete'
+
+        system_configuration:
+            backend_product_visibility: 'Can Be Added to Quotes'
 
         quoteproduct:
             entity_label: 'Quote Product'
@@ -148,6 +154,8 @@ orob2b:
                 qid.label: 'Quote #'
                 account_user.label: 'Assigned To'
                 valid_until.label: 'Valid Until'
+                po_number.label: 'PO Number'
+                ship_until.label: 'Do Not Ship Later Than'
                 sections:
                     general: 'General'
                     quote_products: 'Line Items'

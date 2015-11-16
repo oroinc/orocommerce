@@ -2,15 +2,28 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\Entity;
 
-use Oro\Component\Testing\Unit\EntityTestCase;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
-class CategoryTest extends EntityTestCase
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
+class CategoryTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTestCaseTrait;
+
+    /** @var  Category $category */
+    protected $category;
+
+    public function setup()
+    {
+        $this->category = new Category();
+    }
+
     public function testAccessors()
     {
         $date = new \DateTime();
@@ -32,7 +45,7 @@ class CategoryTest extends EntityTestCase
 
     public function testConstruct()
     {
-        $category = new Category();
+        $category = $this->category;
 
         $this->assertInstanceOf('Doctrine\Common\Collections\Collection', $category->getTitles());
         $this->assertEmpty($category->getTitles()->toArray());
@@ -42,6 +55,12 @@ class CategoryTest extends EntityTestCase
 
         $this->assertInstanceOf('Doctrine\Common\Collections\Collection', $category->getProducts());
         $this->assertEmpty($category->getProducts()->toArray());
+
+        $this->assertInstanceOf('Doctrine\Common\Collections\Collection', $category->getShortDescriptions());
+        $this->assertEmpty($category->getShortDescriptions()->toArray());
+
+        $this->assertInstanceOf('Doctrine\Common\Collections\Collection', $category->getLongDescriptions());
+        $this->assertEmpty($category->getLongDescriptions()->toArray());
 
         $now = new \DateTime();
 
@@ -54,28 +73,91 @@ class CategoryTest extends EntityTestCase
 
     public function testTitleAccessors()
     {
-        $category = new Category();
+        $category = $this->category;
         $this->assertEmpty($category->getTitles()->toArray());
 
-        $firstTitle = new LocalizedFallbackValue();
-        $firstTitle->setString('first');
+        $firstTitle = $this->createLocalizedValue();
 
-        $secondTitle = new LocalizedFallbackValue();
-        $secondTitle->setString('second');
+        $secondTitle = $this->createLocalizedValue();
 
         $category->addTitle($firstTitle)
             ->addTitle($secondTitle)
             ->addTitle($secondTitle);
+
+        $this->assertEquals(
+            2,
+            count($category->getTitles()->toArray())
+        );
+
         $this->assertEquals([$firstTitle, $secondTitle], array_values($category->getTitles()->toArray()));
 
         $category->removeTitle($firstTitle)
             ->removeTitle($firstTitle);
+
         $this->assertEquals([$secondTitle], array_values($category->getTitles()->toArray()));
+    }
+
+    public function testShortDescriptionAccessors()
+    {
+        $category = $this->category;
+        $this->assertEmpty($category->getShortDescriptions()->toArray());
+
+        $firstShortDescription = $this->createLocalizedValue();
+
+        $secondShortDescription = $this->createLocalizedValue();
+
+        $category->addShortDescription($firstShortDescription)
+            ->addShortDescription($secondShortDescription)
+            ->addShortDescription($secondShortDescription);
+
+        $this->assertEquals(
+            [$firstShortDescription, $secondShortDescription],
+            array_values($category->getShortDescriptions()->toArray())
+        );
+
+        $this->assertEquals(
+            2,
+            count($category->getShortDescriptions()->toArray())
+        );
+
+        $category->removeShortDescription($firstShortDescription)
+            ->removeShortDescription($firstShortDescription);
+
+        $this->assertEquals([$secondShortDescription], array_values($category->getShortDescriptions()->toArray()));
+    }
+
+    public function testLongDescriptionAccessors()
+    {
+        $category = $this->category;
+        $this->assertEmpty($category->getLongDescriptions()->toArray());
+
+        $firstLongDescription = $this->createLocalizedValue();
+
+        $secondLongDescription = $this->createLocalizedValue();
+
+        $category->addLongDescription($firstLongDescription)
+            ->addLongDescription($secondLongDescription)
+            ->addLongDescription($secondLongDescription);
+
+        $this->assertEquals(
+            [$firstLongDescription, $secondLongDescription],
+            array_values($category->getLongDescriptions()->toArray())
+        );
+
+        $this->assertEquals(
+            2,
+            count($category->getLongDescriptions()->toArray())
+        );
+
+        $category->removeLongDescription($firstLongDescription)
+            ->removeLongDescription($firstLongDescription);
+
+        $this->assertEquals([$secondLongDescription], array_values($category->getLongDescriptions()->toArray()));
     }
 
     public function testChildCategoryAccessors()
     {
-        $category = new Category();
+        $category = $this->category;
         $this->assertEmpty($category->getChildCategories()->toArray());
 
         $firstCategory = new Category();
@@ -105,7 +187,7 @@ class CategoryTest extends EntityTestCase
         $firstProduct = new Product();
         $secondProduct = new Product();
 
-        $category = new Category();
+        $category = $this->category;
         $category->addProduct($firstProduct)
             ->addProduct($secondProduct);
 
@@ -124,18 +206,38 @@ class CategoryTest extends EntityTestCase
 
     public function testGetDefaultTitle()
     {
-        $defaultTitle = new LocalizedFallbackValue();
-        $defaultTitle->setString('default');
+        $defaultTitle = $this->createLocalizedValue(true);
+        $localizedTitle = $this->createLocalizedValue();
 
-        $localizedTitle = new LocalizedFallbackValue();
-        $localizedTitle->setString('localized')
-            ->setLocale(new Locale());
-
-        $category = new Category();
+        $category = $this->category;
         $category->addTitle($defaultTitle)
             ->addTitle($localizedTitle);
 
         $this->assertEquals($defaultTitle, $category->getDefaultTitle());
+    }
+
+    public function testGetDefaultShortDescription()
+    {
+        $defaultShortDescription = $this->createLocalizedValue(true);
+        $localizedTShortDescription = $this->createLocalizedValue();
+
+        $category = $this->category;
+        $category->addShortDescription($defaultShortDescription)
+            ->addShortDescription($localizedTShortDescription);
+
+        $this->assertEquals($defaultShortDescription, $category->getDefaultShortDescription());
+    }
+
+    public function testGetDefaultLongDescription()
+    {
+        $defaultLongDescription = $this->createLocalizedValue(true);
+        $localizedLongDescription = $this->createLocalizedValue();
+
+        $category = $this->category;
+        $category->addLongDescription($defaultLongDescription)
+            ->addLongDescription($localizedLongDescription);
+
+        $this->assertEquals($defaultLongDescription, $category->getDefaultLongDescription());
     }
 
     /**
@@ -147,11 +249,49 @@ class CategoryTest extends EntityTestCase
      */
     public function testGetDefaultTitleException(array $titles)
     {
-        $category = new Category();
+        $category = $this->category;
+
         foreach ($titles as $title) {
             $category->addTitle($title);
         }
+
         $category->getDefaultTitle();
+    }
+
+    /**
+     * @param array $shortDescriptions
+     * @dataProvider getDefaultTitleExceptionDataProvider
+     *
+     * @expectedException \LogicException
+     * @expectedExceptionMessage There must be only one default short description
+     */
+    public function testGetDefaultShortDescriptionException(array $shortDescriptions)
+    {
+        $category = $this->category;
+
+        foreach ($shortDescriptions as $shortDescription) {
+            $category->addShortDescription($shortDescription);
+        }
+
+        $category->getDefaultShortDescription();
+    }
+
+    /**
+     * @param array $longDescriptions
+     * @dataProvider getDefaultTitleExceptionDataProvider
+     *
+     * @expectedException \LogicException
+     * @expectedExceptionMessage There must be only one default long description
+     */
+    public function testGetDefaultLongDescriptionException(array $longDescriptions)
+    {
+        $category = $this->category;
+
+        foreach ($longDescriptions as $longDescription) {
+            $category->addShortDescription($longDescription);
+        }
+
+        $category->getDefaultLongDescription();
     }
 
     /**
@@ -160,14 +300,14 @@ class CategoryTest extends EntityTestCase
     public function getDefaultTitleExceptionDataProvider()
     {
         return [
-            'no default title' => [[]],
-            'several default titles' => [[new LocalizedFallbackValue(), new LocalizedFallbackValue()]],
+            'no default localized' => [[]],
+            'several default localized' => [[$this->createLocalizedValue(true), $this->createLocalizedValue(true)]],
         ];
     }
 
     public function testPreUpdate()
     {
-        $category = new Category();
+        $category = $this->category;
         $category->preUpdate();
 
         $this->assertInstanceOf('DateTime', $category->getUpdatedAt());
@@ -181,9 +321,25 @@ class CategoryTest extends EntityTestCase
         $title = new LocalizedFallbackValue();
         $title->setString($value);
 
-        $category = new Category();
+        $category = $this->category;
         $category->addTitle($title);
 
         $this->assertEquals($value, (string)$category);
+    }
+
+    /**
+     * @param bool|false $default
+     *
+     * @return LocalizedFallbackValue
+     */
+    protected function createLocalizedValue($default = false)
+    {
+        $localized = (new LocalizedFallbackValue())->setString('some string');
+
+        if (!$default) {
+            $localized->setLocale(new Locale());
+        }
+
+        return $localized;
     }
 }

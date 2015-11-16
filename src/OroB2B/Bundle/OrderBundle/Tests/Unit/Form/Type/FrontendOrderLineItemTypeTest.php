@@ -13,8 +13,8 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Form\Type\FrontendOrderLineItemType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceListAwareSelectType;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
@@ -39,7 +39,10 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                 1 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 1, 'id'),
                 2 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 2, 'id'),
             ],
-            ProductPriceListAwareSelectType::NAME
+            ProductSelectType::NAME,
+            [
+                'data_parameters' => []
+            ]
         );
 
         return array_merge(

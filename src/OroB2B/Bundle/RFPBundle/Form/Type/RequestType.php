@@ -6,6 +6,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 
@@ -66,6 +68,14 @@ class RequestType extends AbstractType
             ->add('note', 'textarea', [
                 'label' => 'orob2b.rfp.request.note.label',
                 'required' => false,
+            ])
+            ->add('poNumber', 'text', [
+                'required' => false,
+                'label' => 'orob2b.rfp.request.po_number.label'
+            ])
+            ->add('shipUntil', OroDateType::NAME, [
+                'required' => false,
+                'label' => 'orob2b.rfp.request.ship_until.label'
             ])
             ->add('requestProducts', RequestProductCollectionType::NAME, [
                 'label'     => 'orob2b.rfp.requestproduct.entity_plural_label',

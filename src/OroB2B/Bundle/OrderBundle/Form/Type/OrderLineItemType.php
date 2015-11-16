@@ -83,6 +83,9 @@ class OrderLineItemType extends AbstractOrderLineItemType
                     'required' => true,
                     'label' => 'orob2b.product.entity_label',
                     'create_enabled' => false,
+                    'data_parameters' => [
+                        'scope' => 'order'
+                    ]
                 ]
             )
             ->add(

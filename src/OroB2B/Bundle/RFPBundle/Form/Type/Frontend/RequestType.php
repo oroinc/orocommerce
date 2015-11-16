@@ -11,6 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
@@ -91,6 +92,14 @@ class RequestType extends AbstractType
             ])
             ->add('note', 'textarea', [
                 'label' => 'orob2b.rfp.request.note.label'
+            ])
+            ->add('poNumber', 'text', [
+                'required' => false,
+                'label' => 'orob2b.rfp.request.po_number.label'
+            ])
+            ->add('shipUntil', OroDateType::NAME, [
+                'required' => false,
+                'label' => 'orob2b.rfp.request.ship_until.label'
             ])
             ->add('requestProducts', RequestProductCollectionType::NAME, [
                 'options' => [

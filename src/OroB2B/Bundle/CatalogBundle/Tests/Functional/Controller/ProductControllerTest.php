@@ -7,7 +7,7 @@ use Oro\Component\Testing\WebTestCase;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadProductData;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
  * @dbIsolation
@@ -57,15 +57,15 @@ class ProductControllerTest extends WebTestCase
             'includeSubcategories' => [
                 'includeSubcategories' => true,
                 'expected' => [
-                    LoadProductData::TEST_PRODUCT_02,
-                    LoadProductData::TEST_PRODUCT_03,
-                    LoadProductData::TEST_PRODUCT_04,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_4,
                 ],
             ],
             'excludeSubcategories' => [
                 'includeSubcategories' => false,
                 'expected' => [
-                    LoadProductData::TEST_PRODUCT_02,
+                    LoadProductData::PRODUCT_2,
                 ],
             ],
         ];

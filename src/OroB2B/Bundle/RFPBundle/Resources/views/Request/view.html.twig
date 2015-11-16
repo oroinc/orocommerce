@@ -109,7 +109,6 @@
                     {% for lineItem in entity.requestProducts %}
                         {% set numSubItems =  lineItem.requestProductItems|length %}
                         {% if numSubItems > 1 %}<tbody class="hasrs">{% else %}<tbody>{% endif %}
-                        {% set isFreeFormProduct = lineItem.product is empty and lineItem.freeFormProduct is not empty %}
                         {% for subItem in lineItem.requestProductItems %}
                             {% set quantity = subItem.quantity %}
                             {% set price = subItem.price %}
@@ -117,11 +116,7 @@
                                 {% if loop.first %}
                                     <td rowspan="{{ numSubItems }}" class="rfp-line_item-sku">{{ lineItem.productSku }}</td>
                                     <td rowspan="{{ numSubItems }}" class="rfp-line_item-product">
-                                        {% if isFreeFormProduct %}
-                                            {{ lineItem.freeFormProduct }}
-                                        {% else %}
-                                            {{ lineItem.product }}
-                                        {% endif %}
+                                        {{ lineItem.product }}
                                     </td>
                                 {% endif %}
                                 <td class="rfp-line_item-requested_quantity rfp-line_item-requested_quantity-{% if loop.first %}first{% else %}not_first{% endif %}">

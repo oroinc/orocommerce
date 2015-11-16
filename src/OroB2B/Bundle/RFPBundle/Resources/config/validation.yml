@@ -25,6 +25,11 @@ OroB2B\Bundle\RFPBundle\Entity\Request:
             - NotBlank: ~
             - Length:
                 max: 255
+        poNumber:
+            - Length:
+                max: 255
+        shipUntil:
+            - Date: ~
         requestProducts:
             - Valid: ~
 

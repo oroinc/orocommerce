@@ -34,6 +34,9 @@ class OroB2BRFPBundle implements Migration, RenameExtensionAwareInterface
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->renameRequestTableFields($schema, $queries);
+        $table = $schema->getTable('orob2b_rfp_request');
+        $table->addColumn('po_number', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('ship_until', 'date', ['notnull' => false]);
 
         $queries->addQuery(
             new UpdateEntityConfigEntityValueQuery(
