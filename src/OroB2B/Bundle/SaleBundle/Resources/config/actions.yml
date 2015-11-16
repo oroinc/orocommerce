@@ -1,15 +1,12 @@
 actions:
-    sale_quote_action1:
-        label: 'Quote Action1 (index)'
-        routes:
-            - orob2b_sale_quote_index
-
-    sale_quote_action2:
-        label: 'Quote Action2 (view)'
-        routes:
-            - orob2b_sale_quote_view
-
-    sale_quote_action3:
-        label: 'Quote Action3 (edit)'
-        routes:
-            - orob2b_sale_quote_update
+    orob2b_sale_expire_quote_action:
+        label: orob2b.sale.quote.actions.quote_expire
+        enabled: true
+        applications:
+            - backend
+            - frontend
+        entities:
+            - OroB2B\Bundle\SaleBundle\Entity\Quote
+        order: 10
+        frontend_options:
+            icon: icon-time

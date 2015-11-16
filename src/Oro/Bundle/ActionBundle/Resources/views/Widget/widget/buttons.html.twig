@@ -1,12 +1,10 @@
 {% if actions|length %}
     <div class="widget-content">
         {% for action in actions %}
-            <div class="btn-group">
-                <a href="javascript:void(0);" title="{{ action.definition.label }}" class="btn icons-holder-text btn-primary">
-                    <i class="icon-repeat"></i>
-                    {{ action.definition.label }}
-                </a>
-            </div>
+            {% set params = action.definition.frontendOptions|merge({'label': action.definition.label|trans }) %}
+            {% set template = params.template|default('OroActionBundle::Action/button.html.twig') %}
+
+            {% include template with {'params': params} %}
         {% endfor %}
     </div>
 {% endif %}

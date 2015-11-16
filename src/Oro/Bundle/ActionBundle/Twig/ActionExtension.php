@@ -2,23 +2,34 @@
 
 namespace Oro\Bundle\ActionBundle\Twig;
 
+use Symfony\Component\HttpFoundation\RequestStack;
+
 use Oro\Bundle\ActionBundle\Model\ActionManager;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 class ActionExtension extends \Twig_Extension
 {
     const NAME = 'oro_action';
 
-    /**
-     * @var ActionManager
-     */
+    /** @var ActionManager */
     protected $manager;
+
+    /** @var DoctrineHelper */
+    protected $doctrineHelper;
+
+    /** @var RequestStack */
+    protected $requestStack;
 
     /**
      * @param ActionManager $manager
+     * @param DoctrineHelper $doctrineHelper
+     * @param RequestStack $requestStack
      */
-    public function __construct(ActionManager $manager)
+    public function __construct(ActionManager $manager, DoctrineHelper $doctrineHelper, RequestStack $requestStack)
     {
         $this->manager = $manager;
+        $this->doctrineHelper = $doctrineHelper;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -40,25 +51,36 @@ class ActionExtension extends \Twig_Extension
                 [$this, 'getWidgetParameters'],
                 ['needs_context' => true]
             ),
+            new \Twig_SimpleFunction('has_actions', [$this, 'hasActions']),
         );
     }
 
     /**
-     *
      * @param array $context
      * @return array
      */
-    public function getWidgetParameters($context)
+    public function getWidgetParameters(array $context)
     {
-        $params = [];
+        $params = ['route' => $this->requestStack->getMasterRequest()->get('_route')];
 
-        if (isset($context['entity'])) {
-            // TODO: find entity identifier() and encode url parameters
-            $params['entity_id'] = $context['entity']->getId();
-            $params['entity_class'] = get_class($context['entity']);
+        if (array_key_exists('entity', $context) && is_object($context['entity']) &&
+            !$this->doctrineHelper->isNewEntity($context['entity'])
+        ) {
+            $params['entityId'] = $this->doctrineHelper->getEntityIdentifier($context['entity']);
+            $params['entityClass'] = get_class($context['entity']);
         } elseif (isset($context['entity_class'])) {
-            $params['entity_class'] = $context['entity_class'];
+            $params['entityClass'] = $context['entity_class'];
         }
+
         return $params;
+    }
+
+    /**
+     * @param array $params
+     * @return bool
+     */
+    public function hasActions(array $params)
+    {
+        return $this->manager->hasActions($params);
     }
 }

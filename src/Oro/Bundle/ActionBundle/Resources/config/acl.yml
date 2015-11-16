@@ -1,0 +1,5 @@
+oro_actions:
+    label:      oro.action.label
+    type:       action
+    group_name: ""
+    bindings:   ~
