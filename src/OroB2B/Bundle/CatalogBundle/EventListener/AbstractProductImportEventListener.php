@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\CatalogBundle\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManager;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
@@ -21,9 +20,6 @@ abstract class AbstractProductImportEventListener
 
     /** @var CategoryRepository */
     protected $categoryRepository;
-
-    /** @var EntityManager */
-    protected $categoryManager;
 
     /** @var array */
     protected $categoriesByTitle = [];
@@ -51,16 +47,6 @@ abstract class AbstractProductImportEventListener
         return $this->categoryRepository;
     }
 
-    /** @return EntityManager */
-    protected function getEntityManager()
-    {
-        if (!$this->categoryManager) {
-            $this->categoryManager = $this->registry->getManagerForClass($this->categoryClass);
-        }
-
-        return $this->categoryManager;
-    }
-
     /**
      * Clean up caches on clear UoW
      */
@@ -86,17 +72,17 @@ abstract class AbstractProductImportEventListener
             return null;
         }
 
-        $this->categoriesByTitle[$categoryDefaultTitle] = $this->getEntityManager()
-            ->getReference($this->categoryClass, $category->getId());
+        $this->categoriesByTitle[$categoryDefaultTitle] = $category;
 
-        return $this->categoriesByTitle[$categoryDefaultTitle];
+        return $category;
     }
 
     /**
      * @param Product $product
+     * @param bool $includeTitles
      * @return null|Category
      */
-    protected function getCategoryByProduct(Product $product)
+    protected function getCategoryByProduct(Product $product, $includeTitles = false)
     {
         $sku = $product->getSku();
 
@@ -104,16 +90,15 @@ abstract class AbstractProductImportEventListener
             return $this->categoriesByProduct[$sku];
         }
 
-        $category = $this->getCategoryRepository()->findOneByProductSku($sku);
+        $category = $this->getCategoryRepository()->findOneByProductSku($sku, $includeTitles);
         if (!$category) {
             $this->categoriesByProduct[$sku] = null;
 
             return null;
         }
 
-        $this->categoriesByProduct[$sku] = $this->getEntityManager()
-            ->getReference($this->categoryClass, $category->getId());
+        $this->categoriesByProduct[$sku] = $category;
 
-        return $this->categoriesByProduct[$sku];
+        return $category;
     }
 }

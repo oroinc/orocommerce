@@ -151,6 +151,6 @@ class LocalizedFallbackValueAwareDataConverter extends PropertyPathTitleDataConv
      */
     protected function getHeader($fieldName, $identity, $targetFieldName, $delimiter)
     {
-        return $fieldName . $delimiter . LocaleCodeFormatter::format($identity) . $delimiter . $targetFieldName;
+        return $fieldName . $delimiter . LocaleCodeFormatter::formatName($identity) . $delimiter . $targetFieldName;
     }
 }

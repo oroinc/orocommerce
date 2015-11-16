@@ -8,6 +8,7 @@ use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\ImportExportBundle\Strategy\Import\ConfigurableAddOrReplaceStrategy;
 
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
+use OroB2B\Bundle\FallbackBundle\ImportExport\Normalizer\LocaleCodeFormatter;
 
 class LocalizedFallbackValueAwareStrategy extends ConfigurableAddOrReplaceStrategy
 {
@@ -30,17 +31,15 @@ class LocalizedFallbackValueAwareStrategy extends ConfigurableAddOrReplaceStrate
             return parent::beforeProcessEntity($entity);
         }
 
-        $fields = $this->fieldHelper->getFields(ClassUtils::getClass($existingEntity), true);
+        $fields = $this->fieldHelper->getRelations(ClassUtils::getClass($existingEntity), true);
         foreach ($fields as $field) {
-            if ($this->fieldHelper->isRelation($field)) {
-                $targetClassName = $field['related_entity_name'];
-                if (is_a($targetClassName, $this->localizedFallbackValueClass, true)) {
-                    $fieldName = $field['name'];
-                    $this->mapCollections(
-                        $this->fieldHelper->getObjectValue($entity, $fieldName),
-                        $this->fieldHelper->getObjectValue($existingEntity, $fieldName)
-                    );
-                }
+            $targetClassName = $field['related_entity_name'];
+            if (is_a($targetClassName, $this->localizedFallbackValueClass, true)) {
+                $fieldName = $field['name'];
+                $this->mapCollections(
+                    $this->fieldHelper->getObjectValue($entity, $fieldName),
+                    $this->fieldHelper->getObjectValue($existingEntity, $fieldName)
+                );
             }
         }
 
@@ -61,27 +60,19 @@ class LocalizedFallbackValueAwareStrategy extends ConfigurableAddOrReplaceStrate
             return;
         }
 
+        $sourceCollectionArray = $sourceCollection->toArray();
+
+        /** @var LocalizedFallbackValue $sourceValue */
+        foreach ($sourceCollectionArray as $sourceValue) {
+            $sourceCollectionArray[LocaleCodeFormatter::formatKey($sourceValue->getLocale())] = $sourceValue->getId();
+        }
+
         $importedCollection
             ->map(
-                function (LocalizedFallbackValue $importedValue) use ($sourceCollection) {
-                    $sourceValues = $sourceCollection
-                        ->filter(
-                            function (LocalizedFallbackValue $sourceValue) use ($importedValue) {
-                                if ($sourceValue->getLocale() === $importedValue->getLocale()) {
-                                    return true;
-                                }
-
-                                return $sourceValue->getLocale()
-                                    && $importedValue->getLocale()
-                                    && $sourceValue->getLocale()->getCode() === $importedValue->getLocale()->getCode();
-                            }
-                        );
-
-                    if (!$sourceValues->isEmpty()) {
-                        /** @var LocalizedFallbackValue $sourceValue */
-                        $sourceValue = $sourceValues->first();
-
-                        $this->fieldHelper->setObjectValue($importedValue, 'id', $sourceValue->getId());
+                function (LocalizedFallbackValue $importedValue) use ($sourceCollectionArray) {
+                    $key = LocaleCodeFormatter::formatKey($importedValue->getLocale());
+                    if (array_key_exists($key, $sourceCollectionArray)) {
+                        $this->fieldHelper->setObjectValue($importedValue, 'id', $sourceCollectionArray[$key]);
                     }
                 }
             );

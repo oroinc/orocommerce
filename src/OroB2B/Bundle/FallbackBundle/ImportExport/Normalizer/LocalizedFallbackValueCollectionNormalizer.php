@@ -27,6 +27,9 @@ class LocalizedFallbackValueCollectionNormalizer extends CollectionNormalizer
     /** @var Locale */
     protected $locale;
 
+    /** @var bool[] */
+    protected $isApplicable = [];
+
     /**
      * @param ManagerRegistry $registry
      * @param string $localizedFallbackValueClass
@@ -53,7 +56,7 @@ class LocalizedFallbackValueCollectionNormalizer extends CollectionNormalizer
 
         /** @var LocalizedFallbackValue $item */
         foreach ($object as $item) {
-            $result[LocaleCodeFormatter::format($item->getLocale())] = [
+            $result[LocaleCodeFormatter::formatName($item->getLocale())] = [
                 'fallback' => $item->getFallback(),
                 'string' => $item->getString(),
                 'text' => $item->getText(),
@@ -132,13 +135,23 @@ class LocalizedFallbackValueCollectionNormalizer extends CollectionNormalizer
 
         $className = $context['entityName'];
         $fieldName = $context['fieldName'];
+
+        $key = $className . ':' . $fieldName;
+        if (array_key_exists($key, $this->isApplicable)) {
+            return $this->isApplicable[$key];
+        }
+
         $metadata = $this->registry->getManagerForClass($className)->getClassMetadata($className);
         if (!$metadata->hasAssociation($fieldName)) {
+            $this->isApplicable[$key] = false;
+
             return false;
         }
 
         $targetClass = $metadata->getAssociationTargetClass($fieldName);
 
-        return is_a($targetClass, $this->localizedFallbackValueClass, true);
+        $this->isApplicable[$key] = is_a($targetClass, $this->localizedFallbackValueClass, true);
+
+        return $this->isApplicable[$key];
     }
 }
