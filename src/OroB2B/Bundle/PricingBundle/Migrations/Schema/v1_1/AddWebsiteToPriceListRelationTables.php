@@ -126,7 +126,7 @@ class AddWebsiteToPriceListRelationTables implements
      * @param Schema $schema
      * @param QueryBag $queries
      * @param string $tableName
-     * @param string|null $fieldName
+     * @param string $fieldName
      */
     protected function addPriorityToRelationTable(Schema $schema, QueryBag $queries, $tableName, $fieldName)
     {
@@ -140,7 +140,7 @@ class AddWebsiteToPriceListRelationTables implements
      * @param QueryBag $queries
      * @param string $newTableName
      * @param string $oldTableName
-     * @param string|null $fieldName
+     * @param string $fieldName
      */
     protected function recreateRelationTableWithPriority(
         Schema $schema,
@@ -168,7 +168,7 @@ class AddWebsiteToPriceListRelationTables implements
     /**
      * @param Schema $schema
      * @param string $tableName
-     * @param string|null $fieldName
+     * @param string $fieldName
      * @return SqlMigrationQuery
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */

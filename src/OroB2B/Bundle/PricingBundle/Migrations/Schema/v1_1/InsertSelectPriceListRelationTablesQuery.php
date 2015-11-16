@@ -11,6 +11,8 @@ use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 
 class InsertSelectPriceListRelationTablesQuery extends ParametrizedMigrationQuery
 {
+    const DEFAULT_PRIORITY = 100;
+
     /**
      * @var int
      */
@@ -34,7 +36,7 @@ class InsertSelectPriceListRelationTablesQuery extends ParametrizedMigrationQuer
     /**
      * @param string $newTableName
      * @param string $oldTableName
-     * @param string|null $fieldName
+     * @param string $fieldName
      */
     public function __construct($newTableName, $oldTableName, $fieldName)
     {
@@ -63,7 +65,7 @@ class InsertSelectPriceListRelationTablesQuery extends ParametrizedMigrationQuer
 
     /**
      * @param LoggerInterface $logger
-     * @param bool|false $dryRun
+     * @param bool $dryRun
      * @throws \Doctrine\DBAL\DBALException
      */
     public function migrateData(LoggerInterface $logger, $dryRun = false)
@@ -76,9 +78,15 @@ class InsertSelectPriceListRelationTablesQuery extends ParametrizedMigrationQuer
         }
 
         $insertFields = implode(', ', array_merge($fields, ['website_id', 'priority']));
-        $selectFields = implode(', ', array_merge($fields, [$websiteId, 100]));
+        $selectFields = implode(', ', array_merge($fields, [$websiteId, static::DEFAULT_PRIORITY]));
 
-        $sql = "INSERT INTO {$this->newTableName} ($insertFields) SELECT $selectFields FROM {$this->oldTableName};";
+        $sql = sprintf(
+            'INSERT INTO %s (%s) SELECT %s FROM %s',
+            $this->newTableName,
+            $insertFields,
+            $selectFields,
+            $this->oldTableName
+        );
 
         $this->logQuery($logger, $sql);
         if (!$dryRun) {
