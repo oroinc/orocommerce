@@ -18,6 +18,6 @@ abstract class AbstractCacheServiceTest extends \PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-        unset($this->clearer, $this->provider);
+        unset($this->provider);
     }
 }

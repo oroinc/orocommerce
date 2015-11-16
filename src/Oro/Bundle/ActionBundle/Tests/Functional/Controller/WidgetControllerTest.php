@@ -95,6 +95,9 @@ class WidgetControllerTest extends WebTestCase
         }
     }
 
+    /**
+     * @return array
+     */
     public function buttonsActionDataProvider()
     {
         $label = 'oro.action.test.label';

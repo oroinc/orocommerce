@@ -15,6 +15,12 @@ class CacheWarmerTest extends AbstractCacheServiceTest
         $this->warmer = new CacheWarmer($this->provider);
     }
 
+    protected function tearDown()
+    {
+        unset($this->warmer);
+        parent::tearDown();
+    }
+
     public function testClear()
     {
         $this->provider->expects($this->once())

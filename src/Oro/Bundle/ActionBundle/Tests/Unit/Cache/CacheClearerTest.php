@@ -15,6 +15,12 @@ class CacheClearerTest extends AbstractCacheServiceTest
         $this->clearer = new CacheClearer($this->provider);
     }
 
+    protected function tearDown()
+    {
+        unset($this->clearer);
+        parent::tearDown();
+    }
+
     public function testClear()
     {
         $this->provider->expects($this->once())
