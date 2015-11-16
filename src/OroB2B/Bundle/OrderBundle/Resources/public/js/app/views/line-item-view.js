@@ -98,6 +98,7 @@ define(function(require) {
 
         initOffers: function() {
             var $choices = this.$el.find(this.options.selectors.quantityOfferChoice + ' input');
+            var $quantityOffers = this.$el.find('div' + this.options.selectors.quantityOffers);
             var $priceValue = this.fieldsByName.priceValue;
             var $productUnit = this.fieldsByName.productUnit;
             var $quantity = this.fieldsByName.quantity;
@@ -105,12 +106,24 @@ define(function(require) {
 
             $choices.click(_.bind(function(event) {
                 var $choice = $(event.target);
-                $choices.prop('checked', false);
-                $choice.prop('checked', true);
-                $priceValue.val(parseFloat($choice.data('price')));
-                $productUnit.val($choice.data('unit'));
-                $quantity.val($choice.val());
-                $currency.val($choice.data('currency'));
+                var $checkedChoice = $choices.filter(':checked');
+                if ($choice !== $checkedChoice[0]) {
+                    $priceValue.val(parseFloat($choice.data('price')));
+                    $productUnit.val($choice.data('unit'));
+                    $quantity.val($choice.val());
+                    $currency.val($choice.data('currency'));
+                    $choices.filter(':checked').prop('checked', false);
+                    $choice.prop('checked', true);
+                    $quantityOffers.change();
+                }
+            }, this));
+
+            $($priceValue).add($productUnit).add($quantity).add($currency).change(_.bind(function(event) {
+                var $checkedChoice = $choices.filter(':checked');
+                if ($checkedChoice.length) {
+                    $checkedChoice.prop('checked', false);
+                    $quantityOffers.change();
+                }
             }, this));
         },
 

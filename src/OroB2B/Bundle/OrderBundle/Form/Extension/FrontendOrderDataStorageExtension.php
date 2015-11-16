@@ -49,8 +49,6 @@ class FrontendOrderDataStorageExtension extends AbstractProductDataStorageExtens
             $lineItem->setProductUnitCode($unit->getCode());
         }
 
-        if ($lineItem->getProduct()) {
-            $entity->addLineItem($lineItem);
-        }
+        $entity->addLineItem($lineItem);
     }
 }

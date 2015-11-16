@@ -48,7 +48,7 @@ class FrontendOrderDataStorageExtensionTest extends AbstractProductDataStorageEx
                 ],
             ]
         ];
-        $order = new Order();
+        $order = $this->entity;
 
         $productUnit = new ProductUnit();
         $productUnit->setCode('item');
@@ -87,7 +87,7 @@ class FrontendOrderDataStorageExtensionTest extends AbstractProductDataStorageEx
                 ],
             ]
         ];
-        $order = new Order();
+        $order = $this->entity;
 
         $product = $this->getProductEntity($sku);
 

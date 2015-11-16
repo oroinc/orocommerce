@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Form\FormView;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -99,5 +100,57 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         $sectionsSorted = $method->invokeArgs($this->extension, array($sections));
 
         $this->assertEquals(10, $sectionsSorted->first()['order']);
+    }
+
+    public function testFinishView()
+    {
+        $data = [
+            'withOffers' => 1,
+            'entity_items_data' => [
+                [
+                    'productSku' => 'testSku',
+                    'offers' => [
+                        [
+                            'testOffer' => 'testValue'
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $lineItem = new FormView();
+        $lineItem->vars['sections'] = new ArrayCollection();
+
+        $lineItemValue = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Entity\OrderLineItem')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $lineItemValue->method('getProductSku')->willReturn('testSku');
+        $lineItem->vars['value'] = $lineItemValue;
+
+        $view = new FormView();
+        $view->children = ['lineItems' => new FormView()];
+        $view->children['lineItems']->children = [$lineItem];
+        $view->children['lineItems']->vars['prototype'] = new FormView();
+        $view->children['lineItems']->vars['prototype']->vars['sections'] = new ArrayCollection();
+
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->getMockBuilder('Symfony\Component\Form\Form')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->extension->finishView($view, $form, ['storage_data' => $data]);
+
+        $this->assertEquals(
+            $view->children['lineItems']->children[0]->vars['offers'][0]['testOffer'],
+            'testValue'
+        );
+        $this->assertEquals(
+            $view->children['lineItems']->children[0]->vars['sections']['offers']['order'],
+            5
+        );
+        $this->assertEquals(
+            $view->children['lineItems']->vars['prototype']->vars['sections']['offers']['order'],
+            5
+        );
     }
 }

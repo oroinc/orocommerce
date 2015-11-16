@@ -44,17 +44,9 @@ class ProductDataStorage
                 $priceValue = $productItem->getPrice() ? $productItem->getPrice()->getValue() : 0;
                 $offers[] = [
                     'quantity'          => $productItem->getQuantity(),
-                    'unit'              => $productItem->getProductUnitCode(),
+                    'unit'              => $productItem->getProductUnit(),
                     'currency'          => $currency,
-                    'price'             => $priceValue,
-                    'quantityFormatted' => $this->productUnitValueFormatter->formatShort(
-                        $productItem->getQuantity(),
-                        $productItem->getProductUnit()
-                    ),
-                    'priceFormatted'    => $priceValue ? $this->numberFormatter->formatCurrency(
-                        $priceValue,
-                        $currency
-                    ) : null,
+                    'price'             => $priceValue
                 ];
             }
 

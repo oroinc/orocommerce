@@ -60,6 +60,7 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
         $this->storage = $storage;
         $this->doctrineHelper = $doctrineHelper;
         $this->productClass = $productClass;
+        $this->data = [];
     }
 
     /**

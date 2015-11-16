@@ -6,8 +6,10 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Criteria;
 
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 
 class OrderDataStorageExtension extends FrontendOrderDataStorageExtension
 {
@@ -36,19 +38,38 @@ class OrderDataStorageExtension extends FrontendOrderDataStorageExtension
      */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        if (!$this->data || !isset($this->data['withOffers'])) {
+        $data = $this->data;
+        if (isset($options['storage_data'])) {
+            $data = array_replace_recursive($data, $options['data']);
+        }
+        if (!$data || !isset($data['withOffers'])) {
             return;
         }
 
-        foreach ($view->offsetGet('lineItems')->children as $rowView) {
-            foreach ($this->data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] as $dataRow) {
-                if ($dataRow[ProductDataStorage::PRODUCT_SKU_KEY] == $rowView->vars['value']->getProductSku()) {
-                    $rowView->vars['offers'] = $dataRow['offers'];
-                }
-            }
-            $rowView->vars['sections']->set('offers', ['data' => [], 'order' => 5]);
-            $rowView->vars['sections'] = $this->sortSections($rowView->vars['sections']);
+        $offers = [];
+        foreach ($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] as $dataRow) {
+            $offers[$dataRow[ProductDataStorage::PRODUCT_SKU_KEY]] = $dataRow['offers'];
         }
+
+        foreach ($view->offsetGet('lineItems')->children as $rowView) {
+
+            /**
+             * @var OrderLineItem $lineItem
+             */
+            $lineItem = $rowView->vars['value'];
+            $sku = $lineItem->getProductSku();
+            if (isset($offers[$sku])) {
+                $rowView->vars['offers'] = $offers[$sku];
+            }
+
+            /**
+             * @var ArrayCollection $sections
+             */
+            $sections = $rowView->vars['sections'];
+            $sections->set('offers', ['data' => [], 'order' => 5]);
+            $rowView->vars['sections'] = $this->sortSections($sections);
+        }
+
         $sections = $view->offsetGet('lineItems')->vars['prototype']->vars['sections'];
         $sections->set('offers', ['data' => [], 'order' => 5]);
         $view->offsetGet('lineItems')->vars['prototype']->vars['sections'] = $this->sortSections($sections);
@@ -60,13 +81,9 @@ class OrderDataStorageExtension extends FrontendOrderDataStorageExtension
      */
     protected function sortSections(ArrayCollection $sections)
     {
-        $iterator = $sections->getIterator();
-        $iterator->uasort(
-            function ($a, $b) {
-                return ($a['order'] < $b['order']) ? -1 : 1;
-            }
-        );
+        $criteria = Criteria::create();
+        $criteria->orderBy(['order' => Criteria::ASC]);
 
-        return new ArrayCollection(iterator_to_array($iterator));
+        return $sections->matching($criteria);
     }
 }

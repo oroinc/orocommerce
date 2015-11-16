@@ -161,13 +161,13 @@
                 {% for offer in offers %}
                     <tr>
                         <td class="order-line-item-quantity-offer-choice">
-                            <input type="radio" value="{{ offer.quantity }}" data-unit="{{ offer.unit }}" data-currency="{{ offer.currency }}" data-price="{{ offer.price }}">
+                            <input type="radio" value="{{ offer.quantity }}" data-unit="{{ offer.unit.code }}" data-currency="{{ offer.currency }}" data-price="{{ offer.price }}">
                         </td>
                         <td class="order-line-item-quantity-offer-quantity">
-                            {{ offer.quantityFormatted }}
+                            {{ offer.quantity|orob2b_format_short_product_unit_value(offer.unit) }}
                         </td>
                         <td class="order-line-item-quantity-offer-price">
-                            {{ offer.priceFormatted }}
+                            {{ offer.price|oro_format_currency({'currency': offer.currency}) }}
                         </td>
                     </tr>
                 {% endfor %}
