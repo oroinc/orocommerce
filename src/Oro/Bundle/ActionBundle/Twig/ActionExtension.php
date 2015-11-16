@@ -63,7 +63,9 @@ class ActionExtension extends \Twig_Extension
     {
         $params = ['route' => $this->requestStack->getMasterRequest()->get('_route')];
 
-        if (array_key_exists('entity', $context) && is_object($context['entity'])) {
+        if (array_key_exists('entity', $context) && is_object($context['entity']) &&
+            !$this->doctrineHelper->isNewEntity($context['entity'])
+        ) {
             $params['entityId'] = $this->doctrineHelper->getEntityIdentifier($context['entity']);
             $params['entityClass'] = get_class($context['entity']);
         } elseif (isset($context['entity_class'])) {

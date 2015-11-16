@@ -93,19 +93,17 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
 
         if (array_key_exists('entity', $context)) {
             $this->doctrineHelper->expects($this->once())
+                ->method('isNewEntity')
+                ->with($context['entity'])
+                ->willReturn(is_null($context['entity']->id));
+
+            $this->doctrineHelper->expects($context['entity']->id ? $this->once() : $this->never())
                 ->method('getEntityIdentifier')
                 ->with($context['entity'])
-                ->willReturn(['id' => 42]);
+                ->willReturn(['id' => $context['entity']->id]);
         }
 
-        $result = $this->extension->getWidgetParameters($context);
-
-        $this->assertInternalType('array', $result);
-
-        foreach ($expected as $key => $value) {
-            $this->assertArrayHasKey($key, $result);
-            $this->assertEquals($value, $result[$key]);
-        }
+        $this->assertEquals($expected, $this->extension->getWidgetParameters($context));
     }
 
     /**
@@ -114,21 +112,29 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
     public function getWidgetParametersDataProvider()
     {
         return [
-            [
+            'empty context' => [
                 'context' => [],
                 'expected' => ['route' => self::ROUTE],
             ],
-            [
+            'entity_class' => [
                 'context' => ['entity_class' => '\stdClass'],
                 'expected' => ['route' => self::ROUTE, 'entityClass' => '\stdClass'],
             ],
-            [
-                'context' => ['entity' => new \stdClass],
+            'new entity' => [
+                'context' => ['entity' => $this->getEntity()],
+                'expected' => ['route' => self::ROUTE],
+            ],
+            'existing entity' => [
+                'context' => ['entity' => $this->getEntity(42)],
                 'expected' => ['route' => self::ROUTE, 'entityClass' => 'stdClass', 'entityId' => ['id' => 42]],
             ],
-            [
-                'context' => ['entity' => new \stdClass, 'entity_class' => 'testClass'],
-                'expected' => ['route' => self::ROUTE, 'entityClass' => 'stdClass', 'entityId' => ['id' => 42]],
+            'existing entity & entity_class' => [
+                'context' => ['entity' => $this->getEntity(43), 'entity_class' => 'testClass'],
+                'expected' => ['route' => self::ROUTE, 'entityClass' => 'stdClass', 'entityId' => ['id' => 43]],
+            ],
+            'new entity & entity_class' => [
+                'context' => ['entity' => $this->getEntity(), 'entity_class' => 'testClass'],
+                'expected' => ['route' => self::ROUTE, 'entityClass' => 'testClass'],
             ],
         ];
     }
@@ -159,5 +165,18 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
             [true],
             [false],
         ];
+    }
+
+    /**
+     * @param int $id
+     * @return \stdClass
+     */
+    protected function getEntity($id = null)
+    {
+        $entity = new \stdClass();
+
+        $entity->id = $id;
+
+        return $entity;
     }
 }
