@@ -6,7 +6,6 @@ parameters:
     orob2b_pricing.form.type.price_list_product_price.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceListProductPriceType
     orob2b_pricing.form.price_list_collection.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceListCollectionType
     orob2b_pricing.form.type.product_price_filter.class: OroB2B\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType
-    orob2b_pricing.form.type.product_price_list_aware_select.class: OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceListAwareSelectType
     orob2b_pricing.form.type.price_list_select_with_priority.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType
     orob2b_pricing.form.type.orob2b_pricing_account_group_website_scoped_price_lists.class: OroB2B\Bundle\PricingBundle\Form\Type\AccountGroupWebsiteScopedPriceListsType
     orob2b_pricing.form.type.orob2b_pricing_account_website_scoped_price_lists.class: OroB2B\Bundle\PricingBundle\Form\Type\AccountWebsiteScopedPriceListsType
@@ -68,11 +67,6 @@ services:
             - @orob2b_product.formatter.product_unit_label
         tags:
             - { name: form.type, alias: orob2b_pricing_product_price_filter }
-
-    orob2b_pricing.form.type.product_price_list_aware_select:
-        class: %orob2b_pricing.form.type.product_price_list_aware_select.class%
-        tags:
-            - { name: form.type, alias: orob2b_pricing_product_price_list_aware_select }
 
     orob2b_pricing.form.extension.account_type:
         class: %orob2b_pricing.form.extension.account_type.class%

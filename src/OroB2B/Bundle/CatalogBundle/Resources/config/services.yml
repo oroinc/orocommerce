@@ -7,6 +7,10 @@ parameters:
     orob2b_catalog.event_listener.form_view.class: OroB2B\Bundle\CatalogBundle\EventListener\FormViewListener
     orob2b_catalog.event_listener.datagrid.class: OroB2B\Bundle\CatalogBundle\EventListener\DatagridListener
     orob2b_catalog.event_listener.product_duplicate.class: OroB2B\Bundle\CatalogBundle\EventListener\ProductDuplicateListener
+    orob2b_catalog.event_listener.abstract_product_import.class: OroB2B\Bundle\CatalogBundle\EventListener\AbstractProductImportEventListener
+    orob2b_catalog.event_listener.product_strategy.class: OroB2B\Bundle\CatalogBundle\EventListener\ProductStrategyEventListener
+    orob2b_catalog.event_listener.product_data_converter.class: OroB2B\Bundle\CatalogBundle\EventListener\ProductDataConverterEventListener
+    orob2b_catalog.event_listener.product_normalizer.class: OroB2B\Bundle\CatalogBundle\EventListener\ProductNormalizerEventListener
 
 services:
     orob2b_catalog.category_tree_handler:
@@ -53,6 +57,32 @@ services:
             - [setDoctrineHelper, [@oro_entity.doctrine_helper]]
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product.duplicate.after, method: onDuplicateAfter }
+
+    orob2b_catalog.event_listener.abstract_product_import:
+        class: %orob2b_catalog.event_listener.abstract_product_import.class%
+        abstract: true
+        arguments:
+            - @doctrine
+            - %orob2b_catalog.category.class%
+
+    orob2b_catalog.event_listener.product_strategy:
+        class: %orob2b_catalog.event_listener.product_strategy.class%
+        parent: orob2b_catalog.event_listener.abstract_product_import
+        tags:
+            - { name: kernel.event_listener, event: orob2b_product.strategy.process_after, method: onProcessAfter }
+            - { name: doctrine.event_listener, event: onClear, method: onClear }
+
+    orob2b_catalog.event_listener.product_data_converter:
+        class: %orob2b_catalog.event_listener.product_data_converter.class%
+        tags:
+            - { name: kernel.event_listener, event: orob2b_product.data_converter.backend_header, method: onBackendHeader }
+
+    orob2b_catalog.event_listener.product_normalizer:
+        class: %orob2b_catalog.event_listener.product_normalizer.class%
+        parent: orob2b_catalog.event_listener.abstract_product_import
+        tags:
+            - { name: kernel.event_listener, event: orob2b_product.normalizer.normalizer, method: onNormalize }
+            - { name: doctrine.event_listener, event: onClear, method: onClear }
 
     orob2b_catalog.handler.request_product:
         class: %orob2b_catalog.handler.request_product.class%
