@@ -66,7 +66,13 @@ class PriceListRepository extends EntityRepository
     public function getPriceListByAccount(Account $account)
     {
         return $this->createQueryBuilder('priceList')
-            ->innerJoin('priceList.accounts', 'account')
+            ->innerJoin(
+                'OroB2BPricingBundle:PriceListToAccount',
+                'priceListToAccount',
+                'WITH',
+                'priceListToAccount.priceList = priceList'
+            )
+            ->innerJoin('priceListToAccount.account', 'account')
             ->andWhere('account = :account')
             ->setParameter('account', $account)
             ->getQuery()
@@ -101,7 +107,13 @@ class PriceListRepository extends EntityRepository
     public function getPriceListByAccountGroup(AccountGroup $accountGroup)
     {
         return $this->createQueryBuilder('priceList')
-            ->innerJoin('priceList.accountGroups', 'accountGroup')
+            ->innerJoin(
+                'OroB2BPricingBundle:PriceListToAccountGroup',
+                'priceListToAccountGroup',
+                'WITH',
+                'priceListToAccountGroup.priceList = priceList'
+            )
+            ->innerJoin('priceListToAccountGroup.accountGroup', 'accountGroup')
             ->andWhere('accountGroup = :accountGroup')
             ->setParameter('accountGroup', $accountGroup)
             ->getQuery()
@@ -136,7 +148,13 @@ class PriceListRepository extends EntityRepository
     public function getPriceListByWebsite(Website $website)
     {
         return $this->createQueryBuilder('priceList')
-            ->innerJoin('priceList.websites', 'website')
+            ->innerJoin(
+                'OroB2BPricingBundle:PriceListToWebsite',
+                'priceListToWebsite',
+                'WITH',
+                'priceListToWebsite.priceList = priceList'
+            )
+            ->innerJoin('priceListToWebsite.website', 'website')
             ->andWhere('website = :website')
             ->setParameter('website', $website)
             ->getQuery()
