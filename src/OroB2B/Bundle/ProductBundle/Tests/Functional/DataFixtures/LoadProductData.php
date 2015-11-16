@@ -18,6 +18,7 @@ class LoadProductData extends AbstractFixture
     const PRODUCT_2 = 'product.2';
     const PRODUCT_3 = 'product.3';
     const PRODUCT_4 = 'product.4';
+    const PRODUCT_5 = 'product.5';
 
     /**
      * @var array
@@ -31,7 +32,7 @@ class LoadProductData extends AbstractFixture
         [
             'productCode' => self::PRODUCT_2,
             'inventoryStatus' =>  Product::INVENTORY_STATUS_IN_STOCK,
-            'status' => Product::STATUS_DISABLED
+            'status' => Product::STATUS_ENABLED
         ],
         [
             'productCode' => self::PRODUCT_3,
@@ -42,6 +43,11 @@ class LoadProductData extends AbstractFixture
             'productCode' => self::PRODUCT_4,
             'inventoryStatus' =>  Product::INVENTORY_STATUS_DISCONTINUED,
             'status' => Product::STATUS_ENABLED
+        ],
+        [
+            'productCode' => self::PRODUCT_5,
+            'inventoryStatus' =>  Product::INVENTORY_STATUS_IN_STOCK,
+            'status' => Product::STATUS_DISABLED
         ],
     ];
 

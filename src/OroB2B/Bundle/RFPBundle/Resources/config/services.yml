@@ -30,21 +30,21 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-requests-grid, method: onResultAfter }
 
     orob2b_rfp.processor.quick_add:
-        parent: orob2b_product.processor.data_storage_aware
+        parent: orob2b_product.component_processor.data_storage_aware.processor
         calls:
             - [setName, ['orob2b_rfp_quick_add_processor']]
             - [setRedirectRouteName, ['orob2b_rfp_frontend_request_create']]
             - [setAcl, ['orob2b_rfp_frontend_request_create']]
+            - [setScope, ['rfq']]
         tags:
             - { name: orob2b_product.quick_add_processor }
 
     orob2b_rfp.event_listener.product_select_db_query:
-        class: %orob2b_product.event_listener.product_select_db_query.class%
-        arguments:
-            - @oro_config.global
-            - @orob2b_product.model.product_visibility_query_builder_modifier
+        class: %orob2b_product.event_listener.scoped_product_select_db_query.class%
+        parent: orob2b_product.event_listener.abstract_product_select_db_query
         calls:
             - [setScope, ['rfp']]
-            - [setSystemConfigurationPath, ['oro_b2b_rfp.product_visibility.value']]
+            - [setFrontendSystemConfigurationPath, ['oro_b2b_rfp.frontend_product_visibility']]
+            - [setBackendSystemConfigurationPath, ['oro_b2b_rfp.backend_product_visibility']]
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }

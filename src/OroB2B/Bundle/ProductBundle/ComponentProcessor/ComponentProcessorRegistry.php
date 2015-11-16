@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ProductBundle\Model;
+namespace OroB2B\Bundle\ProductBundle\ComponentProcessor;
 
 class ComponentProcessorRegistry
 {
