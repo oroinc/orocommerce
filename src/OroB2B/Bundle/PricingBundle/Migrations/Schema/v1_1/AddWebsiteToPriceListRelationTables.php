@@ -34,6 +34,40 @@ class AddWebsiteToPriceListRelationTables implements
     protected $renameExtension;
 
     /**
+     * @var array
+     */
+    protected $priceListForeignKeyConstraintNames = [
+        'orob2b_price_list_to_account' => 'fk_orob2b_price_l_to_acc_pl',
+        'orob2b_price_list_to_acc_gr' => 'fk_orob2b_price_l_to_a_gr_pl',
+        'orob2b_price_list_to_website' => 'fk_orob2b_price_l_to_ws_pl',
+    ];
+
+    /**
+     * @var array
+     */
+    protected $websiteForeignKeyConstraintNames = [
+        'orob2b_price_list_to_account' => 'fk_orob2b_price_l_to_acc_ws',
+        'orob2b_price_list_to_acc_gr' => 'fk_orob2b_price_l_to_a_gr_ws',
+        'orob2b_price_list_to_website' => 'fk_orob2b_price_l_to_ws_ws',
+    ];
+
+    /**
+     * @var array
+     */
+    protected $relationTableForeignKeyConstraintNames = [
+        'account_id' => 'fk_orob2b_price_l_to_acc_acc',
+        'account_group_id' => 'fk_orob2b_price_l_to_a_gr_a_gr',
+    ];
+
+    /**
+     * @var array
+     */
+    protected $relationTableNames = [
+        'account_id' => 'orob2b_account',
+        'account_group_id' => 'orob2b_account_group',
+    ];
+
+    /**
      * {@inheritdoc}
      */
     public function setDatabasePlatform(AbstractPlatform $platform)
@@ -74,10 +108,9 @@ class AddWebsiteToPriceListRelationTables implements
      */
     protected function addPriorityToOroB2BPriceListToAccountGroup(Schema $schema, QueryBag $queries)
     {
-        $field = 'account_group_id';
         $oldTableName = 'orob2b_price_list_to_c_group';
         $newTableName = 'orob2b_price_list_to_acc_gr';
-        $this->recreateRelationTableWithPriority($schema, $queries, $newTableName, $oldTableName, $field);
+        $this->recreateRelationTableWithPriority($schema, $queries, $newTableName, $oldTableName, 'account_group_id');
     }
 
     /**
@@ -93,13 +126,13 @@ class AddWebsiteToPriceListRelationTables implements
      * @param Schema $schema
      * @param QueryBag $queries
      * @param string $tableName
-     * @param string|null $field
+     * @param string|null $fieldName
      */
-    protected function addPriorityToRelationTable(Schema $schema, QueryBag $queries, $tableName, $field)
+    protected function addPriorityToRelationTable(Schema $schema, QueryBag $queries, $tableName, $fieldName)
     {
         $tmpTableName = $this->getTmpTableName($tableName);
         $this->renameExtension->renameTable($schema, $queries, $tableName, $tmpTableName);
-        $this->recreateRelationTableWithPriority($schema, $queries, $tableName, $tmpTableName, $field);
+        $this->recreateRelationTableWithPriority($schema, $queries, $tableName, $tmpTableName, $fieldName);
     }
 
     /**
@@ -107,39 +140,39 @@ class AddWebsiteToPriceListRelationTables implements
      * @param QueryBag $queries
      * @param string $newTableName
      * @param string $oldTableName
-     * @param string|null $field
+     * @param string|null $fieldName
      */
     protected function recreateRelationTableWithPriority(
         Schema $schema,
         QueryBag $queries,
         $newTableName,
         $oldTableName,
-        $field = null
+        $fieldName
     ) {
-        $queries->addPostQuery($this->createPriceListToRelationTableQuery($schema, $newTableName, $field));
-        $queries->addPostQuery($this->createMigratingDataQuery($newTableName, $oldTableName, $field));
+        $queries->addPostQuery($this->createPriceListToRelationTableQuery($schema, $newTableName, $fieldName));
+        $queries->addPostQuery($this->createMigratingDataQuery($newTableName, $oldTableName, $fieldName));
         $queries->addPostQuery($this->createDropTableQuery($oldTableName));
     }
 
     /**
      * @param string $newTableName
      * @param string $oldTableName
-     * @param string $field
+     * @param string $fieldName
      * @return InsertSelectPriceListRelationTablesQuery
      */
-    protected function createMigratingDataQuery($newTableName, $oldTableName, $field)
+    protected function createMigratingDataQuery($newTableName, $oldTableName, $fieldName)
     {
-        return new InsertSelectPriceListRelationTablesQuery($newTableName, $oldTableName, $field);
+        return new InsertSelectPriceListRelationTablesQuery($newTableName, $oldTableName, $fieldName);
     }
 
     /**
      * @param Schema $schema
      * @param string $tableName
-     * @param string|null $field
+     * @param string|null $fieldName
      * @return SqlMigrationQuery
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
-    protected function createPriceListToRelationTableQuery(Schema $schema, $tableName, $field)
+    protected function createPriceListToRelationTableQuery(Schema $schema, $tableName, $fieldName)
     {
         $tableScheme = new Schema();
         $table = $tableScheme->createTable($tableName);
@@ -147,94 +180,36 @@ class AddWebsiteToPriceListRelationTables implements
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('priority', 'integer', []);
         $primaryKey = ['price_list_id', 'website_id'];
-        if ($field !== 'website_id') {
-            $table->addColumn($field, 'integer', []);
+        if ($fieldName !== 'website_id') {
+            $table->addColumn($fieldName, 'integer', []);
             $table->addForeignKeyConstraint(
-                $schema->getTable($this->getTableNameByFieldName($field)),
-                [$field],
+                $schema->getTable($this->relationTableNames[$fieldName]),
+                [$fieldName],
                 ['id'],
                 ['onUpdate' => null, 'onDelete' => 'CASCADE'],
-                $this->getForeignNameByFieldName($field)
+                $this->relationTableForeignKeyConstraintNames[$fieldName]
             );
-            $primaryKey[] = $field;
+            $primaryKey[] = $fieldName;
         }
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_price_list'),
             ['price_list_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE'],
-            $this->getPriceListForeignKeyConstraintName($tableName)
+            $this->priceListForeignKeyConstraintNames[$tableName]
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_website'),
             ['website_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE'],
-            $this->getWebsiteForeignKeyConstraintName($tableName)
+            $this->websiteForeignKeyConstraintNames[$tableName]
         );
         $table->setPrimaryKey($primaryKey);
 
         $comparator = new Comparator();
         $changes = $comparator->compare(new Schema(), $tableScheme)->toSql($this->platform);
         return new SqlMigrationQuery($changes);
-    }
-
-    /**
-     * @param string $tableName
-     * @return string
-     */
-    protected function getForeignNameByFieldName($tableName)
-    {
-        $aliases = [
-            'account_id' => 'fk_orob2b_price_l_to_acc_acc',
-            'account_group_id'  => 'fk_orob2b_price_l_to_a_gr_a_gr',
-        ];
-
-        return $aliases[$tableName];
-    }
-
-    /**
-     * @param string $tableName
-     * @return string
-     */
-    protected function getPriceListForeignKeyConstraintName($tableName)
-    {
-        $aliases = [
-            'orob2b_price_list_to_account' => 'fk_orob2b_price_l_to_acc_pl',
-            'orob2b_price_list_to_acc_gr'  => 'fk_orob2b_price_l_to_a_gr_pl',
-            'orob2b_price_list_to_website' => 'fk_orob2b_price_l_to_ws_pl',
-        ];
-
-        return $aliases[$tableName];
-    }
-
-    /**
-     * @param string $tableName
-     * @return string
-     */
-    protected function getWebsiteForeignKeyConstraintName($tableName)
-    {
-        $aliases = [
-            'orob2b_price_list_to_account' => 'fk_orob2b_price_l_to_acc_ws',
-            'orob2b_price_list_to_acc_gr'  => 'fk_orob2b_price_l_to_a_gr_ws',
-            'orob2b_price_list_to_website' => 'fk_orob2b_price_l_to_ws_ws',
-        ];
-
-        return $aliases[$tableName];
-    }
-
-    /**
-     * @param string $field
-     * @return string
-     */
-    protected function getTableNameByFieldName($field)
-    {
-        $tablesByFields = [
-            'account_id' => 'orob2b_account',
-            'account_group_id' => 'orob2b_account_group',
-        ];
-
-        return $tablesByFields[$field];
     }
 
     /**

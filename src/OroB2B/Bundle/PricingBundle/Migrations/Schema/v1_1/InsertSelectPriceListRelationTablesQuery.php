@@ -28,18 +28,18 @@ class InsertSelectPriceListRelationTablesQuery extends ParametrizedMigrationQuer
     /**
      * @var string
      */
-    protected $field;
+    protected $fieldName;
 
     /**
      * @param string $newTableName
      * @param string $oldTableName
-     * @param string|null $field
+     * @param string|null $fieldName
      */
-    public function __construct($newTableName, $oldTableName, $field)
+    public function __construct($newTableName, $oldTableName, $fieldName)
     {
         $this->newTableName = $newTableName;
         $this->oldTableName = $oldTableName;
-        $this->field = $field;
+        $this->fieldName = $fieldName;
     }
 
     /**
@@ -57,8 +57,8 @@ class InsertSelectPriceListRelationTablesQuery extends ParametrizedMigrationQuer
     {
         $fields = ['price_list_id'];
         $websiteId = 'website_id';
-        if ($this->field !== 'website_id') {
-            $fields[] = $this->field;
+        if ($this->fieldName !== 'website_id') {
+            $fields[] = $this->fieldName;
             $websiteId = $this->getDefaultWebsiteId();
         }
 
