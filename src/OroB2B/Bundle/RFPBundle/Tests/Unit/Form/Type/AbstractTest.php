@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Symfony\Component\Form\FormTypeInterface;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -101,7 +103,19 @@ abstract class AbstractTest extends FormIntegrationTestCase
 
         $products[3] = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 3);
 
-        return new ProductSelectEntityTypeStub($products);
+        return new EntityType(
+            $products,
+            ProductSelectType::NAME,
+            [
+                'data_parameters' => [],
+                'grid_name' => 'products-select-grid-frontend',
+                'grid_widget_route' => 'orob2b_account_frontend_datagrid_widget',
+                'configs'         => [
+                    'placeholder' => null,
+                ],
+            ]
+        );
+
     }
 
     /**

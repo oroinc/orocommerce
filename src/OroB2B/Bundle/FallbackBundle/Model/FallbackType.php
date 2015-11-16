@@ -6,6 +6,7 @@ class FallbackType
 {
     const SYSTEM        = 'system';
     const PARENT_LOCALE = 'parent_locale';
+    const NONE          = null;
 
     /**
      * @var string

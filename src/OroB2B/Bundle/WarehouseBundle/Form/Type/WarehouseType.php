@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\WarehouseBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints as Assert;
 
 class WarehouseType extends AbstractType
 {
@@ -25,10 +24,7 @@ class WarehouseType extends AbstractType
                 'text',
                 [
                     'required' => true,
-                    'label' => 'orob2b.warehouse.name.label',
-                    'constraints' => [
-                        new Assert\NotBlank()
-                    ],
+                    'label' => 'orob2b.warehouse.name.label'
                 ]
             );
     }

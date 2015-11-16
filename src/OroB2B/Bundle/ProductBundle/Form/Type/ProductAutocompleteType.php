@@ -38,7 +38,7 @@ class ProductAutocompleteType extends AbstractProductAwareType
                 'autocomplete' => [
                     'route_name' => 'orob2b_frontend_autocomplete_search',
                     'route_parameters' => [
-                        'name' => 'orob2b_product_frontend',
+                        'name' => 'orob2b_product_visibility_limited',
                     ],
                     'selection_template_twig' =>
                         'OroB2BProductBundle:Product:Autocomplete/autocomplete_selection.html.twig',

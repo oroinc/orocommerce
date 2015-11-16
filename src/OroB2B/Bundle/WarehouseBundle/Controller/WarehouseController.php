@@ -83,13 +83,11 @@ class WarehouseController extends Controller
      *      permission="CREATE"
      * )
      *
-     * @param Request $request
-     *
      * @return array|RedirectResponse
      */
-    public function createAction(Request $request)
+    public function createAction()
     {
-        return $this->update(new Warehouse(), $request);
+        return $this->update(new Warehouse());
     }
 
     /**
@@ -106,28 +104,21 @@ class WarehouseController extends Controller
      *
      * @param Warehouse $warehouse
      *
-     * @param Request $request
      * @return array|RedirectResponse
      */
-    public function updateAction(Warehouse $warehouse, Request $request)
+    public function updateAction(Warehouse $warehouse)
     {
-        return $this->update($warehouse, $request);
+        return $this->update($warehouse);
     }
 
     /**
      * @param Warehouse $warehouse
-     * @param Request $request
      *
      * @return array|RedirectResponse
      */
-    protected function update(Warehouse $warehouse, Request $request)
+    protected function update(Warehouse $warehouse)
     {
         $form = $this->createForm(WarehouseType::NAME, $warehouse);
-        $handler = new WarehouseHandler(
-            $form,
-            $request,
-            $this->getDoctrine()->getManagerForClass(ClassUtils::getClass($warehouse))
-        );
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $warehouse,
@@ -144,8 +135,7 @@ class WarehouseController extends Controller
                     'parameters' => ['id' => $warehouse->getId()]
                 ];
             },
-            $this->get('translator')->trans('orob2b.warehouse.controller.warehouse.saved.message'),
-            $handler
+            $this->get('translator')->trans('orob2b.warehouse.controller.warehouse.saved.message')
         );
     }
 }

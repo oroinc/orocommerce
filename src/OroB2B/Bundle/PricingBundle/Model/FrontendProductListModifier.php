@@ -6,6 +6,7 @@ use Doctrine\ORM\QueryBuilder;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 class FrontendProductListModifier
@@ -33,36 +34,59 @@ class FrontendProductListModifier
     /**
      * @param QueryBuilder $queryBuilder
      * @param string|null $currency
+     * @param PriceList|null $priceList
      */
-    public function applyPriceListLimitations(QueryBuilder $queryBuilder, $currency = null)
+    public function applyPriceListLimitations(QueryBuilder $queryBuilder, $currency = null, PriceList $priceList = null)
     {
         $token = $this->tokenStorage->getToken();
         /** @var AccountUser $user */
         if ($token && ($user = $token->getUser()) instanceof AccountUser) {
-            $priceList = $this->priceListTreeHandler->getPriceList($user);
+            $priceList = $priceList ? $priceList : $this->priceListTreeHandler->getPriceList($user);
 
             if ($priceList) {
-                $rootAliases = $queryBuilder->getRootAliases();
-                $rootAlias = $rootAliases[0];
+                list($rootAlias) = $queryBuilder->getRootAliases();
+
+                $parametersCount = $queryBuilder->getParameters()->count();
+
+                $productPriceAlias = 'productPrice_' . $parametersCount;
+                $priceListParameterName = 'priceList_' . $parametersCount;
 
                 // Select only products that are in specific price list
                 $limitationQb = $queryBuilder->getEntityManager()->createQueryBuilder();
-                $limitationQb->from('OroB2BPricingBundle:ProductPrice', '_productPrice')
-                    ->select('IDENTITY(_productPrice.product)')
-                    ->where($limitationQb->expr()->eq('_productPrice.priceList', ':_priceList'))
-                    ->andWhere($limitationQb->expr()->eq('_productPrice.product', $rootAlias));
+                $limitationQb->from('OroB2BPricingBundle:ProductPrice', $productPriceAlias)
+                    ->select('IDENTITY(' . $this->getParameterName($productPriceAlias, 'product') . ')')
+                    ->where($limitationQb->expr()->eq(
+                        $this->getParameterName($productPriceAlias, 'priceList'),
+                        ':' . $priceListParameterName
+                    ))
+                    ->andWhere($limitationQb->expr()->eq(
+                        $this->getParameterName($productPriceAlias, 'product'),
+                        $rootAlias
+                    ));
 
                 if ($currency) {
-                    $limitationQb
-                        ->andWhere($queryBuilder->expr()->eq('_productPrice.currency', ':currency'));
-                    $queryBuilder
-                        ->setParameter('currency', strtoupper($currency));
+                    $currencyParameterName = 'currency_' . $parametersCount;
+
+                    $limitationQb->andWhere($queryBuilder->expr()->eq(
+                        $this->getParameterName($productPriceAlias, 'currency'),
+                        ':' . $currencyParameterName
+                    ));
+                    $queryBuilder->setParameter($currencyParameterName, strtoupper($currency));
                 }
 
-                $queryBuilder
-                    ->andWhere($queryBuilder->expr()->exists($limitationQb))
-                    ->setParameter('_priceList', $priceList);
+                $queryBuilder->andWhere($queryBuilder->expr()->exists($limitationQb))
+                    ->setParameter($priceListParameterName, $priceList);
             }
         }
+    }
+
+    /**
+     * @param string $alias
+     * @param string $parameter
+     * @return string
+     */
+    protected function getParameterName($alias, $parameter)
+    {
+        return $alias . '.' . $parameter;
     }
 }
