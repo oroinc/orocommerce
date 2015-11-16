@@ -67,6 +67,7 @@ class ActionAssembler
     /**
      * @param array $options
      * @param array $requiredOptions
+     * @throws MissedRequiredOptionException
      */
     protected function assertOptions(array $options, array $requiredOptions)
     {

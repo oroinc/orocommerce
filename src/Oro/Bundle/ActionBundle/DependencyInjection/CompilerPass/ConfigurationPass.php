@@ -15,8 +15,6 @@ class ConfigurationPass implements CompilerPassInterface
     const CACHE_SERVICE_ID = 'oro_action.cache.provider';
     const PROVIDER_SERVICE_ID = 'oro_action.configuration.provider';
 
-    const ROOT_NODE = 'actions';
-
     /**
      * {@inheritDoc}
      */

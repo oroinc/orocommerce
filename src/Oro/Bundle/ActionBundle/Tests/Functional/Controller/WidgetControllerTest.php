@@ -2,59 +2,26 @@
 
 namespace Oro\Bundle\ActionBundle\Tests\Functional\Controller;
 
-use Doctrine\Common\Persistence\ObjectRepository;
-
 use Oro\Bundle\ActionBundle\Configuration\ActionConfigurationProvider;
 use Oro\Bundle\CacheBundle\Provider\FilesystemCache;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class WidgetControllerTest extends WebTestCase
 {
-    const ENTITY_CLASS = 'Oro\Bundle\ActionBundle\Tests\Functional\Stub\TestEntity';
+    const ENTITY_CLASS = 'Oro\Bundle\TestFrameworkBundle\Entity\Product';
 
     /** @var FilesystemCache */
     protected $cacheProvider;
-
-    /** @var DoctrineHelper */
-    protected $originalDoctrineHelper;
-
-    /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
-    protected $doctrineHelper;
 
     protected function setUp()
     {
         $this->initClient();
 
         $this->cacheProvider = $this->getContainer()->get('oro_action.cache.provider');
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectRepository $repository */
-        $repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
-        $repository->expects($this->any())->method('findOneBy')->willReturn(null);
-
-        $this->originalDoctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
-
-        $this->doctrineHelper = $this->getServiceMockBuilder('oro_entity.doctrine_helper')->getMock();
-        $this->doctrineHelper->expects($this->any())->method('getEntityRepository')->willReturn($repository);
-        $this->doctrineHelper->expects($this->any())
-            ->method('isManageableEntity')
-            ->willReturnCallback(function ($className) {
-                return $className === self::ENTITY_CLASS;
-            });
-        $this->doctrineHelper->expects($this->any())
-            ->method('createEntityInstance')
-            ->willReturnCallback(function ($className) {
-                return new $className();
-            });
-
-        $this->getContainer()->set('oro_entity.doctrine_helper', $this->doctrineHelper);
     }
 
     protected function tearDown()
     {
-        $this->getContainer()->set('oro_entity.doctrine_helper', $this->originalDoctrineHelper);
-        unset($this->doctrineHelper);
-
         $this->cacheProvider->delete(ActionConfigurationProvider::ROOT_NODE_NAME);
     }
 
