@@ -1,10 +1,10 @@
 oro_system_configuration:
     fields:
-        oro_b2b_shopping_list.product_visibility:
+        oro_b2b_shopping_list.backend_product_visibility:
             data_type: array
             type: orob2b_product_inventory_status_select
             options:
-                label: orob2b.shoppinglist.system_configuration.product_visibility
+                label: orob2b.shoppinglist.system_configuration.backend_product_visibility
 
     tree:
         system_configuration:
@@ -14,6 +14,6 @@ oro_system_configuration:
                         children:
                             product_settings:
                                 children:
-                                    catalog_product_settings:
+                                    backend_inventory_statuses_visibility:
                                         children:
-                                            - oro_b2b_shopping_list.product_visibility
+                                            - oro_b2b_shopping_list.backend_product_visibility
