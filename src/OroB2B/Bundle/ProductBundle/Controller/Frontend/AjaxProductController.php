@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 
 class AjaxProductController extends Controller
@@ -32,13 +33,11 @@ class AjaxProductController extends Controller
             return new JsonResponse($names);
         }
 
-        $productClass = $this->container->getParameter('orob2b_product.product.class');
-        /** @var ProductRepository $repo */
-        $repo = $this->getDoctrine()
-            ->getManagerForClass($productClass)
-            ->getRepository($productClass);
+        $queryBuilder = $this->getProductRepository()->getFilterProductWithNamesQueryBuilder($skus);
+        /** @var Product[] $products */
+        $products = $this->container->get('orob2b_product.product.manager')
+            ->restrictQueryBuilder($queryBuilder, [])->getQuery()->getResult();
 
-        $products = $repo->getProductWithNamesBySku($skus);
         foreach ($products as $product) {
             $names[$product->getSku()] = [
                 'name' => (string)$product->getDefaultName(),
@@ -46,5 +45,15 @@ class AjaxProductController extends Controller
         }
 
         return new JsonResponse($names);
+    }
+
+    /**
+     * @return ProductRepository
+     */
+    protected function getProductRepository()
+    {
+        $productClass = $this->container->getParameter('orob2b_product.product.class');
+
+        return $this->getDoctrine()->getManagerForClass($productClass)->getRepository($productClass);
     }
 }

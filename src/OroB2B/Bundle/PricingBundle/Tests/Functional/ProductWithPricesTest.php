@@ -65,6 +65,7 @@ class ProductWithPricesTest extends WebTestCase
             '_token' => $form['orob2b_product[_token]']->getValue(),
             'owner'  => $this->getBusinessUnitId(),
             'sku'    => self::TEST_SKU,
+            'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
             'unitPrecisions' => [
                 [
                     'unit'      => self::FIRST_UNIT_CODE,
@@ -235,6 +236,6 @@ class ProductWithPricesTest extends WebTestCase
      */
     protected function getBusinessUnitId()
     {
-        return $this->getContainer()->get('security.context')->getToken()->getUser()->getOwner()->getId();
+        return $this->getContainer()->get('security.token_storage')->getToken()->getUser()->getOwner()->getId();
     }
 }
