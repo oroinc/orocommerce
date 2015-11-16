@@ -9,5 +9,9 @@ placeholders:
         items:
             update_action_buttons: ~
 items:
-    action_buttons:
+    index_action_buttons:
+        template: OroActionBundle:Widget:buttons.html.twig
+    view_action_buttons:
+        template: OroActionBundle:Widget:buttons.html.twig
+    update_action_buttons:
         template: OroActionBundle:Widget:buttons.html.twig

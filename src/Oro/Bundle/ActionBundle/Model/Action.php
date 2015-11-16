@@ -32,6 +32,22 @@ class Action
     }
 
     /**
+     * @return bool
+     */
+    public function isEnabled()
+    {
+        return $this->getDefinition()->isEnabled();
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->getDefinition()->getName();
+    }
+
+    /**
      * @return ActionDefinition
      */
     public function getDefinition()
