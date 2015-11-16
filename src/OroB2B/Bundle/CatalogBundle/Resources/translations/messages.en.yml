@@ -7,6 +7,8 @@ orob2b:
             titles.label:                'Title'
             short_descriptions.label:    'Short Description'
             long_descriptions.label:     'Long Description'
+            small_image.label:           'Small Imgage'
+            large_image.label:           'Large Image'
             left.label:                  'Tree left index'
             level.label:                 'Tree level'
             right.label:                 'Tree right index'
