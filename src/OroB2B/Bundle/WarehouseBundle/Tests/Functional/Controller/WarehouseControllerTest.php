@@ -18,7 +18,7 @@ class WarehouseControllerTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
+        $this->initClient([], $this->generateBasicAuthHeader());
     }
 
     public function testIndex()
@@ -58,7 +58,7 @@ class WarehouseControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertContentOnCreate($crawler, self::WAREHOUSE_TEST_NAME);
+        $this->assertWarehouseSaved($crawler, self::WAREHOUSE_TEST_NAME);
 
         $result = $this->getWarehouseDataByName(self::WAREHOUSE_TEST_NAME);
 
@@ -99,7 +99,7 @@ class WarehouseControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertContentOnCreate($crawler, self::WAREHOUSE_UPDATED_TEST_NAME);
+        $this->assertWarehouseSaved($crawler, self::WAREHOUSE_UPDATED_TEST_NAME);
 
         $result = $this->getWarehouseDataByName(self::WAREHOUSE_UPDATED_TEST_NAME);
 
@@ -166,7 +166,7 @@ class WarehouseControllerTest extends WebTestCase
      * @param Crawler $crawler
      * @param string $warehouseName
      */
-    protected function assertContentOnCreate(Crawler $crawler, $warehouseName)
+    protected function assertWarehouseSaved(Crawler $crawler, $warehouseName)
     {
         $html = $crawler->html();
         $this->assertContains('Warehouse has been saved', $html);
