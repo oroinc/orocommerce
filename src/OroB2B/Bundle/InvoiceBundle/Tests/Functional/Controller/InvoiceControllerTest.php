@@ -30,7 +30,7 @@ class InvoiceControllerTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
+        $this->initClient([], array_merge($this->generateBasicAuthHeader()));
 
         $this->loadFixtures(
             [
@@ -69,7 +69,7 @@ class InvoiceControllerTest extends WebTestCase
         $account = $doctrine->getRepository('OroB2BAccountBundle:Account')->findOneBy([]);
 
         /** @var Product $product */
-        $product = $doctrine->getRepository('OroB2BProductBundle:Product')->findOneBy([]);
+        $product = $this->getReference('product.1');
 
         $lineItems = [
             [
@@ -154,10 +154,23 @@ class InvoiceControllerTest extends WebTestCase
         /** @var Account $account*/
         $account = $doctrine->getRepository('OroB2BAccountBundle:Account')->findOneBy([]);
 
+        /** @var Product $product */
+        $product = $this->getReference('product.2');
+
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
         $lineItems = [
+            [
+                'product' => $product->getId(),
+                'quantity' => 1,
+                'productUnit' => 'bottle',
+                'price' => [
+                    'value' => 10,
+                    'currency' => 'USD'
+                ],
+                'priceType' => InvoiceLineItem::PRICE_TYPE_UNIT,
+            ],
             [
                 'freeFormProduct' => 'Free form product',
                 'quantity' => 20,
@@ -196,6 +209,17 @@ class InvoiceControllerTest extends WebTestCase
         $actualLineItems = $this->getActualLineItems($crawler, count($lineItems));
 
         $expectedLineItems = [
+            [
+                'freeFormProduct' => '',
+                'product' => $product->getId(),
+                'quantity' => 1,
+                'productUnit' => 'orob2b.product_unit.bottle.label.full',
+                'price' => [
+                    'value' => 10,
+                    'currency' => 'USD'
+                ],
+                'priceType' => InvoiceLineItem::PRICE_TYPE_UNIT,
+            ],
             [
                 'product' => '',
                 'freeFormProduct' => 'Free form product',
