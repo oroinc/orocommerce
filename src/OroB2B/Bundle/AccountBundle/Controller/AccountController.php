@@ -26,7 +26,7 @@ class AccountController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_account.entity.account.class')
+            'entity_class' => $this->container->getParameter('orob2b_account.entity.account.class'),
         ];
     }
 
@@ -46,7 +46,7 @@ class AccountController extends Controller
     public function viewAction(Account $account)
     {
         return [
-            'entity' => $account
+            'entity' => $account,
         ];
     }
 
@@ -91,19 +91,20 @@ class AccountController extends Controller
      */
     protected function update(Account $account)
     {
+        $x = $this->createForm(AccountType::NAME, $account);
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $account,
             $this->createForm(AccountType::NAME, $account),
             function (Account $account) {
                 return [
                     'route' => 'orob2b_account_update',
-                    'parameters' => ['id' => $account->getId()]
+                    'parameters' => ['id' => $account->getId()],
                 ];
             },
             function (Account $account) {
                 return [
                     'route' => 'orob2b_account_view',
-                    'parameters' => ['id' => $account->getId()]
+                    'parameters' => ['id' => $account->getId()],
                 ];
             },
             $this->get('translator')->trans('orob2b.account.controller.account.saved.message')
@@ -122,7 +123,7 @@ class AccountController extends Controller
     {
         return [
             'entity' => $account,
-            'treeData' => $this->get('orob2b_account.account_tree_handler')->createTree($account->getId())
+            'treeData' => $this->get('orob2b_account.account_tree_handler')->createTree($account->getId()),
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
+use OroB2B\Bundle\PricingBundle\Entity\AbstractPriceListRelation;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -49,7 +50,8 @@ class FormViewListener
         TranslatorInterface $translator,
         DoctrineHelper $doctrineHelper,
         FrontendPriceListRequestHandler $frontendPriceListRequestHandler
-    ) {
+    )
+    {
         $this->requestStack = $requestStack;
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
@@ -73,21 +75,42 @@ class FormViewListener
             ->getEntityManager('OroB2BPricingBundle:PriceListToAccount')
             ->getRepository('OroB2BPricingBundle:PriceListToAccount')
             ->findBy(['account' => $account]);
-
         if ($priceLists) {
-
-            $template = $event->getEnvironment()->render(
-                'OroB2BPricingBundle:Account:price_list_view.html.twig',
-                ['priceLists' => $priceLists]
-            );
-            $event->getScrollData()->addSubBlockData(0, 0, $template);
+            $this->addPriceListInfo($event, $priceLists);
         }
     }
 
+    /**
+     * @param BeforeListRenderEvent $event
+     * @param AbstractPriceListRelation[] $priceLists
+     */
+    protected function addPriceListInfo(BeforeListRenderEvent $event, $priceLists)
+    {
+        $template = $event->getEnvironment()->render(
+            'OroB2BPricingBundle:Account:price_list_view.html.twig',
+            ['priceListsByWebsites' => $this->groupPriceListsByWebsite($priceLists)]
+        );
+        $blockLabel = $this->translator->trans('orob2b.pricing.pricelist.entity_plural_label');
+        $scrollData = $event->getScrollData();
+        $blockId = $scrollData->addBlock($blockLabel, 0);
+        $subBlockId = $scrollData->addSubBlock($blockId);
+        $scrollData->addSubBlockData($blockId, $subBlockId, $template);
+    }
 
+    /**
+     * @param AbstractPriceListRelation[] $priceLists
+     * @return array
+     */
     protected function groupPriceListsByWebsite(array $priceLists)
     {
+        $result = [];
+        foreach ($priceLists as $priceList) {
+            $website = $priceList->getWebsite();
+            $result[$website->getId()]['priceLists'][] = $priceList;
+            $result[$website->getId()]['website'] = $website;
+        }
 
+        return $result;
     }
 
     /**
@@ -100,17 +123,15 @@ class FormViewListener
             return;
         }
 
-        $groupId = (int)$request->get('id');
-        /** @var AccountGroup $group */
-        $group = $this->doctrineHelper->getEntityReference('OroB2BPricingBundle:PriceListToAccountGroup', $groupId);
-        $priceList = $this->getPriceListRepository()->getPriceListByAccountGroup($group);
-
-        if ($priceList) {
-            $template = $event->getEnvironment()->render(
-                'OroB2BPricingBundle:Account:price_list_view.html.twig',
-                ['priceList' => $priceList]
-            );
-            $event->getScrollData()->addSubBlockData(0, 0, $template);
+        $accountId = (int)$request->get('id');
+        /** @var Account $account */
+        $account = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:AccountGroup', $accountId);
+        $priceLists = $this->doctrineHelper
+            ->getEntityManager('OroB2BPricingBundle:PriceListToAccountGroup')
+            ->getRepository('OroB2BPricingBundle:PriceListToAccountGroup')
+            ->findBy(['accountGroup' => $account]);
+        if ($priceLists) {
+            $this->addPriceListInfo($event, $priceLists);
         }
     }
 

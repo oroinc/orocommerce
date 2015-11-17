@@ -58,6 +58,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
                 'ownership_disabled' => true,
                 'data' => [],
                 'preloaded_websites' => [],
+                'allow_extra_fields' => true,
             ]
         );
     }
