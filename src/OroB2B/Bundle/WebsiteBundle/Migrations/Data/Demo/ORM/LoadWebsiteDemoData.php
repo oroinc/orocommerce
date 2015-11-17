@@ -25,31 +25,31 @@ class LoadWebsiteDemoData extends AbstractFixture implements ContainerAwareInter
             'name' => 'US',
             'url' => 'www.us.com',
             'locales' => ['en_US', 'es_MX'],
-            'sharing' => ['Mexico', 'Canada']
+            'sharing' => ['Mexico', 'Canada'],
         ],
         [
             'name' => 'Australia',
             'url' => 'www.australia.com',
             'locales' => ['en_AU'],
-            'sharing' => null
+            'sharing' => null,
         ],
         [
             'name' => 'Mexico',
             'url' => 'www.mexico.com',
             'locales' => ['es_MX'],
-            'sharing' => ['US', 'Canada']
+            'sharing' => ['US', 'Canada'],
         ],
         [
             'name' => 'Canada',
             'url' => 'www.canada.com',
             'locales' => ['fr_CA', 'en_CA'],
-            'sharing' => ['US', 'Mexico']
+            'sharing' => ['US', 'Mexico'],
         ],
         [
             'name' => 'Europe',
             'url' => 'www.europe.com',
             'locales' => ['en_GB', 'fr_FR', 'de_DE'],
-            'sharing' => null
+            'sharing' => null,
         ],
     ];
 
@@ -64,7 +64,7 @@ class LoadWebsiteDemoData extends AbstractFixture implements ContainerAwareInter
         ['code' => 'es_MX', 'parent' => 'en_US'],
         ['code' => 'fr_CA', 'parent' => 'en_CA'],
         ['code' => 'fr_FR', 'parent' => 'fr_CA'],
-        ['code' => 'de_DE', 'parent' => 'en_US']
+        ['code' => 'de_DE', 'parent' => 'en_US'],
     ];
 
     /**
@@ -93,12 +93,16 @@ class LoadWebsiteDemoData extends AbstractFixture implements ContainerAwareInter
         // Create locales sample with relationship between locales
         $localesRegistry = [];
         foreach ($this->locales as $item) {
-            $code = $this->getLocaleNameByCode($item['code']);
+            $code = $item['code'];
+            $title = $this->getLocaleNameByCode($item['code']);
 
             $locale = new Locale();
-            $locale->setCode($code);
+            $locale
+                ->setCode($code)
+                ->setTitle($title);
+
             if ($item['parent']) {
-                $parentCode = $this->getLocaleNameByCode($item['parent']);
+                $parentCode = $item['parent'];
 
                 $locale->setParentLocale($localesRegistry[$parentCode]);
             }
@@ -182,7 +186,7 @@ class LoadWebsiteDemoData extends AbstractFixture implements ContainerAwareInter
     protected function getLocaleByCode(EntityManager $manager, $code)
     {
         $locale = $manager->getRepository('OroB2BWebsiteBundle:Locale')
-            ->findOneBy(['code' => $this->getLocaleNameByCode($code)]);
+            ->findOneBy(['code' => $code]);
 
         if (!$locale) {
             throw new \LogicException(sprintf('There is no locale with code "%s" .', $code));
