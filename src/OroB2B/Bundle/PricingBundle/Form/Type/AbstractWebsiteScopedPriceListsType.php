@@ -12,7 +12,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use OroB2B\Bundle\PricingBundle\Entity\AbstractPriceListRelation;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepositoryInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -141,7 +141,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
 
             $submittedPriceLists = $this->getWebsiteSubmittedPriceLists($priceListsByWebsite);
 
-            /** @var AbstractPriceListRelation[] $actualPriceListsToTargetEntity */
+            /** @var BasePriceListRelation[] $actualPriceListsToTargetEntity */
             foreach ($actualPriceListsToTargetEntity as $priceListToTargetEntity) {
                 if (!in_array($priceListToTargetEntity->getPriceList(), $submittedPriceLists)) {
                     $em->remove($priceListToTargetEntity);
@@ -180,7 +180,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         /** @var PriceList $priceList */
         $priceList = $priceListWithPriorityData['priceList'];
         if (in_array($priceList->getId(), array_keys($actualPriceListsToTargetEntity))) {
-            /** @var AbstractPriceListRelation $priceListToTargetEntity */
+            /** @var BasePriceListRelation $priceListToTargetEntity */
             $priceListToTargetEntity = $actualPriceListsToTargetEntity[$priceList->getId()];
             $priceListToTargetEntity->setPriority($priceListWithPriorityData['priority']);
         } else {
@@ -204,7 +204,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
             ->getPriceLists($targetEntity, $website);
 
         $result = [];
-        /** @var AbstractPriceListRelation[] $actualPriceListsToTargetEntity */
+        /** @var BasePriceListRelation[] $actualPriceListsToTargetEntity */
         foreach ($actualPriceListsToTargetEntity as $priceListToTargetEntity) {
             $priceListId = $priceListToTargetEntity->getPriceList()->getId();
             $result[$priceListId] = $priceListToTargetEntity;
@@ -230,7 +230,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
 
     /**
      * @param object $targetEntity
-     * @return AbstractPriceListRelation
+     * @return BasePriceListRelation
      */
     abstract public function createPriceListToTargetEntity($targetEntity);
 
