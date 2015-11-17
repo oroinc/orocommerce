@@ -250,7 +250,7 @@ class ActionConfigurationProviderTest extends \PHPUnit_Framework_TestCase
                         ]
                     ]
                 ],
-                'Found cyclomatic extends between test_action1 and test_action2 actions.'
+                'Found circular "extends" references test_action1 and test_action2 actions.'
             ],
             [
                 [

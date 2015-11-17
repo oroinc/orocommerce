@@ -203,7 +203,7 @@ class ActionConfigurationProvider
         if (array_key_exists(self::EXTENDS_NODE_NAME, $extendsConfig)) {
             if (in_array($extends, $this->processedConfigs, true)) {
                 throw new InvalidConfigurationException(
-                    sprintf('Found circular "extends" refererences %s and %s actions.', $extends, $actionName)
+                    sprintf('Found circular "extends" references %s and %s actions.', $extends, $actionName)
                 );
             }
 
