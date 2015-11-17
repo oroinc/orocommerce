@@ -12,6 +12,8 @@ orob2b:
         inversed_websites.label: Inversed websites
         related_websites.label: Related websites
 
+        controller:
+            website.saved.message: Website has been saved
         locale:
             entity_label: Locale
             entity_plural_label: Locales
@@ -25,3 +27,10 @@ orob2b:
         menu:
             websites_list.description: List of websites
             shortcut_websites_list.description: Show list of websites
+
+        sections:
+            general: General
+            additional: Additional
+
+        widgets:
+            website_information: Website Information

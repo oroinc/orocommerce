@@ -20,8 +20,8 @@ class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterfa
      * @var array
      */
     protected $webSites = [
-        ['name' => self::WEBSITE1, 'url' => 'www.us.com', 'locales' => ['en_US']],
-        ['name' => self::WEBSITE2, 'url' => 'www.canada.com', 'locales' => ['en_CA']],
+        ['name' => self::WEBSITE1, 'url' => 'http://www.us.com', 'locales' => ['en_US']],
+        ['name' => self::WEBSITE2, 'url' => 'http://www.canada.com', 'locales' => ['en_CA']],
     ];
 
     /**
