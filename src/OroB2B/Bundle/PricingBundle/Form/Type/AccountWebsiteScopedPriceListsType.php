@@ -2,9 +2,11 @@
 
 namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormInterface;
+use Doctrine\Common\Persistence\ObjectManager;
 
+use OroB2B\Bundle\PricingBundle\Entity\AbstractPriceListRelation;
+use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 
 class AccountWebsiteScopedPriceListsType extends AbstractWebsiteScopedPriceListsType
@@ -14,61 +16,36 @@ class AccountWebsiteScopedPriceListsType extends AbstractWebsiteScopedPriceLists
     /**
      * {@inheritdoc}
      */
-    public function onPostSetData(FormEvent $event)
-    {
-        /** @var Account|null $account */
-        $account = $event->getData();
-        if (!$account || !$account->getId()) {
-            return;
-        }
-
-//        $priceLists[] = $this->getPriceListRepository()->getPriceListByAccount($account);
-        $priceLists = [];
-        $event->setData($priceLists);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function onPostSubmit(FormEvent $event)
-    {
-        /** @var Account|null $account */
-        $account = $event->getData();
-        if (!$account || !$account->getId()) {
-            return;
-        }
-
-        $form = $event->getForm();
-        if (!$form->isValid()) {
-            return;
-        }
-
-        /** @var FormInterface[] $priceListsByWebsites */
-        $priceListsByWebsites = $form->get('priceListsByWebsites');
-
-        foreach ($priceListsByWebsites as $priceListsByWebsite) {
-            $website = $priceListsByWebsite->getConfig()->getOption('website');
-            foreach ($priceListsByWebsite as $priceList) {
-                $pl = $priceList;
-                $acc = $account;
-                $ws = $website;
-            }
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return self::NAME;
     }
 
-
-    protected function updatePriceListRelations($priceList, $account, $website)
+    /**
+     * @return PriceListToAccountRepository
+     */
+    public function getRepository()
     {
-        $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListToAccount')
-            ->getRepository('OroB2BPricingBundle:PriceListToAccount');
+        return $this->getEntityManager()->getRepository('OroB2BPricingBundle:PriceListToAccount');
+    }
 
+    /**
+     * @param Account $account
+     * @return AbstractPriceListRelation
+     */
+    public function createPriceListToTargetEntity($account)
+    {
+        $priceListToTargetEntity = new PriceListToAccount();
+        $priceListToTargetEntity->setAccount($account);
+
+        return $priceListToTargetEntity;
+    }
+
+    /**
+     * @return ObjectManager
+     */
+    public function getEntityManager()
+    {
+        return $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListToAccount');
     }
 }

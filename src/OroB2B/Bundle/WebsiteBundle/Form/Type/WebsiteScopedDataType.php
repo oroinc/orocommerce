@@ -87,6 +87,7 @@ class WebsiteScopedDataType extends AbstractType
             );
         }
 
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
         $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmit']);
     }
 
@@ -109,6 +110,39 @@ class WebsiteScopedDataType extends AbstractType
 
             $formOptions['options']['website'] = $em
                 ->getReference($this->websiteCLass, $websiteId);
+
+            $form->add(
+                $websiteId,
+                $formOptions['type'],
+                $formOptions['options']
+            );
+        }
+    }
+
+    /**
+     * @param FormEvent $event
+     * @throws \Doctrine\ORM\ORMException
+     */
+    public function preSetData(FormEvent $event)
+    {
+        $form = $event->getForm();
+
+        $formOptions = $form->getConfig()->getOptions();
+
+        $formOptions['options']['ownership_disabled'] = true;
+
+        foreach ($event->getData() as $websiteId => $value) {
+            /** @var EntityManager $em */
+            $em = $this->registry->getManagerForClass($this->websiteCLass);
+            $formOptions['options']['data'] = [];
+
+            if (is_array($value)) {
+                foreach ($value as $valueItem) {
+                    $formOptions['options']['data'][] = $valueItem;
+                }
+            }
+
+            $formOptions['options']['website'] = $em->getReference($this->websiteCLass, $websiteId);
 
             $form->add(
                 $websiteId,

@@ -8,7 +8,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 
 /**
  * @ORM\Table(name="orob2b_price_list_to_acc_gr")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository")
  */
 class PriceListToAccountGroup extends AbstractPriceListRelation
 {
