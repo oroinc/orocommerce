@@ -109,52 +109,66 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
      * @param Product $entity
      * @throws \Exception
      */
-    private function resolveVariantLinkIdentifier($existingEntity, $entity)
+    protected function resolveVariantLinkIdentifier($existingEntity, $entity)
     {
-        $fields = $this->fieldHelper->getFields(ClassUtils::getClass($existingEntity), true);
+        $fields = $this->fieldHelper->getRelations(ClassUtils::getClass($existingEntity), true);
         foreach ($fields as $field) {
-            if ($this->fieldHelper->isRelation($field)) {
-                $targetClassName = $field['related_entity_name'];
-                if (is_a($targetClassName, $this->variantLinkClass, true)) {
-                    $this->mapVariantCollections($this->fieldHelper->getObjectValue($entity, $field['name']));
-                }
+            if ($this->isVariantLinkValue($field)) {
+                $variantLinks = $this->filterVariantCollections(
+                    $this->fieldHelper->getObjectValue($entity, $field['name'])
+                );
+                $this->fieldHelper->setObjectValue($entity, 'variantLinks', $variantLinks);
             }
         }
     }
 
     /**
      * @param Collection $variantLinks
+     * @return Collection|void
      */
-    protected function mapVariantCollections(Collection $variantLinks)
+    protected function filterVariantCollections(Collection $variantLinks)
     {
         if ($variantLinks->isEmpty()) {
-            return;
+            return $variantLinks;
         }
 
-        $variantLinks
-            ->map(
+        return $variantLinks
+            ->filter(
                 function (ProductVariantLink $productVariantLink) {
                     $identifier = $this->databaseHelper->getIdentifier($productVariantLink);
                     if ($identifier) {
-                        return;
+                        return true;
                     }
 
-                    $fields = $this->fieldHelper->getFields(ClassUtils::getClass($productVariantLink), true);
+                    $fields = $this->fieldHelper->getRelations(ClassUtils::getClass($productVariantLink), true);
                     foreach ($fields as $field) {
-                        if ($this->fieldHelper->isRelation($field)) {
-                            $childEntity = $this->fieldHelper->getObjectValue($productVariantLink, $field['name']);
-                            $childIdentifier = $this->databaseHelper->getIdentifier($childEntity);
-                            if ($childIdentifier) {
-                                continue;
-                            }
-
-                            $existingChildEntity = $this->findExistingEntity($childEntity);
-                            if ($existingChildEntity) {
-                                $this->fieldHelper->setObjectValue($childEntity, 'id', $existingChildEntity->getId());
-                            }
+                        $childEntity = $this->fieldHelper->getObjectValue($productVariantLink, $field['name']);
+                        $childIdentifier = $this->databaseHelper->getIdentifier($childEntity);
+                        if ($childIdentifier) {
+                            continue;
                         }
+
+                        $existingChildEntity = $this->findExistingEntity($childEntity);
+                        if (!$existingChildEntity) {
+                            $this->context->incrementErrorEntriesCount();
+                            $this->strategyHelper->addValidationErrors(['error'], $this->context);
+                            return false;
+                        }
+                        $this->fieldHelper->setObjectValue($childEntity, 'id', $existingChildEntity->getId());
                     }
+
+                    return true;
                 }
             );
+    }
+
+    /**
+     * @param $field
+     * @return bool
+     */
+    protected function isVariantLinkValue($field)
+    {
+        return $this->fieldHelper->isRelation($field)
+        && is_a($field['related_entity_name'], $this->variantLinkClass, true);
     }
 }
