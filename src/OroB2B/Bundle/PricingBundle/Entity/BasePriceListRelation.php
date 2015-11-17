@@ -7,7 +7,10 @@ use Doctrine\ORM\Mapping as ORM;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
-abstract class AbstractPriceListRelation implements WebsiteAwareInterface, PriceListAwareInterface
+/**
+ * @ORM\MappedSuperclass
+ */
+class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInterface
 {
     /**
      * @var int

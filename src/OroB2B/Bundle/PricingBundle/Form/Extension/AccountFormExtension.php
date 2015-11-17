@@ -25,8 +25,7 @@ class AccountFormExtension extends AbstractTypeExtension
     {
         $builder->add(
             'priceListsByWebsites',
-            AccountWebsiteScopedPriceListsType::NAME,
-            ['allow_extra_fields' => true]
+            AccountWebsiteScopedPriceListsType::NAME
         );
     }
 }

@@ -54,6 +54,9 @@ orob2b:
                 add: 'Add Product'
                 remove: 'Delete'
 
+            actions:
+                quote_expire: 'Expire Quote'
+
         system_configuration:
             backend_product_visibility: 'Can Be Added to Quotes'
 

@@ -6,10 +6,13 @@ use Doctrine\Common\Collections\Criteria;
 
 use Psr\Log\LoggerInterface;
 
+use Oro\Bundle\MigrationBundle\Migration\ArrayLogger;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 
 class InsertSelectPriceListRelationTablesQuery extends ParametrizedMigrationQuery
 {
+    const DEFAULT_PRIORITY = 100;
+
     /**
      * @var int
      */
@@ -28,18 +31,18 @@ class InsertSelectPriceListRelationTablesQuery extends ParametrizedMigrationQuer
     /**
      * @var string
      */
-    protected $field;
+    protected $fieldName;
 
     /**
      * @param string $newTableName
      * @param string $oldTableName
-     * @param string|null $field
+     * @param string $fieldName
      */
-    public function __construct($newTableName, $oldTableName, $field)
+    public function __construct($newTableName, $oldTableName, $fieldName)
     {
         $this->newTableName = $newTableName;
         $this->oldTableName = $oldTableName;
-        $this->field = $field;
+        $this->fieldName = $fieldName;
     }
 
     /**
@@ -47,7 +50,9 @@ class InsertSelectPriceListRelationTablesQuery extends ParametrizedMigrationQuer
      */
     public function getDescription()
     {
-        return 'Copy values from old to new price list relation table with priority and website';
+        $logger = new ArrayLogger();
+        $this->migrateData($logger, true);
+        return $logger->getMessages();
     }
 
     /**
@@ -55,26 +60,38 @@ class InsertSelectPriceListRelationTablesQuery extends ParametrizedMigrationQuer
      */
     public function execute(LoggerInterface $logger)
     {
+        $this->migrateData($logger);
+    }
+
+    /**
+     * @param LoggerInterface $logger
+     * @param bool $dryRun
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    public function migrateData(LoggerInterface $logger, $dryRun = false)
+    {
         $fields = ['price_list_id'];
         $websiteId = 'website_id';
-        if ($this->field !== 'website_id') {
-            $fields[] = $this->field;
+        if ($this->fieldName !== 'website_id') {
+            $fields[] = $this->fieldName;
             $websiteId = $this->getDefaultWebsiteId();
         }
 
         $insertFields = implode(', ', array_merge($fields, ['website_id', 'priority']));
-        $selectFields = implode(', ', array_merge($fields, [$websiteId, 100]));
+        $selectFields = implode(', ', array_merge($fields, [$websiteId, static::DEFAULT_PRIORITY]));
 
-        $sql = <<<SQL
-  INSERT INTO
-    {$this->newTableName}
-  ($insertFields)
-    SELECT
-      $selectFields
-    FROM {$this->oldTableName};
-SQL;
+        $sql = sprintf(
+            'INSERT INTO %s (%s) SELECT %s FROM %s',
+            $this->newTableName,
+            $insertFields,
+            $selectFields,
+            $this->oldTableName
+        );
+
         $this->logQuery($logger, $sql);
-        $this->connection->exec($sql);
+        if (!$dryRun) {
+            $this->connection->exec($sql);
+        }
     }
 
     /**
