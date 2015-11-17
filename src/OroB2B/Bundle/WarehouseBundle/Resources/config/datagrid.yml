@@ -15,6 +15,9 @@ datagrid:
                 from:
                     - { table: %orob2b_warehouse.entity.warehouse.class%, alias: warehouse }
         columns:
+            id:
+                label:         orob2b.warehouse.id.label
+                renderable:    false
             name:
                 label:         orob2b.warehouse.name.label
             createdAt:
