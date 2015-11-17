@@ -80,7 +80,7 @@ class LocalizedFallbackValueAwareStrategy extends ConfigurableAddOrReplaceStrate
         $localizedFallbackValues = $this->fieldHelper->getObjectValue($entity, $field['name']);
 
         foreach ($localizedFallbackValues as $value) {
-            $code = LocaleCodeFormatter::formatKey($value->getLocale());
+            $code = LocaleCodeFormatter::formatName($value->getLocale());
             $localizedFallbackValues->removeElement($value);
             $localizedFallbackValues->set($code, $value);
         }

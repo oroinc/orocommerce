@@ -53,7 +53,6 @@ class LocalizedFallbackValueCollectionNormalizer extends CollectionNormalizer
     {
         $result = [];
 
-        /** @var LocalizedFallbackValue $item */
         foreach ($object as $item) {
             $result[LocaleCodeFormatter::formatName($item->getLocale())] = [
                 'fallback' => $item->getFallback(),
