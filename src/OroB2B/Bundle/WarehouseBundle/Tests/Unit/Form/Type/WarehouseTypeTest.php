@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\WarehouseBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Validator\Validation;
-use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 use OroB2B\Bundle\WarehouseBundle\Form\Type\WarehouseType;
@@ -53,16 +51,6 @@ class WarehouseTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData'  => ['name' => 'Warehouse 2']
             ]
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getExtensions()
-    {
-        return [
-            new ValidatorExtension(Validation::createValidator()),
         ];
     }
 
