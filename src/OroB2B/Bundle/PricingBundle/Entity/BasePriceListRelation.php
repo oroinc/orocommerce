@@ -10,7 +10,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 /**
  * @ORM\MappedSuperclass
  */
-class AbstractPriceListRelation implements WebsiteAwareInterface, PriceListAwareInterface
+class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInterface
 {
     /**
      * @var int

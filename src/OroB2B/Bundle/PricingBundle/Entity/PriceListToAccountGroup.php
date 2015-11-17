@@ -10,7 +10,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
  * @ORM\Table(name="orob2b_price_list_to_acc_gr")
  * @ORM\Entity
  */
-class PriceListToAccountGroup extends AbstractPriceListRelation
+class PriceListToAccountGroup extends BasePriceListRelation
 {
     /**
      * @var AccountGroup
