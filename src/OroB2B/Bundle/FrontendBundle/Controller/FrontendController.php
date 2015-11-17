@@ -5,10 +5,10 @@ namespace OroB2B\Bundle\FrontendBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+
+use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 class FrontendController extends Controller
 {
