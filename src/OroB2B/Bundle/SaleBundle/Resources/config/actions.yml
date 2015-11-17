@@ -5,12 +5,8 @@ actions:
         applications:
             - backend
             - frontend
-        routes:
-            - orob2b_sale_quote_index
         entities:
             - OroB2B\Bundle\SaleBundle\Entity\Quote
         order: 10
         frontend_options:
             icon: icon-time
-#        pre_conditions:
-#            @blank: [$accountUser]
