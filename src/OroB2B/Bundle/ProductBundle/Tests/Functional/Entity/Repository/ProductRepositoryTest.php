@@ -65,6 +65,7 @@ class ProductRepositoryTest extends WebTestCase
                     'product.2',
                     'product.3',
                     'product.4',
+                    'product.5',
                 ],
             ],
             'product, 1, 1' => [
@@ -109,6 +110,7 @@ class ProductRepositoryTest extends WebTestCase
             ProductFixture::PRODUCT_2,
             ProductFixture::PRODUCT_3,
             ProductFixture::PRODUCT_4,
+            ProductFixture::PRODUCT_5,
         ];
 
         return [
@@ -171,5 +173,42 @@ class ProductRepositoryTest extends WebTestCase
                 ]
             )
         );
+    }
+
+    public function testGetProductsNamesBySku()
+    {
+        $product1 = $this->getProduct(ProductFixture::PRODUCT_1);
+        $product2 = $this->getProduct(ProductFixture::PRODUCT_2);
+        $product3 = $this->getProduct(ProductFixture::PRODUCT_3);
+
+        $this->assertEquals(
+            [
+                $product1,
+                $product2,
+                $product3,
+            ],
+            $this->getRepository()->getProductWithNamesBySku(
+                [
+                    $product3->getSku(),
+                    $product1->getSku(),
+                    $product2->getSku(),
+                    'not a sku'
+                ]
+            )
+        );
+
+        $this->assertEmpty($this->getRepository()->getProductWithNamesBySku(['nonExistingSKU']));
+    }
+
+    public function testGetFilterSkuQueryBuilder()
+    {
+        /** @var Product $product */
+        $product = $this->getRepository()->findOneBy(['sku' => 'product.1']);
+
+        $builder = $this->getRepository()->getFilterSkuQueryBuilder([$product->getSku()]);
+        $result = $builder->getQuery()->getResult();
+
+        $this->assertCount(1, $result);
+        $this->assertEquals($product->getSku(), $result[0]['sku']);
     }
 }

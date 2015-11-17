@@ -51,4 +51,10 @@ class LocalizedFallbackValueTest extends EntityTestCase
         $this->assertEquals($id, $value->getId());
         $this->assertNull($clonedValue->getId());
     }
+
+    public function testGetFallback()
+    {
+        $this->assertInternalType('array', LocalizedFallbackValue::getFallbacks());
+        $this->assertNotEmpty('array', LocalizedFallbackValue::getFallbacks());
+    }
 }

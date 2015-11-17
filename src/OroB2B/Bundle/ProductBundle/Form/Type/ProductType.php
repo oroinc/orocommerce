@@ -12,6 +12,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class ProductType extends AbstractType
 {

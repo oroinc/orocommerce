@@ -8,6 +8,7 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\Controller\ProductControllerTest as BaseTest;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
  * @dbIsolation
@@ -49,5 +50,27 @@ class ProductControllerTest extends BaseTest
         foreach ($result['data'] as $data) {
             $this->assertContains($data['name'], $expected);
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function viewDataProvider()
+    {
+        return [
+            'includeSubcategories' => [
+                'includeSubcategories' => true,
+                'expected' => [
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_3,
+                ],
+            ],
+            'excludeSubcategories' => [
+                'includeSubcategories' => false,
+                'expected' => [
+                    LoadProductData::PRODUCT_2,
+                ],
+            ],
+        ];
     }
 }
