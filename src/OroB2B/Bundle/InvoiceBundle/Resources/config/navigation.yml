@@ -4,7 +4,7 @@ oro_menu_config:
             label:           'orob2b.invoice.entity_plural_label'
             route:           'orob2b_invoice_index'
             extras:
-                position:    450
+                position:    750
                 routes: ['/^orob2b_invoice_/']
 
     tree:
