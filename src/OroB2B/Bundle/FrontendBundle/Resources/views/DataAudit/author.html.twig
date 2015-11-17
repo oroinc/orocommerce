@@ -1,6 +1,1 @@
-    {% if value == 'Administrator' %}
-        {{ 'orob2b_frontend.dataaudit.administrator'|trans }}
-    {% else %}
-        {{ value }}
-    {% endif %}
-
+{{ value|default('orob2b_frontend.dataaudit.administrator'|trans) }}

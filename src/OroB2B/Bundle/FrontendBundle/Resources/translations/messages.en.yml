@@ -7,8 +7,6 @@ orob2b_frontend:
                 header: Web settings
                 backend_prefix: Backend prefix
     dataaudit:
-        history: History
-        history.title: %item% history
         administrator: Administrator
     theme:
         demo.title: 'OroPlatform theme'

@@ -6,13 +6,13 @@ datagrid:
             query:
                 select:
                     - >
-                        COALESCE(CONCAT(
+                        CONCAT(
                             CONCAT(
                                 CONCAT(b2b_u.firstName, ' '),
                                 CONCAT(b2b_u.lastName, ' ')
                             ),
                             CONCAT(' - ', b2b_u.email)
-                        ), 'Administrator') as author
+                        ) as author
                 join:
                     left:
                         b2b_audit:
