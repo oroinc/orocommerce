@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
-use OroB2B\Bundle\PricingBundle\Entity\AbstractPriceListRelation;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -16,6 +15,7 @@ use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
 
 class FormViewListener
 {
@@ -50,8 +50,7 @@ class FormViewListener
         TranslatorInterface $translator,
         DoctrineHelper $doctrineHelper,
         FrontendPriceListRequestHandler $frontendPriceListRequestHandler
-    )
-    {
+    ) {
         $this->requestStack = $requestStack;
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
@@ -82,7 +81,7 @@ class FormViewListener
 
     /**
      * @param BeforeListRenderEvent $event
-     * @param AbstractPriceListRelation[] $priceLists
+     * @param BasePriceListRelation[] $priceLists
      */
     protected function addPriceListInfo(BeforeListRenderEvent $event, $priceLists)
     {
@@ -98,7 +97,7 @@ class FormViewListener
     }
 
     /**
-     * @param AbstractPriceListRelation[] $priceLists
+     * @param BasePriceListRelation[] $priceLists
      * @return array
      */
     protected function groupPriceListsByWebsite(array $priceLists)
