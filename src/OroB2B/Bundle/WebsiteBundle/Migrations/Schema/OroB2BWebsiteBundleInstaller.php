@@ -51,6 +51,7 @@ class OroB2BWebsiteBundleInstaller implements Installation
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['code']);
+        $table->addUniqueIndex(['title']);
     }
 
     /**
