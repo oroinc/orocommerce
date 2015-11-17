@@ -29,5 +29,7 @@ class SetNotNullableTitleColumn implements Migration, OrderedMigrationInterface
             ->getColumn('title')
             ->setType(Type::getType(Type::STRING))
             ->setOptions(['length' => 255, 'notnull' => true]);
+
+        $table->addUniqueIndex(['title']);
     }
 }
