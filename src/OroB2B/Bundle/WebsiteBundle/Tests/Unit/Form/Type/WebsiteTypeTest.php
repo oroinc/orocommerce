@@ -59,43 +59,6 @@ class WebsiteTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData'  => ['name' => 'OroCommerce', 'url' => 'http://www.orocommerce.com/']
             ],
-            'website_invalid_name' => [
-                'isValid'       => false,
-                'defaultData'   => ['name' => 'OroCommerce', 'url' => 'http://www.orocommerce.com/'],
-                'submittedData' => [
-                    'name' => '',
-                    'url' => 'http://www.orocommerce.com/'
-                ],
-                'expectedData'  => ['name' => '', 'url' => 'http://www.orocommerce.com/'],
-            ],
-            'website_invalid_url' => [
-                'isValid'       => false,
-                'defaultData'   => ['name' => 'OroCommerce', 'url' => 'http://www.orocommerce.com/'],
-                'submittedData' => [
-                    'name' => 'OroCommerce',
-                    'url' => 'orocommerce.com'
-                ],
-                'expectedData'  => ['name' => 'OroCommerce', 'url' => 'orocommerce.com'],
-            ],
-            'website_empty_url' => [
-                'isValid'       => false,
-                'defaultData'   => ['name' => 'OroCommerce', 'url' => 'http://www.orocommerce.com/'],
-                'submittedData' => [
-                    'name' => 'OroCommerce',
-                    'url' => ''
-                ],
-                'expectedData'  => ['name' => 'OroCommerce', 'url' => ''],
-            ],
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getExtensions()
-    {
-        return [
-            new ValidatorExtension(Validation::createValidator()),
         ];
     }
 }

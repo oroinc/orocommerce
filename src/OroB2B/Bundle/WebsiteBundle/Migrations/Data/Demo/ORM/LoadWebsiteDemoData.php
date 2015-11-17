@@ -23,31 +23,31 @@ class LoadWebsiteDemoData extends AbstractFixture implements ContainerAwareInter
     protected $webSites = [
         [
             'name' => 'US',
-            'url' => 'www.us.com',
+            'url' => 'http://www.us.com',
             'locales' => ['en_US', 'es_MX'],
             'sharing' => ['Mexico', 'Canada'],
         ],
         [
             'name' => 'Australia',
-            'url' => 'www.australia.com',
+            'url' => 'http://www.australia.com',
             'locales' => ['en_AU'],
             'sharing' => null,
         ],
         [
             'name' => 'Mexico',
-            'url' => 'www.mexico.com',
+            'url' => 'http://www.mexico.com',
             'locales' => ['es_MX'],
             'sharing' => ['US', 'Canada'],
         ],
         [
             'name' => 'Canada',
-            'url' => 'www.canada.com',
+            'url' => 'http://www.canada.com',
             'locales' => ['fr_CA', 'en_CA'],
             'sharing' => ['US', 'Mexico'],
         ],
         [
             'name' => 'Europe',
-            'url' => 'www.europe.com',
+            'url' => 'http://www.europe.com',
             'locales' => ['en_GB', 'fr_FR', 'de_DE'],
             'sharing' => null,
         ],

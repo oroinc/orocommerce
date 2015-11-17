@@ -20,7 +20,7 @@ class WebsiteControllerTest extends WebTestCase
     
     protected function setUp()
     {
-        $this->initClient([], array_merge($this->generateBasicAuthHeader(), ['HTTP_X-CSRF-Header' => 1]));
+        $this->initClient([], $this->generateBasicAuthHeader());
     }
     
     public function testIndex()
@@ -60,7 +60,7 @@ class WebsiteControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContentOnCreate($crawler, self::WEBSITE_TEST_NAME, self::WEBSITE_TEST_URL);
+        $this->assertWebsiteSaved($crawler, self::WEBSITE_TEST_NAME, self::WEBSITE_TEST_URL);
 
         $result = $this->getWebsiteDataByName(self::WEBSITE_TEST_NAME);
 
@@ -103,7 +103,7 @@ class WebsiteControllerTest extends WebTestCase
         $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContentOnCreate($crawler, self::WEBSITE_UPDATED_TEST_NAME, self::WEBSITE_UPDATED_TEST_URL);
+        $this->assertWebsiteSaved($crawler, self::WEBSITE_UPDATED_TEST_NAME, self::WEBSITE_UPDATED_TEST_URL);
 
         $result = $this->getWebsiteDataByName(self::WEBSITE_UPDATED_TEST_NAME);
         $this->assertEquals($id, $result['id']);
@@ -148,7 +148,7 @@ class WebsiteControllerTest extends WebTestCase
      * @param string $websiteName
      * @param string $websiteUrl
      */
-    protected function assertContentOnCreate(Crawler $crawler, $websiteName, $websiteUrl)
+    protected function assertWebsiteSaved(Crawler $crawler, $websiteName, $websiteUrl)
     {
         $html = $crawler->html();
         $this->assertContains('Website has been saved', $html);

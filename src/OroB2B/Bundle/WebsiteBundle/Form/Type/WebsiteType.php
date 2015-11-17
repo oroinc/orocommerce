@@ -26,7 +26,6 @@ class WebsiteType extends AbstractType
                 [
                     'required' => true,
                     'label' => 'orob2b.website.name.label',
-                    'constraints' => [new Assert\NotBlank()],
                 ]
             )
             ->add(
@@ -35,10 +34,6 @@ class WebsiteType extends AbstractType
                 [
                     'required' => true,
                     'label' => 'orob2b.website.url.label',
-                    'constraints' => [
-                        new Assert\NotBlank(),
-                        new Assert\Url()
-                    ],
                 ]
             );
     }

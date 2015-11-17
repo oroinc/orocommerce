@@ -2,10 +2,7 @@
 
 namespace OroB2B\Bundle\WebsiteBundle\Controller;
 
-use Doctrine\Common\Util\ClassUtils;
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -15,7 +12,6 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\WebsiteBundle\Form\Handler\WebsiteHandler;
 use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteType;
 
 class WebsiteController extends Controller
@@ -81,14 +77,11 @@ class WebsiteController extends Controller
      *      class="OroB2BWebsiteBundle:Website",
      *      permission="CREATE"
      * )
-     *
-     * @param Request $request
-     *
      * @return array|RedirectResponse
      */
-    public function createAction(Request $request)
+    public function createAction()
     {
-        return $this->update(new Website(), $request);
+        return $this->update(new Website());
     }
 
     /**
@@ -104,32 +97,23 @@ class WebsiteController extends Controller
      * )
      *
      * @param Website $website
-     *
-     * @param Request $request
      * @return array|RedirectResponse
      */
-    public function updateAction(Website $website, Request $request)
+    public function updateAction(Website $website)
     {
-        return $this->update($website, $request);
+        return $this->update($website);
     }
 
     /**
      * @param Website $website
-     * @param Request $request
      *
      * @return array|RedirectResponse
      */
-    protected function update(Website $website, Request $request)
+    protected function update(Website $website)
     {
-        $form = $this->createForm(WebsiteType::NAME, $website);
-        $handler = new WebsiteHandler(
-            $form,
-            $request,
-            $this->getDoctrine()->getManagerForClass(ClassUtils::getClass($website))
-        );
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $website,
-            $form,
+            $this->createForm(WebsiteType::NAME, $website),
             function (Website $website) {
                 return [
                     'route' => 'orob2b_website_update',
@@ -142,8 +126,7 @@ class WebsiteController extends Controller
                     'parameters' => ['id' => $website->getId()]
                 ];
             },
-            $this->get('translator')->trans('orob2b.website.controller.website.saved.message'),
-            $handler
+            $this->get('translator')->trans('orob2b.website.controller.website.saved.message')
         );
     }
 }
