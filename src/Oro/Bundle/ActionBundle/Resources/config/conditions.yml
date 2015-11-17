@@ -109,11 +109,3 @@ services:
         class: Oro\Component\ConfigExpression\Condition\LessThanOrEqual
         tags:
             - { name: oro_action.condition, alias: lte|le|less_or_equal }
-
-#    oro_action.expression.acl_granted:
-#        class: Oro\Bundle\SecurityBundle\ConfigExpression\AclGranted
-#        arguments:
-#            - @oro_security.security_facade
-#            - @doctrine
-#        tags:
-#            - { name: oro_action.condition, alias: acl|acl_granted }
