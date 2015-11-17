@@ -464,7 +464,9 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
      */
     public function validatePaymentDueDate(ExecutionContextInterface $context)
     {
-        if ($this->getPaymentDueDate()->getTimestamp() < $this->getInvoiceDate()->getTimestamp()) {
+        if ((!$this->getPaymentDueDate() instanceof \DateTime || !$this->getInvoiceDate() instanceof \DateTime) ||
+            ($this->getPaymentDueDate()->getTimestamp() < $this->getInvoiceDate()->getTimestamp())
+        ) {
             $context
                 ->buildViolation('orob2b.invoice.validation.payment_due_date_error.label')
                 ->atPath('paymentDueDate')

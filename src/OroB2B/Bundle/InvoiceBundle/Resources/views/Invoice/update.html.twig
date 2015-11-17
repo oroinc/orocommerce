@@ -75,12 +75,15 @@
         </div>
     {% endset %}
 
-    {% set invoiceDatesWidgets %}
+    {% set invoiceFieldsWidgets %}
         <div>
             {{ form_row(form.invoiceDate) }}
         </div>
         <div>
             {{ form_row(form.paymentDueDate) }}
+
+        </div><div>
+            {{ form_row(form.poNumber) }}
 
         </div>
     {% endset %}
@@ -92,7 +95,7 @@
             'subblocks': [{
                 'data': [
                     ownerSelectors,
-                    invoiceDatesWidgets,
+                    invoiceFieldsWidgets,
                     UI.renderProperty('orob2b.invoice.currency.label'|trans, entity.currency)
                 ]
             }]

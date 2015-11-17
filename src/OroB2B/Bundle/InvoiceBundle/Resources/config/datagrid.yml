@@ -12,6 +12,7 @@ datagrid:
                     - invoice.currency
                     - invoice.createdAt
                     - invoice.updatedAt
+                    - invoice.poNumber
                     - CONCAT(invoice_owner.firstName, ' ', invoice_owner.lastName) as owner
                     - CONCAT(accountUser.firstName, ' ', accountUser.lastName) as accountUserName
                     - account.name as accountName
@@ -37,6 +38,8 @@ datagrid:
                 frontend_type: date
             currency:
                 label:         orob2b.invoice.currency.label
+            poNumber:
+                label:         orob2b.invoice.po_number.label
             owner:
                 label:         orob2b.invoice.owner.label
             createdAt:
@@ -84,6 +87,9 @@ datagrid:
                 invoiceDate:
                     type:      date
                     data_name: invoice.invoiceDate
+                poNumber:
+                    type:      string
+                    data_name: invoice.poNumber
                 paymentDueDate:
                     type:      date
                     data_name: invoice.paymentDueDate
