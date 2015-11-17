@@ -41,8 +41,13 @@ define(function(require) {
             }
             this.initializeUnitLoader(unitLoaderOptions);
 
+            var additionalParameters = this.$el.find('.order-line-item-type-product input.select2')
+                .data('select2_query_additional_params');
+
+            additionalParameters = _.extend(additionalParameters, currencyRouteParameter);
+
             this.$el.find('.order-line-item-type-product input.select2')
-                .data('select2_query_additional_params', currencyRouteParameter);
+                .data('select2_query_additional_params', additionalParameters);
         },
 
         /**

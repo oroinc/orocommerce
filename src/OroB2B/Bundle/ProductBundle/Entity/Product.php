@@ -20,6 +20,7 @@ use OroB2B\Bundle\ProductBundle\Model\ExtendProduct;
  * @ORM\Table(
  *      name="orob2b_product",
  *      indexes={
+ *          @ORM\Index(name="idx_orob2b_product_sku", columns={"sku"}),
  *          @ORM\Index(name="idx_orob2b_product_created_at", columns={"created_at"}),
  *          @ORM\Index(name="idx_orob2b_product_updated_at", columns={"updated_at"})
  *      }
@@ -70,6 +71,13 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
      */
     protected $id;
 
@@ -83,7 +91,8 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *              "auditable"=true
      *          },
      *          "importexport"={
-     *              "identity"=true
+     *              "identity"=true,
+     *              "order"=10
      *          }
      *      }
      * )
@@ -98,6 +107,10 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=60,
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -112,6 +125,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=20
      *          }
      *      }
      *  )
@@ -126,6 +142,10 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=70,
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -140,6 +160,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *      defaultValues={
      *          "entity"={
      *              "label"="oro.ui.created_at"
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -154,6 +177,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *      defaultValues={
      *          "entity"={
      *              "label"="oro.ui.updated_at"
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -169,6 +195,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -184,6 +213,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -198,6 +230,10 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=30,
+     *              "full"=true
      *          }
      *      }
      * )
@@ -221,6 +257,15 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
      *      }
      * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=40,
+     *              "full"=true,
+     *              "fallback_field"="string"
+     *          }
+     *      }
+     * )
      */
     protected $names;
 
@@ -241,6 +286,15 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
      *      }
      * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=50,
+     *              "full"=true,
+     *              "fallback_field"="text"
+     *          }
+     *      }
+     * )
      */
     protected $descriptions;
 
@@ -248,6 +302,15 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @var Collection|ProductVariantLink[]
      *
      * @ORM\OneToMany(targetEntity="ProductVariantLink", mappedBy="parentProduct", cascade={"ALL"}, orphanRemoval=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=80,
+     *              "full"=false,
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
      */
     protected $variantLinks;
 
@@ -265,12 +328,24 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     }
 
     /**
+     * @return array
+     */
+    public static function getStatuses()
+    {
+        return [self::STATUS_ENABLED, self::STATUS_DISABLED];
+    }
+
+    /**
      * @return string
      */
     public function __toString()
     {
         try {
-            return (string)$this->getDefaultName()->getString();
+            if ($this->getDefaultName()) {
+                return (string)$this->getDefaultName()->__toString();
+            } else {
+                return (string)$this->sku;
+            }
         } catch (\LogicException $e) {
             return (string)$this->sku;
         }
@@ -445,9 +520,8 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      */
     public function addUnitPrecision(ProductUnitPrecision $unitPrecision)
     {
-        $existingUnitPrecision = $this->getUnitPrecision($unitPrecision->getUnit()->getCode());
-
-        if ($existingUnitPrecision) {
+        $productUnit = $unitPrecision->getUnit();
+        if ($productUnit && $existingUnitPrecision = $this->getUnitPrecision($productUnit->getCode())) {
             $existingUnitPrecision->setPrecision($unitPrecision->getPrecision());
         } else {
             $unitPrecision->setProduct($this);
@@ -555,7 +629,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     }
 
     /**
-     * @return LocalizedFallbackValue
+     * @return null|LocalizedFallbackValue
      * @throws \LogicException
      */
     public function getDefaultName()
@@ -564,11 +638,13 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
             return null === $name->getLocale();
         });
 
-        if ($names->count() !== 1) {
+        if ($names->count() > 1) {
             throw new \LogicException('There must be only one default name');
+        } elseif ($names->count() === 1) {
+            return $names->first();
         }
 
-        return $names->first();
+        return null;
     }
 
     /**

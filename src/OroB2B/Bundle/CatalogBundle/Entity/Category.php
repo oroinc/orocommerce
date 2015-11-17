@@ -38,6 +38,8 @@ use OroB2B\Component\Tree\Entity\TreeTrait;
  *      }
  * )
  * @ORM\HasLifecycleCallbacks()
+ *
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class Category
 {
@@ -141,15 +143,57 @@ class Category
     protected $products;
 
     /**
-     * {@inheritdoc}
+     * @var Collection|LocalizedFallbackValue[]
+     *
+     * @ORM\ManyToMany(
+     *      targetEntity="OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     * @ORM\JoinTable(
+     *      name="orob2b_catalog_cat_short_desc",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *      }
+     * )
+     */
+    protected $shortDescriptions;
+
+    /**
+     * @var Collection|LocalizedFallbackValue[]
+     *
+     * @ORM\ManyToMany(
+     *      targetEntity="OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     * @ORM\JoinTable(
+     *      name="orob2b_catalog_cat_long_desc",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *      }
+     * )
+     */
+    protected $longDescriptions;
+
+    /**
+     * Constructor
      */
     public function __construct()
     {
-        $this->titles          = new ArrayCollection();
-        $this->childCategories = new ArrayCollection();
-        $this->products        = new ArrayCollection();
-        $this->createdAt       = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->updatedAt       = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->titles            = new ArrayCollection();
+        $this->childCategories   = new ArrayCollection();
+        $this->products          = new ArrayCollection();
+        $this->shortDescriptions = new ArrayCollection();
+        $this->longDescriptions  = new ArrayCollection();
+        $this->createdAt         = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->updatedAt         = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 
     /**
@@ -359,5 +403,109 @@ class Category
     public function __toString()
     {
         return (string) $this->getDefaultTitle()->getString();
+    }
+
+    /**
+     * @return Collection|LocalizedFallbackValue[]
+     */
+    public function getShortDescriptions()
+    {
+        return $this->shortDescriptions;
+    }
+
+    /**
+     * @param LocalizedFallbackValue $shortDescription
+     *
+     * @return $this
+     */
+    public function addShortDescription(LocalizedFallbackValue $shortDescription)
+    {
+        if (!$this->shortDescriptions->contains($shortDescription)) {
+            $this->shortDescriptions->add($shortDescription);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param LocalizedFallbackValue $shortDescription
+     *
+     * @return $this
+     */
+    public function removeShortDescription(LocalizedFallbackValue $shortDescription)
+    {
+        if ($this->shortDescriptions->contains($shortDescription)) {
+            $this->shortDescriptions->removeElement($shortDescription);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return LocalizedFallbackValue
+     */
+    public function getDefaultShortDescription()
+    {
+        $shortDescription = $this->shortDescriptions->filter(function (LocalizedFallbackValue $shortDescription) {
+            return null === $shortDescription->getLocale();
+        });
+
+        if ($shortDescription->count() !== 1) {
+            throw new \LogicException('There must be only one default short description');
+        }
+
+        return $shortDescription->first();
+    }
+
+    /**
+     * @return Collection|LocalizedFallbackValue[]
+     */
+    public function getLongDescriptions()
+    {
+        return $this->longDescriptions;
+    }
+
+    /**
+     * @param LocalizedFallbackValue $longDescription
+     *
+     * @return $this
+     */
+    public function addLongDescription(LocalizedFallbackValue $longDescription)
+    {
+        if (!$this->longDescriptions->contains($longDescription)) {
+            $this->longDescriptions->add($longDescription);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param LocalizedFallbackValue $longDescription
+     *
+     * @return $this
+     */
+    public function removeLongDescription(LocalizedFallbackValue $longDescription)
+    {
+        if ($this->longDescriptions->contains($longDescription)) {
+            $this->longDescriptions->removeElement($longDescription);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return LocalizedFallbackValue
+     */
+    public function getDefaultLongDescription()
+    {
+        $longDescription = $this->longDescriptions->filter(function (LocalizedFallbackValue $longDescription) {
+            return null === $longDescription->getLocale();
+        });
+
+        if ($longDescription->count() != 1) {
+            throw new \LogicException('There must be only one default long description');
+        }
+
+        return $longDescription->first();
     }
 }

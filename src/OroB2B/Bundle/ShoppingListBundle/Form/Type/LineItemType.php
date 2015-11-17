@@ -41,6 +41,9 @@ class LineItemType extends AbstractType
                     'label' => 'orob2b.shoppinglist.lineitem.product.label',
                     'create_enabled' => false,
                     'disabled' => $isExisting,
+                    'data_parameters' => [
+                        'scope' => 'shopping_list'
+                    ]
                 ]
             )
             ->add(
