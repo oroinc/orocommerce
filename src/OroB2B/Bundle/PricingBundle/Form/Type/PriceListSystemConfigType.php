@@ -2,10 +2,11 @@
 
 namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
-use OroB2B\Bundle\PricingBundle\Model\PriceListConfig;
+use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfig;
+use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigBag;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class PriceListSystemConfigType extends AbstractType
@@ -18,16 +19,16 @@ class PriceListSystemConfigType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('priceList', PriceListSelectWithPriorityType::NAME, []);
-//            ->add('priceLists', 'oro_collection', [
-//                'label' => false,
-//                'type' => PriceListSelectWithPriorityType::NAME,
-//                'options' => [
-//                    'error_bubbling' => false,
-//                ],
-//                'handle_primary' => false,
-//                'allow_add_after' => true,
-//            ]);
+            ->add('configs', 'oro_collection', [
+                'label' => false,
+                'type' => PriceListSelectWithPriorityType::NAME,
+                'options' => [
+                    'data_class' => PriceListConfig::CLASS_NAME,
+                    'error_bubbling' => false,
+                ],
+                'handle_primary' => false,
+                'allow_add_after' => true,
+            ]);
     }
 
     /**
@@ -37,6 +38,8 @@ class PriceListSystemConfigType extends AbstractType
     {
         $options->setDefaults([
             'label' => false,
+            'data_class' => PriceListConfigBag::CLASS_NAME,
+            'error_bubbling' => false
         ]);
     }
 

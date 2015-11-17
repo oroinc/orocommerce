@@ -2,48 +2,59 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
+use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigBag;
+use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigConverterInterface;
+use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
 
 class PriceListSystemConfigSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var Registry
+     * @var PriceListConfigConverterInterface
      */
-    private $doctrine;
-
-    /**
-     * @var string
-     */
-    private $priceListClassName;
-
-    /**
-     * @var string
-     */
-    private $managerForPriceList;
+    private $converter;
 
     /**
      * PriceListSystemConfigSubscriber constructor.
-     * @param Registry $doctrine
-     * @param string $priceListClassName
+     * @param PriceListConfigConverterInterface $converter
      */
-    public function __construct(Registry $doctrine, $priceListClassName)
+    public function __construct(PriceListConfigConverterInterface $converter)
     {
-        $this->doctrine = $doctrine;
+        $this->converter = $converter;
     }
 
 
-    public function serializeConfigCollection(ConfigSettingsUpdateEvent $event)
+    /**
+     * @param ConfigSettingsUpdateEvent $event
+     * @return PriceListConfigBag
+     */
+    public function formPreSet(ConfigSettingsUpdateEvent $event)
     {
-        return $event;
+        $settingKey = $this->getSettingsKey(ConfigManager::SECTION_VIEW_SEPARATOR);
+        $settings = $event->getSettings();
+        if (is_array($settings) && array_key_exists($settingKey, $settings)) {
+            $settings[$settingKey]['value'] = $this->converter->convertFromSaved($settings[$settingKey]['value']);
+            $event->setSettings($settings);
+        }
     }
 
-    public function unserializeConfigCollection(ConfigSettingsUpdateEvent $event)
+    /**
+     * @param ConfigSettingsUpdateEvent $event
+     */
+    public function beforeSave(ConfigSettingsUpdateEvent $event)
     {
-        return $event;
+        $settingsKey = $this->getSettingsKey(ConfigManager::SECTION_MODEL_SEPARATOR);
+        $settings = $event->getSettings();
+        if (is_array($settings) && array_key_exists($settingsKey, $settings)) {
+            $configs = $settings[$settingsKey]['value'];
+            $settings[$settingsKey]['value'] = $this->converter->convertBeforeSave($configs);
+            $event->setSettings($settings);
+        }
     }
 
     /**
@@ -52,27 +63,22 @@ class PriceListSystemConfigSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            ConfigSettingsUpdateEvent::FORM_PRESET => 'unserializeConfigCollection',
-            ConfigSettingsUpdateEvent::BEFORE_SAVE => 'serializeConfigCollection'
+            ConfigSettingsUpdateEvent::FORM_PRESET => 'formPreSet',
+            ConfigSettingsUpdateEvent::BEFORE_SAVE => 'beforeSave'
         ];
     }
 
     /**
-     * @return \Doctrine\Common\Persistence\ObjectManager|null|object
+     * @param string $separator
+     * @return string
      */
-    private function getManagerForPriceList()
+    protected function getSettingsKey($separator)
     {
-        if (!$this->managerForPriceList) {
-            $manager = $this->doctrine->getManagerForClass($this->priceListClassName);
+        $settingsKey = implode($separator, [
+            OroB2BPricingExtension::ALIAS,
+            Configuration::DEFAULT_PRICE_LISTS
+        ]);
 
-            if (!$manager) {
-                throw new \InvalidArgumentException(
-                    sprintf('Entity Manager for class %s doesn\'t exist.', $this->priceListClassName)
-                );
-            }
-            $this->managerForPriceList = $manager;
-        }
-
-        return $this->managerForPriceList;
+        return $settingsKey;
     }
 }

@@ -3,7 +3,6 @@ oro_system_configuration:
         price_list_settings:
             title: orob2b.pricing.system_configuration.price_lists
             icon: 'icon-briefcase'
-            page_reload: true
         default_price_lists:
             title: orob2b.pricing.system_configuration.default_price_lists
             icon: 'icon-briefcase'
@@ -14,6 +13,7 @@ oro_system_configuration:
             options:
                 label: orob2b.pricing.system_configuration.price_lists
                 resettable: false
+                attr: { class: default_price_lists }
 
     tree:
         system_configuration:

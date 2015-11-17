@@ -10,6 +10,8 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
+    const DEFAULT_PRICE_LISTS = 'default_price_lists';
+
     /**
      * {@inheritDoc}
      */
@@ -22,7 +24,7 @@ class Configuration implements ConfigurationInterface
         SettingsBuilder::append(
             $rootNode,
             [
-                'default_price_lists' => [ 'type' => 'array', 'value' => []]
+                self::DEFAULT_PRICE_LISTS => [ 'type' => 'array', 'value' => []]
             ]
         );
 
