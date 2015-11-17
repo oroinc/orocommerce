@@ -212,7 +212,6 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             $productUnit = $productUnitPrecisions[rand(0, count($productUnitPrecisions) - 1)]->getUnit();
             $numProductItems = rand(1, 10);
             for ($j = 0; $j < $numProductItems; $j++) {
-
                 $currency = $currencies[rand(0, count($currencies) - 1)];
                 $requestProductItem = new RequestProductItem();
                 $requestProductItem

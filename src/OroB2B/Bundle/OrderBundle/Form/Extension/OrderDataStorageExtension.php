@@ -52,7 +52,6 @@ class OrderDataStorageExtension extends FrontendOrderDataStorageExtension
         }
 
         foreach ($view->offsetGet('lineItems')->children as $rowView) {
-
             /**
              * @var OrderLineItem $lineItem
              */
