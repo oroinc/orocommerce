@@ -49,7 +49,7 @@ Look at the example of simple action configuration that performs some action wit
 actions:
     acme_demo_expire_myentity_action:                       # action name
         extends: entity_action_base                         # parent action if needed
-        replaces:                                           # the list of nodes that should be replaced in the parent action
+        replace:                                            # the list of nodes that should be replaced in the parent action
             - frontend_options
         label: adme.demo.myentity.actions.myentity_action   # label for action button
         enabled: true                                       # is action enabled
@@ -84,5 +84,5 @@ actions:
             ...
 ```
 
-This configuration describes action that relates to the ``MyEntity`` entity; On the View page of
+This configuration describes action that relates to the ``MyEntity`` entity. On the View page of
 this entity (acme_demo_myentity_view ) will be displayed button with label "adme.demo.myentity.actions.myentity_action".
