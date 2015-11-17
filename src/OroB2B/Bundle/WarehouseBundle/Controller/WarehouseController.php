@@ -2,13 +2,10 @@
 
 namespace OroB2B\Bundle\WarehouseBundle\Controller;
 
-use Doctrine\Common\Util\ClassUtils;
-
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
@@ -16,7 +13,6 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
 use OroB2B\Bundle\WarehouseBundle\Form\Type\WarehouseType;
-use OroB2B\Bundle\WarehouseBundle\Form\Handler\WarehouseHandler;
 
 class WarehouseController extends Controller
 {
