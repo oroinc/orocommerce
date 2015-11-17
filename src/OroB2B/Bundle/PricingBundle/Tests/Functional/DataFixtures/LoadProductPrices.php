@@ -127,6 +127,24 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
             'currency' => 'EUR',
             'reference' => 'product_price.12'
         ],
+        [
+            'product' => 'product.2',
+            'priceList' => 'default_price_list',
+            'qty' => 1,
+            'unit' => 'product_unit.bottle',
+            'price' => 17.5,
+            'currency' => 'EUR',
+            'reference' => 'product_price.13'
+        ],
+        [
+            'product' => 'product.3',
+            'priceList' => 'default_price_list',
+            'qty' => 1,
+            'unit' => 'product_unit.bottle',
+            'price' => 20.5,
+            'currency' => 'EUR',
+            'reference' => 'product_price.14'
+        ],
     ];
 
     /**
@@ -137,8 +155,12 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
         foreach ($this->data as $data) {
             /** @var Product $product */
             $product = $this->getReference($data['product']);
-            /** @var PriceList $priceList */
-            $priceList = $this->getReference($data['priceList']);
+            if ($data['priceList'] === 'default_price_list') {
+                $priceList = $manager->getRepository('OroB2BPricingBundle:PriceList')->getDefault();
+            } else {
+                /** @var PriceList $priceList */
+                $priceList = $this->getReference($data['priceList']);
+            }
             /** @var ProductUnit $unit */
             $unit = $this->getReference($data['unit']);
             $price = Price::create($data['price'], $data['currency']);

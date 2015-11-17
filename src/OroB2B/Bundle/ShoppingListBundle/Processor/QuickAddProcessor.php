@@ -12,7 +12,7 @@ use Oro\Bundle\UIBundle\Tools\ArrayUtils;
 
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use OroB2B\Bundle\ProductBundle\Model\ComponentProcessorInterface;
+use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\ShoppingListBundle\Generator\MessageGenerator;
 use OroB2B\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;

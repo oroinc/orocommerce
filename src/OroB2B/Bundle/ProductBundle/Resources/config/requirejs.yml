@@ -4,6 +4,7 @@ config:
         'orob2bproduct/js/app/components/grid-sidebar-component': 'bundles/orob2bproduct/js/app/components/grid-sidebar-component.js'
         'orob2bproduct/js/app/components/product-unit-component': 'bundles/orob2bproduct/js/app/components/product-unit-component.js'
         'orob2bproduct/js/app/components/quick-add-component': 'bundles/orob2bproduct/js/app/components/quick-add-component.js'
+        'orob2bproduct/js/app/components/product-autocomplete-component': 'bundles/orob2bproduct/js/app/components/product-autocomplete-component.js'
         'tinymce/plugins/fullscreen/plugin.min': 'empty:'
 
     shim:
