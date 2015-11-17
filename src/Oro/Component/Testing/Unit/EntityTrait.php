@@ -24,7 +24,7 @@ trait EntityTrait
     {
         $reflectionClass = new \ReflectionClass($className);
 
-        if ($constructorArgs) {
+        if ($reflectionClass->hasMethod('__construct')) {
             $entity = $reflectionClass->newInstance($constructorArgs);
         } else {
             $entity = $reflectionClass->newInstanceWithoutConstructor();

@@ -17,7 +17,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
     {
         $this->initClient();
 
-        if ($this->getContainer()->hasParameter('orob2b_product.product.class')) {
+        if (!$this->getContainer()->hasParameter('orob2b_product.product.class')) {
             $this->markTestSkipped('ProductBundle is missing');
         }
 

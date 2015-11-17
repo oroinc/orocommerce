@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\FallbackBundle\ImportExport\Strategy;
 
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\ImportExportBundle\Strategy\Import\ConfigurableAddOrReplaceStrategy;
 
@@ -31,7 +30,7 @@ class LocalizedFallbackValueAwareStrategy extends ConfigurableAddOrReplaceStrate
             return parent::beforeProcessEntity($entity);
         }
 
-        $fields = $this->fieldHelper->getRelations(ClassUtils::getClass($existingEntity), true);
+        $fields = $this->fieldHelper->getRelations($this->entityName);
         foreach ($fields as $field) {
             if ($this->isLocalizedFallbackValue($field)) {
                 $fieldName = $field['name'];
@@ -50,7 +49,7 @@ class LocalizedFallbackValueAwareStrategy extends ConfigurableAddOrReplaceStrate
      */
     protected function afterProcessEntity($entity)
     {
-        $fields = $this->fieldHelper->getRelations(ClassUtils::getClass($entity), true);
+        $fields = $this->fieldHelper->getRelations($this->entityName);
         foreach ($fields as $field) {
             if ($this->isLocalizedFallbackValue($field)) {
                 $this->setLocaleKeys($entity, $field);
