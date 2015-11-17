@@ -55,14 +55,6 @@ class AccountGroupFormExtensionTest extends AbstractPriceListExtensionTest
     /**
      * {@inheritdoc}
      */
-    protected function getSetterMethodName()
-    {
-        return 'setPriceListToAccountGroup';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function testGetExtendedType()
     {
         $this->assertInternalType('string', $this->getExtension()->getExtendedType());

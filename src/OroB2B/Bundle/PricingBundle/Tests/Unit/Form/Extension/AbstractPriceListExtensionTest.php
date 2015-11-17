@@ -141,10 +141,6 @@ abstract class AbstractPriceListExtensionTest extends \PHPUnit_Framework_TestCas
         $event->expects($this->any())->method('getForm')->willReturn($rootForm);
 
         if ($expects && $isFormValid) {
-            $this->repository->expects($this->once())
-                ->method($this->getSetterMethodName())
-                ->with($formData, $priceList);
-
             $priceListFrom = $this->getMock('Symfony\Component\Form\FormInterface');
             $priceListFrom->expects($this->once())->method('getData')->willReturn($priceList);
 
@@ -190,11 +186,6 @@ abstract class AbstractPriceListExtensionTest extends \PHPUnit_Framework_TestCas
      * @return string
      */
     abstract protected function getGetterMethodName();
-
-    /**
-     * @return string
-     */
-    abstract protected function getSetterMethodName();
 
     /**
      * getExtendedType method test case

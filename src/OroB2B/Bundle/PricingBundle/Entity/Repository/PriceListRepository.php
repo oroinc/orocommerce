@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
@@ -66,32 +67,17 @@ class PriceListRepository extends EntityRepository
     public function getPriceListByAccount(Account $account)
     {
         return $this->createQueryBuilder('priceList')
-            ->innerJoin('priceList.accounts', 'account')
+            ->innerJoin(
+                'OroB2BPricingBundle:PriceListToAccount',
+                'priceListToAccount',
+                Join::WITH,
+                'priceListToAccount.priceList = priceList'
+            )
+            ->innerJoin('priceListToAccount.account', 'account')
             ->andWhere('account = :account')
             ->setParameter('account', $account)
             ->getQuery()
             ->getOneOrNullResult();
-    }
-
-    /**
-     * @param Account $account
-     * @param PriceList $priceList
-     */
-    public function setPriceListToAccount(Account $account, PriceList $priceList = null)
-    {
-        $oldPriceList = $this->getPriceListByAccount($account);
-
-        if ($oldPriceList && $priceList && $oldPriceList->getId() === $priceList->getId()) {
-            return;
-        }
-
-        if ($oldPriceList) {
-            $oldPriceList->removeAccount($account);
-        }
-
-        if ($priceList) {
-            $priceList->addAccount($account);
-        }
     }
 
     /**
@@ -101,32 +87,17 @@ class PriceListRepository extends EntityRepository
     public function getPriceListByAccountGroup(AccountGroup $accountGroup)
     {
         return $this->createQueryBuilder('priceList')
-            ->innerJoin('priceList.accountGroups', 'accountGroup')
+            ->innerJoin(
+                'OroB2BPricingBundle:PriceListToAccountGroup',
+                'priceListToAccountGroup',
+                Join::WITH,
+                'priceListToAccountGroup.priceList = priceList'
+            )
+            ->innerJoin('priceListToAccountGroup.accountGroup', 'accountGroup')
             ->andWhere('accountGroup = :accountGroup')
             ->setParameter('accountGroup', $accountGroup)
             ->getQuery()
             ->getOneOrNullResult();
-    }
-
-    /**
-     * @param AccountGroup $accountGroup
-     * @param PriceList $priceList
-     */
-    public function setPriceListToAccountGroup(AccountGroup $accountGroup, PriceList $priceList = null)
-    {
-        $oldPriceList = $this->getPriceListByAccountGroup($accountGroup);
-
-        if ($oldPriceList && $priceList && $oldPriceList->getId() === $priceList->getId()) {
-            return;
-        }
-
-        if ($oldPriceList) {
-            $oldPriceList->removeAccountGroup($accountGroup);
-        }
-
-        if ($priceList) {
-            $priceList->addAccountGroup($accountGroup);
-        }
     }
 
     /**
@@ -136,31 +107,16 @@ class PriceListRepository extends EntityRepository
     public function getPriceListByWebsite(Website $website)
     {
         return $this->createQueryBuilder('priceList')
-            ->innerJoin('priceList.websites', 'website')
+            ->innerJoin(
+                'OroB2BPricingBundle:PriceListToWebsite',
+                'priceListToWebsite',
+                Join::WITH,
+                'priceListToWebsite.priceList = priceList'
+            )
+            ->innerJoin('priceListToWebsite.website', 'website')
             ->andWhere('website = :website')
             ->setParameter('website', $website)
             ->getQuery()
             ->getOneOrNullResult();
-    }
-
-    /**
-     * @param Website $website
-     * @param PriceList $priceList
-     */
-    public function setPriceListToWebsite(Website $website, PriceList $priceList = null)
-    {
-        $oldPriceList = $this->getPriceListByWebsite($website);
-
-        if ($oldPriceList && $priceList && $oldPriceList->getId() === $priceList->getId()) {
-            return;
-        }
-
-        if ($oldPriceList) {
-            $oldPriceList->removeWebsite($website);
-        }
-
-        if ($priceList) {
-            $priceList->addWebsite($website);
-        }
     }
 }
