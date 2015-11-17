@@ -252,7 +252,7 @@ class RequestControllerTest extends WebTestCase
      */
     private function getFormatDate($format)
     {
-        $dateObj = new \DateTime();
+        $dateObj = new \DateTime('now', new \DateTimeZone('UTC'));
         $date = $dateObj->format($format);
 
         return $date;
