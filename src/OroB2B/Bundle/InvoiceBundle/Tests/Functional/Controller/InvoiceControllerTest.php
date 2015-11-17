@@ -57,16 +57,13 @@ class InvoiceControllerTest extends WebTestCase
     public function testCreate()
     {
         $today = (new \DateTime('now'))->format('Y-m-d');
-        $doctrine = $this->getContainer()->get('doctrine');
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_invoice_create'));
         $result  = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save')->form();
-
-        /** @var Account $account*/
-        $account = $doctrine->getRepository('OroB2BAccountBundle:Account')->findOneBy([]);
+        $account = $this->getAccount();
 
         /** @var Product $product */
         $product = $this->getReference('product.1');
@@ -145,14 +142,12 @@ class InvoiceControllerTest extends WebTestCase
     public function testUpdateLineItems($id)
     {
         $today = (new \DateTime('now'))->format('Y-m-d');
-        $doctrine = $this->getContainer()->get('doctrine');
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_invoice_update', ['id' => $id]));
 
         $result  = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        /** @var Account $account*/
-        $account = $doctrine->getRepository('OroB2BAccountBundle:Account')->findOneBy([]);
+        $account = $this->getAccount();
 
         /** @var Product $product */
         $product = $this->getReference('product.2');
@@ -199,13 +194,11 @@ class InvoiceControllerTest extends WebTestCase
 
         // Submit form
         $result = $this->client->getResponse();
-        $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
+        $crawler = $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         // Check updated line items
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_invoice_update', ['id' => $id]));
-
         $actualLineItems = $this->getActualLineItems($crawler, count($lineItems));
 
         $expectedLineItems = [
@@ -298,5 +291,15 @@ class InvoiceControllerTest extends WebTestCase
         }
 
         return $result;
+    }
+
+    /**
+     * @return Account
+     */
+    protected function getAccount()
+    {
+        $doctrine = $this->getContainer()->get('doctrine');
+
+        return $doctrine->getRepository('OroB2BAccountBundle:Account')->findOneBy([]);
     }
 }
