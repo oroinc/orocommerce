@@ -7,9 +7,11 @@
 
 {% block navButtons %}
     {% if resource_granted('orob2b_account_frontend_account_user_role_create') %}
-        {{ UI.addButton({
-            'path': path('orob2b_account_frontend_account_user_role_create'),
-            'entity_label': 'orob2b.account.accountuserrole.entity_label'|trans
-        }) }}
+        <div class="btn-group">
+            {{ UI.addButton({
+                'path': path('orob2b_account_frontend_account_user_role_create'),
+                'entity_label': 'orob2b.account.accountuserrole.entity_label'|trans
+            }) }}
+        </div>
     {% endif %}
 {% endblock %}

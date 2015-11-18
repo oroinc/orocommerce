@@ -31,7 +31,8 @@ class QuickAddType extends AbstractType
                     ],
                     'error_bubbling' => true,
                     'constraints' => [new NotBlank(['message' => 'orob2b.product.at_least_one_item'])],
-                    'add_label' => 'orob2b.product.form.add_row'
+                    'add_label' => 'orob2b.product.form.add_row',
+                    'products' => $options['products'],
                 ]
             )
             ->add(
@@ -51,10 +52,12 @@ class QuickAddType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'validation_required' => false
+                'validation_required' => false,
+                'products' => null,
             ]
         );
         $resolver->setAllowedTypes('validation_required', 'bool');
+        $resolver->setAllowedTypes('products', ['array', 'null']);
     }
 
     /**

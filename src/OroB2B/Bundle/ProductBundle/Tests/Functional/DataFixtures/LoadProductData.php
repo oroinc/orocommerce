@@ -23,6 +23,7 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
     const PRODUCT_2 = 'product.2';
     const PRODUCT_3 = 'product.3';
     const PRODUCT_4 = 'product.4';
+    const PRODUCT_5 = 'product.5';
 
     /**
      * {@inheritdoc}

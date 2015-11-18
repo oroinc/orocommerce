@@ -46,6 +46,6 @@ class RestrictedProductsDatagridEventListener
         if (!$request || !$params = $request->get(ProductSelectType::DATA_PARAMETERS)) {
             $params = [];
         }
-        $this->productManager->restrictQueryBuilderByProductVisibility($queryBuilder, $params);
+        $this->productManager->restrictQueryBuilder($queryBuilder, $params);
     }
 }

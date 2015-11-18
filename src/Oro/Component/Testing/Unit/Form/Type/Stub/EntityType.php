@@ -15,13 +15,18 @@ class EntityType extends AbstractType
     /** @var string */
     protected $name;
 
+    /** @var array|null */
+    protected $options;
+
     /**
      * @param array $choices
      * @param string $name
+     * @param array $options
      */
-    public function __construct(array $choices, $name = 'entity')
+    public function __construct(array $choices, $name = 'entity', array $options = null)
     {
         $this->name = $name;
+        $this->options = $options;
 
         $keys = array_map('strval', array_keys($choices));
         $values = array_values($choices);
@@ -51,9 +56,18 @@ class EntityType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(
-            ['choice_list' => $this->choiceList, 'query_builder' => null, 'create_enabled' => false, 'class' => null]
-        );
+        $defaultOptions = [
+            'choice_list' => $this->choiceList,
+            'query_builder' => null,
+            'create_enabled' => false,
+            'class' => null
+        ];
+
+        if ($this->options) {
+            $defaultOptions = array_merge($defaultOptions, $this->options);
+        }
+
+        $resolver->setDefaults($defaultOptions);
     }
 
     /**

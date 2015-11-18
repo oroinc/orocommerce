@@ -28,3 +28,7 @@ product4:
     productCode: product.4
     inventoryStatus: discontinued
     status: enabled
+product5:
+    productCode: product.5
+    inventoryStatus: in_stock
+    status: disabled
