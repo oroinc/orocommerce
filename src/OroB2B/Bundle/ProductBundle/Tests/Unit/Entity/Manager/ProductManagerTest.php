@@ -24,7 +24,7 @@ class ProductManagerTest extends \PHPUnit_Framework_TestCase
         $this->productManager = new ProductManager($this->eventDispatcher);
     }
 
-    public function testRestrictQueryBuilderByProductVisibility()
+    public function testRestrictQueryBuilder()
     {
         /** @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject $qb */
         $qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')->disableOriginalConstructor()->getMock();
@@ -37,6 +37,6 @@ class ProductManagerTest extends \PHPUnit_Framework_TestCase
                 new ProductSelectDBQueryEvent($qb, new ParameterBag($params))
             );
 
-        $this->productManager->restrictQueryBuilderByProductVisibility($qb, $params);
+        $this->productManager->restrictQueryBuilder($qb, $params);
     }
 }

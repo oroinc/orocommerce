@@ -127,4 +127,113 @@ class AbstractProductAwareTypeTest extends FormIntegrationTestCase
 
         $this->assertEquals($product, $this->formType->getProduct($child));
     }
+
+    /**
+     * @param array $options
+     * @param Product|null $product
+     * @param bool $useParentView
+     *
+     * @dataProvider getProductFromViewDataProvider
+     */
+    public function testGetProductFromView(array $options, Product $product = null, $useParentView = false)
+    {
+        $form = $this->factory->createNamed(
+            AbstractProductAwareTypeStub::NAME,
+            AbstractProductAwareTypeStub::NAME,
+            null,
+            $options
+        );
+
+        $parentView = null;
+        if ($useParentView) {
+            $parentView = $this->factory->createNamed(
+                AbstractProductAwareTypeStub::NAME,
+                AbstractProductAwareTypeStub::NAME
+            )->createView();
+            $parentView->vars['product'] = $product;
+        }
+
+        $view = $form->createView();
+        $view->vars['product'] = $form->getConfig()->getOption('product');
+        $view->parent = $parentView;
+
+        $this->assertEquals($product, $this->formType->getProductFromView($view));
+    }
+
+    /**
+     * @return array
+     */
+    public function getProductFromViewDataProvider()
+    {
+        $product = new Product();
+
+        return [
+            'without product' => [
+                'options' => [],
+                'product' => null,
+                'useParentView' => false,
+            ],
+            'with product' => [
+                'options' => ['product' => $product],
+                'product' => $product,
+                'useParentView' => false,
+            ],
+            'with parentView' => [
+                'options' => [],
+                'product' => $product,
+                'useParentView' => true,
+            ],
+        ];
+    }
+
+    /**
+     * @param Product|null $formProduct
+     * @param Product|null $viewProduct
+     * @param Product|null $product
+     *
+     * @dataProvider getProductFromFormOrViewDataProvider
+     */
+    public function testGetProductFromFormOrView(
+        Product $formProduct = null,
+        Product $viewProduct = null,
+        Product $product = null
+    ) {
+        $form = $this->factory->createNamed(
+            AbstractProductAwareTypeStub::NAME,
+            AbstractProductAwareTypeStub::NAME,
+            null,
+            ['product' => $formProduct]
+        );
+
+        $view = $form->createView();
+        $view->vars['product'] = $viewProduct;
+
+        $this->assertEquals($product, $this->formType->getProductFromFormOrView($form, $view));
+    }
+
+    /**
+     * @return array
+     */
+    public function getProductFromFormOrViewDataProvider()
+    {
+        $product = new Product();
+
+        return [
+            'without product' => [
+                'formProduct' => null,
+                'viewProduct' => null,
+                'product' => null,
+            ],
+            'form with product' => [
+                'formProduct' => $product,
+                'viewProduct' => null,
+                'product' => $product,
+            ],
+            'view with product' => [
+                'formProduct' => null,
+                'viewProduct' => $product,
+                'product' => $product,
+            ],
+        ];
+    }
 }
