@@ -50,25 +50,17 @@ class ConditionPassTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        $definitionMap = [
-            ConditionPass::EXTENSION_SERVICE_ID => $extensionDefinition,
-            'condition.definition.first' => $this->createServiceDefinition(),
-            'condition.definition.second' => $this->createServiceDefinition()
-        ];
-
         $this->container->expects($this->once())
             ->method('hasDefinition')
             ->with(ConditionPass::EXTENSION_SERVICE_ID)
             ->willReturn(true);
         $this->container->expects($this->any())
             ->method('getDefinition')
-            ->will(
-                $this->returnCallback(
-                    function ($serviceId) use ($definitionMap) {
-                        return isset($definitionMap[$serviceId]) ? $definitionMap[$serviceId] : null;
-                    }
-                )
-            );
+            ->will($this->returnValueMap([
+                [ConditionPass::EXTENSION_SERVICE_ID, $extensionDefinition],
+                ['condition.definition.first', $this->createServiceDefinition()],
+                ['condition.definition.second', $this->createServiceDefinition()],
+            ]));
         $this->container->expects($this->once())
             ->method('findTaggedServiceIds')
             ->with(ConditionPass::EXPRESSION_TAG)
@@ -81,6 +73,21 @@ class ConditionPassTest extends \PHPUnit_Framework_TestCase
 
         $compilerPass = new ConditionPass();
         $compilerPass->process($this->container);
+    }
+
+    public function testProcessWithoutConfigurationProvider()
+    {
+        $this->container->expects($this->once())
+            ->method('hasDefinition')
+            ->with(ConditionPass::EXTENSION_SERVICE_ID)
+            ->willReturn(false);
+        $this->container->expects($this->never())
+            ->method('getDefinition')
+            ->with($this->anything());
+        $this->container->expects($this->never())
+            ->method('findTaggedServiceIds');
+
+        $this->compilerPass->process($this->container);
     }
 
     /**
@@ -99,20 +106,5 @@ class ConditionPassTest extends \PHPUnit_Framework_TestCase
             ->willReturn($definition);
 
         return $definition;
-    }
-
-    public function testProcessWithoutConfigurationProvider()
-    {
-        $this->container->expects($this->once())
-            ->method('hasDefinition')
-            ->with(ConditionPass::EXTENSION_SERVICE_ID)
-            ->willReturn(false);
-        $this->container->expects($this->never())
-            ->method('getDefinition')
-            ->with($this->anything());
-        $this->container->expects($this->never())
-            ->method('findTaggedServiceIds');
-
-        $this->compilerPass->process($this->container);
     }
 }

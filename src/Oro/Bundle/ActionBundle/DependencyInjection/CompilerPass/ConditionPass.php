@@ -12,7 +12,7 @@ class ConditionPass implements CompilerPassInterface
     const EXTENSION_SERVICE_ID = 'oro_action.expression.extension';
 
     /**
-     * @param ContainerBuilder $container
+     * {@inheritDoc}
      */
     public function process(ContainerBuilder $container)
     {
