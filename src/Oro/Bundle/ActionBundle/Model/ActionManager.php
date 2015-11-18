@@ -169,7 +169,13 @@ class ActionManager
     {
         $entityClass = $this->doctrineHelper->getEntityClass($entityName);
 
-        return class_exists($entityClass, true) ? $entityClass : false;
+        if (!class_exists($entityClass, true)) {
+            return false;
+        }
+
+        $reflection = new \ReflectionClass($entityClass);
+
+        return $reflection->getName();
     }
 
     /**
