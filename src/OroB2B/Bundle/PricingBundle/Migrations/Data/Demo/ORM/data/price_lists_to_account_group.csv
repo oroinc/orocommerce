@@ -1,0 +1,31 @@
+accountGroup,priceList,website,priority
+All Customers,Wholesale Price List,US,100
+All Customers,Partner C Custom Price List,US,200
+All Customers,Wholesale Price List,Australia,100
+All Customers,Partner C Custom Price List,Australia,200
+All Customers,Wholesale Price List,Canada,100
+All Customers,Partner C Custom Price List,Canada,200
+All Customers,Partner C Custom Price List,Mexico,100
+All Customers,Wholesale Price List,Mexico,200
+All Customers,Wholesale Price List,Europe,100
+All Customers,Partner C Custom Price List,Europe,200
+Wholesale Accounts,Partner C Custom Price List,US,100
+Wholesale Accounts,Wholesale Price List,US,200
+Wholesale Accounts,Partner C Custom Price List,Australia,100
+Wholesale Accounts,Wholesale Price List,Australia,200
+Wholesale Accounts,Partner C Custom Price List,Mexico,100
+Wholesale Accounts,Wholesale Price List,Mexico,200
+Wholesale Accounts,Wholesale Price List,Canada,100
+Wholesale Accounts,Partner C Custom Price List,Canada,200
+Wholesale Accounts,Wholesale Price List,Europe,100
+Wholesale Accounts,Partner C Custom Price List,Europe,200
+Partners,Wholesale Price List,US,100
+Partners,Partner C Custom Price List,US,200
+Partners,Wholesale Price List,Australia,100
+Partners,Partner C Custom Price List,Australia,200
+Partners,Partner C Custom Price List,Mexico,100
+Partners,Wholesale Price List,Mexico,200
+Partners,Wholesale Price List,Canada,100
+Partners,Partner C Custom Price List,Canada,200
+Partners,Wholesale Price List,Europe,100
+Partners,Partner C Custom Price List,Europe,200
