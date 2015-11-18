@@ -11,7 +11,7 @@ product1:
 product2:
     productCode: product.2
     inventoryStatus: in_stock
-    status: disabled
+    status: enabled
     names:
         - { reference: product.2.names.default, string: product.2.names.default }
     descriptions:
