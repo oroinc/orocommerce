@@ -8,8 +8,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class WidgetControllerTest extends WebTestCase
 {
-    const ENTITY_CLASS = 'Oro\Bundle\TestFrameworkBundle\Entity\Product';
-
     /** @var FilesystemCache */
     protected $cacheProvider;
 
