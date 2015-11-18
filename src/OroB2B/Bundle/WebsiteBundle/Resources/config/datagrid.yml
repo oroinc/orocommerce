@@ -11,10 +11,11 @@ datagrid:
                 from:
                     - { table: %orob2b_website.website.class%, alias: website }
         columns:
+            id:
+                label:         orob2b.website.id.label
+                renderable:    false
             name:
                 label:         orob2b.website.name.label
-            url:
-                label:         orob2b.website.url.label
             locales:
                 label:         orob2b.website.locales.label
                 type:          twig
@@ -28,10 +29,10 @@ datagrid:
                 frontend_type: datetime
         sorters:
             columns:
+                id:
+                    data_name: website.id
                 name:
                     data_name: website.name
-                url:
-                    data_name: website.url
                 createdAt:
                     data_name: website.createdAt
                 updatedAt:
@@ -43,9 +44,6 @@ datagrid:
                 name:
                     type:      string
                     data_name: website.name
-                url:
-                    type:      string
-                    data_name: website.url
                 createdAt:
                     type:      datetime
                     data_name: website.createdAt

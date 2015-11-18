@@ -31,6 +31,7 @@ class OroB2BWebsiteBundle implements Migration, NoteExtensionAwareInterface
     {
         $this->addIndexForCreateAndUpdateFields($schema);
         $this->addNoteAssociations($schema);
+        $this->allowNullOnUrl($schema);
     }
 
     /**
@@ -50,5 +51,15 @@ class OroB2BWebsiteBundle implements Migration, NoteExtensionAwareInterface
     protected function addNoteAssociations(Schema $schema)
     {
         $this->noteExtension->addNoteAssociation($schema, self::WEBSITE_TABLE_NAME);
+    }
+
+    /**
+     * @param Schema $schema
+     * @throws \Doctrine\DBAL\Schema\SchemaException
+     */
+    protected function allowNullOnUrl(Schema $schema)
+    {
+        $table = $schema->getTable(self::WEBSITE_TABLE_NAME);
+        $table->getColumn('url')->setNotnull(false);
     }
 }
