@@ -233,7 +233,7 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
     protected $quoteProducts;
 
     /**
-     * @var string
+     * @var bool
      *
      * @ORM\Column(type="boolean")
      * @ConfigField(
@@ -245,6 +245,20 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      * )
      */
     protected $locked = false;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(type="boolean")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $expired = false;
 
     /**
      * @var PriceList
