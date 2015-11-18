@@ -13,7 +13,7 @@ services:
             - "data"
 
     oro_action.expression.extension:
-        class: %oro_action.configuration_pass.replace_property_path.class%
+        class: %oro_action.expression.extension.class%
         arguments:
             - @service_container
             - {}
@@ -26,7 +26,7 @@ services:
         arguments:
             - @oro_action.expression.context_accessor
         calls:
-            - [addExtension, [@oro_workflow.expression.extension]]
+            - [addExtension, [@oro_action.expression.extension]]
 
     oro_action.expression.assembler:
         class: %oro_action.expression.assembler.class%
@@ -38,7 +38,7 @@ services:
     oro_action.condition.configurable:
         class: %oro_action.condition.configurable.class%
         arguments:
-            - @oro_action.expression.extension
+            - @oro_action.expression.assembler
         tags:
             - { name: oro_action.condition, alias: configurable }
 
