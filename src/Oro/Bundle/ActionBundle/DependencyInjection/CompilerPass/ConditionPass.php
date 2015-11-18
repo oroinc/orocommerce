@@ -16,26 +16,28 @@ class ConditionPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if ($container->hasDefinition(self::EXTENSION_SERVICE_ID)) {
-            $types = [];
+        if (!$container->hasDefinition(self::EXTENSION_SERVICE_ID)) {
+            return;
+        }
+        
+        $types = [];
 
-            $conditions = $container->findTaggedServiceIds(self::EXPRESSION_TAG);
+        $conditions = $container->findTaggedServiceIds(self::EXPRESSION_TAG);
 
-            foreach ($conditions as $id => $attributes) {
-                $definition = $container->getDefinition($id);
-                $definition->setScope(ContainerInterface::SCOPE_PROTOTYPE)->setPublic(false);
+        foreach ($conditions as $id => $attributes) {
+            $definition = $container->getDefinition($id);
+            $definition->setScope(ContainerInterface::SCOPE_PROTOTYPE)->setPublic(false);
 
-                foreach ($attributes as $eachTag) {
-                    $aliases = empty($eachTag['alias']) ? [$id] : explode('|', $eachTag['alias']);
+            foreach ($attributes as $eachTag) {
+                $aliases = empty($eachTag['alias']) ? [$id] : explode('|', $eachTag['alias']);
 
-                    foreach ($aliases as $alias) {
-                        $types[$alias] = $id;
-                    }
+                foreach ($aliases as $alias) {
+                    $types[$alias] = $id;
                 }
             }
-
-            $extensionDef = $container->getDefinition(self::EXTENSION_SERVICE_ID);
-            $extensionDef->replaceArgument(1, $types);
         }
+
+        $extensionDef = $container->getDefinition(self::EXTENSION_SERVICE_ID);
+        $extensionDef->replaceArgument(1, $types);
     }
 }
