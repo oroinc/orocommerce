@@ -10,6 +10,8 @@ use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType as OroCollectionType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\TranslationBundle\Translation\Translator;
 
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
@@ -88,6 +90,15 @@ class ProductTypeTest extends FormIntegrationTestCase
 
         $stubEnumSelectType = new EnumSelectTypeStub();
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigProvider $configProvider */
+        $configProvider = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Translator $translator */
+        $translator = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Translation\Translator')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         return [
             new PreloadedExtension(
                 [
@@ -113,7 +124,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                 ],
                 [
                     'form' => [
-                        new TooltipFormExtension(),
+                        new TooltipFormExtension($configProvider, $translator),
                         new IntegerExtension()
                     ]
                 ]
