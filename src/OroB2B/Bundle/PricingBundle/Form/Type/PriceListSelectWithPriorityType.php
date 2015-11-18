@@ -4,6 +4,9 @@ namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Zend\Validator\NotEmpty;
 
 class PriceListSelectWithPriorityType extends AbstractType
 {
@@ -35,5 +38,17 @@ class PriceListSelectWithPriorityType extends AbstractType
     public function getName()
     {
         return self::NAME;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(
+            [
+                'allow_extra_fields' => true,
+            ]
+        );
     }
 }

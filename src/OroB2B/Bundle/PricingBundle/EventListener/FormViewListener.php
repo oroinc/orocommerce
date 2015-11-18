@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
-use OroB2B\Bundle\PricingBundle\Entity\AbstractPriceListRelation;
+use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -82,7 +82,7 @@ class FormViewListener
 
     /**
      * @param BeforeListRenderEvent $event
-     * @param AbstractPriceListRelation[] $priceLists
+     * @param BasePriceListRelation[] $priceLists
      */
     protected function addPriceListInfo(BeforeListRenderEvent $event, $priceLists)
     {
@@ -98,7 +98,7 @@ class FormViewListener
     }
 
     /**
-     * @param AbstractPriceListRelation[] $priceLists
+     * @param BasePriceListRelation[] $priceLists
      * @return array
      */
     protected function groupPriceListsByWebsite(array $priceLists)
@@ -144,7 +144,11 @@ class FormViewListener
             'OroB2BPricingBundle:Account:price_list_update.html.twig',
             ['form' => $event->getFormView()]
         );
-        $event->getScrollData()->addSubBlockData(0, 0, $template);
+        $blockLabel = $this->translator->trans('orob2b.pricing.pricelist.entity_plural_label');
+        $scrollData = $event->getScrollData();
+        $blockId = $scrollData->addBlock($blockLabel, 0);
+        $subBlockId = $scrollData->addSubBlock($blockId);
+        $scrollData->addSubBlockData($blockId, $subBlockId, $template);
     }
 
     /**

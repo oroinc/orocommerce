@@ -91,7 +91,6 @@ class AccountController extends Controller
      */
     protected function update(Account $account)
     {
-        $x = $this->createForm(AccountType::NAME, $account);
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $account,
             $this->createForm(AccountType::NAME, $account),

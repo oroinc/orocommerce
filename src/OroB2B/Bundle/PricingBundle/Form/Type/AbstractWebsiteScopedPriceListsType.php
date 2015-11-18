@@ -58,7 +58,6 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
                 'ownership_disabled' => true,
                 'data' => [],
                 'preloaded_websites' => [],
-                'allow_extra_fields' => true,
             ]
         );
     }
@@ -94,7 +93,6 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
 
         foreach ($priceListsByWebsites as $priceListsByWebsite) {
             $website = $priceListsByWebsite->getConfig()->getOption('website');
-
             $actualPriceListsToTargetEntity = $this->getRepository()
                 ->getPriceLists($targetEntity, $website);
 
@@ -176,7 +174,8 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         Website $website,
         array $priceListWithPriorityData,
         array $actualPriceListsToTargetEntity
-    ) {
+    )
+    {
         /** @var PriceList $priceList */
         $priceList = $priceListWithPriorityData['priceList'];
         if (in_array($priceList->getId(), array_keys($actualPriceListsToTargetEntity))) {
