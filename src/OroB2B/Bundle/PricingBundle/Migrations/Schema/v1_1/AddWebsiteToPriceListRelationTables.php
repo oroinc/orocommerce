@@ -131,6 +131,7 @@ class AddWebsiteToPriceListRelationTables implements
     protected function addPriorityToRelationTable(Schema $schema, QueryBag $queries, $tableName, $fieldName)
     {
         $tmpTableName = $this->getTmpTableName($tableName);
+        $this->dropTableForeignKeys($schema, $tableName);
         $this->renameExtension->renameTable($schema, $queries, $tableName, $tmpTableName);
         $this->recreateRelationTableWithPriority($schema, $queries, $tableName, $tmpTableName, $fieldName);
     }
@@ -163,6 +164,21 @@ class AddWebsiteToPriceListRelationTables implements
     protected function createMigratingDataQuery($newTableName, $oldTableName, $fieldName)
     {
         return new InsertSelectPriceListRelationTablesQuery($newTableName, $oldTableName, $fieldName);
+    }
+
+    /**
+     * @param Schema $schema
+     * @param $tableName
+     */
+    protected function dropTableForeignKeys(Schema $schema, $tableName)
+    {
+        $table = $schema->getTable($tableName);
+        foreach (array_keys($table->getForeignKeys()) as $constraintName) {
+            $table->removeForeignKey($constraintName);
+        }
+        foreach (array_diff(array_keys($table->getIndexes()), [$table->getPrimaryKey()->getName()]) as $indexName) {
+            $table->dropIndex($indexName);
+        }
     }
 
     /**
