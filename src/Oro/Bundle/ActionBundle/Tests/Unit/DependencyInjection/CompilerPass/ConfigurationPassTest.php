@@ -34,6 +34,7 @@ class ConfigurationPassTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->configProviderDefinition = $this->getMockBuilder('Symfony\Component\DependencyInjection\Definition')
+            ->disableOriginalConstructor()
             ->getMock();
 
         $this->cacheProvider = $this->getMockBuilder('Doctrine\Common\Cache\CacheProvider')
