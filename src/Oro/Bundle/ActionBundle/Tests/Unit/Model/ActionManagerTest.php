@@ -96,9 +96,7 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
             } else {
                 $this->doctrineHelper->expects($this->any())
                     ->method('createEntityInstance')
-                    ->willReturnCallback(function ($className) {
-                        return new \stdClass();
-                    });
+                    ->willReturn(new \stdClass());
             }
         }
 

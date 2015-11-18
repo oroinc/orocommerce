@@ -163,7 +163,7 @@ class ActionManager
 
     /**
      * @param string $entityName
-     * @return string|false
+     * @return string|bool
      */
     protected function getEntityClassName($entityName)
     {
