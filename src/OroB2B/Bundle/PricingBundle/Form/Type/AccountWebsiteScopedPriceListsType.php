@@ -24,7 +24,7 @@ class AccountWebsiteScopedPriceListsType extends AbstractWebsiteScopedPriceLists
     /**
      * @return PriceListToAccountRepository
      */
-    public function getRepository()
+    protected function getRepository()
     {
         return $this->getEntityManager()->getRepository('OroB2BPricingBundle:PriceListToAccount');
     }
@@ -33,7 +33,7 @@ class AccountWebsiteScopedPriceListsType extends AbstractWebsiteScopedPriceLists
      * @param Account $account
      * @return BasePriceListRelation
      */
-    public function createPriceListToTargetEntity($account)
+    protected function createPriceListToTargetEntity($account)
     {
         $priceListToTargetEntity = new PriceListToAccount();
         $priceListToTargetEntity->setAccount($account);
@@ -44,7 +44,7 @@ class AccountWebsiteScopedPriceListsType extends AbstractWebsiteScopedPriceLists
     /**
      * @return ObjectManager
      */
-    public function getEntityManager()
+    protected function getEntityManager()
     {
         return $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListToAccount');
     }
