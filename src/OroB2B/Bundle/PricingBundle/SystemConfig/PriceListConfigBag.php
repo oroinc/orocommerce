@@ -31,10 +31,13 @@ class PriceListConfigBag
 
     /**
      * @param ArrayCollection $configs
+     * @return $this
      */
     public function setConfigs(ArrayCollection $configs)
     {
         $this->configs = $configs;
+
+        return $this;
     }
 
     /**
