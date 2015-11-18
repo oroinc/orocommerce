@@ -82,66 +82,86 @@ class WidgetControllerTest extends WebTestCase
         ];
 
         return [
-            [
+            'existing entity' => [
                 'config' => array_merge_recursive(
                     $config,
-                    ['oro_action_test_action' => ['entities' => [self::ENTITY_CLASS]]]
+                    ['oro_action_test_action' => ['entities' => ['Oro\Bundle\TestFrameworkBundle\Entity\Product']]]
                 ),
                 'route' => 'oro_action_test_route',
                 'entityId' => 42,
-                'entityClass' => self::ENTITY_CLASS,
+                'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\Product',
                 'expected' => $label
             ],
-            [
+            'existing entity short syntax' => [
+                'config' => array_merge_recursive(
+                    $config,
+                    ['oro_action_test_action' => ['entities' => ['OroTestFrameworkBundle:Product']]]
+                ),
+                'route' => 'oro_action_test_route',
+                'entityId' => 42,
+                'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\Product',
+                'expected' => $label
+            ],
+            'unknown entity' => [
                 'config' => array_merge_recursive(
                     $config,
                     ['oro_action_test_action' => ['entities' => ['Oro\Bundle\ActionBundle\Entity\UnknownEntity']]]
                 ),
                 'route' => 'oro_action_test_route',
                 'entityId' => 42,
-                'entityClass' => self::ENTITY_CLASS,
+                'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\Product',
                 'expected' => false
             ],
-            [
+            'unknown entity short syntax' => [
+                'config' => array_merge_recursive(
+                    $config,
+                    ['oro_action_test_action' => ['entities' => ['OroActionBundle:UnknownEntity']]]
+                ),
+                'route' => 'oro_action_test_route',
+                'entityId' => 42,
+                'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\Product',
+                'expected' => false
+            ],
+            'existing route' => [
                 'config' => array_merge_recursive(
                     $config,
                     ['oro_action_test_action' => ['routes' => ['oro_action_test_route']]]
                 ),
                 'route' => 'oro_action_test_route',
                 'entityId' => 42,
-                'entityClass' => self::ENTITY_CLASS,
+                'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\Product',
                 'expected' => $label
             ],
-            [
+            'unknown route' => [
                 'config' => array_merge_recursive(
                     $config,
                     ['oro_action_test_action' => ['routes' => ['oro_action_unknown_route']]]
                 ),
                 'route' => 'oro_action_test_route',
                 'entityId' => 42,
-                'entityClass' => self::ENTITY_CLASS,
+                'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\Product',
                 'expected' => false
             ],
-            [
+            'empty context' => [
                 'config' => $config,
                 'route' => 'oro_action_test_route',
                 'entityId' => 42,
-                'entityClass' => self::ENTITY_CLASS,
+                'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\Product',
                 'expected' => false
             ],
-            [
+            'existing route and entity' => [
                 'config' => array_merge_recursive(
                     $config,
                     ['oro_action_test_action' =>
                         [
-                            'entities' => [self::ENTITY_CLASS],
+                            'entities' => ['Oro\Bundle\TestFrameworkBundle\Entity\Product'],
                             'routes' => ['oro_action_test_route']
                         ]
                     ]
                 ),
                 'route' => 'oro_action_test_route',
                 'entityId' => null,
-                'entityClass' => self::ENTITY_CLASS,
+                'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\Product',
                 'expected' => $label
             ]
         ];

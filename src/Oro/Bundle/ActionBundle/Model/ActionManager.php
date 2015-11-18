@@ -110,7 +110,7 @@ class ActionManager
         if ($this->entities !== null || $this->routes !== null) {
             return;
         }
-        
+
         $this->routes = [];
         $this->entities = [];
 
@@ -154,8 +154,22 @@ class ActionManager
     protected function mapActionEntities(Action $action)
     {
         foreach ($action->getDefinition()->getEntities() as $entityName) {
-            $this->entities[$entityName][$action->getName()] = $action;
+            if (false === ($className = $this->getEntityClassName($entityName))) {
+                continue;
+            }
+            $this->entities[$className][$action->getName()] = $action;
         }
+    }
+
+    /**
+     * @param string $entityName
+     * @return string|false
+     */
+    protected function getEntityClassName($entityName)
+    {
+        $entityClass = $this->doctrineHelper->getEntityClass($entityName);
+
+        return class_exists($entityClass, true) ? $entityClass : false;
     }
 
     /**
