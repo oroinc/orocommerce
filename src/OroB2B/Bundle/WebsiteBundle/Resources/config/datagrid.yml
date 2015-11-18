@@ -41,17 +41,20 @@ datagrid:
                 createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         filters:
             columns:
+                id:
+                    type:       number
+                    data_name:  website.id
+                    enabled:    false
                 name:
-                    type:      string
-                    data_name: website.name
+                    type:       string
+                    data_name:  website.name
                 createdAt:
-                    type:      datetime
-                    data_name: website.createdAt
+                    type:       datetime
+                    data_name:  website.createdAt
                 updatedAt:
-                    type:      datetime
-                    data_name: website.updatedAt
+                    type:       datetime
+                    data_name:  website.updatedAt
         properties:
-            id: ~
             view_link:
                 type:  url
                 params: [ id ]
@@ -67,7 +70,6 @@ datagrid:
         source:
             acl_resource: orob2b_website_view
         properties:
-            id: ~
             view_link:
                 route: orob2b_website_view
             update_link:
