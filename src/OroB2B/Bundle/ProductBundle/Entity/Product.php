@@ -105,6 +105,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @ORM\Column(name="has_variants", type="boolean", nullable=false, options={"default"=false})
      * @ConfigField(
      *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
      *          "importexport"={
      *              "order"=60,
      *              "excluded"=true
@@ -137,6 +140,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @ORM\Column(name="variant_fields", type="array", nullable=true)
      * @ConfigField(
      *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
      *          "importexport"={
      *              "order"=70,
      *              "excluded"=true
@@ -205,6 +211,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
      *          "importexport"={
      *              "excluded"=true
      *          }
@@ -219,6 +228,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @ORM\OneToMany(targetEntity="ProductUnitPrecision", mappedBy="product", cascade={"ALL"}, orphanRemoval=true)
      * @ConfigField(
      *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
      *          "importexport"={
      *              "order"=30,
      *              "full"=true

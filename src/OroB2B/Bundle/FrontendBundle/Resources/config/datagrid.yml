@@ -1,0 +1,36 @@
+datagrid:
+    b2b-frontend-audit-history-grid:
+        extends: base-audit-history-grid
+        source:
+            acl_resource: orob2b_frontend_dataaudit_history
+            query:
+                select:
+                    - >
+                        CONCAT(
+                            CONCAT(
+                                CONCAT(b2b_u.firstName, ' '),
+                                CONCAT(b2b_u.lastName, ' ')
+                            ),
+                            CONCAT(' - ', b2b_u.email)
+                        ) as author
+                join:
+                    left:
+                        b2b_audit:
+                            join: OroB2BAccountBundle:Audit
+                            alias: b2b_a
+                            conditionType: WITH
+                            condition: b2b_a.id = a.id
+                        b2b_user:
+                            join: b2b_a.accountUser
+                            alias: b2b_u
+        columns:
+            author:
+                label: oro.dataaudit.datagrid.author
+                type: twig
+                template: OroB2BFrontendBundle:DataAudit:author.html.twig
+                frontend_type: html
+                data_name: author
+        sorters:
+            columns:
+                author:
+                    data_name: author

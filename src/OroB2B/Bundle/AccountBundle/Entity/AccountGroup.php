@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Entity
@@ -26,6 +27,9 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
  *          "form"={
  *              "form_type"="orob2b_account_group_select",
  *              "grid_name"="account-groups-select-grid",
+ *          },
+ *          "dataaudit"={
+ *              "auditable"=true
  *          }
  *      }
  * )
@@ -45,6 +49,13 @@ class AccountGroup
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $name;
 
@@ -52,6 +63,13 @@ class AccountGroup
      * @var Collection|Account[]
      *
      * @ORM\OneToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account", mappedBy="group")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      **/
     protected $accounts;
 
@@ -131,5 +149,13 @@ class AccountGroup
     public function getAccounts()
     {
         return $this->accounts;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->name;
     }
 }
