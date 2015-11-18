@@ -6,9 +6,11 @@
 
 {% block navButtons %}
     {% if resource_granted('orob2b_order_frontend_create') %}
-        {{ UI.addButton({
-            'path': path('orob2b_order_frontend_create'),
-            'entity_label': 'orob2b.order.entity_label'|trans
-        }) }}
+        <div class="btn-group">
+            {{ UI.addButton({
+                'path': path('orob2b_order_frontend_create'),
+                'entity_label': 'orob2b.order.entity_label'|trans
+            }) }}
+        </div>
     {% endif %}
 {% endblock %}

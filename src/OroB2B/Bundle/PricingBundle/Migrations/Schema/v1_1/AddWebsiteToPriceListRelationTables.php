@@ -7,14 +7,21 @@ use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\MigrationBundle\Migration\SqlMigrationQuery;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 
-class AddWebsiteToPriceListRelationTables implements Migration, ContainerAwareInterface, DatabasePlatformAwareInterface
+class AddWebsiteToPriceListRelationTables implements
+    Migration,
+    DatabasePlatformAwareInterface,
+    RenameExtensionAwareInterface
 {
+    /**
+     * @var int
+     */
+    protected $defaultWebsiteId;
 
     /**
      * @var AbstractPlatform
@@ -22,9 +29,43 @@ class AddWebsiteToPriceListRelationTables implements Migration, ContainerAwareIn
     protected $platform;
 
     /**
-     * @var ContainerInterface
+     * @var RenameExtension
      */
-    protected $container;
+    protected $renameExtension;
+
+    /**
+     * @var array
+     */
+    protected $priceListForeignKeyConstraintNames = [
+        'orob2b_price_list_to_account' => 'fk_orob2b_price_l_to_acc_pl',
+        'orob2b_price_list_to_acc_gr' => 'fk_orob2b_price_l_to_a_gr_pl',
+        'orob2b_price_list_to_website' => 'fk_orob2b_price_l_to_ws_pl',
+    ];
+
+    /**
+     * @var array
+     */
+    protected $websiteForeignKeyConstraintNames = [
+        'orob2b_price_list_to_account' => 'fk_orob2b_price_l_to_acc_ws',
+        'orob2b_price_list_to_acc_gr' => 'fk_orob2b_price_l_to_a_gr_ws',
+        'orob2b_price_list_to_website' => 'fk_orob2b_price_l_to_ws_ws',
+    ];
+
+    /**
+     * @var array
+     */
+    protected $relationTableForeignKeyConstraintNames = [
+        'account_id' => 'fk_orob2b_price_l_to_acc_acc',
+        'account_group_id' => 'fk_orob2b_price_l_to_a_gr_a_gr',
+    ];
+
+    /**
+     * @var array
+     */
+    protected $relationTableNames = [
+        'account_id' => 'orob2b_account',
+        'account_group_id' => 'orob2b_account_group',
+    ];
 
     /**
      * {@inheritdoc}
@@ -35,11 +76,11 @@ class AddWebsiteToPriceListRelationTables implements Migration, ContainerAwareIn
     }
 
     /**
-     * @param ContainerInterface|null $container
+     * {@inheritdoc}
      */
-    public function setContainer(ContainerInterface $container = null)
+    public function setRenameExtension(RenameExtension $renameExtension)
     {
-         $this->container = $container;
+        $this->renameExtension = $renameExtension;
     }
 
     /**
@@ -47,73 +88,162 @@ class AddWebsiteToPriceListRelationTables implements Migration, ContainerAwareIn
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->addWebsiteToOroB2BPriceListToAccount($schema, $queries);
-        $this->addWebsiteToOroB2BPriceListToAccountGroup($schema, $queries);
+        $this->addPriorityToOroB2BPriceListToAccount($schema, $queries);
+        $this->addPriorityToOroB2BPriceListToAccountGroup($schema, $queries);
+        $this->addPriorityToOroB2BPriceListToWebsite($schema, $queries);
     }
 
     /**
      * @param Schema $schema
      * @param QueryBag $queries
      */
-    protected function addWebsiteToOroB2BPriceListToAccount(Schema $schema, QueryBag $queries)
+    protected function addPriorityToOroB2BPriceListToAccount(Schema $schema, QueryBag $queries)
     {
-        $this->addWebsiteToRelationTable($schema, $queries, 'orob2b_price_list_to_account', 'account_id');
-    }
-
-    /**
-     * @param Schema $schema
-     */
-    protected function addWebsiteToOroB2BPriceListToAccountGroup(Schema $schema, QueryBag $queries)
-    {
-        $this->addWebsiteToRelationTable($schema, $queries, 'orob2b_price_list_to_c_group', 'account_group_id');
+        $this->addPriorityToRelationTable($schema, $queries, 'orob2b_price_list_to_account', 'account_id');
     }
 
     /**
      * @param Schema $schema
      * @param QueryBag $queries
+     */
+    protected function addPriorityToOroB2BPriceListToAccountGroup(Schema $schema, QueryBag $queries)
+    {
+        $oldTableName = 'orob2b_price_list_to_c_group';
+        $newTableName = 'orob2b_price_list_to_acc_gr';
+        $this->recreateRelationTableWithPriority($schema, $queries, $newTableName, $oldTableName, 'account_group_id');
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    protected function addPriorityToOroB2BPriceListToWebsite(Schema $schema, QueryBag $queries)
+    {
+        $this->addPriorityToRelationTable($schema, $queries, 'orob2b_price_list_to_website', 'website_id');
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     * @param string $tableName
+     * @param string $fieldName
+     */
+    protected function addPriorityToRelationTable(Schema $schema, QueryBag $queries, $tableName, $fieldName)
+    {
+        $tmpTableName = $this->getTmpTableName($tableName);
+        $this->dropTableForeignKeys($schema, $tableName);
+        $this->renameExtension->renameTable($schema, $queries, $tableName, $tmpTableName);
+        $this->recreateRelationTableWithPriority($schema, $queries, $tableName, $tmpTableName, $fieldName);
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     * @param string $newTableName
+     * @param string $oldTableName
+     * @param string $fieldName
+     */
+    protected function recreateRelationTableWithPriority(
+        Schema $schema,
+        QueryBag $queries,
+        $newTableName,
+        $oldTableName,
+        $fieldName
+    ) {
+        $queries->addPostQuery($this->createPriceListToRelationTableQuery($schema, $newTableName, $fieldName));
+        $queries->addPostQuery($this->createMigratingDataQuery($newTableName, $oldTableName, $fieldName));
+        $queries->addPostQuery($this->createDropTableQuery($oldTableName));
+    }
+
+    /**
+     * @param string $newTableName
+     * @param string $oldTableName
+     * @param string $fieldName
+     * @return InsertSelectPriceListRelationTablesQuery
+     */
+    protected function createMigratingDataQuery($newTableName, $oldTableName, $fieldName)
+    {
+        return new InsertSelectPriceListRelationTablesQuery($newTableName, $oldTableName, $fieldName);
+    }
+
+    /**
+     * @param Schema $schema
      * @param $tableName
-     * @param $relationField
-     * @throws \Doctrine\DBAL\Schema\SchemaException
      */
-    protected function addWebsiteToRelationTable(Schema $schema, QueryBag $queries, $tableName, $relationField)
+    protected function dropTableForeignKeys(Schema $schema, $tableName)
     {
         $table = $schema->getTable($tableName);
-        $table->dropPrimaryKey();
-        $table->addColumn('website_id', 'integer', ['default' => $this->getDefaultWebsite()->getId()]);
+        foreach (array_keys($table->getForeignKeys()) as $constraintName) {
+            $table->removeForeignKey($constraintName);
+        }
+        foreach (array_diff(array_keys($table->getIndexes()), [$table->getPrimaryKey()->getName()]) as $indexName) {
+            $table->dropIndex($indexName);
+        }
+    }
+
+    /**
+     * @param Schema $schema
+     * @param string $tableName
+     * @param string $fieldName
+     * @return SqlMigrationQuery
+     * @throws \Doctrine\DBAL\Schema\SchemaException
+     */
+    protected function createPriceListToRelationTableQuery(Schema $schema, $tableName, $fieldName)
+    {
+        $tableScheme = new Schema();
+        $table = $tableScheme->createTable($tableName);
+        $table->addColumn('price_list_id', 'integer', []);
+        $table->addColumn('website_id', 'integer', []);
+        $table->addColumn('priority', 'integer', []);
+        $primaryKey = ['price_list_id', 'website_id'];
+        if ($fieldName !== 'website_id') {
+            $table->addColumn($fieldName, 'integer', []);
+            $table->addForeignKeyConstraint(
+                $schema->getTable($this->relationTableNames[$fieldName]),
+                [$fieldName],
+                ['id'],
+                ['onUpdate' => null, 'onDelete' => 'CASCADE'],
+                $this->relationTableForeignKeyConstraintNames[$fieldName]
+            );
+            $primaryKey[] = $fieldName;
+        }
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_price_list'),
+            ['price_list_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE'],
+            $this->priceListForeignKeyConstraintNames[$tableName]
+        );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_website'),
             ['website_id'],
             ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+            ['onUpdate' => null, 'onDelete' => 'CASCADE'],
+            $this->websiteForeignKeyConstraintNames[$tableName]
         );
-        $table->setPrimaryKey(['price_list_id', $relationField, 'website_id']);
-        $queries->addPostQuery($this->createWebsiteDefaultNullQuery($schema, $tableName));
-    }
-
-    /**
-     * @param Schema $schema
-     * @param $tableName
-     * @return SqlMigrationQuery
-     * @throws \Doctrine\DBAL\Schema\SchemaException
-     */
-    protected function createWebsiteDefaultNullQuery(Schema $schema, $tableName)
-    {
-        $currentSchema  = new Schema([clone $schema->getTable($tableName)]);
-        $requiredSchema = new Schema([clone $schema->getTable($tableName)]);
-        $table = $requiredSchema->getTable($tableName);
-        $table->changeColumn('website_id', ['default' => null]);
+        $table->setPrimaryKey($primaryKey);
 
         $comparator = new Comparator();
-        $changes = $comparator->compare($currentSchema, $requiredSchema)->toSql($this->platform);
+        $changes = $comparator->compare(new Schema(), $tableScheme)->toSql($this->platform);
         return new SqlMigrationQuery($changes);
     }
 
     /**
-     * @return \OroB2B\Bundle\WebsiteBundle\Entity\Website
+     * @param string $tableName
+     * @return string
      */
-    protected function getDefaultWebsite()
+    protected function getTmpTableName($tableName)
     {
-        return $this->container->get('doctrine')->getManagerForClass('OroB2BWebsiteBundle:Website')
-            ->getRepository('OroB2BWebsiteBundle:Website')->getDefaultWebsite();
+        return substr($tableName, 0, 25) . '_tmp';
+    }
+
+    /**
+     * @param string $tableName
+     * @return SqlMigrationQuery
+     * @throws \Doctrine\DBAL\Schema\SchemaException
+     */
+    protected function createDropTableQuery($tableName)
+    {
+        return new SqlMigrationQuery('DROP TABLE ' . $tableName);
     }
 }

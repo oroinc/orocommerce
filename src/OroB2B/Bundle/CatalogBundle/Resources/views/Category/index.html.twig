@@ -4,10 +4,12 @@
 
 {% block navButtons %}
     {% if resource_granted('orob2b_catalog_category_create') %}
-        {{ UI.addButton({
-            'path': path('orob2b_catalog_category_create', { 'id' : rootCategory.id }),
-            'entity_label': 'orob2b.catalog.category.entity_label'|trans
-        }) }}
+        <div class="btn-group">
+            {{ UI.addButton({
+                'path': path('orob2b_catalog_category_create', { 'id' : rootCategory.id }),
+                'entity_label': 'orob2b.catalog.category.entity_label'|trans
+            }) }}
+        </div>
     {% endif %}
 {% endblock %}
 

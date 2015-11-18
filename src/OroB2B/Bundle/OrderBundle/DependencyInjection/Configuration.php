@@ -23,7 +23,13 @@ class Configuration implements ConfigurationInterface
         SettingsBuilder::append(
             $rootNode,
             [
-                'product_visibility' => [
+                'backend_product_visibility' => [
+                    'value' => [
+                        Product::INVENTORY_STATUS_IN_STOCK,
+                        Product::INVENTORY_STATUS_OUT_OF_STOCK
+                    ]
+                ],
+                'frontend_product_visibility' => [
                     'value' => [
                         Product::INVENTORY_STATUS_IN_STOCK,
                         Product::INVENTORY_STATUS_OUT_OF_STOCK

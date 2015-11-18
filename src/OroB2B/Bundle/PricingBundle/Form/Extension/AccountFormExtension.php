@@ -45,7 +45,7 @@ class AccountFormExtension extends AbstractPriceListExtension
         /** @var PriceList|null $priceList */
         $priceList = $form->get('priceList')->getData();
 
-        $this->getPriceListRepository()->setPriceListToAccount($account, $priceList);
+        // TODO: Save price list to account relation in scope BB-1567
     }
 
     /**

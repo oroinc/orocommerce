@@ -10,7 +10,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
  * @ORM\Table(name="orob2b_price_list_to_account")
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository")
  */
-class PriceListToAccount extends AbstractPriceListRelation
+class PriceListToAccount extends BasePriceListRelation
 {
     /**
      * @var Account
@@ -31,9 +31,12 @@ class PriceListToAccount extends AbstractPriceListRelation
 
     /**
      * @param Account $account
+     * @return $this
      */
     public function setAccount($account)
     {
         $this->account = $account;
+
+        return $this;
     }
 }
