@@ -36,6 +36,16 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityClass')
+            ->willReturnCallback(function ($class) {
+                return $class;
+            });
+
+        $this->doctrineHelper->expects($this->any())
+            ->method('isManageableEntity')
+            ->willReturn(true);
+
         $this->configurationProvider = $this
             ->getMockBuilder('Oro\Bundle\ActionBundle\Configuration\ActionConfigurationProvider')
             ->disableOriginalConstructor()
@@ -74,10 +84,6 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
     public function testGetActions(array $context, array $expectedData)
     {
         if (isset($context['entityClass'])) {
-            $this->doctrineHelper->expects($this->once())
-                ->method('isManageableEntity')
-                ->willReturn(true);
-
             if (isset($context['entityId'])) {
                 $this->doctrineHelper->expects($this->any())
                     ->method('getEntityReference')
@@ -90,9 +96,7 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
             } else {
                 $this->doctrineHelper->expects($this->any())
                     ->method('createEntityInstance')
-                    ->willReturnCallback(function ($className) {
-                        return new \stdClass();
-                    });
+                    ->willReturn(new \stdClass());
             }
         }
 
@@ -155,9 +159,9 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
                     'hasActions' => true,
                 ],
             ],
-            'entity1 withut id' => [
+            'entity1 without id' => [
                 'context' => [
-                    'entityClass' => 'entity1',
+                    'entityClass' => 'Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity1',
                 ],
                 'expected' => [
                     'actions' => [],
@@ -166,7 +170,7 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
             ],
             'entity1' => [
                 'context' => [
-                    'entityClass' => 'entity1',
+                    'entityClass' => 'Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity1',
                     'entityId' => 1,
                 ],
                 'expected' => [
@@ -180,7 +184,7 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
             'route1 & entity1' => [
                 'context' => [
                     'route' => 'route1',
-                    'entityClass' => 'entity1',
+                    'entityClass' => 'Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity1',
                     'entityId' => 1,
                 ],
                 'expected' => [
@@ -209,7 +213,7 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
                     ],
                     'context3' => [
                         'route' => 'route2',
-                        'entityClass' => 'entity2',
+                        'entityClass' => 'Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity2',
                         'entityId' => '2',
                     ],
                 ],
@@ -251,7 +255,7 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
                 'label' => 'Label3',
                 'routes' => [],
                 'entities' => [
-                    'entity1',
+                    'Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity1',
                 ],
                 'order' => 30,
             ],
@@ -262,8 +266,8 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
                     'route2',
                 ],
                 'entities' => [
-                    'entity1',
-                    'entity2',
+                    'Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity1',
+                    'Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity2',
                 ],
                 'order' => 20,
             ],
@@ -274,9 +278,9 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
                     'route3',
                 ],
                 'entities' => [
-                    'entity1',
-                    'entity2',
-                    'entity3',
+                    'Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity1',
+                    'Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity2',
+                    'Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity3',
                 ],
                 'order' => 10,
                 'enabled' => false,
