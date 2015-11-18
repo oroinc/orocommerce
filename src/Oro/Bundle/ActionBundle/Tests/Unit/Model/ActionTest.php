@@ -97,30 +97,35 @@ class ActionTest extends \PHPUnit_Framework_TestCase
         static::assertFalse($this->action->isApplicable($this->context));
     }
 
-    public function testIsAllowed()
+
+    /**
+     * @param array $conditions
+     * @param boolean $expected
+     *
+     * @dataProvider isAllowedDataProvider
+     */
+    public function testIsAllowed(array $conditions, $expected)
     {
         $this->context['data'] = new \stdClass();
-        $conditions = [
-            ['test' => []],
-        ];
-        $condition = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Condition\Configurable')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $condition->expects(static::any())
-            ->method('evaluate')
-            ->with($this->context->getEntity())
-            ->willReturn(false);
-
+        $conditionsArray = [];
+        foreach ($conditions as $key => $condition) {
+            $conditionsArray[$key] = [$key];
+        }
         $this->definition->expects(static::once())
             ->method('getPreConditions')
-            ->willReturn($conditions);
+            ->willReturn($conditionsArray);
 
-        $this->conditionFactory->expects(static::once())
-            ->method('create')
-            ->with(ConfigurableCondition::ALIAS, $conditions[0])
-            ->willReturn($condition);
+        $createFunction = function ($name, $options) use ($conditions) {
+            return $conditions[reset($options)];
+        };
+        foreach ($conditions as $key => $condition) {
+            $this->conditionFactory->expects(static::any())
+                ->method('create')
+                ->withAnyParameters()
+                ->willReturnCallback($createFunction);
+        }
 
-        static::assertFalse($this->action->isAllowed($this->context));
+        static::assertEquals($expected, $this->action->isAllowed($this->context));
     }
 
     public function testGetDefinition()
@@ -144,5 +149,39 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             ->willReturn('test name');
 
         $this->assertEquals('test name', $this->action->getName());
+    }
+
+    /**
+     * @return array
+     */
+    public function isAllowedDataProvider()
+    {
+        $conditionTrue = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Condition\Configurable')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $conditionTrue->expects(static::any())
+            ->method('evaluate')
+            ->willReturn(true);
+        $conditionFalse = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Condition\Configurable')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $conditionFalse->expects(static::any())
+            ->method('evaluate')
+            ->willReturn(false);
+
+        return [
+            'condition true' => [
+                'conditions' => [$conditionTrue],
+                'expected' => true,
+            ],
+            'condition false' => [
+                'conditions' => [$conditionFalse],
+                'expected' => false,
+            ],
+            'condition both' => [
+                'conditions' => [$conditionTrue, $conditionFalse],
+                'expected' => false,
+            ],
+        ];
     }
 }
