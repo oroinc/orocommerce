@@ -151,8 +151,11 @@ class AccountGroup
         return $this->accounts;
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
-        return (string)$this->getName();
+        return (string)$this->name;
     }
 }

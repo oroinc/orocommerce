@@ -38,7 +38,6 @@ use OroB2B\Bundle\RFPBundle\Model\ExtendRequest;
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id"
  *          },
- *          "grouping"={"groups"={"activity"}},
  *          "dataaudit"={
  *              "auditable"=true
  *          }
