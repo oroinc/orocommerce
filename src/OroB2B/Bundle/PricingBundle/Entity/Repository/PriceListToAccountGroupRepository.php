@@ -8,14 +8,14 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-class PriceListToAccountGroupRepository extends EntityRepository
+class PriceListToAccountGroupRepository extends EntityRepository implements PriceListRepositoryInterface
 {
     /**
      * @param AccountGroup $accountGroup
      * @param Website $website
      * @return PriceList[]
      */
-    public function getPriceListsByAccountGroup(AccountGroup $accountGroup, Website $website)
+    public function getPriceLists($accountGroup, Website $website)
     {
         return $this->createQueryBuilder('PriceListToAccountGroup')
             ->innerJoin('PriceListToAccountGroup.priceList', 'priceList')
