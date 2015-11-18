@@ -195,6 +195,8 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
      */
     public function skippedDataProvider()
     {
+        $localeEnUs = $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Locale', ['code' => 'en_US']);
+
         return [
             'new product, no fallback from another entity' => [
                 [
@@ -217,6 +219,10 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                                 'OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue',
                                 ['string' => 'product.4 Default Title']
                             ),
+                            $this->getEntity(
+                                'OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue',
+                                ['string' => 'product.4 en_US Title', 'locale' => $localeEnUs]
+                            ),
                         ]
                     ),
                 ],
@@ -226,7 +232,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                     /** @var \OroB2B\Bundle\ProductBundle\Entity\Product $product */
                     $this->assertNotNull($product->getId());
                     $this->assertNotEmpty($product->getNames()->toArray());
-                    $this->assertNull($product->getNames()->first()->getId());
+                    $this->assertNull($product->getNames()->last()->getId());
                 },
             ],
         ];
