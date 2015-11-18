@@ -62,6 +62,8 @@ class WidgetControllerTest extends WebTestCase
 
     /**
      * @return array
+     * 
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function buttonsActionDataProvider()
     {
