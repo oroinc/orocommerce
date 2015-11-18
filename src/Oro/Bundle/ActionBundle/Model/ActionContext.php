@@ -9,6 +9,6 @@ class ActionContext extends AbstractStorage implements EntityAwareInterface
      */
     public function getEntity()
     {
-        return $this->offsetGet('entity');
+        return $this->offsetGet('data');
     }
 }

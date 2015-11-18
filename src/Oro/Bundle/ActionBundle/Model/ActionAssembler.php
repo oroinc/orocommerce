@@ -56,7 +56,7 @@ class ActionAssembler
             ->setFrontendOptions($this->getOption($options, 'frontend_options', []))
             ->setAttributes($this->getOption($options, 'attributes', []))
             ->setFormOptions($this->getOption($options, 'form_options', []))
-            ->setPreConditions($this->getOption($options, 'pre_conditions', []))
+            ->setPreConditions($this->getOption($options, 'preconditions', []))
             ->setConditions($this->getOption($options, 'conditions', []))
             ->setInitStep($this->getOption($options, 'init_step', []))
             ->setExecutionStep($this->getOption($options, 'execution_step', []));

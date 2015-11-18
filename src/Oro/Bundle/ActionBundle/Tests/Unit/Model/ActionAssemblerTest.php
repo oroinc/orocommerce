@@ -110,7 +110,7 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
                         'applications' => ['application1'],
                         'attributes' => ['config_attr'],
                         'conditions' => ['config_cond'],
-                        'pre_conditions' => ['config_pre_cond'],
+                        'preconditions' => ['config_pre_cond'],
                         'form_options' => ['config_form_options'],
                         'frontend_options' => ['config_frontend_options'],
                         'init_step' => ['config_init_step'],

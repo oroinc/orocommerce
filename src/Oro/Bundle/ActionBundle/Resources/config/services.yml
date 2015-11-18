@@ -17,7 +17,7 @@ services:
     oro_action.assembler:
         class: %oro_action.assembler.class%
         arguments:
-            - @oro_action.expression.factory
+            - @oro_workflow.expression.factory
 
     oro_action.expression.extension:
         class: %oro_action.expression.extension.class%
