@@ -13,7 +13,7 @@ services:
             - "data"
 
     oro_action.expression.extension:
-        class: %Oro\Component\ConfigExpression\Extension\DependencyInjection\DependencyInjectionExtension%
+        class: %oro_action.configuration_pass.replace_property_path.class%
         arguments:
             - @service_container
             - {}
@@ -38,7 +38,7 @@ services:
     oro_action.condition.configurable:
         class: %oro_action.condition.configurable.class%
         arguments:
-            - @oro_workflow.expression.assembler
+            - @oro_action.expression.extension
         tags:
             - { name: oro_action.condition, alias: configurable }
 

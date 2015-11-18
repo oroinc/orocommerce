@@ -115,15 +115,12 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             ->method('getPreConditions')
             ->willReturn($conditionsArray);
 
-        $createFunction = function ($name, $options) use ($conditions) {
-            return $conditions[reset($options)];
-        };
-        foreach ($conditions as $key => $condition) {
-            $this->conditionFactory->expects(static::any())
-                ->method('create')
-                ->withAnyParameters()
-                ->willReturnCallback($createFunction);
-        }
+        $this->conditionFactory->expects(static::any())
+            ->method('create')
+            ->withAnyParameters()
+            ->willReturnCallback(function ($name, $options) use ($conditions) {
+                return $conditions[reset($options)];
+            });
 
         static::assertEquals($expected, $this->action->isAllowed($this->context));
     }
