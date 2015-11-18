@@ -2,7 +2,7 @@
 
 {% if resource_granted('oro_actions') and has_actions(params) %}
     {% if params.entityId is defined %}
-        {% set params = params|merge({'entityId' : params.entityId|url_encode}) %}
+        {% set params = params|merge({'entityId' : params.entityId}) %}
     {% endif %}
 
     {{ oro_widget_render({

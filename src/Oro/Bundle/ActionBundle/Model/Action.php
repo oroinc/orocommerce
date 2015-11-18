@@ -116,7 +116,7 @@ class Action
     public function isAllowed(ActionContext $context)
     {
         foreach ($this->getPreConditions() as $condition) {
-            if (!$condition->evaluate($context->getEntity())) {
+            if (!$condition->evaluate($context)) {
                 return false;
             }
         }
