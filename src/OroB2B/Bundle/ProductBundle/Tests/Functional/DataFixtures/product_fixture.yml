@@ -28,11 +28,3 @@ product4:
     productCode: product.4
     inventoryStatus: discontinued
     status: enabled
-    names:
-        - { reference: product.4.names.default, string: product.4.names.default }
-    descriptions:
-        - { reference: product.4.descriptions.default, string: product.4.descriptions.default }
-product5:
-    productCode: product.5
-    inventoryStatus: discontinued
-    status: enabled

@@ -210,12 +210,12 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
             ],
             'existing product with, id not mapped for new fallback' => [
                 [
-                    'sku' => 'product.5',
+                    'sku' => 'product.4',
                     'names' => new ArrayCollection(
                         [
                             $this->getEntity(
                                 'OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue',
-                                ['string' => 'product.5 Default Title']
+                                ['string' => 'product.4 Default Title']
                             ),
                         ]
                     ),
