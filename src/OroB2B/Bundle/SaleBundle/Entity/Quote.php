@@ -47,6 +47,7 @@ use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
  *          }
  *      }
  * )
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHolderInterface
 {
