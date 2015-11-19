@@ -18,7 +18,7 @@ actions:
                 method: modify
                 method_parameters: ['+7 days']
         preconditions:
-            @or:
+            - @or:
                 - @and:
                     - @equal: [$expired, false]
                     - @not:
