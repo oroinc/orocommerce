@@ -16,7 +16,6 @@ use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepositoryInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-
 use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 
 abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
@@ -57,7 +56,6 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
                 'mapped' => false,
                 'ownership_disabled' => true,
                 'data' => [],
-                'preloaded_websites' => []
             ]
         );
     }

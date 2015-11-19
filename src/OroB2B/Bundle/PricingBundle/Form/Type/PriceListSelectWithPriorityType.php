@@ -6,7 +6,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Zend\Validator\NotEmpty;
 
 class PriceListSelectWithPriorityType extends AbstractType
 {
@@ -28,8 +27,7 @@ class PriceListSelectWithPriorityType extends AbstractType
                     'create_enabled' => false
                 ]
             )
-            ->add('priority', 'text', ['required' => false])
-        ;
+            ->add('priority', 'text', ['required' => true, 'constraints' => [new NotBlank()]]);
     }
 
     /**
@@ -38,17 +36,5 @@ class PriceListSelectWithPriorityType extends AbstractType
     public function getName()
     {
         return self::NAME;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function configureOptions(OptionsResolver $resolver)
-    {
-        $resolver->setDefaults(
-            [
-//                'allow_extra_fields' => true,
-            ]
-        );
     }
 }

@@ -15,24 +15,33 @@
                 {% for websiteId, priceListsByWebsite in priceListsByWebsites %}
                     <div class="tab-pane{% if websiteId == priceListsByWebsites|first.website.id %} active{% endif %}"
                          id="website{{ websiteId }}"><br>
-                        {% for priceListToAccount in priceListsByWebsite.priceLists %}
-                            {% set priceList = priceListToAccount.priceList %}
-                            {% if is_granted('VIEW', priceList) %}
-                                {% set priceListData %}
-                                    <a href="{{ path('orob2b_pricing_price_list_view', {id: priceList.id}) }}">
-                                        {{ priceList.name }}
-                                    </a>
-                                {% endset %}
-                                {{ UI.renderHtmlProperty('orob2b.pricing.pricelist.entity_label'|trans, priceListData) }}
-                                {{ UI.renderHtmlProperty('Priority'|trans, priceListToAccount.priority) }}
-                            {% else %}
-                                {{ UI.renderProperty('orob2b.pricing.pricelist.entity_label'|trans, priceList.name) }}
-                            {% endif %}
-                        {% endfor %}
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>{{ 'orob2b.pricing.pricelist.entity_label'|trans }}</th>
+                                <th>{{ 'orob2b.pricing.pricelist.priority_label'|trans }}</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            {% for priceListToAccount in priceListsByWebsite.priceLists %}
+                                {% set priceList = priceListToAccount.priceList %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+                                    <td>
+                                        <a href="{{ path('orob2b_pricing_price_list_view', {'id': priceList.id}) }}">
+                                            {{ priceList.name }}
+                                        </a>
+                                    </td>
+                                    <td>{{ priceListToAccount.priority }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 {% endfor %}
             </div>
         </div>
     </div>
 </div>
-
