@@ -21,10 +21,13 @@ actions:
             @or:
                 - @and:
                     - @equal: [$expired, false]
-                    - @collection_element_value_exists: [$quoteProducts, $productSku, 'SKU']
-                    - @not_empty: $shipUntil
-                    - @lt: [$shipUntil, $.compare_date]
+                    - @not:
+                        - @collection_element_value_exists: [$quoteProducts, $productSku, 'HSSUC']
+                    - @or:
+                        - @empty: $shipUntil
+                        - @lt: [$shipUntil, $.compare_date]
                 - @and:
                     - @equal: [$expired, false]
-                    - @not_empty: $shipUntil
-                    - @gt: [$shipUntil, $.compare_date]
+                    - @or:
+                        - @empty: $shipUntil
+                        - @gt: [$shipUntil, $.compare_date]
