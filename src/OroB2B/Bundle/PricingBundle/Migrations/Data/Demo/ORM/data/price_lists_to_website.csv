@@ -1,4 +1,6 @@
 priceList,website,priority
+Wholesale Price List,Default,100
+Partner C Custom Price List,Default,200
 Wholesale Price List,US,100
 Partner C Custom Price List,US,200
 Wholesale Price List,Australia,100
