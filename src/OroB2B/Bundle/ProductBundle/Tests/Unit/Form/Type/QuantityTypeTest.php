@@ -12,7 +12,7 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubQuantityParentType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\QuantityParentTypeStub;
 
 class QuantityTypeTest extends FormIntegrationTestCase
 {
@@ -21,7 +21,7 @@ class QuantityTypeTest extends FormIntegrationTestCase
     /** @var QuantityType */
     protected $formType;
 
-    /** @var StubQuantityParentType */
+    /** @var QuantityParentTypeStub */
     protected $parentType;
 
     /**
@@ -30,7 +30,7 @@ class QuantityTypeTest extends FormIntegrationTestCase
     protected function setUp()
     {
         $this->formType = $this->getQuantityType();
-        $this->parentType = new StubQuantityParentType();
+        $this->parentType = new QuantityParentTypeStub();
 
         $this->addRoundingServiceExpect();
 

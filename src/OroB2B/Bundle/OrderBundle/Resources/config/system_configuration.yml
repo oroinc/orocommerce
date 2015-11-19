@@ -1,0 +1,27 @@
+oro_system_configuration:
+    fields:
+        oro_b2b_order.backend_product_visibility:
+            data_type: array
+            type: orob2b_product_inventory_status_select
+            options:
+                label: orob2b.order.system_configuration.backend_product_visibility
+        oro_b2b_order.frontend_product_visibility:
+            data_type: array
+            type: orob2b_product_inventory_status_select
+            options:
+                label: orob2b.order.system_configuration.frontend_product_visibility
+
+    tree:
+        system_configuration:
+            platform:
+                children:
+                    catalog:
+                        children:
+                            product_settings:
+                                children:
+                                    frontend_inventory_statuses_visibility:
+                                        children:
+                                            - oro_b2b_order.frontend_product_visibility
+                                    backend_inventory_statuses_visibility:
+                                        children:
+                                            - oro_b2b_order.backend_product_visibility

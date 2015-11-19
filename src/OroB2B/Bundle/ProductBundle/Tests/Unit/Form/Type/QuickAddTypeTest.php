@@ -5,14 +5,18 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductRowCollectionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductRowType;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
+use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductAutocompleteType;
 
 class QuickAddTypeTest extends FormIntegrationTestCase
 {
@@ -39,6 +43,7 @@ class QuickAddTypeTest extends FormIntegrationTestCase
                 ProductRowCollectionType::NAME => new ProductRowCollectionType(),
                 ProductRowType::NAME => new ProductRowType(),
                 CollectionType::NAME => new CollectionType(),
+                ProductAutocompleteType::NAME => new StubProductAutocompleteType(),
             ], []),
             new ValidatorExtension(Validation::createValidator())
         ];
@@ -52,8 +57,17 @@ class QuickAddTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($submittedData, $expectedData)
     {
-        $form = $this->factory->create($this->formType);
+        $products = [new Product(), new Product()];
+        $options = [
+            'products' => $products,
+        ];
+
+        $form = $this->factory->create($this->formType, null, $options);
         $form->submit($submittedData);
+
+        $collectionProducts = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getConfig()->getOption('products');
+        $this->assertEquals($products, $collectionProducts);
+
         $this->assertTrue($form->isValid());
         $this->assertEquals($expectedData, $form->getData());
     }
@@ -94,6 +108,25 @@ class QuickAddTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create($this->formType);
         $form->submit([]);
         $this->assertFalse($form->isValid());
+    }
+
+    public function testConfigureOptions()
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
+        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver->expects($this->once())
+            ->method('setDefaults')
+            ->with(
+                $this->callback(
+                    function (array $options) {
+                        $this->assertArrayHasKey('products', $options);
+                        $this->assertNull($options['products']);
+                        return true;
+                    }
+                )
+            );
+
+        $this->formType->configureOptions($resolver);
     }
 
     public function testGetName()

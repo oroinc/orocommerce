@@ -83,4 +83,6 @@ items:
         applicable: @orob2b_account.placeholder.filter->isUserApplicable()
     product_visibility_button:
         template: OroB2BAccountBundle:ProductVisibility:button.html.twig
-        applicable: @oro_ui.placeholder.filter->isInstanceOf($entity$, %orob2b_product.product.class%)
+        applicable:
+            - @oro_ui.placeholder.filter->isInstanceOf($entity$, %orob2b_product.product.class%)
+            - @orob2b_frontend.placeholder.filter->isBackendRoute()
