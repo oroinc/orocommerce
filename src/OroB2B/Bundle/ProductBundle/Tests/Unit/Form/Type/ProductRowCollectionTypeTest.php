@@ -3,15 +3,17 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
+use OroB2B\Bundle\ProductBundle\Form\Type\ProductAutocompleteType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductRowType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductRowCollectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductAutocompleteType;
 
 class ProductRowCollectionTypeTest extends FormIntegrationTestCase
 {
@@ -39,7 +41,8 @@ class ProductRowCollectionTypeTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     'oro_collection' => new CollectionType(),
-                    ProductRowType::NAME => new ProductRowType()
+                    ProductRowType::NAME => new ProductRowType(),
+                    ProductAutocompleteType::NAME => new StubProductAutocompleteType(),
                 ],
                 []
             ),
@@ -67,16 +70,6 @@ class ProductRowCollectionTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create($this->formType, $defaultData, $options);
 
         $this->assertEquals($defaultData, $form->getData());
-
-        if ($options) {
-            $view = new FormView();
-            $this->formType->buildView($view, $form, $options);
-
-            foreach ($options as $key => $value) {
-                $this->assertArrayHasKey($key, $view->vars);
-                $this->assertEquals($value, $view->vars[$key]);
-            }
-        }
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
@@ -159,11 +152,28 @@ class ProductRowCollectionTypeTest extends FormIntegrationTestCase
                         'productQuantity' => '50'
                     ]
                 ],
-                'options' => [
-                    'row_count' => 5
-                ]
+                'options' => []
             ]
         ];
+    }
+
+    public function testConfigureOptions()
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
+        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver->expects($this->once())
+            ->method('setDefaults')
+            ->with(
+                $this->callback(
+                    function (array $options) {
+                        $this->assertArrayHasKey('products', $options);
+                        $this->assertNull($options['products']);
+                        return true;
+                    }
+                )
+            );
+
+        $this->formType->configureOptions($resolver);
     }
 
     public function testGetName()

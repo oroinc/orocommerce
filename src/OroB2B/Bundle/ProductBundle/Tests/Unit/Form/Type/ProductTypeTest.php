@@ -10,10 +10,12 @@ use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType as OroCollectionType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\TranslationBundle\Translation\Translator;
 
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubLocalizedFallbackValueCollectionType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -26,10 +28,10 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductVariantLinksType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductStatusType;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductCustomFieldsChoiceType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubProductUnitSelectionType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubEnumSelectType;
-use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\StubImageType;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductCustomFieldsChoiceTypeStub;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\EnumSelectTypeStub;
+use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct;
 use OroB2B\Bundle\ProductBundle\Provider\ProductStatusProvider;
 
@@ -86,25 +88,34 @@ class ProductTypeTest extends FormIntegrationTestCase
         $productUnitPrecision = new ProductUnitPrecisionType();
         $productUnitPrecision->setDataClass('OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision');
 
-        $stubEnumSelectType = new StubEnumSelectType();
+        $stubEnumSelectType = new EnumSelectTypeStub();
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigProvider $configProvider */
+        $configProvider = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Translator $translator */
+        $translator = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Translation\Translator')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         return [
             new PreloadedExtension(
                 [
                     $stubEnumSelectType->getName() => $stubEnumSelectType,
-                    ImageType::NAME => new StubImageType(),
+                    ImageType::NAME => new ImageTypeStub(),
                     OroCollectionType::NAME => new OroCollectionType(),
                     ProductUnitPrecisionType::NAME => $productUnitPrecision,
                     ProductUnitPrecisionCollectionType::NAME => new ProductUnitPrecisionCollectionType(),
-                    ProductUnitSelectionType::NAME => new StubProductUnitSelectionType(
+                    ProductUnitSelectionType::NAME => new ProductUnitSelectionTypeStub(
                         [
                             'item' => (new ProductUnit())->setCode('item'),
                             'kg' => (new ProductUnit())->setCode('kg')
                         ],
                         ProductUnitSelectionType::NAME
                     ),
-                    LocalizedFallbackValueCollectionType::NAME => new StubLocalizedFallbackValueCollectionType(),
-                    ProductCustomFieldsChoiceType::NAME => new StubProductCustomFieldsChoiceType(
+                    LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub(),
+                    ProductCustomFieldsChoiceType::NAME => new ProductCustomFieldsChoiceTypeStub(
                         $this->exampleCustomFields
                     ),
                     EntityIdentifierType::NAME => new StubEntityIdentifierType([]),
@@ -113,7 +124,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                 ],
                 [
                     'form' => [
-                        new TooltipFormExtension(),
+                        new TooltipFormExtension($configProvider, $translator),
                         new IntegerExtension()
                     ]
                 ]
