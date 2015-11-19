@@ -79,7 +79,6 @@ class WidgetControllerTest extends WebTestCase
     public function buttonsActionDataProvider()
     {
         $label = 'oro.action.test.label';
-
         $config = [
             'oro_action_test_action' => [
                 'label' => $label,
@@ -99,9 +98,7 @@ class WidgetControllerTest extends WebTestCase
                     [
                         'oro_action_test_action' => [
                             'entities' => [self::ENTITY_CLASS],
-                            'preconditions' => [
-                                ['@equal' => ['$message', 'test message']]
-                            ],
+                            'preconditions' => [['@equal' => ['$message', 'test message']]],
                         ],
                     ]
                 ),
@@ -116,9 +113,7 @@ class WidgetControllerTest extends WebTestCase
                     [
                         'oro_action_test_action' => [
                             'entities' => [self::ENTITY_CLASS],
-                            'preconditions' => [
-                                ['@equal' => ['$message', 'test message wrong']]
-                            ],
+                            'preconditions' => [['@equal' => ['$message', 'test message wrong']]],
                         ],
                     ]
                 ),
