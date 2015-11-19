@@ -14,5 +14,6 @@ actions:
             @or:
                 - @and:
                     - @equal: [$expired, false]
+                    - @collection_element_value_exists: [$quoteProducts, $productSku, 'SKU']
                 - @and:
                     - @equal: [$expired, false]

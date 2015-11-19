@@ -118,7 +118,7 @@ services:
         tags:
             - { name: oro_action.condition, alias: lte|le|less_or_equal }
 
-    #oro_action.expression.collection_element_value_exists:
-    #    class: Oro\Bundle\ActionBundle\Condition\CollectionElementValueExists
-    #    tags:
-    #        - { name: oro_action.condition, alias: collection_element_value_exists }
+    oro_action.expression.collection_element_value_exists:
+        class: Oro\Bundle\ActionBundle\Condition\CollectionElementValueExists
+        tags:
+            - { name: oro_action.condition, alias: collection_element_value_exists }
