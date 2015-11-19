@@ -134,8 +134,7 @@ class VisibilityGridListener
             $targetEntity,
             $parameters,
             $this->subscribedGridConfig[$datagridName]['visibilityEntityClass']
-        )
-        ) {
+        )) {
             return;
         }
         /** @var OrmDatasource $dataSource */
