@@ -59,7 +59,7 @@ class ProductVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function tetGetWebsite()
+    public function testGetWebsite()
     {
         $this->assertEquals($this->website, $this->entity->getWebsite());
     }
