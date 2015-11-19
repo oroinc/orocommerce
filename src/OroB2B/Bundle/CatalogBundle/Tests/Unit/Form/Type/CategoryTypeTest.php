@@ -113,8 +113,7 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
                     'label'    => 'orob2b.catalog.category.small_image.label',
                     'required' => false
                 ]
-            )
-            ->will($this->returnSelf());
+            )->will($this->returnSelf());
 
         $builder->expects($this->at(7))
             ->method('add')
@@ -125,8 +124,7 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
                     'label'    => 'orob2b.catalog.category.large_image.label',
                     'required' => false
                 ]
-            )
-            ->will($this->returnSelf());
+            )->will($this->returnSelf());
 
         $this->type->buildForm($builder, []);
     }
