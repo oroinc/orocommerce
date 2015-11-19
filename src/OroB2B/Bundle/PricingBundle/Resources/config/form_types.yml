@@ -10,6 +10,7 @@ parameters:
     orob2b_pricing.form.extension.account_type.class: OroB2B\Bundle\PricingBundle\Form\Extension\AccountFormExtension
     orob2b_pricing.form.extension.account_group_type.class: OroB2B\Bundle\PricingBundle\Form\Extension\AccountGroupFormExtension
     orob2b_pricing.form.extension.product_type.class: OroB2B\Bundle\PricingBundle\Form\Extension\ProductFormExtension
+    orob2b_pricing.form.extension.website_type.class: OroB2B\Bundle\PricingBundle\Form\Extension\WebSiteFormExtension
 
 services:
     orob2b_pricing.form.type.price_list:
@@ -85,3 +86,11 @@ services:
         class: %orob2b_pricing.form.type.price_list_select_with_priority.class%
         tags:
             - { name: form.type, alias: orob2b_pricing_price_list_select_with_priority }
+
+    orob2b_pricing.form.extension.website_type:
+        class: %orob2b_pricing.form.extension.website_type.class%
+        arguments:
+            - @doctrine
+            - %orob2b_pricing.entity.price_list_to_website.class%
+        tags:
+            - { name: form.type_extension, alias: orob2b_website_type }
