@@ -1,0 +1,47 @@
+parameters:
+    oro_action.context_accessor.class: Oro\Bundle\WorkflowBundle\Model\ContextAccessor
+    oro_action.function_factory.class: Oro\Bundle\WorkflowBundle\Model\Action\ActionFactory
+    oro_action.function_assembler.class: Oro\Bundle\WorkflowBundle\Model\Action\ActionAssembler
+
+    oro_action.function.tree.class: Oro\Bundle\WorkflowBundle\Model\Action\TreeExecutor
+    oro_action.function.configurable.class: Oro\Bundle\WorkflowBundle\Model\Action\Configurable
+    oro_action.function.create_datetime.class: Oro\Bundle\WorkflowBundle\Model\Action\CreateDateTime
+
+services:
+    oro_action.context_accessor:
+        class: %oro_action.context_accessor.class%
+
+    oro_action.function_factory:
+        class: %oro_action.function_factory.class%
+        arguments:
+            - @service_container
+            - []
+
+    oro_action.function_assembler:
+        class: %oro_action.function_assembler.class%
+        arguments:
+            - @oro_action.function_factory
+            - @oro_action.expression.factory
+        calls:
+            - [addConfigurationPass, [@oro_action.configuration_pass.replace_property_path]]
+
+    oro_action.function.tree:
+        class: %oro_action.function.tree.class%
+        arguments:
+            - @?logger
+        tags:
+            - { name: oro_action.function, alias: tree }
+
+    oro_action.function.configurable:
+        class: %oro_action.function.configurable.class%
+        arguments:
+            - @oro_action.function_assembler
+        tags:
+            - { name: oro_action.function, alias: configurable }
+
+    oro_action.function.create_datetime:
+        class: %oro_action.function.create_datetime.class%
+        arguments:
+            - @oro_action.context_accessor
+        tags:
+            - { name: oro_action.function, alias: create_datetime }

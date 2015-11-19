@@ -17,13 +17,13 @@ class CollectionElementValueExists extends AbstractComparison
      */
     public function initialize(array $options)
     {
-        if (2 !== count($options)) {
+        if (count($options) < 2) {
             throw new Exception\InvalidArgumentException(
                 sprintf('Options must have 2 or more elements, but %d given.', count($options))
             );
         }
 
-        $this->right = [];
+        $this->left = [];
 
         for ($i = 0; $i < count($options); $i++) {
             $option = array_shift($options);
@@ -34,10 +34,10 @@ class CollectionElementValueExists extends AbstractComparison
                 );
             }
 
-            $this->right[] = $option;
+            $this->left[] = $option;
         }
 
-        $this->left = array_shift($options);
+        $this->right = array_shift($options);
 
         return $this;
     }
@@ -45,7 +45,7 @@ class CollectionElementValueExists extends AbstractComparison
     /**
      * {@inheritdoc}
      */
-    protected function doCompare($needle, $collection)
+    protected function doCompare($collection, $needle)
     {
         return in_array($needle, $collection, true);
     }

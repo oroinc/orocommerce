@@ -2,6 +2,10 @@
 
 namespace Oro\Bundle\ActionBundle\Model;
 
+use Oro\Bundle\WorkflowBundle\Model\Action\ActionFactory as FunctionFactory;
+use Oro\Bundle\WorkflowBundle\Model\Action\ActionInterface as FunctionInterface;
+use Oro\Bundle\WorkflowBundle\Model\Action\Configurable as ConfigurableAction;
+
 use Oro\Bundle\WorkflowBundle\Model\Condition\AbstractCondition;
 use Oro\Bundle\WorkflowBundle\Model\Condition\Configurable as ConfigurableCondition;
 
@@ -9,11 +13,17 @@ use Oro\Component\ConfigExpression\ExpressionFactory as ConditionFactory;
 
 class Action
 {
+    /** @var FunctionFactory */
+    private $functionFactory;
+
     /** @var ConditionFactory */
     private $conditionFactory;
 
     /** @var ActionDefinition */
     private $definition;
+
+    /** @var FunctionInterface */
+    private $preFunction;
 
     /** @var AbstractCondition */
     private $preCondition;
@@ -22,11 +32,16 @@ class Action
     private $condition;
 
     /**
+     * @param FunctionFactory $functionFactory
      * @param ConditionFactory $conditionFactory
      * @param ActionDefinition $definition
      */
-    public function __construct(ConditionFactory $conditionFactory, ActionDefinition $definition)
-    {
+    public function __construct(
+        FunctionFactory $functionFactory,
+        ConditionFactory $conditionFactory,
+        ActionDefinition $definition
+    ) {
+        $this->functionFactory = $functionFactory;
         $this->conditionFactory = $conditionFactory;
         $this->definition = $definition;
     }
@@ -53,6 +68,22 @@ class Action
     public function getDefinition()
     {
         return $this->definition;
+    }
+
+    /**
+     * @return FunctionInterface
+     */
+    protected function getPreFunctions()
+    {
+        if ($this->preFunction === null) {
+            $this->preFunction = false;
+            $preFunctionsConfig = $this->definition->getPreFunctions();
+            if ($preFunctionsConfig) {
+                $this->preFunction = $this->functionFactory->create(ConfigurableAction::ALIAS, $preFunctionsConfig);
+            }
+        }
+
+        return $this->preFunction;
     }
 
     /**
@@ -110,6 +141,10 @@ class Action
      */
     public function isPreConditionAllowed(ActionContext $context)
     {
+        if ($this->getPreFunctions()) {
+            $this->getPreFunctions()->execute($context);
+        }
+
         if ($this->getPreCondition()) {
             return $this->getPreCondition()->evaluate($context);
         }
