@@ -20,7 +20,7 @@ class PriceListToAccountGroupRepository extends EntityRepository implements Pric
         return $this->createQueryBuilder('PriceListToAccountGroup')
             ->innerJoin('PriceListToAccountGroup.priceList', 'priceList')
             ->innerJoin('PriceListToAccountGroup.accountGroup', 'accountGroup')
-            ->where('PriceListToAccountGroup.accountGroup = :accountGroup')
+            ->where('accountGroup = :accountGroup')
             ->andWhere('PriceListToAccountGroup.website = :website')
             ->setParameters(['accountGroup' => $accountGroup, 'website' => $website])
             ->getQuery()

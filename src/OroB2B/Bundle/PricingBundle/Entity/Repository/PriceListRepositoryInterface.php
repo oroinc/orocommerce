@@ -8,9 +8,9 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 interface PriceListRepositoryInterface
 {
     /**
-     * @param object $account
+     * @param object $entity
      * @param Website $website
      * @return PriceList[]
      */
-    public function getPriceLists($account, Website $website);
+    public function getPriceLists($entity, Website $website);
 }
