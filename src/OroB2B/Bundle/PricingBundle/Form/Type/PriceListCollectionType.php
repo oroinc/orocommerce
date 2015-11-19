@@ -23,6 +23,7 @@ class PriceListCollectionType extends AbstractType
                 'show_form_when_empty' => false,
                 'mapped' => false,
                 'label' => false,
+                'handle_primary' => false
             ]
         );
     }

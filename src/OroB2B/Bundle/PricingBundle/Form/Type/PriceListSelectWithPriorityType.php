@@ -47,7 +47,7 @@ class PriceListSelectWithPriorityType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'allow_extra_fields' => true,
+//                'allow_extra_fields' => true,
             ]
         );
     }

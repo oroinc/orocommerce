@@ -57,7 +57,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
                 'mapped' => false,
                 'ownership_disabled' => true,
                 'data' => [],
-                'preloaded_websites' => [],
+                'preloaded_websites' => []
             ]
         );
     }
@@ -97,30 +97,10 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
             return;
         }
 
-        $form = $event->getForm();
+        /** @var FormInterface $priceListsByWebsites */
+        $priceListsByWebsites = $form->get('priceListsByWebsites');
 
-        /** @var FormInterface[] $priceListsByWebsites */
-        $priceListsByWebsites = $form->getParent()->get('priceListsByWebsites');
-
-        $formData = [];
-
-        foreach ($priceListsByWebsites as $priceListsByWebsite) {
-            $website = $priceListsByWebsite->getConfig()->getOption('website');
-            $actualPriceListsToTargetEntity = $this->getRepository()
-                ->getPriceLists($targetEntity, $website);
-
-            $actualPriceLists = [];
-
-            /** @var object $priceListToTargetEntity */
-            foreach ($actualPriceListsToTargetEntity as $priceListToTargetEntity) {
-                $priceLists['priceList'] = $priceListToTargetEntity->getPriceList();
-                $priceLists['priority'] = $priceListToTargetEntity->getPriority();
-
-                $actualPriceLists[] = $priceLists;
-            }
-
-            $formData[$website->getId()] = $actualPriceLists;
-        }
+        $formData = $this->prepareFormData($targetEntity, $priceListsByWebsites);
 
         $event->setData($formData);
     }
@@ -185,8 +165,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         Website $website,
         array $priceListWithPriorityData,
         array $actualPriceListsToTargetEntity
-    )
-    {
+    ) {
         /** @var PriceList $priceList */
         $priceList = $priceListWithPriorityData['priceList'];
         if (in_array($priceList->getId(), array_keys($actualPriceListsToTargetEntity))) {
