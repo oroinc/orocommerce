@@ -53,7 +53,7 @@ class ProductVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
             [
                 ['visibility', 0],
                 ['sourceProductVisibility', new ProductVisibility()],
-                ['source', BaseProductVisibilityResolved::VISIBLE],
+                ['source', BaseProductVisibilityResolved::VISIBILITY_VISIBLE],
                 ['categoryId', '123']
             ]
         );

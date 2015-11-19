@@ -56,7 +56,7 @@ class AccountGroupProductVisibilityResolvedTest extends \PHPUnit_Framework_TestC
             [
                 ['visibility', 0],
                 ['sourceProductVisibility', new AccountGroupProductVisibility()],
-                ['source', BaseProductVisibilityResolved::VISIBLE],
+                ['source', BaseProductVisibilityResolved::VISIBILITY_VISIBLE],
                 ['categoryId', '123']
             ]
         );

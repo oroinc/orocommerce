@@ -4,24 +4,20 @@ namespace OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\MappedSuperclass
- * @Config
  */
 class BaseProductVisibilityResolved
 {
-    const HIDDEN = -1;
-    const VISIBLE = 1;
+    const VISIBILITY_HIDDEN = -1;
+    const VISIBILITY_FALLBACK_TO_CONFIG = 0;
+    const VISIBILITY_VISIBLE = 1;
 
     const SOURCE_STATIC = 1;
     const SOURCE_CATEGORY = 2;
-    
-    const FALLBACK_TO_CONFIG_VISIBILITY = 0;
 
     /**
      * @var Website

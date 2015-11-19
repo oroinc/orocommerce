@@ -634,12 +634,11 @@ class OroB2BAccountBundleInstaller implements
         $table = $schema->createTable(self::ORO_B2B_PRODUCT_VISIBILITY_RESOLVED);
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('product_id', 'integer', []);
+        $table->addColumn('source_product_visibility', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'integer', ['notnull' => false]);
         $table->addColumn('source', 'integer', ['notnull' => false]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['website_id', 'product_id']);
-        $table->addIndex(['website_id'], 'IDX_ED62570618F45C82', []);
-        $table->addIndex(['product_id'], 'IDX_ED6257064584665A', []);
     }
 
     /**
@@ -658,10 +657,6 @@ class OroB2BAccountBundleInstaller implements
         $table->addColumn('source', 'integer', ['notnull' => false]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['account_group_id', 'website_id', 'product_id']);
-        $table->addIndex(['account_group_id'], 'IDX_41B7427A869A3BF1', []);
-        $table->addIndex(['source_product_visibility'], 'IDX_41B7427A48B3F7B5', []);
-        $table->addIndex(['website_id'], 'IDX_41B7427A18F45C82', []);
-        $table->addIndex(['product_id'], 'IDX_41B7427A4584665A', []);
     }
 
     /**
@@ -680,10 +675,6 @@ class OroB2BAccountBundleInstaller implements
         $table->addColumn('source', 'integer', ['notnull' => false]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['account_group_id', 'website_id', 'product_id']);
-        $table->addIndex(['account_group_id'], 'IDX_417AC14F869A3BF1', []);
-        $table->addIndex(['source_product_visibility'], 'IDX_417AC14F48B3F7B5', []);
-        $table->addIndex(['website_id'], 'IDX_417AC14F18F45C82', []);
-        $table->addIndex(['product_id'], 'IDX_417AC14F4584665A', []);
     }
 
     /**
@@ -1406,6 +1397,12 @@ class OroB2BAccountBundleInstaller implements
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_website'),
             ['website_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_product_visibility'),
+            ['source_product_visibility'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );

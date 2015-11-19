@@ -39,6 +39,7 @@ class OroB2BAccountBundle implements Migration
         $table = $schema->createTable(self::ORO_B2B_PRODUCT_VISIBILITY_RESOLVED);
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('product_id', 'integer', []);
+        $table->addColumn('source_product_visibility', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'integer', ['notnull' => false]);
         $table->addColumn('source', 'integer', ['notnull' => false]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
@@ -108,6 +109,12 @@ class OroB2BAccountBundle implements Migration
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_website'),
             ['website_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_product_visibility'),
+            ['source_product_visibility'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );

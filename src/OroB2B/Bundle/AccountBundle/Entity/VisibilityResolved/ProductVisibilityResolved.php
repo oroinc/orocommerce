@@ -4,13 +4,11 @@ namespace OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="orob2b_prod_vsb_resolv")
- * @Config
  */
 class ProductVisibilityResolved extends BaseProductVisibilityResolved
 {

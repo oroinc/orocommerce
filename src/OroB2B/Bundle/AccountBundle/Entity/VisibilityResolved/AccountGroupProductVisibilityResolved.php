@@ -4,8 +4,6 @@ namespace OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -14,7 +12,6 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 /**
  * @ORM\Entity
  * @ORM\Table(name="orob2b_acc_grp_prod_vsb_resolv")
- * @Config
  */
 class AccountGroupProductVisibilityResolved extends BaseProductVisibilityResolved
 {
