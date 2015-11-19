@@ -15,6 +15,7 @@ orob2b.pricing:
         accounts.label: Accounts
         websites.label: Websites
         prices.label: Prices
+        priority_label: Priority
         form:
             pricelist_required: Please select a price list first...
     quantity.label: Quantity
