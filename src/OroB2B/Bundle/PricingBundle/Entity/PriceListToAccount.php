@@ -33,7 +33,7 @@ class PriceListToAccount extends BasePriceListRelation
      * @param Account $account
      * @return $this
      */
-    public function setAccount($account)
+    public function setAccount(Account $account)
     {
         $this->account = $account;
 

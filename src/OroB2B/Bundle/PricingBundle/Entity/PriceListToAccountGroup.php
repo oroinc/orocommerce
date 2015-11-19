@@ -33,7 +33,7 @@ class PriceListToAccountGroup extends BasePriceListRelation
      * @param AccountGroup $accountGroup
      * @return $this
      */
-    public function setAccountGroup($accountGroup)
+    public function setAccountGroup(AccountGroup $accountGroup)
     {
         $this->accountGroup = $accountGroup;
 
