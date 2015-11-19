@@ -4,6 +4,9 @@ parameters:
     oro_action.expression.factory.class: Oro\Component\ConfigExpression\ExpressionFactory
     oro_action.expression.assembler.class: Oro\Component\ConfigExpression\ExpressionAssembler
 
+    oro_action.condition.configurable.class: Oro\Bundle\WorkflowBundle\Model\Condition\Configurable
+    oro_action.configuration_pass.replace_property_path.class: Oro\Bundle\WorkflowBundle\Model\ConfigurationPass\ReplacePropertyPath
+
 services:
     oro_action.expression.extension:
         class: %oro_action.expression.extension.class%
@@ -25,15 +28,20 @@ services:
         class: %oro_action.expression.assembler.class%
         arguments:
             - @oro_action.expression.factory
-#        calls:
-#            - [addConfigurationPass, [@oro_action.configuration_pass.replace_property_path]]
+        calls:
+            - [addConfigurationPass, [@oro_workflow.configuration_pass.replace_property_path]]
 
-#    oro_action.condition.configurable:
-#        class: Oro\Bundle\ActionBundle\Model\Condition\Configurable
-#        arguments:
-#            - @oro_action.expression.assembler
-#        tags:
-#            - { name: oro_action.condition, alias: configurable }
+    oro_action.configuration_pass.replace_property_path:
+        class: %oro_action.configuration_pass.replace_property_path.class%
+        arguments:
+            - "entity"
+
+    oro_action.condition.configurable:
+        class: %oro_action.condition.configurable.class%
+        arguments:
+            - @oro_action.expression.assembler
+        tags:
+            - { name: oro_action.condition, alias: configurable }
 
     oro_action.expression.andx:
         class: Oro\Component\ConfigExpression\Condition\Andx
@@ -109,3 +117,8 @@ services:
         class: Oro\Component\ConfigExpression\Condition\LessThanOrEqual
         tags:
             - { name: oro_action.condition, alias: lte|le|less_or_equal }
+
+    #oro_action.expression.collection_element_value_exists:
+    #    class: Oro\Bundle\ActionBundle\Condition\CollectionElementValueExists
+    #    tags:
+    #        - { name: oro_action.condition, alias: collection_element_value_exists }

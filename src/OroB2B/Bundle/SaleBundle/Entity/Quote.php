@@ -577,6 +577,26 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
     }
 
     /**
+     * @return bool
+     */
+    public function isExpired()
+    {
+        return $this->expired;
+    }
+
+    /**
+     * @param bool $expired
+     *
+     * @return Quote
+     */
+    public function setExpired($expired)
+    {
+        $this->expired = (bool)$expired;
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function __toString()

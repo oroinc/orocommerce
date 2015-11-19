@@ -15,11 +15,11 @@ class Action
     /** @var ActionDefinition */
     private $definition;
 
-    /** @var AbstractCondition[] */
-    private $preConditions;
+    /** @var AbstractCondition */
+    private $preCondition;
 
-    /** @var AbstractCondition[] */
-    private $conditions;
+    /** @var AbstractCondition */
+    private $condition;
 
     /**
      * @param ConditionFactory $conditionFactory
@@ -56,41 +56,36 @@ class Action
     }
 
     /**
-     * @return AbstractCondition[]
+     * @return AbstractCondition
      */
-    protected function getPreConditions()
+    protected function getPreCondition()
     {
-        if ($this->preConditions === null) {
-            $this->preConditions = [];
+        if ($this->preCondition === null) {
+            $this->preCondition = false;
             $preConditionsConfig = $this->definition->getPreConditions();
             if ($preConditionsConfig) {
-                foreach ($preConditionsConfig as $conditionConfig) {
-                    $this->preConditions[] = $this->conditionFactory
-                        ->create(ConfigurableCondition::ALIAS, $conditionConfig);
-                }
+                $this->preCondition = $this->conditionFactory
+                    ->create(ConfigurableCondition::ALIAS, $preConditionsConfig);
             }
         }
 
-        return $this->preConditions;
+        return $this->preCondition;
     }
 
     /**
-     * @return AbstractCondition[]
+     * @return AbstractCondition
      */
-    protected function getConditions()
+    protected function getCondition()
     {
-        if ($this->conditions === null) {
-            $this->conditions = [];
-            $conditionsConfig = $this->definition->getConditions();
-            if ($conditionsConfig) {
-                foreach ($conditionsConfig as $conditionConfig) {
-                    $this->conditions[] = $this->conditionFactory
-                        ->create(ConfigurableCondition::ALIAS, $conditionConfig);
-                }
+        if ($this->condition === null) {
+            $this->condition = false;
+            $conditionConfig = $this->definition->getConditions();
+            if ($conditionConfig) {
+                $this->condition = $this->conditionFactory->create(ConfigurableCondition::ALIAS, $conditionConfig);
             }
         }
 
-        return $this->conditions;
+        return $this->condition;
     }
 
     /**
@@ -113,12 +108,10 @@ class Action
      * @param ActionContext $context
      * @return bool
      */
-    public function isAllowed(ActionContext $context)
+    public function isPreConditionAllowed(ActionContext $context)
     {
-        foreach ($this->getPreConditions() as $condition) {
-            if (!$condition->evaluate($context)) {
-                return false;
-            }
+        if ($this->getPreCondition()) {
+            return $this->getPreCondition()->evaluate($context);
         }
 
         return true;
@@ -128,12 +121,10 @@ class Action
      * @param ActionContext $context
      * @return bool
      */
-    public function isApplicable(ActionContext $context)
+    public function isConditionAllowed(ActionContext $context)
     {
-        foreach ($this->getConditions() as $condition) {
-            if (!$condition->evaluate($context->getEntity())) {
-                return false;
-            }
+        if ($this->getCondition()) {
+            return $this->getCondition()->evaluate($context);
         }
 
         return true;

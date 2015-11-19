@@ -52,8 +52,8 @@ class ActionTest extends \PHPUnit_Framework_TestCase
         $this->conditionFactory->expects(static::never())
             ->method(static::anything());
 
-        static::assertTrue($this->action->isApplicable($this->context));
-        static::assertTrue($this->action->isAllowed($this->context));
+        static::assertTrue($this->action->isPreConditionAllowed($this->context));
+        static::assertTrue($this->action->isConditionAllowed($this->context));
     }
 
     public function testIsApplicableIsAllowedNoConditions()
@@ -67,11 +67,11 @@ class ActionTest extends \PHPUnit_Framework_TestCase
         $this->conditionFactory->expects(static::never())
             ->method(static::anything());
 
-        static::assertTrue($this->action->isApplicable($this->context));
-        static::assertTrue($this->action->isAllowed($this->context));
+        static::assertTrue($this->action->isPreConditionAllowed($this->context));
+        static::assertTrue($this->action->isConditionAllowed($this->context));
     }
 
-    public function testIsApplicable()
+    public function testIsConditionAllowed()
     {
         $this->context['data'] = new \stdClass();
         $conditions = [
@@ -82,7 +82,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $condition->expects(static::any())
             ->method('evaluate')
-            ->with($this->context->getEntity())
+            ->with($this->context)
             ->willReturn(false);
 
         $this->definition->expects(static::once())
@@ -91,13 +91,13 @@ class ActionTest extends \PHPUnit_Framework_TestCase
 
         $this->conditionFactory->expects(static::once())
             ->method('create')
-            ->with(ConfigurableCondition::ALIAS, $conditions[0])
+            ->with(ConfigurableCondition::ALIAS, $conditions)
             ->willReturn($condition);
 
-        static::assertFalse($this->action->isApplicable($this->context));
+        static::assertFalse($this->action->isConditionAllowed($this->context));
     }
 
-    public function testIsAllowed()
+    public function testIsPreConditionAllowed()
     {
         $this->context['data'] = new \stdClass();
         $conditions = [
@@ -108,7 +108,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $condition->expects(static::any())
             ->method('evaluate')
-            ->with($this->context->getEntity())
+            ->with($this->context)
             ->willReturn(false);
 
         $this->definition->expects(static::once())
@@ -117,10 +117,10 @@ class ActionTest extends \PHPUnit_Framework_TestCase
 
         $this->conditionFactory->expects(static::once())
             ->method('create')
-            ->with(ConfigurableCondition::ALIAS, $conditions[0])
+            ->with(ConfigurableCondition::ALIAS, $conditions)
             ->willReturn($condition);
 
-        static::assertFalse($this->action->isAllowed($this->context));
+        static::assertFalse($this->action->isPreConditionAllowed($this->context));
     }
 
     public function testGetDefinition()

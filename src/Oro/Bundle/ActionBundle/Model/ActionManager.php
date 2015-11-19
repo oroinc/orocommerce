@@ -95,7 +95,7 @@ class ActionManager
         }
 
         $actions = array_filter($actions, function (Action $action) use ($actionContext) {
-            return $action->isEnabled() && $action->isAllowed($actionContext);
+            return $action->isEnabled() && $action->isPreConditionAllowed($actionContext);
         });
 
         uasort($actions, function (Action $action1, Action $action2) {
