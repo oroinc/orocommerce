@@ -5,6 +5,7 @@ namespace Oro\Bundle\ActionBundle\Tests\Unit\Model;
 use Oro\Bundle\ActionBundle\Model\Action;
 use Oro\Bundle\ActionBundle\Model\ActionContext;
 use Oro\Bundle\ActionBundle\Model\ActionDefinition;
+use Oro\Bundle\WorkflowBundle\Model\Action\ActionFactory as FunctionFactory;
 use Oro\Bundle\WorkflowBundle\Model\Condition\Configurable as ConfigurableCondition;
 
 use Oro\Component\ConfigExpression\ExpressionFactory;
@@ -13,6 +14,9 @@ class ActionTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \PHPUnit_Framework_MockObject_MockObject|ActionDefinition $definition */
     protected $definition;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|FunctionFactory $functionFactory */
+    protected $functionFactory;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|ExpressionFactory $conditionFactory */
     protected $conditionFactory;
@@ -29,11 +33,15 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->functionFactory = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Action\ActionFactory')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->conditionFactory = $this->getMockBuilder('Oro\Component\ConfigExpression\ExpressionFactory')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->action = new Action($this->conditionFactory, $this->definition);
+        $this->action = new Action($this->functionFactory, $this->conditionFactory, $this->definition);
         $this->context = new ActionContext();
     }
 
@@ -113,9 +121,9 @@ class ActionTest extends \PHPUnit_Framework_TestCase
 
         $this->definition->expects(static::once())
             ->method('getPreConditions')
-            ->willReturn($conditionsArray);
+            ->willReturn($conditions);
 
-        $this->conditionFactory->expects($this->any())
+        $this->conditionFactory->expects(static::once())
             ->method('create')
             ->with(ConfigurableCondition::ALIAS, $conditions)
             ->willReturn($condition);

@@ -5,6 +5,7 @@ namespace Oro\Bundle\ActionBundle\Tests\Unit\Model;
 use Oro\Bundle\ActionBundle\Model\Action;
 use Oro\Bundle\ActionBundle\Model\ActionAssembler;
 use Oro\Bundle\ActionBundle\Model\ActionDefinition;
+use Oro\Bundle\WorkflowBundle\Model\Action\ActionFactory as FunctionFactory;
 
 use Oro\Component\ConfigExpression\ExpressionFactory as ConditionFactory;
 
@@ -17,7 +18,7 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->assembler = new ActionAssembler($this->getConditionFactory());
+        $this->assembler = new ActionAssembler($this->getFunctionFactory(), $this->getConditionFactory());
     }
 
     protected function tearDown()
@@ -79,6 +80,7 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
             ->setExecutionStep(['config_execution_step'])
             ->setOrder(77);
 
+        $functionFactory = $this->getFunctionFactory();
         $conditionFactory = $this->getConditionFactory();
 
         return [
@@ -97,7 +99,7 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
                 ]
                 ,
                 'expected' => [
-                    'minimum_name' => new Action($conditionFactory, $definition1),
+                    'minimum_name' => new Action($functionFactory, $conditionFactory, $definition1),
                 ],
             ],
             'maximum data' => [
@@ -119,10 +121,20 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
                     ]
                 ],
                 'expected' => [
-                    'maximum_name' => new Action($conditionFactory, $definition2),
+                    'maximum_name' => new Action($functionFactory, $conditionFactory, $definition2),
                 ],
             ],
         ];
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|FunctionFactory
+     */
+    protected function getFunctionFactory()
+    {
+        return $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Action\ActionFactory')
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     /**
