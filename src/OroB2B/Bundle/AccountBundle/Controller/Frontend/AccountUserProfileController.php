@@ -111,17 +111,7 @@ class AccountUserProfileController extends Controller
         /** @var $userManager AccountUserManager */
         $userManager = $this->get('orob2b_account_user.manager');
 
-        $form = $this->createForm(
-            FrontendAccountUserRegistrationType::NAME,
-            $accountUser,
-            ['add_company_name' => true]
-        );
-
-        if (!$accountUser->getAccount() && $request->getMethod() == 'POST') {
-            $formData = $request->request->get(FrontendAccountUserRegistrationType::NAME);
-            $companyName = $formData['companyName'];
-            $accountUser->createAccountWithCompanyName($companyName);
-        }
+        $form = $this->createForm(FrontendAccountUserRegistrationType::NAME, $accountUser);
 
         $handler = new FrontendAccountUserHandler($form, $request, $userManager);
 
