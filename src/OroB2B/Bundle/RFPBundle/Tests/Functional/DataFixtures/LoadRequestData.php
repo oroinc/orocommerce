@@ -6,7 +6,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\CurrencyBundle\Model\OptionalPrice as Price;
+use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
@@ -215,7 +215,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
                 $currency = $currencies[rand(0, count($currencies) - 1)];
                 $requestProductItem = new RequestProductItem();
                 $requestProductItem
-                    ->setPrice(Price::create(rand(1, 100), $currency))
+                    ->setPrice(OptionalPrice::create(rand(1, 100), $currency))
                     ->setQuantity(rand(1, 100))
                     ->setProductUnit($productUnit)
                 ;

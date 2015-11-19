@@ -108,12 +108,12 @@ define(function(require) {
                 var $choice = $(event.target);
                 var $checkedChoice = $choices.filter(':checked');
                 if ($choice !== $checkedChoice[0]) {
-                    $priceValue.val(parseFloat($choice.data('price')));
-                    $productUnit.val($choice.data('unit'));
-                    $quantity.val($choice.val());
-                    $currency.val($choice.data('currency'));
+                    $priceValue.val(parseFloat($choice.data('price'))).change();
+                    $productUnit.val($choice.data('unit')).change();
+                    $quantity.val($choice.val()).change();
+                    $currency.val($choice.data('currency')).change();
                     $choices.filter(':checked').prop('checked', false);
-                    $choice.prop('checked', true);
+                    $choice.prop('checked', true).change();
                     $quantityOffers.change();
                 }
             }, this));
@@ -121,7 +121,7 @@ define(function(require) {
             $($priceValue).add($productUnit).add($quantity).add($currency).change(_.bind(function(event) {
                 var $checkedChoice = $choices.filter(':checked');
                 if ($checkedChoice.length) {
-                    $checkedChoice.prop('checked', false);
+                    $checkedChoice.prop('checked', false).change();
                     $quantityOffers.change();
                 }
             }, this));
