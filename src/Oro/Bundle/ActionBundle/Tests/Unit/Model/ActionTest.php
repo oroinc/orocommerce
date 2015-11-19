@@ -111,18 +111,17 @@ class ActionTest extends \PHPUnit_Framework_TestCase
         foreach ($conditions as $key => $condition) {
             $conditionsArray[$key] = [$key];
         }
-        $this->definition->expects(static::once())
+        $this->definition->expects($this->once())
             ->method('getPreConditions')
             ->willReturn($conditionsArray);
 
-        $this->conditionFactory->expects(static::any())
+        $this->conditionFactory->expects($this->any())
             ->method('create')
-            ->withAnyParameters()
             ->willReturnCallback(function ($name, $options) use ($conditions) {
                 return $conditions[reset($options)];
             });
 
-        static::assertEquals($expected, $this->action->isAllowed($this->context));
+        $this->assertEquals($expected, $this->action->isAllowed($this->context));
     }
 
     public function testGetDefinition()
@@ -153,16 +152,19 @@ class ActionTest extends \PHPUnit_Framework_TestCase
      */
     public function isAllowedDataProvider()
     {
+        /* @var $conditionTrue ConfigurableCondition|\PHPUnit_Framework_MockObject_MockObject */
         $conditionTrue = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Condition\Configurable')
             ->disableOriginalConstructor()
             ->getMock();
-        $conditionTrue->expects(static::any())
+        $conditionTrue->expects($this->any())
             ->method('evaluate')
             ->willReturn(true);
+
+        /* @var $conditionFalse ConfigurableCondition|\PHPUnit_Framework_MockObject_MockObject */
         $conditionFalse = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Condition\Configurable')
             ->disableOriginalConstructor()
             ->getMock();
-        $conditionFalse->expects(static::any())
+        $conditionFalse->expects($this->any())
             ->method('evaluate')
             ->willReturn(false);
 
