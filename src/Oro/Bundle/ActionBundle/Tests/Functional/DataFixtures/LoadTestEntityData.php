@@ -13,7 +13,7 @@ class LoadTestEntityData extends AbstractFixture
     public function load(ObjectManager $manager)
     {
         $testEntity = new TestActivity();
-        $testEntity->setId(42)->setMessage('test message');
+        $testEntity->setMessage('test message');
         $manager->persist($testEntity);
         $manager->flush();
         $this->addReference(self::TEST_ENTITY_1, $testEntity);
