@@ -10,3 +10,9 @@ actions:
         order: 10
         frontend_options:
             icon: icon-time
+        preconditions:
+            - @or:
+                - @and:
+                    - @equal: [$expired, false]
+                - @and:
+                    - @equal: [$expired, false]

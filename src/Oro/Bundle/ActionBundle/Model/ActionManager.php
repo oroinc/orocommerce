@@ -135,7 +135,7 @@ class ActionManager
             $entity = $this->getEntityReference($context['entityClass'], $context['entityId']);
         }
 
-        return new ActionContext($entity ? ['entity' => $entity] : []);
+        return new ActionContext($entity ? ['data' => $entity] : []);
     }
 
     /**

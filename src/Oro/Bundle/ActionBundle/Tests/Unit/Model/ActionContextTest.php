@@ -29,7 +29,7 @@ class ActionContextTest extends \PHPUnit_Framework_TestCase
         $data = new ActionContext();
         $this->assertNull($data->getEntity());
 
-        $data['entity'] = new \stdClass();
+        $data['data'] = new \stdClass();
         $this->assertInternalType('object', $data->getEntity());
     }
 

@@ -53,7 +53,7 @@ actions:
             - frontend_options
         label: adme.demo.myentity.actions.myentity_action   # label for action button
         enabled: true                                       # is action enabled
-        applications:                                       # for what applications action as available (backend, frontend)
+        applications:                                       # for what applications action are available (backend, frontend)
             - backend
             - frontend
         entities:                                           # list of entity classes
@@ -74,7 +74,7 @@ actions:
                         required: false
         attributes:                                         # configuration for Attributes
             ...
-        pre_conditions:                                     # pre conditions for display Action button and run Init step
+        preconditions:                                      # pre conditions for display Action button and run Init step
             ...
         conditions:                                         # conditions for run Execution step
             ...

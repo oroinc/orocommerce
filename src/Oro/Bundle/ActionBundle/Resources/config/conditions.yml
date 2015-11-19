@@ -1,10 +1,17 @@
 parameters:
+    oro_action.configuration_pass.replace_property_path.class: Oro\Bundle\WorkflowBundle\Model\ConfigurationPass\ReplacePropertyPath
     oro_action.expression.extension.class: Oro\Component\ConfigExpression\Extension\DependencyInjection\DependencyInjectionExtension
     oro_action.expression.context_accessor.class: Oro\Component\ConfigExpression\ContextAccessor
     oro_action.expression.factory.class: Oro\Component\ConfigExpression\ExpressionFactory
     oro_action.expression.assembler.class: Oro\Component\ConfigExpression\ExpressionAssembler
+    oro_action.condition.configurable.class: Oro\Bundle\WorkflowBundle\Model\Condition\Configurable
 
 services:
+    oro_action.configuration_pass.replace_property_path:
+        class: %oro_action.configuration_pass.replace_property_path.class%
+        arguments:
+            - "data"
+
     oro_action.expression.extension:
         class: %oro_action.expression.extension.class%
         arguments:
@@ -25,15 +32,15 @@ services:
         class: %oro_action.expression.assembler.class%
         arguments:
             - @oro_action.expression.factory
-#        calls:
-#            - [addConfigurationPass, [@oro_action.configuration_pass.replace_property_path]]
+        calls:
+            - [addConfigurationPass, [@oro_action.configuration_pass.replace_property_path]]
 
-#    oro_action.condition.configurable:
-#        class: Oro\Bundle\ActionBundle\Model\Condition\Configurable
-#        arguments:
-#            - @oro_action.expression.assembler
-#        tags:
-#            - { name: oro_action.condition, alias: configurable }
+    oro_action.condition.configurable:
+        class: %oro_action.condition.configurable.class%
+        arguments:
+            - @oro_action.expression.assembler
+        tags:
+            - { name: oro_action.condition, alias: configurable }
 
     oro_action.expression.andx:
         class: Oro\Component\ConfigExpression\Condition\Andx
