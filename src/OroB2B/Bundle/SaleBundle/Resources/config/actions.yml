@@ -31,6 +31,5 @@ actions:
                     - @or:
                         - @empty: $shipUntil
                         - @gt: [$shipUntil, $.compare_date]
-        prefunctions:
-            - @assign_value:
-                - [$expired, true]
+        postfunctions:
+            - @assign_value: [$expired, true]
