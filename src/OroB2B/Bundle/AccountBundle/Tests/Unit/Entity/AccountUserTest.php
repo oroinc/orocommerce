@@ -94,7 +94,7 @@ class AccountUserTest extends AbstractUserTest
 
         //Creating an account with company name parameter instead of use first and last name
         $user->setAccount(null);
-        $user->createAccountWithCompanyName('test company');
+        $user->createAccount('test company');
         $this->assertEquals('test company', $user->getAccount()->getName());
     }
 
