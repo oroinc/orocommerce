@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\FallbackBundle\ImportExport\Strategy;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Util\ClassUtils;
 
@@ -72,7 +73,7 @@ class LocalizedFallbackValueAwareStrategy extends ConfigurableAddOrReplaceStrate
 
     /**
      * @param object $entity
-     * @param array $field
+     * @param array  $field
      * @throws \Exception
      */
     protected function setLocaleKeys($entity, array $field)
@@ -80,11 +81,17 @@ class LocalizedFallbackValueAwareStrategy extends ConfigurableAddOrReplaceStrate
         /** @var Collection|LocalizedFallbackValue[] $localizedFallbackValues */
         $localizedFallbackValues = $this->fieldHelper->getObjectValue($entity, $field['name']);
 
-        foreach ($localizedFallbackValues as $value) {
-            $code = LocaleCodeFormatter::formatName($value->getLocale());
-            $localizedFallbackValues->removeElement($value);
-            $localizedFallbackValues->set($code, $value);
-        }
+        $newKeys = $localizedFallbackValues->map(
+            function (LocalizedFallbackValue $value) {
+                return LocaleCodeFormatter::formatName($value->getLocale());
+            }
+        );
+
+        $newLocalizedFallbackValues = new ArrayCollection(
+            array_combine($newKeys->toArray(), $localizedFallbackValues->toArray())
+        );
+
+        $this->fieldHelper->setObjectValue($entity, $field['name'], $newLocalizedFallbackValues);
     }
 
     /**
