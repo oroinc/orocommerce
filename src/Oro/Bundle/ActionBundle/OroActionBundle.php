@@ -8,6 +8,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 use Oro\Bundle\ActionBundle\DependencyInjection\CompilerPass\ConditionPass;
 use Oro\Bundle\ActionBundle\DependencyInjection\CompilerPass\ConfigurationPass;
+use Oro\Bundle\ActionBundle\DependencyInjection\CompilerPass\FunctionPass;
 
 class OroActionBundle extends Bundle
 {
@@ -19,6 +20,7 @@ class OroActionBundle extends Bundle
         parent::build($container);
 
         $container->addCompilerPass(new ConditionPass(), PassConfig::TYPE_AFTER_REMOVING);
+        $container->addCompilerPass(new FunctionPass(), PassConfig::TYPE_AFTER_REMOVING);
         $container->addCompilerPass(new ConfigurationPass(), PassConfig::TYPE_AFTER_REMOVING);
     }
 }
