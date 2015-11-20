@@ -16,7 +16,7 @@ services:
     oro_action.configuration.validator.action_definition:
         class: %oro_action.configuration.validator.action_definition.class%
         arguments:
-            - @kernel
+            - %kernel.debug%
             - @router
             - @templating
             - @oro_entity.doctrine_helper

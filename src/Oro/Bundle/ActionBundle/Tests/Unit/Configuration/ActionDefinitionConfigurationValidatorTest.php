@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ActionBundle\Tests\Unit\Configuration;
 
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Templating\EngineInterface;
@@ -13,9 +12,9 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var KernelInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var bool
      */
-    protected $kernel;
+    protected $debug = true;
 
     /**
      * @var RouterInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -42,10 +41,6 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
      */
     public function setUp()
     {
-        $this->kernel = $this->getMockBuilder('Symfony\Component\HttpKernel\KernelInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-
         $this->router = $this->getMock('Symfony\Component\Routing\RouterInterface');
 
         $this->templating = $this->getMock('Symfony\Component\Templating\EngineInterface');
@@ -54,8 +49,16 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->createValidator();
+    }
+
+    /**
+     * @param bool $debug
+     */
+    protected function createValidator($debug = false)
+    {
         $this->validator = new ActionDefinitionConfigurationValidator(
-            $this->kernel,
+            $debug,
             $this->router,
             $this->templating,
             $this->doctrineHelper
@@ -70,6 +73,8 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
      */
     public function testValidate(array $inputData, $expectedOutput)
     {
+        $this->createValidator($inputData['debug']);
+
         /* @var $collection RouteCollection|\PHPUnit_Framework_MockObject_MockObject */
         $collection = $this->getMock('Symfony\Component\Routing\RouteCollection');
 
@@ -94,10 +99,6 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
         $this->templating->expects($this->any())
             ->method('exists')
             ->will($this->returnValueMap($inputData['templates']));
-
-        $this->kernel->expects($this->any())
-            ->method('isDebug')
-            ->willReturn($inputData['debug']);
 
         $this->expectOutputString($expectedOutput);
 
@@ -232,7 +233,9 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
                         ]),
                     ],
                 ],
-                'output' => 'InvalidConfiguration: unknown_route_action2.routes.0: Route "unknown_route" not found.'."\n",
+                'output' => 'InvalidConfiguration: ' .
+                    'unknown_route_action2.routes.0: ' .
+                    'Route "unknown_route" not found.' . "\n",
             ],
             'unknown entity short syntax' => [
                 'input' => [
@@ -245,7 +248,9 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
                         ]),
                     ],
                 ],
-                'output' => 'InvalidConfiguration: unknown_entity_short_syntax_action.entities.0: Entity "UnknownBundle:UnknownEntity" not found.'."\n",
+                'output' => 'InvalidConfiguration: ' .
+                    'unknown_entity_short_syntax_action.entities.0: ' .
+                    'Entity "UnknownBundle:UnknownEntity" not found.' . "\n",
             ],
             'unknown entity' => [
                 'input' => [
@@ -258,7 +263,9 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
                         ]),
                     ],
                 ],
-                'output' => 'InvalidConfiguration: unknown_entity_action.entities.0: Entity "TestEntity" not found.'."\n",
+                'output' => 'InvalidConfiguration: ' .
+                    'unknown_entity_action.entities.0: ' .
+                    'Entity "TestEntity" not found.' . "\n",
             ],
             'valid config' => [
                 'input' => [

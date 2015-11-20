@@ -12,9 +12,9 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 class ActionDefinitionConfigurationValidator
 {
     /**
-     * @var KernelInterface
+     * @var bool
      */
-    protected $kernel;
+    protected $debug;
 
     /**
      * @var RouterInterface
@@ -32,18 +32,18 @@ class ActionDefinitionConfigurationValidator
     protected $doctrineHelper;
 
     /**
-     * @param KernelInterface $kernel
+     * @param bool $debug
      * @param RouterInterface $router
      * @param EngineInterface $templating
      * @param DoctrineHelper $doctrineHelper
      */
     public function __construct(
-        KernelInterface $kernel,
+        $debug,
         RouterInterface $router,
         EngineInterface $templating,
         DoctrineHelper $doctrineHelper
     ) {
-        $this->kernel = $kernel;
+        $this->debug = $debug;
         $this->router = $router;
         $this->templating = $templating;
         $this->doctrineHelper = $doctrineHelper;
@@ -84,7 +84,6 @@ class ActionDefinitionConfigurationValidator
                 false
             );
         }
-
     }
 
     /**
@@ -177,7 +176,7 @@ class ActionDefinitionConfigurationValidator
             $exception->setPath($path);
 
             throw $exception;
-        } elseif ($this->kernel->isDebug()) {
+        } elseif ($this->debug) {
             print('InvalidConfiguration: ' . $path . ': '. $errorMessage . "\n");
         }
     }
