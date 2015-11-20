@@ -156,7 +156,7 @@ class LoadCategoryVisibilityData extends AbstractFixture implements DependentFix
      */
     protected function getCategoryVisibilityData()
     {
-        $filePath = __DIR__.DIRECTORY_SEPARATOR.'data'.DIRECTORY_SEPARATOR.'visibilities.yml';
+        $filePath = __DIR__.DIRECTORY_SEPARATOR.'data'.DIRECTORY_SEPARATOR.'category_visibilities.yml';
 
         return Yaml::parse($filePath);
     }

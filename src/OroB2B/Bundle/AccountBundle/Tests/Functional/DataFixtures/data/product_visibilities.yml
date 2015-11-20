@@ -1,0 +1,32 @@
+product.1:
+    website: US
+    all: config
+    groups:
+        account_group.group1: hidden
+    accounts:
+        account.level_1: visible
+product.2:
+    website: US
+    all: visible
+    groups:
+        account_group.group1: visible
+    accounts:
+        account.level_1: hidden
+product.3:
+    website: US
+    all: visible
+    groups:
+        account_group.group1: hidden
+    accounts: {}
+product.4:
+    website: US
+    all: config
+    groups: {}
+    accounts: {}
+product.5:
+    website: US
+    all: visible
+    groups:
+        account_group.group1: hidden
+    accounts:
+        account.level_1: current_product
