@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ActionBundle\Configuration;
 
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Templating\EngineInterface;
 
