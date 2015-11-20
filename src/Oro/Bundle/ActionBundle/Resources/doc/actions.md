@@ -48,7 +48,7 @@ Look at the example of simple action configuration that performs some action wit
 actions:
     acme_demo_expire_myentity_action:                       # action name
         extends: entity_action_base                         # (optional) parent action if needed
-        replaces:                                           # (optional) the list of nodes that should be replaced in the parent action
+        replace:                                            # (optional) the list of nodes that should be replaced in the parent action
             - frontend_options
         label: adme.demo.myentity.actions.myentity_action   # label for action button
         enabled: true                                       # (optional, default = true) is action enabled
@@ -60,11 +60,14 @@ actions:
         frontend_options:                                   # (optional) display options for action button:
             icon: icon-time                                 # class of button icon
             class: btn                                      # class of button 
-            template: customTemplate.html.twig              # custom button template if needed
+            template: customTemplate.html.twig              #  custom button template if needed
+        prefunctions:                                       # (optional) any needed pre functions which will execute before pre conditions
+            - @create_datetime:
+                attribute: $.date
         preconditions:                                      # (optional) pre conditions for display Action button
-            - @equal: [$expired, 1]
+            @gt: [$updatedAt, $.date]
 ```
 
 This configuration describes action that relates to the ``MyEntity`` entity; On the View page (acme_demo_myentity_view)
-of this entity (in case of field 'expired' = 1) will be displayed button with label
+of this entity (in case of field 'updatedAt' > new DateTime('now')) will be displayed button with label
 "adme.demo.myentity.actions.myentity_action".
