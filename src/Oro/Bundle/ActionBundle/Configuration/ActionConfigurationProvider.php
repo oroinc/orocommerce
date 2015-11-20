@@ -17,6 +17,9 @@ class ActionConfigurationProvider
     /** @var ActionDefinitionListConfiguration */
     protected $definitionConfiguration;
 
+    /** @var ActionDefinitionConfigurationValidator */
+    protected $definitionConfigurationValidator;
+
     /** @var CacheProvider */
     protected $cache;
 
@@ -37,11 +40,13 @@ class ActionConfigurationProvider
      */
     public function __construct(
         ActionDefinitionListConfiguration $definitionConfiguration,
+        ActionDefinitionConfigurationValidator $definitionConfigurationValidator,
         CacheProvider $cache,
         array $rawConfiguration,
         array $kernelBundles
     ) {
         $this->definitionConfiguration = $definitionConfiguration;
+        $this->definitionConfigurationValidator = $definitionConfigurationValidator;
         $this->cache = $cache;
         $this->rawConfiguration = $rawConfiguration;
         $this->kernelBundles = array_values($kernelBundles);
@@ -102,6 +107,8 @@ class ActionConfigurationProvider
             $data = [];
             if (!empty($configs)) {
                 $data = $this->definitionConfiguration->processConfiguration($configs);
+
+                $this->definitionConfigurationValidator->validate($data);
             }
         } catch (InvalidConfigurationException $exception) {
             throw new InvalidConfigurationException(

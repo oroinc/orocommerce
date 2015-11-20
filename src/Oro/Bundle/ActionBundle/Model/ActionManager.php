@@ -167,15 +167,19 @@ class ActionManager
      */
     protected function getEntityClassName($entityName)
     {
-        $entityClass = $this->doctrineHelper->getEntityClass($entityName);
+        try {
+            $entityClass = $this->doctrineHelper->getEntityClass($entityName);
 
-        if (!class_exists($entityClass, true)) {
+            if (!class_exists($entityClass, true)) {
+                return false;
+            }
+
+            $reflection = new \ReflectionClass($entityClass);
+
+            return $reflection->getName();
+        } catch (\Exception $e) {
             return false;
         }
-
-        $reflection = new \ReflectionClass($entityClass);
-
-        return $reflection->getName();
     }
 
     /**
