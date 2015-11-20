@@ -6,12 +6,16 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use Oro\Bundle\UserBundle\Entity\User;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 
 class LoadAccounts extends AbstractFixture implements DependentFixtureInterface
 {
     const DEFAULT_ACCOUNT_NAME = 'account.orphan';
+
+    /** @var User */
+    protected $owner;
 
     /**
      * {@inheritdoc}
@@ -39,8 +43,8 @@ class LoadAccounts extends AbstractFixture implements DependentFixtureInterface
      */
     public function load(ObjectManager $manager)
     {
+        $this->owner = $manager->getRepository('OroUserBundle:User')->findOneBy([]);
         $this->createAccount($manager, self::DEFAULT_ACCOUNT_NAME);
-
         $levelOne = $this->createAccount(
             $manager,
             'account.level_1',
@@ -94,6 +98,7 @@ class LoadAccounts extends AbstractFixture implements DependentFixtureInterface
         AccountGroup $group = null
     ) {
         $account = new Account();
+        $account->setOwner($this->owner);
         $account->setName($name);
         $organization = $manager
             ->getRepository('OroOrganizationBundle:Organization')
