@@ -91,7 +91,11 @@ class LocalizedFallbackValueAwareStrategy extends ConfigurableAddOrReplaceStrate
             array_combine($newKeys->toArray(), $localizedFallbackValues->toArray())
         );
 
-        $this->fieldHelper->setObjectValue($entity, $field['name'], $newLocalizedFallbackValues);
+        // Reflection usage to full replace collections
+        $class = ClassUtils::getClass($entity);
+        $reflection = new \ReflectionProperty($class, $field['name']);
+        $reflection->setAccessible(true);
+        $reflection->setValue($entity, $newLocalizedFallbackValues);
     }
 
     /**
