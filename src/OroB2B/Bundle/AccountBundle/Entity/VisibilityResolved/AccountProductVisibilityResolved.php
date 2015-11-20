@@ -22,7 +22,7 @@ class AccountProductVisibilityResolved extends BaseProductVisibilityResolved
      *
      * @ORM\Id
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
-     * @ORM\JoinColumn(name="account_group_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $account;
 
@@ -41,7 +41,7 @@ class AccountProductVisibilityResolved extends BaseProductVisibilityResolved
      */
     public function __construct(Website $website, Product $product, Account $account)
     {
-        $this->accountGroup = $account;
+        $this->account = $account;
         parent::__construct($website, $product);
     }
 
@@ -50,7 +50,7 @@ class AccountProductVisibilityResolved extends BaseProductVisibilityResolved
      */
     public function getAccount()
     {
-        return $this->accountGroup;
+        return $this->account;
     }
 
     /**
