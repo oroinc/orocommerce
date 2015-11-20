@@ -5,6 +5,7 @@ namespace Oro\Bundle\ActionBundle\Model;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 use Oro\Bundle\ActionBundle\Configuration\ActionConfigurationProvider;
+use Oro\Bundle\ActionBundle\Exception\ActionNotFoundException;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
@@ -52,6 +53,37 @@ class ActionManager
 
     /**
      * @param array $context
+     * @param string $actionName
+     * @throws \Exception
+     */
+    public function execute(array $context, $actionName)
+    {
+        $actionContext = $this->createActionContext($context);
+
+        $action = $this->getAction($context, $actionName);
+        if (!$action) {
+            throw new ActionNotFoundException($actionName);
+        }
+
+        $action->execute($actionContext);
+
+        $entity = $actionContext->getEntity();
+        if ($entity) {
+            $manager = $this->doctrineHelper->getEntityManager($entity);
+            $manager->beginTransaction();
+
+            try {
+                $manager->flush();
+                $manager->commit();
+            } catch (\Exception $e) {
+                $manager->rollback();
+                throw $e;
+            }
+        }
+    }
+
+    /**
+     * @param array $context
      * @return bool
      */
     public function hasActions(array $context)
@@ -74,6 +106,18 @@ class ActionManager
 
     /**
      * @param array $context
+     * @param string $actionName
+     * @return null|Action
+     */
+    protected function getAction(array $context, $actionName)
+    {
+        $actions = $this->getActions($context);
+
+        return array_key_exists($actionName, $actions) ? $actions[$actionName] : null;
+    }
+
+    /**
+     * @param array $context
      * @return Action[]
      */
     protected function findActions(array $context)
@@ -84,7 +128,7 @@ class ActionManager
         $actionContext = $this->createActionContext($context);
 
         if ($context['route'] && array_key_exists($context['route'], $this->routes)) {
-            $actions = array_merge($actions, $this->routes[$context['route']]);
+            $actions = $this->routes[$context['route']];
         }
 
         if ($context['entityClass'] &&
@@ -95,7 +139,7 @@ class ActionManager
         }
 
         $actions = array_filter($actions, function (Action $action) use ($actionContext) {
-            return $action->isEnabled() && $action->isPreConditionAllowed($actionContext);
+            return $action->isEnabled() && $action->isAvailable($actionContext);
         });
 
         uasort($actions, function (Action $action1, Action $action2) {

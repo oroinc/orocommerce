@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\ActionBundle\Model;
 
+use Doctrine\Common\Collections\Collection;
+
+use Oro\Bundle\ActionBundle\Exception\ForbiddenActionException;
 use Oro\Bundle\WorkflowBundle\Model\Action\ActionFactory as FunctionFactory;
 use Oro\Bundle\WorkflowBundle\Model\Action\ActionInterface as FunctionInterface;
 use Oro\Bundle\WorkflowBundle\Model\Action\Configurable as ConfigurableAction;
@@ -30,6 +33,9 @@ class Action
 
     /** @var AbstractCondition */
     private $condition;
+
+    /** @var FunctionInterface */
+    private $postFunction;
 
     /**
      * @param FunctionFactory $functionFactory
@@ -120,6 +126,46 @@ class Action
     }
 
     /**
+     * @return FunctionInterface
+     */
+    protected function getPostFunctions()
+    {
+        if ($this->postFunction === null) {
+            $this->postFunction = false;
+            $postFunctionsConfig = $this->definition->getPostFunctions();
+            if ($postFunctionsConfig) {
+                $this->postFunction = $this->functionFactory->create(ConfigurableAction::ALIAS, $postFunctionsConfig);
+            }
+        }
+
+        return $this->postFunction;
+    }
+
+    /**
+     * Check that action is available to show
+     *
+     * @param ActionContext $context
+     * @param Collection $errors
+     * @return bool
+     */
+    public function isAvailable(ActionContext $context, Collection $errors = null)
+    {
+        return $this->isPreConditionAllowed($context, $errors);
+    }
+
+    /**
+     * Check is transition allowed to execute
+     *
+     * @param ActionContext $context
+     * @param Collection|null $errors
+     * @return bool
+     */
+    public function isAllowed(ActionContext $context, Collection $errors = null)
+    {
+        return $this->isPreConditionAllowed($context, $errors) && $this->isConditionAllowed($context, $errors);
+    }
+
+    /**
      * @param ActionContext $context
      */
     public function init(ActionContext $context)
@@ -129,24 +175,33 @@ class Action
 
     /**
      * @param ActionContext $context
+     * @param Collection $errors
+     * @throws ForbiddenActionException
      */
-    public function execute(ActionContext $context)
+    public function execute(ActionContext $context, Collection $errors = null)
     {
-        // ToDo - implement execution
+        if (!$this->isAllowed($context, $errors)) {
+            throw new ForbiddenActionException(sprintf('Action "%s" is not allowed.', $this->getName()));
+        }
+
+        if ($this->isAllowed($context, $errors) && $this->getPostFunctions()) {
+            $this->getPostFunctions()->execute($context);
+        }
     }
 
     /**
      * @param ActionContext $context
+     * @param Collection $errors
      * @return bool
      */
-    public function isPreConditionAllowed(ActionContext $context)
+    protected function isPreConditionAllowed(ActionContext $context, Collection $errors = null)
     {
         if ($this->getPreFunctions()) {
             $this->getPreFunctions()->execute($context);
         }
 
         if ($this->getPreCondition()) {
-            return $this->getPreCondition()->evaluate($context);
+            return $this->getPreCondition()->evaluate($context, $errors);
         }
 
         return true;
@@ -154,12 +209,13 @@ class Action
 
     /**
      * @param ActionContext $context
+     * @param Collection $errors
      * @return bool
      */
-    public function isConditionAllowed(ActionContext $context)
+    protected function isConditionAllowed(ActionContext $context, Collection $errors = null)
     {
         if ($this->getCondition()) {
-            return $this->getCondition()->evaluate($context);
+            return $this->getCondition()->evaluate($context, $errors);
         }
 
         return true;

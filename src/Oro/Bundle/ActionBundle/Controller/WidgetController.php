@@ -19,14 +19,15 @@ class WidgetController extends Controller
      */
     public function buttonsAction(Request $request)
     {
+        $context = [
+            'route' => $request->get('route'),
+            'entityId' => $request->get('entityId'),
+            'entityClass' => $request->get('entityClass'),
+        ];
+
         return [
-            'actions' => $this->get('oro_action.manager')->getActions(
-                [
-                    'route' => $request->get('route'),
-                    'entityId' => $request->get('entityId'),
-                    'entityClass' => $request->get('entityClass'),
-                ]
-            ),
+            'actions' => $this->get('oro_action.manager')->getActions($context),
+            'context' => $context
         ];
     }
 }
