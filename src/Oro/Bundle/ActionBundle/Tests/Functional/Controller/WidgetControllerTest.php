@@ -35,10 +35,10 @@ class WidgetControllerTest extends WebTestCase
      * @dataProvider buttonsActionDataProvider
      *
      * @param array $config
-     * @param $route
-     * @param $entityId
-     * @param $entityClass
-     * @param $expected
+     * @param string $route
+     * @param bool $entityId
+     * @param string $entityClass
+     * @param bool|string $expected
      */
     public function testButtonsActionForRoutes(array $config, $route, $entityId, $entityClass, $expected)
     {
@@ -94,13 +94,13 @@ class WidgetControllerTest extends WebTestCase
         ];
 
         return [
-            'existing entity wright conditions' => [
+            'existing entity right conditions' => [
                 'config' => array_merge_recursive(
                     $config,
                     [
                         'oro_action_test_action' => [
                             'entities' => ['Oro\Bundle\TestFrameworkBundle\Entity\TestActivity'],
-                            'preconditions' => [['@equal' => ['$message', 'test message']]],
+                            'preconditions' => ['@equal' => ['$message', 'test message']],
                         ],
                     ]
                 ),
@@ -115,7 +115,7 @@ class WidgetControllerTest extends WebTestCase
                     [
                         'oro_action_test_action' => [
                             'entities' => ['Oro\Bundle\TestFrameworkBundle\Entity\TestActivity'],
-                            'preconditions' => [['@equal' => ['$message', 'test message wrong']]],
+                            'preconditions' => ['@equal' => ['$message', 'test message wrong']],
                         ],
                     ]
                 ),

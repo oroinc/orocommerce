@@ -1,4 +1,5 @@
 <?php
+
 namespace Oro\Bundle\ActionBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
@@ -10,6 +11,9 @@ class LoadTestEntityData extends AbstractFixture
 {
     const TEST_ENTITY_1 = 'test_entity_1';
 
+    /**
+     * @param ObjectManager $manager
+     */
     public function load(ObjectManager $manager)
     {
         $testEntity = new TestActivity();
