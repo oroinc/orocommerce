@@ -12,11 +12,6 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var bool
-     */
-    protected $debug = true;
-
-    /**
      * @var RouterInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $router;
@@ -121,7 +116,7 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
      * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
      * @expectedExceptionMessage Unable to find template "unknown_template"
      */
-    public function testValidateWitchTemplateException()
+    public function testValidateWithTemplateException()
     {
         $this->twigLoader->expects($this->once())
             ->method('exists')
