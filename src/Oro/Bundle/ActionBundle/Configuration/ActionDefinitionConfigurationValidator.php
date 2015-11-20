@@ -4,7 +4,6 @@ namespace Oro\Bundle\ActionBundle\Configuration;
 
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Templating\EngineInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
@@ -21,9 +20,9 @@ class ActionDefinitionConfigurationValidator
     protected $router;
 
     /**
-     * @var EngineInterface
+     * @var \Twig_ExistsLoaderInterface
      */
-    protected $templating;
+    protected $twigLoader;
 
     /**
      * @var DoctrineHelper
@@ -33,18 +32,18 @@ class ActionDefinitionConfigurationValidator
     /**
      * @param bool $debug
      * @param RouterInterface $router
-     * @param EngineInterface $templating
+     * @param \Twig_ExistsLoaderInterface $twigLoader
      * @param DoctrineHelper $doctrineHelper
      */
     public function __construct(
         $debug,
         RouterInterface $router,
-        EngineInterface $templating,
+        \Twig_ExistsLoaderInterface $twigLoader,
         DoctrineHelper $doctrineHelper
     ) {
         $this->debug = $debug;
         $this->router = $router;
-        $this->templating = $templating;
+        $this->twigLoader = $twigLoader;
         $this->doctrineHelper = $doctrineHelper;
     }
 
@@ -126,7 +125,7 @@ class ActionDefinitionConfigurationValidator
      */
     public function validateTemplate($templateName)
     {
-        return $this->templating->exists($templateName);
+        return $this->twigLoader->exists($templateName);
     }
 
     /**
@@ -169,14 +168,11 @@ class ActionDefinitionConfigurationValidator
      */
     protected function showException($path, $message, $value, $silent = true)
     {
-        $errorMessage = sprintf($message, $value);
+        $errorMessage = sprintf('%s: ' . $message, $path, $value);
         if (!$silent) {
-            $exception = new InvalidConfigurationException($errorMessage);
-            $exception->setPath($path);
-
-            throw $exception;
+            throw new InvalidConfigurationException($errorMessage);
         } elseif ($this->debug) {
-            print('InvalidConfiguration: ' . $path . ': '. $errorMessage . "\n");
+            print('InvalidConfiguration: ' . $errorMessage . "\n");
         }
     }
 }

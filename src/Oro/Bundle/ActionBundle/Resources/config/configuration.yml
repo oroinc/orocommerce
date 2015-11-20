@@ -19,7 +19,7 @@ services:
         arguments:
             - %kernel.debug%
             - @router
-            - @templating
+            - @twig.loader
             - @oro_entity.doctrine_helper
 
     oro_action.configuration.provider:

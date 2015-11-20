@@ -4,7 +4,6 @@ namespace Oro\Bundle\ActionBundle\Tests\Unit\Configuration;
 
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
-use Symfony\Component\Templating\EngineInterface;
 
 use Oro\Bundle\ActionBundle\Configuration\ActionDefinitionConfigurationValidator;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -22,12 +21,12 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
     protected $router;
 
     /**
-     * @var EngineInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Twig_ExistsLoaderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $templating;
+    protected $twigLoader;
 
     /**
-     * @var DoctrineHelper\\PHPUnit_Framework_MockObject_MockObject
+     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $doctrineHelper;
 
@@ -43,7 +42,7 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
     {
         $this->router = $this->getMock('Symfony\Component\Routing\RouterInterface');
 
-        $this->templating = $this->getMock('Symfony\Component\Templating\EngineInterface');
+        $this->twigLoader = $this->getMock('Twig_ExistsLoaderInterface');
 
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
@@ -60,7 +59,7 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
         $this->validator = new ActionDefinitionConfigurationValidator(
             $debug,
             $this->router,
-            $this->templating,
+            $this->twigLoader,
             $this->doctrineHelper
         );
     }
@@ -96,7 +95,7 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
             ->method('get')
             ->will($this->returnValueMap($inputData['routes']));
 
-        $this->templating->expects($this->any())
+        $this->twigLoader->expects($this->any())
             ->method('exists')
             ->will($this->returnValueMap($inputData['templates']));
 
@@ -111,7 +110,7 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
      */
     public function testValidateWitchTemplateException()
     {
-        $this->templating->expects($this->once())
+        $this->twigLoader->expects($this->once())
             ->method('exists')
             ->willReturn(false);
 
@@ -159,7 +158,7 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
      */
     public function testValidateTemplate($template, $valid)
     {
-        $this->templating->expects($this->once())
+        $this->twigLoader->expects($this->once())
             ->method('exists')
             ->with($template)
             ->willReturn($valid);

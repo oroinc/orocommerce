@@ -112,7 +112,7 @@ class ActionConfigurationProvider
             }
         } catch (InvalidConfigurationException $exception) {
             throw new InvalidConfigurationException(
-                sprintf('Can\'t parse process configuration. %s', $exception->getMessage())
+                sprintf('Can\'t parse action configuration. %s', $exception->getMessage())
             );
         }
 
