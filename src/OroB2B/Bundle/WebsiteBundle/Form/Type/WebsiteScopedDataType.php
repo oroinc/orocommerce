@@ -104,6 +104,9 @@ class WebsiteScopedDataType extends AbstractType
         $formOptions['options']['data'] = $form->getData();
         $formOptions['options']['ownership_disabled'] = true;
 
+        if (!$data) {
+            return;
+        }
         foreach ($data as $websiteId => $value) {
             /** @var EntityManager $em */
             $em = $this->registry->getManagerForClass($this->websiteCLass);

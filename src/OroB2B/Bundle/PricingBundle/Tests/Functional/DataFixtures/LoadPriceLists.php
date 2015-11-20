@@ -105,7 +105,7 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
             ],
             'websites' => [],
             'currencies' => ['GBP', 'EUR']
-        ]
+        ],
     ];
 
     /**
