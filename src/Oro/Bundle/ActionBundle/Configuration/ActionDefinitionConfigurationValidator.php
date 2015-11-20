@@ -147,7 +147,6 @@ class ActionDefinitionConfigurationValidator
 
             return $this->doctrineHelper->isManageableEntity($reflection->getName());
         } catch (\Exception $e) {
-            return false;
         }
 
         return false;
