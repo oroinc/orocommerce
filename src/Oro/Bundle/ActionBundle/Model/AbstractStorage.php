@@ -117,4 +117,21 @@ abstract class AbstractStorage implements \ArrayAccess, \IteratorAggregate, \Cou
     {
         $this->offsetSet($name, $value);
     }
+
+    /**
+     * @param string $name
+     */
+    public function __unset($name)
+    {
+        $this->offsetUnset($name);
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function __isset($name)
+    {
+        return $this->offsetExists($name);
+    }
 }

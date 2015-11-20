@@ -24,6 +24,22 @@ class ActionContextTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($data[$name]);
     }
 
+    public function testIssetGetSetUnset()
+    {
+        $data = new ActionContext();
+
+        $this->assertFalse(isset($data->foo));
+        $this->assertNull($data->foo);
+
+        $data->foo = 'bar';
+        $this->assertTrue(isset($data->foo));
+        $this->assertEquals('bar', $data->foo);
+
+        unset($data->foo);
+        $this->assertFalse(isset($data->foo));
+        $this->assertNull($data->foo);
+    }
+
     public function testGetEntity()
     {
         $data = new ActionContext();

@@ -73,6 +73,7 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
             ->setApplications(['application1'])
             ->setAttributes(['config_attr'])
             ->setConditions(['config_cond'])
+            ->setPreFunctions(['config_pre_func'])
             ->setPreConditions(['config_pre_cond'])
             ->setFormOptions(['config_form_options'])
             ->setFrontendOptions(['config_frontend_options'])
@@ -112,6 +113,7 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
                         'applications' => ['application1'],
                         'attributes' => ['config_attr'],
                         'conditions' => ['config_cond'],
+                        'prefunctions' => ['config_pre_func'],
                         'preconditions' => ['config_pre_cond'],
                         'form_options' => ['config_form_options'],
                         'frontend_options' => ['config_frontend_options'],

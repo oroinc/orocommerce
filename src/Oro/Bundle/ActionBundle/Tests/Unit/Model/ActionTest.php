@@ -6,6 +6,7 @@ use Oro\Bundle\ActionBundle\Model\Action;
 use Oro\Bundle\ActionBundle\Model\ActionContext;
 use Oro\Bundle\ActionBundle\Model\ActionDefinition;
 use Oro\Bundle\WorkflowBundle\Model\Action\ActionFactory as FunctionFactory;
+use Oro\Bundle\WorkflowBundle\Model\Action\Configurable as ConfigurableAction;
 use Oro\Bundle\WorkflowBundle\Model\Condition\Configurable as ConfigurableCondition;
 
 use Oro\Component\ConfigExpression\ExpressionFactory;
@@ -108,20 +109,41 @@ class ActionTest extends \PHPUnit_Framework_TestCase
     public function testIsPreConditionAllowed()
     {
         $this->context['data'] = new \stdClass();
+        $functions = [
+            ['testFunction' => []],
+        ];
+
         $conditions = [
             ['test' => []],
         ];
+
+        $function = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Action\ActionInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $function->expects(static::once())
+            ->method('execute')
+            ->with($this->context);
+
         $condition = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Condition\Configurable')
             ->disableOriginalConstructor()
             ->getMock();
-        $condition->expects(static::any())
+        $condition->expects(static::once())
             ->method('evaluate')
             ->with($this->context)
             ->willReturn(false);
 
         $this->definition->expects(static::once())
+            ->method('getPreFunctions')
+            ->willReturn($functions);
+
+        $this->definition->expects(static::once())
             ->method('getPreConditions')
             ->willReturn($conditions);
+
+        $this->functionFactory->expects(static::once())
+            ->method('create')
+            ->with(ConfigurableAction::ALIAS, $functions)
+            ->willReturn($function);
 
         $this->conditionFactory->expects(static::once())
             ->method('create')
