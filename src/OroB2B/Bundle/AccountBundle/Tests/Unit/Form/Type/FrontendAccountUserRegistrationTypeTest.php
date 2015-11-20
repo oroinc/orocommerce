@@ -100,11 +100,6 @@ class FrontendAccountUserRegistrationTypeTest extends FormIntegrationTestCase
 
         $form = $this->factory->create($this->formType, $defaultData, $options);
 
-        if (isset($options['add_company_name'])) {
-            $this->assertTrue($form->has('companyName'));
-
-        }
-
         $this->assertEquals($defaultData, $form->getData());
         $form->submit($submittedData);
         $this->assertEquals($isValid, $form->isValid());
@@ -124,7 +119,8 @@ class FrontendAccountUserRegistrationTypeTest extends FormIntegrationTestCase
             ->setFirstName('John')
             ->setLastName('Doe')
             ->setEmail('johndoe@example.com')
-            ->setOwner($owner);
+            ->setOwner($owner)
+            ->createAccount();
 
         $entity->setSalt($expectedEntity->getSalt());
 
@@ -139,7 +135,7 @@ class FrontendAccountUserRegistrationTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => $expectedEntity,
                 'owner' => $owner,
-                'isValid' => true
+                'isValid' => false
             ],
             'new user with company name' => [
                 'defaultData' => $entity,
@@ -152,8 +148,7 @@ class FrontendAccountUserRegistrationTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => $expectedEntity,
                 'owner' => $owner,
-                'isValid' => true,
-                'options' => ['add_company_name' => true]
+                'isValid' => true
             ]
         ];
     }
