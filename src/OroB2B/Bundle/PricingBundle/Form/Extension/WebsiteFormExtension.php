@@ -2,7 +2,8 @@
 
 namespace OroB2B\Bundle\PricingBundle\Form\Extension;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -10,19 +11,21 @@ use Symfony\Component\Form\FormEvents;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteType;
 
-class WebSiteFormExtension extends AbstractPriceListExtension
+class WebsiteFormExtension extends AbstractPriceListExtension
 {
     const PRICE_LISTS_TO_WEBSITE_FIELD = 'priceList';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $priceListToWebsiteClass;
+
+    /** @var  EntityManagerInterface */
+    protected $entityManager;
 
     /**
      * WebSiteFormExtension constructor.
@@ -156,7 +159,11 @@ class WebSiteFormExtension extends AbstractPriceListExtension
      */
     protected function getPriceListToWebsiteManager()
     {
-        return $this->registry->getManagerForClass($this->priceListToWebsiteClass);
+        if (!$this->entityManager) {
+            $this->entityManager = $this->registry->getManagerForClass($this->priceListToWebsiteClass);
+        }
+
+        return $this->entityManager;
     }
 
     /**
@@ -169,7 +176,7 @@ class WebSiteFormExtension extends AbstractPriceListExtension
         /** @var PriceListToWebsite[] $entities */
         $entities = $this->getPriceListToWebsiteManager()
             ->getRepository($this->priceListToWebsiteClass)
-            ->findBy(['website' => $website]);
+            ->findBy(['website' => $website], ['priority' => Criteria::ASC]);
 
         foreach ($entities as $entity) {
             $result[$entity->getPriceList()->getId()] = $entity;

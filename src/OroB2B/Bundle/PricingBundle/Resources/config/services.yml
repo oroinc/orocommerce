@@ -22,7 +22,7 @@ parameters:
     orob2b_pricing.validator.product_price_currency.class: OroB2B\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrencyValidator
 
     orob2b_pricing.event_listener.form_view.class: OroB2B\Bundle\PricingBundle\EventListener\FormViewListener
-    orob2b_pricing.event_listener.website_form_view.class: OroB2B\Bundle\PricingBundle\EventListener\WebSiteFormViewListener
+    orob2b_pricing.event_listener.website_form_view.class: OroB2B\Bundle\PricingBundle\EventListener\WebsiteFormViewListener
     orob2b_pricing.event_listener.datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\DatagridListener
     orob2b_pricing.event_listener.product_price_datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener
     orob2b_pricing.event_listener.frontend.product_price_datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener
