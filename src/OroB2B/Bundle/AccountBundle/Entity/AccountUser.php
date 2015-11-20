@@ -272,15 +272,15 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     /**
      * @ORM\PrePersist
      */
-    public function createAccount()
+    public function prePersist()
     {
-        $this->createAccountWithCompanyName();
+        $this->createAccount();
     }
 
     /**
      * @param string|null $companyName
      */
-    public function createAccountWithCompanyName($companyName = null)
+    public function createAccount($companyName = null)
     {
         if (!$this->account) {
             $this->account = new Account();
