@@ -82,7 +82,7 @@ class ConfigurationPassTest extends \PHPUnit_Framework_TestCase
             ->method('replaceArgument')
             ->willReturnCallback(
                 function ($index, $argument) use (&$result) {
-                    $this->assertEquals(2, $index);
+                    $this->assertEquals(3, $index);
 
                     $result = $argument;
                 }

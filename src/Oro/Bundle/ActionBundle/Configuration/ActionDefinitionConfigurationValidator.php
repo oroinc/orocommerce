@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ActionBundle\Configuration;
 
-use AppKernel;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Templating\EngineInterface;
 
@@ -12,7 +12,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 class ActionDefinitionConfigurationValidator
 {
     /**
-     * @var AppKernel
+     * @var KernelInterface
      */
     protected $kernel;
 
@@ -32,12 +32,13 @@ class ActionDefinitionConfigurationValidator
     protected $doctrineHelper;
 
     /**
+     * @param KernelInterface $kernel
      * @param RouterInterface $router
      * @param EngineInterface $templating
      * @param DoctrineHelper $doctrineHelper
      */
     public function __construct(
-        AppKernel $kernel,
+        KernelInterface $kernel,
         RouterInterface $router,
         EngineInterface $templating,
         DoctrineHelper $doctrineHelper
@@ -54,26 +55,26 @@ class ActionDefinitionConfigurationValidator
     public function validate(array $configuration)
     {
         foreach ($configuration as $name => $action) {
-            $this->validateAction($name, $action);
+            $this->validateAction($action, $name);
         }
     }
 
     /**
-     * @param sting $path
      * @param array $action
+     * @param string $path
      */
-    protected function validateAction($path, array $action)
+    protected function validateAction(array $action, $path)
     {
-        $this->validateFrontendOptions($this->getPath($path, 'frontend_options'), $action['frontend_options']);
-        $this->validateRoutes($this->getPath($path, 'routes'), $action['routes']);
-        $this->validateEntities($this->getPath($path, 'entities'), $action['entities']);
+        $this->validateFrontendOptions($action['frontend_options'], $this->getPath($path, 'frontend_options'));
+        $this->validateRoutes($action['routes'], $this->getPath($path, 'routes'));
+        $this->validateEntities($action['entities'], $this->getPath($path, 'entities'));
     }
 
     /**
-     * @param string $path
      * @param array $options
+     * @param string $path
      */
-    protected function validateFrontendOptions($path, array $options)
+    protected function validateFrontendOptions(array $options, $path)
     {
         if (isset($options['template']) && !$this->validateTemplate($options['template'])) {
             $this->showException(
@@ -87,10 +88,10 @@ class ActionDefinitionConfigurationValidator
     }
 
     /**
-     * @param string $path
      * @param array $items
+     * @param string $path
      */
-    protected function validateRoutes($path, array $items)
+    protected function validateRoutes(array $items, $path)
     {
         foreach ($items as $key => $item) {
             if (!$this->validateRoute($item)) {
@@ -100,10 +101,10 @@ class ActionDefinitionConfigurationValidator
     }
 
     /**
-     * @param string $path
      * @param array $items
+     * @param string $path
      */
-    protected function validateEntities($path, array $items)
+    protected function validateEntities(array $items, $path)
     {
         foreach ($items as $key => $item) {
             if (!$this->validateEntity($item)) {
