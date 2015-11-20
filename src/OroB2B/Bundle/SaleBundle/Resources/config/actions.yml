@@ -22,7 +22,7 @@ actions:
                 - @and:
                     - @equal: [$expired, false]
                     - @not:
-                        - @collection_element_value_exists: [$quoteProducts, $productSku, 'HSSUC']
+                        - @collection_element_value_exists: [$quoteProducts, $productSku, 'abc123']
                     - @or:
                         - @empty: $shipUntil
                         - @lt: [$shipUntil, $.compare_date]

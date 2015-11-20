@@ -175,41 +175,4 @@ class ActionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('test name', $this->action->getName());
     }
-
-    /**
-     * @return array
-     */
-    public function isAllowedDataProvider()
-    {
-        /* @var $conditionTrue ConfigurableCondition|\PHPUnit_Framework_MockObject_MockObject */
-        $conditionTrue = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Condition\Configurable')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $conditionTrue->expects($this->any())
-            ->method('evaluate')
-            ->willReturn(true);
-
-        /* @var $conditionFalse ConfigurableCondition|\PHPUnit_Framework_MockObject_MockObject */
-        $conditionFalse = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Condition\Configurable')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $conditionFalse->expects($this->any())
-            ->method('evaluate')
-            ->willReturn(false);
-
-        return [
-            'condition true' => [
-                'conditions' => [$conditionTrue],
-                'expected' => true,
-            ],
-            'condition false' => [
-                'conditions' => [$conditionFalse],
-                'expected' => false,
-            ],
-            'condition both' => [
-                'conditions' => [$conditionTrue, $conditionFalse],
-                'expected' => false,
-            ],
-        ];
-    }
 }
