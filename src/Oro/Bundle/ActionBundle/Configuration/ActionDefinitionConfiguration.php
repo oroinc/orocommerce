@@ -69,6 +69,10 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
                     ->prototype('variable')
                     ->end()
                 ->end()
+                ->arrayNode('postfunctions')
+                    ->prototype('variable')
+                    ->end()
+                ->end()
                 ->append($this->getFrontendOptionsNode())
             ->end();
 

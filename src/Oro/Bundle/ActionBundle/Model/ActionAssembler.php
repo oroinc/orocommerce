@@ -65,6 +65,7 @@ class ActionAssembler
             ->setPreFunctions($this->getOption($options, 'prefunctions', []))
             ->setPreConditions($this->getOption($options, 'preconditions', []))
             ->setConditions($this->getOption($options, 'conditions', []))
+            ->setPostFunctions($this->getOption($options, 'postfunctions', []))
             ->setInitStep($this->getOption($options, 'init_step', []))
             ->setExecutionStep($this->getOption($options, 'execution_step', []));
 
