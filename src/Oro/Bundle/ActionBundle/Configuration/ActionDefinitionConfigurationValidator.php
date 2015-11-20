@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ActionBundle\Configuration;
 
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -30,21 +31,34 @@ class ActionDefinitionConfigurationValidator
     protected $doctrineHelper;
 
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
+     * @var array
+     */
+    protected $errors;
+
+    /**
      * @param bool $debug
      * @param RouterInterface $router
      * @param \Twig_ExistsLoaderInterface $twigLoader
      * @param DoctrineHelper $doctrineHelper
+     * @param LoggerInterface $logger
      */
     public function __construct(
         $debug,
         RouterInterface $router,
         \Twig_ExistsLoaderInterface $twigLoader,
-        DoctrineHelper $doctrineHelper
+        DoctrineHelper $doctrineHelper,
+        LoggerInterface $logger
     ) {
         $this->debug = $debug;
         $this->router = $router;
         $this->twigLoader = $twigLoader;
         $this->doctrineHelper = $doctrineHelper;
+        $this->logger = $logger;
     }
 
     /**
@@ -52,9 +66,19 @@ class ActionDefinitionConfigurationValidator
      */
     public function validate(array $configuration)
     {
+        $this->errors = [];
+
         foreach ($configuration as $name => $action) {
             $this->validateAction($action, $name);
         }
+    }
+
+    /**
+     * @return string
+     */
+    public function getErrors()
+    {
+        return $this->errors;
     }
 
     /**
@@ -172,7 +196,8 @@ class ActionDefinitionConfigurationValidator
         if (!$silent) {
             throw new InvalidConfigurationException($errorMessage);
         } elseif ($this->debug) {
-            print('InvalidConfiguration: ' . $errorMessage . "\n");
+            $this->logger->warning('InvalidConfiguration: ' . $errorMessage, ['ActionConfiguration']);
         }
+        $this->errors[] = $errorMessage;
     }
 }

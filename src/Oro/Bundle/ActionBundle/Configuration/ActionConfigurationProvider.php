@@ -32,6 +32,9 @@ class ActionConfigurationProvider
     /** @var array */
     protected $processedConfigs = [];
 
+    /** @var $array */
+    protected $configurationErrors;
+
     /**
      * @param ActionDefinitionListConfiguration $definitionConfiguration
      * @param CacheProvider $cache
@@ -64,11 +67,16 @@ class ActionConfigurationProvider
     }
 
     /**
+     * @param bool $ignoreCache
      * @return array
      * @throws InvalidConfigurationException
      */
-    public function getActionConfiguration()
+    public function getActionConfiguration($ignoreCache = false)
     {
+        if ($ignoreCache) {
+            return $this->resolveConfiguration();
+        }
+
         if ($this->cache->contains(self::ROOT_NODE_NAME)) {
             $configuration = $this->cache->fetch(self::ROOT_NODE_NAME);
         } else {
@@ -79,6 +87,23 @@ class ActionConfigurationProvider
         }
 
         return $configuration;
+    }
+
+    /**
+     * @return array
+     */
+    public function getConfigurationErrors()
+    {
+        return $this->configurationErrors;
+    }
+
+    /**
+     * @param array $configuration
+     */
+    protected function validateConfiguration(array $configuration)
+    {
+        $this->definitionConfigurationValidator->validate($configuration);
+        $this->configurationErrors = $this->definitionConfigurationValidator->getErrors();
     }
 
     /**
@@ -108,7 +133,7 @@ class ActionConfigurationProvider
             if (!empty($configs)) {
                 $data = $this->definitionConfiguration->processConfiguration($configs);
 
-                $this->definitionConfigurationValidator->validate($data);
+                $this->validateConfiguration($data);
             }
         } catch (InvalidConfigurationException $exception) {
             throw new InvalidConfigurationException(

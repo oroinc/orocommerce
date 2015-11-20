@@ -21,6 +21,7 @@ services:
             - @router
             - @twig.loader
             - @oro_entity.doctrine_helper
+            - @logger
 
     oro_action.configuration.provider:
         class: %oro_action.configuration.provider.class%

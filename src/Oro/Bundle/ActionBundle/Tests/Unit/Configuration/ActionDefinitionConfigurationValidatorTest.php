@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ActionBundle\Tests\Unit\Configuration;
 
+use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -31,6 +32,11 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
     protected $doctrineHelper;
 
     /**
+     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $logger;
+
+    /**
      * @var ActionDefinitionConfigurationValidator
      */
     protected $validator;
@@ -43,6 +49,8 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
         $this->router = $this->getMock('Symfony\Component\Routing\RouterInterface');
 
         $this->twigLoader = $this->getMock('Twig_ExistsLoaderInterface');
+
+        $this->logger = $this->getMock('Symfony\Component\HttpKernel\Log\LoggerInterface');
 
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
@@ -60,17 +68,18 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
             $debug,
             $this->router,
             $this->twigLoader,
-            $this->doctrineHelper
+            $this->doctrineHelper,
+            $this->logger
         );
     }
 
     /**
      * @param array $inputData
-     * @param string $expectedOutput
+     * @param array $expectedData
      *
      * @dataProvider validateProvider
      */
-    public function testValidate(array $inputData, $expectedOutput)
+    public function testValidate(array $inputData, array $expectedData)
     {
         $this->createValidator($inputData['debug']);
 
@@ -99,9 +108,13 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
             ->method('exists')
             ->will($this->returnValueMap($inputData['templates']));
 
-        $this->expectOutputString($expectedOutput);
+        $this->logger->expects($expectedData['expectsLog'])
+            ->method('warning')
+            ->with($expectedData['logMessage']);
 
         $this->validator->validate($inputData['config']);
+
+        $this->assertEquals($expectedData['errors'], $this->validator->getErrors());
     }
 
     /**
@@ -219,7 +232,14 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
                         ]),
                     ],
                 ],
-                'output' => '',
+                'expected' => [
+                    'expectsLog' => $this->never(),
+                    'logMessage' => null,
+                    'errors' => [
+                        'unknown_route_and_entity_action1.routes.0: Route "unknown_route" not found.',
+                        'unknown_route_and_entity_action1.entities.0: Entity "unknown_entity" not found.'
+                    ],
+                ],
             ],
             'unknown route' => [
                 'input' => [
@@ -232,9 +252,14 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
                         ]),
                     ],
                 ],
-                'output' => 'InvalidConfiguration: ' .
-                    'unknown_route_action2.routes.0: ' .
-                    'Route "unknown_route" not found.' . "\n",
+                'expected' => [
+                    'expectsLog' => $this->once(),
+                    'logMessage' => 'InvalidConfiguration: ' .
+                        'unknown_route_action2.routes.0: Route "unknown_route" not found.',
+                    'errors' => [
+                        'unknown_route_action2.routes.0: Route "unknown_route" not found.',
+                    ],
+                ],
             ],
             'unknown entity short syntax' => [
                 'input' => [
@@ -247,9 +272,16 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
                         ]),
                     ],
                 ],
-                'output' => 'InvalidConfiguration: ' .
-                    'unknown_entity_short_syntax_action.entities.0: ' .
-                    'Entity "UnknownBundle:UnknownEntity" not found.' . "\n",
+                'expected' => [
+                    'expectsLog' => $this->once(),
+                    'logMessage' => 'InvalidConfiguration: ' .
+                        'unknown_entity_short_syntax_action.entities.0: ' .
+                            'Entity "UnknownBundle:UnknownEntity" not found.',
+                    'errors' => [
+                        'unknown_entity_short_syntax_action.entities.0: ' .
+                            'Entity "UnknownBundle:UnknownEntity" not found.',
+                    ],
+                ],
             ],
             'unknown entity' => [
                 'input' => [
@@ -262,9 +294,16 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
                         ]),
                     ],
                 ],
-                'output' => 'InvalidConfiguration: ' .
-                    'unknown_entity_action.entities.0: ' .
-                    'Entity "TestEntity" not found.' . "\n",
+                'expected' => [
+                    'expectsLog' => $this->once(),
+                    'logMessage' => 'InvalidConfiguration: ' .
+                        'unknown_entity_action.entities.0: ' .
+                            'Entity "TestEntity" not found.',
+                    'errors' => [
+                        'unknown_entity_action.entities.0: ' .
+                            'Entity "TestEntity" not found.',
+                    ],
+                ],
             ],
             'valid config' => [
                 'input' => [
@@ -281,7 +320,11 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
                         ]),
                     ],
                 ],
-                'output' => '',
+                'expected' => [
+                    'expectsLog' => $this->never(),
+                    'logMessage' => null,
+                    'errors' => [],
+                ],
             ],
         ];
     }
