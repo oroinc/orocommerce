@@ -1,6 +1,8 @@
 orob2b:
     pricing:
           validators:
+              price_list:
+                  product_price_currency.message: 'Cannot remove "%invalidCurrency%" currency. Please delete all prices points in "%invalidCurrency%" first.'
               product_price:
                   unique_entity.message: 'Product has duplication of product prices. Set of fields "PriceList", "Quantity" , "Unit" and "Currency" should be unique.'
                   currency.message: 'Currency "%invalidCurrency%" is not valid for current price list.'

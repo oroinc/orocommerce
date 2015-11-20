@@ -3,6 +3,7 @@ parameters:
     orob2b_website.locale.class: OroB2B\Bundle\WebsiteBundle\Entity\Locale
 
     orob2b_website.manager.class: OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager
+    orob2b_website.website.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
     orob2b_website.twig.website_extension.class: OroB2B\Bundle\WebsiteBundle\Twig\OroB2BWebsiteExtension
 
@@ -18,3 +19,10 @@ services:
             - @orob2b_website.manager
         tags:
             - { name: twig.extension }
+
+    orob2b_website.website.manager.api:
+        class: %orob2b_website.website.manager.api.class%
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - %orob2b_website.website.class%
+            - @doctrine.orm.entity_manager
