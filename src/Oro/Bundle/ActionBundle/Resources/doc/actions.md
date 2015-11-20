@@ -36,7 +36,7 @@ How it works?
 Each action relates to the some entity types (i.e. consists full class name) or\and routes of pages 
 where action should be displayed. Before page loading Action Bundle chooses actions that 
 are corresponded to page's entity\route. Then these actions checking for Pre conditions. If all Pre conditions are met 
-- Action's button is displaying.
+- Action's button is displaying. After user click on the button - all postfunctions will be executed.
 
 Configuration
 -------------
@@ -66,8 +66,11 @@ actions:
                 attribute: $.date
         preconditions:                                      # (optional) pre conditions for display Action button
             @gt: [$updatedAt, $.date]
+        postfunctions:
+            - @assign_value: [$expired, true]
 ```
 
 This configuration describes action that relates to the ``MyEntity`` entity. On the View page (acme_demo_myentity_view)
 of this entity (in case of field 'updatedAt' > new DateTime('now')) will be displayed button with label
-"adme.demo.myentity.actions.myentity_action".
+"adme.demo.myentity.actions.myentity_action". After click on this button - will run postfunction "assign_value" and set
+field 'expired' to the value = `true`.
