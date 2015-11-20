@@ -66,7 +66,7 @@ actions:
                 attribute: $.date
         preconditions:                                      # (optional) pre conditions for display Action button
             @gt: [$updatedAt, $.date]
-        postfunctions:
+        postfunctions:                                      # (optional) any needed post functions which will execute after click on th button
             - @assign_value: [$expired, true]
 ```
 
