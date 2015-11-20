@@ -76,6 +76,7 @@ class ActionDefinitionTest extends \PHPUnit_Framework_TestCase
                 ['preFunctions', ['config1', 'config2']],
                 ['preConditions', ['config1', 'config2']],
                 ['conditions', ['config1', 'config2']],
+                ['postFunctions', ['config1', 'config2']],
                 ['initStep', ['config1', 'config2']],
                 ['executionStep', ['config1', 'config2']],
             ]
