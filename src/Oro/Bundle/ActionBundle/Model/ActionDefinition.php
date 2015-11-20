@@ -35,6 +35,9 @@ class ActionDefinition
     private $attributes = [];
 
     /** @var array */
+    private $preFunctions = [];
+
+    /** @var array */
     private $preConditions = [];
 
     /** @var array */
@@ -232,6 +235,25 @@ class ActionDefinition
     public function setAttributes(array $attributes)
     {
         $this->attributes = $attributes;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPreFunctions()
+    {
+        return $this->preFunctions;
+    }
+
+    /**
+     * @param array $preFunctions
+     * @return $this
+     */
+    public function setPreFunctions(array $preFunctions)
+    {
+        $this->preFunctions = $preFunctions;
 
         return $this;
     }
