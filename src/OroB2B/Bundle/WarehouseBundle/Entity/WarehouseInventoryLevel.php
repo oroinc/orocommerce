@@ -4,6 +4,9 @@ namespace OroB2B\Bundle\WarehouseBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\WarehouseBundle\Model\ExtendWarehouseInventoryLevel;
@@ -11,6 +14,15 @@ use OroB2B\Bundle\WarehouseBundle\Model\ExtendWarehouseInventoryLevel;
 /**
  * @ORM\table(
  *     name="orob2b_warehouse_inventory_level"
+ * )
+ * @ORM\Entity
+ * @Config(
+ *      defaultValues={
+ *          "security"={
+ *              "type"="ACL",
+ *              "group_name"=""
+ *          }
+ *      }
  * )
  */
 class WarehouseInventoryLevel extends ExtendWarehouseInventoryLevel
