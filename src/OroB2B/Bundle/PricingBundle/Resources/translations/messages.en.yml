@@ -74,6 +74,10 @@ orob2b.pricing:
                 price_list: View Price List
                 product: View Product
 
+    system_configuration:
+        price_lists: Price Lists
+        default_price_lists: Default Price Lists
+
 oro:
     importexport:
         import:
