@@ -10,13 +10,15 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Intl\Intl;
 
-use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 class LoadWebsiteDemoData extends AbstractFixture implements ContainerAwareInterface
 {
+    use UserUtilityTrait;
+
     /**
      * @var array
      */
@@ -86,7 +88,7 @@ class LoadWebsiteDemoData extends AbstractFixture implements ContainerAwareInter
     public function load(ObjectManager $manager)
     {
         /** @var EntityManager $manager */
-        $user = $this->getUser($manager);
+        $user = $this->getFirstUser($manager);
         $businessUnit = $user->getOwner();
         $organization = $user->getOrganization();
 
@@ -155,27 +157,6 @@ class LoadWebsiteDemoData extends AbstractFixture implements ContainerAwareInter
     protected function getLocaleNameByCode($code)
     {
         return Intl::getLocaleBundle()->getLocaleName($code, $this->container->get('oro_locale.settings')->getLocale());
-    }
-
-    /**
-     * @param EntityManager $manager
-     * @return User
-     * @throws \LogicException
-     */
-    protected function getUser(EntityManager $manager)
-    {
-        $user = $manager->getRepository('OroUserBundle:User')
-            ->createQueryBuilder('user')
-            ->orderBy('user.id', 'ASC')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getSingleResult();
-
-        if (!$user) {
-            throw new \LogicException('There are no users in system');
-        }
-
-        return $user;
     }
 
     /**
