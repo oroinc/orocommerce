@@ -119,6 +119,39 @@ class ActionConfigurationProviderTest extends \PHPUnit_Framework_TestCase
         $configurationProvider->clearCache();
     }
 
+    public function testGetActionConfigurationWithIgnoreCache()
+    {
+        $config = [
+            'action1' => [
+                'label' => 'Label1',
+            ],
+        ];
+
+        $this->cacheProvider->expects($this->never())->method('contains');
+        $this->cacheProvider->expects($this->never())->method('fetch');
+        $this->cacheProvider->expects($this->never())->method('save');
+
+        $this->definitionConfiguration->expects($this->once())
+            ->method('processConfiguration')
+            ->willReturnCallback(function ($config) {
+                return $config;
+            });
+
+        $this->definitionConfigurationValidator->expects($this->once())
+            ->method('validate')
+            ->with($config);
+
+        $configurationProvider = new ActionConfigurationProvider(
+            $this->definitionConfiguration,
+            $this->definitionConfigurationValidator,
+            $this->cacheProvider,
+            [self::BUNDLE1 => $config],
+            [self::BUNDLE1]
+        );
+
+        $this->assertEquals($config, $configurationProvider->getActionConfiguration(true));
+    }
+
     /**
      * @dataProvider getActionConfigurationDataProvider
      *

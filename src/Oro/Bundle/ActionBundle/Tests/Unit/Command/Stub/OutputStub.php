@@ -11,6 +11,9 @@ class OutputStub extends Output
      */
     public $messages = array();
 
+    /**
+     * {@inheritdoc}
+     */
     protected function doWrite($message, $newline)
     {
         $this->messages[] = $message;
