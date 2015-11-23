@@ -23,6 +23,9 @@ class ActionControllerTest extends WebTestCase
     /** @var FilesystemCache */
     protected $cacheProvider;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->initClient([], static::generateWsseAuthHeader());
@@ -31,10 +34,14 @@ class ActionControllerTest extends WebTestCase
         $this->loadFixtures([
             'Oro\Bundle\ActionBundle\Tests\Functional\DataFixtures\LoadTestEntityData',
         ]);
-        $this->entity = $this->getReference(LoadTestEntityData::TEST_ENTITY_1)->setMessage(self::MESSAGE_DEFAULT);
+        $this->entity = $this->getReference(LoadTestEntityData::TEST_ENTITY_1)
+            ->setMessage(self::MESSAGE_DEFAULT);
         $this->entityId = $this->entity->getId();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function tearDown()
     {
         $this->cacheProvider->delete(ActionConfigurationProvider::ROOT_NODE_NAME);
