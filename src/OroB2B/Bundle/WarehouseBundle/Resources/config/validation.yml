@@ -14,7 +14,7 @@ OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
             fields:     [ warehouse, productUnitPrecision ]
             ignoreNull: false
-     properties:
+    properties:
         quantity:
             - NotBlank: ~
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
