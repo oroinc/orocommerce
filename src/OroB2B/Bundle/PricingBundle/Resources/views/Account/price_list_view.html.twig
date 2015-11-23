@@ -6,7 +6,7 @@
                 {% for websiteId, priceListsByWebsite in priceListsByWebsites %}
                     <li {% if websiteId == priceListsByWebsites|first.website.id %} class="active" {% endif %}>
                         <a href="#website{{ websiteId }}" data-toggle="tab">
-                            {{ priceListsByWebsite.website.name|trans }}
+                            {{ priceListsByWebsite.website.name }}
                         </a>
                     </li>
                 {% endfor %}
