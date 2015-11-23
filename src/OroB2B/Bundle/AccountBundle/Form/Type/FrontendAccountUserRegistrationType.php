@@ -122,13 +122,13 @@ class FrontendAccountUserRegistrationType extends AbstractType
             function (FormEvent $event) {
                 /** @var AccountUser $accountUser */
                 $accountUser = $event->getData();
-
                 if (!$accountUser->getAccount()) {
                     $form = $event->getForm();
                     $companyName = $form->get('companyName')->getData();
                     $accountUser->createAccount($companyName);
                 }
-            }
+            },
+            10
         );
     }
 
