@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\CatalogBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -27,16 +26,14 @@ class CategoryController extends Controller
      *      permission="CREATE"
      * )
      * @param Category $parentCategory
-     * @param Request $request
-     *
      * @return array|RedirectResponse
      */
-    public function createAction(Category $parentCategory, Request $request)
+    public function createAction(Category $parentCategory)
     {
         $category = new Category();
         $category->setParentCategory($parentCategory);
 
-        return $this->update($category, $request);
+        return $this->update($category);
     }
 
     /**
@@ -49,13 +46,11 @@ class CategoryController extends Controller
      *      permission="EDIT"
      * )
      * @param Category $category
-     * @param Request $request
-     *
      * @return array|RedirectResponse
      */
-    public function updateAction(Category $category, Request $request)
+    public function updateAction(Category $category)
     {
-        return $this->update($category, $request);
+        return $this->update($category);
     }
 
     /**
@@ -79,16 +74,14 @@ class CategoryController extends Controller
 
     /**
      * @param Category $category
-     * @param Request $request
-     *
      * @return array|RedirectResponse
      */
-    protected function update(Category $category, Request $request)
+    protected function update(Category $category)
     {
         $form = $this->createForm(CategoryType::NAME, $category);
         $handler = new CategoryHandler(
             $form,
-            $request,
+            $this->getRequest(),
             $this->getDoctrine()->getManagerForClass('OroB2BCatalogBundle:Category'),
             $this->get('event_dispatcher')
         );
