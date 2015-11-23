@@ -40,6 +40,10 @@ datagrid:
                 createdAt:     %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         filters:
             columns:
+                id:
+                    type:      number
+                    data_name: warehouse.id
+                    enabled:   false
                 name:
                     type:      string
                     data_name: warehouse.name
@@ -50,7 +54,6 @@ datagrid:
                     type:      datetime
                     data_name: warehouse.updatedAt
         properties:
-            id: ~
             view_link:
                 type:  url
                 params: [ id ]
@@ -66,7 +69,6 @@ datagrid:
         source:
             acl_resource: orob2b_warehouse_view
         properties:
-            id: ~
             view_link:
                 route: orob2b_warehouse_view
             update_link:

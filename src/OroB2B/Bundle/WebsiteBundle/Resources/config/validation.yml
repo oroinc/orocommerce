@@ -9,7 +9,6 @@ OroB2B\Bundle\WebsiteBundle\Entity\Website:
                 min: 2
                 max: 255
         url:
-            - NotBlank: ~
             - Url: ~
         owner:
             - NotBlank: ~
