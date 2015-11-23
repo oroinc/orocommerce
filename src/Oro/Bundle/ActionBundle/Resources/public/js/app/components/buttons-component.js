@@ -29,7 +29,8 @@ define(function(require) {
             this.options = _.defaults(options || {}, this.options);
 
             this.$container = $(this.options._sourceElement);
-            this.$container.find('a').on('click', _.bind(this.onClick, this));
+            this.$container
+                .on('click', 'a', _.bind(this.onClick, this));
         },
 
         /**

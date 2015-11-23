@@ -6,6 +6,7 @@ use Oro\Bundle\ActionBundle\Model\Action;
 use Oro\Bundle\ActionBundle\Model\ActionContext;
 use Oro\Bundle\ActionBundle\Model\ActionDefinition;
 use Oro\Bundle\WorkflowBundle\Model\Action\ActionFactory as FunctionFactory;
+use Oro\Bundle\WorkflowBundle\Model\Action\ActionInterface as FunctionInterface;
 use Oro\Bundle\WorkflowBundle\Model\Action\Configurable as ConfigurableAction;
 use Oro\Bundle\WorkflowBundle\Model\Condition\Configurable as ConfigurableCondition;
 
@@ -50,6 +51,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
     {
         $functions = ['testFunction' => []];
 
+        /* @var $function FunctionInterface|\PHPUnit_Framework_MockObject_MockObject */
         $function = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Action\ActionInterface')
             ->disableOriginalConstructor()
             ->getMock();
@@ -87,6 +89,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
      */
     public function testExecuteException()
     {
+        /* @var $condition ConfigurableCondition|\PHPUnit_Framework_MockObject_MockObject */
         $condition = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Condition\Configurable')
             ->disableOriginalConstructor()
             ->getMock();
@@ -140,6 +143,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
         $conditions = [
             ['test' => []],
         ];
+        /* @var $condition ConfigurableCondition|\PHPUnit_Framework_MockObject_MockObject */
         $condition = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Condition\Configurable')
             ->disableOriginalConstructor()
             ->getMock();
@@ -171,6 +175,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             ['test' => []],
         ];
 
+        /* @var $function FunctionInterface|\PHPUnit_Framework_MockObject_MockObject */
         $function = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Action\ActionInterface')
             ->disableOriginalConstructor()
             ->getMock();
@@ -178,6 +183,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             ->method('execute')
             ->with($this->context);
 
+        /* @var $condition ConfigurableCondition|\PHPUnit_Framework_MockObject_MockObject */
         $condition = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Condition\Configurable')
             ->disableOriginalConstructor()
             ->getMock();
