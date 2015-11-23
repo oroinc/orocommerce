@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class PriceListSelectWithPriorityType extends AbstractType
 {
@@ -22,10 +23,14 @@ class PriceListSelectWithPriorityType extends AbstractType
                 [
                     'required' => false,
                     'label' => 'orob2b.pricing.pricelist.entity_label',
-                    'create_enabled' => false
+                    'create_enabled' => false,
+                    'constraints' => [new NotBlank()]
                 ]
             )
-            ->add('priority', 'text', ['required' => false])
+            ->add('priority', 'text', [
+                'required' => false,
+                'constraints' => [new NotBlank()]
+            ])
         ;
     }
 

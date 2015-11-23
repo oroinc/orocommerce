@@ -3,11 +3,12 @@
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
 use Doctrine\Common\Collections\Criteria;
+
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -33,8 +34,8 @@ class WebsiteFormViewListener
      * @param RequestStack $requestStack
      * @param DoctrineHelper $doctrineHelper
      * @param TranslatorInterface $translator
-     * @param $websiteClassName
-     * @param $priceListToWebsiteClassName
+     * @param string $websiteClassName
+     * @param string $priceListToWebsiteClassName
      */
     public function __construct(
         RequestStack $requestStack,
@@ -56,7 +57,7 @@ class WebsiteFormViewListener
     public function onWebsiteEdit(BeforeListRenderEvent $event)
     {
         $template = $event->getEnvironment()->render(
-            'OroB2BPricingBundle:Account:price_list_update.html.twig',
+            'OroB2BPricingBundle:Website:price_list_update.html.twig',
             ['form' => $event->getFormView()]
         );
         $event->getScrollData()->addSubBlockData(0, 0, $template);

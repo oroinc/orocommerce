@@ -4,16 +4,19 @@ namespace OroB2B\Bundle\PricingBundle\Form\Extension;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
+
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
+use OroB2B\Bundle\PricingBundle\Validator\Constraints\UniquePriceList;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteType;
 
@@ -51,14 +54,23 @@ class WebsiteFormExtension extends AbstractPriceListExtension
                 'options' => [
                     'error_bubbling' => false,
                 ],
+                'attr' => [
+                    'class' => 'price_lists_collection'
+                ],
                 'handle_primary' => false,
-                'allow_add_after' => true,
+                'error_bubbling' => false,
+                'allow_add_after' => false,
+                'allow_add' => true,
                 'mapped' => false,
-                'required' => false
+                'required' => false,
+                'constraints' => [
+                    new UniquePriceList()
+                ]
             ]);
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData']);
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit'], 10);
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPostSubmit'], 10);
     }
 
     /**
@@ -121,7 +133,10 @@ class WebsiteFormExtension extends AbstractPriceListExtension
         $submittedIds = array_map(function ($item) {
             /** @var PriceList $priceList */
             $priceList = $item['priceList'];
-            return $priceList->getId();
+            if ($priceList instanceof PriceList) {
+                return $priceList->getId();
+            }
+            return null;
         }, $submitted);
 
         $removed = array_diff(array_keys($existing), $submittedIds);

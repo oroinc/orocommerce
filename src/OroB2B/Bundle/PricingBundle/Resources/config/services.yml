@@ -120,16 +120,16 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
 
     orob2b_pricing.event_listener.web_site_form_view:
-            class: %orob2b_pricing.event_listener.website_form_view.class%
-            arguments:
-                - @request_stack
-                - @oro_entity.doctrine_helper
-                - @translator
-                - %orob2b_website.website.class%
-                - %orob2b_pricing.entity.price_list_to_website.class%
-            tags:
-                - { name: kernel.event_listener, event: oro_ui.scroll_data.before.website-edit, method: onWebsiteEdit }
-                - { name: kernel.event_listener, event: oro_ui.scroll_data.before.website-view, method: onWebsiteView }
+        class: %orob2b_pricing.event_listener.website_form_view.class%
+        arguments:
+            - @request_stack
+            - @oro_entity.doctrine_helper
+            - @translator
+            - %orob2b_website.website.class%
+            - %orob2b_pricing.entity.price_list_to_website.class%
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.website-edit, method: onWebsiteEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.website-view, method: onWebsiteView }
 
     orob2b_pricing.event_listener.datagrid:
         class: %orob2b_pricing.event_listener.datagrid.class%
