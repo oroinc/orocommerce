@@ -26,4 +26,11 @@ class OroB2BPricingExtensionTest extends ExtensionTestCase
 
         $this->assertEquals('oro_b2b_pricing', $extension->getAlias());
     }
+
+    public function testGetAlias()
+    {
+        $extension = new OroB2BPricingExtension();
+
+        $this->assertSame('oro_b2b_pricing', $extension->getAlias());
+    }
 }

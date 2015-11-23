@@ -47,3 +47,11 @@ OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite:
     properties:
         priority:
             - NotBlank: ~
+OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfig:
+    properties:
+        priority:
+            - NotBlank: ~
+            - Type:
+                type: integer
+        priceList:
+            - NotBlank: ~

@@ -18,6 +18,7 @@ parameters:
     orob2b_pricing.provider.product_price.class: OroB2B\Bundle\PricingBundle\Provider\ProductPriceProvider
 
     orob2b_pricing.validator.unique_product_prices.class: OroB2B\Bundle\PricingBundle\Validator\Constraints\UniqueProductPricesValidator
+    orob2b_pricing.validator.unique_price_list.class: OroB2B\Bundle\PricingBundle\Validator\Constraints\UniquePriceListValidator
     orob2b_pricing.validator.product_price_allowed_units.class: OroB2B\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnitsValidator
     orob2b_pricing.validator.product_price_currency.class: OroB2B\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrencyValidator
 
@@ -28,12 +29,15 @@ parameters:
     orob2b_pricing.event_listener.frontend.product_price_datagrid.class: OroB2B\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener
     orob2b_pricing.event_listener.product_duplicate.class: OroB2B\Bundle\PricingBundle\EventListener\ProductDuplicateListener
     orob2b_pricing.event_listener.product_select_price_list_aware.class: OroB2B\Bundle\PricingBundle\EventListener\ProductSelectPriceListAwareListener
+    orob2b_pricing.event_subscriber.system_config.class: OroB2B\Bundle\PricingBundle\EventListener\PriceListSystemConfigSubscriber
 
     orob2b_pricing.model.price_list_request_handler.abstract.class: OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler
     orob2b_pricing.model.price_list_request_handler.class: OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler
     orob2b_pricing.model.frontend.price_list_request_handler.class: OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler
     orob2b_pricing.model.price_list_tree_handler.class: OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler
     orob2b_pricing.model.frontend_product_list_modifier.class: OroB2B\Bundle\PricingBundle\Model\FrontendProductListModifier
+    orob2b_pricing.system_config.class: OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfig
+    orob2b_pricing.system_config_convereter.class: OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter
 
     orob2b_pricing.filter.product_price.class: OroB2B\Bundle\PricingBundle\Filter\ProductPriceFilter
 
@@ -237,3 +241,22 @@ services:
             - @doctrine
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
+
+    orob2b_pricing.event_listener.system_config:
+        class: %orob2b_pricing.event_subscriber.system_config.class%
+        arguments:
+            - @orob2b_pricing.system_config_converter
+        tags:
+            - { name: kernel.event_subscriber }
+
+    orob2b_pricing.system_config_converter:
+        class: %orob2b_pricing.system_config_convereter.class%
+        public: false
+        arguments:
+            - @doctrine
+            - %orob2b_pricing.entity.price_list.class%
+
+    orob2b_pricing.validator.unique_price_list:
+        class: %orob2b_pricing.validator.unique_price_list.class%
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_pricing_unique_price_list_validator }
