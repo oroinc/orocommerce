@@ -46,26 +46,81 @@ class ActionTest extends \PHPUnit_Framework_TestCase
         $this->context = new ActionContext();
     }
 
-    public function testInit()
-    {
-        // ToDo: implement
-    }
-
     public function testExecute()
     {
-        // ToDo: implement
+        $functions = ['testFunction' => []];
+
+        $function = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Action\ActionInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $function->expects(static::once())
+            ->method('execute')
+            ->with($this->context);
+
+        $this->definition->expects(static::once())
+            ->method('getPostFunctions')
+            ->willReturn($functions);
+
+        $this->functionFactory->expects(static::once())
+            ->method('create')
+            ->with(ConfigurableAction::ALIAS, $functions)
+            ->willReturn($function);
+
+        $this->action->execute($this->context);
     }
 
-    public function testIsApplicableIsAllowedNoConditionsSection()
+    public function testExecuteWithoutPostFunctions()
+    {
+        $this->definition->expects(static::once())
+            ->method('getPostFunctions')
+            ->willReturn([]);
+
+        $this->functionFactory->expects(static::never())
+            ->method('create');
+
+        $this->action->execute($this->context);
+    }
+
+    /**
+     * @expectedException \Oro\Bundle\ActionBundle\Exception\ForbiddenActionException
+     * @expectedExceptionMessage Action "test_action" is not allowed.
+     */
+    public function testExecuteException()
+    {
+        $condition = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Condition\Configurable')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $condition->expects(static::any())
+            ->method('evaluate')
+            ->with($this->context)
+            ->willReturn(false);
+
+        $config = ['test' => []];
+
+        $this->definition->expects(static::once())
+            ->method('getName')
+            ->willReturn('test_action');
+        $this->definition->expects(static::once())
+            ->method('getPreConditions')
+            ->willReturn(['test' => []]);
+
+        $this->conditionFactory->expects(static::once())
+            ->method('create')
+            ->with(ConfigurableCondition::ALIAS, $config)
+            ->willReturn($condition);
+
+        $this->action->execute($this->context);
+    }
+
+    public function testIsAllowedNoConditionsSection()
     {
         $this->conditionFactory->expects(static::never())
             ->method(static::anything());
 
-        static::assertTrue($this->action->isPreConditionAllowed($this->context));
-        static::assertTrue($this->action->isConditionAllowed($this->context));
+        static::assertTrue($this->action->isAllowed($this->context));
     }
 
-    public function testIsApplicableIsAllowedNoConditions()
+    public function testIsAllowedNoConditions()
     {
         $condition = null;
 
@@ -76,11 +131,10 @@ class ActionTest extends \PHPUnit_Framework_TestCase
         $this->conditionFactory->expects(static::never())
             ->method(static::anything());
 
-        static::assertTrue($this->action->isPreConditionAllowed($this->context));
-        static::assertTrue($this->action->isConditionAllowed($this->context));
+        static::assertTrue($this->action->isAllowed($this->context));
     }
 
-    public function testIsConditionAllowed()
+    public function testIsAllowed()
     {
         $this->context['data'] = new \stdClass();
         $conditions = [
@@ -103,10 +157,10 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             ->with(ConfigurableCondition::ALIAS, $conditions)
             ->willReturn($condition);
 
-        static::assertFalse($this->action->isConditionAllowed($this->context));
+        static::assertFalse($this->action->isAllowed($this->context));
     }
 
-    public function testIsPreConditionAllowed()
+    public function testIsAvailable()
     {
         $this->context['data'] = new \stdClass();
         $functions = [
@@ -150,7 +204,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             ->with(ConfigurableCondition::ALIAS, $conditions)
             ->willReturn($condition);
 
-        static::assertFalse($this->action->isPreConditionAllowed($this->context));
+        static::assertFalse($this->action->isAvailable($this->context));
     }
 
     public function testGetDefinition()

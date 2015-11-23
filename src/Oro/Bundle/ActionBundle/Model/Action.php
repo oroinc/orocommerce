@@ -184,7 +184,7 @@ class Action
             throw new ForbiddenActionException(sprintf('Action "%s" is not allowed.', $this->getName()));
         }
 
-        if ($this->isAllowed($context, $errors) && $this->getPostFunctions()) {
+        if ($this->getPostFunctions()) {
             $this->getPostFunctions()->execute($context);
         }
     }
