@@ -60,6 +60,9 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         );
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParent()
     {
         return WebsiteScopedDataType::NAME;
@@ -187,11 +190,11 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
      */
     protected function getActualPriceListsToTargetEntity($targetEntity, Website $website)
     {
+        /** @var BasePriceListRelation[] $actualPriceListsToTargetEntity */
         $actualPriceListsToTargetEntity = $this->getRepository()
             ->getPriceLists($targetEntity, $website);
 
         $result = [];
-        /** @var BasePriceListRelation[] $actualPriceListsToTargetEntity */
         foreach ($actualPriceListsToTargetEntity as $priceListToTargetEntity) {
             $priceListId = $priceListToTargetEntity->getPriceList()->getId();
             $result[$priceListId] = $priceListToTargetEntity;

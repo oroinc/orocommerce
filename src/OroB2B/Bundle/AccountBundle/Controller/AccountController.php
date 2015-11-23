@@ -26,7 +26,7 @@ class AccountController extends Controller
     public function indexAction()
     {
         return [
-            'entity_class' => $this->container->getParameter('orob2b_account.entity.account.class'),
+            'entity_class' => $this->container->getParameter('orob2b_account.entity.account.class')
         ];
     }
 
