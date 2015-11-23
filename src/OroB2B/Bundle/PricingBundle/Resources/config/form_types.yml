@@ -89,5 +89,7 @@ services:
 
     orob2b_pricing.form.type.price_list_system_config:
         class: %orob2b_pricing.form.type.price_list_system_config.class%
+        arguments:
+            - %orob2b_pricing.system_config.class%
         tags:
             - { name: form.type, alias: orob2b_pricing_price_list_system_config }

@@ -104,8 +104,12 @@
   width: 50px;
 }
 
-.default_price_lists {
+.price_lists_collection {
   width: 450px;
+
+  td {
+    vertical-align: top;
+  }
 
   .entity-select-btn {
     display: inline-block;
@@ -120,6 +124,11 @@
   }
 
   td span.validation-failed {
-    display: none !important;
+    white-space: nowrap;
+    width: 50px;
+  }
+
+  .select2-container.error {
+    border-color: red;
   }
 }

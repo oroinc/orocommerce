@@ -2,13 +2,11 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Validator\Constraints;
 
-use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigBag;
+use Symfony\Component\Validator\Context\ExecutionContext;
+
 use OroB2B\Bundle\PricingBundle\Tests\Unit\SystemConfig\ConfigsGeneratorTrait;
 use OroB2B\Bundle\PricingBundle\Validator\Constraints\UniquePriceList;
 use OroB2B\Bundle\PricingBundle\Validator\Constraints\UniquePriceListValidator;
-
-use Symfony\Component\Validator\Context\ExecutionContext;
-use Doctrine\Common\Collections\ArrayCollection;
 
 class UniquePriceListValidatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,51 +14,64 @@ class UniquePriceListValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testValidationOnValid()
     {
-        $bag = new PriceListConfigBag();
-        $bag->setConfigs(new ArrayCollection($this->createConfigs(2)));
-
         $constraint = new UniquePriceList();
         $validator = new UniquePriceListValidator();
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContext $context */
-        $context = $this->getMockBuilder('Symfony\Component\Validator\Context\ExecutionContext')
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
-
-        $validator->initialize($context);
-        $validator->validate($bag, $constraint);
+        $validator->initialize($this->getContext());
+        $validator->validate($this->createConfigs(2), $constraint);
     }
 
     public function testValidationOnInvalid()
     {
-        $bag = new PriceListConfigBag();
-        $configs = array_merge($this->createConfigs(2), $this->createConfigs(1));
-        $bag->setConfigs(new ArrayCollection($configs));
-        $constraint = new UniquePriceList();
-
         $builder = $this->getMockBuilder('Symfony\Component\Validator\Violation\ConstraintViolationBuilder')
             ->disableOriginalConstructor()
-            ->setMethods(['addViolation'])
+            ->setMethods(['addViolation', 'atPath'])
             ->getMock()
         ;
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContext $context */
-        $context = $this->getMockBuilder('Symfony\Component\Validator\Context\ExecutionContext')
-            ->disableOriginalConstructor()
-            ->setMethods(['buildViolation'])
-            ->getMock()
+        $builder->expects($this->once())
+            ->method('atPath')
+            ->with('[2].priceList')
+            ->willReturn($builder)
         ;
 
+        $context = $this->getContext();
+
+        $constraint = new UniquePriceList();
         $context->expects($this->once())
             ->method('buildViolation')
-            ->with($this->equalTo($constraint->message), ['priceLists' => 'Price List 1'])
+            ->with($this->equalTo($constraint->message), [])
             ->will($this->returnValue($builder))
         ;
 
         $validator = new UniquePriceListValidator();
         $validator->initialize($context);
 
-        $validator->validate($bag, $constraint);
+        $value = array_merge($this->createConfigs(2), $this->createConfigs(1));
+        $validator->validate($value, $constraint);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testValidationOnInvalidTypeInCollection()
+    {
+        $validator = new UniquePriceListValidator();
+        $validator->initialize($this->getContext());
+
+        $value = [new \stdClass()];
+        $validator->validate($value, new UniquePriceList());
+    }
+
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|ExecutionContext $context
+     */
+    protected function getContext()
+    {
+        return $this->getMockBuilder('Symfony\Component\Validator\Context\ExecutionContext')
+            ->disableOriginalConstructor()
+            ->setMethods(['buildViolation'])
+            ->getMock();
     }
 }

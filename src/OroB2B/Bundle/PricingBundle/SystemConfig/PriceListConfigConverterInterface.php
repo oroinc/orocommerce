@@ -5,14 +5,14 @@ namespace OroB2B\Bundle\PricingBundle\SystemConfig;
 interface PriceListConfigConverterInterface
 {
     /**
-     * @param PriceListConfigBag $configBag
-     * @return array;
+     * @param array $configs
+     * @return array ;
      */
-    public function convertBeforeSave(PriceListConfigBag $configBag);
+    public function convertBeforeSave(array $configs);
 
     /**
      * @param array $config
-     * @return PriceListConfigBag
+     * @return PriceListConfig
      */
     public function convertFromSaved(array $config);
 }

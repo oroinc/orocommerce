@@ -2,28 +2,23 @@
 
 namespace OroB2B\Bundle\PricingBundle\SystemConfig;
 
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
 class PriceListConfigConverter implements PriceListConfigConverterInterface
 {
     const PRIORITY_KEY = 'priority';
     const PRICE_LIST_KEY = 'priceList';
 
-    /**
-     * @var RegistryInterface
-     */
-    private $doctrine;
+    /** @var RegistryInterface */
+    protected $doctrine;
 
-    /**
-     * @var string
-     */
-    private $priceListClassName;
+    /** @var string */
+    protected $priceListClassName;
 
-    /**
-     * @var string
-     */
-    private $managerForPriceList;
+    /** @var string */
+    protected $managerForPriceList;
 
     /**
      * PriceListSystemConfigSubscriber constructor.
@@ -37,12 +32,11 @@ class PriceListConfigConverter implements PriceListConfigConverterInterface
     }
 
     /**
-     * @param PriceListConfigBag $configBag
-     * @return array;
+     * @param array $configs
+     * @return array
      */
-    public function convertBeforeSave(PriceListConfigBag $configBag)
+    public function convertBeforeSave(array $configs)
     {
-        $configs = $configBag->getConfigs()->toArray();
         $result = array_map(function ($config) {
             /** @var PriceListConfig $config */
             return [
@@ -56,28 +50,25 @@ class PriceListConfigConverter implements PriceListConfigConverterInterface
 
     /**
      * @param array $configs
-     * @return PriceListConfigBag
+     * @return array
      */
     public function convertFromSaved(array $configs)
     {
         $ids = array_map(function ($config) {
             return $config[self::PRICE_LIST_KEY];
         }, $configs);
-
-        $configBag = new PriceListConfigBag();
+        $result = [];
 
         if (0 !== count($ids)) {
             $priceLists = $this->getManagerForPriceList()
                 ->getRepository('OroB2BPricingBundle:PriceList')
                 ->findBy(['id' => $ids]) ?: [];
-
             foreach ($configs as $config) {
-                $priceListConfig = $this->createPriceListConfig($config, $priceLists);
-                $configBag->addConfig($priceListConfig);
+                $result[] = $this->createPriceListConfig($config, $priceLists);
             }
         }
 
-        return $configBag;
+        return $result;
     }
 
     /**
@@ -85,7 +76,7 @@ class PriceListConfigConverter implements PriceListConfigConverterInterface
      * @param PriceList[] $priceLists
      * @return PriceListConfig
      */
-    private function createPriceListConfig($config, $priceLists)
+    protected function createPriceListConfig($config, $priceLists)
     {
         $configModel = new PriceListConfig();
 
@@ -104,17 +95,10 @@ class PriceListConfigConverter implements PriceListConfigConverterInterface
     /**
      * @return \Doctrine\Common\Persistence\ObjectManager
      */
-    private function getManagerForPriceList()
+    protected function getManagerForPriceList()
     {
         if (!$this->managerForPriceList) {
-            $manager = $this->doctrine->getManagerForClass($this->priceListClassName);
-
-            if (!$manager) {
-                throw new \InvalidArgumentException(
-                    sprintf('Entity Manager for class %s doesn\'t exist.', $this->priceListClassName)
-                );
-            }
-            $this->managerForPriceList = $manager;
+            $this->managerForPriceList = $this->doctrine->getManagerForClass($this->priceListClassName);
         }
 
         return $this->managerForPriceList;

@@ -2,16 +2,33 @@
 
 namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
-use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfig;
-use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigBag;
-
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+
+use OroB2B\Bundle\PricingBundle\Validator\Constraints\UniquePriceList;
+
 class PriceListSystemConfigType extends AbstractType
 {
     const NAME = 'orob2b_pricing_price_list_system_config';
+    const COLLECTION_FIELD_NAME = 'configs';
+
+    /** @var  string */
+    protected $priceListConfigClassName;
+
+    /** @var  string */
+    protected $priceListConfigBagClassName;
+
+    /**
+     * PriceListSystemConfigType constructor.
+     * @param $priceListConfigClassName
+     */
+    public function __construct($priceListConfigClassName)
+    {
+        $this->priceListConfigClassName = $priceListConfigClassName;
+    }
 
     /**
      * {@inheritdoc}
@@ -19,15 +36,22 @@ class PriceListSystemConfigType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('configs', 'oro_collection', [
+            ->add(self::COLLECTION_FIELD_NAME, CollectionType::NAME, [
                 'label' => false,
                 'type' => PriceListSelectWithPriorityType::NAME,
                 'options' => [
-                    'data_class' => PriceListConfig::CLASS_NAME,
+                    'data_class' => $this->priceListConfigClassName,
                     'error_bubbling' => false,
                 ],
                 'handle_primary' => false,
                 'allow_add_after' => true,
+                'error_bubbling' => false,
+                'attr' => [
+                    'class' => 'price_lists_collection'
+                ],
+                'constraints' => [
+                    new UniquePriceList()
+                ]
             ]);
     }
 
@@ -38,7 +62,6 @@ class PriceListSystemConfigType extends AbstractType
     {
         $options->setDefaults([
             'label' => false,
-            'data_class' => PriceListConfigBag::CLASS_NAME,
             'error_bubbling' => false
         ]);
     }
