@@ -65,6 +65,16 @@ define(function(require) {
 
         doPageReload: function() {
             mediator.execute('refreshPage');
+        },
+
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+
+            this.$container.off();
+
+            ButtonsComponent.__super__.dispose.call(this);
         }
     });
 
