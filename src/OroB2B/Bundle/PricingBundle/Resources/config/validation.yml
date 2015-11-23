@@ -47,5 +47,7 @@ OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfig:
     properties:
         priority:
             - NotBlank: ~
+            - Type:
+                type: integer
         priceList:
             - NotBlank: ~
