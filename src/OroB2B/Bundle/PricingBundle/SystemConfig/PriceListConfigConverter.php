@@ -66,6 +66,12 @@ class PriceListConfigConverter implements PriceListConfigConverterInterface
             foreach ($configs as $config) {
                 $result[] = $this->createPriceListConfig($config, $priceLists);
             }
+
+            usort($result, function ($a, $b) {
+                /** @var PriceListConfig $a */
+                /** @var PriceListConfig $b */
+                return ($a->getPriority() < $b->getPriority()) ? -1 : 1;
+            });
         }
 
         return $result;
