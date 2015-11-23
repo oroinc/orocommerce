@@ -8,3 +8,19 @@ OroB2B\Bundle\WarehouseBundle\Entity\Warehouse:
             - NotBlank: ~
             - Length:
                 max: 255
+
+OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields:     [ warehouse, productUnitPrecision ]
+            ignoreNull: false
+     properties:
+        quantity:
+            - NotBlank: ~
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+        warehouse:
+            - NotBlank: ~
+        product:
+            - NotBlank: ~
+        productUnitPrecision:
+            - NotBlank: ~
