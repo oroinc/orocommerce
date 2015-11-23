@@ -68,6 +68,21 @@ class CollectionElementValueExistsTest extends \PHPUnit_Framework_TestCase
                 ],
                 'expectedResult' => false,
             ],
+            'not_strict_in_array' => [
+                'options' => $options,
+                'context' => [
+                    'foo' => [
+                        'sth',
+                        'words' => [
+                            ['name' => '5'],
+                            ['name' => '15']
+                        ],
+                        'sth else'
+                    ],
+                    'bar' => 15
+                ],
+                'expectedResult' => true,
+            ],
         ];
     }
 }

@@ -47,7 +47,7 @@ class CollectionElementValueExists extends AbstractComparison
      */
     protected function doCompare($collection, $needle)
     {
-        return in_array($needle, $collection, true);
+        return in_array($needle, $collection);
     }
 
     /**

@@ -36,8 +36,7 @@ How it works?
 Each action relates to the some entity types (i.e. consists full class name) or\and routes of pages 
 where action should be displayed. Before page loading Action Bundle chooses actions that 
 are corresponded to page's entity\route. Then these actions checking for Pre conditions. If all Pre conditions are met 
-- Action's button is displaying. After user click on the Action button - Init step (if exists) is running.
-After Init step - checking all Conditions to perform Execution step - and if Conditions are met - run Execution step.
+- Action's button is displaying.
 
 Configuration
 -------------
@@ -48,41 +47,27 @@ Look at the example of simple action configuration that performs some action wit
 ```
 actions:
     acme_demo_expire_myentity_action:                       # action name
-        extends: entity_action_base                         # parent action if needed
-        replace:                                            # the list of nodes that should be replaced in the parent action
+        extends: entity_action_base                         # (optional) parent action if needed
+        replace:                                            # (optional) the list of nodes that should be replaced in the parent action
             - frontend_options
         label: adme.demo.myentity.actions.myentity_action   # label for action button
-        enabled: true                                       # is action enabled
-        applications:                                       # for what applications action are available (backend, frontend)
-            - backend
-            - frontend
-        entities:                                           # list of entity classes
+        enabled: true                                       # (optional, default = true) is action enabled
+        entities:                                           # (optional) list of entity classes
             - Acme\Bundle\DemoBundle\Entity\MyEntity
-        routes:                                             # list of routes
+        routes:                                             # (optional) list of routes
             - acme_demo_myentity_view    
-        order: 10                                           # display order of action button
-        frontend_options:                                   # display options for action button:
+        order: 10                                           # (optional, default = 0) display order of action button
+        frontend_options:                                   # (optional) display options for action button:
             icon: icon-time                                 # class of button icon
             class: btn                                      # class of button 
             template: customTemplate.html.twig              # custom button template if needed
-        form_options:
-            form_type: custom_form_type                     # set custom form type
-            attribute_fields:                               # fields of form that will be shown on init_step
-                call_timeout:
-                    form_type: integer
-                    options:
-                        required: false
-        attributes:                                         # configuration for Attributes
-            ...
-        preconditions:                                      # pre conditions for display Action button and run Init step
-            ...
-        conditions:                                         # conditions for run Execution step
-            ...
-        init_step:                                          # configuration for Init step
-            ...
-        execution_step:                                     # configuration for Execution step
-            ...
+        prefunctions:                                       # (optional) any needed pre functions which will execute before pre conditions
+            - @create_datetime:
+                attribute: $.date
+        preconditions:                                      # (optional) pre conditions for display Action button
+            @gt: [$updatedAt, $.date]
 ```
 
-This configuration describes action that relates to the ``MyEntity`` entity. On the View page of
-this entity (acme_demo_myentity_view ) will be displayed button with label "adme.demo.myentity.actions.myentity_action".
+This configuration describes action that relates to the ``MyEntity`` entity. On the View page (acme_demo_myentity_view)
+of this entity (in case of field 'updatedAt' > new DateTime('now')) will be displayed button with label
+"adme.demo.myentity.actions.myentity_action".
