@@ -3,9 +3,11 @@
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+
 use OroB2B\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -14,11 +16,27 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
     /** @var string */
     protected $formExtensionPath;
 
+    /** @var Website[] $websites */
+    protected $websites;
+
+    /** @var PriceList[] $priceLists */
+    protected $priceLists;
+
     public function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
         $this->formExtensionPath = sprintf('%s[priceListsByWebsites]', $this->getMainFormName());
+        $this->websites = [
+            $this->getReference('Canada'),
+            $this->getReference('US'),
+        ];
+
+        $this->priceLists = [
+            $this->getReference('price_list_1'),
+            $this->getReference('price_list_2'),
+            $this->getReference('price_list_3'),
+        ];
     }
 
     public function testDelete()
@@ -33,30 +51,19 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         $this->assertFalse($form->has($this->formExtensionPath));
     }
 
+    /**
+     * @depends testDelete
+     */
     public function testAdd()
     {
-        /** @var Website[] $websites */
-        $websites = [
-            $this->getReference('Canada'),
-            $this->getReference('US'),
-        ];
-
-        /** @var PriceList[] $priceLists */
-        $priceLists = [
-            $this->getReference('price_list_1'),
-            $this->getReference('price_list_2'),
-            $this->getReference('price_list_3'),
-        ];
-
         $form = $this->getUpdateForm();
         $formValues = $form->getValues();
-        foreach ($websites as $website) {
+        foreach ($this->websites as $website) {
             $i = 0;
-            foreach ($priceLists as $priceList) {
+            foreach ($this->priceLists as $priceList) {
                 $collectionElementPath = sprintf('%s[%d][%d]', $this->formExtensionPath, $website->getId(), $i);
                 $formValues[sprintf('%s[priceList]', $collectionElementPath)] = $priceList->getId();
-                $formValues[sprintf('%s[priority]', $collectionElementPath)] = $priceList->getId();
-                $i++;
+                $formValues[sprintf('%s[priority]', $collectionElementPath)] = ++$i;
             }
         }
         $params = $this->explodeArrayPaths($formValues);
@@ -67,7 +74,62 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         );
         $form = $this->getUpdateForm();
         $formValues = $form->getValues();
+        foreach ($this->websites as $website) {
+            $i = 0;
+            foreach ($this->priceLists as $priceList) {
+                $this->assertTrue($this->checkPriceListExistInDatabase($priceList));
+                $collectionElementPath = sprintf('%s[%d][%d]', $this->formExtensionPath, $website->getId(), $i);
+                $this->assertTrue(isset($formValues[sprintf('%s[priceList]', $collectionElementPath)]));
+                $this->assertTrue(isset($formValues[sprintf('%s[priority]', $collectionElementPath)]));
+                $this->assertEquals($formValues[sprintf('%s[priceList]', $collectionElementPath)], $priceList->getId());
+                $this->assertEquals($formValues[sprintf('%s[priority]', $collectionElementPath)], ++$i);
+            }
+        }
+    }
 
+    /**
+     * @depends testAdd
+     */
+    public function testView()
+    {
+        $crawler = $this->client->request(
+            'GET',
+            $this->getViewUrl()
+        );
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $html = $crawler->html();
+        foreach ($this->websites as $website) {
+            $i = 0;
+            $this->assertContains($website->getName(), $html);
+            foreach ($this->priceLists as $priceList) {
+                $this->assertContains($priceList->getName(), $html);
+                $this->assertContains((string)++$i, $html);
+            }
+        }
+    }
+
+    public function testValidation()
+    {
+        $form = $this->getUpdateForm();
+        $formValues = $form->getValues();
+        /** @var Website $website */
+        $website = $this->getReference('Canada');
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference('price_list_1');
+        $collectionElementPath = sprintf('%s[%d][%d]', $this->formExtensionPath, $website->getId(), 0);
+        $formValues[sprintf('%s[priceList]', $collectionElementPath)] = $priceList->getId();
+        $formValues[sprintf('%s[priority]', $collectionElementPath)] = '';
+        $params = $this->explodeArrayPaths($formValues);
+        $crawler = $this->client->request(
+            'POST',
+            $this->getUpdateUrl(),
+            $params
+        );
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains('This value should not be blank', $crawler->html());
     }
 
     /**
@@ -102,6 +164,11 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
     /**
      * @return string
      */
+    abstract public function getViewUrl();
+
+    /**
+     * @return string
+     */
     abstract public function getMainFormName();
 
     /**
@@ -117,5 +184,21 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         return $crawler->selectButton('Save and Close')->form();
+    }
+
+    /**
+     * @param PriceList $priceList
+     * @return bool
+     */
+    protected function checkPriceListExistInDatabase(PriceList $priceList)
+    {
+        $priceListsFromDatabase = $this->getPriceListsByEntity();
+        foreach ($priceListsFromDatabase as $priceListToEntity) {
+            if ($priceListToEntity->getPriceList()->getId() == $priceList->getId()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
