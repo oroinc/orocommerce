@@ -11,4 +11,12 @@ class ActionContext extends AbstractStorage implements EntityAwareInterface
     {
         return $this->offsetGet('data');
     }
+
+    /**
+     * @return string|null
+     */
+    public function getRedirectUrl()
+    {
+        return $this->offsetGet('redirectUrl');
+    }
 }

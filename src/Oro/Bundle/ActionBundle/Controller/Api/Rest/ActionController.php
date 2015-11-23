@@ -50,7 +50,7 @@ class ActionController extends FOSRestController
             return $this->handleError($e->getMessage(), Codes::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        $response = $context->offsetExists('redirectUrl') ? ['redirectUrl' => $context->offsetGet('redirectUrl')] : [];
+        $response = $context->getRedirectUrl() ? ['redirectUrl' => $context->getRedirectUrl()] : [];
 
         return $this->handleView(
             $this->view($response, Codes::HTTP_OK)

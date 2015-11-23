@@ -58,7 +58,7 @@ orob2b:
                 quote_expire: 'Expire Quote'
 
             message:
-                quote.expire.success: 'Quote #%id% expired'
+                quote.expire.success: 'Quote #%id% was successfully expired'
 
         system_configuration:
             backend_product_visibility: 'Can Be Added to Quotes'
