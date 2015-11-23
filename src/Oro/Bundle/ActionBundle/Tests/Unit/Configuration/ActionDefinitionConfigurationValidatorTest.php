@@ -197,6 +197,8 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
 
     /**
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function validateProvider()
     {
