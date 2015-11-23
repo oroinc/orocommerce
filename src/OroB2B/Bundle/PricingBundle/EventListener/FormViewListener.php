@@ -109,6 +109,21 @@ class FormViewListener
             $result[$website->getId()]['website'] = $website;
         }
 
+        foreach ($result as &$websitePriceLists) {
+            usort(
+                $websitePriceLists['priceLists'],
+                function (BasePriceListRelation $priceList1, BasePriceListRelation $priceList2) {
+                    $priority1 = $priceList1->getPriority();
+                    $priority2 = $priceList2->getPriority();
+                    if ($priority1 == $priority2) {
+                        return 0;
+                    }
+
+                    return ($priority1 < $priority2) ? -1 : 1;
+                }
+            );
+        }
+
         return $result;
     }
 
