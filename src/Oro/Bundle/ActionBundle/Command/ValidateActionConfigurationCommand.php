@@ -35,7 +35,7 @@ class ValidateActionConfigurationCommand extends ContainerAwareCommand
         if ($configuration) {
             $errors = $provider->getConfigurationErrors();
 
-            $output->writeln(sprintf('Found %d action(s) with %d error(s):', count($configuration), count($errors)));
+            $output->writeln(sprintf('Found %d action(s) with %d error(s)', count($configuration), count($errors)));
 
             foreach ($errors as $error) {
                 $output->writeln($error);

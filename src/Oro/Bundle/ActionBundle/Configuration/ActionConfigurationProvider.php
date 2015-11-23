@@ -94,7 +94,7 @@ class ActionConfigurationProvider
      */
     public function getConfigurationErrors()
     {
-        return $this->configurationErrors;
+        return $this->definitionConfigurationValidator->getErrors();
     }
 
     /**
@@ -103,7 +103,6 @@ class ActionConfigurationProvider
     protected function validateConfiguration(array $configuration)
     {
         $this->definitionConfigurationValidator->validate($configuration);
-        $this->configurationErrors = $this->definitionConfigurationValidator->getErrors();
     }
 
     /**
