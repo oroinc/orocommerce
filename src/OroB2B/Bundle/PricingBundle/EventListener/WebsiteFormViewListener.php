@@ -2,15 +2,17 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
+use Doctrine\Common\Collections\Criteria;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\UIBundle\View\ScrollData;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
-class WebSiteFormViewListener
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+
+class WebsiteFormViewListener
 {
     /** @var DoctrineHelper */
     protected $doctrineHelper;
@@ -76,7 +78,7 @@ class WebSiteFormViewListener
         $priceLists = $this->doctrineHelper
             ->getEntityManager($this->priceListToWebsiteClassName)
             ->getRepository($this->priceListToWebsiteClassName)
-            ->findBy(['website' => $website]);
+            ->findBy(['website' => $website], ['priority' => Criteria::ASC]);
 
         $template = $event->getEnvironment()->render(
             'OroB2BPricingBundle:PriceList/partial:list.html.twig',
