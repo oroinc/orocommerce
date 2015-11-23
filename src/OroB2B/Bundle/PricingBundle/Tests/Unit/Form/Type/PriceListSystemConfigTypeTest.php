@@ -2,36 +2,31 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
-use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Validation;
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
+
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSystemConfigType;
-use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigBag;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-
 use OroB2B\Bundle\PricingBundle\Tests\Unit\SystemConfig\ConfigsGeneratorTrait;
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
 {
     use ConfigsGeneratorTrait;
 
-    /**
-     * @var array
-     */
-    private $testPriceLists = [];
+    /** @var array */
+    protected $testPriceLists = [];
 
-    /**
-     * @var array
-     */
-    private $testPriceListConfigs = [];
+    /** @var array */
+    protected $testPriceListConfigs = [];
 
-    /**
-     * @var PriceListSystemConfigType
-     */
+    /** @var PriceListSystemConfigType */
     protected $formType;
 
     /**
@@ -39,7 +34,10 @@ class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->formType = new PriceListSystemConfigType();
+        $this->formType = new PriceListSystemConfigType(
+            'OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfig',
+            'OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigBag'
+        );
         $this->testPriceListConfigs = $this->createConfigs(2);
         foreach ($this->testPriceListConfigs as $config) {
             $this->testPriceLists[$config->getPriceList()->getId()] = $config->getPriceList();
@@ -65,19 +63,20 @@ class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
                 $priceListWithPriorityType::NAME => $priceListWithPriorityType,
                 PriceListSelectType::NAME => new PriceListSelectTypeStub(),
                 $entityType->getName() => $entityType,
-            ], [])
+            ], []),
+            new ValidatorExtension(Validation::createValidator())
         ];
     }
 
     public function testSubmit()
     {
-        $defaultData = new PriceListConfigBag();
+        $defaultData = [];
         $form = $this->factory->create($this->formType, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
 
         $form->submit([
-            'configs' => [
+            PriceListSystemConfigType::COLLECTION_FIELD_NAME => [
                 [
                     'priceList' => 1,
                     'priority' => 100,
@@ -90,8 +89,7 @@ class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
         ]);
         $this->assertTrue($form->isValid());
 
-        $expected = new PriceListConfigBag();
-        $expected->setConfigs(new ArrayCollection($this->testPriceListConfigs));
+        $expected = [PriceListSystemConfigType::COLLECTION_FIELD_NAME => $this->testPriceListConfigs];
 
         $this->assertEquals($expected, $form->getData());
     }

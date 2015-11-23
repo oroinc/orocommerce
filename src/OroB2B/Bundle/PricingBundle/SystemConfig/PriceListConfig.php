@@ -3,24 +3,19 @@
 namespace OroB2B\Bundle\PricingBundle\SystemConfig;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListAwareInterface;
 
-class PriceListConfig
+class PriceListConfig implements PriceListAwareInterface
 {
-    const CLASS_NAME = 'OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfig';
-
-    /**
-     * @var  PriceList
-     */
-    private $priceList;
+    /** @var  PriceList */
+    protected $priceList;
 
     /**
      * @var $integer
      */
-    private $priority;
+    protected $priority;
 
-    /**
-     * @return PriceList
-     */
+    /** @return PriceList */
     public function getPriceList()
     {
         return $this->priceList;
@@ -30,7 +25,7 @@ class PriceListConfig
      * @param PriceList $priceList
      * @return $this
      */
-    public function setPriceList($priceList)
+    public function setPriceList(PriceList $priceList)
     {
         $this->priceList = $priceList;
 

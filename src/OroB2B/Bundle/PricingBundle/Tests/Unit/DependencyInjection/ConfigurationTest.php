@@ -2,8 +2,9 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\DependencyInjection;
 
-use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 use Symfony\Component\Config\Definition\Processor;
+
+use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {

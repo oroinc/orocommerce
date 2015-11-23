@@ -9,7 +9,7 @@ class UniquePriceList extends Constraint
     /**
      * @var string
      */
-    public $message = 'Duplicate price lists: priceLists';
+    public $message = 'Duplicate price list.';
 
     /**
      * @return string

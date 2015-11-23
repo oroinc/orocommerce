@@ -29,13 +29,14 @@ parameters:
     orob2b_pricing.event_listener.product_duplicate.class: OroB2B\Bundle\PricingBundle\EventListener\ProductDuplicateListener
     orob2b_pricing.event_listener.product_select_price_list_aware.class: OroB2B\Bundle\PricingBundle\EventListener\ProductSelectPriceListAwareListener
     orob2b_pricing.event_subscriber.system_config.class: OroB2B\Bundle\PricingBundle\EventListener\PriceListSystemConfigSubscriber
-    orob2b_pricing.system_config_convereter.class: OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter
 
     orob2b_pricing.model.price_list_request_handler.abstract.class: OroB2B\Bundle\PricingBundle\Model\AbstractPriceListRequestHandler
     orob2b_pricing.model.price_list_request_handler.class: OroB2B\Bundle\PricingBundle\Model\PriceListRequestHandler
     orob2b_pricing.model.frontend.price_list_request_handler.class: OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler
     orob2b_pricing.model.price_list_tree_handler.class: OroB2B\Bundle\PricingBundle\Model\PriceListTreeHandler
     orob2b_pricing.model.frontend_product_list_modifier.class: OroB2B\Bundle\PricingBundle\Model\FrontendProductListModifier
+    orob2b_pricing.system_config.class: OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfig
+    orob2b_pricing.system_config_convereter.class: OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter
 
     orob2b_pricing.filter.product_price.class: OroB2B\Bundle\PricingBundle\Filter\ProductPriceFilter
 
