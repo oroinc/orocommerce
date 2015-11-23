@@ -629,6 +629,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
         $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->loginCount = 0;
+
         $this->createAccount();
     }
 

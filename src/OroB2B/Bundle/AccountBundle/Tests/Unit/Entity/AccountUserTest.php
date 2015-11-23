@@ -152,6 +152,7 @@ class AccountUserTest extends AbstractUserTest
         $this->assertInstanceOf('\DateTime', $user->getCreatedAt());
         $this->assertInstanceOf('\DateTime', $user->getUpdatedAt());
         $this->assertEquals(0, $user->getLoginCount());
+        $this->assertNotEmpty($user->getAccount());
     }
 
     public function testPreUpdateUnChanged()
