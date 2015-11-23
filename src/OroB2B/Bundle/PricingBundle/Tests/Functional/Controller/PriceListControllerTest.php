@@ -25,7 +25,10 @@ class PriceListControllerTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
-        $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
+        $this->loadFixtures([
+            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists',
+            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
+        ]);
     }
 
     public function testIndex()
@@ -173,6 +176,37 @@ class PriceListControllerTest extends WebTestCase
         $this->assertNotContains($this->getWebsite('US')->getName(), $websitesGrid);
 
         return $id;
+    }
+
+    public function testUpdateCurrenciesError()
+    {
+        $id = $this->getReference('product_price.11')->getPriceList()->getId();
+
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_pricing_price_list_update', ['id' => $id])
+        );
+
+        $form = $crawler->selectButton('Save and Close')->form(
+            [
+                'orob2b_pricing_price_list[currencies]' => ['USD'],
+            ]
+        );
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->submit($form);
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $message = $this->getContainer()->get('translator')
+            ->trans(
+                'orob2b.pricing.validators.price_list.product_price_currency.message',
+                ['%invalidCurrency%' => 'EUR'],
+                'validators'
+            );
+
+        $this->assertContains($message, $crawler->html());
     }
 
     /**

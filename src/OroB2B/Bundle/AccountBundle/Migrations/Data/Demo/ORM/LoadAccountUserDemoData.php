@@ -78,10 +78,9 @@ class LoadAccountUserDemoData extends AbstractFixture implements ContainerAwareI
             $accountUser
                 ->setUsername($row['email'])
                 ->setEmail($row['email'])
-                ->setPassword($row['email'])
                 ->setFirstName($row['firstName'])
                 ->setLastName($row['lastName'])
-                ->setPlainPassword(md5(uniqid(mt_rand(), true)))
+                ->setPlainPassword($row['email'])
                 ->setAccount($account)
                 ->setEnabled(true)
                 ->setOrganization($organization)

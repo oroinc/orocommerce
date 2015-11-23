@@ -27,14 +27,6 @@ class WebsiteType extends AbstractType
                     'required' => true,
                     'label' => 'orob2b.website.name.label',
                 ]
-            )
-            ->add(
-                'url',
-                'text',
-                [
-                    'required' => true,
-                    'label' => 'orob2b.website.url.label',
-                ]
             );
     }
 
