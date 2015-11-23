@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ActionBundle\Configuration;
 
 use Doctrine\Common\Cache\CacheProvider;
+use Doctrine\Common\Collections\Collection;
 
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
@@ -32,11 +33,9 @@ class ActionConfigurationProvider
     /** @var array */
     protected $processedConfigs = [];
 
-    /** @var $array */
-    protected $configurationErrors;
-
     /**
      * @param ActionDefinitionListConfiguration $definitionConfiguration
+     * @param ActionDefinitionConfigurationValidator $definitionConfigurationValidator
      * @param CacheProvider $cache
      * @param array $rawConfiguration
      * @param array $kernelBundles
@@ -68,48 +67,32 @@ class ActionConfigurationProvider
 
     /**
      * @param bool $ignoreCache
+     * @param Collection $errors
      * @return array
      * @throws InvalidConfigurationException
      */
-    public function getActionConfiguration($ignoreCache = false)
+    public function getActionConfiguration($ignoreCache = false, Collection $errors = null)
     {
-        if ($ignoreCache) {
-            return $this->resolveConfiguration();
-        }
-
-        if ($this->cache->contains(self::ROOT_NODE_NAME)) {
+        if (!$ignoreCache && $this->cache->contains(self::ROOT_NODE_NAME)) {
             $configuration = $this->cache->fetch(self::ROOT_NODE_NAME);
         } else {
-            $configuration = $this->resolveConfiguration();
+            $configuration = $this->resolveConfiguration($errors);
 
-            $this->clearCache();
-            $this->cache->save(self::ROOT_NODE_NAME, $configuration);
+            if (!$ignoreCache) {
+                $this->clearCache();
+                $this->cache->save(self::ROOT_NODE_NAME, $configuration);
+            }
         }
 
         return $configuration;
     }
 
     /**
-     * @return array
-     */
-    public function getConfigurationErrors()
-    {
-        return $this->definitionConfigurationValidator->getErrors();
-    }
-
-    /**
-     * @param array $configuration
-     */
-    protected function validateConfiguration(array $configuration)
-    {
-        $this->definitionConfigurationValidator->validate($configuration);
-    }
-
-    /**
+     * @param Collection $errors
      * @return array
      * @throws InvalidConfigurationException
      */
-    protected function resolveConfiguration()
+    protected function resolveConfiguration(Collection $errors = null)
     {
         $configs = $this->prepareRawConfiguration();
 
@@ -127,12 +110,12 @@ class ActionConfigurationProvider
             $this->resolveExtends($configs, $config, $actionName);
         }
 
+        $data = [];
         try {
-            $data = [];
             if (!empty($configs)) {
                 $data = $this->definitionConfiguration->processConfiguration($configs);
 
-                $this->validateConfiguration($data);
+                $this->definitionConfigurationValidator->validate($data, $errors);
             }
         } catch (InvalidConfigurationException $exception) {
             throw new InvalidConfigurationException(

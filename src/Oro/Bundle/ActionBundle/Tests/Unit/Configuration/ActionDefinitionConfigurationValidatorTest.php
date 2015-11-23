@@ -2,7 +2,10 @@
 
 namespace Oro\Bundle\ActionBundle\Tests\Unit\Configuration;
 
-use Symfony\Component\HttpKernel\Log\LoggerInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+
+use Psr\Log\LoggerInterface;
+
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\RouterInterface;
 
@@ -17,7 +20,7 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
     protected $router;
 
     /**
-     * @var \Twig_ExistsLoaderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var \Twig_Loader_Filesystem|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $twigLoader;
 
@@ -43,7 +46,7 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
     {
         $this->router = $this->getMock('Symfony\Component\Routing\RouterInterface');
 
-        $this->twigLoader = $this->getMock('Twig_ExistsLoaderInterface');
+        $this->twigLoader = $this->getMock('Twig_Loader_Filesystem');
 
         $this->logger = $this->getMock('Symfony\Component\HttpKernel\Log\LoggerInterface');
 
@@ -60,11 +63,11 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
     protected function createValidator($debug = false)
     {
         $this->validator = new ActionDefinitionConfigurationValidator(
-            $debug,
             $this->router,
             $this->twigLoader,
             $this->doctrineHelper,
-            $this->logger
+            $this->logger,
+            $debug
         );
     }
 
@@ -107,9 +110,11 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
             ->method('warning')
             ->with($expectedData['logMessage']);
 
-        $this->validator->validate($inputData['config']);
+        $errors = new ArrayCollection();
 
-        $this->assertEquals($expectedData['errors'], $this->validator->getErrors());
+        $this->validator->validate($inputData['config'], $errors);
+
+        $this->assertEquals($expectedData['errors'], $errors->toArray());
     }
 
     /**
@@ -133,66 +138,6 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
         ];
 
         $this->validator->validate($config);
-    }
-
-    /**
-     * @param array $inputData
-     * @param bool $valid
-     *
-     * @dataProvider validateRouteProvider
-     */
-    public function testValidateRoute(array $inputData, $valid)
-    {
-        /* @var $collection RouteCollection|\PHPUnit_Framework_MockObject_MockObject */
-        $collection = $this->getMock('Symfony\Component\Routing\RouteCollection');
-
-        $this->router->expects($this->once())
-            ->method('getRouteCollection')
-            ->willReturn($collection);
-
-        $collection->expects($this->once())
-            ->method('get')
-            ->with($inputData['routeName'])
-            ->willReturn($inputData['route']);
-
-        $this->assertSame($valid, $this->validator->validateRoute($inputData['routeName']));
-    }
-
-    /**
-     * @param string $template
-     * @param bool $valid
-     *
-     * @dataProvider validateTemplateProvider
-     */
-    public function testValidateTemplate($template, $valid)
-    {
-        $this->twigLoader->expects($this->once())
-            ->method('exists')
-            ->with($template)
-            ->willReturn($valid);
-
-        $this->assertSame($valid, $this->validator->validateTemplate($template));
-    }
-
-    /**
-     * @param array $inputData
-     * @param array $expectedData
-     *
-     * @dataProvider validateEntityProvider
-     */
-    public function testValidateEntity(array $inputData, array $expectedData)
-    {
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityClass')
-            ->with($inputData['entity'])
-            ->willReturn($inputData['entityClass']);
-
-        $this->doctrineHelper->expects($expectedData['expectsIsManageable'])
-            ->method('isManageableEntity')
-            ->with($inputData['manageableClass'])
-            ->willReturn($expectedData['manageable']);
-
-        $this->assertSame($expectedData['valid'], $this->validator->validateEntity($inputData['entity']));
     }
 
     /**
@@ -321,103 +266,6 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
                     'expectsLog' => $this->never(),
                     'logMessage' => null,
                     'errors' => [],
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function validateTemplateProvider()
-    {
-        return [
-            'valid template' => [
-                'template1',
-                true,
-            ],
-            'unknown template' => [
-                'template2',
-                false,
-            ],
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function validateRouteProvider()
-    {
-        return [
-            'valid route' => [
-                'input' => [
-                    'routeName' => 'route1',
-                    'route' => new \stdClass(),
-                ],
-                'valid' => true,
-            ],
-            'unknown route' => [
-                'input' => [
-                    'routeName' => 'route2',
-                    'route' => null,
-                ],
-                'valid' => false,
-            ],
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function validateEntityProvider()
-    {
-        return [
-            'not existsing class' => [
-                'input' => [
-                    'entity' => 'TestEntity1',
-                    'entityClass' => 'TestEntity1',
-                    'manageableClass' => 'TestEntity1',
-                ],
-                'expected' => [
-                    'expectsIsManageable' => $this->never(),
-                    'manageable' => null,
-                    'valid' => false,
-                ],
-            ],
-            'existsing class and not manageable' => [
-                'input' => [
-                    'entity' => 'TestEntity2',
-                    'entityClass' => 'Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity2',
-                    'manageableClass' => 'Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity2',
-                ],
-                'expected' => [
-                    'expectsIsManageable' => $this->once(),
-                    'manageable' => false,
-                    'valid' => false,
-                ],
-            ],
-            'existsing class and manageable' => [
-                'input' => [
-                    'entity' => 'TestEntity3',
-                    'entityClass' => 'Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity3',
-                    'manageableClass' => 'Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity3',
-                ],
-                'expected' => [
-                    'expectsIsManageable' => $this->once(),
-                    'manageable' => true,
-                    'valid' => true,
-                ],
-            ],
-            'existsing class and manageable with root path' => [
-                'input' => [
-                    'entity' => 'TestEntity3',
-                    'entityClass' => '\Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity3',
-                    'manageableClass' => 'Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity3',
-                ],
-                'expected' => [
-                    'expectsIsManageable' => $this->once(),
-                    'manageable' => true,
-                    'valid' => true,
                 ],
             ],
         ];

@@ -17,11 +17,11 @@ services:
     oro_action.configuration.validator.action_definition:
         class: %oro_action.configuration.validator.action_definition.class%
         arguments:
-            - %kernel.debug%
             - @router
             - @twig.loader
             - @oro_entity.doctrine_helper
             - @logger
+            - %kernel.debug%
 
     oro_action.configuration.provider:
         class: %oro_action.configuration.provider.class%

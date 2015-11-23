@@ -2,19 +2,17 @@
 
 namespace Oro\Bundle\ActionBundle\Configuration;
 
+use Doctrine\Common\Collections\Collection;
+
+use Psr\Log\LoggerInterface;
+
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use Symfony\Component\HttpKernel\Log\LoggerInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 class ActionDefinitionConfigurationValidator
 {
-    /**
-     * @var bool
-     */
-    protected $debug;
-
     /**
      * @var RouterInterface
      */
@@ -36,49 +34,48 @@ class ActionDefinitionConfigurationValidator
     protected $logger;
 
     /**
-     * @var array
+     * @var bool
+     */
+    protected $debug;
+
+    /**
+     * @var Collection
      */
     protected $errors;
 
     /**
-     * @param bool $debug
      * @param RouterInterface $router
-     * @param \Twig_ExistsLoaderInterface $twigLoader
+     * @param \Twig_Loader_Filesystem $twigLoader
      * @param DoctrineHelper $doctrineHelper
      * @param LoggerInterface $logger
+     * @param bool $debug
      */
     public function __construct(
-        $debug,
         RouterInterface $router,
-        \Twig_ExistsLoaderInterface $twigLoader,
+        \Twig_Loader_Filesystem $twigLoader,
         DoctrineHelper $doctrineHelper,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        $debug
     ) {
-        $this->debug = $debug;
         $this->router = $router;
         $this->twigLoader = $twigLoader;
         $this->doctrineHelper = $doctrineHelper;
         $this->logger = $logger;
+        $this->debug = $debug;
     }
 
     /**
      * @param array $configuration
+     * @param Collection $errors
+     * @return array
      */
-    public function validate(array $configuration)
+    public function validate(array $configuration, Collection $errors = null)
     {
-        $this->errors = [];
+        $this->errors = $errors;
 
         foreach ($configuration as $name => $action) {
             $this->validateAction($action, $name);
         }
-    }
-
-    /**
-     * @return string
-     */
-    public function getErrors()
-    {
-        return $this->errors;
     }
 
     /**
@@ -98,8 +95,8 @@ class ActionDefinitionConfigurationValidator
      */
     protected function validateFrontendOptions(array $options, $path)
     {
-        if (isset($options['template']) && !$this->validateTemplate($options['template'])) {
-            $this->showException(
+        if (isset($options['template']) && !$this->twigLoader->exists($options['template'])) {
+            $this->handleError(
                 $this->getPath($path, 'template'),
                 'Unable to find template "%s"',
                 $options['template'],
@@ -114,9 +111,11 @@ class ActionDefinitionConfigurationValidator
      */
     protected function validateRoutes(array $items, $path)
     {
+        $routeCollection = $this->router->getRouteCollection();
+
         foreach ($items as $key => $item) {
-            if (!$this->validateRoute($item)) {
-                $this->showException($this->getPath($path, $key), 'Route "%s" not found.', $item);
+            if (!$routeCollection->get($item)) {
+                $this->handleError($this->getPath($path, $key), 'Route "%s" not found.', $item);
             }
         }
     }
@@ -129,34 +128,16 @@ class ActionDefinitionConfigurationValidator
     {
         foreach ($items as $key => $item) {
             if (!$this->validateEntity($item)) {
-                $this->showException($this->getPath($path, $key), 'Entity "%s" not found.', $item);
+                $this->handleError($this->getPath($path, $key), 'Entity "%s" not found.', $item);
             }
         }
-    }
-
-    /**
-     * @param string $routeName
-     * @return boolean
-     */
-    public function validateRoute($routeName)
-    {
-        return null !== $this->router->getRouteCollection()->get($routeName);
-    }
-
-    /**
-     * @param string $templateName
-     * @return boolean
-     */
-    public function validateTemplate($templateName)
-    {
-        return $this->twigLoader->exists($templateName);
     }
 
     /**
      * @param string $entityName
      * @return boolean
      */
-    public function validateEntity($entityName)
+    protected function validateEntity($entityName)
     {
         try {
             $entityClass = $this->doctrineHelper->getEntityClass($entityName);
@@ -190,14 +171,19 @@ class ActionDefinitionConfigurationValidator
      * @param mixed $value
      * @param bool $silent
      */
-    protected function showException($path, $message, $value, $silent = true)
+    protected function handleError($path, $message, $value, $silent = true)
     {
         $errorMessage = sprintf('%s: ' . $message, $path, $value);
-        if (!$silent) {
-            throw new InvalidConfigurationException($errorMessage);
-        } elseif ($this->debug) {
+        if ($this->debug) {
             $this->logger->warning('InvalidConfiguration: ' . $errorMessage, ['ActionConfiguration']);
         }
-        $this->errors[] = $errorMessage;
+
+        if (!$silent) {
+            throw new InvalidConfigurationException($errorMessage);
+        }
+
+        if ($this->errors !== null) {
+            $this->errors->add($errorMessage);
+        }
     }
 }

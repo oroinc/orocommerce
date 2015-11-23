@@ -46,23 +46,6 @@ class ActionConfigurationProviderTest extends \PHPUnit_Framework_TestCase
         unset($this->definitionConfiguration, $this->definitionConfigurationValidator, $this->cacheProvider);
     }
 
-    public function testGetConfigurationErrors()
-    {
-        $configurationProvider = new ActionConfigurationProvider(
-            $this->definitionConfiguration,
-            $this->definitionConfigurationValidator,
-            $this->cacheProvider,
-            [],
-            []
-        );
-
-        $this->definitionConfigurationValidator->expects($this->once())
-            ->method('getErrors')
-            ->willReturn(['Error1']);
-
-        $this->assertEquals(['Error1'], $configurationProvider->getConfigurationErrors());
-    }
-
     public function testGetActionConfigurationWithCache()
     {
         $config = ['test' => 'config'];

@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ActionBundle\Tests\Unit\Command;
 
+use Doctrine\Common\Collections\Collection;
+
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -36,9 +38,6 @@ class ValidateActionConfigurationCommandTest extends \PHPUnit_Framework_TestCase
      */
     protected $output;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp()
     {
         $this->provider = $this->getMockBuilder('Oro\Bundle\ActionBundle\Configuration\ActionConfigurationProvider')
@@ -76,12 +75,16 @@ class ValidateActionConfigurationCommandTest extends \PHPUnit_Framework_TestCase
     {
         $this->provider->expects($this->once())
             ->method('getActionConfiguration')
-            ->with(true)
-            ->willReturn($inputData['actionConfiguration']);
+            ->with(true, $this->isInstanceOf('Doctrine\Common\Collections\Collection'))
+            ->willReturnCallback(
+                function ($ignoreCache, Collection $errors) use ($inputData) {
+                    foreach ($inputData['configurationErrors'] as $error) {
+                        $errors->add($error);
+                    }
 
-        $this->provider->expects($this->any())
-            ->method('getConfigurationErrors')
-            ->willReturn($inputData['configurationErrors']);
+                    return $inputData['actionConfiguration'];
+                }
+            );
 
         $this->command->run($this->input, $this->output);
 
