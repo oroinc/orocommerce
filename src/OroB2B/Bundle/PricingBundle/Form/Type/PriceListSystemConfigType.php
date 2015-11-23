@@ -44,7 +44,8 @@ class PriceListSystemConfigType extends AbstractType
                     'error_bubbling' => false,
                 ],
                 'handle_primary' => false,
-                'allow_add_after' => true,
+                'allow_add_after' => false,
+                'allow_add' => true,
                 'error_bubbling' => false,
                 'attr' => [
                     'class' => 'price_lists_collection'

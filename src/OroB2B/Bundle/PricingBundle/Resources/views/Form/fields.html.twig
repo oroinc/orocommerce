@@ -37,10 +37,10 @@
 {% endblock %}
 
 {% block orob2b_pricing_price_list_select_with_priority_widget %}
-    <div class="float-holder">
+    <div class="float-holder" data-page-component-module="orob2bpricing/js/app/components/price-lists-errors-handler">
         <table>
             <tr>
-                <td>
+                <td class="price-list">
                     {{ form_widget(form.priceList) }}
                     {{ form_errors(form.priceList) }}
                 </td>
