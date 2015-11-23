@@ -67,9 +67,8 @@ class FormViewListener
             return;
         }
 
-        $accountId = (int)$request->get('id');
         /** @var Account $account */
-        $account = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:Account', $accountId);
+        $account = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:Account', (int)$request->get('id'));
         $priceLists = $this->doctrineHelper
             ->getEntityManager('OroB2BPricingBundle:PriceListToAccount')
             ->getRepository('OroB2BPricingBundle:PriceListToAccount')
@@ -109,6 +108,21 @@ class FormViewListener
             $result[$website->getId()]['website'] = $website;
         }
 
+        foreach ($result as &$websitePriceLists) {
+            usort(
+                $websitePriceLists['priceLists'],
+                function (BasePriceListRelation $priceList1, BasePriceListRelation $priceList2) {
+                    $priority1 = $priceList1->getPriority();
+                    $priority2 = $priceList2->getPriority();
+                    if ($priority1 == $priority2) {
+                        return 0;
+                    }
+
+                    return ($priority1 < $priority2) ? -1 : 1;
+                }
+            );
+        }
+
         return $result;
     }
 
@@ -122,13 +136,15 @@ class FormViewListener
             return;
         }
 
-        $accountId = (int)$request->get('id');
-        /** @var Account $account */
-        $account = $this->doctrineHelper->getEntityReference('OroB2BAccountBundle:AccountGroup', $accountId);
+        /** @var AccountGroup $accountGroup */
+        $accountGroup = $this->doctrineHelper->getEntityReference(
+            'OroB2BAccountBundle:AccountGroup',
+            (int)$request->get('id')
+        );
         $priceLists = $this->doctrineHelper
             ->getEntityManager('OroB2BPricingBundle:PriceListToAccountGroup')
             ->getRepository('OroB2BPricingBundle:PriceListToAccountGroup')
-            ->findBy(['accountGroup' => $account]);
+            ->findBy(['accountGroup' => $accountGroup]);
         if ($priceLists) {
             $this->addPriceListInfo($event, $priceLists);
         }

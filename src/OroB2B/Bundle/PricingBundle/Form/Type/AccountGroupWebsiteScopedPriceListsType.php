@@ -22,30 +22,22 @@ class AccountGroupWebsiteScopedPriceListsType extends AbstractWebsiteScopedPrice
     }
 
     /**
-     * @return PriceListToAccountGroupRepository
-     */
-    protected function getRepository()
-    {
-        return $this->getEntityManager()->getRepository('OroB2BPricingBundle:PriceListToAccountGroup');
-    }
-
-    /**
-     * @param AccountGroup $account
+     * @param AccountGroup $accountGroup
      * @return BasePriceListRelation
      */
-    protected function createPriceListToTargetEntity($account)
+    protected function createPriceListToTargetEntity($accountGroup)
     {
         $priceListToTargetEntity = new PriceListToAccountGroup();
-        $priceListToTargetEntity->setAccountGroup($account);
+        $priceListToTargetEntity->setAccountGroup($accountGroup);
 
         return $priceListToTargetEntity;
     }
 
     /**
-     * @return ObjectManager
+     * {@inheritdoc}
      */
-    protected function getEntityManager()
+    protected function getClassName()
     {
-        return $this->registry->getManagerForClass('OroB2BPricingBundle:PriceListToAccountGroup');
+        return 'OroB2BPricingBundle:PriceListToAccountGroup';
     }
 }

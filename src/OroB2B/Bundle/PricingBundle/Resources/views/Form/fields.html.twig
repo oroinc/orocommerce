@@ -40,8 +40,8 @@
     <div class="float-holder">
         <table>
             <tr>
-                <td>{{ form_widget(form.priceList) }}</td>
-                <td>{{ form_widget(form.priority, { 'attr': {'class': 'priority'} }) }}</td>
+                <td>{{ form_label(form.priceList) }}{{ form_widget(form.priceList) }}</td>
+                <td>{{ form_label(form.priority) }}{{ form_widget(form.priority, { 'attr': {'class': 'priority'} }) }}</td>
             </tr>
             <tr>
                 <td>{{ form_errors(form.priceList) }}</td>

@@ -56,14 +56,18 @@ class WebsiteScopedDataType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setRequired([
-            'type',
-        ]);
+        $resolver->setRequired(
+            [
+                'type',
+            ]
+        );
 
-        $resolver->setDefaults([
-            'preloaded_websites' => [],
-            'options' => null
-        ]);
+        $resolver->setDefaults(
+            [
+                'preloaded_websites' => [],
+                'options' => null,
+            ]
+        );
     }
 
     /**
@@ -140,9 +144,7 @@ class WebsiteScopedDataType extends AbstractType
             $formOptions['options']['data'] = [];
 
             if (is_array($value)) {
-                foreach ($value as $valueItem) {
-                    $formOptions['options']['data'][] = $valueItem;
-                }
+                $formOptions['options']['data'] = $value;
             }
 
             $formOptions['options']['website'] = $em->getReference($this->websiteCLass, $websiteId);

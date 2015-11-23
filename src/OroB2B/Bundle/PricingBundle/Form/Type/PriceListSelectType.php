@@ -23,7 +23,6 @@ class PriceListSelectType extends AbstractType
                 'configs' => [
                     'placeholder' => 'orob2b.pricing.form.choose_price_list'
                 ]
-                
             ]
         );
     }

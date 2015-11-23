@@ -26,6 +26,17 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
     protected $registry;
 
     /**
+     * @param object $targetEntity
+     * @return BasePriceListRelation
+     */
+    abstract protected function createPriceListToTargetEntity($targetEntity);
+
+    /**
+     * @return string
+     */
+    abstract protected function getClassName();
+
+    /**
      * @param ManagerRegistry $registry
      */
     public function __construct(ManagerRegistry $registry)
@@ -60,26 +71,13 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         );
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getParent()
     {
         return WebsiteScopedDataType::NAME;
     }
-
-    /**
-     * @return PriceListRepositoryInterface
-     */
-    abstract protected function getRepository();
-
-    /**
-     * @param object $targetEntity
-     * @return BasePriceListRelation
-     */
-    abstract protected function createPriceListToTargetEntity($targetEntity);
-
-    /**
-     * @return ObjectManager
-     */
-    abstract protected function getEntityManager();
 
     /**
      * {@inheritdoc}
@@ -122,7 +120,7 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         /** @var FormInterface $priceListsByWebsites */
         $priceListsByWebsites = $form->getParent()->get('priceListsByWebsites');
 
-        $em = $this->getEntityManager();
+        $em = $this->registry->getManagerForClass($this->getClassName());
 
         foreach ($priceListsByWebsites->all() as $priceListsByWebsite) {
             $website = $priceListsByWebsite->getConfig()->getOption('website');
@@ -187,11 +185,11 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
      */
     protected function getActualPriceListsToTargetEntity($targetEntity, Website $website)
     {
-        $actualPriceListsToTargetEntity = $this->getRepository()
-            ->getPriceLists($targetEntity, $website);
+        /** @var PriceListRepositoryInterface $repo */
+        $repo = $this->registry->getManagerForClass($this->getClassName())->getRepository($this->getClassName());
+        $actualPriceListsToTargetEntity = $repo->getPriceLists($targetEntity, $website);
 
         $result = [];
-        /** @var BasePriceListRelation[] $actualPriceListsToTargetEntity */
         foreach ($actualPriceListsToTargetEntity as $priceListToTargetEntity) {
             $priceListId = $priceListToTargetEntity->getPriceList()->getId();
             $result[$priceListId] = $priceListToTargetEntity;
@@ -223,15 +221,14 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
     protected function prepareFormData($targetEntity, FormInterface $priceListsByWebsites)
     {
         $formData = [];
+        /** @var PriceListRepositoryInterface $repo */
+        $repo = $this->registry->getManagerForClass($this->getClassName())->getRepository($this->getClassName());
         foreach ($priceListsByWebsites->all() as $priceListsByWebsite) {
             /** @var Website $website */
             $website = $priceListsByWebsite->getConfig()->getOption('website');
-
-            $actualPriceListsToTargetEntity = $this->getRepository()
-                ->getPriceLists($targetEntity, $website);
+            $actualPriceListsToTargetEntity = $repo->getPriceLists($targetEntity, $website);
 
             $actualPriceLists = [];
-
             /** @var object $priceListToTargetEntity */
             foreach ($actualPriceListsToTargetEntity as $priceListToTargetEntity) {
                 $priceLists['priceList'] = $priceListToTargetEntity->getPriceList();
