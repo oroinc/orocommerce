@@ -36,6 +36,9 @@ orob2b:
             category:
                 saved.message:  'Category has been saved'
 
+        sections:
+            additional: Additional
+
         template:
             select_existing_or_create_new: 'Please select a category on the left or create new one.'
         frontend:
