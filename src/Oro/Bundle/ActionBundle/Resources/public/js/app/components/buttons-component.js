@@ -32,6 +32,9 @@ define(function(require) {
             this.$container.find('a').on('click', _.bind(this.onClick, this));
         },
 
+        /**
+         * @param {jQuery.Event} e
+         */
         onClick: function(e) {
             e.preventDefault();
 
@@ -62,14 +65,6 @@ define(function(require) {
 
         doPageReload: function() {
             mediator.execute('refreshPage');
-        },
-
-        dispose: function() {
-            if (this.disposed) {
-                return;
-            }
-
-            ButtonsComponent.__super__.dispose.call(this);
         }
     });
 
