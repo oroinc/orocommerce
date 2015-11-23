@@ -3,6 +3,8 @@ parameters:
     orob2b_pricing.entity.product_price.class: OroB2B\Bundle\PricingBundle\Entity\ProductPrice
     orob2b_pricing.entity.price_list_currency.class: OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency
 
+    orob2b_pricing.entity.listener.product_price.class: OroB2B\Bundle\PricingBundle\Entity\Listener\ProductPriceListener
+
     orob2b_pricing.form.handler.price_list.class: OroB2B\Bundle\PricingBundle\Form\Handler\PriceListHandler
     orob2b_pricing.price_list.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_pricing.product_price.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
@@ -35,6 +37,7 @@ parameters:
 
     orob2b_pricing.filter.product_price.class: OroB2B\Bundle\PricingBundle\Filter\ProductPriceFilter
 
+    orob2b_pricing.rounding.rounding_service.class: OroB2B\Bundle\PricingBundle\Rounding\RoundingService
 services:
     orob2b_pricing.acl.voter.product_list:
         class: %orob2b_pricing.acl.voter.product_list.class%
@@ -230,3 +233,15 @@ services:
             - @doctrine
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
+
+    orob2b_pricing.rounding.rounding_service:
+        class: %orob2b_pricing.rounding.rounding_service.class%
+        arguments:
+            - @oro_config.manager
+
+    orob2b_pricing.entity.listener.product_price:
+        class: %orob2b_pricing.entity.listener.product_price.class%
+        arguments:
+            - @orob2b_pricing.rounding.rounding_service
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: %orob2b_pricing.entity.product_price.class% }

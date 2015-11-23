@@ -10,7 +10,7 @@ use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Model\Subtotal;
 use OroB2B\Bundle\OrderBundle\Provider\SubtotalsProvider;
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
+use OroB2B\Bundle\PricingBundle\Rounding\RoundingService;
 
 class SubtotalsProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,15 +33,15 @@ class SubtotalsProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
 
-        $this->roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\RoundingService')
+        $this->roundingService = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Rounding\RoundingService')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->roundingService->expects($this->any())
-            ->method('roundQuantity')
+            ->method('round')
             ->will(
                 $this->returnCallback(
-                    function ($value, $unit, $product) {
+                    function ($value) {
                         return round($value, 0, PHP_ROUND_HALF_UP);
                     }
                 )

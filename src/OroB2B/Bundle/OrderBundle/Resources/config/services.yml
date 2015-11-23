@@ -34,10 +34,10 @@ services:
             - { name: doctrine.event_listener, event: postPersist }
 
     orob2b_order.provider.subtotals:
-            class: %orob2b_order.provider.subtotals.class%
-            arguments:
-                - @translator
-                - @orob2b_product.service.rounding
+        class: %orob2b_order.provider.subtotals.class%
+        arguments:
+            - @translator
+            - @orob2b_pricing.rounding.rounding_service
 
     orob2b_order.order.provider.order_address:
         class: %orob2b_order.order.provider.order_address.class%

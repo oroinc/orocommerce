@@ -81,7 +81,7 @@ class RoundingService
     }
 
     /**
-     * @param $quantity
+     * @param float|int $quantity
      * @param Product $product
      * @param ProductUnit $unit
      * @return float|int

@@ -9,7 +9,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Model\Subtotal;
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
+use OroB2B\Bundle\PricingBundle\Rounding\RoundingService;
 
 class SubtotalsProvider
 {
@@ -72,13 +72,7 @@ class SubtotalsProvider
             }
             $rowTotal = $lineItem->getPrice()->getValue();
             if ($lineItem->getPriceType() === OrderLineItem::PRICE_TYPE_UNIT) {
-                $quantity = $this->rounding->roundQuantity(
-                    $rowTotal * $lineItem->getQuantity(),
-                    $lineItem->getProductUnit(),
-                    $lineItem->getProduct()
-                );
-
-                $rowTotal = $quantity;
+                $rowTotal *= $lineItem->getQuantity();
             }
             if ($order->getCurrency() !== $lineItem->getPrice()->getCurrency()) {
                 $rowTotal *= $this->getExchangeRate($lineItem->getPrice()->getCurrency(), $order->getCurrency());
@@ -86,7 +80,10 @@ class SubtotalsProvider
             $subtotalAmount += $rowTotal;
         }
 
-        $subtotal->setAmount($subtotalAmount);
+        $subtotal->setAmount(
+            $this->rounding->round($subtotalAmount)
+        );
+
         $subtotal->setCurrency($order->getCurrency());
 
         return $subtotal;
