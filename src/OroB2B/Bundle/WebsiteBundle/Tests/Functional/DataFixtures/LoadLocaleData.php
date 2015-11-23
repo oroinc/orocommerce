@@ -13,8 +13,8 @@ class LoadLocaleData extends AbstractFixture
      * @var array
      */
     protected $locales = [
-        ['code' => 'en_US', 'parent' => null],
-        ['code' => 'en_CA', 'parent' => 'en_US']
+        ['code' => 'en_US', 'parent' => null, 'title' => 'English (United States)'],
+        ['code' => 'en_CA', 'parent' => 'en_US', 'title' => 'English (Canada)']
     ];
 
     /**
@@ -28,7 +28,9 @@ class LoadLocaleData extends AbstractFixture
         $localesRegistry = [];
         foreach ($this->locales as $item) {
             $locale = new Locale();
-            $locale->setCode($item['code']);
+            $locale
+                ->setCode($item['code'])
+                ->setTitle($item['title']);
             if ($item['parent']) {
                 $locale->setParentLocale($localesRegistry[$item['parent']]);
             }

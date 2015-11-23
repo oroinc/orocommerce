@@ -2,12 +2,14 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Request;
 
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
+use OroB2B\Bundle\FrontendBundle\Request\FrontendHelper;
 use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
 use OroB2B\Bundle\ProductBundle\EventListener\ProductSelectDBQueryEventListener;
 use OroB2B\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
@@ -17,7 +19,7 @@ class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @var ProductSelectDBQueryEventListener
      */
-    protected $productSelectDBQueryEventListener;
+    protected $listener;
 
     /**
      * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
@@ -40,7 +42,12 @@ class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
     protected $queryBuilder;
 
     /**
-     * @inheritDoc
+     * @var FrontendHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $frontendHelper;
+
+    /**
+     * {@inheritDoc}
      */
     protected function setUp()
     {
@@ -54,65 +61,117 @@ class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->queryBuilder = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')->disableOriginalConstructor()
             ->getMock();
+
+        $this->frontendHelper = $this->getMockBuilder('OroB2B\Bundle\FrontendBundle\Request\FrontendHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->listener = $this->createListener();
     }
 
-    public function testOnQueryWrongScope()
+    /**
+     * @return ProductSelectDBQueryEventListener
+     */
+    protected function createListener()
     {
-        $this->modifier->expects($this->never())
-            ->method($this->anything());
-
-        $scope = 'scope';
-
-        $productSelectDBQueryEventListener = new ProductSelectDBQueryEventListener(
+        $requestStack = new RequestStack();
+        $requestStack->push(new Request());
+        return new ProductSelectDBQueryEventListener(
             $this->configManager,
-            $this->modifier
+            $this->modifier,
+            $this->frontendHelper,
+            $requestStack
         );
-        $productSelectDBQueryEventListener->setScope($scope);
-        $productSelectDBQueryEventListener->setSystemConfigurationPath('path');
-
-        $this->event->expects($this->once())
-            ->method('getDataParameters')
-            ->willReturn(new ParameterBag(['scope' => 'wrong_scope']));
-
-        $productSelectDBQueryEventListener->onDBQuery($this->event);
     }
 
-    public function testOnQuery()
+    /**
+     * @dataProvider onQueryDataProvider
+     * @param bool $isFrontend
+     * @param string|null $frontendPath
+     * @param string|null $backendPath
+     */
+    public function testOnQuery($isFrontend, $frontendPath, $backendPath)
     {
-        $path = 'path';
-        $scope = 'scope';
-
         $statuses = [
             'status1',
             'status2',
         ];
 
-        $this->event->expects($this->once())
-            ->method('getDataParameters')
-            ->willReturn(new ParameterBag(['scope' => $scope]));
+        $this->frontendHelper->expects($this->any())
+            ->method('isFrontendRequest')
+            ->willReturn($isFrontend);
 
-        $this->event->expects($this->once())
+        $this->event->expects($this->any())
             ->method('getQueryBuilder')
             ->willReturn($this->queryBuilder);
 
-        $this->configManager->expects($this->once())
-            ->method('get')
-            ->with($path)
-            ->willReturn($statuses);
+        if ($isFrontend && $frontendPath) {
+            $this->configManager->expects($this->once())
+                ->method('get')
+                ->with($frontendPath)
+                ->willReturn($statuses);
 
-        $this->modifier->expects($this->once())
-            ->method('modifyByInventoryStatus')
-            ->with($this->queryBuilder, $statuses);
+            $this->modifier->expects($this->once())
+                ->method('modifyByInventoryStatus')
+                ->with($this->queryBuilder, $statuses);
+        } elseif (!$isFrontend && $backendPath) {
+            $this->configManager->expects($this->once())
+                ->method('get')
+                ->with($backendPath)
+                ->willReturn($statuses);
 
-        $productSelectDBQueryEventListener = new ProductSelectDBQueryEventListener(
-            $this->configManager,
-            $this->modifier
-        );
+            $this->modifier->expects($this->once())
+                ->method('modifyByInventoryStatus')
+                ->with($this->queryBuilder, $statuses);
+        } else {
+            $this->modifier->expects($this->never())
+                ->method('modifyByInventoryStatus')
+                ->with($this->queryBuilder, $statuses);
+        }
 
-        $productSelectDBQueryEventListener->setScope($scope);
-        $productSelectDBQueryEventListener->setSystemConfigurationPath($path);
+        $this->listener->setFrontendSystemConfigurationPath($frontendPath);
+        $this->listener->setBackendSystemConfigurationPath($backendPath);
 
-        $productSelectDBQueryEventListener->onDBQuery($this->event);
+        $this->listener->onDBQuery($this->event);
+    }
+
+    /**
+     * @return array
+     */
+    public function onQueryDataProvider()
+    {
+        return [
+            [
+                'isFrontend' => false,
+                'frontendPath' => 'frontend_path',
+                'backendPath' => 'backend_path',
+            ],
+            [
+                'isFrontend' => false,
+                'frontendPath' => null,
+                'backendPath' => 'backend_path',
+            ],
+            [
+                'isFrontend' => true,
+                'frontendPath' => 'frontend_path',
+                'backendPath' => 'backend_path',
+            ],
+            [
+                'isFrontend' => true,
+                'frontendPath' => 'frontend_path',
+                'backendPath' => null,
+            ],
+            [
+                'isFrontend' => false,
+                'frontendPath' => 'frontend_path',
+                'backendPath' => null,
+            ],
+            [
+                'isFrontend' => true,
+                'frontendPath' => null,
+                'backendPath' => 'backend_path',
+            ]
+        ];
     }
 
     /**
@@ -121,27 +180,30 @@ class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testSystemConfigurationPathEmpty()
     {
-        $productSelectDBQueryEventListener = new ProductSelectDBQueryEventListener(
-            $this->configManager,
-            $this->modifier
-        );
+        $this->listener->setFrontendSystemConfigurationPath(null);
+        $this->listener->setBackendSystemConfigurationPath(null);
 
-        $productSelectDBQueryEventListener->onDBQuery($this->event);
+        $this->listener->onDBQuery($this->event);
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage Scope not configured for ProductSelectDBQueryEventListener
-     */
-    public function testScopeEmpty()
+    public function testSystemConfigurationPathWrongConfig()
     {
-        $productSelectDBQueryEventListener = new ProductSelectDBQueryEventListener(
-            $this->configManager,
-            $this->modifier
+        $this->setExpectedException(
+            'LogicException',
+            'SystemConfigurationPath is not configured properly for ProductSelectDBQueryEventListener'
         );
 
-        $productSelectDBQueryEventListener->setSystemConfigurationPath('path');
+        $this->frontendHelper->expects($this->any())
+            ->method('isFrontendRequest')
+            ->willReturn(true);
 
-        $productSelectDBQueryEventListener->onDBQuery($this->event);
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('wrong_path')
+            ->willReturn(null);
+
+        $this->listener->setFrontendSystemConfigurationPath('wrong_path');
+
+        $this->listener->onDBQuery($this->event);
     }
 }

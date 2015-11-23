@@ -1,0 +1,5 @@
+sku,status,inventory_status.id
+SKU001,,in_stock
+SKU001,some_status,in_stock
+SKU002,enabled,in_stock
+SKU003,disabled,in_stock

@@ -52,7 +52,6 @@ parameters:
     orob2b_account.event_listener.system_config.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigListener
     orob2b_account.event_listener.form_view.class: OroB2B\Bundle\AccountBundle\EventListener\FormViewListener
     orob2b_account.event_listener.visibility_grid_listener.class: OroB2B\Bundle\AccountBundle\EventListener\VisibilityGridListener
-    orob2b_account.event_listener.system_config.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigListener
     orob2b_account.event_listener.abstract_visibility_post_submit.form_handler.class: OroB2B\Bundle\AccountBundle\EventListener\AbstractVisibilityPostSubmitListener
     orob2b_account.event_listener.category_visibility.form_handler.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryVisibilityPostSubmitListener
     orob2b_account.event_listener.product_visibility.form_handler.class: OroB2B\Bundle\AccountBundle\EventListener\ProductVisibilityPostSubmitListener
@@ -504,8 +503,8 @@ services:
         calls:
             - [ addSubscribedGridConfig, { datagrid: account-group-category-visibility-grid, visibilityEntityClass: %orob2b_account.entity.account_group_category_visibility.class%, targetEntityClass: %orob2b_catalog.category.class% }]
             - [ addSubscribedGridConfig, { datagrid: account-category-visibility-grid, visibilityEntityClass: %orob2b_account.entity.account_category_visibility.class%, targetEntityClass: %orob2b_catalog.category.class% }]
-            - [ addSubscribedGridConfig, { datagrid: account-group-product-visibility-grid, visibilityEntityClass: %orob2b_account.entity.product_visibility.class%, targetEntityClass: %orob2b_product.product.class% }]
-            - [ addSubscribedGridConfig, { datagrid: account-product-visibility-grid, visibilityEntityClass: %orob2b_account.entity.account_group_product_visibility.class%, targetEntityClass: %orob2b_product.product.class% }]
+            - [ addSubscribedGridConfig, { datagrid: account-group-product-visibility-grid, visibilityEntityClass: %orob2b_account.entity.account_group_product_visibility.class%, targetEntityClass: %orob2b_product.product.class% }]
+            - [ addSubscribedGridConfig, { datagrid: account-product-visibility-grid, visibilityEntityClass: %orob2b_account.entity.account_product_visibility.class%, targetEntityClass: %orob2b_product.product.class% }]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.account-category-visibility-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.account-group-category-visibility-grid, method: onPreBuild }
@@ -576,7 +575,7 @@ services:
 
     orob2b_account.storage.category_visibility_storage.cache:
         public: false
-        parent: oro.file_cache.abstract
+        parent: oro.cache.abstract
         calls:
             - [ setNamespace, [ "orob2b_account.storage.category_visibility_storage.cache" ] ]
 
