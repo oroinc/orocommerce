@@ -95,8 +95,7 @@ class AccountUserProfileController extends Controller
             ->setOwner($owner)
             ->addOrganization($websiteOrganization)
             ->setOrganization($websiteOrganization)
-            ->addRole($defaultRole)
-        ;
+            ->addRole($defaultRole);
 
         return $accountUser;
     }
