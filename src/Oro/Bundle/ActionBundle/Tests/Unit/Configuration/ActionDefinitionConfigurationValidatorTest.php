@@ -39,9 +39,6 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
      */
     protected $validator;
 
-    /**
-     * {@inheritdoc}
-     */
     public function setUp()
     {
         $this->router = $this->getMock('Symfony\Component\Routing\RouterInterface');
