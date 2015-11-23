@@ -40,7 +40,6 @@ datagrid:
                 label:         oro.ui.updated_at
                 frontend_type: datetime
         properties:
-            id: ~
             view_link:
                 type:  url
                 route: orob2b_shopping_list_view
@@ -64,7 +63,7 @@ datagrid:
         filters:
             columns:
                 id:
-                    type:      string
+                    type:      number
                     data_name: shopping_list.id
                 label:
                     type:      string
