@@ -33,7 +33,7 @@ class ActionController extends FOSRestController
     public function executeAction(Request $request, $actionName)
     {
         try {
-            $this->getActionManager()
+            $context = $this->getActionManager()
                 ->execute(
                     [
                         'route' => $request->get('route'),
@@ -50,8 +50,10 @@ class ActionController extends FOSRestController
             return $this->handleError($e->getMessage(), Codes::HTTP_INTERNAL_SERVER_ERROR);
         }
 
+        $response = $context->offsetExists('redirectUrl') ? ['redirectUrl' => $context->offsetGet('redirectUrl')] : [];
+
         return $this->handleView(
-            $this->view([], Codes::HTTP_OK)
+            $this->view($response, Codes::HTTP_OK)
         );
     }
 

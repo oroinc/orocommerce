@@ -54,6 +54,7 @@ class ActionManager
     /**
      * @param array $context
      * @param string $actionName
+     * @return ActionContext
      * @throws \Exception
      */
     public function execute(array $context, $actionName)
@@ -80,6 +81,8 @@ class ActionManager
                 throw $e;
             }
         }
+
+        return $actionContext;
     }
 
     /**
