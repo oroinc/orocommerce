@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
+use OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -46,7 +46,7 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
     protected $lineItem;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|RoundingService
+     * @var \PHPUnit_Framework_MockObject_MockObject|QuantityRoundingService
      */
     protected $roundingService;
 
@@ -70,7 +70,7 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $this->roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\RoundingService')
+        $this->roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService')
             ->disableOriginalConstructor()
             ->getMock();
 

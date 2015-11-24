@@ -77,7 +77,7 @@ services:
         class: %orob2b_sale.form.type.orob2b_sale_quote_product_to_order.class%
         arguments:
             - @orob2b_sale.service.quote_product_offer_matcher
-            - @orob2b_product.service.rounding
+            - @orob2b_product.service.quantity_rounding
         tags:
             - { name: form.type, alias: orob2b_sale_quote_product_to_order }
 

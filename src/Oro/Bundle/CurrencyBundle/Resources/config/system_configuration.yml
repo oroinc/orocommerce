@@ -3,7 +3,6 @@ oro_system_configuration:
         currency:
             title: oro.currency.system_configuration.groups.currency.title
             icon: 'icon-money'
-            page_reload: true
         currency_settings:
             title: oro.currency.system_configuration.groups.currency_settings.title
 

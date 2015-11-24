@@ -13,6 +13,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
@@ -59,7 +60,8 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface $translator */
         $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
 
-        $roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\RoundingService')
+        /** @var \PHPUnit_Framework_MockObject_MockObject|QuantityRoundingService $roundingService */
+        $roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService')
             ->disableOriginalConstructor()
             ->getMock();
 

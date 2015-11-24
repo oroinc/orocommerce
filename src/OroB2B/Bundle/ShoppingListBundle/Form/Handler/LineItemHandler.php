@@ -11,10 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Exception\InvalidRoundingTypeException;
+use OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 
 class LineItemHandler
 {
@@ -33,19 +30,22 @@ class LineItemHandler
     /** @var int */
     protected $savedId;
 
+    /** @var QuantityRoundingService */
+    protected $roundingService;
+
     /**
      * @param FormInterface $form
      * @param Request $request
      * @param Registry $registry
      * @param ShoppingListManager $shoppingListManager
-     * @param RoundingService $roundingService
+     * @param QuantityRoundingService $roundingService
      */
     public function __construct(
         FormInterface $form,
         Request $request,
         Registry $registry,
         ShoppingListManager $shoppingListManager,
-        RoundingService $roundingService
+        QuantityRoundingService $roundingService
     ) {
         $this->form = $form;
         $this->request = $request;

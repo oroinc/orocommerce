@@ -9,7 +9,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Model\Subtotal;
-use OroB2B\Bundle\PricingBundle\Rounding\RoundingService;
+use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
 class SubtotalsProvider
 {
@@ -19,15 +19,15 @@ class SubtotalsProvider
     protected $translator;
 
     /**
-     * @var RoundingService
+     * @var RoundingServiceInterface
      */
     protected $rounding;
 
     /**
      * @param TranslatorInterface $translator
-     * @param RoundingService       $rounding
+     * @param RoundingServiceInterface $rounding
      */
-    public function __construct(TranslatorInterface $translator, RoundingService $rounding)
+    public function __construct(TranslatorInterface $translator, RoundingServiceInterface $rounding)
     {
         $this->translator = $translator;
         $this->rounding = $rounding;

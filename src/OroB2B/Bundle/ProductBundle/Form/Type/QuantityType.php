@@ -10,7 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Range;
 
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
+use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 
@@ -18,17 +18,17 @@ class QuantityType extends AbstractProductAwareType
 {
     const NAME = 'orob2b_quantity';
 
-    /** @var RoundingService */
+    /** @var RoundingServiceInterface */
     protected $roundingService;
 
     /** @var string */
     protected $productClass;
 
     /**
-     * @param RoundingService $roundingService
-     * @param $productClass
+     * @param RoundingServiceInterface $roundingService
+     * @param string $productClass
      */
-    public function __construct(RoundingService $roundingService, $productClass)
+    public function __construct(RoundingServiceInterface $roundingService, $productClass)
     {
         $this->roundingService = $roundingService;
         $this->productClass = $productClass;

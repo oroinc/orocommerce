@@ -28,7 +28,6 @@ class OroB2BShoppingListExtensionTest extends ExtensionTestCase
             // Managers
             'orob2b_shopping_list.shopping_list.manager.api.class',
             'orob2b_shopping_list.shopping_list.manager.class',
-            'orob2b_shopping_list.line_item.manager.class',
 
             // Form types
             'orob2b_shopping_list.form.type.shopping_list.class',
@@ -49,7 +48,6 @@ class OroB2BShoppingListExtensionTest extends ExtensionTestCase
         $expectedDefinitions = [
             // Services
             'orob2b_shopping_list.validator.line_item',
-            'orob2b_shopping_list.line_item.manager',
             'orob2b_shopping_list.line_item.manager.api',
             'orob2b_shopping_list.shopping_list.manager.api',
             'orob2b_shopping_list.shopping_list.manager',

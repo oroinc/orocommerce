@@ -13,7 +13,7 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
+use OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 
 class ShoppingListManager
 {
@@ -38,21 +38,21 @@ class ShoppingListManager
     protected $tokenStorage;
 
     /**
-     * @var RoundingService
+     * @var QuantityRoundingService
      */
     protected $rounding;
 
     /**
-     * @param ManagerRegistry       $managerRegistry
+     * @param ManagerRegistry $managerRegistry
      * @param TokenStorageInterface $tokenStorage
-     * @param TranslatorInterface   $translator
-     * @param RoundingService       $rounding
+     * @param TranslatorInterface $translator
+     * @param QuantityRoundingService $rounding
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
         TokenStorageInterface $tokenStorage,
         TranslatorInterface $translator,
-        RoundingService $rounding
+        QuantityRoundingService $rounding
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->tokenStorage = $tokenStorage;
