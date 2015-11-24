@@ -63,6 +63,8 @@ parameters:
     orob2b_account.event_listener.category_tree_handler_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryTreeHandlerListener
     orob2b_account.event_listener.product_duplicate_listener.class: OroB2B\Bundle\AccountBundle\EventListener\ProductDuplicateListener
 
+    orob2b_account.event_listener.product_select_db_query.class: OroB2B\Bundle\AccountBundle\EventListener\ProductSelectDBQueryEventListener
+
     # Datagrid Listeners
     orob2b_account.event_listener.datagrid.account_user.class: OroB2B\Bundle\AccountBundle\EventListener\Datagrid\AccountUserDatagridListener
     orob2b_account.event_listener.datagrid.account.class: OroB2B\Bundle\AccountBundle\EventListener\Datagrid\AccountDatagridListener
@@ -621,3 +623,12 @@ services:
             - @security.token_storage
         calls:
             - [setVisibilitySystemConfigurationPath, ['oro_b2b_account.product_visibility']]
+
+    orob2b_account.event_listener.product_select_db_query:
+        class: %orob2b_account.event_listener.product_select_db_query.class%
+        arguments:
+            - @request_stack
+            - @orob2b_frontend.request.frontend_helper
+            - @orob2b_account.model.product_visibility_query_builder_modifier
+        tags:
+            - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
