@@ -54,29 +54,16 @@ class ProductVisibilityQueryBuilderModifier
      */
     public function modify(QueryBuilder $queryBuilder)
     {
-        $productVisibilityResolvedAlias = $this->joinProductVisibilityResolved($queryBuilder);
-
-        $visibilities = [$this->getProductVisibilityResolvedTerm($productVisibilityResolvedAlias)];
+        $visibilities = [$this->getProductVisibilityResolvedTerm($queryBuilder)];
 
         $token = $this->tokenStorage->getToken();
         /** @var AccountUser $user */
         if ($token && ($user = $token->getUser()) instanceof AccountUser) {
-            $accountGroupProductVisibilityResolvedAlias = $this->joinAccountGroupProductVisibilityResolved(
+            $visibilities[] = $this->getAccountGroupProductVisibilityResolvedTerm(
                 $queryBuilder,
                 $user->getAccount()->getGroup()
             );
-            $accountProductVisibilityResolvedAlias = $this->joinAccountProductVisibilityResolved(
-                $queryBuilder,
-                $user->getAccount()
-            );
-
-            $visibilities[] = $this->getAccountGroupProductVisibilityResolvedTerm(
-                $accountGroupProductVisibilityResolvedAlias
-            );
-            $visibilities[] = $this->getAccountProductVisibilityResolvedTerm(
-                $accountProductVisibilityResolvedAlias,
-                $productVisibilityResolvedAlias
-            );
+            $visibilities[] = $this->getAccountProductVisibilityResolvedTerm($queryBuilder, $user->getAccount());
         }
 
         $queryBuilder->andWhere($queryBuilder->expr()->gt(implode(' + ', $visibilities), 0));
@@ -86,18 +73,16 @@ class ProductVisibilityQueryBuilderModifier
      * @param QueryBuilder $queryBuilder
      * @return string
      */
-    protected function joinProductVisibilityResolved(QueryBuilder $queryBuilder)
+    protected function getProductVisibilityResolvedTerm(QueryBuilder $queryBuilder)
     {
-        $tableAlias = '_pvr';
-
         $queryBuilder->leftJoin(
             'OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved',
-            $tableAlias,
+            'product_visibility_resolved',
             Join::WITH,
-            sprintf('%s = %s.product', $this->getRootAlias($queryBuilder), $tableAlias)
+            sprintf('%s = product_visibility_resolved.product', $this->getRootAlias($queryBuilder))
         );
 
-        return $tableAlias;
+        return sprintf('coalesce(product_visibility_resolved.visibility, %s)', $this->getConfigValue());
     }
 
     /**
@@ -105,25 +90,30 @@ class ProductVisibilityQueryBuilderModifier
      * @param AccountGroup $account
      * @return string
      */
-    protected function joinAccountGroupProductVisibilityResolved(QueryBuilder $queryBuilder, AccountGroup $account)
+    protected function getAccountGroupProductVisibilityResolvedTerm(QueryBuilder $queryBuilder, AccountGroup $account)
     {
-        $tableAlias = 'agpvr';
-
-        $parameterName = '_account_group';
-
         $queryBuilder->leftJoin(
             'OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved',
-            $tableAlias,
+            'account_group_product_visibility',
             Join::WITH,
             $queryBuilder->expr()->andX(
-                $queryBuilder->expr()->eq($this->getRootAlias($queryBuilder), $tableAlias . '.product'),
-                $queryBuilder->expr()->eq($tableAlias . '.accountGroup', ':' . $parameterName)
+                $queryBuilder->expr()->eq(
+                    $this->getRootAlias($queryBuilder),
+                    'account_group_product_visibility.product'
+                ),
+                $queryBuilder->expr()->eq('account_group_product_visibility.accountGroup', ':_account_group')
             )
         );
 
-        $queryBuilder->setParameter($parameterName, $account);
+        $queryBuilder->setParameter('_account_group', $account);
 
-        return $tableAlias;
+        $term = <<<TERM
+CASE WHEN account_group_product_visibility.visibility = 0
+  THEN (%s * 10)
+ELSE (COALESCE(account_group_product_visibility.visibility, 0) * 10)
+END
+TERM;
+        return sprintf($term, $this->getConfigValue());
     }
 
     /**
@@ -131,78 +121,34 @@ class ProductVisibilityQueryBuilderModifier
      * @param Account $account
      * @return string
      */
-    protected function joinAccountProductVisibilityResolved(QueryBuilder $queryBuilder, Account $account)
+    protected function getAccountProductVisibilityResolvedTerm(QueryBuilder $queryBuilder, Account $account)
     {
-        $tableAlias = 'apvr';
-
-        $parameterName = '_account';
-
         $queryBuilder->leftJoin(
             'OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved',
-            $tableAlias,
+            'account_product_visibility_resolved',
             Join::WITH,
             $queryBuilder->expr()->andX(
-                $queryBuilder->expr()->eq($this->getRootAlias($queryBuilder), $tableAlias . '.product'),
-                $queryBuilder->expr()->eq($tableAlias . '.account', ':' . $parameterName)
+                $queryBuilder->expr()->eq(
+                    $this->getRootAlias($queryBuilder),
+                    'account_product_visibility_resolved.product'
+                ),
+                $queryBuilder->expr()->eq('account_product_visibility_resolved.account', ':_account')
             )
         );
 
-        $queryBuilder->setParameter($parameterName, $account);
+        $queryBuilder->setParameter('_account', $account);
 
-        return $tableAlias;
-    }
-
-    /**
-     * @param string $productVisibilityResolvedAlias
-     * @return string
-     */
-    protected function getProductVisibilityResolvedTerm($productVisibilityResolvedAlias)
-    {
-        return sprintf('coalesce(%s.visibility, %s)', $productVisibilityResolvedAlias, $this->getConfigValue());
-    }
-
-    /**
-     * @param string $accountGroupProductVisibilityResolvedAlias
-     * @return mixed
-     */
-    protected function getAccountGroupProductVisibilityResolvedTerm($accountGroupProductVisibilityResolvedAlias)
-    {
         $term = <<<TERM
-CASE WHEN %alias%.visibility = 0
-  THEN (%config_value% * 10)
-ELSE (COALESCE(%alias%.visibility, 0) * 10)
-END
-TERM;
-        return strtr($term, [
-            '%alias%' => $accountGroupProductVisibilityResolvedAlias,
-            '%config_value%' => $this->getConfigValue(),
-        ]);
-    }
-
-    /**
-     * @param string $productVisibilityResolvedAlias
-     * @param string $accountProductVisibilityResolvedAlias
-     * @return mixed
-     */
-    protected function getAccountProductVisibilityResolvedTerm(
-        $accountProductVisibilityResolvedAlias,
-        $productVisibilityResolvedAlias
-    ) {
-        $term = <<<TERM
-CASE WHEN %alias%.visibility = 0
-  THEN (%config_value% * 100)
+CASE WHEN account_product_visibility_resolved.visibility = 0
+  THEN (%s * 100)
 ELSE
-  CASE WHEN %alias%.visibility = 2
-    THEN (%pvr_alias%.visibility * 100)
-  ELSE (COALESCE(%alias%.visibility, 0) * 100)
+  CASE WHEN account_product_visibility_resolved.visibility = 2
+    THEN (product_visibility_resolved.visibility * 100)
+  ELSE (COALESCE(account_product_visibility_resolved.visibility, 0) * 100)
   END
 END
 TERM;
-        return strtr($term, [
-            '%alias%' => $accountProductVisibilityResolvedAlias,
-            '%pvr_alias%' => $productVisibilityResolvedAlias,
-            '%config_value%' => $this->getConfigValue(),
-        ]);
+        return sprintf($term, $this->getConfigValue());
     }
 
     /**
