@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Datagrid;
+namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;

@@ -7,9 +7,12 @@ use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContext;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceListAwareInterface;
+use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
 class UniquePriceListValidator extends ConstraintValidator
 {
+    const PRICE_LIST_KEY = 'priceList';
+
     /**
      * Checks if the passed value is valid.
      *
@@ -22,23 +25,53 @@ class UniquePriceListValidator extends ConstraintValidator
         $context = $this->context;
 
         $ids = [];
-        $i = 0;
-        foreach ($value as $priceListAware) {
-            if (!$priceListAware instanceof PriceListAwareInterface) {
-                throw new \InvalidArgumentException();
-            }
-
-            if (!$priceListAware->getPriceList()) {
+        foreach ($value as $index => $item) {
+            if (null === $id = $this->getPriceListId($item)) {
                 continue;
             }
-            $id = $priceListAware->getPriceList()->getId();
             if (in_array($id, $ids, true)) {
+                $path = $this->getViolationPath($item, $index);
                 $context->buildViolation($constraint->message, [])
-                    ->atPath("[$i].priceList")
+                    ->atPath($path)
                     ->addViolation();
             }
             $ids[] = $id;
-            $i++;
         }
+    }
+
+    /**
+     * @param PriceListAwareInterface|array $item
+     * @return int
+     */
+    protected function getPriceListId($item)
+    {
+        if ($item instanceof PriceListAwareInterface) {
+            return $item->getPriceList()->getId();
+        } elseif (is_array($item) &&
+            array_key_exists(self::PRICE_LIST_KEY, $item) &&
+            $item[self::PRICE_LIST_KEY] instanceof PriceList
+        ) {
+            /** @var PriceList $priceList */
+            $priceList = $item[self::PRICE_LIST_KEY];
+            return $priceList->getId();
+        }
+
+        return null;
+    }
+
+    /**
+     * @param mixed $item
+     * @param integer $index
+     * @return string
+     */
+    protected function getViolationPath($item, $index)
+    {
+        if ($item instanceof PriceListAwareInterface) {
+            return "[$index].".self::PRICE_LIST_KEY;
+        } elseif (is_array($item) && array_key_exists(self::PRICE_LIST_KEY, $item)) {
+            return "[$index][".self::PRICE_LIST_KEY.']';
+        }
+
+        return '';
     }
 }
