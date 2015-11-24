@@ -26,16 +26,21 @@ class UniquePriceListValidator extends ConstraintValidator
 
         $ids = [];
         $i = 0;
-        foreach ($value as $item) {
+        foreach ($value as $index => $item) {
             if (null === $id = $this->getPriceListId($item)) {
                 continue;
             }
             if (in_array($id, $ids, true)) {
+                $path = $context->getPropertyPath();
                 $context->buildViolation($constraint->message, [])
                     ->atPath("[$i].priceList")
                     ->addViolation();
             }
             $ids[] = $id;
+            //children[oro_b2b_pricing___default_price_lists].children[value].children[configs].data[1].priceList
+            //children[oro_b2b_pricing___default_price_lists].children[value].children[configs].data
+            //children[priceList].data
+            //children[priceList].data[1].priceList
             $i++;
         }
     }

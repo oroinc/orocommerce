@@ -6,10 +6,10 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityManagerInterface;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
@@ -20,7 +20,7 @@ use OroB2B\Bundle\PricingBundle\Validator\Constraints\UniquePriceList;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteType;
 
-class WebsiteFormExtension extends AbstractPriceListExtension
+class WebsiteFormExtension extends AbstractTypeExtension
 {
     const PRICE_LISTS_TO_WEBSITE_FIELD = 'priceList';
 
@@ -30,6 +30,9 @@ class WebsiteFormExtension extends AbstractPriceListExtension
     /** @var  EntityManagerInterface */
     protected $entityManager;
 
+    /** @var  RegistryInterface */
+    protected $doctrine;
+
     /**
      * WebSiteFormExtension constructor.
      * @param RegistryInterface $doctrine
@@ -37,7 +40,7 @@ class WebsiteFormExtension extends AbstractPriceListExtension
      */
     public function __construct(RegistryInterface $doctrine, $priceListToWebsiteClass)
     {
-        parent::__construct($doctrine);
+        $this->doctrine = $doctrine;
         $this->priceListToWebsiteClass = $priceListToWebsiteClass;
     }
 
@@ -49,23 +52,23 @@ class WebsiteFormExtension extends AbstractPriceListExtension
     {
         $builder
             ->add(self::PRICE_LISTS_TO_WEBSITE_FIELD, CollectionType::NAME, [
-                'label' => 'orob2b.pricing.pricelist.entity_plural_label',
+                'label' => false,
                 'type' => PriceListSelectWithPriorityType::NAME,
                 'options' => [
                     'error_bubbling' => false,
                 ],
-                'attr' => [
-                    'class' => 'price_lists_collection'
-                ],
                 'handle_primary' => false,
-                'error_bubbling' => false,
                 'allow_add_after' => false,
                 'allow_add' => true,
-                'mapped' => false,
-                'required' => false,
+                'error_bubbling' => false,
+                'attr' => [
+                        'class' => 'price_lists_collection'
+                ],
                 'constraints' => [
                     new UniquePriceList()
-                ]
+                ],
+                'mapped' => false,
+                'required' => false
             ]);
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData']);
@@ -155,8 +158,10 @@ class WebsiteFormExtension extends AbstractPriceListExtension
     {
         $ids = array_keys($existing);
         foreach ($submitted as $item) {
-            /** @var PriceList $priceList */
             $priceList = $item['priceList'];
+            if (!$priceList instanceof PriceList) {
+                continue;
+            }
             if (in_array($priceList->getId(), $ids, true)) {
                 $existing[$priceList->getId()]->setPriority($item['priority']);
             } else {
@@ -175,7 +180,7 @@ class WebsiteFormExtension extends AbstractPriceListExtension
     protected function getPriceListToWebsiteManager()
     {
         if (!$this->entityManager) {
-            $this->entityManager = $this->registry->getManagerForClass($this->priceListToWebsiteClass);
+            $this->entityManager = $this->doctrine->getManagerForClass($this->priceListToWebsiteClass);
         }
 
         return $this->entityManager;
