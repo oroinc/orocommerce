@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ActionBundle\Configuration;
 
 use Doctrine\Common\Cache\CacheProvider;
+use Doctrine\Common\Collections\Collection;
 
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
@@ -16,6 +17,9 @@ class ActionConfigurationProvider
 
     /** @var ActionDefinitionListConfiguration */
     protected $definitionConfiguration;
+
+    /** @var ActionDefinitionConfigurationValidator */
+    protected $definitionConfigurationValidator;
 
     /** @var CacheProvider */
     protected $cache;
@@ -31,17 +35,20 @@ class ActionConfigurationProvider
 
     /**
      * @param ActionDefinitionListConfiguration $definitionConfiguration
+     * @param ActionDefinitionConfigurationValidator $definitionConfigurationValidator
      * @param CacheProvider $cache
      * @param array $rawConfiguration
      * @param array $kernelBundles
      */
     public function __construct(
         ActionDefinitionListConfiguration $definitionConfiguration,
+        ActionDefinitionConfigurationValidator $definitionConfigurationValidator,
         CacheProvider $cache,
         array $rawConfiguration,
         array $kernelBundles
     ) {
         $this->definitionConfiguration = $definitionConfiguration;
+        $this->definitionConfigurationValidator = $definitionConfigurationValidator;
         $this->cache = $cache;
         $this->rawConfiguration = $rawConfiguration;
         $this->kernelBundles = array_values($kernelBundles);
@@ -59,28 +66,33 @@ class ActionConfigurationProvider
     }
 
     /**
+     * @param bool $ignoreCache
+     * @param Collection $errors
      * @return array
      * @throws InvalidConfigurationException
      */
-    public function getActionConfiguration()
+    public function getActionConfiguration($ignoreCache = false, Collection $errors = null)
     {
-        if ($this->cache->contains(self::ROOT_NODE_NAME)) {
+        if (!$ignoreCache && $this->cache->contains(self::ROOT_NODE_NAME)) {
             $configuration = $this->cache->fetch(self::ROOT_NODE_NAME);
         } else {
-            $configuration = $this->resolveConfiguration();
+            $configuration = $this->resolveConfiguration($errors);
 
-            $this->clearCache();
-            $this->cache->save(self::ROOT_NODE_NAME, $configuration);
+            if (!$ignoreCache) {
+                $this->clearCache();
+                $this->cache->save(self::ROOT_NODE_NAME, $configuration);
+            }
         }
 
         return $configuration;
     }
 
     /**
+     * @param Collection $errors
      * @return array
      * @throws InvalidConfigurationException
      */
-    protected function resolveConfiguration()
+    protected function resolveConfiguration(Collection $errors = null)
     {
         $configs = $this->prepareRawConfiguration();
 
@@ -98,14 +110,16 @@ class ActionConfigurationProvider
             $this->resolveExtends($configs, $config, $actionName);
         }
 
+        $data = [];
         try {
-            $data = [];
             if (!empty($configs)) {
                 $data = $this->definitionConfiguration->processConfiguration($configs);
+
+                $this->definitionConfigurationValidator->validate($data, $errors);
             }
         } catch (InvalidConfigurationException $exception) {
             throw new InvalidConfigurationException(
-                sprintf('Can\'t parse process configuration. %s', $exception->getMessage())
+                sprintf('Can\'t parse action configuration. %s', $exception->getMessage())
             );
         }
 

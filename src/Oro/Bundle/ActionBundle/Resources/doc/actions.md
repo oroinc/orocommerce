@@ -7,6 +7,7 @@ Table of Contents
  - [Main Model Classes](#main-model-classes)
  - [How it works?](#how-it-works)
  - [Configuration](#configuration)
+ - [Configuration Validation](#configuration-validation)
 
 What are Actions?
 -----------------
@@ -74,3 +75,12 @@ This configuration describes action that relates to the ``MyEntity`` entity. On 
 of this entity (in case of field 'updatedAt' > new DateTime('now')) will be displayed button with label
 "adme.demo.myentity.actions.myentity_action". After click on this button - will run postfunction "assign_value" and set
 field 'expired' to `true`.
+
+Configuration Validation
+------------------------
+
+To validate configuration execute a command:
+
+```
+php app/console oro:action:configuration:validate
+```
