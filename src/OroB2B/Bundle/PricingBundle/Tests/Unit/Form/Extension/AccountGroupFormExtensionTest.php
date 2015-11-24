@@ -2,62 +2,40 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
-use OroB2B\Bundle\PricingBundle\Form\Extension\AccountGroupFormExtension;
+use Symfony\Component\Form\FormBuilder;
 
-class AccountGroupFormExtensionTest extends AbstractPriceListExtensionTest
+use OroB2B\Bundle\PricingBundle\Form\Extension\AccountGroupFormExtension;
+use OroB2B\Bundle\PricingBundle\Form\Type\AccountGroupWebsiteScopedPriceListsType;
+
+class AccountGroupFormExtensionTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @return AccountGroupFormExtension
      */
     protected function getExtension()
     {
-        return new AccountGroupFormExtension($this->registry);
+        return new AccountGroupFormExtension();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function onPostSetDataProvider()
-    {
-        return [
-            [null, false],
-            [new AccountGroup(), false],
-            [$this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 1), true],
-            [$this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 1), true],
-            [$this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 1), true, new PriceList()],
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function onPostSubmitDataProvider()
-    {
-        return [
-            [null, false],
-            [new AccountGroup(), false],
-            [$this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 1), true],
-            [$this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 1), false, false],
-            [$this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountGroup', 1), true, true, new PriceList()],
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getGetterMethodName()
-    {
-        return 'getPriceListByAccountGroup';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function testGetExtendedType()
     {
         $this->assertInternalType('string', $this->getExtension()->getExtendedType());
         $this->assertEquals('orob2b_account_group_type', $this->getExtension()->getExtendedType());
+    }
+
+    public function testBuildForm()
+    {
+        /** @var FormBuilder|\PHPUnit_Framework_MockObject_MockObject $builder */
+        $builder = $this->getMockBuilder('Symfony\Component\Form\FormBuilder')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $builder->expects($this->once())
+            ->method('add')
+            ->with(
+                'priceListsByWebsites',
+                AccountGroupWebsiteScopedPriceListsType::NAME
+            );
+        $this->getExtension()->buildForm($builder, []);
     }
 }
