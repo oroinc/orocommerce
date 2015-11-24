@@ -9,7 +9,7 @@ class OutputStub extends Output
     /**
      * @var array
      */
-    public $messages = array();
+    public $messages = [];
 
     /**
      * {@inheritdoc}

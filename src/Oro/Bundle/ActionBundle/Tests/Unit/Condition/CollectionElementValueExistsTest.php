@@ -20,6 +20,7 @@ class CollectionElementValueExistsTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider evaluateDataProvider
+     *
      * @param array $options
      * @param array $context
      * @param bool $expectedResult
