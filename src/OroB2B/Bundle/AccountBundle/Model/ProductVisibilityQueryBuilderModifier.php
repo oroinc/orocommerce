@@ -88,7 +88,7 @@ class ProductVisibilityQueryBuilderModifier
      */
     protected function joinProductVisibilityResolved(QueryBuilder $queryBuilder)
     {
-        $tableAlias = $this->getTableAlias($queryBuilder, 'pvr');
+        $tableAlias = '_pvr';
 
         $queryBuilder->leftJoin(
             'OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved',
@@ -107,9 +107,9 @@ class ProductVisibilityQueryBuilderModifier
      */
     protected function joinAccountGroupProductVisibilityResolved(QueryBuilder $queryBuilder, AccountGroup $account)
     {
-        $tableAlias = $this->getTableAlias($queryBuilder, 'agpvr');
+        $tableAlias = 'agpvr';
 
-        $parameterName = $this->getParameterName($queryBuilder, 'account_group');
+        $parameterName = '_account_group';
 
         $queryBuilder->leftJoin(
             'OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved',
@@ -133,9 +133,9 @@ class ProductVisibilityQueryBuilderModifier
      */
     protected function joinAccountProductVisibilityResolved(QueryBuilder $queryBuilder, Account $account)
     {
-        $tableAlias = $this->getTableAlias($queryBuilder, 'apvr');
+        $tableAlias = 'apvr';
 
-        $parameterName = $this->getParameterName($queryBuilder, 'account');
+        $parameterName = '_account';
 
         $queryBuilder->leftJoin(
             'OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved',
@@ -218,26 +218,6 @@ TERM;
 
         $configVisibility = $this->configManager->get($this->visibilitySystemConfigurationPath);
         return ($configVisibility === ProductVisibility::VISIBLE) ? 1 : -1;
-    }
-
-    /**
-     * @param QueryBuilder $queryBuilder
-     * @param string $prefix
-     * @return string
-     */
-    protected function getTableAlias(QueryBuilder $queryBuilder, $prefix)
-    {
-        return $prefix . '_' . (count($queryBuilder->getDQLPart('join')) + 1);
-    }
-
-    /**
-     * @param QueryBuilder $queryBuilder
-     * @param string $prefix
-     * @return string
-     */
-    protected function getParameterName(QueryBuilder $queryBuilder, $prefix)
-    {
-        return $prefix . '_' . ($queryBuilder->getParameters()->count() + 1);
     }
 
     /**
