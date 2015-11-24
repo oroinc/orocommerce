@@ -1,8 +1,0 @@
-layout:
-    actions:
-        - @add:
-            id: stylesheets
-            parentId: head
-            blockType: stylesheets
-            options:
-                inputs: ['bundles/orob2bfrontend/css/default/styles.less']
