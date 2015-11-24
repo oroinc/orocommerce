@@ -60,8 +60,8 @@ class UniquePriceListValidator extends ConstraintValidator
     }
 
     /**
-     * @param $item
-     * @param $index
+     * @param mixed $item
+     * @param integer $index
      * @return string
      */
     protected function getViolationPath($item, $index)

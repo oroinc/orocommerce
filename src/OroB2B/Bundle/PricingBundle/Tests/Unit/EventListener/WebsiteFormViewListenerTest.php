@@ -108,10 +108,10 @@ class WebsiteFormViewListenerTest extends FormViewListenerTestCase
     }
 
     /**
-     * @param $renderedHtml
+     * @param string $renderedHtml
      * @return BeforeListRenderEvent
      */
-    protected function createEvent($renderedHtml = '')
+    protected function createEvent($renderedHtml)
     {
         $environment = $this->getEnvironment($renderedHtml);
         $scrollData = $this->getScrollData();
