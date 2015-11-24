@@ -31,6 +31,6 @@ class CacheWarmerTest extends AbstractCacheServiceTest
 
     public function testIsOptional()
     {
-        $this->assertTrue($this->warmer->isOptional());
+        $this->assertFalse($this->warmer->isOptional());
     }
 }
