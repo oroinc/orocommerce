@@ -4,12 +4,12 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Functional\ImportExport;
 
 use Akeneo\Bundle\BatchBundle\Job\DoctrineJobRepository as BatchJobRepository;
 
-use Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationToken;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\Yaml\Yaml;
 
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
+use Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationToken;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
