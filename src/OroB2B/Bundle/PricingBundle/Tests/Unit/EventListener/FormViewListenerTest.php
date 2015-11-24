@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Datagrid;
+namespace OroB2B\Bundle\PricingBundle\Tests\Unit\EventListener;
 
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
@@ -120,12 +120,10 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->method('getEntityReference')
             ->with('OroB2BAccountBundle:Account', $accountId)
             ->willReturn($account);
-        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
-        $em->expects($this->once())->method('getRepository')->willReturn($priceToAccountRepository);
         $this->doctrineHelper->expects($this->once())
-            ->method('getEntityManager')
+            ->method('getEntityRepository')
             ->with('OroB2BPricingBundle:PriceListToAccount')
-            ->willReturn($em);
+            ->willReturn($priceToAccountRepository);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
         $environment = $this->getMock('\Twig_Environment');
@@ -208,12 +206,10 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->method('getEntityReference')
             ->with('OroB2BAccountBundle:AccountGroup', $accountGroupId)
             ->willReturn($accountGroup);
-        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
-        $em->expects($this->once())->method('getRepository')->willReturn($priceToAccountGroupRepository);
         $this->doctrineHelper->expects($this->once())
-            ->method('getEntityManager')
+            ->method('getEntityRepository')
             ->with('OroB2BPricingBundle:PriceListToAccountGroup')
-            ->willReturn($em);
+            ->willReturn($priceToAccountGroupRepository);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
         $environment = $this->getMock('\Twig_Environment');

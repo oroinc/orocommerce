@@ -2,10 +2,11 @@
 
 namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
-use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
+
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer;
 
 class PriceListSelectWithPriorityType extends AbstractType
 {
@@ -25,6 +26,7 @@ class PriceListSelectWithPriorityType extends AbstractType
                     'required' => false,
                     'label' => 'orob2b.pricing.pricelist.entity_label',
                     'create_enabled' => false,
+                    'constraints' => [new NotBlank()]
                 ]
             )
             ->add(
