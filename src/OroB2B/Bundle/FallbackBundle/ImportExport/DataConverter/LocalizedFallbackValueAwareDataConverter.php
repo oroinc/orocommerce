@@ -77,7 +77,8 @@ class LocalizedFallbackValueAwareDataConverter extends PropertyPathTitleDataConv
         $multipleRelationDeepLevel,
         $field,
         $fieldHeader,
-        $fieldOrder
+        $fieldOrder,
+        $isIdentifier = false
     ) {
         if ($fullData && is_a($field['related_entity_name'], $this->localizedFallbackValueClassName, true)) {
             $localeCodes = $this->getLocaleCodes();
