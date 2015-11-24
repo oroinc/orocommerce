@@ -102,6 +102,9 @@ parameters:
 
     orob2b_account.calculator.category_visibility_calculator: OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityCalculator
 
+    #Model
+    orob2b_account.model.product_visibility_query_builder_modifier.class: OroB2B\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier
+
 services:
     orob2b_account.security.account_user_provider:
         class: %orob2b_account.security.account_user_provider.class%
@@ -611,3 +614,10 @@ services:
         tags:
             - {name: kernel.event_listener, event: orob2b_catalog.category.tree.create_after, method: onCreateAfter }
 
+    orob2b_account.model.product_visibility_query_builder_modifier:
+        class: %orob2b_account.model.product_visibility_query_builder_modifier.class%
+        arguments:
+            - @oro_config.global
+            - @security.token_storage
+        calls:
+            - [setVisibilitySystemConfigurationPath, ['oro_b2b_account.product_visibility']]
