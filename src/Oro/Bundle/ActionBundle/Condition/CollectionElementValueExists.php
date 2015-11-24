@@ -12,6 +12,8 @@ use Oro\Component\ConfigExpression\Exception;
 
 class CollectionElementValueExists extends AbstractComparison
 {
+    const NAME = 'collection_element_value_exists';
+
     /**
      * {@inheritdoc}
      */
@@ -55,7 +57,7 @@ class CollectionElementValueExists extends AbstractComparison
      */
     public function getName()
     {
-        return 'collection_element_value_exists';
+        return self::NAME;
     }
 
     /**
