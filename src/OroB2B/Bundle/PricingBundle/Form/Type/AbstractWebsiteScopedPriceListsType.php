@@ -167,14 +167,12 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         if (in_array($priceList->getId(), array_keys($actualPriceListsToTargetEntity))) {
             /** @var BasePriceListRelation $priceListToTargetEntity */
             $priceListToTargetEntity = $actualPriceListsToTargetEntity[$priceList->getId()];
-            $priceListToTargetEntity->setPriority($priceListWithPriorityData['priority']);
         } else {
             $priceListToTargetEntity = $this->createPriceListToTargetEntity($targetEntity);
             $priceListToTargetEntity->setWebsite($website);
             $priceListToTargetEntity->setPriceList($priceListWithPriorityData['priceList']);
-            $priceListToTargetEntity->setPriority($priceListWithPriorityData['priority']);
         }
-
+        $priceListToTargetEntity->setPriority($priceListWithPriorityData['priority']);
         $em->persist($priceListToTargetEntity);
     }
 
