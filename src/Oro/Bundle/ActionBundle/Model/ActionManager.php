@@ -59,6 +59,7 @@ class ActionManager
      */
     public function execute(array $context, $actionName)
     {
+        $context = $this->normalizeContext($context);
         $actionContext = $this->createActionContext($context);
 
         $action = $this->getAction($context, $actionName);
@@ -214,15 +215,19 @@ class ActionManager
      */
     protected function getEntityClassName($entityName)
     {
-        $entityClass = $this->doctrineHelper->getEntityClass($entityName);
+        try {
+            $entityClass = $this->doctrineHelper->getEntityClass($entityName);
 
-        if (!class_exists($entityClass, true)) {
+            if (!class_exists($entityClass, true)) {
+                return false;
+            }
+
+            $reflection = new \ReflectionClass($entityClass);
+
+            return $reflection->getName();
+        } catch (\Exception $e) {
             return false;
         }
-
-        $reflection = new \ReflectionClass($entityClass);
-
-        return $reflection->getName();
     }
 
     /**

@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -50,6 +51,16 @@ class FrontendAccountUserRegistrationType extends AbstractType
     {
         $builder
             ->add(
+                'companyName',
+                'text',
+                [
+                    'required' => true,
+                    'mapped' => false,
+                    'label' => 'orob2b.account.accountuser.profile.company_name',
+                    'constraints' => [new Assert\NotBlank()]
+                ]
+            )
+            ->add(
                 'firstName',
                 'text',
                 [
@@ -87,7 +98,6 @@ class FrontendAccountUserRegistrationType extends AbstractType
             ]
         );
 
-
         $builder->addEventListener(
             FormEvents::SUBMIT,
             function (FormEvent $event) {
@@ -105,6 +115,20 @@ class FrontendAccountUserRegistrationType extends AbstractType
                     }
                 }
             }
+        );
+
+        $builder->addEventListener(
+            FormEvents::POST_SUBMIT,
+            function (FormEvent $event) {
+                /** @var AccountUser $accountUser */
+                $accountUser = $event->getData();
+                if (!$accountUser->getAccount()) {
+                    $form = $event->getForm();
+                    $companyName = $form->get('companyName')->getData();
+                    $accountUser->createAccount($companyName);
+                }
+            },
+            10
         );
     }
 

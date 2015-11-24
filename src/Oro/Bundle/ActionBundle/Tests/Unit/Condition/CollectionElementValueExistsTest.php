@@ -19,7 +19,41 @@ class CollectionElementValueExistsTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider initializeExceptionDataProvider
+     *
+     * @param array $options
+     * @param string $exceptionName
+     * @param string $exceptionMessage
+     */
+    public function testInitializeException(array $options, $exceptionName, $exceptionMessage)
+    {
+        $this->setExpectedException($exceptionName, $exceptionMessage);
+
+        $this->condition->initialize($options);
+    }
+
+    /**
+     * @return array
+     */
+    public function initializeExceptionDataProvider()
+    {
+        return [
+            [
+                'options' => [],
+                'exceptionName' => 'Oro\Component\ConfigExpression\Exception\InvalidArgumentException',
+                'exceptionMessage' => 'Options must have 2 or more elements, but 0 given.'
+            ],
+            [
+                'options' => ['string', 'string'],
+                'exceptionName' => 'Oro\Component\ConfigExpression\Exception\InvalidArgumentException',
+                'exceptionMessage' => 'Option with index 0 must be property path.'
+            ]
+        ];
+    }
+
+    /**
      * @dataProvider evaluateDataProvider
+     *
      * @param array $options
      * @param array $context
      * @param bool $expectedResult
@@ -84,5 +118,10 @@ class CollectionElementValueExistsTest extends \PHPUnit_Framework_TestCase
                 'expectedResult' => true,
             ],
         ];
+    }
+
+    public function testGetName()
+    {
+        $this->assertEquals(CollectionElementValueExists::NAME, $this->condition->getName());
     }
 }
