@@ -36,8 +36,9 @@ How it works?
 
 Each action relates to the some entity types (i.e. consists full class name) or\and routes of pages
 where action should be displayed. Before page loading Action Bundle chooses actions that
-are corresponded to page's entity\route. Then these actions checking for Pre conditions. If all Pre conditions are met
-- Action's button is displaying.
+are corresponded to page's entity\route. Then these actions checking for Pre conditions.
+If all Pre conditions are met - Action's button is displaying.
+After user click on the button - all postfunctions will be executed if pre conditions and conditions are met.
 
 Configuration
 -------------
@@ -61,17 +62,20 @@ actions:
         frontend_options:                                   # (optional) display options for action button:
             icon: icon-time                                 # class of button icon
             class: btn                                      # class of button
-            template: customTemplate.html.twig              #  custom button template if needed
+            template: customTemplate.html.twig              # custom button template if needed
         prefunctions:                                       # (optional) any needed pre functions which will execute before pre conditions
             - @create_datetime:
                 attribute: $.date
         preconditions:                                      # (optional) pre conditions for display Action button
             @gt: [$updatedAt, $.date]
+        postfunctions:                                      # (optional) any needed post functions which will execute after click on th button
+            - @assign_value: [$expired, true]
 ```
 
-This configuration describes action that relates to the ``MyEntity`` entity; On the View page (acme_demo_myentity_view)
+This configuration describes action that relates to the ``MyEntity`` entity. On the View page (acme_demo_myentity_view)
 of this entity (in case of field 'updatedAt' > new DateTime('now')) will be displayed button with label
-"adme.demo.myentity.actions.myentity_action".
+"adme.demo.myentity.actions.myentity_action". After click on this button - will run postfunction "assign_value" and set
+field 'expired' to `true`.
 
 Configuration Validation
 ------------------------

@@ -65,6 +65,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                     'enabled' => true,
                     'prefunctions' => [],
                     'preconditions' => [],
+                    'postfunctions' => [],
                 ],
             ],
             'full valid configuration' => [
@@ -82,10 +83,13 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                             'template' => 'template',
                         ],
                         'prefunctions' => [
-                            '@create_datel' => [],
+                            '@create_date' => [],
                         ],
                         'preconditions' => [
                             '@equal' => '1',
+                        ],
+                        'postfunctions' => [
+                            '@call_method' => [],
                         ],
                     ],
                 ],
@@ -102,10 +106,13 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'template' => 'template',
                     ],
                     'prefunctions' => [
-                        '@create_datel' => [],
+                        '@create_date' => [],
                     ],
                     'preconditions' => [
                         '@equal' => '1',
+                    ],
+                    'postfunctions' => [
+                        '@call_method' => [],
                     ],
                 ],
             ],

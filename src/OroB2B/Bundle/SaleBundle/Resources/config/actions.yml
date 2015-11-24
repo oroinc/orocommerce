@@ -31,3 +31,12 @@ actions:
                     - @or:
                         - @empty: $shipUntil
                         - @gt: [$shipUntil, $.compare_date]
+        postfunctions:
+            - @assign_value: [$expired, true]
+            - @flash_message:
+                message: orob2b.sale.quote.message.quote.expire.success
+                type: 'info'
+                message_parameters:
+                    id: $id
+            - @redirect:
+                route: 'orob2b_sale_quote_index'
