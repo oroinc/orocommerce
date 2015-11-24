@@ -22,6 +22,7 @@ orob2b.pricing:
     unit.label: Unit
     price.label: Price
     add_product_price: Add Product Price
+    add_price_list: Add Price List
 
     productprice:
         entity_label: Product Price
