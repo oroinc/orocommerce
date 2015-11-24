@@ -66,7 +66,6 @@ datagrid:
                 label:         oro.ui.updated_at
                 frontend_type: datetime
         properties:
-            id: ~
             view_link:
                 type:   url
                 route:  orob2b_rfp_request_view
@@ -114,7 +113,7 @@ datagrid:
         filters:
             columns:
                 id:
-                    type:      string
+                    type:      number
                     data_name: request.id
                 firstName:
                     type:      string

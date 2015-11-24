@@ -1,4 +1,6 @@
 OroB2B\Bundle\PricingBundle\Entity\PriceList:
+    constraints:
+        - OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceListProductPricesCurrency: ~
     properties:
         name:
             - NotBlank: ~
@@ -6,8 +8,6 @@ OroB2B\Bundle\PricingBundle\Entity\PriceList:
                 max: 255
         currencies:
             - NotBlank: ~
-            - Valid: ~
-        prices:
             - Valid: ~
 
 OroB2B\Bundle\PricingBundle\Entity\PriceListCurrency:
