@@ -35,12 +35,6 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
     {
         parent::setUp();
         $this->priceLists = $this->createPriceLists(2);
-        foreach ($this->priceLists as $priceList) {
-            $priceListToWebsite = new PriceListToWebsite();
-            $priceListToWebsite->setPriceList($priceList)
-                ->setPriority($priceList->getId() * 100);
-            $this->existing[$priceList->getId()] = $priceListToWebsite;
-        }
     }
 
     public function testBuild()
@@ -117,8 +111,8 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
         $priceListFrom->expects($this->once())
             ->method('setData')
             ->with([
-                ['priceList' => $this->existing[1]->getPriceList(), 'priority'=>100],
-                ['priceList' => $this->existing[2]->getPriceList(), 'priority'=>200]
+                ['priceList' => $this->getExisting()[1]->getPriceList(), 'priority' => 100],
+                ['priceList' => $this->getExisting()[2]->getPriceList(), 'priority' => 200]
             ]);
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $rootForm */
@@ -136,7 +130,7 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
         $priceListFrom->expects($this->once())
             ->method('getData')
             ->willReturn([
-                ['priceList' => $this->existing[1]->getPriceList(), 'priority'=>100]
+                ['priceList' => $this->getExisting()[1]->getPriceList(), 'priority' => 100]
             ]);
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $rootForm */
@@ -147,7 +141,7 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
         $this->getManagerMock()
             ->expects($this->once())
             ->method('remove')
-            ->with($this->existing[2]);
+            ->with($this->getExisting()[2]);
 
         $event = new FormEvent($rootForm, $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', 1));
         $extension = $this->createExtension();
@@ -168,9 +162,9 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
         $priceListFrom->expects($this->once())
             ->method('getData')
             ->willReturn([
-                ['priceList' => $this->existing[1]->getPriceList(), 'priority'=>100],
-                ['priceList' => $this->existing[2]->getPriceList(), 'priority'=>200],
-                ['priceList' => $addedPriceList, 'priority'=>300]
+                ['priceList' => $this->getExisting()[1]->getPriceList(), 'priority' => 100],
+                ['priceList' => $this->getExisting()[2]->getPriceList(), 'priority' => 200],
+                ['priceList' => $addedPriceList, 'priority' => 300]
             ]);
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $rootForm */
@@ -228,7 +222,7 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param $count
+     * @param int $count
      * @return array
      */
     protected function createPriceLists($count)
@@ -272,10 +266,26 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
 
             $repository->expects($this->once())
                 ->method('findBy')
-                ->willReturn($this->existing);
+                ->willReturn($this->getExisting());
             $this->repositoryMock = $repository;
         }
 
         return $this->repositoryMock;
+    }
+
+    /**
+     * @return \OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite[]
+     */
+    protected function getExisting()
+    {
+        if (!$this->existing) {
+            foreach ($this->priceLists as $priceList) {
+                $priceListToWebsite = new PriceListToWebsite();
+                $priceListToWebsite->setPriceList($priceList)
+                    ->setPriority($priceList->getId() * 100);
+                $this->existing[$priceList->getId()] = $priceListToWebsite;
+            }
+        }
+        return $this->existing;
     }
 }

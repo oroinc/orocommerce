@@ -25,23 +25,17 @@ class UniquePriceListValidator extends ConstraintValidator
         $context = $this->context;
 
         $ids = [];
-        $i = 0;
         foreach ($value as $index => $item) {
             if (null === $id = $this->getPriceListId($item)) {
                 continue;
             }
             if (in_array($id, $ids, true)) {
-                $path = $context->getPropertyPath();
+                $path = $this->getViolationPath($item, $index);
                 $context->buildViolation($constraint->message, [])
-                    ->atPath("[$i].priceList")
+                    ->atPath($path)
                     ->addViolation();
             }
             $ids[] = $id;
-            //children[oro_b2b_pricing___default_price_lists].children[value].children[configs].data[1].priceList
-            //children[oro_b2b_pricing___default_price_lists].children[value].children[configs].data
-            //children[priceList].data
-            //children[priceList].data[1].priceList
-            $i++;
         }
     }
 
@@ -63,5 +57,21 @@ class UniquePriceListValidator extends ConstraintValidator
         }
 
         return null;
+    }
+
+    /**
+     * @param mixed $item
+     * @param integer $index
+     * @return string
+     */
+    protected function getViolationPath($item, $index)
+    {
+        if ($item instanceof PriceListAwareInterface) {
+            return "[$index].".self::PRICE_LIST_KEY;
+        } elseif (is_array($item) && array_key_exists(self::PRICE_LIST_KEY, $item)) {
+            return "[$index][".self::PRICE_LIST_KEY.']';
+        }
+
+        return '';
     }
 }

@@ -44,7 +44,6 @@ class WebsiteFormExtension extends AbstractTypeExtension
         $this->priceListToWebsiteClass = $priceListToWebsiteClass;
     }
 
-
     /**
      * {@inheritdoc}
      */
@@ -62,7 +61,7 @@ class WebsiteFormExtension extends AbstractTypeExtension
                 'allow_add' => true,
                 'error_bubbling' => false,
                 'attr' => [
-                        'class' => 'price_lists_collection'
+                    'class' => 'price_lists_collection'
                 ],
                 'constraints' => [
                     new UniquePriceList()
@@ -73,7 +72,6 @@ class WebsiteFormExtension extends AbstractTypeExtension
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData']);
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit'], 10);
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPostSubmit'], 10);
     }
 
     /**
@@ -150,7 +148,7 @@ class WebsiteFormExtension extends AbstractTypeExtension
     }
 
     /**
-     * @param [] $submitted
+     * @param array $submitted
      * @param PriceListToWebsite[] $existing
      * @param Website $website
      */

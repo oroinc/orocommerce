@@ -26,9 +26,10 @@ class WebsiteFormViewListenerTest extends FormViewListenerTestCase
         );
 
         $listener->onWebsiteEdit($event);
+        $scrollData = $event->getScrollData()->getData();
         $this->assertEquals(
-            ['rendered_html'],
-            $event->getScrollData()->getData()[ScrollData::DATA_BLOCKS][0][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
+            [$renderedHtml],
+            $scrollData[ScrollData::DATA_BLOCKS][1][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
         );
     }
 
@@ -107,10 +108,10 @@ class WebsiteFormViewListenerTest extends FormViewListenerTestCase
     }
 
     /**
-     * @param $renderedHtml
+     * @param string $renderedHtml
      * @return BeforeListRenderEvent
      */
-    protected function createEvent($renderedHtml = '')
+    protected function createEvent($renderedHtml)
     {
         $environment = $this->getEnvironment($renderedHtml);
         $scrollData = $this->getScrollData();
