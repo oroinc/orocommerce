@@ -62,27 +62,77 @@ class ProductBySkuValidatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param bool $useOptions
      * @param string $sku
      * @param Product|null $product
      * @dataProvider validateProvider
      */
-    public function testValidate($sku, $product)
+    public function testValidate($useOptions, $sku, $product)
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ProductRepository */
-        $repository = $this
-            ->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
+        if ($useOptions) {
+            $products = [];
+            if ($product) {
+                $products[strtoupper($sku)] = $product;
+            }
+        } else {
+            $products = null;
+        }
 
-        $repository->expects($this->once())
-            ->method('findOneBySku')
-            ->with($sku)
-            ->will($this->returnValue($product));
+        $config = $this->getMock('Symfony\Component\Form\FormConfigInterface');
+        $config->expects($this->any())
+            ->method('getOptions')
+            ->willReturn(
+                [
+                    'product' => null,
+                    'product_field' => 'product',
+                    'product_holder' => null,
+                ]
+            );
+        $config->expects($this->once())
+            ->method('hasOption')
+            ->with('products')
+            ->willReturn(true);
+        $config->expects($this->once())
+            ->method('getOption')
+            ->with('products')
+            ->willReturn($products);
 
-        $this->registry->expects($this->once())
-            ->method('getRepository')
-            ->with(self::PRODUCT_CLASS)
-            ->will($this->returnValue($repository));
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form->expects($this->once())
+            ->method('offsetExists')
+            ->with('products')
+            ->willReturn(true);
+
+        $form->expects($this->once())
+            ->method('offsetGet')
+            ->with('products')
+            ->willReturn($form);
+        $form->expects($this->any())->method('getConfig')->willReturn($config);
+
+        $this->context->expects($this->once())
+            ->method('getPropertyPath')
+            ->willReturn('[products]');
+        $this->context->expects($this->once())
+            ->method('getRoot')
+            ->willReturn($form);
+
+        if (!$useOptions) {
+            /** @var \PHPUnit_Framework_MockObject_MockObject|ProductRepository */
+            $repository = $this
+                ->getMockBuilder('OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository')
+                ->disableOriginalConstructor()
+                ->getMock();
+
+            $repository->expects($this->once())
+                ->method('findOneBySku')
+                ->with($sku)
+                ->will($this->returnValue($product));
+
+            $this->registry->expects($this->once())
+                ->method('getRepository')
+                ->with(self::PRODUCT_CLASS)
+                ->will($this->returnValue($repository));
+        }
 
         $this->context->expects($product ? $this->never() : $this->once())
             ->method('addViolation')
@@ -97,8 +147,10 @@ class ProductBySkuValidatorTest extends \PHPUnit_Framework_TestCase
     public function validateProvider()
     {
         return [
-            'fail' => ['S12', null],
-            'success' => ['S12_1099', new Product()],
+            'fail repo' => [false, 'S12', null],
+            'success repo' => [false, 'S12_1099', new Product()],
+            'fail options' => [true, 'S12', null],
+            'success options' => [true, 'S12_1099', new Product()],
         ];
     }
 }

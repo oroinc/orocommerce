@@ -40,8 +40,7 @@
         {% set allow_delete = widget.parent.vars.allow_delete %}
     {% endif %}
 
-    <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
-        data-layout="separate">
+    <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}>
         {{ form_widget(form) }}
 
         <td>
@@ -53,13 +52,19 @@
 {% endmacro %}
 
 {% block orob2b_product_row_widget %}
-    <td class="fields-row">
+    <td class="fields-row add-products-sku">
         <div>
             {{ form_widget(form.productSku) }}
-            {{ form_errors(form.productSku) }}
+            <div class="product-autocomplete-success">
+                <i class="icon-ok-circle"></i>
+            </div>
+            <div class="product-autocomplete-error" style="display: none;">
+                <span class="validation-failed">SKU not found</span>
+            </div>
+            <div class="product-autocomplete-name"></div>
         </div>
     </td>
-    <td class="fields-row">
+    <td class="fields-row add-products-quantity">
         <div>
             {{ form_widget(form.productQuantity) }}
             {{ form_errors(form.productQuantity) }}
@@ -74,7 +79,6 @@
         {% endif %}
         {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
         {% set id = id ~ '_collection' %}
-        {% set row_count = form.vars.row_count %}
         <div class="row-oro add-products">
             {% set prototype_name = form.vars.prototype_name %}
             <div {{ block('widget_container_attributes') }}>
@@ -88,13 +92,13 @@
                             {% endif %}
                         </tr>
                     </thead>
-                    <tbody data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
+                    <tbody data-last-index="{{ form.children|length}}" data-row-count-add="{{ form.vars.row_count_add }}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %}>
                     {% if form.children|length %}
                         {% for child in form.children %}
                             {{ _self.orob2b_product_row_collection_item_prototype(child) }}
                         {% endfor %}
                     {% elseif show_form_when_empty and prototype_html is defined %}
-                        {% for i in 0..(row_count-1) %}
+                        {% for i in 0..(form.vars.row_count_initial - 1) %}
                             {{ prototype_html|replace({(prototype_name): i})|raw }}
                         {% endfor %}
                     {% endif %}
