@@ -10,3 +10,24 @@ actions:
         order: 10
         frontend_options:
             icon: icon-time
+        prefunctions:
+            - @create_datetime:
+                attribute: $.compare_date
+            - @call_method:
+                object: $.compare_date
+                method: modify
+                method_parameters: ['+7 days']
+        preconditions:
+            @or:
+                - @and:
+                    - @equal: [$expired, false]
+                    - @not:
+                        - @collection_element_value_exists: [$quoteProducts, $productSku, 'abc123']
+                    - @or:
+                        - @empty: $shipUntil
+                        - @lt: [$shipUntil, $.compare_date]
+                - @and:
+                    - @equal: [$expired, false]
+                    - @or:
+                        - @empty: $shipUntil
+                        - @gt: [$shipUntil, $.compare_date]

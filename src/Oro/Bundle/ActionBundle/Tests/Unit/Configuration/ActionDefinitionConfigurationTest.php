@@ -63,6 +63,8 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                     'routes' => [],
                     'order' => 0,
                     'enabled' => true,
+                    'prefunctions' => [],
+                    'preconditions' => [],
                 ],
             ],
             'full valid configuration' => [
@@ -79,6 +81,12 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                             'class' => 'class',
                             'template' => 'template',
                         ],
+                        'prefunctions' => [
+                            '@create_datel' => [],
+                        ],
+                        'preconditions' => [
+                            '@equal' => '1',
+                        ],
                     ],
                 ],
                 'expected' => [
@@ -92,6 +100,12 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'icon' => 'icon',
                         'class' => 'class',
                         'template' => 'template',
+                    ],
+                    'prefunctions' => [
+                        '@create_datel' => [],
+                    ],
+                    'preconditions' => [
+                        '@equal' => '1',
                     ],
                 ],
             ],
