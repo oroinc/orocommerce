@@ -76,8 +76,7 @@ class ProductVisibilityQueryBuilderModifier
         $token = $this->tokenStorage->getToken();
         /** @var AccountUser $user */
         if ($token && ($user = $token->getUser()) instanceof AccountUser
-            && ($account = $user->getAccount()) instanceof Account
-            && ($accountGroup = $account->getGroup()) instanceof AccountGroup
+            && $user->getAccount() && $user->getAccount()->getGroup()
         ) {
             return $user;
         }
