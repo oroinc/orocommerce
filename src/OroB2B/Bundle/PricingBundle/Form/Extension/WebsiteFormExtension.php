@@ -73,7 +73,6 @@ class WebsiteFormExtension extends AbstractTypeExtension
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData']);
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit'], 10);
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPostSubmit'], 10);
     }
 
     /**

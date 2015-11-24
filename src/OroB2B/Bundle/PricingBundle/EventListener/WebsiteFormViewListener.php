@@ -60,7 +60,7 @@ class WebsiteFormViewListener
             'OroB2BPricingBundle:Website:price_list_update.html.twig',
             ['form' => $event->getFormView()]
         );
-        $event->getScrollData()->addSubBlockData(0, 0, $template);
+        $this->addPriceListsBlock($event->getScrollData(), $template);
     }
 
     /**
