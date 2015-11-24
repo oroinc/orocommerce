@@ -91,7 +91,7 @@ class OroB2BWarehouseBundle implements Migration, NoteExtensionAwareInterface
     {
         $table = $schema->createTable(self::WAREHOUSE_INVENTORY_LEVEL_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('quantity', 'decimal', ['scale' => 10]);
+        $table->addColumn('quantity', 'decimal', ['precision' => 20, 'scale' => 10]);
         $table->addColumn('warehouse_id', 'integer');
         $table->addColumn('product_id', 'integer');
         $table->addColumn('product_unit_precision_id', 'integer');
