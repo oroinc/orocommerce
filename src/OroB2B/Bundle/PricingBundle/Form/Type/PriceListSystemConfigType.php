@@ -38,11 +38,9 @@ class PriceListSystemConfigType extends AbstractType
                     'data_class' => $this->priceListConfigClassName,
                 ],
                 'allow_add_after' => false,
+                'show_form_when_empty' => true,
                 'allow_add' => true,
                 'mapped' => true,
-                'attr' => [
-                    'class' => 'price_lists_collection'
-                ]
             ]);
     }
 

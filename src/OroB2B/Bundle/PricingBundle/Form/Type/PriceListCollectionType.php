@@ -26,9 +26,8 @@ class PriceListCollectionType extends AbstractType
                 'mapped' => false,
                 'label' => false,
                 'handle_primary' => false,
-                'constraints' => [
-                    new UniquePriceList()
-                ]
+                'constraints' => [new UniquePriceList()],
+                'attr' => ['class' => 'price-lists-collection']
             ]
         );
     }

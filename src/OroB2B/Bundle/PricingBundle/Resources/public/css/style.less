@@ -99,34 +99,17 @@
   }
 }
 
-.oro-item-collection input[type="text"].priority {
-  width: 50px;
-}
-
-
-.price-lists-by-websites {
-  .controls {
-    margin-left: 10px !important;
+.price-lists-collection {
+  .add-list-item {
+    margin-top: 10px;
   }
-  .entity-select-btn {
-    float: none !important;
-  }
-}
 
-.pricing-price-list {
-  width: auto;
+  table {
+    width: auto;
+  }
 
   td {
     vertical-align: top;
-  }
-
-  .entity-select-btn {
-    display: inline-block;
-    float: none;
-  }
-
-  .oro-item-collection input[type="text"].priority {
-    width: 50px !important;
   }
 
   td span.validation-failed {
@@ -134,21 +117,24 @@
     width: 50px;
   }
 
+  .entity-select-btn {
+    display: inline-block;
+    float: none;
+  }
+
+  input.priority {
+    width: 50px !important;
+  }
+
   .select2-container.error {
     border-color: red;
   }
-}
 
-.system-configuration-container .price_lists_collection .controls {
-  margin: 5px 0 0 10px !important;
-}
-
-.pricing-price-list {
-  .add-list-item {
-    margin-top: 10px;
+  .removeRow:after{
+    text-indent: 6px;
   }
 
-  table {
-    width: auto;
+  .controls {
+    margin-left: 10px !important;
   }
 }

@@ -35,7 +35,7 @@ class PriceListConfigConverterTest extends \PHPUnit_Framework_TestCase
         ];
 
         $actual = $converter->convertFromSaved($configs);
-        $this->assertEquals($this->createConfigs(2), $actual);
+        $this->assertEquals(array_reverse($this->createConfigs(2)), $actual);
     }
 
     /**

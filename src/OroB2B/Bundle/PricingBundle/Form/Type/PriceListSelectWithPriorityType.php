@@ -34,7 +34,7 @@ class PriceListSelectWithPriorityType extends AbstractType
                 'text',
                 [
                     'required' => true,
-                    'label' => 'orob2b.pricing.pricelist.priority.label',
+                    'label' => 'orob2b.pricing.pricelist.priority_label',
                     'constraints' => [new NotBlank(), new Integer()],
                 ]
             );
