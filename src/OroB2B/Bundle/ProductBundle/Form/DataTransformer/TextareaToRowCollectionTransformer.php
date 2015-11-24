@@ -2,11 +2,10 @@
 
 namespace OroB2B\Bundle\ProductBundle\Form\DataTransformer;
 
-use OroB2B\Bundle\ProductBundle\Model\QuickAddRow;
 use Symfony\Component\Form\DataTransformerInterface;
 
+use OroB2B\Bundle\ProductBundle\Model\QuickAddRow;
 use OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection;
-use Symfony\Component\Form\Exception\TransformationFailedException;
 
 class TextareaToRowCollectionTransformer implements DataTransformerInterface
 {
@@ -35,7 +34,7 @@ class TextareaToRowCollectionTransformer implements DataTransformerInterface
             $collection->add(new QuickAddRow(
                 $lineNumber++,
                 trim($data[0]),
-                array_key_exists(1, $data) ? trim($data[1]) : null
+                array_key_exists(1, $data) ? (float) trim($data[1]) : null
             ));
         }
 

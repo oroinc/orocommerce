@@ -21,8 +21,26 @@ class QuickAddRowCollection extends ArrayCollection
      */
     public function hasCompleteRows()
     {
+        return $this->getCompleteRows()->count() > 0;
+    }
+
+    /**
+     * @return $this
+     */
+    public function getCompleteRows()
+    {
         return $this->filter(function (QuickAddRow $row) {
             return $row->isComplete();
-        })->count() > 0;
+        });
+    }
+
+    /**
+     * @return $this
+     */
+    public function getValidRows()
+    {
+        return $this->filter(function (QuickAddRow $row) {
+            return $row->isValid();
+        });
     }
 }

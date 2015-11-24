@@ -9,13 +9,12 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Regex;
 
 use OroB2B\Bundle\ProductBundle\Form\DataTransformer\TextareaToRowCollectionTransformer;
+use OroB2B\Bundle\ProductBundle\Validator\Constraints\QuickAddRowCollection;
 
 class QuickAddCopyPasteType extends AbstractType
 {
     const NAME = 'orob2b_product_quick_add_copy_paste';
-
     const PRODUCTS_FIELD_NAME = 'products';
-
     const FORMAT_REGEX = '/[^\s]+[\t\,][^\s]+/';
 
     /**
@@ -31,7 +30,8 @@ class QuickAddCopyPasteType extends AbstractType
                     [
                         'constraints' => [
                                 new NotBlank(),
-                                new Regex(['message' => 'Invalid format', 'pattern' => self::FORMAT_REGEX])
+                                new Regex(['message' => 'Invalid format', 'pattern' => self::FORMAT_REGEX]),
+                                new QuickAddRowCollection()
                         ],
                         'label' => false,
                         'data' => "HSSUC, 1\nHSTUC, 2\nHCCM, 3\nSKU1, 10\nSKU2,20\nSKU3, 30\n",
