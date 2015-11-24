@@ -28,15 +28,15 @@ class ActionControllerTest extends WebTestCase
      */
     protected function setUp()
     {
-        $this->initClient([], static::generateWsseAuthHeader());
+        $this->initClient([], $this->generateWsseAuthHeader());
 
-        $this->cacheProvider = static::getContainer()->get('oro_action.cache.provider');
+        $this->cacheProvider = $this->getContainer()->get('oro_action.cache.provider');
         $this->loadFixtures([
             'Oro\Bundle\ActionBundle\Tests\Functional\DataFixtures\LoadTestEntityData',
         ]);
+
         $this->entity = $this->getReference(LoadTestEntityData::TEST_ENTITY_1)
             ->setMessage(self::MESSAGE_DEFAULT);
-        $this->entityId = $this->entity->getId();
     }
 
     /**
@@ -52,20 +52,16 @@ class ActionControllerTest extends WebTestCase
      *
      * @param array $config
      * @param string $route
-     * @param bool|int $entityId
+     * @param bool $entityId
      * @param string $entityClass
      * @param int $statusCode
-     * @param bool|string $updated
+     * @param string $message
      */
-    public function testExecuteAction(array $config, $route, $entityId, $entityClass, $statusCode, $updated)
+    public function testExecuteAction(array $config, $route, $entityId, $entityClass, $statusCode, $message)
     {
         $this->cacheProvider->save(ActionConfigurationProvider::ROOT_NODE_NAME, $config);
 
-        if ($entityId) {
-            $entityId = $this->entityId;
-        }
-
-        static::assertEquals(self::MESSAGE_DEFAULT, $this->entity->getMessage());
+        $this->assertEquals(self::MESSAGE_DEFAULT, $this->entity->getMessage());
 
         $this->client->request(
             'GET',
@@ -74,7 +70,7 @@ class ActionControllerTest extends WebTestCase
                 [
                     'actionName' => 'oro_action_test_action',
                     'route' => $route,
-                    'entityId' => $entityId,
+                    'entityId' => $entityId ? $this->entity->getId() : null,
                     'entityClass' => $entityClass,
                 ]
             )
@@ -82,8 +78,8 @@ class ActionControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
 
-        static::assertEquals($updated ? self::MESSAGE_NEW : self::MESSAGE_DEFAULT, $this->entity->getMessage());
-        static::assertResponseStatusCodeEquals($result, $statusCode);
+        $this->assertEquals($message, $this->entity->getMessage());
+        $this->assertResponseStatusCodeEquals($result, $statusCode);
     }
 
     /**
@@ -123,7 +119,7 @@ class ActionControllerTest extends WebTestCase
                 'entityId' => true,
                 'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
                 'statusCode' => 200,
-                'updated' => true,
+                'message' => self::MESSAGE_NEW,
             ],
             'existing entity wrong conditions' => [
                 'config' => array_merge_recursive(
@@ -139,7 +135,7 @@ class ActionControllerTest extends WebTestCase
                 'entityId' => true,
                 'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
                 'statusCode' => 404,
-                'updated' => false,
+                'message' => self::MESSAGE_DEFAULT,
             ],
             'existing entity short syntax' => [
                 'config' => array_merge_recursive(
@@ -150,7 +146,7 @@ class ActionControllerTest extends WebTestCase
                 'entityId' => true,
                 'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
                 'statusCode' => 200,
-                'updated' => false,
+                'message' => self::MESSAGE_DEFAULT,
             ],
             'existing entity with root namespace' => [
                 'config' => array_merge_recursive(
@@ -165,7 +161,7 @@ class ActionControllerTest extends WebTestCase
                 'entityId' => true,
                 'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
                 'statusCode' => 200,
-                'updated' => false,
+                'message' => self::MESSAGE_DEFAULT,
             ],
             'unknown entity' => [
                 'config' => array_merge_recursive(
@@ -176,7 +172,7 @@ class ActionControllerTest extends WebTestCase
                 'entityId' => true,
                 'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
                 'statusCode' => 404,
-                'updated' => false,
+                'message' => self::MESSAGE_DEFAULT,
             ],
             'unknown entity short syntax' => [
                 'config' => array_merge_recursive(
@@ -187,7 +183,7 @@ class ActionControllerTest extends WebTestCase
                 'entityId' => true,
                 'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
                 'statusCode' => 404,
-                'updated' => false,
+                'message' => self::MESSAGE_DEFAULT,
             ],
             'existing route' => [
                 'config' => array_merge_recursive(
@@ -198,7 +194,7 @@ class ActionControllerTest extends WebTestCase
                 'entityId' => true,
                 'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
                 'statusCode' => 200,
-                'updated' => false,
+                'message' => self::MESSAGE_DEFAULT,
             ],
             'unknown route' => [
                 'config' => array_merge_recursive(
@@ -209,7 +205,7 @@ class ActionControllerTest extends WebTestCase
                 'entityId' => false,
                 'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
                 'statusCode' => 404,
-                'updated' => false,
+                'message' => self::MESSAGE_DEFAULT,
             ],
             'empty context' => [
                 'config' => $config,
@@ -217,7 +213,7 @@ class ActionControllerTest extends WebTestCase
                 'entityId' => true,
                 'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
                 'statusCode' => 404,
-                'updated' => false,
+                'message' => self::MESSAGE_DEFAULT,
             ],
             'existing route and entity' => [
                 'config' => array_merge_recursive(
@@ -233,7 +229,7 @@ class ActionControllerTest extends WebTestCase
                 'entityId' => null,
                 'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
                 'statusCode' => 200,
-                'updated' => false,
+                'message' => self::MESSAGE_DEFAULT,
             ]
         ];
     }
