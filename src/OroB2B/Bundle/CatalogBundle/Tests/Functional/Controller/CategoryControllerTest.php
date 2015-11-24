@@ -240,9 +240,13 @@ class CategoryControllerTest extends WebTestCase
         $fileLocator = $this->getContainer()->get('file_locator');
 
         $smallImageName = self::SMALL_IMAGE_NAME;
-        $smallImageFile = $fileLocator->locate('@OroB2BCatalogBundle/Tests/DataFixtures/files'.$smallImageName);
+        $smallImageFile = $fileLocator->locate(
+            '@OroB2BCatalogBundle/Tests/Functional/DataFixtures/files/'.$smallImageName
+        );
         $largeImageName = self::LARGE_IMAGE_NAME;
-        $largeImageFile = $fileLocator->locate('@OroB2BCatalogBundle/Tests/DataFixtures/files'.$largeImageName);
+        $largeImageFile = $fileLocator->locate(
+            '@OroB2BCatalogBundle/Tests/Functional/DataFixtures/files/'.$largeImageName
+        );
 
         $smallImage = new UploadedFile($smallImageFile, $smallImageName);
         $largeImage = new UploadedFile($largeImageFile, $largeImageName);
