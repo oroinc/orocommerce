@@ -36,8 +36,9 @@ How it works?
 
 Each action relates to the some entity types (i.e. consists full class name) or\and routes of pages
 where action should be displayed. Before page loading Action Bundle chooses actions that
-are corresponded to page's entity\route. Then these actions checking for Pre conditions. If all Pre conditions are met
-- Action's button is displaying. After user click on the button - all postfunctions will be executed.
+are corresponded to page's entity\route. Then these actions checking for Pre conditions.
+If all Pre conditions are met - Action's button is displaying.
+After user click on the button - all postfunctions will be executed if pre conditions and conditions are met.
 
 Configuration
 -------------
