@@ -7,6 +7,7 @@ Table of Contents
  - [Main Model Classes](#main-model-classes)
  - [How it works?](#how-it-works)
  - [Configuration](#configuration)
+ - [Configuration Validation](#configuration-validation)
 
 What are Actions?
 -----------------
@@ -23,9 +24,9 @@ Main Model Classes
 ------------------
 
 * **Action** - main model that contains information about specific action. It contains the most important
-information like action related entity classes (f.e. 'Acme\Bundle\DemoBundle\Entity\MyEntity') 
+information like action related entity classes (f.e. 'Acme\Bundle\DemoBundle\Entity\MyEntity')
 or routes ('acme_demo_myentity_view'). Action can be enabled or disabled.
-Other fields of the action contain information about action name, extended options, 
+Other fields of the action contain information about action name, extended options,
 order of display buttons. More options see in [Configuration](#configuration).
 
 * **ActionDefinition** - part of the Action model that contains raw data from action's configuration.
@@ -33,15 +34,15 @@ order of display buttons. More options see in [Configuration](#configuration).
 How it works?
 -------------
 
-Each action relates to the some entity types (i.e. consists full class name) or\and routes of pages 
-where action should be displayed. Before page loading Action Bundle chooses actions that 
-are corresponded to page's entity\route. Then these actions checking for Pre conditions. If all Pre conditions are met 
+Each action relates to the some entity types (i.e. consists full class name) or\and routes of pages
+where action should be displayed. Before page loading Action Bundle chooses actions that
+are corresponded to page's entity\route. Then these actions checking for Pre conditions. If all Pre conditions are met
 - Action's button is displaying.
 
 Configuration
 -------------
 
-All actions are described in configuration file ``actions.yml`` corresponded bundle. 
+All actions are described in configuration file ``actions.yml`` corresponded bundle.
 Look at the example of simple action configuration that performs some action with entity MyEntity.
 
 ```
@@ -55,11 +56,11 @@ actions:
         entities:                                           # (optional) list of entity classes
             - Acme\Bundle\DemoBundle\Entity\MyEntity
         routes:                                             # (optional) list of routes
-            - acme_demo_myentity_view    
+            - acme_demo_myentity_view
         order: 10                                           # (optional, default = 0) display order of action button
         frontend_options:                                   # (optional) display options for action button:
             icon: icon-time                                 # class of button icon
-            class: btn                                      # class of button 
+            class: btn                                      # class of button
             template: customTemplate.html.twig              # custom button template if needed
         prefunctions:                                       # (optional) any needed pre functions which will execute before pre conditions
             - @create_datetime:
@@ -71,3 +72,12 @@ actions:
 This configuration describes action that relates to the ``MyEntity`` entity. On the View page (acme_demo_myentity_view)
 of this entity (in case of field 'updatedAt' > new DateTime('now')) will be displayed button with label
 "adme.demo.myentity.actions.myentity_action".
+
+Configuration Validation
+------------------------
+
+To validate configuration execute a command:
+
+```
+php app/console oro:action:configuration:validate
+```
