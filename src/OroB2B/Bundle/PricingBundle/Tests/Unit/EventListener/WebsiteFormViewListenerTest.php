@@ -28,7 +28,7 @@ class WebsiteFormViewListenerTest extends FormViewListenerTestCase
         $listener->onWebsiteEdit($event);
         $scrollData = $event->getScrollData()->getData();
         $this->assertEquals(
-            ['rendered_html'],
+            [$renderedHtml],
             $scrollData[ScrollData::DATA_BLOCKS][1][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
         );
     }

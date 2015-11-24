@@ -149,7 +149,7 @@ class WebsiteFormExtension extends AbstractTypeExtension
     }
 
     /**
-     * @param [] $submitted
+     * @param array $submitted
      * @param PriceListToWebsite[] $existing
      * @param Website $website
      */
