@@ -57,24 +57,15 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
         $productVisibility = (new ProductVisibility())
             ->setProduct($product)
             ->setWebsite($website)
-            ->setVisibility($data['all']);
+            ->setVisibility($data['all']['visibility']);
 
         $manager->persist($productVisibility);
 
-        $this->setReference($this->getProductVisibilityReference($productVisibility), $productVisibility);
+        $this->setReference($data['all']['reference'], $productVisibility);
 
         $this->createAccountGroupVisibilities($manager, $product, $website, $data['groups']);
 
         $this->createAccountVisibilities($manager, $product, $website, $data['accounts']);
-    }
-
-    /**
-     * @param ProductVisibility $productVisibility
-     * @return string
-     */
-    protected function getProductVisibilityReference(ProductVisibility $productVisibility)
-    {
-        return $productVisibility->getProduct()->getSku() . '.visibility.all';
     }
 
     /**
@@ -89,7 +80,7 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
         Website $website,
         array $accountGroupsData
     ) {
-        foreach ($accountGroupsData as $groupReference => $visibility) {
+        foreach ($accountGroupsData as $groupReference => $accountGroupData) {
             /** @var AccountGroup $accountGroup */
             $accountGroup = $this->getReference($groupReference);
 
@@ -97,25 +88,13 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
                 ->setProduct($product)
                 ->setWebsite($website)
                 ->setAccountGroup($accountGroup)
-                ->setVisibility($visibility)
+                ->setVisibility($accountGroupData['visibility'])
             ;
 
             $manager->persist($accountGroupProductVisibility);
 
-            $this->setReference(
-                $this->getAccountGroupProductVisibilityReference($accountGroupProductVisibility),
-                $accountGroupProductVisibility
-            );
+            $this->setReference($accountGroupData['reference'], $accountGroupProductVisibility);
         }
-    }
-
-    /**
-     * @param AccountGroupProductVisibility $entity
-     * @return string
-     */
-    protected function getAccountGroupProductVisibilityReference(AccountGroupProductVisibility $entity)
-    {
-        return $entity->getProduct() . '.visibility.' . $entity->getAccountGroup()->getName();
     }
 
     /**
@@ -130,7 +109,7 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
         Website $website,
         array $accountsData
     ) {
-        foreach ($accountsData as $accountReference => $visibility) {
+        foreach ($accountsData as $accountReference => $accountData) {
             /** @var Account $account */
             $account = $this->getReference($accountReference);
 
@@ -138,25 +117,13 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
                 ->setProduct($product)
                 ->setWebsite($website)
                 ->setAccount($account)
-                ->setVisibility($visibility)
+                ->setVisibility($accountData['visibility'])
             ;
 
             $manager->persist($accountProductVisibility);
 
-            $this->setReference(
-                $this->getAccountProductVisibilityReference($accountProductVisibility),
-                $accountProductVisibility
-            );
+            $this->setReference($accountData['reference'], $accountProductVisibility);
         }
-    }
-
-    /**
-     * @param AccountProductVisibility $entity
-     * @return string
-     */
-    protected function getAccountProductVisibilityReference(AccountProductVisibility $entity)
-    {
-        return $entity->getProduct() . '.visibility.' . $entity->getAccount()->getName();
     }
 
     /**
