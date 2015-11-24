@@ -69,9 +69,23 @@
   }
 }
 
+.modal-body_md {
+  padding: 4rem;
+
+  @media (max-width: 768px) {
+    padding: 3rem 2rem;
+  }
+}
+
 .modal-sm {
   @media (min-width: 768px) {
     width: 30rem;
+  }
+}
+
+.modal-md {
+  @media (min-width: 768px) {
+    width: 40rem;
   }
 }
 
@@ -93,6 +107,7 @@
 
 //Bootstrap button override
 .btn {
+  border: 0;
 
   &.btn-block_custom {
     display: block !important;
@@ -115,6 +130,11 @@
     padding: .5rem 1.2rem;
   }
 
+  &.btn_xsm {
+    font-size: 1.3rem;
+    padding: .7rem 1.5rem;
+  }
+
   &.btn_md {
     padding: 1.2rem;
   }
@@ -122,6 +142,13 @@
   &.btn_lg {
     font-size: 1.7rem;
     padding: 1.5rem 3rem;
+  }
+
+  &.btn_xlg {
+    font-size: 2.4rem;
+    line-height: 2.4rem;
+    min-height: 8rem;
+    min-width: 28rem;
   }
 
   &.btn-default {
@@ -302,6 +329,12 @@
       clear: both;
     }
 
+    &.disabled {
+      opacity: 1;
+      background: @alt-border-color;
+      cursor: default;
+    }
+
     &.within-fixed-checkout {
       width: 100% !important;
       
@@ -311,13 +344,65 @@
       }
     }
 
+    &.btn_has-dropdown_sm {
+      font-size: 1.5rem;
+      line-height: 1.5rem;
+      min-height: 3.4rem;
+      width: 28rem;
+
+      > a, > span {
+        display: block;
+        float: left;
+        line-height: 3.4rem;
+        .ellipsis;
+
+        
+        &.direct-link {
+          width: calc(~'100% - 43px');
+        }
+
+        &.dropdown-toggle {
+          width: 4.3rem;
+          border-left: .1rem solid rgba(255, 255, 255, 0.3);
+        } 
+      }
+    }
+
+    &.btn_has-dropdown_smd {
+      font-size: 1.5rem;
+      line-height: 1.5rem;
+      min-height: 4rem;
+      min-width: 14rem;
+
+      > a, > span {
+        display: block;
+        float: left;
+        line-height: 4rem;
+        .ellipsis;
+
+        
+        &.direct-link {
+          width: calc(~'100% - 30px');
+        }
+
+        &.dropdown-toggle {
+          width: 3rem;
+          border-left: .1rem solid rgba(255, 255, 255, 0.3);
+        } 
+
+        .material-icons {
+          line-height: 2rem;
+        }
+      }
+    }
+
     &.btn_has-dropdown_md {
       font-size: 1.5rem;
       line-height: 1.5rem;
       min-height: 4.7rem;
       min-width: 14rem;
 
-      > a {
+      > a, > span {
         display: block;
         float: left;
         line-height: 4.7rem;
@@ -333,7 +418,6 @@
           border-left: .1rem solid rgba(255, 255, 255, 0.3);
         } 
       }
-
     }
 
     &.btn_has-dropdown_lg {
@@ -343,7 +427,7 @@
       min-width: 19.5rem;
       max-width: 20.5rem;
 
-      > a {
+      > a, > span {
         display: block;
         float: left;
         line-height: 5.6rem;
@@ -365,7 +449,7 @@
       min-height: 8rem;
       width: 28rem;
 
-      > a {
+      > a, > span {
         display: block;
         float: left;
         line-height: 8rem;
@@ -511,6 +595,11 @@
   &.badge_lll_gray {
     background: @theme-lightest-gray-color;
     color: @base-font-color;
+  }
+
+  &.badge_complete {
+    color: #fff;
+    background: @theme-checkout-complete;
   }
 
   &.badge-hidden {

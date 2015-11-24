@@ -13,7 +13,7 @@
 
     .chosen-single {
       color: @base-font-color;
-      padding: .6rem 1.4rem;
+      padding: .6rem 1.4rem .5rem;
       box-shadow: none;
       background: transparent;
       height: auto;
@@ -56,7 +56,11 @@
       outline: 0;
       border: 0.1rem solid #ebebeb;
       box-shadow: 0 1px 5px rgba(0,0,0,.15);
+    }
+  }
 
+  &.chosen-with-drop {
+    .chosen-single {
       div {
 
         b {
@@ -64,12 +68,12 @@
         }
       }
     }
-  }
 
-  &.chosen-with-drop {
     .chosen-drop {
       border: 0.1rem solid @base-border-color;
       border-top: 0;
+      width: auto;
+      min-width: 100%;
       box-shadow: 0 3px 5px rgba(0,0,0,.15);
     }
   }
@@ -110,3 +114,109 @@
   }
 }
 
+/*Order Filter*/
+.action-selectbox_custom {
+
+  &.disabled {
+
+    .chosen-container {
+      &.chosen-container-single {
+        .chosen-single {
+          border: .1rem solid @base-border-color;
+
+          span {
+            color: @base-font-color-lightest;
+          }
+
+          div {
+            b {
+              &:before {
+               border-top-color: #bbb;
+             }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .chosen-container {
+    background: rgb(255,255,255);
+    background: -moz-linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(230,230,230,1) 100%);
+    background: -webkit-gradient(linear, to bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(230,230,230,1))); 
+    background: -webkit-linear-gradient(to bottom, rgba(255,255,255,1) 0%,rgba(230,230,230,1) 100%);
+    background: -o-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(230,230,230,1) 100%); 
+    background: -ms-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(230,230,230,1) 100%);
+    background: linear-gradient(to bottom, rgba(255,255,255,1) 0%,rgba(230,230,230,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e6e6e6',GradientType=0 );
+    
+    &.chosen-container-single {
+      .chosen-single {
+        border: .1rem solid #d6d6d6;
+        padding: .3rem 1.4rem;
+
+        span {
+          text-transform: none;
+        }
+
+        div {
+          b {
+            transform: rotate(0);
+          }
+        }
+      }
+    }
+
+    &.chosen-with-drop {
+      .chosen-single {
+        div {
+          b {
+            transform: rotate(180deg);
+          }
+        }
+      }
+    }
+
+    .chosen-results {
+      li {
+        text-transform: none;
+        &.highlighted {
+          background: @theme-blue-color;
+        }
+      }
+    }
+  }
+}
+
+.action-selectbox_custom_in-pager {
+  .chosen-container {
+    background: rgb(255,255,255);
+    background: -moz-linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(230,230,230,1) 100%);
+    background: -webkit-gradient(linear, to bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(230,230,230,1))); 
+    background: -webkit-linear-gradient(to bottom, rgba(255,255,255,1) 0%,rgba(230,230,230,1) 100%);
+    background: -o-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(230,230,230,1) 100%); 
+    background: -ms-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(230,230,230,1) 100%);
+    background: linear-gradient(to bottom, rgba(255,255,255,1) 0%,rgba(230,230,230,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e6e6e6',GradientType=0 );
+    
+    &.chosen-container-single {
+      .chosen-single {
+        padding: .3rem .7rem; 
+
+        span {
+          margin-right: 16px;
+          font-weight: 700;
+        }
+
+        div {
+          width: 2.5rem;
+        }
+      }
+    }
+
+    .chosen-results li {
+      padding: .5rem 1rem;
+      text-align: left !important;
+    }
+  }
+}

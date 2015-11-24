@@ -17,6 +17,7 @@
   }
 
   &.sticky-widget__filter {
+
     &.sticked {
       height: auto;
       box-shadow: none;
@@ -55,6 +56,52 @@
         }
       }
     }
+  }
+
+  &.sticky-widget__cart {
+
+    &.sticked {
+      height: auto;
+      box-shadow: none;
+      border-bottom: .1rem solid @base-border-color;
+      top: 5.4rem;
+      padding: 1.2rem 0;
+      background: #f7f7f7;
+      z-index: 98;
+    }
+  }
+}
+
+.sticky-widget__cart__container {
+  margin: 0 -1.5rem;
+
+  &:before, &:after {
+    content: "";
+    display: block;
+    height: 0;
+    clear: both;
+  }
+}
+
+.sticky-widget__cart__container_col {
+  float: left;
+  width: 50%;
+  padding: 0 1.5rem;
+}
+
+.sticky-widget__cart__checkout-btns {
+  font-size: 0;
+  line-height: 3.4rem;
+}
+
+.sticky-widget__cart__checkout {
+  font-size: 0;
+  text-align: right;
+  line-height: 3.4rem;
+
+  span {
+    vertical-align: middle;
+    margin-right: 2rem;
   }
 }
 

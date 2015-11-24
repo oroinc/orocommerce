@@ -23,6 +23,14 @@
   }
 }
 
+.b_paddingless_md {
+  td, th {
+    @media (min-width: 992px) {
+      padding-bottom: 0 !important;
+    }
+  }
+}
+
 .b-padding10 {
   td, th {
     padding-bottom: 1rem !important;
@@ -51,12 +59,32 @@
   width: 8rem !important;
 }
 
+.w90 {
+  width: 9rem !important;
+}
+
 .w100 {
   width: 10rem !important;
 }
 
+.w120 {
+  width: 12rem !important;
+}
+
+.w130 {
+  width: 13rem !important;
+}
+
+.w140 {
+  width: 14rem !important;
+}
+
 .w170 {
   width: 17rem !important;
+}
+
+.w200 {
+  width: 20rem !important;
 }
 
 .w300 {
@@ -86,7 +114,7 @@
   .generate-margin-helpers((@i - 1), @param, @position, @size);
 
   .m@{param}@{i}-@{size} {
-    margin-@{position}: unit(@i, rem) !important;
+    /*margin-@{position}: unit(@i, rem) !important;*/
   }
 }
 
@@ -109,7 +137,7 @@
   .generate-micro-margin-helpers((@i - 0.1), (@n - 1), @param, @position, @size);
 
   .mm@{param}@{n}-@{size} {
-    margin-@{position}: unit(@i, rem) !important;
+    /*margin-@{position}: unit(@i, rem) !important;*/
   }
 }
 
@@ -132,7 +160,7 @@
   .generate-negative-micro-margin-helpers((@i - 0.1), (@n - 1), @param, @position, @size);
 
   .nmm@{param}@{n}-@{size} {
-    margin-@{position}: unit(-@i, rem) !important;
+    /*margin-@{position}: unit(-@i, rem) !important;*/
   }
 }
 
@@ -274,6 +302,12 @@ a.red {
     border-bottom: .1rem solid @base-border-color;
     border-top: .1rem solid @base-border-color;
     padding: 2rem 0;
+  }
+
+  &.buttons-flex-container_equal-btns {
+    .btn {
+      flex-basis: 50%;
+    }
   }
 
   .btn {
