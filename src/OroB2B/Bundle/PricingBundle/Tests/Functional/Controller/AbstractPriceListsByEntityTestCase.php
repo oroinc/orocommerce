@@ -74,6 +74,12 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         );
         $form = $this->getUpdateForm();
         $formValues = $form->getValues();
+        $priceListsIds = array_map(
+            function (PriceList $priceList) {
+                return $priceList->getId();
+            },
+            $this->priceLists
+        );
         foreach ($this->websites as $website) {
             $i = 0;
             foreach ($this->priceLists as $priceList) {
@@ -81,7 +87,7 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
                 $collectionElementPath = sprintf('%s[%d][%d]', $this->formExtensionPath, $website->getId(), $i);
                 $this->assertTrue(isset($formValues[sprintf('%s[priceList]', $collectionElementPath)]));
                 $this->assertTrue(isset($formValues[sprintf('%s[priority]', $collectionElementPath)]));
-                $this->assertEquals($formValues[sprintf('%s[priceList]', $collectionElementPath)], $priceList->getId());
+                $this->assertContains((int)$formValues[sprintf('%s[priceList]', $collectionElementPath)], $priceListsIds);
                 $this->assertEquals($formValues[sprintf('%s[priority]', $collectionElementPath)], ++$i);
             }
         }
