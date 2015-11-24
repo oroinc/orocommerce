@@ -7,8 +7,10 @@ use Oro\Bundle\AttachmentBundle\Entity\File;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 /**
- * @method File getImage()
- * @method Category setImage(File $image)
+ * @method File getSmallImage()
+ * @method Category setSmallImage(File $smallImage)
+ * @method File getLargeImage()
+ * @method Category setLargeImage(File $largeImage)
  */
 class ExtendCategory
 {

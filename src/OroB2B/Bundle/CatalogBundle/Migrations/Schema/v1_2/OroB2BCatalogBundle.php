@@ -47,7 +47,9 @@ class OroB2BCatalogBundle implements Migration, AttachmentExtensionAwareInterfac
             self::ORO_B2B_CATALOG_CATEGORY_TABLE_NAME,
             $fieldName,
             [],
-            self::MAX_CATEGORY_IMAGE_SIZE_IN_MB
+            self::MAX_CATEGORY_IMAGE_SIZE_IN_MB,
+            self::THUMBNAIL_WIDTH_SIZE_IN_PX,
+            self::THUMBNAIL_HEIGHT_SIZE_IN_PX
         );
     }
 }
