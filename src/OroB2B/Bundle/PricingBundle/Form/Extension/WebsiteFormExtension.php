@@ -44,7 +44,6 @@ class WebsiteFormExtension extends AbstractTypeExtension
         $this->priceListToWebsiteClass = $priceListToWebsiteClass;
     }
 
-
     /**
      * {@inheritdoc}
      */
@@ -62,7 +61,7 @@ class WebsiteFormExtension extends AbstractTypeExtension
                 'allow_add' => true,
                 'error_bubbling' => false,
                 'attr' => [
-                        'class' => 'price_lists_collection'
+                    'class' => 'price_lists_collection'
                 ],
                 'constraints' => [
                     new UniquePriceList()
