@@ -4,18 +4,24 @@ namespace Oro\Bundle\ActionBundle\Model;
 
 use Oro\Bundle\ActionBundle\Exception\MissedRequiredOptionException;
 
+use Oro\Bundle\WorkflowBundle\Model\Action\ActionFactory as FunctionFactory;
 use Oro\Component\ConfigExpression\ExpressionFactory as ConditionFactory;
 
 class ActionAssembler
 {
+    /** @var FunctionFactory */
+    private $functionFactory;
+
     /** @var ConditionFactory */
     private $conditionFactory;
 
     /**
+     * @param FunctionFactory $functionFactory
      * @param ConditionFactory $conditionFactory
      */
-    public function __construct(ConditionFactory $conditionFactory)
+    public function __construct(FunctionFactory $functionFactory, ConditionFactory $conditionFactory)
     {
+        $this->functionFactory = $functionFactory;
         $this->conditionFactory = $conditionFactory;
     }
 
@@ -29,7 +35,7 @@ class ActionAssembler
 
         foreach ($configuration as $actionName => $options) {
             $definition = $this->assembleDefinition($actionName, $options);
-            $actions[$actionName] = new Action($this->conditionFactory, $definition);
+            $actions[$actionName] = new Action($this->functionFactory, $this->conditionFactory, $definition);
         }
 
         return $actions;
@@ -56,7 +62,8 @@ class ActionAssembler
             ->setFrontendOptions($this->getOption($options, 'frontend_options', []))
             ->setAttributes($this->getOption($options, 'attributes', []))
             ->setFormOptions($this->getOption($options, 'form_options', []))
-            ->setPreConditions($this->getOption($options, 'pre_conditions', []))
+            ->setPreFunctions($this->getOption($options, 'prefunctions', []))
+            ->setPreConditions($this->getOption($options, 'preconditions', []))
             ->setConditions($this->getOption($options, 'conditions', []))
             ->setInitStep($this->getOption($options, 'init_step', []))
             ->setExecutionStep($this->getOption($options, 'execution_step', []));

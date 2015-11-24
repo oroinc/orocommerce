@@ -5,6 +5,8 @@ namespace Oro\Bundle\ActionBundle\Tests\Unit\Model;
 use Oro\Bundle\ActionBundle\Model\Action;
 use Oro\Bundle\ActionBundle\Model\ActionContext;
 use Oro\Bundle\ActionBundle\Model\ActionDefinition;
+use Oro\Bundle\WorkflowBundle\Model\Action\ActionFactory as FunctionFactory;
+use Oro\Bundle\WorkflowBundle\Model\Action\Configurable as ConfigurableAction;
 use Oro\Bundle\WorkflowBundle\Model\Condition\Configurable as ConfigurableCondition;
 
 use Oro\Component\ConfigExpression\ExpressionFactory;
@@ -13,6 +15,9 @@ class ActionTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \PHPUnit_Framework_MockObject_MockObject|ActionDefinition $definition */
     protected $definition;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|FunctionFactory $functionFactory */
+    protected $functionFactory;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|ExpressionFactory $conditionFactory */
     protected $conditionFactory;
@@ -29,11 +34,15 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->functionFactory = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Action\ActionFactory')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->conditionFactory = $this->getMockBuilder('Oro\Component\ConfigExpression\ExpressionFactory')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->action = new Action($this->conditionFactory, $this->definition);
+        $this->action = new Action($this->functionFactory, $this->conditionFactory, $this->definition);
         $this->context = new ActionContext();
     }
 
@@ -52,8 +61,8 @@ class ActionTest extends \PHPUnit_Framework_TestCase
         $this->conditionFactory->expects(static::never())
             ->method(static::anything());
 
-        static::assertTrue($this->action->isApplicable($this->context));
-        static::assertTrue($this->action->isAllowed($this->context));
+        static::assertTrue($this->action->isPreConditionAllowed($this->context));
+        static::assertTrue($this->action->isConditionAllowed($this->context));
     }
 
     public function testIsApplicableIsAllowedNoConditions()
@@ -67,11 +76,11 @@ class ActionTest extends \PHPUnit_Framework_TestCase
         $this->conditionFactory->expects(static::never())
             ->method(static::anything());
 
-        static::assertTrue($this->action->isApplicable($this->context));
-        static::assertTrue($this->action->isAllowed($this->context));
+        static::assertTrue($this->action->isPreConditionAllowed($this->context));
+        static::assertTrue($this->action->isConditionAllowed($this->context));
     }
 
-    public function testIsApplicable()
+    public function testIsConditionAllowed()
     {
         $this->context['data'] = new \stdClass();
         $conditions = [
@@ -82,7 +91,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $condition->expects(static::any())
             ->method('evaluate')
-            ->with($this->context->getEntity())
+            ->with($this->context)
             ->willReturn(false);
 
         $this->definition->expects(static::once())
@@ -91,36 +100,57 @@ class ActionTest extends \PHPUnit_Framework_TestCase
 
         $this->conditionFactory->expects(static::once())
             ->method('create')
-            ->with(ConfigurableCondition::ALIAS, $conditions[0])
+            ->with(ConfigurableCondition::ALIAS, $conditions)
             ->willReturn($condition);
 
-        static::assertFalse($this->action->isApplicable($this->context));
+        static::assertFalse($this->action->isConditionAllowed($this->context));
     }
 
-    public function testIsAllowed()
+    public function testIsPreConditionAllowed()
     {
         $this->context['data'] = new \stdClass();
+        $functions = [
+            ['testFunction' => []],
+        ];
+
         $conditions = [
             ['test' => []],
         ];
+
+        $function = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Action\ActionInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $function->expects(static::once())
+            ->method('execute')
+            ->with($this->context);
+
         $condition = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Condition\Configurable')
             ->disableOriginalConstructor()
             ->getMock();
-        $condition->expects(static::any())
+        $condition->expects(static::once())
             ->method('evaluate')
-            ->with($this->context->getEntity())
+            ->with($this->context)
             ->willReturn(false);
+
+        $this->definition->expects(static::once())
+            ->method('getPreFunctions')
+            ->willReturn($functions);
 
         $this->definition->expects(static::once())
             ->method('getPreConditions')
             ->willReturn($conditions);
 
+        $this->functionFactory->expects(static::once())
+            ->method('create')
+            ->with(ConfigurableAction::ALIAS, $functions)
+            ->willReturn($function);
+
         $this->conditionFactory->expects(static::once())
             ->method('create')
-            ->with(ConfigurableCondition::ALIAS, $conditions[0])
+            ->with(ConfigurableCondition::ALIAS, $conditions)
             ->willReturn($condition);
 
-        static::assertFalse($this->action->isAllowed($this->context));
+        static::assertFalse($this->action->isPreConditionAllowed($this->context));
     }
 
     public function testGetDefinition()

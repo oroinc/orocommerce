@@ -95,7 +95,7 @@ class ActionManager
         }
 
         $actions = array_filter($actions, function (Action $action) use ($actionContext) {
-            return $action->isEnabled() && $action->isAllowed($actionContext);
+            return $action->isEnabled() && $action->isPreConditionAllowed($actionContext);
         });
 
         uasort($actions, function (Action $action1, Action $action2) {
@@ -110,7 +110,7 @@ class ActionManager
         if ($this->entities !== null || $this->routes !== null) {
             return;
         }
-        
+
         $this->routes = [];
         $this->entities = [];
 
@@ -135,7 +135,7 @@ class ActionManager
             $entity = $this->getEntityReference($context['entityClass'], $context['entityId']);
         }
 
-        return new ActionContext($entity ? ['entity' => $entity] : []);
+        return new ActionContext($entity ? ['data' => $entity] : []);
     }
 
     /**
@@ -154,7 +154,31 @@ class ActionManager
     protected function mapActionEntities(Action $action)
     {
         foreach ($action->getDefinition()->getEntities() as $entityName) {
-            $this->entities[$entityName][$action->getName()] = $action;
+            if (false === ($className = $this->getEntityClassName($entityName))) {
+                continue;
+            }
+            $this->entities[$className][$action->getName()] = $action;
+        }
+    }
+
+    /**
+     * @param string $entityName
+     * @return string|bool
+     */
+    protected function getEntityClassName($entityName)
+    {
+        try {
+            $entityClass = $this->doctrineHelper->getEntityClass($entityName);
+
+            if (!class_exists($entityClass, true)) {
+                return false;
+            }
+
+            $reflection = new \ReflectionClass($entityClass);
+
+            return $reflection->getName();
+        } catch (\Exception $e) {
+            return false;
         }
     }
 

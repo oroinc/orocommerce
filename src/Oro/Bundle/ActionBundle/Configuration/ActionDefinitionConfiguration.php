@@ -61,6 +61,14 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
                 ->booleanNode('enabled')
                     ->defaultTrue()
                 ->end()
+                ->arrayNode('prefunctions')
+                    ->prototype('variable')
+                    ->end()
+                ->end()
+                ->arrayNode('preconditions')
+                    ->prototype('variable')
+                    ->end()
+                ->end()
                 ->append($this->getFrontendOptionsNode())
             ->end();
 
