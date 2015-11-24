@@ -52,7 +52,7 @@ class WebsiteControllerTest extends WebTestCase
         $form->remove($this->formExtensionPath);
         $this->client->submit($form);
         $form = $this->getUpdateForm();
-//        todo: uncomment after fix bug
+//        todo: uncomment after fix bug with empty forms
 //        $this->assertFalse(isset($form[$this->formExtensionPath]));
         $this->assertCount(0, $this->getPriceListsByWebsite());
     }
@@ -105,6 +105,42 @@ class WebsiteControllerTest extends WebTestCase
             $this->assertContains($priceList->getName(), $html);
             $this->assertContains((string)++$i, $html);
         }
+    }
+
+    public function testValidation()
+    {
+        $form = $this->getUpdateForm();
+        $formValues = $form->getValues();
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference('price_list_1');
+        $collectionElementPath1 = sprintf('%s[%d]', $this->formExtensionPath, 0);
+        $collectionElementPath2 = sprintf('%s[%d]', $this->formExtensionPath, 1);
+        $formValues[sprintf('%s[priceList]', $collectionElementPath1)] = $priceList->getId();
+        $formValues[sprintf('%s[priority]', $collectionElementPath1)] = '';
+        $this->checkValidationMessage($formValues, 'This value should not be blank');
+        $formValues[sprintf('%s[priority]', $collectionElementPath1)] = 'not_integer';
+        $this->checkValidationMessage($formValues, 'This value should be integer number');
+        $formValues[sprintf('%s[priority]', $collectionElementPath1)] = 1;
+        $formValues[sprintf('%s[priceList]', $collectionElementPath2)] = $priceList->getId();
+        $formValues[sprintf('%s[priority]', $collectionElementPath2)] = 2;
+        $this->checkValidationMessage($formValues, 'Duplicate price list');
+    }
+
+    /**
+     * @param array $formValues
+     * @param $message
+     */
+    protected function checkValidationMessage(array $formValues, $message)
+    {
+        $params = $this->explodeArrayPaths($formValues);
+        $crawler = $this->client->request(
+            'POST',
+            $this->getUrl('orob2b_website_update', ['id' => $this->website->getId()]),
+            $params
+        );
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertContains($message, $crawler->html());
     }
 
     /**

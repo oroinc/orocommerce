@@ -118,9 +118,25 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         $website = $this->getReference('Canada');
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_1');
-        $collectionElementPath = sprintf('%s[%d][%d]', $this->formExtensionPath, $website->getId(), 0);
-        $formValues[sprintf('%s[priceList]', $collectionElementPath)] = $priceList->getId();
-        $formValues[sprintf('%s[priority]', $collectionElementPath)] = '';
+        $collectionElementPath1 = sprintf('%s[%d][%d]', $this->formExtensionPath, $website->getId(), 0);
+        $collectionElementPath2 = sprintf('%s[%d][%d]', $this->formExtensionPath, $website->getId(), 1);
+        $formValues[sprintf('%s[priceList]', $collectionElementPath1)] = $priceList->getId();
+        $formValues[sprintf('%s[priority]', $collectionElementPath1)] = '';
+        $this->checkValidationMessage($formValues, 'This value should not be blank');
+        $formValues[sprintf('%s[priority]', $collectionElementPath1)] = 'not_integer';
+        $this->checkValidationMessage($formValues, 'This value should be integer number');
+        $formValues[sprintf('%s[priority]', $collectionElementPath1)] = 1;
+        $formValues[sprintf('%s[priceList]', $collectionElementPath2)] = $priceList->getId();
+        $formValues[sprintf('%s[priority]', $collectionElementPath2)] = 2;
+        $this->checkValidationMessage($formValues, 'Duplicate price list');
+    }
+
+    /**
+     * @param array $formValues
+     * @param $message
+     */
+    protected function checkValidationMessage(array $formValues, $message)
+    {
         $params = $this->explodeArrayPaths($formValues);
         $crawler = $this->client->request(
             'POST',
@@ -129,7 +145,7 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('This value should not be blank', $crawler->html());
+        $this->assertContains($message, $crawler->html());
     }
 
     /**
