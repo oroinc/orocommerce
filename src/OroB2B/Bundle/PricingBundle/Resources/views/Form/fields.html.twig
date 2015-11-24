@@ -40,14 +40,12 @@
     <div class="float-holder" data-page-component-module="orob2bpricing/js/app/components/price-lists-errors-handler">
         <table>
             <tr>
-                <td class="price-list">
-                    {{ form_widget(form.priceList) }}
-                    {{ form_errors(form.priceList) }}
-                </td>
-                <td>
-                    {{ form_widget(form.priority, { 'attr': {'class': 'priority'} }) }}
-                    {{ form_errors(form.priority) }}
-                </td>
+                <td>{{ form_label(form.priceList) }}{{ form_widget(form.priceList) }}</td>
+                <td>{{ form_label(form.priority) }}{{ form_widget(form.priority, { 'attr': {'class': 'priority'} }) }}</td>
+            </tr>
+            <tr>
+                <td>{{ form_errors(form.priceList) }}</td>
+                <td>{{ form_errors(form.priority) }}</td>
             </tr>
         </table>
     </div>

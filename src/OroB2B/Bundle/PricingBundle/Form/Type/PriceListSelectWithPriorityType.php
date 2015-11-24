@@ -6,6 +6,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer;
+
 class PriceListSelectWithPriorityType extends AbstractType
 {
     const NAME = 'orob2b_pricing_price_list_select_with_priority';
@@ -27,11 +29,15 @@ class PriceListSelectWithPriorityType extends AbstractType
                     'constraints' => [new NotBlank()]
                 ]
             )
-            ->add('priority', 'text', [
-                'required' => false,
-                'constraints' => [new NotBlank()]
-            ])
-        ;
+            ->add(
+                'priority',
+                'text',
+                [
+                    'required' => true,
+                    'label' => 'orob2b.pricing.pricelist.priority_label',
+                    'constraints' => [new NotBlank(), new Integer()],
+                ]
+            );
     }
 
     /**

@@ -10,6 +10,9 @@ use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccount;
+use OroB2B\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
@@ -72,14 +75,27 @@ class FormViewListenerTest extends FormViewListenerTestCase
     }
 
     /**
-     * @param bool $isPriceListExist
+     * @param bool $isPriceListsExist
      * @dataProvider viewDataProvider
      */
-    public function testOnAccountView($isPriceListExist)
+    public function testOnAccountView($isPriceListsExist)
     {
         $accountId = 1;
         $account = new Account();
-        $priceList = new PriceList();
+        $websiteId1 = 12;
+        $websiteId2 = 13;
+        /** @var Website $website1 */
+        $website1 = $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', $websiteId1);
+        /** @var Website $website2 */
+        $website2 = $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', $websiteId2);
+
+        $priceListToAccount1 = new PriceListToAccount();
+        $priceListToAccount1->setAccount($account);
+        $priceListToAccount1->setWebsite($website1);
+        $priceListToAccount1->setPriority(3);
+        $priceListToAccount2 = clone $priceListToAccount1;
+        $priceListToAccount2->setWebsite($website2);
+        $priceListsToAccount = [$priceListToAccount1, $priceListToAccount2];
         $templateHtml = 'template_html';
 
         $request = new Request(['id' => $accountId]);
@@ -90,13 +106,15 @@ class FormViewListenerTest extends FormViewListenerTestCase
         /** @var FormViewListener $listener */
         $listener = $this->getListener($requestStack);
 
-        $priceRepository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository')
+        $priceToAccountRepository = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository')
             ->disableOriginalConstructor()
             ->getMock();
-        $priceRepository->expects($this->once())
-            ->method('getPriceListByAccount')
-            ->with($account)
-            ->willReturn($isPriceListExist ? $priceList : null);
+
+        $priceToAccountRepository->expects($this->once())
+            ->method('findBy')
+            ->with(['account' => $account])
+            ->willReturn($isPriceListsExist ? $priceListsToAccount : null);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
@@ -104,24 +122,38 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->willReturn($account);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
-            ->with('OroB2BPricingBundle:PriceList')
-            ->willReturn($priceRepository);
+            ->with('OroB2BPricingBundle:PriceListToAccount')
+            ->willReturn($priceToAccountRepository);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
         $environment = $this->getMock('\Twig_Environment');
-        $environment->expects($isPriceListExist ? $this->once() : $this->never())
+        $environment->expects($isPriceListsExist ? $this->once() : $this->never())
             ->method('render')
-            ->with('OroB2BPricingBundle:Account:price_list_view.html.twig', ['priceList' => $priceList])
+            ->with(
+                'OroB2BPricingBundle:Account:price_list_view.html.twig',
+                ['priceListsByWebsites' =>
+                    [
+                        $websiteId1 => [
+                            'priceLists' => [$priceListToAccount1],
+                            'website' => $website1
+                        ],
+                        $websiteId2 => [
+                            'priceLists' => [$priceListToAccount2],
+                            'website' => $website2
+                        ],
+                    ]
+                ]
+            )
             ->willReturn($templateHtml);
 
         $event = $this->createEvent($environment);
         $listener->onAccountView($event);
         $scrollData = $event->getScrollData()->getData();
 
-        if ($isPriceListExist) {
+        if ($isPriceListsExist) {
             $this->assertEquals(
                 [$templateHtml],
-                $scrollData[ScrollData::DATA_BLOCKS][0][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
+                $scrollData[ScrollData::DATA_BLOCKS][1][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
             );
         } else {
             $this->assertEmpty($scrollData[ScrollData::DATA_BLOCKS][0][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]);
@@ -129,14 +161,27 @@ class FormViewListenerTest extends FormViewListenerTestCase
     }
 
     /**
-     * @param bool $isPriceListExist
+     * @param bool $isPriceListsExist
      * @dataProvider viewDataProvider
      */
-    public function testOnAccountGroupView($isPriceListExist)
+    public function testOnAccountGroupView($isPriceListsExist)
     {
         $accountGroupId = 1;
         $accountGroup = new AccountGroup();
-        $priceList = new PriceList();
+        $websiteId1 = 12;
+        $websiteId2 = 13;
+        /** @var Website $website1 */
+        $website1 = $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', $websiteId1);
+        /** @var Website $website2 */
+        $website2 = $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', $websiteId2);
+
+        $priceListToAccountGroup1 = new PriceListToAccountGroup();
+        $priceListToAccountGroup1->setAccountGroup($accountGroup);
+        $priceListToAccountGroup1->setWebsite($website1);
+        $priceListToAccountGroup1->setPriority(3);
+        $priceListToAccountGroup2 = clone $priceListToAccountGroup1;
+        $priceListToAccountGroup2->setWebsite($website2);
+        $priceListsToAccount = [$priceListToAccountGroup1, $priceListToAccountGroup2];
         $templateHtml = 'template_html';
 
         $request = new Request(['id' => $accountGroupId]);
@@ -147,13 +192,15 @@ class FormViewListenerTest extends FormViewListenerTestCase
         /** @var FormViewListener $listener */
         $listener = $this->getListener($requestStack);
 
-        $priceRepository = $this->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository')
+        $priceToAccountGroupRepository = $this
+            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListToAccountGroupRepository')
             ->disableOriginalConstructor()
             ->getMock();
-        $priceRepository->expects($this->once())
-            ->method('getPriceListByAccountGroup')
-            ->with($accountGroup)
-            ->willReturn($isPriceListExist ? $priceList : null);
+
+        $priceToAccountGroupRepository->expects($this->once())
+            ->method('findBy')
+            ->with(['accountGroup' => $accountGroup])
+            ->willReturn($isPriceListsExist ? $priceListsToAccount : null);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
@@ -161,24 +208,38 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->willReturn($accountGroup);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
-            ->with('OroB2BPricingBundle:PriceList')
-            ->willReturn($priceRepository);
+            ->with('OroB2BPricingBundle:PriceListToAccountGroup')
+            ->willReturn($priceToAccountGroupRepository);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
         $environment = $this->getMock('\Twig_Environment');
-        $environment->expects($isPriceListExist ? $this->once() : $this->never())
+        $environment->expects($isPriceListsExist ? $this->once() : $this->never())
             ->method('render')
-            ->with('OroB2BPricingBundle:Account:price_list_view.html.twig', ['priceList' => $priceList])
+            ->with(
+                'OroB2BPricingBundle:Account:price_list_view.html.twig',
+                ['priceListsByWebsites' =>
+                    [
+                        $websiteId1 => [
+                            'priceLists' => [$priceListToAccountGroup1],
+                            'website' => $website1
+                        ],
+                        $websiteId2 => [
+                            'priceLists' => [$priceListToAccountGroup2],
+                            'website' => $website2
+                        ],
+                    ]
+                ]
+            )
             ->willReturn($templateHtml);
 
         $event = $this->createEvent($environment);
         $listener->onAccountGroupView($event);
         $scrollData = $event->getScrollData()->getData();
 
-        if ($isPriceListExist) {
+        if ($isPriceListsExist) {
             $this->assertEquals(
                 [$templateHtml],
-                $scrollData[ScrollData::DATA_BLOCKS][0][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
+                $scrollData[ScrollData::DATA_BLOCKS][1][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
             );
         } else {
             $this->assertEmpty($scrollData[ScrollData::DATA_BLOCKS][0][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]);
@@ -207,7 +268,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         $this->assertEquals(
             [$templateHtml],
-            $scrollData[ScrollData::DATA_BLOCKS][0][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
+            $scrollData[ScrollData::DATA_BLOCKS][1][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
         );
     }
 
