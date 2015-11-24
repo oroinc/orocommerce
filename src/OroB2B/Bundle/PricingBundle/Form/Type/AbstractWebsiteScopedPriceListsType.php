@@ -162,8 +162,10 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         array $priceListWithPriorityData,
         array $actualPriceListsToTargetEntity
     ) {
-        /** @var PriceList $priceList */
         $priceList = $priceListWithPriorityData['priceList'];
+        if (!$priceList instanceof PriceList) {
+            return;
+        }
         if (in_array($priceList->getId(), array_keys($actualPriceListsToTargetEntity))) {
             /** @var BasePriceListRelation $priceListToTargetEntity */
             $priceListToTargetEntity = $actualPriceListsToTargetEntity[$priceList->getId()];
