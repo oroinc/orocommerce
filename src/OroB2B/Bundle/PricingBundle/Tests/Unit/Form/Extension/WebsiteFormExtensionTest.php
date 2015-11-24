@@ -2,18 +2,15 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
-use OroB2B\Bundle\PricingBundle\Validator\Constraints\UniquePriceList;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\Test\FormInterface;
 
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-
 use OroB2B\Bundle\PricingBundle\Form\Extension\WebsiteFormExtension;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
 
 class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -52,24 +49,10 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 WebsiteFormExtension::PRICE_LISTS_TO_WEBSITE_FIELD,
-                CollectionType::NAME,
+                PriceListCollectionType::NAME,
                 [
-                    'label' => false,
-                    'type' => PriceListSelectWithPriorityType::NAME,
-                    'options' => [
-                        'error_bubbling' => false,
-                    ],
-                    'handle_primary' => false,
                     'allow_add_after' => false,
                     'allow_add' => true,
-                    'error_bubbling' => false,
-                    'attr' => [
-                        'class' => 'price_lists_collection'
-                    ],
-                    'constraints' => [
-                        new UniquePriceList()
-                    ],
-                    'mapped' => false,
                     'required' => false
                 ]
             );

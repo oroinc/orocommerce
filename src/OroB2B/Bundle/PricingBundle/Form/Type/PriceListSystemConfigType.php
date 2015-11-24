@@ -6,10 +6,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-
-use OroB2B\Bundle\PricingBundle\Validator\Constraints\UniquePriceList;
-
 class PriceListSystemConfigType extends AbstractType
 {
     const NAME = 'orob2b_pricing_price_list_system_config';
@@ -36,22 +32,16 @@ class PriceListSystemConfigType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add(self::COLLECTION_FIELD_NAME, CollectionType::NAME, [
-                'label' => false,
+            ->add(self::COLLECTION_FIELD_NAME, PriceListCollectionType::NAME, [
                 'type' => PriceListSelectWithPriorityType::NAME,
                 'options' => [
                     'data_class' => $this->priceListConfigClassName,
-                    'error_bubbling' => false,
                 ],
-                'handle_primary' => false,
                 'allow_add_after' => false,
                 'allow_add' => true,
-                'error_bubbling' => false,
+                'mapped' => true,
                 'attr' => [
                     'class' => 'price_lists_collection'
-                ],
-                'constraints' => [
-                    new UniquePriceList()
                 ]
             ]);
     }

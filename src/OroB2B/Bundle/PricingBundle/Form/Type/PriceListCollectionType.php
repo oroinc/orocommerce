@@ -7,6 +7,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
+use OroB2B\Bundle\PricingBundle\Validator\Constraints\UniquePriceList;
+
 class PriceListCollectionType extends AbstractType
 {
     const NAME = 'orob2b_pricing_price_list_collection';
@@ -24,6 +26,9 @@ class PriceListCollectionType extends AbstractType
                 'mapped' => false,
                 'label' => false,
                 'handle_primary' => false,
+                'constraints' => [
+                    new UniquePriceList()
+                ]
             ]
         );
     }
