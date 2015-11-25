@@ -41,9 +41,6 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
     /** @var ProductRepository */
     protected $productRepository;
 
-    /** @var array */
-    protected $data;
-
     /**
      * @param RequestStack $requestStack
      * @param ProductDataStorage $storage
@@ -60,7 +57,6 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
         $this->storage = $storage;
         $this->doctrineHelper = $doctrineHelper;
         $this->productClass = $productClass;
-        $this->data = [];
     }
 
     /**
@@ -93,7 +89,6 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
     protected function fillData($entity)
     {
         $data = $this->storage->get();
-        $this->data = $data;
         $this->storage->remove();
 
         if (!$data) {
@@ -122,9 +117,7 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
     {
         $repository = $this->getProductRepository();
         foreach ($itemsData as $dataRow) {
-            if (!array_key_exists(ProductDataStorage::PRODUCT_SKU_KEY, $dataRow) ||
-                !array_key_exists(ProductDataStorage::PRODUCT_QUANTITY_KEY, $dataRow)
-            ) {
+            if (!array_key_exists(ProductDataStorage::PRODUCT_SKU_KEY, $dataRow)) {
                 continue;
             }
 

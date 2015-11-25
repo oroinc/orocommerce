@@ -23,7 +23,30 @@ class OrderController extends Controller
      */
     public function createAction(RFPRequest $request)
     {
-        $this->get('orob2b_rfp.service.product_data_storage')->saveToStorage($request);
+        $data = [
+            ProductDataStorage::ENTITY_DATA_KEY => [
+                'accountUser' => $request->getAccountUser()->getId(),
+                'account' => $request->getAccount()->getId(),
+            ],
+        ];
+
+        foreach ($request->getRequestProducts() as $lineItem) {
+            $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = [
+                ProductDataStorage::PRODUCT_SKU_KEY => $lineItem->getProduct()->getSku(),
+            ];
+
+            $offers = [];
+            foreach ($lineItem->getRequestProductItems() as $productItem) {
+                $offers[] = [
+                    'quantity' => $productItem->getQuantity(),
+                    'unit' => $productItem->getProductUnit()->getCode(),
+                    'currency' => $productItem->getPrice() ? $productItem->getPrice()->getCurrency() : null,
+                    'price' => $productItem->getPrice() ? $productItem->getPrice()->getValue() : 0,
+                ];
+            }
+        }
+
+        $this->get('orob2b_product.service.product_data_storage')->set($data);
 
         return $this->redirectToRoute('orob2b_order_create', [ProductDataStorage::STORAGE_KEY => true]);
     }

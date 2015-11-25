@@ -2,87 +2,56 @@
 
 namespace OroB2B\Bundle\OrderBundle\Form\Extension;
 
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
-
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Criteria;
-
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 
-class OrderDataStorageExtension extends FrontendOrderDataStorageExtension
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use OroB2B\Bundle\ProductBundle\Form\Extension\AbstractProductDataStorageExtension;
+use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+
+class OrderDataStorageExtension extends AbstractProductDataStorageExtension
 {
     /**
      * {@inheritdoc}
      */
-    protected function fillItemsData($entity, array $itemsData = [])
+    protected function addItem(Product $product, $entity, array $itemData = [])
     {
-        $repository = $this->getProductRepository();
-        foreach ($itemsData as $dataRow) {
-            if (!array_key_exists(ProductDataStorage::PRODUCT_SKU_KEY, $dataRow)) {
-                continue;
-            }
-
-            $product = $repository->findOneBySku($dataRow[ProductDataStorage::PRODUCT_SKU_KEY]);
-            if (!$product) {
-                continue;
-            }
-
-            $this->addItem($product, $entity, $dataRow);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function finishView(FormView $view, FormInterface $form, array $options)
-    {
-        $data = $this->data;
-        if (isset($options['storage_data'])) {
-            $data = array_replace_recursive($data, $options['storage_data']);
-        }
-        if (!$data || !isset($data['withOffers'])) {
+        if (!$entity instanceof Order) {
             return;
         }
 
-        $offers = [];
-        foreach ($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY] as $dataRow) {
-            $offers[$dataRow[ProductDataStorage::PRODUCT_SKU_KEY]] = $dataRow['offers'];
+        $lineItem = new OrderLineItem();
+        $lineItem
+            ->setProduct($product)
+            ->setProductSku($product->getSku());
+
+        if (array_key_exists(ProductDataStorage::PRODUCT_QUANTITY_KEY, $itemData)) {
+            $lineItem->setQuantity($itemData[ProductDataStorage::PRODUCT_QUANTITY_KEY]);
         }
 
-        foreach ($view->offsetGet('lineItems')->children as $rowView) {
-            /**
-             * @var OrderLineItem $lineItem
-             */
-            $lineItem = $rowView->vars['value'];
-            $sku = $lineItem->getProductSku();
-            if (isset($offers[$sku])) {
-                $rowView->vars['offers'] = $offers[$sku];
+        $this->fillEntityData($lineItem, $itemData);
+
+        if (!$lineItem->getProductUnit()) {
+            /** @var ProductUnitPrecision $unitPrecision */
+            $unitPrecision = $product->getUnitPrecisions()->first();
+            if (!$unitPrecision) {
+                return;
             }
 
-            /**
-             * @var ArrayCollection $sections
-             */
-            $sections = $rowView->vars['sections'];
-            $sections->set('offers', ['data' => [], 'order' => 5]);
-            $rowView->vars['sections'] = $this->sortSections($sections);
+            /** @var ProductUnit $unit */
+            $unit = $unitPrecision->getUnit();
+            if (!$unit) {
+                return;
+            }
+
+            $lineItem->setProductUnit($unit);
+            $lineItem->setProductUnitCode($unit->getCode());
         }
 
-        $sections = $view->offsetGet('lineItems')->vars['prototype']->vars['sections'];
-        $sections->set('offers', ['data' => [], 'order' => 5]);
-        $view->offsetGet('lineItems')->vars['prototype']->vars['sections'] = $this->sortSections($sections);
-    }
-
-    /**
-     * @param ArrayCollection $sections
-     * @return ArrayCollection
-     */
-    protected function sortSections(ArrayCollection $sections)
-    {
-        $criteria = Criteria::create();
-        $criteria->orderBy(['order' => Criteria::ASC]);
-
-        return $sections->matching($criteria);
+        if ($lineItem->getProduct()) {
+            $entity->addLineItem($lineItem);
+        }
     }
 }

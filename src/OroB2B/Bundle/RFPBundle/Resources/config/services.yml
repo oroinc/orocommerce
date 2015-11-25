@@ -8,9 +8,6 @@ parameters:
     orob2b_rfp.mailer.processor.class: OroB2B\Bundle\RFPBundle\Mailer\Processor
 
     orob2b_rfp.event_listener.request_frontend_datagrid.class: OroB2B\Bundle\RFPBundle\EventListener\RequestFrontendDatagridListener
-
-    orob2b_rfp.service.product_data_storage.class: OroB2B\Bundle\RFPBundle\Storage\ProductDataStorage
-
 services:
     orob2b_rfp.datagrid.action_permission_provider:
         class: %orob2b_rfp.datagrid.action_permission_provider.class%
@@ -40,13 +37,6 @@ services:
             - [setScope, ['rfq']]
         tags:
             - { name: orob2b_product.quick_add_processor }
-
-    orob2b_rfp.service.product_data_storage:
-        class: %orob2b_rfp.service.product_data_storage.class%
-        arguments:
-            - @orob2b_product.service.product_data_storage
-            - @oro_locale.formatter.number
-            - @orob2b_product.formatter.product_unit_value
 
     orob2b_rfp.event_listener.product_select_db_query:
         class: %orob2b_product.event_listener.scoped_product_select_db_query.class%
