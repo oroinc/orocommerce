@@ -25,17 +25,11 @@ class Action
     /** @var ActionDefinition */
     private $definition;
 
-    /** @var FunctionInterface */
-    private $preFunction;
+    /** @var FunctionInterface[] */
+    private $functions = [];
 
-    /** @var AbstractCondition */
-    private $preCondition;
-
-    /** @var AbstractCondition */
-    private $condition;
-
-    /** @var FunctionInterface */
-    private $postFunction;
+    /** @var AbstractCondition[] */
+    private $conditions = [];
 
     /**
      * @param FunctionFactory $functionFactory
@@ -77,68 +71,25 @@ class Action
     }
 
     /**
-     * @return FunctionInterface
+     * @param ActionContext $context
      */
-    protected function getPreFunctions()
+    public function init(ActionContext $context)
     {
-        if ($this->preFunction === null) {
-            $this->preFunction = false;
-            $preFunctionsConfig = $this->definition->getPreFunctions();
-            if ($preFunctionsConfig) {
-                $this->preFunction = $this->functionFactory->create(ConfigurableAction::ALIAS, $preFunctionsConfig);
-            }
-        }
-
-        return $this->preFunction;
+        $this->executeFunctions(ActionDefinition::INITFUNCTIONS, $context);
     }
 
     /**
-     * @return AbstractCondition
+     * @param ActionContext $context
+     * @param Collection $errors
+     * @throws ForbiddenActionException
      */
-    protected function getPreCondition()
+    public function execute(ActionContext $context, Collection $errors = null)
     {
-        if ($this->preCondition === null) {
-            $this->preCondition = false;
-            $preConditionsConfig = $this->definition->getPreConditions();
-            if ($preConditionsConfig) {
-                $this->preCondition = $this->conditionFactory
-                    ->create(ConfigurableCondition::ALIAS, $preConditionsConfig);
-            }
+        if (!$this->isAllowed($context, $errors)) {
+            throw new ForbiddenActionException(sprintf('Action "%s" is not allowed.', $this->getName()));
         }
 
-        return $this->preCondition;
-    }
-
-    /**
-     * @return AbstractCondition
-     */
-    protected function getCondition()
-    {
-        if ($this->condition === null) {
-            $this->condition = false;
-            $conditionConfig = $this->definition->getConditions();
-            if ($conditionConfig) {
-                $this->condition = $this->conditionFactory->create(ConfigurableCondition::ALIAS, $conditionConfig);
-            }
-        }
-
-        return $this->condition;
-    }
-
-    /**
-     * @return FunctionInterface
-     */
-    protected function getPostFunctions()
-    {
-        if ($this->postFunction === null) {
-            $this->postFunction = false;
-            $postFunctionsConfig = $this->definition->getPostFunctions();
-            if ($postFunctionsConfig) {
-                $this->postFunction = $this->functionFactory->create(ConfigurableAction::ALIAS, $postFunctionsConfig);
-            }
-        }
-
-        return $this->postFunction;
+        $this->executeFunctions(ActionDefinition::POSTFUNCTIONS, $context);
     }
 
     /**
@@ -167,44 +118,14 @@ class Action
 
     /**
      * @param ActionContext $context
-     */
-    public function init(ActionContext $context)
-    {
-        // ToDo - implement init
-    }
-
-    /**
-     * @param ActionContext $context
-     * @param Collection $errors
-     * @throws ForbiddenActionException
-     */
-    public function execute(ActionContext $context, Collection $errors = null)
-    {
-        if (!$this->isAllowed($context, $errors)) {
-            throw new ForbiddenActionException(sprintf('Action "%s" is not allowed.', $this->getName()));
-        }
-
-        if ($this->getPostFunctions()) {
-            $this->getPostFunctions()->execute($context);
-        }
-    }
-
-    /**
-     * @param ActionContext $context
      * @param Collection $errors
      * @return bool
      */
     protected function isPreConditionAllowed(ActionContext $context, Collection $errors = null)
     {
-        if ($this->getPreFunctions()) {
-            $this->getPreFunctions()->execute($context);
-        }
+        $this->executeFunctions(ActionDefinition::PREFUNCTIONS, $context);
 
-        if ($this->getPreCondition()) {
-            return $this->getPreCondition()->evaluate($context, $errors);
-        }
-
-        return true;
+        return $this->evaluateConditions(ActionDefinition::PRECONDITIONS, $context, $errors);
     }
 
     /**
@@ -214,8 +135,48 @@ class Action
      */
     protected function isConditionAllowed(ActionContext $context, Collection $errors = null)
     {
-        if ($this->getCondition()) {
-            return $this->getCondition()->evaluate($context, $errors);
+        return $this->evaluateConditions(ActionDefinition::CONDITIONS, $context, $errors);
+    }
+
+    /**
+     * @param string $name
+     * @param ActionContext $context
+     */
+    protected function executeFunctions($name, ActionContext $context)
+    {
+        if (!isset($this->functions[$name])) {
+            $this->functions[$name] = false;
+
+            $config = $this->definition->getFunctions($name);
+            if ($config) {
+                $this->functions[$name] = $this->functionFactory->create(ConfigurableAction::ALIAS, $config);
+            }
+        }
+
+        if ($this->functions[$name]) {
+            $this->functions[$name]->execute($context);
+        }
+    }
+
+    /**
+     * @param string $name
+     * @param ActionContext $context
+     * @param Collection $errors
+     * @return boolean
+     */
+    protected function evaluateConditions($name, ActionContext $context, Collection $errors = null)
+    {
+        if (!isset($this->conditions[$name])) {
+            $this->conditions[$name] = false;
+
+            $config = $this->definition->getConditions($name);
+            if ($config) {
+                $this->conditions[$name] = $this->conditionFactory->create(ConfigurableCondition::ALIAS, $config);
+            }
+        }
+
+        if ($this->conditions[$name]) {
+            return $this->conditions[$name]->evaluate($context, $errors);
         }
 
         return true;

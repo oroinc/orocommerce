@@ -62,12 +62,16 @@ class ActionAssembler
             ->setFrontendOptions($this->getOption($options, 'frontend_options', []))
             ->setAttributes($this->getOption($options, 'attributes', []))
             ->setFormOptions($this->getOption($options, 'form_options', []))
-            ->setPreFunctions($this->getOption($options, 'prefunctions', []))
-            ->setPreConditions($this->getOption($options, 'preconditions', []))
-            ->setConditions($this->getOption($options, 'conditions', []))
-            ->setPostFunctions($this->getOption($options, 'postfunctions', []))
             ->setInitStep($this->getOption($options, 'init_step', []))
             ->setExecutionStep($this->getOption($options, 'execution_step', []));
+
+        foreach (ActionDefinition::getAllowedConditions() as $name) {
+            $actionDefinition->addConditions($name, $this->getOption($options, $name, []));
+        }
+
+        foreach (ActionDefinition::getAllowedFunctions() as $name) {
+            $actionDefinition->addFunctions($name, $this->getOption($options, $name, []));
+        }
 
         return $actionDefinition;
     }
