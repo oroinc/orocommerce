@@ -18,6 +18,9 @@ parameters:
     orob2b_product.form.type.product_status.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductStatusType
     orob2b_product.form.type.quick_add_copy_paste.class: OroB2B\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType
     orob2b_product.form.type.quick_add_import_from_file.class: OroB2B\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType
+    orob2b_product.form.type.quick_add_order.class: OroB2B\Bundle\ProductBundle\Form\Type\QuickAddOrderType
+    orob2b_product.form.type.quick_add_collection.class: OroB2B\Bundle\ProductBundle\Form\Type\QuickAddCollectionType
+    orob2b_product.form.type.quick_add_product_row.class: OroB2B\Bundle\ProductBundle\Form\Type\QuickAddProductRowType
 
 services:
     # Product form types
@@ -126,6 +129,13 @@ services:
         tags:
             - { name: form.type, alias: orob2b_product_status }
 
+    orob2b_product.form.type.product_inventory_status_select:
+        class: %orob2b_product.form.type.product_inventory_status_select.class%
+        arguments:
+            - @doctrine
+        tags:
+            - { name: form.type, alias: orob2b_product_inventory_status_select }
+
     orob2b_product.form.type.quick_add_copy_paste:
         class: %orob2b_product.form.type.quick_add_copy_paste.class%
         tags:
@@ -136,9 +146,18 @@ services:
         tags:
             - { name: form.type, alias: 'orob2b_product_quick_add_import_from_file' }
 
-    orob2b_product.form.type.product_inventory_status_select:
-        class: %orob2b_product.form.type.product_inventory_status_select.class%
-        arguments:
-            - @doctrine
+    orob2b_product.form.type.quick_add_order:
+        class: %orob2b_product.form.type.quick_add_order.class%
         tags:
-            - { name: form.type, alias: orob2b_product_inventory_status_select }
+            - { name: form.type, alias: 'orob2b_product_quick_add_order' }
+
+    orob2b_product.form.type.quick_add_collection:
+        class: %orob2b_product.form.type.quick_add_collection.class%
+        tags:
+            - { name: form.type, alias: 'orob2b_product_quick_add_collection' }
+
+    orob2b_product.form.type.quick_add_product_row:
+        class: %orob2b_product.form.type.quick_add_product_row.class%
+        tags:
+            - { name: form.type, alias: 'orob2b_product_quick_add_product_row' }
+

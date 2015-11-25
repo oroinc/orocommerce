@@ -43,4 +43,14 @@ class QuickAddRowCollection extends ArrayCollection
             return $row->isValid();
         });
     }
+
+    /**
+     * @return $this
+     */
+    public function getInvalidRows()
+    {
+        return $this->filter(function (QuickAddRow $row) {
+            return !$row->isValid();
+        });
+    }
 }

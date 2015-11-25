@@ -9,6 +9,11 @@ class QuickAddCopyPaste
      */
     protected $collection;
 
+    public function __construct()
+    {
+        $this->collection = new QuickAddRowCollection();
+    }
+
     /**
      * @return QuickAddRowCollection
      */

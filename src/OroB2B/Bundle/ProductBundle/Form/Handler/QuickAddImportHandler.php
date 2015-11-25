@@ -2,7 +2,10 @@
 
 namespace OroB2B\Bundle\ProductBundle\Form\Handler;
 
+use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
+use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
+use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddOrderType;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,10 +14,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
-use OroB2B\Bundle\ProductBundle\Model\ComponentProcessorInterface;
-use OroB2B\Bundle\ProductBundle\Model\ComponentProcessorRegistry;
 
-class QuickAddImport
+class QuickAddImportHandler
 {
     /**
      * @var TranslatorInterface
@@ -53,16 +54,12 @@ class QuickAddImport
     public function process(Request $request)
     {
         $response = null;
-        $formOptions = [];
 
         $processor = $this->getProcessor($this->getComponentName($request));
-        if ($processor) {
-            $formOptions['validation_required'] = $processor->isValidationRequired();
-        }
+        $form = $this->createQuickAddOrderForm();
 
-        $form = $this->createQuickAddForm($formOptions);
         if ($request->isMethod(Request::METHOD_POST)) {
-            $form->submit($request);
+            $form->handleRequest($request);
             if ($processor && $processor->isAllowed()) {
                 if ($form->isValid()) {
                     $products = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getData();
@@ -73,7 +70,7 @@ class QuickAddImport
                     );
                     if (!$response) {
                         // reset form
-                        $form = $this->createQuickAddForm($formOptions);
+                        $form = $this->createQuickAddOrderForm();
                     }
                 }
             } else {
@@ -90,12 +87,11 @@ class QuickAddImport
     }
 
     /**
-     * @param array $options
      * @return FormInterface
      */
-    protected function createQuickAddForm(array $options = [])
+    protected function createQuickAddOrderForm()
     {
-        return $this->formFactory->create(QuickAddType::NAME, null, $options);
+        return $this->formFactory->create(QuickAddOrderType::NAME);
     }
 
     /**
@@ -104,7 +100,7 @@ class QuickAddImport
      */
     protected function getComponentName(Request $request)
     {
-        $formData = $request->get(QuickAddType::NAME, []);
+        $formData = $request->get(QuickAddOrderType::NAME, []);
 
         $name = null;
         if (array_key_exists(QuickAddType::COMPONENT_FIELD_NAME, $formData)) {

@@ -39,17 +39,9 @@
         }
     </style>
 
-    {% set counts = {
-    totalRecords: 6,
-    validItems: 3,
-    errorEntries: 3
-    } %}
-
-    {% set errors = [
-    'SKU1 does not found',
-    'SKU2 does not found',
-    'SKU3 does not found'
-    ] %}
+    {% set totalRowsCount = result.count() %}
+    {% set validRowsCount = result.getValidRows().count() %}
+    {% set invalidRowsCount = result.getInvalidRows().count() %}
 
     <div class="validation-info">
         <strong>
@@ -72,7 +64,7 @@
                 <td>{{ 'Total number of records'|trans }}</td>
                 <td>
                     <div class="pull-right">
-                        {{ counts.totalRecords|default(0) }}
+                        {{ totalRowsCount }}
                     </div>
                 </td>
             </tr>
@@ -80,15 +72,14 @@
                 <td>{{ 'Valid items'|trans }}</td>
                 <td>
                     <div class="pull-right">
-                        {{ counts.validItems|default(0) }}
+                        {{ validRowsCount }}
                     </div>
                 </td>
             </tr>
 
-
-            <tr {% if counts.errorEntries %}class="error"{% endif %}>
+            <tr {% if invalidRowsCount %}class="error"{% endif %}>
                 <td>
-                    {% if counts.errorEntries > 0 %}
+                    {% if invalidRowsCount %}
                         <a href="javascript: void(0)" class="error-toggle">
                             {{ 'Records with errors '|trans }}
                         </a>
@@ -98,7 +89,7 @@
                 </td>
                 <td>
                     <div class="pull-right">
-                        {{ counts.errorEntries|default(0) }}
+                        {{ invalidRowsCount }}
                     </div>
                 </td>
             </tr>
@@ -107,12 +98,17 @@
 
     </div>
 
-    {% if errors|length > 0 %}
-        {#<a href="javascript: void(0)" class="error-toggle error-toggle-head"><i class="icon-chevron-right"></i>{{ 'Errors found %errors%'|trans({'%errors%': errors|length}) }}</a>#}
+    {% if invalidRowsCount > 0 %}
         <div class="import-errors">
             <ol>
-                {% for error in errors %}
-                    <li>{{ error }}</li>
+                {% for invalidRow in result.getInvalidRows() %}
+                    <li>
+                        {% if not invalidRow.isComplete %}
+                            Row #{{ invalidRow.getId() }} has invalid format.
+                        {% else %}
+                            Item number {{ invalidRow.getSku() }} does not found.
+                        {% endif %}
+                    </li>
                 {% endfor %}
             </ol>
             <div class="clearfix">
@@ -146,34 +142,32 @@
 
 
     {% set pageComponentOptions = {
-        'componentSelector': '#' ~ 'import-form-component',
-        'additionalSelector': '#' ~ 'import-form-additional',
+        'componentSelector': '#' ~ form.component.vars.id,
+        'additionalSelector': '#' ~ form.component.vars.id,
         'componentPrefix': 'quick-add-import'
     } %}
 
 
-    <form id = "import-uniq-i" name="import-uniq-i"
-          action="{{ app.request.uri }}" method="post"
+    <form id="{{ form.vars.id }}" name="{{ form.vars.name }}"
+          action="{{ path('orob2b_product_frontend_quick_add_validation_result') }}" method="post"
           data-page-component-module="orob2bproduct/js/app/components/quick-add-component"
           data-page-component-options="{{ pageComponentOptions|json_encode }}" >
 
-        <input id="import-form-component" name="form[component]" type="hidden">
-        <input id="import-form-additional" name="form[additional]" type="hidden">
-
+        {{ form_widget(form.products) }}
+        {{ form_widget(form.component) }}
+        {{ form_widget(form.additional) }}
 
         <div class="btn-group pull-left">
-
             <button type="reset" class="btn">Cancel</button>
-
         </div>
 
         <div class="btn-group pull-right">
 
-            {% placeholder orob2b_product_quick_add_import_buttons  %}
+            {% if validRowsCount > 0 %}
+                {% placeholder orob2b_product_quick_add_import_buttons  %}
+            {% endif %}
 
         </div>
-
-
 
         <div class="widget-actions">
         </div>

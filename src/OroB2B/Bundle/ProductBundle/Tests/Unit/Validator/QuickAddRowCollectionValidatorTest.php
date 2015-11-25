@@ -42,13 +42,7 @@ class QuickAddRowCollectionValidatorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $this->registry->expects($this->once())
-            ->method('getRepository')
-            ->with('OroB2BProductBundle:Product')
-            ->willReturn($this->repository);
-
-        $this->validator = new QuickAddRowCollectionValidator($this->registry);
+        $this->validator = new QuickAddRowCollectionValidator($this->repository);
     }
 
     public function testValidate()
