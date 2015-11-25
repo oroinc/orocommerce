@@ -10,17 +10,19 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
+use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as EntityIdentifierTypeStub;
 
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Extension\Stub\OroRichTextTypeStub;
 use OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
 use OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityPostSetDataListener;
 use OroB2B\Bundle\AccountBundle\Form\Extension\CategoryFormExtension;
 use OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityChangesetTypeStub;
+use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Extension\Stub\ImageTypeStub;
+use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Extension\Stub\CategoryStub;
 use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocaleCollectionType;
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
@@ -76,7 +78,8 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
                     LocalizedPropertyType::NAME => new LocalizedPropertyType(),
                     LocaleCollectionType::NAME => new LocaleCollectionTypeStub(),
                     EntityChangesetType::NAME => new EntityChangesetTypeStub(),
-                    OroRichTextType::NAME => new OroRichTextTypeStub()
+                    OroRichTextType::NAME => new OroRichTextTypeStub(),
+                    ImageType::NAME => new ImageTypeStub()
                 ],
                 [
                     CategoryType::NAME => [$this->categoryFormExtension],
@@ -90,7 +93,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
     {
         $form = $this->factory->create(
             CategoryType::NAME,
-            new Category(),
+            new CategoryStub(),
             ['data_class' => 'OroB2B\Bundle\CatalogBundle\Entity\Category']
         );
         $this->assertTrue($form->has('visibility'));
