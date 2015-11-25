@@ -69,12 +69,15 @@ class OroB2BWarehouseBundleInstaller implements Installation, NoteExtensionAware
     {
         $table = $schema->createTable(self::WAREHOUSE_INVENTORY_LEVEL_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('quantity', 'decimal', ['scale' => 10]);
+        $table->addColumn('quantity', 'decimal', ['precision' => 20, 'scale' => 10]);
         $table->addColumn('warehouse_id', 'integer');
         $table->addColumn('product_id', 'integer');
         $table->addColumn('product_unit_precision_id', 'integer');
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['warehouse_id', 'product_unit_precision_id'], 'IDX_WAREHOUSE_INVENTORY');
+        $table->addUniqueIndex(
+            ['warehouse_id', 'product_unit_precision_id'],
+            'uidx_orob2b_warehouse_warehouse_inventory_level'
+        );
     }
 
     /**
@@ -138,6 +141,6 @@ class OroB2BWarehouseBundleInstaller implements Installation, NoteExtensionAware
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_0';
     }
 }

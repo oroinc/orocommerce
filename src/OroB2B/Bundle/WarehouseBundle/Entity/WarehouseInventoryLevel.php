@@ -12,8 +12,14 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\WarehouseBundle\Model\ExtendWarehouseInventoryLevel;
 
 /**
- * @ORM\table(
- *     name="orob2b_warehouse_inventory_level"
+ * @ORM\Table(
+ *     name="orob2b_warehouse_inventory_level",
+ *     uniqueConstraints={
+ *          @ORM\UniqueConstraint(
+ *              name="uidx_orob2b_warehouse_warehouse_inventory_level",
+ *              columns={"warehouse_id", "product_unit_precision_id"}
+ *          )
+ *      }
  * )
  * @ORM\Entity
  * @Config(
@@ -39,7 +45,7 @@ class WarehouseInventoryLevel extends ExtendWarehouseInventoryLevel
     /**
      * @var float
      *
-     * @ORM\Column(name="quantity", type="decimal", scale=10, nullable=false))
+     * @ORM\Column(name="quantity", type="decimal", precision=20, scale=10, nullable=false))
      */
     protected $quantity;
 
@@ -122,17 +128,6 @@ class WarehouseInventoryLevel extends ExtendWarehouseInventoryLevel
     }
 
     /**
-     * @param Product $product
-     * @return WarehouseInventoryLevel
-     */
-    public function setProduct(Product $product)
-    {
-        $this->product = $product;
-
-        return $this;
-    }
-
-    /**
      * @return ProductUnitPrecision
      */
     public function getProductUnitPrecision()
@@ -147,6 +142,7 @@ class WarehouseInventoryLevel extends ExtendWarehouseInventoryLevel
     public function setProductUnitPrecision(ProductUnitPrecision $productUnitPrecision)
     {
         $this->productUnitPrecision = $productUnitPrecision;
+        $this->product = $productUnitPrecision->getProduct();
 
         return $this;
     }
