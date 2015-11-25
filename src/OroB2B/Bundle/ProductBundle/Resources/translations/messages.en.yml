@@ -82,6 +82,10 @@ orob2b:
             additional: Additional
             productVariants: Product Variants
 
+        warehouse:
+            inventory_label: Inventory
+            widget_dialog_title: Warehouse Inventory Levels
+
         widgets:
             product_information: Product Information
 
