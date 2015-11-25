@@ -17,6 +17,10 @@
             {{ UI.renderProperty('orob2b.account.accountuser.birthday.label'|trans, birthday_string) }}
             {{ UI.renderHtmlProperty('orob2b.account.accountuser.email.label'|trans, Email.email_address_simple(entity.email)) }}
 
+            {% if entity.account %}
+                {{ UI.renderProperty('orob2b.account.accountuser.profile.company_name'|trans, entity.account.name) }}
+            {% endif %}
+
             {% set roles = [] %}
             {% for entityRole in entity.roles %}
                 {% set roles = roles|merge([entityRole.label]) %}

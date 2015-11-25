@@ -52,12 +52,11 @@ class WebsiteTypeTest extends FormIntegrationTestCase
         return [
             'website_valid' => [
                 'isValid'       => true,
-                'defaultData'   => ['name' => 'OroCRM', 'url' => 'http://www.orocrm.com/'],
+                'defaultData'   => ['name' => 'OroCRM'],
                 'submittedData' => [
-                    'name' => 'OroCommerce',
-                    'url' => 'http://www.orocommerce.com/'
+                    'name' => 'OroCommerce'
                 ],
-                'expectedData'  => ['name' => 'OroCommerce', 'url' => 'http://www.orocommerce.com/']
+                'expectedData'  => ['name' => 'OroCommerce']
             ],
         ];
     }

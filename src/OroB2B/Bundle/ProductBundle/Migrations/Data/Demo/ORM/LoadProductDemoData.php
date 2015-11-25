@@ -11,13 +11,15 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
-use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class LoadProductDemoData extends AbstractFixture implements ContainerAwareInterface
 {
+    use UserUtilityTrait;
+
     /**
      * @var ContainerInterface
      */
@@ -37,7 +39,7 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
     public function load(ObjectManager $manager)
     {
         /** @var EntityManager $manager */
-        $user = $this->getUser($manager);
+        $user = $this->getFirstUser($manager);
         $businessUnit = $user->getOwner();
         $organization = $user->getOrganization();
 
@@ -76,27 +78,6 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         fclose($handler);
 
         $manager->flush();
-    }
-
-    /**
-     * @param EntityManager $manager
-     * @return User
-     * @throws \LogicException
-     */
-    protected function getUser(EntityManager $manager)
-    {
-        $user = $manager->getRepository('OroUserBundle:User')
-            ->createQueryBuilder('user')
-            ->orderBy('user.id', 'ASC')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getSingleResult();
-
-        if (!$user) {
-            throw new \LogicException('There are no users in system');
-        }
-
-        return $user;
     }
 
     /**

@@ -21,6 +21,7 @@ parameters:
     orob2b_pricing.validator.unique_price_list.class: OroB2B\Bundle\PricingBundle\Validator\Constraints\UniquePriceListValidator
     orob2b_pricing.validator.product_price_allowed_units.class: OroB2B\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnitsValidator
     orob2b_pricing.validator.product_price_currency.class: OroB2B\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrencyValidator
+    orob2b_pricing.validator.price_list_product_prices_currency.class: OroB2B\Bundle\PricingBundle\Validator\Constraints\PriceListProductPricesCurrencyValidator
 
     orob2b_pricing.event_listener.form_view.class: OroB2B\Bundle\PricingBundle\EventListener\FormViewListener
     orob2b_pricing.event_listener.website_form_view.class: OroB2B\Bundle\PricingBundle\EventListener\WebsiteFormViewListener
@@ -172,6 +173,11 @@ services:
         class: %orob2b_pricing.validator.product_price_currency.class%
         tags:
             - { name: validator.constraint_validator, alias: orob2b_pricing_product_price_currency_validator }
+
+    orob2b_pricing.validator.price_list_product_prices_currency:
+        class: %orob2b_pricing.validator.price_list_product_prices_currency.class%
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_pricing_price_list_product_prices_currency_validator }
 
     orob2b_pricing.model.price_list_request_handler.abstract:
         class: %orob2b_pricing.model.price_list_request_handler.abstract.class%
