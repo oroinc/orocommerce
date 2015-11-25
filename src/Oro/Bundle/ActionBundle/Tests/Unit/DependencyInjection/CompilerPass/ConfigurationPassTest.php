@@ -34,6 +34,7 @@ class ConfigurationPassTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->configProviderDefinition = $this->getMockBuilder('Symfony\Component\DependencyInjection\Definition')
+            ->disableOriginalConstructor()
             ->getMock();
 
         $this->cacheProvider = $this->getMockBuilder('Doctrine\Common\Cache\CacheProvider')
@@ -81,7 +82,7 @@ class ConfigurationPassTest extends \PHPUnit_Framework_TestCase
             ->method('replaceArgument')
             ->willReturnCallback(
                 function ($index, $argument) use (&$result) {
-                    $this->assertEquals(2, $index);
+                    $this->assertEquals(3, $index);
 
                     $result = $argument;
                 }
