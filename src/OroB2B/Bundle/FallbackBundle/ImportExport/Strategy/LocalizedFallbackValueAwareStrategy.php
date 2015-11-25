@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\FallbackBundle\ImportExport\Strategy;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\ImportExportBundle\Strategy\Import\ConfigurableAddOrReplaceStrategy;
@@ -13,6 +14,9 @@ class LocalizedFallbackValueAwareStrategy extends ConfigurableAddOrReplaceStrate
 {
     /** @var string */
     protected $localizedFallbackValueClass;
+
+    /** @var \ReflectionProperty[] */
+    protected $reflectionProperties = [];
 
     /**
      * @param string $localizedFallbackValueClass
@@ -79,11 +83,30 @@ class LocalizedFallbackValueAwareStrategy extends ConfigurableAddOrReplaceStrate
         /** @var Collection|LocalizedFallbackValue[] $localizedFallbackValues */
         $localizedFallbackValues = $this->fieldHelper->getObjectValue($entity, $field['name']);
 
-        foreach ($localizedFallbackValues as $value) {
-            $code = LocaleCodeFormatter::formatName($value->getLocale());
-            $localizedFallbackValues->removeElement($value);
-            $localizedFallbackValues->set($code, $value);
+        $newLocalizedFallbackValues = new ArrayCollection();
+        foreach ($localizedFallbackValues as $localizedFallbackValue) {
+            $key = LocaleCodeFormatter::formatName($localizedFallbackValue->getLocale());
+            $newLocalizedFallbackValues->set($key, $localizedFallbackValue);
         }
+
+        // Reflection usage to full replace collections
+        $this->getReflectionProperty($field['name'])->setValue($entity, $newLocalizedFallbackValues);
+    }
+
+    /**
+     * @param string $fieldName
+     * @return \ReflectionProperty
+     */
+    protected function getReflectionProperty($fieldName)
+    {
+        if (array_key_exists($fieldName, $this->reflectionProperties)) {
+            return $this->reflectionProperties[$fieldName];
+        }
+
+        $this->reflectionProperties[$fieldName] = new \ReflectionProperty($this->entityName, $fieldName);
+        $this->reflectionProperties[$fieldName]->setAccessible(true);
+
+        return $this->reflectionProperties[$fieldName];
     }
 
     /**
