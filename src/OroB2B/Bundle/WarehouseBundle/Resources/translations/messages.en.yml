@@ -19,3 +19,12 @@ orob2b:
         sections:
             general: General
             additional: Additional
+
+        warehouseinventorylevel:
+            entity_label: Inventory
+            entity_plural_label: Inventories
+            id.label: Id
+            quantity.label: Quantity
+            product.label: Product
+            product_unit_precision.label: Product Unit Precision
+            warehouse.label: Warehouse
