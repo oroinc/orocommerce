@@ -69,11 +69,11 @@ class CategoryTypeTest extends WebTestCase
 
         $smallImageName = self::SMALL_IMAGE_NAME;
         $smallImageFile = $fileLocator->locate(
-            '@OroB2BCatalogBundle/Tests/Functional/DataFixtures/files/'.$smallImageName
+            '@OroB2BCatalogBundle/Tests/Functional/DataFixtures/files/' . $smallImageName
         );
         $largeImageName = self::LARGE_IMAGE_NAME;
         $largeImageFile = $fileLocator->locate(
-            '@OroB2BCatalogBundle/Tests/Functional/DataFixtures/files/'.$largeImageName
+            '@OroB2BCatalogBundle/Tests/Functional/DataFixtures/files/' . $largeImageName
         );
 
         $smallImage = new UploadedFile($smallImageFile, $smallImageName, null, null, null, true);

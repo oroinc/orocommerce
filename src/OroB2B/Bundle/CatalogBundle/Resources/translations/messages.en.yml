@@ -19,7 +19,8 @@ orob2b:
             include_subcategories.label: 'Include Sub-Categories'
 
         sections:
-            general: General
+            general: 'General'
+            additional: 'Additional'
 
         subcategory:
             entity_label:   'Subcategory'
@@ -29,15 +30,12 @@ orob2b:
             shortcut_master_catalog.description:   'Manage Master Catalog'
 
         product:
-            section.catalog: Master Catalog
-            in_category.label: In category
+            section.catalog: 'Master Catalog'
+            in_category.label: 'In category'
 
         controller:
             category:
                 saved.message:  'Category has been saved'
-
-        sections:
-            additional: Additional
 
         template:
             select_existing_or_create_new: 'Please select a category on the left or create new one.'

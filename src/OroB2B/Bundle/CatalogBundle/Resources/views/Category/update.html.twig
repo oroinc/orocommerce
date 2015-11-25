@@ -82,20 +82,6 @@
         }]
     %}
 
-    {% if resource_granted('orob2b_product_update') %}
-        {% set dataBlocks = dataBlocks|merge([{
-            'title' : 'orob2b.product.entity_plural_label'|trans,
-            'subblocks':
-            [
-                {
-                    'title' : null,
-                    'useSpan': false,
-                    'data' : [dataGrid.renderGrid('category-products-grid', { category_id: entityId }, { cssClass: 'inner-grid' })]
-                }
-            ]
-        }]) %}
-    {% endif %}
-
     {% set additionalData = [] %}
     {% for child in form.children if child.vars.extra_field is defined and child.vars.extra_field %}
         {% set additionalData = additionalData|merge([form_row(child)]) %}
@@ -109,6 +95,20 @@
                 'data' : additionalData
             }]
         }] ) %}
+    {% endif %}
+
+    {% if resource_granted('orob2b_product_update') %}
+        {% set dataBlocks = dataBlocks|merge([{
+            'title' : 'orob2b.product.entity_plural_label'|trans,
+            'subblocks':
+            [
+                {
+                    'title' : null,
+                    'useSpan': false,
+                    'data' : [dataGrid.renderGrid('category-products-grid', { category_id: entityId }, { cssClass: 'inner-grid' })]
+                }
+            ]
+        }]) %}
     {% endif %}
 
     {% set data = {
