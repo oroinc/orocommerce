@@ -91,7 +91,8 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
                     (int)$formValues[sprintf('%s[priceList]', $collectionElementPath)],
                     $priceListsIds
                 );
-                $this->assertEquals($formValues[sprintf('%s[priority]', $collectionElementPath)], ++$i);
+                $this->assertContains($formValues[sprintf('%s[priority]', $collectionElementPath)], [1, 2, 3]);
+                $i++;
             }
         }
     }
