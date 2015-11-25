@@ -17,6 +17,8 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 /**
  * @dbIsolation
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ *
+ * @covers \OroB2B\Bundle\ProductBundle\ImportExport\TemplateFixture\ProductFixture
  */
 class ImportExportTest extends WebTestCase
 {
