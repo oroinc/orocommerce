@@ -250,7 +250,7 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
     /**
      * @var bool
      *
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", options={"default"=false})
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
