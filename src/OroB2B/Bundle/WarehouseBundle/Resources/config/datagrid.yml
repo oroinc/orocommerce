@@ -117,7 +117,7 @@ datagrid:
                 - product_id
         columns:
             warehouseName:
-                label:         orob2b.warehouse.name.label
+                label:         orob2b.warehouse.entity_label
             levelQuantity:
                 label:         orob2b.warehouse.warehouseinventorylevel.quantity.label
                 frontend_type: decimal
