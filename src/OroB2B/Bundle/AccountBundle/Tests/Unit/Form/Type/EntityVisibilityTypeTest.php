@@ -7,12 +7,14 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
 
+use Oro\Bundle\FormBundle\Form\Type\DataChangesetType;
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 
 use OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityPostSetDataListener;
 use OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
 use OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
 
+use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\DataChangesetTypeStub;
 use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\EntityChangesetTypeStub;
 
 class EntityVisibilityTypeTest extends FormIntegrationTestCase
@@ -62,6 +64,7 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
+                    DataChangesetType::NAME => new DataChangesetTypeStub(),
                     EntityChangesetType::NAME => new EntityChangesetTypeStub()
                 ],
                 []

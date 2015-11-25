@@ -12,6 +12,7 @@ use Symfony\Component\Validator\Validation;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
+use Oro\Bundle\FormBundle\Form\Type\DataChangesetType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as EntityIdentifierTypeStub;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
@@ -26,6 +27,7 @@ use OroB2B\Bundle\FallbackBundle\Form\Type\LocaleCollectionType;
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedPropertyType;
 use OroB2B\Bundle\FallbackBundle\Tests\Unit\Form\Type\Stub\LocaleCollectionTypeStub;
+use OroB2B\Bundle\AccountBundle\Tests\Unit\Form\Type\Stub\DataChangesetTypeStub;
 
 class CategoryFormExtensionTest extends FormIntegrationTestCase
 {
@@ -75,6 +77,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
                     LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionType($registry),
                     LocalizedPropertyType::NAME => new LocalizedPropertyType(),
                     LocaleCollectionType::NAME => new LocaleCollectionTypeStub(),
+                    DataChangesetType::NAME => new DataChangesetTypeStub(),
                     EntityChangesetType::NAME => new EntityChangesetTypeStub(),
                     OroRichTextType::NAME => new OroRichTextTypeStub()
                 ],
