@@ -1,0 +1,36 @@
+parameters:
+    oro_action.manager.class: Oro\Bundle\ActionBundle\Model\ActionManager
+    oro_action.assembler.class: Oro\Bundle\ActionBundle\Model\ActionAssembler
+
+    oro_action.expression.extension.class: Oro\Component\ConfigExpression\Extension\DependencyInjection\DependencyInjectionExtension
+    oro_action.expression.context_accessor.class: Oro\Component\ConfigExpression\ContextAccessor
+    oro_action.expression.factory.class: Oro\Component\ConfigExpression\ExpressionFactory
+
+services:
+    oro_action.manager:
+        class: %oro_action.manager.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+            - @oro_action.configuration.provider
+            - @oro_action.assembler
+
+    oro_action.assembler:
+        class: %oro_action.assembler.class%
+        arguments:
+            - @oro_action.expression.factory
+
+    oro_action.expression.extension:
+        class: %oro_action.expression.extension.class%
+        arguments:
+            - @service_container
+            - {}
+
+    oro_action.expression.context_accessor:
+        class: %oro_action.expression.context_accessor.class%
+
+    oro_action.expression.factory:
+        class: %oro_action.expression.factory.class%
+        arguments:
+            - @oro_action.expression.context_accessor
+        calls:
+            - [addExtension, [@oro_action.expression.extension]]

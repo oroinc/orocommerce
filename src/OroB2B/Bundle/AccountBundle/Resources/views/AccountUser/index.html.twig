@@ -5,9 +5,11 @@
 
 {% block navButtons %}
     {% if resource_granted('orob2b_account_account_user_create') %}
-        {{ UI.addButton({
-            'path': path('orob2b_account_account_user_create'),
-            'entity_label': 'orob2b.account.accountuser.entity_label'|trans
-        }) }}
+        <div class="btn-group">
+            {{ UI.addButton({
+                'path': path('orob2b_account_account_user_create'),
+                'entity_label': 'orob2b.account.accountuser.entity_label'|trans
+            }) }}
+        </div>
     {% endif %}
 {% endblock %}
