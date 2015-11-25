@@ -37,7 +37,7 @@ product.3:
 product.4:
     website: US
     all:
-        visibility: config
+        visibility: hidden
         reference: product.4.visibility.all
     groups: {}
     accounts: {}

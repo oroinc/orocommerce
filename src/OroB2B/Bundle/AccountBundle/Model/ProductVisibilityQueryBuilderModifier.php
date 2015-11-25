@@ -56,9 +56,8 @@ class ProductVisibilityQueryBuilderModifier
     {
         $visibilities = [$this->getProductVisibilityResolvedTerm($queryBuilder)];
 
-        $token = $this->tokenStorage->getToken();
-        /** @var AccountUser $user */
-        if ($token && ($user = $token->getUser()) instanceof AccountUser) {
+        $user = $this->getAccountUserIfApplicable();
+        if ($user) {
             $visibilities[] = $this->getAccountGroupProductVisibilityResolvedTerm(
                 $queryBuilder,
                 $user->getAccount()->getGroup()
@@ -67,6 +66,22 @@ class ProductVisibilityQueryBuilderModifier
         }
 
         $queryBuilder->andWhere($queryBuilder->expr()->gt(implode(' + ', $visibilities), 0));
+    }
+
+    /**
+     * @return AccountUser|null
+     */
+    protected function getAccountUserIfApplicable()
+    {
+        $token = $this->tokenStorage->getToken();
+        /** @var AccountUser $user */
+        if ($token && ($user = $token->getUser()) instanceof AccountUser
+            && $user->getAccount() && $user->getAccount()->getGroup()
+        ) {
+            return $user;
+        }
+
+        return null;
     }
 
     /**

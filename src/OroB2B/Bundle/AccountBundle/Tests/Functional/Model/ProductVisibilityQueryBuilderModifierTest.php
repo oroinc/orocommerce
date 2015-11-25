@@ -4,7 +4,6 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Model;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 use Oro\Component\Testing\WebTestCase;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
@@ -41,7 +40,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
+            $this->generateBasicAuthHeader(AccountLoadAccountUserData::EMAIL, AccountLoadAccountUserData::PASSWORD)
         );
 
         $this->loadFixtures([
@@ -56,7 +55,8 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()->getMock();
 
-        $this->setupTokenStorage();
+        $this->tokenStorage = $this
+            ->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
 
         $this->modifier = new ProductVisibilityQueryBuilderModifier(
             $this->configManager,
@@ -70,10 +70,17 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
      * @dataProvider modifyDataProvider
      *
      * @param string $configValue
+     * @param string|null $user
      * @param array $expectedData
      */
-    public function testModify($configValue, $expectedData)
+    public function testModify($configValue, $user, $expectedData)
     {
+        if ($user) {
+            $user = $this->getReference($user);
+        }
+
+        $this->setupTokenStorage($user);
+
         $queryBuilder = $this->getProductRepository()->createQueryBuilder('p')
             ->select('p.sku')->orderBy('p.sku');
 
@@ -97,33 +104,52 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         return [
             'config visible' => [
                 'configValue' => ProductVisibility::VISIBLE,
+                'user' => AccountLoadAccountUserData::EMAIL,
                 'expectedData' => [
                     'product.1',
-                    'product.4',
                     'product.5',
                 ]
             ],
             'config hidden' => [
                 'configValue' => ProductVisibility::HIDDEN,
+                'user' => AccountLoadAccountUserData::EMAIL,
                 'expectedData' => [
                     'product.1',
                     'product.5',
                 ]
-            ]
+            ],
+            'anonymous config visible' => [
+                'configValue' => ProductVisibility::VISIBLE,
+                'user' => null,
+                'expectedData' => [
+                    'product.1',
+                    'product.2',
+                    'product.3',
+                    'product.5',
+                ]
+            ],
+            'anonymous config hidden' => [
+                'configValue' => ProductVisibility::HIDDEN,
+                'user' => null,
+                'expectedData' => [
+                    'product.2',
+                    'product.3',
+                    'product.5',
+                ]
+            ],
         ];
     }
 
-    protected function setupTokenStorage()
+    /**
+     * @param object|null $user
+     */
+    protected function setupTokenStorage($user = null)
     {
-        $user = $this->getReference(AccountLoadAccountUserData::EMAIL);
-
         $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $token->expects($this->any())
             ->method('getUser')
             ->willReturn($user);
 
-        $this->tokenStorage = $this
-            ->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
         $this->tokenStorage->expects($this->any())
             ->method('getToken')
             ->willReturn($token);
