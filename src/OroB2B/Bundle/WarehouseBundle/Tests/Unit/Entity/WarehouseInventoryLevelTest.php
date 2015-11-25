@@ -26,4 +26,19 @@ class WarehouseInventoryLevelTest extends \PHPUnit_Framework_TestCase
         $warehouseInventoryLevel = new WarehouseInventoryLevel();
         $this->assertPropertyAccessors($warehouseInventoryLevel, $properties);
     }
+
+    public function testSetProductUnitPrecision()
+    {
+        $product = new Product();
+        $productUnitPrecision = new ProductUnitPrecision();
+        $productUnitPrecision->setProduct($product);
+
+        $warehouseInventoryLevel = new WarehouseInventoryLevel();
+        $this->assertEmpty($warehouseInventoryLevel->getProduct());
+        $this->assertEmpty($warehouseInventoryLevel->getProductUnitPrecision());
+
+        $warehouseInventoryLevel->setProductUnitPrecision($productUnitPrecision);
+        $this->assertEquals($productUnitPrecision, $warehouseInventoryLevel->getProductUnitPrecision());
+        $this->assertEquals($product, $warehouseInventoryLevel->getProduct());
+    }
 }

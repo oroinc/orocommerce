@@ -76,7 +76,7 @@ class OroB2BWarehouseBundleInstaller implements Installation, NoteExtensionAware
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(
             ['warehouse_id', 'product_unit_precision_id'],
-            'uidx_orob2b_warehouse_warehouse_inventory_level'
+            'uidx_orob2b_wh_wh_inventory_lev'
         );
     }
 

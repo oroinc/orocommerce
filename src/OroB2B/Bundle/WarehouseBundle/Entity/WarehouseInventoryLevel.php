@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\WarehouseBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -13,10 +12,10 @@ use OroB2B\Bundle\WarehouseBundle\Model\ExtendWarehouseInventoryLevel;
 
 /**
  * @ORM\Table(
- *     name="orob2b_warehouse_inventory_level",
+ *     name="orob2b_warehouse_inventory_lev",
  *     uniqueConstraints={
  *          @ORM\UniqueConstraint(
- *              name="uidx_orob2b_warehouse_warehouse_inventory_level",
+ *              name="uidx_orob2b_wh_wh_inventory_lev",
  *              columns={"warehouse_id", "product_unit_precision_id"}
  *          )
  *      }
