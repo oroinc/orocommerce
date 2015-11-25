@@ -44,8 +44,3 @@ orob2b_product_frontend_quick_add:
     prefix:       /account/product/quick-add
     options:
         frontend: true
-
-orob2b_product_warehouse_ajax:
-    resource:     "@OroB2BProductBundle/Controller/AjaxProductWarehouseInventoryController.php"
-    type:         annotation
-    prefix:       /product-warehouse

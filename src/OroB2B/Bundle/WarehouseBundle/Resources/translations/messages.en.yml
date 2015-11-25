@@ -28,3 +28,4 @@ orob2b:
             product.label: Product
             product_unit_precision.label: Product Unit Precision
             warehouse.label: Warehouse
+            widget_dialog_title: Warehouse Inventory Levels
