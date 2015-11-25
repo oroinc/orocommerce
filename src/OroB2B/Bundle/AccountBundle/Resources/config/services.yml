@@ -103,6 +103,7 @@ parameters:
     orob2b_account.storage.category_visibility_storage.class: OroB2B\Bundle\AccountBundle\Visibility\Storage\CategoryVisibilityStorage
 
     orob2b_account.calculator.category_visibility_calculator: OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityCalculator
+    orob2b_account.calculator.category_visibility_resolver.class: OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityResolver
 
     #Model
     orob2b_account.model.product_visibility_query_builder_modifier.class: OroB2B\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier
@@ -596,6 +597,9 @@ services:
             - @doctrine
         calls:
             - [setContainer, [@service_container]]
+
+    orob2b_account.calculator.category_visibility_resolver:
+        class: %orob2b_account.calculator.category_visibility_resolver.class%
 
     orob2b_account.storage.category_visibility_storage:
         class: %orob2b_account.storage.category_visibility_storage.class%
