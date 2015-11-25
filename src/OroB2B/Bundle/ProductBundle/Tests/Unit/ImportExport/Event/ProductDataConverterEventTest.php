@@ -14,5 +14,6 @@ class ProductDataConverterEventTest extends \PHPUnit_Framework_TestCase
         $modifiedData = ['test1'];
         $event->setData($modifiedData);
         $this->assertSame($modifiedData, $event->getData());
+        $this->assertNotSame($data, $event->getData());
     }
 }

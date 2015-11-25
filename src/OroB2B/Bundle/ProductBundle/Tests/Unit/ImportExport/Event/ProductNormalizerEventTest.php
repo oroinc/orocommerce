@@ -20,5 +20,6 @@ class ProductNormalizerEventTest extends \PHPUnit_Framework_TestCase
         $modifiedPlainData = ['test1'];
         $event->setPlainData($modifiedPlainData);
         $this->assertSame($modifiedPlainData, $event->getPlainData());
+        $this->assertNotSame($plainData, $event->getPlainData());
     }
 }

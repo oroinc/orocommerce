@@ -6,6 +6,7 @@ use Oro\Bundle\ImportExportBundle\Field\FieldHelper;
 
 use OroB2B\Bundle\ProductBundle\ImportExport\Normalizer\ProductNormalizer;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductNormalizerTest extends \PHPUnit_Framework_TestCase
 {
@@ -15,7 +16,7 @@ class ProductNormalizerTest extends \PHPUnit_Framework_TestCase
     protected $productNormalizer;
 
     /**
-     * @var FieldHelper
+     * @var FieldHelper|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $fieldHelper;
 
@@ -24,15 +25,23 @@ class ProductNormalizerTest extends \PHPUnit_Framework_TestCase
      */
     protected $productClass;
 
+    /**
+     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $eventDispatcher;
+
     protected function setUp()
     {
         $this->fieldHelper = $this->getMockBuilder('Oro\Bundle\ImportExportBundle\Field\FieldHelper')
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+
         $this->productClass = 'OroB2B\Bundle\ProductBundle\Entity\Product';
         $this->productNormalizer = new ProductNormalizer($this->fieldHelper);
         $this->productNormalizer->setProductClass($this->productClass);
+        $this->productNormalizer->setEventDispatcher($this->eventDispatcher);
     }
 
     public function testNormalize()
@@ -45,7 +54,24 @@ class ProductNormalizerTest extends \PHPUnit_Framework_TestCase
 
         $this->fieldHelper->expects($this->once())
             ->method('getObjectValue')
-            ->willReturn('SKU-1');
+            ->will(
+                $this->returnValueMap(
+                    [
+                        [$product, 'sku', 'SKU-1'],
+                    ]
+                )
+            );
+
+        $this->eventDispatcher->expects($this->once())->method('dispatch')
+            ->withConsecutive(
+                [
+                    $this->logicalAnd(
+                        $this->isType('string'),
+                        $this->equalTo('orob2b_product.normalizer.normalizer')
+                    ),
+                    $this->isInstanceOf('OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent'),
+                ]
+            );
 
         $result = $this->productNormalizer->normalize($product);
         $this->assertArrayHasKey('sku', $result);
@@ -64,10 +90,21 @@ class ProductNormalizerTest extends \PHPUnit_Framework_TestCase
             ->method('setObjectValue')
             ->will(
                 $this->returnCallback(
-                    function ($result, $fieldName, $value) {
-                        return $result->setSku($value);
+                    function (Product $result, $fieldName, $value) {
+                        return $result->{'set' . $fieldName}($value);
                     }
                 )
+            );
+
+        $this->eventDispatcher->expects($this->once())->method('dispatch')
+            ->withConsecutive(
+                [
+                    $this->logicalAnd(
+                        $this->isType('string'),
+                        $this->equalTo('orob2b_product.normalizer.denormalizer')
+                    ),
+                    $this->isInstanceOf('OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent'),
+                ]
             );
 
         $result = $this->productNormalizer->denormalize($data, $this->productClass);
@@ -75,15 +112,55 @@ class ProductNormalizerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($result->getSku(), 'SKU-1');
     }
 
-    public function testSupportsNormalization()
+    /**
+     * @param mixed $data
+     * @param bool $expected
+     *
+     * @dataProvider normalizationDataProvider
+     */
+    public function testSupportsNormalization($data, $expected)
     {
-        $product = new Product();
-        $this->assertTrue($this->productNormalizer->supportsNormalization($product));
+        $this->assertEquals($expected, $this->productNormalizer->supportsNormalization($data));
     }
 
-    public function testSupportsDenormalization()
+    /**
+     * @return array
+     */
+    public function normalizationDataProvider()
     {
-        $product = new Product();
-        $this->assertTrue($this->productNormalizer->supportsDenormalization($product, $this->productClass));
+        return [
+            [false, false],
+            [true, false],
+            ['', false],
+            ['string', false],
+            [[], false],
+            [['array'], false],
+            [new \stdClass(), false],
+            [new Product(), true],
+        ];
+    }
+
+    /**
+     * @param string $type
+     * @param bool $expected
+     *
+     * @dataProvider denormalizationDataProvider
+     */
+    public function testSupportsDenormalization($type, $expected)
+    {
+        $this->assertEquals($expected, $this->productNormalizer->supportsDenormalization([], $type));
+    }
+
+    /**
+     * @return array
+     */
+    public function denormalizationDataProvider()
+    {
+        return [
+            ['\stdClass', false],
+            ['string', false],
+            ['', false],
+            ['OroB2B\Bundle\ProductBundle\Entity\Product', true],
+        ];
     }
 }
