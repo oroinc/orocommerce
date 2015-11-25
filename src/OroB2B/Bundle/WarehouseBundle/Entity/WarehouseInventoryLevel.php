@@ -51,7 +51,7 @@ class WarehouseInventoryLevel extends ExtendWarehouseInventoryLevel
     /**
      * @var Warehouse $warehouse
      *
-     * @ORM\ManyToOne(targetEntity="Warehouse")
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\WarehouseBundle\Entity\Warehouse")
      * @ORM\JoinColumn(name="warehouse_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
      */
     protected $warehouse;
