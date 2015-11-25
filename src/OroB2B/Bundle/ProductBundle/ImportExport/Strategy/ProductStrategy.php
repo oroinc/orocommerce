@@ -2,16 +2,12 @@
 
 namespace OroB2B\Bundle\ProductBundle\ImportExport\Strategy;
 
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Util\ClassUtils;
-
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\FallbackBundle\ImportExport\Strategy\LocalizedFallbackValueAwareStrategy;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink;
 use OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
 
 class ProductStrategy extends LocalizedFallbackValueAwareStrategy
@@ -51,13 +47,6 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
     {
         $event = new ProductStrategyEvent($entity, $this->context->getValue('itemData'));
         $this->eventDispatcher->dispatch(ProductStrategyEvent::PROCESS_BEFORE, $event);
-
-        $existingEntity = $this->findExistingEntity($entity);
-        if (!$existingEntity) {
-            return parent::beforeProcessEntity($entity);
-        }
-
-        $this->resolveVariantLinkIdentifier($existingEntity, $entity);
 
         return parent::beforeProcessEntity($entity);
     }
@@ -105,70 +94,29 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
     }
 
     /**
-     * @param Product $existingEntity
-     * @param Product $entity
-     * @throws \Exception
+     * {@inheritdoc}
      */
-    protected function resolveVariantLinkIdentifier($existingEntity, $entity)
+    protected function findEntityByIdentityValues($entityName, array $identityValues)
     {
-        $fields = $this->fieldHelper->getRelations(ClassUtils::getClass($existingEntity), true);
-        foreach ($fields as $field) {
-            if ($this->isVariantLinkValue($field)) {
-                $variantLinks = $this->filterVariantCollections(
-                    $this->fieldHelper->getObjectValue($entity, $field['name'])
-                );
-                $this->fieldHelper->setObjectValue($entity, 'variantLinks', $variantLinks);
-            }
-        }
-    }
+        $newIdentityValues = [];
+        if (is_a($entityName, $this->variantLinkClass, true)) {
+            foreach ($identityValues as $entityFieldName => $entity) {
+                if ($this->databaseHelper->getIdentifier($entity)) {
+                    $newIdentityValues[$entityFieldName] = $entity;
+                } else {
+                    $existingEntity = $this->findExistingEntity($entity);
 
-    /**
-     * @param Collection $variantLinks
-     * @return Collection|void
-     */
-    protected function filterVariantCollections(Collection $variantLinks)
-    {
-        if ($variantLinks->isEmpty()) {
-            return $variantLinks;
-        }
-
-        return $variantLinks
-            ->filter(
-                function (ProductVariantLink $productVariantLink) {
-                    $identifier = $this->databaseHelper->getIdentifier($productVariantLink);
-                    if ($identifier) {
-                        return true;
+                    if (!$existingEntity) {
+                        return null;
                     }
 
-                    $fields = $this->fieldHelper->getRelations(ClassUtils::getClass($productVariantLink), true);
-                    foreach ($fields as $field) {
-                        $childEntity = $this->fieldHelper->getObjectValue($productVariantLink, $field['name']);
-                        $childIdentifier = $this->databaseHelper->getIdentifier($childEntity);
-                        if ($childIdentifier) {
-                            continue;
-                        }
-
-                        $existingChildEntity = $this->findExistingEntity($childEntity);
-                        if (!$existingChildEntity) {
-                            $this->context->incrementErrorEntriesCount();
-                            $this->strategyHelper->addValidationErrors(['error'], $this->context);
-                            return false;
-                        }
-                        $this->fieldHelper->setObjectValue($childEntity, 'id', $existingChildEntity->getId());
-                    }
-
-                    return true;
+                    $newIdentityValues[$entityFieldName] = $existingEntity;
                 }
-            );
-    }
+            }
+        } else {
+            $newIdentityValues = $identityValues;
+        }
 
-    /**
-     * @param $field
-     * @return bool
-     */
-    protected function isVariantLinkValue($field)
-    {
-        return $this->fieldHelper->isRelation($field)
-        && is_a($field['related_entity_name'], $this->variantLinkClass, true);
+        return parent::findEntityByIdentityValues($entityName, $newIdentityValues);
     }
 }

@@ -50,8 +50,8 @@ class ProductVariantLink
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "identity"=true,
-     *              "full"=false
+     *              "order"=10,
+     *              "identity"=true
      *          }
      *      }
      * )
@@ -64,7 +64,7 @@ class ProductVariantLink
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "excluded"=true
+     *              "order"=20
      *          }
      *      }
      * )

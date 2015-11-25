@@ -138,7 +138,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *      defaultValues={
      *          "importexport"={
      *              "order"=70,
-     *              "excluded"=true
+     *              "full"=true
      *          }
      *      }
      * )

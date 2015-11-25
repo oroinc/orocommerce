@@ -53,7 +53,7 @@ class LocalizedFallbackValueAwareStrategy extends ConfigurableAddOrReplaceStrate
         $fields = $this->fieldHelper->getRelations(ClassUtils::getClass($entity), true);
         foreach ($fields as $field) {
             if ($this->isLocalizedFallbackValue($field)) {
-                $this->setLocaleKeys($entity, $field);
+//                $this->setLocaleKeys($entity, $field);
             }
         }
 
