@@ -82,6 +82,7 @@ parameters:
     #Voters
     orob2b_account.acl.voter.account_user_role.class: OroB2B\Bundle\AccountBundle\Acl\Voter\AccountUserRoleVoter
     orob2b_account.acl.voter.account.class: OroB2B\Bundle\AccountBundle\Acl\Voter\AccountVoter
+    orob2b_account.acl.voter.product_visibility.class: OroB2B\Bundle\AccountBundle\Acl\Voter\ProductVisibilityVoter
 
     orob2b_account.item.builder.pinbar.class: Oro\Bundle\NavigationBundle\Entity\Builder\PinbarTabBuilder
     orob2b_account.item.builder.favorite.class: Oro\Bundle\NavigationBundle\Entity\Builder\NavigationItemBuilder
@@ -128,6 +129,16 @@ services:
             - @oro_entity.doctrine_helper
         calls:
             - [setContainer, [@service_container]]
+        tags:
+            - { name: security.voter }
+
+    orob2b_product_viisbility.acl.voter.account:
+        class: %orob2b_account.acl.voter.product_visibility.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+        calls:
+            - [setContainer, [@service_container]]
+            - [setModifier, [@orob2b_account.model.product_visibility_query_builder_modifier]]
         tags:
             - { name: security.voter }
 
