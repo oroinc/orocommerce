@@ -24,12 +24,28 @@ class ActionContextTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($data[$name]);
     }
 
+    public function testIssetGetSetUnset()
+    {
+        $data = new ActionContext();
+
+        $this->assertFalse(isset($data->foo));
+        $this->assertNull($data->foo);
+
+        $data->foo = 'bar';
+        $this->assertTrue(isset($data->foo));
+        $this->assertEquals('bar', $data->foo);
+
+        unset($data->foo);
+        $this->assertFalse(isset($data->foo));
+        $this->assertNull($data->foo);
+    }
+
     public function testGetEntity()
     {
         $data = new ActionContext();
         $this->assertNull($data->getEntity());
 
-        $data['entity'] = new \stdClass();
+        $data['data'] = new \stdClass();
         $this->assertInternalType('object', $data->getEntity());
     }
 
@@ -96,5 +112,16 @@ class ActionContextTest extends \PHPUnit_Framework_TestCase
 
         $data = new ActionContext($array);
         $this->assertEquals($array, $data->toArray());
+    }
+
+    public function testGetRedirectUrl()
+    {
+        $data = new ActionContext();
+        $this->assertNull($data->getRedirectUrl());
+
+        $url = 'my/test/url';
+
+        $data->offsetSet('redirectUrl', $url);
+        $this->assertEquals($url, $data->getRedirectUrl());
     }
 }
