@@ -25,7 +25,7 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $builder = new TreeBuilder();
-        $root = $builder->root('configuration');
+        $root = $builder->root('action');
         $this->addNodes($root);
 
         return $builder;
@@ -73,10 +73,44 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
                     ->prototype('variable')
                     ->end()
                 ->end()
+                ->append($this->getAttributesNode())
                 ->append($this->getFrontendOptionsNode())
             ->end();
 
         return $nodeDefinition;
+    }
+
+    /**
+     * @return NodeDefinition
+     */
+    protected function getAttributesNode()
+    {
+        $builder = new TreeBuilder();
+        $node = $builder->root('attributes');
+        $node
+            ->useAttributeAsKey('name')
+            ->prototype('array')
+                ->children()
+                    ->scalarNode('name')
+                        ->cannotBeEmpty()
+                    ->end()
+                    ->scalarNode('type')
+                        ->defaultNull()
+                    ->end()
+                    ->scalarNode('label')
+                        ->defaultNull()
+                    ->end()
+                    ->scalarNode('property_path')
+                        ->defaultNull()
+                    ->end()
+                    ->arrayNode('options')
+                        ->prototype('variable')
+                        ->end()
+                    ->end()
+                ->end()
+            ->end();
+
+        return $node;
     }
 
     /**

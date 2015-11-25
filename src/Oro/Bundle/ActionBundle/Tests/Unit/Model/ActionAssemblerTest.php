@@ -5,25 +5,28 @@ namespace Oro\Bundle\ActionBundle\Tests\Unit\Model;
 use Oro\Bundle\ActionBundle\Model\Action;
 use Oro\Bundle\ActionBundle\Model\ActionAssembler;
 use Oro\Bundle\ActionBundle\Model\ActionDefinition;
+use Oro\Bundle\ActionBundle\Model\AttributeAssembler;
 use Oro\Bundle\WorkflowBundle\Model\Action\ActionFactory as FunctionFactory;
 
 use Oro\Component\ConfigExpression\ExpressionFactory as ConditionFactory;
 
 class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var ActionAssembler
-     */
+    /** @var ActionAssembler */
     protected $assembler;
 
     protected function setUp()
     {
-        $this->assembler = new ActionAssembler($this->getFunctionFactory(), $this->getConditionFactory());
+        $this->assembler = new ActionAssembler(
+            $this->getFunctionFactory(),
+            $this->getConditionFactory(),
+            $this->getAttributeAssembler()
+        );
     }
 
     protected function tearDown()
     {
-        unset($this->assembler);
+        unset($this->assembler, $this->functionFactory, $this->conditionFactory, $this->attributeAssembler);
     }
 
     /**
@@ -82,9 +85,6 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
             ->setExecutionStep(['config_execution_step'])
             ->setOrder(77);
 
-        $functionFactory = $this->getFunctionFactory();
-        $conditionFactory = $this->getConditionFactory();
-
         return [
             'no data' => [
                 [],
@@ -101,7 +101,12 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
                 ]
                 ,
                 'expected' => [
-                    'minimum_name' => new Action($functionFactory, $conditionFactory, $definition1),
+                    'minimum_name' => new Action(
+                        $this->getFunctionFactory(),
+                        $this->getConditionFactory(),
+                        $this->getAttributeAssembler(),
+                        $definition1
+                    )
                 ],
             ],
             'maximum data' => [
@@ -125,7 +130,12 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
                     ]
                 ],
                 'expected' => [
-                    'maximum_name' => new Action($functionFactory, $conditionFactory, $definition2),
+                    'maximum_name' => new Action(
+                        $this->getFunctionFactory(),
+                        $this->getConditionFactory(),
+                        $this->getAttributeAssembler(),
+                        $definition2
+                    )
                 ],
             ],
         ];
@@ -147,6 +157,16 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
     protected function getConditionFactory()
     {
         return $this->getMockBuilder('Oro\Component\ConfigExpression\ExpressionFactory')
+            ->disableOriginalConstructor()
+            ->getMock();
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|AttributeAssembler
+     */
+    protected function getAttributeAssembler()
+    {
+        return $this->getMockBuilder('Oro\Bundle\ActionBundle\Model\AttributeAssembler')
             ->disableOriginalConstructor()
             ->getMock();
     }
