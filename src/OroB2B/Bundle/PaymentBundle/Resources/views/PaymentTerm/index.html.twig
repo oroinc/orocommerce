@@ -5,9 +5,11 @@
 
 {% block navButtons %}
     {% if resource_granted('orob2b_payment_term_create') %}
-        {{ UI.addButton({
-            'path': path('orob2b_payment_term_create'),
-            'entity_label': 'orob2b.payment.paymentterm.entity_label'|trans
-        }) }}
+        <div class="btn-group">
+            {{ UI.addButton({
+                'path': path('orob2b_payment_term_create'),
+                'entity_label': 'orob2b.payment.paymentterm.entity_label'|trans
+            }) }}
+        </div>
     {% endif %}
 {% endblock %}

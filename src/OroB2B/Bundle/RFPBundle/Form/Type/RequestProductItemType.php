@@ -48,7 +48,7 @@ class RequestProductItemType extends AbstractType
                 ProductUnitSelectionType::NAME,
                 [
                     'label' => 'orob2b.product.productunit.entity_label',
-                    'required' => true,
+                    'required' => false,
                     'compact' => $options['compact_units'],
                 ]
             )

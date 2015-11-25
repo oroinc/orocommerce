@@ -20,13 +20,16 @@ parameters:
     orob2b_product.event_listener.product_variant_custom_fields_datagrid.class: OroB2B\Bundle\ProductBundle\EventListener\ProductVariantCustomFieldsDatagridListener
     orob2b_product.event_listener.restricted_products_datagrid.class: OroB2B\Bundle\ProductBundle\EventListener\RestrictedProductsDatagridEventListener
     orob2b_product.event_listener.product_select_db_query.class: OroB2B\Bundle\ProductBundle\EventListener\ProductSelectDBQueryEventListener
+    orob2b_product.event_listener.scoped_product_select_db_query.class: OroB2B\Bundle\ProductBundle\EventListener\ScopedProductSelectDBQueryEventListener
     orob2b_product.event_listener.restrict_disabled_products.class: OroB2B\Bundle\ProductBundle\EventListener\RestrictDisabledProductsEventListener
+
     orob2b_product.validator.unique_variant_links.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator
     orob2b_product.validator.by_product_sku.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinkByProductSkuValidator
     orob2b_product.validator.product_variant_field.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductVariantFieldValidator
 
-    orob2b_product.component_processor.registry.class: OroB2B\Bundle\ProductBundle\Model\ComponentProcessorRegistry
-    orob2b_product.processor.data_storage_aware.class: OroB2B\Bundle\ProductBundle\Model\DataStorageAwareProcessor
+    orob2b_product.component_processor.filter.class: OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter
+    orob2b_product.component_processor.registry.class: OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry
+    orob2b_product.component_processor.data_storage_aware.processor.class: OroB2B\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor
     orob2b_product.form_handler.quick_add.class: OroB2B\Bundle\ProductBundle\Form\Handler\QuickAddHandler
     orob2b_product.product.manager.class: OroB2B\Bundle\ProductBundle\Entity\Manager\ProductManager
 
@@ -82,6 +85,7 @@ services:
             - ["sku", "defaultName.string"]
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_product, acl_resource: orob2b_product_view }
+            - { name: oro_form.autocomplete.search_handler, alias: orob2b_product_frontend, acl_resource: orob2b_product_frontend_view }
         lazy: true
 
     orob2b_product.service.sku_incrementor:
@@ -120,15 +124,27 @@ services:
             tags:
                 - { name: validator.constraint_validator, alias: orob2b_product_product_by_sku_validator }
 
+    orob2b_product.component_processor.filter:
+        class: %orob2b_product.component_processor.filter.class%
+        arguments:
+            - @orob2b_product.product.manager
+            - @doctrine
+        calls:
+            - [setProductClass, [%orob2b_product.product.class%]]
+
     orob2b_product.component_processor.registry:
         class: %orob2b_product.component_processor.registry.class%
 
-    orob2b_product.processor.data_storage_aware:
-        class: %orob2b_product.processor.data_storage_aware.class%
+    orob2b_product.component_processor.data_storage_aware.processor:
+        class: %orob2b_product.component_processor.data_storage_aware.processor.class%
         arguments:
             - @router
             - @orob2b_product.service.product_data_storage
             - @oro_security.security_facade
+            - @session
+            - @translator
+        calls:
+            - [setComponentProcessorFilter, [@orob2b_product.component_processor.filter]]
         abstract: true
 
     orob2b_product.form_handler.quick_add:
@@ -137,6 +153,9 @@ services:
             - @translator
             - @form.factory
             - @orob2b_product.component_processor.registry
+            - @doctrine
+        calls:
+            - [setProductClass, [%orob2b_product.product.class%]]
 
     orob2b_product.event_listener.product_grid_widget:
         class: %orob2b_product.event_listener.product_grid_widget.class%
@@ -196,7 +215,9 @@ services:
             - @request_stack
             - @orob2b_product.product.manager
         tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-products-grid, method: onBuildAfter }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.products-select-grid, method: onBuildAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.products-select-grid-frontend, method: onBuildAfter }
 
     orob2b_product.event_listener.command.platform_update:
         class: %orob2b_product.event_listener.command.platform_update.class%
@@ -230,5 +251,21 @@ services:
         class: %orob2b_product.event_listener.restrict_disabled_products.class%
         arguments:
             - @orob2b_product.model.product_visibility_query_builder_modifier
+        tags:
+            - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
+
+    orob2b_product.event_listener.abstract_product_select_db_query:
+        abstract:  true
+        arguments:
+            - @oro_config.global
+            - @orob2b_product.model.product_visibility_query_builder_modifier
+            - @orob2b_frontend.request.frontend_helper
+            - @request_stack
+
+    orob2b_product.event_listener.product_select_db_query:
+        class: %orob2b_product.event_listener.product_select_db_query.class%
+        parent: orob2b_product.event_listener.abstract_product_select_db_query
+        calls:
+            - [setFrontendSystemConfigurationPath, ['orob2b_product.general_frontend_product_visibility']]
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }

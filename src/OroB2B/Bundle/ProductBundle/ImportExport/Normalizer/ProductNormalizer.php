@@ -2,10 +2,11 @@
 
 namespace OroB2B\Bundle\ProductBundle\ImportExport\Normalizer;
 
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\ConfigurableEntityNormalizer;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
 
 class ProductNormalizer extends ConfigurableEntityNormalizer
@@ -13,13 +14,13 @@ class ProductNormalizer extends ConfigurableEntityNormalizer
     /** @var string */
     protected $productClass;
 
-    /** @var EventDispatcher */
+    /** @var EventDispatcherInterface */
     protected $eventDispatcher;
 
     /**
-     * @param EventDispatcher $eventDispatcher
+     * @param EventDispatcherInterface $eventDispatcher
      */
-    public function setEventDispatcher($eventDispatcher)
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
     }
@@ -57,6 +58,7 @@ class ProductNormalizer extends ConfigurableEntityNormalizer
      */
     public function denormalize($data, $class, $format = null, array $context = [])
     {
+        /** @var Product $object */
         $object = parent::denormalize($data, $class, $format, $context);
 
         if (!isset($context['fieldName'])) {
@@ -77,7 +79,7 @@ class ProductNormalizer extends ConfigurableEntityNormalizer
      */
     public function supportsNormalization($data, $format = null, array $context = [])
     {
-        return is_a($data, $this->productClass, true);
+        return is_a($data, $this->productClass);
     }
 
     /**

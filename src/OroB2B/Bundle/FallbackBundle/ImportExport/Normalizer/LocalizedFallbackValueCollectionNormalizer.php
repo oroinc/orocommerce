@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\FallbackBundle\ImportExport\Normalizer;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\CollectionNormalizer;
@@ -46,7 +47,7 @@ class LocalizedFallbackValueCollectionNormalizer extends CollectionNormalizer
     }
 
     /**
-     * @param LocalizedFallbackValue $object
+     * @param Collection|LocalizedFallbackValue[] $object
      *
      * {@inheritdoc}
      */
@@ -54,7 +55,6 @@ class LocalizedFallbackValueCollectionNormalizer extends CollectionNormalizer
     {
         $result = [];
 
-        /** @var LocalizedFallbackValue $item */
         foreach ($object as $item) {
             $result[LocaleCodeFormatter::formatName($item->getLocale())] = [
                 'fallback' => $item->getFallback(),

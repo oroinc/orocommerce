@@ -327,7 +327,11 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     public function __toString()
     {
         try {
-            return (string)$this->getDefaultName()->getString();
+            if ($this->getDefaultName()) {
+                return (string)$this->getDefaultName()->__toString();
+            } else {
+                return (string)$this->sku;
+            }
         } catch (\LogicException $e) {
             return (string)$this->sku;
         }
@@ -611,7 +615,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
     }
 
     /**
-     * @return LocalizedFallbackValue
+     * @return null|LocalizedFallbackValue
      * @throws \LogicException
      */
     public function getDefaultName()
@@ -620,11 +624,13 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
             return null === $name->getLocale();
         });
 
-        if ($names->count() !== 1) {
+        if ($names->count() > 1) {
             throw new \LogicException('There must be only one default name');
+        } elseif ($names->count() === 1) {
+            return $names->first();
         }
 
-        return $names->first();
+        return null;
     }
 
     /**

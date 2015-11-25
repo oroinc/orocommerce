@@ -21,11 +21,16 @@ oro_system_configuration:
             type: oro_user_select
             options:
                 label: orob2b.rfp.system_configuration.default_user_for_notifications
-        oro_b2b_rfp.product_visibility:
+        oro_b2b_rfp.backend_product_visibility:
             data_type: array
             type: orob2b_product_inventory_status_select
             options:
-                label: orob2b.rfp.system_configuration.product_visibility
+                label: orob2b.rfp.system_configuration.backend_product_visibility
+        oro_b2b_rfp.frontend_product_visibility:
+            data_type: array
+            type: orob2b_product_inventory_status_select
+            options:
+                label: orob2b.rfp.system_configuration.frontend_product_visibility
 
     tree:
         system_configuration:
@@ -43,6 +48,9 @@ oro_system_configuration:
                         children:
                             product_settings:
                                 children:
-                                    catalog_product_settings:
+                                    frontend_inventory_statuses_visibility:
                                         children:
-                                            - oro_b2b_rfp.product_visibility
+                                            - oro_b2b_rfp.frontend_product_visibility
+                                    backend_inventory_statuses_visibility:
+                                        children:
+                                            - oro_b2b_rfp.backend_product_visibility

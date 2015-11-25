@@ -6,7 +6,7 @@ OroB2B\Bundle\WebsiteBundle\Entity\Website:
         name:
             - NotBlank: ~
             - Length:
-                min: 3
+                min: 2
                 max: 255
         url:
             - NotBlank: ~
