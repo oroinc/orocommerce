@@ -10,7 +10,7 @@ define(function(require) {
          * @inheritDoc
          */
         initialize: function(options) {
-            var $el = $('.pricing-price-list');
+            var $el = options._sourceElement;
             $el.find('input[type="hidden"]').on('change', function(e){
                 $(this).closest('td').find('.validation-failed').remove();
                 $(this).closest('.error').removeClass('error');
