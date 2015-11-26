@@ -74,6 +74,7 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->append($this->getFrontendOptionsNode())
+                ->append($this->getFormOptionsNode())
             ->end();
 
         return $nodeDefinition;
@@ -91,6 +92,37 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
                 ->scalarNode('icon')->end()
                 ->scalarNode('class')->end()
                 ->scalarNode('template')->end()
+            ->end();
+
+        return $node;
+    }
+
+    /**
+     * @return NodeDefinition
+     */
+    protected function getFormOptionsNode()
+    {
+        $builder = new TreeBuilder();
+        $node = $builder->root('form_options');
+        $node
+            ->children()
+                ->arrayNode('attribute_fields')
+                    ->useAttributeAsKey('name')
+                    ->prototype('array')
+                        ->children()
+                            ->scalarNode('form_type')->end()
+                            ->arrayNode('options')
+                                ->prototype('variable')
+                                ->end()
+                            ->end()
+                        ->end()
+                    ->end()
+                ->end()
+                ->arrayNode('attribute_default_values')
+                    ->useAttributeAsKey('name')
+                    ->prototype('variable')
+                    ->end()
+                ->end()
             ->end();
 
         return $node;

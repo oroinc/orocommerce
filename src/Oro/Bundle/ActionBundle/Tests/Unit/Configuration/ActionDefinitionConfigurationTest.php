@@ -82,6 +82,19 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                             'class' => 'class',
                             'template' => 'template',
                         ],
+                        'form_options' => [
+                            'attribute_fields' => [
+                                'attribute_1' => [
+                                    'form_type' => 'test type',
+                                    'options' => [
+                                        'class' => 'testClass',
+                                    ]
+                                ]
+                            ],
+                            'attribute_default_values' => [
+                                'attribute_1' => 'value 1',
+                            ]
+                        ],
                         'prefunctions' => [
                             '@create_date' => [],
                         ],
@@ -104,6 +117,19 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'icon' => 'icon',
                         'class' => 'class',
                         'template' => 'template',
+                    ],
+                    'form_options' => [
+                        'attribute_fields' => [
+                            'attribute_1' => [
+                                'form_type' => 'test type',
+                                'options' => [
+                                    'class' => 'testClass',
+                                ],
+                            ]
+                        ],
+                        'attribute_default_values' => [
+                            'attribute_1' => 'value 1',
+                        ]
                     ],
                     'prefunctions' => [
                         '@create_date' => [],
@@ -195,6 +221,26 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'order' => 10,
                         'enabled' => true,
                         'frontend_options' => 'not array value',
+                    ],
+                ],
+            ],
+            'incorrect action[form_options]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'applications' => [],
+                        'entities' => [],
+                        'routes' => [],
+                        'order' => 10,
+                        'enabled' => true,
+                        'form_options' => [
+                            'attribute_fields' => [
+                                'attribute_1' => [
+                                    'form_type' => 'test type',
+                                    'options' => 'not array value',
+                                ]
+                            ],
+                        ],
                     ],
                 ],
             ],
