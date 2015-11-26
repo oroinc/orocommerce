@@ -11,10 +11,11 @@ datagrid:
                 from:
                     - { table: %orob2b_website.website.class%, alias: website }
         columns:
+            id:
+                label:         orob2b.website.id.label
+                renderable:    false
             name:
                 label:         orob2b.website.name.label
-            url:
-                label:         orob2b.website.url.label
             locales:
                 label:         orob2b.website.locales.label
                 type:          twig
@@ -28,10 +29,10 @@ datagrid:
                 frontend_type: datetime
         sorters:
             columns:
+                id:
+                    data_name: website.id
                 name:
                     data_name: website.name
-                url:
-                    data_name: website.url
                 createdAt:
                     data_name: website.createdAt
                 updatedAt:
@@ -40,20 +41,20 @@ datagrid:
                 createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         filters:
             columns:
+                id:
+                    type:       number
+                    data_name:  website.id
+                    enabled:    false
                 name:
-                    type:      string
-                    data_name: website.name
-                url:
-                    type:      string
-                    data_name: website.url
+                    type:       string
+                    data_name:  website.name
                 createdAt:
-                    type:      datetime
-                    data_name: website.createdAt
+                    type:       datetime
+                    data_name:  website.createdAt
                 updatedAt:
-                    type:      datetime
-                    data_name: website.updatedAt
+                    type:       datetime
+                    data_name:  website.updatedAt
         properties:
-            id: ~
             view_link:
                 type:  url
                 params: [ id ]
@@ -69,7 +70,6 @@ datagrid:
         source:
             acl_resource: orob2b_website_view
         properties:
-            id: ~
             view_link:
                 route: orob2b_website_view
             update_link:

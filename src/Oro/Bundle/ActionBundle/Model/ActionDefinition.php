@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\ActionBundle\Model;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ */
 class ActionDefinition
 {
     /** @var string */
@@ -35,10 +38,16 @@ class ActionDefinition
     private $attributes = [];
 
     /** @var array */
+    private $preFunctions = [];
+
+    /** @var array */
     private $preConditions = [];
 
     /** @var array */
     private $conditions = [];
+
+    /** @var array */
+    private $postFunctions = [];
 
     /** @var array */
     private $initStep = [];
@@ -239,6 +248,25 @@ class ActionDefinition
     /**
      * @return array
      */
+    public function getPreFunctions()
+    {
+        return $this->preFunctions;
+    }
+
+    /**
+     * @param array $preFunctions
+     * @return $this
+     */
+    public function setPreFunctions(array $preFunctions)
+    {
+        $this->preFunctions = $preFunctions;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
     public function getPreConditions()
     {
         return $this->preConditions;
@@ -270,6 +298,25 @@ class ActionDefinition
     public function setConditions(array $conditions)
     {
         $this->conditions = $conditions;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getPostFunctions()
+    {
+        return $this->postFunctions;
+    }
+
+    /**
+     * @param array $postFunctions
+     * @return $this
+     */
+    public function setPostFunctions(array $postFunctions)
+    {
+        $this->postFunctions = $postFunctions;
 
         return $this;
     }

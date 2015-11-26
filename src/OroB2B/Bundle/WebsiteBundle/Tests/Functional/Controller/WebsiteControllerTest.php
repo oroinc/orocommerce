@@ -14,9 +14,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 class WebsiteControllerTest extends WebTestCase
 {
     const WEBSITE_TEST_NAME = 'OroCRM';
-    const WEBSITE_TEST_URL = 'http://www.orocrm.com';
     const WEBSITE_UPDATED_TEST_NAME = 'OroCommerce';
-    const WEBSITE_UPDATED_TEST_URL = 'http://www.orocommerce.com';
     
     protected function setUp()
     {
@@ -48,8 +46,7 @@ class WebsiteControllerTest extends WebTestCase
             'orob2b_website_type' => [
                 '_token' => $form['orob2b_website_type[_token]']->getValue(),
                 'owner' => $this->getCurrentUser()->getId(),
-                'name' => self::WEBSITE_TEST_NAME,
-                'url' => self::WEBSITE_TEST_URL,
+                'name' => self::WEBSITE_TEST_NAME
             ]
         ];
 
@@ -60,7 +57,7 @@ class WebsiteControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertWebsiteSaved($crawler, self::WEBSITE_TEST_NAME, self::WEBSITE_TEST_URL);
+        $this->assertWebsiteSaved($crawler, self::WEBSITE_TEST_NAME);
 
         $result = $this->getWebsiteDataByName(self::WEBSITE_TEST_NAME);
 
@@ -77,7 +74,6 @@ class WebsiteControllerTest extends WebTestCase
         $html = $crawler->html();
 
         $this->assertContains(self::WEBSITE_TEST_NAME, $html);
-        $this->assertContains(self::WEBSITE_TEST_URL, $html);
 
         $result  = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -90,8 +86,7 @@ class WebsiteControllerTest extends WebTestCase
             'orob2b_website_type' => [
                 '_token' => $form['orob2b_website_type[_token]']->getValue(),
                 'owner' => $this->getCurrentUser()->getId(),
-                'name' => self::WEBSITE_UPDATED_TEST_NAME,
-                'url' => self::WEBSITE_UPDATED_TEST_URL,
+                'name' => self::WEBSITE_UPDATED_TEST_NAME
             ]
         ];
 
@@ -103,7 +98,7 @@ class WebsiteControllerTest extends WebTestCase
         $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertWebsiteSaved($crawler, self::WEBSITE_UPDATED_TEST_NAME, self::WEBSITE_UPDATED_TEST_URL);
+        $this->assertWebsiteSaved($crawler, self::WEBSITE_UPDATED_TEST_NAME);
 
         $result = $this->getWebsiteDataByName(self::WEBSITE_UPDATED_TEST_NAME);
         $this->assertEquals($id, $result['id']);
@@ -146,14 +141,12 @@ class WebsiteControllerTest extends WebTestCase
     /**
      * @param Crawler $crawler
      * @param string $websiteName
-     * @param string $websiteUrl
      */
-    protected function assertWebsiteSaved(Crawler $crawler, $websiteName, $websiteUrl)
+    protected function assertWebsiteSaved(Crawler $crawler, $websiteName)
     {
         $html = $crawler->html();
         $this->assertContains('Website has been saved', $html);
         $this->assertContains($websiteName, $html);
-        $this->assertContains($websiteUrl, $html);
         $this->assertEquals($websiteName, $crawler->filter('h1.user-name')->html());
     }
 }

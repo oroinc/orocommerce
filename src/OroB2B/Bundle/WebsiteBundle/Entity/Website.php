@@ -106,7 +106,7 @@ class Website extends ExtendWebsite implements OrganizationAwareInterface
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255, unique=true, nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
