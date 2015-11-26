@@ -2,12 +2,10 @@
 
 namespace Oro\Bundle\ActionBundle\Model;
 
-use Oro\Bundle\ActionBundle\Exception\MissedRequiredOptionException;
-
 use Oro\Bundle\WorkflowBundle\Model\Action\ActionFactory as FunctionFactory;
 use Oro\Component\ConfigExpression\ExpressionFactory as ConditionFactory;
 
-class ActionAssembler
+class ActionAssembler extends AbstractAssembler
 {
     /** @var FunctionFactory */
     private $functionFactory;
@@ -88,34 +86,5 @@ class ActionAssembler
             ->setExecutionStep($this->getOption($options, 'execution_step', []));
 
         return $actionDefinition;
-    }
-
-    /**
-     * @param array $options
-     * @param array $requiredOptions
-     * @throws MissedRequiredOptionException
-     */
-    protected function assertOptions(array $options, array $requiredOptions)
-    {
-        foreach ($requiredOptions as $optionName) {
-            if (empty($options[$optionName])) {
-                throw new MissedRequiredOptionException(sprintf('Option "%s" is required', $optionName));
-            }
-        }
-    }
-
-    /**
-     * @param array $options
-     * @param string $key
-     * @param mixed $default
-     * @return mixed
-     */
-    protected function getOption(array $options, $key, $default = null)
-    {
-        if (array_key_exists($key, $options)) {
-            return $options[$key];
-        }
-
-        return $default;
     }
 }
