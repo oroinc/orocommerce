@@ -4,18 +4,15 @@ namespace Oro\Bundle\ActionBundle\Tests\Unit\Model;
 
 use Symfony\Component\PropertyAccess\PropertyPath;
 
+use Oro\Component\ConfigExpression\ConfigurationPass\ConfigurationPassInterface;
+
 use Oro\Bundle\ActionBundle\Model\FormOptionsAssembler;
 use Oro\Bundle\WorkflowBundle\Model\Attribute;
 
 class FormOptionsAssemblerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $actionFactory;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigurationPassInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $configurationPass;
 
@@ -26,9 +23,9 @@ class FormOptionsAssemblerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->configurationPass = $this->getMockBuilder(
+        $this->configurationPass = $this->getMock(
             'Oro\Component\ConfigExpression\ConfigurationPass\ConfigurationPassInterface'
-        )->getMockForAbstractClass();
+        );
 
         $this->assembler = new FormOptionsAssembler();
         $this->assembler->addConfigurationPass($this->configurationPass);
@@ -83,11 +80,16 @@ class FormOptionsAssemblerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param array $options
+     * @param array $attributes
+     * @param string $expectedException
+     * @param string $expectedExceptionMessage
+     *
      * @dataProvider invalidOptionsDataProvider
      */
     public function testAssembleRequiredOptionException(
-        $options,
-        $attributes,
+        array $options,
+        array $attributes,
         $expectedException,
         $expectedExceptionMessage
     ) {
@@ -95,65 +97,51 @@ class FormOptionsAssemblerTest extends \PHPUnit_Framework_TestCase
         $this->assembler->assemble($options, $attributes);
     }
 
+    /**
+     * @return array
+     */
     public function invalidOptionsDataProvider()
     {
-        return array(
-            'string_attribute_fields' => array(
-                'options' => array(
-                    'attribute_fields' => 'string'
-                ),
-                'attributes' => array(),
-                'expectedException' => 'Symfony\Component\Form\Exception\InvalidConfigurationException',
-                'expectedExceptionMessage' => 'Option "form_options.attribute_fields" must be an array.'
-            ),
-            'string_attribute_default_values' => array(
-                'options' => array(
-                    'attribute_default_values' => 'string'
-                ),
-                'attributes' => array(),
-                'expectedException' => 'Symfony\Component\Form\Exception\InvalidConfigurationException',
-                'expectedExceptionMessage' =>
-                    'Option "form_options.attribute_default_values" must be an array.'
-            ),
-            'attribute_not_exist_at_attribute_fields' => array(
-                'options' => array(
-                    'attribute_fields' => array(
-                        'attribute_one' => array('form_type' => 'text'),
-                    )
-                ),
-                'attributes' => array(),
+        return [
+            'attribute_not_exist_at_attribute_fields' => [
+                'options' => [
+                    'attribute_fields' => [
+                        'attribute_one' => ['form_type' => 'text'],
+                    ]
+                ],
+                'attributes' => [],
                 'expectedException' => 'Oro\Bundle\ActionBundle\Exception\UnknownAttributeException',
                 'expectedExceptionMessage' => 'Unknown attribute "attribute_one".'
-            ),
-            'attribute_not_exist_at_attribute_default_values' => array(
-                'options' => array(
-                    'attribute_default_values' => array(
-                        'attribute_one' => array('form_type' => 'text'),
-                    )
-                ),
-                'attributes' => array(),
+            ],
+            'attribute_not_exist_at_attribute_default_values' => [
+                'options' => [
+                    'attribute_default_values' => [
+                        'attribute_one' => ['form_type' => 'text'],
+                    ]
+                ],
+                'attributes' => [],
                 'expectedException' => 'Oro\Bundle\ActionBundle\Exception\UnknownAttributeException',
                 'expectedExceptionMessage' => 'Unknown attribute "attribute_one".'
-            ),
-            'attribute_default_value_not_in_attribute_fields' => array(
-                'options' => array(
-                    'attribute_fields' => array(
-                        'attribute_one' => array('form_type' => 'text'),
-                    ),
-                    'attribute_default_values' => array(
+            ],
+            'attribute_default_value_not_in_attribute_fields' => [
+                'options' => [
+                    'attribute_fields' => [
+                        'attribute_one' => ['form_type' => 'text'],
+                    ],
+                    'attribute_default_values' => [
                         'attribute_two' => '$attribute_one'
-                    )
-                ),
-                array(
+                    ]
+                ],
+                [
                     $this->createAttribute('attribute_one'),
                     $this->createAttribute('attribute_two'),
-                ),
+                ],
                 'expectedException' => 'Symfony\Component\Form\Exception\InvalidConfigurationException',
                 'expectedExceptionMessage' =>
                     'Form options doesn\'t have attribute which is referenced in ' .
                     '"attribute_default_values" option.'
-            ),
-        );
+            ],
+        ];
     }
 
     /**
