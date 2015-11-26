@@ -33,15 +33,9 @@ class FormOptionsAssembler
     {
         $this->setAttributes($attributes);
 
-        $attributeFields =  array_key_exists('attribute_fields', $options)
+        $attributeFields = array_key_exists('attribute_fields', $options)
             ? $options['attribute_fields']
             : [];
-
-        if (!is_array($attributeFields)) {
-            throw new InvalidConfigurationException(
-                'Option "form_options.attribute_fields" must be an array.'
-            );
-        }
 
         $attributeFieldKeys = array_keys($attributeFields);
         foreach ($attributeFieldKeys as $attributeName) {
@@ -52,11 +46,6 @@ class FormOptionsAssembler
 
         if (!empty($options['attribute_default_values'])) {
             $value = $options['attribute_default_values'];
-            if (!is_array($value)) {
-                throw new InvalidConfigurationException(
-                    'Option "form_options.attribute_default_values" must be an array.'
-                );
-            }
 
             $arrayKeys = array_keys($value);
             foreach ($arrayKeys as $attributeName) {
@@ -105,6 +94,7 @@ class FormOptionsAssembler
         foreach ($this->configurationPasses as $configurationPass) {
             $data = $configurationPass->passConfiguration($data);
         }
+
         return $data;
     }
 
