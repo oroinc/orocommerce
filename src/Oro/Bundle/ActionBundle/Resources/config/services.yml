@@ -3,6 +3,7 @@ parameters:
     oro_action.assembler.class: Oro\Bundle\ActionBundle\Model\ActionAssembler
     oro_action.attribute_assembler.class: Oro\Bundle\ActionBundle\Model\AttributeAssembler
     oro_action.attribute_guesser.class: Oro\Bundle\WorkflowBundle\Model\AttributeGuesser
+    oro_action.form_options_assembler.class: Oro\Bundle\ActionBundle\Model\FormOptionsAssembler
 
 services:
     oro_action.manager:
@@ -18,6 +19,7 @@ services:
             - @oro_action.function_factory
             - @oro_action.expression.factory
             - @oro_action.attribute_assembler
+            - @oro_action.form_options_assembler
 
     oro_action.attribute_assembler:
         class: %oro_action.attribute_assembler.class%
@@ -59,3 +61,6 @@ services:
             - [addFormTypeMapping, ["bool", "checkbox"]]
             - [addFormTypeMapping, ["boolean", "checkbox"]]
             - [addFormTypeMapping, ["float", "number"]]
+
+    oro_action.form_options_assembler:
+        class: %oro_action.form_options_assembler.class%
