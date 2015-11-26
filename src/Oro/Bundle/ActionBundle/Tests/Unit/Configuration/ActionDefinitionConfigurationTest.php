@@ -183,7 +183,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
         return array_merge(
             $this->invalidConfigurationProvider(),
             $this->invalidAttributeProvider(),
-            $this->invalidFromOptionsProvider(),
+            $this->invalidFormOptionsProvider(),
             $this->invalidAttributesProvider()
         );
     }
@@ -341,7 +341,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    protected function invalidFromOptionsProvider()
+    protected function invalidFormOptionsProvider()
     {
         return [
             'incorrect action[form_options]' => [
