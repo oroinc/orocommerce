@@ -5,12 +5,14 @@ namespace Oro\Bundle\ActionBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Exception\InvalidConfigurationException;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\Options;
 
 use Oro\Bundle\ActionBundle\Model\Action;
 use Oro\Bundle\ActionBundle\Model\ActionContext;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
+use Oro\Bundle\ActionBundle\Form\EventListener\RequiredAttributesListener;
 use Oro\Bundle\WorkflowBundle\Model\Attribute;
 use Oro\Bundle\WorkflowBundle\Model\ContextAccessor;
 
@@ -21,16 +23,25 @@ class ActionType extends AbstractType
     /** @var ActionManager */
     protected $actionManager;
 
+    /** @var RequiredAttributesListener */
+    protected $requiredAttributesListener;
+
     /** @var ContextAccessor */
     protected $contextAccessor;
 
     /**
+     * ActionType constructor.
      * @param ActionManager $actionManager
+     * @param RequiredAttributesListener $requiredAttributesListener
      * @param ContextAccessor $contextAccessor
      */
-    public function __construct(ActionManager $actionManager, ContextAccessor $contextAccessor)
-    {
+    public function __construct(
+        ActionManager $actionManager,
+        RequiredAttributesListener $requiredAttributesListener,
+        ContextAccessor $contextAccessor
+    ) {
         $this->actionManager = $actionManager;
+        $this->requiredAttributesListener = $requiredAttributesListener;
         $this->contextAccessor = $contextAccessor;
     }
 
@@ -51,7 +62,6 @@ class ActionType extends AbstractType
 
         $resolver->setDefined(
             [
-                'action',
                 'attribute_fields',
                 'attribute_default_values',
                 'init_functions'
@@ -61,7 +71,6 @@ class ActionType extends AbstractType
         $resolver->setDefaults(
             [
                 'data_class' => 'Oro\Bundle\ActionBundle\Model\ActionContext',
-                'disable_attribute_fields' => false,
                 'attribute_fields' => [],
                 'attribute_default_values' => []
             ]
@@ -74,22 +83,6 @@ class ActionType extends AbstractType
                 'attribute_default_values' => 'array',
                 'init_functions' => 'Oro\Bundle\WorkflowBundle\Model\Action\ActionInterface',
             ]
-        );
-
-        $resolver->setNormalizer(
-            'constraints',
-            function (Options $options, $constraints) {
-                if (!$constraints) {
-                    $constraints = [];
-                }
-
-                //$constraints[] = new TransitionIsAllowed(
-                //    $options['action_context'],
-                //    $options['action_name']
-                //);
-
-                return $constraints;
-            }
         );
     }
 
@@ -108,15 +101,44 @@ class ActionType extends AbstractType
      */
     protected function addEventListeners(FormBuilderInterface $builder, array $options)
     {
+        if (!empty($options['attribute_default_values'])) {
+            $builder->addEventListener(
+                FormEvents::PRE_SET_DATA,
+                function (FormEvent $event) use ($options) {
+                    /** @var ActionContext $context */
+                    $context = $event->getData();
 
+                    foreach ($options['attribute_default_values'] as $attributeName => $value) {
+                        $context->$attributeName = $this->contextAccessor->getValue($context, $value);
+                    }
+                }
+            );
+        }
+
+        if (!empty($options['attribute_fields'])) {
+            $this->requiredAttributesListener->initialize(array_keys($options['attribute_fields']));
+
+            $builder->addEventSubscriber($this->requiredAttributesListener);
+        }
+
+        $builder->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            function () use ($options) {
+                /** @var Action $action */
+                $action = $options['action'];
+
+                /** @var ActionContext $actionContext */
+                $actionContext = $options['action_context'];
+
+                $action->init($actionContext);
+            }
+        );
     }
 
     /**
-     * Add attributes to form
-     *
      * @param FormBuilderInterface $builder
      * @param array $options
-     * @throws InvalidConfigurationException When attribute is not found in given Workflow
+     * @throws InvalidConfigurationException
      */
     protected function addAttributes(FormBuilderInterface $builder, array $options)
     {
@@ -142,28 +164,10 @@ class ActionType extends AbstractType
                 $attributeOptions = [];
             }
 
-            $this->addAttributeField($builder, $attribute, $attributeOptions, $options);
+            $attributeOptions = $this->prepareAttributeOptions($attribute, $attributeOptions, $options);
+
+            $builder->add($attribute->getName(), $attributeOptions['form_type'], $attributeOptions['options']);
         }
-    }
-
-
-    /**
-     * Adds form type of attribute to form builder
-     *
-     * @param FormBuilderInterface $builder
-     * @param Attribute $attribute
-     * @param array $attributeOptions
-     * @param array $options
-     */
-    protected function addAttributeField(
-        FormBuilderInterface $builder,
-        Attribute $attribute,
-        array $attributeOptions,
-        array $options
-    ) {
-        $attributeOptions = $this->prepareAttributeOptions($attribute, $attributeOptions, $options);
-
-        $builder->add($attribute->getName(), $attributeOptions['form_type'], $attributeOptions['options']);
     }
 
     /**
@@ -175,16 +179,10 @@ class ActionType extends AbstractType
      */
     protected function prepareAttributeOptions(Attribute $attribute, array $attributeOptions, array $options)
     {
-        /** @var Action $action */
-        $action = $options['action'];
-
-        // set default form options
-        if (!isset($attributeOptions['options'])) {
-            $attributeOptions['options'] = [];
-        }
-
-        // ensure that attribute has form_type
         if (empty($attributeOptions['form_type'])) {
+            /** @var Action $action */
+            $action = $options['action'];
+
             throw new InvalidConfigurationException(
                 sprintf(
                     'Parameter "form_type" must be defined for attribute "%s" in action "%s".',
@@ -194,26 +192,22 @@ class ActionType extends AbstractType
             );
         }
 
-        // update form label
+        if (!array_key_exists('options', $attributeOptions) || !is_array($attributeOptions['options'])) {
+            $attributeOptions['options'] = [];
+        }
+
         $attributeOptions['options']['label'] = isset($attributeOptions['label'])
             ? $attributeOptions['label']
             : $attribute->getLabel();
 
-        // update required option
         if (!array_key_exists('required', $attributeOptions['options'])) {
             $attributeOptions['options']['required'] = false;
         }
 
-        // set disabled option
-        if ($options['disable_attribute_fields']) {
-            $attributeOptions['options']['disabled'] = true;
-        }
-
-        $contextAccessor = $this->contextAccessor;
         array_walk_recursive(
             $attributeOptions,
-            function (&$leaf) use ($options, $contextAccessor) {
-                $leaf = $contextAccessor->getValue($options['action'], $leaf);
+            function (&$leaf) use ($options) {
+                $leaf = $this->contextAccessor->getValue($options['action'], $leaf);
             }
         );
 

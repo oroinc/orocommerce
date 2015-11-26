@@ -65,6 +65,8 @@ services:
 
     oro_action.form_options_assembler:
         class: %oro_action.form_options_assembler.class%
+        calls:
+            - [addConfigurationPass, [@oro_action.configuration_pass.replace_property_path]]
 
     oro_action.form_manager:
         class: %oro_action.form_manager.class%
