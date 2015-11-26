@@ -6,8 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\WorkflowBundle\Configuration\WorkflowConfiguration;
-use Oro\Bundle\WorkflowBundle\Exception\AssemblerException;
-use Oro\Bundle\WorkflowBundle\Model\AbstractAssembler;
+use Oro\Bundle\ActionBundle\Exception\AssemblerException;
 use Oro\Bundle\WorkflowBundle\Model\Attribute;
 use Oro\Bundle\WorkflowBundle\Model\AttributeGuesser;
 
@@ -143,8 +142,8 @@ class AttributeAssembler extends AbstractAssembler
     protected function validateAttribute(Attribute $attribute)
     {
         $this->assertAttributeHasValidType($attribute);
-        
-        if ($attribute->getType() === 'object' || $attribute->getType() === 'entity') {
+
+        if (in_array($attribute->getType(), ['object', 'entity'], true)) {
             $this->assertAttributeHasClassOption($attribute);
         } else {
             $this->assertAttributeHasNoOptions($attribute, 'class');

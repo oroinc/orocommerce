@@ -46,7 +46,7 @@ class AttributeAssemblerTest extends \PHPUnit_Framework_TestCase
      */
     public function testAssembleRequiredOptionException(array $configuration, $message)
     {
-        $this->setExpectedException('Oro\Bundle\WorkflowBundle\Exception\AssemblerException', $message);
+        $this->setExpectedException('Oro\Bundle\ActionBundle\Exception\AssemblerException', $message);
 
         $this->assembler->assemble($this->actionContext, $configuration);
     }
