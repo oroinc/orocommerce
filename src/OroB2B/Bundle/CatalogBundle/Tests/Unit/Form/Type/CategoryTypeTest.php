@@ -104,6 +104,28 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
             )
             ->will($this->returnSelf());
 
+        $builder->expects($this->at(6))
+            ->method('add')
+            ->with(
+                'smallImage',
+                'oro_image',
+                [
+                    'label'    => 'orob2b.catalog.category.small_image.label',
+                    'required' => false
+                ]
+            )->will($this->returnSelf());
+
+        $builder->expects($this->at(7))
+            ->method('add')
+            ->with(
+                'largeImage',
+                'oro_image',
+                [
+                    'label'    => 'orob2b.catalog.category.large_image.label',
+                    'required' => false
+                ]
+            )->will($this->returnSelf());
+
         $this->type->buildForm($builder, []);
     }
 
