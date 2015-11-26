@@ -16,6 +16,9 @@ class ActionAssembler extends AbstractAssembler
     /** @var AttributeAssembler */
     private $attributeAssembler;
 
+    /** @var FormOptionsAssembler */
+    private $formOptionsAssembler;
+
     /**
      * @param FunctionFactory $functionFactory
      * @param ConditionFactory $conditionFactory
@@ -24,11 +27,13 @@ class ActionAssembler extends AbstractAssembler
     public function __construct(
         FunctionFactory $functionFactory,
         ConditionFactory $conditionFactory,
-        AttributeAssembler $attributeAssembler
+        AttributeAssembler $attributeAssembler,
+        FormOptionsAssembler $formOptionsAssembler
     ) {
         $this->functionFactory = $functionFactory;
         $this->conditionFactory = $conditionFactory;
         $this->attributeAssembler = $attributeAssembler;
+        $this->formOptionsAssembler = $formOptionsAssembler;
     }
 
     /**
@@ -44,6 +49,7 @@ class ActionAssembler extends AbstractAssembler
                 $this->functionFactory,
                 $this->conditionFactory,
                 $this->attributeAssembler,
+                $this->formOptionsAssembler,
                 $this->assembleDefinition($actionName, $options)
             );
         }

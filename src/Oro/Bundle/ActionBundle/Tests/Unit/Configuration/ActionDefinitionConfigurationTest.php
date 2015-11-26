@@ -51,6 +51,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @return array
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function processValidConfigurationProvider()
     {
@@ -90,6 +91,19 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                             'class' => 'class',
                             'template' => 'template',
                         ],
+                        'form_options' => [
+                            'attribute_fields' => [
+                                'attribute_1' => [
+                                    'form_type' => 'test type',
+                                    'options' => [
+                                        'class' => 'testClass',
+                                    ]
+                                ]
+                            ],
+                            'attribute_default_values' => [
+                                'attribute_1' => 'value 1',
+                            ]
+                        ],
                         'prefunctions' => [
                             '@create_date' => [],
                         ],
@@ -117,11 +131,6 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                     'routes' => ['route_1', 'route_2'],
                     'order' => 15,
                     'enabled' => false,
-                    'frontend_options' => [
-                        'icon' => 'icon',
-                        'class' => 'class',
-                        'template' => 'template',
-                    ],
                     'prefunctions' => [
                         '@create_date' => [],
                     ],
@@ -142,7 +151,25 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                             'property_path' => null,
                             'options' => []
                         ]
-                    ]
+                    ],
+                    'frontend_options' => [
+                        'icon' => 'icon',
+                        'class' => 'class',
+                        'template' => 'template',
+                    ],
+                    'form_options' => [
+                        'attribute_fields' => [
+                            'attribute_1' => [
+                                'form_type' => 'test type',
+                                'options' => [
+                                    'class' => 'testClass',
+                                ],
+                            ]
+                        ],
+                        'attribute_default_values' => [
+                            'attribute_1' => 'value 1',
+                        ]
+                    ],
                 ],
             ],
         ];
@@ -150,9 +177,21 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @return array
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function processInvalidConfigurationProvider()
+    {
+        return array_merge(
+            $this->invalidConfigurationProvider(),
+            $this->invalidAttributeProvider(),
+            $this->invalidFormOptionsProvider(),
+            $this->invalidAttributesProvider()
+        );
+    }
+
+    /**
+     * @return array
+     */
+    protected function invalidConfigurationProvider()
     {
         return [
             'incorrect root' => [
@@ -236,6 +275,15 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                 ],
                 'message' => 'Invalid type for path "action.frontend_options". Expected array, but got string'
             ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function invalidAttributeProvider()
+    {
+        return [
             'incorrect action[attribute]' => [
                 'input' => [
                     'action' => [
@@ -286,6 +334,105 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
                 'message' => 'Invalid type for path "action.attributes.test.options". Expected array, but got integer'
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function invalidFormOptionsProvider()
+    {
+        return [
+            'incorrect action[form_options]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'form_options' => 'not array value',
+                    ],
+                ],
+                'message' => 'Invalid type for path "action.form_options". Expected array, but got string'
+            ],
+            'incorrect action[form_options][attribute_fields][options]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'form_options' => [
+                            'attribute_fields' => [
+                                'options' => 'not array value',
+                            ],
+                        ]
+                    ],
+                ],
+                'message' =>
+                    'Invalid type for path "action.form_options.attribute_fields.options". ' .
+                    'Expected array, but got string'
+            ],
+            'incorrect action[form_options][attribute_fields]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'form_options' => [
+                            'attribute_fields' => 'not array value',
+                        ]
+                    ],
+                ],
+                'message' =>
+                    'Invalid type for path "action.form_options.attribute_fields". ' .
+                    'Expected array, but got string'
+            ],
+            'incorrect action[form_options][attribute_default_values]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'form_options' => [
+                            'attribute_default_values' => 'not array value',
+                        ]
+                    ],
+                ],
+                'message' =>
+                    'Invalid type for path "action.form_options.attribute_default_values". ' .
+                    'Expected array, but got string'
+            ],
+        ];
+    }
+
+    /**
+     * @return type
+     */
+    protected function invalidAttributesProvider()
+    {
+        return [
+            'incorrect action[attributes]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => 'not array value',
+                    ],
+                ],
+                'message' => 'Invalid type for path "action.attributes". Expected array, but got string'
+            ],
+            'incorrect action[attributes][0]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => [
+                            'bad_attribute'
+                        ],
+                    ],
+                ],
+                'message' => 'Invalid type for path "action.attributes.0". Expected array, but got string'
+            ],
+            'incorrect action[attributes][options]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => [
+                            'options' => 'not array value',
+                        ],
+                    ],
+                ],
+                'message' => 'Invalid type for path "action.attributes.options". Expected array, but got string'
             ],
         ];
     }

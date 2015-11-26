@@ -26,6 +26,9 @@ class Action
     /** @var AttributeAssembler */
     private $attributeAssembler;
 
+    /** @var FormOptionsAssembler */
+    private $formOptionsAssembler;
+
     /** @var ActionDefinition */
     private $definition;
 
@@ -34,6 +37,9 @@ class Action
 
     /** @var AbstractCondition[] */
     private $conditions = [];
+
+    /** @var array */
+    private $formOptions;
 
     /**
      * @param FunctionFactory $functionFactory
@@ -45,11 +51,13 @@ class Action
         FunctionFactory $functionFactory,
         ConditionFactory $conditionFactory,
         AttributeAssembler $attributeAssembler,
+        FormOptionsAssembler $formOptionsAssembler,
         ActionDefinition $definition
     ) {
         $this->functionFactory = $functionFactory;
         $this->conditionFactory = $conditionFactory;
         $this->attributeAssembler = $attributeAssembler;
+        $this->formOptionsAssembler = $formOptionsAssembler;
         $this->definition = $definition;
     }
 
@@ -97,6 +105,24 @@ class Action
         }
 
         $this->executeFunctions($context, ActionDefinition::POSTFUNCTIONS);
+    }
+
+    /**
+     * @param ActionContext $context
+     * @return array
+     */
+    public function getFormOptions(ActionContext $context)
+    {
+        if ($this->formOptions === null) {
+            $this->formOptions = false;
+            $formOptionsConfig = $this->definition->getFormOptions();
+            if ($formOptionsConfig) {
+                $this->formOptions = $this->formOptionsAssembler
+                    ->assemble($formOptionsConfig, $this->getAttributeManager($context)->getAttributes());
+            }
+        }
+
+        return $this->formOptions;
     }
 
     /**

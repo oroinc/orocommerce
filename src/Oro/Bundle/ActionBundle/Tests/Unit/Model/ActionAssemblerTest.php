@@ -6,6 +6,7 @@ use Oro\Bundle\ActionBundle\Model\Action;
 use Oro\Bundle\ActionBundle\Model\ActionAssembler;
 use Oro\Bundle\ActionBundle\Model\ActionDefinition;
 use Oro\Bundle\ActionBundle\Model\AttributeAssembler;
+use Oro\Bundle\ActionBundle\Model\FormOptionsAssembler;
 use Oro\Bundle\WorkflowBundle\Model\Action\ActionFactory as FunctionFactory;
 
 use Oro\Component\ConfigExpression\ExpressionFactory as ConditionFactory;
@@ -20,7 +21,8 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
         $this->assembler = new ActionAssembler(
             $this->getFunctionFactory(),
             $this->getConditionFactory(),
-            $this->getAttributeAssembler()
+            $this->getAttributeAssembler(),
+            $this->getFormOptionsAssembler()
         );
     }
 
@@ -111,6 +113,7 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
                         $this->getFunctionFactory(),
                         $this->getConditionFactory(),
                         $this->getAttributeAssembler(),
+                        $this->getFormOptionsAssembler(),
                         $definition1
                     )
                 ],
@@ -141,6 +144,7 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
                         $this->getFunctionFactory(),
                         $this->getConditionFactory(),
                         $this->getAttributeAssembler(),
+                        $this->getFormOptionsAssembler(),
                         $definition2
                     )
                 ],
@@ -174,6 +178,16 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
     protected function getAttributeAssembler()
     {
         return $this->getMockBuilder('Oro\Bundle\ActionBundle\Model\AttributeAssembler')
+            ->disableOriginalConstructor()
+            ->getMock();
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|FormOptionsAssembler
+     */
+    protected function getFormOptionsAssembler()
+    {
+        return $this->getMockBuilder('Oro\Bundle\ActionBundle\Model\FormOptionsAssembler')
             ->disableOriginalConstructor()
             ->getMock();
     }
