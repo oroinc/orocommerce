@@ -20,7 +20,7 @@ layout:
                 styles:
                     blockType: style
                     options:
-                        src: 'css/layout/default/styles.css'
+                        src: 'layout/default/styles.css'
                 body:
                     blockType: body
                 wrapper:
@@ -45,6 +45,10 @@ layout:
                     options:
                         attr:
                             class: footer
+                scripts:
+                    blockType: script
+                    options:
+                        src: 'layout/default/scripts.js'
             tree:
                 root:
                     head:
@@ -57,3 +61,4 @@ layout:
                             main:
                                 content: ~
                             footer: ~
+                        scripts: ~

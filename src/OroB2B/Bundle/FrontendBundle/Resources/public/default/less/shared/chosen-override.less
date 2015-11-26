@@ -21,7 +21,39 @@
 
       span {
         color: @base-font-color;
-        text-transform: uppercase;
+        //text-transform: uppercase;
+      }
+
+      abbr {
+        top: 11px;
+        background: none;
+        text-align: center;
+
+        &:before {
+          content: "";
+          display: block;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          margin: -.6rem 0 0;
+          width: .1rem;
+          height: 1.3rem;
+          transform: rotate(45deg);
+          background: @base-link-color;
+        }
+
+        &:after {
+          content: "";
+          display: block;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          margin-left: -.6rem;
+          height: .1rem;
+          width: 1.3rem;
+          transform: rotate(45deg);
+          background: @base-link-color;
+        }
       }
 
       div {
@@ -86,7 +118,7 @@
     li {
       line-height: 2.4rem;
       padding: .5rem 1.4rem;
-      text-transform: uppercase;
+      //text-transform: uppercase;
 
       &.highlighted {
         background: @theme-blue-color;
@@ -180,6 +212,7 @@
     .chosen-results {
       li {
         text-transform: none;
+
         &.highlighted {
           background: @theme-blue-color;
         }
@@ -217,6 +250,28 @@
     .chosen-results li {
       padding: .5rem 1rem;
       text-align: left !important;
+    }
+  }
+}
+
+.account-oq__filter__select-container {
+
+  .chosen-container {
+    &.chosen-container-single {
+      .chosen-single {
+        border: .1rem solid @alt-border-color;
+
+        span {
+          text-transform: none;
+        }
+      }
+    }
+
+    .chosen-results {
+      li {
+        text-transform: none;
+        .ellipsis;
+      }
     }
   }
 }

@@ -23,6 +23,28 @@ body {
   background: @base-background-color;
 }
 
+.wrapper {
+  
+  &.sales-mode {
+    padding-top: 1.1rem;
+    transition: transform .2s linear;
+
+    @media (max-width: 991px) {
+      transform: translate3d(0, 0, 0);
+      padding-top: 0;
+    }
+
+    /*&.expanded {
+      transform: translate3d(0, 8.6rem, 0);
+
+      @media (max-width: 991px) {
+        transform: translate3d(0, 0, 0);
+        padding-top: 0;
+      }
+    }*/
+  }
+}
+
 //Bootstrap override
 .container-fluid, .main {
   max-width: 140rem;
