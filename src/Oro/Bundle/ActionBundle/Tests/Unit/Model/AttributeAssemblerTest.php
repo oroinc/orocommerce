@@ -44,9 +44,9 @@ class AttributeAssemblerTest extends \PHPUnit_Framework_TestCase
      * @param array $configuration
      * @param string $message
      */
-    public function testAssembleRequiredOptionException(array $configuration, $message)
+    public function testAssembleRequiredOptionException(array $configuration, $exception, $message)
     {
-        $this->setExpectedException('Oro\Bundle\WorkflowBundle\Exception\AssemblerException', $message);
+        $this->setExpectedException($exception, $message);
 
         $this->assembler->assemble($this->actionContext, $configuration);
     }
@@ -64,6 +64,7 @@ class AttributeAssemblerTest extends \PHPUnit_Framework_TestCase
                         'property_path' => null
                     ]
                 ],
+                'Oro\Bundle\ActionBundle\Exception\MissedRequiredOptionException',
                 'Option "label" is required'
             ],
             'no_type' => [
@@ -73,6 +74,7 @@ class AttributeAssemblerTest extends \PHPUnit_Framework_TestCase
                         'property_path' => null
                     ]
                 ],
+                'Oro\Bundle\ActionBundle\Exception\MissedRequiredOptionException',
                 'Option "type" is required'
             ],
             'no_label' => [
@@ -82,6 +84,7 @@ class AttributeAssemblerTest extends \PHPUnit_Framework_TestCase
                         'property_path' => null
                     ]
                 ],
+                'Oro\Bundle\ActionBundle\Exception\MissedRequiredOptionException',
                 'Option "label" is required'
             ],
             'invalid_type' => [
@@ -92,6 +95,7 @@ class AttributeAssemblerTest extends \PHPUnit_Framework_TestCase
                         'property_path' => null
                     ]
                 ],
+                'Oro\Bundle\ActionBundle\Exception\AssemblerException',
                 'Invalid attribute type "text", allowed types are "bool", "boolean", "int", "integer", ' .
                     '"float", "string", "array", "object", "entity"'
             ],
@@ -106,6 +110,7 @@ class AttributeAssemblerTest extends \PHPUnit_Framework_TestCase
                         'property_path' => null
                     ]
                 ],
+                'Oro\Bundle\ActionBundle\Exception\AssemblerException',
                 'Option "class" cannot be used in attribute "attribute_name"'
             ],
             'missing_object_class' => [
@@ -116,6 +121,7 @@ class AttributeAssemblerTest extends \PHPUnit_Framework_TestCase
                         'property_path' => null
                     ]
                 ],
+                'Oro\Bundle\ActionBundle\Exception\MissedRequiredOptionException',
                 'Option "class" is required in attribute "attribute_name"'
             ],
             'missing_entity_class' => [
@@ -126,6 +132,7 @@ class AttributeAssemblerTest extends \PHPUnit_Framework_TestCase
                         'property_path' => null
                     ]
                 ],
+                'Oro\Bundle\ActionBundle\Exception\MissedRequiredOptionException',
                 'Option "class" is required in attribute "attribute_name"'
             ],
             'invalid_class' => [
@@ -139,6 +146,7 @@ class AttributeAssemblerTest extends \PHPUnit_Framework_TestCase
                         'property_path' => null
                     ]
                 ],
+                'Oro\Bundle\ActionBundle\Exception\AssemblerException',
                 'Class "InvalidClass" referenced by "class" option in attribute "attribute_name" not found'
             ],
             'not_allowed_entity_acl' => [
@@ -154,6 +162,7 @@ class AttributeAssemblerTest extends \PHPUnit_Framework_TestCase
                         ],
                     ]
                 ],
+                'Oro\Bundle\ActionBundle\Exception\AssemblerException',
                 'Attribute "Label" with type "object" can\'t have entity ACL'
             ],
         ];
