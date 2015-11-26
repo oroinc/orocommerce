@@ -96,7 +96,11 @@ class ProductVisibilityTest extends WebTestCase
 
         foreach ($expectedData as $productKey => $accessResult) {
             $product = $this->getReference($productKey);
-            $res = $this->voter->vote($this->tokenStorage->getToken(), $product, [ProductVisibilityVoter::ATTRIBUTE_VIEW]);
+            $res = $this->voter->vote(
+                $this->tokenStorage->getToken(),
+                $product,
+                [ProductVisibilityVoter::ATTRIBUTE_VIEW]
+            );
             $this->assertEquals($accessResult, $res);
         }
     }

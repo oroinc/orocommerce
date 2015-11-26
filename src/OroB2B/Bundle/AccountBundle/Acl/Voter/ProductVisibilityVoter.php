@@ -2,11 +2,12 @@
 
 namespace OroB2B\Bundle\AccountBundle\Acl\Voter;
 
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 
 use OroB2B\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ProductVisibilityVoter extends AbstractEntityVoter implements ContainerAwareInterface
 {
@@ -47,7 +48,6 @@ class ProductVisibilityVoter extends AbstractEntityVoter implements ContainerAwa
             $product = $qb->getQuery()->getOneOrNullResult();
 
             if ($product) {
-
                 return self::ACCESS_GRANTED;
             }
 
