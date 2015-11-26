@@ -7,6 +7,7 @@ use Oro\Bundle\ActionBundle\Model\Action;
 use Oro\Bundle\ActionBundle\Model\ActionAssembler;
 use Oro\Bundle\ActionBundle\Model\ActionDefinition;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
+use Oro\Bundle\ActionBundle\Model\AttributeAssembler;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\WorkflowBundle\Model\Action\ActionFactory as FunctionFactory;
@@ -26,6 +27,9 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
 
     /** @var ConditionFactory|\PHPUnit_Framework_MockObject_MockObject */
     protected $conditionFactory;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|AttributeAssembler */
+    protected $attributeAssembler;
 
     /** @var ActionAssembler */
     protected $assembler;
@@ -65,11 +69,19 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->attributeAssembler = $this->getMockBuilder('Oro\Bundle\ActionBundle\Model\AttributeAssembler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->configurationProvider->expects($this->once())
             ->method('getActionConfiguration')
             ->willReturn($this->getConfiguration());
 
-        $this->assembler = new ActionAssembler($this->functionFactory, $this->conditionFactory);
+        $this->assembler = new ActionAssembler(
+            $this->functionFactory,
+            $this->conditionFactory,
+            $this->attributeAssembler
+        );
 
         $this->manager = new ActionManager($this->doctrineHelper, $this->configurationProvider, $this->assembler);
     }

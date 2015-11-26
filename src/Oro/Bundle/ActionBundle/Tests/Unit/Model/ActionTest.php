@@ -2,11 +2,16 @@
 
 namespace Oro\Bundle\ActionBundle\Tests\Unit\Model;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 use Oro\Bundle\ActionBundle\Model\Action;
 use Oro\Bundle\ActionBundle\Model\ActionContext;
 use Oro\Bundle\ActionBundle\Model\ActionDefinition;
+use Oro\Bundle\ActionBundle\Model\AttributeAssembler;
+
 use Oro\Bundle\WorkflowBundle\Model\Action\ActionFactory as FunctionFactory;
 use Oro\Bundle\WorkflowBundle\Model\Action\ActionInterface as FunctionInterface;
+use Oro\Bundle\WorkflowBundle\Model\Attribute;
 use Oro\Bundle\WorkflowBundle\Model\Condition\Configurable as ConfigurableCondition;
 
 use Oro\Component\ConfigExpression\ExpressionFactory;
@@ -16,14 +21,17 @@ use Oro\Component\ConfigExpression\ExpressionFactory;
  */
 class ActionTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ActionDefinition $definition */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ActionDefinition */
     protected $definition;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|FunctionFactory $functionFactory */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|FunctionFactory */
     protected $functionFactory;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ExpressionFactory $conditionFactory */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ExpressionFactory */
     protected $conditionFactory;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|AttributeAssembler */
+    protected $attributeAssembler;
 
     /** @var Action */
     protected $action;
@@ -45,7 +53,17 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->action = new Action($this->functionFactory, $this->conditionFactory, $this->definition);
+        $this->attributeAssembler = $this->getMockBuilder('Oro\Bundle\ActionBundle\Model\AttributeAssembler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->action = new Action(
+            $this->functionFactory,
+            $this->conditionFactory,
+            $this->attributeAssembler,
+            $this->definition
+        );
+
         $this->context = new ActionContext();
     }
 
@@ -369,5 +387,29 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             ->willReturn($returnValue);
 
         return $condition;
+    }
+
+    public function testGetAttributeManager()
+    {
+        $attributes = ['attribute' => ['label' => 'attr_label']];
+
+        $this->definition->expects($this->once())
+            ->method('getAttributes')
+            ->willReturn($attributes);
+
+        $this->context['data'] = new \stdClass();
+
+        $attribute = new Attribute();
+        $attribute->setName('test_attr');
+
+        $this->attributeAssembler->expects($this->once())
+            ->method('assemble')
+            ->with($this->context, $attributes)
+            ->willReturn(new ArrayCollection([$attribute]));
+
+        $attributeManager = $this->action->getAttributeManager($this->context);
+
+        $this->assertInstanceOf('Oro\Bundle\WorkflowBundle\Model\AttributeManager', $attributeManager);
+        $this->assertEquals(new ArrayCollection(['test_attr' => $attribute]), $attributeManager->getAttributes());
     }
 }

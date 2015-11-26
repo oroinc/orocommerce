@@ -34,13 +34,18 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param array $inputData
-     *
      * @dataProvider processInvalidConfigurationProvider
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     *
+     * @param array $inputData
+     * @param string $expectedExceptionMessage
      */
-    public function testProcessInvalidConfiguration(array $inputData)
+    public function testProcessInvalidConfiguration(array $inputData, $expectedExceptionMessage)
     {
+        $this->setExpectedException(
+            'Symfony\Component\Config\Definition\Exception\InvalidConfigurationException',
+            $expectedExceptionMessage
+        );
+
         $this->configuration->processConfiguration($inputData);
     }
 
@@ -68,6 +73,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                     'conditions' => [],
                     'initfunctions' => [],
                     'postfunctions' => [],
+                    'attributes' => []
                 ],
             ],
             'full valid configuration' => [
@@ -96,6 +102,12 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'postfunctions' => [
                             '@call_method' => [],
                         ],
+                        'attributes' => [
+                            'test_attribute' => [
+                                'type' => 'string',
+                                'label' => 'Test Attribute Label'
+                            ]
+                        ]
                     ],
                 ],
                 'expected' => [
@@ -123,6 +135,14 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                     'postfunctions' => [
                         '@call_method' => [],
                     ],
+                    'attributes' => [
+                        'test_attribute' => [
+                            'type' => 'string',
+                            'label' => 'Test Attribute Label',
+                            'property_path' => null,
+                            'options' => []
+                        ]
+                    ]
                 ],
             ],
         ];
@@ -130,6 +150,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @return array
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function processInvalidConfigurationProvider()
     {
@@ -138,11 +159,13 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                 'input' => [
                     'action' => 'not array value',
                 ],
+                'message' => 'Invalid type for path "action". Expected array, but got string'
             ],
             'empty action[label]' => [
                 'input' => [
                     'action' => [],
                 ],
+                'message' => 'The child node "label" at path "action" must be configured'
             ],
             'incorrect action[application]' => [
                 'input' => [
@@ -151,6 +174,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'applications' => 'not array value',
                     ],
                 ],
+                'message' => 'Invalid type for path "action.applications". Expected array, but got string'
             ],
             'incorrect action[entities]' => [
                 'input' => [
@@ -160,6 +184,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'entities' => 'not array value',
                     ],
                 ],
+                'message' => 'Invalid type for path "action.entities". Expected array, but got string'
             ],
             'incorrect action[routes]' => [
                 'input' => [
@@ -170,6 +195,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'routes' => 'not array value',
                     ],
                 ],
+                'message' => 'Invalid type for path "action.routes". Expected array, but got string'
             ],
             'incorrect action[order]' => [
                 'input' => [
@@ -181,6 +207,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'order' => 'not integer value',
                     ],
                 ],
+                'message' => 'Invalid type for path "action.order". Expected int, but got string'
             ],
             'incorrect action[enabled]' => [
                 'input' => [
@@ -193,6 +220,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'enabled' => 'not bool value',
                     ],
                 ],
+                'message' => 'Invalid type for path "action.enabled". Expected boolean, but got string'
             ],
             'incorrect action[frontend_options]' => [
                 'input' => [
@@ -206,6 +234,58 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'frontend_options' => 'not array value',
                     ],
                 ],
+                'message' => 'Invalid type for path "action.frontend_options". Expected array, but got string'
+            ],
+            'incorrect action[attribute]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => 'not array value',
+                    ],
+                ],
+                'message' => 'Invalid type for path "action.attributes". Expected array, but got string'
+            ],
+            'incorrect action[attribute][type]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => [
+                            'test' => [
+                                'type' => []
+                            ]
+                        ],
+                    ],
+                ],
+                'message' => 'Invalid type for path "action.attributes.test.type". Expected scalar, but got array'
+            ],
+            'incorrect action[attribute][label]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => [
+                            'test' => [
+                                'type' => 'type',
+                                'label' => []
+                            ]
+                        ],
+                    ],
+                ],
+                'message' => 'Invalid type for path "action.attributes.test.label". Expected scalar, but got array'
+            ],
+            'incorrect action[attribute][options]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => [
+                            'test' => [
+                                'type' => 'type',
+                                'label' => 'label',
+                                'options' => 1
+                            ]
+                        ],
+                    ],
+                ],
+                'message' => 'Invalid type for path "action.attributes.test.options". Expected array, but got integer'
             ],
         ];
     }
