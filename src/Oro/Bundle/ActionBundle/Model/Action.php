@@ -9,6 +9,7 @@ use Oro\Bundle\WorkflowBundle\Model\Action\ActionFactory as FunctionFactory;
 use Oro\Bundle\WorkflowBundle\Model\Action\ActionInterface as FunctionInterface;
 use Oro\Bundle\WorkflowBundle\Model\Action\Configurable as ConfigurableAction;
 
+use Oro\Bundle\WorkflowBundle\Model\AttributeManager;
 use Oro\Bundle\WorkflowBundle\Model\Condition\AbstractCondition;
 use Oro\Bundle\WorkflowBundle\Model\Condition\Configurable as ConfigurableCondition;
 
@@ -21,6 +22,9 @@ class Action
 
     /** @var ConditionFactory */
     private $conditionFactory;
+
+    /** @var AttributeAssembler */
+    private $attributeAssembler;
 
     /** @var ActionDefinition */
     private $definition;
@@ -40,15 +44,18 @@ class Action
     /**
      * @param FunctionFactory $functionFactory
      * @param ConditionFactory $conditionFactory
+     * @param AttributeAssembler $attributeAssembler
      * @param ActionDefinition $definition
      */
     public function __construct(
         FunctionFactory $functionFactory,
         ConditionFactory $conditionFactory,
+        AttributeAssembler $attributeAssembler,
         ActionDefinition $definition
     ) {
         $this->functionFactory = $functionFactory;
         $this->conditionFactory = $conditionFactory;
+        $this->attributeAssembler = $attributeAssembler;
         $this->definition = $definition;
     }
 
@@ -171,6 +178,20 @@ class Action
     public function init(ActionContext $context)
     {
         // ToDo - implement init
+    }
+
+    /**
+     * @param ActionContext $context
+     * @return AttributeManager
+     */
+    public function getAttributeManager(ActionContext $context)
+    {
+        return new AttributeManager(
+            $this->attributeAssembler->assemble(
+                $context,
+                $this->definition->getAttributes()
+            )
+        );
     }
 
     /**
