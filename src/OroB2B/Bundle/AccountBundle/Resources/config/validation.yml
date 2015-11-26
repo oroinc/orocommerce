@@ -58,6 +58,8 @@ OroB2B\Bundle\AccountBundle\Entity\AccountUser:
                 minMessage: "You must select at least {{ limit }} role"
         birthday:
             - Date: ~
+        account:
+            - NotBlank: ~
         organization:
             - NotBlank: ~
         addresses:

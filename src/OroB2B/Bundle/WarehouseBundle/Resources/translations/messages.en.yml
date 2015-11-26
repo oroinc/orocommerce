@@ -1,0 +1,21 @@
+orob2b:
+    warehouse:
+        entity_label: Warehouse
+        entity_plural_label: Warehouses
+        organization.label: Organization
+        owner.label: Owner
+        id.label: Id
+        name.label: Name
+
+        controller:
+            warehouse.saved.message: Warehouse has been saved
+
+        menu:
+            warehouse_tab.label: Inventory
+
+        widgets:
+            warehouse_information: Warehouse Information
+
+        sections:
+            general: General
+            additional: Additional
