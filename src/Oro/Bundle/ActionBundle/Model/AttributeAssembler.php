@@ -5,8 +5,9 @@ namespace Oro\Bundle\ActionBundle\Model;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Util\ClassUtils;
 
-use Oro\Bundle\WorkflowBundle\Configuration\WorkflowConfiguration;
 use Oro\Bundle\ActionBundle\Exception\AssemblerException;
+use Oro\Bundle\ActionBundle\Exception\MissedRequiredOptionException;
+use Oro\Bundle\WorkflowBundle\Configuration\WorkflowConfiguration;
 use Oro\Bundle\WorkflowBundle\Model\Attribute;
 use Oro\Bundle\WorkflowBundle\Model\AttributeGuesser;
 
@@ -59,7 +60,7 @@ class AttributeAssembler extends AbstractAssembler
      * @param array $options
      * @return Attribute
      */
-    protected function assembleAttribute(ActionContext $context, $name, array $options)
+    protected function assembleAttribute(ActionContext $context, $name, array $options = [])
     {
         if (!empty($options['property_path'])) {
             $options = $this->guessOptions(
@@ -173,7 +174,7 @@ class AttributeAssembler extends AbstractAssembler
     /**
      * @param Attribute $attribute
      * @param string|array $optionNames
-     * @throws AssemblerException If attribute is invalid
+     * @throws MissedRequiredOptionException If attribute is invalid
      */
     protected function assertAttributeHasOptions(Attribute $attribute, $optionNames)
     {
@@ -181,7 +182,7 @@ class AttributeAssembler extends AbstractAssembler
 
         foreach ($optionNames as $optionName) {
             if (!$attribute->hasOption($optionName)) {
-                throw new AssemblerException(
+                throw new MissedRequiredOptionException(
                     sprintf('Option "%s" is required in attribute "%s"', $optionName, $attribute->getName())
                 );
             }

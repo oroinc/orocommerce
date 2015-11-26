@@ -2,20 +2,20 @@
 
 namespace Oro\Bundle\ActionBundle\Model;
 
-use Oro\Bundle\ActionBundle\Exception\AssemblerException;
+use Oro\Bundle\ActionBundle\Exception\MissedRequiredOptionException;
 
 abstract class AbstractAssembler
 {
     /**
      * @param array $options
      * @param array $requiredOptions
-     * @throws AssemblerException
+     * @throws MissedRequiredOptionException
      */
     protected function assertOptions(array $options, array $requiredOptions)
     {
         foreach ($requiredOptions as $optionName) {
             if (empty($options[$optionName])) {
-                throw new AssemblerException(sprintf('Option "%s" is required', $optionName));
+                throw new MissedRequiredOptionException(sprintf('Option "%s" is required', $optionName));
             }
         }
     }
