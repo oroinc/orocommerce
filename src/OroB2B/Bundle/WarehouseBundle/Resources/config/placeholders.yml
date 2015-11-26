@@ -6,4 +6,4 @@ placeholders:
 
 items:
     inventory_levels_widget:
-        template: OroB2BWarehouseBundle:WarehouseInventoryProduct:button.html.twig
+        template: OroB2BWarehouseBundle:WarehouseInventoryLevel:button.html.twig
