@@ -9,6 +9,7 @@ use Oro\Bundle\ActionBundle\Model\ActionDefinition;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 use Oro\Bundle\ActionBundle\Model\AttributeAssembler;
 
+use Oro\Bundle\ActionBundle\Model\FormOptionsAssembler;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\WorkflowBundle\Model\Action\ActionFactory as FunctionFactory;
 
@@ -30,6 +31,9 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|AttributeAssembler */
     protected $attributeAssembler;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|FormOptionsAssembler */
+    protected $formOptionsAssembler;
 
     /** @var ActionAssembler */
     protected $assembler;
@@ -73,6 +77,10 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->formOptionsAssembler = $this->getMockBuilder('Oro\Bundle\ActionBundle\Model\FormOptionsAssembler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->configurationProvider->expects($this->once())
             ->method('getActionConfiguration')
             ->willReturn($this->getConfiguration());
@@ -80,7 +88,8 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
         $this->assembler = new ActionAssembler(
             $this->functionFactory,
             $this->conditionFactory,
-            $this->attributeAssembler
+            $this->attributeAssembler,
+            $this->formOptionsAssembler
         );
 
         $this->manager = new ActionManager($this->doctrineHelper, $this->configurationProvider, $this->assembler);
