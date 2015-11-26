@@ -144,7 +144,7 @@ class Action
      */
     protected function executeFunctions($name, ActionContext $context)
     {
-        if (!isset($this->functions[$name])) {
+        if (!array_key_exists($name, $this->functions)) {
             $this->functions[$name] = false;
 
             $config = $this->definition->getFunctions($name);
@@ -153,7 +153,7 @@ class Action
             }
         }
 
-        if ($this->functions[$name]) {
+        if ($this->functions[$name] instanceof FunctionInterface) {
             $this->functions[$name]->execute($context);
         }
     }
@@ -166,7 +166,7 @@ class Action
      */
     protected function evaluateConditions($name, ActionContext $context, Collection $errors = null)
     {
-        if (!isset($this->conditions[$name])) {
+        if (!array_key_exists($name, $this->conditions)) {
             $this->conditions[$name] = false;
 
             $config = $this->definition->getConditions($name);
@@ -175,7 +175,7 @@ class Action
             }
         }
 
-        if ($this->conditions[$name]) {
+        if ($this->conditions[$name] instanceof ConfigurableCondition) {
             return $this->conditions[$name]->evaluate($context, $errors);
         }
 

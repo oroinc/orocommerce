@@ -291,7 +291,7 @@ class ActionDefinition
      * @param string $name
      * @return array
      */
-    public function getConditions($name)
+    public function getConditions($name = null)
     {
         if ($name === null) {
             return $this->conditions;
