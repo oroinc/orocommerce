@@ -12,8 +12,7 @@ orob2b_warehouse_bundle_api:
     defaults:
         version:  latest
 
-
 orob2b_warehouse_inventory_product:
-    resource:     "@OroB2BWarehouseBundle/Controller/WarehouseInventoryProductController.php"
+    resource:     "@OroB2BWarehouseBundle/Controller/WarehouseInventoryLevelController.php"
     type:         annotation
-    prefix:       /warehouse-product
+    prefix:       /warehouse/inventory-level
