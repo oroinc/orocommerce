@@ -15,14 +15,22 @@ class ActionAssembler
     /** @var ConditionFactory */
     private $conditionFactory;
 
+    /** @var AttributeAssembler */
+    private $attributeAssembler;
+
     /**
      * @param FunctionFactory $functionFactory
      * @param ConditionFactory $conditionFactory
+     * @param AttributeAssembler $attributeAssembler
      */
-    public function __construct(FunctionFactory $functionFactory, ConditionFactory $conditionFactory)
-    {
+    public function __construct(
+        FunctionFactory $functionFactory,
+        ConditionFactory $conditionFactory,
+        AttributeAssembler $attributeAssembler
+    ) {
         $this->functionFactory = $functionFactory;
         $this->conditionFactory = $conditionFactory;
+        $this->attributeAssembler = $attributeAssembler;
     }
 
     /**
@@ -34,8 +42,12 @@ class ActionAssembler
         $actions = [];
 
         foreach ($configuration as $actionName => $options) {
-            $definition = $this->assembleDefinition($actionName, $options);
-            $actions[$actionName] = new Action($this->functionFactory, $this->conditionFactory, $definition);
+            $actions[$actionName] = new Action(
+                $this->functionFactory,
+                $this->conditionFactory,
+                $this->attributeAssembler,
+                $this->assembleDefinition($actionName, $options)
+            );
         }
 
         return $actions;
