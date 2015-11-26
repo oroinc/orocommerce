@@ -1,0 +1,9 @@
+placeholders:
+    view_navButtons_before:
+        items:
+            inventory_levels_widget:
+                order: 100
+
+items:
+    inventory_levels_widget:
+        template: OroB2BWarehouseBundle:WarehouseInventoryProduct:button.html.twig

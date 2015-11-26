@@ -1,0 +1,25 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+{% if resource_granted('EDIT', entity) %}
+    {{ UI.clientButton({
+        'dataUrl': path('orob2b_warehouse_inventory_product_update_widget', {'id': entity.id}),
+        'aCss': 'no-hash btn',
+        'iCss': 'icon-list-alt',
+        'label' : 'orob2b.warehouse.warehouseinventorylevel.entity_label'|trans,
+        'widget' : {
+            'type' : 'dialog',
+            'multiple' : false,
+            'options' : {
+                'dialogOptions' : {
+                    'stateEnabled': false,
+                    'incrementalPosition': false,
+                    'title' : 'orob2b.warehouse.warehouseinventorylevel.widget_dialog_title'|trans,
+                    'allowMaximize': true,
+                    'allowMinimize': true,
+                    'dblclick': 'maximize',
+                    'maximizedHeightDecreaseBy': 'minimize-bar',
+                    'width': 650
+                }
+            }
+        }
+    }) }}
+{% endif %}
