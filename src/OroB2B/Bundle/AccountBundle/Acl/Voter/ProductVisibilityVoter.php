@@ -2,12 +2,10 @@
 
 namespace OroB2B\Bundle\AccountBundle\Acl\Voter;
 
+use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
+use OroB2B\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-
-use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
-
-use OroB2B\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier;
 
 class ProductVisibilityVoter extends AbstractEntityVoter implements ContainerAwareInterface
 {
@@ -75,14 +73,5 @@ class ProductVisibilityVoter extends AbstractEntityVoter implements ContainerAwa
     public function setModifier(ProductVisibilityQueryBuilderModifier $modifier)
     {
         $this->modifier = $modifier;
-    }
-
-
-    /**
-     * {@inheritdoc}
-     */
-    public function supportsClass($class)
-    {
-        return is_a($class, 'OroB2B\Bundle\ProductBundle\Entity\Product', true);
     }
 }
