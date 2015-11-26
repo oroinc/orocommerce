@@ -3,6 +3,8 @@
 namespace OroB2B\Bundle\CatalogBundle\Tests\Functional\Controller;
 
 use Symfony\Component\DomCrawler\Form;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -10,6 +12,7 @@ use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
+use Oro\Bundle\AttachmentBundle\Entity\File;
 
 /**
  * @dbIsolation
@@ -26,6 +29,8 @@ class CategoryControllerTest extends WebTestCase
     const UPDATED_DEFAULT_SUBCATEGORY_TITLE = 'Updated Subcategory Title';
     const UPDATED_DEFAULT_CATEGORY_SHORT_DESCRIPTION = 'Updated Category Short Description';
     const UPDATED_DEFAULT_CATEGORY_LONG_DESCRIPTION = 'Updated Category Long Description';
+    const LARGE_IMAGE_NAME = 'large_image.png';
+    const SMALL_IMAGE_NAME = 'small_image.png';
 
     /**
      * @var Locale[]
@@ -232,11 +237,27 @@ class CategoryControllerTest extends WebTestCase
             $this->getUrl('orob2b_catalog_category_create', ['id' => $parentId])
         );
 
+        $fileLocator = $this->getContainer()->get('file_locator');
+
+        $smallImageName = self::SMALL_IMAGE_NAME;
+        $smallImageFile = $fileLocator->locate(
+            '@OroB2BCatalogBundle/Tests/Functional/DataFixtures/files/' . $smallImageName
+        );
+        $largeImageName = self::LARGE_IMAGE_NAME;
+        $largeImageFile = $fileLocator->locate(
+            '@OroB2BCatalogBundle/Tests/Functional/DataFixtures/files/' . $largeImageName
+        );
+
+        $smallImage = new UploadedFile($smallImageFile, $smallImageName);
+        $largeImage = new UploadedFile($largeImageFile, $largeImageName);
+
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
         $form['orob2b_catalog_category[titles][values][default]'] = $title;
         $form['orob2b_catalog_category[shortDescriptions][values][default]'] = $shortDescription;
         $form['orob2b_catalog_category[longDescriptions][values][default]'] = $longDescription;
+        $form['orob2b_catalog_category[smallImage][file]'] = $smallImage;
+        $form['orob2b_catalog_category[largeImage][file]'] = $largeImage;
 
         if ($parentId === $this->masterCatalog->getId()) {
             $appendProducts = $this->getProductBySku(LoadProductData::PRODUCT_1)->getId() . ', '
@@ -253,10 +274,13 @@ class CategoryControllerTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Category has been saved', $crawler->html());
-        $this->assertContains($title, $crawler->html());
-        $this->assertContains($shortDescription, $crawler->html());
-        $this->assertContains($longDescription, $crawler->html());
+        $html = $crawler->html();
+        $this->assertContains('Category has been saved', $html);
+        $this->assertContains($title, $html);
+        $this->assertContains($shortDescription, $html);
+        $this->assertContains($longDescription, $html);
+        $this->assertContains($smallImage->getFilename(), $html);
+        $this->assertContains($largeImage->getFilename(), $html);
 
         return $this->getCategoryIdByUri($this->client->getRequest()->getRequestUri());
     }
@@ -284,9 +308,11 @@ class CategoryControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_catalog_category_update', ['id' => $id]));
         $form = $crawler->selectButton('Save and Close')->form();
         $formValues = $form->getValues();
-        $this->assertContains('Add note', $crawler->html());
-
+        $html = $crawler->html();
         //Verified that actual values correspond with the ones that were set during Category creation
+        $this->assertContains('Add note', $html);
+        $this->assertContains(self::SMALL_IMAGE_NAME, $html);
+        $this->assertContains(self::LARGE_IMAGE_NAME, $html);
         $this->assertFormDefaultLocalized($formValues, $title, $shortDescription, $longDescription);
 
         $testProductOne = $this->getProductBySku(LoadProductData::PRODUCT_1);
@@ -298,20 +324,20 @@ class CategoryControllerTest extends WebTestCase
         if ($title === self::DEFAULT_SUBCATEGORY_TITLE) {
             $appendProduct = $testProductFour;
         };
-
         $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('category');
         $parameters = [
             'input_action' => 'save_and_stay',
             'orob2b_catalog_category' => [
                 '_token' => $crfToken,
                 'appendProducts' => $appendProduct->getId(),
-                'removeProducts' => $testProductOne->getId(),
+                'removeProducts' => $testProductOne->getId()
             ]
         ];
 
         $parameters['orob2b_catalog_category']['titles']['values']['default'] = $newTitle;
         $parameters['orob2b_catalog_category']['shortDescriptions']['values']['default'] = $newShortDescription;
         $parameters['orob2b_catalog_category']['longDescriptions']['values']['default'] = $newLongDescription;
+        $parameters['orob2b_catalog_category']['largeImage']['emptyFile'] = true;
 
         foreach ($this->locales as $locale) {
             $parameters['orob2b_catalog_category']['titles']['values']['locales'][$locale->getId()]['value']
@@ -321,21 +347,21 @@ class CategoryControllerTest extends WebTestCase
             $parameters['orob2b_catalog_category']['longDescriptions']['values']['locales'][$locale->getId()]['value']
                 = $locale->getCode() . $newLongDescription;
         }
-
         $this->client->followRedirects(true);
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), $parameters);
-
+        $html = $crawler->html();
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Category has been saved', $crawler->html());
+        $this->assertContains('Category has been saved', $html);
 
         $form = $crawler->selectButton('Save and Close')->form();
         $formValues = $form->getValues();
-
         //Verified that values correspond with the new ones that has been set after submit
         $this->assertFormDefaultLocalized($formValues, $newTitle, $newShortDescription, $newLongDescription);
         $this->assertLocalizedValues($formValues, $newTitle, $newShortDescription, $newLongDescription);
         $this->assertNull($this->getProductCategoryByProduct($testProductOne));
+        $this->assertNotContains(self::LARGE_IMAGE_NAME, $html);
+        $this->assertContains(self::SMALL_IMAGE_NAME, $html);
 
         if ($title === self::DEFAULT_CATEGORY_TITLE) {
             $productTwoCategory = $this->getProductCategoryByProduct($testProductTwo);
