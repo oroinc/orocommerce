@@ -10,14 +10,6 @@ actions:
         order: 10
         frontend_options:
             icon: icon-time
-        attributes:
-            form1:
-                label: test
-                type: bool
-#        form_options:
-#            attribute_fields:
-#                form1:
-#                    form_type: test
         prefunctions:
             - @create_datetime:
                 attribute: $.compare_date
