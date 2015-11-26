@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ActionBundle\Model;
 
+use Oro\Bundle\ActionBundle\Form\Type\ActionType;
 use Oro\Bundle\WorkflowBundle\Model\Action\ActionFactory as FunctionFactory;
 use Oro\Component\ConfigExpression\ExpressionFactory as ConditionFactory;
 
@@ -23,6 +24,7 @@ class ActionAssembler extends AbstractAssembler
      * @param FunctionFactory $functionFactory
      * @param ConditionFactory $conditionFactory
      * @param AttributeAssembler $attributeAssembler
+     * @param FormOptionsAssembler $formOptionsAssembler
      */
     public function __construct(
         FunctionFactory $functionFactory,
@@ -75,6 +77,7 @@ class ActionAssembler extends AbstractAssembler
             ->setApplications($this->getOption($options, 'applications', []))
             ->setEnabled($this->getOption($options, 'enabled', true))
             ->setOrder($this->getOption($options, 'order', 0))
+            ->setFormType($this->getOption($options, 'form_type', ActionType::NAME))
             ->setFrontendOptions($this->getOption($options, 'frontend_options', []))
             ->setAttributes($this->getOption($options, 'attributes', []))
             ->setFormOptions($this->getOption($options, 'form_options', []))

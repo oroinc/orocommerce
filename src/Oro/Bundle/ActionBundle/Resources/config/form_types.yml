@@ -1,0 +1,11 @@
+parameters:
+    oro_action.form.type.action.class: Oro\Bundle\ActionBundle\Form\Type\ActionType
+
+services:
+    oro_action.form.type.action:
+        class: %oro_action.form.type.action.class%
+        arguments:
+            - @oro_action.manager
+            - @oro_workflow.context_accessor
+        tags:
+            - { name: form.type, alias: oro_action }

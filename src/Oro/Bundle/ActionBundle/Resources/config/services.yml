@@ -4,6 +4,7 @@ parameters:
     oro_action.attribute_assembler.class: Oro\Bundle\ActionBundle\Model\AttributeAssembler
     oro_action.attribute_guesser.class: Oro\Bundle\WorkflowBundle\Model\AttributeGuesser
     oro_action.form_options_assembler.class: Oro\Bundle\ActionBundle\Model\FormOptionsAssembler
+    oro_action.form_manager.class: Oro\Bundle\ActionBundle\Model\ActionFormManager
 
 services:
     oro_action.manager:
@@ -64,3 +65,8 @@ services:
 
     oro_action.form_options_assembler:
         class: %oro_action.form_options_assembler.class%
+
+    oro_action.form_manager:
+        class: %oro_action.form_manager.class%
+        arguments:
+            - @form.factory

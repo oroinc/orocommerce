@@ -38,6 +38,9 @@ class ActionDefinition
     /** @var array */
     private $frontendOptions = [];
 
+    /** @var string */
+    private $formType;
+
     /** @var array */
     private $formOptions = [];
 
@@ -220,6 +223,25 @@ class ActionDefinition
     public function setFrontendOptions(array $frontendOptions)
     {
         $this->frontendOptions = $frontendOptions;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFormType()
+    {
+        return $this->formType;
+    }
+
+    /**
+     * @param string $formType
+     * @return $this
+     */
+    public function setFormType($formType)
+    {
+        $this->formType = $formType;
 
         return $this;
     }
