@@ -7,6 +7,13 @@ namespace Oro\Bundle\ActionBundle\Model;
  */
 class ActionDefinition
 {
+    const PREFUNCTIONS = 'prefunctions';
+    const INITFUNCTIONS = 'initfunctions';
+    const POSTFUNCTIONS = 'postfunctions';
+
+    const PRECONDITIONS = 'preconditions';
+    const CONDITIONS = 'conditions';
+
     /** @var string */
     private $name;
 
@@ -38,22 +45,32 @@ class ActionDefinition
     private $attributes = [];
 
     /** @var array */
-    private $preFunctions = [];
-
-    /** @var array */
-    private $preConditions = [];
+    private $functions = [];
 
     /** @var array */
     private $conditions = [];
-
-    /** @var array */
-    private $postFunctions = [];
 
     /** @var array */
     private $initStep = [];
 
     /** @var array */
     private $executionStep = [];
+
+    /**
+     * @return array
+     */
+    public static function getAllowedConditions()
+    {
+        return [self::PRECONDITIONS, self::CONDITIONS];
+    }
+
+    /**
+     * @return array
+     */
+    public static function getAllowedFunctions()
+    {
+        return [self::PREFUNCTIONS, self::INITFUNCTIONS, self::POSTFUNCTIONS];
+    }
 
     /**
      * @param string $name
@@ -246,77 +263,51 @@ class ActionDefinition
     }
 
     /**
+     * @param string $name
      * @return array
      */
-    public function getPreFunctions()
+    public function getFunctions($name = null)
     {
-        return $this->preFunctions;
+        if ($name === null) {
+            return $this->functions;
+        }
+
+        return isset($this->functions[$name]) ? $this->functions[$name] : [];
     }
 
     /**
-     * @param array $preFunctions
+     * @param string $name
+     * @param array $data
      * @return $this
      */
-    public function setPreFunctions(array $preFunctions)
+    public function addFunctions($name, array $data)
     {
-        $this->preFunctions = $preFunctions;
+        $this->functions[$name] = $data;
 
         return $this;
     }
 
     /**
+     * @param string $name
      * @return array
      */
-    public function getPreConditions()
+    public function getConditions($name = null)
     {
-        return $this->preConditions;
+        if ($name === null) {
+            return $this->conditions;
+        }
+
+        return isset($this->conditions[$name]) ? $this->conditions[$name] : [];
     }
 
     /**
-     * @param array $preConditions
+     * @param string $name
+     * @param array $data
      * @return $this
      */
-    public function setPreConditions(array $preConditions)
+    public function addConditions($name, array $data)
     {
-        $this->preConditions = $preConditions;
-
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getConditions()
-    {
-        return $this->conditions;
-    }
-
-    /**
-     * @param array $conditions
-     * @return $this
-     */
-    public function setConditions(array $conditions)
-    {
-        $this->conditions = $conditions;
-
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getPostFunctions()
-    {
-        return $this->postFunctions;
-    }
-
-    /**
-     * @param array $postFunctions
-     * @return $this
-     */
-    public function setPostFunctions(array $postFunctions)
-    {
-        $this->postFunctions = $postFunctions;
+        $this->conditions[$name] = $data;
 
         return $this;
     }
