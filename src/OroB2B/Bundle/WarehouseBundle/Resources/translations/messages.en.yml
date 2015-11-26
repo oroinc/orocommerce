@@ -15,17 +15,17 @@ orob2b:
 
         widgets:
             warehouse_information: Warehouse Information
+            inventory_management: Inventory
 
         sections:
             general: General
             additional: Additional
 
         warehouseinventorylevel:
-            entity_label: Inventory
-            entity_plural_label: Inventories
+            entity_label: Warehouse Inventory Level
+            entity_plural_label: Warehouse Inventory Levels
             id.label: Id
             quantity.label: Quantity
             product.label: Product
             product_unit_precision.label: Product Unit Precision
             warehouse.label: Warehouse
-            widget_dialog_title: Warehouse Inventory Levels

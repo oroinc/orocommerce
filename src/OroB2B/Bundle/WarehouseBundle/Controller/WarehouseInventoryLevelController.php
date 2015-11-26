@@ -2,12 +2,12 @@
 
 namespace OroB2B\Bundle\WarehouseBundle\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
