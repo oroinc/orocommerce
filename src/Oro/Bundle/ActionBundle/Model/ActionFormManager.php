@@ -4,8 +4,6 @@ namespace Oro\Bundle\ActionBundle\Model;
 
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormTypeInterface;
 
 class ActionFormManager
 {
@@ -27,7 +25,7 @@ class ActionFormManager
      */
     public function getActionForm(Action $action, ActionContext $context)
     {
-        return $this->createForm(
+        return $this->formFactory->create(
             $action->getDefinition()->getFormType(),
             $context,
             array_merge(
@@ -38,27 +36,5 @@ class ActionFormManager
                 ]
             )
         );
-    }
-
-    /**
-     * @param string|FormTypeInterface $type
-     * @param mixed $data
-     * @param array $options
-     * @return FormInterface
-     */
-    protected function createForm($type, $data = null, array $options = [])
-    {
-        return $this->formFactory->create($type, $data, $options);
-    }
-
-    /**
-     * @param ActionContext $context
-     * @return bool
-     */
-    public function hasForm(ActionContext $context)
-    {
-        $formOptions = $this->getFormOptions($context);
-
-        return !empty($formOptions) && !empty($formOptions['attribute_fields']);
     }
 }

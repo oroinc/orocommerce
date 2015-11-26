@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\ActionBundle\Model;
 
-use Oro\Bundle\WorkflowBundle\Model\Attribute;
-
 class ActionContext extends AbstractStorage implements EntityAwareInterface
 {
     /**
@@ -69,7 +67,6 @@ class ActionContext extends AbstractStorage implements EntityAwareInterface
 
         $result = [];
 
-        /** @var Attribute $attribute */
         foreach ($names as $name) {
             $result[$name] = $this->offsetGet($name);
         }

@@ -397,7 +397,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
 
         return $condition;
     }
-    
+
     public function testGetAttributeManager()
     {
         $attributes = ['attribute' => ['label' => 'attr_label']];

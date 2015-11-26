@@ -135,6 +135,56 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider getActionDataProvider
+     *
+     * @param array $context
+     * @param string $actionName
+     * @param mixed $expected
+     */
+    public function testGetAction(array $context, $actionName, $expected)
+    {
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityReference')
+            ->willReturnCallback(function ($className, $id) {
+                $obj = new \stdClass();
+                $obj->id = $id;
+
+                return $obj;
+            });
+
+        $action = $this->manager->getAction($context, $actionName);
+
+        $this->assertEquals($expected, $action ? $action->getName() : $action);
+    }
+
+    /**
+     * @return array
+     */
+    public function getActionDataProvider()
+    {
+        return [
+            'invalid action name' => [
+                'context' => [
+                    'route' => 'route1',
+                    'entityClass' => 'Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity1',
+                    'entityId' => 1,
+                ],
+                'actionName' => 'test',
+                'expected' => null
+            ],
+            'valid action name' => [
+                'context' => [
+                    'route' => 'route1',
+                    'entityClass' => 'Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity1',
+                    'entityId' => 1,
+                ],
+                'actionName' => 'action2',
+                'expected' => 'action2'
+            ],
+        ];
+    }
+
+    /**
      * @param array $inputData
      * @param array $expectedData
      *

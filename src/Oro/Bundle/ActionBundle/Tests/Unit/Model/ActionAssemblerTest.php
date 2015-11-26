@@ -91,8 +91,6 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
             ->addFunctions('postfunctions', ['config_post_func'])
             ->setFormOptions(['config_form_options'])
             ->setFrontendOptions(['config_frontend_options'])
-            ->setInitStep(['config_init_step'])
-            ->setExecutionStep(['config_execution_step'])
             ->setOrder(77)
             ->setFormType(ActionType::NAME);
 
@@ -137,8 +135,6 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
                         'postfunctions' => ['config_post_func'],
                         'form_options' => ['config_form_options'],
                         'frontend_options' => ['config_frontend_options'],
-                        'init_step' => ['config_init_step'],
-                        'execution_step' => ['config_execution_step'],
                         'order' => 77,
                     ]
                 ],

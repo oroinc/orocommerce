@@ -80,9 +80,7 @@ class ActionAssembler extends AbstractAssembler
             ->setFormType($this->getOption($options, 'form_type', ActionType::NAME))
             ->setFrontendOptions($this->getOption($options, 'frontend_options', []))
             ->setAttributes($this->getOption($options, 'attributes', []))
-            ->setFormOptions($this->getOption($options, 'form_options', []))
-            ->setInitStep($this->getOption($options, 'init_step', []))
-            ->setExecutionStep($this->getOption($options, 'execution_step', []));
+            ->setFormOptions($this->getOption($options, 'form_options', []));
 
         foreach (ActionDefinition::getAllowedConditions() as $name) {
             $actionDefinition->addConditions($name, $this->getOption($options, $name, []));

@@ -2,9 +2,6 @@
 
 namespace Oro\Bundle\ActionBundle\Model;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyFields)
- */
 class ActionDefinition
 {
     const PREFUNCTIONS = 'prefunctions';
@@ -52,12 +49,6 @@ class ActionDefinition
 
     /** @var array */
     private $conditions = [];
-
-    /** @var array */
-    private $initStep = [];
-
-    /** @var array */
-    private $executionStep = [];
 
     /**
      * @return array
@@ -330,44 +321,6 @@ class ActionDefinition
     public function addConditions($name, array $data)
     {
         $this->conditions[$name] = $data;
-
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getInitStep()
-    {
-        return $this->initStep;
-    }
-
-    /**
-     * @param array $initStep
-     * @return $this
-     */
-    public function setInitStep(array $initStep)
-    {
-        $this->initStep = $initStep;
-
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getExecutionStep()
-    {
-        return $this->executionStep;
-    }
-
-    /**
-     * @param array $executionStep
-     * @return $this
-     */
-    public function setExecutionStep(array $executionStep)
-    {
-        $this->executionStep = $executionStep;
 
         return $this;
     }
