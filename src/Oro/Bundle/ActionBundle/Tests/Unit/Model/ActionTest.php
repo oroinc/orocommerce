@@ -11,6 +11,9 @@ use Oro\Bundle\WorkflowBundle\Model\Condition\Configurable as ConfigurableCondit
 
 use Oro\Component\ConfigExpression\ExpressionFactory;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class ActionTest extends \PHPUnit_Framework_TestCase
 {
     /** @var \PHPUnit_Framework_MockObject_MockObject|ActionDefinition $definition */
