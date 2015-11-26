@@ -63,7 +63,7 @@ class FormOptionsAssembler
                 $this->assertAttributeExists($attributeName);
                 if (!array_key_exists($attributeName, $attributeFields)) {
                     throw new InvalidConfigurationException(
-                        'Form options of %s "%s" doesn\'t have attribute "%s" which is referenced in ' .
+                        'Form options doesn\'t have attribute which is referenced in ' .
                         '"attribute_default_values" option.'
                     );
                 }

@@ -51,6 +51,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @return array
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function processValidConfigurationProvider()
     {
@@ -323,6 +324,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         ],
                     ],
                 ],
+                'message' => 'Invalid type for path "action.form_options.attribute_fields.attribute_1.options"'
             ],
         ];
     }

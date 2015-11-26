@@ -8,6 +8,7 @@ use Oro\Bundle\ActionBundle\Model\Action;
 use Oro\Bundle\ActionBundle\Model\ActionContext;
 use Oro\Bundle\ActionBundle\Model\ActionDefinition;
 use Oro\Bundle\ActionBundle\Model\AttributeAssembler;
+use Oro\Bundle\ActionBundle\Model\FormOptionsAssembler;
 
 use Oro\Bundle\WorkflowBundle\Model\Action\ActionFactory as FunctionFactory;
 use Oro\Bundle\WorkflowBundle\Model\Action\ActionInterface as FunctionInterface;
@@ -34,6 +35,9 @@ class ActionTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|AttributeAssembler */
     protected $attributeAssembler;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject|FormOptionsAssembler */
+    protected $formOptionsAssembler;
+
     /** @var Action */
     protected $action;
 
@@ -58,10 +62,15 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->formOptionsAssembler = $this->getMockBuilder('Oro\Bundle\ActionBundle\Model\FormOptionsAssembler')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->action = new Action(
             $this->functionFactory,
             $this->conditionFactory,
             $this->attributeAssembler,
+            $this->formOptionsAssembler,
             $this->definition
         );
 
