@@ -82,7 +82,7 @@ class Action
      */
     public function init(ActionContext $context)
     {
-        $this->executeFunctions(ActionDefinition::INITFUNCTIONS, $context);
+        $this->executeFunctions($context, ActionDefinition::INITFUNCTIONS);
     }
 
     /**
@@ -96,7 +96,7 @@ class Action
             throw new ForbiddenActionException(sprintf('Action "%s" is not allowed.', $this->getName()));
         }
 
-        $this->executeFunctions(ActionDefinition::POSTFUNCTIONS, $context);
+        $this->executeFunctions($context, ActionDefinition::POSTFUNCTIONS);
     }
 
     /**
@@ -130,9 +130,9 @@ class Action
      */
     protected function isPreConditionAllowed(ActionContext $context, Collection $errors = null)
     {
-        $this->executeFunctions(ActionDefinition::PREFUNCTIONS, $context);
+        $this->executeFunctions($context, ActionDefinition::PREFUNCTIONS);
 
-        return $this->evaluateConditions(ActionDefinition::PRECONDITIONS, $context, $errors);
+        return $this->evaluateConditions($context, ActionDefinition::PRECONDITIONS, $errors);
     }
 
     /**
@@ -156,14 +156,14 @@ class Action
      */
     protected function isConditionAllowed(ActionContext $context, Collection $errors = null)
     {
-        return $this->evaluateConditions(ActionDefinition::CONDITIONS, $context, $errors);
+        return $this->evaluateConditions($context, ActionDefinition::CONDITIONS, $errors);
     }
 
     /**
      * @param string $name
      * @param ActionContext $context
      */
-    protected function executeFunctions($name, ActionContext $context)
+    protected function executeFunctions(ActionContext $context, $name)
     {
         if (!array_key_exists($name, $this->functions)) {
             $this->functions[$name] = false;
@@ -185,7 +185,7 @@ class Action
      * @param Collection $errors
      * @return boolean
      */
-    protected function evaluateConditions($name, ActionContext $context, Collection $errors = null)
+    protected function evaluateConditions(ActionContext $context, $name, Collection $errors = null)
     {
         if (!array_key_exists($name, $this->conditions)) {
             $this->conditions[$name] = false;
