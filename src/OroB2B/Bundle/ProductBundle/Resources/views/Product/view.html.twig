@@ -27,14 +27,12 @@
 {% endblock breadcrumbs %}
 
 {% block navButtons %}
-
     {% if resource_granted('EDIT', entity) %}
         {{ UI.editButton({
             'path' : path('orob2b_product_update', { 'id': entity.id }),
             'entity_label': 'orob2b.product.entity_label'|trans
         }) }}
     {% endif %}
-
     {% if resource_granted('orob2b_product_create') %}
         {{ UI.button({
             'path': path('orob2b_product_duplicate', { 'id': entity.id }),
@@ -42,7 +40,6 @@
             'iCss': 'icon-copy'
         }) }}
     {% endif %}
-
     {% if resource_granted('DELETE', entity) %}
         {{ UI.deleteButton({
             'dataUrl': path('orob2b_api_delete_product', {'id': entity.id}),
@@ -53,7 +50,6 @@
             'entity_label': 'orob2b.product.entity_label'|trans
         }) }}
     {% endif %}
-
 {% endblock navButtons %}
 
 {% block content_data %}

@@ -16,7 +16,7 @@ class WarehouseInventoryLevelController extends Controller
     /**
      * Edit product warehouse inventory levels
      *
-     * @Route("/update/{id}", name="orob2b_warehouse_inventory_product_update_widget", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="orob2b_warehouse_inventory_level_update", requirements={"id"="\d+"})
      * @Template
      * @Acl(
      *      id="orob2b_product_warehouse_inventory_update",
