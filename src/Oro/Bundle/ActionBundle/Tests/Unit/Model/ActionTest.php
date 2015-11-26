@@ -12,7 +12,6 @@ use Oro\Bundle\ActionBundle\Model\FormOptionsAssembler;
 
 use Oro\Bundle\WorkflowBundle\Model\Action\ActionFactory as FunctionFactory;
 use Oro\Bundle\WorkflowBundle\Model\Action\ActionInterface as FunctionInterface;
-use Oro\Bundle\WorkflowBundle\Model\Action\Configurable as ConfigurableAction;
 use Oro\Bundle\WorkflowBundle\Model\Attribute;
 use Oro\Bundle\WorkflowBundle\Model\Condition\Configurable as ConfigurableCondition;
 
@@ -77,175 +76,13 @@ class ActionTest extends \PHPUnit_Framework_TestCase
         $this->context = new ActionContext();
     }
 
-    public function testExecute()
+    public function testGetName()
     {
-        $functions = ['testFunction' => []];
-
-        /* @var $function FunctionInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $function = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Action\ActionInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $function->expects(static::once())
-            ->method('execute')
-            ->with($this->context);
-
-        $this->definition->expects(static::once())
-            ->method('getPostFunctions')
-            ->willReturn($functions);
-
-        $this->functionFactory->expects(static::once())
-            ->method('create')
-            ->with(ConfigurableAction::ALIAS, $functions)
-            ->willReturn($function);
-
-        $this->action->execute($this->context);
-    }
-
-    public function testExecuteWithoutPostFunctions()
-    {
-        $this->definition->expects(static::once())
-            ->method('getPostFunctions')
-            ->willReturn([]);
-
-        $this->functionFactory->expects(static::never())
-            ->method('create');
-
-        $this->action->execute($this->context);
-    }
-
-    /**
-     * @expectedException \Oro\Bundle\ActionBundle\Exception\ForbiddenActionException
-     * @expectedExceptionMessage Action "test_action" is not allowed.
-     */
-    public function testExecuteException()
-    {
-        /* @var $condition ConfigurableCondition|\PHPUnit_Framework_MockObject_MockObject */
-        $condition = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Condition\Configurable')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $condition->expects(static::any())
-            ->method('evaluate')
-            ->with($this->context)
-            ->willReturn(false);
-
-        $config = ['test' => []];
-
-        $this->definition->expects(static::once())
+        $this->definition->expects($this->once())
             ->method('getName')
-            ->willReturn('test_action');
-        $this->definition->expects(static::once())
-            ->method('getPreConditions')
-            ->willReturn(['test' => []]);
+            ->willReturn('test name');
 
-        $this->conditionFactory->expects(static::once())
-            ->method('create')
-            ->with(ConfigurableCondition::ALIAS, $config)
-            ->willReturn($condition);
-
-        $this->action->execute($this->context);
-    }
-
-    public function testIsAllowedNoConditionsSection()
-    {
-        $this->conditionFactory->expects(static::never())
-            ->method(static::anything());
-
-        static::assertTrue($this->action->isAllowed($this->context));
-    }
-
-    public function testIsAllowedNoConditions()
-    {
-        $condition = null;
-
-        $this->definition->expects(static::once())
-            ->method('getConditions')
-            ->willReturn($condition);
-
-        $this->conditionFactory->expects(static::never())
-            ->method(static::anything());
-
-        static::assertTrue($this->action->isAllowed($this->context));
-    }
-
-    public function testIsAllowed()
-    {
-        $this->context['data'] = new \stdClass();
-        $conditions = [
-            ['test' => []],
-        ];
-        /* @var $condition ConfigurableCondition|\PHPUnit_Framework_MockObject_MockObject */
-        $condition = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Condition\Configurable')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $condition->expects(static::any())
-            ->method('evaluate')
-            ->with($this->context)
-            ->willReturn(false);
-
-        $this->definition->expects(static::once())
-            ->method('getConditions')
-            ->willReturn($conditions);
-
-        $this->conditionFactory->expects(static::once())
-            ->method('create')
-            ->with(ConfigurableCondition::ALIAS, $conditions)
-            ->willReturn($condition);
-
-        static::assertFalse($this->action->isAllowed($this->context));
-    }
-
-    public function testIsAvailable()
-    {
-        $this->context['data'] = new \stdClass();
-        $functions = [
-            ['testFunction' => []],
-        ];
-
-        $conditions = [
-            ['test' => []],
-        ];
-
-        /* @var $function FunctionInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $function = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Action\ActionInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $function->expects(static::once())
-            ->method('execute')
-            ->with($this->context);
-
-        /* @var $condition ConfigurableCondition|\PHPUnit_Framework_MockObject_MockObject */
-        $condition = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Condition\Configurable')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $condition->expects(static::once())
-            ->method('evaluate')
-            ->with($this->context)
-            ->willReturn(false);
-
-        $this->definition->expects(static::once())
-            ->method('getPreFunctions')
-            ->willReturn($functions);
-
-        $this->definition->expects(static::once())
-            ->method('getPreConditions')
-            ->willReturn($conditions);
-
-        $this->functionFactory->expects(static::once())
-            ->method('create')
-            ->with(ConfigurableAction::ALIAS, $functions)
-            ->willReturn($function);
-
-        $this->conditionFactory->expects(static::once())
-            ->method('create')
-            ->with(ConfigurableCondition::ALIAS, $conditions)
-            ->willReturn($condition);
-
-        static::assertFalse($this->action->isAvailable($this->context));
-    }
-
-    public function testGetDefinition()
-    {
-        static::assertInstanceOf('Oro\Bundle\ActionBundle\Model\ActionDefinition', $this->action->getDefinition());
+        $this->assertEquals('test name', $this->action->getName());
     }
 
     public function testIsEnabled()
@@ -257,13 +94,308 @@ class ActionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(true, $this->action->isEnabled());
     }
 
-    public function testGetName()
+    public function testGetDefinition()
+    {
+        $this->assertInstanceOf('Oro\Bundle\ActionBundle\Model\ActionDefinition', $this->action->getDefinition());
+    }
+
+    public function testInit()
+    {
+        $config = [
+            ['initfunctions',  ['initfunctions']],
+        ];
+
+        $functions = [
+            'initfunctions' => $this->createFunction($this->once(), $this->context),
+        ];
+
+        $this->definition->expects($this->any())
+            ->method('getFunctions')
+            ->will($this->returnValueMap($config));
+
+        $this->functionFactory->expects($this->any())
+            ->method('create')
+            ->willReturnCallback(function ($type, $config) use ($functions) {
+                return $functions[$config[0]];
+            });
+
+        $this->action->init($this->context);
+    }
+
+    /**
+     * @param ActionContext $context
+     * @param array $config
+     * @param array $functions
+     * @param array $conditions
+     * @param string $exceptionMessage
+     *
+     * @dataProvider executeProvider
+     */
+    public function testExecute(
+        ActionContext $context,
+        array $config,
+        array $functions,
+        array $conditions,
+        $exceptionMessage = ''
+    ) {
+        $this->definition->expects($this->any())
+            ->method('getName')
+            ->willReturn('TestName');
+
+        $this->definition->expects($this->any())
+            ->method('getFunctions')
+            ->will($this->returnValueMap($config));
+
+        $this->definition->expects($this->any())
+            ->method('getConditions')
+            ->will($this->returnValueMap($config));
+
+        $this->functionFactory->expects($this->any())
+            ->method('create')
+            ->willReturnCallback(function ($type, $config) use ($functions) {
+                return $functions[$config[0]];
+            });
+
+        $this->conditionFactory->expects($this->any())
+            ->method('create')
+            ->willReturnCallback(function ($type, $config) use ($conditions) {
+                return $conditions[$config[0]];
+            });
+
+        if ($exceptionMessage) {
+            $this->setExpectedException(
+                'Oro\Bundle\ActionBundle\Exception\ForbiddenActionException',
+                $exceptionMessage
+            );
+        }
+
+        $this->action->execute($context);
+    }
+
+    public function testIsAvailable()
     {
         $this->definition->expects($this->once())
-            ->method('getName')
-            ->willReturn('test name');
+            ->method('getFunctions')
+            ->willReturn(['function1']);
 
-        $this->assertEquals('test name', $this->action->getName());
+        $this->functionFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($this->createFunction($this->once(), $this->context));
+
+        $this->definition->expects($this->once())
+            ->method('getConditions')
+            ->willReturn(['condition1']);
+
+        $this->conditionFactory->expects($this->once())
+            ->method('create')
+            ->willReturn($this->createCondition($this->once(), $this->context, true));
+
+        $this->assertTrue($this->action->isAvailable($this->context));
+    }
+
+    /**
+     * @param array $inputData
+     * @param array $expectedData
+     *
+     * @dataProvider isAllowedProvider
+     */
+    public function testIsAllowed(array $inputData, array $expectedData)
+    {
+        $this->definition->expects($this->any())
+            ->method('getConditions')
+            ->will($this->returnValueMap($inputData['config']['conditions']));
+
+        $this->conditionFactory->expects($expectedData['conditionFactory'])
+            ->method('create')
+            ->willReturnCallback(function ($type, $config) use ($inputData) {
+                return $inputData['conditions'][$config[0]];
+            });
+
+        $this->assertEquals($expectedData['allowed'], $this->action->isAllowed($inputData['context']));
+    }
+
+    /**
+     * @return array
+     */
+    public function executeProvider()
+    {
+        $context = new ActionContext();
+
+        $config = [
+            ['prefunctions', ['prefunctions']],
+            ['postfunctions', ['postfunctions']],
+            ['preconditions', ['preconditions']],
+            ['conditions', ['conditions']],
+        ];
+
+        return [
+            '!isPreConditionAllowed' => [
+                'context' => $context,
+                'config' => $config,
+                'functions' => [
+                    'prefunctions' => $this->createFunction($this->once(), $context),
+                    'postfunctions' => $this->createFunction($this->never(), $context),
+                ],
+                'conditions' => [
+                    'preconditions' => $this->createCondition($this->once(), $context, false),
+                    'conditions' => $this->createCondition($this->never(), $context, true),
+                ],
+                'exception' => 'Action "TestName" is not allowed.',
+            ],
+            '!isConditionAllowed' => [
+                'context' => $context,
+                'config' => $config,
+                'functions' => [
+                    'prefunctions' => $this->createFunction($this->once(), $context),
+                    'postfunctions' => $this->createFunction($this->never(), $context),
+                ],
+                'conditions' => [
+                    'preconditions' => $this->createCondition($this->once(), $context, true),
+                    'conditions' => $this->createCondition($this->once(), $context, false),
+                ],
+                'exception' => 'Action "TestName" is not allowed.',
+            ],
+            'isAllowed' => [
+                'context' => $context,
+                'config' => $config,
+                'functions' => [
+                    'prefunctions' => $this->createFunction($this->once(), $context),
+                    'postfunctions' => $this->createFunction($this->once(), $context),
+                ],
+                'conditions' => [
+                    'preconditions' => $this->createCondition($this->once(), $context, true),
+                    'conditions' => $this->createCondition($this->once(), $context, true),
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function isAllowedProvider()
+    {
+        $context = new ActionContext();
+
+        return [
+            'no conditions' => [
+                'input' => [
+                    'context' => $context,
+                    'config' => [
+                        'conditions' => [],
+                    ],
+                ],
+                'expected' => [
+                    'conditionFactory' => $this->never(),
+                    'allowed' => true,
+                    'errors' => [],
+                ],
+            ],
+            '!isPreConditionAllowed' => [
+                'input' => [
+                    'context' => $context,
+                    'config' => [
+                        'conditions' => [
+                            ['preconditions', ['preconditions']],
+                            ['conditions', ['conditions']],
+                        ],
+                    ],
+                    'conditions' => [
+                        'preconditions' => $this->createCondition($this->once(), $context, false),
+                        'conditions' => $this->createCondition($this->never(), $context, true),
+                    ],
+                ],
+                'expected' => [
+                    'conditionFactory' => $this->exactly(1),
+                    'allowed' => false,
+                ],
+            ],
+            '!isConditionAllowed' => [
+                'input' => [
+                    'context' => $context,
+                    'config' => [
+                        'conditions' => [
+                            ['preconditions', ['preconditions']],
+                            ['conditions', ['conditions']],
+                        ],
+                    ],
+                    'conditions' => [
+                        'preconditions' => $this->createCondition($this->once(), $context, true),
+                        'conditions' => $this->createCondition($this->once(), $context, false),
+                    ],
+                ],
+                'expected' => [
+                    'conditionFactory' => $this->exactly(2),
+                    'allowed' => false,
+                    'errors' => ['error3', 'error4'],
+                ],
+            ],
+            'allowed' => [
+                'input' => [
+                    'context' => $context,
+                    'config' => [
+                        'conditions' => [
+                            ['preconditions', ['preconditions']],
+                            ['conditions', ['conditions']],
+                        ],
+                    ],
+                    'conditions' => [
+                        'preconditions' => $this->createCondition($this->once(), $context, true),
+                        'conditions' => $this->createCondition($this->once(), $context, true),
+                    ],
+                ],
+                'expected' => [
+                    'conditionFactory' => $this->exactly(2),
+                    'allowed' => true,
+                    'errors' => [],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @param \PHPUnit_Framework_MockObject_Matcher_InvokedCount $expects
+     * @param ActionContext $context
+     * @return FunctionInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function createFunction(
+        \PHPUnit_Framework_MockObject_Matcher_InvokedCount $expects,
+        ActionContext $context
+    ) {
+        /* @var $function FunctionInterface|\PHPUnit_Framework_MockObject_MockObject */
+        $function = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Action\ActionInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $function->expects($expects)
+            ->method('execute')
+            ->with($context);
+
+        return $function;
+    }
+
+    /**
+     * @param \PHPUnit_Framework_MockObject_Matcher_InvokedCount $expects
+     * @param ActionContext $context
+     * @param bool $returnValue
+     * @return ConfigurableCondition|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function createCondition(
+        \PHPUnit_Framework_MockObject_Matcher_InvokedCount $expects,
+        ActionContext $context,
+        $returnValue
+    ) {
+        /* @var $condition ConfigurableCondition|\PHPUnit_Framework_MockObject_MockObject */
+        $condition = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Condition\Configurable')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $condition->expects($expects)
+            ->method('evaluate')
+            ->with($context)
+            ->willReturn($returnValue);
+
+        return $condition;
     }
 
     public function testGetAttributeManager()
