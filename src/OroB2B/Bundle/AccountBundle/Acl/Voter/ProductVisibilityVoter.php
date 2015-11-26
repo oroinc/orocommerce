@@ -2,14 +2,11 @@
 
 namespace OroB2B\Bundle\AccountBundle\Acl\Voter;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 
 use OroB2B\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier;
 
-class ProductVisibilityVoter extends AbstractEntityVoter implements ContainerAwareInterface
+class ProductVisibilityVoter extends AbstractEntityVoter
 {
 
     const ATTRIBUTE_VIEW = 'VIEW';
@@ -20,11 +17,6 @@ class ProductVisibilityVoter extends AbstractEntityVoter implements ContainerAwa
     protected $supportedAttributes = [
         self::ATTRIBUTE_VIEW,
     ];
-
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
 
     /**
      * @var ProductVisibilityQueryBuilderModifier
@@ -54,17 +46,7 @@ class ProductVisibilityVoter extends AbstractEntityVoter implements ContainerAwa
             return self::ACCESS_DENIED;
         }
 
-        return self::ACCESS_DENIED;
-    }
-
-    /**
-     * Sets the Container.
-     *
-     * @param ContainerInterface|null $container A ContainerInterface instance or null
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
+        return self::ACCESS_ABSTAIN;
     }
 
     /**

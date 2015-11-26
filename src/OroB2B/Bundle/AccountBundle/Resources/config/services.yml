@@ -139,7 +139,6 @@ services:
             - @oro_entity.doctrine_helper
         calls:
             - [setClassName, [%orob2b_product.product.class%]]
-            - [setContainer, [@service_container]]
             - [setModifier, [@orob2b_account.model.product_visibility_query_builder_modifier]]
         tags:
             - { name: security.voter }
