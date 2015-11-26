@@ -14,4 +14,9 @@ interface PriceListAwareInterface
      * @return mixed
      */
     public function setPriceList(PriceList $priceList);
+
+    /**
+     * @return int
+     */
+    public function getPriority();
 }

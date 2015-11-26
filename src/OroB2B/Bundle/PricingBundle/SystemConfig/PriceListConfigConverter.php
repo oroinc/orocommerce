@@ -70,7 +70,7 @@ class PriceListConfigConverter implements PriceListConfigConverterInterface
             usort($result, function ($a, $b) {
                 /** @var PriceListConfig $a */
                 /** @var PriceListConfig $b */
-                return ($a->getPriority() < $b->getPriority()) ? -1 : 1;
+                return ($a->getPriority() > $b->getPriority()) ? -1 : 1;
             });
         }
 

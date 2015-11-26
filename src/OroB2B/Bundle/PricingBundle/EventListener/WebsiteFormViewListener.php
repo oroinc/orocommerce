@@ -79,7 +79,7 @@ class WebsiteFormViewListener
         $priceLists = $this->doctrineHelper
             ->getEntityManager($this->priceListToWebsiteClassName)
             ->getRepository($this->priceListToWebsiteClassName)
-            ->findBy(['website' => $website], ['priority' => Criteria::ASC]);
+            ->findBy(['website' => $website], ['priority' => Criteria::DESC]);
 
         $template = $event->getEnvironment()->render(
             'OroB2BPricingBundle:PriceList/partial:list.html.twig',
