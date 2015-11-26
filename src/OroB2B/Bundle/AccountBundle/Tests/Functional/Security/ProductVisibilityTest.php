@@ -2,14 +2,16 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Security;
 
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
+
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Component\Testing\WebTestCase;
+
 use OroB2B\Bundle\AccountBundle\Acl\Voter\ProductVisibilityVoter;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData as AccountLoadAccountUserData;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
 /**
  * @dbIsolation
