@@ -69,6 +69,9 @@ class RequiredAttributesListener implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return array(FormEvents::PRE_SET_DATA => 'onPreSetData', FormEvents::SUBMIT => 'onSubmit');
+        return [
+            FormEvents::PRE_SET_DATA => 'onPreSetData',
+            FormEvents::SUBMIT => 'onSubmit'
+        ];
     }
 }
