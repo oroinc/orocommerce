@@ -51,14 +51,26 @@ class ProductNormalizerTest extends \PHPUnit_Framework_TestCase
 
         $this->fieldHelper->expects($this->once())
             ->method('getFields')
-            ->willReturn([['name' => 'sku', 'type' => 'string', 'label' => 'sku']]);
+            ->willReturn([
+                [
+                    'name' => 'sku',
+                    'type' => 'string',
+                    'label' => 'sku'
+                ],
+                [
+                    'name' => 'variantFields',
+                    'type' => 'array',
+                    'label' => 'variantFields'
+                ]
+            ]);
 
-        $this->fieldHelper->expects($this->once())
+        $this->fieldHelper->expects($this->exactly(2))
             ->method('getObjectValue')
             ->will(
                 $this->returnValueMap(
                     [
                         [$product, 'sku', 'SKU-1'],
+                        [$product, 'variantFields', ['test_field', 'test_field_second']],
                     ]
                 )
             );
@@ -76,41 +88,47 @@ class ProductNormalizerTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->productNormalizer->normalize($product);
         $this->assertArrayHasKey('sku', $result);
+        $this->assertArrayHasKey('variantFields', $result);
         $this->assertEquals($result['sku'], 'SKU-1');
+        $this->assertEquals($result['variantFields'], 'test_field,test_field_second');
     }
 
     public function testDenormalize()
     {
-        $data = ['sku' => 'SKU-1'];
+        $data = ['sku' => 'SKU-1', 'variantFields' => 'test_field,test_field_second'];
 
         $this->fieldHelper->expects($this->once())
             ->method('getFields')
-            ->willReturn([['name' => 'sku', 'type' => 'string', 'label' => 'sku']]);
+            ->willReturn([
+                [
+                    'name' => 'sku',
+                    'type' => 'string',
+                    'label' => 'sku'
+                ],
+                [
+                    'name' => 'variantFields',
+                    'type' => 'array',
+                    'label' => 'variantFields'
+                ]
+            ]);
 
-        $this->fieldHelper->expects($this->once())
+        $this->fieldHelper->expects($this->exactly(3))
             ->method('setObjectValue')
             ->will(
                 $this->returnCallback(
                     function (Product $result, $fieldName, $value) {
+                        if ($fieldName === 'variantFields' && !is_array($value)) {
+                            return $result;
+                        }
                         return $result->{'set' . $fieldName}($value);
                     }
                 )
             );
 
-        $this->eventDispatcher->expects($this->once())->method('dispatch')
-            ->withConsecutive(
-                [
-                    $this->logicalAnd(
-                        $this->isType('string'),
-                        $this->equalTo('orob2b_product.normalizer.denormalizer')
-                    ),
-                    $this->isInstanceOf('OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent'),
-                ]
-            );
-
         $result = $this->productNormalizer->denormalize($data, $this->productClass);
         $this->assertInstanceOf($this->productClass, $result);
         $this->assertEquals($result->getSku(), 'SKU-1');
+        $this->assertEquals($result->getVariantFields(), ['test_field', 'test_field_second']);
     }
 
     /**

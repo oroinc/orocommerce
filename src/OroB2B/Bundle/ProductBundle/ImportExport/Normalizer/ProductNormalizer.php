@@ -40,7 +40,7 @@ class ProductNormalizer extends ConfigurableEntityNormalizer
     {
         $data = parent::normalize($object, $format, $context);
 
-        if (!isset($context['mode']) && !isset($context['fieldName'])) {
+        if (!isset($context['mode']) && !isset($context['fieldName']) && isset($data['variantFields'])) {
             $data['variantFields'] = implode(',', $data['variantFields']);
         }
 
@@ -61,7 +61,7 @@ class ProductNormalizer extends ConfigurableEntityNormalizer
         /** @var Product $object */
         $object = parent::denormalize($data, $class, $format, $context);
 
-        if (!isset($context['fieldName'])) {
+        if (!isset($context['fieldName']) && isset($data['variantFields'])) {
             $this->fieldHelper->setObjectValue($object, 'variantFields', explode(',', $data['variantFields']));
         }
 
