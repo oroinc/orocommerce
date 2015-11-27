@@ -66,7 +66,7 @@ class OroB2BSaleBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_2';
     }
 
     /**
@@ -112,6 +112,7 @@ class OroB2BSaleBundleInstaller implements
         $table->addColumn('updated_at', 'datetime', []);
         $table->addColumn('valid_until', 'datetime', ['notnull' => false]);
         $table->addColumn('locked', 'boolean');
+        $table->addColumn('expired', 'boolean', ['default' => false]);
         $table->addColumn('price_list_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
     }

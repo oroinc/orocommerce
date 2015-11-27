@@ -6,6 +6,7 @@ use Doctrine\Common\Cache\CacheProvider;
 
 use Oro\Bundle\ActionBundle\Configuration\ActionConfigurationProvider;
 use Oro\Bundle\ActionBundle\Configuration\ActionDefinitionListConfiguration;
+use Oro\Bundle\ActionBundle\Configuration\ActionDefinitionConfigurationValidator;
 
 class ActionConfigurationProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -15,6 +16,9 @@ class ActionConfigurationProviderTest extends \PHPUnit_Framework_TestCase
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|ActionDefinitionListConfiguration */
     protected $definitionConfiguration;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ActionDefinitionConfigurationValidator */
+    protected $definitionConfigurationValidator;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|CacheProvider */
     protected $cacheProvider;
@@ -26,6 +30,11 @@ class ActionConfigurationProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->definitionConfigurationValidator = $this
+            ->getMockBuilder('Oro\Bundle\ActionBundle\Configuration\ActionDefinitionConfigurationValidator')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->cacheProvider = $this->getMockBuilder('Doctrine\Common\Cache\CacheProvider')
             ->setMethods(['contains', 'fetch', 'save', 'delete'])
             ->disableOriginalConstructor()
@@ -34,7 +43,7 @@ class ActionConfigurationProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-        unset($this->definitionConfiguration, $this->cacheProvider);
+        unset($this->definitionConfiguration, $this->definitionConfigurationValidator, $this->cacheProvider);
     }
 
     public function testGetActionConfigurationWithCache()
@@ -52,6 +61,7 @@ class ActionConfigurationProviderTest extends \PHPUnit_Framework_TestCase
 
         $configurationProvider = new ActionConfigurationProvider(
             $this->definitionConfiguration,
+            $this->definitionConfigurationValidator,
             $this->cacheProvider,
             [],
             []
@@ -66,6 +76,7 @@ class ActionConfigurationProviderTest extends \PHPUnit_Framework_TestCase
 
         $configurationProvider = new ActionConfigurationProvider(
             $this->definitionConfiguration,
+            $this->definitionConfigurationValidator,
             $this->cacheProvider,
             [self::BUNDLE1 => ['test_action' => ['label' => 'Test Action']]],
             [self::BUNDLE1]
@@ -78,6 +89,7 @@ class ActionConfigurationProviderTest extends \PHPUnit_Framework_TestCase
     {
         $configurationProvider = new ActionConfigurationProvider(
             $this->definitionConfiguration,
+            $this->definitionConfigurationValidator,
             $this->cacheProvider,
             [],
             []
@@ -88,6 +100,39 @@ class ActionConfigurationProviderTest extends \PHPUnit_Framework_TestCase
             ->with(ActionConfigurationProvider::ROOT_NODE_NAME);
 
         $configurationProvider->clearCache();
+    }
+
+    public function testGetActionConfigurationWithIgnoreCache()
+    {
+        $config = [
+            'action1' => [
+                'label' => 'Label1',
+            ],
+        ];
+
+        $this->cacheProvider->expects($this->never())->method('contains');
+        $this->cacheProvider->expects($this->never())->method('fetch');
+        $this->cacheProvider->expects($this->never())->method('save');
+
+        $this->definitionConfiguration->expects($this->once())
+            ->method('processConfiguration')
+            ->willReturnCallback(function ($config) {
+                return $config;
+            });
+
+        $this->definitionConfigurationValidator->expects($this->once())
+            ->method('validate')
+            ->with($config);
+
+        $configurationProvider = new ActionConfigurationProvider(
+            $this->definitionConfiguration,
+            $this->definitionConfigurationValidator,
+            $this->cacheProvider,
+            [self::BUNDLE1 => $config],
+            [self::BUNDLE1]
+        );
+
+        $this->assertEquals($config, $configurationProvider->getActionConfiguration(true));
     }
 
     /**
@@ -107,6 +152,7 @@ class ActionConfigurationProviderTest extends \PHPUnit_Framework_TestCase
 
         $configurationProvider = new ActionConfigurationProvider(
             $this->definitionConfiguration,
+            $this->definitionConfigurationValidator,
             $this->cacheProvider,
             $rawConfig,
             [self::BUNDLE1, self::BUNDLE2, self::BUNDLE3]
@@ -207,9 +253,11 @@ class ActionConfigurationProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn(false);
 
         $this->definitionConfiguration->expects($this->never())->method($this->anything());
+        $this->definitionConfigurationValidator->expects($this->never())->method($this->anything());
 
         $configurationProvider = new ActionConfigurationProvider(
             $this->definitionConfiguration,
+            $this->definitionConfigurationValidator,
             $this->cacheProvider,
             $rawConfig,
             [self::BUNDLE1, self::BUNDLE2, self::BUNDLE3]
@@ -285,5 +333,8 @@ class ActionConfigurationProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturnCallback(function (array $configs) {
                 return $configs;
             });
+
+        $this->definitionConfigurationValidator->expects($this->once())
+            ->method('validate');
     }
 }
