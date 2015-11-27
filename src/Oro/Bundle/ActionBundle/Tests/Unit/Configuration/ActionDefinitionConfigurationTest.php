@@ -74,7 +74,8 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                     'conditions' => [],
                     'initfunctions' => [],
                     'postfunctions' => [],
-                    'attributes' => []
+                    'attributes' => [],
+                    'frontend_options' => [],
                 ],
             ],
             'full valid configuration' => [
@@ -398,7 +399,9 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return type
+     * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     protected function invalidAttributesProvider()
     {
@@ -423,16 +426,138 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                 ],
                 'message' => 'Invalid type for path "action.attributes.0". Expected array, but got string'
             ],
-            'incorrect action[attributes][options]' => [
+            'incorrect action[attributes][attribute1]' => [
                 'input' => [
                     'action' => [
                         'label' => 'Test Label',
                         'attributes' => [
-                            'options' => 'not array value',
+                            'attribute1' => 'not array value',
                         ],
                     ],
                 ],
-                'message' => 'Invalid type for path "action.attributes.options". Expected array, but got string'
+                'message' => 'Invalid type for path "action.attributes.attribute1". Expected array, but got string'
+            ],
+            'empty action[attributes][attribute2][type]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => [
+                            'attribute2' => [],
+                        ],
+                    ],
+                ],
+                'message' => 'The child node "type" at path "action.attributes.attribute2" must be configured'
+            ],
+            'invalid action[attributes][attribute3][type]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => [
+                            'attribute3' => [
+                                'type' => 'type1',
+                            ],
+                        ],
+                    ],
+                ],
+                'message' => 'The value "type1" is not allowed for path "action.attributes.attribute3.type"'
+            ],
+            'empty action[attributes][attribute4][label]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => [
+                            'attribute4' => [
+                                'type' => 'bool',
+                            ],
+                        ],
+                    ],
+                ],
+                'message' => 'The child node "label" at path "action.attributes.attribute4" must be configured'
+            ],
+            'incorrect action[attributes][attribute5][entity_acl]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => [
+                            'attribute5' => [
+                                'type' => 'int',
+                                'label' => 'Attribute 5 Label',
+                                'entity_acl' => 'not array value',
+                            ],
+                        ],
+                    ],
+                ],
+                'message' =>
+                    'Invalid type for path "action.attributes.attribute5.entity_acl". ' .
+                    'Expected array, but got string'
+            ],
+            'used entity_acl & !entity type action[attributes][attribute6]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => [
+                            'attribute6' => [
+                                'type' => 'int',
+                                'label' => 'Attribute 6 Label',
+                                'entity_acl' => [],
+                            ],
+                        ],
+                    ],
+                ],
+                'message' =>
+                    'Invalid configuration for path "action.attributes.attribute6": ' .
+                    'Attribute "Attribute 6 Label" with type "int" can\'t have entity ACL'
+            ],
+            'empty action[attributes][attribute7][options][class] with object' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => [
+                            'attribute7' => [
+                                'type' => 'object',
+                                'label' => 'Attribute 7 Label',
+                            ],
+                        ],
+                    ],
+                ],
+                'message' =>
+                    'Invalid configuration for path "action.attributes.attribute7": ' .
+                    'Option "class" is required for "object" type'
+            ],
+            'empty action[attributes][attribute8][options][class] with entity' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => [
+                            'attribute8' => [
+                                'type' => 'entity',
+                                'label' => 'Attribute 8 Label',
+                            ],
+                        ],
+                    ],
+                ],
+                'message' =>
+                    'Invalid configuration for path "action.attributes.attribute8": ' .
+                    'Option "class" is required for "entity" type'
+            ],
+            'excess option action[attributes][attribute9][options][class] with !entity|object' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => [
+                            'attribute9' => [
+                                'type' => 'bool',
+                                'label' => 'Attribute 9 Label',
+                                'options' => [
+                                    'class' => 'TestClass9',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'message' =>
+                    'Invalid configuration for path "action.attributes.attribute9": ' .
+                    'Option "class" cannot be used for "bool" type'
             ],
         ];
     }

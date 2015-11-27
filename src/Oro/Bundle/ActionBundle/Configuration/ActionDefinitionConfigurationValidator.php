@@ -84,24 +84,73 @@ class ActionDefinitionConfigurationValidator
      */
     protected function validateAction(array $action, $path)
     {
-        $this->validateFrontendOptions($action['frontend_options'], $this->getPath($path, 'frontend_options'));
+        $this->validateFrontendOptions($action, $path);
+        $this->validateFormOptions($action, $path);
         $this->validateRoutes($action['routes'], $this->getPath($path, 'routes'));
         $this->validateEntities($action['entities'], $this->getPath($path, 'entities'));
     }
 
     /**
-     * @param array $options
+     * @param array $config
      * @param string $path
      */
-    protected function validateFrontendOptions(array $options, $path)
+    protected function validateFrontendOptions(array $config, $path)
     {
+        $sectionName = 'frontend_options';
+        if (!array_key_exists($sectionName, $config)) {
+            return;
+        }
+
+        $optionsPath = $this->getPath($path, $sectionName);
+        $options = $config[$sectionName];
+
         if (isset($options['template']) && !$this->twigLoader->exists($options['template'])) {
             $this->handleError(
-                $this->getPath($path, 'template'),
+                $this->getPath($optionsPath, 'template'),
                 'Unable to find template "%s"',
                 $options['template'],
                 false
             );
+        }
+    }
+
+    /**
+     * @param array $config
+     * @param string $path
+     */
+    protected function validateFormOptions(array $config, $path)
+    {
+        $sectionName = 'form_options';
+        if (!array_key_exists($sectionName, $config)) {
+            return;
+        }
+
+        $optionsPath = $this->getPath($path, $sectionName);
+
+        $this->validateFormOptionsAttributes($config, 'attribute_fields', $optionsPath);
+        $this->validateFormOptionsAttributes($config, 'attribute_default_values', $optionsPath);
+    }
+
+    /**
+     * @param array $config
+     * @param string $sectionName
+     * @param string $path
+     */
+    protected function validateFormOptionsAttributes(array $config, $sectionName, $path)
+    {
+        if (!array_key_exists($sectionName, $config['form_options'])) {
+            return;
+        }
+
+        foreach (array_keys($config['form_options'][$sectionName]) as $attributeName) {
+            if (!isset($config['attributes'][$attributeName])) {
+                $this->handleError(
+                    $this->getPath($path, $sectionName),
+                    'Unknown attribute "%s".',
+                    $attributeName,
+                    false
+                );
+            }
         }
     }
 
