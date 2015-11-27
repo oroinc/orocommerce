@@ -80,7 +80,6 @@ class WarehouseInventoryLevelGridType extends AbstractType
     protected function getUnitPrecisions(Product $product)
     {
         $data = [];
-
         foreach ($product->getUnitPrecisions() as $precision) {
             $data[$precision->getProductUnitCode()] = $precision->getPrecision();
         }
@@ -93,7 +92,7 @@ class WarehouseInventoryLevelGridType extends AbstractType
      */
     protected function getQuantityConstraints()
     {
-        // build fake field to get correct definitions on JS constraints
+        // build fake field to get correct definitions of JS constraints
         $view = $this->formFactory->create(
             'number',
             null,

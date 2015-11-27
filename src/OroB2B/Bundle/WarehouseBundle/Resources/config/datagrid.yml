@@ -99,7 +99,7 @@ datagrid:
     warehouse-inventory-level-grid:
         source:
             type:         orm
-            # acl_resource: TODO set correct ACL permission
+            acl_resource: orob2b_product_warehouse_inventory_update
             query:
                 select:
                     - CONCAT(warehouse.id, '_', precision.id) as combinedId
@@ -123,7 +123,6 @@ datagrid:
                 label:         orob2b.warehouse.warehouseinventorylevel.quantity.label
                 frontend_type: string # can't use decimal because of inappropriate formatter
                 editable:      true
-                align:         left
             productUnit:
                 label:         orob2b.product.productunit.entity_label
                 type:          twig
