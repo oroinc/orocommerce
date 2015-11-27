@@ -38,6 +38,9 @@ class Action
     /** @var AbstractCondition[] */
     private $conditions = [];
 
+    /** @var AttributeManager[] */
+    private $attributeManagers = [];
+
     /** @var array */
     private $formOptions;
 
@@ -108,24 +111,6 @@ class Action
     }
 
     /**
-     * @param ActionContext $context
-     * @return array
-     */
-    public function getFormOptions(ActionContext $context)
-    {
-        if ($this->formOptions === null) {
-            $this->formOptions = false;
-            $formOptionsConfig = $this->definition->getFormOptions();
-            if ($formOptionsConfig) {
-                $this->formOptions = $this->formOptionsAssembler
-                    ->assemble($formOptionsConfig, $this->getAttributeManager($context)->getAttributes());
-            }
-        }
-
-        return $this->formOptions;
-    }
-
-    /**
      * Check that action is available to show
      *
      * @param ActionContext $context
@@ -163,20 +148,6 @@ class Action
 
     /**
      * @param ActionContext $context
-     * @return AttributeManager
-     */
-    public function getAttributeManager(ActionContext $context)
-    {
-        return new AttributeManager(
-            $this->attributeAssembler->assemble(
-                $context,
-                $this->definition->getAttributes()
-            )
-        );
-    }
-
-    /**
-     * @param ActionContext $context
      * @param Collection $errors
      * @return bool
      */
@@ -186,8 +157,48 @@ class Action
     }
 
     /**
-     * @param string $name
      * @param ActionContext $context
+     * @return AttributeManager
+     */
+    public function getAttributeManager(ActionContext $context)
+    {
+        $hash = spl_object_hash($context);
+
+        if (!array_key_exists($hash, $this->attributeManagers)) {
+            $this->attributeManagers[$hash] = false;
+
+            $config = $this->definition->getAttributes();
+            if ($config) {
+                $this->attributeManagers[$hash] = new AttributeManager(
+                    $this->attributeAssembler->assemble($context, $config)
+                );
+            }
+        }
+
+        return $this->attributeManagers[$hash];
+    }
+
+    /**
+     * @param ActionContext $context
+     * @return array
+     */
+    public function getFormOptions(ActionContext $context)
+    {
+        if ($this->formOptions === null) {
+            $this->formOptions = false;
+            $formOptionsConfig = $this->definition->getFormOptions();
+            if ($formOptionsConfig) {
+                $this->formOptions = $this->formOptionsAssembler
+                    ->assemble($formOptionsConfig, $this->getAttributeManager($context)->getAttributes());
+            }
+        }
+
+        return $this->formOptions;
+    }
+
+    /**
+     * @param ActionContext $context
+     * @param string $name
      */
     protected function executeFunctions(ActionContext $context, $name)
     {
@@ -206,8 +217,8 @@ class Action
     }
 
     /**
-     * @param string $name
      * @param ActionContext $context
+     * @param string $name
      * @param Collection $errors
      * @return boolean
      */

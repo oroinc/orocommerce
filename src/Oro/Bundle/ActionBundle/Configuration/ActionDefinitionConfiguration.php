@@ -144,6 +144,7 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
         $builder = new TreeBuilder();
         $node = $builder->root('frontend_options');
         $node
+            ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('icon')->end()
                 ->scalarNode('class')->end()
