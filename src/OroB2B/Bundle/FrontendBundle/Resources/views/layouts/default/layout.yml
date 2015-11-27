@@ -20,7 +20,7 @@ layout:
                 styles:
                     blockType: style
                     options:
-                        src: 'layout/default/styles.css'
+                        src: { @value: $data.theme.data.assets.styles.output }
                 body:
                     blockType: body
                 wrapper:
@@ -48,7 +48,7 @@ layout:
                 scripts:
                     blockType: script
                     options:
-                        src: 'layout/default/scripts.js'
+                        src: { @value: $data.theme.data.assets.scripts.output }
             tree:
                 root:
                     head:
