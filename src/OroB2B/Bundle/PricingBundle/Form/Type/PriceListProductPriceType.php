@@ -47,6 +47,7 @@ class PriceListProductPriceType extends AbstractType
                     'label' => 'orob2b.pricing.productprice.product.label',
                     'create_enabled' => false,
                     'disabled' => $isExisting,
+                    'error_bubbling' => true,
                 ]
             )
             ->add(
@@ -77,6 +78,7 @@ class PriceListProductPriceType extends AbstractType
                     'label' => 'orob2b.pricing.productprice.price.label',
                     'additional_currencies' => $additionalCurrencies,
                     'currency_empty_value' => false,
+                    'by_reference' => false,
                 ]
             );
 

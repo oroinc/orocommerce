@@ -177,6 +177,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
 
         $defaultProductPriceWithId = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\ProductPrice', 1);
         $defaultProductPriceWithId->setPriceList($priceList);
+        $defaultProductPriceWithId->setPrice((new Price())->setCurrency('USD')->setValue(1));
 
         return [
             'product price without data' => [
@@ -185,7 +186,10 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
                     'product'  => null,
                     'quantity'  => null,
                     'unit'  => null,
-                    'price'  => null,
+                    'price'  => [
+                        'value'    => $defaultProductPriceWithId->getPrice()->getValue(),
+                        'currency' => $defaultProductPriceWithId->getPrice()->getCurrency()
+                    ],
                 ],
                 'expectedData'  => clone $defaultProductPriceWithId,
                 'rounding'      => false

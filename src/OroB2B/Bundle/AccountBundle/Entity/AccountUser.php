@@ -343,14 +343,19 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
     }
 
     /**
-     * @ORM\PrePersist
+     * @param string|null $companyName
      */
-    public function createAccount()
+    public function createAccount($companyName = null)
     {
         if (!$this->account) {
             $this->account = new Account();
             $this->account->setOrganization($this->organization);
-            $this->account->setName(sprintf('%s %s', $this->firstName, $this->lastName));
+
+            if (!$companyName) {
+                $companyName = sprintf('%s %s', $this->firstName, $this->lastName);
+            }
+
+            $this->account->setName($companyName);
 
             if ($this->getOwner() && !$this->account->getOwner()) {
                 $this->account->setOwner($this->getOwner(), false);
@@ -697,6 +702,8 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
         $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->loginCount = 0;
+
+        $this->createAccount();
     }
 
     /**

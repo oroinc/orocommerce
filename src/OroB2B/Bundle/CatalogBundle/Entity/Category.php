@@ -14,6 +14,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Component\Tree\Entity\TreeTrait;
+use OroB2B\Bundle\CatalogBundle\Model\ExtendCategory;
 
 /**
  * @ORM\Table(name="orob2b_catalog_category")
@@ -41,7 +42,7 @@ use OroB2B\Component\Tree\Entity\TreeTrait;
  *
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class Category
+class Category extends ExtendCategory
 {
     use TreeTrait;
 
@@ -187,6 +188,8 @@ class Category
      */
     public function __construct()
     {
+        parent::__construct();
+
         $this->titles            = new ArrayCollection();
         $this->childCategories   = new ArrayCollection();
         $this->products          = new ArrayCollection();
