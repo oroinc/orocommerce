@@ -10,6 +10,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData as AccountLoadAccountUserData;
+use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 /**
  * @dbIsolation
@@ -32,6 +33,11 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
      * @var TokenStorageInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $tokenStorage;
+
+    /**
+     * @var WebsiteManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $websiteManager;
 
     /**
      * {@inheritdoc}
@@ -58,9 +64,13 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         $this->tokenStorage = $this
             ->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
 
+        $this->websiteManager = $this->getMockBuilder('OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager')
+            ->disableOriginalConstructor()->getMock();
+
         $this->modifier = new ProductVisibilityQueryBuilderModifier(
             $this->configManager,
-            $this->tokenStorage
+            $this->tokenStorage,
+            $this->websiteManager
         );
 
         $this->modifier->setVisibilitySystemConfigurationPath(static::VISIBILITY_SYSTEM_CONFIGURATION_PATH);
@@ -71,9 +81,10 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
      *
      * @param string $configValue
      * @param string|null $user
+     * @param string $website
      * @param array $expectedData
      */
-    public function testModify($configValue, $user, $expectedData)
+    public function testModify($configValue, $user, $website, $expectedData)
     {
         if ($user) {
             $user = $this->getReference($user);
@@ -88,6 +99,10 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
             ->method('get')
             ->with(static::VISIBILITY_SYSTEM_CONFIGURATION_PATH)
             ->willReturn($configValue);
+
+        $this->websiteManager->expects($this->any())
+            ->method('getCurrentWebsite')
+            ->willReturn($this->getReference($website));
 
         $this->modifier->modify($queryBuilder);
 
@@ -105,6 +120,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
             'config visible' => [
                 'configValue' => ProductVisibility::VISIBLE,
                 'user' => AccountLoadAccountUserData::EMAIL,
+                'website' => 'US',
                 'expectedData' => [
                     'product.1',
                     'product.5',
@@ -113,6 +129,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
             'config hidden' => [
                 'configValue' => ProductVisibility::HIDDEN,
                 'user' => AccountLoadAccountUserData::EMAIL,
+                'website' => 'US',
                 'expectedData' => [
                     'product.1',
                     'product.5',
@@ -121,6 +138,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
             'anonymous config visible' => [
                 'configValue' => ProductVisibility::VISIBLE,
                 'user' => null,
+                'website' => 'US',
                 'expectedData' => [
                     'product.1',
                     'product.2',
@@ -131,6 +149,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
             'anonymous config hidden' => [
                 'configValue' => ProductVisibility::HIDDEN,
                 'user' => null,
+                'website' => 'US',
                 'expectedData' => [
                     'product.2',
                     'product.3',

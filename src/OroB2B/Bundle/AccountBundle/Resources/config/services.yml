@@ -642,6 +642,7 @@ services:
         arguments:
             - @oro_config.global
             - @security.token_storage
+            - @orob2b_website.manager
         calls:
             - [setVisibilitySystemConfigurationPath, ['oro_b2b_account.product_visibility']]
     orob2b_account.visibility.cache.account_group_product_resolved_cache_builder:
