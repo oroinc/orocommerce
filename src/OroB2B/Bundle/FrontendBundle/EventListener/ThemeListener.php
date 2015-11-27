@@ -99,7 +99,11 @@ class ThemeListener
         if ($request->attributes->get('_theme')) {
             $request->attributes->remove('_template');
         } else {
-            $request->attributes->remove('_layout');
+            if ($request->attributes->has('_template')) {
+                $request->attributes->remove('_layout');
+            } else {
+                $request->attributes->set('_theme', 'default');
+            }
         }
     }
 }

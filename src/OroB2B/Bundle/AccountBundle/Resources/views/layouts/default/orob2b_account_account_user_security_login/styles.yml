@@ -1,0 +1,12 @@
+layout:
+    actions:
+        - @addTree:
+            items:
+                loginPageStyles:
+                    blockType: style
+                    options:
+                        visible: { @not_empty: $data.orob2b_login_page.css }
+                        content: { @value: $data.orob2b_login_page.css }
+            tree:
+                head:
+                    loginPageStyles: ~

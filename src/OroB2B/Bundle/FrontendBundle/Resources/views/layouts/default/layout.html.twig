@@ -18,7 +18,13 @@
 
 {% block _content_widget %}
     <div{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
+        <div class="content__container">
+            <div class="container-fluid">
+                <div class="content__inner">
+                    {{ block_widget(block) }}
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
 
