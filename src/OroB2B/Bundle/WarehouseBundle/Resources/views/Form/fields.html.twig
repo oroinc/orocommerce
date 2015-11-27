@@ -3,7 +3,20 @@
 {% endblock %}
 
 {% block orob2b_warehouse_inventory_level_grid_widget %}
+    {% set gridName = 'warehouse-inventory-level-grid' %}
+
+    {% set attr = attr|merge({
+        'data-page-component-module': 'orob2bwarehouse/js/app/components/warehouse-inventory-levels-component',
+        'data-page-component-options': {
+            'gridName': gridName,
+            'quantityColumnName': 'levelQuantity',
+            'unitColumnName': 'unitCode',
+            'unitPrecisions': unitPrecisions,
+            'quantityConstraints': quantityConstraints
+        }|json_encode
+    }) %}
+    {{ form_widget(form, {'id': 'warehouse-inventory-level-quantities', 'attr' : attr}) }}
+
     {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
-    {{ dataGrid.renderGrid('warehouse-inventory-level-grid', {'product_id': product_id}) }}
-    {{ form_widget(form, {'id': 'warehouse-inventory-level-quantities'}) }}
+    {{ dataGrid.renderGrid(gridName, {'product_id': product.id}) }}
 {% endblock %}

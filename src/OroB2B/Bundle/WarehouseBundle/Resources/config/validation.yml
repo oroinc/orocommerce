@@ -17,6 +17,8 @@ OroB2B\Bundle\WarehouseBundle\Entity\WarehouseInventoryLevel:
     properties:
         quantity:
             - NotBlank: ~
+            - Range:
+                min: 0
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
         warehouse:
             - NotBlank: ~

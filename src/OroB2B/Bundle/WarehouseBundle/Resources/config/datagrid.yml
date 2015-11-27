@@ -102,7 +102,8 @@ datagrid:
             # acl_resource: TODO set correct ACL permission
             query:
                 select:
-                    - CONCAT(warehouse.id, '_', precision.id) as combined_id
+                    - CONCAT(warehouse.id, '_', precision.id) as combinedId
+                    - IDENTITY(precision.unit) as unitCode
                     - warehouse.name as warehouseName
                     - IDENTITY(precision.unit) as productUnit
                     - level.quantity as levelQuantity
@@ -120,7 +121,7 @@ datagrid:
                 label:         orob2b.warehouse.entity_label
             levelQuantity:
                 label:         orob2b.warehouse.warehouseinventorylevel.quantity.label
-                frontend_type: decimal
+                frontend_type: string # can't use decimal because of inappropriate formatter
                 editable:      true
                 align:         left
             productUnit:
@@ -140,6 +141,7 @@ datagrid:
                 productUnit:   %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
         properties:
             combined_id: ~
+            unitCode: ~
         options:
             mode: client
             toolbarOptions:
@@ -147,7 +149,7 @@ datagrid:
                 pagination:
                     onePage: true
             cellSelection:
-                dataField: combined_id
+                dataField: combinedId
                 columnName:
                     - levelQuantity
                 selector: '#warehouse-inventory-level-quantities'
