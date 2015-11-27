@@ -57,6 +57,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $submittedData = [
             'orob2b_account_frontend_account_user_register' => [
                 '_token' => $form->get('orob2b_account_frontend_account_user_register[_token]')->getValue(),
+                'companyName' => 'Test Company',
                 'firstName' => 'Jim',
                 'lastName' => 'Brown',
                 'email' => self::EMAIL,
@@ -226,6 +227,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $submittedData = [
             'orob2b_account_frontend_account_user_register' => [
                 '_token' => $form->get('orob2b_account_frontend_account_user_register[_token]')->getValue(),
+                'companyName' => 'Test Company',
                 'firstName' => 'Created',
                 'lastName' => 'User',
                 'email' => self::EMAIL,
@@ -325,6 +327,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $submittedData = [
             'orob2b_account_frontend_account_user_register' => [
                 '_token' => $form->get('orob2b_account_frontend_account_user_register[_token]')->getValue(),
+                'companyName' => 'Test Company',
                 'firstName' => 'First Name',
                 'lastName' => 'Last Name',
                 'email' => $email,
