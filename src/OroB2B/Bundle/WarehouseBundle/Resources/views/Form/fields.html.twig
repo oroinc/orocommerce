@@ -1,0 +1,9 @@
+{% block orob2b_warehouse_inventory_level_grid_row %}
+    {{ block('form_row') }}
+{% endblock %}
+
+{% block orob2b_warehouse_inventory_level_grid_widget %}
+    {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+    {{ dataGrid.renderGrid('warehouse-inventory-level-grid', {'product_id': product_id}) }}
+    {{ form_widget(form, {'id': 'warehouse-inventory-level-quantities'}) }}
+{% endblock %}
