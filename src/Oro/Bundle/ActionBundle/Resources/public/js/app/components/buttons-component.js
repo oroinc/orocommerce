@@ -38,23 +38,59 @@ define(function(require) {
          */
         onClick: function(e) {
             e.preventDefault();
-
+            var $element = $(e.target);
             mediator.execute('showLoading');
-            $.getJSON(e.target.href)
-                .done(_.bind(function(response) {
-                    mediator.execute('hideLoading');
-
-                    if (response.redirectUrl) {
-                        e.stopImmediatePropagation();
-                        this.doRedirect(response.redirectUrl);
-                    } else {
-                        this.doPageReload();
+            if ($element.data('dialog-url')) {
+                require(['oro/dialog-widget'],
+                    function (DialogWidget) {
+                        var dialogOptions = {
+                            title: 'action',
+                            url: $element.data('dialog-url'),
+                            stateEnabled: false,
+                            incrementalPosition: false,
+                            loadingMaskEnabled: true,
+                            dialogOptions: {
+                                modal: true,
+                                resizable: true,
+                                width: 475,
+                                autoResize: true
+                            }
+                        };
+                        var additionalOptions = $element.data('dialog-options');
+                        if (additionalOptions) {
+                            if (additionalOptions.dialogOptions !== undefined) {
+                                additionalOptions.dialogOptions = _.extend(
+                                    dialogOptions.dialogOptions,
+                                    additionalOptions.dialogOptions
+                                );
+                            }
+                            dialogOptions = _.extend(dialogOptions, additionalOptions);
+                        }
+                        var formWidget = new DialogWidget(dialogOptions);
+                        formWidget.on('formSave', function (data) {
+                           formWidget.remove();
+                        });
+                        formWidget.render();
+                        mediator.execute('hideLoading');
                     }
-                }, this))
-                .fail(function() {
-                    mediator.execute('hideLoading');
-                    messenger.notificationFlashMessage('error', __('Could not perform action'));
-                });
+                );
+            } else {
+                $.getJSON(e.target.href)
+                    .done(_.bind(function (response) {
+                        mediator.execute('hideLoading');
+
+                        if (response.redirectUrl) {
+                            e.stopImmediatePropagation();
+                            this.doRedirect(response.redirectUrl);
+                        } else {
+                            this.doPageReload();
+                        }
+                    }, this))
+                    .fail(function () {
+                        mediator.execute('hideLoading');
+                        messenger.notificationFlashMessage('error', __('Could not perform action'));
+                    });
+            }
         },
 
         /**

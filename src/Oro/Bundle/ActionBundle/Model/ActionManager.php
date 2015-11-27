@@ -175,7 +175,7 @@ class ActionManager
      * @param array $context
      * @return ActionContext
      */
-    protected function createActionContext(array $context)
+    public function createActionContext(array $context)
     {
         $entity = null;
 
