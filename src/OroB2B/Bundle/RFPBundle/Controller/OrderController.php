@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\RFPBundle\Controller;
 
+use OroB2B\Bundle\RFPBundle\Form\Extension\OrderDataStorageExtension;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -33,6 +34,7 @@ class OrderController extends Controller
         foreach ($request->getRequestProducts() as $lineItem) {
             $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = [
                 ProductDataStorage::PRODUCT_SKU_KEY => $lineItem->getProduct()->getSku(),
+                'comment' => $lineItem->getComment(),
             ];
 
             $offers = [];
@@ -44,6 +46,8 @@ class OrderController extends Controller
                     'price' => $productItem->getPrice() ? $productItem->getPrice()->getValue() : 0,
                 ];
             }
+
+            $data[OrderDataStorageExtension::OFFERS_DATA_KEY][] = $offers;
         }
 
         $this->get('orob2b_product.service.product_data_storage')->set($data);

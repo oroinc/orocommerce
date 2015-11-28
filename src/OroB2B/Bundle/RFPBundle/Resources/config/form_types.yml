@@ -142,4 +142,4 @@ services:
             - @request_stack
             - @orob2b_product.service.product_data_storage
         tags:
-            - { name: form.type_extension, alias: orob2b_order_line_item }
+            - { name: form.type_extension, alias: orob2b_order_line_item, priority: 5 }

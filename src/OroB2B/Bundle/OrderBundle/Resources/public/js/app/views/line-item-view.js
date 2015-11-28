@@ -20,9 +20,7 @@ define(function(require) {
             this.options = $.extend(true, {
                 selectors: {
                     productType: '.order-line-item-type-product',
-                    freeFormType: '.order-line-item-type-free-form',
-                    quantityOffers: '.order-line-item-quantity-offers',
-                    quantityOfferChoice: '.order-line-item-quantity-offer-choice'
+                    freeFormType: '.order-line-item-type-free-form'
                 }
             }, this.options);
 
@@ -49,7 +47,6 @@ define(function(require) {
             ]);
 
             this.initTypeSwitcher();
-            this.initOffers();
             this.initPrices();
         },
 
@@ -94,37 +91,6 @@ define(function(require) {
             } else {
                 showProductType();
             }
-        },
-
-        initOffers: function() {
-            var $choices = this.$el.find(this.options.selectors.quantityOfferChoice + ' input');
-            var $quantityOffers = this.$el.find('div' + this.options.selectors.quantityOffers);
-            var $priceValue = this.fieldsByName.priceValue;
-            var $productUnit = this.fieldsByName.productUnit;
-            var $quantity = this.fieldsByName.quantity;
-            var $currency = this.fieldsByName.currency;
-
-            $choices.click(_.bind(function(event) {
-                var $choice = $(event.target);
-                var $checkedChoice = $choices.filter(':checked');
-                if ($choice !== $checkedChoice[0]) {
-                    $priceValue.val(parseFloat($choice.data('price'))).change();
-                    $productUnit.val($choice.data('unit')).change();
-                    $quantity.val($choice.val()).change();
-                    $currency.val($choice.data('currency')).change();
-                    $choices.filter(':checked').prop('checked', false);
-                    $choice.prop('checked', true).change();
-                    $quantityOffers.change();
-                }
-            }, this));
-
-            $($priceValue).add($productUnit).add($quantity).add($currency).change(_.bind(function(event) {
-                var $checkedChoice = $choices.filter(':checked');
-                if ($checkedChoice.length) {
-                    $checkedChoice.prop('checked', false).change();
-                    $quantityOffers.change();
-                }
-            }, this));
         },
 
         /**
