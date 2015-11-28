@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\RFPBundle\Controller;
 
-use OroB2B\Bundle\RFPBundle\Form\Extension\OrderDataStorageExtension;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -11,6 +10,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
+use OroB2B\Bundle\RFPBundle\Form\Extension\OrderDataStorageExtension;
 
 class OrderController extends Controller
 {
