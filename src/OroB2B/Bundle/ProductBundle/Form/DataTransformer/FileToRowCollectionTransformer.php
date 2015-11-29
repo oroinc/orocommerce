@@ -4,13 +4,13 @@ namespace OroB2B\Bundle\ProductBundle\Form\DataTransformer;
 
 use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\Common\Type;
-
 use Box\Spout\Reader\ReaderInterface;
-use OroB2B\Bundle\ProductBundle\Model\QuickAddRow;
+
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\HttpFoundation\File\File;
 
+use OroB2B\Bundle\ProductBundle\Model\QuickAddRow;
 use OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection;
 
 class FileToRowCollectionTransformer implements DataTransformerInterface
@@ -41,6 +41,7 @@ class FileToRowCollectionTransformer implements DataTransformerInterface
                     $lineNumber++;
                     continue;
                 }
+                
                 $collection->add(new QuickAddRow(
                     $lineNumber++,
                     isset($row[0]) ? trim($row[0]) : null,
