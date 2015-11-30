@@ -79,6 +79,17 @@ orob2b.pricing:
     system_configuration:
         price_lists: Price Lists
         default_price_lists: Default Price Lists
+        groups:
+            product_price_settings.title: Pricing Settings
+        fields:
+            rounding_type:
+                label: Pricing Rounding Type
+                tooltip: Select the rounding type that can be used for product prices.
+                choices:
+                    half_up.label: Half Up
+                    half_down.label: Half Down
+                    ceil.label: Ceil
+                    floor.label: Floor
 
 oro:
     importexport:
