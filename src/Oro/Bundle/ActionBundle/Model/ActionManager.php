@@ -113,7 +113,7 @@ class ActionManager
      * @param string $actionName
      * @return null|Action
      */
-    protected function getAction(array $context, $actionName)
+    public function getAction(array $context, $actionName)
     {
         $actions = $this->getActions($context);
 
