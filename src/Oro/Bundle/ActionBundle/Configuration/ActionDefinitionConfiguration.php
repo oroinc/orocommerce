@@ -58,6 +58,8 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
                     ->prototype('scalar')
                     ->end()
                 ->end()
+                ->scalarNode('acl_resource')
+                ->end()
                 ->integerNode('order')
                     ->defaultValue(0)
                 ->end()

@@ -293,7 +293,7 @@ class ActionDefinition
      * @param array $data
      * @return $this
      */
-    public function addFunctions($name, array $data)
+    public function setFunctions($name, array $data)
     {
         $this->functions[$name] = $data;
 
@@ -318,7 +318,7 @@ class ActionDefinition
      * @param array $data
      * @return $this
      */
-    public function addConditions($name, array $data)
+    public function setConditions($name, array $data)
     {
         $this->conditions[$name] = $data;
 

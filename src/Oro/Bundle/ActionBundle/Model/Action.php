@@ -119,11 +119,15 @@ class Action
      */
     public function isAvailable(ActionContext $context, Collection $errors = null)
     {
-        return $this->isPreConditionAllowed($context, $errors);
+        if ($this->hasForm()) {
+            return $this->isPreConditionAllowed($context, $errors);
+        } else {
+            return $this->isAllowed($context, $errors);
+        }
     }
 
     /**
-     * Check is transition allowed to execute
+     * Check is action allowed to execute
      *
      * @param ActionContext $context
      * @param Collection|null $errors
