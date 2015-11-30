@@ -612,3 +612,25 @@ services:
         tags:
             - {name: kernel.event_listener, event: orob2b_catalog.category.tree.create_after, method: onCreateAfter }
 
+    orob2b_account.form.frontend_account_registration:
+        class: OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType
+        factory_method: createNamed
+        factory_service: form.factory
+        arguments: ["frontend_account_user_register", "orob2b_account_frontend_account_user_register"]
+
+    orob2b_account.layout.data_provider.new_account_user:
+        class: OroB2B\Bundle\AccountBundle\Layout\Extension\NewAccountUserDataProvider
+        arguments:
+            - @service_container
+        tags:
+            - { name: layout.data_provider, alias: newAccountUser }
+
+    orob2b_account.layout.context_configurator.form.frontend_account_registration:
+        class: Oro\Bundle\LayoutBundle\Layout\Extension\DependencyInjectionFormContextConfigurator
+        arguments:
+            - @service_container
+        calls:
+            - [ setContextOptionName, [ "frontend_account_registration_form" ] ]
+            - [ setFormServiceId, [ "orob2b_account.form.frontend_account_registration" ] ]
+        tags:
+            - { name: layout.context_configurator }
