@@ -1,6 +1,6 @@
 {% set formComponentOptions = {
     'isSaved': saved,
-    'widgetId': app.request.get('_wid')|raw,
+    'wid': app.request.get('_wid')|raw,
 } %}
 <div class="widget-content">
     <div data-page-component-module="oroaction/js/app/components/form-component"

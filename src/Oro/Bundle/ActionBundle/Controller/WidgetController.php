@@ -25,11 +25,7 @@ class WidgetController extends Controller
      */
     public function buttonsAction(Request $request)
     {
-        $context = [
-            'route' => $request->get('route'),
-            'entityId' => $request->get('entityId'),
-            'entityClass' => $request->get('entityClass'),
-        ];
+        $context = $this->createContextFromRequest($request);
 
         return [
             'actions' => $this->getActionManager()->getActions($context),
@@ -45,17 +41,11 @@ class WidgetController extends Controller
      */
     public function formAction(Request $request, $actionName)
     {
-        $context = [
-            'route' => $request->get('route'),
-            'entityId' => $request->get('entityId'),
-            'entityClass' => $request->get('entityClass'),
-        ];
-        /** @var ActionFormManager $formManager */
-        $formManager = $this->get('oro_action.form_manager');
+        $context = $this->createContextFromRequest($request);
         $action = $this->getActionManager()->getAction($context, $actionName);
         $actionContext = $this->getActionManager()->createActionContext($context);
 
-        $form = $formManager->getActionForm($action, $actionContext);
+        $form = $this->getActionFromManager()->getActionForm($action, $actionContext);
 
         $saved = false;
         if ($request->isMethod('POST')) {
@@ -77,10 +67,31 @@ class WidgetController extends Controller
     }
 
     /**
+     * @param Request $request
+     * @return array
+     */
+    protected function createContextFromRequest(Request $request)
+    {
+        return [
+            'route' => $request->get('route'),
+            'entityId' => $request->get('entityId'),
+            'entityClass' => $request->get('entityClass'),
+        ];
+    }
+
+    /**
      * @return ActionManager
      */
     protected function getActionManager()
     {
         return $this->get('oro_action.manager');
+    }
+
+    /**
+     * @return ActionFormManager
+     */
+    protected function getActionFromManager()
+    {
+        return $this->get('oro_action.form_manager');
     }
 }

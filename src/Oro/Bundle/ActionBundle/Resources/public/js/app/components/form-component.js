@@ -6,6 +6,7 @@ define(function(require) {
     var FormComponent;
     var BaseComponent = require('oroui/js/app/components/base/component');
     var _ = require('underscore');
+    var widgetManager = require('underscore');
 
     FormComponent = BaseComponent.extend({
         /**
@@ -13,7 +14,7 @@ define(function(require) {
          */
         options: {
             isSaved: false,
-            widgetId: null
+            wid: null
         },
 
         /**
@@ -21,19 +22,11 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-            this.triggerEvents();
-        },
 
-        triggerEvents: function() {
             if (this.options.isSaved) {
-                var self = this;
-                require(['oroui/js/widget-manager'],
-                    function(widgetManager) {
-                        widgetManager.getWidgetInstance(self.options.widgetId, function(widget) {
-                            widget.trigger('formSave');
-                        });
-                    }
-                );
+                widgetManager.getWidgetInstance(this.options.wid, function(widget) {
+                    widget.trigger('formSave');
+                });
             }
         }
     });
