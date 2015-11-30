@@ -59,7 +59,6 @@ class ActionManager
      */
     public function execute(array $context, $actionName)
     {
-        $context = $this->normalizeContext($context);
         $actionContext = $this->createActionContext($context);
 
         $action = $this->getAction($context, $actionName);
@@ -175,8 +174,9 @@ class ActionManager
      * @param array $context
      * @return ActionContext
      */
-    protected function createActionContext(array $context)
+    public function createActionContext(array $context)
     {
+        $context = $this->normalizeContext($context);
         $entity = null;
 
         if ($context['entityClass']) {
