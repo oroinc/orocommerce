@@ -65,7 +65,7 @@ class AjaxLineItemController extends Controller
             $request,
             $this->getDoctrine(),
             $this->get('orob2b_shopping_list.shopping_list.manager'),
-            $this->get('orob2b_product.service.rounding')
+            $this->get('orob2b_product.service.quantity_rounding')
         );
         $result = $this->get('oro_form.model.update_handler')
             ->handleUpdate($lineItem, $form, [], [], null, $handler);
@@ -114,7 +114,7 @@ class AjaxLineItemController extends Controller
             $request,
             $this->getDoctrine(),
             $shoppingListManager,
-            $this->get('orob2b_product.service.rounding')
+            $this->get('orob2b_product.service.quantity_rounding')
         );
         $isFormHandled = $handler->process($lineItem);
 
