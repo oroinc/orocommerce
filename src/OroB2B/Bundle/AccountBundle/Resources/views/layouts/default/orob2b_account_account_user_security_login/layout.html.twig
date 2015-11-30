@@ -47,9 +47,7 @@
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " {{ class_prefix }}__title"
     }) %}
-    <h2{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </h2>
+    <h2{{ block('block_attributes') }}>{{ block_widget(block) }}</h2>
 {% endblock %}
 
 {% block _loginFormError_widget %}
