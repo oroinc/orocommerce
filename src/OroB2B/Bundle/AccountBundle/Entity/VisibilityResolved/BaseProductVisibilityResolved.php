@@ -4,13 +4,14 @@ namespace OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\MappedSuperclass
  */
-class BaseProductVisibilityResolved
+abstract class BaseProductVisibilityResolved
 {
     const VISIBILITY_HIDDEN = -1;
     const VISIBILITY_FALLBACK_TO_CONFIG = 0;
@@ -112,7 +113,7 @@ class BaseProductVisibilityResolved
     }
 
     /**
-     * @param int $categoryId
+     * @param int|null $categoryId
      * @return $this
      */
     public function setCategoryId($categoryId)
@@ -140,4 +141,15 @@ class BaseProductVisibilityResolved
 
         return $this;
     }
+
+    /**
+     * @param VisibilityInterface|null $sourceProductVisibility
+     * @return $this
+     */
+    abstract public function setSourceProductVisibility(VisibilityInterface $sourceProductVisibility = null);
+
+    /**
+     * @return VisibilityInterface
+     */
+    abstract public function getSourceProductVisibility();
 }

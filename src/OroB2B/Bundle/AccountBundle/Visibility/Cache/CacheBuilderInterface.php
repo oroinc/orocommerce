@@ -10,7 +10,6 @@ interface CacheBuilderInterface
 {
     /**
      * @param object $visibilitySettings
-     * @return mixed
      */
     public function resolveVisibilitySettings($visibilitySettings);
 

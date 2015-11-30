@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -62,10 +63,10 @@ class AccountProductVisibilityResolved extends BaseProductVisibilityResolved
     }
 
     /**
-     * @param AccountProductVisibility $sourceProductVisibility
+     * @param VisibilityInterface|AccountProductVisibility|null $sourceProductVisibility
      * @return $this
      */
-    public function setSourceProductVisibility(AccountProductVisibility $sourceProductVisibility)
+    public function setSourceProductVisibility(VisibilityInterface $sourceProductVisibility = null)
     {
         $this->sourceProductVisibility = $sourceProductVisibility;
 

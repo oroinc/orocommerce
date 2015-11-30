@@ -107,8 +107,9 @@ abstract class AbstractVisibilityPostSubmitListener extends VisibilityAbstractLi
         $visibility
     ) {
         $em = $this->getEntityManager($targetEntity);
+        // set selected visibility before persist and before delete (for using in processes)
+        $visibilityEntity->setVisibility($visibility);
         if ($visibility !== $visibilityEntity->getDefault($targetEntity)) {
-            $visibilityEntity->setVisibility($visibility);
             $em->persist($visibilityEntity);
         } elseif ($visibilityEntity->getVisibility()) {
             $em->remove($visibilityEntity);
