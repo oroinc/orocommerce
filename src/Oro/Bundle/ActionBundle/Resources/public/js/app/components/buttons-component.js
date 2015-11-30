@@ -42,7 +42,7 @@ define(function(require) {
             mediator.execute('showLoading');
             if ($element.data('dialog-url')) {
                 require(['oro/dialog-widget'],
-                    function (DialogWidget) {
+                    function(DialogWidget) {
                         var dialogOptions = {
                             title: 'action',
                             url: $element.data('dialog-url'),
@@ -67,8 +67,8 @@ define(function(require) {
                             dialogOptions = _.extend(dialogOptions, additionalOptions);
                         }
                         var formWidget = new DialogWidget(dialogOptions);
-                        formWidget.on('formSave', function (data) {
-                           formWidget.remove();
+                        formWidget.on('formSave', function(data) {
+                            formWidget.remove();
                         });
                         formWidget.render();
                         mediator.execute('hideLoading');
@@ -76,7 +76,7 @@ define(function(require) {
                 );
             } else {
                 $.getJSON(e.target.href)
-                    .done(_.bind(function (response) {
+                    .done(_.bind(function(response) {
                         mediator.execute('hideLoading');
 
                         if (response.redirectUrl) {
@@ -86,7 +86,7 @@ define(function(require) {
                             this.doPageReload();
                         }
                     }, this))
-                    .fail(function () {
+                    .fail(function() {
                         mediator.execute('hideLoading');
                         messenger.notificationFlashMessage('error', __('Could not perform action'));
                     });
