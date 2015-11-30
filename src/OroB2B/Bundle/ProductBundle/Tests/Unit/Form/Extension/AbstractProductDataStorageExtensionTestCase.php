@@ -297,17 +297,20 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
         if ($expectsAddEventListener) {
             $builder->expects($this->once())->method('addEventListener')->with(
                 $this->isType('string'),
-                $this->callback(
-                    function (\Closure $closure) {
-                        $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')
-                            ->disableOriginalConstructor()
-                            ->getMock();
+                $this->logicalAnd(
+                    $this->isInstanceOf('\Closure'),
+                    $this->callback(
+                        function (\Closure $closure) {
+                            $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')
+                                ->disableOriginalConstructor()
+                                ->getMock();
 
-                        $event->expects($this->once())->method('getData')->willReturn($this->entity);
-                        $closure($event);
+                            $event->expects($this->once())->method('getData')->willReturn($this->entity);
+                            $closure($event);
 
-                        return true;
-                    }
+                            return true;
+                        }
+                    )
                 )
             );
         } else {

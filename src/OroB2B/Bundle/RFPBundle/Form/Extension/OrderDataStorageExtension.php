@@ -42,12 +42,12 @@ class OrderDataStorageExtension extends AbstractTypeExtension
     /** {@inheritdoc} */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if (!$this->requestStack->getCurrentRequest()->get(ProductDataStorage::STORAGE_KEY)) {
+        if (!$this->isApplicable()) {
             return;
         }
 
         $data = $this->storage->get();
-        if (array_key_exists(self::OFFERS_DATA_KEY, $data)) {
+        if (array_key_exists(self::OFFERS_DATA_KEY, $data) && is_array($data[self::OFFERS_DATA_KEY])) {
             $this->offers = $data[self::OFFERS_DATA_KEY];
         }
 
@@ -62,7 +62,7 @@ class OrderDataStorageExtension extends AbstractTypeExtension
     /** {@inheritdoc} */
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
-        if (!$this->requestStack->getCurrentRequest()->get(ProductDataStorage::STORAGE_KEY)) {
+        if (!$this->isApplicable()) {
             return;
         }
 
@@ -79,21 +79,25 @@ class OrderDataStorageExtension extends AbstractTypeExtension
      */
     protected function getOffers(FormInterface $form)
     {
-        if (!$form->getParent()) {
-            return [];
-        }
-
         $lineItem = $form->getData();
         if (!$lineItem) {
             return [];
         }
 
-        $collection = $form->getParent()->getData();
+        $parent = $form->getParent();
+        if (!$parent) {
+            return [];
+        }
+
+        $collection = $parent->getData();
         if (!$collection instanceof Collection) {
             return [];
         }
 
         $key = $collection->indexOf($lineItem);
+        if (false === $key) {
+            return [];
+        }
 
         if (!array_key_exists($key, $this->offers)) {
             return [];
@@ -105,7 +109,7 @@ class OrderDataStorageExtension extends AbstractTypeExtension
     /** {@inheritdoc} */
     public function configureOptions(OptionsResolver $resolver)
     {
-        if (!$this->requestStack->getCurrentRequest()->get(ProductDataStorage::STORAGE_KEY)) {
+        if (!$this->isApplicable()) {
             return;
         }
 
@@ -117,6 +121,16 @@ class OrderDataStorageExtension extends AbstractTypeExtension
                 return $sections;
             }
         );
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isApplicable()
+    {
+        $request = $this->requestStack->getCurrentRequest();
+
+        return $request && $request->get(ProductDataStorage::STORAGE_KEY);
     }
 
     /** {@inheritdoc} */
