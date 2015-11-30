@@ -7,8 +7,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilder;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class ProductVisibilityCacheCalculationCommand extends ContainerAwareCommand
 {
@@ -31,7 +31,7 @@ class ProductVisibilityCacheCalculationCommand extends ContainerAwareCommand
     }
 
     /**
-     * {@internaldoc}
+     * {@inheritdoc}
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
