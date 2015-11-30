@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ActionBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\PropertyAccess\PropertyPath;
+
 use Oro\Bundle\ActionBundle\Form\EventListener\RequiredAttributesListener;
 use Oro\Bundle\ActionBundle\Form\Type\ActionType;
 use Oro\Bundle\ActionBundle\Model\Action;
@@ -11,7 +13,6 @@ use Oro\Bundle\WorkflowBundle\Model\Attribute;
 use Oro\Bundle\WorkflowBundle\Model\AttributeManager;
 use Oro\Bundle\WorkflowBundle\Model\ContextAccessor;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\PropertyAccess\PropertyPath;
 
 class ActionTypeTest extends FormIntegrationTestCase
 {
