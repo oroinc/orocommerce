@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\CatalogBundle\Tests\Functional\Form\Type;
 
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 use Doctrine\Common\Collections\Collection;
 
@@ -21,6 +23,9 @@ use OroB2B\Bundle\CatalogBundle\Form\Type\CategoryType;
  */
 class CategoryTypeTest extends WebTestCase
 {
+    const LARGE_IMAGE_NAME = 'large_image.png';
+    const SMALL_IMAGE_NAME = 'small_image.png';
+
     /**
      * @var FormFactoryInterface
      */
@@ -60,24 +65,28 @@ class CategoryTypeTest extends WebTestCase
         $defaultShortDescription = 'Default Short Description';
         $defaultLongDescription = 'Default Long Description';
 
+        $fileLocator = $this->getContainer()->get('file_locator');
+
+        $smallImageName = self::SMALL_IMAGE_NAME;
+        $smallImageFile = $fileLocator->locate(
+            '@OroB2BCatalogBundle/Tests/Functional/DataFixtures/files/' . $smallImageName
+        );
+        $largeImageName = self::LARGE_IMAGE_NAME;
+        $largeImageFile = $fileLocator->locate(
+            '@OroB2BCatalogBundle/Tests/Functional/DataFixtures/files/' . $largeImageName
+        );
+
+        $smallImage = new UploadedFile($smallImageFile, $smallImageName, null, null, null, true);
+        $largeImage = new UploadedFile($largeImageFile, $largeImageName, null, null, null, true);
+
         // prepare input array
         $submitData = [
             'parentCategory' => $parentCategory->getId(),
-            'titles' => [
-                'values' => [
-                    'default' => $defaultTitle
-                ],
-            ],
-            'shortDescriptions' => [
-                'values' => [
-                    'default' => $defaultShortDescription
-                ],
-            ],
-            'longDescriptions' => [
-                'values' => [
-                    'default' => $defaultLongDescription
-                ],
-            ],
+            'titles' => [ 'values' => ['default' => $defaultTitle]],
+            'shortDescriptions' => ['values' => ['default' => $defaultShortDescription]],
+            'longDescriptions' => ['values' => [ 'default' => $defaultLongDescription]],
+            'smallImage' => ['file' => $smallImage],
+            'largeImage' => ['file' => $largeImage],
             'appendProducts' => implode(',', $this->getProductIds($appendedProducts)),
             'removeProducts' => implode(',', $this->getProductIds($removedProducts)),
             '_token' => $this->tokenManager->getToken('category')->getValue(),
@@ -98,7 +107,6 @@ class CategoryTypeTest extends WebTestCase
                 'fallback' => FallbackType::SYSTEM
             ];
         }
-
         // submit form
         $form = $this->formFactory->create(CategoryType::NAME, new Category());
         $form->submit($submitData);
@@ -129,7 +137,6 @@ class CategoryTypeTest extends WebTestCase
             $this->assertEmpty($localizedLongDescription->getText());
             $this->assertEquals(FallbackType::SYSTEM, $localizedLongDescription->getFallback());
         }
-
         // assert related products
         $this->assertEquals($appendedProducts, $form->get('appendProducts')->getData());
         $this->assertEquals($removedProducts, $form->get('removeProducts')->getData());

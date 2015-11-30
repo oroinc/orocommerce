@@ -95,7 +95,7 @@ class OroB2BWebsiteBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('business_unit_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('name', 'string', ['length' => 255]);
-        $table->addColumn('url', 'string', ['length' => 255]);
+        $table->addColumn('url', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
 

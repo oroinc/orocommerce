@@ -82,6 +82,7 @@ parameters:
     #Voters
     orob2b_account.acl.voter.account_user_role.class: OroB2B\Bundle\AccountBundle\Acl\Voter\AccountUserRoleVoter
     orob2b_account.acl.voter.account.class: OroB2B\Bundle\AccountBundle\Acl\Voter\AccountVoter
+    orob2b_account.acl.voter.product_visibility.class: OroB2B\Bundle\AccountBundle\Acl\Voter\ProductVisibilityVoter
 
     orob2b_account.item.builder.pinbar.class: Oro\Bundle\NavigationBundle\Entity\Builder\PinbarTabBuilder
     orob2b_account.item.builder.favorite.class: Oro\Bundle\NavigationBundle\Entity\Builder\NavigationItemBuilder
@@ -103,6 +104,7 @@ parameters:
     orob2b_account.storage.category_visibility_storage.class: OroB2B\Bundle\AccountBundle\Visibility\Storage\CategoryVisibilityStorage
 
     orob2b_account.calculator.category_visibility_calculator: OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityCalculator
+    orob2b_account.calculator.category_visibility_resolver.class: OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityResolver
 
     #Model
     orob2b_account.model.product_visibility_query_builder_modifier.class: OroB2B\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier
@@ -128,6 +130,16 @@ services:
             - @oro_entity.doctrine_helper
         calls:
             - [setContainer, [@service_container]]
+        tags:
+            - { name: security.voter }
+
+    orob2b_product_viisbility.acl.voter.account:
+        class: %orob2b_account.acl.voter.product_visibility.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+        calls:
+            - [setClassName, [%orob2b_product.product.class%]]
+            - [setModifier, [@orob2b_account.model.product_visibility_query_builder_modifier]]
         tags:
             - { name: security.voter }
 
@@ -596,6 +608,9 @@ services:
             - @doctrine
         calls:
             - [setContainer, [@service_container]]
+
+    orob2b_account.calculator.category_visibility_resolver:
+        class: %orob2b_account.calculator.category_visibility_resolver.class%
 
     orob2b_account.storage.category_visibility_storage:
         class: %orob2b_account.storage.category_visibility_storage.class%
