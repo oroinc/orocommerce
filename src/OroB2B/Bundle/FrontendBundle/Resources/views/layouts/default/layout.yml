@@ -30,6 +30,8 @@ layout:
                             class: wrapper
                 header:
                     blockType: container
+                notification:
+                    blockType: block
                 main:
                     blockType: container
                     options:
@@ -49,16 +51,20 @@ layout:
                     blockType: script
                     options:
                         src: { @value: $data.theme.data.assets.scripts.output }
+                requirejs:
+                    blockType: block
             tree:
                 root:
                     head:
                         meta_charset: ~
                         meta_viewport: ~
                         styles: ~
+                        requirejs: ~
                     body:
                         wrapper:
                             header: ~
+                            notification: ~
                             main:
                                 content: ~
                             footer: ~
-                        scripts: ~
+                        #scripts: ~

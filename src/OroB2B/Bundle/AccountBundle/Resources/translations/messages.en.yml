@@ -76,7 +76,7 @@ orob2b.account:
                 title: 'Create New Password'
                 label: 'Create'
             remember_me: 'Remember Me'
-            login: 'Sing In'
+            login: 'Sign In'
             return_to_login: 'Return to Login'
             password_reset.message: 'Password was created successfully.'
             request_password.label: 'Request'
