@@ -118,11 +118,11 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
                         ->cannotBeEmpty()
                     ->end()
                     ->enumNode('type')
-                        ->isRequired()
+                        ->defaultNull()
                         ->values(['bool', 'boolean', 'int', 'integer', 'float', 'string', 'array', 'object', 'entity'])
                     ->end()
                     ->scalarNode('label')
-                        ->isRequired()
+                        ->defaultNull()
                     ->end()
                     ->scalarNode('property_path')
                         ->defaultNull()
@@ -138,6 +138,7 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
                     ->always(function ($config) {
                         $this->checkEntityAcl($config);
                         $this->checkOptionClass($config, in_array($config['type'], ['object', 'entity'], true));
+                        $this->checkPropertyPath($config);
 
                         return $config;
                     })
@@ -222,6 +223,21 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
             throw new \Exception(sprintf('Option "class" is required for "%s" type', $config['type']));
         } elseif (!$require && !empty($config['options']['class'])) {
             throw new \Exception(sprintf('Option "class" cannot be used for "%s" type', $config['type']));
+        }
+    }
+
+    /**
+     * @param array $config
+     * @throws \Exception
+     */
+    protected function checkPropertyPath(array $config)
+    {
+        if (empty($config['property_path']) && empty($config['label'])) {
+            throw new \Exception('Option "label" or "property_path" is required');
+        }
+
+        if (empty($config['property_path']) && empty($config['type'])) {
+            throw new \Exception('Option "type" or "property_path" is required');
         }
     }
 }

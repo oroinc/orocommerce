@@ -437,16 +437,18 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                 ],
                 'message' => 'Invalid type for path "action.attributes.attribute1". Expected array, but got string'
             ],
-            'empty action[attributes][attribute2][type]' => [
+            'empty action[attributes][attribute2][type] and action[attributes][attribute2][property_path]' => [
                 'input' => [
                     'action' => [
                         'label' => 'Test Label',
                         'attributes' => [
-                            'attribute2' => [],
+                            'attribute2' => [
+                                'label' => 'label1',
+                            ],
                         ],
                     ],
                 ],
-                'message' => 'The child node "type" at path "action.attributes.attribute2" must be configured'
+                'message' => 'Option "type" or "property_path" is required'
             ],
             'invalid action[attributes][attribute3][type]' => [
                 'input' => [
@@ -461,7 +463,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                 ],
                 'message' => 'The value "type1" is not allowed for path "action.attributes.attribute3.type"'
             ],
-            'empty action[attributes][attribute4][label]' => [
+            'empty action[attributes][attribute4][label] and  and action[attributes][attribute2][property_path]' => [
                 'input' => [
                     'action' => [
                         'label' => 'Test Label',
@@ -472,7 +474,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         ],
                     ],
                 ],
-                'message' => 'The child node "label" at path "action.attributes.attribute4" must be configured'
+                'message' => 'Option "label" or "property_path" is required'
             ],
             'incorrect action[attributes][attribute5][entity_acl]' => [
                 'input' => [
