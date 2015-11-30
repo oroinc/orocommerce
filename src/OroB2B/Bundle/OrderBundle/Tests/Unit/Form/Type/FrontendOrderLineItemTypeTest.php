@@ -111,7 +111,7 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
         return new ArrayCollection(
             [
                 'quantity' => ['data' => ['quantity' => [], 'productUnit' => []], 'order' => 10],
-                'price' => ['data' => [], 'order' => 20],
+                'price' => ['data' => ['price' => []], 'order' => 20],
                 'ship_by' => ['data' => ['shipBy' => []], 'order' => 30],
                 'comment' => [
                     'data' => [
@@ -344,17 +344,7 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
             'page_component_options' => [
                 'view' => 'orob2border/js/app/views/frontend-line-item-view',
             ],
-            'sections' => [
-                'quantity' => ['data' => ['quantity' => [], 'productUnit' => []], 'order' => 10],
-                'price' => ['data' => ['price' => [], 'priceType' => []], 'order' => 20],
-                'ship_by' => ['data' => ['shipBy' => []], 'order' => 30],
-                'comment' => [
-                    'data' => [
-                        'comment' => ['page_component' => 'orob2border/js/app/components/notes-component'],
-                    ],
-                    'order' => 40,
-                ],
-            ],
+            'sections' => $this->getExpectedSections()->toArray()
         ];
     }
 }

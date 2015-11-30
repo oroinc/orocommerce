@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
@@ -65,6 +66,15 @@ class OrderLineItemType extends AbstractOrderLineItemType
                 'view' => 'orob2border/js/app/views/line-item-view',
                 'freeFormUnits' => $this->getFreeFormUnits(),
             ]
+        );
+
+        $resolver->setNormalizer(
+            'sections',
+            function (Options $options, array $sections) {
+                $sections['price'] = ['data' => ['price' => [], 'priceType' => []], 'order' => 20];
+
+                return $sections;
+            }
         );
     }
 

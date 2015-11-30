@@ -199,17 +199,7 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                 'view' => 'orob2border/js/app/views/line-item-view',
                 'freeFormUnits' => null,
             ],
-            'sections' => [
-                'quantity' => ['data' => ['quantity' => [], 'productUnit' => []], 'order' => 10],
-                'price' => ['data' => ['price' => [], 'priceType' => []], 'order' => 20],
-                'ship_by' => ['data' => ['shipBy' => []], 'order' => 30],
-                'comment' => [
-                    'data' => [
-                        'comment' => ['page_component' => 'orob2border/js/app/components/notes-component'],
-                    ],
-                    'order' => 40,
-                ],
-            ],
+            'sections' => $this->getExpectedSections()->toArray()
         ];
     }
 }
