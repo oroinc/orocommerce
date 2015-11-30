@@ -20,7 +20,7 @@ class CategoryVisibilityResolver
     /**
      * @param Category $category
      * @param AccountGroup $accountGroup
-     * @return string
+     * @return bool
      */
     public function isCategoryVisibleForAccountGroup(Category $category, AccountGroup $accountGroup)
     {
@@ -30,7 +30,7 @@ class CategoryVisibilityResolver
     /**
      * @param Category $category
      * @param Account $account
-     * @return string
+     * @return bool
      */
     public function isCategoryVisibleForAccount(Category $category, Account $account)
     {

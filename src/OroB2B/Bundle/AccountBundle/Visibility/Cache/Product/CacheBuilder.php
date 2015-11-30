@@ -1,22 +1,23 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Visibility\Cache;
+namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product;
 
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseBuilderInterface;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-class CacheBuilder implements CacheBuilderInterface
+class CacheBuilder implements ProductCaseBuilderInterface
 {
     /**
-     * @var CacheBuilderInterface[]
+     * @var ProductCaseBuilderInterface[]
      */
     protected $builders = [];
 
     /**
-     * @param CacheBuilderInterface $cacheBuilder
+     * @param ProductCaseBuilderInterface $cacheBuilder
      */
-    public function addBuilder(CacheBuilderInterface $cacheBuilder)
+    public function addBuilder(ProductCaseBuilderInterface $cacheBuilder)
     {
         if (!in_array($cacheBuilder, $this->builders, true)) {
             $this->builders[] = $cacheBuilder;
@@ -26,7 +27,7 @@ class CacheBuilder implements CacheBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function resolveVisibilitySettings($visibilitySettings)
+    public function resolveVisibilitySettings(VisibilityInterface $visibilitySettings)
     {
         foreach ($this->builders as $builder) {
             if ($builder->isVisibilitySettingsSupported($visibilitySettings)) {
@@ -38,7 +39,7 @@ class CacheBuilder implements CacheBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function isVisibilitySettingsSupported($visibilitySettings)
+    public function isVisibilitySettingsSupported(VisibilityInterface $visibilitySettings)
     {
         foreach ($this->builders as $builder) {
             if ($builder->isVisibilitySettingsSupported($visibilitySettings)) {
@@ -52,20 +53,10 @@ class CacheBuilder implements CacheBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function updateResolvedVisibilityByCategory(Category $category)
+    public function productCategoryChanged(Product $product)
     {
         foreach ($this->builders as $builder) {
-            $builder->updateResolvedVisibilityByCategory($category);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function updateProductResolvedVisibility(Product $product)
-    {
-        foreach ($this->builders as $builder) {
-            $builder->updateProductResolvedVisibility($product);
+            $builder->productCategoryChanged($product);
         }
     }
 

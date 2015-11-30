@@ -1,18 +1,19 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Visibility\Cache;
+namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseBuilderInterface;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-class AccountGroupProductResolvedCacheBuilder implements CacheBuilderInterface
+class AccountGroupProductResolvedCacheBuilder implements ProductCaseBuilderInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function resolveVisibilitySettings($visibilitySettings)
+    public function resolveVisibilitySettings(VisibilityInterface $visibilitySettings)
     {
         // TODO: Implement resolveVisibilitySettings() method.
     }
@@ -20,7 +21,7 @@ class AccountGroupProductResolvedCacheBuilder implements CacheBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function isVisibilitySettingsSupported($visibilitySettings)
+    public function isVisibilitySettingsSupported(VisibilityInterface$visibilitySettings)
     {
         return $visibilitySettings instanceof AccountGroupProductVisibility;
     }
@@ -28,15 +29,7 @@ class AccountGroupProductResolvedCacheBuilder implements CacheBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function updateResolvedVisibilityByCategory(Category $category)
-    {
-        // TODO: Implement updateResolvedVisibilityByCategory() method.
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function updateProductResolvedVisibility(Product $product)
+    public function productCategoryChanged(Product $product)
     {
         // TODO: Implement updateProductResolvedVisibility() method.
     }
