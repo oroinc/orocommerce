@@ -2,12 +2,7 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Extension;
 
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Form\FormView;
-
-use Doctrine\Common\Collections\ArrayCollection;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -43,22 +38,16 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
     public function testBuild()
     {
         $sku = 'TEST';
+        $qty = 3;
         $data = [
             ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                 [
                     ProductDataStorage::PRODUCT_SKU_KEY => $sku,
-                    'offers' => [
-                        'quantity' => 1,
-                        'unit' => 'kg',
-                        'currency' => 'USD',
-                        'price' => 30,
-                        'quantityFormatted' => '1 kg',
-                        'priceFormatted' => '$30',
-                    ],
+                    ProductDataStorage::PRODUCT_QUANTITY_KEY => $qty,
                 ],
             ]
         ];
-        $order = new Order();
+        $this->entity = new Order();
 
         $productUnit = new ProductUnit();
         $productUnit->setCode('item');
@@ -70,88 +59,42 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         $this->assertStorageCalled($data);
         $this->assertProductRepositoryCalled($product);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface $builder */
-        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
-        $this->extension->buildForm($builder, ['data' => $order]);
+        $this->extension->buildForm($this->getBuilderMock(true), []);
 
-        $this->assertCount(1, $order->getLineItems());
+        $this->assertCount(1, $this->entity->getLineItems());
         /** @var OrderLineItem $lineItem */
-        $lineItem = $order->getLineItems()->first();
+        $lineItem = $this->entity->getLineItems()->first();
 
         $this->assertEquals($product, $lineItem->getProduct());
         $this->assertEquals($product->getSku(), $lineItem->getProductSku());
         $this->assertEquals($productUnit, $lineItem->getProductUnit());
         $this->assertEquals($productUnit->getCode(), $lineItem->getProductUnitCode());
+        $this->assertEquals($qty, $lineItem->getQuantity());
     }
 
-    public function testSortSections()
+    public function testBuildWithoutUnit()
     {
-        $sections = new ArrayCollection(
-            [
-                'item3' => [ 'order' => 30 ],
-                'item2' => [ 'order' => 20 ],
-                'item1' => [ 'order' => 10 ]
-            ]
-        );
-
-        $reflector = new \ReflectionClass('OroB2B\Bundle\OrderBundle\Form\Extension\OrderDataStorageExtension');
-        $method = $reflector->getMethod('sortSections');
-        $method->setAccessible(true);
-
-        $sectionsSorted = $method->invokeArgs($this->extension, array($sections));
-
-        $this->assertEquals(10, $sectionsSorted->first()['order']);
-    }
-
-    public function testFinishView()
-    {
+        $sku = 'TEST';
+        $qty = 3;
         $data = [
-            'withOffers' => 1,
-            'entity_items_data' => [
+            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                 [
-                    'productSku' => 'testSku',
-                    'offers' => [
-                        [
-                            'testOffer' => 'testValue'
-                        ]
-                    ]
-                ]
+                    ProductDataStorage::PRODUCT_SKU_KEY => $sku,
+                    ProductDataStorage::PRODUCT_QUANTITY_KEY => $qty,
+                ],
             ]
         ];
+        $order = new Order();
 
-        $lineItem = new FormView();
-        $lineItem->vars['sections'] = new ArrayCollection();
+        $product = $this->getProductEntity($sku);
 
-        $lineItemValue = $this->getMockBuilder('OroB2B\Bundle\OrderBundle\Entity\OrderLineItem')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $lineItemValue->method('getProductSku')->willReturn('testSku');
-        $lineItem->vars['value'] = $lineItemValue;
+        $this->assertMetadataCalled();
+        $this->assertRequestGetCalled();
+        $this->assertStorageCalled($data);
+        $this->assertProductRepositoryCalled($product);
 
-        $view = new FormView();
-        $view->children = ['lineItems' => new FormView()];
-        $view->children['lineItems']->children = [$lineItem];
-        $view->children['lineItems']->vars['prototype'] = new FormView();
-        $view->children['lineItems']->vars['prototype']->vars['sections'] = new ArrayCollection();
+        $this->extension->buildForm($this->getBuilderMock(true), []);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMockBuilder('Symfony\Component\Form\Form')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->extension->finishView($view, $form, ['storage_data' => $data]);
-
-        $this->assertEquals(
-            $view->children['lineItems']->children[0]->vars['offers'][0]['testOffer'],
-            'testValue'
-        );
-        $this->assertEquals(
-            $view->children['lineItems']->children[0]->vars['sections']['offers']['order'],
-            5
-        );
-        $this->assertEquals(
-            $view->children['lineItems']->vars['prototype']->vars['sections']['offers']['order'],
-            5
-        );
+        $this->assertEmpty($order->getLineItems());
     }
 }

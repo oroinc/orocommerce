@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\RFPBundle\Form\Extension;
 
 use Doctrine\Common\Collections\Collection;
+
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -65,6 +66,10 @@ class OrderDataStorageExtension extends AbstractTypeExtension
             return;
         }
 
+        if (!$view->offsetExists(self::OFFERS_DATA_KEY)) {
+            return;
+        }
+
         $view->offsetGet(self::OFFERS_DATA_KEY)->vars['offers'] = $this->getOffers($form);
     }
 
@@ -79,6 +84,9 @@ class OrderDataStorageExtension extends AbstractTypeExtension
         }
 
         $lineItem = $form->getData();
+        if (!$lineItem) {
+            return [];
+        }
 
         $collection = $form->getParent()->getData();
         if (!$collection instanceof Collection) {

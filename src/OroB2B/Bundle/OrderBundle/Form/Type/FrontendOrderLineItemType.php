@@ -70,7 +70,7 @@ class FrontendOrderLineItemType extends AbstractOrderLineItemType
         $resolver->setNormalizer(
             'sections',
             function (Options $options, array $sections) {
-                $sections['price'] = ['data' => ['price' => []], 'order' => 20];
+                $sections['price'] = ['data' => ['price' => [], 'priceType' => []], 'order' => 20];
 
                 return $sections;
             }
@@ -154,11 +154,9 @@ class FrontendOrderLineItemType extends AbstractOrderLineItemType
             return;
         }
 
+        $choices = [$item->getProductUnit()];
         if ($item->getProduct()) {
             $choices = $this->getProductAvailableChoices($item);
-
-        } else {
-            $choices = [$item->getProductUnit()];
         }
 
         $form->remove('productUnit');

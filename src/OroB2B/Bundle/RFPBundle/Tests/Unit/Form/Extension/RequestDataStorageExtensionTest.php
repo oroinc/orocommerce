@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\RFPBundle\Tests\Unit\Form\Extension;
 
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
@@ -50,7 +49,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
                 ],
             ],
         ];
-        $request = new RFPRequest();
+        $this->entity = new RFPRequest();
 
         $productUnit = new ProductUnit();
         $productUnit->setCode('item');
@@ -62,13 +61,11 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
         $this->assertStorageCalled($data);
         $this->assertProductRepositoryCalled($product);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface $builder */
-        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
-        $this->extension->buildForm($builder, ['data' => $request]);
+        $this->extension->buildForm($this->getBuilderMock(true), []);
 
-        $this->assertCount(1, $request->getRequestProducts());
+        $this->assertCount(1, $this->entity->getRequestProducts());
         /** @var RequestProduct $requestProduct */
-        $requestProduct = $request->getRequestProducts()->first();
+        $requestProduct = $this->entity->getRequestProducts()->first();
 
         $this->assertEquals($product, $requestProduct->getProduct());
         $this->assertEquals($product->getSku(), $requestProduct->getProductSku());
@@ -94,7 +91,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
                 ],
             ],
         ];
-        $request = new RFPRequest();
+        $this->entity = new RFPRequest();
 
         $product = $this->getProductEntity($sku);
 
@@ -103,10 +100,8 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
         $this->assertStorageCalled($data);
         $this->assertProductRepositoryCalled($product);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface $builder */
-        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
-        $this->extension->buildForm($builder, ['data' => $request]);
+        $this->extension->buildForm($this->getBuilderMock(true), []);
 
-        $this->assertEmpty($request->getRequestProducts());
+        $this->assertEmpty($this->entity->getRequestProducts());
     }
 }

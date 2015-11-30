@@ -9,6 +9,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\CurrencyBundle\Model\OptionalPrice;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
@@ -16,19 +17,19 @@ use OroB2B\Bundle\RFPBundle\Entity\RequestStatus;
 
 class LoadRequestData extends AbstractFixture implements DependentFixtureInterface
 {
-    const FIRST_NAME    = 'Grzegorz';
-    const LAST_NAME     = 'Brzeczyszczykiewicz';
-    const EMAIL         = 'test_request@example.com';
-    const PO_NUMBER     = 'CA1234USD';
+    const FIRST_NAME = 'Grzegorz';
+    const LAST_NAME = 'Brzeczyszczykiewicz';
+    const EMAIL = 'test_request@example.com';
+    const PO_NUMBER = 'CA1234USD';
 
-    const REQUEST1      = 'rfp.request.1';
-    const REQUEST2      = 'rfp.request.2';
-    const REQUEST3      = 'rfp.request.3';
-    const REQUEST4      = 'rfp.request.4';
-    const REQUEST5      = 'rfp.request.5';
-    const REQUEST6      = 'rfp.request.6';
-    const REQUEST7      = 'rfp.request.7';
-    const REQUEST8      = 'rfp.request.8';
+    const REQUEST1 = 'rfp.request.1';
+    const REQUEST2 = 'rfp.request.2';
+    const REQUEST3 = 'rfp.request.3';
+    const REQUEST4 = 'rfp.request.4';
+    const REQUEST5 = 'rfp.request.5';
+    const REQUEST6 = 'rfp.request.6';
+    const REQUEST7 = 'rfp.request.7';
+    const REQUEST8 = 'rfp.request.8';
 
     /**
      * @var array
@@ -43,7 +44,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'role' => 'CEO',
             'note' => self::REQUEST1,
             'po_number' => self::PO_NUMBER,
-            'ship_until' => true
+            'ship_until' => true,
         ],
         self::REQUEST2 => [
             'first_name' => self::FIRST_NAME,
@@ -56,7 +57,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'account' => LoadUserData::ACCOUNT1,
             'accountUser' => LoadUserData::ACCOUNT1_USER1,
             'po_number' => self::PO_NUMBER,
-            'ship_until' => true
+            'ship_until' => true,
         ],
         self::REQUEST3 => [
             'first_name' => self::FIRST_NAME,
@@ -124,7 +125,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'account' => LoadUserData::ACCOUNT1,
             'accountUser' => LoadUserData::ACCOUNT1_USER1,
             'po_number' => self::PO_NUMBER,
-            'ship_until' => true
+            'ship_until' => true,
         ],
     ];
 
@@ -136,8 +137,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
         return [
             'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData',
             'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestStatusData',
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions'
+            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
         ];
     }
 
@@ -146,12 +146,16 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
      */
     public function load(ObjectManager $manager)
     {
-        /** @var RequestStatus $status */
-        $status = $manager->getRepository('OroB2BRFPBundle:RequestStatus')->findOneBy([], ['id' => 'ASC']);
+        $statuses = [
+            LoadRequestStatusData::NAME_CLOSED,
+            LoadRequestStatusData::NAME_IN_PROGRESS,
+            LoadRequestStatusData::NAME_DELETED,
+            LoadRequestStatusData::NAME_NOT_DELETED,
+        ];
 
-        if (!$status) {
-            return;
-        }
+        /** @var RequestStatus $status */
+        $status = $this->getReference(LoadRequestStatusData::PREFIX . $statuses[array_rand($statuses)]);
+
         /** @var Organization $organization */
         $organization = $this->getUser($manager)->getOrganization();
 
@@ -176,7 +180,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
                 $request->setAccountUser($this->getReference($rawRequest['accountUser']));
             }
 
-            $this->processRequestProducts($request, $manager);
+            $this->processRequestProducts($request);
             if (isset($rawRequest['ship_until'])) {
                 $request->setShipUntil(new \DateTime());
             }
@@ -194,16 +198,22 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
 
     /**
      * @param Request $request
-     * @param ObjectManager $manager
      */
-    protected function processRequestProducts(Request $request, ObjectManager $manager)
+    protected function processRequestProducts(Request $request)
     {
-        $products = $this->getProducts($manager);
         $currencies = $this->getCurrencies();
+        $products = [
+            LoadProductData::PRODUCT_1,
+            LoadProductData::PRODUCT_2,
+            LoadProductData::PRODUCT_3,
+            LoadProductData::PRODUCT_4,
+            LoadProductData::PRODUCT_5,
+        ];
 
         $numLineItems = rand(1, 10);
         for ($i = 0; $i < $numLineItems; $i++) {
-            $product = $products[array_rand($products)];
+            /** @var Product $product */
+            $product = $this->getReference($products[array_rand($products)]);
 
             $requestProduct = new RequestProduct();
             $requestProduct->setProduct($product);
@@ -217,27 +227,11 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
                 $requestProductItem
                     ->setPrice(OptionalPrice::create(rand(1, 100), $currency))
                     ->setQuantity(rand(1, 100))
-                    ->setProductUnit($productUnit)
-                ;
+                    ->setProductUnit($productUnit);
                 $requestProduct->addRequestProductItem($requestProductItem);
             }
             $request->addRequestProduct($requestProduct);
         }
-    }
-
-    /**
-     * @param ObjectManager $manager
-     * @return Product[]
-     */
-    protected function getProducts(ObjectManager $manager)
-    {
-        $products = $manager->getRepository('OroB2BProductBundle:Product')->findBy([], null, 10);
-
-        if (0 === count($products)) {
-            throw new \LogicException('There are no products in system');
-        }
-
-        return $products;
     }
 
     /**
