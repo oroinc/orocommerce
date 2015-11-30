@@ -30,7 +30,7 @@ define(function(require) {
 
             this.$container = $(this.options._sourceElement);
             this.$container
-                .on('click', 'a', _.bind(this.onClick, this));
+                .on('click', 'a.action-button', _.bind(this.onClick, this));
         },
 
         /**

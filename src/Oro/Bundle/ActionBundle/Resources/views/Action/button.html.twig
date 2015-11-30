@@ -1,7 +1,7 @@
 <div class="pull-left btn-group icons-holder">
     <a {% if (params.id is defined) %}id="{{ params.id }}"{% endif %}
         href="{{ params.path is defined ? params.path : 'javascript:void(0);' }}"
-        class="{{ params.class|default('btn back icons-holder-text') }} {{ params.aCss is defined ? params.aCss : '' }}"
+        class="{{ params.class|default('btn back icons-holder-text action-button') }} {{ params.aCss is defined ? params.aCss : '' }}"
         title="{{ params.title|default(params.label) }}"
     >
         <i class="{{ params.icon is defined ? params.icon : '' }} {{ params.iCss is defined ? params.iCss : '' }} hide-text">{{ params.label }}</i>
