@@ -394,7 +394,7 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
                 ],
                 'actionContext' => $actionContext1,
             ],
-       ];
+        ];
     }
 
     /**
