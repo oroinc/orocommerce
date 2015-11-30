@@ -28,7 +28,6 @@ abstract class AbstractRoundingServiceTest extends \PHPUnit_Framework_TestCase
     /** AbstractRoundingService */
     abstract protected function getRoundingService();
 
-
     /**
      * @dataProvider roundProvider
      *
