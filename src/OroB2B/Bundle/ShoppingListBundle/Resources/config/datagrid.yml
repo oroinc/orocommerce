@@ -202,9 +202,9 @@ datagrid:
                 label:         orob2b.shoppinglist.lineitem.quantity.label
             unitCode:
                 label:         orob2b.shoppinglist.lineitem.unit.label
-                type: twig
+                type:          twig
                 frontend_type: html
-                template: OroB2BShoppingListBundle:LineItem:Datagrid/Property/unitCode.html.twig
+                template:      OroB2BProductBundle:ProductUnit:Datagrid/unitFullSingle.html.twig
             notes:
                 label:         orob2b.shoppinglist.lineitem.notes.label
         sorters:
@@ -307,7 +307,7 @@ datagrid:
                 label:         orob2b.shoppinglist.lineitem.unit.label
                 type:          twig
                 frontend_type: html
-                template:      OroB2BShoppingListBundle:LineItem:Datagrid/Property/unitCode.html.twig
+                template:      OroB2BProductBundle:ProductUnit:Datagrid/unitFullSingle.html.twig
             notes:
                 label:         orob2b.shoppinglist.lineitem.notes.label
         sorters:

@@ -127,7 +127,7 @@ datagrid:
                 label:         orob2b.product.productunit.entity_label
                 type:          twig
                 frontend_type: html
-                template:      OroB2BWarehouseBundle:WarehouseInventoryLevel:Datagrid/productUnit.html.twig
+                template:      OroB2BProductBundle:ProductUnit:Datagrid/unitFullPlural.html.twig
         sorters:
             columns:
                 warehouseName:
