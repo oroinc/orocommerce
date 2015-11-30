@@ -12,6 +12,7 @@ use OroB2B\Bundle\AccountBundle\Acl\Voter\ProductVisibilityVoter;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData as AccountLoadAccountUserData;
+use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 /**
  * @dbIsolation
@@ -35,6 +36,11 @@ class ProductVisibilityTest extends WebTestCase
      * @var TokenStorageInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $tokenStorage;
+
+    /**
+     * @var WebsiteManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $websiteManager;
 
     /**
      * @var ProductVisibilityVoter
@@ -66,9 +72,13 @@ class ProductVisibilityTest extends WebTestCase
         $this->tokenStorage = $this
             ->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
 
+        $this->websiteManager = $this->getMockBuilder('OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager')
+            ->disableOriginalConstructor()->getMock();
+
         $this->modifier = new ProductVisibilityQueryBuilderModifier(
             $this->configManager,
-            $this->tokenStorage
+            $this->tokenStorage,
+            $this->websiteManager
         );
 
         $this->modifier->setVisibilitySystemConfigurationPath(static::VISIBILITY_SYSTEM_CONFIGURATION_PATH);
@@ -77,13 +87,13 @@ class ProductVisibilityTest extends WebTestCase
     }
 
     /**
-     * @dataProvider modifyDataProvider
+     * @dataProvider voteDataProvider
      *
      * @param string $configValue
      * @param string|null $user
      * @param array $expectedData
      */
-    public function testModify($configValue, $user, $expectedData)
+    public function testVote($configValue, $user, $expectedData)
     {
         if ($user) {
             $user = $this->getReference($user);
@@ -93,6 +103,10 @@ class ProductVisibilityTest extends WebTestCase
             ->method('get')
             ->with(static::VISIBILITY_SYSTEM_CONFIGURATION_PATH)
             ->willReturn($configValue);
+
+        $this->websiteManager->expects($this->any())
+            ->method('getCurrentWebsite')
+            ->willReturn($this->getReference('US'));
 
         foreach ($expectedData as $productKey => $accessResult) {
             $product = $this->getReference($productKey);
@@ -108,7 +122,7 @@ class ProductVisibilityTest extends WebTestCase
     /**
      * @return array
      */
-    public function modifyDataProvider()
+    public function voteDataProvider()
     {
         return [
             'config visible' => [
