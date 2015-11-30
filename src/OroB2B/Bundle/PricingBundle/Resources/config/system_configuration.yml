@@ -18,7 +18,7 @@ oro_system_configuration:
                 label: orob2b.pricing.system_configuration.price_lists
                 resettable: false
                 attr: { class: default_price_lists }
-        orob2b_pricing.rounding_type:
+        oro_b2b_pricing.rounding_type:
             data_type: string
             type: choice
             priority: 10
@@ -47,7 +47,7 @@ oro_system_configuration:
                                     product_price_settings:
                                         priority: 100
                                         children:
-                                            - orob2b_pricing.rounding_type
+                                            - oro_b2b_pricing.rounding_type
                     catalog:
                         children:
                             price_list_settings:
