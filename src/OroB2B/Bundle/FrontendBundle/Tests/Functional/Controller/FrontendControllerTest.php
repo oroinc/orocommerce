@@ -30,7 +30,7 @@ class FrontendControllerTest extends WebTestCase
         $this->client->request('GET', $this->getUrl('_frontend'));
         $crawler = $this->client->followRedirect();
         $this->assertNotContains($this->getBackendPrefix(), $crawler->html());
-        $this->assertEquals('Login', $crawler->filter('h2.title')->html());
+        $this->assertEquals('Sign In', trim($crawler->filter('h2.create-account__title')->html()));
     }
 
     public function testRedirectToProduct()
@@ -71,7 +71,7 @@ class FrontendControllerTest extends WebTestCase
 
         $this->client->request('GET', $this->getUrl('_frontend'));
         $crawler = $this->client->followRedirect();
-        $this->assertEquals('Login', $crawler->filter('h2.title')->html());
+        $this->assertEquals('Sign In', trim($crawler->filter('h2.create-account__title')->html()));
     }
 
     /**
