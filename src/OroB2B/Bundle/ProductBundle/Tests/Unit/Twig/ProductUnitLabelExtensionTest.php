@@ -43,19 +43,19 @@ class ProductUnitLabelExtensionTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $unitCode
      * @param bool $isShort
+     * @param bool $isPlural
      * @param string $expected
      *
      * @dataProvider formatProvider
      */
-    public function testFormat($unitCode, $isShort, $expected)
+    public function testFormat($unitCode, $isShort, $isPlural, $expected)
     {
         $this->formatter->expects($this->once())
             ->method('format')
-            ->with($unitCode, $isShort)
-            ->willReturn($expected)
-        ;
+            ->with($unitCode, $isShort, $isPlural)
+            ->willReturn($expected);
 
-        $this->assertEquals($expected, $this->extension->format($unitCode, $isShort));
+        $this->assertEquals($expected, $this->extension->format($unitCode, $isShort, $isPlural));
     }
 
     /**
@@ -64,15 +64,17 @@ class ProductUnitLabelExtensionTest extends \PHPUnit_Framework_TestCase
     public function formatProvider()
     {
         return [
-            'format' => [
+            'format full single' => [
                 'unitCode'  => 'kg',
                 'isShort'   => false,
+                'isPlural'  => false,
                 'expected'  => 'kilogram',
             ],
-            'format shosrt' => [
+            'format short plural' => [
                 'unitCode'  => 'kg',
                 'isShort'   => true,
-                'expected'  => 'kg',
+                'isPlural'  => true,
+                'expected'  => 'kgs',
             ],
         ];
     }
