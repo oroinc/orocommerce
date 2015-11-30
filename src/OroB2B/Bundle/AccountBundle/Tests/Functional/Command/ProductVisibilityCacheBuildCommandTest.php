@@ -4,12 +4,12 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Command;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\AccountBundle\Command\ProductVisibilityCacheCalculationCommand;
+use OroB2B\Bundle\AccountBundle\Command\ProductVisibilityCacheBuildCommand;
 
 /**
  * @dbIsolation
  */
-class ProductVisibilityCacheCalculationCommandTest extends WebTestCase
+class ProductVisibilityCacheBuildCommandTest extends WebTestCase
 {
     protected function setUp()
     {
@@ -32,7 +32,7 @@ class ProductVisibilityCacheCalculationCommandTest extends WebTestCase
         $cacheBuilder = $this->getMock('OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilder');
         $cacheBuilder->expects($expectedBuildCacheCall)->method('buildCache')->with($expectedArgument);
         $this->client->getContainer()->set('orob2b_account.visibility.cache.cache_builder', $cacheBuilder);
-        $result = $this->runCommand(ProductVisibilityCacheCalculationCommand::NAME, $params);
+        $result = $this->runCommand(ProductVisibilityCacheBuildCommand::NAME, $params);
         foreach ($expectedMessages as $message) {
             $this->assertContains($message, $result);
         }
