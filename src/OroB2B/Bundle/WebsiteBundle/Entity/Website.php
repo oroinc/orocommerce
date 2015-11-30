@@ -11,9 +11,18 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
+
+use OroB2B\Bundle\WebsiteBundle\Model\ExtendWebsite;
 
 /**
- * @ORM\Table(name="orob2b_website")
+ * @ORM\Table(
+ *     name="orob2b_website",
+ *     indexes={
+ *          @ORM\Index(name="idx_orob2b_website_created_at", columns={"created_at"}),
+ *          @ORM\Index(name="idx_orob2b_website_updated_at", columns={"updated_at"})
+ *      }
+ * )
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository")
  * @Config(
  *      routeName="orob2b_website_index",
@@ -21,6 +30,13 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
  *      defaultValues={
  *          "entity"={
  *              "icon"="icon-briefcase"
+ *          },
+ *          "ownership"={
+ *              "owner_type"="BUSINESS_UNIT",
+ *              "owner_field_name"="owner",
+ *              "owner_column_name"="business_unit_owner_id",
+ *              "organization_field_name"="organization",
+ *              "organization_column_name"="organization_id"
  *          },
  *          "dataaudit"={
  *              "auditable"=true
@@ -33,7 +49,7 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
  * )
  * @ORM\HasLifecycleCallbacks()
  */
-class Website
+class Website extends ExtendWebsite implements OrganizationAwareInterface
 {
     /**
      * @var Collection|Locale[]
@@ -90,7 +106,7 @@ class Website
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255, unique=true, nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -152,8 +168,13 @@ class Website
      */
     protected $organization;
 
+    /**
+     * Website constructor.
+     */
     public function __construct()
     {
+        parent::__construct();
+
         $this->inversedWebsites = new ArrayCollection();
         $this->relatedWebsites = new ArrayCollection();
         $this->locales = new ArrayCollection();

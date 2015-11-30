@@ -7,12 +7,15 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
-use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterface
 {
+    use UserUtilityTrait;
+
     const WEBSITE1 = 'US';
     const WEBSITE2 = 'Canada';
 
@@ -20,8 +23,8 @@ class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterfa
      * @var array
      */
     protected $webSites = [
-        ['name' => self::WEBSITE1, 'url' => 'www.us.com', 'locales' => ['en_US']],
-        ['name' => self::WEBSITE2, 'url' => 'www.canada.com', 'locales' => ['en_CA']],
+        ['name' => self::WEBSITE1, 'url' => 'http://www.us.com', 'locales' => ['en_US']],
+        ['name' => self::WEBSITE2, 'url' => 'http://www.canada.com', 'locales' => ['en_CA']],
     ];
 
     /**
@@ -40,7 +43,7 @@ class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterfa
     public function load(ObjectManager $manager)
     {
         /** @var EntityManager $manager */
-        $user = $this->getUser($manager);
+        $user = $this->getFirstUser($manager);
         $businessUnit = $user->getOwner();
         $organization = $user->getOrganization();
 
@@ -66,27 +69,6 @@ class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterfa
 
         $manager->flush();
         $manager->clear();
-    }
-
-    /**
-     * @param EntityManager $manager
-     * @return User
-     * @throws \LogicException
-     */
-    protected function getUser(EntityManager $manager)
-    {
-        $user = $manager->getRepository('OroUserBundle:User')
-            ->createQueryBuilder('user')
-            ->orderBy('user.id', 'ASC')
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getSingleResult();
-
-        if (!$user) {
-            throw new \LogicException('There are no users in system');
-        }
-
-        return $user;
     }
 
     /**

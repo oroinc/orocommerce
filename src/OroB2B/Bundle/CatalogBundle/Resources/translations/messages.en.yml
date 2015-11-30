@@ -7,6 +7,8 @@ orob2b:
             titles.label:                'Title'
             short_descriptions.label:    'Short Description'
             long_descriptions.label:     'Long Description'
+            small_image.label:           'Small Image'
+            large_image.label:           'Large Image'
             left.label:                  'Tree left index'
             level.label:                 'Tree level'
             right.label:                 'Tree right index'
@@ -17,7 +19,8 @@ orob2b:
             include_subcategories.label: 'Include Sub-Categories'
 
         sections:
-            general: General
+            general: 'General'
+            additional: 'Additional'
 
         subcategory:
             entity_label:   'Subcategory'
@@ -27,8 +30,8 @@ orob2b:
             shortcut_master_catalog.description:   'Manage Master Catalog'
 
         product:
-            section.catalog: Master Catalog
-            in_category.label: In category
+            section.catalog: 'Master Catalog'
+            in_category.label: 'In category'
 
         controller:
             category:

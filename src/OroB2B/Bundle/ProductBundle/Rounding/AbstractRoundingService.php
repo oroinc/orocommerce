@@ -6,13 +6,8 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\ProductBundle\Exception\InvalidRoundingTypeException;
 
-class RoundingService
+abstract class AbstractRoundingService implements RoundingServiceInterface
 {
-    const HALF_UP   = 'half_up';
-    const HALF_DOWN = 'half_down';
-    const CEIL      = 'ceil';
-    const FLOOR     = 'floor';
-
     /**
      * @var ConfigManager
      */
@@ -27,29 +22,22 @@ class RoundingService
     }
 
     /**
-     * Gets the an array of allowed types
-     *
-     * @return array
-     */
-    private function getAllowedTypes()
-    {
-        return [
-            self::HALF_UP,
-            self::HALF_DOWN,
-            self::CEIL,
-            self::FLOOR,
-        ];
-    }
-
-    /**
      * @param float|integer $value
-     * @param integer $precision
-     * @return float|integer
+     * @param int $precision
+     * @param string $roundType
+     * @return float|int
      * @throws InvalidRoundingTypeException
      */
-    public function round($value, $precision)
+    public function round($value, $precision = null, $roundType = null)
     {
-        $roundType = $this->configManager->get('orob2b_product.unit_rounding_type');
+        if (null === $roundType) {
+            $roundType = (string)$this->getRoundType();
+        }
+
+        if (null === $precision) {
+            $precision = (int)$this->getFallbackPrecision();
+        }
+
         $multiplier = pow(10, $precision);
 
         switch ($roundType) {
@@ -69,7 +57,7 @@ class RoundingService
                 throw new InvalidRoundingTypeException(
                     sprintf(
                         'The type of the rounding is not valid. Allowed the following types: %s.',
-                        implode(', ', $this->getAllowedTypes())
+                        implode(', ', [self::HALF_UP, self::HALF_DOWN, self::CEIL, self::FLOOR])
                     )
                 );
                 break;
@@ -77,4 +65,14 @@ class RoundingService
 
         return $value;
     }
+
+    /**
+     * @return string
+     */
+    abstract protected function getRoundType();
+
+    /**
+     * @return int
+     */
+    abstract protected function getFallbackPrecision();
 }

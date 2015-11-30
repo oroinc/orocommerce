@@ -91,6 +91,11 @@ class AccountUserTest extends AbstractUserTest
         $user->setFirstName('Jane');
         $user->createAccount();
         $this->assertEquals('John Doe', $user->getAccount()->getName());
+
+        //Creating an account with company name parameter instead of use first and last name
+        $user->setAccount(null);
+        $user->createAccount('test company');
+        $this->assertEquals('test company', $user->getAccount()->getName());
     }
 
     public function testSerializing()
@@ -147,6 +152,7 @@ class AccountUserTest extends AbstractUserTest
         $this->assertInstanceOf('\DateTime', $user->getCreatedAt());
         $this->assertInstanceOf('\DateTime', $user->getUpdatedAt());
         $this->assertEquals(0, $user->getLoginCount());
+        $this->assertNotEmpty($user->getAccount());
     }
 
     public function testPreUpdateUnChanged()

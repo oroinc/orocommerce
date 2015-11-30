@@ -138,7 +138,7 @@ class AccountUserType extends AbstractType
                 'account',
                 AccountSelectType::NAME,
                 [
-                    'required' => false,
+                    'required' => true,
                     'label' => 'orob2b.account.accountuser.account.label'
                 ]
             )

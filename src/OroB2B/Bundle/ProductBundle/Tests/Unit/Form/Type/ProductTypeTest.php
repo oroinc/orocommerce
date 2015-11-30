@@ -10,6 +10,8 @@ use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType as OroCollectionType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\TranslationBundle\Translation\Translator;
 
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\FallbackBundle\Form\Type\LocalizedFallbackValueCollectionType;
@@ -25,7 +27,7 @@ use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductVariantLinksType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductStatusType;
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
+use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductCustomFieldsChoiceTypeStub;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\EnumSelectTypeStub;
@@ -43,7 +45,7 @@ class ProductTypeTest extends FormIntegrationTestCase
     protected $type;
 
     /**
-     * @var RoundingService|\PHPUnit_Framework_MockObject_MockObject
+     * @var RoundingServiceInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $roundingService;
 
@@ -60,9 +62,7 @@ class ProductTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\RoundingService')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->roundingService = $this->getMock('OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface');
 
         $this->type = new ProductType($this->roundingService);
         $this->type->setDataClass(self::DATA_CLASS);
@@ -87,6 +87,15 @@ class ProductTypeTest extends FormIntegrationTestCase
         $productUnitPrecision->setDataClass('OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision');
 
         $stubEnumSelectType = new EnumSelectTypeStub();
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigProvider $configProvider */
+        $configProvider = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Translator $translator */
+        $translator = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Translation\Translator')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         return [
             new PreloadedExtension(
@@ -113,7 +122,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                 ],
                 [
                     'form' => [
-                        new TooltipFormExtension(),
+                        new TooltipFormExtension($configProvider, $translator),
                         new IntegerExtension()
                     ]
                 ]

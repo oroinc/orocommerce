@@ -508,8 +508,8 @@ services:
         calls:
             - [ addSubscribedGridConfig, { datagrid: account-group-category-visibility-grid, visibilityEntityClass: %orob2b_account.entity.account_group_category_visibility.class%, targetEntityClass: %orob2b_catalog.category.class% }]
             - [ addSubscribedGridConfig, { datagrid: account-category-visibility-grid, visibilityEntityClass: %orob2b_account.entity.account_category_visibility.class%, targetEntityClass: %orob2b_catalog.category.class% }]
-            - [ addSubscribedGridConfig, { datagrid: account-group-product-visibility-grid, visibilityEntityClass: %orob2b_account.entity.product_visibility.class%, targetEntityClass: %orob2b_product.product.class% }]
-            - [ addSubscribedGridConfig, { datagrid: account-product-visibility-grid, visibilityEntityClass: %orob2b_account.entity.account_group_product_visibility.class%, targetEntityClass: %orob2b_product.product.class% }]
+            - [ addSubscribedGridConfig, { datagrid: account-group-product-visibility-grid, visibilityEntityClass: %orob2b_account.entity.account_group_product_visibility.class%, targetEntityClass: %orob2b_product.product.class% }]
+            - [ addSubscribedGridConfig, { datagrid: account-product-visibility-grid, visibilityEntityClass: %orob2b_account.entity.account_product_visibility.class%, targetEntityClass: %orob2b_product.product.class% }]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.account-category-visibility-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.account-group-category-visibility-grid, method: onPreBuild }
