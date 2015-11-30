@@ -27,12 +27,15 @@
       productsSliderInit(); //Initing of products slider (slick slider)
       moreInfoExpandBinding(); //More info button binding
       pinClickBinding(); //Pin click binding
-      customCheckboxBinding();
-      customRadioBinding();
-      filterWidgetToggleBinding();
-      datepickerInit();
-      topbarButtonsBinding();
-      customInputFileInit();
+      customCheckboxBinding(); //Custom checkbox click binding
+      customRadioBinding(); //Custom radio click binding
+      filterWidgetToggleBinding(); //Filter Widget toggle binding
+      datepickerInit(); //Initing of the datepicker
+      topbarButtonsBinding(); //Topbar buttons clicks binding
+      customInputFileInit(); //Custom input file initing
+      salesPanelToggleInit(); //Sales panel toggle binding
+      flexSelectResizeInit(); //resizing the selects
+      salesMobileNavMenuInit(); 
 
       countInit().init({
         plus: '[data-count-plus]',
@@ -95,11 +98,33 @@
     }
 
     function tabToggleBinding() {
-      var tabTrigger = '[data-tab-trigger]';
+      var tabTrigger = '[data-tab-trigger]',
+          horizontalTab = '[data-horizontal-tab]';
 
       $(document).on('click', tabTrigger, function(event) {
-        $('[data-tab]').removeClass('active');
-        $(this).parent().addClass('active');   
+        var isHorizontal = $(this).data('tab-type-horizontal') || false,
+            tabId = $(this).data('tab-trigger');
+
+        if (isHorizontal) {
+          $(horizontalTab).removeClass('active');
+          $(tabTrigger).closest('[data-tab-nav-list]').find('li').removeClass('active');
+          
+          $(this).parent().addClass('active'); 
+
+          $(horizontalTab).each(function() {
+            if ($(this).data('horizontal-tab') === tabId) {
+              $(this).addClass('active');
+            }
+          });
+
+        } else {
+          if ($(this).closest('[data-tab]').hasClass('active')) {
+            $(this).closest('[data-tab]').toggleClass('active');    
+          } else {
+            $('[data-tab]').removeClass('active');  
+            $(this).closest('[data-tab]').addClass('active'); 
+          } 
+        }
 
         //Reinitializing of products carousel
         if ($('[data-products-slider]').length) {
@@ -107,6 +132,7 @@
           productsSliderInit();
         }
 
+        event.stopPropagation();
         event.preventDefault();
       });
     }
@@ -191,7 +217,7 @@
         $(container).removeClass('active');
 
         mobileNavigitionDropdownToWindowSize();
-        $('body').addClass('hidden-scrollbar').css('overflow', 'hidden');
+        $('body').addClass('hidden-scrollbar').css('overflow-y', 'hidden');
         $(this).addClass('active');
         $(this).find(container).addClass('active');      
 
@@ -206,10 +232,12 @@
 
       $(document).on('touchend', function(event) {
         if (!$container.is(event.target) && $container.has(event.target).length === 0 && !$btn.is(event.target) && !$btn.has(event.target).length) {
-          $('body.hidden-scrollbar').removeClass('hidden-scrollbar').css('overflow', 'auto');
+          $('body.hidden-scrollbar').removeClass('hidden-scrollbar').css('overflow-y', 'auto');
           $btn.removeClass('active');
           $container.removeClass('active');
           $container.css('max-height', 'auto');
+          $container.css('transform', 'translateX(0)');
+          $('[data-sales-m-navigation-level]').removeClass('active');
         }    
       });        
     }
@@ -432,10 +460,12 @@
           $radio = $(label).find('input[type="radio"]');
 
       $radio.on('change', function(event) {
-        if ($(this).attr('checked') !== 'checked' || typeof $(this).attr('checked') === 'undefined') {
-          $(label).find('input[type="radio"]').attr('checked', false);
-          $(label).removeClass('checked'); 
+        var inputName = $(this).attr('name');
 
+        if ($(this).attr('checked') !== 'checked' || typeof $(this).attr('checked') === 'undefined') {
+          $(label).find('input[type="radio"][name="' + inputName + '"]').attr('checked', false);
+          $('input[type="radio"][name="' + inputName + '"]').closest('label').removeClass('checked'); 
+          
           $(this).attr('checked', true); 
           $(this).parent().addClass('checked');
         }
@@ -605,6 +635,101 @@
       customInputFile();  
       $('input[type=file]').customFile();
     }
+
+    function salesPanelToggleInit() {
+      var handle = '[data-sales-panel-toggle]',
+          $panel = $('[data-sales-panel]'),
+          $wrapper = $('[data-wrapper]'),
+          expanded = false;
+
+      setPanelHeight();
+
+      $(document).on('click', handle, function(event) {
+        
+        if (expanded) {
+          $panel.css('transform', 'translate3d(0px, ' + -calculatePanelHeight() + 'px, 0px)');
+          $wrapper.css('transform', 'translate3d(0px, 0px, 0px)');
+          expanded = false;
+        } else {
+          $panel.css('transform', 'translate3d(0px, 0px, 0px)');
+          $wrapper.css('transform', 'translate3d(0px, ' + calculatePanelHeight() + 'px, 0px)');
+          expanded = true;
+        }
+
+        event.preventDefault();
+      });
+
+      $(window).on('resize', _.throttle(setPanelHeight, 100));
+    }
+
+    //Helper functions to calculate panel height for salesPanelToggleInit function
+    function calculatePanelHeight() {
+      var $panel = $('[data-sales-panel]'),
+          $panelTop = $('.sales-panel__top'),
+          $panelBottom = $('.sales-panel__bottom'),
+          panelTopHeight = $panelTop.outerHeight(),
+          panelBottomHeight = $panelBottom.outerHeight(),
+          panelHeight;
+
+      if (window.innerWidth >= 992) {
+        panelHeight = panelTopHeight + panelBottomHeight - 11;
+      } else {
+        panelHeight = 130;
+      }
+
+      return panelHeight;    
+    }
+
+    function setPanelHeight() {
+      var $panel = $('[data-sales-panel]'),
+          $wrapper = $('[data-wrapper]');
+
+      $panel.css('transform', 'translate3d(0px, ' + -calculatePanelHeight() + 'px, 0px)');
+      if (window.innerWidth >= 992) {
+        $wrapper.addClass('sales-mode');
+        $wrapper.css('transform', 'translate3d(0px, 0px, 0px)');
+      } else {
+        $wrapper.removeAttr('style').removeClass('sales-mode');
+      }
+    }
+
+    function flexSelectResizeInit() {
+      calculateSelectSize();
+
+      $(window).on('resize', _.debounce(calculateSelectSize, 100));
+    }
+
+    //Helper function for the flexSelectInit function
+    function calculateSelectSize() {
+      var select = '[data-flex-select]',
+          winWidth = window.innerWidth;
+  
+      if (winWidth >= 992 && winWidth <= 1400) {
+        $(select).css('width', ((winWidth - 175 - 90) / 6) + 'px');
+      }
+    }
+
+    function salesMobileNavMenuInit() {
+      var btn = '[data-sales-mobile-navigation-trigger]',
+          back = '[data-sales-m-back]';
+
+      $(document).on('touchstart', btn, function(event) {
+        var type = $(this).data('sales-mobile-navigation-trigger');
+        
+        $(this).closest('.navigation_mobile__dropdown-container').css('transform', 'translateX(-100%');
+        $('[data-sales-m-navigation-level="' + type + '"]').addClass('active');
+
+        event.preventDefault();
+      });    
+
+      $(document).on('touchstart', back, function(event) {
+        var type = $(this).data('sales-m-back');
+
+        $('[data-main-menu]').css('transform', 'translateX(0)');
+        $('[data-sales-m-navigation-level="' + type + '"]').removeClass('active');
+        event.preventDefault();
+      });
+    } 
 
     return app;
   };
