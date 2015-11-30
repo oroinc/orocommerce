@@ -79,6 +79,7 @@ class ActionType extends AbstractType
         $resolver->setAllowedTypes(
             [
                 'action' => 'Oro\Bundle\ActionBundle\Model\Action',
+                'action_context' => 'Oro\Bundle\ActionBundle\Model\ActionContext',
                 'attribute_fields' => 'array',
                 'attribute_default_values' => 'array',
                 'init_functions' => 'Oro\Bundle\WorkflowBundle\Model\Action\ActionInterface',

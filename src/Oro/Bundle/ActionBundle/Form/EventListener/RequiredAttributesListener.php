@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ActionBundle\Form\EventListener;
 
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 use Oro\Bundle\ActionBundle\Model\ActionContext;
 
@@ -69,6 +69,9 @@ class RequiredAttributesListener implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return array(FormEvents::PRE_SET_DATA => 'onPreSetData', FormEvents::SUBMIT => 'onSubmit');
+        return [
+            FormEvents::PRE_SET_DATA => 'onPreSetData',
+            FormEvents::SUBMIT => 'onSubmit'
+        ];
     }
 }
