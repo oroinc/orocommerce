@@ -54,4 +54,23 @@ class ActionContext extends AbstractStorage implements EntityAwareInterface
     {
         return $this->offsetExists($name);
     }
+
+    /**
+     * @param array $names
+     * @return array
+     */
+    public function getValues(array $names = [])
+    {
+        if (!$names) {
+            return $this->data;
+        }
+
+        $result = [];
+
+        foreach ($names as $name) {
+            $result[$name] = $this->offsetGet($name);
+        }
+
+        return $result;
+    }
 }
