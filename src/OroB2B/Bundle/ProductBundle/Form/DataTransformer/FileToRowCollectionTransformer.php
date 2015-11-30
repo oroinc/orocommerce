@@ -2,13 +2,13 @@
 
 namespace OroB2B\Bundle\ProductBundle\Form\DataTransformer;
 
-use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\Common\Type;
+use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\Reader\ReaderInterface;
 
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\TransformationFailedException;
-use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 use OroB2B\Bundle\ProductBundle\Model\QuickAddRow;
 use OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection;
@@ -24,7 +24,7 @@ class FileToRowCollectionTransformer implements DataTransformerInterface
     }
 
     /**
-     * @param File $file
+     * @param UploadedFile $file
      * @return QuickAddRowCollection
      */
     public function reverseTransform($file)
@@ -54,12 +54,12 @@ class FileToRowCollectionTransformer implements DataTransformerInterface
     }
 
     /**
-     * @param File $file
+     * @param UploadedFile $file
      * @return ReaderInterface
      */
-    private function createReaderForFile(File $file)
+    private function createReaderForFile(UploadedFile $file)
     {
-        switch ($file->getExtension()) {
+        switch ($file->getClientOriginalExtension()) {
             case 'csv':
                 return ReaderFactory::create(Type::CSV);
             case 'ods':

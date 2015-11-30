@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\ProductBundle\Controller\Frontend;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddOrderType;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
 use OroB2B\Bundle\ProductBundle\Model\QuickAddCopyPaste;
-use OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -49,13 +48,23 @@ class QuickAddController extends Controller
      */
     public function importAction(Request $request)
     {
-        $form = $this->createForm(QuickAddImportFromFileType::NAME);
+        $form = $this->createForm(QuickAddImportFromFileType::NAME)->handleRequest($request);
 
-        $form->handleRequest($request);
+        /** @var QuickAddCopyPaste $copyPasteFormData */
+        $formData = $form->getData();
 
 
-        if ($form->isValid()) {
-            return $this->redirectToRoute('orob2b_product_frontend_quick_add_validation_result');
+        if (!empty($formData[QuickAddType::PRODUCTS_FIELD_NAME])) {
+            $resultForm = $this->createForm(QuickAddOrderType::NAME);
+            $resultForm->setData($formData[QuickAddType::PRODUCTS_FIELD_NAME]);
+
+            return $this->render(
+                'OroB2BProductBundle:QuickAdd\Frontend:validationResult.html.twig',
+                [
+                    'result' => $formData[QuickAddType::PRODUCTS_FIELD_NAME],
+                    'form' => $resultForm->createView()
+                ]
+            );
         }
 
         return [

@@ -8,12 +8,11 @@ use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 use OroB2B\Bundle\ProductBundle\Form\DataTransformer\FileToRowCollectionTransformer;
+use OroB2B\Bundle\ProductBundle\Validator\Constraints\QuickAddRowCollection;
 
 class QuickAddImportFromFileType extends AbstractType
 {
     const NAME = 'orob2b_product_quick_add_import_from_file';
-
-    const PRODUCTS_FIELD_NAME = 'products';
 
     /**
      * {@inheritdoc}
@@ -23,7 +22,7 @@ class QuickAddImportFromFileType extends AbstractType
         $builder
             ->add(
                 $builder->create(
-                    self::PRODUCTS_FIELD_NAME,
+                    QuickAddType::PRODUCTS_FIELD_NAME,
                     'file',
                     [
                         'required' => true,
@@ -39,13 +38,13 @@ class QuickAddImportFromFileType extends AbstractType
                                     'mimeTypesMessage' => 'This file type is not allowed.'
                                 ]
                             ),
-                            new NotBlank()
+                            new NotBlank(),
+                            new QuickAddRowCollection()
                         ]
                     ]
-                )
+                )->addModelTransformer(new FileToRowCollectionTransformer())
             );
 
-        $builder->addModelTransformer(new FileToRowCollectionTransformer());
     }
 
     /**
