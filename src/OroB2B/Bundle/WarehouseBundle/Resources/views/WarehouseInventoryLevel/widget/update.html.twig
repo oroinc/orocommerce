@@ -1,7 +1,0 @@
-{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
-
-<div class="widget-content" data-page-component-module="orob2bfrontend/js/app/components/widget-form-component">
-    {# TODO: Replace manual grid and field rendering with form type WarehouseInventoryLevelGridType in scope of https://magecore.atlassian.net/browse/COM-215  #}
-    {{ dataGrid.renderGrid('warehouse-inventory-level-grid', {'product_id': product.id}) }}
-    <input type="text" id="warehouse-inventory-level-quantities" />
-</div>

@@ -1,0 +1,5 @@
+orob2b:
+    warhouse:
+        warehouse_inventory_level_save:
+            flash:
+                success: Inventory has been updated
