@@ -13,7 +13,7 @@ class ProductVariantLinkByProductSkuValidator extends ConstraintValidator
 
     /**
      * @param ProductVariantLink $value
-     * @param UniqueProductVariantLinks|Constraint $constraint
+     * @param ProductVariantLinkByProductSku|Constraint $constraint
      */
     public function validate($value, Constraint $constraint)
     {

@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\ProductBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-class ProductVariantLinksByProductSku extends Constraint
+class ProductVariantLinkByProductSku extends Constraint
 {
     /** @var string */
     public $message = 'orob2b.product.product_variant_links.sku.message';

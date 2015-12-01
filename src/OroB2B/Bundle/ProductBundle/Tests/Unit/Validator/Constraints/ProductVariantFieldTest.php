@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\ProductBundle\Test\Validator\Constraints;
 
+use Symfony\Component\Validator\Constraint;
+
 use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductVariantField;
 use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductVariantFieldValidator;
 
@@ -31,5 +33,10 @@ class ProductVariantFieldTest extends \PHPUnit_Framework_TestCase
     public function testValidatedBy()
     {
         $this->assertEquals(ProductVariantFieldValidator::ALIAS, $this->constraint->validatedBy());
+    }
+
+    public function testGetTargets()
+    {
+        $this->assertEquals(Constraint::CLASS_CONSTRAINT, $this->constraint->getTargets());
     }
 }

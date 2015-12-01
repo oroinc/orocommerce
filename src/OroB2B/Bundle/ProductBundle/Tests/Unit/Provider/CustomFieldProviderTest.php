@@ -44,9 +44,29 @@ class CustomFieldProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetEntityCustomFields()
     {
         $allFields = [
-            'size' => ['owner' => 'Custom', 'label' => 'Size Label','type' => 'string', 'state' => 'Active'],
-            'color' => ['owner' => 'Custom', 'label' => 'Color Label', 'type' => 'string', 'state' => 'Active'],
-            'id' => ['owner' => 'System', 'label' => 'Id Label', 'type' => 'string'],
+            'size' => [
+                'owner' => 'Custom',
+                'label' => 'Size Label',
+                'type' => 'string',
+                'state' => 'Active',
+            ],
+            'color' => [
+                'owner' => 'Custom',
+                'label' => 'Color Label',
+                'type' => 'string',
+                'state' => 'Requires update',
+            ],
+            'weight' => [
+                'owner' => 'Custom',
+                'label' => 'Weight Label',
+                'type' => 'string',
+                'state' => 'New',
+            ],
+            'id' => [
+                'owner' => 'System',
+                'label' => 'Id Label',
+                'type' => 'string'
+            ],
         ];
 
         $expectedResult = [

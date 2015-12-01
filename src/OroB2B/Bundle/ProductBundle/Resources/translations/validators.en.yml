@@ -4,7 +4,7 @@ orob2b:
             unique_variants_combination.message: 'Cannot save product variants. Variant field value combinations should be unique.'
             sku.message: 'Invalid SKU in variant link'
         product_variant_field:
-            message: 'Cannot save product variant field. Field "{{ field }}" not exist in product.'
+            message: 'Cannot save product variant field. Field "{{ field }}" does not exist in product.'
 
         product_by_sku:
             not_found: SKU not found

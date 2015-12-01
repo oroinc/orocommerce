@@ -14,7 +14,7 @@ class ProductVariantFieldValidator extends ConstraintValidator
 {
     const ALIAS = 'orob2b_product_variant_field';
 
-    /** @var  CustomFieldProvider */
+    /** @var CustomFieldProvider */
     protected $customFieldProvider;
 
     /**
@@ -26,19 +26,17 @@ class ProductVariantFieldValidator extends ConstraintValidator
     }
 
     /**
-     * @param Product    $value
-     * @param Constraint $constraint
+     * @param Product $value
+     * @param ProductVariantField|Constraint $constraint
      */
     public function validate($value, Constraint $constraint)
     {
         $productClass = ClassUtils::getClass($value);
         $customProductFields = $this->customFieldProvider->getEntityCustomFields($productClass);
 
-        if (!empty($customProductFields)) {
-            foreach ($value->getVariantFields() as $field) {
-                if (!array_key_exists($field, $customProductFields)) {
-                    $this->context->addViolation($constraint->message, ['{{ field }}' => $field]);
-                }
+        foreach ($value->getVariantFields() as $field) {
+            if (!array_key_exists($field, $customProductFields)) {
+                $this->context->addViolation($constraint->message, ['{{ field }}' => $field]);
             }
         }
     }

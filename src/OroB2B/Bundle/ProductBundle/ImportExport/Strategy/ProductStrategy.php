@@ -18,9 +18,7 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
     /** @var BusinessUnit */
     protected $owner;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     protected $variantLinkClass;
 
     /**

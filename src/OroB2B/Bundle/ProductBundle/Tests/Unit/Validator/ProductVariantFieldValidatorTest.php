@@ -23,13 +23,13 @@ class ProductVariantFieldValidatorTest extends \PHPUnit_Framework_TestCase
     protected $context;
 
     /** @var array */
-    protected $variantFieldsArray = [
+    protected $variantFields = [
         'field_first',
         'field_second'
     ];
 
     /** @var array  */
-    protected $unCorrectCustomVariantFields = [
+    protected $incorrectCustomVariantFields = [
         'field_first' => [
             'name' => 'field_first',
             'type' => 'string',
@@ -79,9 +79,7 @@ class ProductVariantFieldValidatorTest extends \PHPUnit_Framework_TestCase
         unset(
             $this->context,
             $this->customFieldProvider,
-            $this->service,
-            $this->unCorrectCustomVariantFields,
-            $this->correctCustomVariantFields
+            $this->service
         );
     }
 
@@ -101,9 +99,24 @@ class ProductVariantFieldValidatorTest extends \PHPUnit_Framework_TestCase
         $this->service->validate($product, new ProductVariantField());
     }
 
+    public function testAddViolationIfProductDoesNotHaveFields()
+    {
+        $product = $this->prepareProductWithVariantFields($this->variantFields);
+        $productClass = ClassUtils::getClass($product);
+
+        $this->customFieldProvider->expects($this->once())
+            ->method('getEntityCustomFields')
+            ->with($productClass)
+            ->willReturn([]);
+
+        $this->context->expects($this->exactly(count($this->variantFields)))->method('addViolation');
+
+        $this->service->validate($product, new ProductVariantField());
+    }
+
     public function testDoesNotAddViolationIfVariantFieldsExistInCustomFields()
     {
-        $product = $this->prepareProduct($this->variantFieldsArray);
+        $product = $this->prepareProductWithVariantFields($this->variantFields);
         $productClass = ClassUtils::getClass($product);
 
         $this->customFieldProvider->expects($this->once())
@@ -118,14 +131,14 @@ class ProductVariantFieldValidatorTest extends \PHPUnit_Framework_TestCase
 
     public function testAddViolationIfVariantFieldDoesNotExistInCustomField()
     {
-        $product = $this->prepareProduct($this->variantFieldsArray);
+        $product = $this->prepareProductWithVariantFields($this->variantFields);
 
         $productClass = ClassUtils::getClass($product);
 
         $this->customFieldProvider->expects($this->once())
             ->method('getEntityCustomFields')
             ->with($productClass)
-            ->willReturn($this->unCorrectCustomVariantFields);
+            ->willReturn($this->incorrectCustomVariantFields);
 
         $this->context->expects($this->once())
             ->method('addViolation')
@@ -138,7 +151,7 @@ class ProductVariantFieldValidatorTest extends \PHPUnit_Framework_TestCase
      * @param array $variantFields
      * @return StubProduct
      */
-    private function prepareProduct(array $variantFields)
+    private function prepareProductWithVariantFields(array $variantFields)
     {
         $product = new StubProduct();
         $product->setHasVariants(true);

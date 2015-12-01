@@ -7,6 +7,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Oro\Bundle\ImportExportBundle\Field\FieldHelper;
 
 use OroB2B\Bundle\ProductBundle\ImportExport\Normalizer\ProductNormalizer;
+use OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class ProductNormalizerTest extends \PHPUnit_Framework_TestCase
@@ -120,9 +121,20 @@ class ProductNormalizerTest extends \PHPUnit_Framework_TestCase
                         if ($fieldName === 'variantFields' && !is_array($value)) {
                             return $result;
                         }
-                        return $result->{'set' . $fieldName}($value);
+                        return $result->{'set' . ucfirst($fieldName)}($value);
                     }
                 )
+            );
+
+        $this->eventDispatcher->expects($this->once())->method('dispatch')
+            ->withConsecutive(
+                [
+                    $this->logicalAnd(
+                        $this->isType('string'),
+                        $this->equalTo('orob2b_product.normalizer.denormalizer')
+                    ),
+                    $this->isInstanceOf('OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent'),
+                ]
             );
 
         $result = $this->productNormalizer->denormalize($data, $this->productClass);

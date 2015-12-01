@@ -7,7 +7,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProduct;
 use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinkByProductSkuValidator;
 use OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink;
-use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinksByProductSku;
+use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinkByProductSku;
 
 class ProductVariantLinkByProductSkuValidatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -36,7 +36,6 @@ class ProductVariantLinkByProductSkuValidatorTest extends \PHPUnit_Framework_Tes
         unset($this->context, $this->service);
     }
 
-
     public function testDoesNothingIfIssetProduct()
     {
         $productVariantLink = new ProductVariantLink();
@@ -45,7 +44,7 @@ class ProductVariantLinkByProductSkuValidatorTest extends \PHPUnit_Framework_Tes
 
         $this->context->expects($this->never())->method('addViolation');
 
-        $this->service->validate($productVariantLink, new ProductVariantLinksByProductSku());
+        $this->service->validate($productVariantLink, new ProductVariantLinkByProductSku());
     }
 
     public function testAddViolationIfProductEmpty()
@@ -54,6 +53,6 @@ class ProductVariantLinkByProductSkuValidatorTest extends \PHPUnit_Framework_Tes
 
         $this->context->expects($this->once())->method('addViolation');
 
-        $this->service->validate($productVariantLink, new ProductVariantLinksByProductSku());
+        $this->service->validate($productVariantLink, new ProductVariantLinkByProductSku());
     }
 }

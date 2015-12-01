@@ -2,13 +2,15 @@
 
 namespace OroB2B\Bundle\ProductBundle\Test\Validator\Constraints;
 
+use Symfony\Component\Validator\Constraint;
+
 use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinkByProductSkuValidator;
-use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinksByProductSku;
+use OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinkByProductSku;
 
 class ProductVariantLinkByProductSkuTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ProductVariantLinksByProductSku
+     * @var ProductVariantLinkByProductSku
      */
     protected $constraint;
 
@@ -17,7 +19,7 @@ class ProductVariantLinkByProductSkuTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->constraint = new ProductVariantLinksByProductSku();
+        $this->constraint = new ProductVariantLinkByProductSku();
     }
 
     /**
@@ -31,5 +33,10 @@ class ProductVariantLinkByProductSkuTest extends \PHPUnit_Framework_TestCase
     public function testValidatedBy()
     {
         $this->assertEquals(ProductVariantLinkByProductSkuValidator::ALIAS, $this->constraint->validatedBy());
+    }
+
+    public function testGetTargets()
+    {
+        $this->assertEquals(Constraint::CLASS_CONSTRAINT, $this->constraint->getTargets());
     }
 }

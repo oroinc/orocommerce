@@ -87,6 +87,6 @@ class ProductNormalizer extends ConfigurableEntityNormalizer
      */
     public function supportsDenormalization($data, $type, $format = null, array $context = [])
     {
-        return $type === $this->productClass;
+        return is_a($type, $this->productClass, true);
     }
 }
