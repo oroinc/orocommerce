@@ -58,6 +58,8 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
                     ->prototype('scalar')
                     ->end()
                 ->end()
+                ->scalarNode('acl_resource')
+                ->end()
                 ->integerNode('order')
                     ->defaultValue(0)
                 ->end()
@@ -144,6 +146,7 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
         $builder = new TreeBuilder();
         $node = $builder->root('frontend_options');
         $node
+            ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('icon')->end()
                 ->scalarNode('class')->end()
