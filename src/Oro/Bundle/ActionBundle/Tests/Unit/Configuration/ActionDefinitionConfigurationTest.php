@@ -90,6 +90,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'frontend_options' => [
                             'icon' => 'icon',
                             'class' => 'class',
+                            'group' => 'group label',
                             'template' => 'template',
                             'dialog_template' => 'template',
                         ],
@@ -157,6 +158,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                     'frontend_options' => [
                         'icon' => 'icon',
                         'class' => 'class',
+                        'group' => 'group label',
                         'template' => 'template',
                         'dialog_template' => 'template',
                     ],

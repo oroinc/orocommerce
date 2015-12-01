@@ -150,6 +150,7 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
             ->children()
                 ->scalarNode('icon')->end()
                 ->scalarNode('class')->end()
+                ->scalarNode('group')->end()
                 ->scalarNode('template')->end()
                 ->scalarNode('dialog_template')->end()
             ->end();
