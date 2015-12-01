@@ -58,17 +58,17 @@ class ActionDefinitionTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testAddAndGetConditions()
+    public function testSetAndGetConditions()
     {
-        $this->definition->addConditions('name1', ['cond1', 'cond2']);
+        $this->definition->setConditions('name1', ['cond1', 'cond2']);
 
         $this->assertEquals(['cond1', 'cond2'], $this->definition->getConditions('name1'));
         $this->assertEquals(['name1' => ['cond1', 'cond2']], $this->definition->getConditions());
     }
 
-    public function testAddAndGetFunctions()
+    public function testSetAndGetFunctions()
     {
-        $this->definition->addFunctions('name1', ['func1', 'func2']);
+        $this->definition->setFunctions('name1', ['func1', 'func2']);
 
         $this->assertEquals(['func1', 'func2'], $this->definition->getFunctions('name1'));
         $this->assertEquals(['name1' => ['func1', 'func2']], $this->definition->getFunctions());

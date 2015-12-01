@@ -172,25 +172,185 @@ class ActionTest extends \PHPUnit_Framework_TestCase
         $this->action->execute($context);
     }
 
-    public function testIsAvailable()
+    /**
+     * @param array $inputData
+     * @param array $expectedData
+     *
+     * @dataProvider isAvailableProvider
+     */
+    public function testIsAvailable(array $inputData, array $expectedData)
     {
-        $this->definition->expects($this->once())
-            ->method('getFunctions')
-            ->willReturn(['function1']);
-
-        $this->functionFactory->expects($this->once())
-            ->method('create')
-            ->willReturn($this->createFunction($this->once(), $this->context));
-
-        $this->definition->expects($this->once())
+        $this->definition->expects($this->any())
             ->method('getConditions')
-            ->willReturn(['condition1']);
+            ->will($this->returnValueMap($inputData['config']['conditions']));
 
-        $this->conditionFactory->expects($this->once())
+        $this->definition->expects($this->any())
+            ->method('getFormOptions')
+            ->willReturn($inputData['config']['form_options']);
+
+        $this->conditionFactory->expects($expectedData['conditionFactory'])
             ->method('create')
-            ->willReturn($this->createCondition($this->once(), $this->context, true));
+            ->willReturnCallback(function ($type, $config) use ($inputData) {
+                return $inputData['conditions'][$config[0]];
+            });
 
-        $this->assertTrue($this->action->isAvailable($this->context));
+        $this->assertEquals($expectedData['available'], $this->action->isAvailable($inputData['context']));
+    }
+
+    /**
+     * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
+    public function isAvailableProvider()
+    {
+        $context = new ActionContext();
+
+        return [
+            'no conditions' => [
+                'input' => [
+                    'context' => $context,
+                    'config' => [
+                        'conditions' => [],
+                        'form_options' => [],
+                    ],
+                ],
+                'expected' => [
+                    'conditionFactory' => $this->never(),
+                    'available' => true,
+                    'errors' => [],
+                ],
+            ],
+            '!isPreConditionAllowed' => [
+                'input' => [
+                    'context' => $context,
+                    'config' => [
+                        'conditions' => [
+                            ['preconditions', ['preconditions']],
+                            ['conditions', ['conditions']],
+                        ],
+                        'form_options' => [],
+                    ],
+                    'conditions' => [
+                        'preconditions' => $this->createCondition($this->once(), $context, false),
+                        'conditions' => $this->createCondition($this->never(), $context, true),
+                    ],
+                ],
+                'expected' => [
+                    'conditionFactory' => $this->exactly(1),
+                    'available' => false,
+                ],
+            ],
+            '!isConditionAllowed' => [
+                'input' => [
+                    'context' => $context,
+                    'config' => [
+                        'conditions' => [
+                            ['preconditions', ['preconditions']],
+                            ['conditions', ['conditions']],
+                        ],
+                        'form_options' => [],
+                    ],
+                    'conditions' => [
+                        'preconditions' => $this->createCondition($this->once(), $context, true),
+                        'conditions' => $this->createCondition($this->once(), $context, false),
+                    ],
+                ],
+                'expected' => [
+                    'conditionFactory' => $this->exactly(2),
+                    'available' => false,
+                    'errors' => ['error3', 'error4'],
+                ],
+            ],
+            'allowed' => [
+                'input' => [
+                    'context' => $context,
+                    'config' => [
+                        'conditions' => [
+                            ['preconditions', ['preconditions']],
+                            ['conditions', ['conditions']],
+                        ],
+                        'form_options' => [],
+                    ],
+                    'conditions' => [
+                        'preconditions' => $this->createCondition($this->once(), $context, true),
+                        'conditions' => $this->createCondition($this->once(), $context, true),
+                    ],
+                ],
+                'expected' => [
+                    'conditionFactory' => $this->exactly(2),
+                    'available' => true,
+                    'errors' => [],
+                ],
+            ],
+            'hasForm and no conditions' => [
+                'input' => [
+                    'context' => $context,
+                    'config' => [
+                        'conditions' => [],
+                        'form_options' => [
+                            'attribute_fields' => [
+                                'attribute1' => [],
+                            ],
+                        ],
+                    ],
+                ],
+                'expected' => [
+                    'conditionFactory' => $this->never(),
+                    'available' => true,
+                    'errors' => [],
+                ],
+            ],
+            'hasForm and !isPreConditionAllowed' => [
+                'input' => [
+                    'context' => $context,
+                    'config' => [
+                        'conditions' => [
+                            ['preconditions', ['preconditions']],
+                            ['conditions', ['conditions']],
+                        ],
+                        'form_options' => [
+                            'attribute_fields' => [
+                                'attribute2' => [],
+                            ],
+                        ],
+                    ],
+                    'conditions' => [
+                        'preconditions' => $this->createCondition($this->once(), $context, false),
+                        'conditions' => $this->createCondition($this->never(), $context, true),
+                    ],
+                ],
+                'expected' => [
+                    'conditionFactory' => $this->exactly(1),
+                    'available' => false,
+                ],
+            ],
+            'hasForm and allowed' => [
+                'input' => [
+                    'context' => $context,
+                    'config' => [
+                        'conditions' => [
+                            ['preconditions', ['preconditions']],
+                            ['conditions', ['conditions']],
+                        ],
+                        'form_options' => [
+                            'attribute_fields' => [
+                                'attribute3' => [],
+                            ],
+                        ],
+                    ],
+                    'conditions' => [
+                        'preconditions' => $this->createCondition($this->once(), $context, true),
+                        'conditions' => $this->createCondition($this->never(), $context, true),
+                    ],
+                ],
+                'expected' => [
+                    'conditionFactory' => $this->exactly(1),
+                    'available' => true,
+                    'errors' => [],
+                ],
+            ],
+        ];
     }
 
     /**

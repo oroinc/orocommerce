@@ -74,7 +74,8 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                     'conditions' => [],
                     'initfunctions' => [],
                     'postfunctions' => [],
-                    'attributes' => []
+                    'attributes' => [],
+                    'frontend_options' => [],
                 ],
             ],
             'full valid configuration' => [

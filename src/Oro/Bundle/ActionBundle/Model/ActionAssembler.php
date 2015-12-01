@@ -83,13 +83,35 @@ class ActionAssembler extends AbstractAssembler
             ->setFormOptions($this->getOption($options, 'form_options', []));
 
         foreach (ActionDefinition::getAllowedConditions() as $name) {
-            $actionDefinition->addConditions($name, $this->getOption($options, $name, []));
+            $actionDefinition->setConditions($name, $this->getOption($options, $name, []));
         }
 
         foreach (ActionDefinition::getAllowedFunctions() as $name) {
-            $actionDefinition->addFunctions($name, $this->getOption($options, $name, []));
+            $actionDefinition->setFunctions($name, $this->getOption($options, $name, []));
         }
 
+        $this->addAclPrecondition($actionDefinition, $this->getOption($options, 'acl_resource'));
+
         return $actionDefinition;
+    }
+
+    /**
+     * @param ActionDefinition $actionDefinition
+     * @param mixed $aclResource
+     */
+    protected function addAclPrecondition(ActionDefinition $actionDefinition, $aclResource)
+    {
+        if (!$aclResource) {
+            return;
+        }
+
+        $definition = $actionDefinition->getConditions(ActionDefinition::PRECONDITIONS);
+
+        $newDefinition = ['@and' => [['@acl_granted' => $aclResource]]];
+        if ($definition) {
+            $newDefinition['@and'][] = $definition;
+        }
+
+        $actionDefinition->setConditions(ActionDefinition::PRECONDITIONS, $newDefinition);
     }
 }
