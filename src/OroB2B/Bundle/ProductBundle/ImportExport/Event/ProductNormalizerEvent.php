@@ -24,7 +24,7 @@ class ProductNormalizerEvent extends Event
     /**
      * @var array
      */
-    protected $context;
+    protected $context = [];
 
     /**
      * {@inheritdoc}
