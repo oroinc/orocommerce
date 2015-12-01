@@ -1,4 +1,5 @@
 parameters:
+    oro_action.helper.context.class: Oro\Bundle\ActionBundle\Model\ContextHelper
     oro_action.manager.class: Oro\Bundle\ActionBundle\Model\ActionManager
     oro_action.assembler.class: Oro\Bundle\ActionBundle\Model\ActionAssembler
     oro_action.attribute_assembler.class: Oro\Bundle\ActionBundle\Model\AttributeAssembler
@@ -7,10 +8,17 @@ parameters:
     oro_action.form_manager.class: Oro\Bundle\ActionBundle\Model\ActionFormManager
 
 services:
+    oro_action.helper.context:
+            class: %oro_action.helper.context.class%
+            arguments:
+                - @oro_entity.doctrine_helper
+                - @request_stack
+
     oro_action.manager:
         class: %oro_action.manager.class%
         arguments:
             - @oro_entity.doctrine_helper
+            - @oro_action.helper.context
             - @oro_action.configuration.provider
             - @oro_action.assembler
 
@@ -72,3 +80,5 @@ services:
         class: %oro_action.form_manager.class%
         arguments:
             - @form.factory
+            - @oro_action.manager
+            - @oro_action.helper.context

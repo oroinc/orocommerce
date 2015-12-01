@@ -1,4 +1,3 @@
 config:
     paths:
         'oroaction/js/app/components/buttons-component': 'bundles/oroaction/js/app/components/buttons-component.js'
-        'oroaction/js/app/components/form-component': 'bundles/oroaction/js/app/components/form-component.js'
