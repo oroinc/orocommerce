@@ -115,26 +115,85 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
     }
 
     /**
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
-     * @expectedExceptionMessage Unable to find template "unknown_template"
+     * @param array $config
+     * @param string $exceptionName
+     * @param string $exceptionMessage
+     *
+     * @dataProvider validateWithExceptionProvider
      */
-    public function testValidateWithTemplateException()
+    public function testValidateWithException(array $config, $exceptionName, $exceptionMessage)
     {
-        $this->twigLoader->expects($this->once())
+        $this->twigLoader->expects($this->any())
             ->method('exists')
             ->willReturn(false);
 
-        $config = [
-            'exception_action' => [
-                'routes' => [],
-                'entities' => [],
-                'frontend_options' => [
-                    'template' => 'unknown_template',
-                ],
-            ],
-        ];
+        $this->setExpectedException($exceptionName, $exceptionMessage);
 
         $this->validator->validate($config);
+    }
+
+    /**
+     * @return array
+     */
+    public function validateWithExceptionProvider()
+    {
+        return [
+            'unknown_template' => [
+                'config' => [
+                    'action1' => [
+                        'routes' => [],
+                        'entities' => [],
+                        'frontend_options' => [
+                            'template' => 'unknown_template',
+                        ],
+                    ],
+                ],
+                'exceptionName' => 'Symfony\Component\Config\Definition\Exception\InvalidConfigurationException',
+                'exceptionMessage' => 'action1.frontend_options.template: Unable to find template "unknown_template"',
+            ],
+            'unknown attribute in attribute_fields' => [
+                'config' => [
+                    'action2' => [
+                        'routes' => [],
+                        'entities' => [],
+                        'frontend_options' => [],
+                        'attributes' => [
+                            'attribute1' => [],
+                        ],
+                        'form_options' => [
+                            'attribute_fields' => [
+                                'attribute2' => [],
+                            ],
+                            'attribute_default_values' => [],
+                        ],
+                    ],
+                ],
+                'exceptionName' => 'Symfony\Component\Config\Definition\Exception\InvalidConfigurationException',
+                'exceptionMessage' => 'action2.form_options.attribute_fields: Unknown attribute "attribute2".',
+            ],
+            'unknown attribute in attribute_default_values' => [
+                'config' => [
+                    'action2' => [
+                        'routes' => [],
+                        'entities' => [],
+                        'frontend_options' => [],
+                        'attributes' => [
+                            'attribute2' => [],
+                        ],
+                        'form_options' => [
+                            'attribute_fields' => [
+                                'attribute2' => [],
+                            ],
+                            'attribute_default_values' => [
+                                'attribute3' => 'value1',
+                            ],
+                        ],
+                    ],
+                ],
+                'exceptionName' => 'Symfony\Component\Config\Definition\Exception\InvalidConfigurationException',
+                'exceptionMessage' => 'action2.form_options.attribute_default_values: Unknown attribute "attribute3".',
+            ],
+        ];
     }
 
     /**

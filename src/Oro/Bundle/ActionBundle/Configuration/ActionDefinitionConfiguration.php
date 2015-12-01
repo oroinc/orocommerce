@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\ActionBundle\Configuration;
 
-use Symfony\Component\Config\Definition\Processor;
-use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\Config\Definition\Processor;
 
 use Oro\Bundle\ActionBundle\Model\ActionDefinition;
 
@@ -119,8 +119,9 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
                     ->scalarNode('name')
                         ->cannotBeEmpty()
                     ->end()
-                    ->scalarNode('type')
+                    ->enumNode('type')
                         ->defaultNull()
+                        ->values(['bool', 'boolean', 'int', 'integer', 'float', 'string', 'array', 'object', 'entity'])
                     ->end()
                     ->scalarNode('label')
                         ->defaultNull()
@@ -128,10 +129,21 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
                     ->scalarNode('property_path')
                         ->defaultNull()
                     ->end()
+                    ->arrayNode('entity_acl')
+                    ->end()
                     ->arrayNode('options')
                         ->prototype('variable')
                         ->end()
                     ->end()
+                ->end()
+                ->validate()
+                    ->always(function ($config) {
+                        $this->checkEntityAcl($config);
+                        $this->checkOptionClass($config, in_array($config['type'], ['object', 'entity'], true));
+                        $this->checkPropertyPath($config);
+
+                        return $config;
+                    })
                 ->end()
             ->end();
 
@@ -187,5 +199,49 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
             ->end();
 
         return $node;
+    }
+
+    /**
+     * @param array $config
+     * @throws \Exception
+     */
+    protected function checkEntityAcl(array $config)
+    {
+        if ($config['type'] !== 'entity' && array_key_exists('entity_acl', $config)) {
+            throw new \Exception(sprintf(
+                'Attribute "%s" with type "%s" can\'t have entity ACL',
+                $config['label'],
+                $config['type']
+            ));
+        }
+    }
+
+    /**
+     * @param array $config
+     * @param bool $require
+     * @throws \Exception
+     */
+    protected function checkOptionClass(array $config, $require)
+    {
+        if ($require && empty($config['options']['class'])) {
+            throw new \Exception(sprintf('Option "class" is required for "%s" type', $config['type']));
+        } elseif (!$require && !empty($config['options']['class'])) {
+            throw new \Exception(sprintf('Option "class" cannot be used for "%s" type', $config['type']));
+        }
+    }
+
+    /**
+     * @param array $config
+     * @throws \Exception
+     */
+    protected function checkPropertyPath(array $config)
+    {
+        if (empty($config['property_path']) && empty($config['label'])) {
+            throw new \Exception('Option "label" or "property_path" is required');
+        }
+
+        if (empty($config['property_path']) && empty($config['type'])) {
+            throw new \Exception('Option "type" or "property_path" is required');
+        }
     }
 }
