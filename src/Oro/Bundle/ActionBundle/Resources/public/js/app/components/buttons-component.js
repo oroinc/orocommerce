@@ -38,19 +38,20 @@ define(function(require) {
          */
         onClick: function(e) {
             e.preventDefault();
-            mediator.execute('showLoading');
 
             var $element = $(e.target);
             if ($element.data('dialog-url')) {
-                var formWidget = new DialogWidget(this._getDialogOptions($element));
-                formWidget
-                    .on('formSave', function(data) {
-                        formWidget.remove();
-                    })
-                    .render();
+                var widget = new DialogWidget(this._getDialogOptions($element));
 
-                mediator.execute('hideLoading');
+                this.listenTo(widget, 'formSave', _.bind(function(response) {
+                    widget.remove();
+                    this.doResponse(e, response);
+                }, this));
+
+                widget.render();
             } else {
+                mediator.execute('showLoading');
+
                 $.getJSON(e.target.href)
                     .done(_.bind(function(response) {
                         this.doResponse(e, response);

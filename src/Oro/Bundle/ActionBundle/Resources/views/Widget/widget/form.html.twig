@@ -1,17 +1,21 @@
-{% set formComponentOptions = {
-    'isSaved': saved,
-    'wid': app.request.get('_wid')|raw,
-} %}
 <div class="widget-content">
-    <div data-page-component-module="oroaction/js/app/components/form-component"
-         data-page-component-options="{{ formComponentOptions|json_encode }}">
+    {% if response is defined %}
+        <script type="text/javascript">
+            require(['oroui/js/widget-manager'],
+                function(widgetManager) {
+                    widgetManager.getWidgetInstance({{ app.request.get('_wid')|json_encode|raw }}, function(widget) {
+                        widget.trigger('formSave', {{ response|json_encode|raw }});
+                    });
+                });
+        </script>
+    {% else %}
         {% if form.vars.errors|length > 0 %}
             <div class="alert alert-error">
                 {{ form_errors(form) }}
             </div>
         {% endif %}
 
-        <form method="post"
+        <form method="POST"
               data-nohash="true"
               data-disable-autofocus="true"
               id="{{ form.vars.id }}"
@@ -20,13 +24,15 @@
               class="form-dialog"
         >
             {{ form_widget(form) }}
+            {{ form_rest(form) }}
+
             <div class="widget-actions form-actions">
                 {% block page_container_form_actions %}
                     <button class="btn" type="reset">{{ 'Cancel'|trans }}</button>
-                    <button class="btn btn-primary" type="submit">{{ 'Submit'|trans }}</button>
+                    <button class="btn btn-success" type="submit">{{ 'Submit'|trans }}</button>
                 {% endblock %}
             </div>
         </form>
         {{ oro_form_js_validation(form) }}
-    </div>
+    {% endif %}
 </div>

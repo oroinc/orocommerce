@@ -9,7 +9,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-use Oro\Bundle\ActionBundle\Model\ActionFormManager;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 
 class WidgetController extends Controller
@@ -20,12 +19,11 @@ class WidgetController extends Controller
      * @Route("/buttons", name="oro_action_widget_buttons")
      * @Template()
      *
-     * @param Request $request
      * @return array
      */
-    public function buttonsAction(Request $request)
+    public function buttonsAction()
     {
-        $context = $this->createContextFromRequest($request);
+        $context = $this->get('oro_action.helper.context')->getContext();
 
         return [
             'actions' => $this->getActionManager()->getActions($context),
@@ -35,48 +33,28 @@ class WidgetController extends Controller
 
     /**
      * @Route("/form/{actionName}", name="oro_action_widget_form")
+     *
      * @param Request $request
      * @param string $actionName
      * @return Response
      */
     public function formAction(Request $request, $actionName)
     {
-        $context = $this->createContextFromRequest($request);
-        $action = $this->getActionManager()->getAction($context, $actionName);
-        $actionContext = $this->getActionManager()->createActionContext($context);
+        $form = $this->get('oro_action.form_manager')->getActionForm($actionName);
+        $params = [];
 
-        $form = $this->getActionFromManager()->getActionForm($action, $actionContext);
-
-        $saved = false;
         if ($request->isMethod('POST')) {
             $form->submit($request);
             if ($form->isValid()) {
-                $saved = true;
+                $context = $this->getActionManager()->execute($actionName);
+
+                $params['response'] = $context->getRedirectUrl() ? ['redirectUrl' => $context->getRedirectUrl()] : [];
             }
+        } else {
+            $params['form'] = $form->createView();
         }
 
-        return $this->render(
-            self::DEFAULT_DIALOG_TEMPLATE,
-            [
-                'action' => $action,
-                'saved' => $saved,
-                'form' => $form->createView(),
-                'context' => $context
-            ]
-        );
-    }
-
-    /**
-     * @param Request $request
-     * @return array
-     */
-    protected function createContextFromRequest(Request $request)
-    {
-        return [
-            'route' => $request->get('route'),
-            'entityId' => $request->get('entityId'),
-            'entityClass' => $request->get('entityClass'),
-        ];
+        return $this->render(self::DEFAULT_DIALOG_TEMPLATE, $params);
     }
 
     /**
@@ -85,13 +63,5 @@ class WidgetController extends Controller
     protected function getActionManager()
     {
         return $this->get('oro_action.manager');
-    }
-
-    /**
-     * @return ActionFormManager
-     */
-    protected function getActionFromManager()
-    {
-        return $this->get('oro_action.form_manager');
     }
 }
