@@ -4,14 +4,12 @@ namespace OroB2B\Bundle\ShoppingListBundle\Processor;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddOrderType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Oro\Bundle\UIBundle\Tools\ArrayUtils;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
