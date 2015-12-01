@@ -58,6 +58,8 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
                     ->prototype('scalar')
                     ->end()
                 ->end()
+                ->scalarNode('acl_resource')
+                ->end()
                 ->integerNode('order')
                     ->defaultValue(0)
                 ->end()
@@ -160,7 +162,9 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
             ->children()
                 ->scalarNode('icon')->end()
                 ->scalarNode('class')->end()
+                ->scalarNode('group')->end()
                 ->scalarNode('template')->end()
+                ->scalarNode('dialog_template')->end()
             ->end();
 
         return $node;

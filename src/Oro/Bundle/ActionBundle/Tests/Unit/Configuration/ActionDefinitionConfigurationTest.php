@@ -90,7 +90,9 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'frontend_options' => [
                             'icon' => 'icon',
                             'class' => 'class',
+                            'group' => 'group label',
                             'template' => 'template',
+                            'dialog_template' => 'template',
                         ],
                         'form_options' => [
                             'attribute_fields' => [
@@ -156,7 +158,9 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                     'frontend_options' => [
                         'icon' => 'icon',
                         'class' => 'class',
+                        'group' => 'group label',
                         'template' => 'template',
+                        'dialog_template' => 'template',
                     ],
                     'form_options' => [
                         'attribute_fields' => [

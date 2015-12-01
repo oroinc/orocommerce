@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ActionBundle\Tests\Unit\Model;
 
+use Oro\Bundle\ActionBundle\Form\Type\ActionType;
 use Oro\Bundle\ActionBundle\Model\Action;
 use Oro\Bundle\ActionBundle\Model\ActionAssembler;
 use Oro\Bundle\ActionBundle\Model\ActionDefinition;
@@ -59,6 +60,8 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function assembleProvider()
     {
@@ -67,11 +70,12 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
             ->setName('minimum_name')
             ->setLabel('My Label')
             ->setEntities(['My\Entity'])
-            ->addConditions('conditions', [])
-            ->addConditions('preconditions', [])
-            ->addFunctions('prefunctions', [])
-            ->addFunctions('initfunctions', [])
-            ->addFunctions('postfunctions', []);
+            ->setConditions('conditions', [])
+            ->setConditions('preconditions', [])
+            ->setFunctions('prefunctions', [])
+            ->setFunctions('initfunctions', [])
+            ->setFunctions('postfunctions', [])
+            ->setFormType(ActionType::NAME);
 
         $definition2 = new ActionDefinition();
         $definition2
@@ -82,16 +86,39 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
             ->setEnabled(false)
             ->setApplications(['application1'])
             ->setAttributes(['config_attr'])
-            ->addConditions('preconditions', ['config_pre_cond'])
-            ->addConditions('conditions', ['config_cond'])
-            ->addFunctions('prefunctions', ['config_pre_func'])
-            ->addFunctions('initfunctions', ['config_init_func'])
-            ->addFunctions('postfunctions', ['config_post_func'])
+            ->setConditions('preconditions', ['config_pre_cond'])
+            ->setConditions('conditions', ['config_cond'])
+            ->setFunctions('prefunctions', ['config_pre_func'])
+            ->setFunctions('initfunctions', ['config_init_func'])
+            ->setFunctions('postfunctions', ['config_post_func'])
             ->setFormOptions(['config_form_options'])
             ->setFrontendOptions(['config_frontend_options'])
-            ->setInitStep(['config_init_step'])
-            ->setExecutionStep(['config_execution_step'])
-            ->setOrder(77);
+            ->setOrder(77)
+            ->setFormType(ActionType::NAME);
+
+        $definition3 = new ActionDefinition();
+        $definition3
+            ->setName('maximum_name_and_acl')
+            ->setLabel('My Label')
+            ->setEntities(['My\Entity'])
+            ->setRoutes(['my_route'])
+            ->setEnabled(false)
+            ->setApplications(['application1'])
+            ->setAttributes(['config_attr'])
+            ->setConditions('preconditions', [
+                '@and' => [
+                    ['@acl_granted' => 'test_acl'],
+                    ['config_pre_cond']
+                ]
+             ])
+            ->setConditions('conditions', ['config_cond'])
+            ->setFunctions('prefunctions', ['config_pre_func'])
+            ->setFunctions('initfunctions', ['config_init_func'])
+            ->setFunctions('postfunctions', ['config_post_func'])
+            ->setFormOptions(['config_form_options'])
+            ->setFrontendOptions(['config_frontend_options'])
+            ->setOrder(77)
+            ->setFormType(ActionType::NAME);
 
         return [
             'no data' => [
@@ -134,8 +161,6 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
                         'postfunctions' => ['config_post_func'],
                         'form_options' => ['config_form_options'],
                         'frontend_options' => ['config_frontend_options'],
-                        'init_step' => ['config_init_step'],
-                        'execution_step' => ['config_execution_step'],
                         'order' => 77,
                     ]
                 ],
@@ -146,6 +171,36 @@ class ActionAssemblerTest extends \PHPUnit_Framework_TestCase
                         $this->getAttributeAssembler(),
                         $this->getFormOptionsAssembler(),
                         $definition2
+                    )
+                ],
+            ],
+            'maximum data and acl_resource' => [
+                [
+                    'maximum_name_and_acl' => [
+                        'label' => 'My Label',
+                        'entities' => ['My\Entity'],
+                        'routes' => ['my_route'],
+                        'enabled' => false,
+                        'applications' => ['application1'],
+                        'attributes' => ['config_attr'],
+                        'conditions' => ['config_cond'],
+                        'prefunctions' => ['config_pre_func'],
+                        'preconditions' => ['config_pre_cond'],
+                        'initfunctions' => ['config_init_func'],
+                        'postfunctions' => ['config_post_func'],
+                        'form_options' => ['config_form_options'],
+                        'frontend_options' => ['config_frontend_options'],
+                        'order' => 77,
+                        'acl_resource' => 'test_acl',
+                    ]
+                ],
+                'expected' => [
+                    'maximum_name_and_acl' => new Action(
+                        $this->getFunctionFactory(),
+                        $this->getConditionFactory(),
+                        $this->getAttributeAssembler(),
+                        $this->getFormOptionsAssembler(),
+                        $definition3
                     )
                 ],
             ],

@@ -103,12 +103,23 @@ class ActionDefinitionConfigurationValidator
 
         $optionsPath = $this->getPath($path, $sectionName);
         $options = $config[$sectionName];
+        
+        $this->assertTemplate($options, $optionsPath, 'template');
+        $this->assertTemplate($options, $optionsPath, 'dialog_template');
+    }
 
-        if (isset($options['template']) && !$this->twigLoader->exists($options['template'])) {
+    /**
+     * @param array $options
+     * @param string $path
+     * @param string $paramName
+     */
+    protected function assertTemplate(array $options, $path, $paramName)
+    {
+        if (isset($options[$paramName]) && !$this->twigLoader->exists($options[$paramName])) {
             $this->handleError(
-                $this->getPath($optionsPath, 'template'),
+                $this->getPath($path, $paramName),
                 'Unable to find template "%s"',
-                $options['template'],
+                $options[$paramName],
                 false
             );
         }
