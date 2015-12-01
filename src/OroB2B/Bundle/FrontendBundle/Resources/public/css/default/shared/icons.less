@@ -1,0 +1,62 @@
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 2.4rem;  /* Preferred icon size */
+  display: inline-block;
+  vertical-align: middle;
+  width: 1em;
+  height: 1em;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+
+  &.material-icons_gray {
+    color: @base-font-color-lighter;
+  }
+
+  &.material-icons_hidden {
+    visibility: hidden;
+  }
+}
+
+.credit-card-icon {
+  display: inline-block;
+  vertical-align: middle;
+
+  &.credit-card-icon_mc {
+    width: 3.9rem;
+    height: 2.5rem;
+    background: url('../images/payments/mc.png') no-repeat;
+  }
+
+  &.credit-card-icon_visa {
+    width: 4.1rem;
+    height: 2.5rem;
+    background: url('../images/payments/visa.png') no-repeat;
+  }
+
+  &.credit-card-icon_ae {
+    width: 4rem;
+    height: 2.5rem;
+    background: url('../images/payments/ae.png') no-repeat;
+  }
+
+  &.credit-card-icon_discover {
+    width: 4rem;
+    height: 2.5rem;
+    background: url('../images/payments/discover.png') no-repeat;
+  }
+}

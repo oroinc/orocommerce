@@ -11,12 +11,16 @@ layout:
                 meta_charset:
                     blockType: meta
                     options:
-                        charset: "UTF-8"
+                        charset: 'UTF-8'
                 meta_viewport:
                     blockType: meta
                     options:
-                        name: "viewport"
-                        content: "width=device-width, initial-scale=1"
+                        name: viewport
+                        content: 'width=device-width, initial-scale=1'
+                styles:
+                    blockType: style
+                    options:
+                        src: 'css/layout/default/styles.css'
                 body:
                     blockType: body
                 wrapper:
@@ -46,6 +50,7 @@ layout:
                     head:
                         meta_charset: ~
                         meta_viewport: ~
+                        styles: ~
                     body:
                         wrapper:
                             header: ~

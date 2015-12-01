@@ -1,0 +1,69 @@
+* {
+  &:focus {
+    outline: none;
+  }
+}
+
+html {
+  width: 100%;
+  //height: 100%;
+  font-size: 62.5%;
+  font-family: @lato-font;
+}
+
+body {
+  /*&:extend(html);*/
+  -webkit-font-smoothing: antialiased;
+  -moz-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+  vertical-align: baseline;
+  font-size: @base-font-size;
+  line-height: @base-line-height;
+  color: @base-font-color;
+  background: @base-background-color;
+}
+
+//Bootstrap override
+.container-fluid, .main {
+  max-width: 140rem;
+  margin: 0 auto;
+}
+
+.main {
+  margin: 0 auto 7rem;
+
+  @media (max-width: 767px) {
+    margin-bottom: 0;
+  }
+
+  &.main_home {
+    max-width: 100%;
+  }
+
+  &:before, &:after {
+    content: "";
+    display: block;
+    height: 0;
+    clear: both;
+  }
+}
+
+//Links
+a {
+  color: @base-link-color;
+
+  &:hover {
+    color: @base-link-color;
+    text-decoration: underline;
+  }
+}
+
+.main {
+
+  &.sticky-nav {
+    @media (max-width: 991px) {
+      padding-top: 5rem;
+    }
+  }
+  
+}

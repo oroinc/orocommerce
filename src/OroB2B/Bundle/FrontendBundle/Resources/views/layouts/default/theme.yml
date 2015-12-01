@@ -1,3 +1,10 @@
 label: Default theme
 description: Default theme. Based on layouts.
 groups: [ commerce ]
+data:
+    assets:
+        styles:
+            inputs:
+                - 'bundles/orob2bfrontend/css/default/styles.less'
+            filters: ['cssrewrite', 'cssmin']
+            output: 'css/layout/default/styles.css'
