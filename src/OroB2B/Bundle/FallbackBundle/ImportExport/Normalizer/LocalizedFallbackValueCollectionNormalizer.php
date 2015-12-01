@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\FallbackBundle\ImportExport\Normalizer;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\CollectionNormalizer;
@@ -28,6 +27,9 @@ class LocalizedFallbackValueCollectionNormalizer extends CollectionNormalizer
     /** @var Locale */
     protected $locale;
 
+    /** @var Locale[] */
+    protected $locales = [];
+
     /** @var bool[] */
     protected $isApplicable = [];
 
@@ -46,11 +48,7 @@ class LocalizedFallbackValueCollectionNormalizer extends CollectionNormalizer
         $this->locale = new $localeClass;
     }
 
-    /**
-     * @param Collection|LocalizedFallbackValue[] $object
-     *
-     * {@inheritdoc}
-     */
+    /** {@inheritdoc} */
     public function normalize($object, $format = null, array $context = [])
     {
         $result = [];
@@ -82,9 +80,11 @@ class LocalizedFallbackValueCollectionNormalizer extends CollectionNormalizer
             $object = clone $this->value;
 
             if ($localeCode !== LocaleCodeFormatter::DEFAULT_LOCALE) {
-                $locale = clone $this->locale;
-                $locale->setCode($localeCode);
-                $object->setLocale($locale);
+                if (!array_key_exists($localeCode, $this->locales)) {
+                    $this->locales[$localeCode] = clone $this->locale;
+                    $this->locales[$localeCode]->setCode($localeCode);
+                }
+                $object->setLocale($this->locales[$localeCode]);
             }
 
             if (array_key_exists('fallback', $item)) {

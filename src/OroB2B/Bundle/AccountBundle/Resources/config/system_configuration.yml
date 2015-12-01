@@ -3,7 +3,6 @@ oro_system_configuration:
         account:
             title: orob2b.account.system_configuration.groups.account.title
             icon: 'icon-user'
-            page_reload: true
         account_users:
             title: orob2b.account.system_configuration.groups.account_users.title
         catalog:
@@ -11,13 +10,11 @@ oro_system_configuration:
         catalog_settings:
             title: orob2b.account.catalog.visibility.catalog_configuration_label
             icon: 'icon-briefcase'
-            page_reload: true
         catalog_category_settings:
             title: orob2b.account.catalog.visibility.label
         product_settings:
             title: orob2b.account.product.visibility.product_configuration_label
             icon: 'icon-briefcase'
-            page_reload: true
         account_product_visibility:
             title: orob2b.account.product.visibility.label
     fields:
