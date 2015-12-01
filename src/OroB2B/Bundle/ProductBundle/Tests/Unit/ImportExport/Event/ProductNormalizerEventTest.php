@@ -12,10 +12,12 @@ class ProductNormalizerEventTest extends \PHPUnit_Framework_TestCase
         $product = new Product();
         $product->setSku('SKU-1');
         $plainData = ['test'];
+        $context = ['contextData'];
 
-        $event = new ProductNormalizerEvent($product, $plainData);
+        $event = new ProductNormalizerEvent($product, $plainData, $context);
         $this->assertSame($product, $event->getProduct());
         $this->assertSame($plainData, $event->getPlainData());
+        $this->assertSame($context, $event->getContext());
 
         $modifiedPlainData = ['test1'];
         $event->setPlainData($modifiedPlainData);

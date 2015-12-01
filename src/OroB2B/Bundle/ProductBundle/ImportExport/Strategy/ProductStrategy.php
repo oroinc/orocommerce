@@ -18,12 +18,23 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
     /** @var BusinessUnit */
     protected $owner;
 
+    /** @var string */
+    protected $variantLinkClass;
+
     /**
      * @param SecurityFacade $securityFacade
      */
     public function setSecurityFacade($securityFacade)
     {
         $this->securityFacade = $securityFacade;
+    }
+
+    /**
+     * @param string $variantLinkClass
+     */
+    public function setVariantLinkClass($variantLinkClass)
+    {
+        $this->variantLinkClass = $variantLinkClass;
     }
 
     /**
@@ -78,5 +89,32 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
         $this->owner = $this->databaseHelper->getEntityReference($user->getOwner());
 
         $entity->setOwner($this->owner);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function findEntityByIdentityValues($entityName, array $identityValues)
+    {
+        $newIdentityValues = [];
+        if (is_a($entityName, $this->variantLinkClass, true)) {
+            foreach ($identityValues as $entityFieldName => $entity) {
+                if ($this->databaseHelper->getIdentifier($entity)) {
+                    $newIdentityValues[$entityFieldName] = $entity;
+                } else {
+                    $existingEntity = $this->findExistingEntity($entity);
+
+                    if (!$existingEntity) {
+                        return null;
+                    }
+
+                    $newIdentityValues[$entityFieldName] = $existingEntity;
+                }
+            }
+        } else {
+            $newIdentityValues = $identityValues;
+        }
+
+        return parent::findEntityByIdentityValues($entityName, $newIdentityValues);
     }
 }

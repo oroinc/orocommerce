@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\ProductBundle\Provider;
 
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 
 class CustomFieldProvider
 {
@@ -40,7 +41,21 @@ class CustomFieldProvider
             if ($extendConfig->get('owner') === 'Custom') {
                 /** @var FieldConfigId $configId */
                 $configId = $extendConfig->getId();
-                $entityConfig = $this->entityConfigProvider->getConfigById($configId);
+                $entityConfig = $this->entityConfigProvider
+                    ->getConfigById($configId);
+
+                $isStateCorrect = $entityConfig
+                    ->in(
+                        'state',
+                        [
+                            ExtendScope::STATE_ACTIVE,
+                            ExtendScope::STATE_UPDATE
+                        ]
+                    );
+
+                if (!$isStateCorrect) {
+                    continue;
+                }
 
                 $customFields[$configId->getFieldName()] = [
                     'name' => $configId->getFieldName(),

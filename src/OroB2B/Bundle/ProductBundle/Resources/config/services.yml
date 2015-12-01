@@ -25,6 +25,8 @@ parameters:
     orob2b_product.event_listener.restrict_disabled_products.class: OroB2B\Bundle\ProductBundle\EventListener\RestrictDisabledProductsEventListener
 
     orob2b_product.validator.unique_variant_links.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator
+    orob2b_product.validator.by_product_sku.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinkByProductSkuValidator
+    orob2b_product.validator.product_variant_field.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductVariantFieldValidator
 
     orob2b_product.component_processor.filter.class: OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter
     orob2b_product.component_processor.registry.class: OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry
@@ -201,6 +203,18 @@ services:
         class: %orob2b_product.validator.unique_variant_links.class%
         tags:
             - { name: validator.constraint_validator, alias: orob2b_product_unique_variant_links }
+
+    orob2b_product.validator.by_product_sku:
+        class: %orob2b_product.validator.by_product_sku.class%
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_product_variant_links_by_product_sku }
+
+    orob2b_product.validator.product_variant_field:
+        class: %orob2b_product.validator.product_variant_field.class%
+        arguments:
+            - @orob2b_product.provider.custom_field_provider
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_product_variant_field }
 
     orob2b_product.event_listener.restricted_products_datagrid:
         class: %orob2b_product.event_listener.restricted_products_datagrid.class%

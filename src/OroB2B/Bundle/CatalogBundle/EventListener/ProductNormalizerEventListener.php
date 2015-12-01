@@ -2,19 +2,21 @@
 
 namespace OroB2B\Bundle\CatalogBundle\EventListener;
 
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
 
 class ProductNormalizerEventListener extends AbstractProductImportEventListener
 {
-    /** @var Category[] */
-    protected $categories = [];
-
     /**
      * @param ProductNormalizerEvent $event
      */
     public function onNormalize(ProductNormalizerEvent $event)
     {
+        $context = $event->getContext();
+        if (isset($context['fieldName']) && isset($context['mode'])) {
+            // It's a related Product entity (like variantLinks)
+            return;
+        }
+
         $category = $this->getCategoryByProduct($event->getProduct(), true);
         if (!$category) {
             return;
