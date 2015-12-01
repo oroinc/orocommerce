@@ -1,0 +1,3 @@
+config:
+    paths:
+        'orob2bwarehouse/js/app/components/warehouse-inventory-levels-component': 'bundles/orob2bwarehouse/js/app/components/warehouse-inventory-levels-component.js'
