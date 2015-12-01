@@ -65,6 +65,7 @@ class Action
         $this->definition = $definition;
     }
 
+
     /**
      * @return bool
      */
@@ -136,7 +137,8 @@ class Action
      */
     public function isAllowed(ActionContext $context, Collection $errors = null)
     {
-        return $this->isPreConditionAllowed($context, $errors) && $this->isConditionAllowed($context, $errors);
+        return $this->isPreConditionAllowed($context, $errors) &&
+            $this->evaluateConditions($context, ActionDefinition::CONDITIONS, $errors);
     }
 
     /**
@@ -149,16 +151,6 @@ class Action
         $this->executeFunctions($context, ActionDefinition::PREFUNCTIONS);
 
         return $this->evaluateConditions($context, ActionDefinition::PRECONDITIONS, $errors);
-    }
-
-    /**
-     * @param ActionContext $context
-     * @param Collection $errors
-     * @return bool
-     */
-    protected function isConditionAllowed(ActionContext $context, Collection $errors = null)
-    {
-        return $this->evaluateConditions($context, ActionDefinition::CONDITIONS, $errors);
     }
 
     /**
