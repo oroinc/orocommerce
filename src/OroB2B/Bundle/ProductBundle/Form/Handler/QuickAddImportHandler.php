@@ -54,25 +54,36 @@ class QuickAddImportHandler
     public function process(Request $request)
     {
         $response = null;
-
         $processor = $this->getProcessor($this->getComponentName($request));
-        $form = $this->createQuickAddOrderForm();
 
-        if ($request->isMethod(Request::METHOD_POST)) {
-            $form->handleRequest($request);
+        $products = $request->get(
+            sprintf('%s[%s]', QuickAddOrderType::NAME, QuickAddType::PRODUCTS_FIELD_NAME),
+            [],
+            true
+        );
+        $products = is_array($products) ? $products : [];
+
+        $shoppingListId = (int) $request->get(
+            sprintf('%s[%s]', QuickAddOrderType::NAME, QuickAddType::ADDITIONAL_FIELD_NAME),
+            0,
+            true
+        );
+
+        if ($products) {
             if ($processor && $processor->isAllowed()) {
-                if ($form->isValid()) {
-                    $products = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getData();
-                    $products = is_array($products) ? $products : [];
                     $response = $processor->process(
-                        [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products],
+                        [
+                            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products,
+                            ProductDataStorage::ADDITIONAL_DATA_KEY => [
+                                ProductDataStorage::SHOPPING_LIST_ID => $shoppingListId
+                            ]
+                        ],
                         $request
                     );
                     if (!$response) {
                         // reset form
                         $form = $this->createQuickAddOrderForm();
                     }
-                }
             } else {
                 /** @var Session $session */
                 $session = $request->getSession();

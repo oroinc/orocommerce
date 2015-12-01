@@ -15,6 +15,10 @@ class ProductDataStorage
     const PRODUCT_SKU_KEY = 'productSku';
     const PRODUCT_QUANTITY_KEY = 'productQuantity';
 
+    const ADDITIONAL_DATA_KEY = 'additional_data';
+
+    const SHOPPING_LIST_ID = 'shoppingListId';
+
     /** @var SessionInterface */
     protected $session;
 

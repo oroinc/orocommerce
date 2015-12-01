@@ -91,8 +91,20 @@ class QuickAddHandler
                 if ($form->isValid()) {
                     $products = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getData();
                     $products = is_array($products) ? $products : [];
+
+                    $shoppingListId = (int) $request->get(
+                        sprintf('%s[%s]', QuickAddType::NAME, QuickAddType::ADDITIONAL_FIELD_NAME),
+                        0,
+                        true
+                    );
+
                     $response = $processor->process(
-                        [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products],
+                        [
+                            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products,
+                            ProductDataStorage::ADDITIONAL_DATA_KEY => [
+                                ProductDataStorage::SHOPPING_LIST_ID => $shoppingListId
+                            ]
+                        ],
                         $request
                     );
                     if (!$response) {

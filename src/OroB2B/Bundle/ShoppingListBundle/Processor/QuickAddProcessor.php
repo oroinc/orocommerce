@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\ShoppingListBundle\Processor;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddOrderType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -57,18 +58,20 @@ class QuickAddProcessor implements ComponentProcessorInterface
             return;
         }
 
+        $shoppingListId = !empty($data[ProductDataStorage::ADDITIONAL_DATA_KEY][ProductDataStorage::SHOPPING_LIST_ID])
+            ? $data[ProductDataStorage::ADDITIONAL_DATA_KEY][ProductDataStorage::SHOPPING_LIST_ID]
+            : 0;
+
         $data = $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY];
 
-        $shoppingListId = (int)$request->get(
-            sprintf('%s[%s]', QuickAddType::NAME, QuickAddType::ADDITIONAL_FIELD_NAME),
-            null,
-            true
-        );
         $shoppingList = $this->shoppingListLineItemHandler->getShoppingList($shoppingListId);
 
-        $productSkus = ArrayUtils::arrayColumn($data, 'productSku');
+        $productSkus = ArrayUtils::arrayColumn($data, ProductDataStorage::PRODUCT_SKU_KEY);
         $productIds = $this->getProductRepository()->getProductsIdsBySku($productSkus);
-        $productSkuQuantities = array_combine($productSkus, ArrayUtils::arrayColumn($data, 'productQuantity'));
+        $productSkuQuantities = array_combine(
+            $productSkus,
+            ArrayUtils::arrayColumn($data, ProductDataStorage::PRODUCT_QUANTITY_KEY)
+        );
         $productIdsQuantities = array_combine($productIds, $productSkuQuantities);
 
         /** @var Session $session */
