@@ -20,7 +20,7 @@ layout:
                 styles:
                     blockType: style
                     options:
-                        src: 'css/layout/default/styles.css'
+                        src: { @value: $data.theme.data.assets.styles.output }
                 body:
                     blockType: body
                 wrapper:
@@ -30,6 +30,8 @@ layout:
                             class: wrapper
                 header:
                     blockType: container
+                notification:
+                    blockType: block
                 main:
                     blockType: container
                     options:
@@ -45,15 +47,24 @@ layout:
                     options:
                         attr:
                             class: footer
+                scripts:
+                    blockType: script
+                    options:
+                        src: { @value: $data.theme.data.assets.scripts.output }
+                requirejs:
+                    blockType: block
             tree:
                 root:
                     head:
                         meta_charset: ~
                         meta_viewport: ~
                         styles: ~
+                        requirejs: ~
                     body:
                         wrapper:
                             header: ~
+                            notification: ~
                             main:
                                 content: ~
                             footer: ~
+                        #scripts: ~

@@ -186,7 +186,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $this->assertFalse($user->isConfirmed());
 
         $crawler = $this->client->followRedirect();
-        $this->assertEquals('Login', $crawler->filter('h2.title')->html());
+        $this->assertEquals('Sign In', $crawler->filter('h2.create-account__title')->html());
         $this->assertContains('Please check your email to complete registration', $crawler->html());
 
         $this->client->followRedirects(true);
@@ -205,7 +205,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Login', $crawler->html());
+        $this->assertContains('Sign In', $crawler->html());
 
         $user = $this->getAccountUser(['email' => self::EMAIL]);
         $this->assertNotEmpty($user);
@@ -252,13 +252,13 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_account_user_security_login'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertEquals('Login', $crawler->filter('h2.title')->html());
+        $this->assertEquals('Sign In', $crawler->filter('h2.create-account__title')->html());
 
         $forgotPasswordLink = $crawler->filter('a:contains("Forgot Your Password?")')->link();
         $crawler = $this->client->click($forgotPasswordLink);
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertEquals('Forgot Your Password', $crawler->filter('h2.title')->html());
+        $this->assertEquals('Forgot Your Password?', $crawler->filter('h2.title')->html());
 
         $this->assertUnknownEmail($crawler);
         $this->assertKnownEmail($crawler);
@@ -297,7 +297,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertEquals('Login', $crawler->filter('h2.title')->html());
+        $this->assertEquals('Sign In', $crawler->filter('h2.create-account__title')->html());
         $this->assertContains('Password was created successfully.', $crawler->html());
     }
 
@@ -357,7 +357,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $this->client->followRedirects(true);
 
         $crawler = $this->client->submit($form, $submittedData);
-        $this->assertEquals('Forgot Your Password', $crawler->filter('h2.title')->html());
+        $this->assertEquals('Forgot Your Password?', $crawler->filter('h2.title')->html());
         $this->assertContains(
             'Email address "'. $unknownEmail .'" is not known',
             $crawler->html()
