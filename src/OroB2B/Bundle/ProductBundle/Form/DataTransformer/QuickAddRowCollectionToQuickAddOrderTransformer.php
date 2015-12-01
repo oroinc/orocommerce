@@ -2,11 +2,12 @@
 
 namespace OroB2B\Bundle\ProductBundle\Form\DataTransformer;
 
+use Symfony\Component\Form\DataTransformerInterface;
+
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
 use OroB2B\Bundle\ProductBundle\Model\QuickAddRow;
 use OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
-use Symfony\Component\Form\DataTransformerInterface;
 
 class QuickAddRowCollectionToQuickAddOrderTransformer implements DataTransformerInterface
 {

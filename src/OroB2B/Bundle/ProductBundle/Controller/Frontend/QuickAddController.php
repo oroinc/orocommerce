@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -83,9 +84,19 @@ class QuickAddController extends Controller
     {
         $result = $this->get('orob2b_product.form_handler.quick_add_import')->process($request);
 
-        return [
+        /** @var RedirectResponse $response */
+        $response = $result['response'];
+        $form = $result['form'];
 
-        ];
+        if (!$response) {
+            $response = new RedirectResponse($this->generateUrl('orob2b_product_frontend_quick_add'));
+        }
+
+        return new Response(
+            '<div class="widget-content"><script>window.location.href = "' .
+            $response->getTargetUrl() .
+            '";</script></div>'
+        );
     }
 
     /**

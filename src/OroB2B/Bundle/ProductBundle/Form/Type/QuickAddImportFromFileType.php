@@ -32,8 +32,8 @@ class QuickAddImportFromFileType extends AbstractType
                                     'mimeTypes' => [
                                         'text/plain',
                                         'text/csv',
-                                        'application/octet-stream',
-                                        'application/zip'
+                                        'application/vnd.oasis.opendocument.spreadsheet',
+                                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                                     ],
                                     'mimeTypesMessage' => 'This file type is not allowed.'
                                 ]

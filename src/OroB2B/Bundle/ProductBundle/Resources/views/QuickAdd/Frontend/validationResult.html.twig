@@ -4,17 +4,17 @@
 <div class="widget-content"
      data-page-component-module="orob2bfrontend/js/app/components/widget-form-component"
      data-page-component-options="{{ widgetOptions|json_encode }}"
-     id="import-validation">
+         id="import-validation">
 
-    <style type="text/css">
-        #import-validation {
-            padding-bottom: 1px;
-        }
+        <style type="text/css">
+            #import-validation {
+                padding-bottom: 1px;
+            }
 
-        .import-errors ol {
-            height: 198px;
-            overflow: auto;
-            padding-left: 25px;
+            .import-errors ol {
+                height: 198px;
+                overflow: auto;
+                padding-left: 25px;
         }
 
         .import-errors {
@@ -143,7 +143,7 @@
 
     {% set pageComponentOptions = {
         'componentSelector': '#' ~ form.component.vars.id,
-        'additionalSelector': '#' ~ form.component.vars.id,
+        'additionalSelector': '#' ~ form.additional.vars.id,
         'componentPrefix': 'quick-add-import'
     } %}
 
@@ -171,6 +171,8 @@
 
         <div class="widget-actions">
         </div>
+
+        {{ form_rest(form) }}
 
     </form>
 
