@@ -82,22 +82,16 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
 
     public function testBuildFormNoRequestParameter()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface $builder */
-        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
-
         $this->assertRequestGetCalled(false);
 
         $this->storage->expects($this->never())
             ->method($this->anything());
 
-        $this->extension->buildForm($builder, ['data' => $this->entity]);
+        $this->extension->buildForm($this->getBuilderMock(), []);
     }
 
     public function testBuildFormExistingEntity()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface $builder */
-        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
-
         $this->doctrineHelper->expects($this->any())->method('getSingleEntityIdentifier')->willReturn(1);
 
         $this->assertRequestGetCalled();
@@ -105,21 +99,18 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
         $this->storage->expects($this->never())
             ->method($this->anything());
 
-        $this->extension->buildForm($builder, ['data' => $this->entity]);
+        $this->extension->buildForm($this->getBuilderMock(true), []);
     }
 
     public function testBuildFormNoData()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface $builder */
-        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
-
         $this->doctrineHelper->expects($this->once())->method('getSingleEntityIdentifier')->willReturn(null);
         $this->doctrineHelper->expects($this->never())->method('getEntityRepository');
 
         $this->assertRequestGetCalled();
-        $this->assertStorageCalled([]);
+        $this->assertStorageCalled([], false);
 
-        $this->extension->buildForm($builder, ['data' => $this->entity]);
+        $this->extension->buildForm($this->getBuilderMock(true), []);
     }
 
     /**
@@ -155,13 +146,14 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
 
     /**
      * @param array $data
+     * @param bool $expectsRemove
      */
-    protected function assertStorageCalled(array $data)
+    protected function assertStorageCalled(array $data, $expectsRemove = true)
     {
         $this->storage->expects($this->once())
             ->method('get')
             ->willReturn($data);
-        $this->storage->expects($this->once())
+        $this->storage->expects($expectsRemove ? $this->once() : $this->never())
             ->method('remove');
     }
 
@@ -223,25 +215,27 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
     {
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityMetadata')
-            ->willReturnCallback(function ($object) use ($mappings) {
+            ->willReturnCallback(
+                function ($object) use ($mappings) {
 
-                $class = is_object($object) ? ClassUtils::getClass($object) : ClassUtils::getRealClass($object);
+                    $class = is_object($object) ? ClassUtils::getClass($object) : ClassUtils::getRealClass($object);
 
-                $metadata = new ClassMetadata($class);
-                $metadata->setIdentifier([null]);
+                    $metadata = new ClassMetadata($class);
+                    $metadata->setIdentifier([null]);
 
-                if (!isset($mappings[$class])) {
+                    if (!isset($mappings[$class])) {
+                        return $metadata;
+                    }
+
+                    $reflectionClass = new \ReflectionClass($metadata);
+                    foreach ($mappings[$class] as $property => $value) {
+                        $method = $reflectionClass->getProperty($property);
+                        $method->setValue($metadata, $value);
+                    }
+
                     return $metadata;
                 }
-
-                $reflectionClass = new \ReflectionClass($metadata);
-                foreach ($mappings[$class] as $property => $value) {
-                    $method = $reflectionClass->getProperty($property);
-                    $method->setValue($metadata, $value);
-                }
-
-                return $metadata;
-            });
+            );
 
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityReference')
@@ -290,5 +284,39 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
         $type = 'entity';
         $this->extension->setExtendedType($type);
         $this->assertSame($type, $this->extension->getExtendedType());
+    }
+
+    /**
+     * @param bool $expectsAddEventListener
+     * @return \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface
+     */
+    protected function getBuilderMock($expectsAddEventListener = false)
+    {
+        /** @var  $builder */
+        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
+        if ($expectsAddEventListener) {
+            $builder->expects($this->once())->method('addEventListener')->with(
+                $this->isType('string'),
+                $this->logicalAnd(
+                    $this->isInstanceOf('\Closure'),
+                    $this->callback(
+                        function (\Closure $closure) {
+                            $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')
+                                ->disableOriginalConstructor()
+                                ->getMock();
+
+                            $event->expects($this->once())->method('getData')->willReturn($this->entity);
+                            $closure($event);
+
+                            return true;
+                        }
+                    )
+                )
+            );
+        } else {
+            $builder->expects($this->never())->method('addEventListener');
+        }
+
+        return $builder;
     }
 }

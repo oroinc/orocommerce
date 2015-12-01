@@ -36,12 +36,12 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
     {
         $productSelectType = new EntityType(
             [
-                1 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 1, 'id'),
-                2 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 2, 'id'),
+                1 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 1]),
+                2 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 2]),
             ],
             ProductSelectType::NAME,
             [
-                'data_parameters' => []
+                'data_parameters' => [],
             ]
         );
 
@@ -101,7 +101,6 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
         $this->formType->buildView($view, $form, $options);
 
         $this->assertEquals($expected, $view->vars['disallow_delete']);
-        $this->assertEquals($this->getExpectedSections(), $view->vars['sections']);
 
         $this->assertDefaultBuildViewCalled();
     }
@@ -112,7 +111,7 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
         return new ArrayCollection(
             [
                 'quantity' => ['data' => ['quantity' => [], 'productUnit' => []], 'order' => 10],
-                'price' => ['data' => [], 'order' => 20],
+                'price' => ['data' => ['price' => []], 'order' => 20],
                 'ship_by' => ['data' => ['shipBy' => []], 'order' => 30],
                 'comment' => [
                     'data' => [
@@ -184,7 +183,7 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
         $this->assertTrue($form->isValid());
         $this->assertEquals($expectedData, $form->getData());
     }
-    
+
     /**
      * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -192,7 +191,7 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
     public function submitDataProvider()
     {
         /** @var Product $product */
-        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 1, 'id');
+        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 1]);
         $date = \DateTime::createFromFormat('Y-m-d H:i:s', '2015-02-03 00:00:00', new \DateTimeZone('UTC'));
         $currency = 'USD';
         $order = new Order();
@@ -213,7 +212,9 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                 'expectedData' => (new OrderLineItem())
                     ->setProduct($product)
                     ->setQuantity(10)
-                    ->setProductUnit($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code'))
+                    ->setProductUnit(
+                        $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'item'])
+                    )
                     ->setPriceType(OrderLineItem::PRICE_TYPE_UNIT)
                     ->setShipBy($date)
                     ->setComment('Comment'),
@@ -235,7 +236,9 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                     ->setFromExternalSource(true)
                     ->setProduct($product)
                     ->setQuantity(5)
-                    ->setProductUnit($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'kg', 'code'))
+                    ->setProductUnit(
+                        $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'kg'])
+                    )
                     ->setPriceType(OrderLineItem::PRICE_TYPE_UNIT)
                     ->setShipBy($date)
                     ->setComment('Comment'),
@@ -244,11 +247,13 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                     ->setFromExternalSource(true)
                     ->setProduct($product)
                     ->setQuantity(5)
-                    ->setProductUnit($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'kg', 'code'))
+                    ->setProductUnit(
+                        $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'kg'])
+                    )
                     ->setPriceType(OrderLineItem::PRICE_TYPE_UNIT)
                     ->setShipBy($date)
                     ->setComment('Comment'),
-                'choices' => []
+                'choices' => [],
             ],
             'modifications with choices' => [
                 'options' => [
@@ -266,7 +271,9 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                     ->setFromExternalSource(true)
                     ->setProduct($product)
                     ->setQuantity(5)
-                    ->setProductUnit($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code'))
+                    ->setProductUnit(
+                        $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'item'])
+                    )
                     ->setPriceType(OrderLineItem::PRICE_TYPE_UNIT)
                     ->setShipBy($date)
                     ->setComment('Comment'),
@@ -275,13 +282,15 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                     ->setFromExternalSource(true)
                     ->setProduct($product)
                     ->setQuantity(5)
-                    ->setProductUnit($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code'))
+                    ->setProductUnit(
+                        $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'item'])
+                    )
                     ->setPriceType(OrderLineItem::PRICE_TYPE_UNIT)
                     ->setShipBy($date)
                     ->setComment('Comment'),
                 'choices' => [
-                    $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code')
-                ]
+                    $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'item']),
+                ],
             ],
             'free form' => [
                 'options' => [
@@ -299,7 +308,9 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                     ->setProductSku('SKU')
                     ->setFreeFormProduct('Service')
                     ->setQuantity(10)
-                    ->setProductUnit($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code'))
+                    ->setProductUnit(
+                        $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'item'])
+                    )
                     ->setPriceType(OrderLineItem::PRICE_TYPE_UNIT)
                     ->setComment('Comment Updated'),
                 'data' => (new OrderLineItem())
@@ -308,13 +319,32 @@ class FrontendOrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                     ->setProductSku('SKU')
                     ->setFreeFormProduct('Service')
                     ->setQuantity(5)
-                    ->setProductUnit($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code'))
+                    ->setProductUnit(
+                        $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'item'])
+                    )
                     ->setPriceType(OrderLineItem::PRICE_TYPE_UNIT)
                     ->setComment('Comment'),
                 'choices' => [
-                    $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code')
-                ]
+                    $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'item']),
+                ],
             ],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getExpectedOptions()
+    {
+        return [
+            'currency' => null,
+            'data_class' => 'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem',
+            'intention' => 'order_line_item',
+            'page_component' => 'oroui/js/app/components/view-component',
+            'page_component_options' => [
+                'view' => 'orob2border/js/app/views/frontend-line-item-view',
+            ],
+            'sections' => $this->getExpectedSections()->toArray()
         ];
     }
 }

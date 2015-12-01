@@ -153,3 +153,42 @@
         {{ form_errors(form.price.currency) }}
     </td>
 {% endblock %}
+
+{% block _orob2b_order_type_lineItems_entry_offers_widget %}
+    {% set page_component_options = {
+        offersSelector: '[name=%s]'|format(id),
+        quantitySelector: '#%s'|format(form.parent.quantity.vars.id),
+        unitSelector: '#%s'|format(form.parent.productUnit.vars.id),
+    } %}
+
+    <table class="grid table table-hover table-bordered order-line-item-offers"
+           data-page-component-module="orob2brfp/js/app/components/order-line-item-offers"
+           data-page-component-options="{{ page_component_options|json_encode }}">
+        <tbody>
+            {% for offer in offers %}
+                <tr>
+                    <td class="order-line-item-offers-radio">
+                        <input type="radio"
+                               value="{{ offer.quantity }}"
+                               name="{{ id }}"
+                               id="{{ id }}-{{ loop.index }}"
+                               data-quantity="{{ offer.quantity }}"
+                               data-unit="{{ offer.unit }}"
+                               data-currency="{{ offer.currency }}"
+                               data-price="{{ offer.price }}">
+                    </td>
+                    <td class="order-line-item-offers-quantity">
+                        <label for="{{ id }}-{{ loop.index }}">
+                            {{ offer.quantity|orob2b_format_product_unit_code(offer.unit) }}
+                        </label>
+                    </td>
+                    <td class="order-line-item-offers-price">
+                        <label for="{{ id }}-{{ loop.index }}">
+                            {{ offer.price|oro_format_currency({'currency': offer.currency}) }}
+                        </label>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

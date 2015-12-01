@@ -17,6 +17,7 @@ parameters:
     orob2b_rfp.form.type.frontend_request_product_collection.class: OroB2B\Bundle\RFPBundle\Form\Type\Frontend\RequestProductCollectionType
 
     orob2b_rfp.form.type.extension.request_data_storage.class: OroB2B\Bundle\RFPBundle\Form\Extension\RequestDataStorageExtension
+    orob2b_rfp.form.type.extension.order_data_storage.class: OroB2B\Bundle\RFPBundle\Form\Extension\OrderDataStorageExtension
 
 services:
     orob2b_rfp.form.type.default_request_status:
@@ -134,3 +135,11 @@ services:
             - [setExtendedType, [orob2b_rfp_frontend_request]]
         tags:
             - { name: form.type_extension, alias: orob2b_rfp_frontend_request }
+
+    orob2b_rfp.form.type.extension.order_data_storage:
+        class: %orob2b_rfp.form.type.extension.order_data_storage.class%
+        arguments:
+            - @request_stack
+            - @orob2b_product.service.product_data_storage
+        tags:
+            - { name: form.type_extension, alias: orob2b_order_line_item, priority: 5 }

@@ -52,6 +52,18 @@ class OrderControllerTest extends WebTestCase
         $content = $crawler->filter('[data-ftid=orob2b_order_type_lineItems]')->html();
         foreach ($request->getRequestProducts() as $lineItem) {
             $this->assertContains($lineItem->getProduct()->getSku(), $content);
+
+            foreach ($lineItem->getRequestProductItems() as $requestProductItem) {
+                $nodes = $crawler->filter(
+                    sprintf(
+                        '[data-quantity=%s][data-unit=%s]',
+                        $requestProductItem->getQuantity(),
+                        $requestProductItem->getProductUnitCode()
+                    )
+                );
+
+                $this->assertNotEmpty($nodes->count());
+            }
         }
     }
 }

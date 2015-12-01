@@ -99,11 +99,21 @@ abstract class AbstractOrderLineItemType extends AbstractType
                 'page_component' => 'oroui/js/app/components/view-component',
                 'page_component_options' => [],
                 'currency' => null,
+                'sections' => [
+                    'quantity' => ['data' => ['quantity' => [], 'productUnit' => []], 'order' => 10],
+                    'price' => ['data' => ['price' => [], 'priceType' => []], 'order' => 20],
+                    'ship_by' => ['data' => ['shipBy' => []], 'order' => 30],
+                    'comment' => [
+                        'data' => ['comment' => ['page_component' => 'orob2border/js/app/components/notes-component']],
+                        'order' => 40,
+                    ],
+                ],
             ]
         );
         $resolver->setAllowedTypes('page_component_options', 'array');
         $resolver->setAllowedTypes('page_component', 'string');
         $resolver->setAllowedTypes('currency', ['null', 'string']);
+        $resolver->setAllowedTypes('sections', ['array']);
     }
 
     /**
@@ -121,8 +131,12 @@ abstract class AbstractOrderLineItemType extends AbstractType
             $view->vars['page_component_options'] = $options['page_component_options'];
         }
         $view->vars['page_component_options']['currency'] = $options['currency'];
+    }
 
-        $sections = $this->getItemTemplateSections();
+    /** {@inheritdoc} */
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        $sections = new ArrayCollection($options['sections']);
         $criteria = Criteria::create();
         $criteria->orderBy(['order' => Criteria::ASC]);
         $view->vars['sections'] = $sections->matching($criteria);
@@ -132,22 +146,4 @@ abstract class AbstractOrderLineItemType extends AbstractType
      * @param FormInterface $form
      */
     abstract protected function updateAvailableUnits(FormInterface $form);
-
-    /**
-     * @return ArrayCollection
-     */
-    protected function getItemTemplateSections()
-    {
-        return new ArrayCollection(
-            [
-                'quantity' => ['data' => ['quantity' => [], 'productUnit' => []], 'order' => 10],
-                'price' => ['data' => ['price' => [], 'priceType' => []], 'order' => 20],
-                'ship_by' => ['data' => ['shipBy' => []], 'order' => 30],
-                'comment' => [
-                    'data' => ['comment' => ['page_component' => 'orob2border/js/app/components/notes-component']],
-                    'order' => 40,
-                ],
-            ]
-        );
-    }
 }

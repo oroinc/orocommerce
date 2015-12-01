@@ -4,6 +4,8 @@ namespace OroB2B\Bundle\ProductBundle\Form\Extension;
 
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -41,9 +43,6 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
     /** @var ProductRepository */
     protected $productRepository;
 
-    /** @var array */
-    protected $data;
-
     /**
      * @param RequestStack $requestStack
      * @param ProductDataStorage $storage
@@ -60,7 +59,6 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
         $this->storage = $storage;
         $this->doctrineHelper = $doctrineHelper;
         $this->productClass = $productClass;
-        $this->data = [];
     }
 
     /**
@@ -80,10 +78,17 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if ($this->requestStack->getCurrentRequest()->get(ProductDataStorage::STORAGE_KEY)) {
-            $entity = isset($options['data']) ? $options['data'] : null;
-            if ($entity instanceof $this->dataClass && !$this->doctrineHelper->getSingleEntityIdentifier($entity)) {
-                $this->fillData($entity);
-            }
+            $builder->addEventListener(
+                FormEvents::PRE_SET_DATA,
+                function (FormEvent $event) {
+                    $entity = $event->getData();
+                    if ($entity instanceof $this->dataClass
+                        && !$this->doctrineHelper->getSingleEntityIdentifier($entity)
+                    ) {
+                        $this->fillData($entity);
+                    }
+                }
+            );
         }
     }
 
@@ -93,8 +98,6 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
     protected function fillData($entity)
     {
         $data = $this->storage->get();
-        $this->data = $data;
-        $this->storage->remove();
 
         if (!$data) {
             return;
@@ -112,6 +115,8 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
             $itemsData = $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY];
             $this->fillItemsData($entity, $itemsData);
         }
+
+        $this->storage->remove();
     }
 
     /**
@@ -122,9 +127,7 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
     {
         $repository = $this->getProductRepository();
         foreach ($itemsData as $dataRow) {
-            if (!array_key_exists(ProductDataStorage::PRODUCT_SKU_KEY, $dataRow) ||
-                !array_key_exists(ProductDataStorage::PRODUCT_QUANTITY_KEY, $dataRow)
-            ) {
+            if (!array_key_exists(ProductDataStorage::PRODUCT_SKU_KEY, $dataRow)) {
                 continue;
             }
 
