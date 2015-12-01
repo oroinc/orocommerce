@@ -95,19 +95,22 @@ class ActionDefinitionConfigurationValidator
      */
     protected function validateFrontendOptions(array $options, $path)
     {
-        if (isset($options['template']) && !$this->twigLoader->exists($options['template'])) {
+        $this->assertTemplate($options, $path, 'template');
+        $this->assertTemplate($options, $path, 'dialog_template');
+    }
+
+    /**
+     * @param array $options
+     * @param string $path
+     * @param string $paramName
+     */
+    protected function assertTemplate(array $options, $path, $paramName)
+    {
+        if (isset($options[$paramName]) && !$this->twigLoader->exists($options[$paramName])) {
             $this->handleError(
-                $this->getPath($path, 'template'),
+                $this->getPath($path, $paramName),
                 'Unable to find template "%s"',
-                $options['template'],
-                false
-            );
-        }
-        if (isset($options['dialog_template']) && !$this->twigLoader->exists($options['dialog_template'])) {
-            $this->handleError(
-                $this->getPath($path, 'dialog_template'),
-                'Unable to find template "%s"',
-                $options['dialog_template'],
+                $options[$paramName],
                 false
             );
         }
