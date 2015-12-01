@@ -228,4 +228,14 @@ class Action
 
         return true;
     }
+
+    /**
+     * @return bool
+     */
+    public function hasForm()
+    {
+        $formOptionsConfig = $this->definition->getFormOptions();
+
+        return !empty($formOptionsConfig['attribute_fields']);
+    }
 }

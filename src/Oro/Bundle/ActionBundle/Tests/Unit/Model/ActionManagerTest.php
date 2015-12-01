@@ -5,6 +5,7 @@ namespace Oro\Bundle\ActionBundle\Tests\Unit\Model;
 use Oro\Bundle\ActionBundle\Configuration\ActionConfigurationProvider;
 use Oro\Bundle\ActionBundle\Model\Action;
 use Oro\Bundle\ActionBundle\Model\ActionAssembler;
+use Oro\Bundle\ActionBundle\Model\ActionContext;
 use Oro\Bundle\ActionBundle\Model\ActionDefinition;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 use Oro\Bundle\ActionBundle\Model\AttributeAssembler;
@@ -15,6 +16,9 @@ use Oro\Bundle\WorkflowBundle\Model\Action\ActionFactory as FunctionFactory;
 
 use Oro\Component\ConfigExpression\ExpressionFactory as ConditionFactory;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class ActionManagerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
@@ -81,7 +85,7 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->configurationProvider->expects($this->once())
+        $this->configurationProvider->expects($this->any())
             ->method('getActionConfiguration')
             ->willReturn($this->getConfiguration());
 
@@ -132,6 +136,56 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
         }
 
         $this->assertGetActions($expectedData['actions'], $context);
+    }
+
+    /**
+     * @dataProvider getActionDataProvider
+     *
+     * @param array $context
+     * @param string $actionName
+     * @param mixed $expected
+     */
+    public function testGetAction(array $context, $actionName, $expected)
+    {
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityReference')
+            ->willReturnCallback(function ($className, $id) {
+                $obj = new \stdClass();
+                $obj->id = $id;
+
+                return $obj;
+            });
+
+        $action = $this->manager->getAction($context, $actionName);
+
+        $this->assertEquals($expected, $action ? $action->getName() : $action);
+    }
+
+    /**
+     * @return array
+     */
+    public function getActionDataProvider()
+    {
+        return [
+            'invalid action name' => [
+                'context' => [
+                    'route' => 'route1',
+                    'entityClass' => 'Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity1',
+                    'entityId' => 1,
+                ],
+                'actionName' => 'test',
+                'expected' => null
+            ],
+            'valid action name' => [
+                'context' => [
+                    'route' => 'route1',
+                    'entityClass' => 'Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity1',
+                    'entityId' => 1,
+                ],
+                'actionName' => 'action2',
+                'expected' => 'action2'
+            ],
+        ];
     }
 
     /**
@@ -188,6 +242,22 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
             'Oro\Bundle\ActionBundle\Model\ActionContext',
             $this->manager->execute($context, 'test_action')
         );
+    }
+
+    /**
+     * @dataProvider createActionContextProvider
+     *
+     * @param array $context
+     * @param ActionContext $actionContext
+     */
+    public function testCreateActionContext(array $context, ActionContext $actionContext)
+    {
+        if (array_key_exists('entityClass', $context)) {
+            $this->doctrineHelper->expects($this->any())
+                ->method('getEntityReference')
+                ->willReturn(new \stdClass());
+        }
+        $this->assertEquals($actionContext, $this->manager->createActionContext($context));
     }
 
     /**
@@ -296,6 +366,35 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
                 'throwEntityManagerException' => true
             ],
         ];
+    }
+
+    /**
+     * @return array
+     */
+    public function createActionContextProvider()
+    {
+        $actionContext1 = new ActionContext(['data' => new \stdClass()]);
+
+        return [
+            'empty' => [
+                'context' => [],
+                'actionContext' => new ActionContext(),
+            ],
+            'route1 without entity id' => [
+                'context' => [
+                    'route' => 'route1',
+                    'entityClass' => 'stdClass'
+                ],
+                'actionContext' => new ActionContext(),
+            ],
+            'entity' => [
+                'context' => [
+                    'entityClass' => 'stdClass',
+                    'entityId' => 1
+                ],
+                'actionContext' => $actionContext1,
+            ],
+       ];
     }
 
     /**

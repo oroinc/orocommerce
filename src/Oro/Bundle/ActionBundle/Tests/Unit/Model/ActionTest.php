@@ -215,6 +215,20 @@ class ActionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param array $input
+     * @param bool $expected
+     *
+     * @dataProvider hasFormProvider
+     */
+    public function testHasForm(array $input, $expected)
+    {
+        $this->definition->expects($this->once())
+            ->method('getFormOptions')
+            ->willReturn($input);
+        $this->assertEquals($expected, $this->action->hasForm());
+    }
+
+    /**
      * @return array
      */
     public function executeProvider()
@@ -349,6 +363,27 @@ class ActionTest extends \PHPUnit_Framework_TestCase
                     'allowed' => true,
                     'errors' => [],
                 ],
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function hasFormProvider()
+    {
+        return [
+            'empty' => [
+                'input' => [],
+                'expected' => false,
+            ],
+            'empty attribute_fields' => [
+                'input' => ['attribute_fields' => []],
+                'expected' => false,
+            ],
+            'filled' => [
+                'input' => ['attribute_fields' => ['attribute' => []]],
+                'expected' => true,
             ],
         ];
     }
