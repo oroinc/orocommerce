@@ -2,6 +2,9 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache;
 
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManager;
+
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityResolverAdapterInterface;
@@ -41,9 +44,9 @@ abstract class AbstractCacheBuilder
         $productVisibilityResolved->setSourceProductVisibility($productVisibility);
         $productVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_STATIC);
         $productVisibilityResolved->setCategoryId(null);
-        if ($selectedVisibility == BaseProductVisibilityResolved::VISIBILITY_VISIBLE) {
+        if ($selectedVisibility == VisibilityInterface::VISIBLE) {
             $productVisibilityResolved->setVisibility(BaseProductVisibilityResolved::VISIBILITY_VISIBLE);
-        } elseif ($selectedVisibility == BaseProductVisibilityResolved::VISIBILITY_HIDDEN) {
+        } elseif ($selectedVisibility == VisibilityInterface::HIDDEN) {
             $productVisibilityResolved->setVisibility(BaseProductVisibilityResolved::VISIBILITY_HIDDEN);
         }
     }

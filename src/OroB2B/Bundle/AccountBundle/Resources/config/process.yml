@@ -23,27 +23,33 @@ definitions:
             - @visibility_settings_resolver:
                 visibility_entity: $.data
 
+    product_visibility_remove:
+        enabled: true
+        label: Product visibility change
+        entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility
+        actions_configuration:
+            - @visibility_settings_resolver:
+                visibility_entity: $.data
+                deleted: true
 triggers:
     product_visibility_change:
         -
             event: create
         -
             event: update
-        -
-            event: delete
 
     account_group_product_visibility_change:
         -
             event: create
         -
             event: update
-        -
-            event: delete
 
     account_product_visibility_change:
         -
             event: create
         -
             event: update
+
+    product_visibility_remove:
         -
             event: delete

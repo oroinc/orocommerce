@@ -47,7 +47,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractCacheBuilder imple
             $accountGroupProductVisibilityResolved->setVisibility(
                 $this->categoryVisibilityResolver->getCategoryVisibilityForAccountGroup($category, $accountGroup)
             );
-            $accountGroupProductVisibilityResolved->setSourceProductVisibility($accountGroupProductVisibilityResolved);
+            $accountGroupProductVisibilityResolved->setSourceProductVisibility($accountGroupProductVisibility);
             $accountGroupProductVisibilityResolved->setSource(AccountGroupProductVisibilityResolved::SOURCE_CATEGORY);
             $accountGroupProductVisibilityResolved->setCategoryId($category->getId());
         } elseif ($selectedVisibility == AccountGroupProductVisibility::CURRENT_PRODUCT

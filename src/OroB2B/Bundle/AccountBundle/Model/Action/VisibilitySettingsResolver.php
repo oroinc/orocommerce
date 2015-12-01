@@ -7,12 +7,16 @@ use Oro\Bundle\WorkflowBundle\Model\Action\AbstractAction;
 use Oro\Bundle\WorkflowBundle\Model\ContextAccessor;
 
 use Oro\Bundle\WorkflowBundle\Model\ProcessData;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
 
 class VisibilitySettingsResolver extends AbstractAction
 {
     /** @var CacheBuilderInterface */
-    public $cacheBuilder;
+    protected $cacheBuilder;
+
+    /** @var bool */
+    protected $deleted;
 
     /**
      * @param ContextAccessor $contextAccessor
@@ -29,8 +33,12 @@ class VisibilitySettingsResolver extends AbstractAction
      */
     protected function executeAction($context)
     {
-
-        $this->cacheBuilder->resolveVisibilitySettings($context->getEntity());
+        /** @var VisibilityInterface $visibility */
+        $visibility = $context->getEntity();
+        if ($this->deleted) {
+            $visibility->setVisibility($visibility::getDefault($visibility));
+        }
+        $this->cacheBuilder->resolveVisibilitySettings($visibility);
     }
 
     public function initialize(array $options)
@@ -38,5 +46,6 @@ class VisibilitySettingsResolver extends AbstractAction
         if (empty($options['visibility_entity'])) {
             throw new InvalidParameterException('visibility_entity parameter is required');
         }
+        $this->deleted = isset($options['deleted']) && $options['deleted'];
     }
 }
