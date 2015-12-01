@@ -5,14 +5,28 @@ namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseBuilderInterface;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
 {
+    /** @var CategoryCaseBuilderInterface */
+    protected $accountProductResolvedCacheBuilder;
+
+    /**
+     * @param CategoryCaseBuilderInterface $accountProductResolvedCacheBuilder
+     */
+    public function setAccountProductCacheBuilder(CategoryCaseBuilderInterface $accountProductResolvedCacheBuilder)
+    {
+        $this->accountProductResolvedCacheBuilder = $accountProductResolvedCacheBuilder;
+    }
+
     /**
      * @param VisibilityInterface|AccountGroupCategoryVisibility $visibilitySettings
      */
@@ -26,6 +40,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
 
         $categoryIds = $this->getCategoryIdsForUpdate($category, $accountGroup);
         $this->updateProductVisibilityByCategory($categoryIds, $visibility, $accountGroup);
+        $this->updateAccountsWithFallbackToGroup($category, $accountGroup);
     }
 
     /**
@@ -41,7 +56,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
      */
     public function categoryPositionChanged(Category $category)
     {
-        $accountGroups = $this->getAccountGroupsForUpdate();
+        $accountGroups = $this->getAccountGroupsWithFallbackToParentCategory();
 
         foreach ($accountGroups as $accountGroup) {
             $visibility = $this->categoryVisibilityResolver->isCategoryVisibleForAccountGroup($category, $accountGroup);
@@ -49,6 +64,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
 
             $categoryIds = $this->getCategoryIdsForUpdate($category, $accountGroup);
             $this->updateProductVisibilityByCategory($categoryIds, $visibility, $accountGroup);
+            $this->updateAccountsWithFallbackToGroup($category, $accountGroup);
         }
     }
 
@@ -120,7 +136,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
     /**
      * @return AccountGroup[]
      */
-    protected function getAccountGroupsForUpdate()
+    protected function getAccountGroupsWithFallbackToParentCategory()
     {
         /** @var QueryBuilder $qb */
         $qb = $this->registry
@@ -137,6 +153,56 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
             )
             ->where($qb->expr()->eq('AccountGroupCategoryVisibility.visibility', ':parentCategory'))
             ->setParameter('parentCategory', AccountGroupCategoryVisibility::PARENT_CATEGORY);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    protected function updateAccountsWithFallbackToGroup(Category $category, AccountGroup $accountGroup)
+    {
+        $accounts = $this->getAccountsWithFallbackToGroup($category, $accountGroup);
+
+        foreach ($accounts as $account) {
+            $accountVisibilitySettings = new AccountCategoryVisibility();
+            $accountVisibilitySettings->setCategory($category);
+            $accountVisibilitySettings->setAccount($account);
+
+            $this->accountProductResolvedCacheBuilder->resolveVisibilitySettings($accountVisibilitySettings);
+        }
+    }
+
+    /**
+     * @param Category $category
+     * @param AccountGroup $accountGroup
+     * @return Account[]
+     */
+    protected function getAccountsWithFallbackToGroup(Category $category, AccountGroup $accountGroup)
+    {
+        /** @var QueryBuilder $qb */
+        $qb = $this->registry->getManagerForClass('OroB2BAccountBundle:Account')
+            ->createQueryBuilder();
+
+        $qb->select('account')
+            ->from('OroB2BAccountBundle:Account', 'account')
+            ->leftJoin(
+                'OroB2BAccountBundle:Visibility\AccountCategoryVisibility',
+                'accountCategoryVisibility',
+                Join::WITH,
+                $qb->expr()->eq('accountCategoryVisibility.account', 'account')
+            )
+            ->where($qb->expr()->andX(
+                $qb->expr()->eq('account.group', ':accountGroup'),
+                $qb->expr()->orX(
+                    $qb->expr()->isNull('accountCategoryVisibility.visibility'),
+                    $qb->expr()->not(
+                        $qb->expr()->eq('accountCategoryVisibility.category', ':category')
+                    )
+                )
+            ))
+            ->setParameters([
+                'category' => $category,
+                'accountGroup' => $accountGroup
+            ])
+            ->distinct();
 
         return $qb->getQuery()->getResult();
     }

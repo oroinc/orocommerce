@@ -5,7 +5,9 @@ namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseBuilderInterface;
@@ -15,14 +17,26 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
 {
     /** @var CategoryCaseBuilderInterface */
-    protected $dependVisibilityCacheBuilder;
+    protected $accountProductResolvedCacheBuilder;
+
+    /** @var CategoryCaseBuilderInterface */
+    protected $accountGroupProductResolvedCacheBuilder;
 
     /**
-     * @param $dependVisibilityCacheBuilder
+     * @param CategoryCaseBuilderInterface $accountProductResolvedCacheBuilder
      */
-    public function setDependVisibilityCacheBuilder(CategoryCaseBuilderInterface $dependVisibilityCacheBuilder)
+    public function setAccountProductCacheBuilder(CategoryCaseBuilderInterface $accountProductResolvedCacheBuilder)
     {
-        $this->dependVisibilityCacheBuilder = $dependVisibilityCacheBuilder;
+        $this->accountProductResolvedCacheBuilder = $accountProductResolvedCacheBuilder;
+    }
+
+    /**
+     * @param CategoryCaseBuilderInterface $accountGroupProductResolvedCacheBuilder
+     */
+    public function setAccountGroupProductCacheBuilder(
+        CategoryCaseBuilderInterface $accountGroupProductResolvedCacheBuilder
+    ) {
+        $this->accountGroupProductResolvedCacheBuilder = $accountGroupProductResolvedCacheBuilder;
     }
 
     /**
@@ -37,6 +51,7 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
 
         $categoryIds = $this->getCategoryIdsForUpdate($category, null);
         $this->updateProductVisibilityByCategory($categoryIds, $visibility);
+        $this->updateProductVisibilityByCategoryForAccountGroups($category);
         $this->updateProductVisibilityByCategoryForAccounts($category);
     }
 
@@ -58,6 +73,7 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
 
         $categoryIds = $this->getCategoryIdsForUpdate($category, null);
         $this->updateProductVisibilityByCategory($categoryIds, $visibility);
+        $this->updateProductVisibilityByCategoryForAccountGroups($category);
         $this->updateProductVisibilityByCategoryForAccounts($category);
     }
 
@@ -124,10 +140,26 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
      */
     protected function updateProductVisibilityByCategoryForAccounts(Category $category)
     {
-        $AccountCategoryVisibilities = $this->getAccountVisibilitySettings($category);
+        $accountCategoryVisibilities = $this->getAccountVisibilitySettings($category);
 
-        foreach ($AccountCategoryVisibilities as $AccountCategoryVisibility) {
-            $this->dependVisibilityCacheBuilder->resolveVisibilitySettings($AccountCategoryVisibility);
+        foreach ($accountCategoryVisibilities as $accountCategoryVisibility) {
+            $this->accountProductResolvedCacheBuilder->resolveVisibilitySettings($accountCategoryVisibility);
+        }
+    }
+
+    /**
+     * @param Category $category
+     */
+    protected function updateProductVisibilityByCategoryForAccountGroups(Category $category)
+    {
+        $accountGroups = $this->getAccountGroupsWithFallbackToAll($category);
+
+        foreach ($accountGroups as $accountGroup) {
+            $accountGroupVisibilitySettings = new AccountGroupCategoryVisibility();
+            $accountGroupVisibilitySettings->setCategory($category);
+            $accountGroupVisibilitySettings->setAccountGroup($accountGroup);
+
+            $this->accountGroupProductResolvedCacheBuilder->resolveVisibilitySettings($accountGroupVisibilitySettings);
         }
     }
 
@@ -149,6 +181,32 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
                 'categoryVisibility' => AccountCategoryVisibility::CATEGORY,
                 'category' => $category
             ]);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param Category $category
+     * @return \OroB2B\Bundle\AccountBundle\Entity\AccountGroup[]
+     */
+    protected function getAccountGroupsWithFallbackToAll(Category $category)
+    {
+        /** @var QueryBuilder $qb */
+        $qb = $this->registry->getManagerForClass('OroB2BAccountBundle:AccountGroup')
+            ->createQueryBuilder();
+
+        $qb->select('accountGroup')
+            ->from('OroB2BAccountBundle:AccountGroup', 'accountGroup')
+            ->leftJoin(
+                'OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility',
+                'accountGroupCategoryVisibility',
+                Join::WITH,
+                $qb->expr()->eq('accountGroupCategoryVisibility.accountGroup', 'accountGroup')
+            )
+            ->where($qb->expr()->isNull('accountGroupCategoryVisibility.visibility'))
+            ->orWhere($qb->expr()->neq('accountGroupCategoryVisibility.category', ':category'))
+            ->setParameter('category', $category)
+            ->distinct();
 
         return $qb->getQuery()->getResult();
     }
