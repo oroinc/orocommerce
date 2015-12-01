@@ -375,6 +375,26 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider getDialogTemplateDataProvider
+     *
+     * @param string $actionName
+     * @param string $expected
+     */
+    public function testGetDialogTemplate($actionName, $expected)
+    {
+        $this->assertContextHelperCalled(
+            [
+                'route' => 'route1',
+                'entityClass' => 'stdClass',
+                'entityId' => 1
+            ],
+            2
+        );
+
+        $this->assertEquals($expected, $this->manager->getDialogTemplate($actionName));
+    }
+
+    /**
      * @param array $expectedActions
      * @param array $inputContext
      */
@@ -517,6 +537,27 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
+    public function getDialogTemplateDataProvider()
+    {
+        return [
+            [
+                'actionName' => 'unknown_action',
+                'expected' => ActionManager::DEFAULT_DIALOG_TEMPLATE
+            ],
+            [
+                'actionName' => 'action2',
+                'expected' => ActionManager::DEFAULT_DIALOG_TEMPLATE
+            ],
+            [
+                'actionName' => 'action4',
+                'expected' => 'test.html.twig'
+            ]
+        ];
+    }
+
+    /**
+     * @return array
+     */
     protected function getConfiguration()
     {
         return [
@@ -551,6 +592,9 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
                 'entities' => [
                     'Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity1',
                     'Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity2',
+                ],
+                'frontend_options' => [
+                    'dialog_template' => 'test.html.twig'
                 ],
                 'order' => 20,
             ],
