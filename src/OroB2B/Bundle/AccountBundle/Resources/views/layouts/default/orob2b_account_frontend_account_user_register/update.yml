@@ -1,0 +1,32 @@
+layout:
+    actions:
+        - @add:
+            id: registration_form:start
+            parentId: content
+            blockType: form_start
+            options:
+                form_name: 'frontend_account_registration_form'
+                form_method: 'POST'
+                form_route_name: 'orob2b_account_frontend_account_user_register'
+        - @add:
+            id: registration_form
+            parentId: content
+            blockType: form
+            options:
+                form_name: 'frontend_account_registration_form'
+                form_data: { @value: $data.newAccountUser }
+        - @add:
+            id: registration_form:submit
+            parentId: content
+            blockType: button
+            options:
+                action: submit
+                text: Create an Account
+                attr:
+                    class: 'btn btn_orange btn_lg create-account__form__submit'
+        - @add:
+            id: registration_form:end
+            parentId: content
+            blockType: form_end
+            options:
+                form_name: 'frontend_account_registration_form'

@@ -13,6 +13,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\LayoutBundle\Annotation\Layout;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserManager;
@@ -28,7 +29,7 @@ class AccountUserProfileController extends Controller
      *
      * @Route("/register", name="orob2b_account_frontend_account_user_register")
      * @Template("OroB2BAccountBundle:AccountUser/Frontend:register.html.twig")
-     *
+     * @Layout(vars={"form"})
      * @param Request $request
      * @return array|RedirectResponse
      */
@@ -90,6 +91,7 @@ class AccountUserProfileController extends Controller
         /** @var $userManager AccountUserManager */
         $userManager = $this->get('orob2b_account_user.manager');
         $form = $this->createForm(FrontendAccountUserRegistrationType::NAME, $accountUser);
+        return ['form'=> $form];
         $handler = new FrontendAccountUserHandler($form, $request, $userManager);
         if ($userManager->isConfirmationRequired()) {
             $registrationMessage = 'orob2b.account.controller.accountuser.registered_with_confirmation.message';
