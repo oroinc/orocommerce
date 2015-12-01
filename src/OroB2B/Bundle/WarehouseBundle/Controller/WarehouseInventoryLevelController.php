@@ -13,7 +13,7 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WarehouseBundle\Form\Type\WarehouseInventoryLevelGridType;
-use OroB2B\Bundle\WarehouseBundle\Form\Handler\WarehouseInventoryLevelGridHandler;
+use OroB2B\Bundle\WarehouseBundle\Form\Handler\WarehouseInventoryLevelHandler;
 
 class WarehouseInventoryLevelController extends Controller
 {
@@ -38,14 +38,14 @@ class WarehouseInventoryLevelController extends Controller
         $form = $this->createForm(
             WarehouseInventoryLevelGridType::NAME,
             null,
-            ['product_id' => $product->getId()]
+            ['product' => $product]
         );
 
-        $handler = new WarehouseInventoryLevelGridHandler(
+        $handler = new WarehouseInventoryLevelHandler(
             $form,
-            $this->getDoctrine()->getManager(),
+            $this->getDoctrine()->getManagerForClass('OroB2BWarehouseBundle:WarehouseInventoryLevel'),
             $request,
-            $this->get('orob2b_product.service.rounding')
+            $this->get('orob2b_product.service.quantity_rounding')
         );
 
         return $this->get('oro_form.model.update_handler')->handleUpdate(

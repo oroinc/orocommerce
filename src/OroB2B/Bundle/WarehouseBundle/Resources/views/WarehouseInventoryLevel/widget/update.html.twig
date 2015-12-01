@@ -1,6 +1,6 @@
 {% set pageComponentOptions = {
     '_wid': app.request.get('_wid'),
-    'savedId': product.id
+    'savedId': savedId is defined and savedId and form.vars.errors is empty ? savedId : null
 } %}
 <div class="widget-content"
      data-page-component-module="orob2bfrontend/js/app/components/widget-form-component"
@@ -13,7 +13,7 @@
     {% endif %}
 
     <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ app.request.uri }}" {{ form_enctype(form) }}
-          method="{{ form.vars.method }}"
+          method="{{ form.vars.method }}" class="form-horizontal"
     >
         {{ form_widget(form) }}
 

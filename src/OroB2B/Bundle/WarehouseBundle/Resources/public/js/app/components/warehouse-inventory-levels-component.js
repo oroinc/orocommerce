@@ -70,10 +70,17 @@ define(function(require) {
          */
         _formatInitialQuantity: function() {
             var quantityColumn = this.options.quantityColumnName;
+            var numberFormatter = this.numberFormatter;
 
-            // do initial rounding
+            // apply rounding
             _.each(this.grid.collection.fullCollection.models, function(model) {
-                model.set(quantityColumn, this.numberFormatter.fromRaw(model.get(quantityColumn)));
+                model.on('change:' + quantityColumn, function(model, value) {
+                    // convert to numeric value to support correct grid sorting
+                    if (!isNaN(value)) {
+                        model.set(quantityColumn, numberFormatter.toRaw(value), {silent: true});
+                    }
+                });
+                model.set(quantityColumn, numberFormatter.fromRaw(model.get(quantityColumn)));
             }, this);
 
             // render editable cells again to refresh data
@@ -119,6 +126,7 @@ define(function(require) {
             }
 
             var editorInput = cell.$el.find(':input').first();
+            editorInput.parent().addClass('controls');
             editorInput.attr('name', 'quantity_' + cell.model.cid);
             editorInput.data('validation', constraints);
             editorInput.valid();

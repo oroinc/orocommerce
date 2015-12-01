@@ -46,7 +46,7 @@ class WarehouseInventoryLevel extends ExtendWarehouseInventoryLevel
      *
      * @ORM\Column(name="quantity", type="decimal", precision=20, scale=10, nullable=false))
      */
-    protected $quantity;
+    protected $quantity = 0;
 
     /**
      * @var Warehouse $warehouse
