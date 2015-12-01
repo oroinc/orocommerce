@@ -74,20 +74,11 @@ class ActionDefinitionConfigurationValidator
         $this->errors = $errors;
 
         foreach ($configuration as $name => $action) {
-            $this->validateAction($action, $name);
+            $this->validateFrontendOptions($action, $name);
+            $this->validateFormOptions($action, $name);
+            $this->validateRoutes($action['routes'], $this->getPath($name, 'routes'));
+            $this->validateEntities($action['entities'], $this->getPath($name, 'entities'));
         }
-    }
-
-    /**
-     * @param array $action
-     * @param string $path
-     */
-    protected function validateAction(array $action, $path)
-    {
-        $this->validateFrontendOptions($action, $path);
-        $this->validateFormOptions($action, $path);
-        $this->validateRoutes($action['routes'], $this->getPath($path, 'routes'));
-        $this->validateEntities($action['entities'], $this->getPath($path, 'entities'));
     }
 
     /**
