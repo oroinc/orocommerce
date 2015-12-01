@@ -14,8 +14,6 @@ use Oro\Bundle\ActionBundle\Model\ActionManager;
 
 class WidgetController extends Controller
 {
-    const DEFAULT_DIALOG_TEMPLATE = 'OroActionBundle:Widget:widget/form.html.twig';
-
     /**
      * @Route("/buttons", name="oro_action_widget_buttons")
      * @Template()
@@ -55,12 +53,7 @@ class WidgetController extends Controller
         }
         $params['form'] = $form->createView();
         
-        $frontendOptions = $action->getDefinition()->getFrontendOptions();
-        $template = !empty($frontendOptions['dialog_template'])
-            ? $frontendOptions['dialog_template']
-            : self::DEFAULT_DIALOG_TEMPLATE;
-
-        return $this->render($template, $params);
+        return $this->render($this->getActionManager()->getDialogTemplate($actionName), $params);
     }
 
     /**
