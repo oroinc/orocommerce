@@ -1,8 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Tests\Functional\Controller;
-
-use Doctrine\Common\Collections\Criteria;
+namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller;
 
 use Oro\Component\Testing\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
@@ -12,7 +10,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 /**
  * @dbIsolation
  */
-class FrontendAuditTest extends WebTestCase
+class AuditControllerTest extends WebTestCase
 {
     /**
      * @var array
@@ -47,7 +45,7 @@ class FrontendAuditTest extends WebTestCase
         $user = $this->getContainer()->get('doctrine')
             ->getManagerForClass('OroB2BAccountBundle:AccountUser')
             ->getRepository('OroB2BAccountBundle:AccountUser')
-            ->findOneBy([], ['id' => Criteria::DESC]);
+            ->findOneBy([]);
 
         $response = $this->requestFrontendGrid(
             'b2b-frontend-audit-history-grid',
@@ -102,7 +100,7 @@ class FrontendAuditTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains("Account User has been saved", $crawler->html());
+        $this->assertContains('Account User has been saved', $crawler->html());
     }
 
     /**
