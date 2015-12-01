@@ -2,22 +2,21 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category;
 
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseBuilderInterface;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\AbstractCacheBuilder;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-class CacheBuilder implements CategoryCaseBuilderInterface
+class CacheBuilder extends AbstractCacheBuilder implements CategoryCaseCacheBuilderInterface
 {
     /**
-     * @var CategoryCaseBuilderInterface[]
+     * @var CategoryCaseCacheBuilderInterface[]
      */
     protected $builders = [];
 
     /**
-     * @param CategoryCaseBuilderInterface $cacheBuilder
+     * @param CategoryCaseCacheBuilderInterface $cacheBuilder
      */
-    public function addBuilder(CategoryCaseBuilderInterface $cacheBuilder)
+    public function addBuilder(CategoryCaseCacheBuilderInterface $cacheBuilder)
     {
         if (!in_array($cacheBuilder, $this->builders, true)) {
             $this->builders[] = $cacheBuilder;
@@ -27,46 +26,10 @@ class CacheBuilder implements CategoryCaseBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function resolveVisibilitySettings(VisibilityInterface $visibilitySettings)
-    {
-        foreach ($this->builders as $builder) {
-            if ($builder->isVisibilitySettingsSupported($visibilitySettings)) {
-                $builder->resolveVisibilitySettings($visibilitySettings);
-            }
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isVisibilitySettingsSupported(VisibilityInterface $visibilitySettings)
-    {
-        foreach ($this->builders as $builder) {
-            if ($builder->isVisibilitySettingsSupported($visibilitySettings)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function categoryPositionChanged(Category $category)
     {
         foreach ($this->builders as $builder) {
             $builder->categoryPositionChanged($category);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function buildCache(Website $website = null)
-    {
-        foreach ($this->builders as $builder) {
-            $builder->buildCache($website);
         }
     }
 }

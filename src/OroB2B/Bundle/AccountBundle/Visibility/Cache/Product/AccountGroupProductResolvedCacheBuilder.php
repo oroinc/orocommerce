@@ -4,11 +4,11 @@ namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseBuilderInterface;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-class AccountGroupProductResolvedCacheBuilder implements ProductCaseBuilderInterface
+class AccountGroupProductResolvedCacheBuilder implements ProductCaseCacheBuilderInterface
 {
     /**
      * {@inheritdoc}

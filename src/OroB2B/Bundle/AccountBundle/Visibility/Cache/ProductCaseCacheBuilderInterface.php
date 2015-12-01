@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\AccountBundle\Visibility\Cache;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
-interface ProductCaseBuilderInterface extends CacheBuilderInterface
+interface ProductCaseCacheBuilderInterface extends CacheBuilderInterface
 {
     /**
      * @param Product $product

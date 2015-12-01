@@ -10,19 +10,19 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseBuilderInterface;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
 {
-    /** @var CategoryCaseBuilderInterface */
+    /** @var CategoryCaseCacheBuilderInterface */
     protected $accountProductResolvedCacheBuilder;
 
     /**
-     * @param CategoryCaseBuilderInterface $accountProductResolvedCacheBuilder
+     * @param CategoryCaseCacheBuilderInterface $accountProductResolvedCacheBuilder
      */
-    public function setAccountProductCacheBuilder(CategoryCaseBuilderInterface $accountProductResolvedCacheBuilder)
+    public function setAccountProductCacheBuilder(CategoryCaseCacheBuilderInterface $accountProductResolvedCacheBuilder)
     {
         $this->accountProductResolvedCacheBuilder = $accountProductResolvedCacheBuilder;
     }

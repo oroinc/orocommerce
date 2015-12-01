@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Visibility\Cache;
+namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Visibility\Cache\Product;
 
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\CacheBuilder;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseBuilderInterface;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 
-class CacheBuilderTest extends \PHPUnit_Framework_TestCase
+class CacheBuilderTest extends AbstractCacheBuilderTest
 {
     /**
-     * @var ProductCaseBuilderInterface[]|\PHPUnit_Framework_MockObject_MockObject[]
+     * @var ProductCaseCacheBuilderInterface[]|\PHPUnit_Framework_MockObject_MockObject[]
      */
     protected $builders;
 
@@ -18,14 +18,16 @@ class CacheBuilderTest extends \PHPUnit_Framework_TestCase
     protected $cacheBuilder;
 
     /**
+     * @var string
+     */
+    protected $cacheBuilderInterface = 'OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface';
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->builders[] = $this
-            ->getMock('OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseBuilderInterface');
-        $this->builders[] = $this->getMock('OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseBuilderInterface');
-        $this->builders[] = $this->getMock('OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseBuilderInterface');
+        parent::setUp();
 
         $this->cacheBuilder = new CacheBuilder();
 
@@ -50,8 +52,8 @@ class CacheBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $mock = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface');
 
-        /** @var ProductCaseBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
-        $builder = $this->getMock('OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseBuilderInterface');
+        /** @var ProductCaseCacheBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
+        $builder = $this->getMock('OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface');
 
         $builder->expects($this->once())
             ->method('isVisibilitySettingsSupported')
@@ -89,8 +91,8 @@ class CacheBuilderTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsVisibilitySettingsSupported()
     {
-        /** @var ProductCaseBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
-        $builder = $this->getMock('OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseBuilderInterface');
+        /** @var ProductCaseCacheBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
+        $builder = $this->getMock('OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface');
 
         $builder->expects($this->once())
             ->method('isVisibilitySettingsSupported')

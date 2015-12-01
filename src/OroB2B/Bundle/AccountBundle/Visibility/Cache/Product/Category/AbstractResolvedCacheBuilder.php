@@ -7,13 +7,13 @@ use Doctrine\ORM\QueryBuilder;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseBuilderInterface;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;
 use OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityResolver;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-abstract class AbstractResolvedCacheBuilder implements CategoryCaseBuilderInterface
+abstract class AbstractResolvedCacheBuilder implements CategoryCaseCacheBuilderInterface
 {
     /** @var Registry */
     protected $registry;
@@ -31,7 +31,7 @@ abstract class AbstractResolvedCacheBuilder implements CategoryCaseBuilderInterf
     }
 
     /**
-     * @param $categoryVisibilityClass
+     * @param string $categoryVisibilityClass
      */
     public function setCategoryVisibilityClass($categoryVisibilityClass)
     {
