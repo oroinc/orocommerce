@@ -1,0 +1,8 @@
+{% extends 'form_div_layout.html.twig' %}
+
+{% block form_widget_simple %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " input input_block input_md"
+    }) %}
+    {{ parent() }}
+{% endblock %}

@@ -1,0 +1,103 @@
+layout:
+    actions:
+        - @setBlockTheme:
+            themes: 'OroB2BAccountBundle:layouts:default/orob2b_account_account_user_security_login/layout.html.twig'
+        - @addTree:
+            items:
+                loginPage:
+                    blockType: container
+                    options:
+                        class_prefix: 'create-account'
+                        vars:
+                            loginPage: { @value: $data.orob2b_login_page }
+                loginPageLogo:
+                    blockType: block
+                    options:
+                        visible: { @not_empty: $data.orob2b_login_page.logoImage }
+                        vars:
+                            loginPage: { @value: $data.orob2b_login_page }
+                loginPageTop:
+                    blockType: html
+                    options:
+                        visible: { @not_empty: $data.orob2b_login_page.topContent }
+                        text: { @value: $data.orob2b_login_page.topContent }
+                loginForm:
+                    blockType: container
+                loginPageBottom:
+                    blockType: html
+                    options:
+                        visible: { @not_empty: $data.orob2b_login_page.bottomContent }
+                        text: { @value: $data.orob2b_login_page.bottomContent }
+                loginFormLabel:
+                    blockType: text
+                    options:
+                        text: orob2b.account.accountuser.profile.login
+                loginFormError:
+                    blockType: text
+                    options:
+                        visible: { @not_empty: $context.error }
+                        text: { @value: $context.error }
+                loginFormUsername:
+                    blockType: input
+                    options:
+                        id: userNameSignIn
+                        name: _username
+                        value: { @value: $context.last_username }
+                        placeholder: orob2b.account.accountuser.email.label
+                        label: orob2b.account.accountuser.email.label
+                loginFormPassword:
+                    blockType: input
+                    options:
+                        type: password
+                        id: passwordSignIn
+                        name: _password
+                        placeholder: orob2b.account.accountuser.profile.enter_password
+                        label: orob2b.account.accountuser.password.label
+                loginFormRemember:
+                    blockType: input
+                    options:
+                        type: checkbox
+                        id: rememberMe
+                        name: _remember_me
+                        #value: on
+                        label: orob2b.account.accountuser.profile.remember_me
+                loginFormTarget:
+                    blockType: input
+                    options:
+                        type: hidden
+                        name: _target_path
+                loginFormCsrf:
+                    blockType: input
+                    options:
+                        type: hidden
+                        name: _csrf_token
+                        value: { @value: $context.csrf_token }
+                loginFormSubmit:
+                    blockType: button
+                    options:
+                        type: input
+                        action: submit
+                        text: orob2b.account.accountuser.profile.login
+                loginFormForgot:
+                    blockType: link
+                    options:
+                        route_name: orob2b_account_frontend_account_user_reset_request
+                        text: orob2b.account.accountuser.profile.forgot_password
+            tree:
+                content:
+                    loginPage:
+                        loginPageLogo: ~
+                        loginPageTop: ~
+                        loginForm:
+                            loginFormLabel: ~
+                            loginFormError: ~
+                            loginFormUsername: ~
+                            loginFormPassword: ~
+                            loginFormRemember: ~
+                            loginFormSubmit: ~
+                            loginFormForgot: ~
+                            loginFormTarget: ~
+                            loginFormCsrf: ~
+                        loginPageBottom: ~
+
+

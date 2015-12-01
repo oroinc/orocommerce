@@ -2,6 +2,8 @@ layout:
     actions:
         - @setBlockTheme:
             themes: 'OroB2BFrontendBundle:layouts:default/layout.html.twig'
+        - @setFormTheme:
+            themes: 'OroB2BFrontendBundle:layouts:default/form_theme.html.twig'
         - @addTree:
             items:
                 head:
@@ -11,12 +13,16 @@ layout:
                 meta_charset:
                     blockType: meta
                     options:
-                        charset: "UTF-8"
+                        charset: 'UTF-8'
                 meta_viewport:
                     blockType: meta
                     options:
-                        name: "viewport"
-                        content: "width=device-width, initial-scale=1"
+                        name: viewport
+                        content: 'width=device-width, initial-scale=1'
+                styles:
+                    blockType: style
+                    options:
+                        src: { @value: $data.theme.data.assets.styles.output }
                 body:
                     blockType: body
                 wrapper:
@@ -26,6 +32,8 @@ layout:
                             class: wrapper
                 header:
                     blockType: container
+                notification:
+                    blockType: block
                 main:
                     blockType: container
                     options:
@@ -41,14 +49,24 @@ layout:
                     options:
                         attr:
                             class: footer
+                scripts:
+                    blockType: script
+                    options:
+                        src: { @value: $data.theme.data.assets.scripts.output }
+                requirejs:
+                    blockType: block
             tree:
                 root:
                     head:
                         meta_charset: ~
                         meta_viewport: ~
+                        styles: ~
+                        requirejs: ~
                     body:
                         wrapper:
                             header: ~
+                            notification: ~
                             main:
                                 content: ~
                             footer: ~
+                        #scripts: ~
