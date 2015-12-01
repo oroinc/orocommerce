@@ -83,7 +83,6 @@ class ProductVariantFieldValidatorTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-
     public function testDoesNothingIfEmptyProductCustomFields()
     {
         $product = new StubProduct();

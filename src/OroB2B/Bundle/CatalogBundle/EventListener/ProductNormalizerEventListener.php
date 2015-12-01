@@ -2,14 +2,10 @@
 
 namespace OroB2B\Bundle\CatalogBundle\EventListener;
 
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
 
 class ProductNormalizerEventListener extends AbstractProductImportEventListener
 {
-    /** @var Category[] */
-    protected $categories = [];
-
     /**
      * @param ProductNormalizerEvent $event
      */
@@ -21,7 +17,7 @@ class ProductNormalizerEventListener extends AbstractProductImportEventListener
             return;
         }
 
-        $category = $this->getCategoryByProduct($event->getProduct());
+        $category = $this->getCategoryByProduct($event->getProduct(), true);
         if (!$category) {
             return;
         }
