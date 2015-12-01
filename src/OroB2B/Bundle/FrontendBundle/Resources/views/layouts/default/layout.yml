@@ -2,6 +2,8 @@ layout:
     actions:
         - @setBlockTheme:
             themes: 'OroB2BFrontendBundle:layouts:default/layout.html.twig'
+        - @setFormTheme:
+            themes: 'OroB2BFrontendBundle:layouts:default/form_theme.html.twig'
         - @addTree:
             items:
                 head:
