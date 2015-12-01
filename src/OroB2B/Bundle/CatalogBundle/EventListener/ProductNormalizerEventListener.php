@@ -16,7 +16,8 @@ class ProductNormalizerEventListener extends AbstractProductImportEventListener
     public function onNormalize(ProductNormalizerEvent $event)
     {
         $context = $event->getContext();
-        if (isset($context['fieldName'])) {
+        if (isset($context['fieldName']) && isset($context['mode'])) {
+            // It's a related Product entity (like variantLinks)
             return;
         }
 

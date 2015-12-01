@@ -44,7 +44,7 @@ OroB2B\Bundle\ProductBundle\Entity\ProductUnit:
 
 OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink:
     constraints:
-        - OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinksByProductSku: ~
+        - OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinkByProductSku: ~
     properties:
         visible:
             - Type:

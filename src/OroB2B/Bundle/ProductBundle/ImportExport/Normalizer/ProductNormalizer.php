@@ -63,6 +63,8 @@ class ProductNormalizer extends ConfigurableEntityNormalizer
 
         if (!isset($context['fieldName']) && isset($data['variantFields'])) {
             $this->fieldHelper->setObjectValue($object, 'variantFields', explode(',', $data['variantFields']));
+        } else {
+            $this->fieldHelper->setObjectValue($object, 'variantFields', []);
         }
 
         if ($this->eventDispatcher) {
@@ -79,7 +81,7 @@ class ProductNormalizer extends ConfigurableEntityNormalizer
      */
     public function supportsNormalization($data, $format = null, array $context = [])
     {
-        return is_a($data, $this->productClass);
+        return is_a($data, $this->productClass, true);
     }
 
     /**
