@@ -2,9 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Controller\Frontend;
 
-use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddOrderType;
-use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
-use OroB2B\Bundle\ProductBundle\Model\QuickAddCopyPaste;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -14,8 +11,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddOrderType;
+use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
+use OroB2B\Bundle\ProductBundle\Model\QuickAddCopyPaste;
 
 class QuickAddController extends Controller
 {
@@ -75,10 +75,10 @@ class QuickAddController extends Controller
 
     /**
      * @Route("/validation/result/", name="orob2b_product_frontend_quick_add_validation_result")
-     * Template("OroB2BProductBundle:QuickAdd\Frontend:validationResult.html.twig")
+     * @Template("OroB2BProductBundle:QuickAdd\Frontend:validationRedirectResult.html.twig")
      *
      * @param Request $request
-     * @return array|Response
+     * @return Response
      */
     public function validationResultAction(Request $request)
     {
@@ -86,17 +86,12 @@ class QuickAddController extends Controller
 
         /** @var RedirectResponse $response */
         $response = $result['response'];
-        $form = $result['form'];
 
         if (!$response) {
             $response = new RedirectResponse($this->generateUrl('orob2b_product_frontend_quick_add'));
         }
 
-        return new Response(
-            '<div class="widget-content"><script>window.location.href = "' .
-            $response->getTargetUrl() .
-            '";</script></div>'
-        );
+        return ['targetUrl' => $response->getTargetUrl()];
     }
 
     /**
