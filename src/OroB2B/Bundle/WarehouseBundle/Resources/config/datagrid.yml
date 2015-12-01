@@ -139,7 +139,7 @@ datagrid:
             default:
                 productUnit:   %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
         properties:
-            combined_id: ~
+            combinedId: ~
             unitCode: ~
         options:
             mode: client
