@@ -19,8 +19,6 @@ class ProductDataStorage
 
     const SHOPPING_LIST_ID_KEY = 'shoppingListId';
 
-
-
     /** @var SessionInterface */
     protected $session;
 
