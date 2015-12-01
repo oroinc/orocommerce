@@ -56,8 +56,8 @@ class QuickAddProcessor implements ComponentProcessorInterface
             return;
         }
 
-        $shoppingListId = !empty($data[ProductDataStorage::ADDITIONAL_DATA_KEY][ProductDataStorage::SHOPPING_LIST_ID])
-            ? $data[ProductDataStorage::ADDITIONAL_DATA_KEY][ProductDataStorage::SHOPPING_LIST_ID]
+        $shoppingListId = !empty($data[ProductDataStorage::ADDITIONAL_DATA_KEY][ProductDataStorage::SHOPPING_LIST_ID_KEY])
+            ? $data[ProductDataStorage::ADDITIONAL_DATA_KEY][ProductDataStorage::SHOPPING_LIST_ID_KEY]
             : 0;
 
         $data = $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY];

@@ -102,7 +102,7 @@ class QuickAddHandler
                         [
                             ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products,
                             ProductDataStorage::ADDITIONAL_DATA_KEY => [
-                                ProductDataStorage::SHOPPING_LIST_ID => $shoppingListId
+                                ProductDataStorage::SHOPPING_LIST_ID_KEY => $shoppingListId
                             ]
                         ],
                         $request

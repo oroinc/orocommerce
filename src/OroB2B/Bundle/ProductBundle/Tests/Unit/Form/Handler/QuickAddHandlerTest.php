@@ -271,7 +271,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
                 [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products,
                     ProductDataStorage::ADDITIONAL_DATA_KEY => [
-                        ProductDataStorage::SHOPPING_LIST_ID => 0
+                        ProductDataStorage::SHOPPING_LIST_ID_KEY => 0
                     ]
                 ],
                 $request
@@ -318,7 +318,7 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
                 [
                     ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products,
                     ProductDataStorage::ADDITIONAL_DATA_KEY => [
-                        ProductDataStorage::SHOPPING_LIST_ID => 0
+                        ProductDataStorage::SHOPPING_LIST_ID_KEY => 0
                     ]
                 ],
                 $request
