@@ -1,1 +1,2 @@
-{{ record.getValue('productUnit')|orob2b_format_product_unit_label }}
+{# render unit in full plural form #}
+{{ record.getValue('productUnit')|orob2b_format_product_unit_label(false, true) }}
