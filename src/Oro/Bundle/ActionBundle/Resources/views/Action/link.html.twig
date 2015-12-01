@@ -2,6 +2,8 @@
     href="{{ params.path is defined ? params.path : 'javascript:void(0);' }}"
     class="{{ params.class|default('back icons-holder-text action-button') }} {{ params.aCss is defined ? params.aCss : '' }}"
     title="{{ params.title|default(params.label) }}"
+    data-dialog-url="{{ params.dialogUrl }}"
+    data-dialog-options="{{ {'title': params.title|default(params.label)}|json_encode }}"
 >
     <i class="{{ params.icon is defined ? params.icon : '' }} {{ params.iCss is defined ? params.iCss : '' }} hide-text">{{ params.label }}</i>{{ params.label|trim }}
 </a>

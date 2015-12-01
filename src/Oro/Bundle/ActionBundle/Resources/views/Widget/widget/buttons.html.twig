@@ -11,11 +11,6 @@
             'dialogUrl': dialogUrl
         }) %}
 
-        {% set params = action.definition.frontendOptions|merge({
-            'label': action.definition.label|trans,
-            'path': path('oro_api_action_execute', {actionName: action.name}|merge(context))
-        }) %}
-
         {% set button %}
             {% set template = params.template|default('OroActionBundle::Action/button.html.twig') %}
             {% include template with {'params': params, 'context': context} %}
