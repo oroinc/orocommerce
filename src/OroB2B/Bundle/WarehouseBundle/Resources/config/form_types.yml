@@ -1,0 +1,10 @@
+parameters:
+    orob2b_warehouse.form.type.warehouse.class: OroB2B\Bundle\WarehouseBundle\Form\Type\WarehouseType
+
+services:
+    orob2b_warehouse.form.type.warehouse:
+        class: %orob2b_warehouse.form.type.warehouse.class%
+        calls:
+            - [setDataClass, [%orob2b_warehouse.entity.warehouse.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_warehouse }

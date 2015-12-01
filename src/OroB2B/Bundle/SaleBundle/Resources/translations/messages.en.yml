@@ -17,9 +17,12 @@ orob2b:
             account_user.label: 'Account User'
             locked.label: 'Locked'
             not_locked.label: 'Not Locked'
+            expired.label: 'Expired'
+            not_expired.label: 'Not Expired'
             po_number.label: 'PO Number'
             ship_until.label: 'Do Not Ship Later Than'
             price_list.label: 'Price List'
+            expired.label: 'Expired'
 
             sections:
                 general: 'General'
@@ -56,6 +59,9 @@ orob2b:
 
             actions:
                 quote_expire: 'Expire Quote'
+
+            message:
+                quote.expire.success: 'Quote #%id% was successfully expired'
 
         system_configuration:
             backend_product_visibility: 'Can Be Added to Quotes'

@@ -1,0 +1,10 @@
+OroB2B\Bundle\WarehouseBundle\Entity\Warehouse:
+    properties:
+        owner:
+            - NotBlank: ~
+        organization:
+            - NotBlank: ~
+        name:
+            - NotBlank: ~
+            - Length:
+                max: 255
