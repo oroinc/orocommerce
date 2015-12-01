@@ -62,13 +62,13 @@ class ContextHelper
     /**
      * @param string $name
      * @param mixed $default
-     * @return string|null
+     * @return mixed
      */
     protected function getRequestParameter($name, $default = null)
     {
         $request = $this->requestStack->getCurrentRequest();
 
-        return $request ? $request->get($name) : $default;
+        return $request ? $request->get($name, $default) : $default;
     }
 
     /**

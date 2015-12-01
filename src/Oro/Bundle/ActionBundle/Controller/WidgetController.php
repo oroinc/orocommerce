@@ -6,6 +6,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -40,6 +41,7 @@ class WidgetController extends Controller
      */
     public function formAction(Request $request, $actionName)
     {
+        /** @var Form $form */
         $form = $this->get('oro_action.form_manager')->getActionForm($actionName);
         $params = [];
 
@@ -50,9 +52,8 @@ class WidgetController extends Controller
 
                 $params['response'] = $context->getRedirectUrl() ? ['redirectUrl' => $context->getRedirectUrl()] : [];
             }
-        } else {
-            $params['form'] = $form->createView();
         }
+        $params['form'] = $form->createView();
 
         return $this->render(self::DEFAULT_DIALOG_TEMPLATE, $params);
     }

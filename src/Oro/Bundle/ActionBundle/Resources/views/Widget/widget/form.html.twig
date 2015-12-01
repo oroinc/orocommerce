@@ -14,17 +14,17 @@
                 {{ form_errors(form) }}
             </div>
         {% endif %}
-
-        <form method="POST"
-              data-nohash="true"
-              data-disable-autofocus="true"
-              id="{{ form.vars.id }}"
-              name="{{ form.vars.name }}"
-              action="{{ app.request.uri }}"
-              class="form-dialog"
-        >
+        {{ form_start(form, {
+            'method': 'POST',
+            'action': app.request.uri,
+            'attr': {
+                'class': 'form-dialog',
+                'data-nohash': 'true',
+                'data-disable-autofocus': 'true',
+                'id': form.vars.id,
+            },
+        }) }}
             {{ form_widget(form) }}
-            {{ form_rest(form) }}
 
             <div class="widget-actions form-actions">
                 {% block page_container_form_actions %}
@@ -32,7 +32,7 @@
                     <button class="btn btn-success" type="submit">{{ 'Submit'|trans }}</button>
                 {% endblock %}
             </div>
-        </form>
+        {{ form_end(form) }}
         {{ oro_form_js_validation(form) }}
     {% endif %}
 </div>
