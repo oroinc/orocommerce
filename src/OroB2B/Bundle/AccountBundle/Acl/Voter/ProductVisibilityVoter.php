@@ -5,10 +5,10 @@ namespace OroB2B\Bundle\AccountBundle\Acl\Voter;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 
 use OroB2B\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier;
+use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 
 class ProductVisibilityVoter extends AbstractEntityVoter
 {
-
     const ATTRIBUTE_VIEW = 'VIEW';
 
     /**
@@ -20,22 +20,19 @@ class ProductVisibilityVoter extends AbstractEntityVoter
 
     /**
      * @var ProductVisibilityQueryBuilderModifier
-    */
+     */
     private $modifier;
+
     /**
-     * @param string $class
-     * @param int $identifier
-     * @param string $attribute
-     * @return int
+     * @inheritdoc
      */
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
         if (in_array($attribute, $this->supportedAttributes)) {
-            $qb = $this->doctrineHelper
-                ->getEntityRepository($class)
-                ->createQueryBuilder('product')
-                ->andWhere('product.id = :id')
-                ->setParameter('id', $identifier);
+            $repository = $this->doctrineHelper
+                ->getEntityRepository($class);
+            /** @var $repository ProductRepository */
+            $qb = $repository->getProductsQueryBuilder([$identifier]);
             $this->modifier->modify($qb);
             $product = $qb->getQuery()->getOneOrNullResult();
 
