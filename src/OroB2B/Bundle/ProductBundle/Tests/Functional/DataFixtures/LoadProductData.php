@@ -11,7 +11,7 @@ use Symfony\Component\Yaml\Yaml;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
-use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -19,6 +19,8 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
 class LoadProductData extends AbstractFixture implements DependentFixtureInterface
 {
+    use UserUtilityTrait;
+
     const PRODUCT_1 = 'product.1';
     const PRODUCT_2 = 'product.2';
     const PRODUCT_3 = 'product.3';
@@ -39,7 +41,7 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
     public function load(ObjectManager $manager)
     {
         /** @var EntityManager $manager */
-        $user = $this->getUser($manager);
+        $user = $this->getFirstUser($manager);
         $businessUnit = $user->getOwner();
         $organization = $user->getOrganization();
 

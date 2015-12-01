@@ -123,6 +123,22 @@ class CategoryType extends AbstractType
                     'mapped'   => false,
                     'multiple' => true,
                 ]
+            )
+            ->add(
+                'smallImage',
+                'oro_image',
+                [
+                    'label'    => 'orob2b.catalog.category.small_image.label',
+                    'required' => false
+                ]
+            )
+            ->add(
+                'largeImage',
+                'oro_image',
+                [
+                    'label'    => 'orob2b.catalog.category.large_image.label',
+                    'required' => false
+                ]
             );
     }
 

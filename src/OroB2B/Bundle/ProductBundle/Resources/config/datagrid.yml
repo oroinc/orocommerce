@@ -238,8 +238,6 @@ datagrid:
                             condition: productNames.locale IS NULL
             bind_parameters:
                 - parentProduct
-        properties:
-            id: ~
         sorters:
             columns:
                 id:
@@ -255,7 +253,7 @@ datagrid:
         filters:
             columns:
                 id:
-                    type:      string
+                    type:      number
                     data_name: product.id
                 sku:
                     type:      string
@@ -364,8 +362,6 @@ datagrid:
                 type:          twig
                 frontend_type: html
                 template:      OroB2BProductBundle:Product:Datagrid/inventoryStatus.html.twig
-        properties:
-            id: ~
         sorters:
             columns:
                 visible:
