@@ -48,6 +48,7 @@ class Action
      * @param FunctionFactory $functionFactory
      * @param ConditionFactory $conditionFactory
      * @param AttributeAssembler $attributeAssembler
+     * @param FormOptionsAssembler $formOptionsAssembler
      * @param ActionDefinition $definition
      */
     public function __construct(
