@@ -267,7 +267,15 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $processor = $this->getProcessor();
         $processor->expects($this->once())
             ->method('process')
-            ->with([ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products], $request);
+            ->with(
+                [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products,
+                    ProductDataStorage::ADDITIONAL_DATA_KEY => [
+                        ProductDataStorage::SHOPPING_LIST_ID => 0
+                    ]
+                ],
+                $request
+            );
 
         $this->assertEquals(['form' => $clearForm, 'response' => null], $this->handler->process($request));
     }
@@ -306,7 +314,15 @@ class QuickAddHandlerTest extends \PHPUnit_Framework_TestCase
         $processor = $this->getProcessor();
         $processor->expects($this->once())
             ->method('process')
-            ->with([ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products], $request)
+            ->with(
+                [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products,
+                    ProductDataStorage::ADDITIONAL_DATA_KEY => [
+                        ProductDataStorage::SHOPPING_LIST_ID => 0
+                    ]
+                ],
+                $request
+            )
             ->willReturn($response);
 
         $this->assertEquals(['form' => $form, 'response' => $response], $this->handler->process($request));
