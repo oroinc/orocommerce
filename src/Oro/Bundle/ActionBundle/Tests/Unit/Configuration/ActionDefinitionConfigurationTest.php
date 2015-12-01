@@ -91,6 +91,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                             'icon' => 'icon',
                             'class' => 'class',
                             'template' => 'template',
+                            'dialog_template' => 'template',
                         ],
                         'form_options' => [
                             'attribute_fields' => [
@@ -157,6 +158,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'icon' => 'icon',
                         'class' => 'class',
                         'template' => 'template',
+                        'dialog_template' => 'template',
                     ],
                     'form_options' => [
                         'attribute_fields' => [

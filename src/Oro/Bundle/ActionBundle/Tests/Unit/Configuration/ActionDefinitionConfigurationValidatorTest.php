@@ -138,6 +138,29 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
     }
 
     /**
+     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     * @expectedExceptionMessage Unable to find template "unknown_template"
+     */
+    public function testValidateWithDialogTemplateException()
+    {
+        $this->twigLoader->expects($this->once())
+            ->method('exists')
+            ->willReturn(false);
+
+        $config = [
+            'exception_action' => [
+                'routes' => [],
+                'entities' => [],
+                'frontend_options' => [
+                    'dialog_template' => 'unknown_template',
+                ],
+            ],
+        ];
+
+        $this->validator->validate($config);
+    }
+
+    /**
      * @return array
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -255,6 +278,7 @@ class ActionDefinitionConfigurationValidatorTest extends \PHPUnit_Framework_Test
                             'routes' => ['route1'],
                             'frontend_options' => [
                                 'template' => 'Template1',
+                                'dialog_template' => 'Template1',
                             ],
                         ]),
                     ],

@@ -151,6 +151,7 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
                 ->scalarNode('icon')->end()
                 ->scalarNode('class')->end()
                 ->scalarNode('template')->end()
+                ->scalarNode('dialog_template')->end()
             ->end();
 
         return $node;

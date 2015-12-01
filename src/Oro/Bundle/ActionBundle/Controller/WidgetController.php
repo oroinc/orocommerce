@@ -54,8 +54,13 @@ class WidgetController extends Controller
             }
         }
         $params['form'] = $form->createView();
+        
+        $frontendOptions = $action->getDefinition()->getFrontendOptions();
+        $template = !empty($frontendOptions['dialog_template'])
+            ? $frontendOptions['dialog_template']
+            : self::DEFAULT_DIALOG_TEMPLATE;
 
-        return $this->render(self::DEFAULT_DIALOG_TEMPLATE, $params);
+        return $this->render($template, $params);
     }
 
     /**
