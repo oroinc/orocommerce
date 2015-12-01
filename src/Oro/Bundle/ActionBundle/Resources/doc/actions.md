@@ -63,6 +63,7 @@ actions:
             icon: icon-time                                 # class of button icon
             class: btn                                      # class of button
             template: customTemplate.html.twig              # custom button template if needed
+            dialog_template: customDialogTemplate.html.twig # custom dialog template if needed
         prefunctions:                                       # (optional) any needed pre functions which will execute before pre conditions
             - @create_datetime:
                 attribute: $.date

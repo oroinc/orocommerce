@@ -103,6 +103,14 @@ class ActionDefinitionConfigurationValidator
                 false
             );
         }
+        if (isset($options['dialog_template']) && !$this->twigLoader->exists($options['dialog_template'])) {
+            $this->handleError(
+                $this->getPath($path, 'dialog_template'),
+                'Unable to find template "%s"',
+                $options['dialog_template'],
+                false
+            );
+        }
     }
 
     /**
