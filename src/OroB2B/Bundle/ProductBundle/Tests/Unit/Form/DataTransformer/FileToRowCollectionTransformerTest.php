@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\DataTransformer;
 
-use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 use OroB2B\Bundle\ProductBundle\Form\DataTransformer\FileToRowCollectionTransformer;
 
@@ -19,17 +19,26 @@ class FileToRowCollectionTransformerTest extends RowCollectionTransformerTest
     protected function setUp()
     {
         $this->transformer = new FileToRowCollectionTransformer();
-        $this->transformer->transform(null);
     }
 
     /**
      * @dataProvider reverseTransformDataProvider
      *
-     * @param File $file
+     * @param UploadedFile $file
      */
-    public function testTransformsFile(File $file)
+    public function testReverseTransformFile(UploadedFile $file)
     {
         $this->assertValidCollection($this->transformer->reverseTransform($file));
+    }
+
+    /**
+     * @dataProvider reverseTransformDataProvider
+     *
+     * @param array|null $value
+     */
+    public function testTransformFile($value)
+    {
+        $this->assertEquals($value, $this->transformer->transform($value));
     }
 
     /**
@@ -38,9 +47,17 @@ class FileToRowCollectionTransformerTest extends RowCollectionTransformerTest
     public function reverseTransformDataProvider()
     {
         return [
-            'csv' => [new File(__DIR__ . '/files/quick-order.csv')],
-            'ods' => [new File(__DIR__ . '/files/quick-order.ods')],
-            'xlsx' => [new File(__DIR__ . '/files/quick-order.xlsx')]
+            'csv' => [new UploadedFile(__DIR__ . '/files/quick-order.csv', 'quick-order.csv')],
+            'ods' => [new UploadedFile(__DIR__ . '/files/quick-order.ods', 'quick-order.ods')],
+            'xlsx' => [new UploadedFile(__DIR__ . '/files/quick-order.xlsx', 'quick-order.xlsx')]
         ];
+    }
+
+    /**
+     * @return array
+     */
+    public function transformDataProvider()
+    {
+        return ['array' => [], 'null' => null];
     }
 }
