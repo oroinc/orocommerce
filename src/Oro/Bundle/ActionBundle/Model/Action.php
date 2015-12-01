@@ -65,7 +65,6 @@ class Action
         $this->definition = $definition;
     }
 
-
     /**
      * @return bool
      */
