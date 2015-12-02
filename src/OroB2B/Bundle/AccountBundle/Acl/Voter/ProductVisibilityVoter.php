@@ -62,8 +62,6 @@ class ProductVisibilityVoter extends AbstractEntityVoter
     }
 
     /**
-     * Sets the Container.
-     *
      * @param ProductVisibilityQueryBuilderModifier $modifier A ProductVisibilityQueryBuilderModifier instance
      */
     public function setModifier(ProductVisibilityQueryBuilderModifier $modifier)
