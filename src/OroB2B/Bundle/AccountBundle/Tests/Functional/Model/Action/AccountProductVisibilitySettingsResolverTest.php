@@ -122,12 +122,9 @@ class AccountProductVisibilitySettingsResolverTest extends AbstractVisibilitySet
             BaseProductVisibilityResolved::SOURCE_STATIC
         );
         $this->assertEquals($accountProductVisibilityResolved->getSourceProductVisibility(), null);
-        $configManager = $this->getClientInstance()->getContainer()->get('oro_config.global');
-        $configManager->set(self::VISIBILITY_SYSTEM_CONFIGURATION_PATH, VisibilityInterface::HIDDEN);
-        $configManager->flush();
         $this->assertEquals(
             $accountProductVisibilityResolved->getVisibility(),
-            BaseProductVisibilityResolved::VISIBILITY_HIDDEN
+            BaseProductVisibilityResolved::VISIBILITY_VISIBLE
         );
         $this->checkProductIdentifyEntitiesAccessory($accountProductVisibilityResolved);
     }

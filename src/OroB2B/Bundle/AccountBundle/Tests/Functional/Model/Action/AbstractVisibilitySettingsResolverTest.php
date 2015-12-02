@@ -24,8 +24,6 @@ abstract class AbstractVisibilitySettingsResolverTest extends WebTestCase
     /** @var  Registry */
     protected $registry;
 
-    const VISIBILITY_SYSTEM_CONFIGURATION_PATH = 'oro_b2b_account.product_visibility';
-
     public function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());

@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache;
 
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
