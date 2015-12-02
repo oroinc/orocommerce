@@ -142,4 +142,4 @@ To validate all actions configuration execute a command:
 php app/console oro:action:configuration:validate
 ```
 
-**Note:** All configurations apply automatically after their changes.
+**Note:** All configurations apply automatically after their changes on dev environment.
