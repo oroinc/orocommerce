@@ -3,34 +3,40 @@
 namespace OroB2B\Bundle\AccountBundle\Visibility\Calculator;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\QueryBuilder;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Visibility\Exception\InvalidVisibilityValueException;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\AccountBundle\Visibility\Storage\CategoryVisibilityData;
 
-class CategoryVisibilityCalculator implements ContainerAwareInterface
+class CategoryVisibilityCalculator
 {
-    const CATEGORY_VISIBILITY_CONFIG_VALUE_KEY = 'oro_b2b_account.category_visibility';
+    /**
+     * @var array
+     */
+    protected $resolvedVisibilities = [];
 
-    const VISIBLE = 'visible';
-    const INVISIBLE = 'invisible';
+    /**
+     * @var array
+     */
+    protected $resolvedAccountGroupVisibilities = [];
 
-    const TO_ALL = 'to_all';
-    const TO_GROUP = 'to_group';
-    const TO_ACCOUNT = 'to_account';
+    /**
+     * @var array
+     */
+    protected $resolvedAccountVisibilities = [];
 
     /**
      * @var ManagerRegistry
      */
-    protected $managerRegistry;
+    protected $registry;
 
     /**
      * @var ConfigManager
@@ -40,201 +46,201 @@ class CategoryVisibilityCalculator implements ContainerAwareInterface
     /**
      * @var string
      */
-    protected $configValue;
+    protected $configPath;
 
     /**
-     * @var ContainerInterface
+     * @param string $configPath
      */
-    protected $container;
-
-    /**
-     * @param ManagerRegistry $managerRegistry
-     */
-    public function __construct(ManagerRegistry $managerRegistry)
+    public function setVisibilityConfigurationPath($configPath)
     {
-        $this->managerRegistry = $managerRegistry;
+        $this->configPath = $configPath;
     }
 
     /**
-     * @param Account|null $account
-     * @return array
+     * @param ManagerRegistry $registry
+     * @param ConfigManager $configManager
      */
-    public function getVisibility(Account $account = null)
+    public function __construct(ManagerRegistry $registry, ConfigManager $configManager)
     {
-        /** @var \OroB2B\Bundle\AccountBundle\Entity\Repository\CategoryVisibilityRepository $repo */
-        $repo = $this->managerRegistry->getManagerForClass(
-            'OroB2BAccountBundle:Visibility\CategoryVisibility'
-        )->getRepository('OroB2BAccountBundle:Visibility\CategoryVisibility');
-        $visibilities = $repo->getVisibilityToAll($account);
-        $visibleIds = $this->calculateVisible($visibilities);
-        $ids = array_map(
-            function ($visibility) {
-                return $visibility['categoryEntity']->getId();
-            },
-            $visibilities
-        );
-        $invisibleIds = array_values(array_diff($ids, $visibleIds));
+        $this->registry = $registry;
+        $this->configManager = $configManager;
+    }
 
-        return [
-            self::VISIBLE => $visibleIds,
-            self::INVISIBLE => $invisibleIds
+    /**
+     * @return CategoryVisibilityData
+     * @throws InvalidVisibilityValueException
+     */
+    public function calculate()
+    {
+        $queryBuilder = $this->registry->getManagerForClass('OroB2BAccountBundle:Visibility\CategoryVisibility')
+            ->getRepository('OroB2BAccountBundle:Visibility\CategoryVisibility')
+            ->getCategoriesVisibilitiesQueryBuilder();
+
+        return $this->calculateProcess($queryBuilder, 'calculateVisibility');
+    }
+
+    /**
+     * @param AccountGroup $accountGroup
+     * @return CategoryVisibilityData
+     */
+    public function calculateForAccountGroup(AccountGroup $accountGroup)
+    {
+        $queryBuilder = $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility')
+            ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility')
+            ->getCategoryWithVisibilitiesForAccountGroup($accountGroup);
+
+        return $this->calculateProcess($queryBuilder, 'calculateAccountGroupVisibility', 'account_group_visibility');
+    }
+
+    /**
+     * @param Account $account
+     * @return CategoryVisibilityData
+     */
+    public function calculateForAccount(Account $account)
+    {
+        $queryBuilder = $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountCategoryVisibility')
+            ->getRepository('OroB2BAccountBundle:Visibility\AccountCategoryVisibility')
+            ->getCategoryVisibilitiesForAccount($account);
+
+        return $this->calculateProcess($queryBuilder, 'calculateAccountVisibility', 'account_visibility');
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param string $visibilityMethodName
+     * @param string $field
+     * @return CategoryVisibilityData
+     * @throws InvalidVisibilityValueException
+     */
+    protected function calculateProcess(QueryBuilder $queryBuilder, $visibilityMethodName, $field = null)
+    {
+        $iterator = new BufferedQueryResultIterator($queryBuilder);
+
+        $result = [
+            'hidden' => [],
+            'visible' => [],
         ];
+        foreach ($iterator as $data) {
+            $visibility = call_user_func([$this, $visibilityMethodName], $data);
+            // get only non default values to decrease storage size
+            if ($field && empty($data[$field])) {
+                continue;
+            }
+            $result[$visibility ? 'visible' : 'hidden'][] = $data['category_id'];
+        }
+
+        return new CategoryVisibilityData($result['visible'], $result['hidden']);
     }
 
     /**
-     * @param array $visibilities
-     * @return array
-     * @throws \Exception
+     * @param $data
+     * @return bool
+     * @throws InvalidVisibilityValueException
      */
-    protected function calculateVisible($visibilities)
+    protected function calculateVisibility($data)
     {
-        $result = [];
-        $visibleIds = [];
-
-        foreach ($visibilities as $visibility) {
-            $this->setDefaultValues($visibility);
-            /** @var Category $category */
-            $category = $visibility['categoryEntity'];
-            $id = $category->getId();
-            $result[$id] = [];
-
-            $result[$id][self::TO_ALL] = $this->calculateVisibleToAll($visibility, $result);
-            $result[$id][self::TO_GROUP] = $this->calculateVisibleToGroup($visibility, $result);
-            $result[$id][self::TO_ACCOUNT] = $this->calculateVisibleToAccount($visibility, $result);
-
-            // todo refactor: move visibility constants to model class to prevent string constant usage below
-            if ('visible' === $result[$id][self::TO_ACCOUNT]) {
-                $visibleIds[] = $id;
+        if (is_null($data['visibility'])) {
+            $data['visibility'] = CategoryVisibility::PARENT_CATEGORY;
+            if (is_null($data['category_parent_id'])) {
+                $data['visibility'] = CategoryVisibility::CONFIG;
             }
         }
 
-        return $visibleIds;
-    }
-
-    /**
-     * @param $visibility
-     */
-    protected function setDefaultValues(&$visibility)
-    {
-        /** @var Category $category */
-        $category = $visibility['categoryEntity'];
-
-        if (null === $visibility[self::TO_ALL]) {
-            $visibility[self::TO_ALL] = CategoryVisibility::getDefault($category);
-        }
-        if (null === $visibility[self::TO_GROUP]) {
-            $visibility[self::TO_GROUP] = AccountGroupCategoryVisibility::getDefault($category);
-        }
-        if (null === $visibility[self::TO_ACCOUNT]) {
-            $visibility[self::TO_ACCOUNT] = AccountCategoryVisibility::getDefault($category);
-        }
-    }
-
-    /**
-     * @param $visibility
-     * @param $result
-     * @return null|string
-     * @throws InvalidVisibilityValueException
-     */
-    protected function calculateVisibleToAll($visibility, $result)
-    {
-        /** @var Category $category */
-        $category = $visibility['categoryEntity'];
-        switch ($visibility[self::TO_ALL]) {
-            case CategoryVisibility::PARENT_CATEGORY:
-                if (null !== $category->getParentCategory()) {
-                    return $result[$category->getParentCategory()->getId()][self::TO_ALL];
-                } else {
-                    return $this->getCategoryVisibilityConfigValue();
-                }
+        $visible = false;
+        switch ($data['visibility']) {
+            case CategoryVisibility::HIDDEN:
+                break;
+            case CategoryVisibility::VISIBLE:
+                $visible = true;
                 break;
             case CategoryVisibility::CONFIG:
-                return $this->getCategoryVisibilityConfigValue();
-            case CategoryVisibility::VISIBLE:
-            case CategoryVisibility::HIDDEN:
-                return $visibility[self::TO_ALL];
+                $visible = $this->isVisibleByConfig();
+                break;
+            case CategoryVisibility::PARENT_CATEGORY:
+                $visible = $this->resolvedVisibilities[$data['category_parent_id']];
+                break;
             default:
-                throw new InvalidVisibilityValueException;
+                throw new InvalidVisibilityValueException();
         }
+
+        return $this->resolvedVisibilities[$data['category_id']] = $visible;
     }
 
     /**
-     * @param $visibility
-     * @param $result
-     * @return null|string
+     * @param array $data
+     * @return bool
      * @throws InvalidVisibilityValueException
      */
-    protected function calculateVisibleToGroup($visibility, $result)
+    protected function calculateAccountGroupVisibility(array $data)
     {
-        /** @var Category $category */
-        $category = $visibility['categoryEntity'];
+        $visibility = $this->calculateVisibility($data);
 
-        switch ($visibility[self::TO_GROUP]) {
-            case AccountGroupCategoryVisibility::CATEGORY:
-                return $result[$category->getId()][self::TO_ALL];
-            case AccountGroupCategoryVisibility::PARENT_CATEGORY:
-                if (null !== $category->getParentCategory()) {
-                    return $result[$category->getParentCategory()->getId()][self::TO_GROUP];
-                } else {
-                    return $this->getCategoryVisibilityConfigValue();
-                }
+        if (empty($data['account_group_visibility'])) {
+            return $this->resolvedAccountGroupVisibilities[$data['category_id']] = $visibility;
+        }
+
+        $visible = false;
+        switch ($data['account_group_visibility']) {
+            case AccountGroupCategoryVisibility::HIDDEN:
                 break;
             case AccountGroupCategoryVisibility::VISIBLE:
-            case AccountGroupCategoryVisibility::HIDDEN:
-                return $visibility[self::TO_GROUP];
+                $visible = true;
+                break;
+            case AccountGroupCategoryVisibility::PARENT_CATEGORY:
+                $visible = $this->resolvedAccountGroupVisibilities[$data['category_parent_id']];
+                break;
             default:
-                throw new InvalidVisibilityValueException;
+                throw new InvalidVisibilityValueException();
         }
+
+        return $this->resolvedAccountGroupVisibilities[$data['category_id']] = $visible;
     }
 
     /**
-     * @param $visibility
-     * @param $result
-     * @return null|string
+     * @param array $data
+     * @return bool
      * @throws InvalidVisibilityValueException
      */
-    protected function calculateVisibleToAccount($visibility, $result)
+    protected function calculateAccountVisibility(array $data)
     {
-        /** @var Category $category */
-        $category = $visibility['categoryEntity'];
+        $groupVisibility = $this->calculateAccountGroupVisibility($data);
 
-        switch ($visibility[self::TO_ACCOUNT]) {
-            case AccountCategoryVisibility::ACCOUNT_GROUP:
-                return $result[$category->getId()][self::TO_GROUP];
-            case AccountCategoryVisibility::CATEGORY:
-                return $result[$category->getId()][self::TO_ALL];
-            case AccountCategoryVisibility::PARENT_CATEGORY:
-                if (null !== $category->getParentCategory()) {
-                    return $result[$category->getParentCategory()->getId()][self::TO_ACCOUNT];
-                } else {
-                    return $this->getCategoryVisibilityConfigValue();
-                }
+        if (is_null($data['account_visibility'])) {
+            return $this->resolvedAccountVisibilities[$data['category_id']] = $groupVisibility;
+        }
+
+        $visible = false;
+        switch ($data['account_visibility']) {
+            case AccountCategoryVisibility::HIDDEN:
                 break;
             case AccountCategoryVisibility::VISIBLE:
-            case AccountCategoryVisibility::HIDDEN:
-                return $visibility[self::TO_ACCOUNT];
+                $visible = true;
+                break;
+            case AccountCategoryVisibility::CATEGORY:
+                $visible = $this->calculateVisibility($data);
+                break;
+            case AccountCategoryVisibility::PARENT_CATEGORY:
+                $visible = $this->resolvedAccountVisibilities[$data['category_parent_id']];
+                break;
             default:
-                throw new InvalidVisibilityValueException;
+                throw new InvalidVisibilityValueException();
         }
+
+        return $this->resolvedAccountVisibilities[$data['category_id']] = $visible;
     }
 
     /**
-     * @return array|string
+     * @return bool
      */
-    protected function getCategoryVisibilityConfigValue()
+    protected function isVisibleByConfig()
     {
-        if (!$this->configManager) {
-            $this->configManager = $this->container->get('oro_config.manager');
+        if (empty($this->configPath)) {
+            throw new \LogicException(
+                'Visibility configuration path not configured for AbstractCategoryVisibilityCalculator'
+            );
         }
-
-        return $this->configManager->get(self::CATEGORY_VISIBILITY_CONFIG_VALUE_KEY);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
+        return $this->configManager->get($this->configPath) === CategoryVisibility::VISIBLE ? true : false;
     }
 }

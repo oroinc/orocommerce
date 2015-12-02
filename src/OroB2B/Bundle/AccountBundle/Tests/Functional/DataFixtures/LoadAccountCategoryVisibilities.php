@@ -37,7 +37,7 @@ class LoadAccountCategoryVisibilities extends AbstractFixture implements Depende
             'name' => self::VISIBILITY3,
             'category' => LoadCategoryData::SECOND_LEVEL1,
             'account' => 'account.level_1.4',
-            'visibility' => AccountCategoryVisibility::ACCOUNT_GROUP
+            'visibility' => AccountCategoryVisibility::CATEGORY
         ],
     ];
 

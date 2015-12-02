@@ -4,20 +4,24 @@ namespace OroB2B\Bundle\AccountBundle\Visibility\Storage;
 
 use Doctrine\Common\Cache\CacheProvider;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityCalculator;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 
 class CategoryVisibilityStorage
 {
-    const VISIBILITY = 'visibility';
-    const IDS = 'ids';
+    const ALL_CACHE_ID = 'all';
+    const ACCOUNT_CACHE_ID_PREFIX = 'account';
+    const ACCOUNT_GROUP_CACHE_ID_PREFIX = 'account_group';
 
-    const ANONYMOUS_CACHE_KEY = 'anon';
-
-    /** @var CacheProvider */
+    /**
+     * @var CacheProvider
+     */
     protected $cacheProvider;
 
-    /** @var CategoryVisibilityCalculator */
+    /**
+     * @var CategoryVisibilityCalculator
+     */
     protected $calculator;
 
     /**
@@ -31,62 +35,110 @@ class CategoryVisibilityStorage
     }
 
     /**
+     * @return CategoryVisibilityData
+     */
+    public function getCategoryVisibilityData()
+    {
+        return $this->getData($this->getCacheId(), 'calculate');
+    }
+
+    /**
+     * @param AccountGroup $accountGroup
+     * @return CategoryVisibilityData
+     */
+    public function getCategoryVisibilityDataForAccountGroup(AccountGroup $accountGroup)
+    {
+        return $this->getCategoryVisibilityData()->merge(
+            $this->getData($this->getCacheIdForAccountGroup($accountGroup), 'calculateForAccountGroup', $accountGroup)
+        );
+    }
+
+    /**
      * @param Account|null $account
      * @return CategoryVisibilityData
      */
-    public function getData(Account $account = null)
+    public function getCategoryVisibilityDataForAccount(Account $account = null)
     {
-        $data = $this->getDataFromCache($account);
-
-        return new CategoryVisibilityData($data[self::IDS], $data[self::VISIBILITY]);
-    }
-
-    /**
-     * @param array $accountIds
-     */
-    public function clearData(array $accountIds = null)
-    {
-        if ($accountIds === null) {
-            $this->cacheProvider->deleteAll();
+        if (is_null($account)) {
+            return $this->getCategoryVisibilityData();
+        }
+        if ($account->getGroup()) {
+            $categoryVisibilityData = $this->getCategoryVisibilityDataForAccountGroup($account->getGroup());
         } else {
-            foreach ($accountIds as $accountId) {
-                $this->cacheProvider->delete($accountId);
-            }
+            $categoryVisibilityData = $this->getCategoryVisibilityData();
         }
+        return $categoryVisibilityData->merge(
+            $this->getData($this->getCacheIdForAccount($account), 'calculateForAccount', $account)
+        );
+    }
+
+    public function flush()
+    {
+        $this->cacheProvider->deleteAll();
+    }
+
+    public function clear()
+    {
+        $this->cacheProvider->delete($this->getCacheId());
     }
 
     /**
-     * @param Account|null $account
-     * @return array
+     * @param AccountGroup $accountGroup
      */
-    protected function getDataFromCache(Account $account = null)
+    public function clearForAccountGroup(AccountGroup $accountGroup)
     {
-        $accountId = (null !== $account) ? $account->getId() : null;
-        $data = $this->cacheProvider->fetch($accountId);
+        $this->cacheProvider->delete($this->getCacheIdForAccountGroup($accountGroup));
+    }
 
-        if (!$data) {
-            $calculatedData = $this->calculator->getVisibility($account);
-            $data = $this->formatData($calculatedData);
-            $this->cacheProvider->save($accountId ?: self::ANONYMOUS_CACHE_KEY, $data);
+    /**
+     * @param Account $account
+     */
+    public function clearForAccount(Account $account)
+    {
+        $this->cacheProvider->delete($this->getCacheIdForAccount($account));
+    }
+
+    /**
+     * @return string
+     */
+    protected function getCacheId()
+    {
+        return static::ALL_CACHE_ID;
+    }
+
+    /**
+     * @param AccountGroup $accountGroup
+     * @return string
+     */
+    protected function getCacheIdForAccountGroup(AccountGroup $accountGroup)
+    {
+        return static::ACCOUNT_GROUP_CACHE_ID_PREFIX . '.' . $accountGroup->getId();
+    }
+
+    /**
+     * @param Account $account
+     * @return string
+     */
+    protected function getCacheIdForAccount(Account $account)
+    {
+        return static::ACCOUNT_CACHE_ID_PREFIX . '.' . $account->getId();
+    }
+
+    /**
+     * @param string $cacheId
+     * @param string $calculatorVisibilityMethodName
+     * @param AccountGroup|Account|null $entity
+     * @return CategoryVisibilityData
+     */
+    protected function getData($cacheId, $calculatorVisibilityMethodName, $entity = null)
+    {
+        $data = $this->cacheProvider->fetch($cacheId);
+        if ($data) {
+            return CategoryVisibilityData::fromArray($data);
         }
+        $data = call_user_func([$this->calculator, $calculatorVisibilityMethodName], $entity);
+        $this->cacheProvider->save($cacheId, $data->toArray());
 
         return $data;
-    }
-
-    /**
-     * @param array $data
-     * @return array
-     */
-    protected function formatData(array $data)
-    {
-        $visibleIds = $data[CategoryVisibilityCalculator::VISIBLE];
-        $invisibleIds = $data[CategoryVisibilityCalculator::INVISIBLE];
-
-        $visible = count($visibleIds) < count($invisibleIds);
-
-        return [
-            self::VISIBILITY => $visible,
-            self::IDS => $visible ? $visibleIds : $invisibleIds
-        ];
     }
 }

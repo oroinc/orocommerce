@@ -38,7 +38,7 @@ class LoadAccountGroupCategoryVisibilities extends AbstractFixture implements De
             'name' => self::VISIBILITY3,
             'category' => LoadCategoryData::SECOND_LEVEL1,
             'group' => 'account_group.group2',
-            'visibility' => AccountGroupCategoryVisibility::CATEGORY
+            'visibility' => AccountGroupCategoryVisibility::PARENT_CATEGORY
         ],
     ];
 
