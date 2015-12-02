@@ -417,7 +417,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
                 ],
                 'actionName' => 'TestName1',
                 'exceptions' => [
-                    ['message' => 'Action "{action}" is not allowed.', 'parameters' => ['{action}' => 'TestName1']],
+                    ['message' => 'Action "TestName1" is not allowed.'],
                 ],
             ],
             '!isConditionAllowed' => [
@@ -433,7 +433,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
                 ],
                 'actionName' => 'TestName2',
                 'exceptions' => [
-                    ['message' => 'Action "{action}" is not allowed.', 'parameters' => ['{action}' => 'TestName2']],
+                    ['message' => 'Action "TestName2" is not allowed.'],
                 ],
             ],
             'isAllowed' => [

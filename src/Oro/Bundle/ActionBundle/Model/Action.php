@@ -106,8 +106,7 @@ class Action
         if (!$this->isAllowed($context, $errors)) {
             if (null !== $errors && !count($errors)) {
                 $errors->add([
-                    'message' => 'Action "{action}" is not allowed.',
-                    'parameters' => ['{action}' => $this->getName()],
+                    'message' => sprintf('Action "%s" is not allowed.', $this->getName()),
                 ]);
             }
             return false;
