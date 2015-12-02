@@ -70,19 +70,22 @@ actions:
         extends: entity_action_base                                 # (optional) parent action if needed
         replace:                                                    # (optional) the list of nodes that should be replaced in the parent action
             - frontend_options                                      # node name
-        label: adme.demo.myentity.actions.myentity_action           # label for action button
+        label: aсme.demo.actions.myentity_action                    # label for action button
         enabled: true                                               # (optional, default = true) is action enabled
         entities:                                                   # (optional) list of entity classes
             - Acme\Bundle\DemoBundle\Entity\MyEntity                # entity class
+            - AcmeDemoBundle:MyEntity2
         routes:                                                     # (optional) list of routes
             - acme_demo_myentity_view                               # route name
         order: 10                                                   # (optional, default = 0) display order of action button
+        acl_resource: acme_demo_myentity_view                       # (optional) ACL resource name that will be checked while checking that action execution is allowed
 
         frontend_options:                                           # (optional) display options for action button:
-            icon: icon-time                                         # class of button icon
-            class: btn                                              # class of button
-            template: customTemplate.html.twig                      # custom button template if needed
-            dialog_template: customDialogTemplate.html.twig         # custom dialog template if needed
+            icon: icon-time                                         # (optional) class of button icon
+            class: btn                                              # (optional) class of button
+            group: aсme.demo.actions.demogroup.label                # (optional) group action to drop-down on the label
+            template: customTemplate.html.twig                      # (optional) custom button template
+            dialog_template: customDialogTemplate.html.twig         # (optional) custom dialog template
 
         attributes:                                                 # (optional) list of all existing attributes
             demo_attr:                                              # attribute name
@@ -95,7 +98,7 @@ actions:
         form_options:                                               # (optional) parameters which will be passed to form dialog
             attribute_fields:                                       # list of attribute fields which will be shown in dialog
                 demo_attr:                                          # attribute name (must be configured in `attributes` block of action config)
-                    form_type; text                                 # needed type of current field
+                    form_type: text                                 # needed type of current field
                         options:                                    # list of form field options
                             required: true                          # define this field as required
                             constraints:                            # list of constraints
