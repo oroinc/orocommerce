@@ -9,6 +9,8 @@ parameters:
 
     orob2b_rfp.event_listener.request_frontend_datagrid.class: OroB2B\Bundle\RFPBundle\EventListener\RequestFrontendDatagridListener
 
+    orob2b_rfp.datagrid.action.request_change_status_dialog.class: OroB2B\Bundle\RFPBundle\Datagrid\Action\RequestChangeStatusDialogAction
+
 services:
     orob2b_rfp.datagrid.action_permission_provider:
         class: %orob2b_rfp.datagrid.action_permission_provider.class%
@@ -48,3 +50,11 @@ services:
             - [setBackendSystemConfigurationPath, ['oro_b2b_rfp.backend_product_visibility']]
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
+
+    orob2b_rfp.datagrid.action.request_change_status_dialog:
+        class: %orob2b_rfp.datagrid.action.request_change_status_dialog.class%
+        arguments:
+            - @translator
+        scope: prototype
+        tags:
+            - { name: oro_datagrid.extension.action.type, type: request-change-status-dialog }

@@ -1,0 +1,44 @@
+{% form_theme form with ['OroTagBundle:Form:fields.html.twig'] %}
+<div class="widget-content">
+    {% if response is defined %}
+        <script type="text/javascript">
+            require(['oroui/js/widget-manager'],
+                    function(widgetManager) {
+                        widgetManager.getWidgetInstance({{ app.request.get('_wid')|json_encode|raw }}, function(widget) {
+                            widget.trigger('formSave', {{ response|json_encode|raw }});
+                        });
+                    });
+        </script>
+    {% else %}
+        {% if form.vars.errors|length > 0 %}
+            <div class="alert alert-error">
+                {{ form_errors(form) }}
+            </div>
+        {% endif %}
+        <div class="form-container">
+            {{ form_start(form, {
+                'method': 'POST',
+                'action': app.request.uri,
+                'attr': {
+                    'class': 'form-dialog',
+                    'data-nohash': 'true',
+                    'data-disable-autofocus': 'true',
+                    'id': form.vars.id,
+                },
+            }) }}
+                <fieldset class="form form-horizontal">
+                    {{ form_row(form.request_status) }}
+                    <div class="rfp-status-note">{{ form_row(form.request_note) }}</div>
+                    {{ form_rest(form) }}
+                    <div class="widget-actions form-actions">
+                        <button class="btn" type="reset">{{ 'orob2b.rfp.request.cancel.label'|trans }}</button>
+                        <button class="btn btn-primary" type="submit">
+                            {{ 'oro.ui.update_entity'|trans({'%entityName%': 'orob2b.rfp.request.entity_label_short'|trans}) }}
+                        </button>
+                    </div>
+                </fieldset>
+            {{ form_end(form) }}
+            {{ oro_form_js_validation(form) }}
+        </div>
+    {% endif %}
+</div>

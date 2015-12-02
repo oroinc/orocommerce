@@ -61,17 +61,19 @@ class ActionManager
 
     /**
      * @param string $actionName
+     * @param ActionContext $actionContext
      * @return ActionContext
      * @throws \Exception
      */
-    public function execute($actionName)
+    public function execute($actionName, ActionContext $actionContext = null)
     {
         $action = $this->getAction($actionName);
         if (!$action) {
             throw new ActionNotFoundException($actionName);
         }
-
-        $actionContext = $this->contextHelper->getActionContext();
+        if (!$actionContext) {
+            $actionContext = $this->contextHelper->getActionContext();
+        }
         $action->execute($actionContext);
 
         $entity = $actionContext->getEntity();

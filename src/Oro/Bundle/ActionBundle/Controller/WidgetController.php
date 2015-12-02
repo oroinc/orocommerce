@@ -46,13 +46,13 @@ class WidgetController extends Controller
         if ($request->isMethod('POST')) {
             $form->submit($request);
             if ($form->isValid()) {
-                $context = $this->getActionManager()->execute($actionName);
+                $context = $this->getActionManager()->execute($actionName, $form->getData());
 
                 $params['response'] = $context->getRedirectUrl() ? ['redirectUrl' => $context->getRedirectUrl()] : [];
             }
         }
         $params['form'] = $form->createView();
-        
+
         return $this->render($this->getActionManager()->getDialogTemplate($actionName), $params);
     }
 
