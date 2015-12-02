@@ -102,7 +102,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
     public function testInit()
     {
         $config = [
-            ['initfunctions',  ['initfunctions']],
+            ['initfunctions', ['initfunctions']],
         ];
 
         $functions = [
@@ -376,6 +376,42 @@ class ActionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param array $input
+     * @param array $expected
+     *
+     * @dataProvider getFormOptionsDataProvider
+     */
+    public function testGetFormOptions(array $input, array $expected)
+    {
+        $this->definition->expects($this->once())
+            ->method('getFormOptions')
+            ->willReturn($input);
+
+        if ($input) {
+            $attributes = ['attribute' => ['label' => 'attr_label']];
+
+            $this->definition->expects($this->once())
+                ->method('getAttributes')
+                ->willReturn($attributes);
+
+            $attribute = new Attribute();
+            $attribute->setName('test_attr');
+
+            $this->attributeAssembler->expects($this->once())
+                ->method('assemble')
+                ->with($this->context, $attributes)
+                ->willReturn(new ArrayCollection(['test_attr' => $attribute]));
+
+            $this->formOptionsAssembler->expects($this->once())
+                ->method('assemble')
+                ->with($input, new ArrayCollection(['test_attr' => $attribute]))
+                ->willReturn($expected);
+        }
+
+        $this->assertEquals($expected, $this->action->getFormOptions($this->context));
+    }
+
+    /**
+     * @param array $input
      * @param bool $expected
      *
      * @dataProvider hasFormProvider
@@ -544,6 +580,23 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             'filled' => [
                 'input' => ['attribute_fields' => ['attribute' => []]],
                 'expected' => true,
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getFormOptionsDataProvider()
+    {
+        return [
+            'empty' => [
+                'input' => [],
+                'expected' => [],
+            ],
+            'filled' => [
+                'input' => ['attribute_fields' => ['attribute' => []]],
+                'expected' => ['attribute_fields' => ['attribute' => []]],
             ],
         ];
     }

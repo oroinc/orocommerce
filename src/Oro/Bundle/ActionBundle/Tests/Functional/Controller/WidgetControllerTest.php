@@ -7,6 +7,8 @@ use Oro\Bundle\ActionBundle\Tests\Functional\DataFixtures\LoadTestEntityData;
 use Oro\Bundle\CacheBundle\Provider\FilesystemCache;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use Oro\Component\PropertyAccess\PropertyAccessor;
+
 class WidgetControllerTest extends WebTestCase
 {
     /** @var int */
@@ -40,7 +42,7 @@ class WidgetControllerTest extends WebTestCase
      * @param string $entityClass
      * @param bool|string $expected
      */
-    public function testButtonsActionForRoutes(array $config, $route, $entityId, $entityClass, $expected)
+    public function testButtonsAction(array $config, $route, $entityId, $entityClass, $expected)
     {
         $this->cacheProvider->save(ActionConfigurationProvider::ROOT_NODE_NAME, $config);
 
@@ -69,6 +71,55 @@ class WidgetControllerTest extends WebTestCase
             $this->assertContains($expected, $crawler->html());
         } else {
             $this->assertEmpty($crawler);
+        }
+    }
+
+    public function testFormAction()
+    {
+        $this->cacheProvider->save(ActionConfigurationProvider::ROOT_NODE_NAME, $this->getConfigurationForFormAction());
+
+        $this->assertEntityFields(
+            LoadTestEntityData::TEST_ENTITY_1,
+            ['message' => 'test message', 'description' => null]
+        );
+
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl(
+                'oro_action_widget_form',
+                [
+                    '_widgetContainer' => 'dialog',
+                    'actionName' => 'oro_action_test_action',
+                    'entityId' => $this->entityId,
+                    'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
+                ]
+            )
+        );
+
+        $form = $crawler->selectButton('Submit')->form();
+        $form['oro_action[message_attr]'] = 'New Test Message';
+        $form['oro_action[descr_attr]'] = 'Test Description';
+
+        $crawler = $this->client->submit($form);
+
+        $this->assertContains('widget.trigger(\'formSave\', []);', $crawler->html());
+        $this->assertEntityFields(
+            LoadTestEntityData::TEST_ENTITY_1,
+            ['message' => 'New Test Message', 'description' => 'Test Description']
+        );
+    }
+
+    /**
+     * @param string $uid
+     * @param array $fields
+     */
+    protected function assertEntityFields($uid, array $fields)
+    {
+        $object = $this->getReference($uid);
+        $propertyAccessor = new PropertyAccessor();
+
+        foreach ($fields as $name => $value) {
+            $this->assertEquals($value, $propertyAccessor->getValue($object, $name));
         }
     }
 
@@ -209,6 +260,55 @@ class WidgetControllerTest extends WebTestCase
                 'entityId' => null,
                 'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
                 'expected' => $label
+            ]
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getConfigurationForFormAction()
+    {
+        return [
+            'oro_action_test_action' => [
+                'label' => 'oro.action.test.label',
+                'enabled' => true,
+                'order' => 10,
+                'entities' => ['Oro\Bundle\TestFrameworkBundle\Entity\TestActivity'],
+                'routes' => [],
+                'frontend_options' => [],
+                'attributes' => [
+                    'message_attr' => ['label' => 'Message', 'type' => 'string'],
+                    'descr_attr' => ['property_path' => 'data.description']
+                ],
+                'form_options' => [
+                    'attribute_fields' => [
+                        'message_attr' => [
+                            'form_type' => 'text',
+                            'options' => ['required' => true, 'constraints' => ['NotBlank' => []]]
+                        ],
+                        'descr_attr' => [
+                            'form_type' => 'text',
+                            'options' => ['required' => true, 'constraints' => ['NotBlank' => []]]
+                        ]
+                    ],
+                    'attribute_default_values' => ['message_attr' => '$message']
+                ],
+                'prefunctions' => [],
+                'preconditions' => [],
+                'initfunctions' => [
+                    ['@assign_value' => [
+                        'conditions' => ['@empty' => '$description'],
+                        'parameters' => ['$.descr_attr', 'Test Description'],
+                    ]]
+                ],
+                'conditions' => [
+                    '@not' => [['@equal' => ['$message', '$.message_attr']]]
+                ],
+                'postfunctions' => [
+                    ['@assign_value' => ['$message', '$.message_attr']],
+                    ['@assign_value' => ['$description', '$.descr_attr']]
+                ]
             ]
         ];
     }
