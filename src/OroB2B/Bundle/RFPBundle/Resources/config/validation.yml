@@ -22,7 +22,6 @@ OroB2B\Bundle\RFPBundle\Entity\Request:
             - Length:
                 max: 255
         role:
-            - NotBlank: ~
             - Length:
                 max: 255
         poNumber:
