@@ -2,10 +2,13 @@
 
 namespace OroB2B\Bundle\AccountBundle\Acl\Voter;
 
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 
 use OroB2B\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 class ProductVisibilityVoter extends AbstractEntityVoter
 {
@@ -21,7 +24,19 @@ class ProductVisibilityVoter extends AbstractEntityVoter
     /**
      * @var ProductVisibilityQueryBuilderModifier
      */
-    private $modifier;
+    protected $modifier;
+
+    /**
+     * {@inheritdoc}
+    */
+    public function vote(TokenInterface $token, $object, array $attributes)
+    {
+        if ($token->getUser() instanceof AccountUser) {
+            return parent::vote($token, $object, $attributes);
+        }
+
+        return self::ACCESS_ABSTAIN;
+    }
 
     /**
      * @inheritdoc
