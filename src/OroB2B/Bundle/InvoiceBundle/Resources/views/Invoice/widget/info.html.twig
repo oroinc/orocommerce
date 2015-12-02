@@ -25,7 +25,8 @@
             {% endif %}
             {{ UI.renderHtmlProperty('orob2b.invoice.account_user.label'|trans, accountUserView) }}
 
-            {{ UI.renderProperty('orob2b.invoice.payment_due_date.label'|trans, entity.invoiceDate|oro_format_date) }}
+            {{ UI.renderProperty('orob2b.invoice.invoice_date.label'|trans, entity.invoiceDate|oro_format_date) }}
+            {{ UI.renderProperty('orob2b.invoice.payment_due_date.label'|trans, entity.paymentDueDate|oro_format_date) }}
         </div>
         <div class="responsive-block">
             {{ entityConfig.renderDynamicFields(entity) }}

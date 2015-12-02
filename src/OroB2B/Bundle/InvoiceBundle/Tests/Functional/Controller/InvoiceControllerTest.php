@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\InvoiceBundle\Tests\Functional\Controller;
 
+use OroB2B\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
@@ -11,7 +12,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
 
 /**
  * @dbIsolation
@@ -58,7 +58,7 @@ class InvoiceControllerTest extends WebTestCase
     {
         $today = (new \DateTime('now'))->format('Y-m-d');
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_invoice_create'));
-        $result  = $this->client->getResponse();
+        $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         /** @var Form $form */
@@ -75,9 +75,9 @@ class InvoiceControllerTest extends WebTestCase
                 'productUnit' => 'liter',
                 'price' => [
                     'value' => 100,
-                    'currency' => 'USD'
+                    'currency' => 'USD',
                 ],
-                'priceType' => InvoiceLineItem::PRICE_TYPE_UNIT,
+                'priceType' => PriceTypeAwareInterface::PRICE_TYPE_UNIT,
             ],
         ];
         $submittedData = [
@@ -89,8 +89,9 @@ class InvoiceControllerTest extends WebTestCase
                 'poNumber' => self::PO_NUMBER,
                 'invoiceDate' => $today,
                 'paymentDueDate' => $today,
-                'lineItems' => $lineItems
-            ]
+                'currency' => 'USD',
+                'lineItems' => $lineItems,
+            ],
         ];
 
         $this->client->followRedirects(true);
@@ -99,6 +100,7 @@ class InvoiceControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
 
         $this->assertEquals(
             self::PO_NUMBER,
@@ -115,10 +117,10 @@ class InvoiceControllerTest extends WebTestCase
                 'productUnit' => 'orob2b.product_unit.liter.label.full',
                 'price' => [
                     'value' => 100,
-                    'currency' => 'USD'
+                    'currency' => 'USD',
                 ],
-                'priceType' => InvoiceLineItem::PRICE_TYPE_UNIT,
-            ]
+                'priceType' => $this->getContainer()->get('translator')->trans('orob2b.pricing.price_type.unit'),
+            ],
         ];
 
         $this->assertEquals($expectedLineItems, $actualLineItems);
@@ -126,12 +128,13 @@ class InvoiceControllerTest extends WebTestCase
         $response = $this->client->requestGrid(
             'invoices-grid',
             [
-                'invoices-grid[_filter][poNumber][value]' => self::PO_NUMBER
+                'invoices-grid[_filter][poNumber][value]' => self::PO_NUMBER,
             ]
         );
 
         $result = $this->getJsonResponseContent($response, 200);
         $result = reset($result['data']);
+
         return $result['id'];
     }
 
@@ -144,7 +147,7 @@ class InvoiceControllerTest extends WebTestCase
         $today = (new \DateTime('now'))->format('Y-m-d');
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_invoice_update', ['id' => $id]));
 
-        $result  = $this->client->getResponse();
+        $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $account = $this->getAccount();
@@ -162,9 +165,9 @@ class InvoiceControllerTest extends WebTestCase
                 'productUnit' => 'bottle',
                 'price' => [
                     'value' => 10,
-                    'currency' => 'USD'
+                    'currency' => 'USD',
                 ],
-                'priceType' => InvoiceLineItem::PRICE_TYPE_UNIT,
+                'priceType' => PriceTypeAwareInterface::PRICE_TYPE_UNIT,
             ],
             [
                 'freeFormProduct' => 'Free form product',
@@ -172,10 +175,10 @@ class InvoiceControllerTest extends WebTestCase
                 'productUnit' => 'liter',
                 'price' => [
                     'value' => 200,
-                    'currency' => 'USD'
+                    'currency' => 'USD',
                 ],
-                'priceType' => InvoiceLineItem::PRICE_TYPE_BUNDLED,
-            ]
+                'priceType' => PriceTypeAwareInterface::PRICE_TYPE_BUNDLED,
+            ],
         ];
         $submittedData = [
             'input_action' => 'save_and_stay',
@@ -184,10 +187,11 @@ class InvoiceControllerTest extends WebTestCase
                 'owner' => $this->getCurrentUser()->getId(),
                 'account' => $account->getId(),
                 'poNumber' => self::PO_NUMBER_UPDATED,
+                'currency' => 'USD',
                 'invoiceDate' => $today,
                 'paymentDueDate' => $today,
-                'lineItems' => $lineItems
-            ]
+                'lineItems' => $lineItems,
+            ],
         ];
 
         $this->client->followRedirects(true);
@@ -209,9 +213,9 @@ class InvoiceControllerTest extends WebTestCase
                 'productUnit' => 'orob2b.product_unit.bottle.label.full',
                 'price' => [
                     'value' => 10,
-                    'currency' => 'USD'
+                    'currency' => 'USD',
                 ],
-                'priceType' => InvoiceLineItem::PRICE_TYPE_UNIT,
+                'priceType' => $this->getContainer()->get('translator')->trans('orob2b.pricing.price_type.unit'),
             ],
             [
                 'product' => '',
@@ -220,10 +224,10 @@ class InvoiceControllerTest extends WebTestCase
                 'productUnit' => 'orob2b.product_unit.liter.label.full',
                 'price' => [
                     'value' => 200,
-                    'currency' => 'USD'
+                    'currency' => 'USD',
                 ],
-                'priceType' => InvoiceLineItem::PRICE_TYPE_BUNDLED,
-            ]
+                'priceType' => $this->getContainer()->get('translator')->trans('orob2b.pricing.price_type.bundled'),
+            ],
         ];
 
         $this->assertEquals($expectedLineItems, $actualLineItems);
@@ -267,26 +271,26 @@ class InvoiceControllerTest extends WebTestCase
 
         for ($i = 0; $i < $count; $i++) {
             $result[] = [
-                'product' => $crawler->filter('input[name="orob2b_invoice_type[lineItems]['. $i .'][product]"]')
+                'product' => $crawler->filter('input[name="orob2b_invoice_type[lineItems]['.$i.'][product]"]')
                     ->extract('value')[0],
                 'freeFormProduct' => $crawler
-                    ->filter('input[name="orob2b_invoice_type[lineItems]['. $i .'][freeFormProduct]"]')
+                    ->filter('input[name="orob2b_invoice_type[lineItems]['.$i.'][freeFormProduct]"]')
                     ->extract('value')[0],
-                'quantity' => $crawler->filter('input[name="orob2b_invoice_type[lineItems]['. $i .'][quantity]"]')
+                'quantity' => $crawler->filter('input[name="orob2b_invoice_type[lineItems]['.$i.'][quantity]"]')
                     ->extract('value')[0],
                 'productUnit' => $crawler
-                    ->filter('select[name="orob2b_invoice_type[lineItems]['. $i .'][productUnit]"] :selected')
+                    ->filter('select[name="orob2b_invoice_type[lineItems]['.$i.'][productUnit]"] :selected')
                     ->html(),
                 'price' => [
-                    'value' => $crawler->filter('input[name="orob2b_invoice_type[lineItems]['. $i .'][price][value]"]')
+                    'value' => $crawler->filter('input[name="orob2b_invoice_type[lineItems]['.$i.'][price][value]"]')
                         ->extract('value')[0],
                     'currency' => $crawler
-                        ->filter('input[name="orob2b_invoice_type[lineItems]['. $i .'][price][currency]"]')
+                        ->filter('input[name="orob2b_invoice_type[lineItems]['.$i.'][price][currency]"]')
                         ->extract('value')[0],
                 ],
                 'priceType' => $crawler
-                    ->filter('input[name="orob2b_invoice_type[lineItems]['. $i .'][priceType]"]')
-                    ->extract('value')[0],
+                    ->filter('select[name="orob2b_invoice_type[lineItems]['.$i.'][priceType]"] :selected')
+                    ->html(),
             ];
         }
 

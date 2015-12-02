@@ -11,13 +11,12 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
-
-use OroB2B\Bundle\InvoiceBundle\Entity\InvoiceLineItem;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use OroB2B\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use OroB2B\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuantityType;
+use OroB2B\Bundle\PricingBundle\Form\Type\PriceTypeSelectorType;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 
@@ -159,9 +158,9 @@ class InvoiceLineItemType extends AbstractType
             )
             ->add(
                 'priceType',
-                'hidden',
+                PriceTypeSelectorType::NAME,
                 [
-                    'empty_data' => InvoiceLineItem::PRICE_TYPE_UNIT,
+                    'attr' => array('style' => 'display: none'),
                 ]
             );
     }

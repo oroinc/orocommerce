@@ -47,6 +47,9 @@ orob2b.pricing:
         action:
             save: Save
             cancel: Cancel
+    price_type:
+        bundled: 'bundle'
+        unit: 'per unit'
 
     menu:
         price_lists_tab.label: Price lists management

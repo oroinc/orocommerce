@@ -6,6 +6,7 @@ parameters:
     orob2b_pricing.form.type.product_price_value.class: OroB2B\Bundle\PricingBundle\Form\Type\ProductPriceValueType
     orob2b_pricing.form.type.price_list_product_price.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceListProductPriceType
     orob2b_pricing.form.type.product_price_filter.class: OroB2B\Bundle\PricingBundle\Form\Type\Filter\ProductPriceFilterType
+    orob2b_pricing.form.type.price_type_selector.class: OroB2B\Bundle\PricingBundle\Form\Type\PriceTypeSelectorType
 
     orob2b_pricing.form.extension.account_type.class: OroB2B\Bundle\PricingBundle\Form\Extension\AccountFormExtension
     orob2b_pricing.form.extension.account_group_type.class: OroB2B\Bundle\PricingBundle\Form\Extension\AccountGroupFormExtension
@@ -50,6 +51,11 @@ services:
             - @orob2b_pricing.rounding.price_rounding_service
         tags:
             - { name: form.type, alias: orob2b_pricing_product_price_value }
+
+    orob2b_pricing.form.type.price_type_selector:
+        class: %orob2b_pricing.form.type.price_type_selector.class%
+        tags:
+            - { name: form.type, alias: "orob2b_pricing_price_type" }
 
     orob2b_pricing.form.type.price_list_product_price:
         class: %orob2b_pricing.form.type.price_list_product_price.class%

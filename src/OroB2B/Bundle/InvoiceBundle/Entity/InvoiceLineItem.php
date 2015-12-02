@@ -8,6 +8,7 @@ use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 use OroB2B\Bundle\InvoiceBundle\Model\ExtendInvoiceLineItem;
+use OroB2B\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
@@ -34,9 +35,6 @@ use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
  */
 class InvoiceLineItem extends ExtendInvoiceLineItem implements ProductUnitHolderInterface, ProductHolderInterface
 {
-    const PRICE_TYPE_UNIT = 10;
-    const PRICE_TYPE_BUNDLED = 20;
-
     /**
      * @var integer
      *
@@ -112,9 +110,9 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements ProductUnitHolder
     /**
      * @var int
      *
-     * @ORM\Column(name="price_type", type="integer")
+     * @ORM\Column(name="price_type", type="string")
      */
-    protected $priceType = self::PRICE_TYPE_UNIT;
+    protected $priceType = PriceTypeAwareInterface::PRICE_TYPE_UNIT;
 
     /**
      * @var Invoice

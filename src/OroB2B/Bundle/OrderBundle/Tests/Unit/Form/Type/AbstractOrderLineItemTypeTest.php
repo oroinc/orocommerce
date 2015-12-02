@@ -14,7 +14,7 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 use OroB2B\Bundle\OrderBundle\Entity\OrderLineItem;
 use OroB2B\Bundle\OrderBundle\Form\Type\AbstractOrderLineItemType;
-use OroB2B\Bundle\OrderBundle\Form\Type\PriceTypeSelectorType;
+use OroB2B\Bundle\PricingBundle\Form\Type\PriceTypeSelectorType;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 

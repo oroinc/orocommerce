@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountUserSelectType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountSelectType;
@@ -80,6 +81,14 @@ class InvoiceType extends AbstractType
             ->add('poNumber', 'text', [
                 'required' => false
             ])
+            ->add(
+                'currency',
+                CurrencySelectionType::NAME,
+                [
+                    'required' => true,
+                    'label' => 'orob2b.invoice.currency.label',
+                ]
+            )
             ->add(
                 'lineItems',
                 InvoiceLineItemsCollectionType::NAME,

@@ -1,0 +1,9 @@
+<?php
+
+namespace OroB2B\Bundle\PricingBundle\Entity;
+
+interface PriceTypeAwareInterface
+{
+    const PRICE_TYPE_UNIT = 10;
+    const PRICE_TYPE_BUNDLED = 20;
+}
