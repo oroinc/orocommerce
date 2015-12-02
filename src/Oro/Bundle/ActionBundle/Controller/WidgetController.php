@@ -41,49 +41,32 @@ class WidgetController extends Controller
      */
     public function formAction(Request $request, $actionName)
     {
-        $params = [
-            'errors' => new ArrayCollection(),
-        ];
+        $errors = new ArrayCollection();
+        $params = [];
 
         try {
             /** @var Form $form */
             $form = $this->get('oro_action.form_manager')->getActionForm($actionName);
+            $form->handleRequest($request);
 
-            if ($this->submitForm($request, $form)) {
-                $context = $this->getActionManager()->execute($actionName, $params['errors']);
+            if ($form->isValid()) {
+                $context = $this->getActionManager()->execute($actionName, $errors);
 
-                if ($context) {
-                    $params['response'] = [];
-                    if ($context->getRedirectUrl()) {
-                        $params['response']['redirectUrl'] = $context->getRedirectUrl();
-                    }
-                }
+                $params['response'] = $context->getRedirectUrl() ? ['redirectUrl' => $context->getRedirectUrl()] : [];
             }
-
-            $params['form'] = $form->createView();
         } catch (\Exception $e) {
-            $params['errors']->add([
-                'message' => $e->getMessage(),
-            ]);
+            if (!$errors->count()) {
+                $errors->add(['message' => $e->getMessage()]);
+            }
         }
+
+        if (!empty($form)) {
+            $params['form'] = $form->createView();
+        }
+
+        $params['errors'] = $errors;
 
         return $this->render($this->getActionManager()->getDialogTemplate($actionName), $params);
-    }
-
-    /**
-     * @param Request $request
-     * @param Form $form
-     * @return boolean
-     */
-    protected function submitForm(Request $request, Form $form)
-    {
-        if (!$request->isMethod('POST')) {
-            return false;
-        }
-
-        $form->submit($request);
-
-        return $form->isValid();
     }
 
     /**

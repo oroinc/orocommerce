@@ -64,7 +64,7 @@ class ActionManager
     /**
      * @param string $actionName
      * @param Collection $errors
-     * @return ActionContext|bool
+     * @return ActionContext
      * @throws \Exception
      */
     public function execute($actionName, Collection $errors = null)
@@ -75,9 +75,7 @@ class ActionManager
         }
 
         $actionContext = $this->contextHelper->getActionContext();
-        if (!$action->execute($actionContext, $errors)) {
-            return false;
-        }
+        $action->execute($actionContext, $errors);
 
         $entity = $actionContext->getEntity();
         if ($entity) {

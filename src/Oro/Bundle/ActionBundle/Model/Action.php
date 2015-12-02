@@ -100,21 +100,15 @@ class Action
     /**
      * @param ActionContext $context
      * @param Collection $errors
+     * @throws ForbiddenActionException
      */
     public function execute(ActionContext $context, Collection $errors = null)
     {
         if (!$this->isAllowed($context, $errors)) {
-            if (null !== $errors && !count($errors)) {
-                $errors->add([
-                    'message' => sprintf('Action "%s" is not allowed.', $this->getName()),
-                ]);
-            }
-            return false;
+            throw new ForbiddenActionException(sprintf('Action "%s" is not allowed.', $this->getName()));
         }
 
         $this->executeFunctions($context, ActionDefinition::POSTFUNCTIONS);
-
-        return true;
     }
 
     /**
