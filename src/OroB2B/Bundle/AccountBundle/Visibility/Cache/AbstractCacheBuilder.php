@@ -2,9 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache;
 
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\EntityManager;
-
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityResolverAdapterInterface;

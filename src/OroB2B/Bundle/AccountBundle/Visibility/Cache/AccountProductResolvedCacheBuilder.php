@@ -2,7 +2,10 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache;
 
+use Symfony\Bridge\Doctrine\RegistryInterface;
+
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
@@ -11,7 +14,6 @@ use OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityResolver
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class AccountProductResolvedCacheBuilder extends AbstractCacheBuilder implements CacheBuilderInterface
 {

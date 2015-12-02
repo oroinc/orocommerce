@@ -4,15 +4,12 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Model\Action;
 
 use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;

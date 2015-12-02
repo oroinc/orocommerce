@@ -5,8 +5,8 @@ namespace OroB2B\Bundle\AccountBundle\Model\Action;
 use Oro\Bundle\WorkflowBundle\Exception\InvalidParameterException;
 use Oro\Bundle\WorkflowBundle\Model\Action\AbstractAction;
 use Oro\Bundle\WorkflowBundle\Model\ContextAccessor;
-
 use Oro\Bundle\WorkflowBundle\Model\ProcessData;
+
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
 
