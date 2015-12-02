@@ -42,7 +42,6 @@ class WidgetController extends Controller
     public function formAction(Request $request, $actionName)
     {
         $params = [
-            'response' => [],
             'errors' => new ArrayCollection(),
         ];
 
@@ -50,12 +49,12 @@ class WidgetController extends Controller
             /** @var Form $form */
             $form = $this->get('oro_action.form_manager')->getActionForm($actionName);
 
-            if ($request->isMethod('POST')) {
-                $form->submit($request);
-                if ($form->isValid()) {
-                    $context = $this->getActionManager()->execute($actionName, $params['errors']);
+            if ($this->submitForm($request, $form)) {
+                $context = $this->getActionManager()->execute($actionName, $params['errors']);
 
-                    if ($context && $context->getRedirectUrl()) {
+                if ($context) {
+                    $params['response'] = [];
+                    if ($context->getRedirectUrl()) {
                         $params['response']['redirectUrl'] = $context->getRedirectUrl();
                     }
                 }
@@ -69,6 +68,22 @@ class WidgetController extends Controller
         }
 
         return $this->render($this->getActionManager()->getDialogTemplate($actionName), $params);
+    }
+
+    /**
+     * @param Request $request
+     * @param Form $form
+     * @return boolean
+     */
+    protected function submitForm(Request $request, Form $form)
+    {
+        if (!$request->isMethod('POST')) {
+            return false;
+        }
+
+        $form->submit($request);
+
+        return $form->isValid();
     }
 
     /**
