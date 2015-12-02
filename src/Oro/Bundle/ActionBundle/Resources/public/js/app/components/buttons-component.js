@@ -59,7 +59,11 @@ define(function(require) {
                     }, this))
                     .fail(function(jqXHR) {
                         var message = __('Could not perform action');
-                        if (jqXHR.responseJSON.message || false) {
+                        if (jqXHR.statusText) {
+                            message += ': ' + jqXHR.statusText;
+                        }
+
+                        if (jqXHR.responseJSON && jqXHR.responseJSON.message) {
                             message += ': ' + jqXHR.responseJSON.message;
                         }
 
