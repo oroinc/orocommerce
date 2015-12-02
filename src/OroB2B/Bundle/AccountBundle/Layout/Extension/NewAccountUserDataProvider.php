@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Layout\Extension;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\DataProviderInterface;
@@ -14,15 +14,20 @@ use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class NewAccountUserDataProvider implements DataProviderInterface
 {
-    /** @var ContainerInterface */
-    protected $container;
+    /** @var WebsiteManager */
+    protected $websiteManager;
+
+    /** @var ManagerRegistry */
+    protected $managerRegistry;
 
     /**
-     * @param ContainerInterface $container
+     * @param WebsiteManager $websiteManager
+     * @param ManagerRegistry $managerRegistry
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(WebsiteManager $websiteManager, ManagerRegistry $managerRegistry)
     {
-        $this->container = $container;
+        $this->websiteManager = $websiteManager;
+        $this->managerRegistry = $managerRegistry;
     }
 
     /**
@@ -48,15 +53,13 @@ class NewAccountUserDataProvider implements DataProviderInterface
     {
         $accountUser = new AccountUser();
 
-        /** @var WebsiteManager $websiteManager */
-        $websiteManager = $this->container->get('orob2b_website.manager');
-        $website = $websiteManager->getCurrentWebsite();
+        $website = $this->websiteManager->getCurrentWebsite();
         /** @var Organization|OrganizationInterface $websiteOrganization */
         $websiteOrganization = $website->getOrganization();
         if (!$websiteOrganization) {
             throw new \RuntimeException('Website organization is empty');
         }
-        $defaultRole = $this->container->get('doctrine')
+        $defaultRole = $this->managerRegistry
             ->getManagerForClass('OroB2BAccountBundle:AccountUserRole')
             ->getRepository('OroB2BAccountBundle:AccountUserRole')
             ->getDefaultAccountUserRoleByWebsite($website);
