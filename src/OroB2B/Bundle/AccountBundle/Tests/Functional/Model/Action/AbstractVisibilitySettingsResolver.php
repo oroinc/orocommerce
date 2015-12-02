@@ -24,6 +24,8 @@ abstract class AbstractVisibilitySettingsResolver extends WebTestCase
     /** @var  Registry */
     protected $registry;
 
+    const VISIBILITY_SYSTEM_CONFIGURATION_PATH = 'oro_b2b_account.product_visibility';
+
     public function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -40,6 +42,12 @@ abstract class AbstractVisibilitySettingsResolver extends WebTestCase
         $this->registry = $this->client->getContainer()->get('doctrine');
         $this->website = $this->getReference(LoadWebsiteData::WEBSITE1);
         $this->product = $this->getReference(LoadProductData::PRODUCT_1);
+    }
+
+    public function tearDown()
+    {
+        $this->client->getContainer()->get('doctrine')->getManager()->clear();
+        parent::tearDown();
     }
 
     /**

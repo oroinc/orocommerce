@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManager;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
@@ -103,25 +104,62 @@ class AccountProductVisibilitySettingsResolver extends AbstractVisibilitySetting
         $this->assertNull($this->getAccountProductVisibilityResolved());
     }
 
-    /**
-     * @depends testChangeAccountProductVisibilityToCategory
-     */
-    public function testChangeAccountProductVisibilityToCurrentProduct()
-    {
 
-        $accountProductVisibility = $this->getAccountProductVisibility($emForProductVisibility);
-        $accountProductVisibility->setVisibility(AccountProductVisibility::CATEGORY);
-        $emForProductVisibility->flush();
+    /**
+     * @depends testChangeAccountProductVisibilityToAccountGroup
+     */
+    public function testChangeAccountProductVisibilityToCurrentProductWithoutResolvedFallbackEntity()
+    {
+        $accountProductVisibility = $this->createAccountProductVisibility();
+        $accountProductVisibility->setVisibility(AccountProductVisibility::CURRENT_PRODUCT);
+        $emForAccountProductVisibility = $this->getManagerForAccountProductVisibility();
+        $emForAccountProductVisibility->persist($accountProductVisibility);
+        $emForAccountProductVisibility->flush();
         $accountProductVisibilityResolved = $this->getAccountProductVisibilityResolved();
-        $this->assertEquals($accountProductVisibilityResolved->getCategoryId(), $category->getId());
+        $this->assertEquals($accountProductVisibilityResolved->getCategoryId(), null);
         $this->assertEquals(
             $accountProductVisibilityResolved->getSource(),
-            BaseProductVisibilityResolved::SOURCE_CATEGORY
+            BaseProductVisibilityResolved::SOURCE_STATIC
         );
-        $this->assertEquals($accountProductVisibilityResolved->getSourceProductVisibility(), $accountProductVisibility);
+        $this->assertEquals($accountProductVisibilityResolved->getSourceProductVisibility(), null);
+        $configManager = $this->getClientInstance()->getContainer()->get('oro_config.global');
+        $configManager->set(self::VISIBILITY_SYSTEM_CONFIGURATION_PATH, VisibilityInterface::HIDDEN);
+        $configManager->flush();
         $this->assertEquals(
             $accountProductVisibilityResolved->getVisibility(),
             BaseProductVisibilityResolved::VISIBILITY_HIDDEN
+
+        );
+        $this->checkProductIdentifyEntitiesAccessory($accountProductVisibilityResolved);
+    }
+
+    /**
+     * @depends testChangeAccountProductVisibilityToCurrentProductWithoutResolvedFallbackEntity
+     */
+    public function testChangeAccountProductVisibilityToCurrentProduct()
+    {
+        $productVisibilityValue = BaseProductVisibilityResolved::VISIBILITY_VISIBLE;
+        $productVisibilityResolved = new ProductVisibilityResolved($this->website, $this->product);
+        $productVisibilityResolved->setVisibility($productVisibilityValue);
+        $emForProductVisibility = $this->registry->getManagerForClass(
+            'OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved'
+        );
+        $emForProductVisibility->persist($productVisibilityResolved);
+        $accountProductVisibility = $this->createAccountProductVisibility();
+        $accountProductVisibility->setVisibility(AccountProductVisibility::CURRENT_PRODUCT);
+        $emForAccountProductVisibility = $this->getManagerForAccountProductVisibility();
+        $emForAccountProductVisibility->persist($accountProductVisibility);
+        $emForAccountProductVisibility->flush();
+        $accountProductVisibilityResolved = $this->getAccountProductVisibilityResolved();
+        $this->assertEquals($accountProductVisibilityResolved->getCategoryId(), null);
+        $this->assertEquals(
+            $accountProductVisibilityResolved->getSource(),
+            BaseProductVisibilityResolved::SOURCE_STATIC
+        );
+        $this->assertEquals($accountProductVisibilityResolved->getSourceProductVisibility(), null);
+        $this->assertEquals(
+            $accountProductVisibilityResolved->getVisibility(),
+            $productVisibilityValue
         );
         $this->checkProductIdentifyEntitiesAccessory($accountProductVisibilityResolved);
     }
@@ -131,7 +169,7 @@ class AccountProductVisibilitySettingsResolver extends AbstractVisibilitySetting
      */
     protected function getManagerForAccountProductVisibility()
     {
-        return $this->registry->getManager();
+        return $this->registry->getManagerForClass('OroB2BAccountBundle:Visibility\AccountProductVisibility');
     }
 
     /**

@@ -71,11 +71,11 @@ class AccountProductResolvedCacheBuilder extends AbstractCacheBuilder implements
             $accountProductVisibilityResolved->setCategoryId($category->getId());
         } elseif ($selectedVisibility == AccountProductVisibility::CURRENT_PRODUCT) {
             $accountProductVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_STATIC);
-            $productVisibility = $this->registry
+            $productVisibilityResolved = $this->registry
                 ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
                 ->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
                 ->findOneBy(['product' => $product, 'website' => $website]);
-            if (!$productVisibility) {
+            if (!$productVisibilityResolved) {
                 $visibilityFromConfig = $this->configManager->get('oro_b2b_account.product_visibility');
                 $visibility = $visibilityFromConfig == ProductVisibility::VISIBLE ? 1 : -1;
                 $accountProductVisibilityResolved->setVisibility($visibility);
@@ -83,10 +83,10 @@ class AccountProductResolvedCacheBuilder extends AbstractCacheBuilder implements
 
                 return;
             }
-            $accountProductVisibilityResolved->setVisibility(
-                $productVisibility->getVisibility() == ProductVisibility::VISIBLE ? 1 : -1
+            $accountProductVisibilityResolved->setVisibility($productVisibilityResolved->getVisibility());
+            $accountProductVisibilityResolved->setSourceProductVisibility(
+                $productVisibilityResolved->getSourceProductVisibility()
             );
-            $accountProductVisibilityResolved->setSourceProductVisibility($productVisibility);
         } else {
             $this->resolveStaticValues(
                 $accountProductVisibility,
