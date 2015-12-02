@@ -2,105 +2,56 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Security;
 
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
-
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Component\Testing\WebTestCase;
+use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
-use OroB2B\Bundle\AccountBundle\Acl\Voter\ProductVisibilityVoter;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
-use OroB2B\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData as AccountLoadAccountUserData;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
  * @dbIsolation
- * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class ProductVisibilityTest extends WebTestCase
 {
     const VISIBILITY_SYSTEM_CONFIGURATION_PATH = 'oro_b2b_account.product_visibility';
 
     /**
-     * @var ProductVisibilityQueryBuilderModifier
-     */
-    protected $modifier;
-
-    /**
-     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $configManager;
-
-    /**
-     * @var TokenStorageInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $tokenStorage;
-
-    /**
-     * @var ProductVisibilityVoter
-    */
-    protected $voter;
-
-    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->initClient(
-            [],
-            $this->generateBasicAuthHeader(AccountLoadAccountUserData::EMAIL, AccountLoadAccountUserData::PASSWORD)
-        );
-
+        $this->initClient();
         $this->loadFixtures([
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
             'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
             'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
         ]);
 
-        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()->getMock();
-
-        $this->tokenStorage = $this
-            ->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
-
-        $this->modifier = new ProductVisibilityQueryBuilderModifier(
-            $this->configManager,
-            $this->tokenStorage
-        );
-
-        $this->modifier->setVisibilitySystemConfigurationPath(static::VISIBILITY_SYSTEM_CONFIGURATION_PATH);
-        $this->voter = $this->getContainer()->get('orob2b_product_viisbility.acl.voter.account');
-        $this->voter->setModifier($this->modifier);
     }
 
     /**
      * @dataProvider modifyDataProvider
      *
      * @param string $configValue
-     * @param string|null $user
      * @param array $expectedData
      */
-    public function testModify($configValue, $user, $expectedData)
+    public function testVisibility($configValue, $expectedData)
     {
-        if ($user) {
-            $user = $this->getReference($user);
-        }
-        $this->setupTokenStorage($user);
-        $this->configManager->expects($this->any())
-            ->method('get')
-            ->with(static::VISIBILITY_SYSTEM_CONFIGURATION_PATH)
-            ->willReturn($configValue);
-
-        foreach ($expectedData as $productKey => $accessResult) {
-            $product = $this->getReference($productKey);
-            $res = $this->voter->vote(
-                $this->tokenStorage->getToken(),
-                $product,
-                [ProductVisibilityVoter::ATTRIBUTE_VIEW]
+        $this->initClient(
+            [],
+            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
+        );
+        $configManager = $this->getClientInstance()->getContainer()->get('oro_config.global');
+        $configManager->set(self::VISIBILITY_SYSTEM_CONFIGURATION_PATH, $configValue);
+        $configManager->flush();
+        foreach ($expectedData as $productSKU => $resultCode) {
+            $product = $this->getReference($productSKU);
+            $this->assertInstanceOf('OroB2B\Bundle\ProductBundle\Entity\Product', $product);
+            $this->client->request(
+                'GET',
+                $this->getUrl('orob2b_product_frontend_product_view', ['id' => $product->getId()])
             );
-            $this->assertEquals($accessResult, $res);
+            $result = $this->client->getResponse();
+            $this->assertHtmlResponseStatusCodeEquals($result, $resultCode);
         }
     }
 
@@ -112,72 +63,31 @@ class ProductVisibilityTest extends WebTestCase
         return [
             'config visible' => [
                 'configValue' => ProductVisibility::VISIBLE,
-                'user' => AccountLoadAccountUserData::EMAIL,
                 'expectedData' => [
-                    'product.1' => VoterInterface::ACCESS_GRANTED,
-                    'product.2' => VoterInterface::ACCESS_DENIED,
-                    'product.3' => VoterInterface::ACCESS_DENIED,
-                    'product.4' => VoterInterface::ACCESS_DENIED,
-                    'product.5' => VoterInterface::ACCESS_GRANTED,
+                    LoadProductData::PRODUCT_1 => 200,
+                    LoadProductData::PRODUCT_2 => 200,
+                    LoadProductData::PRODUCT_3 => 200,
+                    LoadProductData::PRODUCT_4 => 403,
+                    LoadProductData::PRODUCT_5 => 200,
                 ]
             ],
             'config hidden' => [
                 'configValue' => ProductVisibility::HIDDEN,
-                'user' => AccountLoadAccountUserData::EMAIL,
                 'expectedData' => [
-                    'product.1' => VoterInterface::ACCESS_GRANTED,
-                    'product.2' => VoterInterface::ACCESS_DENIED,
-                    'product.3' => VoterInterface::ACCESS_DENIED,
-                    'product.4' => VoterInterface::ACCESS_DENIED,
-                    'product.5' => VoterInterface::ACCESS_GRANTED,
-                ]
-            ],
-            'anonymous config visible' => [
-                'configValue' => ProductVisibility::VISIBLE,
-                'user' => null,
-                'expectedData' => [
-                    'product.1' => VoterInterface::ACCESS_GRANTED,
-                    'product.2' => VoterInterface::ACCESS_GRANTED,
-                    'product.3' => VoterInterface::ACCESS_GRANTED,
-                    'product.4' => VoterInterface::ACCESS_DENIED,
-                    'product.5' => VoterInterface::ACCESS_GRANTED,
-                ]
-            ],
-            'anonymous config hidden' => [
-                'configValue' => ProductVisibility::HIDDEN,
-                'user' => null,
-                'expectedData' => [
-                    'product.1' => VoterInterface::ACCESS_DENIED,
-                    'product.2' => VoterInterface::ACCESS_GRANTED,
-                    'product.3' => VoterInterface::ACCESS_GRANTED,
-                    'product.4' => VoterInterface::ACCESS_DENIED,
-                    'product.5' => VoterInterface::ACCESS_GRANTED,
+                    LoadProductData::PRODUCT_1 => 403,
+                    LoadProductData::PRODUCT_2 => 200,
+                    LoadProductData::PRODUCT_3 => 200,
+                    LoadProductData::PRODUCT_4 => 403,
+                    LoadProductData::PRODUCT_5 => 200,
                 ]
             ],
         ];
     }
 
-    /**
-     * @param object|null $user
-     */
-    protected function setupTokenStorage($user = null)
+    protected function tearDown()
     {
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
-        $token->expects($this->any())
-            ->method('getUser')
-            ->willReturn($user);
-
-        $this->tokenStorage->expects($this->any())
-            ->method('getToken')
-            ->willReturn($token);
-    }
-
-    /**
-     * @return \OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository
-     */
-    protected function getProductRepository()
-    {
-        return $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BProductBundle:Product')
-            ->getRepository('OroB2BProductBundle:Product');
+        $configManager = $this->getClientInstance()->getContainer()->get('oro_config.global');
+        $configManager->set(self::VISIBILITY_SYSTEM_CONFIGURATION_PATH, ProductVisibility::VISIBLE);
+        $configManager->flush();
     }
 }
