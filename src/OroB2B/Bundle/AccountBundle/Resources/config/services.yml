@@ -655,7 +655,7 @@ services:
         class: %orob2b_account.visibility.cache.product_resolved_cache_builder.class%
         arguments:
             - @doctrine
-            - @oro_entity.orm.insert_from_select_query
+            - @oro_entity.orm.insert_from_select_query_executor
             - @orob2b_account.calculator.category_visibility_resolver
             - %orob2b_account.entity.product_visibility_resolved.class%
 
