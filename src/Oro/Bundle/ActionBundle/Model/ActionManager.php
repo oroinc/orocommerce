@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ActionBundle\Model;
 
+use Doctrine\Common\Collections\Collection;
+
 use Oro\Bundle\ActionBundle\Configuration\ActionConfigurationProvider;
 use Oro\Bundle\ActionBundle\Exception\ActionNotFoundException;
 
@@ -61,11 +63,12 @@ class ActionManager
 
     /**
      * @param string $actionName
+     * @param Collection $errors
      * @param ActionContext $actionContext
      * @return ActionContext
      * @throws \Exception
      */
-    public function execute($actionName, ActionContext $actionContext = null)
+    public function execute($actionName, Collection $errors = null, ActionContext $actionContext = null)
     {
         $action = $this->getAction($actionName);
         if (!$action) {
@@ -76,7 +79,7 @@ class ActionManager
             $actionContext = $this->contextHelper->getActionContext();
         }
 
-        $action->execute($actionContext);
+        $action->execute($actionContext, $errors);
 
         $entity = $actionContext->getEntity();
         if ($entity) {

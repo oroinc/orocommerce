@@ -127,6 +127,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
      * @param array $config
      * @param array $functions
      * @param array $conditions
+     * @param string $actionName
      * @param string $exceptionMessage
      *
      * @dataProvider executeProvider
@@ -136,11 +137,12 @@ class ActionTest extends \PHPUnit_Framework_TestCase
         array $config,
         array $functions,
         array $conditions,
+        $actionName,
         $exceptionMessage = ''
     ) {
         $this->definition->expects($this->any())
             ->method('getName')
-            ->willReturn('TestName');
+            ->willReturn($actionName);
 
         $this->definition->expects($this->any())
             ->method('getFunctions')
@@ -162,6 +164,8 @@ class ActionTest extends \PHPUnit_Framework_TestCase
                 return $conditions[$config[0]];
             });
 
+        $errors = new ArrayCollection();
+
         if ($exceptionMessage) {
             $this->setExpectedException(
                 'Oro\Bundle\ActionBundle\Exception\ForbiddenActionException',
@@ -169,7 +173,9 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             );
         }
 
-        $this->action->execute($context);
+        $this->action->execute($context, $errors);
+
+        $this->assertEmpty($errors->toArray());
     }
 
     /**
@@ -450,7 +456,8 @@ class ActionTest extends \PHPUnit_Framework_TestCase
                     'preconditions' => $this->createCondition($this->once(), $context, false),
                     'conditions' => $this->createCondition($this->never(), $context, true),
                 ],
-                'exception' => 'Action "TestName" is not allowed.',
+                'actionName' => 'TestName1',
+                'exception' => 'Action "TestName1" is not allowed.'
             ],
             '!isConditionAllowed' => [
                 'context' => $context,
@@ -463,7 +470,8 @@ class ActionTest extends \PHPUnit_Framework_TestCase
                     'preconditions' => $this->createCondition($this->once(), $context, true),
                     'conditions' => $this->createCondition($this->once(), $context, false),
                 ],
-                'exception' => 'Action "TestName" is not allowed.',
+                'actionName' => 'TestName2',
+                'exception' => 'Action "TestName2" is not allowed.'
             ],
             'isAllowed' => [
                 'context' => $context,
@@ -476,6 +484,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
                     'preconditions' => $this->createCondition($this->once(), $context, true),
                     'conditions' => $this->createCondition($this->once(), $context, true),
                 ],
+                'actionName' => 'TestName3',
             ],
         ];
     }

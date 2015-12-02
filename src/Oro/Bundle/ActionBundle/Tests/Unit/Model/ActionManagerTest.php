@@ -322,7 +322,8 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
             ->method('isAvailable')
             ->willReturn(true);
         $action->expects($this->once())
-            ->method('execute');
+            ->method('execute')
+            ->willReturn(true);
 
         return $action;
     }
