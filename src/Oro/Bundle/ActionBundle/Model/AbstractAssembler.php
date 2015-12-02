@@ -15,11 +15,12 @@ abstract class AbstractAssembler
     protected function assertOptions(array $options, array $requiredOptions, $path = null)
     {
         foreach ($requiredOptions as $optionName) {
-            $message = 'Option "%s" is required';
-            if ($path) {
-                $message = sprintf('%s at "%s"', $message, $path);
-            }
             if (empty($options[$optionName])) {
+                $message = 'Option "%s" is required';
+                if ($path) {
+                    $message = sprintf('%s at "%s"', $message, $path);
+                }
+
                 throw new MissedRequiredOptionException(sprintf($message, $optionName));
             }
         }
