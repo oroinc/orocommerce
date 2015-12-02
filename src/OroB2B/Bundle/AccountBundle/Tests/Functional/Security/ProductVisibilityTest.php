@@ -42,7 +42,6 @@ class ProductVisibilityTest extends WebTestCase
         );
         $configManager = $this->getClientInstance()->getContainer()->get('oro_config.global');
         $configManager->set(self::VISIBILITY_SYSTEM_CONFIGURATION_PATH, $configValue);
-        $configManager->flush();
         foreach ($expectedData as $productSKU => $resultCode) {
             $product = $this->getReference($productSKU);
             $this->assertInstanceOf('OroB2B\Bundle\ProductBundle\Entity\Product', $product);
