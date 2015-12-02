@@ -118,7 +118,7 @@ class ProductVisibilityTest extends WebTestCase
                     'product.2' => VoterInterface::ACCESS_DENIED,
                     'product.3' => VoterInterface::ACCESS_DENIED,
                     'product.4' => VoterInterface::ACCESS_DENIED,
-                    'product.5' => VoterInterface::ACCESS_DENIED,
+                    'product.5' => VoterInterface::ACCESS_GRANTED,
                 ]
             ],
             'config hidden' => [
@@ -129,7 +129,7 @@ class ProductVisibilityTest extends WebTestCase
                     'product.2' => VoterInterface::ACCESS_DENIED,
                     'product.3' => VoterInterface::ACCESS_DENIED,
                     'product.4' => VoterInterface::ACCESS_DENIED,
-                    'product.5' => VoterInterface::ACCESS_DENIED,
+                    'product.5' => VoterInterface::ACCESS_GRANTED,
                 ]
             ],
             'anonymous config visible' => [

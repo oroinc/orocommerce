@@ -49,7 +49,6 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
             'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
             'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
             'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityResolvedData',
         ]);
 
         $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')

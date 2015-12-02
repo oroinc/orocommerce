@@ -42,7 +42,6 @@ class ProductControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->loadFixtures(['OroB2B\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadLocaleData']);
     }
 
     public function testIndex()
