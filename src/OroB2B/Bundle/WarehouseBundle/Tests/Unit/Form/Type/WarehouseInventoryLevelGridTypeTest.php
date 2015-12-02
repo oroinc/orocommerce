@@ -5,17 +5,21 @@ namespace OroB2B\Bundle\WarehouseBundle\Tests\Unit\Form\Type;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
+
+use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\FormBundle\Form\Type\DataChangesetType;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\WarehouseBundle\Form\Type\WarehouseInventoryLevelGridType;
 
-class WarehouseInventoryLevelGridTypeTest extends \PHPUnit_Framework_TestCase
+class WarehouseInventoryLevelGridTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
@@ -29,11 +33,31 @@ class WarehouseInventoryLevelGridTypeTest extends \PHPUnit_Framework_TestCase
      */
     protected $formFactory;
 
+    /**
+     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $doctrineHelper;
+
     protected function setUp()
     {
-        $this->formFactory = $this->getMock('Symfony\Component\Form\FormFactoryInterface');
+        parent::setUp();
 
-        $this->type = new WarehouseInventoryLevelGridType($this->formFactory);
+        $this->formFactory = $this->getMock('Symfony\Component\Form\FormFactoryInterface');
+        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->type = new WarehouseInventoryLevelGridType($this->formFactory, $this->doctrineHelper);
+    }
+
+    /**
+     * @return array
+     */
+    protected function getExtensions()
+    {
+        return [
+            new PreloadedExtension([DataChangesetType::NAME => new DataChangesetType()], [])
+        ];
     }
 
     public function testGetName()
@@ -46,20 +70,83 @@ class WarehouseInventoryLevelGridTypeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(DataChangesetType::NAME, $this->type->getParent());
     }
 
-    public function testConfigureOptions()
+    /**
+     * @param array $options
+     * @param mixed $submittedData
+     * @param mixed $expectedData
+     * @param DoctrineHelper $doctrineHelper
+     * @dataProvider submitDataProvider
+     */
+    public function testSubmit(array $options, $submittedData, $expectedData, DoctrineHelper $doctrineHelper = null)
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
-        $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')
+        $type = $doctrineHelper
+            ? new WarehouseInventoryLevelGridType($this->formFactory, $doctrineHelper)
+            : $this->type;
+
+        $form = $this->factory->create($type, null, $options);
+        $form->submit($submittedData);
+        $this->assertTrue($form->isValid());
+        $this->assertEquals($expectedData, $form->getData());
+    }
+
+    public function submitDataProvider()
+    {
+        $firstWarehouse = $this->getEntity('OroB2B\Bundle\WarehouseBundle\Entity\Warehouse', ['id' => 1]);
+        $secondWarehouse = $this->getEntity('OroB2B\Bundle\WarehouseBundle\Entity\Warehouse', ['id' => 2]);
+
+        $warehouseClass = 'OroB2BWarehouseBundle:Warehouse';
+        $doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
-        $resolver->expects($this->once())
-            ->method('setRequired')
-            ->with('product');
-        $resolver->expects($this->once())
-            ->method('setAllowedTypes')
-            ->with('product', 'OroB2B\Bundle\ProductBundle\Entity\Product');
+        $doctrineHelper->expects($this->any())
+            ->method('getEntityReference')
+            ->willReturnMap([
+                [$warehouseClass, 1, $firstWarehouse],
+                [$warehouseClass, 2, $secondWarehouse],
+            ]);
 
-        $this->type->configureOptions($resolver);
+        /** @var ProductUnitPrecision $firstPrecision */
+        $firstPrecision = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision', ['id' => 11]);
+        /** @var ProductUnitPrecision $secondPrecision */
+        $secondPrecision = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision', ['id' => 12]);
+
+        $product = new Product();
+        $product->addUnitPrecision($firstPrecision)
+            ->addUnitPrecision($secondPrecision);
+
+        return [
+            'no data' => [
+                'options' => ['product' => $product],
+                'submittedData' => null,
+                'expectedData' => new ArrayCollection([]),
+            ],
+            'empty data' => [
+                'options' => ['product' => $product],
+                'submittedData' => '',
+                'expectedData' => new ArrayCollection([]),
+            ],
+            'valid data' => [
+                'options' => ['product' => $product],
+                'submittedData' => json_encode([
+                    '1_11' => ['levelQuantity' => '42'],
+                    '2_12' => ['levelQuantity' => null],
+                ]),
+                'expectedData' => new ArrayCollection([
+                    '1_11' => [
+                        'data' => ['levelQuantity' => '42'],
+                        'warehouse' => $firstWarehouse,
+                        'precision' => $firstPrecision,
+                    ],
+                    '2_12' => [
+                        'data' => ['levelQuantity' => null],
+                        'warehouse' => $secondWarehouse,
+                        'precision' => $secondPrecision,
+                    ]
+
+                ]),
+                'doctrineHelper' => $doctrineHelper,
+            ]
+        ];
     }
 
     public function testFinishView()

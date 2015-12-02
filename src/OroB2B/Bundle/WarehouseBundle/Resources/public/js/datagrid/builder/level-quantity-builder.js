@@ -1,13 +1,12 @@
-define(function(require) {
+define(['jquery', 'underscore', 'oroui/js/mediator', 'orodatagrid/js/datagrid/formatter/number-formatter'
+], function($, _, mediator, NumberFormatter) {
     'use strict';
 
-    var WarehouseInventoryLevelsComponent;
-    var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var NumberFormatter = require('orodatagrid/js/datagrid/formatter/number-formatter');
+    var LevelQuantity = function() {
+        this.initialize.apply(this, arguments);
+    };
 
-    WarehouseInventoryLevelsComponent = BaseComponent.extend({
+    _.extend(LevelQuantity.prototype, {
         /**
          * @property {Grid}
          */
@@ -31,7 +30,6 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            gridName: 'levels-grid',
             quantityColumnName: 'quantity',
             unitColumnName: 'code',
             unitPrecisions: {},
@@ -39,23 +37,17 @@ define(function(require) {
         },
 
         /**
-         * @inheritDoc
+         * @param {Object} [options.grid] grid instance
+         * @param {Object} [options.options] grid initialization options
          */
         initialize: function(options) {
-            this.options = _.defaults(options || {}, this.options);
+            this.grid = options.grid;
+
+            var inputSelector = options.options.metadata.options.cellSelection.selector;
+            var quantityValidationOptions = $(inputSelector).first().data('level-quantity-options');
+            this.options = _.defaults(quantityValidationOptions || {}, this.options);
+
             this.numberFormatter = new NumberFormatter();
-            mediator.on('datagrid:rendered', this._onDatagridRendered, this);
-        },
-
-        /**
-         * @param {Grid} grid
-         */
-        _onDatagridRendered: function(grid) {
-            if (grid.name !== this.options.gridName) {
-                return;
-            }
-
-            this.grid = grid;
 
             this._formatInitialQuantity();
             this._applyValidationToGrid();
@@ -70,10 +62,17 @@ define(function(require) {
          */
         _formatInitialQuantity: function() {
             var quantityColumn = this.options.quantityColumnName;
+            var numberFormatter = this.numberFormatter;
 
-            // do initial rounding
+            // apply rounding
             _.each(this.grid.collection.fullCollection.models, function(model) {
-                model.set(quantityColumn, this.numberFormatter.fromRaw(model.get(quantityColumn)));
+                model.on('change:' + quantityColumn, function(model, value) {
+                    // convert to numeric value to support correct grid sorting
+                    if (!isNaN(value)) {
+                        model.set(quantityColumn, numberFormatter.toRaw(value), {silent: true});
+                    }
+                });
+                model.set(quantityColumn, numberFormatter.fromRaw(model.get(quantityColumn)));
             }, this);
 
             // render editable cells again to refresh data
@@ -119,11 +118,28 @@ define(function(require) {
             }
 
             var editorInput = cell.$el.find(':input').first();
+            editorInput.parent().addClass('controls');
             editorInput.attr('name', 'quantity_' + cell.model.cid);
             editorInput.data('validation', constraints);
             editorInput.valid();
         }
     });
 
-    return WarehouseInventoryLevelsComponent;
+    return {
+        /**
+         * @param {jQuery.Deferred} deferred
+         * @param {Object} options
+         */
+        init: function(deferred, options) {
+            options.gridPromise.done(function(grid) {
+                var validation = new LevelQuantity({
+                    'grid': grid,
+                    'options': options
+                });
+                deferred.resolve(validation);
+            }).fail(function() {
+                deferred.reject();
+            });
+        }
+    };
 });

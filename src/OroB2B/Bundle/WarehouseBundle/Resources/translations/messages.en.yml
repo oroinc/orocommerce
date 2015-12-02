@@ -17,6 +17,10 @@ orob2b:
             warehouse_information: Warehouse Information
             inventory_management: Inventory
 
+            actions:
+                save: Save
+                cancel: Cancel
+
         sections:
             general: General
             additional: Additional

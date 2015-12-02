@@ -25,6 +25,7 @@ use OroB2B\Bundle\WarehouseBundle\Model\ExtendWarehouseInventoryLevel;
  *      defaultValues={
  *          "security"={
  *              "type"="ACL",
+ *              "permissions"="VIEW;EDIT",
  *              "group_name"=""
  *          }
  *      }
@@ -46,7 +47,7 @@ class WarehouseInventoryLevel extends ExtendWarehouseInventoryLevel
      *
      * @ORM\Column(name="quantity", type="decimal", precision=20, scale=10, nullable=false))
      */
-    protected $quantity;
+    protected $quantity = 0;
 
     /**
      * @var Warehouse $warehouse
@@ -100,7 +101,7 @@ class WarehouseInventoryLevel extends ExtendWarehouseInventoryLevel
     }
 
     /**
-     * @return mixed
+     * @return Warehouse
      */
     public function getWarehouse()
     {
