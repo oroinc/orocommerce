@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\WarehouseBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -35,6 +36,10 @@ class WarehouseInventoryLevelController extends Controller
      */
     public function updateAction(Product $product, Request $request)
     {
+        if (!$this->get('oro_security.security_facade')->isGranted('EDIT', $product)) {
+            throw new AccessDeniedHttpException();
+        }
+
         $form = $this->createForm(
             WarehouseInventoryLevelGridType::NAME,
             null,

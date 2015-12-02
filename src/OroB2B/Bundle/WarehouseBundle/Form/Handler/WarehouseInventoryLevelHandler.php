@@ -5,11 +5,11 @@ namespace OroB2B\Bundle\WarehouseBundle\Form\Handler;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\FormBundle\Form\DataTransformer\DataChangesetTransformer;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 use OroB2B\Bundle\WarehouseBundle\Entity\Warehouse;
@@ -57,11 +57,9 @@ class WarehouseInventoryLevelHandler
     }
 
     /**
-     * @param Product $product
-     *
      * @return bool
      */
-    public function process(Product $product)
+    public function process()
     {
         if ($this->request->isMethod('POST')) {
             $this->form->submit($this->request);
@@ -69,18 +67,8 @@ class WarehouseInventoryLevelHandler
             if ($this->form->isValid()) {
                 $formData = $this->form->getData();
 
-                if (count($formData)) {
-                    foreach ($formData as $levelData) {
-                        $warehouseInventoryLevel = $this->getWarehouseInventoryLevelObject($levelData);
-                        $hasQuantity = $warehouseInventoryLevel->getQuantity() > 0;
-                        $isPersisted = $warehouseInventoryLevel->getId() !== null;
-
-                        if ($hasQuantity && !$isPersisted) {
-                            $this->manager->persist($warehouseInventoryLevel);
-                        } elseif (!$hasQuantity && $isPersisted) {
-                            $this->manager->remove($warehouseInventoryLevel);
-                        }
-                    }
+                if ($formData && count($formData)) {
+                    $this->handleWarehouseInventoryLevels($formData);
                     $this->manager->flush();
                 }
 
@@ -89,6 +77,24 @@ class WarehouseInventoryLevelHandler
         }
 
         return false;
+    }
+
+    /**
+     * @param $levelsData array|Collection
+     */
+    protected function handleWarehouseInventoryLevels($levelsData)
+    {
+        foreach ($levelsData as $levelData) {
+            $warehouseInventoryLevel = $this->getWarehouseInventoryLevelObject($levelData);
+            $hasQuantity = $warehouseInventoryLevel->getQuantity() > 0;
+            $isPersisted = $warehouseInventoryLevel->getId() !== null;
+
+            if ($hasQuantity && !$isPersisted) {
+                $this->manager->persist($warehouseInventoryLevel);
+            } elseif (!$hasQuantity && $isPersisted) {
+                $this->manager->remove($warehouseInventoryLevel);
+            }
+        }
     }
 
     /**
