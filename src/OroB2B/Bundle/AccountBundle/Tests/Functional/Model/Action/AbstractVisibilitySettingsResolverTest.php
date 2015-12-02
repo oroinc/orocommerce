@@ -13,7 +13,7 @@ use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
-abstract class AbstractVisibilitySettingsResolver extends WebTestCase
+abstract class AbstractVisibilitySettingsResolverTest extends WebTestCase
 {
     /** @var  Website */
     protected $website;

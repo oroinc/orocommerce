@@ -29,7 +29,6 @@ class AccountProductResolvedCacheBuilder extends AbstractCacheBuilder implements
         RegistryInterface $registry,
         CategoryVisibilityResolverAdapterInterface $categoryVisibilityResolver,
         ConfigManager $configManager
-
     ) {
         parent::__construct($registry, $categoryVisibilityResolver);
         $this->configManager = $configManager;

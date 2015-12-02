@@ -13,7 +13,7 @@ use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 /**
  * @dbIsolation
  */
-class ProductVisibilitySettingsResolver extends AbstractVisibilitySettingsResolver
+class ProductVisibilitySettingsResolverTest extends AbstractVisibilitySettingsResolverTest
 {
     public function testChangeProductVisibilityToHidden()
     {

@@ -18,7 +18,7 @@ use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 /**
  * @dbIsolation
  */
-class AccountProductVisibilitySettingsResolver extends AbstractVisibilitySettingsResolver
+class AccountProductVisibilitySettingsResolverTest extends AbstractVisibilitySettingsResolverTest
 {
     /** @var  Account */
     protected $account;
@@ -128,7 +128,6 @@ class AccountProductVisibilitySettingsResolver extends AbstractVisibilitySetting
         $this->assertEquals(
             $accountProductVisibilityResolved->getVisibility(),
             BaseProductVisibilityResolved::VISIBILITY_HIDDEN
-
         );
         $this->checkProductIdentifyEntitiesAccessory($accountProductVisibilityResolved);
     }
