@@ -2,40 +2,15 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache;
 
-use Symfony\Bridge\Doctrine\RegistryInterface;
-
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityResolverAdapterInterface;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountProductResolvedCacheBuilder extends AbstractCacheBuilder implements CacheBuilderInterface
 {
-    /**
-     * @var ConfigManager
-     */
-    protected $configManager;
-
-    /**
-     * @param RegistryInterface $registry
-     * @param CategoryVisibilityResolverAdapterInterface $categoryVisibilityResolver
-     * @param ConfigManager $configManager
-     */
-    public function __construct(
-        RegistryInterface $registry,
-        CategoryVisibilityResolverAdapterInterface $categoryVisibilityResolver,
-        ConfigManager $configManager
-    ) {
-        parent::__construct($registry, $categoryVisibilityResolver);
-        $this->configManager = $configManager;
-    }
-
     /**
      * @param AccountProductVisibility $accountProductVisibility
      */
@@ -64,6 +39,14 @@ class AccountProductResolvedCacheBuilder extends AbstractCacheBuilder implements
                 ->getManagerForClass('OroB2BCatalogBundle:Category')
                 ->getRepository('OroB2BCatalogBundle:Category')
                 ->findOneByProduct($product);
+            if (!$category instanceof Category) {
+                $accountProductVisibilityResolved->setVisibility($this->getVisibilityFromConfig($this->configManager));
+                $accountProductVisibilityResolved->setSourceProductVisibility(null);
+                $accountProductVisibilityResolved->setSource(null);
+                $accountProductVisibilityResolved->setCategoryId(null);
+
+                return;
+            }
             $accountProductVisibilityResolved->setVisibility(
                 $this->categoryVisibilityResolver->getCategoryVisibilityForAccount($category, $account)
             );
@@ -77,9 +60,7 @@ class AccountProductResolvedCacheBuilder extends AbstractCacheBuilder implements
                 ->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
                 ->findOneBy(['product' => $product, 'website' => $website]);
             if (!$productVisibilityResolved) {
-                $visibilityFromConfig = $this->configManager->get('oro_b2b_account.product_visibility');
-                $visibility = $visibilityFromConfig == ProductVisibility::VISIBLE ? 1 : -1;
-                $accountProductVisibilityResolved->setVisibility($visibility);
+                $accountProductVisibilityResolved->setVisibility($this->getVisibilityFromConfig($this->configManager));
                 $accountProductVisibilityResolved->setSourceProductVisibility(null);
 
                 return;

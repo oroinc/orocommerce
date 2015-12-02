@@ -109,6 +109,12 @@ class ProductVisibilityControllerTest extends WebTestCase
         );
     }
 
+    public function tearDown()
+    {
+        $this->client->getContainer()->get('doctrine')->getManager()->clear();
+        parent::tearDown();
+    }
+
     public function testUpdate()
     {
         $this->submitForm();

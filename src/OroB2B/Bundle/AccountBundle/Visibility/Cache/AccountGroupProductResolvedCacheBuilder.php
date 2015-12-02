@@ -44,6 +44,16 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractCacheBuilder imple
                 ->getManagerForClass('OroB2BCatalogBundle:Category')
                 ->getRepository('OroB2BCatalogBundle:Category')
                 ->findOneByProduct($product);
+            if (!$category instanceof Category) {
+                $accountGroupProductVisibilityResolved->setVisibility(
+                    $this->getVisibilityFromConfig($this->configManager)
+                );
+                $accountGroupProductVisibilityResolved->setSourceProductVisibility(null);
+                $accountGroupProductVisibilityResolved->setSource(null);
+                $accountGroupProductVisibilityResolved->setCategoryId(null);
+
+                return;
+            }
             $accountGroupProductVisibilityResolved->setVisibility(
                 $this->categoryVisibilityResolver->getCategoryVisibilityForAccountGroup($category, $accountGroup)
             );

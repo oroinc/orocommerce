@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache;
 
+
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityResolverAdapterInterface;
@@ -16,16 +18,22 @@ abstract class AbstractCacheBuilder
     /** @var  CategoryVisibilityResolverAdapterInterface */
     protected $categoryVisibilityResolver;
 
+    /** @var  ConfigManager */
+    protected $configManager;
+
     /**
      * @param RegistryInterface $registry
      * @param CategoryVisibilityResolverAdapterInterface $categoryVisibilityResolver
+     * @param ConfigManager $configManager
      */
     public function __construct(
         RegistryInterface $registry,
-        CategoryVisibilityResolverAdapterInterface $categoryVisibilityResolver
+        CategoryVisibilityResolverAdapterInterface $categoryVisibilityResolver,
+        ConfigManager $configManager
     ) {
         $this->registry = $registry;
         $this->categoryVisibilityResolver = $categoryVisibilityResolver;
+        $this->configManager = $configManager;
     }
 
     /**
@@ -46,5 +54,17 @@ abstract class AbstractCacheBuilder
         } elseif ($selectedVisibility == VisibilityInterface::HIDDEN) {
             $productVisibilityResolved->setVisibility(BaseProductVisibilityResolved::VISIBILITY_HIDDEN);
         }
+    }
+
+    /**
+     * @param ConfigManager $configManager
+     * @return int
+     */
+    protected function getVisibilityFromConfig(ConfigManager $configManager)
+    {
+        $visibilityFromConfig = $configManager->get('oro_b2b_account.product_visibility');
+        $visibility = $visibilityFromConfig == VisibilityInterface::VISIBLE ? 1 : -1;
+
+        return $visibility;
     }
 }

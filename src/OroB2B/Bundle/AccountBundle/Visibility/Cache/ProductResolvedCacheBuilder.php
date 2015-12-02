@@ -33,10 +33,17 @@ class ProductResolvedCacheBuilder extends AbstractCacheBuilder implements CacheB
                 ->getManagerForClass('OroB2BCatalogBundle:Category')
                 ->getRepository('OroB2BCatalogBundle:Category')
                 ->findOneByProduct($product);
+            $productVisibilityResolved->setSourceProductVisibility(null);
+            if (!$category instanceof Category) {
+                $productVisibilityResolved->setVisibility($this->getVisibilityFromConfig($this->configManager));
+                $productVisibilityResolved->setSource(null);
+                $productVisibilityResolved->setCategoryId(null);
+
+                return;
+            }
             $productVisibilityResolved->setVisibility(
                 $this->categoryVisibilityResolver->getCategoryVisibility($category)
             );
-            $productVisibilityResolved->setSourceProductVisibility(null);
             $productVisibilityResolved->setSource(ProductVisibilityResolved::SOURCE_CATEGORY);
             $productVisibilityResolved->setCategoryId($category->getId());
         } elseif ($selectedVisibility == ProductVisibility::CONFIG && $productVisibilityResolved) {

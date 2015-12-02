@@ -81,6 +81,8 @@ abstract class AbstractVisibilitySettingsResolverTest extends WebTestCase
         $this->assertEquals($this->product, $visibilityResolved->getProduct());
     }
 
+
+
     /**
      * @return array
      */
