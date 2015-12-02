@@ -9,13 +9,18 @@ abstract class AbstractAssembler
     /**
      * @param array $options
      * @param array $requiredOptions
+     * @param string $path
      * @throws MissedRequiredOptionException
      */
-    protected function assertOptions(array $options, array $requiredOptions)
+    protected function assertOptions(array $options, array $requiredOptions, $path = null)
     {
         foreach ($requiredOptions as $optionName) {
+            $message = 'Option "%s" is required';
+            if ($path) {
+                $message = sprintf('%s at "%s"', $message, $path);
+            }
             if (empty($options[$optionName])) {
-                throw new MissedRequiredOptionException(sprintf('Option "%s" is required', $optionName));
+                throw new MissedRequiredOptionException(sprintf($message, $optionName));
             }
         }
     }

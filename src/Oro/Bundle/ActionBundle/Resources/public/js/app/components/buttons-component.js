@@ -57,9 +57,14 @@ define(function(require) {
                     .done(_.bind(function(response) {
                         this.doResponse(e, response);
                     }, this))
-                    .fail(function() {
+                    .fail(function(jqXHR) {
+                        var message = __('Could not perform action');
+                        if (jqXHR.responseJSON.message || false) {
+                            message += ': ' + jqXHR.responseJSON.message;
+                        }
+
                         mediator.execute('hideLoading');
-                        messenger.notificationFlashMessage('error', __('Could not perform action'));
+                        messenger.notificationFlashMessage('error', message);
                     });
             }
         },

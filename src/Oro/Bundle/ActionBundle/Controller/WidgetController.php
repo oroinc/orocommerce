@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ActionBundle\Controller;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
@@ -39,20 +41,33 @@ class WidgetController extends Controller
      */
     public function formAction(Request $request, $actionName)
     {
-        /** @var Form $form */
-        $form = $this->get('oro_action.form_manager')->getActionForm($actionName);
-        $params = [];
+        $params = [
+            'response' => [],
+            'errors' => new ArrayCollection(),
+        ];
 
-        if ($request->isMethod('POST')) {
-            $form->submit($request);
-            if ($form->isValid()) {
-                $context = $this->getActionManager()->execute($actionName);
+        try {
+            /** @var Form $form */
+            $form = $this->get('oro_action.form_manager')->getActionForm($actionName);
 
-                $params['response'] = $context->getRedirectUrl() ? ['redirectUrl' => $context->getRedirectUrl()] : [];
+            if ($request->isMethod('POST')) {
+                $form->submit($request);
+                if ($form->isValid()) {
+                    $context = $this->getActionManager()->execute($actionName, $params['errors']);
+
+                    if ($context && $context->getRedirectUrl()) {
+                        $params['response']['redirectUrl'] = $context->getRedirectUrl();
+                    }
+                }
             }
+
+            $params['form'] = $form->createView();
+        } catch (\Exception $e) {
+            $params['errors']->add([
+                'message' => $e->getMessage(),
+            ]);
         }
-        $params['form'] = $form->createView();
-        
+
         return $this->render($this->getActionManager()->getDialogTemplate($actionName), $params);
     }
 

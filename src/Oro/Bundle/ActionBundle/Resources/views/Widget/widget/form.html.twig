@@ -1,5 +1,5 @@
 <div class="widget-content">
-    {% if response is defined %}
+    {% if response %}
         <script type="text/javascript">
             require(['oroui/js/widget-manager'],
                 function(widgetManager) {
@@ -9,30 +9,41 @@
                 });
         </script>
     {% else %}
-        {% if form.vars.errors|length > 0 %}
+        {% if errors|length %}
             <div class="alert alert-error">
-                {{ form_errors(form) }}
+                <ul>
+                {% for error in errors %}
+                    <li>{{ error.message | trans(error.parameters|default([]))}}</li>
+                {% endfor %}
+                </ul>
             </div>
         {% endif %}
-        {{ form_start(form, {
-            'method': 'POST',
-            'action': app.request.uri,
-            'attr': {
-                'class': 'form-dialog',
-                'data-nohash': 'true',
-                'data-disable-autofocus': 'true',
-                'id': form.vars.id,
-            },
-        }) }}
-            {{ form_widget(form) }}
+        {% if form is defined %}
+            {% if form.vars.errors|length > 0 %}
+                <div class="alert alert-error">
+                    {{ form_errors(form) }}
+                </div>
+            {% endif %}
+            {{ form_start(form, {
+                'method': 'POST',
+                'action': app.request.uri,
+                'attr': {
+                    'class': 'form-dialog',
+                    'data-nohash': 'true',
+                    'data-disable-autofocus': 'true',
+                    'id': form.vars.id,
+                },
+            }) }}
+                {{ form_widget(form) }}
 
-            <div class="widget-actions form-actions">
-                {% block page_container_form_actions %}
-                    <button class="btn" type="reset">{{ 'Cancel'|trans }}</button>
-                    <button class="btn btn-success" type="submit">{{ 'Submit'|trans }}</button>
-                {% endblock %}
-            </div>
-        {{ form_end(form) }}
-        {{ oro_form_js_validation(form) }}
+                <div class="widget-actions form-actions">
+                    {% block page_container_form_actions %}
+                        <button class="btn" type="reset">{{ 'Cancel'|trans }}</button>
+                        <button class="btn btn-success" type="submit">{{ 'Submit'|trans }}</button>
+                    {% endblock %}
+                </div>
+            {{ form_end(form) }}
+            {{ oro_form_js_validation(form) }}
+        {% endif %}
     {% endif %}
 </div>
