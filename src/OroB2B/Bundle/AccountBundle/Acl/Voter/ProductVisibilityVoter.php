@@ -2,13 +2,16 @@
 
 namespace OroB2B\Bundle\AccountBundle\Acl\Voter;
 
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 
 use OroB2B\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier;
+use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 class ProductVisibilityVoter extends AbstractEntityVoter
 {
-
     const ATTRIBUTE_VIEW = 'VIEW';
 
     /**
@@ -20,22 +23,31 @@ class ProductVisibilityVoter extends AbstractEntityVoter
 
     /**
      * @var ProductVisibilityQueryBuilderModifier
-    */
-    private $modifier;
+     */
+    protected $modifier;
+
     /**
-     * @param string $class
-     * @param int $identifier
-     * @param string $attribute
-     * @return int
+     * {@inheritdoc}
+    */
+    public function vote(TokenInterface $token, $object, array $attributes)
+    {
+        if ($token->getUser() instanceof AccountUser) {
+            return parent::vote($token, $object, $attributes);
+        }
+
+        return self::ACCESS_ABSTAIN;
+    }
+
+    /**
+     * @inheritdoc
      */
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
         if (in_array($attribute, $this->supportedAttributes)) {
-            $qb = $this->doctrineHelper
-                ->getEntityRepository($class)
-                ->createQueryBuilder('product')
-                ->andWhere('product.id = :id')
-                ->setParameter('id', $identifier);
+            $repository = $this->doctrineHelper
+                ->getEntityRepository($class);
+            /** @var $repository ProductRepository */
+            $qb = $repository->getProductsQueryBuilder([$identifier]);
             $this->modifier->modify($qb);
             $product = $qb->getQuery()->getOneOrNullResult();
 
@@ -50,8 +62,6 @@ class ProductVisibilityVoter extends AbstractEntityVoter
     }
 
     /**
-     * Sets the Container.
-     *
      * @param ProductVisibilityQueryBuilderModifier $modifier A ProductVisibilityQueryBuilderModifier instance
      */
     public function setModifier(ProductVisibilityQueryBuilderModifier $modifier)
