@@ -8,42 +8,54 @@
                     });
                 });
         </script>
-    {% else %}
-        {% if errors|length %}
-            <div class="alert alert-error">
-                <ul>
-                {% for error in errors %}
-                    <li>{{ error.message | trans(error.parameters|default([]))}}</li>
-                {% endfor %}
-                </ul>
-            </div>
-        {% endif %}
-        {% if form is defined %}
+    {% elseif form is defined %}
+        {% block errors %}
+            {% if errors|length %}
+                <div class="alert alert-error">
+                    <ul>
+                    {% for error in errors %}
+                        <li>{{ error.message | trans(error.parameters|default([]))}}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        {% endblock %}
+        {% block form_errors %}
             {% if form.vars.errors|length > 0 %}
                 <div class="alert alert-error">
                     {{ form_errors(form) }}
                 </div>
             {% endif %}
-            {{ form_start(form, {
-                'method': 'POST',
-                'action': app.request.uri,
-                'attr': {
-                    'class': 'form-dialog',
-                    'data-nohash': 'true',
-                    'data-disable-autofocus': 'true',
-                    'id': form.vars.id,
-                },
-            }) }}
-                {{ form_widget(form) }}
+        {% endblock %}
+        {% if form is defined %}
+            {% block form %}
+                {{ form_start(form, {
+                    'method': 'POST',
+                    'action': app.request.uri,
+                    'attr': {
+                        'class': 'form-dialog',
+                        'data-nohash': 'true',
+                        'data-disable-autofocus': 'true',
+                        'id': form.vars.id,
+                    },
+                }) }}
+                    {% block form_inner %}
+                        {% block form_widget %}
+                            {{ form_widget(form) }}
+                        {% endblock %}
 
-                <div class="widget-actions form-actions">
-                    {% block page_container_form_actions %}
-                        <button class="btn" type="reset">{{ 'Cancel'|trans }}</button>
-                        <button class="btn btn-success" type="submit">{{ 'Submit'|trans }}</button>
+                        {% block form_actions %}
+                            <div class="widget-actions form-actions">
+                                {% block form_actions_inner %}
+                                    <button class="btn" type="reset">{{ 'Cancel'|trans }}</button>
+                                    <button class="btn btn-success" type="submit">{{ 'Submit'|trans }}</button>
+                                {% endblock %}
+                            </div>
+                        {% endblock %}
                     {% endblock %}
-                </div>
-            {{ form_end(form) }}
-            {{ oro_form_js_validation(form) }}
+                {{ form_end(form) }}
+                {{ oro_form_js_validation(form) }}
+            {% endblock %}
         {% endif %}
     {% endif %}
 </div>
