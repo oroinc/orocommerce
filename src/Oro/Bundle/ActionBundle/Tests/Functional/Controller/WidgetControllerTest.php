@@ -9,6 +9,9 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use Oro\Component\PropertyAccess\PropertyAccessor;
 
+/**
+ * @dbIsolation
+ */
 class WidgetControllerTest extends WebTestCase
 {
     /** @var int */
@@ -16,6 +19,9 @@ class WidgetControllerTest extends WebTestCase
 
     /** @var FilesystemCache */
     protected $cacheProvider;
+
+    /** @var PropertyAccessor */
+    protected $propertyAccessor;
 
     protected function setUp()
     {
@@ -74,14 +80,25 @@ class WidgetControllerTest extends WebTestCase
         }
     }
 
-    public function testFormAction()
-    {
+    /**
+     * @dataProvider formActionDataProvider
+     *
+     * @param array $inputData
+     * @param array $submittedData
+     * @param array $expectedFormData
+     * @param array $expectedData
+     * @param string $expectedMessage
+     */
+    public function testFormAction(
+        array $inputData,
+        array $submittedData,
+        array $expectedFormData,
+        array $expectedData,
+        $expectedMessage
+    ) {
         $this->cacheProvider->save(ActionConfigurationProvider::ROOT_NODE_NAME, $this->getConfigurationForFormAction());
 
-        $this->assertEntityFields(
-            LoadTestEntityData::TEST_ENTITY_1,
-            ['message' => 'test message', 'description' => null]
-        );
+        $this->assertEntityFields($inputData);
 
         $crawler = $this->client->request(
             'GET',
@@ -97,30 +114,137 @@ class WidgetControllerTest extends WebTestCase
         );
 
         $form = $crawler->selectButton('Submit')->form();
-        $form['oro_action[message_attr]'] = 'New Test Message';
-        $form['oro_action[descr_attr]'] = 'Test Description';
+        foreach ($expectedFormData as $name => $value) {
+            $this->assertEquals($value, $form->offsetGet($name)->getValue());
+        }
+        foreach ($submittedData as $name => $value) {
+            $form->offsetSet($name, $value);
+        }
 
         $crawler = $this->client->submit($form);
 
-        $this->assertContains('widget.trigger(\'formSave\', []);', $crawler->html());
-        $this->assertEntityFields(
-            LoadTestEntityData::TEST_ENTITY_1,
-            ['message' => 'New Test Message', 'description' => 'Test Description']
-        );
+        $this->assertContains($expectedMessage, $crawler->html());
+        $this->assertEntityFields($expectedData);
     }
 
     /**
-     * @param string $uid
+     * @return array
+     */
+    public function formActionDataProvider()
+    {
+        return [
+            'valid action' => [
+                'inputData' => [
+                    'message' => 'test message',
+                    'description' => null
+                ],
+                'submittedData' => [
+                    'oro_action[message_attr]' => 'new message',
+                ],
+                'expectedFormData' => [
+                    'oro_action[message_attr]' => 'test message',
+                    'oro_action[descr_attr]' => 'Test Description'
+                ],
+                'expectedData' => [
+                    'message' => 'new message',
+                    'description' => 'Test Description'
+                ],
+                'expectedMessage' => 'widget.trigger(\'formSave\', []);'
+            ],
+            'action not allowed' => [
+                'inputData' => [
+                    'message' => 'new message',
+                    'description' => 'Test Description'
+                ],
+                'submittedData' => [
+                    'oro_action[message_attr]' => 'new message',
+                    'oro_action[descr_attr]' => 'new description text'
+                ],
+                'expectedFormData' => [
+                    'oro_action[message_attr]' => 'new message',
+                    'oro_action[descr_attr]' => ''
+                ],
+                'expectedData' => [
+                    'message' => 'new message',
+                    'description' => 'Test Description'
+                ],
+                'expectedMessage' => 'Action "oro_action_test_action" is not allowed.'
+            ],
+            'action not allowed (constraint message)' => [
+                'inputData' => [
+                    'message' => 'new message',
+                    'description' => 'Test Description'
+                ],
+                'submittedData' => [
+                    'oro_action[message_attr]' => 'new message text',
+                    'oro_action[descr_attr]' => 'Test Description'
+                ],
+                'expectedFormData' => [
+                    'oro_action[message_attr]' => 'new message',
+                    'oro_action[descr_attr]' => ''
+                ],
+                'expectedData' => [
+                    'message' => 'new message',
+                    'description' => 'Test Description'
+                ],
+                'expectedMessage' => 'Please, write other description.'
+            ],
+            'action with form error' => [
+                'inputData' => [
+                    'message' => 'new message',
+                    'description' => 'Test Description'
+                ],
+                'submittedData' => [
+                    'oro_action[message_attr]' => '',
+                    'oro_action[descr_attr]' => 'new description text'
+                ],
+                'expectedFormData' => [
+                    'oro_action[message_attr]' => 'new message',
+                    'oro_action[descr_attr]' => ''
+                ],
+                'expectedData' => [
+                    'message' => 'new message',
+                    'description' => 'Test Description'
+                ],
+                'expectedMessage' => 'This value should not be blank.'
+            ]
+        ];
+    }
+
+    /**
      * @param array $fields
      */
-    protected function assertEntityFields($uid, array $fields)
+    protected function assertEntityFields(array $fields)
     {
-        $object = $this->getReference($uid);
-        $propertyAccessor = new PropertyAccessor();
+        $entity = $this->getEntity($this->entityId);
 
         foreach ($fields as $name => $value) {
-            $this->assertEquals($value, $propertyAccessor->getValue($object, $name));
+            $this->assertEquals($value, $this->getPropertyAccessor()->getValue($entity, $name));
         }
+    }
+
+    /**
+     * @param int $id
+     * @return object|null
+     */
+    protected function getEntity($id)
+    {
+        return $this->getContainer()
+            ->get('doctrine')
+            ->getRepository('Oro\Bundle\TestFrameworkBundle\Entity\TestActivity')
+            ->find($id);
+    }
+
+    /**
+     * @return PropertyAccessor
+     */
+    protected function getPropertyAccessor()
+    {
+        if (!$this->propertyAccessor) {
+            $this->propertyAccessor = new PropertyAccessor();
+        }
+
+        return $this->propertyAccessor;
     }
 
     /**
@@ -285,11 +409,10 @@ class WidgetControllerTest extends WebTestCase
                     'attribute_fields' => [
                         'message_attr' => [
                             'form_type' => 'text',
-                            'options' => ['required' => true, 'constraints' => ['NotBlank' => []]]
+                            'options' => ['required' => true, 'constraints' => [['NotBlank' => []]]]
                         ],
                         'descr_attr' => [
-                            'form_type' => 'text',
-                            'options' => ['required' => true, 'constraints' => ['NotBlank' => []]]
+                            'form_type' => 'text'
                         ]
                     ],
                     'attribute_default_values' => ['message_attr' => '$message']
@@ -303,7 +426,17 @@ class WidgetControllerTest extends WebTestCase
                     ]]
                 ],
                 'conditions' => [
-                    '@not' => [['@equal' => ['$message', '$.message_attr']]]
+                    '@and' => [
+                        [
+                            '@not' => [['@equal' => ['$message', '$.message_attr']]]
+                        ],
+                        [
+                            '@not' => [
+                                'parameters' => [['@equal' => ['$description', '$.descr_attr']]],
+                                'message' => 'Please, write other description.'
+                            ]
+                        ]
+                    ]
                 ],
                 'postfunctions' => [
                     ['@assign_value' => ['$message', '$.message_attr']],

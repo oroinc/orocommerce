@@ -102,6 +102,19 @@ class ActionType extends AbstractType
      */
     protected function addEventListeners(FormBuilderInterface $builder, array $options)
     {
+        $builder->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            function () use ($options) {
+                /** @var Action $action */
+                $action = $options['action'];
+
+                /** @var ActionContext $actionContext */
+                $actionContext = $options['action_context'];
+
+                $action->init($actionContext);
+            }
+        );
+
         if (!empty($options['attribute_default_values'])) {
             $builder->addEventListener(
                 FormEvents::PRE_SET_DATA,
@@ -121,19 +134,6 @@ class ActionType extends AbstractType
 
             $builder->addEventSubscriber($this->requiredAttributesListener);
         }
-
-        $builder->addEventListener(
-            FormEvents::PRE_SET_DATA,
-            function () use ($options) {
-                /** @var Action $action */
-                $action = $options['action'];
-
-                /** @var ActionContext $actionContext */
-                $actionContext = $options['action_context'];
-
-                $action->init($actionContext);
-            }
-        );
     }
 
     /**

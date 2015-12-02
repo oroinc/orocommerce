@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ActionBundle\Tests\Unit\Model;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 use Oro\Bundle\ActionBundle\Configuration\ActionConfigurationProvider;
 use Oro\Bundle\ActionBundle\Model\Action;
 use Oro\Bundle\ActionBundle\Model\ActionAssembler;
@@ -254,10 +256,14 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
             $assembler
         );
 
+        $errors = new ArrayCollection();
+
         $this->assertInstanceOf(
             'Oro\Bundle\ActionBundle\Model\ActionContext',
-            $this->manager->execute('test_action', $actionContext)
+            $this->manager->execute('test_action', $actionContext, $errors)
         );
+
+        $this->assertEmpty($errors->toArray());
     }
 
     /**
