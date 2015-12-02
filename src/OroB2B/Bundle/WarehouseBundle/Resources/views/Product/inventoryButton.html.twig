@@ -1,5 +1,5 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
-{% if resource_granted('EDIT', entity) %}
+{% if resource_granted('orob2b_product_warehouse_inventory_update') and resource_granted('EDIT', entity) %}
     {{ UI.clientButton({
         'dataUrl': path('orob2b_warehouse_inventory_level_update', {'id': entity.id}),
         'aCss': 'no-hash btn',
@@ -17,8 +17,7 @@
                     'allowMinimize': true,
                     'dblclick': 'maximize',
                     'maximizedHeightDecreaseBy': 'minimize-bar',
-                    'width': 1000,
-                    'height': 400,
+                    'width': 800,
                 }
             }
         }
