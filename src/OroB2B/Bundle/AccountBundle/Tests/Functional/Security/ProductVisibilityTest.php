@@ -57,7 +57,6 @@ class ProductVisibilityTest extends WebTestCase
             'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
             'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
             'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityResolvedData',
         ]);
 
         $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
@@ -119,7 +118,7 @@ class ProductVisibilityTest extends WebTestCase
                     'product.2' => VoterInterface::ACCESS_DENIED,
                     'product.3' => VoterInterface::ACCESS_DENIED,
                     'product.4' => VoterInterface::ACCESS_DENIED,
-                    'product.5' => VoterInterface::ACCESS_GRANTED,
+                    'product.5' => VoterInterface::ACCESS_DENIED,
                 ]
             ],
             'config hidden' => [
@@ -130,7 +129,7 @@ class ProductVisibilityTest extends WebTestCase
                     'product.2' => VoterInterface::ACCESS_DENIED,
                     'product.3' => VoterInterface::ACCESS_DENIED,
                     'product.4' => VoterInterface::ACCESS_DENIED,
-                    'product.5' => VoterInterface::ACCESS_GRANTED,
+                    'product.5' => VoterInterface::ACCESS_DENIED,
                 ]
             ],
             'anonymous config visible' => [

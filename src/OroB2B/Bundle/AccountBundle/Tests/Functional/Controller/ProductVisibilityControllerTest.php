@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller;
 
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -11,6 +9,9 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Component\Testing\WebTestCase;
 
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
@@ -202,9 +203,16 @@ class ProductVisibilityControllerTest extends WebTestCase
                 ],
             ]
         );
-
+        $em = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
+        $visibilitiesResolved = $em
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
+            ->findBy(['product' => $this->product]);
+        foreach ($visibilitiesResolved as $visibilityResolved) {
+            $visibilityResolved->setVisibility(BaseProductVisibilityResolved::VISIBILITY_VISIBLE);
+        }
+        $em->flush();
         $this->submitForm();
-
         $this->assertCountVisibilities(3);
     }
 

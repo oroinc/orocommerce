@@ -46,8 +46,10 @@ class ProductResolvedCacheBuilder extends AbstractCacheBuilder implements CacheB
             );
             $productVisibilityResolved->setSource(ProductVisibilityResolved::SOURCE_CATEGORY);
             $productVisibilityResolved->setCategoryId($category->getId());
-        } elseif ($selectedVisibility == ProductVisibility::CONFIG && $productVisibilityResolved) {
-            $em->remove($productVisibilityResolved);
+        } elseif ($selectedVisibility == ProductVisibility::CONFIG) {
+            if ($productVisibilityResolved) {
+                $em->remove($productVisibilityResolved);
+            }
         } else {
             $this->resolveStaticValues($productVisibility, $productVisibilityResolved, $selectedVisibility);
         }

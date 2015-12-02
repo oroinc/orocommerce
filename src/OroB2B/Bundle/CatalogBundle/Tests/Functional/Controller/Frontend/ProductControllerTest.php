@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\CatalogBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\Controller\ProductControllerTest as BaseTest;
@@ -24,6 +25,9 @@ class ProductControllerTest extends BaseTest
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
         $this->loadFixtures(['OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData']);
+        $configManager = $this->getClientInstance()->getContainer()->get('oro_config.global');
+        $configManager->set('oro_b2b_account.product_visibility', VisibilityInterface::VISIBLE);
+        $configManager->flush();
     }
 
     /**
@@ -36,7 +40,6 @@ class ProductControllerTest extends BaseTest
     {
         /** @var Category $secondLevelCategory */
         $secondLevelCategory = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
-
         $response = $this->requestFrontendGrid(
             [
                 'gridName' => 'frontend-products-grid',
