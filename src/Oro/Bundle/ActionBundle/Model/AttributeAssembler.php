@@ -70,7 +70,7 @@ class AttributeAssembler extends AbstractAssembler
             );
         }
 
-        $this->assertOptions($options, ['label', 'type']);
+        $this->assertOptions($options, ['label', 'type'], 'attributes.' . $name);
         $this->assertAttributeEntityAcl($options);
 
         $attribute = new Attribute();

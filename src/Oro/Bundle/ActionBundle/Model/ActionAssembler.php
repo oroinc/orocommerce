@@ -66,7 +66,7 @@ class ActionAssembler extends AbstractAssembler
      */
     protected function assembleDefinition($actionName, array $options)
     {
-        $this->assertOptions($options, ['label']);
+        $this->assertOptions($options, ['label'], $actionName);
         $actionDefinition = new ActionDefinition();
 
         $actionDefinition
