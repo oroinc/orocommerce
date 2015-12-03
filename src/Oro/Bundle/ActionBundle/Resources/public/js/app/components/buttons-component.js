@@ -40,7 +40,7 @@ define(function(require) {
         onClick: function(e) {
             e.preventDefault();
 
-            var $element = $(e.target);
+            var $element = $(e.currentTarget);
             if ($element.data('dialog-url')) {
                 var widget = new DialogWidget(this._getDialogOptions($element));
 
@@ -53,7 +53,7 @@ define(function(require) {
             } else {
                 mediator.execute('showLoading');
 
-                $.getJSON(e.target.href)
+                $.getJSON($element.attr('href'))
                     .done(_.bind(function(response) {
                         this.doResponse(e, response);
                     }, this))
