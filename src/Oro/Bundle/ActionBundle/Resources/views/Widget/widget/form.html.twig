@@ -8,7 +8,7 @@
                     });
                 });
         </script>
-    {% elseif form is defined %}
+    {% else %}
         {% block errors %}
             {% if errors|length %}
                 <div class="alert alert-error">
@@ -20,14 +20,15 @@
                 </div>
             {% endif %}
         {% endblock %}
-        {% block form_errors %}
-            {% if form.vars.errors|length > 0 %}
-                <div class="alert alert-error">
-                    {{ form_errors(form) }}
-                </div>
-            {% endif %}
-        {% endblock %}
         {% if form is defined %}
+            {% block form_errors %}
+                {% if form.vars.errors|length > 0 %}
+                    <div class="alert alert-error">
+                        {{ form_errors(form) }}
+                    </div>
+                {% endif %}
+            {% endblock %}
+
             {% block form %}
                 {{ form_start(form, {
                     'method': 'POST',
