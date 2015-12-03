@@ -60,7 +60,7 @@ class WarehouseInventoryLevelGridDataTransformer implements DataTransformerInter
         }
 
         foreach ($value as $combinedId => $changeSetRow) {
-            list($warehouseId, $precisionId) = explode('_', $combinedId);
+            list($warehouseId, $precisionId) = explode('_', $combinedId, 2);
             $warehouse = $this->getWarehouse((int)$warehouseId);
             $precision = $this->getPrecision((int)$precisionId);
 
