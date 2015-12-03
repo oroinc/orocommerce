@@ -3,11 +3,11 @@
 {% set dialogOptions = {'title': linkTitle } %}
 
 {% block button %}
-    <div class="pull-left btn-group icons-holder">
+    {% if onlyLink is not defined %}<div class="pull-left btn-group icons-holder">{% endif %}
         {% block link %}
             <a {% if (params.id is defined) %}id="{{ params.id }}"{% endif %}
                 href="{{ params.path is defined ? params.path : 'javascript:void(0);' }}"
-                class="{{ params.class|default('btn back icons-holder-text action-button') }} {{ params.aCss is defined ? params.aCss : '' }}"
+                class="{{ params.class|default('back icons-holder-text action-button') }} {{ params.aCss is defined ? params.aCss : '' }}"
                 title="{{ linkTitle }}"
                 data-dialog-url="{{ params.dialogUrl }}"
                 data-dialog-options="{{ dialogOptions|json_encode }}"
@@ -16,5 +16,5 @@
                 {{ linkLabel|trim }}
             </a>
         {% endblock %}
-    </div>
+    {% if onlyLink is not defined %}</div>{% endif %}
 {% endblock %}
