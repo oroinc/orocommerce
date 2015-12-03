@@ -58,7 +58,7 @@ class ActionType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setRequired(['action_context', 'action']);
+        $resolver->setRequired(['data', 'action']);
 
         $resolver->setDefined(
             [
@@ -79,7 +79,6 @@ class ActionType extends AbstractType
         $resolver->setAllowedTypes(
             [
                 'action' => 'Oro\Bundle\ActionBundle\Model\Action',
-                'action_context' => 'Oro\Bundle\ActionBundle\Model\ActionContext',
                 'attribute_fields' => 'array',
                 'attribute_default_values' => 'array',
                 'init_functions' => 'Oro\Bundle\WorkflowBundle\Model\Action\ActionInterface',
@@ -102,15 +101,13 @@ class ActionType extends AbstractType
      */
     protected function addEventListeners(FormBuilderInterface $builder, array $options)
     {
+        $actionContext = $builder->getData();
+
         $builder->addEventListener(
             FormEvents::PRE_SET_DATA,
-            function () use ($options) {
+            function () use ($actionContext, $options) {
                 /** @var Action $action */
                 $action = $options['action'];
-
-                /** @var ActionContext $actionContext */
-                $actionContext = $options['action_context'];
-
                 $action->init($actionContext);
             }
         );
@@ -147,7 +144,7 @@ class ActionType extends AbstractType
         $action = $options['action'];
 
         /** @var ActionContext $actionContext */
-        $actionContext = $options['action_context'];
+        $actionContext = $builder->getData();
 
         foreach ($options['attribute_fields'] as $attributeName => $attributeOptions) {
             $attribute = $action->getAttributeManager($actionContext)->getAttribute($attributeName);

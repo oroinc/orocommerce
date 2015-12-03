@@ -93,16 +93,9 @@ class ActionTypeTest extends FormIntegrationTestCase
     public function submitDataProvider()
     {
         return [
-            'empty data' => [
-                'defaultData' => null,
-                'inputOptions' => ['action_context' => $this->createActionContext(), 'action' => $this->createAction()],
-                'submittedData' => [],
-                'expectedData' => $this->createActionContext()
-            ],
             'existing data' => [
                 'defaultData' => $this->createActionContext(['field1' => 'data1', 'field2' => 'data2']),
                 'inputOptions' => [
-                    'action_context' => $this->createActionContext(),
                     'action' => $this->createAction(),
                     'attribute_fields' => [
                         'field1'  => [
@@ -132,7 +125,6 @@ class ActionTypeTest extends FormIntegrationTestCase
             'new data' => [
                 'defaultData' => $this->createActionContext(),
                 'inputOptions' => [
-                    'action_context' => $this->createActionContext(),
                     'action' => $this->createAction(),
                     'attribute_fields' => [
                         'field1'  => [
@@ -164,7 +156,6 @@ class ActionTypeTest extends FormIntegrationTestCase
                     ]
                 ),
                 'inputOptions' => [
-                    'action_context' => $this->createActionContext(),
                     'action' => $this->createAction(),
                     'attribute_fields' => [
                         'field1'  => [
@@ -216,16 +207,13 @@ class ActionTypeTest extends FormIntegrationTestCase
      * @param array $options
      * @param string $exception
      * @param string $message
+     * @param ActionContext $context
      */
-    public function testException(array $options, $exception, $message)
+    public function testException(array $options, $exception, $message, ActionContext $context = null)
     {
         $this->setExpectedException($exception, $message);
 
-        $this->factory->create(
-            $this->formType,
-            $this->createActionContext(),
-            $options
-        );
+        $this->factory->create($this->formType, $context, $options);
     }
 
     /**
@@ -236,7 +224,19 @@ class ActionTypeTest extends FormIntegrationTestCase
         return [
             [
                 'options' => [
-                    'action_context' => $this->createActionContext(),
+                    'action' => $this->createAction(),
+                    'attribute_fields' => [
+                        'field'  => [
+                            'form_type' => 'text'
+                        ]
+                    ],
+                ],
+                'exception' => 'Symfony\Component\OptionsResolver\Exception\MissingOptionsException',
+                'message' => 'The required option "data" is missing.',
+                'context' => null
+            ],
+            [
+                'options' => [
                     'action' => $this->createAction(true),
                     'attribute_fields' => [
                         'field'  => [
@@ -245,18 +245,19 @@ class ActionTypeTest extends FormIntegrationTestCase
                     ],
                 ],
                 'exception' => 'Symfony\Component\Form\Exception\InvalidConfigurationException',
-                'message' => 'Invalid reference to unknown attribute "field" of action "test_action".'
+                'message' => 'Invalid reference to unknown attribute "field" of action "test_action".',
+                'context' => $this->createActionContext()
             ],
             [
                 'options' => [
-                    'action_context' => $this->createActionContext(),
                     'action' => $this->createAction(),
                     'attribute_fields' => [
                         'field' => null
                     ],
                 ],
                 'exception' => 'Symfony\Component\Form\Exception\InvalidConfigurationException',
-                'message' => 'Parameter "form_type" must be defined for attribute "field" in action "test_action".'
+                'message' => 'Parameter "form_type" must be defined for attribute "field" in action "test_action".',
+                'context' => $this->createActionContext()
             ]
         ];
     }
