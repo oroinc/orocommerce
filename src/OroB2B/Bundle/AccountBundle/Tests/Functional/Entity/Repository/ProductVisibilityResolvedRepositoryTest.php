@@ -58,23 +58,20 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
         );
 
         $actual = $this->repository->findAll();
-        $i = 0;
         $this->assertSame(15, count($actual));
         foreach ($this->getWebsites() as $website) {
-            $j = 0;
             foreach ($categories as $category) {
-                $expected = [
-                    'websiteId' => $website->getId(),
-                    'source' => BaseProductVisibilityResolved::SOURCE_CATEGORY,
-                    'visibility' => BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
-                    'categoryId' => $category->getId(),
-                    'productId' => $category->getProducts()[0]->getId()
-                ];
-                $index = $i * count($categories) + $j;
-                $this->assertProductVisibilityResolved($actual[$index], $expected);
-                $j++;
+                $expected = $this->getContainer()->get('doctrine')
+                    ->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
+                    ->findBy([
+                        'website' => $website,
+                        'categoryId' => $category->getId(),
+                        'product' => $category->getProducts()[0],
+                        'source' => BaseProductVisibilityResolved::SOURCE_CATEGORY,
+                        'visibility' => BaseProductVisibilityResolved::VISIBILITY_VISIBLE
+                    ]);
+                $this->assertSame(1, count($expected));
             }
-            $i++;
         }
     }
 
@@ -97,19 +94,6 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
         );
         $this->assertSame(1, $updatedHidden);
         $this->assertSame(3, $updatedVisible);
-    }
-
-    /**
-     * @param BaseProductVisibilityResolved $visibility
-     * @param array $expected
-     */
-    protected function assertProductVisibilityResolved(BaseProductVisibilityResolved $visibility, array $expected)
-    {
-        $this->assertSame($expected['websiteId'], $visibility->getWebsite()->getId());
-        $this->assertSame($expected['source'], $visibility->getSource());
-        $this->assertSame($expected['visibility'], $visibility->getVisibility());
-        $this->assertSame($expected['categoryId'], $visibility->getCategoryId());
-        $this->assertSame($expected['productId'], $visibility->getProduct()->getId());
     }
 
     /**
