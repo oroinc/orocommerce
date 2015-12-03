@@ -65,6 +65,7 @@ class ActionManager
      * @param string $actionName
      * @param ActionContext $actionContext
      * @param Collection $errors
+     * @param ActionContext $actionContext
      * @return ActionContext
      * @throws \Exception
      */

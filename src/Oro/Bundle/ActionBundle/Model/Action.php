@@ -181,7 +181,7 @@ class Action
     public function getFormOptions(ActionContext $context)
     {
         if ($this->formOptions === null) {
-            $this->formOptions = false;
+            $this->formOptions = [];
             $formOptionsConfig = $this->definition->getFormOptions();
             if ($formOptionsConfig) {
                 $this->formOptions = $this->formOptionsAssembler

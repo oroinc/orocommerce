@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ActionBundle\Tests\Unit\Model;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 use Oro\Bundle\ActionBundle\Configuration\ActionConfigurationProvider;
 use Oro\Bundle\ActionBundle\Model\Action;
 use Oro\Bundle\ActionBundle\Model\ActionAssembler;
@@ -222,10 +224,11 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
      * @dataProvider executeDataProvider
      *
      * @param array $context
+     * @param ActionContext $actionContext
      */
-    public function testExecute(array $context)
+    public function testExecute(array $context, ActionContext $actionContext = null)
     {
-        $this->assertContextHelperCalled($context, 2, 2);
+        $this->assertContextHelperCalled($context, 2, $actionContext ? 1 : 2);
 
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityReference')
@@ -253,7 +256,14 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
             $assembler
         );
 
-        $this->assertInstanceOf('Oro\Bundle\ActionBundle\Model\ActionContext', $this->manager->execute('test_action'));
+        $errors = new ArrayCollection();
+
+        $this->assertInstanceOf(
+            'Oro\Bundle\ActionBundle\Model\ActionContext',
+            $this->manager->execute('test_action', $actionContext, $errors)
+        );
+
+        $this->assertEmpty($errors->toArray());
     }
 
     /**
@@ -360,6 +370,14 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
                     'entityClass' => 'stdClass',
                     'entityId' => 1
                 ]
+            ],
+            'route1 and entity and exception with action context' => [
+                'context' => [
+                    'route' => 'route1',
+                    'entityClass' => 'stdClass',
+                    'entityId' => 1
+                ],
+                'actionContext' => new ActionContext()
             ],
         ];
     }
