@@ -38,11 +38,12 @@ class ProductUnitLabelExtension extends \Twig_Extension
     /**
      * @param string $unitCode
      * @param bool $isShort
+     * @param bool $isPlural
      * @return string
      */
-    public function format($unitCode, $isShort = false)
+    public function format($unitCode, $isShort = false, $isPlural = false)
     {
-        return $this->formatter->format($unitCode, $isShort);
+        return $this->formatter->format($unitCode, $isShort, $isPlural);
     }
 
     /**
