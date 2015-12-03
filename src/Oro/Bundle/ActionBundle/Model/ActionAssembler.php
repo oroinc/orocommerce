@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\ActionBundle\Model;
 
-use Oro\Bundle\ActionBundle\Exception\MissedRequiredOptionException;
-
+use Oro\Bundle\ActionBundle\Form\Type\ActionType;
 use Oro\Bundle\WorkflowBundle\Model\Action\ActionFactory as FunctionFactory;
 use Oro\Component\ConfigExpression\ExpressionFactory as ConditionFactory;
 
-class ActionAssembler
+class ActionAssembler extends AbstractAssembler
 {
     /** @var FunctionFactory */
     private $functionFactory;
@@ -15,14 +14,28 @@ class ActionAssembler
     /** @var ConditionFactory */
     private $conditionFactory;
 
+    /** @var AttributeAssembler */
+    private $attributeAssembler;
+
+    /** @var FormOptionsAssembler */
+    private $formOptionsAssembler;
+
     /**
      * @param FunctionFactory $functionFactory
      * @param ConditionFactory $conditionFactory
+     * @param AttributeAssembler $attributeAssembler
+     * @param FormOptionsAssembler $formOptionsAssembler
      */
-    public function __construct(FunctionFactory $functionFactory, ConditionFactory $conditionFactory)
-    {
+    public function __construct(
+        FunctionFactory $functionFactory,
+        ConditionFactory $conditionFactory,
+        AttributeAssembler $attributeAssembler,
+        FormOptionsAssembler $formOptionsAssembler
+    ) {
         $this->functionFactory = $functionFactory;
         $this->conditionFactory = $conditionFactory;
+        $this->attributeAssembler = $attributeAssembler;
+        $this->formOptionsAssembler = $formOptionsAssembler;
     }
 
     /**
@@ -34,8 +47,13 @@ class ActionAssembler
         $actions = [];
 
         foreach ($configuration as $actionName => $options) {
-            $definition = $this->assembleDefinition($actionName, $options);
-            $actions[$actionName] = new Action($this->functionFactory, $this->conditionFactory, $definition);
+            $actions[$actionName] = new Action(
+                $this->functionFactory,
+                $this->conditionFactory,
+                $this->attributeAssembler,
+                $this->formOptionsAssembler,
+                $this->assembleDefinition($actionName, $options)
+            );
         }
 
         return $actions;
@@ -48,7 +66,7 @@ class ActionAssembler
      */
     protected function assembleDefinition($actionName, array $options)
     {
-        $this->assertOptions($options, ['label']);
+        $this->assertOptions($options, ['label'], $actionName);
         $actionDefinition = new ActionDefinition();
 
         $actionDefinition
@@ -59,45 +77,41 @@ class ActionAssembler
             ->setApplications($this->getOption($options, 'applications', []))
             ->setEnabled($this->getOption($options, 'enabled', true))
             ->setOrder($this->getOption($options, 'order', 0))
+            ->setFormType($this->getOption($options, 'form_type', ActionType::NAME))
             ->setFrontendOptions($this->getOption($options, 'frontend_options', []))
             ->setAttributes($this->getOption($options, 'attributes', []))
-            ->setFormOptions($this->getOption($options, 'form_options', []))
-            ->setPreFunctions($this->getOption($options, 'prefunctions', []))
-            ->setPreConditions($this->getOption($options, 'preconditions', []))
-            ->setConditions($this->getOption($options, 'conditions', []))
-            ->setPostFunctions($this->getOption($options, 'postfunctions', []))
-            ->setInitStep($this->getOption($options, 'init_step', []))
-            ->setExecutionStep($this->getOption($options, 'execution_step', []));
+            ->setFormOptions($this->getOption($options, 'form_options', []));
+
+        foreach (ActionDefinition::getAllowedConditions() as $name) {
+            $actionDefinition->setConditions($name, $this->getOption($options, $name, []));
+        }
+
+        foreach (ActionDefinition::getAllowedFunctions() as $name) {
+            $actionDefinition->setFunctions($name, $this->getOption($options, $name, []));
+        }
+
+        $this->addAclPrecondition($actionDefinition, $this->getOption($options, 'acl_resource'));
 
         return $actionDefinition;
     }
 
     /**
-     * @param array $options
-     * @param array $requiredOptions
-     * @throws MissedRequiredOptionException
+     * @param ActionDefinition $actionDefinition
+     * @param mixed $aclResource
      */
-    protected function assertOptions(array $options, array $requiredOptions)
+    protected function addAclPrecondition(ActionDefinition $actionDefinition, $aclResource)
     {
-        foreach ($requiredOptions as $optionName) {
-            if (empty($options[$optionName])) {
-                throw new MissedRequiredOptionException(sprintf('Option "%s" is required', $optionName));
-            }
-        }
-    }
-
-    /**
-     * @param array $options
-     * @param string $key
-     * @param mixed $default
-     * @return mixed
-     */
-    protected function getOption(array $options, $key, $default = null)
-    {
-        if (array_key_exists($key, $options)) {
-            return $options[$key];
+        if (!$aclResource) {
+            return;
         }
 
-        return $default;
+        $definition = $actionDefinition->getConditions(ActionDefinition::PRECONDITIONS);
+
+        $newDefinition = ['@and' => [['@acl_granted' => $aclResource]]];
+        if ($definition) {
+            $newDefinition['@and'][] = $definition;
+        }
+
+        $actionDefinition->setConditions(ActionDefinition::PRECONDITIONS, $newDefinition);
     }
 }
