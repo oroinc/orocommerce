@@ -80,6 +80,8 @@
 {% endblock %}
 
 {% block form_field_widget %}
+    {% set attr = {} %}
+    {% set label_attr = {} %}
     {% if class_prefix %}
         {% set attr = form.vars.attr|merge({
             class: form.vars.attr.class|default('') ~ " " ~ class_prefix ~ "__form__input"

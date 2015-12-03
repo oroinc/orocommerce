@@ -1,0 +1,36 @@
+{% block _registration_page_widget %}
+    {% set attr = attr|merge({
+    class: attr.class|default('') ~ " {{ class_prefix }} {{ class_prefix }}_half-cols"
+    }) %}
+    <div{{ block('block_attributes') }}>
+        <div class=" create-account__form-container form-container-x6">
+            {{ block_widget(block) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block _registration_page_label_widget %}
+    {% set attr = attr|merge({
+    class: attr.class|default('') ~ " {{ class_prefix }}__title"
+    }) %}
+    <h2{{ block('block_attributes') }}>{{ block_widget(block) }}</h2>
+{% endblock %}
+
+{% block _registration_form_submit_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " btn btn_orange btn_lg {{ class_prefix }}__form__submit"
+    }) %}
+    <fieldset class="{{ class_prefix }}__form__row mt1-sm">
+        <div class="{{ class_prefix }}__form__col form__col_x12">
+            {{ block_row(block, {
+                attr: attr,
+            }) }}
+        </div>
+    </fieldset>
+{% endblock %}
+
+{% block _registration_page_description_widget %}
+    <p>
+        {{ block_widget(block) }}
+    </p>
+{% endblock %}

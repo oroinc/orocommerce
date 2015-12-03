@@ -5,21 +5,20 @@ namespace OroB2B\Bundle\AccountBundle\Controller\Frontend;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
+use Oro\Component\Layout\LayoutContext;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUserManager;
 use OroB2B\Bundle\AccountBundle\Form\Handler\FrontendAccountUserHandler;
-use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType;
-use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserProfileType;
 
 class AccountUserProfileController extends Controller
@@ -29,7 +28,7 @@ class AccountUserProfileController extends Controller
      *
      * @Route("/register", name="orob2b_account_frontend_account_user_register")
      * @Template("OroB2BAccountBundle:AccountUser/Frontend:register.html.twig")
-     * @Layout(vars={"form"})
+     * @Layout()
      * @param Request $request
      * @return array|RedirectResponse
      */
@@ -40,7 +39,7 @@ class AccountUserProfileController extends Controller
         }
         $this->checkPermissions();
 
-        return $this->handleForm($this->getAccountUser(), $request);
+        return $this->handleForm($request);
     }
 
     protected function checkPermissions()
@@ -52,53 +51,27 @@ class AccountUserProfileController extends Controller
     }
 
     /**
-     * @return AccountUser
-     */
-    protected function getAccountUser()
-    {
-        $accountUser = new AccountUser();
-
-        /** @var WebsiteManager $websiteManager */
-        $websiteManager = $this->get('orob2b_website.manager');
-        $website = $websiteManager->getCurrentWebsite();
-        /** @var Organization|OrganizationInterface $websiteOrganization */
-        $websiteOrganization = $website->getOrganization();
-        if (!$websiteOrganization) {
-            throw new \RuntimeException('Website organization is empty');
-        }
-        $defaultRole = $this->getDoctrine()
-            ->getManagerForClass('OroB2BAccountBundle:AccountUserRole')
-            ->getRepository('OroB2BAccountBundle:AccountUserRole')
-            ->getDefaultAccountUserRoleByWebsite($website);
-        if (!$defaultRole) {
-            throw new \RuntimeException(sprintf('Role "%s" was not found', AccountUser::ROLE_DEFAULT));
-        }
-        $accountUser
-            ->addOrganization($websiteOrganization)
-            ->setOrganization($websiteOrganization)
-            ->addRole($defaultRole);
-
-        return $accountUser;
-    }
-
-    /**
-     * @param AccountUser $accountUser
      * @param Request $request
      * @return array|RedirectResponse
      */
-    protected function handleForm(AccountUser $accountUser, Request $request)
+    protected function handleForm(Request $request)
     {
-        /** @var $userManager AccountUserManager */
+        $context = new LayoutContext();
+        /** @var AccountUser $accountUser */
+        $accountUser = $this->get('orob2b_account.layout.data_provider.new_account_user')->getData($context);
+        /** @var AccountUserManager $userManager  */
         $userManager = $this->get('orob2b_account_user.manager');
-        $form = $this->createForm(FrontendAccountUserRegistrationType::NAME, $accountUser);
-        return ['form'=> $form];
+
+        /** @var FormInterface $form */
+        $form = $this->get('orob2b_account.form.frontend_account_registration');
+        $form->setData($accountUser);
         $handler = new FrontendAccountUserHandler($form, $request, $userManager);
         if ($userManager->isConfirmationRequired()) {
             $registrationMessage = 'orob2b.account.controller.accountuser.registered_with_confirmation.message';
         } else {
             $registrationMessage = 'orob2b.account.controller.accountuser.registered.message';
         }
-        return $this->get('oro_form.model.update_handler')->handleUpdate(
+        $response = $this->get('oro_form.model.update_handler')->handleUpdate(
             $accountUser,
             $form,
             ['route' => 'orob2b_account_account_user_security_login'],
@@ -106,6 +79,10 @@ class AccountUserProfileController extends Controller
             $this->get('translator')->trans($registrationMessage),
             $handler
         );
+        if ($response instanceof Response) {
+            return $response;
+        }
+        return $context;
     }
 
     /**

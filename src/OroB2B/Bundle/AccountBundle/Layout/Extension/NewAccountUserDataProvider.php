@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Layout\Extension;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\DataProviderInterface;
@@ -14,15 +14,27 @@ use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class NewAccountUserDataProvider implements DataProviderInterface
 {
-    /** @var ContainerInterface */
-    protected $container;
+    /** @var AccountUser */
+    protected $data;
 
     /**
-     * @param ContainerInterface $container
+     * @var WebsiteManager
      */
-    public function __construct(ContainerInterface $container)
+    protected $websiteManager;
+
+    /**
+     * @var ManagerRegistry
+     */
+    protected $doctrine;
+
+    /**
+     * @param WebsiteManager $websiteManager
+     * @param ManagerRegistry $doctrine
+     */
+    public function __construct(WebsiteManager $websiteManager, ManagerRegistry $doctrine)
     {
-        $this->container = $container;
+        $this->websiteManager = $websiteManager;
+        $this->doctrine = $doctrine;
     }
 
     /**
@@ -38,7 +50,11 @@ class NewAccountUserDataProvider implements DataProviderInterface
      */
     public function getData(ContextInterface $context)
     {
-        return $this->getAccountUser();
+        if (!$this->data) {
+            $this->data = $this->getAccountUser();
+        }
+
+        return $this->data;
     }
 
     /**
@@ -49,14 +65,14 @@ class NewAccountUserDataProvider implements DataProviderInterface
         $accountUser = new AccountUser();
 
         /** @var WebsiteManager $websiteManager */
-        $websiteManager = $this->container->get('orob2b_website.manager');
+        $websiteManager = $this->websiteManager;
         $website = $websiteManager->getCurrentWebsite();
         /** @var Organization|OrganizationInterface $websiteOrganization */
         $websiteOrganization = $website->getOrganization();
         if (!$websiteOrganization) {
             throw new \RuntimeException('Website organization is empty');
         }
-        $defaultRole = $this->container->get('doctrine')
+        $defaultRole = $this->doctrine
             ->getManagerForClass('OroB2BAccountBundle:AccountUserRole')
             ->getRepository('OroB2BAccountBundle:AccountUserRole')
             ->getDefaultAccountUserRoleByWebsite($website);

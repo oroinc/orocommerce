@@ -6,3 +6,13 @@
     }) %}
     {{ parent() }}
 {% endblock %}
+
+{%- block form_row -%}
+    <fieldset class="create-account__form__row">
+        <div class="create-account__form__col form__col_x12">
+            {{- form_label(form) -}}
+            {{- form_errors(form) -}}
+            {{- form_widget(form) -}}
+        </div>
+    </fieldset>
+{%- endblock form_row -%}

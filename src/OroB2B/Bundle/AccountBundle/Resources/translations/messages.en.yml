@@ -70,6 +70,8 @@ orob2b.account:
         profile:
             registration.title: 'Registration'
             register: 'Register'
+            register.description: 'Please register if you do not have an account. A sales representative will contact you shortly.'
+            create_an_account: 'Create an Account'
             forgot_password: 'Forgot Your Password?'
             enter_password: 'Enter your password'
             reset_password:

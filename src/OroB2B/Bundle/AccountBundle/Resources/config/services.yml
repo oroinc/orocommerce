@@ -621,7 +621,8 @@ services:
     orob2b_account.layout.data_provider.new_account_user:
         class: OroB2B\Bundle\AccountBundle\Layout\Extension\NewAccountUserDataProvider
         arguments:
-            - @service_container
+            - @orob2b_website.manager
+            - @doctrine
         tags:
             - { name: layout.data_provider, alias: newAccountUser }
 
