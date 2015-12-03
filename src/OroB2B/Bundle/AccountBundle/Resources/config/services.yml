@@ -52,7 +52,6 @@ parameters:
     orob2b_account.event_listener.system_config.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigListener
     orob2b_account.event_listener.form_view.class: OroB2B\Bundle\AccountBundle\EventListener\FormViewListener
     orob2b_account.event_listener.visibility_grid_listener.class: OroB2B\Bundle\AccountBundle\EventListener\VisibilityGridListener
-    orob2b_account.event_listener.system_config.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigListener
     orob2b_account.event_listener.abstract_visibility_post_submit.form_handler.class: OroB2B\Bundle\AccountBundle\EventListener\AbstractVisibilityPostSubmitListener
     orob2b_account.event_listener.category_visibility.form_handler.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryVisibilityPostSubmitListener
     orob2b_account.event_listener.product_visibility.form_handler.class: OroB2B\Bundle\AccountBundle\EventListener\ProductVisibilityPostSubmitListener
@@ -96,6 +95,7 @@ parameters:
     orob2b.account.catalog.visibility.change_set.validatior.class: OroB2B\Bundle\AccountBundle\Validator\Constraints\VisibilityChangeSetValidator
 
     orob2b_account.provider.visibility_choices.class: OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider
+    orob2b_account.provider.sign_in.class: OroB2B\Bundle\AccountBundle\Provider\SignInDataProvider
 
     orob2b_account.helper.account_user_role_privileges.class: OroB2B\Bundle\AccountBundle\Helper\AccountUserRolePrivilegesHelper
 
@@ -635,3 +635,12 @@ services:
             - [ setFormServiceId, [ "orob2b_account.form.frontend_account_registration" ] ]
         tags:
             - { name: layout.context_configurator }
+
+    orob2b_account.provider.sign_in:
+        class: %orob2b_account.provider.sign_in.class%
+        arguments:
+            - @request_stack
+            - @oro_security.security_facade
+            - @security.csrf.token_manager
+        tags:
+            - { name: layout.data_provider, alias: orob2b_account_sign_in }

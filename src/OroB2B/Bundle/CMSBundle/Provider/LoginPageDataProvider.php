@@ -13,6 +13,11 @@ use OroB2B\Bundle\CMSBundle\Entity\LoginPage;
 class LoginPageDataProvider implements DataProviderInterface
 {
     /**
+     * @var LoginPage
+     */
+    protected $data;
+
+    /**
      * @var ManagerRegistry
      */
     protected $managerRegistry;
@@ -43,7 +48,7 @@ class LoginPageDataProvider implements DataProviderInterface
      */
     public function getIdentifier()
     {
-        return 'orob2b_login_page';
+        return 'orob2b_cms_login_page';
     }
 
     /**
@@ -51,7 +56,10 @@ class LoginPageDataProvider implements DataProviderInterface
      */
     public function getData(ContextInterface $context)
     {
-        return $this->getDefaultLoginPage();
+        if ($this->data === null) {
+            $this->data = $this->getDefaultLoginPage();
+        }
+        return $this->data;
     }
 
     /**

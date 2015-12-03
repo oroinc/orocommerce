@@ -27,28 +27,16 @@ layout:
                     blockType: body
                 wrapper:
                     blockType: container
-                    options:
-                        attr:
-                            class: wrapper
                 header:
                     blockType: container
                 notification:
                     blockType: block
                 main:
                     blockType: container
-                    options:
-                        attr:
-                            class: main
                 content:
                     blockType: container
-                    options:
-                        attr:
-                            class: content
                 footer:
                     blockType: container
-                    options:
-                        attr:
-                            class: footer
                 scripts:
                     blockType: script
                     options:
