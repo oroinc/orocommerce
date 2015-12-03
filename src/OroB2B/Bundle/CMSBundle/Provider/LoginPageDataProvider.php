@@ -73,7 +73,7 @@ class LoginPageDataProvider implements DataProviderInterface
     /**
      * @return LoginPage
      */
-    public function getDefaultLoginPage()
+    protected function getDefaultLoginPage()
     {
         $loginPage = $this->getLoginPageRepository()->findOneBy([]);
         if (!$loginPage) {
