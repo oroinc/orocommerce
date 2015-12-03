@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache;
 
-use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductResolvedCacheBuilder;
 
@@ -16,21 +15,12 @@ class ProductResolvedCacheBuilderTest extends WebTestCase
      */
     protected $cacheBuilder;
 
-    /**
-     * @var EntityRepository
-     */
-    protected $repository;
-
     protected function setUp()
     {
         $this->initClient();
 
         $this->cacheBuilder = $this->client->getContainer()
             ->get('orob2b_account.visibility.cache.product_resolved_cache_builder');
-
-        $this->repository = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
 
         $this->loadFixtures(
             [
@@ -42,21 +32,15 @@ class ProductResolvedCacheBuilderTest extends WebTestCase
         );
     }
 
-    /**
-     * @group failing
-     */
     public function testClearBeforeBuildCache()
     {
-//        $pv = $this->getContainer()->get('doctrine')
-//            ->getManager()
-//            ->getRepository('OroB2BAccountBundle:Visibility\ProductVisibility')
-//            ->findAll()
-//        ;
-//
-//        $deleted = $this->cacheBuilder->buildCache();
-//        $actualCount = $this->repository->findAll();
-//
-//        $this->assertSame(4, count($actualCount));
-////        $this->assertSame(4, $deleted);
+        $this->cacheBuilder->buildCache();
+        $actual = $this->getContainer()->get('doctrine')
+            ->getManager()
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
+            ->findAll()
+        ;
+
+        $this->assertSame(14, count($actual));
     }
 }

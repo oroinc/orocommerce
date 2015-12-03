@@ -9,7 +9,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 
 /**
- * @dbIsilation
+ * @dbIsolation
  */
 class ProductVisibilityResolvedRepositoryTest extends WebTestCase
 {
