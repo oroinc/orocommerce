@@ -230,6 +230,10 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertContextHelperCalled($context, 2, $actionContext ? 1 : 2);
 
+        if ($actionContext && $actionContext->getEntity()) {
+            $this->assertEntityManagerCalled('stdClass');
+        }
+
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityReference')
             ->willReturnCallback(function ($className, $id) {
@@ -378,6 +382,14 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
                     'entityId' => 1
                 ],
                 'actionContext' => new ActionContext()
+            ],
+            'route1 and entity and exception with action context and entity' => [
+                'context' => [
+                    'route' => 'route1',
+                    'entityClass' => 'stdClass',
+                    'entityId' => 1
+                ],
+                'actionContext' => new ActionContext(['data' => new \stdClass])
             ],
         ];
     }

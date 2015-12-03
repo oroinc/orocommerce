@@ -94,7 +94,6 @@ class ActionFormManagerTest extends \PHPUnit_Framework_TestCase
                 $context,
                 [
                     'some_option' => 'option_value',
-                    'action_context' => $context,
                     'action' => $this->action
                 ]
             )

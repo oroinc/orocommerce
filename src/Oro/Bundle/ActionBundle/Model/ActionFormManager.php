@@ -50,13 +50,7 @@ class ActionFormManager
         return $this->formFactory->create(
             $action->getDefinition()->getFormType(),
             $context,
-            array_merge(
-                $action->getFormOptions($context),
-                [
-                    'action_context' => $context,
-                    'action' => $action
-                ]
-            )
+            array_merge($action->getFormOptions($context), ['action' => $action])
         );
     }
 }
