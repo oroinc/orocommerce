@@ -134,7 +134,7 @@ class AccountVoter extends AbstractEntityVoter implements ContainerAwareInterfac
      */
     protected function isSameAccount(AccountUser $user, AccountOwnerAwareInterface $object)
     {
-        return $user->getAccount()->getId() === $object->getAccount()->getId();
+        return $object->getAccount() && $user->getAccount()->getId() === $object->getAccount()->getId();
     }
 
     /**

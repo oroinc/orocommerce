@@ -26,3 +26,6 @@ oro_menu_config:
 
 oro_titles:
     orob2b_website_index: ~
+    orob2b_website_view:   '%%name%%'
+    orob2b_website_update: '%%name%% - Edit'
+    orob2b_website_create: 'Create Website'

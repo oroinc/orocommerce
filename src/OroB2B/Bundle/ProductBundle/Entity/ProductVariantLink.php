@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ProductBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Entity
@@ -32,6 +33,14 @@ class ProductVariantLink
      * @var Product
      * @ORM\ManyToOne(targetEntity="Product")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "identity"=true,
+     *              "full"=false
+     *          }
+     *      }
+     * )
      */
     protected $product;
 

@@ -68,6 +68,7 @@ orob2b.account:
         owner.label:                 'Owner'
 
         profile:
+            company_name: 'Company Name'
             registration.title: 'Registration'
             register: 'Register'
             register.description: 'Please register if you do not have an account. A sales representative will contact you shortly.'
@@ -286,7 +287,7 @@ orob2b.account:
             hidden.label: Hidden
     product:
         visibility:
-            label: Product Visibility
+            label: Manage Visibility
             product_configuration_label: Products
 
     menu:

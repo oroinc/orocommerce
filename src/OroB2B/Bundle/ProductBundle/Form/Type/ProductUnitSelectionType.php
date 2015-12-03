@@ -179,6 +179,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
 
         $product = $productHolder->getProduct();
         $choices = $this->getProductUnits($product);
+        $view->vars['choices'] = [];
 
         $productUnit = $productUnitHolder->getProductUnit();
 
@@ -187,7 +188,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
                 $options['empty_label'],
                 ['{title}' => $productUnitHolder->getProductUnitCode()]
             );
-            $view->vars['choices'] = [new ChoiceView(null, null, $emptyValueTitle, ['selected' => true])];
+            $view->vars['choices'][] = new ChoiceView(null, null, $emptyValueTitle, ['selected' => true]);
         }
 
         $this->setChoicesViews($view, $choices, $options);
@@ -200,14 +201,10 @@ class ProductUnitSelectionType extends AbstractProductAwareType
      */
     public function setChoicesViews(FormView $view, array $choices, array $options)
     {
-        $choicesViews = [];
-
         $choices = $this->productUnitFormatter->formatChoices($choices, $options['compact']);
         foreach ($choices as $key => $value) {
-            $choicesViews[] = new ChoiceView($value, $key, $value);
+            $view->vars['choices'][] = new ChoiceView($value, $key, $value);
         }
-
-        $view->vars['choices'] = $choicesViews;
     }
 
     /**

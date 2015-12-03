@@ -115,6 +115,7 @@ class OroB2BProductBundleInstaller implements
         $table->addUniqueIndex(['sku']);
         $table->addIndex(['created_at'], 'idx_orob2b_product_created_at', []);
         $table->addIndex(['updated_at'], 'idx_orob2b_product_updated_at', []);
+        $table->addIndex(['sku'], 'idx_orob2b_product_sku', []);
     }
 
     /**
@@ -263,7 +264,12 @@ class OroB2BProductBundleInstaller implements
             $schema,
             self::PRODUCT_TABLE_NAME,
             'inventory_status',
-            'prod_inventory_status'
+            'prod_inventory_status',
+            false,
+            false,
+            [
+                'importexport' => ['order' => '25'],
+            ]
         );
     }
 
@@ -284,7 +290,9 @@ class OroB2BProductBundleInstaller implements
             $schema,
             self::PRODUCT_TABLE_NAME,
             'image',
-            [],
+            [
+                'importexport' => ['excluded' => true]
+            ],
             self::MAX_PRODUCT_IMAGE_SIZE_IN_MB
         );
 
