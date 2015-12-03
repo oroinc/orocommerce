@@ -5,7 +5,6 @@ namespace OroB2B\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
@@ -27,24 +26,13 @@ class AjaxProductControllerTest extends WebTestCase
         );
     }
 
-    public function testProductNamesBySkus()
+    /**
+     * @dataProvider productNamesBySkusDataProvider
+     * @param array $skus
+     * @param array $expectedData
+     */
+    public function testProductNamesBySkus(array $skus, array $expectedData)
     {
-        /** @var Product $product1 */
-        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
-        /** @var Product $product2 */
-        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
-
-        $skus = [
-            'not a sku',
-            $product1->getSku(),
-            $product2->getSku(),
-        ];
-
-        $expectedData = [
-            $product1->getSku() => ['name'=> $product1->getDefaultName()->getString()],
-            $product2->getSku() => ['name'=> $product2->getDefaultName()->getString()],
-        ];
-
         $this->client->request(
             'POST',
             $this->getUrl('orob2b_product_frontend_ajax_names_by_skus'),
@@ -55,5 +43,36 @@ class AjaxProductControllerTest extends WebTestCase
 
         $data = json_decode($result->getContent(), true);
         $this->assertEquals($expectedData, $data);
+    }
+
+    public function productNamesBySkusDataProvider()
+    {
+        return [
+            'restricted' => [
+                'skus' => [
+                    'not a sku',
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_4,
+                ],
+                'expectedData' => [
+                    LoadProductData::PRODUCT_1 => ['name' => LoadProductData::PRODUCT_1],
+                    LoadProductData::PRODUCT_2 => ['name' => LoadProductData::PRODUCT_2],
+                    LoadProductData::PRODUCT_3 => ['name' => LoadProductData::PRODUCT_3],
+                ],
+            ],
+            'allowed' => [
+                'skus' => [
+                    'not a sku',
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                ],
+                'expectedData' => [
+                    LoadProductData::PRODUCT_1 => ['name' => LoadProductData::PRODUCT_1],
+                    LoadProductData::PRODUCT_2 => ['name' => LoadProductData::PRODUCT_2],
+                ],
+            ],
+        ];
     }
 }

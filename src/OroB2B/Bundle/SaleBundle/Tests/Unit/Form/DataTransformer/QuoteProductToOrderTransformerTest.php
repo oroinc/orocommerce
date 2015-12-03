@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\DataTransformer;
 
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
+use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Form\DataTransformer\QuoteProductToOrderTransformer;
@@ -20,7 +20,7 @@ class QuoteProductToOrderTransformerTest extends \PHPUnit_Framework_TestCase
     protected $matcher;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|RoundingService
+     * @var \PHPUnit_Framework_MockObject_MockObject|RoundingServiceInterface
      */
     protected $roundingService;
 
@@ -42,9 +42,7 @@ class QuoteProductToOrderTransformerTest extends \PHPUnit_Framework_TestCase
                 }
             );
 
-        $this->roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\RoundingService')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->roundingService = $this->getMock('OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface');
         $this->roundingService->expects($this->any())
             ->method('round')
             ->willReturnCallback(
