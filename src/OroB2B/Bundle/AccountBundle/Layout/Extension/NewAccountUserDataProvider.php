@@ -17,24 +17,21 @@ class NewAccountUserDataProvider implements DataProviderInterface
     /** @var AccountUser */
     protected $data;
 
-    /**
-     * @var WebsiteManager
-     */
+
+    /** @var WebsiteManager */
     protected $websiteManager;
 
-    /**
-     * @var ManagerRegistry
-     */
-    protected $doctrine;
+    /** @var ManagerRegistry */
+    protected $managerRegistry;
 
     /**
      * @param WebsiteManager $websiteManager
-     * @param ManagerRegistry $doctrine
+     * @param ManagerRegistry $managerRegistry
      */
-    public function __construct(WebsiteManager $websiteManager, ManagerRegistry $doctrine)
+    public function __construct(WebsiteManager $websiteManager, ManagerRegistry $managerRegistry)
     {
         $this->websiteManager = $websiteManager;
-        $this->doctrine = $doctrine;
+        $this->managerRegistry = $managerRegistry;
     }
 
     /**
@@ -64,15 +61,13 @@ class NewAccountUserDataProvider implements DataProviderInterface
     {
         $accountUser = new AccountUser();
 
-        /** @var WebsiteManager $websiteManager */
-        $websiteManager = $this->websiteManager;
-        $website = $websiteManager->getCurrentWebsite();
+        $website = $this->websiteManager->getCurrentWebsite();
         /** @var Organization|OrganizationInterface $websiteOrganization */
         $websiteOrganization = $website->getOrganization();
         if (!$websiteOrganization) {
             throw new \RuntimeException('Website organization is empty');
         }
-        $defaultRole = $this->doctrine
+        $defaultRole = $this->managerRegistry
             ->getManagerForClass('OroB2BAccountBundle:AccountUserRole')
             ->getRepository('OroB2BAccountBundle:AccountUserRole')
             ->getDefaultAccountUserRoleByWebsite($website);
