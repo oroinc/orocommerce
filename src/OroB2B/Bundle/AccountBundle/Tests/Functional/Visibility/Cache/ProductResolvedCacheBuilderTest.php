@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductResolvedCacheBuilder;
 
 /**

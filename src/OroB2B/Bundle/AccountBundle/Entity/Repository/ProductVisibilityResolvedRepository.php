@@ -13,11 +13,11 @@ use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityR
 class ProductVisibilityResolvedRepository extends EntityRepository
 {
     /**
-     * @param InsertFromSelectQueryExecutor $insertFromSelect
-     * @param $cacheVisibility
-     * @param $categories
+     * @param InsertFromSelectQueryExecutor $executor
+     * @param string $cacheVisibility
+     * @param array $categories
      */
-    public function insertByCategory(InsertFromSelectQueryExecutor $insertFromSelect, $cacheVisibility, $categories)
+    public function insertByCategory(InsertFromSelectQueryExecutor $executor, $cacheVisibility, array $categories)
     {
         $queryBuilder = $this->getEntityManager()
             ->getRepository('OroB2BCatalogBundle:Category')
@@ -35,7 +35,7 @@ class ProductVisibilityResolvedRepository extends EntityRepository
             ->setParameter('ids', $categories)
         ;
 
-        $insertFromSelect->execute($this->getClassName(), [
+        $executor->execute($this->getClassName(), [
             'website', 'product', 'visibility', 'source', 'categoryId'
         ], $queryBuilder);
     }
@@ -61,7 +61,7 @@ class ProductVisibilityResolvedRepository extends EntityRepository
     }
 
     /**
-     * @param $visibility
+     * @param string $visibility
      */
     public function deleteByVisibility($visibility)
     {
