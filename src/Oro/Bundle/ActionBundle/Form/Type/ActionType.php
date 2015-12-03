@@ -101,14 +101,16 @@ class ActionType extends AbstractType
      */
     protected function addEventListeners(FormBuilderInterface $builder, array $options)
     {
-        $actionContext = $builder->getData();
-
         $builder->addEventListener(
             FormEvents::PRE_SET_DATA,
-            function () use ($actionContext, $options) {
+            function (FormEvent $event) use ($options) {
                 /** @var Action $action */
                 $action = $options['action'];
-                $action->init($actionContext);
+
+                /** @var ActionContext $context */
+                $context = $event->getData();
+
+                $action->init($context);
             }
         );
 
