@@ -3,13 +3,20 @@
     class: attr.class|default('') ~ " {{ class_prefix }} {{ class_prefix }}_half-cols"
     }) %}
     <div{{ block('block_attributes') }}>
-        <div class=" create-account__form-container form-container-x6">
             {{ block_widget(block) }}
-        </div>
     </div>
 {% endblock %}
 
-{% block _registration_page_label_widget %}
+{% block _registration_form_container_widget %}
+    {% set attr = attr|merge({
+    class: attr.class|default('') ~ " {{ class_prefix }}__form-container form-container-x6"
+    }) %}
+    <div{{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _registration_form_label_widget %}
     {% set attr = attr|merge({
     class: attr.class|default('') ~ " {{ class_prefix }}__title"
     }) %}
@@ -29,7 +36,7 @@
     </fieldset>
 {% endblock %}
 
-{% block _registration_page_description_widget %}
+{% block _registration_form_description_widget %}
     <p>
         {{ block_widget(block) }}
     </p>

@@ -8,11 +8,13 @@ layout:
                     blockType: container
                     options:
                         class_prefix: 'create-account'
-                registration_page_label:
+                registration_form_container:
+                    blockType: container
+                registration_form_label:
                     blockType: text
                     options:
                         text: orob2b.account.accountuser.profile.register
-                registration_page_description:
+                registration_form_description:
                     blockType: html
                     options:
                         text: 'orob2b.account.accountuser.profile.register.description'
@@ -43,9 +45,10 @@ layout:
             tree:
                 content:
                     registration_page:
-                        registration_form_start: ~
-                        registration_page_label: ~
-                        registration_page_description: ~
-                        registration_form: ~
-                        registration_form_submit: ~
-                        registration_form_end: ~
+                        registration_form_container:
+                            registration_form_start: ~
+                            registration_form_label: ~
+                            registration_form_description: ~
+                            registration_form: ~
+                            registration_form_submit: ~
+                            registration_form_end: ~
