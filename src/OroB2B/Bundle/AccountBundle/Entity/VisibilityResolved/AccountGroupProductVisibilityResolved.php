@@ -10,7 +10,9 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupProductVisibilityResolvedRepository")
+ * @ORM\Entity(
+ * repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupProductVisibilityResolvedRepository"
+ * )
  * @ORM\Table(name="orob2b_acc_grp_prod_vsb_resolv")
  */
 class AccountGroupProductVisibilityResolved extends BaseProductVisibilityResolved

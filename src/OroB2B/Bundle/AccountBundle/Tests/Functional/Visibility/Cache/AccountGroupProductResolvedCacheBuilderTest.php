@@ -42,9 +42,7 @@ class AccountGroupProductResolvedCacheBuilderTest extends WebTestCase
 
     public function testClearBeforeBuildCache()
     {
-        $hidden = $this->getSourceRepository()->findBy(['visibility' => AccountGroupProductVisibility::HIDDEN]);
-        $visible = $this->getSourceRepository()->findBy(['visibility' => AccountGroupProductVisibility::VISIBLE]);
-
+        $d = $this->getSourceRepository()->findAll();
         $this->getContainer()->get('doctrine')
             ->getManager()
             ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved')
@@ -53,16 +51,14 @@ class AccountGroupProductResolvedCacheBuilderTest extends WebTestCase
 
         $this->assertCount(72, $this->getRepository()->findAll());
 
-        $visibleResolved = $this->getRepository()->findBy(
-            ['visibility' => BaseProductVisibilityResolved::VISIBILITY_VISIBLE]
+        $this->assertCount(
+            3,
+            $this->getRepository()->findBy(['source' => BaseProductVisibilityResolved::SOURCE_STATIC])
         );
-        $hiddenResolved = $this->getRepository()->findBy(
-            ['visibility' => BaseProductVisibilityResolved::VISIBILITY_HIDDEN]
+        $this->assertCount(
+            69,
+            $this->getRepository()->findBy(['source' => BaseProductVisibilityResolved::SOURCE_CATEGORY])
         );
-
-        $this->assertEquals(count($hidden), count($hiddenResolved));
-        $this->assertEquals(count($visible), count($visibleResolved));
-
     }
 
     /**
@@ -76,7 +72,7 @@ class AccountGroupProductResolvedCacheBuilderTest extends WebTestCase
     }
 
     /**
-     * @return AccountGroupProductVisibilityResolvedRepository
+     * @return AccountGroupProductVisibilityResolvedRepository|EntityRepository
      */
     protected function getRepository()
     {
