@@ -23,8 +23,8 @@ Wholesale Accounts,Default Price List,Canada,100
 Wholesale Accounts,Partner C Custom Price List,Canada,200
 Wholesale Accounts,Wholesale Price List,Europe,100
 Wholesale Accounts,Partner C Custom Price List,Europe,200
-Partners,Wholesale Price List,default,100
-Partners,Partner C Custom Price List,default,200
+Partners,Wholesale Price List,Default,100
+Partners,Partner C Custom Price List,Default,200
 Partners,Default Price List,US,100
 Partners,Partner C Custom Price List,US,200
 Partners,Wholesale Price List,Australia,100
