@@ -63,31 +63,31 @@ class ProductWithPricesTest extends WebTestCase
 
         $formData = [
             '_token' => $form['orob2b_product[_token]']->getValue(),
-            'owner' => $this->getBusinessUnitId(),
-            'sku' => self::TEST_SKU,
+            'owner'  => $this->getBusinessUnitId(),
+            'sku'    => self::TEST_SKU,
             'inventoryStatus' => Product::INVENTORY_STATUS_IN_STOCK,
             'unitPrecisions' => [
                 [
-                    'unit' => self::FIRST_UNIT_CODE,
-                    'precision' => self::FIRST_UNIT_PRECISION,
+                    'unit'      => self::FIRST_UNIT_CODE,
+                    'precision' => self::FIRST_UNIT_PRECISION
                 ],
                 [
-                    'unit' => self::SECOND_UNIT_CODE,
-                    'precision' => self::SECOND_UNIT_PRECISION,
-                ],
+                    'unit'      => self::SECOND_UNIT_CODE,
+                    'precision' => self::SECOND_UNIT_PRECISION
+                ]
             ],
             'prices' => [
                 [
                     'priceList' => $priceList->getId(),
-                    'price' => [
-                        'value' => self::FIRST_PRICE_VALUE,
-                        'currency' => self::FIRST_PRICE_CURRENCY,
+                    'price'     => [
+                        'value'    => self::FIRST_PRICE_VALUE,
+                        'currency' => self::FIRST_PRICE_CURRENCY
                     ],
-                    'quantity' => self::FIRST_QUANTITY,
-                    'unit' => self::FIRST_UNIT_CODE,
-                ],
+                    'quantity'  => self::FIRST_QUANTITY,
+                    'unit'      => self::FIRST_UNIT_CODE
+                ]
             ],
-            'status' => Product::STATUS_ENABLED,
+            'status' => Product::STATUS_ENABLED
         ];
 
         $formData['names']['values']['default'] = self::DEFAULT_NAME;
@@ -95,14 +95,10 @@ class ProductWithPricesTest extends WebTestCase
             $formData['names']['values']['locales'][$locale->getId()]['fallback'] = FallbackType::SYSTEM;
         }
 
-        $crawler = $this->client->request(
-            $form->getMethod(),
-            $form->getUri(),
-            [
-                'input_action' => 'save_and_stay',
-                'orob2b_product' => $formData,
-            ]
-        );
+        $crawler = $this->client->request($form->getMethod(), $form->getUri(), [
+            'input_action'        => 'save_and_stay',
+            'orob2b_product' => $formData
+        ]);
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -220,6 +216,7 @@ class ProductWithPricesTest extends WebTestCase
         $this->assertContains('Product has been saved', $crawler->html());
 
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_update', ['id' => $id]));
+
         $this->assertContains('orob2b_product[unitPrecisions][0]', $crawler->html());
         $this->assertNotContains('orob2b_product[prices][0]', $crawler->html());
     }
