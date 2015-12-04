@@ -10,7 +10,7 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
+use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\Decimal;
 use OroB2B\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero;
 use OroB2B\Bundle\SaleBundle\Model\QuoteProductOfferMatcher;
@@ -32,15 +32,15 @@ class QuoteProductToOrderType extends AbstractType
     protected $matcher;
 
     /**
-     * @var RoundingService
+     * @var RoundingServiceInterface
      */
     protected $roundingService;
 
     /**
      * @param QuoteProductOfferMatcher $matcher
-     * @param RoundingService $roundingService
+     * @param RoundingServiceInterface $roundingService
      */
-    public function __construct(QuoteProductOfferMatcher $matcher, RoundingService $roundingService)
+    public function __construct(QuoteProductOfferMatcher $matcher, RoundingServiceInterface $roundingService)
     {
         $this->matcher = $matcher;
         $this->roundingService = $roundingService;
