@@ -25,6 +25,13 @@
   line-height: 2.4rem;
   box-sizing: border-box;
   text-align: left;
+  text-decoration: none;
+  color: @base-font-color;
+
+  &:hover, &:active, &:focus {
+    text-decoration: none;
+    color: @base-font-color;
+  }
 
   &.active {
 
@@ -121,7 +128,7 @@
     }
   }
 
-  i {
+  > i {
     position: absolute;
     right: 1rem;
     top: 50%;

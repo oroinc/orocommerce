@@ -1,24 +1,26 @@
 .sticky-widget {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 99;
   visibility: hidden;
   transform: translateY(-5.5rem);
-  transition: transform .3s linear;
+  transition: transform .2s linear;
   height: 5.4rem;
   background: @base-topbar-background-color;
   box-shadow: 0 .1rem .5rem 0 rgba(0,0,0,.3);
   
   &.sticked {
     visibility: visible;
+    transition: transform .2s linear;
     transform: translateY(0);
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 99;
   }
 
   &.sticky-widget__filter {
 
     &.sticked {
+      transform: translateY(0);
       height: auto;
       box-shadow: none;
       border-bottom: .1rem solid @base-border-color;
@@ -102,6 +104,14 @@
   span {
     vertical-align: middle;
     margin-right: 2rem;
+  }
+}
+
+[data-open-filter-trigger] {
+  &.collapsed {
+    i {
+      transform: rotate(-90deg);
+    }
   }
 }
 

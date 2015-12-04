@@ -109,6 +109,10 @@
 .btn {
   border: 0;
 
+  &:focus, &:active {
+    outline: 0 !important;
+  }
+
   &.btn-block_custom {
     display: block !important;
     max-width: 100% !important;
@@ -116,11 +120,12 @@
   }
 
   &.btn_squared {
-    padding: .6rem .7rem;
+    padding: .3rem .4rem;
   }
 
   &.btn_xs {
     font-size: 1.2rem;
+    line-height: 1.7rem;
     padding: .3rem 1.2rem;
     min-width: 6rem;
   }
@@ -177,9 +182,22 @@
     vertical-align: middle;
   }
 
+  &.btn_min-auto {
+    min-width: auto;
+  }
+
   &.btn-dark {
     background: @theme-dark-gray-color;
     color: #fff;
+
+    &:hover {
+      background: lighten(@theme-dark-gray-color, 5%);
+    }
+
+    &:active {
+      color: #fff;
+      box-shadow: inset 0 .3rem .5rem 0 rgba(0,0,0,.35);
+    }
 
     > a {
       color: #fff;
@@ -195,6 +213,38 @@
     background: @theme-middle-gray-color;
     color: #fff;
 
+    &:hover {
+      background: lighten(@theme-middle-gray-color, 5%);
+    }
+
+    &:active {
+      color: #fff;
+      box-shadow: inset 0 .3rem .5rem 0 rgba(0,0,0,.35);
+    }
+
+    > a {
+      color: #fff;
+      text-decoration: none !important;
+
+      &:hover {
+        text-decoration: none !important;
+      }
+    }
+  }
+
+  &.btn_orange {
+    background: @theme-orange-color;  
+    color: #fff;
+
+    &:hover {
+      background: lighten(@theme-orange-color, 5%);
+    }
+
+    &:active {
+      color: #fff;
+      box-shadow: inset 0 .3rem .5rem 0 rgba(0,0,0,.35);
+    }
+
     > a {
       color: #fff;
       text-decoration: none !important;
@@ -209,17 +259,17 @@
     background: transparent;
   }
 
-  &.btn_orange {
-    background: @theme-orange-color;  
-    color: #fff;
+  &.disabled,
+  &[disabled] {
+    color: @base-background-color;
+    cursor: default;
 
-    > a {
-      color: #fff;
-      text-decoration: none !important;
+    a, button {
+      cursor: not-allowed;
+    }
 
-      &:hover {
-        text-decoration: none !important;
-      }
+    &:active {
+      box-shadow: none;
     }
   }
 
@@ -336,7 +386,7 @@
     &.disabled {
       opacity: 1;
       background: @alt-border-color;
-      cursor: default;
+      cursor: not-allowed;
     }
 
     &.within-fixed-checkout {
@@ -469,10 +519,36 @@
       }
     }  
 
+    &.btn_has-dropdown_separate {
+
+      &:active {
+        box-shadow: none;
+      }
+
+      .direct-link {
+        &:active {
+          box-shadow: inset 0 .2rem .5rem 0 rgba(0,0,0,.3);
+        }
+      }
+
+      .dropdown-toggle {
+        &:active {
+          box-shadow: inset 0 .2rem .5rem 0 rgba(0,0,0,.3);
+        }
+      }
+    }
+
     .dropdown-menu {
       border: 0;
       left: auto;
       right: 0;
+      width: 100%;
+
+      > li {
+        > a {
+          padding: .8rem 2rem;
+        }
+      }
     }
   }
 }
@@ -488,6 +564,13 @@
 
   &.badge_relative {
     position: relative;
+  }
+
+  &.badge_tiny {
+    width: 1.4rem;
+    height: 1.4rem;
+    font-size: .9rem;
+    line-height: 1.4rem;
   }
 
   &.badge_xs {
@@ -613,6 +696,16 @@
     background: @theme-checkout-complete;
   }
 
+  &.badge_error {
+    color: #fff;
+    background: @theme-error-font-color;
+  }
+
+  &.badge_notice {
+    color: #fff;
+    background: @theme-notice-font-color;
+  }
+
   &.badge-hidden {
     visibility: hidden;
   }
@@ -639,6 +732,10 @@
   i {
     width: auto;
     margin: 0 auto;
+
+    &.fa-filter {
+      margin-left: -.1rem;
+    }
   }
 }
 
@@ -646,15 +743,28 @@
 
   .btn {
     min-width: 3rem;
-    min-height: 4rem;
+    min-height: 2.8rem;
     color: @theme-light-gray-color;
+    background: rgb(255,255,255);
+    background: -moz-linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(230,230,230,1) 100%);
+    background: -webkit-gradient(linear, to bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(230,230,230,1))); 
+    background: -webkit-linear-gradient(to bottom, rgba(255,255,255,1) 0%,rgba(230,230,230,1) 100%);
+    background: -o-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(230,230,230,1) 100%); 
+    background: -ms-linear-gradient(top, rgba(255,255,255,1) 0%,rgba(230,230,230,1) 100%);
+    background: linear-gradient(to bottom, rgba(255,255,255,1) 0%,rgba(230,230,230,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#e6e6e6',GradientType=0 );
+    
+    &.btn_bordered {
+      border-color: @theme-bucket-color;
+    }
 
     &:focus {
       outline: 0;
     }
 
     &.current {
-      background: @base-footer-background-color;
+      background: @base-background-color;
+      box-shadow: inset 0 .2rem .5rem 0 rgba(0,0,0,.2);
     }
 
     &:not(:first-child):not(:last-child) {
