@@ -154,6 +154,7 @@ define(function(require) {
         handleUnitsState: function(units) {
             var self = this;
             var disabled = _.isEmpty(units);
+            var value = self.unitSelector.val();
 
             this.unitSelector
                 .prop('disabled', disabled)
@@ -171,7 +172,7 @@ define(function(require) {
                     }
                 });
                 self.unitSelector.find('option[value=""]').hide();
-                self.unitSelector.val(_.keys(units)[0]);
+                self.unitSelector.val(value !== null ? value : _.keys(units)[0]);
             } else {
                 self.unitSelector.find('option[value=""]').show();
                 self.unitSelector.val('');
