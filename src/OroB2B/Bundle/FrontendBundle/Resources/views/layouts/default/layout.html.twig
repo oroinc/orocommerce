@@ -9,6 +9,9 @@
 {% endblock %}
 
 {% block _wrapper_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " wrapper"
+    }) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
@@ -21,12 +24,18 @@
 {% endblock %}
 
 {% block _main_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " main"
+    }) %}
     <main{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </main>
 {% endblock %}
 
 {% block _content_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " content"
+    }) %}
     <div{{ block('block_attributes') }}>
         <div class="content__container">
             <div class="container-fluid">
@@ -39,6 +48,9 @@
 {% endblock %}
 
 {% block _footer_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " footer"
+    }) %}
     <footer{{ block('block_attributes') }}>
         <div class="container-fluid">
             {{ block_widget(block) }}

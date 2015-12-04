@@ -17,15 +17,3 @@ data:
                 - 'bundles/orob2bfrontend/default/less/styles.less'
             filters: ['cssrewrite', 'cssmin']
             output: 'css/layout/default/styles.css'
-#        scripts:
-#            inputs:
-#                 - 'bundles/orob2bfrontend/default/js/vendors/jquery.min.js'
-#                 - 'bundles/orob2bfrontend/default/js/vendors/lodash.min.js'
-#                 - 'bundles/orob2bfrontend/default/js/vendors/jquery.raty.js'
-#                 - 'bundles/orob2bfrontend/default/js/vendors/slick.min.js'
-#                 - 'bundles/orob2bfrontend/default/js/vendors/chosen.jquery.min.js'
-#                 - 'bundles/orob2bfrontend/default/vendors/bootstrap/js/bootstrap.min.js'
-#                 - 'bundles/orob2bfrontend/default/js/vendors/bootstrap-datepicker.min.js'
-#                 - 'bundles/orob2bfrontend/default/js/main.js'
-#            filters: []
-#            output: 'js/layout/default/scripts.js'

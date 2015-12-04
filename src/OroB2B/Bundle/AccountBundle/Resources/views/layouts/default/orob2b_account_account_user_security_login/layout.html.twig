@@ -1,9 +1,4 @@
-{% block _loginPage_widget %}
-    {% if loginPage and loginPage.backgroundImage %}
-        {% set attr = attr|merge({
-            style: attr.style|default('') ~ "background-image: url('" ~ file_url(loginPage, 'backgroundImage', loginPage.backgroundImage) ~ "');"
-        }) %}
-    {% endif %}
+{% block _login_page_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " {{ class_prefix }} {{ class_prefix }}_half-cols"
     }) %}
@@ -12,25 +7,7 @@
     </div>
 {% endblock %}
 
-{% block _loginPageLogo_widget %}
-    <div{{ block('block_attributes') }}>
-        <img src="{{ filtered_image_url(loginPage.logoImage, 'login_page_logo') }}">
-    </div>
-{% endblock %}
-
-{% block _loginPageTop_widget %}
-    <div{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
-{% block _loginPageBottom_widget %}
-    <div{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
-{% block _loginForm_widget %}
+{% block _login_form_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " {{ class_prefix }}__form-container form-container-x6"
     }) %}
@@ -43,23 +20,28 @@
     </div>
 {% endblock %}
 
-{% block _loginFormLabel_widget %}
+{% block _login_form_label_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " {{ class_prefix }}__title"
     }) %}
     <h2{{ block('block_attributes') }}>{{ block_widget(block) }}</h2>
 {% endblock %}
 
-{% block _loginFormError_widget %}
+{% block _login_form_error_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " {{ class_prefix }}__form__row alert-error"
+        class: attr.class|default('') ~ " notification notification_xmd notification_error notification-radiused mb1-md"
     }) %}
     <div{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
+        <div>
+            <span class="notification__sign notification__sign_error">
+              <i class="icon-attention fs20"></i>
+            </span>
+            <span>{{ block_widget(block) }}</span>
+        </div>
     </div>
 {% endblock %}
 
-{% block _loginFormUsername_widget %}
+{% block _login_form_username_widget %}
     {% set attr = {
         required: 'required',
         autofocus: true
@@ -79,7 +61,7 @@
     </fieldset>
 {% endblock %}
 
-{% block _loginFormPassword_widget %}
+{% block _login_form_password_widget %}
     {% set attr = {
         required: 'required'
     }|merge(attr)|merge({
@@ -98,7 +80,7 @@
     </fieldset>
 {% endblock %}
 
-{% block _loginFormRemember_widget %}
+{% block _login_form_remember_widget %}
     {% set label_attr = {
         'data-checkbox': null
     }|merge(label_attr)|merge({
@@ -116,7 +98,7 @@
     </fieldset>
 {% endblock %}
 
-{% block _loginFormSubmit_widget %}
+{% block _login_form_submit_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " btn btn_orange btn_lg {{ class_prefix }}__form__submit"
     }) %}
