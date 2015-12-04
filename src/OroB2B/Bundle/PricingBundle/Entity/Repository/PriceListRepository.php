@@ -66,6 +66,7 @@ class PriceListRepository extends EntityRepository
      */
     public function getPriceListByAccount(Account $account)
     {
+        // TODO: need to refactor this method later because account might have several related price lists
         return $this->createQueryBuilder('priceList')
             ->innerJoin(
                 'OroB2BPricingBundle:PriceListToAccount',
@@ -76,6 +77,8 @@ class PriceListRepository extends EntityRepository
             ->innerJoin('priceListToAccount.account', 'account')
             ->andWhere('account = :account')
             ->setParameter('account', $account)
+            ->orderBy('priceList.id')
+            ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
     }
@@ -86,6 +89,7 @@ class PriceListRepository extends EntityRepository
      */
     public function getPriceListByAccountGroup(AccountGroup $accountGroup)
     {
+        // TODO: need to refactor this method later because account group might have several related price lists
         return $this->createQueryBuilder('priceList')
             ->innerJoin(
                 'OroB2BPricingBundle:PriceListToAccountGroup',
@@ -96,6 +100,8 @@ class PriceListRepository extends EntityRepository
             ->innerJoin('priceListToAccountGroup.accountGroup', 'accountGroup')
             ->andWhere('accountGroup = :accountGroup')
             ->setParameter('accountGroup', $accountGroup)
+            ->orderBy('priceList.id')
+            ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
     }
@@ -106,6 +112,7 @@ class PriceListRepository extends EntityRepository
      */
     public function getPriceListByWebsite(Website $website)
     {
+        // TODO: need to refactor this method later because website might have several related price lists
         return $this->createQueryBuilder('priceList')
             ->innerJoin(
                 'OroB2BPricingBundle:PriceListToWebsite',
@@ -116,6 +123,8 @@ class PriceListRepository extends EntityRepository
             ->innerJoin('priceListToWebsite.website', 'website')
             ->andWhere('website = :website')
             ->setParameter('website', $website)
+            ->orderBy('priceList.id')
+            ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
     }
