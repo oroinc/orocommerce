@@ -2,32 +2,18 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Functional\Form\Type;
 
-use OroB2B\Bundle\ProductBundle\Tests\Functional\Form\Type\AbstractProductSelectTypeTest;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\Form\Type\AbstractScopedProductSelectTypeTest;
 
 /**
  * @dbIsolation
  */
-class ProductSelectTypeTest extends AbstractProductSelectTypeTest
+class ProductSelectTypeTest extends AbstractScopedProductSelectTypeTest
 {
-    /** @var string */
-    protected $scope = 'order';
-
-    /** @var string */
-    protected $configPath = 'oro_b2b_order.product_visibility.value';
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getScope()
+    public function setUp()
     {
-        return $this->scope;
-    }
+        $this->setDataParameters(['scope' => 'order']);
+        $this->setConfigPath('oro_b2b_order.backend_product_visibility');
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getConfigPath()
-    {
-        return $this->configPath;
+        parent::setUp();
     }
 }

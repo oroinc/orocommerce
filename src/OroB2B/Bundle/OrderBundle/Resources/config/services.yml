@@ -34,9 +34,10 @@ services:
             - { name: doctrine.event_listener, event: postPersist }
 
     orob2b_order.provider.subtotals:
-            class: %orob2b_order.provider.subtotals.class%
-            arguments:
-                - @translator
+        class: %orob2b_order.provider.subtotals.class%
+        arguments:
+            - @translator
+            - @orob2b_pricing.rounding.price_rounding_service
 
     orob2b_order.order.provider.order_address:
         class: %orob2b_order.order.provider.order_address.class%
@@ -89,21 +90,21 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onAccountView }
 
     orob2b_order.processor.quick_add:
-        parent: orob2b_product.processor.data_storage_aware
+        parent: orob2b_product.component_processor.data_storage_aware.processor
         calls:
             - [setName, ['orob2b_order_quick_add_processor']]
             - [setRedirectRouteName, ['orob2b_order_frontend_create']]
             - [setAcl, ['orob2b_order_frontend_create']]
+            - [setScope, ['order']]
         tags:
             - { name: orob2b_product.quick_add_processor }
 
     orob2b_order.event_listener.product_select_db_query:
-        class: %orob2b_product.event_listener.product_select_db_query.class%
-        arguments:
-            - @oro_config.global
-            - @orob2b_product.model.product_visibility_query_builder_modifier
+        class: %orob2b_product.event_listener.scoped_product_select_db_query.class%
+        parent: orob2b_product.event_listener.abstract_product_select_db_query
         calls:
             - [setScope, ['order']]
-            - [setSystemConfigurationPath, ['oro_b2b_order.product_visibility.value']]
+            - [setFrontendSystemConfigurationPath, ['oro_b2b_order.frontend_product_visibility']]
+            - [setBackendSystemConfigurationPath, ['oro_b2b_order.backend_product_visibility']]
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }

@@ -13,7 +13,11 @@
   &.notification_alert {
     background: @theme-alert-bg-color;
     color: @theme-alert-font-color;
+  }
 
+  &.notification_warning {
+    background: @theme-alert-bg-color;
+    color: @theme-alert-font-color;
   }
 
   &.notification_error {
@@ -24,6 +28,22 @@
   &.notification_info {
     background: @theme-info-bg-color;
     color: @theme-info-font-color;
+  }
+
+  &.notification_xsm {
+    padding: 0 1rem;
+    line-height: 2.4rem;
+    min-height: 2.4rem;
+    font-size: 1.3rem;
+
+    .badge {
+      margin-bottom: .3rem;
+    }
+
+    .material-icons {
+      font-size: 2rem;
+      vertical-align: middle;
+    }
   }
 
   &.notification_sm {
@@ -47,7 +67,7 @@
   }
 
   &.notification_xmd {
-    padding: 1rem 1.5rem;
+    padding: 2rem 1.5rem;
     min-height: 4rem;
 
     .material-icons {
@@ -60,9 +80,10 @@
     }
   }
 
-  &.noticification_lg {
+  &.notification_lg {
     padding: 1rem 0;
     min-height: 5rem;
+    line-height: 3rem;
   }
 
   &.notification-radiused {
@@ -75,9 +96,65 @@
       margin: -1rem -1.5rem 1rem;
     }
   }
+
+  > ul {
+    .list-normalize;
+    margin: .5rem 0 0;
+  }
+}
+
+.notification__relative-container {
+  position: relative;
+  padding: 0 2rem;
+}
+
+.notification__sign {
+  vertical-align: middle;
+
+  &.notification__sign_abs {
+    position: absolute;
+    top: 50%;
+    left: 0;
+
+    &.notification__sign_error {
+      margin-top: -1.6rem;
+    }
+
+    &.notification__sign_notice {
+      margin-top: -1.6rem;
+    }
+
+    &.notification__sign_alert {
+      margin-top: -1.3rem;
+    }
+  }
 }
 
 .notification__additional-content {
-  padding-left: 2.5rem;  
+  padding-left: 3rem;  
   color: @base-font-color;
+}
+
+
+/*Messages*/
+.input-errors-list {
+  .list-normalize;
+
+  li {
+    margin: .5rem 0 0;
+  }
+}
+
+.error-message {
+  font-size: 1.3rem;
+  line-height: 1.3rem;
+  color: @theme-input-error;
+
+  ul {
+    .list-normalize;
+
+    li {
+      margin-bottom: .5rem;
+    }
+  }
 }

@@ -13,6 +13,7 @@ use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
+use OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 
 class ShoppingListManager
 {
@@ -37,18 +38,26 @@ class ShoppingListManager
     protected $tokenStorage;
 
     /**
-     * @param ManagerRegistry       $managerRegistry
+     * @var QuantityRoundingService
+     */
+    protected $rounding;
+
+    /**
+     * @param ManagerRegistry $managerRegistry
      * @param TokenStorageInterface $tokenStorage
-     * @param TranslatorInterface   $translator
+     * @param TranslatorInterface $translator
+     * @param QuantityRoundingService $rounding
      */
     public function __construct(
         ManagerRegistry $managerRegistry,
         TokenStorageInterface $tokenStorage,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        QuantityRoundingService $rounding
     ) {
         $this->managerRegistry = $managerRegistry;
         $this->tokenStorage = $tokenStorage;
         $this->translator = $translator;
+        $this->rounding = $rounding;
     }
 
     /**
@@ -107,7 +116,12 @@ class ShoppingListManager
         $repository = $em->getRepository('OroB2BShoppingListBundle:LineItem');
         $duplicate = $repository->findDuplicate($lineItem);
         if ($duplicate instanceof LineItem && $shoppingList->getId()) {
-            $duplicate->setQuantity($duplicate->getQuantity() + $lineItem->getQuantity());
+            $quantity = $this->rounding->roundQuantity(
+                $duplicate->getQuantity() + $lineItem->getQuantity(),
+                $duplicate->getUnit(),
+                $duplicate->getProduct()
+            );
+            $duplicate->setQuantity($quantity);
         } else {
             $shoppingList->addLineItem($lineItem);
             $em->persist($lineItem);
