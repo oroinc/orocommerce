@@ -1,0 +1,10 @@
+parameters:
+    orob2b_tax.form.type.tax_code.class: OroB2B\Bundle\TaxBundle\Form\Type\TaxCodeType
+
+services:
+    orob2b_tax.form.type.tax_code:
+        class: %orob2b_tax.form.type.tax_code.class%
+        calls:
+            - [setDataClass, [%orob2b_tax.entity.product_tax_code.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_tax_tax_code_type }

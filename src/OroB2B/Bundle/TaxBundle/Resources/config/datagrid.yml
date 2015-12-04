@@ -1,0 +1,69 @@
+datagrid:
+    tax-product-tax-codes-grid:
+        options:
+            entityHint: product tax code
+        source:
+            acl_resource: orob2b_tax_product_tax_code_view
+            type:         orm
+            query:
+                select:
+                    - product_tax_code.id
+                    - product_tax_code.code
+                    - product_tax_code.description
+                from:
+                    - { table: %orob2b_tax.entity.product_tax_code.class%, alias: product_tax_code }
+        columns:
+            code:
+                label: orob2b.tax.code.label
+            description:
+                label: orob2b.tax.description.label
+        sorters:
+            columns:
+                code:
+                    data_name: product_tax_code.code
+                description:
+                    data_name: product_tax_code.description
+            default:
+                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                code:
+                    type:      string
+                    data_name: product_tax_code.code
+                description:
+                    type:      string
+                    data_name: product_tax_code.description
+        properties:
+            id: ~
+            view_link:
+                type:  url
+                route: orob2b_tax_product_tax_code_view
+                params: [ id ]
+            update_link:
+                type:   url
+                route:  orob2b_tax_product_tax_code_update
+                params: [ id ]
+            delete_link:
+                type:   url
+                route:  orob2b_api_tax_delete_producttaxcode
+                params: [ id ]
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  orob2b_tax_product_tax_code_view
+                rowAction:     true
+            update:
+                type:          navigate
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          edit
+                acl_resource:  orob2b_tax_product_tax_code_update
+            delete:
+                type:          delete
+                label:         oro.grid.action.delete
+                link:          delete_link
+                icon:          trash
+                acl_resource:  orob2b_tax_product_tax_code_delete

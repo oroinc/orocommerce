@@ -1,0 +1,15 @@
+orob2b.tax:
+    code.label: 'Code'
+    description.label: 'Description'
+
+    producttaxcode:
+        entity_label: 'Product Tax Code'
+        entity_plural_label: 'Product Tax Codes'
+        description: 'List of Product Tax Codes'
+        product.label: 'Product'
+
+    menu:
+        taxes_tab.label: 'Taxes'
+
+    sections:
+        general: 'General Information'
