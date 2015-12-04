@@ -6,13 +6,13 @@ use OroB2B\Bundle\CatalogBundle\Migrations\Data\ORM\AbstractCategoryFixture;
 
 class LoadCategoryData extends AbstractCategoryFixture
 {
-    const FIRST_LEVEL = 'Test First Level';
-    const SECOND_LEVEL1 = 'Test Second Level 1';
-    const SECOND_LEVEL2 = 'Test Second Level 2';
-    const THIRD_LEVEL1 = 'Test Third Level 1';
-    const THIRD_LEVEL2 = 'Test Third Level 2';
-    const FOURTH_LEVEL1 = 'Test Fourth Level 1';
-    const FOURTH_LEVEL2 = 'Test Fourth Level 2';
+    const FIRST_LEVEL = 'category_1';
+    const SECOND_LEVEL1 = 'category_1_2';
+    const SECOND_LEVEL2 = 'category_1_5';
+    const THIRD_LEVEL1 = 'category_1_2_3';
+    const THIRD_LEVEL2 = 'category_1_5_6';
+    const FOURTH_LEVEL1 = 'category_1_2_3_4';
+    const FOURTH_LEVEL2 = 'category_1_5_6_7';
 
     /**
      * @var array
