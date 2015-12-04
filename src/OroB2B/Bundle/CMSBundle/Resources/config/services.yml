@@ -43,4 +43,4 @@ services:
         calls:
             - [setLoginPageClass, [%orob2b_cms.loginpage.class%]]
         tags:
-            - { name: layout.data_provider, alias: orob2b_login_page }
+            - { name: layout.data_provider, alias: orob2b_cms_login_page }
