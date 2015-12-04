@@ -52,11 +52,11 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $form = $crawler->selectButton('Register')->form();
+        $form = $crawler->selectButton('Create an Account')->form();
 
         $submittedData = [
-            'orob2b_account_frontend_account_user_register' => [
-                '_token' => $form->get('orob2b_account_frontend_account_user_register[_token]')->getValue(),
+            'frontend_account_user_register' => [
+                '_token' => $form->get('frontend_account_user_register[_token]')->getValue(),
                 'companyName' => 'Test Company',
                 'firstName' => 'Jim',
                 'lastName' => 'Brown',
@@ -74,7 +74,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertEmpty($this->getAccountUser(['email' => self::EMAIL]));
-        $this->assertContains('The password fields must match.', $crawler->filter('.validation-failed')->html());
+        $this->assertContains('The password fields must match.', $crawler->filter('.notification_error')->html());
     }
 
     /**
@@ -223,10 +223,10 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $form = $crawler->selectButton('Register')->form();
+        $form = $crawler->selectButton('Create an Account')->form();
         $submittedData = [
-            'orob2b_account_frontend_account_user_register' => [
-                '_token' => $form->get('orob2b_account_frontend_account_user_register[_token]')->getValue(),
+            'frontend_account_user_register' => [
+                '_token' => $form->get('frontend_account_user_register[_token]')->getValue(),
                 'companyName' => 'Test Company',
                 'firstName' => 'Created',
                 'lastName' => 'User',
@@ -243,7 +243,7 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('This value is already used.', $crawler->filter('.validation-failed')->html());
+        $this->assertContains('This value is already used.', $crawler->filter('.notification_error')->html());
     }
 
     /**
@@ -323,10 +323,10 @@ class AccountUserControllerRegisterTest extends WebTestCase
      */
     protected function submitRegisterForm(Crawler $crawler, $email)
     {
-        $form = $crawler->selectButton('Register')->form();
+        $form = $crawler->selectButton('Create an Account')->form();
         $submittedData = [
-            'orob2b_account_frontend_account_user_register' => [
-                '_token' => $form->get('orob2b_account_frontend_account_user_register[_token]')->getValue(),
+            'frontend_account_user_register' => [
+                '_token' => $form->get('frontend_account_user_register[_token]')->getValue(),
                 'companyName' => 'Test Company',
                 'firstName' => 'First Name',
                 'lastName' => 'Last Name',
