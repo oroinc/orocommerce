@@ -30,9 +30,9 @@ class NewAccountUserDataProviderTest extends WebTestCase
     {
         $actual = $this->dataProvider->getData($this->context);
 
-        $this->assertEquals(null, $actual->getId());
-        $this->assertEquals('ROLE_FRONTEND_BUYER', $actual->getRoles()[0]->getRole());
-        $this->assertEquals('admin', $actual->getOwner()->getUsername());
-        $this->assertEquals('OroCRM', $actual->getOrganization()->getName());
+        $this->assertEquals(null, $actual->getId()); // new AccountUser
+        $this->assertNotEmpty($actual->getRoles()); // has at least one Role
+        $this->assertNotEquals(null, $actual->getOwner()); // has Owner
+        $this->assertNotEquals(null, $actual->getOrganization()); // has Organization
     }
 }
