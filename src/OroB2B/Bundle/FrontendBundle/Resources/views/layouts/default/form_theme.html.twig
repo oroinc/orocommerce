@@ -27,10 +27,11 @@
 {%- block form_errors -%}
     {%- if errors|length > 0 -%}
         <div class="notification notification_xsm notification_error notification-radiused mmt5-md">
-            <i class="icon-attention"></i>
+            <ul>
             {%- for error in errors -%}
-                <span class="mml5-md">{{ error.message }}</span><br>
+                <li><i class="icon-attention"></i><span class="mml5-md">{{ error.message }}</span></li>
             {%- endfor -%}
+            </ul>
         </div>
     {%- endif -%}
 {%- endblock form_errors -%}
