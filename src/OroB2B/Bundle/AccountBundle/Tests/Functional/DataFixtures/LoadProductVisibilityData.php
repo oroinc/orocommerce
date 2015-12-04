@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures;
 
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Yaml\Yaml;
 
 use Doctrine\Common\Persistence\ObjectManager;
@@ -16,17 +18,31 @@ use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-class LoadProductVisibilityData extends AbstractFixture implements DependentFixtureInterface
+class LoadProductVisibilityData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function getDependencies()
     {
         return [
-            'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
             'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
             'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
+            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
+            'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
         ];
     }
 
@@ -51,8 +67,7 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
      */
     protected function createProductVisibilities(ObjectManager $manager, Product $product, array $data)
     {
-        /** @var Website $website */
-        $website = $this->getReference($data['website']);
+        $website = $this->getWebsite($data['website']);
 
         $productVisibility = (new ProductVisibility())
             ->setProduct($product)
@@ -66,6 +81,22 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
         $this->createAccountGroupVisibilities($manager, $product, $website, $data['groups']);
 
         $this->createAccountVisibilities($manager, $product, $website, $data['accounts']);
+    }
+
+    /**
+     * @param string $websiteName
+     * @return Website
+     */
+    protected function getWebsite($websiteName)
+    {
+        if ($websiteName === 'Default') {
+            return $this->container
+                ->get('doctrine')
+                ->getManagerForClass('OroB2BWebsiteBundle:Website')
+                ->getRepository('OroB2BWebsiteBundle:Website')->findOneBy(['name' => $websiteName]);
+        }
+
+        return $this->getReference($websiteName);
     }
 
     /**

@@ -14,6 +14,7 @@ class ProductUnitPrecisionTest extends EntityTestCase
     public function testProperties()
     {
         $properties = [
+            ['id', 1],
             ['product', new Product()],
             ['unit', new ProductUnit()],
             ['precision', 3],

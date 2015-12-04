@@ -29,7 +29,7 @@ class ProductVisibilityTest extends WebTestCase
     }
 
     /**
-     * @dataProvider modifyDataProvider
+     * @dataProvider visibilityDataProvider
      *
      * @param string $configValue
      * @param array $expectedData
@@ -58,7 +58,7 @@ class ProductVisibilityTest extends WebTestCase
     /**
      * @return array
      */
-    public function modifyDataProvider()
+    public function visibilityDataProvider()
     {
         return [
             'config visible' => [
