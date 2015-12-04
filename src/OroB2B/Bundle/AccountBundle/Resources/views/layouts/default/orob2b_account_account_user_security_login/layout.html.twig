@@ -29,10 +29,15 @@
 
 {% block _login_form_error_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " {{ class_prefix }}__form__row alert-error"
+        class: attr.class|default('') ~ " notification notification_xmd notification_error notification-radiused mb1-md"
     }) %}
     <div{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
+        <div>
+            <span class="notification__sign notification__sign_error">
+              <i class="icon-attention fs20"></i>
+            </span>
+            <span>{{ block_widget(block) }}</span>
+        </div>
     </div>
 {% endblock %}
 
