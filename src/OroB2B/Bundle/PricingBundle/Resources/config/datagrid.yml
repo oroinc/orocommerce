@@ -429,9 +429,9 @@ datagrid:
                 label:         orob2b.pricing.productprice.quantity.label
             unitCode:
                 label:         orob2b.pricing.productprice.unit_code.label
-                type: twig
+                type:          twig
                 frontend_type: html
-                template: OroB2BPricingBundle:PriceList:Datagrid/Property/unitCode.html.twig
+                template:      OroB2BProductBundle:ProductUnit:Datagrid/unitFullSingle.html.twig
             value:
                 label:         orob2b.pricing.productprice.value.label
             currency:
@@ -550,9 +550,9 @@ datagrid:
                 label:         orob2b.pricing.productprice.quantity.label
             unitCode:
                 label:         orob2b.pricing.productprice.unit_code.label
-                type: twig
+                type:          twig
                 frontend_type: html
-                template: OroB2BPricingBundle:PriceList:Datagrid/Property/unitCode.html.twig
+                template:      OroB2BProductBundle:ProductUnit:Datagrid/unitFullSingle.html.twig
             value:
                 label:         orob2b.pricing.productprice.value.label
             currency:
