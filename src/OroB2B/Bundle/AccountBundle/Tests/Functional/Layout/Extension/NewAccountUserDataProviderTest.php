@@ -30,6 +30,7 @@ class NewAccountUserDataProviderTest extends WebTestCase
     {
         $actual = $this->dataProvider->getData($this->context);
 
+        $this->assertInstanceOf('OroB2B\Bundle\AccountBundle\Entity\AccountUser', $actual);
         $this->assertEquals(null, $actual->getId()); // new AccountUser
         $this->assertNotEmpty($actual->getRoles()); // has at least one Role
         $this->assertNotEquals(null, $actual->getOwner()); // has Owner
