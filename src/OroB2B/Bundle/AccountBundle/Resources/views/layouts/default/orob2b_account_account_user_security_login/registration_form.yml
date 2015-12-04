@@ -39,7 +39,7 @@ layout:
                     options:
                         form_name: 'frontend_account_registration_form'
             tree:
-                loginPage:
+                login_page:
                     registration_form_container:
                         registration_form_start: ~
                         registration_form_label: ~
