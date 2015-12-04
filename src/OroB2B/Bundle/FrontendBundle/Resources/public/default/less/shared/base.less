@@ -21,6 +21,12 @@ body {
   line-height: @base-line-height;
   color: @base-font-color;
   background: @base-background-color;
+
+  @media (max-width: 991px) {
+    &.sales-mode {
+      overflow-x: hidden; 
+    }
+  }
 }
 
 .wrapper {
@@ -86,6 +92,5 @@ a {
     @media (max-width: 991px) {
       padding-top: 5rem;
     }
-  }
-  
+  } 
 }
