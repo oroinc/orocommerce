@@ -40,7 +40,7 @@ layout:
                 scripts:
                     blockType: script
                     options:
-                        src: { @value: $data.theme.data.assets.scripts.output }
+                        content: 'require(["orob2bfrontend/default/js/main.min"])'
                 requirejs:
                     blockType: block
             tree:
@@ -57,4 +57,4 @@ layout:
                             main:
                                 content: ~
                             footer: ~
-                        #scripts: ~
+                        scripts: ~
