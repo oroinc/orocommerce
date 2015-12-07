@@ -1,5 +1,9 @@
 <div class="widget-content">
-    <script>
-        window.location.href = "{{ targetUrl }}";
+    <script type="text/javascript">
+        require(['oroui/js/mediator'],
+                function(mediator) {
+                    var targetUrl = {{ targetUrl|json_encode|raw }};
+                    mediator.execute('redirectTo', {url: targetUrl}, {redirect: true});
+                });
     </script>
-</div>'
+</div>
