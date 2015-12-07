@@ -62,10 +62,12 @@ abstract class AbstractWebsiteScopedPriceListsType extends AbstractType
         $resolver->setDefaults(
             [
                 'type' => PriceListCollectionType::NAME,
-                'label' => 'orob2b.pricing.pricelist.entity_plural_label',
+                'options' => [
+                    'render_as_widget' => true,
+                ],
+                'label' => false,
                 'required' => false,
                 'mapped' => false,
-                'ownership_disabled' => true,
                 'data' => [],
             ]
         );

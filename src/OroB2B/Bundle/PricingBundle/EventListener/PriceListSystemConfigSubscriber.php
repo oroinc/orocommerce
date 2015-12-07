@@ -8,24 +8,22 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 
 use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
-use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigConverterInterface;
+use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSystemConfigType;
 
 class PriceListSystemConfigSubscriber implements EventSubscriberInterface
 {
-    /** @var PriceListConfigConverterInterface */
+    /** @var PriceListConfigConverter */
     protected $converter;
 
     /**
      * PriceListSystemConfigSubscriber constructor.
-     * @param PriceListConfigConverterInterface $converter
+     * @param PriceListConfigConverter $converter
      */
-    public function __construct(PriceListConfigConverterInterface $converter)
+    public function __construct(PriceListConfigConverter $converter)
     {
         $this->converter = $converter;
     }
-
 
     /**
      * @param ConfigSettingsUpdateEvent $event
@@ -36,11 +34,7 @@ class PriceListSystemConfigSubscriber implements EventSubscriberInterface
         $settingKey = $this->getSettingsKey(ConfigManager::SECTION_VIEW_SEPARATOR);
         $settings = $event->getSettings();
         if (is_array($settings) && array_key_exists($settingKey, $settings)) {
-            $settings[$settingKey]['value'] = [
-                PriceListSystemConfigType::COLLECTION_FIELD_NAME => $this->converter
-                    ->convertFromSaved($settings[$settingKey]['value'])
-            ];
-
+            $settings[$settingKey]['value'] = $this->converter->convertFromSaved($settings[$settingKey]['value']);
             $event->setSettings($settings);
         }
     }
@@ -53,8 +47,7 @@ class PriceListSystemConfigSubscriber implements EventSubscriberInterface
         $settingsKey = $this->getSettingsKey(ConfigManager::SECTION_MODEL_SEPARATOR);
         $settings = $event->getSettings();
         if (is_array($settings) && array_key_exists($settingsKey, $settings)) {
-            $configs = $settings[$settingsKey]['value'][PriceListSystemConfigType::COLLECTION_FIELD_NAME];
-            $settings[$settingsKey]['value'] = $this->converter->convertBeforeSave($configs);
+            $settings[$settingsKey]['value'] = $this->converter->convertBeforeSave($settings[$settingsKey]['value']);
             $event->setSettings($settings);
         }
     }

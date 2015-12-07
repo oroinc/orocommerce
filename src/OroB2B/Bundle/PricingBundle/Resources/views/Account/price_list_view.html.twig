@@ -13,7 +13,7 @@
             </ul>
             <div class="tab-content">
                 {% for websiteId, priceListsByWebsite in priceListsByWebsites %}
-                    <div class="tab-pane{% if websiteId == priceListsByWebsites|first.website.id %} active{% endif %}"
+                    <div class="tab-pane{% if websiteId == priceListsByWebsites|first.website.id %} active{% endif %} price-list-by-account-grid"
                          id="website{{ websiteId }}"><br>
                         <table class="grid table-hover table table-bordered">
                             <thead>

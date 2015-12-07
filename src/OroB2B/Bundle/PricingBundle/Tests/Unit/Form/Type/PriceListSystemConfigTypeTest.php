@@ -79,22 +79,18 @@ class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
         $this->assertEquals($defaultData, $form->getData());
 
         $form->submit([
-            PriceListSystemConfigType::COLLECTION_FIELD_NAME => [
-                [
-                    'priceList' => 1,
-                    'priority' => 100,
-                ],
-                [
-                    'priceList' => 2,
-                    'priority' => 200,
-                ]
+            [
+                'priceList' => 1,
+                'priority' => 100,
+            ],
+            [
+                'priceList' => 2,
+                'priority' => 200,
             ]
         ]);
         $this->assertTrue($form->isValid());
 
-        $expected = [PriceListSystemConfigType::COLLECTION_FIELD_NAME => $this->testPriceListConfigs];
-
-        $this->assertEquals($expected, $form->getData());
+        $this->assertEquals($this->testPriceListConfigs, $form->getData());
     }
 
     /**

@@ -36,11 +36,21 @@
     </div>
 {% endblock %}
 
+{% block orob2b_pricing_price_list_collection_row %}
+    {% if render_as_widget %}
+        <div class="price-list-collection-as-widget">
+            {{ block('orob2b_pricing_price_list_collection_widget') }}
+        </div>
+    {% else %}
+        {{ block('oro_collection_row') }}
+    {% endif %}
+{% endblock %}
+
 {% block orob2b_pricing_price_list_collection_widget %}
     {% if prototype is defined %}
         {% set prototype_html = _self.orob2b_pricing_price_list_collection_prototype(form) %}
     {% endif %}
-    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container' }) %}
+    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container price-list-grid-form' }) %}
     {% set id = id ~ '_collection' %}
     <div class="pricing-price-list" data-page-component-module="orob2bpricing/js/app/components/price-lists-errors-handler">
         <div class="row-oro">
