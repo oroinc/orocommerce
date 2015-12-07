@@ -55,8 +55,8 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $form = $crawler->selectButton('Create an Account')->form();
 
         $submittedData = [
-            'frontend_account_user_register' => [
-                '_token' => $form->get('frontend_account_user_register[_token]')->getValue(),
+            'orob2b_account_frontend_account_user_register' => [
+                '_token' => $form->get('orob2b_account_frontend_account_user_register[_token]')->getValue(),
                 'companyName' => 'Test Company',
                 'firstName' => 'Jim',
                 'lastName' => 'Brown',
@@ -225,8 +225,8 @@ class AccountUserControllerRegisterTest extends WebTestCase
 
         $form = $crawler->selectButton('Create an Account')->form();
         $submittedData = [
-            'frontend_account_user_register' => [
-                '_token' => $form->get('frontend_account_user_register[_token]')->getValue(),
+            'orob2b_account_frontend_account_user_register' => [
+                '_token' => $form->get('orob2b_account_frontend_account_user_register[_token]')->getValue(),
                 'companyName' => 'Test Company',
                 'firstName' => 'Created',
                 'lastName' => 'User',
@@ -325,8 +325,8 @@ class AccountUserControllerRegisterTest extends WebTestCase
     {
         $form = $crawler->selectButton('Create an Account')->form();
         $submittedData = [
-            'frontend_account_user_register' => [
-                '_token' => $form->get('frontend_account_user_register[_token]')->getValue(),
+            'orob2b_account_frontend_account_user_register' => [
+                '_token' => $form->get('orob2b_account_frontend_account_user_register[_token]')->getValue(),
                 'companyName' => 'Test Company',
                 'firstName' => 'First Name',
                 'lastName' => 'Last Name',

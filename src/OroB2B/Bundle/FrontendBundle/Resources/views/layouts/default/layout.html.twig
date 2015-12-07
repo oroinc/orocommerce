@@ -102,8 +102,12 @@
             class: form.vars.label_attr.class|default('') ~ " " ~ class_prefix ~ "__form__label"
         }) %}
     {% endif %}
-    {{ form_row(form, {
-        attr: attr,
-        label_attr: label_attr
-    }) }}
+    <fieldset class="{{ class_prefix }}__form__row">
+        <div class="{{ class_prefix }}__form__col form__col_x12">
+            {{ form_row(form, {
+                attr: attr,
+                label_attr: label_attr
+            }) }}
+        </div>
+    </fieldset>
 {% endblock %}

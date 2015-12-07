@@ -8,18 +8,16 @@
 {% endblock %}
 
 {%- block form_row -%}
-    <fieldset class="create-account__form__row">
-        <div class="create-account__form__col form__col_x12">
-            {{- form_label(form) -}}
-            {{- form_widget(form) -}}
-            {{- form_errors(form) -}}
-        </div>
-    </fieldset>
+    {{- form_label(form) -}}
+    {{- form_widget(form) -}}
+    {{- form_errors(form) -}}
 {%- endblock form_row -%}
 
 {% block widget_attributes %}
     {% if errors|length > 0 %}
-        {% set attr = attr|merge({'class': attr.class is defined ? attr.class ~ ' input_error' : 'input_error'}) %}
+        {% set attr = attr|merge({
+            class: attr.class|default('') ~ ' input_error'
+        }) %}
     {% endif %}
     {{ parent() }}
 {% endblock widget_attributes %}
