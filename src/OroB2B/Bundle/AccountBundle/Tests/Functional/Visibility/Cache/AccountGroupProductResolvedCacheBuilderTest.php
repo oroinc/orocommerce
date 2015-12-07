@@ -40,23 +40,22 @@ class AccountGroupProductResolvedCacheBuilderTest extends WebTestCase
         );
     }
 
-    public function testClearBeforeBuildCache()
+    public function testBuildCache()
     {
-        $d = $this->getSourceRepository()->findAll();
         $this->getContainer()->get('doctrine')
             ->getManager()
             ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved')
             ->findAll();
         $this->cacheBuilder->buildCache();
 
-        $this->assertCount(72, $this->getRepository()->findAll());
+        $this->assertCount(36, $this->getRepository()->findAll());
 
         $this->assertCount(
             3,
             $this->getRepository()->findBy(['source' => BaseProductVisibilityResolved::SOURCE_STATIC])
         );
         $this->assertCount(
-            69,
+            33,
             $this->getRepository()->findBy(['source' => BaseProductVisibilityResolved::SOURCE_CATEGORY])
         );
     }
