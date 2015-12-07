@@ -1,7 +1,7 @@
 {% set linkTitle = params.title|default(params.label)|trans %}
 {% set linkLabel = params.label %}
 {% set dialogOptions = {
-    'title': params.dialog_title|default(linkTitle),
+    'title': params.dialog_title is defined ? params.dialog_title|trans : linkTitle,
     'dialogOptions': params.dialog_options|default({}),
 } %}
 
