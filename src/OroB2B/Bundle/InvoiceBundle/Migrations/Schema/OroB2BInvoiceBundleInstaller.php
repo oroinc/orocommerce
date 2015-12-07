@@ -53,7 +53,8 @@ class OroB2BInvoiceBundleInstaller implements Installation
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
-        $table->addColumn('payment_due_date', 'date', []);
+        $table->addColumn('subtotal', 'float');
+        $table->addColumn('payment_due_date', 'date');
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['invoice_number'], 'UNIQ_1CB885202DA68207');
         $table->addIndex(['created_at'], 'orob2b_invoice_created_at_index', []);

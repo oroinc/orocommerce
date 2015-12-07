@@ -7,6 +7,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\CurrencyBundle\Model\CurrencyAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
@@ -16,6 +17,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\InvoiceBundle\Model\ExtendInvoice;
+use OroB2B\Bundle\PricingBundle\Model\LineItemsAwareInterface;
 
 /**
  * @ORM\Table(
@@ -47,7 +49,10 @@ use OroB2B\Bundle\InvoiceBundle\Model\ExtendInvoice;
  * @ORM\EntityListeners({ "OroB2B\Bundle\InvoiceBundle\EventListener\ORM\InvoiceEventListener" })
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class Invoice extends ExtendInvoice implements OrganizationAwareInterface
+class Invoice extends ExtendInvoice implements
+    OrganizationAwareInterface,
+    CurrencyAwareInterface,
+    LineItemsAwareInterface
 {
     /**
      * @var integer
@@ -182,6 +187,20 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
      * )
      */
     protected $lineItems;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="subtotal", type="float", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $subtotal;
 
     /**
      * {@inheritdoc}
@@ -455,6 +474,34 @@ class Invoice extends ExtendInvoice implements OrganizationAwareInterface
         $this->currency = $currency;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSubtotal()
+    {
+        return $this->subtotal;
+    }
+
+    /**
+     * @param mixed $subtotal
+     * @return $this
+     */
+    public function setSubtotal($subtotal)
+    {
+        $this->subtotal = $subtotal;
+
+        return $this;
+    }
+
+    /**
+     * This method SHOULD be called from related entities
+     * to ensure invoice update in db
+     */
+    public function requireUpdate()
+    {
+        $this->updatedAt = null;
     }
 
     /**

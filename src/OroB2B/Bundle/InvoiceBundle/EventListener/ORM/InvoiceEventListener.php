@@ -7,6 +7,7 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use OroB2B\Bundle\InvoiceBundle\Doctrine\ORM\InvoiceNumberGeneratorInterface;
 use OroB2B\Bundle\InvoiceBundle\Entity\Invoice;
+use OroB2B\Bundle\PricingBundle\Provider\LineItemsSubtotalProvider;
 
 class InvoiceEventListener
 {
@@ -14,6 +15,11 @@ class InvoiceEventListener
      * @var InvoiceNumberGeneratorInterface
      */
     private $invoiceNumberGenerator;
+
+    /**
+     * @var LineItemsSubtotalProvider
+     */
+    private $lineItemsSubtotalProvider;
 
     /**
      * @param InvoiceNumberGeneratorInterface $numberGenerator
@@ -27,11 +33,24 @@ class InvoiceEventListener
     }
 
     /**
+     * @param LineItemsSubtotalProvider $lineItemsSubtotalProvider
+     * @return $this
+     */
+    public function setLineItemsSubtotalProvider($lineItemsSubtotalProvider)
+    {
+        $this->lineItemsSubtotalProvider = $lineItemsSubtotalProvider;
+
+        return $this;
+    }
+
+    /**
      * @param Invoice $invoice
      * @param LifecycleEventArgs $event
      */
     public function prePersist(Invoice $invoice, LifecycleEventArgs $event)
     {
+        $this->fillSubtotal($invoice);
+
         $now = new \DateTime('now', new \DateTimeZone('UTC'));
         $invoice->setCreatedAt($now);
         $invoice->setUpdatedAt($now);
@@ -43,6 +62,7 @@ class InvoiceEventListener
      */
     public function preUpdate(Invoice $invoice, PreUpdateEventArgs $event)
     {
+        $this->fillSubtotal($invoice);
         $invoice->setUpdatedAt(new \DateTime('now', new \DateTimeZone('UTC')));
     }
 
@@ -56,5 +76,15 @@ class InvoiceEventListener
             $invoice->setInvoiceNumber($this->invoiceNumberGenerator->generate($invoice));
             $event->getEntityManager()->flush($invoice);
         }
+    }
+
+    /**
+     * @param Invoice $invoice
+     */
+    protected function fillSubtotal(Invoice $invoice)
+    {
+        $subtotal = $this->lineItemsSubtotalProvider->getSubtotal($invoice);
+
+        $invoice->setSubtotal($subtotal->getAmount());
     }
 }

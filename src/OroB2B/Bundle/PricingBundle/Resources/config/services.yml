@@ -36,6 +36,8 @@ parameters:
     orob2b_pricing.filter.product_price.class: OroB2B\Bundle\PricingBundle\Filter\ProductPriceFilter
 
     orob2b_pricing.rounding.price_rounding_service.class: OroB2B\Bundle\PricingBundle\Rounding\PriceRoundingService
+
+    orob2b_pricing.provider.line_items_subtotal.class: OroB2B\Bundle\PricingBundle\Provider\LineItemsSubtotalProvider
 services:
     orob2b_pricing.acl.voter.product_list:
         class: %orob2b_pricing.acl.voter.product_list.class%
@@ -235,3 +237,9 @@ services:
     orob2b_pricing.rounding.price_rounding_service:
         class: %orob2b_pricing.rounding.price_rounding_service.class%
         parent: orob2b_product.service.abstract_rounding
+
+    orob2b_pricing.provider.line_items_subtotal:
+        class: %orob2b_pricing.provider.line_items_subtotal.class%
+        arguments:
+            - @translator
+            - @orob2b_pricing.rounding.price_rounding_service

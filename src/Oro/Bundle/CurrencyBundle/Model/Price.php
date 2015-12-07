@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CurrencyBundle\Model;
 
-class Price
+class Price implements CurrencyAwareInterface
 {
     /** @var float */
     protected $value;

@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\InvoiceBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
+use Oro\Bundle\CurrencyBundle\Model\PriceAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 use OroB2B\Bundle\InvoiceBundle\Model\ExtendInvoiceLineItem;
@@ -31,9 +32,14 @@ use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
  *          }
  *      }
  * )
+ * @ORM\EntityListeners({ "OroB2B\Bundle\InvoiceBundle\EventListener\ORM\InvoiceListItemEventListener" })
  * @SuppressWarnings(PHPMD.TooManyFields)
  */
-class InvoiceLineItem extends ExtendInvoiceLineItem implements ProductUnitHolderInterface, ProductHolderInterface
+class InvoiceLineItem extends ExtendInvoiceLineItem implements
+    ProductUnitHolderInterface,
+    ProductHolderInterface,
+    PriceAwareInterface,
+    PriceTypeAwareInterface
 {
     /**
      * @var integer
@@ -285,7 +291,7 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements ProductUnitHolder
      */
     public function getPriceType()
     {
-        return $this->priceType;
+        return (int) $this->priceType;
     }
 
     /**
@@ -314,10 +320,6 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements ProductUnitHolder
         return $this;
     }
 
-    /**
-     * @ORM\PrePersist()
-     * @ORM\PreUpdate()
-     */
     public function updateItemInformation()
     {
         if ($this->getProduct()) {

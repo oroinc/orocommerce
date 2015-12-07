@@ -27,6 +27,7 @@
 
             {{ UI.renderProperty('orob2b.invoice.invoice_date.label'|trans, entity.invoiceDate|oro_format_date) }}
             {{ UI.renderProperty('orob2b.invoice.payment_due_date.label'|trans, entity.paymentDueDate|oro_format_date) }}
+            {{ UI.renderProperty('orob2b.invoice.subtotal.label'|trans, entity.subtotal|oro_format_currency({'currency': entity.currency})) }}
         </div>
         <div class="responsive-block">
             {{ entityConfig.renderDynamicFields(entity) }}
