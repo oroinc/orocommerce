@@ -21,8 +21,7 @@ class ChangeCategoryVisibilityTest extends CategoryCaseActionTestCase
      */
     protected function getActionContainerId()
     {
-        // TODO
-        return 'container.id';
+        return 'orob2b_account.model.action.change_category_visibility';
     }
 
     /**
@@ -34,8 +33,6 @@ class ChangeCategoryVisibilityTest extends CategoryCaseActionTestCase
      */
     public function testVisibilityChange($categoryVisibilityReference, $visibility, array $expectedData)
     {
-        $this->markTestIncomplete('Waiting for action service');
-
         /** @var VisibilityInterface $categoryVisibility */
         $categoryVisibility = $this->getReference($categoryVisibilityReference);
 
