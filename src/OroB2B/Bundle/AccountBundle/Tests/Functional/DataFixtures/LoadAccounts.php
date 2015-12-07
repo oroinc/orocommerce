@@ -35,36 +35,34 @@ class LoadAccounts extends AbstractFixture implements DependentFixtureInterface
      *         account.level_1.3.1
      *             account.level_1.3.1.1
      *     account.level_1.4
+     *         account.level_1.4.1
+     *             account.level_1.4.1.1
      * account.level_1_1
      */
     public function load(ObjectManager $manager)
     {
         $this->createAccount($manager, self::DEFAULT_ACCOUNT_NAME);
 
-        $levelOne = $this->createAccount(
-            $manager,
-            'account.level_1',
-            null,
-            $this->getAccountGroup('account_group.group1')
-        );
+        $group1 = $this->getAccountGroup('account_group.group1');
+        $group2 = $this->getAccountGroup('account_group.group2');
+        $group3 = $this->getAccountGroup('account_group.group3');
+
+        $levelOne = $this->createAccount($manager, 'account.level_1', null, $group1);
 
         $levelTwoFirst = $this->createAccount($manager, 'account.level_1.1', $levelOne);
         $this->createAccount($manager, 'account.level_1.1.1', $levelTwoFirst);
 
-        $levelTwoSecond = $this->createAccount($manager, 'account.level_1.2', $levelOne);
-        $levelTreeFirst = $this->createAccount($manager, 'account.level_1.2.1', $levelTwoSecond);
-        $this->createAccount($manager, 'account.level_1.2.1.1', $levelTreeFirst);
+        $levelTwoSecond = $this->createAccount($manager, 'account.level_1.2', $levelOne, $group2);
+        $levelTreeFirst = $this->createAccount($manager, 'account.level_1.2.1', $levelTwoSecond, $group2);
+        $this->createAccount($manager, 'account.level_1.2.1.1', $levelTreeFirst, $group2);
 
-        $levelTwoThird = $this->createAccount(
-            $manager,
-            'account.level_1.3',
-            $levelOne,
-            $this->getAccountGroup('account_group.group1')
-        );
-        $levelTreeFirst = $this->createAccount($manager, 'account.level_1.3.1', $levelTwoThird);
-        $this->createAccount($manager, 'account.level_1.3.1.1', $levelTreeFirst);
+        $levelTwoThird = $this->createAccount($manager, 'account.level_1.3', $levelOne, $group1);
+        $levelTreeFirst = $this->createAccount($manager, 'account.level_1.3.1', $levelTwoThird, $group3);
+        $this->createAccount($manager, 'account.level_1.3.1.1', $levelTreeFirst, $group3);
 
-        $this->createAccount($manager, 'account.level_1.4', $levelOne);
+        $levelTwoFourth = $this->createAccount($manager, 'account.level_1.4', $levelOne, $group3);
+        $levelTreeFourth = $this->createAccount($manager, 'account.level_1.4.1', $levelTwoFourth);
+        $this->createAccount($manager, 'account.level_1.4.1.1', $levelTreeFourth);
 
         $this->createAccount($manager, 'account.level_1_1');
 

@@ -83,6 +83,8 @@ class AccountRepositoryTest extends WebTestCase
                     'account.level_1.3.1',
                     'account.level_1.3.1.1',
                     'account.level_1.4',
+                    'account.level_1.4.1',
+                    'account.level_1.4.1.1',
                 ]
             ],
             'level_1.1' => [
@@ -107,7 +109,10 @@ class AccountRepositoryTest extends WebTestCase
             ],
             'level_1.4' => [
                 'account.level_1.4',
-                []
+                [
+                    'account.level_1.4.1',
+                    'account.level_1.4.1.1',
+                ]
             ],
         ];
     }
