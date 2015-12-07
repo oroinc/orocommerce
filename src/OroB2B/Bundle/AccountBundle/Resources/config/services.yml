@@ -619,7 +619,7 @@ services:
         arguments: ["frontend_account_user_register", "orob2b_account_frontend_account_user_register"]
 
     orob2b_account.layout.data_provider.new_account_user:
-        class: OroB2B\Bundle\AccountBundle\Layout\Extension\NewAccountUserDataProvider
+        class: OroB2B\Bundle\AccountBundle\Provider\NewAccountUserDataProvider
         arguments:
             - @doctrine
             - @oro_config.manager

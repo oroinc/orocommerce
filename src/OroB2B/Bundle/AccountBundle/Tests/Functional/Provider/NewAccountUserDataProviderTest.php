@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Layout\Extension;
+namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Provider;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Layout\LayoutContext;
 
-use OroB2B\Bundle\AccountBundle\Layout\Extension\NewAccountUserDataProvider;
+use OroB2B\Bundle\AccountBundle\Provider\NewAccountUserDataProvider;
 
 /**
  * @dbIsolation
