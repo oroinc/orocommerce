@@ -30,7 +30,6 @@ class AuditControllerTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
-
     }
 
     public function testAuditHistory()
@@ -45,7 +44,7 @@ class AuditControllerTest extends WebTestCase
         $user = $this->getContainer()->get('doctrine')
             ->getManagerForClass('OroB2BAccountBundle:AccountUser')
             ->getRepository('OroB2BAccountBundle:AccountUser')
-            ->findOneBy([]);
+            ->findOneBy(['email' => $this->userData['email']]);
 
         $response = $this->requestFrontendGrid(
             'frontend-audit-history-grid',
@@ -78,7 +77,7 @@ class AuditControllerTest extends WebTestCase
             $this->assertEquals($this->userData[$key], $value);
         }
 
-        $this->assertEquals('AccountUser AccountUser  - ' . LoadAccountUserData::AUTH_USER, trim($result['author']));
+        $this->assertEquals('AccountUser AccountUser - ' . LoadAccountUserData::AUTH_USER, trim($result['author']));
     }
 
     protected function createUser()
