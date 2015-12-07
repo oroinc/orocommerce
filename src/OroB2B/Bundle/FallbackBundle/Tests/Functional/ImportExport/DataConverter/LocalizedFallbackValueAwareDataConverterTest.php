@@ -121,6 +121,8 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'descriptions.en_US.value' => '',
                     'descriptions.en_CA.fallback' => '',
                     'descriptions.en_CA.value' => '',
+                    'hasVariants' => '',
+                    'variantFields' => '',
                 ],
             ],
             'en locale' => [
@@ -145,6 +147,8 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'descriptions.en_US.value' => '',
                     'descriptions.en_CA.fallback' => '',
                     'descriptions.en_CA.value' => '',
+                    'hasVariants' => '',
+                    'variantFields' => '',
                 ],
             ],
             'custom locales' => [
@@ -174,6 +178,8 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'descriptions.en_US.value' => '',
                     'descriptions.en_CA.fallback' => '',
                     'descriptions.en_CA.value' => '',
+                    'hasVariants' => '',
+                    'variantFields' => '',
                 ],
             ],
         ];

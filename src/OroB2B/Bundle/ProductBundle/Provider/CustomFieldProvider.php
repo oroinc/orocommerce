@@ -38,31 +38,25 @@ class CustomFieldProvider
         $extendConfigs = $this->extendConfigProvider->getConfigs($entityName);
 
         foreach ($extendConfigs as $extendConfig) {
-            if ($extendConfig->get('owner') === 'Custom') {
-                /** @var FieldConfigId $configId */
-                $configId = $extendConfig->getId();
-                $entityConfig = $this->entityConfigProvider
-                    ->getConfigById($configId);
-
-                $isStateCorrect = $entityConfig
-                    ->in(
-                        'state',
-                        [
-                            ExtendScope::STATE_ACTIVE,
-                            ExtendScope::STATE_UPDATE
-                        ]
-                    );
-
-                if (!$isStateCorrect) {
-                    continue;
-                }
-
-                $customFields[$configId->getFieldName()] = [
-                    'name' => $configId->getFieldName(),
-                    'type' => $configId->getFieldType(),
-                    'label' => $entityConfig->get('label')
-                ];
+            if ($extendConfig->get('owner') !== ExtendScope::OWNER_CUSTOM) {
+                continue;
             }
+
+            if (!$extendConfig->in('state', [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE])) {
+                continue;
+            }
+
+            /** @var FieldConfigId $configId */
+            $configId = $extendConfig->getId();
+            $entityConfig = $this->entityConfigProvider
+                ->getConfigById($configId);
+
+
+            $customFields[$configId->getFieldName()] = [
+                'name' => $configId->getFieldName(),
+                'type' => $configId->getFieldType(),
+                'label' => $entityConfig->get('label'),
+            ];
         }
 
         return $customFields;

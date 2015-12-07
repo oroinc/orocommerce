@@ -96,8 +96,8 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
      */
     protected function findEntityByIdentityValues($entityName, array $identityValues)
     {
-        $newIdentityValues = [];
         if (is_a($entityName, $this->variantLinkClass, true)) {
+            $newIdentityValues = [];
             foreach ($identityValues as $entityFieldName => $entity) {
                 if ($this->databaseHelper->getIdentifier($entity)) {
                     $newIdentityValues[$entityFieldName] = $entity;
@@ -111,10 +111,9 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
                     $newIdentityValues[$entityFieldName] = $existingEntity;
                 }
             }
-        } else {
-            $newIdentityValues = $identityValues;
+            $identityValues = $newIdentityValues;
         }
 
-        return parent::findEntityByIdentityValues($entityName, $newIdentityValues);
+        return parent::findEntityByIdentityValues($entityName, $identityValues);
     }
 }

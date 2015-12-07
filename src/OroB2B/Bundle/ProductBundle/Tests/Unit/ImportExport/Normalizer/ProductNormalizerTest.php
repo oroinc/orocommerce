@@ -7,7 +7,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Oro\Bundle\ImportExportBundle\Field\FieldHelper;
 
 use OroB2B\Bundle\ProductBundle\ImportExport\Normalizer\ProductNormalizer;
-use OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class ProductNormalizerTest extends \PHPUnit_Framework_TestCase
@@ -52,26 +51,22 @@ class ProductNormalizerTest extends \PHPUnit_Framework_TestCase
 
         $this->fieldHelper->expects($this->once())
             ->method('getFields')
-            ->willReturn([
+            ->willReturn(
                 [
-                    'name' => 'sku',
-                    'type' => 'string',
-                    'label' => 'sku'
-                ],
-                [
-                    'name' => 'variantFields',
-                    'type' => 'array',
-                    'label' => 'variantFields'
+                    [
+                        'name' => 'sku',
+                        'type' => 'string',
+                        'label' => 'sku',
+                    ],
                 ]
-            ]);
+            );
 
-        $this->fieldHelper->expects($this->exactly(2))
+        $this->fieldHelper->expects($this->once())
             ->method('getObjectValue')
             ->will(
                 $this->returnValueMap(
                     [
                         [$product, 'sku', 'SKU-1'],
-                        [$product, 'variantFields', ['test_field', 'test_field_second']],
                     ]
                 )
             );
@@ -89,38 +84,30 @@ class ProductNormalizerTest extends \PHPUnit_Framework_TestCase
 
         $result = $this->productNormalizer->normalize($product);
         $this->assertArrayHasKey('sku', $result);
-        $this->assertArrayHasKey('variantFields', $result);
         $this->assertEquals($result['sku'], 'SKU-1');
-        $this->assertEquals($result['variantFields'], 'test_field,test_field_second');
     }
 
     public function testDenormalize()
     {
-        $data = ['sku' => 'SKU-1', 'variantFields' => 'test_field,test_field_second'];
+        $data = ['sku' => 'SKU-1'];
 
         $this->fieldHelper->expects($this->once())
             ->method('getFields')
-            ->willReturn([
+            ->willReturn(
                 [
-                    'name' => 'sku',
-                    'type' => 'string',
-                    'label' => 'sku'
-                ],
-                [
-                    'name' => 'variantFields',
-                    'type' => 'array',
-                    'label' => 'variantFields'
+                    [
+                        'name' => 'sku',
+                        'type' => 'string',
+                        'label' => 'sku',
+                    ],
                 ]
-            ]);
+            );
 
-        $this->fieldHelper->expects($this->exactly(3))
+        $this->fieldHelper->expects($this->once())
             ->method('setObjectValue')
             ->will(
                 $this->returnCallback(
                     function (Product $result, $fieldName, $value) {
-                        if ($fieldName === 'variantFields' && !is_array($value)) {
-                            return $result;
-                        }
                         return $result->{'set' . ucfirst($fieldName)}($value);
                     }
                 )
@@ -140,7 +127,6 @@ class ProductNormalizerTest extends \PHPUnit_Framework_TestCase
         $result = $this->productNormalizer->denormalize($data, $this->productClass);
         $this->assertInstanceOf($this->productClass, $result);
         $this->assertEquals($result->getSku(), 'SKU-1');
-        $this->assertEquals($result->getVariantFields(), ['test_field', 'test_field_second']);
     }
 
     /**

@@ -40,10 +40,6 @@ class ProductNormalizer extends ConfigurableEntityNormalizer
     {
         $data = parent::normalize($object, $format, $context);
 
-        if (!isset($context['mode']) && !isset($context['fieldName']) && isset($data['variantFields'])) {
-            $data['variantFields'] = implode(',', $data['variantFields']);
-        }
-
         if ($this->eventDispatcher) {
             $event = new ProductNormalizerEvent($object, $data, $context);
             $this->eventDispatcher->dispatch(ProductNormalizerEvent::NORMALIZE, $event);
@@ -61,14 +57,8 @@ class ProductNormalizer extends ConfigurableEntityNormalizer
         /** @var Product $object */
         $object = parent::denormalize($data, $class, $format, $context);
 
-        if (!isset($context['fieldName']) && isset($data['variantFields'])) {
-            $this->fieldHelper->setObjectValue($object, 'variantFields', explode(',', $data['variantFields']));
-        } else {
-            $this->fieldHelper->setObjectValue($object, 'variantFields', []);
-        }
-
         if ($this->eventDispatcher) {
-            $event = new ProductNormalizerEvent($object, $data);
+            $event = new ProductNormalizerEvent($object, $data, $context);
             $this->eventDispatcher->dispatch(ProductNormalizerEvent::DENORMALIZE, $event);
             $object = $event->getProduct();
         }
@@ -81,7 +71,7 @@ class ProductNormalizer extends ConfigurableEntityNormalizer
      */
     public function supportsNormalization($data, $format = null, array $context = [])
     {
-        return is_a($data, $this->productClass, true);
+        return is_a($data, $this->productClass);
     }
 
     /**
