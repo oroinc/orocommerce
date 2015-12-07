@@ -2,27 +2,12 @@
 
 namespace OroB2B\Bundle\ProductBundle\EventListener;
 
-use Oro\Bundle\ImportExportBundle\Field\FieldHelper;
-
 use OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductNormalizerEvent;
 
 class ProductNormalizerEventListener
 {
     const DELIMITER = ',';
-    const VARIANT_FIELDS_PROPERTY = 'variantFields';
-
-    /**
-     * @var FieldHelper
-     */
-    protected $fieldHelper;
-
-    /**
-     * @param FieldHelper $fieldHelper
-     */
-    public function __construct(FieldHelper $fieldHelper)
-    {
-        $this->fieldHelper = $fieldHelper;
-    }
+    const VARIANT_FIELDS_KEY = 'variantFields';
 
     /**
      * @param ProductNormalizerEvent $event
@@ -35,8 +20,8 @@ class ProductNormalizerEventListener
         }
 
         $data = $event->getPlainData();
-        if (array_key_exists(self::VARIANT_FIELDS_PROPERTY, $data) && is_array($data[self::VARIANT_FIELDS_PROPERTY])) {
-            $data[self::VARIANT_FIELDS_PROPERTY] = implode(self::DELIMITER, $data[self::VARIANT_FIELDS_PROPERTY]);
+        if (array_key_exists(self::VARIANT_FIELDS_KEY, $data) && is_array($data[self::VARIANT_FIELDS_KEY])) {
+            $data[self::VARIANT_FIELDS_KEY] = implode(self::DELIMITER, $data[self::VARIANT_FIELDS_KEY]);
             $event->setPlainData($data);
         }
     }
@@ -44,7 +29,7 @@ class ProductNormalizerEventListener
     /**
      * @param ProductNormalizerEvent $event
      */
-    public function onDeNormalize(ProductNormalizerEvent $event)
+    public function onDenormalize(ProductNormalizerEvent $event)
     {
         $context = $event->getContext();
         if (!$this->isApplicable($context)) {
@@ -54,11 +39,14 @@ class ProductNormalizerEventListener
         $data = $event->getPlainData();
         $object = $event->getProduct();
         $variantFields = [];
-        if (array_key_exists(self::VARIANT_FIELDS_PROPERTY, $data) && is_array($data[self::VARIANT_FIELDS_PROPERTY])) {
-            $variantFields = explode(self::DELIMITER, $data[self::VARIANT_FIELDS_PROPERTY]);
+        if (array_key_exists(self::VARIANT_FIELDS_KEY, $data) && is_string($data[self::VARIANT_FIELDS_KEY])) {
+            $variantFields = explode(self::DELIMITER, $data[self::VARIANT_FIELDS_KEY]);
+            $variantFields = array_map('trim', $variantFields);
+            $variantFields = array_filter($variantFields);
+            $variantFields = array_values($variantFields);
         }
 
-        $this->fieldHelper->setObjectValue($object, self::VARIANT_FIELDS_PROPERTY, $variantFields);
+        $object->setVariantFields($variantFields);
     }
 
     /**
@@ -69,6 +57,6 @@ class ProductNormalizerEventListener
      */
     protected function isApplicable(array $context)
     {
-        return isset($context['mode'], $context['fieldName']);
+        return !array_key_exists('fieldName', $context);
     }
 }

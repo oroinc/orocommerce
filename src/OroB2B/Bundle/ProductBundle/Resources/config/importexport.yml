@@ -60,8 +60,6 @@ services:
 
     orob2b_product.event_listener.product_normalizer:
         class: %orob2b_product.event_listener.product_normalizer.class%
-        arguments:
-            - @oro_importexport.field.field_helper
         tags:
             - { name: kernel.event_listener, event: orob2b_product.normalizer.normalizer, method: onNormalize }
             - { name: kernel.event_listener, event: orob2b_product.normalizer.denormalizer, method: onDenormalize }
