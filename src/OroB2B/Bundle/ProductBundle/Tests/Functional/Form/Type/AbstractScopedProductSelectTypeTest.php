@@ -54,6 +54,8 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,
                     LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_7,
                 ],
             ],
             [
@@ -61,6 +63,8 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
                 'expectedProducts' => [
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_7,
                 ],
             ],
             [
@@ -81,6 +85,8 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,
                     LoadProductData::PRODUCT_4,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_7,
                 ],
             ],
         ];

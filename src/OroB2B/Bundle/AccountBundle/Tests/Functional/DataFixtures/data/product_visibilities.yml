@@ -1,5 +1,5 @@
 product.1:
-    website: US
+    website: Default
     all:
         visibility: config
         reference: product.1.visibility.all
@@ -12,7 +12,7 @@ product.1:
             visibility: visible
             reference: product.1.visibility.account.level_1
 product.2:
-    website: US
+    website: Default
     all:
         visibility: visible
         reference: product.2.visibility.all
@@ -25,7 +25,7 @@ product.2:
             visibility: hidden
             reference: product.2.visibility.account.level_1
 product.3:
-    website: US
+    website: Default
     all:
         visibility: visible
         reference: product.3.visibility.all
@@ -35,14 +35,14 @@ product.3:
             reference: product.3.visibility.account_group.group1
     accounts: {}
 product.4:
-    website: US
+    website: Default
     all:
         visibility: hidden
         reference: product.4.visibility.all
     groups: {}
     accounts: {}
 product.5:
-    website: US
+    website: Default
     all:
         visibility: visible
         reference: product.5.visibility.all
@@ -54,3 +54,17 @@ product.5:
         account.level_1:
             visibility: current_product
             reference: product.5.visibility.account.level_1
+product.6:
+    website: US
+    all:
+        visibility: config
+        reference: product.6.visibility.all
+    groups: {}
+    accounts: {}
+product.7:
+    website: US
+    all:
+        visibility: config
+        reference: product.7.visibility.all
+    groups: {}
+    accounts: {}

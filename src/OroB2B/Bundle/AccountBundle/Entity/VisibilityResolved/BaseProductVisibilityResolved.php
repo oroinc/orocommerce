@@ -13,7 +13,6 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 class BaseProductVisibilityResolved
 {
     const VISIBILITY_HIDDEN = -1;
-    const VISIBILITY_FALLBACK_TO_CONFIG = 0;
     const VISIBILITY_VISIBLE = 1;
 
     const SOURCE_STATIC = 1;

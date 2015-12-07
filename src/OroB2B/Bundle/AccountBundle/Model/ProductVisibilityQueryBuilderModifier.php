@@ -13,6 +13,8 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
+use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 class ProductVisibilityQueryBuilderModifier
 {
@@ -32,13 +34,23 @@ class ProductVisibilityQueryBuilderModifier
     protected $tokenStorage;
 
     /**
+     * @var WebsiteManager
+     */
+    protected $websiteManager;
+
+    /**
      * @param ConfigManager $configManager
      * @param TokenStorageInterface $tokenStorage
+     * @param WebsiteManager $websiteManager
      */
-    public function __construct(ConfigManager $configManager, TokenStorageInterface $tokenStorage)
-    {
+    public function __construct(
+        ConfigManager $configManager,
+        TokenStorageInterface $tokenStorage,
+        WebsiteManager $websiteManager
+    ) {
         $this->configManager = $configManager;
         $this->tokenStorage = $tokenStorage;
+        $this->websiteManager = $websiteManager;
     }
 
     /**
@@ -94,10 +106,15 @@ class ProductVisibilityQueryBuilderModifier
             'OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved',
             'product_visibility_resolved',
             Join::WITH,
-            sprintf('%s = product_visibility_resolved.product', $this->getRootAlias($queryBuilder))
+            $queryBuilder->expr()->andX(
+                $queryBuilder->expr()->eq($this->getRootAlias($queryBuilder), 'product_visibility_resolved.product'),
+                $queryBuilder->expr()->eq('product_visibility_resolved.website', ':_website')
+            )
         );
 
-        return sprintf('coalesce(product_visibility_resolved.visibility, %s)', $this->getConfigValue());
+        $queryBuilder->setParameter('_website', $this->websiteManager->getCurrentWebsite());
+
+        return sprintf('COALESCE(product_visibility_resolved.visibility, %s)', $this->getConfigValue());
     }
 
     /**
@@ -109,26 +126,22 @@ class ProductVisibilityQueryBuilderModifier
     {
         $queryBuilder->leftJoin(
             'OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved',
-            'account_group_product_visibility',
+            'account_group_product_visibility_resolved',
             Join::WITH,
             $queryBuilder->expr()->andX(
                 $queryBuilder->expr()->eq(
                     $this->getRootAlias($queryBuilder),
-                    'account_group_product_visibility.product'
+                    'account_group_product_visibility_resolved.product'
                 ),
-                $queryBuilder->expr()->eq('account_group_product_visibility.accountGroup', ':_account_group')
+                $queryBuilder->expr()->eq('account_group_product_visibility_resolved.accountGroup', ':_account_group'),
+                $queryBuilder->expr()->eq('account_group_product_visibility_resolved.website', ':_website')
             )
         );
 
         $queryBuilder->setParameter('_account_group', $account);
+        $queryBuilder->setParameter('_website', $this->websiteManager->getCurrentWebsite());
 
-        $term = <<<TERM
-CASE WHEN account_group_product_visibility.visibility = 0
-  THEN (%s * 10)
-ELSE (COALESCE(account_group_product_visibility.visibility, 0) * 10)
-END
-TERM;
-        return sprintf($term, $this->getConfigValue());
+        return 'COALESCE(account_group_product_visibility_resolved.visibility, 0) * 10';
     }
 
     /**
@@ -147,23 +160,21 @@ TERM;
                     $this->getRootAlias($queryBuilder),
                     'account_product_visibility_resolved.product'
                 ),
-                $queryBuilder->expr()->eq('account_product_visibility_resolved.account', ':_account')
+                $queryBuilder->expr()->eq('account_product_visibility_resolved.account', ':_account'),
+                $queryBuilder->expr()->eq('account_product_visibility_resolved.website', ':_website')
             )
         );
 
         $queryBuilder->setParameter('_account', $account);
+        $queryBuilder->setParameter('_website', $this->websiteManager->getCurrentWebsite());
 
         $term = <<<TERM
-CASE WHEN account_product_visibility_resolved.visibility = 0
-  THEN (%s * 100)
-ELSE
-  CASE WHEN account_product_visibility_resolved.visibility = 2
+CASE WHEN account_product_visibility_resolved.visibility = %s
     THEN (product_visibility_resolved.visibility * 100)
-  ELSE (COALESCE(account_product_visibility_resolved.visibility, 0) * 100)
-  END
+ELSE (COALESCE(account_product_visibility_resolved.visibility, 0) * 100)
 END
 TERM;
-        return sprintf($term, $this->getConfigValue());
+        return sprintf($term, AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL);
     }
 
     /**

@@ -657,6 +657,7 @@ services:
         arguments:
             - @oro_config.global
             - @security.token_storage
+            - @orob2b_website.manager
         calls:
             - [setVisibilitySystemConfigurationPath, [%orob2b_account.entity.account_user_role.class%]]
 

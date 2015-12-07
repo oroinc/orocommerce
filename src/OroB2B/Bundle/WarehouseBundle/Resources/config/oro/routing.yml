@@ -11,3 +11,8 @@ orob2b_warehouse_bundle_api:
         _format:  json
     defaults:
         version:  latest
+
+orob2b_warehouse_inventory_product:
+    resource:     "@OroB2BWarehouseBundle/Controller/WarehouseInventoryLevelController.php"
+    type:         annotation
+    prefix:       /warehouse/inventory-level

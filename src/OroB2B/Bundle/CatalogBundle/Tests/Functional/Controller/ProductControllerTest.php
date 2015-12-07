@@ -59,7 +59,7 @@ class ProductControllerTest extends WebTestCase
                 'expected' => [
                     LoadProductData::PRODUCT_2,
                     LoadProductData::PRODUCT_3,
-                    LoadProductData::PRODUCT_4,
+                    LoadProductData::PRODUCT_6,
                 ],
             ],
             'excludeSubcategories' => [
@@ -85,6 +85,6 @@ class ProductControllerTest extends WebTestCase
         $this->assertJson($json);
         $arr = json_decode($json, true);
         $this->assertEquals($arr['defaultCategoryId'], $categoryId);
-        $this->assertCount(5, $arr['data']);
+        $this->assertCount(8, $arr['data']);
     }
 }
