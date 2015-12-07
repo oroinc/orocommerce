@@ -1,12 +1,13 @@
 <?php
 
-
 namespace OroB2B\Bundle\PricingBundle\DependencyInjection;
-
-use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+
+use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
+
+use OroB2B\Bundle\PricingBundle\Rounding\PriceRoundingService;
 
 class Configuration implements ConfigurationInterface
 {
@@ -24,7 +25,9 @@ class Configuration implements ConfigurationInterface
         SettingsBuilder::append(
             $rootNode,
             [
-                self::DEFAULT_PRICE_LISTS => [ 'type' => 'array', 'value' => []]
+                self::DEFAULT_PRICE_LISTS => [ 'type' => 'array', 'value' => []],
+                'rounding_type' => ['value' => PriceRoundingService::HALF_UP],
+                'precision' => ['value' => PriceRoundingService::FALLBACK_PRECISION],
             ]
         );
 

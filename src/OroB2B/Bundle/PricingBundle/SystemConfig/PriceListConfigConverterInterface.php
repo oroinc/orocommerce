@@ -6,7 +6,7 @@ interface PriceListConfigConverterInterface
 {
     /**
      * @param array $configs
-     * @return array ;
+     * @return array
      */
     public function convertBeforeSave(array $configs);
 

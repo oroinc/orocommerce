@@ -106,6 +106,81 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         $this->assertSaved($form);
     }
 
+    public function testCreateDuplicateEntry()
+    {
+        /** @var ProductPrice $productPrice */
+        $productPrice = $this->getReference('product_price.3');
+
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl(
+                'orob2b_product_price_create_widget',
+                [
+                    'priceListId' => $productPrice->getPriceList()->getId(),
+                    '_widgetContainer' => 'dialog',
+                    '_wid' => 'test-uuid'
+                ]
+            )
+        );
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $form = $crawler->selectButton('Save')->form([
+            'orob2b_pricing_price_list_product_price[product]' => $productPrice->getProduct()->getId(),
+            'orob2b_pricing_price_list_product_price[quantity]' => $productPrice->getQuantity(),
+            'orob2b_pricing_price_list_product_price[unit]' => $productPrice->getUnit()->getCode(),
+            'orob2b_pricing_price_list_product_price[price][value]' => $productPrice->getPrice()->getValue(),
+            'orob2b_pricing_price_list_product_price[price][currency]' => $productPrice->getPrice()->getCurrency(),
+        ]);
+
+        $this->assertSubmitError($form, 'orob2b.pricing.validators.product_price.unique_entity.message');
+    }
+
+    public function testUpdateDuplicateEntry()
+    {
+        /** @var ProductPrice $productPrice */
+        $productPrice = $this->getReference('product_price.3');
+        $productPriceEUR = $this->getReference('product_price.11');
+
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl(
+                'orob2b_product_price_update_widget',
+                [
+                    'id' => $productPriceEUR->getId(),
+                    '_widgetContainer' => 'dialog',
+                    '_wid' => 'test-uuid'
+                ]
+            )
+        );
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $form = $crawler->selectButton('Save')->form([
+            'orob2b_pricing_price_list_product_price[quantity]' => $productPrice->getQuantity(),
+            'orob2b_pricing_price_list_product_price[unit]' => $productPrice->getUnit()->getCode(),
+            'orob2b_pricing_price_list_product_price[price][value]' => $productPrice->getPrice()->getValue(),
+            'orob2b_pricing_price_list_product_price[price][currency]' => $productPrice->getPrice()->getCurrency(),
+        ]);
+
+        $this->assertSubmitError($form, 'orob2b.pricing.validators.product_price.unique_entity.message');
+    }
+
+    protected function assertSubmitError($form, $message)
+    {
+        $this->client->followRedirects(true);
+        $crawler = $this->client->submit($form);
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $html = $crawler->html();
+
+        $this->assertRegExp('/"savedId":\s*null/i', $html);
+        $error = $this->getContainer()->get('translator')
+            ->trans($message, [], 'validators');
+        $this->assertContains($error, $html);
+    }
+
     /**
      * @return array
      */
@@ -193,7 +268,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         $expectedData = [];
         if (!empty($expected)) {
             $expectedData = [
-                $product->getId() .'-'. $unit .'-'. $qty .'-'. $currency  => $expected
+                $product->getId() . '-' . $unit . '-' . $qty . '-' . $currency => $expected
             ];
         }
 

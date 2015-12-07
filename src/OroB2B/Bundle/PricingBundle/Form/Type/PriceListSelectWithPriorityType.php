@@ -23,7 +23,8 @@ class PriceListSelectWithPriorityType extends AbstractType
                 'priceList',
                 PriceListSelectType::NAME,
                 [
-                    'required' => false,
+                    'empty_data' => null,
+                    'required' => true,
                     'label' => 'orob2b.pricing.pricelist.entity_label',
                     'create_enabled' => false,
                     'constraints' => [new NotBlank()]
@@ -33,8 +34,9 @@ class PriceListSelectWithPriorityType extends AbstractType
                 'priority',
                 'text',
                 [
+                    'empty_data' => null,
                     'required' => true,
-                    'label' => 'orob2b.pricing.pricelist.priority.label',
+                    'label' => 'orob2b.pricing.pricelist.priority_label',
                     'constraints' => [new NotBlank(), new Integer()],
                 ]
             );

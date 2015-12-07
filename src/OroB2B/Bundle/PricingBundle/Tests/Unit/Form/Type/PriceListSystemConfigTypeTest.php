@@ -15,6 +15,7 @@ use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
 use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSystemConfigType;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
 use OroB2B\Bundle\PricingBundle\Tests\Unit\SystemConfig\ConfigsGeneratorTrait;
+use OroB2B\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
 
 class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
 {
@@ -55,11 +56,13 @@ class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
             $this->testPriceLists
         );
         $oroCollectionType = new CollectionType();
+        $priceListCollectionType = new PriceListCollectionType();
         $priceListWithPriorityType = new PriceListSelectWithPriorityType();
 
         return [
             new PreloadedExtension([
                 $oroCollectionType::NAME => $oroCollectionType,
+                $priceListCollectionType::NAME => $priceListCollectionType,
                 $priceListWithPriorityType::NAME => $priceListWithPriorityType,
                 PriceListSelectType::NAME => new PriceListSelectTypeStub(),
                 $entityType->getName() => $entityType,

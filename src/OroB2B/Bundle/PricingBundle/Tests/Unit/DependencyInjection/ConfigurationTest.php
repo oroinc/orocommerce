@@ -8,7 +8,6 @@ use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
 {
-
     public function testGetConfigTreeBuilder()
     {
         $configuration = new Configuration();
@@ -25,11 +24,18 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $expected = [
             'settings' => [
                 'resolved' => 1,
-                'default_price_lists' =>
-                    [
+                'default_price_lists' => [
                         'value' => [],
                         'scope' => 'app'
-                    ]
+                ],
+                'rounding_type' => [
+                    'value' => 'half_up',
+                    'scope' => 'app'
+                ],
+                'precision' => [
+                    'value' => 4,
+                    'scope' => 'app'
+                ]
             ]
         ];
 

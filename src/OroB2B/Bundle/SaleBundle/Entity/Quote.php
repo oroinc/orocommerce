@@ -47,6 +47,7 @@ use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
  *          }
  *      }
  * )
+ * @SuppressWarnings(PHPMD.TooManyFields)
  */
 class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHolderInterface
 {
@@ -233,7 +234,7 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
     protected $quoteProducts;
 
     /**
-     * @var string
+     * @var bool
      *
      * @ORM\Column(type="boolean")
      * @ConfigField(
@@ -245,6 +246,20 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
      * )
      */
     protected $locked = false;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(type="boolean", options={"default"=false})
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
+     */
+    protected $expired = false;
 
     /**
      * @var PriceList
@@ -558,6 +573,26 @@ class Quote extends ExtendQuote implements AccountOwnerAwareInterface, EmailHold
     public function setLocked($locked)
     {
         $this->locked = (bool)$locked;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isExpired()
+    {
+        return $this->expired;
+    }
+
+    /**
+     * @param bool $expired
+     *
+     * @return Quote
+     */
+    public function setExpired($expired)
+    {
+        $this->expired = (bool)$expired;
 
         return $this;
     }

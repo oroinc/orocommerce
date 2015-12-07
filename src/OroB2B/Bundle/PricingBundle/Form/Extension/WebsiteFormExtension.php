@@ -11,14 +11,11 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
-use OroB2B\Bundle\PricingBundle\Validator\Constraints\UniquePriceList;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteType;
+use OroB2B\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
 
 class WebsiteFormExtension extends AbstractTypeExtension
 {
@@ -44,29 +41,16 @@ class WebsiteFormExtension extends AbstractTypeExtension
         $this->priceListToWebsiteClass = $priceListToWebsiteClass;
     }
 
+
     /**
      * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add(self::PRICE_LISTS_TO_WEBSITE_FIELD, CollectionType::NAME, [
-                'label' => false,
-                'type' => PriceListSelectWithPriorityType::NAME,
-                'options' => [
-                    'error_bubbling' => false,
-                ],
-                'handle_primary' => false,
+            ->add(self::PRICE_LISTS_TO_WEBSITE_FIELD, PriceListCollectionType::NAME, [
                 'allow_add_after' => false,
                 'allow_add' => true,
-                'error_bubbling' => false,
-                'attr' => [
-                    'class' => 'price_lists_collection'
-                ],
-                'constraints' => [
-                    new UniquePriceList()
-                ],
-                'mapped' => false,
                 'required' => false
             ]);
 

@@ -9,7 +9,7 @@ class UniquePriceList extends Constraint
     /**
      * @var string
      */
-    public $message = 'Duplicate price list.';
+    public $message = 'orob2b.pricing.validators.price_list.unique_price_list.message';
 
     /**
      * @return string

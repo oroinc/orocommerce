@@ -2,18 +2,16 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
-use OroB2B\Bundle\PricingBundle\Validator\Constraints\UniquePriceList;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\Test\FormInterface;
 
-use Oro\Bundle\FormBundle\Form\Type\CollectionType;
-
 use OroB2B\Bundle\PricingBundle\Form\Extension\WebsiteFormExtension;
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\PriceListToWebsite;
+use OroB2B\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteType;
 
 class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -52,24 +50,10 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('add')
             ->with(
                 WebsiteFormExtension::PRICE_LISTS_TO_WEBSITE_FIELD,
-                CollectionType::NAME,
+                PriceListCollectionType::NAME,
                 [
-                    'label' => false,
-                    'type' => PriceListSelectWithPriorityType::NAME,
-                    'options' => [
-                        'error_bubbling' => false,
-                    ],
-                    'handle_primary' => false,
                     'allow_add_after' => false,
                     'allow_add' => true,
-                    'error_bubbling' => false,
-                    'attr' => [
-                        'class' => 'price_lists_collection'
-                    ],
-                    'constraints' => [
-                        new UniquePriceList()
-                    ],
-                    'mapped' => false,
                     'required' => false
                 ]
             );
@@ -87,7 +71,7 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
         $extension->buildForm($builder, []);
     }
 
-    public function testWebsiteNotExists()
+    public function testOnPostSetDataWebsiteNotExists()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Symfony\Bridge\Doctrine\RegistryInterface $registry */
         $registry = $this->getMockBuilder('Symfony\Bridge\Doctrine\RegistryInterface')
@@ -107,19 +91,18 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testOnPostSetData()
     {
-        $priceListFrom = $this->getMock('Symfony\Component\Form\FormInterface');
+        $priceListFrom = $this->getFormMock();
         $priceListFrom->expects($this->once())
             ->method('setData')
             ->with([
                 ['priceList' => $this->getExisting()[1]->getPriceList(), 'priority' => 100],
-                ['priceList' => $this->getExisting()[2]->getPriceList(), 'priority' => 200]
+                ['priceList' => $this->getExisting()[2]->getPriceList(), 'priority' => 200],
             ]);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $rootForm */
-        $rootForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $rootForm = $this->getFormMock();
         $rootForm->expects($this->once())->method('get')->willReturn($priceListFrom);
 
-        $event = new FormEvent($rootForm, $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', 1));
+        $event = new FormEvent($rootForm, $this->createWebsite());
         $extension = $this->createExtension();
         $extension->onPostSetData($event);
     }
@@ -130,11 +113,11 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
         $priceListFrom->expects($this->once())
             ->method('getData')
             ->willReturn([
-                ['priceList' => $this->getExisting()[1]->getPriceList(), 'priority' => 100]
+                ['priceList' => $this->getExisting()[1]->getPriceList(), 'priority' => 100],
+                ['priceList' => null, 'priority' => 200],
             ]);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $rootForm */
-        $rootForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $rootForm = $this->getFormMock();
         $rootForm->expects($this->once())->method('get')->willReturn($priceListFrom);
         $rootForm->expects($this->once())->method('isValid')->willReturn(true);
 
@@ -143,16 +126,31 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('remove')
             ->with($this->getExisting()[2]);
 
-        $event = new FormEvent($rootForm, $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', 1));
+        $event = new FormEvent($rootForm, $this->createWebsite());
         $extension = $this->createExtension();
+        $extension->onPostSubmit($event);
+    }
+
+    public function testOnPostSubmitFormInvalid()
+    {
+        $rootForm = $this->getFormMock();
+        $rootForm->expects($this->once())
+            ->method('isValid')
+            ->willReturn(false);
+
+        $rootForm->expects($this->never())
+            ->method('get');
+
+        $event = new FormEvent($rootForm, $this->createWebsite());
+        $extension = new WebsiteFormExtension($this->getRegistryMock(), self::PRICE_LIST_TO_WEBSITE_CLASS);
         $extension->onPostSubmit($event);
     }
 
     public function testOnPostSubmitNew()
     {
         $priceListFrom = $this->getMock('Symfony\Component\Form\FormInterface');
-        /** @var Website $website */
-        $website = $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', 1);
+        $website = $this->createWebsite();
+
         /** @var PriceList $addedPriceList */
         $addedPriceList = $this->getEntity('OroB2B\Bundle\PricingBundle\Entity\PriceList', 3);
         $expected = new PriceListToWebsite();
@@ -164,11 +162,11 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->willReturn([
                 ['priceList' => $this->getExisting()[1]->getPriceList(), 'priority' => 100],
                 ['priceList' => $this->getExisting()[2]->getPriceList(), 'priority' => 200],
-                ['priceList' => $addedPriceList, 'priority' => 300]
+                ['priceList' => $addedPriceList, 'priority' => 300],
+                ['priceList' => null, 'priority' => 400]
             ]);
 
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $rootForm */
-        $rootForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $rootForm = $this->getFormMock();
         $rootForm->expects($this->once())->method('get')->willReturn($priceListFrom);
         $rootForm->expects($this->once())->method('isValid')->willReturn(true);
 
@@ -182,15 +180,34 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
         $extension->onPostSubmit($event);
     }
 
+    public function testGetExtendedType()
+    {
+        $exception = new WebsiteFormExtension($this->getRegistryMock(), self::PRICE_LIST_TO_WEBSITE_CLASS);
+        $this->assertSame(WebsiteType::NAME, $exception->getExtendedType());
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|FormInterface
+     */
+    protected function getFormMock()
+    {
+        return $this->getMock('Symfony\Component\Form\FormInterface');
+    }
+
+    /**
+     * @return Website
+     */
+    protected function createWebsite()
+    {
+        return $this->getEntity('OroB2B\Bundle\WebsiteBundle\Entity\Website', 1);
+    }
+
     /**
      * @return WebsiteFormExtension
      */
     protected function createExtension()
     {
-        /** @var \Symfony\Bridge\Doctrine\RegistryInterface|\PHPUnit_Framework_MockObject_MockObject $registry */
-        $registry = $this->getMockBuilder('Symfony\Bridge\Doctrine\RegistryInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $registry = $this->getRegistryMock();
 
         $registry->expects($this->once())
             ->method('getManagerForClass')
@@ -198,6 +215,16 @@ class WebsiteFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->getManagerMock());
 
         return new WebsiteFormExtension($registry, self::PRICE_LIST_TO_WEBSITE_CLASS);
+    }
+
+    /**
+     * @return \Symfony\Bridge\Doctrine\RegistryInterface|\PHPUnit_Framework_MockObject_MockObject $registry
+     */
+    protected function getRegistryMock()
+    {
+        return $this->getMockBuilder('Symfony\Bridge\Doctrine\RegistryInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     /**

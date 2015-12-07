@@ -99,50 +99,6 @@
   }
 }
 
-.oro-item-collection input[type="text"].priority {
-  width: 50px;
-}
-
-
-.price-lists-by-websites {
-  .controls {
-    margin-left: 10px !important;
-  }
-  .entity-select-btn {
-    float: none !important;
-  }
-}
-
-.price_lists_collection {
-  width: 450px;
-
-  td {
-    vertical-align: top;
-  }
-
-  .entity-select-btn {
-    display: inline-block;
-    float: none;
-  }
-
-  .oro-item-collection input[type="text"].priority {
-    width: 50px !important;
-  }
-
-  td span.validation-failed {
-    white-space: nowrap;
-    width: 50px;
-  }
-
-  .select2-container.error {
-    border-color: red;
-  }
-}
-
-.system-configuration-container .price_lists_collection .controls {
-  margin: 5px 0 0 10px !important;
-}
-
 .pricing-price-list {
   .add-list-item {
     margin-top: 10px;
@@ -151,4 +107,39 @@
   table {
     width: auto;
   }
+
+  td {
+    vertical-align: top;
+  }
+
+  td span.validation-failed {
+    white-space: nowrap;
+    width: 50px;
+  }
+
+  .entity-select-btn {
+    display: inline-block;
+    float: none;
+  }
+
+  input.priority {
+    width: 50px !important;
+  }
+
+  .select2-container.error {
+    border-color: red;
+  }
+
+  .removeRow:after{
+    text-indent: 6px;
+  }
+
+  .controls {
+    margin-left: 10px !important;
+  }
+}
+
+.system-configuration-content .form-horizontal .control-group .controls,
+.form-horizontal .oro-tabs .control-group .controls {
+  margin-left: 10px;
 }

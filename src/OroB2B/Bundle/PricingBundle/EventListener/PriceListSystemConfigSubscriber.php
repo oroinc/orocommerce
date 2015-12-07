@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\EventListener;
 
-use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSystemConfigType;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -11,6 +10,7 @@ use Oro\Bundle\ConfigBundle\Event\ConfigSettingsUpdateEvent;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\Configuration;
 use OroB2B\Bundle\PricingBundle\SystemConfig\PriceListConfigConverterInterface;
 use OroB2B\Bundle\PricingBundle\DependencyInjection\OroB2BPricingExtension;
+use OroB2B\Bundle\PricingBundle\Form\Type\PriceListSystemConfigType;
 
 class PriceListSystemConfigSubscriber implements EventSubscriberInterface
 {

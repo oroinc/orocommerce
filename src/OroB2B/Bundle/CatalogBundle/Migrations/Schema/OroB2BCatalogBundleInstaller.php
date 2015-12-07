@@ -8,27 +8,27 @@ use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class OroB2BCatalogBundleInstaller implements Installation, NoteExtensionAwareInterface
+class OroB2BCatalogBundleInstaller implements
+    Installation,
+    NoteExtensionAwareInterface,
+    AttachmentExtensionAwareInterface
 {
     const ORO_B2B_CATALOG_CATEGORY_SHORT_DESCRIPTION_TABLE_NAME = 'orob2b_catalog_cat_short_desc';
     const ORO_B2B_CATALOG_CATEGORY_LONG_DESCRIPTION_TABLE_NAME = 'orob2b_catalog_cat_long_desc';
     const ORO_B2B_CATALOG_CATEGORY_TABLE_NAME = 'orob2b_catalog_category';
     const ORO_B2B_FALLBACK_LOCALIZE_TABLE_NAME ='orob2b_fallback_locale_value';
+    const MAX_CATEGORY_IMAGE_SIZE_IN_MB = 10;
+    const THUMBNAIL_WIDTH_SIZE_IN_PX = 100;
+    const THUMBNAIL_HEIGHT_SIZE_IN_PX = 100;
 
     /** @var NoteExtension */
     protected $noteExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getMigrationVersion()
-    {
-        return 'v1_1';
-    }
 
     /**
      * Sets the NoteExtension
@@ -38,6 +38,25 @@ class OroB2BCatalogBundleInstaller implements Installation, NoteExtensionAwareIn
     public function setNoteExtension(NoteExtension $noteExtension)
     {
         $this->noteExtension = $noteExtension;
+    }
+
+    /** @var AttachmentExtension */
+    protected $attachmentExtension;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
+    {
+        $this->attachmentExtension = $attachmentExtension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMigrationVersion()
+    {
+        return 'v1_2';
     }
 
     /**
@@ -58,6 +77,8 @@ class OroB2BCatalogBundleInstaller implements Installation, NoteExtensionAwareIn
         $this->addOrob2BCategoryToProductForeignKeys($schema);
         $this->addOroB2BCatalogCategoryShortDescriptionForeignKeys($schema);
         $this->addOroB2BCatalogCategoryLongDescriptionForeignKeys($schema);
+        $this->addCategoryImageAssociation($schema, 'largeImage');
+        $this->addCategoryImageAssociation($schema, 'smallImage');
     }
 
     /**
@@ -237,6 +258,23 @@ class OroB2BCatalogBundleInstaller implements Installation, NoteExtensionAwareIn
             ['category_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     * @param $fieldName
+     */
+    public function addCategoryImageAssociation(Schema $schema, $fieldName)
+    {
+        $this->attachmentExtension->addImageRelation(
+            $schema,
+            self::ORO_B2B_CATALOG_CATEGORY_TABLE_NAME,
+            $fieldName,
+            [],
+            self::MAX_CATEGORY_IMAGE_SIZE_IN_MB,
+            self::THUMBNAIL_WIDTH_SIZE_IN_PX,
+            self::THUMBNAIL_HEIGHT_SIZE_IN_PX
         );
     }
 }
