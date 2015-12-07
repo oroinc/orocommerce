@@ -7,8 +7,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Oro\Bundle\WorkflowBundle\Model\ProcessData;
 use Oro\Bundle\WorkflowBundle\Model\ContextAccessor;
 
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\CacheBuilder;
 use OroB2B\Bundle\AccountBundle\Model\Action\ChangeCategoryPosition;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class ChangeCategoryPositionTest extends \PHPUnit_Framework_TestCase
@@ -32,7 +32,7 @@ class ChangeCategoryPositionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage CacheBuilder is not provided
+     * @expectedExceptionMessage CacheBuilder for category position change is not provided
      */
     public function testInitializeFailed()
     {
@@ -43,8 +43,10 @@ class ChangeCategoryPositionTest extends \PHPUnit_Framework_TestCase
     {
         $category = new Category();
 
-        /** @var CacheBuilder|\PHPUnit_Framework_MockObject_MockObject $cacheBuilder */
-        $cacheBuilder = $this->getMock('OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\CacheBuilder');
+        /** @var CategoryCaseCacheBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $cacheBuilder */
+        $cacheBuilder = $this
+            ->getMock('OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface');
+
         $cacheBuilder->expects($this->once())
             ->method('categoryPositionChanged')
             ->with($category);

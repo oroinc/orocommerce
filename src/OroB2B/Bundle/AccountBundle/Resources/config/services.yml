@@ -121,6 +121,12 @@ parameters:
     orob2b_account.visibility.cache.product.category.account_product_resolved_cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\AccountProductResolvedCacheBuilder
     orob2b_account.visibility.cache.product.category.product_resolved_cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\ProductResolvedCacheBuilder
 
+    orob2b_account.visibility.cache.product.category.subtree.category_subtree_cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\AbstractSubtreeCacheBuilder
+    orob2b_account.visibility.cache.product.category.subtree.position_change_category_subtree_cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\PositionChangeCategorySubtreeCacheBuilder
+    orob2b_account.visibility.cache.product.category.subtree.visibility_change_category_subtree_cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeCategorySubtreeCacheBuilder
+    orob2b_account.visibility.cache.product.category.subtree.visibility_change_account_subtree_cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeAccountSubtreeCacheBuilder
+    orob2b_account.visibility.cache.product.category.subtree.visibility_change_group_subtree_cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeGroupSubtreeCacheBuilder
+
     orob2b_account.visibility.cache.product.cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\CacheBuilder
     orob2b_account.visibility.cache.product.category.cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\CacheBuilder
 
@@ -683,12 +689,14 @@ services:
         calls:
             - [setCategoryVisibilityClass, ['%orob2b_account.entity.account_group_category_visibility.class%']]
             - [setAccountProductCacheBuilder, [@orob2b_account.visibility.cache.product.category.account_product_resolved_cache_builder]]
+            - [setVisibilityChangeAccountSubtreeCacheBuilder, [@orob2b_account.visibility.cache.product.category.subtree.visibility_change_group_subtree_cache_builder]]
 
     orob2b_account.visibility.cache.product.category.account_product_resolved_cache_builder:
         class: %orob2b_account.visibility.cache.product.category.account_product_resolved_cache_builder.class%
         parent: orob2b_account.visibility.cache.product.category.abstract_resolved_cache_builder
         calls:
             - [setCategoryVisibilityClass, ['%orob2b_account.entity.account_category_visibility.class%']]
+            - [setVisibilityChangeAccountSubtreeCacheBuilder, [@orob2b_account.visibility.cache.product.category.subtree.visibility_change_account_subtree_cache_builder]]
 
     orob2b_account.visibility.cache.product.category.product_resolved_cache_builder:
         class: %orob2b_account.visibility.cache.product.category.product_resolved_cache_builder.class%
@@ -697,6 +705,8 @@ services:
             - [setCategoryVisibilityClass, ['%orob2b_account.entity.category_visibility.class%']]
             - [setAccountProductCacheBuilder, [@orob2b_account.visibility.cache.product.category.account_product_resolved_cache_builder]]
             - [setAccountGroupProductCacheBuilder, [@orob2b_account.visibility.cache.product.category.account_group_product_resolved_cache_builder]]
+            - [setVisibilityChangeCategorySubtreeCacheBuilder, [@orob2b_account.visibility.cache.product.category.subtree.visibility_change_category_subtree_cache_builder]]
+            - [setPositionChangeCategorySubtreeCacheBuilder, [@orob2b_account.visibility.cache.product.category.subtree.position_change_category_subtree_cache_builder]]
 
     orob2b_account.visibility.cache.product.category.cache_builder:
         class: %orob2b_account.visibility.cache.product.category.cache_builder.class%
@@ -704,6 +714,28 @@ services:
             - [addBuilder, [@orob2b_account.visibility.cache.product.category.product_resolved_cache_builder]]
             - [addBuilder, [@orob2b_account.visibility.cache.product.category.account_group_product_resolved_cache_builder]]
             - [addBuilder, [@orob2b_account.visibility.cache.product.category.account_product_resolved_cache_builder]]
+
+    orob2b_account.visibility.cache.product.category.subtree.category_subtree_cache_builder:
+        class: %orob2b_account.visibility.cache.product.category.subtree.category_subtree_cache_builder.class%
+        arguments:
+            - @doctrine
+            - @orob2b_account.calculator.category_visibility_resolver
+
+    orob2b_account.visibility.cache.product.category.subtree.visibility_change_category_subtree_cache_builder:
+        class: %orob2b_account.visibility.cache.product.category.subtree.visibility_change_category_subtree_cache_builder.class%
+        parent: orob2b_account.visibility.cache.product.category.subtree.category_subtree_cache_builder
+
+    orob2b_account.visibility.cache.product.category.subtree.position_change_category_subtree_cache_builder:
+        class: %orob2b_account.visibility.cache.product.category.subtree.position_change_category_subtree_cache_builder.class%
+        parent: orob2b_account.visibility.cache.product.category.subtree.category_subtree_cache_builder
+
+    orob2b_account.visibility.cache.product.category.subtree.visibility_change_account_subtree_cache_builder:
+        class: %orob2b_account.visibility.cache.product.category.subtree.visibility_change_account_subtree_cache_builder.class%
+        parent: orob2b_account.visibility.cache.product.category.subtree.category_subtree_cache_builder
+
+    orob2b_account.visibility.cache.product.category.subtree.visibility_change_group_subtree_cache_builder:
+        class: %orob2b_account.visibility.cache.product.category.subtree.visibility_change_group_subtree_cache_builder.class%
+        parent: orob2b_account.visibility.cache.product.category.subtree.category_subtree_cache_builder
 
     orob2b_account.event_listener.product_select_db_query:
         class: %orob2b_account.event_listener.product_select_db_query.class%
@@ -728,6 +760,6 @@ services:
         arguments:
             - @oro_workflow.context_accessor
         calls:
-            - [setCacheBuilder, [@orob2b_account.visibility.cache.product.category.cache_builder]]
+            - [setCacheBuilder, [@orob2b_account.visibility.cache.product.category.product_resolved_cache_builder]]
         tags:
             - { name: oro_workflow.action, alias: change_category_position }

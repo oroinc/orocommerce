@@ -6,7 +6,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-abstract class AbstractCacheBuilder implements CacheBuilderInterface
+abstract class AbstractCacheBuilder
 {
     /**
      * @var CacheBuilderInterface[]

@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Visibility\Cache\Product;
 
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\CacheBuilder as ProductCaseCacheBuilder;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\CacheBuilder as CategoryCaseCacheBuilder;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
@@ -48,7 +47,7 @@ abstract class AbstractCacheBuilderTest extends \PHPUnit_Framework_TestCase
             ->method('resolveVisibilitySettings')
             ->with($mock);
 
-        /** @var CategoryCaseCacheBuilderInterface|ProductCaseCacheBuilderInterface $concreteBuilder */
+        /** @var CacheBuilderInterface|ProductCaseCacheBuilderInterface $concreteBuilder */
         $this->cacheBuilder->addBuilder($concreteBuilder);
 
         foreach ($this->builders as $builder) {
@@ -82,7 +81,7 @@ abstract class AbstractCacheBuilderTest extends \PHPUnit_Framework_TestCase
             ->method('isVisibilitySettingsSupported')
             ->willReturn(true);
 
-        /** @var CategoryCaseCacheBuilderInterface|ProductCaseCacheBuilderInterface $concreteBuilder */
+        /** @var CacheBuilderInterface|ProductCaseCacheBuilderInterface $concreteBuilder */
         $this->cacheBuilder->addBuilder($concreteBuilder);
 
         $result = $this->assertCallAllBuilders(

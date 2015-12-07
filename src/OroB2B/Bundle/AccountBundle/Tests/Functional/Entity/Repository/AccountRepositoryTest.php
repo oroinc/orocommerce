@@ -7,6 +7,9 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountRepository;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
 /**
  * @dbIsolation
@@ -33,7 +36,10 @@ class AccountRepositoryTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts'
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
+                'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountCategoryVisibilities'
             ]
         );
 
@@ -108,6 +114,62 @@ class AccountRepositoryTest extends WebTestCase
             'level_1.4' => [
                 'account.level_1.4',
                 []
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider getCategoryAccountsByVisibilityDataProvider
+     * @param string $categoryName
+     * @param string $visibility
+     * @param array $expectedAccounts
+     */
+    public function testGetCategoryAccountsByVisibility($categoryName, $visibility, array $expectedAccounts)
+    {
+        /** @var Category $category */
+        $category = $this->getReference($categoryName);
+
+        $accounts = $this->repository->getCategoryAccountsByVisibility($category, $visibility);
+
+        $accounts = array_map(
+            function (Account $account) {
+                return $account->getName();
+            },
+            $accounts
+        );
+
+        $this->assertEquals($expectedAccounts, $accounts);
+    }
+
+    /**
+     * @return array
+     */
+    public function getCategoryAccountsByVisibilityDataProvider()
+    {
+        return [
+            'FIRST_LEVEL with VISIBLE' => [
+                'categoryName' => LoadCategoryData::FIRST_LEVEL,
+                'visibility' => AccountCategoryVisibility::VISIBLE,
+                'expectedAccounts' => [
+                    'AccountUser AccountUser',
+                    'account.orphan',
+                    'account.level_1',
+                    'account.level_1.1',
+                    'account.level_1.1.1',
+                    'account.level_1.2',
+                    'account.level_1.2.1',
+                    'account.level_1.2.1.1',
+                    'account.level_1.3',
+                    'account.level_1.3.1',
+                    'account.level_1.3.1.1',
+                    'account.level_1.4',
+                    'account.level_1_1',
+                ]
+            ],
+            'FIRST_LEVEL with HIDDEN' => [
+                'categoryName' => LoadCategoryData::FIRST_LEVEL,
+                'visibility' => AccountCategoryVisibility::HIDDEN,
+                'expectedAccounts' => []
             ],
         ];
     }

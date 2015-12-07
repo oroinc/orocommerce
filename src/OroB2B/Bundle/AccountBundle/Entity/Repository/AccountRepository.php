@@ -6,6 +6,9 @@ use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
+
 class AccountRepository extends EntityRepository
 {
     /**
@@ -35,5 +38,26 @@ class AccountRepository extends EntityRepository
         }
 
         return $children;
+    }
+
+    /**
+     * @param Category $category
+     * @param $visibility
+     * @return Account[]
+     */
+    public function getCategoryAccountsByVisibility(Category $category, $visibility)
+    {
+        $qb = $this->createQueryBuilder('account');
+
+        $qb->select('account')
+            ->join('OroB2BAccountBundle:Visibility\AccountCategoryVisibility', 'accountCategoryVisibility')
+            ->where($qb->expr()->eq('accountCategoryVisibility.category', ':category'))
+            ->andWhere($qb->expr()->eq('accountCategoryVisibility.visibility', ':visibility'))
+            ->setParameters([
+                'category' => $category,
+                'visibility' => $visibility
+            ]);
+
+        return $qb->getQuery()->getResult();
     }
 }

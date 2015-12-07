@@ -2,34 +2,23 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category;
 
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\AbstractCacheBuilder;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
-class CacheBuilder extends AbstractCacheBuilder implements CategoryCaseCacheBuilderInterface
+class CacheBuilder extends AbstractCacheBuilder implements CacheBuilderInterface
 {
     /**
-     * @var CategoryCaseCacheBuilderInterface[]
+     * @var CacheBuilderInterface[]
      */
     protected $builders = [];
 
     /**
-     * @param CategoryCaseCacheBuilderInterface $cacheBuilder
+     * @param CacheBuilderInterface $cacheBuilder
      */
-    public function addBuilder(CategoryCaseCacheBuilderInterface $cacheBuilder)
+    public function addBuilder(CacheBuilderInterface $cacheBuilder)
     {
         if (!in_array($cacheBuilder, $this->builders, true)) {
             $this->builders[] = $cacheBuilder;
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function categoryPositionChanged(Category $category)
-    {
-        foreach ($this->builders as $builder) {
-            $builder->categoryPositionChanged($category);
         }
     }
 }

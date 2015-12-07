@@ -2,8 +2,37 @@
 
 namespace OroB2B\Bundle\AccountBundle\Model\Action;
 
-class ChangeCategoryPosition extends CategoryCaseAction
+use Oro\Bundle\WorkflowBundle\Model\Action\AbstractAction;
+
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;
+
+class ChangeCategoryPosition extends AbstractAction
 {
+    /**
+     * @var CategoryCaseCacheBuilderInterface
+     */
+    protected $cacheBuilder;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function initialize(array $options)
+    {
+        if (!$this->cacheBuilder) {
+            throw new \InvalidArgumentException('CacheBuilder for category position change is not provided');
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param CategoryCaseCacheBuilderInterface $cacheBuilder
+     */
+    public function setCacheBuilder(CategoryCaseCacheBuilderInterface $cacheBuilder)
+    {
+        $this->cacheBuilder = $cacheBuilder;
+    }
+
     /**
      * {@inheritdoc}
      */
