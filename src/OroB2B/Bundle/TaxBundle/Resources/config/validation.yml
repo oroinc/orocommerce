@@ -3,6 +3,7 @@ OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: code
     properties:
         code:
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Alphanumeric: ~
             - NotBlank: ~
             - Length:
                 min: 1

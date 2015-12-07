@@ -106,7 +106,7 @@ class ProductTaxCodeController extends Controller
                     'parameters' => ['id' => $account->getId()]
                 ];
             },
-            $this->get('translator')->trans('orob2b.account.controller.account.saved.message')
+            $this->get('translator')->trans('orob2b.tax.controller.product_tax_code.saved.message')
         );
     }
 }
