@@ -44,15 +44,24 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $event->getSettings());
     }
 
-    /**
-     * @param array $settings
-     * @param array $values
-     * @param array $converted
-     * @param array $expected
-     * @dataProvider beforeSaveDataProvider
-     */
-    public function testBeforeSave(array $settings, array $values, array $converted, array $expected)
+    public function testBeforeSave()
     {
+        $values = $this->createConfigs(2);
+        $settings = [
+            'oro_b2b_pricing.default_price_lists' => [
+                'value' => $values
+            ]
+        ];
+        $converted = [
+            ['priceList' => 1, 'priority' => 100],
+            ['priceList' => 2, 'priority' => 200]
+        ];
+        $expected = [
+            'oro_b2b_pricing.default_price_lists' => [
+                'value' => $converted
+            ]
+        ];
+
         /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager $configManager */
         $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
@@ -70,35 +79,6 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
         $subscriber->beforeSave($event);
 
         $this->assertEquals($expected, $event->getSettings());
-    }
-
-    /**
-     * @return array
-     */
-    public function beforeSaveDataProvider()
-    {
-        $values = $this->createConfigs(2);
-        $converted = [
-            ['priceList' => 1, 'priority' => 100],
-            ['priceList' => 2, 'priority' => 200]
-        ];
-
-        return [
-            'data format' => [
-                'settings' => [
-                    'oro_b2b_pricing.default_price_lists' => [
-                        'value' => $values
-                    ]
-                ],
-                'values' => $values,
-                'converted' => $converted,
-                'expected' => [
-                    'oro_b2b_pricing.default_price_lists' => [
-                        'value' => $converted
-                    ]
-                ],
-            ],
-        ];
     }
 
     public function testGetSubscribedEvents()
