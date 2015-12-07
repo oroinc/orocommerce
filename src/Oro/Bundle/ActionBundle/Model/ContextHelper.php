@@ -3,6 +3,8 @@
 namespace Oro\Bundle\ActionBundle\Model;
 
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
@@ -13,6 +15,12 @@ class ContextHelper
 
     /** @var RequestStack */
     protected $requestStack;
+
+    /** @var array */
+    protected $actionContexts = [];
+
+    /** @var  PropertyAccessor */
+    protected $propertyAccessor;
 
     /**
      * @param DoctrineHelper $doctrineHelper
@@ -50,13 +58,19 @@ class ContextHelper
             $context = $this->normalizeContext($context);
         }
 
-        $entity = null;
+        $hash = $this->generateHash($context, ['entityClass', 'entityId']);
 
-        if ($context['entityClass']) {
-            $entity = $this->getEntityReference($context['entityClass'], $context['entityId']);
+        if (!array_key_exists($hash, $this->actionContexts)) {
+            $entity = null;
+
+            if ($context['entityClass']) {
+                $entity = $this->getEntityReference($context['entityClass'], $context['entityId']);
+            }
+
+            $this->actionContexts[$hash] = new ActionContext($entity ? ['data' => $entity] : []);
         }
 
-        return new ActionContext($entity ? ['data' => $entity] : []);
+        return $this->actionContexts[$hash];
     }
 
     /**
@@ -105,5 +119,32 @@ class ContextHelper
         }
 
         return $entity;
+    }
+
+    /**
+     * @param array $context
+     * @param array $properties
+     * @return null|string
+     */
+    protected function generateHash(array $context, array $properties)
+    {
+        $array = [];
+        foreach ($properties as $property) {
+            $array[$property] = $this->getPropertyAccessor()->getValue($context, sprintf('[%s]', $property));
+        }
+
+        return md5(json_encode(array_multisort($array), JSON_NUMERIC_CHECK));
+    }
+
+    /**
+     * @return PropertyAccessor
+     */
+    protected function getPropertyAccessor()
+    {
+        if (!$this->propertyAccessor) {
+            $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+        }
+
+        return $this->propertyAccessor;
     }
 }
