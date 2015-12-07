@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\ActionBundle\Tests\Unit\Model;
 
-use Oro\Bundle\ActionBundle\Model\ActionContext;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+use Oro\Bundle\ActionBundle\Model\ActionContext;
 use Oro\Bundle\ActionBundle\Model\ContextHelper;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
@@ -184,5 +184,41 @@ class ContextHelperTest extends \PHPUnit_Framework_TestCase
                 ]
             ]
         ];
+    }
+
+    public function testGetActionContextWithCache()
+    {
+        $entity = new \stdClass();
+        $entity->id1 = 42;
+        $entity->id2 = 100;
+        $entity->id3 = 'test';
+
+        $context1 = [
+            'route' => 'test_route',
+            'entityClass' => 'stdClass',
+            'entityId' => ['params' => ['id1' => '42', 'id2' => 100, 'id3' => 'test']]
+        ];
+
+        $context2 = [
+            'entityId' => ['params' => ['id3' => 'test', 'id2' => '100', 'id1' => 42]],
+            'route' => 'test_route',
+            'extra_parameter' => new \stdClass(),
+            'entityClass' => 'stdClass'
+        ];
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('isManageableEntity')
+            ->with('stdClass')
+            ->willReturn(true);
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityReference')
+            ->willReturn($entity);
+
+        $actionContext = new ActionContext(['data' => $entity]);
+
+        $this->assertEquals($actionContext, $this->helper->getActionContext($context1));
+
+        // use local cache
+        $this->assertEquals($actionContext, $this->helper->getActionContext($context2));
     }
 }
