@@ -1,47 +1,53 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 <div class="row-fluid form-horizontal">
     <div class="responsive-block">
-        <div class="oro-tabs">
-            <ul class="nav nav-tabs">
-                {% for websiteId, priceListsByWebsite in priceListsByWebsites %}
-                    <li {% if websiteId == priceListsByWebsites|first.website.id %} class="active" {% endif %}>
-                        <a href="#website{{ websiteId }}" data-toggle="tab">
-                            {{ priceListsByWebsite.website.name }}
-                        </a>
-                    </li>
-                {% endfor %}
-            </ul>
-            <div class="tab-content">
-                {% for websiteId, priceListsByWebsite in priceListsByWebsites %}
-                    <div class="tab-pane{% if websiteId == priceListsByWebsites|first.website.id %} active{% endif %}"
-                         id="website{{ websiteId }}"><br>
-                        <table class="grid table-hover table table-bordered">
-                            <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>{{ 'orob2b.pricing.pricelist.entity_label'|trans }}</th>
-                                <th>{{ 'orob2b.pricing.pricelist.priority.label'|trans }}</th>
-                            </tr>
-                            </thead>
-
-                            <tbody>
-                            {% for priceListToAccount in priceListsByWebsite.priceLists %}
-                                {% set priceList = priceListToAccount.priceList %}
+        {% if priceListsByWebsites %}
+            <div class="oro-tabs">
+                <ul class="nav nav-tabs">
+                    {% for websiteId, priceListsByWebsite in priceListsByWebsites %}
+                        <li {% if websiteId == priceListsByWebsites|first.website.id %} class="active" {% endif %}>
+                            <a href="#website{{ websiteId }}" data-toggle="tab">
+                                {{ priceListsByWebsite.website.name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <div class="tab-content">
+                    {% for websiteId, priceListsByWebsite in priceListsByWebsites %}
+                        <div class="tab-pane{% if websiteId == priceListsByWebsites|first.website.id %} active{% endif %}"
+                             id="website{{ websiteId }}"><br>
+                            <table class="grid table-hover table table-bordered">
+                                <thead>
                                 <tr>
-                                    <td>{{ loop.index }}</td>
-                                    <td>
-                                        <a href="{{ path('orob2b_pricing_price_list_view', {'id': priceList.id}) }}">
-                                            {{ priceList.name }}
-                                        </a>
-                                    </td>
-                                    <td>{{ priceListToAccount.priority }}</td>
+                                    <th>#</th>
+                                    <th>{{ 'orob2b.pricing.pricelist.entity_label'|trans }}</th>
+                                    <th>{{ 'orob2b.pricing.pricelist.priority.label'|trans }}</th>
                                 </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                {% endfor %}
+                                </thead>
+
+                                <tbody>
+                                {% for priceListToAccount in priceListsByWebsite.priceLists %}
+                                    {% set priceList = priceListToAccount.priceList %}
+                                    <tr>
+                                        <td>{{ loop.index }}</td>
+                                        <td>
+                                            <a href="{{ path('orob2b_pricing_price_list_view', {'id': priceList.id}) }}">
+                                                {{ priceList.name }}
+                                            </a>
+                                        </td>
+                                        <td>{{ priceListToAccount.priority }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
-        </div>
+        {% else %}
+            <div class="no-data">
+                <span>{{ "orob2b.pricing.no_price_lists"|trans }}</span>
+            </div>
+        {% endif %}
     </div>
 </div>

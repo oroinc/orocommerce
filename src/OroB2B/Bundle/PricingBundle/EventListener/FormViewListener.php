@@ -72,9 +72,7 @@ class FormViewListener
         $priceLists = $this->doctrineHelper
             ->getEntityRepository('OroB2BPricingBundle:PriceListToAccount')
             ->findBy(['account' => $account]);
-        if ($priceLists) {
-            $this->addPriceListInfo($event, $priceLists);
-        }
+        $this->addPriceListInfo($event, $priceLists);
     }
 
     /**
@@ -95,9 +93,7 @@ class FormViewListener
         $priceLists = $this->doctrineHelper
             ->getEntityRepository('OroB2BPricingBundle:PriceListToAccountGroup')
             ->findBy(['accountGroup' => $accountGroup]);
-        if ($priceLists) {
-            $this->addPriceListInfo($event, $priceLists);
-        }
+        $this->addPriceListInfo($event, $priceLists);
     }
 
     /**
