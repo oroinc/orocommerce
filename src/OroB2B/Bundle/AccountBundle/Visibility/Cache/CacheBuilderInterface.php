@@ -2,35 +2,22 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache;
 
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 interface CacheBuilderInterface
 {
     /**
-     * @param object $visibilitySettings
+     * @param VisibilityInterface $visibilitySettings
      * @return mixed
      */
-    public function resolveVisibilitySettings($visibilitySettings);
+    public function resolveVisibilitySettings(VisibilityInterface $visibilitySettings);
 
     /**
-     * @param object $visibilitySettings
+     * @param VisibilityInterface $visibilitySettings
      * @return mixed
      */
-    public function isVisibilitySettingsSupported($visibilitySettings);
-
-    /**
-     * @param Category $category
-     * @return mixed
-     */
-    public function updateResolvedVisibilityByCategory(Category $category);
-
-    /**
-     * @param Product $product
-     * @return mixed
-     */
-    public function updateProductResolvedVisibility(Product $product);
+    public function isVisibilitySettingsSupported(VisibilityInterface $visibilitySettings);
 
     /**
      * @param Website|null $website

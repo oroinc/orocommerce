@@ -47,7 +47,7 @@ class CacheBuilderTest extends \PHPUnit_Framework_TestCase
 
     public function testResolveVisibilitySettings()
     {
-        $mock = $this->getMock('stdClass');
+        $mock = $this->getMock('OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface');
 
         /** @var CacheBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
         $builder = $this->getMock('OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface');
@@ -75,7 +75,10 @@ class CacheBuilderTest extends \PHPUnit_Framework_TestCase
 
     public function testIsVisibilitySettingsSupportedFalse()
     {
-        $result = $this->assertCallAllBuilders('isVisibilitySettingsSupported', $this->getMock('stdClass'));
+        $result = $this->assertCallAllBuilders(
+            'isVisibilitySettingsSupported',
+            $this->getMock('OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface')
+        );
 
         $this->assertFalse($result);
     }
@@ -94,7 +97,10 @@ class CacheBuilderTest extends \PHPUnit_Framework_TestCase
 
         $this->cacheBuilder->addBuilder($builder);
 
-        $result = $this->assertCallAllBuilders('isVisibilitySettingsSupported', $this->getMock('stdClass'));
+        $result = $this->assertCallAllBuilders(
+            'isVisibilitySettingsSupported',
+            $this->getMock('OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface')
+        );
 
         $this->assertTrue($result);
     }
@@ -102,22 +108,6 @@ class CacheBuilderTest extends \PHPUnit_Framework_TestCase
     public function testBuildCache()
     {
         $this->assertCallAllBuilders('buildCache', $this->getMock('OroB2B\Bundle\WebsiteBundle\Entity\Website'));
-    }
-
-    public function testUpdateResolvedVisibilityByCategory()
-    {
-        $this->assertCallAllBuilders(
-            'updateResolvedVisibilityByCategory',
-            $this->getMock('OroB2B\Bundle\CatalogBundle\Entity\Category')
-        );
-    }
-
-    public function testUpdateProductResolvedVisibility()
-    {
-        $this->assertCallAllBuilders(
-            'updateProductResolvedVisibility',
-            $this->getMock('OroB2B\Bundle\ProductBundle\Entity\Product')
-        );
     }
 
     /**

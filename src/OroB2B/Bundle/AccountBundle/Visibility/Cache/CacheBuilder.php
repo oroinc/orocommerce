@@ -2,8 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache;
 
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class CacheBuilder implements CacheBuilderInterface
@@ -26,7 +25,7 @@ class CacheBuilder implements CacheBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function resolveVisibilitySettings($visibilitySettings)
+    public function resolveVisibilitySettings(VisibilityInterface $visibilitySettings)
     {
         foreach ($this->builders as $builder) {
             if ($builder->isVisibilitySettingsSupported($visibilitySettings)) {
@@ -38,7 +37,7 @@ class CacheBuilder implements CacheBuilderInterface
     /**
      * {@inheritdoc}
      */
-    public function isVisibilitySettingsSupported($visibilitySettings)
+    public function isVisibilitySettingsSupported(VisibilityInterface $visibilitySettings)
     {
         foreach ($this->builders as $builder) {
             if ($builder->isVisibilitySettingsSupported($visibilitySettings)) {
@@ -47,26 +46,6 @@ class CacheBuilder implements CacheBuilderInterface
         }
 
         return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function updateResolvedVisibilityByCategory(Category $category)
-    {
-        foreach ($this->builders as $builder) {
-            $builder->updateResolvedVisibilityByCategory($category);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function updateProductResolvedVisibility(Product $product)
-    {
-        foreach ($this->builders as $builder) {
-            $builder->updateProductResolvedVisibility($product);
-        }
     }
 
     /**
