@@ -45,13 +45,13 @@ class CallServiceMethod extends AbstractAction
             throw new InvalidParameterException('Method name parameter is required');
         }
 
-        if (!method_exists($this->container->get($options['service']), $options['method'])) {
+        $this->options = $options;
+
+        if (!method_exists($this->getService(), $this->getMethod())) {
             throw new InvalidParameterException(
-                sprintf('Could not found public method "%s" in service "%s"', $options['method'], $options['service'])
+                sprintf('Could not found public method "%s" in service "%s"', $this->getMethod(), $options['service'])
             );
         }
-
-        $this->options = $options;
 
         return $this;
     }
@@ -83,7 +83,7 @@ class CallServiceMethod extends AbstractAction
     }
 
     /**
-     * @return string
+     * @return object
      */
     protected function getService()
     {
