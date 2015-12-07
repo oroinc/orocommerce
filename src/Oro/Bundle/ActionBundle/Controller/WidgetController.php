@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\ActionBundle\Model\ActionManager;
+use Oro\Bundle\ActionBundle\Model\ContextHelper;
 
 class WidgetController extends Controller
 {
@@ -24,11 +25,9 @@ class WidgetController extends Controller
      */
     public function buttonsAction()
     {
-        $context = $this->get('oro_action.helper.context')->getContext();
-
         return [
-            'actions' => $this->getActionManager()->getActions($context),
-            'context' => $context
+            'actions' => $this->getActionManager()->getActions(),
+            'context' => $this->getContextHelper()->getContext()
         ];
     }
 
@@ -41,6 +40,7 @@ class WidgetController extends Controller
      */
     public function formAction(Request $request, $actionName)
     {
+        $context = $this->getContextHelper()->getActionContext();
         $errors = new ArrayCollection();
         $params = [];
 
@@ -54,14 +54,13 @@ class WidgetController extends Controller
 
                 $params['response'] = $context->getRedirectUrl() ? ['redirectUrl' => $context->getRedirectUrl()] : [];
             }
+
+            $params['form'] = $form->createView();
+            $params['context'] = $context->getValues();
         } catch (\Exception $e) {
             if (!$errors->count()) {
                 $errors->add(['message' => $e->getMessage()]);
             }
-        }
-
-        if (!empty($form)) {
-            $params['form'] = $form->createView();
         }
 
         $params['errors'] = $errors;
@@ -75,5 +74,13 @@ class WidgetController extends Controller
     protected function getActionManager()
     {
         return $this->get('oro_action.manager');
+    }
+
+    /**
+     * @return ContextHelper
+     */
+    protected function getContextHelper()
+    {
+        return $this->get('oro_action.helper.context');
     }
 }

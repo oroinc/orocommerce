@@ -3,6 +3,8 @@
 namespace Oro\Bundle\ActionBundle\Model;
 
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
@@ -13,6 +15,12 @@ class ContextHelper
 
     /** @var RequestStack */
     protected $requestStack;
+
+    /** @var array */
+    protected $actionContexts = [];
+
+    /** @var  PropertyAccessor */
+    protected $propertyAccessor;
 
     /**
      * @param DoctrineHelper $doctrineHelper
@@ -50,13 +58,19 @@ class ContextHelper
             $context = $this->normalizeContext($context);
         }
 
-        $entity = null;
+        $hash = $this->generateHash($context, ['entityClass', 'entityId']);
 
-        if ($context['entityClass']) {
-            $entity = $this->getEntityReference($context['entityClass'], $context['entityId']);
+        if (!array_key_exists($hash, $this->actionContexts)) {
+            $entity = null;
+
+            if ($context['entityClass']) {
+                $entity = $this->getEntityReference($context['entityClass'], $context['entityId']);
+            }
+
+            $this->actionContexts[$hash] = new ActionContext($entity ? ['data' => $entity] : []);
         }
 
-        return new ActionContext($entity ? ['data' => $entity] : []);
+        return $this->actionContexts[$hash];
     }
 
     /**
@@ -105,5 +119,53 @@ class ContextHelper
         }
 
         return $entity;
+    }
+
+    /**
+     * @param array $context
+     * @param array $properties
+     * @return null|string
+     */
+    protected function generateHash(array $context, array $properties)
+    {
+        $string = null;
+        foreach ($properties as $property) {
+            $value = $this->getPropertyAccessor()->getValue($context, sprintf('[%s]', $property));
+
+            $string .= '|' . (is_array($value) ? $this->arrayToString($value) : $value);
+        }
+
+        return $string ? md5($string) : null;
+    }
+
+    /**
+     * @param array $array
+     * @return string
+     */
+    protected function arrayToString(array $array)
+    {
+        $string = '';
+
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $value = $this->arrayToString($value);
+            }
+
+            $string .= $key . $value;
+        }
+
+        return $string;
+    }
+
+    /**
+     * @return PropertyAccessor
+     */
+    protected function getPropertyAccessor()
+    {
+        if (!$this->propertyAccessor) {
+            $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+        }
+
+        return $this->propertyAccessor;
     }
 }

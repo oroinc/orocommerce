@@ -105,7 +105,7 @@ class ContextHelperTest extends \PHPUnit_Framework_TestCase
         $entity = new \stdClass();
         $entity->id = 42;
 
-        $this->requestStack->expects($this->exactly($requestStackCalls))
+        $this->requestStack->expects($this->exactly($requestStackCalls * 2))
             ->method('getCurrentRequest')
             ->willReturn($request);
 
@@ -118,7 +118,7 @@ class ContextHelperTest extends \PHPUnit_Framework_TestCase
             if ($request->get('entityId') || ($expected->getEntity() && isset($expected->getEntity()->id))) {
                 $this->doctrineHelper->expects($this->once())
                     ->method('getEntityReference')
-                    ->with('stdClass', 42)
+                    ->with('stdClass', $this->logicalOr(42, $this->isType('array')))
                     ->willReturn($entity);
             } else {
                 $this->doctrineHelper->expects($this->once())
@@ -128,6 +128,9 @@ class ContextHelperTest extends \PHPUnit_Framework_TestCase
             }
         }
 
+        $this->assertEquals($expected, $this->helper->getActionContext($context));
+
+        // use local cache
         $this->assertEquals($expected, $this->helper->getActionContext($context));
     }
 
@@ -167,6 +170,16 @@ class ContextHelperTest extends \PHPUnit_Framework_TestCase
                 'context' => [
                     'route' => 'test_route',
                     'entityId' => '42',
+                    'entityClass' => 'stdClass'
+                ]
+            ],
+            'entity (id as array)' => [
+                'request' => new Request(),
+                'requestStackCalls' => 0,
+                'expected' => new ActionContext(['data' => $entity]),
+                'context' => [
+                    'route' => 'test_route',
+                    'entityId' => ['params' => ['id' => '42']],
                     'entityClass' => 'stdClass'
                 ]
             ]
