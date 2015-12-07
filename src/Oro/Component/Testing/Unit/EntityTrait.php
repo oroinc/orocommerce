@@ -23,7 +23,6 @@ trait EntityTrait
     protected function getEntity($className, array $properties = [], array $constructorArgs = null)
     {
         $reflectionClass = new \ReflectionClass($className);
-
         if ($reflectionClass->hasMethod('__construct')) {
             $entity = $reflectionClass->newInstance($constructorArgs);
         } else {

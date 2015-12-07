@@ -1,0 +1,7 @@
+{% extends 'OroActionBundle:Action:button.html.twig' %}
+
+{% block link %}
+    {% set linkTitle = 'orob2b.rfp.widget.change_status_title'|trans %}
+    {% set dialogOptions = dialogOptions|merge({'title': linkTitle, 'dialogOptions': {'width': 550}}) %}
+    {{ parent() }}
+{% endblock %}
