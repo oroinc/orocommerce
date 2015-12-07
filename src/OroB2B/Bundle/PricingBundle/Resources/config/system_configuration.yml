@@ -17,8 +17,6 @@ oro_system_configuration:
             options:
                 label: orob2b.pricing.system_configuration.price_lists
                 resettable: false
-                constraints:
-                    - OroB2B\Bundle\PricingBundle\Validator\Constraints\NotEmptyPriceLists: ~
         oro_b2b_pricing.rounding_type:
             data_type: string
             type: choice
