@@ -10,9 +10,6 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
 {
-    /** @var CacheBuilderInterface */
-    protected $accountProductResolvedCacheBuilder;
-
     /** @var VisibilityChangeGroupSubtreeCacheBuilder */
     protected $visibilityChangeAccountGroupSubtreeCacheBuilder;
 
@@ -23,14 +20,6 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
         VisibilityChangeGroupSubtreeCacheBuilder $visibilityChangeAccountGroupSubtreeCacheBuilder
     ) {
         $this->visibilityChangeAccountGroupSubtreeCacheBuilder = $visibilityChangeAccountGroupSubtreeCacheBuilder;
-    }
-
-    /**
-     * @param CacheBuilderInterface $accountProductResolvedCacheBuilder
-     */
-    public function setAccountProductCacheBuilder(CacheBuilderInterface $accountProductResolvedCacheBuilder)
-    {
-        $this->accountProductResolvedCacheBuilder = $accountProductResolvedCacheBuilder;
     }
 
     /**

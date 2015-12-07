@@ -6,7 +6,6 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -15,12 +14,6 @@ use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\Visibi
 
 class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implements CategoryCaseCacheBuilderInterface
 {
-    /** @var CacheBuilderInterface */
-    protected $accountProductResolvedCacheBuilder;
-
-    /** @var CacheBuilderInterface */
-    protected $accountGroupProductResolvedCacheBuilder;
-
     /** @var AccountGroup[] */
     protected $intersectAccountGroupsWithFallbackToParent;
 
@@ -32,23 +25,6 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
 
     /** @var PositionChangeCategorySubtreeCacheBuilder */
     protected $positionChangeCategorySubtreeCacheBuilder;
-
-    /**
-     * @param CacheBuilderInterface $accountProductResolvedCacheBuilder
-     */
-    public function setAccountProductCacheBuilder(CacheBuilderInterface $accountProductResolvedCacheBuilder)
-    {
-        $this->accountProductResolvedCacheBuilder = $accountProductResolvedCacheBuilder;
-    }
-
-    /**
-     * @param CacheBuilderInterface $accountGroupProductResolvedCacheBuilder
-     */
-    public function setAccountGroupProductCacheBuilder(
-        CacheBuilderInterface $accountGroupProductResolvedCacheBuilder
-    ) {
-        $this->accountGroupProductResolvedCacheBuilder = $accountGroupProductResolvedCacheBuilder;
-    }
 
     /**
      * @param VisibilityChangeCategorySubtreeCacheBuilder $visibilityChangeCategorySubtreeCacheBuilder

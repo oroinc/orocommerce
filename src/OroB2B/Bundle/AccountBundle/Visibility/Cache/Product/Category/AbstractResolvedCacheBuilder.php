@@ -18,21 +18,10 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
     /** @var CategoryVisibilityResolver */
     protected $categoryVisibilityResolver;
 
-    /** @var string */
-    protected $categoryVisibilityClass;
-
     public function __construct(Registry $registry, CategoryVisibilityResolver $categoryVisibilityResolver)
     {
         $this->registry = $registry;
         $this->categoryVisibilityResolver = $categoryVisibilityResolver;
-    }
-
-    /**
-     * @param string $categoryVisibilityClass
-     */
-    public function setCategoryVisibilityClass($categoryVisibilityClass)
-    {
-        $this->categoryVisibilityClass = $categoryVisibilityClass;
     }
 
     /**

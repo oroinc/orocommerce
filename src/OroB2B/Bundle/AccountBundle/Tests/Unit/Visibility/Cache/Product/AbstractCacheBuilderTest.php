@@ -97,14 +97,6 @@ abstract class AbstractCacheBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertCallAllBuilders('buildCache', $this->getMock('OroB2B\Bundle\WebsiteBundle\Entity\Website'));
     }
 
-    public function testProductCategoryChanged()
-    {
-        $this->assertCallAllBuilders(
-            'productCategoryChanged',
-            $this->getMock('OroB2B\Bundle\ProductBundle\Entity\Product')
-        );
-    }
-
     /**
      * @param string $method
      * @param mixed $argument
