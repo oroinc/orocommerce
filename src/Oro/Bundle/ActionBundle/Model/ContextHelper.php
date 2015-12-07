@@ -128,33 +128,12 @@ class ContextHelper
      */
     protected function generateHash(array $context, array $properties)
     {
-        $string = null;
+        $array = [];
         foreach ($properties as $property) {
-            $value = $this->getPropertyAccessor()->getValue($context, sprintf('[%s]', $property));
-
-            $string .= '|' . (is_array($value) ? $this->arrayToString($value) : $value);
+            $array[$property] = $this->getPropertyAccessor()->getValue($context, sprintf('[%s]', $property));
         }
 
-        return $string ? md5($string) : null;
-    }
-
-    /**
-     * @param array $array
-     * @return string
-     */
-    protected function arrayToString(array $array)
-    {
-        $string = '';
-
-        foreach ($array as $key => $value) {
-            if (is_array($value)) {
-                $value = $this->arrayToString($value);
-            }
-
-            $string .= $key . $value;
-        }
-
-        return $string;
+        return md5(json_encode(array_multisort($array), JSON_NUMERIC_CHECK));
     }
 
     /**
