@@ -24,7 +24,7 @@ orob2b.pricing:
     price.label: Price
     add_product_price: Add Product Price
     add_price_list: Add Price List
-    no_price_lists: 'No price lists found'
+    no_price_lists: No price lists
 
     productprice:
         entity_label: Product Price
