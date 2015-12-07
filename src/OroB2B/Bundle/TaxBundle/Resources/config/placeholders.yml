@@ -1,0 +1,17 @@
+placeholders:
+    product_info:
+        items:
+            product_tax_code_view:
+                order: 200
+
+    account_info:
+        items:
+            account_tax_code_view:
+                order: 200
+
+items:
+    product_tax_code_view:
+        template: OroB2BTaxBundle:Product:block/taxCode.html.twig
+
+    account_tax_code_view:
+        template: OroB2BTaxBundle:Account:block/taxCode.html.twig
