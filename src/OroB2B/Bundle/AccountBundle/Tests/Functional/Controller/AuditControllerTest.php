@@ -48,10 +48,10 @@ class AuditControllerTest extends WebTestCase
             ->findOneBy([]);
 
         $response = $this->requestFrontendGrid(
-            'b2b-frontend-audit-history-grid',
+            'frontend-audit-history-grid',
             [
-                'b2b-frontend-audit-history-grid[object_class]' => 'OroB2B_Bundle_AccountBundle_Entity_AccountUser',
-                'b2b-frontend-audit-history-grid[object_id]'    => $user->getId()
+                'frontend-audit-history-grid[object_class]' => 'OroB2B_Bundle_AccountBundle_Entity_AccountUser',
+                'frontend-audit-history-grid[object_id]'    => $user->getId()
             ]
         );
 
