@@ -15,7 +15,8 @@ orob2b.pricing:
         accounts.label: Accounts
         websites.label: Websites
         prices.label: Prices
-        priority_label: Priority
+        priority.label: Priority
+
         form:
             pricelist_required: Please select a price list first...
     quantity.label: Quantity
@@ -23,6 +24,7 @@ orob2b.pricing:
     price.label: Price
     add_product_price: Add Product Price
     add_price_list: Add Price List
+    no_price_lists: No price lists
 
     productprice:
         entity_label: Product Price
@@ -45,7 +47,6 @@ orob2b.pricing:
         show_tier_prices.label: Show Tier Prices
         price_in_%currency%: 'Price (%currency%)'
         price_%unit%_in_%currency%: 'Price (%currency%/%unit%)'
-
         action:
             save: Save
             cancel: Cancel

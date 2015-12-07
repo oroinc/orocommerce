@@ -63,22 +63,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $listener->onFrontendProductView($event);
     }
 
-    /**
-     * @return array
-     */
-    public function viewDataProvider()
-    {
-        return [
-            'price list does not exist' => [false],
-            'price list does exists' => [true],
-        ];
-    }
-
-    /**
-     * @param bool $isPriceListsExist
-     * @dataProvider viewDataProvider
-     */
-    public function testOnAccountView($isPriceListsExist)
+    public function testOnAccountView()
     {
         $accountId = 1;
         $account = new Account();
@@ -114,7 +99,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $priceToAccountRepository->expects($this->once())
             ->method('findBy')
             ->with(['account' => $account])
-            ->willReturn($isPriceListsExist ? $priceListsToAccount : null);
+            ->willReturn($priceListsToAccount);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
@@ -127,7 +112,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
         $environment = $this->getMock('\Twig_Environment');
-        $environment->expects($isPriceListsExist ? $this->once() : $this->never())
+        $environment->expects($this->once())
             ->method('render')
             ->with(
                 'OroB2BPricingBundle:Account:price_list_view.html.twig',
@@ -150,21 +135,13 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $listener->onAccountView($event);
         $scrollData = $event->getScrollData()->getData();
 
-        if ($isPriceListsExist) {
-            $this->assertEquals(
-                [$templateHtml],
-                $scrollData[ScrollData::DATA_BLOCKS][1][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
-            );
-        } else {
-            $this->assertEmpty($scrollData[ScrollData::DATA_BLOCKS][0][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]);
-        }
+        $this->assertEquals(
+            [$templateHtml],
+            $scrollData[ScrollData::DATA_BLOCKS][1][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
+        );
     }
 
-    /**
-     * @param bool $isPriceListsExist
-     * @dataProvider viewDataProvider
-     */
-    public function testOnAccountGroupView($isPriceListsExist)
+    public function testOnAccountGroupView()
     {
         $accountGroupId = 1;
         $accountGroup = new AccountGroup();
@@ -200,7 +177,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $priceToAccountGroupRepository->expects($this->once())
             ->method('findBy')
             ->with(['accountGroup' => $accountGroup])
-            ->willReturn($isPriceListsExist ? $priceListsToAccount : null);
+            ->willReturn($priceListsToAccount);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityReference')
@@ -213,7 +190,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
         $environment = $this->getMock('\Twig_Environment');
-        $environment->expects($isPriceListsExist ? $this->once() : $this->never())
+        $environment->expects($this->once())
             ->method('render')
             ->with(
                 'OroB2BPricingBundle:Account:price_list_view.html.twig',
@@ -236,14 +213,10 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $listener->onAccountGroupView($event);
         $scrollData = $event->getScrollData()->getData();
 
-        if ($isPriceListsExist) {
-            $this->assertEquals(
-                [$templateHtml],
-                $scrollData[ScrollData::DATA_BLOCKS][1][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
-            );
-        } else {
-            $this->assertEmpty($scrollData[ScrollData::DATA_BLOCKS][0][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]);
-        }
+        $this->assertEquals(
+            [$templateHtml],
+            $scrollData[ScrollData::DATA_BLOCKS][1][ScrollData::SUB_BLOCKS][0][ScrollData::DATA]
+        );
     }
 
     public function testOnEntityEdit()
