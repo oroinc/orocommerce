@@ -1,7 +1,7 @@
 # https://magecore.atlassian.net/wiki/display/BB/Categories+visibilities
 category_1:
     all:
-        visibility: null
+        visibility: visible
         reference: category_1.visibility.all
     groups:
         account_group.group1:
