@@ -51,7 +51,7 @@ class QuickAddController extends Controller
     {
         $form = $this->createForm(QuickAddImportFromFileType::NAME)->handleRequest($request);
 
-        /** @var QuickAddCopyPaste $copyPasteFormData */
+        /** @var QuickAddCopyPaste $formData */
         $formData = $form->getData();
 
 

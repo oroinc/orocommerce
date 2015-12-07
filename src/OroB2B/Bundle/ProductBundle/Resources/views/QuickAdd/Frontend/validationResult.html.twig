@@ -157,9 +157,15 @@
         {{ form_widget(form.component) }}
         {{ form_widget(form.additional) }}
 
-        <div class="btn-group pull-left">
-            <button type="reset" class="btn">Cancel</button>
-        </div>
+        {% if  widgetOptions._wid %}
+            <div class="btn-group pull-left">
+                <button data-url="{{ path('orob2b_product_frontend_quick_add_import') }}" class="btn back-action">Back</button>
+            </div>
+        {% else %}
+            <div class="btn-group pull-left">
+                <button type="reset" class="btn cancel-action">Cancel</button>
+            </div>
+        {% endif %}
 
         <div class="btn-group pull-right">
 
@@ -176,5 +182,22 @@
 
     </form>
 
+    <script type="text/javascript">
+        require(['oroui/js/widget-manager'],
+                function(widgetManager) {
+
+                    var wid = {{ widgetOptions._wid|json_encode|raw }};
+
+                    widgetManager.getWidgetInstance(wid, function(widget) {
+                        $('.back-action').on('click', function (e) {
+                            widget.setUrl(this.dataset.url);
+                            widget.loadContent();
+                        });
+                    });
+                });
+    </script>
+
 </div>
+
+
 
