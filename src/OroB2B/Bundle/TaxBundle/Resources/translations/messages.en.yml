@@ -1,0 +1,27 @@
+orob2b.tax:
+    code.label: 'Code'
+    description.label: 'Description'
+
+    producttaxcode:
+        entity_label: 'Product Tax Code'
+        entity_plural_label: 'Product Tax Codes'
+        description: 'List of Product Tax Codes'
+        product.label: 'Product'
+
+    accounttaxcode:
+        entity_label: 'Account Tax Code'
+        entity_plural_label: 'Account Tax Codes'
+        description: 'List of Account Tax Codes'
+        account.label: 'Account'
+
+    menu:
+        taxes_tab.label: 'Taxes'
+
+    sections:
+        general: 'General Information'
+
+    controller:
+        account_tax_code:
+            saved.message: 'Account Tax Code has been saved'
+        product_tax_code:
+            saved.message: 'Product Tax Code has been saved'
