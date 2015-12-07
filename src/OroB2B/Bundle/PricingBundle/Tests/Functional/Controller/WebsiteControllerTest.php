@@ -120,8 +120,8 @@ class WebsiteControllerTest extends WebTestCase
         $formValues[sprintf('%s[priority]', $collectionElementPath1)] = 1;
         $formValues[sprintf('%s[priceList]', $collectionElementPath2)] = $priceList->getId();
         $formValues[sprintf('%s[priority]', $collectionElementPath2)] = 2;
-//        Uncomment after Duplicate price list message add
-//        $this->checkValidationMessage($formValues, 'Duplicate price list');
+
+        $this->checkValidationMessage($formValues, 'Price list is duplicated.');
     }
 
     /**
