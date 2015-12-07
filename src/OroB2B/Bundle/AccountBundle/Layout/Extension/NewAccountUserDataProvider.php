@@ -55,7 +55,7 @@ class NewAccountUserDataProvider implements DataProviderInterface
      */
     public function getIdentifier()
     {
-        return 'newAccountUser';
+        return 'new_account_user';
     }
 
     /**

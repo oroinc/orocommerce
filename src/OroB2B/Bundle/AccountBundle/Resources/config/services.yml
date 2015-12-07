@@ -626,7 +626,7 @@ services:
             - @orob2b_website.manager
             - @oro_user.manager
         tags:
-            - { name: layout.data_provider, alias: newAccountUser }
+            - { name: layout.data_provider, alias: new_account_user }
 
     orob2b_account.layout.context_configurator.form.frontend_account_registration:
         class: Oro\Bundle\LayoutBundle\Layout\Extension\DependencyInjectionFormContextConfigurator
