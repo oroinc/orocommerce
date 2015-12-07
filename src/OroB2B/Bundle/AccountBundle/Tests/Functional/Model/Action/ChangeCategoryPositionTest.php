@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Model\Action;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Model\Action\ChangeCategoryPosition;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class ChangeCategoryPositionTest extends CategoryCaseActionTestCase
 {
@@ -17,29 +18,29 @@ class ChangeCategoryPositionTest extends CategoryCaseActionTestCase
      */
     protected function getActionContainerId()
     {
-        // TODO
-        return 'container.id';
+        return 'orob2b_account.model.action.change_category_position';
     }
 
     /**
      * @dataProvider positionChangeDataProvider
      *
-     * @param string $categoryVisibilityReference
-     * @param string $visibility
+     * @param string $categoryReference
+     * @param string $newParentCategoryReference
      * @param array $expectedData
      */
-    public function testPositionChange($categoryVisibilityReference, $visibility, array $expectedData)
+    public function testPositionChange($categoryReference, $newParentCategoryReference, array $expectedData)
     {
-        $this->markTestIncomplete('Waiting for action service');
+        /** @var Category $category */
+        $category = $this->getReference($categoryReference);
 
-        /** @var VisibilityInterface $categoryVisibility */
-        $categoryVisibility = $this->getReference($categoryVisibilityReference);
+        /** @var Category $newParentCategory */
+        $newParentCategory = $this->getReference($newParentCategoryReference);
 
-        $categoryVisibility->setVisibility($visibility);
+        $category->setParentCategory($newParentCategory);
 
         $this->context->expects($this->once())
             ->method('getEntity')
-            ->willReturn($categoryVisibility);
+            ->willReturn($category);
 
         $this->action->execute($this->context);
 
@@ -52,7 +53,61 @@ class ChangeCategoryPositionTest extends CategoryCaseActionTestCase
     public function positionChangeDataProvider()
     {
         return [
-
+            [
+                'categoryReference' => 'category_1_2',
+                'newParentCategoryReference' => 'category_1_5_6',
+                'expectedData' => [
+                    'hiddenProducts' => [
+                        'product.2',
+                        'product.4',
+                        'product.7',
+                    ],
+                    'hiddenProductsByAccountGroups' => [
+                        'account_group.group2' => [
+                            'product.7',
+                        ],
+                        'account_group.group3' => [
+                            'product.2',
+                            'product.3',
+                            'product.6',
+                        ],
+                    ],
+                    'hiddenProductsByAccounts' => [
+                        'account.level_1.1' => [
+                            'product.2',
+                            'product.3',
+                            'product.6',
+                            'product.4',
+                            'product.7',
+                        ],
+                        'account.level_1.2' => [
+                            'product.7',
+                        ],
+                        'account.level_1.2.1' => [
+                            'product.7',
+                        ],
+                        'account.level_1.2.1.1' => [
+                        ],
+                        'account.level_1.3.1' => [
+                            'product.2',
+                            'product.3',
+                            'product.6',
+                            'product.4',
+                            'product.7',
+                        ],
+                        'account.level_1.3.1.1' => [
+                            'product.2',
+                            'product.3',
+                            'product.6',
+                            'product.4',
+                        ],
+                        'account.level_1.4' => [
+                            'product.2',
+                            'product.3',
+                        ],
+                    ],
+                ]
+            ],
         ];
     }
 }
