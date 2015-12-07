@@ -43,12 +43,14 @@ OroB2B\Bundle\ProductBundle\Entity\ProductUnit:
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
 
 OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink:
-    constraints:
-        - OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinkByProductSku: ~
     properties:
         visible:
             - Type:
                 type: boolean
+        parentProduct:
+            - NotBlank: ~
+        product:
+            - NotBlank: ~
 
 OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     constraints:
