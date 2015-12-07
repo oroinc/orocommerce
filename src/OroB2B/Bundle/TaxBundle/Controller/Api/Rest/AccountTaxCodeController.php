@@ -16,7 +16,6 @@ use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 /**
  * @NamePrefix("orob2b_api_tax_")
  * @RouteResource("accounttaxcode")
-
  */
 class AccountTaxCodeController extends RestController implements ClassResourceInterface
 {

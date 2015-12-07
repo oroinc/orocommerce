@@ -35,8 +35,8 @@
 
 {% block content_data %}
     {% set accountTaxCodeInfo %}
-        {{ UI.renderProperty('orob2b.tax.code.label'|trans, entity.code) }}
-        {{ UI.renderProperty('orob2b.tax.description.label'|trans, entity.description) }}
+        {{ UI.renderProperty('orob2b.tax.accounttaxcode.code.label'|trans, entity.code) }}
+        {{ UI.renderProperty('orob2b.tax.accounttaxcode.description.label'|trans, entity.description) }}
     {% endset %}
 
     {% set dataBlocks = [{

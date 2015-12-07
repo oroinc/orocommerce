@@ -4,22 +4,11 @@ namespace OroB2B\Bundle\TaxBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\MappedSuperclass
  * @ORM\HasLifecycleCallbacks
- * @Config(
- *      defaultValues={
- *          "entity"={
- *              "icon"="icon-list-alt"
- *          },
- *          "dataaudit"={
- *              "auditable"=true
- *          }
- *      }
- * )
  */
 abstract class AbstractTaxCode
 {
@@ -202,5 +191,13 @@ abstract class AbstractTaxCode
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->code;
     }
 }

@@ -14,13 +14,21 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
  * @ORM\HasLifecycleCallbacks
  * @Config(
  *      routeName="orob2b_tax_account_tax_code_index",
- *      routeView="orob2b_tax_account_tax_code_view"
+ *      routeView="orob2b_tax_account_tax_code_view",
+ *      defaultValues={
+ *          "entity"={
+ *              "icon"="icon-list-alt"
+ *          },
+ *          "dataaudit"={
+ *              "auditable"=true
+ *          }
+ *      }
  * )
  */
 class AccountTaxCode extends AbstractTaxCode
 {
     /**
-     * @ORM\OneToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
      * @ORM\JoinColumn(name="account_id", referencedColumnName="id")
      *
      * @var Account

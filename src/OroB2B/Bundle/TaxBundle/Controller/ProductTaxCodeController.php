@@ -12,14 +12,14 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
-use OroB2B\Bundle\TaxBundle\Form\Type\TaxCodeType;
+use OroB2B\Bundle\TaxBundle\Form\Type\ProductTaxCodeType;
 
 class ProductTaxCodeController extends Controller
 {
     /**
      * @Route("/", name="orob2b_tax_product_tax_code_index")
      * @Template
-     * @AclAncestor("orob2b_tax_view")
+     * @AclAncestor("orob2b_tax_product_tax_code_view")
      *
      * @return array
      */
@@ -93,17 +93,17 @@ class ProductTaxCodeController extends Controller
     {
         return $this->get('oro_form.model.update_handler')->handleUpdate(
             $productTaxCode,
-            $this->createForm(TaxCodeType::NAME, $productTaxCode),
-            function (ProductTaxCode $account) {
+            $this->createForm(ProductTaxCodeType::NAME, $productTaxCode),
+            function (ProductTaxCode $productTaxCode) {
                 return [
                     'route' => 'orob2b_tax_product_tax_code_update',
-                    'parameters' => ['id' => $account->getId()]
+                    'parameters' => ['id' => $productTaxCode->getId()]
                 ];
             },
-            function (ProductTaxCode $account) {
+            function (ProductTaxCode $productTaxCode) {
                 return [
                     'route' => 'orob2b_tax_product_tax_code_view',
-                    'parameters' => ['id' => $account->getId()]
+                    'parameters' => ['id' => $productTaxCode->getId()]
                 ];
             },
             $this->get('translator')->trans('orob2b.tax.controller.product_tax_code.saved.message')

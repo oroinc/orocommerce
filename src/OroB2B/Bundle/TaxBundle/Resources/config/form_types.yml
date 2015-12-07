@@ -1,10 +1,18 @@
 parameters:
-    orob2b_tax.form.type.tax_code.class: OroB2B\Bundle\TaxBundle\Form\Type\TaxCodeType
+    orob2b_tax.form.type.product_tax_code.class: OroB2B\Bundle\TaxBundle\Form\Type\ProductTaxCodeType
+    orob2b_tax.form.type.account_tax_code.class: OroB2B\Bundle\TaxBundle\Form\Type\AccountTaxCodeType
 
 services:
-    orob2b_tax.form.type.tax_code:
-        class: %orob2b_tax.form.type.tax_code.class%
+    orob2b_tax.form.type.product_tax_code:
+        class: %orob2b_tax.form.type.product_tax_code.class%
         calls:
-            - [setDataClass, [%orob2b_tax.entity.abstract_tax_code.class%]]
+            - [setDataClass, [%orob2b_tax.entity.product_tax_code.class%]]
         tags:
-            - { name: form.type, alias: orob2b_tax_tax_code_type }
+            - { name: form.type, alias: orob2b_tax_product_tax_code_type }
+
+    orob2b_tax.form.type.account_tax_code:
+        class: %orob2b_tax.form.type.account_tax_code.class%
+        calls:
+            - [setDataClass, [%orob2b_tax.entity.account_tax_code.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_tax_account_tax_code_type }

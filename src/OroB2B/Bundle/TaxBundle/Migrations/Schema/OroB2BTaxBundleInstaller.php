@@ -47,7 +47,6 @@ class OroB2BTaxBundleInstaller implements Installation
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['code'], 'UNIQ_E98BB26B77153098');
-        $table->addUniqueIndex(['account_id'], 'UNIQ_E98BB26B9B6B5FBA');
     }
 
     /**
@@ -66,9 +65,7 @@ class OroB2BTaxBundleInstaller implements Installation
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['code'], 'UNIQ_5AF53A4A77153098');
-        $table->addUniqueIndex(['product_id'], 'UNIQ_5AF53A4A4584665A');
     }
-
 
     /**
      * Add orob2b_tax_account_tax_code foreign keys.
