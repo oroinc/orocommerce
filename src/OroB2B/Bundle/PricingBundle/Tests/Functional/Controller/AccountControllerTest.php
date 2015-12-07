@@ -2,55 +2,57 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
 use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\AccountBundle\Form\Type\AccountType;
 
 /**
  * @dbIsolation
  */
-class AccountControllerTest extends WebTestCase
+class AccountControllerTest extends AbstractPriceListsByEntityTestCase
 {
-    protected function setUp()
-    {
-        $this->initClient([], $this->generateBasicAuthHeader());
+    /** @var  Account */
+    protected $account;
 
-        $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
+    public function setUp()
+    {
+        parent::setUp();
+        $this->account = $this->getReference('account.level_1.1.1');
     }
 
-    public function testUpdate()
+    /**
+     * {@inheritdoc}
+     */
+    public function getUpdateUrl()
     {
-        $this->markTestIncomplete(
-            'Will pass after price list repository fixes during BB-1500'
-        );
+        return $this->getUrl('orob2b_account_update', ['id' => $this->account->getId()]);
+    }
 
-        /** @var Account $account */
-        $account = $this->getReference('account.orphan');
+    /**
+     * {@inheritdoc}
+     */
+    public function getViewUrl()
+    {
+        return $this->getUrl('orob2b_account_view', ['id' => $this->account->getId()]);
+    }
 
-        /** @var PriceList $priceList */
-        $priceList = $this->getReference('account.orphan');
+    /**
+     * {@inheritdoc}
+     */
+    public function getMainFormName()
+    {
+        return AccountType::NAME;
+    }
 
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_account_update', ['id' => $account->getId()])
-        );
-
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
-        $form = $crawler->selectButton('Save and Close')->form(
-            [
-                'orob2b_account_type' => ['priceList' => $priceList->getId()]
-            ]
-        );
-
-        $this->client->followRedirects(true);
-        $crawler = $this->client->submit($form);
-
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
-        $this->assertContains($priceList->getName(), $crawler->html());
+    /**
+     * {@inheritdoc}
+     */
+    public function getPriceListsByEntity()
+    {
+        return $this->client
+            ->getContainer()
+            ->get('doctrine')
+            ->getManager()
+            ->getRepository('OroB2BPricingBundle:PriceListToAccount')
+            ->findBy(['account' => $this->account]);
     }
 }
