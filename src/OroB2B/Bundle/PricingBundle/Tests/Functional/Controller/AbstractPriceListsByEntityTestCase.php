@@ -47,8 +47,6 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         $form->remove($this->formExtensionPath);
         $this->client->submit($form);
         $this->assertCount(0, $this->getPriceListsByEntity());
-        $form = $this->getUpdateForm();
-        $this->assertFalse($form->has($this->formExtensionPath));
     }
 
     /**
@@ -138,7 +136,7 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         $formValues[sprintf('%s[priority]', $collectionElementPath1)] = 1;
         $formValues[sprintf('%s[priceList]', $collectionElementPath2)] = $priceList->getId();
         $formValues[sprintf('%s[priority]', $collectionElementPath2)] = 2;
-//        Todo uncomment after fix
+//        Todo uncomment after add Duplicate price list message
 //        $this->checkValidationMessage($formValues, 'Duplicate price list');
     }
 
