@@ -614,17 +614,19 @@ services:
 
     orob2b_account.form.frontend_account_registration:
         class: OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType
-        factory_method: createNamed
+        factory_method: create
         factory_service: form.factory
-        arguments: ["frontend_account_user_register", "orob2b_account_frontend_account_user_register"]
+        arguments: ["orob2b_account_frontend_account_user_register"]
 
     orob2b_account.layout.data_provider.new_account_user:
         class: OroB2B\Bundle\AccountBundle\Layout\Extension\NewAccountUserDataProvider
         arguments:
-            - @orob2b_website.manager
             - @doctrine
+            - @oro_config.manager
+            - @orob2b_website.manager
+            - @oro_user.manager
         tags:
-            - { name: layout.data_provider, alias: new_account_user }
+            - { name: layout.data_provider, alias: orob2b_account_new_account_user }
 
     orob2b_account.layout.context_configurator.form.frontend_account_registration:
         class: Oro\Bundle\LayoutBundle\Layout\Extension\DependencyInjectionFormContextConfigurator

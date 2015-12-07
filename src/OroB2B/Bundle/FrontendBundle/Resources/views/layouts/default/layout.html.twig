@@ -92,6 +92,8 @@
 {% endblock %}
 
 {% block form_field_widget %}
+    {% set attr = {} %}
+    {% set label_attr = {} %}
     {% if class_prefix %}
         {% set attr = form.vars.attr|merge({
             class: form.vars.attr.class|default('') ~ " " ~ class_prefix ~ "__form__input"
@@ -100,8 +102,12 @@
             class: form.vars.label_attr.class|default('') ~ " " ~ class_prefix ~ "__form__label"
         }) %}
     {% endif %}
-    {{ form_row(form, {
-        attr: attr,
-        label_attr: label_attr
-    }) }}
+    <fieldset class="{{ class_prefix }}__form__row">
+        <div class="{{ class_prefix }}__form__col form__col_x12">
+            {{ form_row(form, {
+                attr: attr,
+                label_attr: label_attr
+            }) }}
+        </div>
+    </fieldset>
 {% endblock %}
