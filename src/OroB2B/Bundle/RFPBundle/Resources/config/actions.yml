@@ -27,8 +27,10 @@ actions:
                 request_status: $status
         frontend_options:
             icon: icon-edit
-            template: OroB2BRFPBundle:Action:changeStatusButton.html.twig
             dialog_template: OroB2BRFPBundle:Action:changeStatusForm.html.twig
+            dialog_title: orob2b.rfp.widget.change_status_title
+            dialog_options:
+                width: 550
         postfunctions:
             - @assign_value: [$status, $.request_status]
             - @format_string:

@@ -1,6 +1,9 @@
 {% set linkTitle = params.title|default(params.label)|trans %}
 {% set linkLabel = params.label %}
-{% set dialogOptions = {'title': linkTitle } %}
+{% set dialogOptions = {
+    'title': params.dialog_title is defined ? params.dialog_title|trans : linkTitle,
+    'dialogOptions': params.dialog_options|default({}),
+} %}
 
 {% block button %}
     {% if onlyLink is not defined %}<div class="pull-left btn-group icons-holder">{% endif %}
