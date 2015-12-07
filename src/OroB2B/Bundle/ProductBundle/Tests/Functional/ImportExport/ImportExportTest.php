@@ -9,10 +9,16 @@ use Symfony\Component\Yaml\Yaml;
 
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
+use Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationToken;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @dbIsolation
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ *
+ * @covers \OroB2B\Bundle\ProductBundle\ImportExport\TemplateFixture\ProductFixture
  */
 class ImportExportTest extends WebTestCase
 {
@@ -287,13 +293,7 @@ class ImportExportTest extends WebTestCase
      */
     public function testValidation($fileName, array $contextErrors = [])
     {
-        $reader = $this->getContainer()->get('oro_importexport.reader.csv');
-        $reflection = new \ReflectionProperty(get_class($reader), 'file');
-        $reflection->setAccessible(true);
-        $reflection->setValue($reader, null);
-        $reflection = new \ReflectionProperty(get_class($reader), 'header');
-        $reflection->setAccessible(true);
-        $reflection->setValue($reader, null);
+        $this->cleanUpReader();
 
         $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . $fileName;
 
@@ -324,6 +324,17 @@ class ImportExportTest extends WebTestCase
         $this->assertEquals($contextErrors, array_values($errors), implode(PHP_EOL, $errors));
     }
 
+    protected function cleanUpReader()
+    {
+        $reader = $this->getContainer()->get('oro_importexport.reader.csv');
+        $reflection = new \ReflectionProperty(get_class($reader), 'file');
+        $reflection->setAccessible(true);
+        $reflection->setValue($reader, null);
+        $reflection = new \ReflectionProperty(get_class($reader), 'header');
+        $reflection->setAccessible(true);
+        $reflection->setValue($reader, null);
+    }
+
     /**
      * @return array
      */
@@ -332,5 +343,62 @@ class ImportExportTest extends WebTestCase
         $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'import_validation.yml';
 
         return Yaml::parse($filePath);
+    }
+
+    public function testImportRelations()
+    {
+        $token = new OrganizationToken(
+            $this->getContainer()->get('doctrine')->getRepository('OroOrganizationBundle:Organization')->findOneBy([])
+        );
+        $token->setUser(
+            $this->getContainer()->get('doctrine')->getRepository('OroUserBundle:User')->findOneBy([])
+        );
+        $this->getContainer()->get('security.token_storage')->setToken($token);
+
+        $this->cleanUpReader();
+
+        $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'import.csv';
+
+        $productClass = $this->getContainer()->getParameter('orob2b_product.product.class');
+        $configuration = [
+            'import' => [
+                'processorAlias' => 'orob2b_product_product.add_or_replace',
+                'entityName' => $productClass,
+                'filePath' => $filePath,
+            ],
+        ];
+
+        $jobResult = $this->getContainer()->get('oro_importexport.job_executor')->executeJob(
+            ProcessorRegistry::TYPE_IMPORT,
+            JobExecutor::JOB_IMPORT_FROM_CSV,
+            $configuration
+        );
+
+        $exceptions = $jobResult->getFailureExceptions();
+        $this->assertEmpty($exceptions, implode(PHP_EOL, $exceptions));
+        $this->assertEmpty(
+            $jobResult->getContext()->getErrors(),
+            implode(PHP_EOL, $jobResult->getContext()->getErrors())
+        );
+
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass($productClass);
+
+        /** @var Product $product */
+        $product = $em->getRepository($productClass)->findOneBy(['sku' => 'SKU099']);
+        $this->assertNotEmpty($product);
+        $this->assertEquals('enabled', $product->getStatus());
+        $this->assertEquals('in_stock', $product->getInventoryStatus()->getId());
+
+        $this->assertCount(1, $product->getUnitPrecisions());
+        $this->assertEquals('kg', $product->getUnitPrecisions()->first()->getUnit()->getCode());
+        $this->assertEquals(3, $product->getUnitPrecisions()->first()->getPrecision());
+
+        $this->assertCount(2, $product->getNames());
+        $this->assertEquals('parent_locale', $product->getNames()->first()->getFallback());
+        $this->assertEquals('Name', $product->getNames()->first()->getString());
+        $this->assertEquals('system', $product->getNames()->last()->getFallback());
+        $this->assertEquals('En Name', $product->getNames()->last()->getString());
+
+        $this->getContainer()->get('security.token_storage')->setToken(null);
     }
 }

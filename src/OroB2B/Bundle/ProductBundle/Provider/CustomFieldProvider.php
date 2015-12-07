@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\ProductBundle\Provider;
 
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 
 class CustomFieldProvider
 {
@@ -37,17 +38,25 @@ class CustomFieldProvider
         $extendConfigs = $this->extendConfigProvider->getConfigs($entityName);
 
         foreach ($extendConfigs as $extendConfig) {
-            if ($extendConfig->get('owner') === 'Custom') {
-                /** @var FieldConfigId $configId */
-                $configId = $extendConfig->getId();
-                $entityConfig = $this->entityConfigProvider->getConfigById($configId);
-
-                $customFields[$configId->getFieldName()] = [
-                    'name' => $configId->getFieldName(),
-                    'type' => $configId->getFieldType(),
-                    'label' => $entityConfig->get('label')
-                ];
+            if ($extendConfig->get('owner') !== ExtendScope::OWNER_CUSTOM) {
+                continue;
             }
+
+            if (!$extendConfig->in('state', [ExtendScope::STATE_ACTIVE, ExtendScope::STATE_UPDATE])) {
+                continue;
+            }
+
+            /** @var FieldConfigId $configId */
+            $configId = $extendConfig->getId();
+            $entityConfig = $this->entityConfigProvider
+                ->getConfigById($configId);
+
+
+            $customFields[$configId->getFieldName()] = [
+                'name' => $configId->getFieldName(),
+                'type' => $configId->getFieldType(),
+                'label' => $entityConfig->get('label'),
+            ];
         }
 
         return $customFields;
