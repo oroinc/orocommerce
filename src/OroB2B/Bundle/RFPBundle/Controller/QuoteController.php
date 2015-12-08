@@ -11,6 +11,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
+use OroB2B\Bundle\RFPBundle\Storage\RequestDataStorage;
 
 class QuoteController extends Controller
 {
@@ -24,54 +25,10 @@ class QuoteController extends Controller
      */
     public function createAction(RFPRequest $rfpRequest)
     {
-        $this->saveToStorage($rfpRequest);
+        /** @var RequestDataStorage $storageService */
+        $storageService = $this->get('orob2b_rfp.service.request_data_storage');
+        $storageService->saveToStorage($rfpRequest);
 
         return $this->redirectToRoute('orob2b_sale_quote_create', [ProductDataStorage::STORAGE_KEY => true]);
-    }
-
-    /**
-     * @param RFPRequest $rfpRequest
-     */
-    protected function saveToStorage(RFPRequest $rfpRequest)
-    {
-        /** @var ProductDataStorage $storage */
-        $storage = $this->get('orob2b_product.service.product_data_storage');
-
-        $data = [
-            ProductDataStorage::ENTITY_DATA_KEY => [
-                'accountUser' => $rfpRequest->getAccountUser() ? $rfpRequest->getAccountUser()->getId() : null,
-                'account' => $rfpRequest->getAccount() ? $rfpRequest->getAccount()->getId() : null,
-                'request' => $rfpRequest->getId(),
-                'poNumber' => $rfpRequest->getPoNumber(),
-                'shipUntil' => $rfpRequest->getShipUntil(),
-            ],
-        ];
-
-        foreach ($rfpRequest->getRequestProducts() as $requestProduct) {
-            $items = [];
-            foreach ($requestProduct->getRequestProductItems() as $requestProductItem) {
-                $productUnitCode = $requestProductItem->getProductUnit()
-                    ? $requestProductItem->getProductUnit()->getCode()
-                    : null
-                ;
-
-                $items[] = [
-                    'price' => $requestProductItem->getPrice(),
-                    'quantity' => $requestProductItem->getQuantity(),
-                    'productUnit' => $productUnitCode,
-                    'productUnitCode' => $productUnitCode,
-                    'requestProductItem' => $requestProductItem->getId(),
-                ];
-            }
-
-            $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = [
-                ProductDataStorage::PRODUCT_SKU_KEY => $requestProduct->getProduct()->getSku(),
-                ProductDataStorage::PRODUCT_QUANTITY_KEY => null,
-                'commentAccount' => $requestProduct->getComment(),
-                'requestProductItems' => $items,
-            ];
-        }
-
-        $storage->set($data);
     }
 }
