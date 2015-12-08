@@ -96,7 +96,9 @@ class NotificationHelper extends Controller
         if (!$quote->isLocked()) {
             $quote->setLocked(true);
 
-            $this->getManager($this->quoteClassName)->flush();
+            $manager = $this->getManager($this->quoteClassName);
+            $manager->persist($quote);
+            $manager->flush();
         }
     }
 
