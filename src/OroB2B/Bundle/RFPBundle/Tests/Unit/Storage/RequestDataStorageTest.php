@@ -8,7 +8,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage as Storage;
+use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
 use OroB2B\Bundle\RFPBundle\Storage\RequestDataStorage;
@@ -18,15 +18,12 @@ class RequestDataStorageTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|Storage */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ProductDataStorage */
     protected $storage;
 
     /** @var RequestDataStorage */
     protected $requestDataStorage;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp()
     {
         $this->storage = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage')
@@ -36,9 +33,6 @@ class RequestDataStorageTest extends \PHPUnit_Framework_TestCase
         $this->requestDataStorage = new RequestDataStorage($this->storage);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function tearDown()
     {
         unset($this->storage, $this->requestDataStorage);
@@ -53,51 +47,28 @@ class RequestDataStorageTest extends \PHPUnit_Framework_TestCase
         $comment = 'Test Comment';
         $unitCode = 'kg';
 
-        /** @var Account $account */
-        $account = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => $accountId]);
+        $rfpRequest = $this->createRFPRequest($accountId, $accountUserId, $productSku, $unitCode, $quantity, $comment);
 
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', ['id' => $accountUserId]);
+        /** @var RequestProduct $requestProduct */
+        $requestProduct = $rfpRequest->getRequestProducts()->first();
 
-        $product = new Product();
-        $product->setSku($productSku);
-
-        $productUnit = new ProductUnit();
-        $productUnit->setCode($unitCode);
-
-        $requestProductItem = new RequestProductItem();
-        $requestProductItem
-            ->setQuantity($quantity)
-            ->setProductUnit($productUnit);
-
-        $requestProduct = new RequestProduct();
-
-        $requestProduct
-            ->setProduct($product)
-            ->setComment($comment)
-            ->addRequestProductItem($requestProductItem)
-        ;
-
-        $rfpRequest = new RFPRequest();
-        $rfpRequest
-            ->setAccount($account)
-            ->setAccountUser($accountUser)
-            ->addRequestProduct($requestProduct);
+        /** @var RequestProductItem $requestProductItem */
+        $requestProductItem = $requestProduct->getRequestProductItems()->first();
 
         $this->storage->expects($this->once())
             ->method('set')
             ->with([
-                Storage::ENTITY_DATA_KEY => [
+                ProductDataStorage::ENTITY_DATA_KEY => [
                     'account' => $accountId,
                     'accountUser' => $accountUserId,
                     'request' => null,
                     'poNumber' => null,
                     'shipUntil' => null
                 ],
-                Storage::ENTITY_ITEMS_DATA_KEY => [
+                ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                     [
-                        Storage::PRODUCT_SKU_KEY => $productSku,
-                        Storage::PRODUCT_QUANTITY_KEY => null,
+                        ProductDataStorage::PRODUCT_SKU_KEY => $productSku,
+                        ProductDataStorage::PRODUCT_QUANTITY_KEY => null,
                         'commentAccount' => $comment,
                         'requestProductItems' => [
                             [
@@ -113,5 +84,53 @@ class RequestDataStorageTest extends \PHPUnit_Framework_TestCase
             ]);
 
         $this->requestDataStorage->saveToStorage($rfpRequest);
+    }
+
+    /**
+     * @param int $accountId
+     * @param int $accountUserId
+     * @param string $productSku
+     * @param string $unitCode
+     * @param float $quantity
+     * @param string $comment
+     * @return RFPRequest
+     */
+    protected function createRFPRequest($accountId, $accountUserId, $productSku, $unitCode, $quantity, $comment)
+    {
+        /** @var Account $account */
+        $account = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => $accountId]);
+
+        /** @var AccountUser $accountUser */
+        $accountUser = $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\AccountUser', ['id' => $accountUserId]);
+
+        $product = new Product();
+        $product->setSku($productSku);
+
+        $productUnit = new ProductUnit();
+        $productUnit->setCode($unitCode);
+
+        /** @var RequestProductItem $requestProductItem */
+        $requestProductItem = $this->getEntity(
+            'OroB2B\Bundle\RFPBundle\Entity\RequestProductItem',
+            [
+                'id' => rand(1, 1000),
+                'quantity' => $quantity,
+                'productUnit' => $productUnit
+            ]
+        );
+
+        $requestProduct = new RequestProduct();
+        $requestProduct
+            ->setProduct($product)
+            ->setComment($comment)
+            ->addRequestProductItem($requestProductItem);
+
+        $rfpRequest = new RFPRequest();
+        $rfpRequest
+            ->setAccount($account)
+            ->setAccountUser($accountUser)
+            ->addRequestProduct($requestProduct);
+
+        return $rfpRequest;
     }
 }

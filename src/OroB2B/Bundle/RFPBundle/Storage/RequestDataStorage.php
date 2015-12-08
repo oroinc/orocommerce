@@ -38,8 +38,7 @@ class RequestDataStorage
             foreach ($requestProduct->getRequestProductItems() as $requestProductItem) {
                 $productUnitCode = $requestProductItem->getProductUnit()
                     ? $requestProductItem->getProductUnit()->getCode()
-                    : null
-                ;
+                    : null;
 
                 $items[] = [
                     'price' => $requestProductItem->getPrice(),
