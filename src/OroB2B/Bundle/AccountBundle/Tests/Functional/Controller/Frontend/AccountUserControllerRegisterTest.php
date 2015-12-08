@@ -187,7 +187,10 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $this->assertFalse($user->isConfirmed());
 
         $crawler = $this->client->followRedirect();
-        $this->assertEquals('Sign In', $crawler->filter('h2.create-account__title')->html());
+        $this->assertEquals(
+            'Sign In',
+            $crawler->filter('form.create-account__form_signin h2.create-account__title')->html()
+        );
         $this->assertContains('Please check your email to complete registration', $crawler->html());
 
         $this->client->followRedirects(true);
