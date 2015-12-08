@@ -21,4 +21,18 @@ class PriceListConfigTest extends \PHPUnit_Framework_TestCase
             ]
         );
     }
+
+    public function testConstruct()
+    {
+        $config = new PriceListConfig();
+        $this->assertNull($config->getPriceList());
+        $this->assertNull($config->getPriority());
+
+        $priceList = new PriceList();
+        $priority = 100;
+
+        $config = new PriceListConfig($priceList, $priority);
+        $this->assertEquals($priceList, $config->getPriceList());
+        $this->assertEquals($priority, $config->getPriority());
+    }
 }
