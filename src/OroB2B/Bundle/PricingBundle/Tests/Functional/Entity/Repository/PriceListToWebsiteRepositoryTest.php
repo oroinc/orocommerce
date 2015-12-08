@@ -20,6 +20,24 @@ class PriceListToWebsiteRepositoryTest extends WebTestCase
         $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
     }
 
+    public function testFindByPrimaryKey()
+    {
+        $repository = $this->getRepository();
+
+        /** @var PriceListToWebsite $actualPriceListToWebsite */
+        $actualPriceListToWebsite = $repository->findOneBy([]);
+        if (!$actualPriceListToWebsite) {
+            $this->markTestSkipped('Can\'t test method because fixture was not loaded.');
+        }
+
+        $expectedPriceListToWebsite = $repository->findByPrimaryKey(
+            $actualPriceListToWebsite->getPriceList(),
+            $actualPriceListToWebsite->getWebsite()
+        );
+
+        $this->assertEquals(spl_object_hash($expectedPriceListToWebsite), spl_object_hash($actualPriceListToWebsite));
+    }
+
     /**
      * @dataProvider getPriceListDataProvider
      * @param string $website
@@ -33,8 +51,8 @@ class PriceListToWebsiteRepositoryTest extends WebTestCase
         $actualPriceListsToWebsite = $this->getRepository()->getPriceLists($website);
 
         $actualPriceLists = array_map(
-            function (PriceListToWebsite $priceListToAccount) {
-                return $priceListToAccount->getPriceList()->getName();
+            function (PriceListToWebsite $priceListToWebsite) {
+                return $priceListToWebsite->getPriceList()->getName();
             },
             $actualPriceListsToWebsite
         );
