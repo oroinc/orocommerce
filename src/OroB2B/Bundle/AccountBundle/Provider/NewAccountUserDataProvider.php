@@ -55,7 +55,7 @@ class NewAccountUserDataProvider implements DataProviderInterface
      */
     public function getIdentifier()
     {
-        return 'new_account_user';
+        return 'orob2b_account_new_account_user';
     }
 
     /**

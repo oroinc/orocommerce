@@ -8,14 +8,14 @@ layout:
                     blockType: container
                     options:
                         class_prefix: 'create-account'
-                registration_form_container:
+                registration_form:
                     blockType: container
                 registration_form_label:
                     blockType: text
                     options:
                         text: orob2b.account.accountuser.profile.register
                 registration_form_description:
-                    blockType: html
+                    blockType: text
                     options:
                         text: 'orob2b.account.accountuser.profile.register.description'
                 registration_form_start:
@@ -24,14 +24,11 @@ layout:
                         form_name: 'frontend_account_registration_form'
                         form_method: 'POST'
                         form_route_name: 'orob2b_account_frontend_account_user_register'
-                        attr:
-                            class: 'create-account__form create-account__form_register'
-                registration_form:
+                registration_form_fields:
                     blockType: form
                     options:
-                        class_prefix: create-account
                         form_name: 'frontend_account_registration_form'
-                        form_data: { @value: $data.newAccountUser }
+                        form_data: { @value: $data.orob2b_account_new_account_user }
                 registration_form_submit:
                     blockType: button
                     options:
@@ -45,10 +42,10 @@ layout:
             tree:
                 content:
                     registration_page:
-                        registration_form_container:
+                        registration_form:
                             registration_form_start: ~
                             registration_form_label: ~
                             registration_form_description: ~
-                            registration_form: ~
+                            registration_form_fields: ~
                             registration_form_submit: ~
                             registration_form_end: ~
