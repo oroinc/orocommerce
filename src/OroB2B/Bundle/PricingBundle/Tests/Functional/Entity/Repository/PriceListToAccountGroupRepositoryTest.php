@@ -21,6 +21,28 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
         $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
     }
 
+    public function testFindByPrimaryKey()
+    {
+        $repository = $this->getRepository();
+
+        /** @var PriceListToAccountGroup $actualPriceListToAccountGroup */
+        $actualPriceListToAccountGroup = $repository->findOneBy([]);
+        if (!$actualPriceListToAccountGroup) {
+            $this->markTestSkipped('Can\'t test method because fixture was not loaded.');
+        }
+
+        $expectedPriceListToAccountGroup = $repository->findByPrimaryKey(
+            $actualPriceListToAccountGroup->getPriceList(),
+            $actualPriceListToAccountGroup->getAccountGroup(),
+            $actualPriceListToAccountGroup->getWebsite()
+        );
+
+        $this->assertEquals(
+            spl_object_hash($expectedPriceListToAccountGroup),
+            spl_object_hash($actualPriceListToAccountGroup)
+        );
+    }
+
     /**
      * @dataProvider getPriceListDataProvider
      * @param string $accountGroup

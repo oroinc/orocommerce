@@ -67,6 +67,7 @@ class PriceListRepository extends EntityRepository
     public function getPriceListByAccount(Account $account)
     {
         // TODO: need to refactor this method later because account might have several related price lists
+        // TODO: also need to move this method to appropriate repository
         return $this->createQueryBuilder('priceList')
             ->innerJoin(
                 'OroB2BPricingBundle:PriceListToAccount',
@@ -90,6 +91,7 @@ class PriceListRepository extends EntityRepository
     public function getPriceListByAccountGroup(AccountGroup $accountGroup)
     {
         // TODO: need to refactor this method later because account group might have several related price lists
+        // TODO: also need to move this method to appropriate repository
         return $this->createQueryBuilder('priceList')
             ->innerJoin(
                 'OroB2BPricingBundle:PriceListToAccountGroup',
@@ -113,6 +115,7 @@ class PriceListRepository extends EntityRepository
     public function getPriceListByWebsite(Website $website)
     {
         // TODO: need to refactor this method later because website might have several related price lists
+        // TODO: also need to move this method to appropriate repository
         return $this->createQueryBuilder('priceList')
             ->innerJoin(
                 'OroB2BPricingBundle:PriceListToWebsite',

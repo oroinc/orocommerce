@@ -90,18 +90,18 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
     }
 
     /**
-     * Create orob2b_price_list_to_acc_gr table
+     * Create orob2b_price_list_to_acc_group table
      *
      * @param Schema $schema
      */
     protected function createOrob2BPriceListToAccGrTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_price_list_to_acc_gr');
+        $table = $schema->createTable('orob2b_price_list_to_acc_group');
         $table->addColumn('price_list_id', 'integer', []);
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('account_group_id', 'integer', []);
         $table->addColumn('priority', 'integer', []);
-        $table->setPrimaryKey(['price_list_id', 'website_id', 'account_group_id']);
+        $table->setPrimaryKey(['account_group_id', 'price_list_id', 'website_id']);
     }
 
     /**
@@ -116,7 +116,7 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('account_id', 'integer', []);
         $table->addColumn('priority', 'integer', []);
-        $table->setPrimaryKey(['price_list_id', 'website_id', 'account_id']);
+        $table->setPrimaryKey(['account_id', 'price_list_id', 'website_id']);
     }
 
     /**
@@ -173,33 +173,30 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
     }
 
     /**
-     * Add orob2b_price_list_to_acc_gr foreign keys.
+     * Add orob2b_price_list_to_acc_group foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOrob2BPriceListToAccGrForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_price_list_to_acc_gr');
+        $table = $schema->getTable('orob2b_price_list_to_acc_group');
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_website'),
             ['website_id'],
             ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null],
-            'fk_orob2b_price_l_to_a_gr_ws'
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_account_group'),
             ['account_group_id'],
             ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null],
-            'fk_orob2b_price_l_to_a_gr_a_gr'
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_price_list'),
             ['price_list_id'],
             ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null],
-            'fk_orob2b_price_l_to_a_gr_pl'
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 
@@ -215,22 +212,19 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
             $schema->getTable('orob2b_website'),
             ['website_id'],
             ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null],
-            'fk_orob2b_price_l_to_acc_ws'
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_account'),
             ['account_id'],
             ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null],
-            'fk_orob2b_price_l_to_acc_acc'
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_price_list'),
             ['price_list_id'],
             ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null],
-            'fk_orob2b_price_l_to_acc_pl'
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 
@@ -246,15 +240,13 @@ class OroB2BPricingBundleInstaller implements Installation, NoteExtensionAwareIn
             $schema->getTable('orob2b_website'),
             ['website_id'],
             ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null],
-            'fk_orob2b_price_l_to_ws_ws'
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_price_list'),
             ['price_list_id'],
             ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null],
-            'fk_orob2b_price_l_to_ws_pl'
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 
