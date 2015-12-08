@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Layout\Extension;
+namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Provider;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Layout\LayoutContext;
 
-use OroB2B\Bundle\AccountBundle\Layout\Extension\NewAccountUserDataProvider;
+use OroB2B\Bundle\AccountBundle\Provider\NewAccountUserDataProvider;
 
 /**
  * @dbIsolation
@@ -24,6 +24,11 @@ class NewAccountUserDataProviderTest extends WebTestCase
 
         $this->context = new LayoutContext();
         $this->dataProvider = $this->getContainer()->get('orob2b_account.layout.data_provider.new_account_user');
+    }
+
+    public function testGetIdentifier()
+    {
+        $this->assertEquals('orob2b_account_new_account_user', $this->dataProvider->getIdentifier());
     }
 
     public function testGetData()

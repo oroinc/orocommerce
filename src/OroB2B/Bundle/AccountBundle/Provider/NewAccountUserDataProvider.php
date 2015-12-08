@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Layout\Extension;
+namespace OroB2B\Bundle\AccountBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
