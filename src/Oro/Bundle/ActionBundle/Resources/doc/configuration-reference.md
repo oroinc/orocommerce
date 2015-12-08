@@ -75,7 +75,7 @@ which specified in `extends`, copied and merged with configuration of original a
 Defining an Action
 ==================
 
-Root element of configuration is "workflows". Under this element workflows can be defined.
+Root element of configuration is "actions". Under this element actions can be defined.
 
 Single action configuration has next properties:
 
@@ -210,8 +210,8 @@ Example
 -------
 
 ```
-workflows:
-    b2b_flow_sales:
+actions:
+    demo_action:
         # ...
         new_account:
             label: 'Account'
