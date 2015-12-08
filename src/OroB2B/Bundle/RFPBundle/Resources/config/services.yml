@@ -9,7 +9,7 @@ parameters:
 
     orob2b_rfp.event_listener.request_frontend_datagrid.class: OroB2B\Bundle\RFPBundle\EventListener\RequestFrontendDatagridListener
 
-    orob2b_rfp.service.product_data_storage.class: OroB2B\Bundle\RFPBundle\Storage\RequestDataStorage
+    orob2b_rfp.service.request_data_storage.class: OroB2B\Bundle\RFPBundle\Storage\RequestDataStorage
 
 services:
     orob2b_rfp.datagrid.action_permission_provider:
@@ -52,6 +52,6 @@ services:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
 
     orob2b_rfp.service.request_data_storage:
-        class: %orob2b_rfp.service.product_data_storage.class%
+        class: %orob2b_rfp.service.request_data_storage.class%
         arguments:
             - @orob2b_product.service.product_data_storage
