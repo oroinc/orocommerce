@@ -3,8 +3,7 @@
 namespace OroB2B\Bundle\PricingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PriceListSystemConfigType extends AbstractType
 {
@@ -28,9 +27,9 @@ class PriceListSystemConfigType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $options)
+    public function configureOptions(OptionsResolver $resolver)
     {
-        $options->setDefaults([
+        $resolver->setDefaults([
             'type' => PriceListSelectWithPriorityType::NAME,
             'options' => [
                 'data_class' => $this->priceListConfigClassName,
