@@ -7,6 +7,11 @@ orob2b.tax:
         entity_plural_label: 'Product Tax Codes'
         description: 'List of Product Tax Codes'
         product.label: 'Product'
+    tax:
+        rate.label: 'Rate'
+        entity_label: 'Tax'
+        entity_plural_label: 'Taxes'
+        description: 'List of Taxes'
 
     menu:
         taxes_tab.label: 'Taxes'
