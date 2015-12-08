@@ -6,7 +6,7 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
-class PriceListConfigConverter implements PriceListConfigConverterInterface
+class PriceListConfigConverter
 {
     const PRIORITY_KEY = 'priority';
     const PRICE_LIST_KEY = 'priceList';

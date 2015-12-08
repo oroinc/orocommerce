@@ -7,7 +7,9 @@ use OroB2B\Bundle\PricingBundle\Entity\PriceListAwareInterface;
 
 class PriceListConfig implements PriceListAwareInterface
 {
-    /** @var  PriceList */
+    /**
+     * @var PriceList
+     */
     protected $priceList;
 
     /**
@@ -15,7 +17,19 @@ class PriceListConfig implements PriceListAwareInterface
      */
     protected $priority;
 
-    /** @return PriceList */
+    /**
+     * @param PriceList|null $priceList
+     * @param int|string|null $priority
+     */
+    public function __construct(PriceList $priceList = null, $priority = null)
+    {
+        $this->priceList = $priceList;
+        $this->priority = $priority;
+    }
+
+    /**
+     * @return PriceList
+     */
     public function getPriceList()
     {
         return $this->priceList;
@@ -41,7 +55,7 @@ class PriceListConfig implements PriceListAwareInterface
     }
 
     /**
-     * @param mixed $priority
+     * @param int|string $priority
      * @return $this
      */
     public function setPriority($priority)
