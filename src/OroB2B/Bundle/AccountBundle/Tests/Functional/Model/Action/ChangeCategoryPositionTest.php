@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Model\Action;
 
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Model\Action\ChangeCategoryPosition;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
