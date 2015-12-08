@@ -33,6 +33,7 @@ parameters:
 
     orob2b_product.event_listener.product_grid_widget.class: OroB2B\Bundle\ProductBundle\EventListener\ProductGridWidgetRenderEventListener
     orob2b_product.event_listener.command.platform_update.class: OroB2B\Bundle\ProductBundle\EventListener\PlatformUpdateCommandListener
+    orob2b_product.event_listener.product_data_storage.class: OroB2B\Bundle\ProductBundle\EventListener\ProductDataStorageEventListener
 
     orob2b_product.menu.frontend.quick_add.class: OroB2B\Bundle\ProductBundle\Menu\Frontend\QuickAddMenuBuilder
 
@@ -211,6 +212,13 @@ services:
             - @oro_entity_config.config_model_manager
         tags:
             - { name: kernel.event_listener, event: console.command, name: onConsoleCommand }
+
+    orob2b_product.event_listener.product_data_storage:
+        class: %orob2b_product.event_listener.product_data_storage.class%
+        arguments:
+            - @orob2b_product.service.product_data_storage
+        tags:
+            - { name: kernel.event_listener, event: kernel.request }
 
     orob2b_product.model.product_visibility_query_builder_modifier:
         class: %orob2b_product.model.product_visibility_query_builder_modifier.class%

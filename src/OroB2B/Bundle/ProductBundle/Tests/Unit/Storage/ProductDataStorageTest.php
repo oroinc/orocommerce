@@ -29,6 +29,13 @@ class ProductDataStorageTest extends \PHPUnit_Framework_TestCase
         unset($this->storage, $this->session);
     }
 
+    public function testInvoked()
+    {
+        $this->assertFalse($this->storage->isInvoked());
+        $this->storage->get();
+        $this->assertTrue($this->storage->isInvoked());
+    }
+
     public function testSet()
     {
         $data = [['productId' => 42, 'qty' => 100]];
@@ -53,6 +60,8 @@ class ProductDataStorageTest extends \PHPUnit_Framework_TestCase
             ->with(ProductDataStorage::PRODUCT_DATA_KEY)
             ->willReturn($storageData);
 
+        $this->session->expects($this->once())->method('has')->willReturn(true);
+
         $this->assertEquals($expectedData, $this->storage->get());
     }
 
@@ -71,10 +80,28 @@ class ProductDataStorageTest extends \PHPUnit_Framework_TestCase
 
     public function testRemove()
     {
+        $this->session->expects($this->once())->method('has')->willReturn(true);
+
         $this->session->expects($this->once())
             ->method('remove')
             ->with(ProductDataStorage::PRODUCT_DATA_KEY);
 
         $this->storage->remove();
+    }
+
+    public function testNothingToRemove()
+    {
+        $this->session->expects($this->once())->method('has')->willReturn(false);
+        $this->session->expects($this->never())->method('remove');
+
+        $this->storage->remove();
+    }
+
+    public function testNothingToGet()
+    {
+        $this->session->expects($this->once())->method('has')->willReturn(false);
+        $this->session->expects($this->never())->method('get');
+
+        $this->storage->get();
     }
 }

@@ -15,6 +15,9 @@ class ProductDataStorage
     const PRODUCT_SKU_KEY = 'productSku';
     const PRODUCT_QUANTITY_KEY = 'productQuantity';
 
+    /** @var bool */
+    private static $invocation = false;
+
     /** @var SessionInterface */
     protected $session;
 
@@ -39,6 +42,12 @@ class ProductDataStorage
      */
     public function get()
     {
+        self::$invocation = true;
+
+        if (!$this->session->has(self::PRODUCT_DATA_KEY)) {
+            return [];
+        }
+
         $data = @unserialize($this->session->get(self::PRODUCT_DATA_KEY, null));
 
         return $data !== false && is_array($data) ? $data : [];
@@ -46,6 +55,16 @@ class ProductDataStorage
 
     public function remove()
     {
-        $this->session->remove(self::PRODUCT_DATA_KEY);
+        if ($this->session->has(self::PRODUCT_DATA_KEY)) {
+            $this->session->remove(self::PRODUCT_DATA_KEY);
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isInvoked()
+    {
+        return self::$invocation;
     }
 }

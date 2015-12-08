@@ -96,8 +96,7 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
 
         $this->assertRequestGetCalled();
 
-        $this->storage->expects($this->never())
-            ->method($this->anything());
+        $this->storage->expects($this->never())->method('get');
 
         $this->extension->buildForm($this->getBuilderMock(true), []);
     }
@@ -108,7 +107,7 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
         $this->doctrineHelper->expects($this->never())->method('getEntityRepository');
 
         $this->assertRequestGetCalled();
-        $this->assertStorageCalled([], false);
+        $this->assertStorageCalled([], true);
 
         $this->extension->buildForm($this->getBuilderMock(true), []);
     }
@@ -295,7 +294,7 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
         /** @var  $builder */
         $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
         if ($expectsAddEventListener) {
-            $builder->expects($this->once())->method('addEventListener')->with(
+            $builder->expects($this->exactly(2))->method('addEventListener')->with(
                 $this->isType('string'),
                 $this->logicalAnd(
                     $this->isInstanceOf('\Closure'),
@@ -305,7 +304,10 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
                                 ->disableOriginalConstructor()
                                 ->getMock();
 
-                            $event->expects($this->once())->method('getData')->willReturn($this->entity);
+                            $form = $this->getMock('Symfony\Component\Form\FormInterface');
+                            $form->expects($this->any())->method('isValid')->willReturn(true);
+                            $event->expects($this->any())->method('getData')->willReturn($this->entity);
+                            $event->expects($this->any())->method('getForm')->willReturn($form);
                             $closure($event);
 
                             return true;

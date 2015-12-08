@@ -10,6 +10,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
+use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
 use OroB2B\Bundle\RFPBundle\Form\Extension\OrderDataStorageExtension;
 
 class OrderController extends Controller
@@ -24,12 +25,7 @@ class OrderController extends Controller
      */
     public function createAction(RFPRequest $request)
     {
-        $data = [
-            ProductDataStorage::ENTITY_DATA_KEY => [
-                'accountUser' => $request->getAccountUser()->getId(),
-                'account' => $request->getAccount()->getId(),
-            ],
-        ];
+        $data = [ProductDataStorage::ENTITY_DATA_KEY => $this->getEntityData($request)];
 
         foreach ($request->getRequestProducts() as $lineItem) {
             $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = [
@@ -39,12 +35,7 @@ class OrderController extends Controller
 
             $offers = [];
             foreach ($lineItem->getRequestProductItems() as $productItem) {
-                $offers[] = [
-                    'quantity' => $productItem->getQuantity(),
-                    'unit' => $productItem->getProductUnit()->getCode(),
-                    'currency' => $productItem->getPrice() ? $productItem->getPrice()->getCurrency() : null,
-                    'price' => $productItem->getPrice() ? $productItem->getPrice()->getValue() : 0,
-                ];
+                $offers[] = $this->getOfferData($productItem);
             }
 
             $data[OrderDataStorageExtension::OFFERS_DATA_KEY][] = $offers;
@@ -53,5 +44,44 @@ class OrderController extends Controller
         $this->get('orob2b_product.service.product_data_storage')->set($data);
 
         return $this->redirectToRoute('orob2b_order_create', [ProductDataStorage::STORAGE_KEY => true]);
+    }
+
+    /**
+     * @param RFPRequest $request
+     * @return array
+     */
+    protected function getEntityData(RFPRequest $request)
+    {
+        $data = [];
+
+        if ($request->getAccountUser()) {
+            $data['accountUser'] = $request->getAccountUser()->getId();
+        }
+
+        if ($request->getAccount()) {
+            $data['account'] = $request->getAccount()->getId();
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param RequestProductItem $productItem
+     * @return array
+     */
+    protected function getOfferData(RequestProductItem $productItem)
+    {
+        $data = [
+            'quantity' => $productItem->getQuantity(),
+            'unit' => $productItem->getProductUnitCode(),
+        ];
+
+        $price = $productItem->getPrice();
+        if ($price) {
+            $data['currency'] = $price->getCurrency();
+            $data['price'] = $price->getValue();
+        }
+
+        return $data;
     }
 }

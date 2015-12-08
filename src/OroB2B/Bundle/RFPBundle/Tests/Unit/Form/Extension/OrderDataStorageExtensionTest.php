@@ -71,6 +71,8 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
         $request->expects($this->once())->method('get')->willReturn(true);
         $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
+        $this->productDataStorage->expects($this->once())->method('get')->willReturn(['offers' => [['quantity' => 1]]]);
+
         $resolver = new OptionsResolver();
         $resolver->setDefault('sections', []);
         $this->extension->configureOptions($resolver);
@@ -80,6 +82,21 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('offers', $options['sections']);
         $this->assertArrayHasKey('data', $options['sections']['offers']);
         $this->assertArrayHasKey('order', $options['sections']['offers']);
+    }
+
+    public function testConfigureOptionsWithoutData()
+    {
+        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $request->expects($this->once())->method('get')->willReturn(true);
+        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
+
+        $resolver = new OptionsResolver();
+        $resolver->setDefault('sections', []);
+        $this->extension->configureOptions($resolver);
+        $options = $resolver->resolve();
+
+        $this->assertArrayHasKey('sections', $options);
+        $this->assertArrayNotHasKey('offers', $options['sections']);
     }
 
     public function testFinishViewNotApplicable()
@@ -264,11 +281,11 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
         $request->expects($this->once())->method('get')->willReturn(true);
         $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
-        $this->productDataStorage->expects($this->once())->method('get')->willReturn([]);
+        $this->productDataStorage->expects($this->never())->method('get');
 
         $this->extension->buildForm($this->getBuilderMock(true), []);
 
-        $this->assertEquals([], $this->getOffers());
+        $this->assertEquals(false, $this->getOffers());
     }
 
 
@@ -278,11 +295,11 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
         $request->expects($this->once())->method('get')->willReturn(true);
         $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
-        $this->productDataStorage->expects($this->once())->method('get')->willReturn(['offers' => false]);
+        $this->productDataStorage->expects($this->never())->method('get');
 
         $this->extension->buildForm($this->getBuilderMock(true), []);
 
-        $this->assertEquals([], $this->getOffers());
+        $this->assertEquals(false, $this->getOffers());
     }
 
 
@@ -296,7 +313,37 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->productDataStorage->expects($this->once())->method('get')->willReturn(['offers' => [$offer]]);
 
-        $this->extension->buildForm($this->getBuilderMock(true), []);
+        /** @var \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface $builder */
+        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
+        $builder->expects($this->once())->method('addEventListener')->with(
+            $this->isType('string'),
+            $this->logicalAnd(
+                $this->isInstanceOf('\Closure'),
+                $this->callback(
+                    function (\Closure $closure) {
+                        /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
+                        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+                        $parent = $this->getMock('Symfony\Component\Form\FormInterface');
+                        $data = new \stdClass();
+
+                        $form->expects($this->once())->method('getData')->willReturn($data);
+                        $parent->expects($this->once())->method('getData')->willReturn(new ArrayCollection([$data]));
+                        $form->expects($this->once())->method('getParent')->willReturn($parent);
+
+                        $event = $this->getMockBuilder('Symfony\Component\Form\FormEvent')
+                            ->disableOriginalConstructor()
+                            ->getMock();
+
+                        $event->expects($this->once())->method('getForm')->willReturn($form);
+                        $closure($event);
+
+                        return true;
+                    }
+                )
+            )
+        );
+
+        $this->extension->buildForm($builder, []);
 
         $this->assertEquals([$offer], $this->getOffers());
     }

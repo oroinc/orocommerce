@@ -26,8 +26,10 @@ class OrderDataStorageExtension extends AbstractTypeExtension
     /** @var ProductDataStorage */
     protected $storage;
 
-    /** @var array */
-    protected $offers = [];
+    /**
+     * @var array|bool false if not initialized
+     */
+    private $offers = false;
 
     /**
      * @param RequestStack $requestStack
@@ -46,17 +48,39 @@ class OrderDataStorageExtension extends AbstractTypeExtension
             return;
         }
 
-        $data = $this->storage->get();
+        $builder->addEventListener(
+            FormEvents::POST_SET_DATA,
+            function (FormEvent $event) {
+                $form = $event->getForm();
+                $form->add(
+                    self::OFFERS_DATA_KEY,
+                    'choice',
+                    [
+                        'mapped' => false,
+                        'expanded' => true,
+                        'choices' => array_keys($this->getOffers($form)),
+                        'choices_as_values' => true,
+                    ]
+                );
+            }
+        );
+    }
+
+    /**
+     * @return array
+     */
+    protected function getOffersStorageData()
+    {
+        if (false !== $this->offers) {
+            return $this->offers;
+        }
+        $this->offers = [];
+        $data = (array)$this->storage->get();
         if (array_key_exists(self::OFFERS_DATA_KEY, $data) && is_array($data[self::OFFERS_DATA_KEY])) {
             $this->offers = $data[self::OFFERS_DATA_KEY];
         }
 
-        $builder->addEventListener(
-            FormEvents::POST_SET_DATA,
-            function (FormEvent $event) {
-                $event->getForm()->add(self::OFFERS_DATA_KEY, 'choice', ['mapped' => false, 'expanded' => true]);
-            }
-        );
+        return (array)$this->offers;
     }
 
     /** {@inheritdoc} */
@@ -99,17 +123,18 @@ class OrderDataStorageExtension extends AbstractTypeExtension
             return [];
         }
 
-        if (!array_key_exists($key, $this->offers)) {
+        $offers = $this->getOffersStorageData();
+        if (!array_key_exists($key, $offers)) {
             return [];
         }
 
-        return (array)$this->offers[$key];
+        return (array)$offers[$key];
     }
 
     /** {@inheritdoc} */
     public function configureOptions(OptionsResolver $resolver)
     {
-        if (!$this->isApplicable()) {
+        if (!$this->isApplicable() || !$this->getOffersStorageData()) {
             return;
         }
 
