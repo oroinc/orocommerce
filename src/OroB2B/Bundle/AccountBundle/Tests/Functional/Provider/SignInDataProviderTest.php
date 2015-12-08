@@ -42,6 +42,11 @@ class SignInDataProviderTest extends WebTestCase
         $this->dataProvider = $this->getContainer()->get('orob2b_account.provider.sign_in');
     }
 
+    public function testGetIdentifier()
+    {
+        $this->assertEquals('orob2b_account_sign_in', $this->dataProvider->getIdentifier());
+    }
+
     public function testGetData()
     {
         $lastUsername = 'Last Username';
@@ -56,7 +61,6 @@ class SignInDataProviderTest extends WebTestCase
 
         $session->set(Security::LAST_USERNAME, $lastUsername);
         $session->set(Security::AUTHENTICATION_ERROR, new AuthenticationException($errorMessage));
-
 
         $this->requestStack->push($request);
 

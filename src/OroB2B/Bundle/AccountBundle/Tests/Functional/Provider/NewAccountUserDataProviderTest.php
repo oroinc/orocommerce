@@ -26,6 +26,11 @@ class NewAccountUserDataProviderTest extends WebTestCase
         $this->dataProvider = $this->getContainer()->get('orob2b_account.layout.data_provider.new_account_user');
     }
 
+    public function testGetIdentifier()
+    {
+        $this->assertEquals('orob2b_account_new_account_user', $this->dataProvider->getIdentifier());
+    }
+
     public function testGetData()
     {
         $actual = $this->dataProvider->getData($this->context);
