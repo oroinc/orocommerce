@@ -6,6 +6,8 @@ use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+
 class AccountRepository extends EntityRepository
 {
     /**
@@ -35,5 +37,17 @@ class AccountRepository extends EntityRepository
         }
 
         return $children;
+    }
+
+    /**
+     * @return Account[]
+     */
+    public function getPartialAccounts()
+    {
+        return $this
+            ->createQueryBuilder('account')
+            ->select('partial account.{id}')
+            ->getQuery()
+            ->getResult();
     }
 }

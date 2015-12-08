@@ -8,6 +8,8 @@ use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 
 class AccountProductVisibilityResolvedRepository extends EntityRepository
@@ -76,6 +78,26 @@ class AccountProductVisibilityResolvedRepository extends EntityRepository
     }
 
     /**
+     * @param string $cacheVisibility
+     * @return mixed
+     */
+    public function updateFromBaseTableForCurrentProduct($cacheVisibility)
+    {
+        $qb = $this->createQueryBuilder('apvr');
+
+        return $qb->update()
+            ->set('apvr.visibility', $cacheVisibility)
+            ->set('apvr.source', BaseProductVisibilityResolved::SOURCE_STATIC)
+            ->set('apvr.categoryId', ':category_id')
+            ->where($this->getWhereExprForVisibilityToAll($qb))
+            ->setParameter('category_id', null)
+            ->setParameter('visibility', $cacheVisibility)
+            ->setParameter('source_visibility', AccountProductVisibility::CURRENT_PRODUCT)
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
      * @param $visibility
      */
     public function deleteByVisibility($visibility)
@@ -97,6 +119,57 @@ class AccountProductVisibilityResolvedRepository extends EntityRepository
             ->delete()
             ->getQuery()
             ->execute();
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @return \Doctrine\ORM\Query\Expr\Andx
+     */
+    protected function getWhereExprForVisibilityToAll(QueryBuilder $qb)
+    {
+        return $qb->expr()->andX(
+            $qb->expr()->in(
+                'IDENTITY(apvr.product)',
+                $this->getEntityManager()->createQueryBuilder()
+                    ->select('IDENTITY(apv_1.product)')
+                    ->from('OroB2BAccountBundle:Visibility\AccountProductVisibility', 'apv_1')
+                    ->innerJoin(
+                        'OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved',
+                        'pvr',
+                        Join::WITH,
+                        'IDENTITY(apv_1.product) = IDENTITY(pvr.product) and IDENTITY(apv_1.website) = IDENTITY(pvr.website)'
+                    )
+                    ->where('IDENTITY(apv_1.product) = IDENTITY(apvr.product)')
+                    ->andWhere('IDENTITY(apv_1.website) = IDENTITY(apvr.website)')
+                    ->andWhere('IDENTITY(apv_1.account) = IDENTITY(apvr.account)')
+                    ->andWhere('apv_1.visibility = :source_visibility')
+                    ->andWhere("pvr.visibility = :visibility")
+                    ->getQuery()
+                    ->getDQL()
+            ),
+            $qb->expr()->in(
+                'IDENTITY(apvr.website)',
+                $this->getEntityManager()->createQueryBuilder()
+                    ->select('IDENTITY(apv_2.website)')
+                    ->from('OroB2BAccountBundle:Visibility\AccountProductVisibility', 'apv_2')
+                    ->where('IDENTITY(apv_2.product) = IDENTITY(apvr.product)')
+                    ->andWhere('IDENTITY(apv_2.website) = IDENTITY(apvr.website)')
+                    ->andWhere('IDENTITY(apv_2.account) = IDENTITY(apvr.account)')
+                    ->getQuery()
+                    ->getDQL()
+            ),
+            $qb->expr()->in(
+                'IDENTITY(apvr.account)',
+                $this->getEntityManager()->createQueryBuilder()
+                    ->select('IDENTITY(apv_3.account)')
+                    ->from('OroB2BAccountBundle:Visibility\AccountProductVisibility', 'apv_3')
+                    ->where('IDENTITY(apv_3.product) = IDENTITY(apvr.product)')
+                    ->andWhere('IDENTITY(apv_3.website) = IDENTITY(apvr.website)')
+                    ->andWhere('IDENTITY(apv_3.account) = IDENTITY(apvr.account)')
+                    ->getQuery()
+                    ->getDQL()
+            )
+        );
     }
 
     /**
