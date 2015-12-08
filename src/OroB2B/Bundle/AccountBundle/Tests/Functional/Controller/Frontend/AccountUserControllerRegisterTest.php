@@ -257,7 +257,10 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_account_account_user_security_login'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertEquals('Sign In', $crawler->filter('h2.create-account__title')->html());
+        $this->assertEquals(
+            'Sign In',
+            $crawler->filter('form.create-account__form_signin h2.create-account__title')->html()
+        );
 
         $forgotPasswordLink = $crawler->filter('a:contains("Forgot Your Password?")')->link();
         $crawler = $this->client->click($forgotPasswordLink);
@@ -302,7 +305,10 @@ class AccountUserControllerRegisterTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertEquals('Sign In', $crawler->filter('h2.create-account__title')->html());
+        $this->assertEquals(
+            'Sign In',
+            $crawler->filter('form.create-account__form_signin h2.create-account__title')->html()
+        );
         $this->assertContains('Password was created successfully.', $crawler->html());
     }
 
