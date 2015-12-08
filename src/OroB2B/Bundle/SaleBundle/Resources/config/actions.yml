@@ -29,6 +29,7 @@ actions:
         entities:
             - OroB2B\Bundle\SaleBundle\Entity\Quote
         order: 20
+        acl_resource: oro_email_email_create
 
         frontend_options:
             icon: icon-envelope

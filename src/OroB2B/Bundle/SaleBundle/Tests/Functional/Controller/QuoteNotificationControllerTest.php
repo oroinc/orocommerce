@@ -34,6 +34,8 @@ class QuoteNotificationControllerTest extends WebTestCase
 
     public function testEmail()
     {
+        $this->markTestIncomplete();
+
         /** @var Quote $quote */
         $quote = $this->getReference(LoadQuoteData::QUOTE3);
         $crawler = $this->client->request(
