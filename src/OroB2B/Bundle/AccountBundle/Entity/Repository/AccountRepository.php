@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AccountBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
@@ -50,7 +51,12 @@ class AccountRepository extends EntityRepository
         $qb = $this->createQueryBuilder('account');
 
         $qb->select('account')
-            ->join('OroB2BAccountBundle:Visibility\AccountCategoryVisibility', 'accountCategoryVisibility')
+            ->join(
+                'OroB2BAccountBundle:Visibility\AccountCategoryVisibility',
+                'accountCategoryVisibility',
+                Join::WITH,
+                $qb->expr()->eq('accountCategoryVisibility.account', 'account')
+            )
             ->where($qb->expr()->eq('accountCategoryVisibility.category', ':category'))
             ->andWhere($qb->expr()->eq('accountCategoryVisibility.visibility', ':visibility'))
             ->setParameters([

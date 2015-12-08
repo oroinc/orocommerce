@@ -5,6 +5,9 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Model\Action;
 use OroB2B\Bundle\AccountBundle\Model\Action\ChangeCategoryPosition;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
+/**
+ * @dbIsolation
+ */
 class ChangeCategoryPositionTest extends CategoryCaseActionTestCase
 {
     /**
@@ -66,16 +69,12 @@ class ChangeCategoryPositionTest extends CategoryCaseActionTestCase
                             'product.7',
                         ],
                         'account_group.group3' => [
-                            'product.2',
                             'product.3',
                             'product.6',
                         ],
                     ],
                     'hiddenProductsByAccounts' => [
                         'account.level_1.1' => [
-                            'product.2',
-                            'product.3',
-                            'product.6',
                             'product.4',
                             'product.7',
                         ],
@@ -85,10 +84,7 @@ class ChangeCategoryPositionTest extends CategoryCaseActionTestCase
                         'account.level_1.2.1' => [
                             'product.7',
                         ],
-                        'account.level_1.2.1.1' => [
-                        ],
                         'account.level_1.3.1' => [
-                            'product.2',
                             'product.3',
                             'product.6',
                             'product.4',
@@ -101,7 +97,6 @@ class ChangeCategoryPositionTest extends CategoryCaseActionTestCase
                             'product.4',
                         ],
                         'account.level_1.4' => [
-                            'product.2',
                             'product.3',
                         ],
                     ],

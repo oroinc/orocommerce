@@ -9,7 +9,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
-class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractChangeCategorySubtreeCacheBuilder
+class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitiesAwareSubtreeCacheBuilder
 {
     /**
      * @param Category $category
@@ -22,11 +22,6 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractChangeCategory
         $categoryIds = $this->getCategoryIdsForUpdate($category, null);
         $this->updateProductVisibilityByCategory($categoryIds, $visibility);
 
-        $this->accountGroupsWithChangedVisibility[$category->getId()]
-            = $this->updateAccountGroupsFirstLevel($category, $visibility);
-
-        $this->accountsWithChangedVisibility[$category->getId()]
-            = $this->updateAccountsFirstLevel($category, $visibility);
         $this->updateProductVisibilitiesForCategoryRelatedEntities($category, $visibility);
     }
 
@@ -36,6 +31,10 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractChangeCategory
     protected function updateAccountGroupsFirstLevel(Category $category, $visibility)
     {
         $accountGroupsForUpdate = $this->getAccountGroupsFirstLevel($category);
+        if ($accountGroupsForUpdate === null) {
+            return [];
+        }
+
         $this->updateAccountGroupsProductVisibility($category, $accountGroupsForUpdate, $visibility);
 
         return $accountGroupsForUpdate;
@@ -58,6 +57,10 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractChangeCategory
     protected function updateAccountsFirstLevel(Category $category, $visibility)
     {
         $accountsForUpdate = $this->getAccountsFirstLevel($category);
+
+        if ($accountsForUpdate === null) {
+            return [];
+        }
 
         /**
          * Cache updated account for current category into appropriate section

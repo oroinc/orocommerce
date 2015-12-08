@@ -1,4 +1,3 @@
-# https://magecore.atlassian.net/wiki/display/BB/Categories+visibilities
 category_1:
     all:
         visibility: visible
@@ -17,6 +16,9 @@ category_1:
         account.level_1.1:
             visibility: category
             reference: category_1.visibility.account.level_1.1
+        account.level_1.2:
+            visibility: parent_category
+            reference: category_1.visibility.account.level_1.2
         account.level_1.2.1:
             visibility: category
             reference: category_1.visibility.account.level_1.2.1
@@ -103,7 +105,7 @@ category_1_2_3_4:
             reference: category_1_2_3_4.visibility.account.level_1.4
 category_1_5:
     all:
-       visibility: parent_category
+       visibility: null
        reference: category_1_5.visibility.all
     groups:
         account_group.group3:

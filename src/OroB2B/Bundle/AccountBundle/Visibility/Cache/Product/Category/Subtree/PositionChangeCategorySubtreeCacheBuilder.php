@@ -2,10 +2,18 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategorySubtreeCacheBuilder
 {
+    /** @var AccountGroup[] */
+    protected $accountGroupsWithInverseVisibility;
+
+    /** @var  Account[] */
+    protected $accountsWithInverseVisibility;
+
     /**
      * @param Category $category
      */
@@ -17,6 +25,28 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
         $categoryIds = $this->getCategoryIdsForUpdate($category, null);
         $this->updateProductVisibilityByCategory($categoryIds, $visibility);
 
+        $this->updateAppropriateVisibilityRelatedEntities($category, $visibility);
+        $this->updateInvertedVisibilityRelatedEntities($category, $visibility);
+    }
+
+    /**
+     * @param Category $category
+     * @param int $visibility
+     */
+    protected function updateAppropriateVisibilityRelatedEntities(Category $category, $visibility)
+    {
+        $this->updateAccountGroupsAppropriateVisibility($category, $visibility);
+        $this->updateAccountsAppropriateVisibility($category, $visibility);
+
+        $this->updateProductVisibilitiesForCategoryRelatedEntities($category, $visibility);
+    }
+
+    /**
+     * @param Category $category
+     * @param int $visibility
+     */
+    protected function updateAccountGroupsAppropriateVisibility(Category $category, $visibility)
+    {
         $accountGroupsForUpdate = $this->getAccountGroupsFirstLevel($category);
 
         $accountGroupsWithFallbackToParent = $this->getCategoryAccountGroupsWithVisibilityFallbackToParent($category);
@@ -24,8 +54,8 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
         $accountGroupsWithInverseVisibility = [];
 
         foreach ($accountGroupsWithFallbackToParent as $accountGroup) {
-            $accountGroupVisibility
-                = $this->categoryVisibilityResolver->isCategoryVisibleForAccountGroup($category, $accountGroup);
+            $accountGroupVisibility = $this->categoryVisibilityResolver
+                ->isCategoryVisibleForAccountGroup($category, $accountGroup);
             if ($accountGroupVisibility === $visibility) {
                 $accountGroupsForUpdate[] = $accountGroup;
             } else {
@@ -33,17 +63,28 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
             }
         }
 
-        $this->updateAccountGroupsProductVisibility($category, $accountGroupsForUpdate, $visibility);
+        $this->updateAccountGroupsProductVisibility(
+            $category,
+            $accountGroupsForUpdate,
+            $visibility
+        );
 
         $this->accountGroupsWithChangedVisibility[$category->getId()] = $accountGroupsForUpdate;
+        $this->accountGroupsWithInverseVisibility = $accountGroupsWithInverseVisibility;
+    }
 
+    /**
+     * @param Category $category
+     * @param int $visibility
+     */
+    protected function updateAccountsAppropriateVisibility(Category $category, $visibility)
+    {
         $accountForUpdate = $this->getAccountsFirstLevel($category);
         $accountsWithFallbackToParent = $this->getAccountsWithFallbackToParent($category);
 
         $accountsWithInverseVisibility = [];
         foreach ($accountsWithFallbackToParent as $account) {
-            $accountVisibility
-                = $this->categoryVisibilityResolver->isCategoryVisibleForAccount($category, $account);
+            $accountVisibility = $this->categoryVisibilityResolver->isCategoryVisibleForAccount($category, $account);
             if ($accountVisibility === $visibility) {
                 $accountForUpdate[] = $account;
             } else {
@@ -54,20 +95,27 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
         $this->updateAccountsProductVisibility($category, $accountForUpdate, $visibility);
 
         $this->accountsWithChangedVisibility[$category->getId()] = $accountForUpdate;
-        $this->updateProductVisibilitiesForCategoryRelatedEntities($category, $visibility);
+        $this->accountsWithInverseVisibility = $accountsWithInverseVisibility;
+    }
 
+    /**
+     * @param Category $category
+     * @param int $visibility
+     */
+    protected function updateInvertedVisibilityRelatedEntities(Category $category, $visibility)
+    {
         $invertedVisibility = $visibility * -1;
 
         $this->updateAccountGroupsProductVisibility(
             $category,
-            $accountGroupsWithInverseVisibility,
+            $this->accountGroupsWithInverseVisibility,
             $invertedVisibility
         );
 
-        $this->updateAccountsProductVisibility($category, $accountsWithInverseVisibility, $invertedVisibility);
+        $this->updateAccountsProductVisibility($category, $this->accountsWithInverseVisibility, $invertedVisibility);
 
-        $this->accountGroupsWithChangedVisibility[$category->getId()] = $accountGroupsWithInverseVisibility;
-        $this->accountsWithChangedVisibility[$category->getId()] = $accountsWithInverseVisibility;
+        $this->accountGroupsWithChangedVisibility[$category->getId()] = $this->accountGroupsWithInverseVisibility;
+        $this->accountsWithChangedVisibility[$category->getId()] = $this->accountsWithInverseVisibility;
 
         $this->updateProductVisibilitiesForCategoryRelatedEntities($category, $invertedVisibility);
     }

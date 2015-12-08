@@ -10,8 +10,11 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
-class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractSubtreeCacheBuilder
+class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAwareSubtreeCacheBuilder
 {
+    /** @var AccountGroup */
+    protected $accountGroup;
+
     /**
      * @param Category $category
      * @param AccountGroup $accountGroup
@@ -24,22 +27,25 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractSubtreeCacheBuild
         $categoryIds = $this->getCategoryIdsForUpdate($category, $accountGroup);
         $this->updateProductVisibilityByCategory($categoryIds, $visibility, $accountGroup);
 
-        $this->accountGroupsWithChangedVisibility[$category->getId()] = [$accountGroup];
+        $this->accountGroup = $accountGroup;
 
-        $this->accountsWithChangedVisibility[$category->getId()]
-            = $this->updateAccountsFirstLevel($category, $accountGroup, $visibility);
         $this->updateProductVisibilitiesForCategoryRelatedEntities($category, $visibility);
     }
 
     /**
-     * @param Category $category
-     * @param AccountGroup $accountGroup
-     * @param int $visibility
-     * @return Account[]
+     * {@inheritdoc}
      */
-    protected function updateAccountsFirstLevel(Category $category, AccountGroup $accountGroup, $visibility)
+    protected function updateAccountGroupsFirstLevel(Category $category, $visibility)
     {
-        $accountsForUpdate = $this->getAccountsWithFallbackToCurrentGroup($category, $accountGroup);
+        return [$this->accountGroup];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function updateAccountsFirstLevel(Category $category, $visibility)
+    {
+        $accountsForUpdate = $this->getAccountsWithFallbackToCurrentGroup($category, $this->accountGroup);
         $this->updateAccountsProductVisibility($category, $accountsForUpdate, $visibility);
 
         return $accountsForUpdate;

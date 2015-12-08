@@ -61,7 +61,7 @@ class ChangeCategoryVisibilityTest extends CategoryCaseActionTestCase
                         'product.1',
                         'product.2',
                         'product.5',
-                        'product.6',
+                        'product.4',
                         'product.7',
                     ],
                     'hiddenProductsByAccountGroups' => [
@@ -75,9 +75,6 @@ class ChangeCategoryVisibilityTest extends CategoryCaseActionTestCase
                             'product.2',
                             'product.3',
                             'product.6',
-                            'product.5',
-                            'product.4',
-                            'product.7',
                         ],
                     ],
                     'hiddenProductsByAccounts' => [
