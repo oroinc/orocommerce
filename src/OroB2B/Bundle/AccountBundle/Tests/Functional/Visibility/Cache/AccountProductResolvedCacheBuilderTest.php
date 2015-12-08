@@ -48,14 +48,14 @@ class AccountProductResolvedCacheBuilderTest extends WebTestCase
             ->findAll();
         $this->cacheBuilder->buildCache();
 
-        $this->assertCount(288, $this->getRepository()->findAll());
+        $this->assertCount(156, $this->getRepository()->findAll());
 
         $this->assertCount(
             2,
             $this->getRepository()->findBy(['source' => BaseProductVisibilityResolved::SOURCE_STATIC])
         );
         $this->assertCount(
-            286,
+            154,
             $this->getRepository()->findBy(['source' => BaseProductVisibilityResolved::SOURCE_CATEGORY])
         );
     }

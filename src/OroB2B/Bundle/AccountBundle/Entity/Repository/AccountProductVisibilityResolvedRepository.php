@@ -137,7 +137,8 @@ class AccountProductVisibilityResolvedRepository extends EntityRepository
                         'OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved',
                         'pvr',
                         Join::WITH,
-                        'IDENTITY(apv_1.product) = IDENTITY(pvr.product) and IDENTITY(apv_1.website) = IDENTITY(pvr.website)'
+                        'IDENTITY(apv_1.product) = IDENTITY(pvr.product)
+                        and IDENTITY(apv_1.website) = IDENTITY(pvr.website)'
                     )
                     ->where('IDENTITY(apv_1.product) = IDENTITY(apvr.product)')
                     ->andWhere('IDENTITY(apv_1.website) = IDENTITY(apvr.website)')
