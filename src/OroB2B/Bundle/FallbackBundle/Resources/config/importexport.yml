@@ -8,7 +8,6 @@ services:
     orob2b_fallback.importexport.data_converter.property_path_title:
         class: %orob2b_fallback.importexport.data_converter.property_path_title.class%
         parent: oro_importexport.data_converter.configurable
-        abstract: true
 
     orob2b_fallback.importexport.data_converter.localized_fallback_value_aware:
         class: %orob2b_fallback.importexport.data_converter.localized_fallback_value_aware.class%

@@ -25,12 +25,10 @@ oro_system_configuration:
         system_configuration:
             platform:
                 children:
-                    general_setup:
+                    catalog:
                         children:
-                            product:
-                                priority: 220
+                            product_settings:
                                 children:
                                     product_price_settings:
-                                        priority: 100
                                         children:
                                             - orob2b_pricing.rounding_type
