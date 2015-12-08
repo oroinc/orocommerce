@@ -124,7 +124,7 @@ class ContextHelper
     /**
      * @param array $context
      * @param array $properties
-     * @return null|string
+     * @return string
      */
     protected function generateHash(array $context, array $properties)
     {
