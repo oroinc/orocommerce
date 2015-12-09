@@ -34,18 +34,24 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param array $inputData
-     *
      * @dataProvider processInvalidConfigurationProvider
-     * @expectedException \Symfony\Component\Config\Definition\Exception\InvalidConfigurationException
+     *
+     * @param array $inputData
+     * @param string $expectedExceptionMessage
      */
-    public function testProcessInvalidConfiguration(array $inputData)
+    public function testProcessInvalidConfiguration(array $inputData, $expectedExceptionMessage)
     {
+        $this->setExpectedException(
+            'Symfony\Component\Config\Definition\Exception\InvalidConfigurationException',
+            $expectedExceptionMessage
+        );
+
         $this->configuration->processConfiguration($inputData);
     }
 
     /**
      * @return array
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function processValidConfigurationProvider()
     {
@@ -65,7 +71,11 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                     'enabled' => true,
                     'prefunctions' => [],
                     'preconditions' => [],
+                    'conditions' => [],
+                    'initfunctions' => [],
                     'postfunctions' => [],
+                    'attributes' => [],
+                    'frontend_options' => [],
                 ],
             ],
             'full valid configuration' => [
@@ -80,17 +90,41 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'frontend_options' => [
                             'icon' => 'icon',
                             'class' => 'class',
+                            'group' => 'group label',
                             'template' => 'template',
+                            'dialog_template' => 'template',
+                        ],
+                        'form_options' => [
+                            'attribute_fields' => [
+                                'attribute_1' => [
+                                    'form_type' => 'test type',
+                                    'options' => [
+                                        'class' => 'testClass',
+                                    ]
+                                ]
+                            ],
+                            'attribute_default_values' => [
+                                'attribute_1' => 'value 1',
+                            ]
                         ],
                         'prefunctions' => [
                             '@create_date' => [],
                         ],
                         'preconditions' => [
-                            '@equal' => '1',
+                            '@equal' => ['$field1', 'value1'],
+                        ],
+                        'initfunctions' => [
+                            '@assign_value' => ['$field1', 'value2'],
                         ],
                         'postfunctions' => [
                             '@call_method' => [],
                         ],
+                        'attributes' => [
+                            'test_attribute' => [
+                                'type' => 'string',
+                                'label' => 'Test Attribute Label'
+                            ]
+                        ]
                     ],
                 ],
                 'expected' => [
@@ -100,19 +134,46 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                     'routes' => ['route_1', 'route_2'],
                     'order' => 15,
                     'enabled' => false,
-                    'frontend_options' => [
-                        'icon' => 'icon',
-                        'class' => 'class',
-                        'template' => 'template',
-                    ],
                     'prefunctions' => [
                         '@create_date' => [],
                     ],
                     'preconditions' => [
-                        '@equal' => '1',
+                        '@equal' => ['$field1', 'value1'],
+                    ],
+                    'conditions' => [],
+                    'initfunctions' => [
+                        '@assign_value' => ['$field1', 'value2'],
                     ],
                     'postfunctions' => [
                         '@call_method' => [],
+                    ],
+                    'attributes' => [
+                        'test_attribute' => [
+                            'type' => 'string',
+                            'label' => 'Test Attribute Label',
+                            'property_path' => null,
+                            'options' => []
+                        ]
+                    ],
+                    'frontend_options' => [
+                        'icon' => 'icon',
+                        'class' => 'class',
+                        'group' => 'group label',
+                        'template' => 'template',
+                        'dialog_template' => 'template',
+                    ],
+                    'form_options' => [
+                        'attribute_fields' => [
+                            'attribute_1' => [
+                                'form_type' => 'test type',
+                                'options' => [
+                                    'class' => 'testClass',
+                                ],
+                            ]
+                        ],
+                        'attribute_default_values' => [
+                            'attribute_1' => 'value 1',
+                        ]
                     ],
                 ],
             ],
@@ -124,16 +185,31 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
      */
     public function processInvalidConfigurationProvider()
     {
+        return array_merge(
+            $this->invalidConfigurationProvider(),
+            $this->invalidAttributeProvider(),
+            $this->invalidFormOptionsProvider(),
+            $this->invalidAttributesProvider()
+        );
+    }
+
+    /**
+     * @return array
+     */
+    protected function invalidConfigurationProvider()
+    {
         return [
             'incorrect root' => [
                 'input' => [
                     'action' => 'not array value',
                 ],
+                'message' => 'Invalid type for path "action". Expected array, but got string'
             ],
             'empty action[label]' => [
                 'input' => [
                     'action' => [],
                 ],
+                'message' => 'The child node "label" at path "action" must be configured'
             ],
             'incorrect action[application]' => [
                 'input' => [
@@ -142,6 +218,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'applications' => 'not array value',
                     ],
                 ],
+                'message' => 'Invalid type for path "action.applications". Expected array, but got string'
             ],
             'incorrect action[entities]' => [
                 'input' => [
@@ -151,6 +228,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'entities' => 'not array value',
                     ],
                 ],
+                'message' => 'Invalid type for path "action.entities". Expected array, but got string'
             ],
             'incorrect action[routes]' => [
                 'input' => [
@@ -161,6 +239,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'routes' => 'not array value',
                     ],
                 ],
+                'message' => 'Invalid type for path "action.routes". Expected array, but got string'
             ],
             'incorrect action[order]' => [
                 'input' => [
@@ -172,6 +251,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'order' => 'not integer value',
                     ],
                 ],
+                'message' => 'Invalid type for path "action.order". Expected int, but got string'
             ],
             'incorrect action[enabled]' => [
                 'input' => [
@@ -184,6 +264,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'enabled' => 'not bool value',
                     ],
                 ],
+                'message' => 'Invalid type for path "action.enabled". Expected boolean, but got string'
             ],
             'incorrect action[frontend_options]' => [
                 'input' => [
@@ -197,6 +278,292 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'frontend_options' => 'not array value',
                     ],
                 ],
+                'message' => 'Invalid type for path "action.frontend_options". Expected array, but got string'
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function invalidAttributeProvider()
+    {
+        return [
+            'incorrect action[attribute]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => 'not array value',
+                    ],
+                ],
+                'message' => 'Invalid type for path "action.attributes". Expected array, but got string'
+            ],
+            'incorrect action[attribute][type]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => [
+                            'test' => [
+                                'type' => []
+                            ]
+                        ],
+                    ],
+                ],
+                'message' => 'Invalid type for path "action.attributes.test.type". Expected scalar, but got array'
+            ],
+            'incorrect action[attribute][label]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => [
+                            'test' => [
+                                'type' => 'type',
+                                'label' => []
+                            ]
+                        ],
+                    ],
+                ],
+                'message' => 'Invalid type for path "action.attributes.test.label". Expected scalar, but got array'
+            ],
+            'incorrect action[attribute][options]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => [
+                            'test' => [
+                                'type' => 'type',
+                                'label' => 'label',
+                                'options' => 1
+                            ]
+                        ],
+                    ],
+                ],
+                'message' => 'Invalid type for path "action.attributes.test.options". Expected array, but got integer'
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function invalidFormOptionsProvider()
+    {
+        return [
+            'incorrect action[form_options]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'form_options' => 'not array value',
+                    ],
+                ],
+                'message' => 'Invalid type for path "action.form_options". Expected array, but got string'
+            ],
+            'incorrect action[form_options][attribute_fields][options]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'form_options' => [
+                            'attribute_fields' => [
+                                'options' => 'not array value',
+                            ],
+                        ]
+                    ],
+                ],
+                'message' =>
+                    'Invalid type for path "action.form_options.attribute_fields.options". ' .
+                    'Expected array, but got string'
+            ],
+            'incorrect action[form_options][attribute_fields]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'form_options' => [
+                            'attribute_fields' => 'not array value',
+                        ]
+                    ],
+                ],
+                'message' =>
+                    'Invalid type for path "action.form_options.attribute_fields". ' .
+                    'Expected array, but got string'
+            ],
+            'incorrect action[form_options][attribute_default_values]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'form_options' => [
+                            'attribute_default_values' => 'not array value',
+                        ]
+                    ],
+                ],
+                'message' =>
+                    'Invalid type for path "action.form_options.attribute_default_values". ' .
+                    'Expected array, but got string'
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
+    protected function invalidAttributesProvider()
+    {
+        return [
+            'incorrect action[attributes]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => 'not array value',
+                    ],
+                ],
+                'message' => 'Invalid type for path "action.attributes". Expected array, but got string'
+            ],
+            'incorrect action[attributes][0]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => [
+                            'bad_attribute'
+                        ],
+                    ],
+                ],
+                'message' => 'Invalid type for path "action.attributes.0". Expected array, but got string'
+            ],
+            'incorrect action[attributes][attribute1]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => [
+                            'attribute1' => 'not array value',
+                        ],
+                    ],
+                ],
+                'message' => 'Invalid type for path "action.attributes.attribute1". Expected array, but got string'
+            ],
+            'empty action[attributes][attribute2][type] and action[attributes][attribute2][property_path]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => [
+                            'attribute2' => [
+                                'label' => 'label1',
+                            ],
+                        ],
+                    ],
+                ],
+                'message' => 'Option "type" or "property_path" is required'
+            ],
+            'invalid action[attributes][attribute3][type]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => [
+                            'attribute3' => [
+                                'type' => 'type1',
+                            ],
+                        ],
+                    ],
+                ],
+                'message' => 'The value "type1" is not allowed for path "action.attributes.attribute3.type"'
+            ],
+            'empty action[attributes][attribute4][label] and  and action[attributes][attribute2][property_path]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => [
+                            'attribute4' => [
+                                'type' => 'bool',
+                            ],
+                        ],
+                    ],
+                ],
+                'message' => 'Option "label" or "property_path" is required'
+            ],
+            'incorrect action[attributes][attribute5][entity_acl]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => [
+                            'attribute5' => [
+                                'type' => 'int',
+                                'label' => 'Attribute 5 Label',
+                                'entity_acl' => 'not array value',
+                            ],
+                        ],
+                    ],
+                ],
+                'message' =>
+                    'Invalid type for path "action.attributes.attribute5.entity_acl". ' .
+                    'Expected array, but got string'
+            ],
+            'used entity_acl & !entity type action[attributes][attribute6]' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => [
+                            'attribute6' => [
+                                'type' => 'int',
+                                'label' => 'Attribute 6 Label',
+                                'entity_acl' => [],
+                            ],
+                        ],
+                    ],
+                ],
+                'message' =>
+                    'Invalid configuration for path "action.attributes.attribute6": ' .
+                    'Attribute "Attribute 6 Label" with type "int" can\'t have entity ACL'
+            ],
+            'empty action[attributes][attribute7][options][class] with object' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => [
+                            'attribute7' => [
+                                'type' => 'object',
+                                'label' => 'Attribute 7 Label',
+                            ],
+                        ],
+                    ],
+                ],
+                'message' =>
+                    'Invalid configuration for path "action.attributes.attribute7": ' .
+                    'Option "class" is required for "object" type'
+            ],
+            'empty action[attributes][attribute8][options][class] with entity' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => [
+                            'attribute8' => [
+                                'type' => 'entity',
+                                'label' => 'Attribute 8 Label',
+                            ],
+                        ],
+                    ],
+                ],
+                'message' =>
+                    'Invalid configuration for path "action.attributes.attribute8": ' .
+                    'Option "class" is required for "entity" type'
+            ],
+            'excess option action[attributes][attribute9][options][class] with !entity|object' => [
+                'input' => [
+                    'action' => [
+                        'label' => 'Test Label',
+                        'attributes' => [
+                            'attribute9' => [
+                                'type' => 'bool',
+                                'label' => 'Attribute 9 Label',
+                                'options' => [
+                                    'class' => 'TestClass9',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                'message' =>
+                    'Invalid configuration for path "action.attributes.attribute9": ' .
+                    'Option "class" cannot be used for "bool" type'
             ],
         ];
     }
