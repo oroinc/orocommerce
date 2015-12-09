@@ -42,7 +42,7 @@ class OroB2BTaxBundleInstaller implements Installation
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('code', 'string', ['length' => 255]);
-        $table->addColumn('description', 'string', ['length' => 255]);
+        $table->addColumn('description', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
@@ -60,7 +60,7 @@ class OroB2BTaxBundleInstaller implements Installation
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_id', 'integer', ['notnull' => false]);
         $table->addColumn('code', 'string', ['length' => 255]);
-        $table->addColumn('description', 'string', ['length' => 255]);
+        $table->addColumn('description', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);

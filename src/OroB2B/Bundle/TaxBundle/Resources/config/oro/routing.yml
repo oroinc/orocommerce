@@ -16,4 +16,3 @@ orob2b_tax_bundle_api:
         _format:  json
     defaults:
         version:  latest
-

@@ -1,6 +1,7 @@
 orob2b_tax_product_tax_code_api:
     resource: "@OroB2BTaxBundle/Controller/Api/Rest/ProductTaxCodeController.php"
     type:     rest
+
 orob2b_tax_account_tax_code_api:
     resource: "@OroB2BTaxBundle/Controller/Api/Rest/AccountTaxCodeController.php"
     type:     rest
