@@ -4,10 +4,10 @@ namespace OroB2B\Bundle\AccountBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
-use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 
 class AccountGroupProductVisibilityResolvedRepository extends EntityRepository
@@ -29,18 +29,26 @@ class AccountGroupProductVisibilityResolvedRepository extends EntityRepository
             ->createQueryBuilder('category')
             ->select(
                 [
-                    'website.id as websiteId',
-                    'product.id as productId',
+                    'IDENTITY(agpv.website)',
+                    'product.id',
                     (string)$accountGroupId,
                     (string)$cacheVisibility,
                     (string)BaseProductVisibilityResolved::SOURCE_CATEGORY,
                     'category.id as categoryId',
                 ]
             )
-            ->innerJoin('OroB2BProductBundle:Product', 'product', Join::WITH, 'product MEMBER OF category.products')
-            ->innerJoin('OroB2BWebsiteBundle:Website', 'website')
+            ->innerJoin('category.products', 'product')
+            ->innerJoin(
+                'OroB2BAccountBundle:Visibility\AccountGroupProductVisibility',
+                'agpv',
+                Join::WITH,
+                'agpv.product = product AND agpv.visibility = :category AND IDENTITY(agpv.accountGroup) = :accGroupId'
+            )
             ->where('category.id in (:ids)')
-            ->setParameter('ids', $categories);
+            ->setParameter('ids', $categories)
+            ->setParameter('accGroupId', $accountGroupId)
+            ->setParameter('category', AccountGroupProductVisibility::CATEGORY);
+
         $insertFromSelect->execute(
             $this->getClassName(),
             [
@@ -56,36 +64,40 @@ class AccountGroupProductVisibilityResolvedRepository extends EntityRepository
     }
 
     /**
-     * @param string $baseVisibility
-     * @param string $cacheVisibility
-     * @return mixed
+     * @param InsertFromSelectQueryExecutor $insertFromSelect
      */
-    public function updateFromBaseTable($cacheVisibility, $baseVisibility)
-    {
-        $qb = $this->createQueryBuilder('agpvr');
+    public function insertStatic(
+        InsertFromSelectQueryExecutor $insertFromSelect
+    ) {
+        $queryBuilder = $this->getEntityManager()
+            ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
+            ->createQueryBuilder('agpv')
+            ->select(
+                [
+                    'IDENTITY(agpv.website)',
+                    'IDENTITY(agpv.product)',
+                    'IDENTITY(agpv.accountGroup)',
+                    'CASE WHEN agpv.visibility = :visible THEN :cacheVisible ELSE :cacheHidden END',
+                    (string)BaseProductVisibilityResolved::SOURCE_STATIC,
+                ]
+            )
+            ->where('agpv.visibility = :visible OR agpv.visibility = :hidden')
+            ->setParameter('visible', AccountGroupProductVisibility::VISIBLE)
+            ->setParameter('hidden', AccountGroupProductVisibility::HIDDEN)
+            ->setParameter('cacheVisible', BaseProductVisibilityResolved::VISIBILITY_VISIBLE)
+            ->setParameter('cacheHidden', BaseProductVisibilityResolved::VISIBILITY_HIDDEN);
 
-        return $qb->update()
-            ->set('agpvr.visibility', $cacheVisibility)
-            ->set('agpvr.source', BaseProductVisibilityResolved::SOURCE_STATIC)
-            ->set('agpvr.categoryId', ':category_id')
-            ->setParameter('category_id', null)
-            ->where($this->getWhereExpr($qb))
-            ->setParameter('visibility', $baseVisibility)
-            ->getQuery()
-            ->execute();
-    }
-
-    /**
-     * @param $visibility
-     */
-    public function deleteByVisibility($visibility)
-    {
-        $qb = $this->createQueryBuilder('agpvr');
-        $qb->delete()
-            ->where($this->getWhereExpr($qb))
-            ->setParameter('visibility', $visibility)
-            ->getQuery()
-            ->execute();
+        $insertFromSelect->execute(
+            $this->getClassName(),
+            [
+                'website',
+                'product',
+                'accountGroup',
+                'visibility',
+                'source',
+            ],
+            $queryBuilder
+        );
     }
 
     /**
@@ -97,49 +109,5 @@ class AccountGroupProductVisibilityResolvedRepository extends EntityRepository
             ->delete()
             ->getQuery()
             ->execute();
-    }
-
-    /**
-     * @param QueryBuilder $qb
-     * @return \Doctrine\ORM\Query\Expr\Andx
-     */
-    protected function getWhereExpr(QueryBuilder $qb)
-    {
-        return $qb->expr()->andX(
-            $qb->expr()->in(
-                'IDENTITY(agpvr.product)',
-                $this->getEntityManager()->createQueryBuilder()
-                    ->select('IDENTITY(agpv_1.product)')
-                    ->from('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility', 'agpv_1')
-                    ->where('IDENTITY(agpv_1.product) = IDENTITY(agpvr.product)')
-                    ->andWhere('IDENTITY(agpv_1.website) = IDENTITY(agpvr.website)')
-                    ->andWhere('IDENTITY(agpv_1.accountGroup) = IDENTITY(agpvr.accountGroup)')
-                    ->andWhere('agpv_1.visibility = :visibility')
-                    ->getQuery()
-                    ->getDQL()
-            ),
-            $qb->expr()->in(
-                'IDENTITY(agpvr.website)',
-                $this->getEntityManager()->createQueryBuilder()
-                    ->select('IDENTITY(agpv_2.website)')
-                    ->from('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility', 'agpv_2')
-                    ->where('IDENTITY(agpv_2.product) = IDENTITY(agpvr.product)')
-                    ->andWhere('IDENTITY(agpv_2.website) = IDENTITY(agpvr.website)')
-                    ->andWhere('IDENTITY(agpv_2.accountGroup) = IDENTITY(agpvr.accountGroup)')
-                    ->getQuery()
-                    ->getDQL()
-            ),
-            $qb->expr()->in(
-                'IDENTITY(agpvr.accountGroup)',
-                $this->getEntityManager()->createQueryBuilder()
-                    ->select('IDENTITY(agpv_3.accountGroup)')
-                    ->from('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility', 'agpv_3')
-                    ->where('IDENTITY(agpv_3.product) = IDENTITY(agpvr.product)')
-                    ->andWhere('IDENTITY(agpv_3.website) = IDENTITY(agpvr.website)')
-                    ->andWhere('IDENTITY(agpv_3.accountGroup) = IDENTITY(agpvr.accountGroup)')
-                    ->getQuery()
-                    ->getDQL()
-            )
-        );
     }
 }

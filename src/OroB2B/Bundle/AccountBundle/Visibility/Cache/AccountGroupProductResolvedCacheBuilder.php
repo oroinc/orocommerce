@@ -116,15 +116,7 @@ class AccountGroupProductResolvedCacheBuilder implements CacheBuilderInterface
                     $accountGroupId
                 );
             }
-            $this->getRepository()->deleteByVisibility(AccountGroupProductVisibility::CURRENT_PRODUCT);
-            $this->getRepository()->updateFromBaseTable(
-                BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
-                AccountGroupProductVisibility::VISIBLE
-            );
-            $this->getRepository()->updateFromBaseTable(
-                BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
-                AccountGroupProductVisibility::HIDDEN
-            );
+            $this->getRepository()->insertStatic($this->insertFromSelectExecutor);
             $this->getManager()->commit();
         } catch (\Exception $exception) {
             $this->getManager()->rollback();
@@ -157,9 +149,9 @@ class AccountGroupProductResolvedCacheBuilder implements CacheBuilderInterface
         // temporary
         /** @var Category[] $categories */
         $categories = $this->doctrine
-            ->getManagerForClass('OroB2BCatalogBundle:Category')
-            ->getRepository('OroB2BCatalogBundle:Category')
-            ->getPartialCategories();
+            ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
+            ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
+            ->getCategoriesByAccountGroupProductVisibility();
 
         $accountGroups = $this->doctrine
             ->getManagerForClass('OroB2BAccountBundle:AccountGroup')

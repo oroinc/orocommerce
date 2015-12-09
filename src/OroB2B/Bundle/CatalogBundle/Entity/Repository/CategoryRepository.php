@@ -108,16 +108,4 @@ class CategoryRepository extends NestedTreeRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
-
-    /**
-     * @return Category[]
-     */
-    public function getPartialCategories()
-    {
-        return $this
-            ->createQueryBuilder('category')
-            ->select('partial category.{id}')
-            ->getQuery()
-            ->getResult();
-    }
 }

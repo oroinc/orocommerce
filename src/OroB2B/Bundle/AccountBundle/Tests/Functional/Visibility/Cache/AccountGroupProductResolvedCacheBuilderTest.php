@@ -9,7 +9,9 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupProductVisibilityResolvedRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\AccountGroupProductResolvedCacheBuilder;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
  * @dbIsolation
@@ -42,20 +44,27 @@ class AccountGroupProductResolvedCacheBuilderTest extends WebTestCase
 
     public function testBuildCache()
     {
-        $this->getContainer()->get('doctrine')
-            ->getManager()
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved')
-            ->findAll();
+        $agpv = $this->getContainer()->get('doctrine')
+            ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
+            ->findOneBy(
+                [
+                    'product' => $this->getReference(LoadProductData::PRODUCT_1),
+                    'accountGroup' => $this->getReference(LoadGroups::GROUP1),
+                ]
+            );
+        $agpv->setVisibility(AccountGroupProductVisibility::CATEGORY);
+        $this->getContainer()->get('doctrine')->getManager()->flush();
+
         $this->cacheBuilder->buildCache();
 
-        $this->assertCount(36, $this->getRepository()->findAll());
+        $this->assertCount(4, $this->getRepository()->findAll());
 
         $this->assertCount(
             3,
             $this->getRepository()->findBy(['source' => BaseProductVisibilityResolved::SOURCE_STATIC])
         );
         $this->assertCount(
-            33,
+            1,
             $this->getRepository()->findBy(['source' => BaseProductVisibilityResolved::SOURCE_CATEGORY])
         );
     }
