@@ -1,8 +1,9 @@
 parameters:
+    orob2b_tax.entity.abstract_tax_code.class: OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode
     orob2b_tax.entity.product_tax_code.class: OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode
     orob2b_tax.entity.account_tax_code.class: OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode
-    orob2b_tax.autocomplete.product_tax_code.search_handle.class: OroB2B\Bundle\TaxBundle\Autocomplete\ProductTaxCodeSearchHandler
-    orob2b_tax.autocomplete.account_tax_code.search_handle.class: OroB2B\Bundle\TaxBundle\Autocomplete\AccountTaxCodeSearchHandler
+
+    orob2b_tax.event_listener.form_view.class: OroB2B\Bundle\TaxBundle\EventListener\FormViewListener
 
     orob2b_tax.product_tax_code.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_tax.account_tax_code.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
@@ -20,21 +21,33 @@ services:
         arguments:
             - %orob2b_tax.entity.account_tax_code.class%
             - @doctrine.orm.entity_manager
-            
+
     orob2b_tax.form.autocomplete.product_tax_code.search_handler:
         parent: oro_form.autocomplete.search_handler
         arguments:
             - %orob2b_tax.entity.product_tax_code.class%
-            - ["id"]
+            - ["code"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: orob2b_product_tax_code, acl_resource: orob2b_product_tax_code_view }
+            - { name: oro_form.autocomplete.search_handler, alias: orob2b_product_tax_code_autocomplete_handler }
         lazy: true
 
     orob2b_tax.form.autocomplete.account_tax_code.search_handler:
         parent: oro_form.autocomplete.search_handler
         arguments:
             - %orob2b_tax.entity.account_tax_code.class%
-            - ["id"]
+            - ["code"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: orob2b_account_tax_code, acl_resource: orob2b_account_tax_code_view }
+            - { name: oro_form.autocomplete.search_handler, alias: orob2b_account_tax_code_autocomplete_handler }
         lazy: true
+
+    orob2b_tax.event_listener.form_view:
+        class: %orob2b_tax.event_listener.form_view.class%
+        arguments:
+            - @translator
+            - @oro_entity.doctrine_helper
+            - @request_stack
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onProductView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onAccountView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-edit, method: onAccountEdit }

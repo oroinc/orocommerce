@@ -14,27 +14,27 @@ services:
         tags:
             - { name: form.type, alias: orob2b_tax_tax_code_type }
 
-    orob2b_tax.form.type.product_tax_code:
+    orob2b_tax.form.type.product_tax_code_autocomplete:
         class: %orob2b_tax.form.type.product_tax_code.class%
         tags:
-            - { name: form.type, alias: orob2b_product_tax_code }
+            - { name: form.type, alias: orob2b_product_tax_code_autocomplete }
 
-    orob2b_tax.form.type.account_tax_code:
+    orob2b_tax.form.type.account_tax_code_autocomplete:
         class: %orob2b_tax.form.type.account_tax_code.class%
         tags:
-            - { name: form.type, alias: orob2b_account_tax_code }
+            - { name: form.type, alias: orob2b_account_tax_code_autocomplete }
 
-    orob2b_catalog.form.extension.product_tax:
+    orob2b_tax.form.extension.product_tax:
         class: %orob2b_tax.form.extension.product_tax.class%
         arguments:
-            - @doctrine
+            - @oro_entity.doctrine_helper
         tags:
             - { name: form.type_extension, alias: orob2b_product }
 
-    orob2b_catalog.form.extension.account_tax:
+    orob2b_tax.form.extension.account_tax:
         class: %orob2b_tax.form.extension.account_tax.class%
         arguments:
-            - @doctrine
+            - @oro_entity.doctrine_helper
         tags:
             - { name: form.type_extension, alias: orob2b_account }
 

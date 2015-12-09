@@ -9,7 +9,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository")
  * @ORM\Table(name="orob2b_tax_account_tax_code")
  * @ORM\HasLifecycleCallbacks
  * @Config(

@@ -2,12 +2,13 @@
 
 namespace OroB2B\Bundle\TaxBundle\Form\Type;
 
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\OroAutocompleteType;
-use OroB2B\Bundle\TaxBundle\Entity\AccountTax;
+use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
 
 class AccountTaxCodeAutocompleteType extends AbstractType
 {
@@ -37,22 +38,24 @@ class AccountTaxCodeAutocompleteType extends AbstractType
     {
         $resolver->setDefaults(
             [
+                'autocomplete_alias' => 'orob2b_account_tax_code_autocomplete_handler',
                 'autocomplete' => [
-                    'route_name' => 'orob2b_account_tax_autocomplete_search',
+                    'route_name' => 'oro_form_autocomplete_search',
                     'route_parameters' => [
-                        'name' => 'orob2b_account_tax_visibility_limited',
+                        'name' => 'orob2b_account_tax_code_autocomplete_handler',
                     ],
                     'selection_template_twig' =>
-                        'OroB2BTaxBundle:Autocomplete:account_tax_autocomplete_selection.html.twig',
-                    'componentModule' => 'orob2btax/js/app/components/account-tax-autocomplete-component',
+                        'OroB2BTaxBundle:Autocomplete:tax_code_autocomplete_selection.html.twig',
+                    //'componentModule' => 'orob2btax/js/app/components/tax-code-autocomplete-component',
+                    'componentModule' => 'oro/autocomplete-component',
                 ],
-                'account_tax' => null,
-                'account_tax_field' => 'account_tax',
+                'account_tax_code' => null,
+                'account_tax_code_field' => 'taxCode',
             ]
         );
 
-        $resolver->setAllowedTypes('account_tax', ['OroB2B\Bundle\TaxBundle\Entity\AccountTax', 'null']);
-        $resolver->setAllowedTypes('account_tax_field', 'string');
+        $resolver->setAllowedTypes('account_tax_code', ['OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode', 'null']);
+        $resolver->setAllowedTypes('account_tax_code_field', 'string');
     }
 
     /**
@@ -60,51 +63,41 @@ class AccountTaxCodeAutocompleteType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $productTax = $this->getAccountTaxFromFormOrView($form, $view);
+        $accountTax = $this->getAccountTaxFromFormOrView($form, $view);
 
-        if ($productTax) {
-            $view->vars['componentOptions']['productTax'] = [
-                'id' => $productTax->getId(),
-                'description' => $productTax->getDescription(),
+        if ($accountTax) {
+            $view->vars['componentOptions']['accountTax'] = [
+                'id' => $accountTax->getId(),
+                'description' => $accountTax->getDescription(),
             ];
         }
     }
 
     /**
      * @param FormInterface $form
-     * @return null|AccountTax
+     * @return null|AccountTaxCode
      */
     protected function getAccountTax(FormInterface $form)
     {
         $options = $form->getConfig()->getOptions();
-        $productTaxField = $options['account_tax_field'];
+        $accountTaxField = $options['account_tax_field'];
 
         $parent = $form->getParent();
-        while ($parent && !$parent->has($productTaxField)) {
+        while ($parent && !$parent->has($accountTaxField)) {
             $parent = $parent->getParent();
         }
 
-        if ($parent && $parent->has($productTaxField)) {
-            $productTaxData = $parent->get($productTaxField)->getData();
-            if ($productTaxData instanceof AccountTax) {
-                return $productTaxData;
-            }
-
-            if ($productTaxData instanceof AccountTaxHolderInterface) {
-                return $productTaxData->getAccountTax();
+        if ($parent && $parent->has($accountTaxField)) {
+            $accountTaxData = $parent->get($accountTaxField)->getData();
+            if ($accountTaxData instanceof AccountTaxCode) {
+                return $accountTaxData;
             }
         }
 
-        /** @var AccountTax $product */
-        $productTax = $options['account_tax'];
-        if ($productTax) {
-            return $productTax;
-        }
-
-        /** @var AccountTaxHolderInterface $productTaxHolder */
-        $productTaxHolder = $options['account_tax_holder'];
-        if ($productTaxHolder) {
-            return $productTaxHolder->getAccountTax();
+        /** @var AccountTaxCode $account */
+        $accountTax = $options['account_tax_code'];
+        if ($accountTax) {
+            return $accountTax;
         }
 
         return null;
@@ -112,41 +105,40 @@ class AccountTaxCodeAutocompleteType extends AbstractType
 
     /**
      * @param FormView $view
-     * @return null|AccountTax
+     * @return null|AccountTaxCode
      */
     protected function getAccountTaxFromView(FormView $view)
     {
-        $productTax = null;
+        $accountTax = null;
 
-        if (isset($view->vars['account_tax']) && $view->vars['account_tax']) {
-            $productTax = $view->vars['account_tax'];
+        if (isset($view->vars['account_tax_code']) && $view->vars['account_tax_code']) {
+            $accountTax = $view->vars['account_tax_code'];
         } else {
             $parent = $view->parent;
-            while ($parent && !isset($parent->vars['account_tax'])) {
+            while ($parent && !isset($parent->vars['account_tax_code'])) {
                 $parent = $parent->parent;
             }
 
-            if ($parent && isset($parent->vars['account_tax']) && $parent->vars['account_tax']) {
-                $productTax = $parent->vars['account_tax'];
+            if ($parent && isset($parent->vars['account_tax_code']) && $parent->vars['account_tax_code']) {
+                $accountTax = $parent->vars['account_tax_code'];
             }
         }
 
-        return $productTax;
+        return $accountTax;
     }
 
     /**
      * @param FormInterface $form
      * @param FormView $view
-     * @return null|AccountTax
+     * @return null|AccountTaxCode
      */
     protected function getAccountTaxFromFormOrView(FormInterface $form, FormView $view)
     {
-        $productTax = $this->getAccountTax($form);
-        if (!$productTax) {
-            $productTax = $this->getAccountTaxFromView($view);
+        $accountTax = $this->getAccountTax($form);
+        if (!$accountTax) {
+            $accountTax = $this->getAccountTaxFromView($view);
         }
 
-        return $productTax;
+        return $accountTax;
     }
-
 }

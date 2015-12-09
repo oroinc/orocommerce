@@ -25,3 +25,11 @@ orob2b.tax:
             saved.message: 'Account Tax Code has been saved'
         product_tax_code:
             saved.message: 'Product Tax Code has been saved'
+
+    product:
+        section:
+            taxes: 'Taxes'
+
+    account:
+        section:
+            taxes: 'Taxes'

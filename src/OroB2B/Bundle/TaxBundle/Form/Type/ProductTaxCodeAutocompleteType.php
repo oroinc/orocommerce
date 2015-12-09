@@ -2,13 +2,13 @@
 
 namespace OroB2B\Bundle\TaxBundle\Form\Type;
 
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\OroAutocompleteType;
-use OroB2B\Bundle\TaxBundle\Entity\ProductTax;
-use OroB2B\Bundle\TaxBundle\Model\ProductTaxHolderInterface;
+use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
 
 class ProductTaxCodeAutocompleteType extends AbstractType
 {
@@ -38,19 +38,24 @@ class ProductTaxCodeAutocompleteType extends AbstractType
     {
         $resolver->setDefaults(
             [
+                'autocomplete_alias' => 'orob2b_product_tax_code_autocomplete_handler',
                 'autocomplete' => [
                     'route_name' => 'oro_form_autocomplete_search',
+                    'route_parameters' => [
+                        'name' => 'orob2b_product_tax_code_autocomplete_handler',
+                    ],
                     'selection_template_twig' =>
-                        'OroB2BTaxBundle:Autocomplete:product_tax_autocomplete_selection.html.twig',
-                    'componentModule' => 'orob2btax/js/app/components/product-tax-autocomplete-component',
+                        'OroB2BTaxBundle:Autocomplete:tax_code_autocomplete_selection.html.twig',
+                    //'componentModule' => 'orob2btax/js/app/components/tax-code-autocomplete-component',
+                    'componentModule' => 'oro/autocomplete-component',
                 ],
-                'product_tax' => null,
-                'product_tax_field' => 'product_tax',
+                'product_tax_code' => null,
+                'product_tax_code_field' => 'taxCode',
             ]
         );
 
-        $resolver->setAllowedTypes('product_tax', ['OroB2B\Bundle\TaxBundle\Entity\ProductTax', 'null']);
-        $resolver->setAllowedTypes('product_tax_field', 'string');
+        $resolver->setAllowedTypes('product_tax_code', ['OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode', 'null']);
+        $resolver->setAllowedTypes('product_tax_code_field', 'string');
     }
 
     /**
@@ -70,12 +75,12 @@ class ProductTaxCodeAutocompleteType extends AbstractType
 
     /**
      * @param FormInterface $form
-     * @return null|ProductTax
+     * @return null|ProductTaxCode
      */
     protected function getProductTax(FormInterface $form)
     {
         $options = $form->getConfig()->getOptions();
-        $productTaxField = $options['product_tax_field'];
+        $productTaxField = $options['product_tax_code_field'];
 
         $parent = $form->getParent();
         while ($parent && !$parent->has($productTaxField)) {
@@ -84,25 +89,15 @@ class ProductTaxCodeAutocompleteType extends AbstractType
 
         if ($parent && $parent->has($productTaxField)) {
             $productTaxData = $parent->get($productTaxField)->getData();
-            if ($productTaxData instanceof ProductTax) {
+            if ($productTaxData instanceof ProductTaxCode) {
                 return $productTaxData;
             }
-
-            if ($productTaxData instanceof ProductTaxHolderInterface) {
-                return $productTaxData->getProductTax();
-            }
         }
 
-        /** @var ProductTax $product */
-        $productTax = $options['product_tax'];
+        /** @var ProductTaxCode $product */
+        $productTax = $options['product_tax_code'];
         if ($productTax) {
             return $productTax;
-        }
-
-        /** @var ProductTaxHolderInterface $productTaxHolder */
-        $productTaxHolder = $options['product_tax_holder'];
-        if ($productTaxHolder) {
-            return $productTaxHolder->getProductTax();
         }
 
         return null;
@@ -110,22 +105,22 @@ class ProductTaxCodeAutocompleteType extends AbstractType
 
     /**
      * @param FormView $view
-     * @return null|ProductTax
+     * @return null|ProductTaxCode
      */
     protected function getProductTaxFromView(FormView $view)
     {
         $productTax = null;
 
-        if (isset($view->vars['product_tax']) && $view->vars['product_tax']) {
-            $productTax = $view->vars['product_tax'];
+        if (isset($view->vars['product_tax_code']) && $view->vars['product_tax_code']) {
+            $productTax = $view->vars['product_tax_code'];
         } else {
             $parent = $view->parent;
-            while ($parent && !isset($parent->vars['product_tax'])) {
+            while ($parent && !isset($parent->vars['product_tax_code'])) {
                 $parent = $parent->parent;
             }
 
-            if ($parent && isset($parent->vars['product_tax']) && $parent->vars['product_tax']) {
-                $productTax = $parent->vars['product_tax'];
+            if ($parent && isset($parent->vars['product_tax_code']) && $parent->vars['product_tax_code']) {
+                $productTax = $parent->vars['product_tax_code'];
             }
         }
 
@@ -135,7 +130,7 @@ class ProductTaxCodeAutocompleteType extends AbstractType
     /**
      * @param FormInterface $form
      * @param FormView $view
-     * @return null|ProductTax
+     * @return null|ProductTaxCode
      */
     protected function getProductTaxFromFormOrView(FormInterface $form, FormView $view)
     {
@@ -146,5 +141,4 @@ class ProductTaxCodeAutocompleteType extends AbstractType
 
         return $productTax;
     }
-
 }
