@@ -17,6 +17,10 @@ class ProductDataStorageSessionBagPass implements CompilerPassInterface
             return;
         }
 
+        if (!$container->hasDefinition('orob2b_product.storage.product_data_bag')) {
+            return;
+        }
+
         $container->getDefinition('session')->addMethodCall(
             'registerBag',
             [new Reference('orob2b_product.storage.product_data_bag')]

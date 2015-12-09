@@ -10,7 +10,7 @@ abstract class AbstractDataStorage
      */
     protected function prepareData(array $data)
     {
-        return json_encode($data);
+        return (string)json_encode($data);
     }
 
     /**
