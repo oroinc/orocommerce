@@ -47,7 +47,7 @@ class ProductControllerTest extends BaseTest
         $count = count($expected);
         $this->assertCount($count, $result['data']);
         foreach ($result['data'] as $data) {
-            $this->assertContains($data['name'], $expected);
+            $this->assertContains($data['sku'], $expected);
         }
     }
 

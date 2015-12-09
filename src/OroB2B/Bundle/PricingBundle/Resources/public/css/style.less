@@ -1,7 +1,6 @@
 @import "../../oroui/css/less/mixins";
 
-.product-price-collection
-{
+.product-price-collection {
   input[type="text"].quantity,
   input[type="text"].price-value,
   .entity-create-or-select-container {
@@ -98,4 +97,56 @@
     float: right;
     margin-bottom: 4px;
   }
+}
+
+.pricing-price-list {
+  .add-list-item {
+    margin-top: 10px;
+  }
+
+  table {
+    width: auto;
+  }
+
+  td {
+    vertical-align: top;
+  }
+
+  td span.validation-failed {
+    white-space: nowrap;
+    width: 50px;
+  }
+
+  .entity-select-btn {
+    display: inline-block;
+    float: none;
+  }
+
+  input.priority {
+    width: 50px !important;
+  }
+
+  .select2-container.error {
+    border-color: red;
+  }
+
+  .removeRow:after{
+    text-indent: 6px;
+  }
+
+  .controls {
+    margin-left: 10px !important;
+  }
+}
+
+.price-list-grid-form {
+  width: 463px;
+}
+
+.price-list-collection-as-widget {
+  padding: 0 10px 10px 10px;
+}
+
+.tab-content > .tab-pane.price-list-by-account-grid {
+  padding: 0 20px;
 }

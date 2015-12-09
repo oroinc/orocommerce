@@ -27,6 +27,12 @@ class LocalizedFallbackValueCollectionNormalizer extends CollectionNormalizer
     /** @var Locale */
     protected $locale;
 
+    /** @var Locale[] */
+    protected $locales = [];
+
+    /** @var bool[] */
+    protected $isApplicable = [];
+
     /**
      * @param ManagerRegistry $registry
      * @param string $localizedFallbackValueClass
@@ -42,18 +48,13 @@ class LocalizedFallbackValueCollectionNormalizer extends CollectionNormalizer
         $this->locale = new $localeClass;
     }
 
-    /**
-     * @param LocalizedFallbackValue $object
-     *
-     * {@inheritdoc}
-     */
+    /** {@inheritdoc} */
     public function normalize($object, $format = null, array $context = [])
     {
         $result = [];
 
-        /** @var LocalizedFallbackValue $item */
         foreach ($object as $item) {
-            $result[LocaleCodeFormatter::format($item->getLocale())] = [
+            $result[LocaleCodeFormatter::formatName($item->getLocale())] = [
                 'fallback' => $item->getFallback(),
                 'string' => $item->getString(),
                 'text' => $item->getText(),
@@ -79,9 +80,11 @@ class LocalizedFallbackValueCollectionNormalizer extends CollectionNormalizer
             $object = clone $this->value;
 
             if ($localeCode !== LocaleCodeFormatter::DEFAULT_LOCALE) {
-                $locale = clone $this->locale;
-                $locale->setCode($localeCode);
-                $object->setLocale($locale);
+                if (!array_key_exists($localeCode, $this->locales)) {
+                    $this->locales[$localeCode] = clone $this->locale;
+                    $this->locales[$localeCode]->setCode($localeCode);
+                }
+                $object->setLocale($this->locales[$localeCode]);
             }
 
             if (array_key_exists('fallback', $item)) {
@@ -132,13 +135,23 @@ class LocalizedFallbackValueCollectionNormalizer extends CollectionNormalizer
 
         $className = $context['entityName'];
         $fieldName = $context['fieldName'];
+
+        $key = $className . ':' . $fieldName;
+        if (array_key_exists($key, $this->isApplicable)) {
+            return $this->isApplicable[$key];
+        }
+
         $metadata = $this->registry->getManagerForClass($className)->getClassMetadata($className);
         if (!$metadata->hasAssociation($fieldName)) {
+            $this->isApplicable[$key] = false;
+
             return false;
         }
 
         $targetClass = $metadata->getAssociationTargetClass($fieldName);
 
-        return is_a($targetClass, $this->localizedFallbackValueClass, true);
+        $this->isApplicable[$key] = is_a($targetClass, $this->localizedFallbackValueClass, true);
+
+        return $this->isApplicable[$key];
     }
 }
