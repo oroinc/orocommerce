@@ -34,10 +34,16 @@ class OffersFormStorageTest extends \PHPUnit_Framework_TestCase
             [[], []],
             [['test' => 'test'], []],
             [['offers_data' => 'test'], []],
-            [['offers_data' => 10], [10]],
-            [['offers_data' => '[{"productId":42,"qty":100}]'], [['productId' => 42, 'qty' => 100]]],
+            [['offers_data' => 10], []],
             [
-                ['offers_data' => '[{"productId":42,"qty":100}, {"productId":43,"qty":101}]'],
+                ['offers_data' => 'a:1:{i:0;a:2:{s:9:"productId";i:42;s:3:"qty";i:100;}}'],
+                [['productId' => 42, 'qty' => 100]],
+            ],
+            [
+                [
+                    'offers_data' => 'a:2:{i:0;a:2:{s:9:"productId";i:42;s:3:"qty";i:100;}' .
+                        'i:1;a:2:{s:9:"productId";i:43;s:3:"qty";i:101;}}',
+                ],
                 [['productId' => 42, 'qty' => 100], ['productId' => 43, 'qty' => 101]],
             ],
             [['offers_data' => '[{invalid_json:100}]'], []],
@@ -64,15 +70,15 @@ class OffersFormStorageTest extends \PHPUnit_Framework_TestCase
     public function rawDataDataProvider()
     {
         return [
-            [[null], '[null]'],
-            [['test'], '["test"]'],
-            [[10], '[10]'],
-            [[['productId' => 42, 'qty' => 100]], '[{"productId":42,"qty":100}]'],
+            [[null], 'a:1:{i:0;N;}'],
+            [['test'], 'a:1:{i:0;s:4:"test";}'],
+            [[10], 'a:1:{i:0;i:10;}'],
+            [[['productId' => 42, 'qty' => 100]], 'a:1:{i:0;a:2:{s:9:"productId";i:42;s:3:"qty";i:100;}}'],
             [
                 [['productId' => 42, 'qty' => 100], ['productId' => 43, 'qty' => 101]],
-                '[{"productId":42,"qty":100},{"productId":43,"qty":101}]',
+                'a:2:{i:0;a:2:{s:9:"productId";i:42;s:3:"qty";i:100;}i:1;a:2:{s:9:"productId";i:43;s:3:"qty";i:101;}}',
             ],
-            [[], '[]'],
+            [[], 'a:0:{}'],
         ];
     }
 }

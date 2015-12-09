@@ -10,15 +10,19 @@ abstract class AbstractDataStorage
      */
     protected function prepareData(array $data)
     {
-        return (string)json_encode($data);
+        return serialize($data);
     }
 
     /**
      * @param string $rowData
      * @return array
+     *
+     * Use serialize to avoid dates and models management
      */
     protected function parseData($rowData)
     {
-        return (array)json_decode($rowData, true);
+        $data = @unserialize($rowData);
+
+        return $data !== false && is_array($data) ? $data : [];
     }
 }

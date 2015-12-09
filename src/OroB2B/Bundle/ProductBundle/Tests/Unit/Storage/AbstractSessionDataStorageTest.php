@@ -50,7 +50,7 @@ class AbstractSessionDataStorageTest extends \PHPUnit_Framework_TestCase
 
         $this->sessionBag->expects($this->once())
             ->method('set')
-            ->with($this->isType('string'), json_encode($data));
+            ->with($this->isType('string'), serialize($data));
 
         $this->storage->set($data);
     }
@@ -81,13 +81,13 @@ class AbstractSessionDataStorageTest extends \PHPUnit_Framework_TestCase
         return [
             [null, []],
             ['test', []],
-            [10, [10]],
-            ['[{"productId":42,"qty":100}]', [['productId' => 42, 'qty' => 100]]],
+            [10, []],
+            ['a:1:{i:0;a:2:{s:9:"productId";i:42;s:3:"qty";i:100;}}', [['productId' => 42, 'qty' => 100]]],
             [
-                '[{"productId":42,"qty":100}, {"productId":43,"qty":101}]',
+                'a:2:{i:0;a:2:{s:9:"productId";i:42;s:3:"qty";i:100;}i:1;a:2:{s:9:"productId";i:43;s:3:"qty";i:101;}}',
                 [['productId' => 42, 'qty' => 100], ['productId' => 43, 'qty' => 101]],
             ],
-            ['[{invalid_json:100}]', []],
+            ['[{invalid_serialized:100}]', []],
             [false, []],
             ['', []],
             ['[]', []],
