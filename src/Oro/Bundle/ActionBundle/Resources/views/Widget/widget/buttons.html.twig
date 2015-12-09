@@ -11,7 +11,7 @@
             'dialogUrl': dialogUrl
         }) %}
 
-        {% set template = params.template|default('OroActionBundle::Action/button.html.twig') %}
+        {% set template = params.template|default('OroActionBundle:Action:button.html.twig') %}
         {% set groupName = action.definition.frontendOptions.group|default(null) %}
         {% if groupName %}
             {% set link %}
