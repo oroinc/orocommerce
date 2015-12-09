@@ -13,7 +13,7 @@ parameters:
     orob2b_product.service.duplicator.class: OroB2B\Bundle\ProductBundle\Duplicator\ProductDuplicator
     orob2b_product.service.sku_incrementor.class: OroB2B\Bundle\ProductBundle\Duplicator\SkuIncrementor
     orob2b_product.service.product_update_handler.class: OroB2B\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler
-    orob2b_product.service.product_data_storage.class: OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage
+    orob2b_product.storage.product_data_storage.class: OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage
     orob2b_product.validator.product_by_sku.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator
     orob2b_product.provider.custom_field_provider.class: OroB2B\Bundle\ProductBundle\Provider\CustomFieldProvider
     orob2b_product.provider.product_status_provider.class: OroB2B\Bundle\ProductBundle\Provider\ProductStatusProvider
@@ -33,7 +33,6 @@ parameters:
 
     orob2b_product.event_listener.product_grid_widget.class: OroB2B\Bundle\ProductBundle\EventListener\ProductGridWidgetRenderEventListener
     orob2b_product.event_listener.command.platform_update.class: OroB2B\Bundle\ProductBundle\EventListener\PlatformUpdateCommandListener
-    orob2b_product.event_listener.product_data_storage.class: OroB2B\Bundle\ProductBundle\EventListener\ProductDataStorageEventListener
 
     orob2b_product.menu.frontend.quick_add.class: OroB2B\Bundle\ProductBundle\Menu\Frontend\QuickAddMenuBuilder
 
@@ -111,10 +110,23 @@ services:
             - [setUrlGenerator, [@router]]
             - [setTranslator, [@translator]]
 
-    orob2b_product.service.product_data_storage:
-        class: %orob2b_product.service.product_data_storage.class%
+    orob2b_product.storage.product_data_bag:
+        class: %session.attribute_bag.class%
+        public: false
+        arguments:
+            - '_product_data_bag'
+        calls:
+            - [setName, ['product_data_bag']]
+
+    orob2b_product.storage.session_data_storage:
+        class: %orob2b_product.storage.product_data_storage.class%
+        abstract: true
         arguments:
             - @session
+
+    orob2b_product.storage.product_data_storage:
+        class: %orob2b_product.storage.product_data_storage.class%
+        parent: orob2b_product.storage.session_data_storage
 
     orob2b_product.validator.product_by_sku:
             class: %orob2b_product.validator.product_by_sku.class%
@@ -138,7 +150,7 @@ services:
         class: %orob2b_product.component_processor.data_storage_aware.processor.class%
         arguments:
             - @router
-            - @orob2b_product.service.product_data_storage
+            - @orob2b_product.storage.product_data_storage
             - @oro_security.security_facade
             - @session
             - @translator
@@ -212,13 +224,6 @@ services:
             - @oro_entity_config.config_model_manager
         tags:
             - { name: kernel.event_listener, event: console.command, name: onConsoleCommand }
-
-    orob2b_product.event_listener.product_data_storage:
-        class: %orob2b_product.event_listener.product_data_storage.class%
-        arguments:
-            - @orob2b_product.service.product_data_storage
-        tags:
-            - { name: kernel.event_listener, event: kernel.request }
 
     orob2b_product.model.product_visibility_query_builder_modifier:
         class: %orob2b_product.model.product_visibility_query_builder_modifier.class%

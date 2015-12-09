@@ -35,7 +35,7 @@ class QuoteController extends Controller
     protected function saveToStorage(RFPRequest $rfpRequest)
     {
         /** @var ProductDataStorage $storage */
-        $storage = $this->get('orob2b_product.service.product_data_storage');
+        $storage = $this->get('orob2b_product.storage.product_data_storage');
 
         $data = [
             ProductDataStorage::ENTITY_DATA_KEY => [

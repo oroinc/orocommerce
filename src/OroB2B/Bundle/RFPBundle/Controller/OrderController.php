@@ -11,7 +11,6 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
-use OroB2B\Bundle\RFPBundle\Form\Extension\OrderDataStorageExtension;
 
 class OrderController extends Controller
 {
@@ -27,21 +26,22 @@ class OrderController extends Controller
     {
         $data = [ProductDataStorage::ENTITY_DATA_KEY => $this->getEntityData($request)];
 
+        $offers = [];
         foreach ($request->getRequestProducts() as $lineItem) {
             $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = [
                 ProductDataStorage::PRODUCT_SKU_KEY => $lineItem->getProduct()->getSku(),
                 'comment' => $lineItem->getComment(),
             ];
 
-            $offers = [];
+            $itemOffers = [];
             foreach ($lineItem->getRequestProductItems() as $productItem) {
-                $offers[] = $this->getOfferData($productItem);
+                $itemOffers[] = $this->getOfferData($productItem);
             }
-
-            $data[OrderDataStorageExtension::OFFERS_DATA_KEY][] = $offers;
+            $offers[] = $itemOffers;
         }
 
-        $this->get('orob2b_product.service.product_data_storage')->set($data);
+        $this->get('orob2b_product.storage.product_data_storage')->set($data);
+        $this->get('orob2b_rfp.storage.offers_data_storage')->set($offers);
 
         return $this->redirectToRoute('orob2b_order_create', [ProductDataStorage::STORAGE_KEY => true]);
     }

@@ -79,22 +79,13 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
     {
         if ($this->requestStack->getCurrentRequest()->get(ProductDataStorage::STORAGE_KEY)) {
             $builder->addEventListener(
-                FormEvents::POST_SET_DATA,
+                FormEvents::PRE_SET_DATA,
                 function (FormEvent $event) {
                     $entity = $event->getData();
                     if ($entity instanceof $this->dataClass
                         && !$this->doctrineHelper->getSingleEntityIdentifier($entity)
                     ) {
                         $this->fillData($entity);
-                    }
-                }
-            );
-            $builder->addEventListener(
-                FormEvents::POST_SUBMIT,
-                function (FormEvent $event) {
-                    $form = $event->getForm();
-                    if ($form->isValid()) {
-                        $this->storage->remove();
                     }
                 }
             );
@@ -107,6 +98,7 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
     protected function fillData($entity)
     {
         $data = $this->storage->get();
+        $this->storage->remove();
 
         if (!$data) {
             return;

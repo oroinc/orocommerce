@@ -8,6 +8,9 @@ parameters:
     orob2b_rfp.mailer.processor.class: OroB2B\Bundle\RFPBundle\Mailer\Processor
 
     orob2b_rfp.event_listener.request_frontend_datagrid.class: OroB2B\Bundle\RFPBundle\EventListener\RequestFrontendDatagridListener
+    orob2b_rfp.storage.offers_data_storage.class: OroB2B\Bundle\RFPBundle\Storage\OffersDataStorage
+    orob2b_rfp.storage.offers_form_storage.class: OroB2B\Bundle\RFPBundle\Storage\OffersFormStorage
+
 services:
     orob2b_rfp.datagrid.action_permission_provider:
         class: %orob2b_rfp.datagrid.action_permission_provider.class%
@@ -47,3 +50,10 @@ services:
             - [setBackendSystemConfigurationPath, ['oro_b2b_rfp.backend_product_visibility']]
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
+
+    orob2b_rfp.storage.offers_data_storage:
+        class: %orob2b_rfp.storage.offers_data_storage.class%
+        parent: orob2b_product.storage.session_data_storage
+
+    orob2b_rfp.storage.offers_form_storage:
+        class: %orob2b_rfp.storage.offers_form_storage.class%

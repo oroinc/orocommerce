@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Storage;
 
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
@@ -18,10 +19,17 @@ class ProductDataStorageTest extends \PHPUnit_Framework_TestCase
      */
     protected $storage;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|AttributeBagInterface
+     */
+    protected $sessionBag;
+
     protected function setUp()
     {
         $this->session = $this->getMock('Symfony\Component\HttpFoundation\Session\SessionInterface');
-        $this->storage = new ProductDataStorage($this->session);
+        $this->sessionBag = $this->getMock('Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface');
+        $this->session->expects($this->atMost(1))->method('getBag')->willReturn($this->sessionBag);
+        $this->storage = new ProductDataStorage($this->session, $this->sessionBag);
     }
 
     protected function tearDown()
@@ -29,20 +37,13 @@ class ProductDataStorageTest extends \PHPUnit_Framework_TestCase
         unset($this->storage, $this->session);
     }
 
-    public function testInvoked()
-    {
-        $this->assertFalse($this->storage->isInvoked());
-        $this->storage->get();
-        $this->assertTrue($this->storage->isInvoked());
-    }
-
     public function testSet()
     {
         $data = [['productId' => 42, 'qty' => 100]];
 
-        $this->session->expects($this->once())
+        $this->sessionBag->expects($this->once())
             ->method('set')
-            ->with(ProductDataStorage::PRODUCT_DATA_KEY, serialize($data));
+            ->with(ProductDataStorage::PRODUCT_DATA_KEY, json_encode($data));
 
         $this->storage->set($data);
     }
@@ -55,12 +56,12 @@ class ProductDataStorageTest extends \PHPUnit_Framework_TestCase
      */
     public function testGet($storageData, array $expectedData)
     {
-        $this->session->expects($this->once())
+        $this->sessionBag->expects($this->once())
             ->method('get')
             ->with(ProductDataStorage::PRODUCT_DATA_KEY)
             ->willReturn($storageData);
 
-        $this->session->expects($this->once())->method('has')->willReturn(true);
+        $this->sessionBag->expects($this->once())->method('has')->willReturn(true);
 
         $this->assertEquals($expectedData, $this->storage->get());
     }
@@ -73,16 +74,22 @@ class ProductDataStorageTest extends \PHPUnit_Framework_TestCase
         return [
             [null, []],
             ['test', []],
-            [10, []],
-            ['a:1:{i:0;a:2:{s:9:"productId";i:42;s:3:"qty";i:100;}}', [['productId' => 42, 'qty' => 100]]],
+            [10, [10]],
+            ['[{"productId":42,"qty":100}]', [['productId' => 42, 'qty' => 100]]],
+            [
+                '[{"productId":42,"qty":100}, {"productId":43,"qty":101}]',
+                [['productId' => 42, 'qty' => 100], ['productId' => 43, 'qty' => 101]],
+            ],
+            ['[{invalid_json:100}]', []],
+            [false, []],
         ];
     }
 
     public function testRemove()
     {
-        $this->session->expects($this->once())->method('has')->willReturn(true);
+        $this->sessionBag->expects($this->once())->method('has')->willReturn(true);
 
-        $this->session->expects($this->once())
+        $this->sessionBag->expects($this->once())
             ->method('remove')
             ->with(ProductDataStorage::PRODUCT_DATA_KEY);
 
@@ -91,16 +98,16 @@ class ProductDataStorageTest extends \PHPUnit_Framework_TestCase
 
     public function testNothingToRemove()
     {
-        $this->session->expects($this->once())->method('has')->willReturn(false);
-        $this->session->expects($this->never())->method('remove');
+        $this->sessionBag->expects($this->once())->method('has')->willReturn(false);
+        $this->sessionBag->expects($this->never())->method('remove');
 
         $this->storage->remove();
     }
 
     public function testNothingToGet()
     {
-        $this->session->expects($this->once())->method('has')->willReturn(false);
-        $this->session->expects($this->never())->method('get');
+        $this->sessionBag->expects($this->once())->method('has')->willReturn(false);
+        $this->sessionBag->expects($this->never())->method('get');
 
         $this->storage->get();
     }
