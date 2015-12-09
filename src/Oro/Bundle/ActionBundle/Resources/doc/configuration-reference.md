@@ -65,22 +65,23 @@ php app/console oro:action:configuration:validate
 Configuration Merging
 =====================
 
-All configurations merge in the boot bundles order. There are two step of merging process: overriding and extending.
+All configurations merge in the boot bundles order. There are two steps of merging process: overriding and extending.
 
 **Overriding**
 
-On this step application collect all configurations of each actions with same name and merge they to one configuration.
+On this step application collects all configurations of all actions with the same name and merge their to one
+configuration.
 Merging uses simple rules:
  * if node value is scalar - value will be replaced
- * if node value is array - this array will be complemented by values from second configuration
+ * if node value is array - this array will be complemented by values from the second configuration
  * if array node `replace` is exist on the same level and it contain original node name - value will be replaced
 
 After first step application knows about all actions and have only one configuration for each action.
 
 **Extending**
-On this step application collect configurations for all actions which contain `extends`. Then main action configuration,
-which specified in `extends`, copied and merged with configuration of original action. Merging use same way, which use
-`overriding` step (first and second rules).
+On this step application collects configurations for all actions which contain `extends`. Then main action 
+configuration, which specified in `extends`, copied and merged with configuration of original action. Merging use same 
+way, which use `overriding` step (first and second rules).
 
 Defining an Action
 ==================
@@ -287,7 +288,7 @@ Form Options Configuration
 These options will be passed to form type of action, they can contain options for form types of attributes that will be
 shown when user clicks action button.
 
-Single from configuration can be described with next configuration:
+Single form configuration can be described with next configuration:
 
 * **attribute_fields**
     *array*
@@ -324,13 +325,13 @@ Pre Conditions and Conditions Configuration
 * **conditions**
     Configuration of Conditions that must satisfy to allow action.
 
-It declares a tree structure of conditions that are applied on the Action Context to check is the Action could be
-performed. Single condition configuration contains alias - a unique name of condition and options.
+It declares a tree structure of conditions that are applied on the Action Context to check if the Action could be
+performed. Single condition configuration contains alias - a unique name of condition - and options.
 
 Optionally each condition can have a constraint message. All messages of not passed conditions will be shown to user
-when transition could not be performed.
+when action could not be performed.
 
-There are two types of conditions - preconditions and actually action conditions. Preconditions is used to check
+There are two types of conditions - preconditions and actually action conditions. Preconditions are using to check
 whether action should be allowed to show, and actual conditions used to check whether action can be done.
 
 Alias of condition starts from "@" symbol and must refer to registered condition. For example "@or" refers to logical
@@ -366,10 +367,10 @@ Pre Functions, Init Functions and Post Functions Configuration
     One of possible init actions usage scenario is to fill attributes with default values, which will be used in action
     form if it exist.
 * **postfunctions**
-    Configuration of Post Functions that must be performed after all previous step are performed. This is main action
+    Configuration of Post Functions that must be performed after all previous steps are performed. This is main action
     step that must contain action logic. It will be performed only after conditions will be qualified.
 
-Similarly to Conditions alias of Function starts from "@" symbol and must refer to registered Functions. For example
+Similarly to Conditions - alias of Function starts from "@" symbol and must refer to registered Functions. For example
 "@assign_value" refers to Function which set specified value to attribute in Action Context.
 
 Example
