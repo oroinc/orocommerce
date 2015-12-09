@@ -38,6 +38,7 @@ services:
             - @doctrine
             - @security.token_storage
             - @translator
+            - @orob2b_product.service.quantity_rounding
 
     orob2b_shopping_list.placeholder.filter:
         class: %orob2b_shopping_list.placeholder.filter.class%
