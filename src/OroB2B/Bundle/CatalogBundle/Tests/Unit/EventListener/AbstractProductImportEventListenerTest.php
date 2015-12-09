@@ -5,12 +5,15 @@ namespace OroB2B\Bundle\CatalogBundle\Tests\Unit\EventListener;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 
+use Oro\Component\Testing\Unit\EntityTrait;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 abstract class AbstractProductImportEventListenerTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     const CATEGORY_CLASS = 'OroB2B\Bundle\CatalogBundle\Entity\Category';
 
     /**
@@ -108,8 +111,8 @@ abstract class AbstractProductImportEventListenerTest extends \PHPUnit_Framework
     {
         $sku = uniqid('', true);
 
-        $product = (new Product())
-            ->setSku($sku);
+        /** @var Product $product */
+        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 1, 'sku' => $sku]);
 
         $category = new Category();
         $title = new LocalizedFallbackValue();
