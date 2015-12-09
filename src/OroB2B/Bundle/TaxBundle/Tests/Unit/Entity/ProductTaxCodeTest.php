@@ -17,12 +17,21 @@ class ProductTaxCodeTest extends \PHPUnit_Framework_TestCase
             ['id', '1'],
             ['code', 'fr4a'],
             ['description', 'description'],
-            ['product', new Product()],
             ['createdAt', new \DateTime()],
             ['updatedAt', new \DateTime()],
         ];
 
         $this->assertPropertyAccessors($this->createProductTaxCode(), $properties);
+    }
+
+    /**
+     * Test ProductTaxCode relations
+     */
+    public function testRelations()
+    {
+        $this->assertPropertyCollections($this->createProductTaxCode(), [
+            ['products', new Product()],
+        ]);
     }
 
     public function testToString()

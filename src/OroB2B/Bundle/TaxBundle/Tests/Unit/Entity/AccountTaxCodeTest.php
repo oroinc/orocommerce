@@ -17,12 +17,21 @@ class AccountTaxCodeTest extends \PHPUnit_Framework_TestCase
             ['id', '1'],
             ['code', 'fr4a'],
             ['description', 'description'],
-            ['account', new Account()],
             ['createdAt', new \DateTime()],
             ['updatedAt', new \DateTime()],
         ];
 
         $this->assertPropertyAccessors($this->createAccountTaxCode(), $properties);
+    }
+
+    /**
+     * Test AccountTaxCode relations
+     */
+    public function testRelations()
+    {
+        $this->assertPropertyCollections($this->createAccountTaxCode(), [
+            ['accounts', new Account()],
+        ]);
     }
 
     public function testToString()
