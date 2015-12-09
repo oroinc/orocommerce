@@ -117,6 +117,14 @@ services:
         tags:
             - { name: oro_action.condition, alias: lte|le|less_or_equal }
 
+    oro_action.expression.acl_granted:
+        class: Oro\Bundle\SecurityBundle\ConfigExpression\AclGranted
+        arguments:
+            - @oro_security.security_facade
+            - @doctrine
+        tags:
+            - { name: oro_action.condition, alias: acl|acl_granted }
+
     oro_action.expression.collection_element_value_exists:
         class: Oro\Bundle\ActionBundle\Condition\CollectionElementValueExists
         tags:

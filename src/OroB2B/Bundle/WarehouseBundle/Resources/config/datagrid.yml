@@ -95,3 +95,62 @@ datagrid:
                 link:          delete_link
                 icon:          trash
                 acl_resource:  orob2b_warehouse_delete
+
+    warehouse-inventory-level-grid:
+        source:
+            type:         orm
+            acl_resource: orob2b_product_warehouse_inventory_update
+            query:
+                select:
+                    - CONCAT(warehouse.id, '_', precision.id) as combinedId
+                    - IDENTITY(precision.unit) as unitCode
+                    - warehouse.name as warehouseName
+                    - IDENTITY(precision.unit) as productUnit
+                    - level.quantity as levelQuantity
+                from:
+                    - { table: %orob2b_warehouse.entity.warehouse.class%, alias: warehouse }
+                join:
+                    inner:
+                        - { join: %orob2b_product.product_unit_precision.class%, alias: precision, conditionType: WITH, condition: "IDENTITY(precision.product) = :productId" }
+                    left:
+                        - { join: %orob2b_warehouse.entity.warehouse_inventory_level.class%, alias: level, conditionType: WITH, condition: "level.warehouse = warehouse AND level.productUnitPrecision = precision" }
+            bind_parameters:
+                - productId
+        columns:
+            warehouseName:
+                label:         orob2b.warehouse.entity_label
+            levelQuantity:
+                label:         orob2b.warehouse.warehouseinventorylevel.quantity.label
+                frontend_type: string # can't use decimal because of inappropriate formatter
+                editable:      true
+            productUnit:
+                label:         orob2b.product.productunit.entity_label
+                type:          twig
+                frontend_type: html
+                template:      OroB2BProductBundle:ProductUnit:Datagrid/unitFullPlural.html.twig
+        sorters:
+            columns:
+                warehouseName:
+                    data_name: warehouseName
+                levelQuantity:
+                    data_name: levelQuantity
+                productUnit:
+                    data_name: productUnit
+            default:
+                productUnit:   %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        properties:
+            combinedId: ~
+            unitCode: ~
+        options:
+            mode: client
+            toolbarOptions:
+                hide: true
+                pagination:
+                    onePage: true
+            cellSelection:
+                dataField: combinedId
+                columnName:
+                    - levelQuantity
+                selector: '#warehouse-inventory-level-quantities'
+            requireJSModules:
+                - orob2bwarehouse/js/datagrid/builder/level-quantity-builder
