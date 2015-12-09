@@ -155,7 +155,8 @@ datagrid:
                     - { table: %orob2b_pricing.entity.price_list.class%, alias: priceList }
                 join:
                     inner:
-                        - { join: priceList.accounts, alias: relatedEntity }
+                        - { join: %orob2b_pricing.entity.price_list_to_account.class%, alias: priceListToAccount, conditionType: 'WITH', condition: 'priceListToAccount.priceList = priceList'}
+                        - { join: priceListToAccount.account, alias: relatedEntity }
                     left:
                         - { join: relatedEntity.group, alias: accountGroup }
                         - { join: relatedEntity.parent, alias: parent }
@@ -200,7 +201,8 @@ datagrid:
                     - { table: %orob2b_pricing.entity.price_list.class%, alias: priceList }
                 join:
                     inner:
-                        - { join: priceList.accountGroups, alias: relatedEntity }
+                        - { join: %orob2b_pricing.entity.price_list_to_account_group.class%, alias: priceListToAccountGroup, conditionType: 'WITH', condition: 'priceListToAccountGroup.priceList = priceList'}
+                        - { join: priceListToAccountGroup.accountGroup, alias: relatedEntity }
         columns:
             name:
                 label: orob2b.account.accountgroup.name.label
@@ -221,7 +223,8 @@ datagrid:
                     - { table: %orob2b_pricing.entity.price_list.class%, alias: priceList }
                 join:
                     inner:
-                        - { join: priceList.websites, alias: relatedEntity }
+                        - { join: %orob2b_pricing.entity.price_list_to_website.class%, alias: priceListToWebsite, conditionType: 'WITH', condition: 'priceListToWebsite.priceList = priceList'}
+                        - { join: priceListToWebsite.website, alias: relatedEntity }
         columns:
             name:
                 label:          orob2b.website.name.label
@@ -426,9 +429,9 @@ datagrid:
                 label:         orob2b.pricing.productprice.quantity.label
             unitCode:
                 label:         orob2b.pricing.productprice.unit_code.label
-                type: twig
+                type:          twig
                 frontend_type: html
-                template: OroB2BPricingBundle:PriceList:Datagrid/Property/unitCode.html.twig
+                template:      OroB2BProductBundle:ProductUnit:Datagrid/unitFullSingle.html.twig
             value:
                 label:         orob2b.pricing.productprice.value.label
             currency:
@@ -547,9 +550,9 @@ datagrid:
                 label:         orob2b.pricing.productprice.quantity.label
             unitCode:
                 label:         orob2b.pricing.productprice.unit_code.label
-                type: twig
+                type:          twig
                 frontend_type: html
-                template: OroB2BPricingBundle:PriceList:Datagrid/Property/unitCode.html.twig
+                template:      OroB2BProductBundle:ProductUnit:Datagrid/unitFullSingle.html.twig
             value:
                 label:         orob2b.pricing.productprice.value.label
             currency:

@@ -1,11 +1,11 @@
 parameters:
     orob2b_product.form.type.product.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductType
-    orob2b_product.form.type.product_unit_rounding_type.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitRoundingTypeType
     orob2b_product.form.type.product_unit_selection.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
     orob2b_product.form.type.quantity_type.class: OroB2B\Bundle\ProductBundle\Form\Type\QuantityType
     orob2b_product.form.type.product_unit_precision.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionType
     orob2b_product.form.type.product_unit_precision_collection.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductUnitPrecisionCollectionType
     orob2b_product.form.type.product_select.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductSelectType
+    orob2b_product.form.type.product_autocomplete.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductAutocompleteType
     orob2b_product.form.type.quick_add.class: OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType
     orob2b_product.form.type.product_row.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductRowType
     orob2b_product.form.type.product_row_collection.class: OroB2B\Bundle\ProductBundle\Form\Type\ProductRowCollectionType
@@ -35,13 +35,6 @@ services:
         tags:
             - { name: form.type, alias: orob2b_product_row_collection }
 
-    orob2b_product.form.type.product_unit_rounding_type:
-        class: %orob2b_product.form.type.product_unit_rounding_type.class%
-        arguments:
-            - @translator
-        tags:
-            - { name: form.type, alias: orob2b_product_unit_rounding_type }
-
     orob2b_product.form.type.product_unit_selection:
         class: %orob2b_product.form.type.product_unit_selection.class%
         arguments:
@@ -55,7 +48,7 @@ services:
     orob2b_product.form.type.quantity_type:
         class: %orob2b_product.form.type.quantity_type.class%
         arguments:
-            - @orob2b_product.service.rounding
+            - @orob2b_product.service.quantity_rounding
             - %orob2b_product.product.class%
         tags:
             - { name: form.type, alias: orob2b_quantity }
@@ -78,6 +71,11 @@ services:
             - @translator
         tags:
             - { name: form.type, alias: orob2b_product_select }
+
+    orob2b_product.form.type.product_autocomplete:
+        class: %orob2b_product.form.type.product_autocomplete.class%
+        tags:
+            - { name: form.type, alias: orob2b_product_autocomplete }
 
     orob2b_product.form.type.quick_add:
         class: %orob2b_product.form.type.quick_add.class%

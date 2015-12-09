@@ -3,7 +3,6 @@ oro_system_configuration:
         account:
             title: orob2b.account.system_configuration.groups.account.title
             icon: 'icon-user'
-            page_reload: true
         account_users:
             title: orob2b.account.system_configuration.groups.account_users.title
         catalog:
@@ -11,14 +10,12 @@ oro_system_configuration:
         catalog_settings:
             title: orob2b.account.catalog.visibility.catalog_configuration_label
             icon: 'icon-briefcase'
-            page_reload: true
         catalog_category_settings:
             title: orob2b.account.catalog.visibility.label
         product_settings:
             title: orob2b.account.product.visibility.product_configuration_label
             icon: 'icon-briefcase'
-            page_reload: true
-        catalog_product_settings:
+        account_product_visibility:
             title: orob2b.account.product.visibility.label
     fields:
         oro_b2b_account.default_account_owner:
@@ -93,7 +90,7 @@ oro_system_configuration:
                             product_settings:
                                 priority: 230
                                 children:
-                                    catalog_product_settings:
+                                    account_product_visibility:
                                         priority: 100
                                         children:
                                             - oro_b2b_account.product_visibility

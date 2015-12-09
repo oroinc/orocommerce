@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\ProductBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Entity
@@ -18,6 +19,13 @@ class ProductVariantLink
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
      */
     protected $id;
 
@@ -25,6 +33,13 @@ class ProductVariantLink
      * @var Product
      * @ORM\ManyToOne(targetEntity="Product", inversedBy="variantLinks")
      * @ORM\JoinColumn(name="parent_product_id", referencedColumnName="id", onDelete="CASCADE", nullable=false))
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
      */
     protected $parentProduct;
 
@@ -32,12 +47,27 @@ class ProductVariantLink
      * @var Product
      * @ORM\ManyToOne(targetEntity="Product")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=10,
+     *              "identity"=true
+     *          }
+     *      }
+     * )
      */
     protected $product;
 
     /**
      * @var bool
      * @ORM\Column(name="visible", type="boolean", nullable=false, options={"default"=true})
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=20
+     *          }
+     *      }
+     * )
      */
     protected $visible = true;
 

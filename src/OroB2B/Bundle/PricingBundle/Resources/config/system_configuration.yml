@@ -1,0 +1,55 @@
+oro_system_configuration:
+    groups:
+        price_list_settings:
+            title: orob2b.pricing.system_configuration.price_lists
+            icon: 'icon-briefcase'
+        default_price_lists:
+            title: orob2b.pricing.system_configuration.default_price_lists
+            icon: 'icon-briefcase'
+            
+        product_price_settings:
+            title: orob2b.pricing.system_configuration.groups.product_price_settings.title
+
+    fields:
+        oro_b2b_pricing.default_price_lists:
+            data_type: array
+            type: orob2b_pricing_price_list_system_config
+            options:
+                label: orob2b.pricing.system_configuration.price_lists
+                resettable: false
+        oro_b2b_pricing.rounding_type:
+            data_type: string
+            type: choice
+            priority: 10
+            options:
+                label: orob2b.pricing.system_configuration.fields.rounding_type.label
+                tooltip: orob2b.pricing.system_configuration.fields.rounding_type.tooltip
+                required: true
+                constraints:
+                    - NotBlank: ~
+                choice_translation_domain: messages
+                choices:
+                    half_up: orob2b.pricing.system_configuration.fields.rounding_type.choices.half_up.label
+                    half_down: orob2b.pricing.system_configuration.fields.rounding_type.choices.half_down.label
+                    ceil: orob2b.pricing.system_configuration.fields.rounding_type.choices.ceil.label
+                    floor: orob2b.pricing.system_configuration.fields.rounding_type.choices.floor.label
+
+    tree:
+        system_configuration:
+            platform:
+                children:
+                    catalog:
+                        children:
+                            product_settings:
+                                children:
+                                    product_price_settings:
+                                        children:
+                                            - oro_b2b_pricing.rounding_type
+                    catalog:
+                        children:
+                            price_list_settings:
+                                children:
+                                    default_price_lists:
+                                        priority: 100
+                                        children:
+                                            - oro_b2b_pricing.default_price_lists

@@ -32,7 +32,7 @@ orob2b:
         form:
             choose: Choose Product...
             product_required: Please select a product first...
-        form.add_row: Add row
+        form.add_row: Add rows
 
         productunit:
             entity_label: Product Unit
@@ -94,8 +94,11 @@ orob2b:
             groups:
                 product.title: 'Product'
                 product_unit_settings.title: 'Product Unit Settings'
+                frontend_inventory_statuses_visibility.title: 'Allowed Inventory Statuses (Store Frontend)'
+                backend_inventory_statuses_visibility.title: 'Allowed Inventory Statuses (Management Console)'
             fields:
                 unit_rounding_type.label: 'Unit Rounding Type'
+                general_frontend_inventory_statuses_visibility.label: 'Visible Inventory Statuses'
 
         grid:
             action:
@@ -109,12 +112,16 @@ orob2b:
             quick_add:
                 title: Quick Order Form
                 description: Quick add products to order, RFQ or shopping cart
+                messages:
+                    not_added_products: '{1} Product %sku% can’t be added.|]1,Inf]Products %sku% can’t be added.'
             component_not_accessible.message: Can't process request, component not accessible
 
     product_unit.each:
         label:
             full: each
+            full_plural: each
             short: ea
+            short_plural: ea
         value:
             full: '{0} none|{1} %count% each|]1,Inf] %count% each'
             short: '{0} none|{1} %count% ea|]1,Inf] %count% ea'
@@ -122,7 +129,9 @@ orob2b:
     product_unit.hour:
         label:
             full: hour
+            full_plural: hours
             short: hr
+            short_plural: hrs
         value:
             full: '{0} none|{1} %count% hour|]1,Inf] %count% hours'
             short: '{0} none|{1} %count% hr|]1,Inf] %count% hrs'
@@ -130,7 +139,9 @@ orob2b:
     product_unit.item:
         label:
             full: item
+            full_plural: items
             short: item
+            short_plural: items
         value:
             full: '{0} none|{1} %count% item|]1,Inf] %count% items'
             short: '{0} none|{1} %count% item|]1,Inf] %count% items'
@@ -138,7 +149,9 @@ orob2b:
     product_unit.kg:
         label:
             full: kilogram
+            full_plural: kilograms
             short: kg
+            short_plural: kgs
         value:
             full: '{0} none|{1} %count% kilogram|]1,Inf] %count% kilograms'
             short: '{0} none|{1} %count% kg|]1,Inf] %count% kg'
@@ -146,7 +159,9 @@ orob2b:
     product_unit.piece:
         label:
             full: piece
+            full_plural: pieces
             short: pc
+            short_plural: pcs
         value:
             full: '{0} none|{1} %count% piece|]1,Inf] %count% pieces'
             short: '{0} none|{1} %count% pc|]1,Inf] %count% pcs'
@@ -154,7 +169,9 @@ orob2b:
     product_unit.set:
         label:
             full: set
+            full_plural: sets
             short: set
+            short_plural: sets
         value:
             full: '{0} none|{1} %count% set|]1,Inf] %count% sets'
             short: '{0} none|{1} %count% set|]1,Inf] %count% sets'

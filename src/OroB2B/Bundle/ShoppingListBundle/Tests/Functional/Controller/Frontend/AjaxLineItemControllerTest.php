@@ -96,7 +96,7 @@ class AjaxLineItemControllerTest extends WebTestCase
             ->getRepository('OroB2BShoppingListBundle:LineItem')
             ->find($existingLineItem->getId());
 
-        $roundingService = $this->getContainer()->get('orob2b_product.service.rounding');
+        $roundingService = $this->getContainer()->get('orob2b_product.service.quantity_rounding');
         $expectedNewQuantity = $roundingService->round(
             $existingLineItem->getQuantity() + $newQuantity,
             $existingLineItem->getProduct()->getUnitPrecision($existingLineItem->getUnit()->getCode())->getPrecision()

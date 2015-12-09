@@ -164,21 +164,19 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         /* @var $productUnitHolder ProductUnitHolderInterface */
         $productUnitHolder = $formParent->getData();
         if (!$productUnitHolder) {
+            $this->formatChoiceViews($view, $options);
             return;
         }
 
         $productHolder = $productUnitHolder->getProductHolder();
         if (!$productHolder || !$productHolder->getProduct()) {
-            /** @var ChoiceView $choiceView */
-            foreach ($view->vars['choices'] as $choiceView) {
-                $choiceView->label = $this->productUnitFormatter->format($choiceView->value, $options['compact']);
-            }
-
+            $this->formatChoiceViews($view, $options);
             return;
         }
 
         $product = $productHolder->getProduct();
         $choices = $this->getProductUnits($product);
+        $view->vars['choices'] = [];
 
         $productUnit = $productUnitHolder->getProductUnit();
 
@@ -187,7 +185,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
                 $options['empty_label'],
                 ['{title}' => $productUnitHolder->getProductUnitCode()]
             );
-            $view->vars['choices'] = [new ChoiceView(null, null, $emptyValueTitle, ['selected' => true])];
+            $view->vars['choices'][] = new ChoiceView(null, null, $emptyValueTitle, ['selected' => true]);
         }
 
         $this->setChoicesViews($view, $choices, $options);
@@ -195,19 +193,27 @@ class ProductUnitSelectionType extends AbstractProductAwareType
 
     /**
      * @param FormView $view
+     * @param array $options
+     */
+    protected function formatChoiceViews(FormView $view, array $options)
+    {
+        /** @var ChoiceView $choiceView */
+        foreach ($view->vars['choices'] as $choiceView) {
+            $choiceView->label = $this->productUnitFormatter->format($choiceView->value, $options['compact']);
+        }
+    }
+
+    /**
+     * @param FormView $view
      * @param array $choices
      * @param array $options
      */
-    public function setChoicesViews(FormView $view, array $choices, array $options)
+    protected function setChoicesViews(FormView $view, array $choices, array $options)
     {
-        $choicesViews = [];
-
         $choices = $this->productUnitFormatter->formatChoices($choices, $options['compact']);
         foreach ($choices as $key => $value) {
-            $choicesViews[] = new ChoiceView($value, $key, $value);
+            $view->vars['choices'][] = new ChoiceView($value, $key, $value);
         }
-
-        $view->vars['choices'] = $choicesViews;
     }
 
     /**

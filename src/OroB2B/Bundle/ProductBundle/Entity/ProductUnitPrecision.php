@@ -4,6 +4,9 @@ namespace OroB2B\Bundle\ProductBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+
 use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
 /**
@@ -17,6 +20,7 @@ use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
  *      }
  * )
  * @ORM\Entity
+ * @Config(mode="hidden")
  */
 class ProductUnitPrecision implements ProductUnitHolderInterface
 {
@@ -24,18 +28,40 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
      */
     protected $id;
 
     /**
      * @ORM\ManyToOne(targetEntity="Product", inversedBy="unitPrecisions")
      * @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
      */
     protected $product;
 
     /**
      * @ORM\ManyToOne(targetEntity="ProductUnit")
      * @ORM\JoinColumn(name="unit_code", referencedColumnName="code", onDelete="CASCADE")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=10,
+     *              "identity"=true
+     *          }
+     *      }
+     * )
      */
     protected $unit;
 
@@ -43,8 +69,23 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
      * @var integer
      *
      * @ORM\Column(name="unit_precision",type="integer")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=20
+     *          }
+     *      }
+     * )
      */
     protected $precision;
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
     /**
      * Set product

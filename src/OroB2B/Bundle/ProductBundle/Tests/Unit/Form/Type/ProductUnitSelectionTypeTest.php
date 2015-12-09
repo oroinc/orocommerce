@@ -279,16 +279,6 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         $precision->setUnit($unit);
 
         return [
-            'empty item' => [
-                'inputData' => [
-                    'options' => [],
-                    'productUnitHolder' => null,
-                ],
-                'expectedData' => [
-                    'empty_value' => null,
-                    'choices' => array_combine($this->units, $this->units),
-                ],
-            ],
             'without parent form' => [
                 'inputData' => [
                     'options' => [],
@@ -304,6 +294,19 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                     'choices' => array_combine($this->units, $this->units),
                 ],
                 false,
+            ],
+            'without product holder' => [
+                'inputData' => [
+                    'options' => [],
+                    'productUnitHolder' => null,
+                ],
+                'expectedData' => [
+                    'empty_value' => null,
+                    'choices' => array_combine(
+                        $this->units,
+                        ['orob2b.product_unit.test01.label.full', 'orob2b.product_unit.test02.label.full']
+                    ),
+                ],
             ],
             'filled item' => [
                 'inputData' => [
@@ -328,9 +331,9 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                     'options' => [],
                     'productUnitHolder' => $this->createProductUnitHolder(
                         1,
-                        'sku',
-                        new ProductUnit(),
-                        $this->createProductHolder(1, 'sku', (new Product())->addUnitPrecision($precision))
+                        'code',
+                        $unit,
+                        $this->createProductHolder(1, 'code', (new Product())->addUnitPrecision($precision))
                     ),
                 ],
                 'expectedData' => [
@@ -346,9 +349,9 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                     ],
                     'productUnitHolder' => $this->createProductUnitHolder(
                         1,
-                        'sku',
-                        new ProductUnit(),
-                        $this->createProductHolder(1, 'sku', (new Product())->addUnitPrecision($precision))
+                        'code',
+                        $unit,
+                        $this->createProductHolder(1, 'code', (new Product())->addUnitPrecision($precision))
                     ),
                 ],
                 'expectedData' => [
@@ -362,9 +365,9 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                     'options' => [],
                     'productUnitHolder' => $this->createProductUnitHolder(
                         1,
-                        'sku',
+                        'code',
                         null,
-                        $this->createProductHolder(1, 'sku', null)
+                        $this->createProductHolder(1, 'code', null)
                     ),
                 ],
                 'expectedData' => [
@@ -372,6 +375,23 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                         $this->units,
                         ['orob2b.product_unit.test01.label.full', 'orob2b.product_unit.test02.label.full']
                     ),
+                ],
+            ],
+            'deleted product unit' => [
+                'inputData' => [
+                    'options' => [],
+                    'productUnitHolder' => $this->createProductUnitHolder(
+                        1,
+                        'sku',
+                        (new ProductUnit())->setCode('sku'),
+                        $this->createProductHolder(1, 'sku', (new Product())->addUnitPrecision($precision))
+                    ),
+                ],
+                'expectedData' => [
+                    'choices' => [
+                        null => 'orob2b.product.productunit.removed:sku',
+                        'code' => 'orob2b.product_unit.code.label.full',
+                    ],
                 ],
             ],
         ];

@@ -8,19 +8,27 @@ use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
 use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtension;
+use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 
-class OroB2BCatalogBundleInstaller implements Installation, NoteExtensionAwareInterface
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
+class OroB2BCatalogBundleInstaller implements
+    Installation,
+    NoteExtensionAwareInterface,
+    AttachmentExtensionAwareInterface
 {
+    const ORO_B2B_CATALOG_CATEGORY_SHORT_DESCRIPTION_TABLE_NAME = 'orob2b_catalog_cat_short_desc';
+    const ORO_B2B_CATALOG_CATEGORY_LONG_DESCRIPTION_TABLE_NAME = 'orob2b_catalog_cat_long_desc';
+    const ORO_B2B_CATALOG_CATEGORY_TABLE_NAME = 'orob2b_catalog_category';
+    const ORO_B2B_FALLBACK_LOCALIZE_TABLE_NAME ='orob2b_fallback_locale_value';
+    const MAX_CATEGORY_IMAGE_SIZE_IN_MB = 10;
+    const THUMBNAIL_WIDTH_SIZE_IN_PX = 100;
+    const THUMBNAIL_HEIGHT_SIZE_IN_PX = 100;
+
     /** @var NoteExtension */
     protected $noteExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getMigrationVersion()
-    {
-        return 'v1_0';
-    }
 
     /**
      * Sets the NoteExtension
@@ -32,6 +40,25 @@ class OroB2BCatalogBundleInstaller implements Installation, NoteExtensionAwareIn
         $this->noteExtension = $noteExtension;
     }
 
+    /** @var AttachmentExtension */
+    protected $attachmentExtension;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setAttachmentExtension(AttachmentExtension $attachmentExtension)
+    {
+        $this->attachmentExtension = $attachmentExtension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMigrationVersion()
+    {
+        return 'v1_2';
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -41,11 +68,17 @@ class OroB2BCatalogBundleInstaller implements Installation, NoteExtensionAwareIn
         $this->createOroB2BCatalogCategoryTable($schema);
         $this->createOroB2BCatalogCategoryTitleTable($schema);
         $this->createOrob2BCategoryToProductTable($schema);
+        $this->createOroB2BCatalogCategoryShortDescriptionTable($schema);
+        $this->createOroB2BCatalogCategoryLongDescriptionTable($schema);
 
         /** Foreign keys generation **/
         $this->addOroB2BCatalogCategoryForeignKeys($schema);
         $this->addOroB2BCatalogCategoryTitleForeignKeys($schema);
         $this->addOrob2BCategoryToProductForeignKeys($schema);
+        $this->addOroB2BCatalogCategoryShortDescriptionForeignKeys($schema);
+        $this->addOroB2BCatalogCategoryLongDescriptionForeignKeys($schema);
+        $this->addCategoryImageAssociation($schema, 'largeImage');
+        $this->addCategoryImageAssociation($schema, 'smallImage');
     }
 
     /**
@@ -153,6 +186,95 @@ class OroB2BCatalogBundleInstaller implements Installation, NoteExtensionAwareIn
             ['product_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Create orob2b_catalog_category_short_description table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BCatalogCategoryShortDescriptionTable(Schema $schema)
+    {
+        $table = $schema->createTable(self::ORO_B2B_CATALOG_CATEGORY_SHORT_DESCRIPTION_TABLE_NAME);
+        $table->addColumn('category_id', 'integer', []);
+        $table->addColumn('localized_value_id', 'integer', []);
+        $table->addUniqueIndex(['localized_value_id'], 'uniq_a2b14ef5eb576e89');
+        $table->setPrimaryKey(['category_id', 'localized_value_id']);
+    }
+
+    /**
+     * Create orob2b_catalog_category_long_description table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BCatalogCategoryLongDescriptionTable(Schema $schema)
+    {
+        $table = $schema->createTable(self::ORO_B2B_CATALOG_CATEGORY_LONG_DESCRIPTION_TABLE_NAME);
+        $table->addColumn('category_id', 'integer', []);
+        $table->addColumn('localized_value_id', 'integer', []);
+        $table->addUniqueIndex(['localized_value_id'], 'uniq_4f7c279feb576e89');
+        $table->setPrimaryKey(['category_id', 'localized_value_id']);
+    }
+
+    /**
+     * Add orob2b_catalog_category_short_description foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BCatalogCategoryShortDescriptionForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable(self::ORO_B2B_CATALOG_CATEGORY_SHORT_DESCRIPTION_TABLE_NAME);
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::ORO_B2B_FALLBACK_LOCALIZE_TABLE_NAME),
+            ['localized_value_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::ORO_B2B_CATALOG_CATEGORY_TABLE_NAME),
+            ['category_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    /**
+     * Add orob2b_catalog_category_long_description foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BCatalogCategoryLongDescriptionForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable(self::ORO_B2B_CATALOG_CATEGORY_LONG_DESCRIPTION_TABLE_NAME);
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::ORO_B2B_FALLBACK_LOCALIZE_TABLE_NAME),
+            ['localized_value_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable(self::ORO_B2B_CATALOG_CATEGORY_TABLE_NAME),
+            ['category_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     * @param $fieldName
+     */
+    public function addCategoryImageAssociation(Schema $schema, $fieldName)
+    {
+        $this->attachmentExtension->addImageRelation(
+            $schema,
+            self::ORO_B2B_CATALOG_CATEGORY_TABLE_NAME,
+            $fieldName,
+            [],
+            self::MAX_CATEGORY_IMAGE_SIZE_IN_MB,
+            self::THUMBNAIL_WIDTH_SIZE_IN_PX,
+            self::THUMBNAIL_HEIGHT_SIZE_IN_PX
         );
     }
 }

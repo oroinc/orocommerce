@@ -15,18 +15,16 @@ class OroB2BProductExtensionTest extends ExtensionTestCase
         $expectedParameters = [
             'orob2b_product.product.class',
             'orob2b_product.form.type.product.class',
-            'orob2b_product.form.type.product_unit_rounding_type.class',
             'orob2b_product.product.manager.api.class',
-            'orob2b_product.service.rounding.class',
+            'orob2b_product.service.quantity_rounding.class',
 
         ];
         $this->assertParametersLoaded($expectedParameters);
 
         $expectedDefinitions = [
             'orob2b_product.form.type.product',
-            'orob2b_product.form.type.product_unit_rounding_type',
             'orob2b_product.product.manager.api',
-            'orob2b_product.service.rounding',
+            'orob2b_product.service.quantity_rounding',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 

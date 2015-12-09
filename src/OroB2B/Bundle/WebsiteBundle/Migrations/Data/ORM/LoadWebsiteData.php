@@ -54,7 +54,7 @@ class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterfa
             ->getRepository('OroOrganizationBundle:BusinessUnit')
             ->findOneBy(['name' => LoadOrganizationAndBusinessUnitData::MAIN_BUSINESS_UNIT]);
 
-        $url = parse_url($this->container->get('oro_config.manager')->get('oro_ui.application_url'));
+        $url = $this->container->get('oro_config.manager')->get('oro_ui.application_url');
 
         /** @var Locale $locale */
         $locale = $this->getReference('default_website_locale');
@@ -64,7 +64,7 @@ class LoadWebsiteData extends AbstractFixture implements DependentFixtureInterfa
             ->setName(self::DEFAULT_WEBSITE_NAME)
             ->setOrganization($organization)
             ->setOwner($businessUnit)
-            ->setUrl($url['host'])
+            ->setUrl($url)
             ->addLocale($locale);
 
         $manager->persist($website);

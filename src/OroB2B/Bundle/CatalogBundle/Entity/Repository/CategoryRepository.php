@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\CatalogBundle\Entity\Repository;
 
+use Doctrine\ORM\Query\Expr\Join;
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
@@ -68,10 +69,13 @@ class CategoryRepository extends NestedTreeRepository
      */
     public function findOneByDefaultTitle($title)
     {
-        return $this->createQueryBuilder('category')
-            ->innerJoin('category.titles', 'title')
-            ->andWhere('title.string = :title')->setParameter('title', $title)
-            ->andWhere('title.locale IS NULL')
+        $qb = $this->createQueryBuilder('category');
+
+        return $qb
+            ->select('partial category.{id}')
+            ->innerJoin('category.titles', 'title', Join::WITH, $qb->expr()->isNull('title.locale'))
+            ->andWhere('title.string = :title')
+            ->setParameter('title', $title)
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
@@ -89,5 +93,30 @@ class CategoryRepository extends NestedTreeRepository
             ->where(':product MEMBER OF category.products')
             ->setParameter('product', $product)
             ->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * @param string $productSku
+     *
+     * @param bool $includeTitles
+     * @return null|Category
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findOneByProductSku($productSku, $includeTitles = false)
+    {
+        $qb = $this->createQueryBuilder('category');
+
+        if ($includeTitles) {
+            $qb->addSelect('title.string');
+            $qb->leftJoin('category.titles', 'title', Join::WITH, $qb->expr()->isNull('title.locale'));
+        }
+
+        return $qb
+            ->select('partial category.{id}')
+            ->innerJoin('category.products', 'p', Join::WITH, $qb->expr()->eq('p.sku', ':sku'))
+            ->setParameter('sku', $productSku)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }
