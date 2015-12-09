@@ -15,19 +15,19 @@ use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 
 /**
  * @NamePrefix("orob2b_api_tax_")
- * @RouteResource("producttaxcode")
+ * @RouteResource("accounttaxcode")
  */
-class ProductTaxCodeController extends RestController implements ClassResourceInterface
+class AccountTaxCodeController extends RestController implements ClassResourceInterface
 {
     /**
      * @ApiDoc(
-     *      description="Delete product tax code",
+     *      description="Delete account tax code",
      *      resource=true
      * )
      * @Acl(
-     *      id="orob2b_tax_product_tax_code_delete",
+     *      id="orob2b_tax_account_tax_code_delete",
      *      type="entity",
-     *      class="OroB2BTaxBundle:ProductTaxCode",
+     *      class="OroB2BTaxBundle:AccountTaxCode",
      *      permission="DELETE"
      * )
      *
@@ -44,7 +44,7 @@ class ProductTaxCodeController extends RestController implements ClassResourceIn
      */
     public function getManager()
     {
-        return $this->get('orob2b_tax.manager.product_tax_code.api');
+        return $this->get('orob2b_tax.manager.account_tax_code.api');
     }
 
     /**

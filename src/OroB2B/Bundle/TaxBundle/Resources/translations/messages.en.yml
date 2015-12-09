@@ -11,11 +11,24 @@ orob2b.tax:
         entity_plural_label: 'Product Tax Codes'
         description: 'List of Product Tax Codes'
         product.label: 'Product'
+        id.label: 'ID'
+        code.label: 'Code'
+        description.label: 'Description'
+        
     tax:
         rate.label: 'Rate'
         entity_label: 'Tax'
         entity_plural_label: 'Taxes'
         description: 'List of Taxes'
+
+    accounttaxcode:
+        entity_label: 'Account Tax Code'
+        entity_plural_label: 'Account Tax Codes'
+        description: 'List of Account Tax Codes'
+        account.label: 'Account'
+        id.label: 'ID'
+        code.label: 'Code'
+        description.label: 'Description'
 
     menu:
         taxes_tab.label: 'Taxes'
@@ -24,4 +37,9 @@ orob2b.tax:
         general: 'General Information'
 
     controller:
-        tax.saved.mesage: 'Tax has been saved'
+        account_tax_code:
+            saved.message: 'Account Tax Code has been saved'
+        product_tax_code:
+            saved.message: 'Product Tax Code has been saved'
+        tax:
+            saved.mesage: 'Tax has been saved'
