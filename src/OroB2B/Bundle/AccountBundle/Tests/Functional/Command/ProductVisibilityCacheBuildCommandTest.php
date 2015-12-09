@@ -29,8 +29,7 @@ class ProductVisibilityCacheBuildCommandTest extends WebTestCase
         \PHPUnit_Framework_MockObject_Matcher_InvokedCount $expectedBuildCacheCall,
         $expectedArgument
     ) {
-        $this->markTestSkipped('skipped');
-        $cacheBuilder = $this->getMock('OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilder');
+        $cacheBuilder = $this->getMock('OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\CacheBuilder');
         $cacheBuilder->expects($expectedBuildCacheCall)->method('buildCache')->with($expectedArgument);
         $this->client->getContainer()->set('orob2b_account.visibility.cache.cache_builder', $cacheBuilder);
         $result = $this->runCommand(ProductVisibilityCacheBuildCommand::NAME, $params);
