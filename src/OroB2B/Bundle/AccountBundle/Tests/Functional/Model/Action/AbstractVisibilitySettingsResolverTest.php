@@ -44,12 +44,6 @@ abstract class AbstractVisibilitySettingsResolverTest extends WebTestCase
         $this->product = $this->getReference(LoadProductData::PRODUCT_1);
     }
 
-    public function tearDown()
-    {
-        $this->client->getContainer()->get('doctrine')->getManager()->clear();
-        parent::tearDown();
-    }
-
     /**
      * @param BaseProductVisibilityResolved $productVisibilityResolved
      * @param VisibilityInterface $productVisibility
