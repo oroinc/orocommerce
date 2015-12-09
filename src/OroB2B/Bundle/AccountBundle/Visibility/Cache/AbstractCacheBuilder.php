@@ -2,7 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache;
 
-use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
@@ -12,7 +12,7 @@ use OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityResolver
 
 abstract class AbstractCacheBuilder implements CacheBuilderInterface
 {
-    /** @var  RegistryInterface */
+    /** @var  ManagerRegistry */
     protected $registry;
 
     /** @var  CategoryVisibilityResolverAdapterInterface */
@@ -22,12 +22,12 @@ abstract class AbstractCacheBuilder implements CacheBuilderInterface
     protected $configManager;
 
     /**
-     * @param RegistryInterface $registry
+     * @param ManagerRegistry $registry
      * @param CategoryVisibilityResolverAdapterInterface $categoryVisibilityResolver
      * @param ConfigManager $configManager
      */
     public function __construct(
-        RegistryInterface $registry,
+        ManagerRegistry $registry,
         CategoryVisibilityResolverAdapterInterface $categoryVisibilityResolver,
         ConfigManager $configManager
     ) {
