@@ -36,7 +36,6 @@ class ProductControllerTest extends BaseTest
     {
         /** @var Category $secondLevelCategory */
         $secondLevelCategory = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
-
         $response = $this->requestFrontendGrid(
             [
                 'gridName' => 'frontend-products-grid',
