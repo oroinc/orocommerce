@@ -2,13 +2,13 @@
 
 namespace OroB2B\Bundle\TaxBundle\Controller\Api\Rest;
 
+use Symfony\Component\HttpFoundation\Response;
+
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
 use FOS\RestBundle\Routing\ClassResourceInterface;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
-
-use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
@@ -16,7 +16,6 @@ use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 /**
  * @NamePrefix("orob2b_api_tax_")
  * @RouteResource("accounttaxcode")
-
  */
 class AccountTaxCodeController extends RestController implements ClassResourceInterface
 {

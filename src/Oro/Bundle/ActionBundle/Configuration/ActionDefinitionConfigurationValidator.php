@@ -74,34 +74,85 @@ class ActionDefinitionConfigurationValidator
         $this->errors = $errors;
 
         foreach ($configuration as $name => $action) {
-            $this->validateAction($action, $name);
+            $this->validateFrontendOptions($action, $name);
+            $this->validateFormOptions($action, $name);
+            $this->validateRoutes($action['routes'], $this->getPath($name, 'routes'));
+            $this->validateEntities($action['entities'], $this->getPath($name, 'entities'));
         }
     }
 
     /**
-     * @param array $action
+     * @param array $config
      * @param string $path
      */
-    protected function validateAction(array $action, $path)
+    protected function validateFrontendOptions(array $config, $path)
     {
-        $this->validateFrontendOptions($action['frontend_options'], $this->getPath($path, 'frontend_options'));
-        $this->validateRoutes($action['routes'], $this->getPath($path, 'routes'));
-        $this->validateEntities($action['entities'], $this->getPath($path, 'entities'));
+        $sectionName = 'frontend_options';
+        if (!array_key_exists($sectionName, $config)) {
+            return;
+        }
+
+        $optionsPath = $this->getPath($path, $sectionName);
+        $options = $config[$sectionName];
+        
+        $this->assertTemplate($options, $optionsPath, 'template');
+        $this->assertTemplate($options, $optionsPath, 'dialog_template');
     }
 
     /**
      * @param array $options
      * @param string $path
+     * @param string $paramName
      */
-    protected function validateFrontendOptions(array $options, $path)
+    protected function assertTemplate(array $options, $path, $paramName)
     {
-        if (isset($options['template']) && !$this->twigLoader->exists($options['template'])) {
+        if (isset($options[$paramName]) && !$this->twigLoader->exists($options[$paramName])) {
             $this->handleError(
-                $this->getPath($path, 'template'),
+                $this->getPath($path, $paramName),
                 'Unable to find template "%s"',
-                $options['template'],
+                $options[$paramName],
                 false
             );
+        }
+    }
+
+    /**
+     * @param array $config
+     * @param string $path
+     */
+    protected function validateFormOptions(array $config, $path)
+    {
+        $sectionName = 'form_options';
+        if (!array_key_exists($sectionName, $config)) {
+            return;
+        }
+
+        $optionsPath = $this->getPath($path, $sectionName);
+
+        $this->validateFormOptionsAttributes($config, 'attribute_fields', $optionsPath);
+        $this->validateFormOptionsAttributes($config, 'attribute_default_values', $optionsPath);
+    }
+
+    /**
+     * @param array $config
+     * @param string $sectionName
+     * @param string $path
+     */
+    protected function validateFormOptionsAttributes(array $config, $sectionName, $path)
+    {
+        if (!array_key_exists($sectionName, $config['form_options'])) {
+            return;
+        }
+
+        foreach (array_keys($config['form_options'][$sectionName]) as $attributeName) {
+            if (!isset($config['attributes'][$attributeName])) {
+                $this->handleError(
+                    $this->getPath($path, $sectionName),
+                    'Unknown attribute "%s".',
+                    $attributeName,
+                    false
+                );
+            }
         }
     }
 

@@ -7,11 +7,6 @@ datagrid:
                     - tax_code.id
                     - tax_code.code
                     - tax_code.description
-        columns:
-            code:
-                label: orob2b.tax.code.label
-            description:
-                label: orob2b.tax.description.label
         sorters:
             columns:
                 code:
@@ -65,6 +60,11 @@ datagrid:
             query:
                 from:
                     - { table: %orob2b_tax.entity.product_tax_code.class%, alias: tax_code }
+        columns:
+            code:
+                label: orob2b.tax.producttaxcode.code.label
+            description:
+                label: orob2b.tax.producttaxcode.description.label
         properties:
             view_link:
                 route: orob2b_tax_product_tax_code_view
@@ -89,6 +89,11 @@ datagrid:
             query:
                 from:
                     - { table: %orob2b_tax.entity.account_tax_code.class%, alias: tax_code }
+        columns:
+            code:
+                label: orob2b.tax.accounttaxcode.code.label
+            description:
+                label: orob2b.tax.accounttaxcode.description.label
         properties:
             view_link:
                 route: orob2b_tax_account_tax_code_view

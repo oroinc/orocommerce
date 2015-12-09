@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\TaxBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -14,39 +16,77 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
  * @ORM\HasLifecycleCallbacks
  * @Config(
  *      routeName="orob2b_tax_product_tax_code_index",
- *      routeView="orob2b_tax_product_tax_code_view"
+ *      routeView="orob2b_tax_product_tax_code_view",
+ *      defaultValues={
+ *          "entity"={
+ *              "icon"="icon-list-alt"
+ *          },
+ *          "dataaudit"={
+ *              "auditable"=true
+ *          }
+ *      }
  * )
  */
 class ProductTaxCode extends AbstractTaxCode
 {
     /**
-     * @ORM\OneToOne(targetEntity="OroB2B\Bundle\ProductBundle\Entity\Product")
-     * @ORM\JoinColumn(name="product_id", referencedColumnName="id")
+     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\ProductBundle\Entity\Product")
+     * @ORM\JoinTable(
+     *      name="orob2b_tax_prod_tax_code_prod",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="product_tax_code_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *      }
+     * )
      *
-     * @var Product
+     * @var Product[]|Collection
      */
-    protected $product;
+    protected $products;
+
+    public function __construct()
+    {
+        $this->products = new ArrayCollection();
+    }
 
     /**
-     * Set product
+     * Add product
      *
      * @param Product $product
      * @return $this
      */
-    public function setProduct(Product $product)
+    public function addProduct(Product $product)
     {
-        $this->product = $product;
+        if (!$this->products->contains($product)) {
+            $this->products->add($product);
+        }
 
         return $this;
     }
 
     /**
-     * Get product
+     * Remove product
      *
-     * @return Product
+     * @param Product $product
+     * @return $this
      */
-    public function getProduct()
+    public function removeProduct(Product $product)
     {
-        return $this->product;
+        if ($this->products->contains($product)) {
+            $this->products->removeElement($product);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get products
+     *
+     * @return Product[]|Collection
+     */
+    public function getProducts()
+    {
+        return $this->products;
     }
 }

@@ -40,15 +40,6 @@ oro_system_configuration:
         system_configuration:
             platform:
                 children:
-                    general_setup:
-                        children:
-                            product:
-                                priority: 220
-                                children:
-                                    product_unit_settings:
-                                        priority: 100
-                                        children:
-                                            - orob2b_product.unit_rounding_type
                     catalog:
                         children:
                             product_settings:
@@ -56,3 +47,6 @@ oro_system_configuration:
                                     frontend_inventory_statuses_visibility:
                                         children:
                                             - orob2b_product.general_frontend_product_visibility
+                                    product_unit_settings:
+                                        children:
+                                            - orob2b_product.unit_rounding_type

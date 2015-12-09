@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\TaxBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -14,39 +16,77 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
  * @ORM\HasLifecycleCallbacks
  * @Config(
  *      routeName="orob2b_tax_account_tax_code_index",
- *      routeView="orob2b_tax_account_tax_code_view"
+ *      routeView="orob2b_tax_account_tax_code_view",
+ *      defaultValues={
+ *          "entity"={
+ *              "icon"="icon-list-alt"
+ *          },
+ *          "dataaudit"={
+ *              "auditable"=true
+ *          }
+ *      }
  * )
  */
 class AccountTaxCode extends AbstractTaxCode
 {
     /**
-     * @ORM\OneToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
-     * @ORM\JoinColumn(name="account_id", referencedColumnName="id")
+     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
+     * @ORM\JoinTable(
+     *      name="orob2b_tax_acc_tax_code_acc",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="account_tax_code_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *      }
+     * )
      *
-     * @var Account
+     * @var Account[]|Collection
      */
-    protected $account;
+    protected $accounts;
+
+    public function __construct()
+    {
+        $this->accounts = new ArrayCollection();
+    }
 
     /**
-     * Set account
+     * Add account
      *
      * @param Account $account
      * @return $this
      */
-    public function setAccount(Account $account)
+    public function addAccount(Account $account)
     {
-        $this->account = $account;
+        if (!$this->accounts->contains($account)) {
+            $this->accounts->add($account);
+        }
 
         return $this;
     }
 
     /**
-     * Get account
+     * Remove account
      *
-     * @return Account
+     * @param Account $account
+     * @return $this
      */
-    public function getAccount()
+    public function removeAccount(Account $account)
     {
-        return $this->account;
+        if ($this->accounts->contains($account)) {
+            $this->accounts->removeElement($account);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get accounts
+     *
+     * @return Account[]|Collection
+     */
+    public function getAccounts()
+    {
+        return $this->accounts;
     }
 }
