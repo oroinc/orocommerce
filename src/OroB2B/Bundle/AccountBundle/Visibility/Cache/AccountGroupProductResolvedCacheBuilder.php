@@ -53,7 +53,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractCacheBuilder
                 $accountGroupProductVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_CATEGORY);
                 $accountGroupProductVisibilityResolved->setCategoryId($category->getId());
             } else {
-                $this->resolveConfigValue($accountGroupProductVisibility, $accountGroupProductVisibilityResolved);
+                $this->resolveConfigValue($accountGroupProductVisibilityResolved, $accountGroupProductVisibility);
             }
         } elseif ($selectedVisibility === AccountGroupProductVisibility::CURRENT_PRODUCT) {
             if ($accountGroupProductVisibilityResolved) {
@@ -61,8 +61,8 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractCacheBuilder
             }
         } else {
             $this->resolveStaticValues(
-                $accountGroupProductVisibility,
                 $accountGroupProductVisibilityResolved,
+                $accountGroupProductVisibility,
                 $selectedVisibility
             );
         }

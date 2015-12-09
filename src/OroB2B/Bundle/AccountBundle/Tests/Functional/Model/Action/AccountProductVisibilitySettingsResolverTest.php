@@ -25,6 +25,8 @@ class AccountProductVisibilitySettingsResolverTest extends AbstractVisibilitySet
 
     public function setUp()
     {
+        $this->markTestSkipped('Must be fixed in scope of BB-1550');
+
         parent::setUp();
         $this->account = $this->getReference(LoadAccounts::DEFAULT_ACCOUNT_NAME);
     }

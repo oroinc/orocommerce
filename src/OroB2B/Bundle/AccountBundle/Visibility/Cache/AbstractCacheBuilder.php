@@ -2,12 +2,13 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache;
 
+use Symfony\Bridge\Doctrine\RegistryInterface;
+
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityResolverAdapterInterface;
-
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 abstract class AbstractCacheBuilder implements CacheBuilderInterface
 {
@@ -36,13 +37,13 @@ abstract class AbstractCacheBuilder implements CacheBuilderInterface
     }
 
     /**
-     * @param VisibilityInterface $productVisibility
      * @param BaseProductVisibilityResolved $productVisibilityResolved
+     * @param VisibilityInterface $productVisibility
      * @param string $selectedVisibility
      */
     protected function resolveStaticValues(
-        VisibilityInterface $productVisibility,
         BaseProductVisibilityResolved $productVisibilityResolved,
+        VisibilityInterface $productVisibility,
         $selectedVisibility
     ) {
         $productVisibilityResolved->setSourceProductVisibility($productVisibility);
@@ -56,12 +57,12 @@ abstract class AbstractCacheBuilder implements CacheBuilderInterface
     }
 
     /**
-     * @param VisibilityInterface $productVisibility
      * @param BaseProductVisibilityResolved $productVisibilityResolved
+     * @param VisibilityInterface|null $productVisibility
      */
     protected function resolveConfigValue(
-        VisibilityInterface $productVisibility,
-        BaseProductVisibilityResolved $productVisibilityResolved
+        BaseProductVisibilityResolved $productVisibilityResolved,
+        VisibilityInterface $productVisibility = null
     ) {
         $productVisibilityResolved->setSourceProductVisibility($productVisibility);
         $productVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_STATIC);

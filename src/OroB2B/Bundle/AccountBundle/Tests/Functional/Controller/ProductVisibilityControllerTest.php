@@ -203,15 +203,6 @@ class ProductVisibilityControllerTest extends WebTestCase
                 ],
             ]
         );
-        $em = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
-        $visibilitiesResolved = $em
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
-            ->findBy(['product' => $this->product]);
-        foreach ($visibilitiesResolved as $visibilityResolved) {
-            $visibilityResolved->setVisibility(BaseProductVisibilityResolved::VISIBILITY_VISIBLE);
-        }
-        $em->flush();
         $this->submitForm();
         $this->assertCountVisibilities(3);
     }

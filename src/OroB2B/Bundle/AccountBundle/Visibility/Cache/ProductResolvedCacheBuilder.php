@@ -45,14 +45,14 @@ class ProductResolvedCacheBuilder extends AbstractCacheBuilder
                 $productVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_CATEGORY);
                 $productVisibilityResolved->setCategoryId($category->getId());
             } else {
-                $this->resolveConfigValue($productVisibility, $productVisibilityResolved);
+                $this->resolveConfigValue($productVisibilityResolved);
             }
         } elseif ($selectedVisibility === ProductVisibility::CONFIG) {
             if ($productVisibilityResolved) {
                 $em->remove($productVisibilityResolved);
             }
         } else {
-            $this->resolveStaticValues($productVisibility, $productVisibilityResolved, $selectedVisibility);
+            $this->resolveStaticValues($productVisibilityResolved, $productVisibility, $selectedVisibility);
         }
 
         // set calculated visibility to account resolved values
