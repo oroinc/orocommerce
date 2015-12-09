@@ -52,55 +52,10 @@
                 'data': [
                     form_row(form.name),
                     form_row(form.currencies),
-                    form_widget(form.appendAccounts, {'id': 'priceListAppendAccounts'}),
-                    form_widget(form.removeAccounts, {'id': 'priceListRemoveAccounts'}),
-                    form_widget(form.appendAccountGroups, {'id': 'priceListAppendAccountGroups'}),
-                    form_widget(form.removeAccountGroups, {'id': 'priceListRemoveAccountGroups'}),
-                    form_widget(form.appendWebsites, {'id': 'priceListAppendWebsites'}),
-                    form_widget(form.removeWebsites, {'id': 'priceListRemoveWebsites'}),
                 ]
             }]
         }]
     %}
-
-    {% set dataBlocks = dataBlocks|merge([
-        {
-            'title' : 'orob2b.account.entity_plural_label'|trans,
-            'subblocks': [
-                {
-                    'title' : '',
-                    'useSpan': false,
-                    'data' : [dataGrid.renderGrid('price-list-select-accounts-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
-                }
-            ]
-        }
-    ]) %}
-
-    {% set dataBlocks = dataBlocks|merge([
-        {
-            'title' : 'orob2b.account.accountgroup.entity_plural_label'|trans,
-            'subblocks': [
-                {
-                    'title' : '',
-                    'useSpan': false,
-                    'data' : [dataGrid.renderGrid('price-list-select-account-groups-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
-                }
-            ]
-        }
-    ]) %}
-
-    {% set dataBlocks = dataBlocks|merge([
-        {
-            'title' : 'orob2b.website.entity_plural_label'|trans,
-            'subblocks': [
-                {
-                    'title' : '',
-                    'useSpan': false,
-                    'data' : [dataGrid.renderGrid('price-list-select-websites-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
-                }
-            ]
-        }
-    ]) %}
 
     {% set data = {
         'formErrors': form_errors(form),

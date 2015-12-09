@@ -15,7 +15,21 @@ orob2b:
 
         widgets:
             warehouse_information: Warehouse Information
+            inventory_management: Inventory
+
+            actions:
+                save: Save
+                cancel: Cancel
 
         sections:
             general: General
             additional: Additional
+
+        warehouseinventorylevel:
+            entity_label: Warehouse Inventory Level
+            entity_plural_label: Warehouse Inventory Levels
+            id.label: Id
+            quantity.label: Quantity
+            product.label: Product
+            product_unit_precision.label: Product Unit Precision
+            warehouse.label: Warehouse

@@ -18,6 +18,7 @@ class OroActionExtension extends Extension
         $loader->load('cache.yml');
         $loader->load('conditions.yml');
         $loader->load('configuration.yml');
+        $loader->load('form_types.yml');
         $loader->load('functions.yml');
         $loader->load('services.yml');
         $loader->load('twig_extensions.yml');

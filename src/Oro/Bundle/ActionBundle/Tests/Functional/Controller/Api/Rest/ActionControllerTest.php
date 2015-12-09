@@ -8,6 +8,9 @@ use Oro\Bundle\CacheBundle\Provider\FilesystemCache;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestActivity;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+/**
+ * @dbIsolation
+ */
 class ActionControllerTest extends WebTestCase
 {
     const MESSAGE_DEFAULT = 'test message';
