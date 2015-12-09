@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Handler;
 
+use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -10,9 +11,11 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Bundle\ActionBundle\Model\ActionContext;
+use Oro\Bundle\ActionBundle\Model\ActionManager;
+use Oro\Bundle\ActionBundle\Model\ContextHelper;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Route\Router;
 
@@ -57,9 +60,9 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
     protected $translator;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|UrlGeneratorInterface
+     * @var \PHPUnit_Framework_MockObject_MockObject|ActionManager
      */
-    protected $urlGenerator;
+    protected $actionManager;
 
     /**
      * @var ProductUpdateHandler
@@ -86,7 +89,7 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
         $this->translator = $this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->urlGenerator = $this->getMockBuilder('Symfony\Component\Routing\Generator\UrlGeneratorInterface')
+        $this->actionManager = $this->getMockBuilder('Oro\Bundle\ActionBundle\Model\ActionManager')
             ->disableOriginalConstructor()
             ->getMock();
         $this->entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
@@ -101,29 +104,26 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
             $this->eventDispatcher
         );
         $this->handler->setTranslator($this->translator);
-        $this->handler->setUrlGenerator($this->urlGenerator);
+        $this->handler->setActionManager($this->actionManager);
     }
 
     /**
-     * @param bool $getIdShouldBeCalled
+     * @param int $getIdCalls
      * @return object
      */
-    protected function getProductMock($getIdShouldBeCalled = true)
+    protected function getProductMock($getIdCalls = 1)
     {
         $product = $this->getMock('OroB2B\Bundle\ProductBundle\Entity\Product');
-
-        if ($getIdShouldBeCalled) {
-            $product->expects($this->once())
-                ->method('getId')
-                ->will($this->returnValue(self::PRODUCT_ID));
-        }
+        $product->expects($this->exactly($getIdCalls))
+            ->method('getId')
+            ->will($this->returnValue(self::PRODUCT_ID));
 
         return $product;
     }
 
     public function testSaveAndDuplicate()
     {
-        $entity = $this->getProductMock();
+        $entity = $this->getProductMock(2);
         $queryParameters = ['qwe' => 'rty'];
         $this->request->query = new ParameterBag($queryParameters);
         $this->request->expects($this->once())
@@ -182,10 +182,19 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('trans')
             ->with('orob2b.product.controller.product.saved_and_duplicated.message')
             ->will($this->returnValue($savedAndDuplicatedMessage));
-        $this->urlGenerator->expects($this->once())
-            ->method('generate')
-            ->with('orob2b_product_duplicate', ['id' => self::PRODUCT_ID])
-            ->will($this->returnValue('generated_redirect_url'));
+        $this->actionManager->expects($this->once())
+            ->method('execute')
+            ->with(
+                'orob2b_product_duplicate_action',
+                new ActionContext(['data' => $entity]),
+                null,
+                [
+                    ContextHelper::ROUTE_PARAM => 'orob2b_product_view',
+                    ContextHelper::ENTITY_ID_PARAM => $entity->getId(),
+                    ContextHelper::ENTITY_CLASS_PARAM => ClassUtils::getClass($entity)
+                ]
+            )
+            ->willReturn(new ActionContext(['redirectUrl' => 'generated_redirect_url']));
 
         $result = $this->handler->handleUpdate(
             $entity,
@@ -205,7 +214,7 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
         $form = $this->getMockBuilder('Symfony\Component\Form\Form')
             ->disableOriginalConstructor()
             ->getMock();
-        $entity = $this->getProductMock(false);
+        $entity = $this->getProductMock(0);
         $expected = $this->assertSaveData($form, $entity);
 
         $result = $this->handler->handleUpdate(
@@ -224,7 +233,7 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
         $form = $this->getMockBuilder('Symfony\Component\Form\Form')
             ->disableOriginalConstructor()
             ->getMock();
-        $entity = $this->getProductMock(false);
+        $entity = $this->getProductMock(0);
 
         $handler = $this->getMockBuilder('Oro\Bundle\FormBundle\Tests\Unit\Form\Stub\HandlerStub')
             ->getMock();
