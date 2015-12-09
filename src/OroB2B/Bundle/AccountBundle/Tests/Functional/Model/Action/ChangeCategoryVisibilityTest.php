@@ -27,34 +27,49 @@ class ChangeCategoryVisibilityTest extends CategoryCaseActionTestCase
     /**
      * @dataProvider visibilityChangeDataProvider
      *
-     * @param string $categoryVisibilityReference
+     * @param string $visibilityReference
      * @param string $visibility
      * @param array $expectedData
      */
-    public function testVisibilityChange($categoryVisibilityReference, $visibility, array $expectedData)
+    public function testVisibilityChange($visibilityReference, $visibility, array $expectedData)
     {
         /** @var VisibilityInterface $categoryVisibility */
-        $categoryVisibility = $this->getReference($categoryVisibilityReference);
+        $categoryVisibility = $this->getReference($visibilityReference);
 
         $categoryVisibility->setVisibility($visibility);
 
-        $this->context->expects($this->once())
+        $this->context->expects($this->exactly(1))
             ->method('getEntity')
             ->willReturn($categoryVisibility);
 
         $this->action->execute($this->context);
 
         $this->assertProductVisibilityResolvedCorrect($expectedData);
+
+        // TODO waiting for CategoryVisibilityResolver implementation
+//        $categoryVisibility->setVisibility($this->getInversedVisibility($visibility));
+//
+//        $this->action->execute($this->context);
     }
 
     /**
+     * @param string $visibility
+     * @return string
+     */
+    protected function getInversedVisibility($visibility)
+    {
+        return $visibility === CategoryVisibility::VISIBLE ? CategoryVisibility::HIDDEN : CategoryVisibility::VISIBLE;
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     public function visibilityChangeDataProvider()
     {
         return [
-            [
-                'categoryVisibilityReference' => 'category_1.visibility.all',
+            'change visibility to all' => [
+                'visibilityReference' => 'category_1.visibility.all',
                 'visibility' => CategoryVisibility::HIDDEN,
                 'expectedData' => [
                     'hiddenProducts' => [
@@ -128,6 +143,110 @@ class ChangeCategoryVisibilityTest extends CategoryCaseActionTestCase
                     ],
                 ]
             ],
+            // TODO waiting for CategoryVisibilityResolver implementation
+//            'change visibility account group' => [
+//                'visibilityReference' => 'category_1.visibility.account_group.group3',
+//                'visibility' => CategoryVisibility::HIDDEN,
+//                'expectedData' => [
+//                    'hiddenProducts' => [
+//                        'product.4',
+//                        'product.7',
+//                    ],
+//                    'hiddenProductsByAccountGroups' => [
+//                        'account_group.group2' => [
+//                            'product.7',
+//                        ],
+//                        'account_group.group3' => [
+//                            'product.1',
+//                            'product.3',
+//                            'product.6',
+//                            'product.5',
+//                            'product.4',
+//                            'product.7',
+//                        ],
+//                    ],
+//                    'hiddenProductsByAccounts' => [
+//                        'account.level_1.1' => [
+//                            'product.4',
+//                            'product.7',
+//                        ],
+//                        'account.level_1.2' => [
+//                            'product.7',
+//                        ],
+//                        'account.level_1.2.1' => [
+//                            'product.7',
+//                        ],
+//                        'account.level_1.3.1' => [
+//                            'product.1',
+//                            'product.3',
+//                            'product.6',
+//                            'product.5',
+//                            'product.4',
+//                            'product.7',
+//                        ],
+//                        'account.level_1.3.1.1' => [
+//                            'product.2',
+//                            'product.3',
+//                            'product.6',
+//                            'product.7',
+//                        ],
+//                        'account.level_1.4' => [
+//                            'product.3',
+//                            'product.4',
+//                        ],
+//                    ],
+//                ]
+//            ],
+//            'change visibility account' => [
+//                'visibilityReference' => 'category_1.visibility.account.level_1.2.1',
+//                'visibility' => CategoryVisibility::HIDDEN,
+//                'expectedData' => [
+//                    'hiddenProducts' => [
+//                        'product.4',
+//                        'product.7',
+//                    ],
+//                    'hiddenProductsByAccountGroups' => [
+//                        'account_group.group2' => [
+//                            'product.7',
+//                        ],
+//                        'account_group.group3' => [
+//                            'product.3',
+//                            'product.6',
+//                        ],
+//                    ],
+//                    'hiddenProductsByAccounts' => [
+//                        'account.level_1.1' => [
+//                            'product.4',
+//                            'product.7',
+//                        ],
+//                        'account.level_1.2' => [
+//                            'product.7',
+//                        ],
+//                        'account.level_1.2.1' => [
+//                            'product.1',
+//                            'product.2',
+//                            'product.3',
+//                            'product.6',
+//                            'product.7',
+//                        ],
+//                        'account.level_1.3.1' => [
+//                            'product.3',
+//                            'product.6',
+//                            'product.4',
+//                            'product.7',
+//                        ],
+//                        'account.level_1.3.1.1' => [
+//                            'product.2',
+//                            'product.3',
+//                            'product.6',
+//                            'product.4',
+//                        ],
+//                        'account.level_1.4' => [
+//                            'product.3',
+//                        ],
+//                    ],
+//                ]
+//            ],
         ];
     }
 }
