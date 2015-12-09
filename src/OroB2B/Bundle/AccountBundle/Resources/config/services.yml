@@ -8,7 +8,6 @@ parameters:
     orob2b_account.entity.account_user_address.class: OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress
     orob2b_account.entity.account_user_role.class: OroB2B\Bundle\AccountBundle\Entity\AccountUserRole
     orob2b_account.entity.audit.class: OroB2B\Bundle\AccountBundle\Entity\Audit
-    orob2b_account.entity.audit_field.class: OroB2B\Bundle\AccountBundle\Entity\AuditField
     orob2b_account.entity.navigation_item.class: OroB2B\Bundle\AccountBundle\Entity\NavigationItem
     orob2b_account.entity.navigation_history_item.class: OroB2B\Bundle\AccountBundle\Entity\NavigationHistoryItem
     orob2b_account.entity.pinbar_tab.class: OroB2B\Bundle\AccountBundle\Entity\PinbarTab
@@ -97,9 +96,6 @@ parameters:
     orob2b_account.provider.visibility_choices.class: OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider
 
     orob2b_account.audit.discriminator_map_listener.class: OroB2B\Bundle\AccountBundle\Audit\DiscriminatorMapListener
-    orob2b_account.audit.commit_order.class: OroB2B\Bundle\AccountBundle\Audit\CommitOrderListener
-
-    orob2b_account.audit.event_listener.audit_grid_listener.class: OroB2B\Bundle\AccountBundle\Audit\AuditDatagridListener
 
     orob2b_account.helper.account_user_role_privileges.class: OroB2B\Bundle\AccountBundle\Helper\AccountUserRolePrivilegesHelper
 
@@ -572,24 +568,8 @@ services:
         class: %orob2b_account.audit.discriminator_map_listener.class%
         calls:
             - [ addClass, [ orob2b_audit, %orob2b_account.entity.audit.class% ] ]
-            - [ addClass, [ orob2b_audit_field, %orob2b_account.entity.audit_field.class% ] ]
         tags:
             - { name: doctrine.event_listener, event: loadClassMetadata }
-
-    orob2b_account.audit.commit_order:
-        class: %orob2b_account.audit.commit_order.class%
-        calls:
-            - [ addDependency, [ %orob2b_account.entity.audit_field.class%, %orob2b_account.entity.audit.class% ] ]
-        tags:
-            - { name: doctrine.event_listener, event: onFlush, priority: -10 }
-
-    orob2b_account.audit.event_listener.audit_grid_listener:
-        class: %orob2b_account.audit.event_listener.audit_grid_listener.class%
-        arguments:
-            - @oro_datagrid.configuration.provider
-        tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.audit-history-grid, method: onHistoryBuildBefore }
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.audit-grid, method: onAuditBuildBefore }
 
     orob2b_account.helper.account_user_role_privileges:
         class: %orob2b_account.helper.account_user_role_privileges.class%
@@ -638,3 +618,10 @@ services:
             - @orob2b_account.storage.category_visibility_storage
         tags:
             - {name: kernel.event_listener, event: orob2b_catalog.category.tree.create_after, method: onCreateAfter }
+
+    orob2b_account.event_listener.frontend_dataaudit_history_grid_listener:
+        class:  %oro_dataaudit.event_listener.dataaudit_history_grid_listener.class%
+        arguments:
+            - [objectClass, objectId]
+        tags:
+          - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-audit-history-grid, method: onBuildAfter }

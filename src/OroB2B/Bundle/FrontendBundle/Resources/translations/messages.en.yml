@@ -6,8 +6,6 @@ orob2b_frontend:
             web:
                 header: Web settings
                 backend_prefix: Backend prefix
-    dataaudit:
-        administrator: Administrator
     theme:
         demo.title: 'OroPlatform theme'
     system_configuration:

@@ -25,10 +25,6 @@ placeholders:
             web_settings:
                 order: 300
 
-    frontend_change_history_block:
-        items:
-            frontend_change_history_link: ~
-
 items:
     logo:
         template: OroB2BFrontendBundle:Organization:logo.html.twig
@@ -56,7 +52,3 @@ items:
         template: OroActivityListBundle:ActivityList:activities.html.twig
     web_settings:
         template: OroB2BFrontendBundle:InstallConfiguration:web.html.twig
-    frontend_change_history_link:
-        template: OroDataAuditBundle::change_history_link.html.twig
-        applicable: @oro_dataaudit.placeholder.filter->isEntityAuditable($entity$, $audit_show_change_history$)
-        acl: orob2b_frontend_dataaudit_history

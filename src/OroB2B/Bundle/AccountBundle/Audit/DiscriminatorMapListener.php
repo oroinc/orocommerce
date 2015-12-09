@@ -44,7 +44,7 @@ class DiscriminatorMapListener
         $className = $metadata->getName();
         foreach ($this->supportedClassNames as $key => $supportedClassName) {
             if (is_a($supportedClassName, $className, true)) {
-                $metadata->discriminatorMap[$key] = $supportedClassName;
+                $metadata->addDiscriminatorMapClass($key, $supportedClassName);
             }
         }
     }

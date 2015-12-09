@@ -3,12 +3,9 @@
 namespace OroB2B\Bundle\FrontendBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 class FrontendController extends Controller
 {
@@ -23,29 +20,5 @@ class FrontendController extends Controller
         } else {
             return $this->redirectToRoute('orob2b_product_frontend_product_index');
         }
-    }
-
-    /**
-     * @Route(
-     *      "/history/{entity}/{id}/{_format}",
-     *      name="orob2b_frontend_dataaudit_history",
-     *      requirements={"entity"="[a-zA-Z0-9_]+", "id"="\d+"},
-     *      defaults={"entity"="entity", "id"=0, "_format" = "html"}
-     * )
-     * @Template("OroDataAuditBundle:Audit/widget:history.html.twig")
-     * @Acl(
-     *      id="orob2b_frontend_dataaudit_history",
-     *      type="action",
-     *      label="orob2b.frontend.dataaudit.module_label",
-     *      group_name="commerce"
-     * )
-     */
-    public function historyAction($entity, $id)
-    {
-        return array(
-            'gridName'     => 'b2b-frontend-audit-history-grid',
-            'entityClass'  => $entity,
-            'entityId'     => $id,
-        );
     }
 }

@@ -1,8 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Tests\Functional\Controller;
-
-use Doctrine\Common\Collections\Criteria;
+namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller;
 
 use Oro\Component\Testing\WebTestCase;
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
@@ -12,7 +10,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 /**
  * @dbIsolation
  */
-class FrontendAuditTest extends WebTestCase
+class AuditControllerTest extends WebTestCase
 {
     /**
      * @var array
@@ -32,7 +30,6 @@ class FrontendAuditTest extends WebTestCase
             [],
             $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
         );
-
     }
 
     public function testAuditHistory()
@@ -47,13 +44,13 @@ class FrontendAuditTest extends WebTestCase
         $user = $this->getContainer()->get('doctrine')
             ->getManagerForClass('OroB2BAccountBundle:AccountUser')
             ->getRepository('OroB2BAccountBundle:AccountUser')
-            ->findOneBy([], ['id' => Criteria::DESC]);
+            ->findOneBy(['email' => $this->userData['email']]);
 
         $response = $this->requestFrontendGrid(
-            'b2b-frontend-audit-history-grid',
+            'frontend-audit-history-grid',
             [
-                'b2b-frontend-audit-history-grid[object_class]' => 'OroB2B_Bundle_AccountBundle_Entity_AccountUser',
-                'b2b-frontend-audit-history-grid[object_id]'    => $user->getId()
+                'frontend-audit-history-grid[object_class]' => 'OroB2B_Bundle_AccountBundle_Entity_AccountUser',
+                'frontend-audit-history-grid[object_id]'    => $user->getId()
             ]
         );
 
@@ -80,7 +77,7 @@ class FrontendAuditTest extends WebTestCase
             $this->assertEquals($this->userData[$key], $value);
         }
 
-        $this->assertEquals('AccountUser AccountUser  - ' . LoadAccountUserData::AUTH_USER, trim($result['author']));
+        $this->assertEquals('AccountUser AccountUser - ' . LoadAccountUserData::AUTH_USER, trim($result['author']));
     }
 
     protected function createUser()
@@ -102,7 +99,7 @@ class FrontendAuditTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains("Account User has been saved", $crawler->html());
+        $this->assertContains('Account User has been saved', $crawler->html());
     }
 
     /**

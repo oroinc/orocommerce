@@ -73,7 +73,7 @@ class DiscriminatorMapListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->addClass('key', '\stdClass');
         $this->listener->loadClassMetadata($event);
 
-        $this->assertEquals(['key' => '\stdClass'], $metadata->discriminatorMap);
+        $this->assertEquals(['key' => 'stdClass'], $metadata->discriminatorMap);
     }
 
     public function testMapOverride()
@@ -92,6 +92,6 @@ class DiscriminatorMapListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->addClass('key', '\stdClass');
         $this->listener->loadClassMetadata($event);
 
-        $this->assertEquals(['key' => '\stdClass', 'other' => 'second'], $metadata->discriminatorMap);
+        $this->assertEquals(['key' => 'stdClass', 'other' => 'second'], $metadata->discriminatorMap);
     }
 }
