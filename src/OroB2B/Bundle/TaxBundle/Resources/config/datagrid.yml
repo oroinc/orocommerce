@@ -88,7 +88,7 @@ datagrid:
             description:
                 label: orob2b.tax.description.label
             rate:
-                label: orob2b.tax.tax.rate.label
+                label: orob2b.tax.rate.label
         sorters:
             columns:
                 code:

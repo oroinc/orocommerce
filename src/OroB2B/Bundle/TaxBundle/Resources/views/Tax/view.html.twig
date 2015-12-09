@@ -7,7 +7,7 @@
     {% set breadcrumbs = {
         'entity': entity,
         'indexPath': path('orob2b_tax_tax_index'),
-        'indexLabel': 'orob2b.tax.tax.entity_plural_label'|trans,
+        'indexLabel': 'orob2b.tax.entity_plural_label'|trans,
         'entityTitle': entity.code|default('N/A'|trans)
     } %}
 
@@ -18,7 +18,7 @@
     {% if resource_granted('EDIT', entity) %}
         {{ UI.editButton({
             'path' : path('orob2b_tax_tax_update', { 'id': entity.id }),
-            'entity_label': 'orob2b.tax.tax.entity_label'|trans
+            'entity_label': 'orob2b.tax.entity_label'|trans
         }) }}
     {% endif %}
     {% if resource_granted('DELETE', entity) %}
@@ -28,7 +28,7 @@
             'aCss': 'no-hash remove-button',
             'dataId': entity.id,
             'id': 'btn-remove-attribute',
-            'entity_label': 'orob2b.tax.tax.entity_label'|trans,
+            'entity_label': 'orob2b.tax.entity_label'|trans,
         }) }}
     {% endif %}
 {% endblock navButtons %}
@@ -37,7 +37,7 @@
     {% set taxInfo %}
         {{ UI.renderProperty('orob2b.tax.code.label'|trans, entity.code) }}
         {{ UI.renderProperty('orob2b.tax.description.label'|trans, entity.description) }}
-        {{ UI.renderProperty('orob2b.tax.tax.rate.label'|trans, entity.rate) }}
+        {{ UI.renderProperty('orob2b.tax.rate.label'|trans, entity.rate) }}
     {% endset %}
 
     {% set dataBlocks = [{

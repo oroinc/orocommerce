@@ -16,7 +16,7 @@ oro_menu_config:
                 description: 'orob2b.tax.producttaxcode.description'
 
         tax_list:
-            label:           'orob2b.tax.tax.entity_plural_label'
+            label:           'orob2b.tax.entity_plural_label'
             route:           'orob2b_tax_tax_index'
             extras:
                 position:    100

@@ -106,7 +106,7 @@ class TaxController extends Controller
                     'parameters' => ['id' => $tax->getId()]
                 ];
             },
-            $this->get('translator')->trans('orob2b.account.controller.account.saved.message')
+            $this->get('translator')->trans('orob2b.tax.controller.tax.saved.message')
         );
     }
 }

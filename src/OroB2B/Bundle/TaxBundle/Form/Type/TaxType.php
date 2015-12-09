@@ -37,7 +37,7 @@ class TaxType extends AbstractType
                 'label' => 'orob2b.tax.description.label'
             ])
             ->add('rate', 'oro_percent', [
-                'label' => 'orob2b.tax.tax.rate.label',
+                'label' => 'orob2b.tax.rate.label',
                 'required' => true
             ]);
     }
