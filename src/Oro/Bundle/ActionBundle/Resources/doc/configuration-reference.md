@@ -9,6 +9,16 @@ Table of Contents
  - [Configuration Merging](#configuration-merging)
  - [Defining an Action](#defining-an-action)
    - [Example](#example)
+ - [Frontend Options Configuration](#frontend-options-configuration)
+   - [Example](#example-1)
+ - [Attributes Configuration](#attributes-configuration)
+   - [Example](#example-2)
+ - [Form Options Configuration](#form-options-configuration)
+   - [Example](#example-3)
+ - [Pre Conditions and Conditions Configuration](#pre-conditions-and-conditions-configuration)
+   - [Example](#example-4)
+ - [Pre Functions, Init Functions and Post Functions Configuration](#pre-functions-init-functions-and-post-functions-configuration)
+   - [Example](#example-5)
 
 Overview
 ========
@@ -20,7 +30,7 @@ Configuration of Action declares all aspects related to specific action:
 * conditions and functions
 * attributes involved in action
 * frontend configuration
-* action widget dialog parameters
+* action dialog parameters
 
 Structure of configuration is declared in class Oro\Bundle\ActionBundle\Configuration\ActionDefinitionConfiguration.
 
@@ -123,39 +133,88 @@ Single action configuration has next properties:
 Example
 -------
 ```
-actions:                                              # root elements
-    demo_action:                                      # name of action
-        extends: demo_action_base                     # base action name
-        label: aсme.demo.actions.myentity_action      # this value will be shown in UI for action button
-        enabled: false                                # action is disabled, means not used in application
-        entities:                                     # on view/edit pages of this entities action button will be shown
-            - Acme\Bundle\DemoBundle\Entity\MyEntity  # entity class name
-        routes:                                       # on pages with this action names action button will be shown
-            - acme_demo_action_view                   # route name
-        order: 10                                     # display order of action button
-        acl_resource: acme_demo_action_view           # ACL resource name
-        frontend_options:                             # configuration for Frontend Options
-                                                      # ...
-        prefunctions:                                 # configuration for Pre Functions
-                                                      # ...
-        preconditions:                                # configuration for Pre Conditions
-                                                      # ...
-        attributes:                                   # configuration for Attributes
-                                                      # ...
-        form_options:                                 # configuration for Form Options
-                                                      # ...
-        initfunctions:                                # configuration for Init Functions
-                                                      # ...
-        conditions:                                   # configuration for Conditions
-                                                      # ...
-        postfunctions:                                # configuration for Post Functions
-                                                      # ...
+actions:                                             # root elements
+    demo_action:                                     # name of action
+        extends: demo_action_base                    # base action name
+        label: aсme.demo.actions.myentity_action     # this value will be shown in UI for action button
+        enabled: false                               # action is disabled, means not used in application
+        entities:                                    # on view/edit pages of this entities action button will be shown
+            - Acme\Bundle\DemoBundle\Entity\MyEntity # entity class name
+        routes:                                      # on pages with this action names action button will be shown
+            - acme_demo_action_view                  # route name
+        order: 10                                    # display order of action button
+        acl_resource: acme_demo_action_view          # ACL resource name that will be checked on pre conditions step
+        frontend_options:                            # configuration for Frontend Options
+                                                     # ...
+        prefunctions:                                # configuration for Pre Functions
+                                                     # ...
+        preconditions:                               # configuration for Pre Conditions
+                                                     # ...
+        attributes:                                  # configuration for Attributes
+                                                     # ...
+        form_options:                                # configuration for Form Options
+                                                     # ...
+        initfunctions:                               # configuration for Init Functions
+                                                     # ...
+        conditions:                                  # configuration for Conditions
+                                                     # ...
+        postfunctions:                               # configuration for Post Functions
+                                                     # ...
 ```
 
 Frontend Options Configuration
 ==============================
 
+Frontend Options allow to change action button style, override button or dialog template and set widget options.
 
+Frontend Options configuration has next options:
+
+* **icon**
+    *string*
+    CSS class of icon of action button
+* **class**
+    *string*
+    CSS class applied to action button
+* **group**
+    *string*
+    Name of action button menu. Action button will be part of dropdown buttons menu with label (specified group).
+    All actions with same group will be shown in one dropdown burrons menu.
+* **template**
+    *string*
+    This option provide possibility to override button template.
+    Should be extended from `OroActionBundle:Action:button.html.twig`
+* **dialog_template**
+    *string*
+    You can set custom action dialog template.
+    Should be extended from `OroActionBundle:Widget:widget/form.html.twig`
+* **dialog_title**
+    *string*
+    Custom title of action dialog window.
+* **dialog_options**
+    *array*
+    Parameters related to widget component. Can be specified next options: *allowMaximize*, *allowMinimize*, *dblclick*,
+    *maximizedHeightDecreaseBy*, *width*, etc.
+
+Example
+-------
+```
+actions:
+    demo_action:
+        # ...
+        frontend_options:
+            icon: icon-ok
+            class: btn
+            group: aсme.demo.actions.demogroup.label
+            template: OroActionBundle:Action:button.html.twig
+            dialog_template: OroActionBundle:Widget:widget/form.html.twig
+            dialog_title: aсme.demo.actions.dialog.title
+            dialog_options:
+                allowMaximize: true
+                allowMinimize: true
+                dblclick: maximize
+                maximizedHeightDecreaseBy: minimize-bar
+                width: 500
+```
 
 Attributes Configuration
 ========================
@@ -191,16 +250,13 @@ Single attribute can be described with next configuration:
 * **property_path**
     *string*
     Used to work with attribute value by reference and specifies path to data storage. If property path is specified
-    then all other attribute properties except name are optional - they can be automatically guessed
-    based on last element (field) of property path.
+    then all other attribute properties except name are optional - they can be automatically guessed based on last
+    element (field) of property path.
 * **options**
     Options of an attribute. Currently next options are supported
     * **class**
         *string*
         Fully qualified class name. Allowed only when type either entity or object.
-    * **multiple**
-        *boolean*
-        Indicates whether several entities are supported. Allowed only when type is entity.
 
 **Notice**
 Attribute configuration does not contain any information about how to render attribute on step forms, it's
@@ -213,35 +269,125 @@ Example
 actions:
     demo_action:
         # ...
-        new_account:
-            label: 'Account'
+        user:
+            label: 'User'
             type: entity
-            entity_acl:
-                delete: false
             options:
-                class: OroCRM\Bundle\AccountBundle\Entity\Account
-        new_company_name:
+                class: Oro\Bundle\UserBundle\Entity\User
+        company_name:
             label: 'Company name'
             type: string
-        opportunity:
-            property_path: sales_funnel.opportunity
-        opportunity_name:
-            property_path: sales_funnel.opportunity.name
+        group_name:
+            property_path: user.group.name
+```
+
+Form Options Configuration
+==========================
+
+These options will be passed to form type of action, they can contain options for form types of attributes that will be
+shown when user clicks action button.
+
+Single from configuration can be described with next configuration:
+
+* **attribute_fields**
+    *array*
+    List of attributes with their options. All attributes specified in this configuration must be contains in attribute
+    configuration.
+* **attribute_default_values**
+    *array*
+    List of default values for attributes. This values are shown in action form on form load.
+
+Example
+-------
+
+```
+actions:
+    demo_action:
+        # ...
+        form_options:
+            attribute_fields:
+                demo_attr:
+                    form_type: text
+                        options:
+                            required: true
+                            constraints:
+                                - NotBlank: ~
+            attribute_default_values:
+                demo_attr: $demo
 ```
 
 Pre Conditions and Conditions Configuration
 ===========================================
+
 * **preconditions**
-    Configuration of Pre Conditions that must satisfy to allow showing action button
+    Configuration of Pre Conditions that must satisfy to allow showing action button.
 * **conditions**
-    Configuration of Conditions that must satisfy to allow action
+    Configuration of Conditions that must satisfy to allow action.
+
+It declares a tree structure of conditions that are applied on the Action Context to check is the Action could be
+performed. Single condition configuration contains alias - a unique name of condition and options.
+
+Optionally each condition can have a constraint message. All messages of not passed conditions will be shown to user
+when transition could not be performed.
+
+There are two types of conditions - preconditions and actually action conditions. Preconditions is used to check
+whether action should be allowed to show, and actual conditions used to check whether action can be done.
+
+Alias of condition starts from "@" symbol and must refer to registered condition. For example "@or" refers to logical
+OR condition.
+
+Options can refer to values of main entity in Action Context using "$" prefix. For example "$some_value" refers to value
+of "callsome_value" attribute of entity that is processed in condition.
+
+Also it is possible to refer to any property of Action Context using "$." prefix. For example to refer date attribute
+with date can be used string "$.created".
+
+Example
+-------
+
+```
+actions:
+    demo_action:
+        # ...
+        pre_conditions:
+            @equal: [$name, 'John Dow']
+        conditions:
+            @not_empty: [$group]
+```
 
 Pre Functions, Init Functions and Post Functions Configuration
 ==============================================================
 
 * **prefunctions**
-
+    Configuration of Pre Functions that may be performed before pre conditions, conditions, init functions and post
+    functions. It can be used to prepare some data in Action Context that will be used in pre conditions validation.
 * **initfunctions**
-
+    Configuration of Init Functions that may be performed on Action Context before conditions and post functions.
+    One of possible init actions usage scenario is to fill attributes with default values, which will be used in action
+    form if it exist.
 * **postfunctions**
+    Configuration of Post Functions that must be performed after all previous step are performed. This is main action
+    step that must contain action logic. It will be performed only after conditions will be qualified.
 
+Similarly to Conditions alias of Function starts from "@" symbol and must refer to registered Functions. For example
+"@assign_value" refers to Function which set specified value to attribute in Action Context.
+
+Example
+-------
+
+```
+actions:
+    demo_action:
+        # ...
+        prefunctions:
+            - @assign_value: [$name, 'User Name']
+        initfunctions:
+            - @assign_value: [$group, 'Group Name']
+        postfunctions:
+            - @create_entity:
+                class: Acme\Bundle\DemoBundle\Entity\User
+                attribute: $user
+                data:
+                    name: $name
+                    group: $group
+```
