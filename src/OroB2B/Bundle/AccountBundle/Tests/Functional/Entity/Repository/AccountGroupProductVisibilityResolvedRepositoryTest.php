@@ -49,7 +49,7 @@ class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
         parent::tearDown();
     }
 
-    function testClearTable()
+    public function testClearTable()
     {
         $this->assertCount(4, $this->getRepository()->findAll());
         $deletedCount = $this->getRepository()->clearTable();
@@ -61,7 +61,7 @@ class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
     /**
      * @depends testClearTable
      */
-    function testInsertByCategory()
+    public function testInsertByCategory()
     {
         /** @var AccountGroup $group */
         $group = $this->getReference(LoadGroups::GROUP1);
@@ -117,10 +117,14 @@ class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
                     ]
                 );
             $this->assertNotNull($source);
+            if ($resolvedValue->getVisibility() == BaseProductVisibilityResolved::VISIBILITY_HIDDEN) {
+                $visibility = AccountGroupProductVisibility::HIDDEN;
+            } else {
+                $visibility = AccountGroupProductVisibility::VISIBLE;
+            }
             $this->assertEquals(
                 $source->getVisibility(),
-                $resolvedValue->getVisibility() == BaseProductVisibilityResolved::VISIBILITY_HIDDEN
-                    ? AccountGroupProductVisibility::HIDDEN : AccountGroupProductVisibility::VISIBLE
+                $visibility
             );
         }
 
@@ -129,8 +133,7 @@ class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
     /**
      * @return InsertFromSelectQueryExecutor
      */
-    protected
-    function getInsertFromSelectExecutor()
+    protected function getInsertFromSelectExecutor()
     {
         return $this->getContainer()
             ->get('oro_entity.orm.insert_from_select_query_executor');
@@ -139,8 +142,7 @@ class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
     /**
      * @return EntityRepository
      */
-    protected
-    function getSourceRepository()
+    protected function getSourceRepository()
     {
         return $this->getContainer()->get('doctrine')->getRepository(
             'OroB2BAccountBundle:Visibility\AccountGroupProductVisibility'
@@ -150,8 +152,7 @@ class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
     /**
      * @return AccountGroupProductVisibilityResolvedRepository
      */
-    protected
-    function getRepository()
+    protected function getRepository()
     {
         return $this->getContainer()->get('doctrine')->getRepository(
             'OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved'
