@@ -8,7 +8,6 @@ use FOS\RestBundle\Util\Codes;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\ActionBundle\Model\ActionManager;
@@ -26,22 +25,13 @@ class ActionController extends FOSRestController
      * @AclAncestor("oro_action")
      * @Rest\Get
      *
-     * @param Request $request
      * @param string $actionName
      * @return Response
      */
-    public function executeAction(Request $request, $actionName)
+    public function executeAction($actionName)
     {
         try {
-            $context = $this->getActionManager()
-                ->execute(
-                    [
-                        'route' => $request->get('route'),
-                        'entityId' => $request->get('entityId'),
-                        'entityClass' => $request->get('entityClass')
-                    ],
-                    $actionName
-                );
+            $context = $this->getActionManager()->execute($actionName);
         } catch (ActionNotFoundException $e) {
             return $this->handleError($e->getMessage(), Codes::HTTP_NOT_FOUND);
         } catch (ForbiddenActionException $e) {

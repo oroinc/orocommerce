@@ -77,7 +77,8 @@ class LocalizedFallbackValueAwareDataConverter extends PropertyPathTitleDataConv
         $multipleRelationDeepLevel,
         $field,
         $fieldHeader,
-        $fieldOrder
+        $fieldOrder,
+        $isIdentifier = false
     ) {
         if ($fullData && is_a($field['related_entity_name'], $this->localizedFallbackValueClassName, true)) {
             $localeCodes = $this->getLocaleCodes();
@@ -151,6 +152,6 @@ class LocalizedFallbackValueAwareDataConverter extends PropertyPathTitleDataConv
      */
     protected function getHeader($fieldName, $identity, $targetFieldName, $delimiter)
     {
-        return $fieldName . $delimiter . LocaleCodeFormatter::format($identity) . $delimiter . $targetFieldName;
+        return $fieldName . $delimiter . LocaleCodeFormatter::formatName($identity) . $delimiter . $targetFieldName;
     }
 }
