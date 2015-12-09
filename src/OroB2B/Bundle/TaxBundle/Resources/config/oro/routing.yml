@@ -1,4 +1,18 @@
-orob2b_tax:
-    resource:     "@OroB2BTaxBundle/Controller/TaxController.php"
+orob2b_tax_product_tax_code:
+    resource:     "@OroB2BTaxBundle/Controller/ProductTaxCodeController.php"
     type:         annotation
-    prefix:       /tax
+    prefix:       /tax/product
+
+orob2b_tax_account_tax_code:
+    resource:     "@OroB2BTaxBundle/Controller/AccountTaxCodeController.php"
+    type:         annotation
+    prefix:       /tax/account
+
+orob2b_tax_bundle_api:
+    resource:     "@OroB2BTaxBundle/Resources/config/oro/routing_api.yml"
+    prefix:       api/rest/{version}/
+    requirements:
+        version:  latest|v1
+        _format:  json
+    defaults:
+        version:  latest
