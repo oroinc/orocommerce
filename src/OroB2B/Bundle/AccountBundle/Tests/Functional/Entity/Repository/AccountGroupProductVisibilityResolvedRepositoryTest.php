@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Repository;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityRepository;
 
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
@@ -33,30 +34,34 @@ class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
             ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved');
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityResolvedData',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
                 'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
-                'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
                 'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
             ]
         );
     }
 
-    public function testClearTable()
+    protected function tearDown()
     {
-        $deletedCount = $this->getRepository()->clearTable();
-        $actual = $this->getRepository()->findAll();
+        $this->registry->getManager()->clear();
+        parent::tearDown();
+    }
 
-        $this->assertSame(0, count($actual));
-        $this->assertSame(4, $deletedCount);
+    function testClearTable()
+    {
+        $this->assertCount(4, $this->getRepository()->findAll());
+        $deletedCount = $this->getRepository()->clearTable();
+
+        $this->assertCount(0, $this->getRepository()->findAll());
+        $this->assertEquals(4, $deletedCount);
     }
 
     /**
      * @depends testClearTable
      */
-    public function testInsertByCategory()
+    function testInsertByCategory()
     {
         /** @var AccountGroup $group */
         $group = $this->getReference(LoadGroups::GROUP1);
@@ -122,9 +127,10 @@ class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
     }
 
     /**
-     * @return \Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor
+     * @return InsertFromSelectQueryExecutor
      */
-    protected function getInsertFromSelectExecutor()
+    protected
+    function getInsertFromSelectExecutor()
     {
         return $this->getContainer()
             ->get('oro_entity.orm.insert_from_select_query_executor');
@@ -133,7 +139,8 @@ class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
     /**
      * @return EntityRepository
      */
-    protected function getSourceRepository()
+    protected
+    function getSourceRepository()
     {
         return $this->getContainer()->get('doctrine')->getRepository(
             'OroB2BAccountBundle:Visibility\AccountGroupProductVisibility'
@@ -143,7 +150,8 @@ class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
     /**
      * @return AccountGroupProductVisibilityResolvedRepository
      */
-    protected function getRepository()
+    protected
+    function getRepository()
     {
         return $this->getContainer()->get('doctrine')->getRepository(
             'OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved'

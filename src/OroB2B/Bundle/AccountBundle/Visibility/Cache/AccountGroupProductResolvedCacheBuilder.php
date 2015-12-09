@@ -32,11 +32,6 @@ class AccountGroupProductResolvedCacheBuilder implements CacheBuilderInterface
     protected $doctrine;
 
     /**
-     * @var string
-     */
-    protected $cacheClass;
-
-    /**
      * ProductResolvedCacheBuilder constructor.
      * @param RegistryInterface $doctrine
      * @param InsertFromSelectQueryExecutor $executor
@@ -52,13 +47,6 @@ class AccountGroupProductResolvedCacheBuilder implements CacheBuilderInterface
         $this->categoryVisibilityResolver = $categoryVisibilityResolver;
     }
 
-    /**
-     * @param string $cacheClass
-     */
-    public function setCacheClass($cacheClass)
-    {
-        $this->cacheClass = $cacheClass;
-    }
 
     /**
      * {@inheritdoc}
@@ -130,7 +118,9 @@ class AccountGroupProductResolvedCacheBuilder implements CacheBuilderInterface
      */
     protected function getRepository()
     {
-        return $this->getManager()->getRepository($this->cacheClass);
+        return $this
+            ->getManager()
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved');
     }
 
     /**
@@ -138,7 +128,8 @@ class AccountGroupProductResolvedCacheBuilder implements CacheBuilderInterface
      */
     protected function getManager()
     {
-        return $this->doctrine->getManagerForClass($this->cacheClass);
+        return $this->doctrine
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved');
     }
 
     /**

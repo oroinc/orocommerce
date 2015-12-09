@@ -14,8 +14,8 @@ class AccountGroupProductVisibilityResolvedRepository extends EntityRepository
 {
     /**
      * @param InsertFromSelectQueryExecutor $insertFromSelect
-     * @param $cacheVisibility
-     * @param $categories
+     * @param integer $cacheVisibility
+     * @param integer[] $categories
      * @param integer $accountGroupId
      */
     public function insertByCategory(
@@ -28,14 +28,12 @@ class AccountGroupProductVisibilityResolvedRepository extends EntityRepository
             ->getRepository('OroB2BCatalogBundle:Category')
             ->createQueryBuilder('category')
             ->select(
-                [
-                    'IDENTITY(agpv.website)',
-                    'product.id',
-                    (string)$accountGroupId,
-                    (string)$cacheVisibility,
-                    (string)BaseProductVisibilityResolved::SOURCE_CATEGORY,
-                    'category.id as categoryId',
-                ]
+                'IDENTITY(agpv.website)',
+                'product.id',
+                (string)$accountGroupId,
+                (string)$cacheVisibility,
+                (string)BaseProductVisibilityResolved::SOURCE_CATEGORY,
+                'category.id'
             )
             ->innerJoin('category.products', 'product')
             ->innerJoin(
