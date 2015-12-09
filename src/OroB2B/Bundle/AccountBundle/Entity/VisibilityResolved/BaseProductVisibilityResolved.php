@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -51,11 +52,12 @@ class BaseProductVisibilityResolved
     protected $source;
 
     /**
-     * @var int
+     * @var Category
      *
-     * @ORM\Column(name="category_id", type="integer", nullable=true)
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\CatalogBundle\Entity\Category")
+     * @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
      */
-    protected $categoryId;
+    protected $category;
 
     /**
      * @param Website $website
@@ -103,20 +105,20 @@ class BaseProductVisibilityResolved
     }
 
     /**
-     * @return int
+     * @return Category
      */
-    public function getCategoryId()
+    public function getCategory()
     {
-        return $this->categoryId;
+        return $this->category;
     }
 
     /**
-     * @param int $categoryId
+     * @param Category $category
      * @return $this
      */
-    public function setCategoryId($categoryId)
+    public function setCategory($category)
     {
-        $this->categoryId = $categoryId;
+        $this->category = $category;
 
         return $this;
     }

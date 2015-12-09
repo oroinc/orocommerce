@@ -47,6 +47,7 @@ parameters:
     orob2b_account.account_user.password_reset.handler.class: OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserPasswordResetHandler
 
     #Listeners
+    orob2b_account.event_listener.category_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryListener
     orob2b_account.event_listener.login.class: OroB2B\Bundle\AccountBundle\EventListener\LoginListener
     orob2b_account.event_listener.ormdatasource_acl.class: OroB2B\Bundle\AccountBundle\EventListener\OrmDatasourceAclListener
     orob2b_account.event_listener.system_config.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigListener
@@ -669,3 +670,11 @@ services:
             - @orob2b_account.model.product_visibility_query_builder_modifier
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
+
+    orob2b_account.event_listener.category_listener:
+        arguments:
+            - @doctrine
+            - @oro_entity.orm.insert_from_select_query_executor
+        class: %orob2b_account.event_listener.category_listener.class%
+        tags:
+            - { name: doctrine.event_listener, event: postRemove }
