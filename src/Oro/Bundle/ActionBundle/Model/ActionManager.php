@@ -65,12 +65,17 @@ class ActionManager
      * @param string $actionName
      * @param ActionContext $actionContext
      * @param Collection $errors
+     * @param array $context
      * @return ActionContext
      * @throws \Exception
      */
-    public function execute($actionName, ActionContext $actionContext = null, Collection $errors = null)
-    {
-        $action = $this->getAction($actionName);
+    public function execute(
+        $actionName,
+        ActionContext $actionContext = null,
+        Collection $errors = null,
+        array $context = null
+    ) {
+        $action = $this->getAction($actionName, $context);
         if (!$action) {
             throw new ActionNotFoundException($actionName);
         }
