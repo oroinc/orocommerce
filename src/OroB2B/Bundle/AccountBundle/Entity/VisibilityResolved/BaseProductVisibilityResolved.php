@@ -9,6 +9,9 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
+ * @method BaseProductVisibilityResolved setSourceProductVisibility(VisibilityInterface $sourceProductVisibility = null)
+ * @method VisibilityInterface getSourceProductVisibility()
+ *
  * @ORM\MappedSuperclass
  */
 abstract class BaseProductVisibilityResolved
@@ -140,15 +143,4 @@ abstract class BaseProductVisibilityResolved
 
         return $this;
     }
-
-    /**
-     * @param VisibilityInterface|null $sourceProductVisibility
-     * @return $this
-     */
-    abstract public function setSourceProductVisibility(VisibilityInterface $sourceProductVisibility = null);
-
-    /**
-     * @return VisibilityInterface
-     */
-    abstract public function getSourceProductVisibility();
 }

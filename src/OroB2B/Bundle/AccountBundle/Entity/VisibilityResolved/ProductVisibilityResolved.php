@@ -5,10 +5,9 @@ namespace OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved;
 use Doctrine\ORM\Mapping as ORM;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Repository\ProductVisibilityResolvedRepository")
  * @ORM\Table(name="orob2b_prod_vsb_resolv")
  */
 class ProductVisibilityResolved extends BaseProductVisibilityResolved
@@ -30,10 +29,10 @@ class ProductVisibilityResolved extends BaseProductVisibilityResolved
     }
 
     /**
-     * @param VisibilityInterface|ProductVisibility|null $sourceProductVisibility
+     * @param ProductVisibility|null $sourceProductVisibility
      * @return $this
      */
-    public function setSourceProductVisibility(VisibilityInterface $sourceProductVisibility = null)
+    public function setSourceProductVisibility(ProductVisibility $sourceProductVisibility = null)
     {
         $this->sourceProductVisibility = $sourceProductVisibility;
 

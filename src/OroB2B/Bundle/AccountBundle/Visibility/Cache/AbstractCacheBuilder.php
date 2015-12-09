@@ -9,7 +9,7 @@ use OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityResolver
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-abstract class AbstractCacheBuilder
+abstract class AbstractCacheBuilder implements CacheBuilderInterface
 {
     /** @var  RegistryInterface */
     protected $registry;
@@ -48,21 +48,34 @@ abstract class AbstractCacheBuilder
         $productVisibilityResolved->setSourceProductVisibility($productVisibility);
         $productVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_STATIC);
         $productVisibilityResolved->setCategoryId(null);
-        if ($selectedVisibility == VisibilityInterface::VISIBLE) {
+        if ($selectedVisibility === VisibilityInterface::VISIBLE) {
             $productVisibilityResolved->setVisibility(BaseProductVisibilityResolved::VISIBILITY_VISIBLE);
-        } elseif ($selectedVisibility == VisibilityInterface::HIDDEN) {
+        } elseif ($selectedVisibility === VisibilityInterface::HIDDEN) {
             $productVisibilityResolved->setVisibility(BaseProductVisibilityResolved::VISIBILITY_HIDDEN);
         }
     }
 
     /**
-     * @param ConfigManager $configManager
+     * @param VisibilityInterface $productVisibility
+     * @param BaseProductVisibilityResolved $productVisibilityResolved
+     */
+    protected function resolveConfigValue(
+        VisibilityInterface $productVisibility,
+        BaseProductVisibilityResolved $productVisibilityResolved
+    ) {
+        $productVisibilityResolved->setSourceProductVisibility($productVisibility);
+        $productVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_STATIC);
+        $productVisibilityResolved->setCategoryId(null);
+        $productVisibilityResolved->setVisibility($this->getVisibilityFromConfig());
+    }
+
+    /**
      * @return int
      */
-    protected function getVisibilityFromConfig(ConfigManager $configManager)
+    protected function getVisibilityFromConfig()
     {
-        $visibilityFromConfig = $configManager->get('oro_b2b_account.product_visibility');
-        $visibility = $visibilityFromConfig == VisibilityInterface::VISIBLE ? 1 : -1;
+        $visibilityFromConfig = $this->configManager->get('oro_b2b_account.product_visibility');
+        $visibility = $visibilityFromConfig === VisibilityInterface::VISIBLE ? 1 : -1;
 
         return $visibility;
     }

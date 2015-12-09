@@ -9,7 +9,7 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-class AccountProductResolvedCacheBuilder extends AbstractCacheBuilder implements CacheBuilderInterface
+class AccountProductResolvedCacheBuilder extends AbstractCacheBuilder
 {
     /**
      * @param AccountProductVisibility $accountProductVisibility
@@ -27,48 +27,45 @@ class AccountProductResolvedCacheBuilder extends AbstractCacheBuilder implements
         );
         $accountProductVisibilityResolved = $em
             ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved')
-            ->findOneBy(['product' => $product, 'website' => $website, 'account' => $account]);
+            ->findByPrimaryKey($account, $product, $website);
 
         if (!$accountProductVisibilityResolved && $selectedVisibility !== AccountProductVisibility::ACCOUNT_GROUP) {
             $accountProductVisibilityResolved = new AccountProductVisibilityResolved($website, $product, $account);
             $em->persist($accountProductVisibilityResolved);
         }
 
-        if ($selectedVisibility == AccountProductVisibility::CATEGORY) {
+        if ($selectedVisibility === AccountProductVisibility::CATEGORY) {
             $category = $this->registry
                 ->getManagerForClass('OroB2BCatalogBundle:Category')
                 ->getRepository('OroB2BCatalogBundle:Category')
                 ->findOneByProduct($product);
-            if (!$category instanceof Category) {
-                $accountProductVisibilityResolved->setVisibility($this->getVisibilityFromConfig($this->configManager));
-                $accountProductVisibilityResolved->setSourceProductVisibility(null);
-                $accountProductVisibilityResolved->setSource(null);
-                $accountProductVisibilityResolved->setCategoryId(null);
-
-                return;
+            if ($category) {
+                $accountProductVisibilityResolved->setVisibility(
+                    $this->categoryVisibilityResolver->getCategoryVisibilityForAccount($category, $account)
+                );
+                $accountProductVisibilityResolved->setSourceProductVisibility($accountProductVisibility);
+                $accountProductVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_CATEGORY);
+                $accountProductVisibilityResolved->setCategoryId($category->getId());
+            } else {
+                $this->resolveConfigValue($accountProductVisibility, $accountProductVisibilityResolved);
             }
-            $accountProductVisibilityResolved->setVisibility(
-                $this->categoryVisibilityResolver->getCategoryVisibilityForAccount($category, $account)
-            );
-            $accountProductVisibilityResolved->setSourceProductVisibility($accountProductVisibility);
-            $accountProductVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_CATEGORY);
-            $accountProductVisibilityResolved->setCategoryId($category->getId());
-        } elseif ($selectedVisibility == AccountProductVisibility::CURRENT_PRODUCT) {
-            $accountProductVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_STATIC);
+        } elseif ($selectedVisibility === AccountProductVisibility::CURRENT_PRODUCT) {
             $productVisibilityResolved = $this->registry
                 ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
                 ->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
-                ->findOneBy(['product' => $product, 'website' => $website]);
-            if (!$productVisibilityResolved) {
-                $accountProductVisibilityResolved->setVisibility($this->getVisibilityFromConfig($this->configManager));
-                $accountProductVisibilityResolved->setSourceProductVisibility(null);
-
-                return;
+                ->findByPrimaryKey($product, $website);
+            if ($productVisibilityResolved) {
+                $accountProductVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_STATIC);
+                $accountProductVisibilityResolved->setCategoryId(null);
+                $accountProductVisibilityResolved->setVisibility($productVisibilityResolved->getVisibility());
+                $accountProductVisibilityResolved->setSourceProductVisibility($accountProductVisibility);
+            } else {
+                $this->resolveConfigValue($accountProductVisibility, $accountProductVisibilityResolved);
             }
-            $accountProductVisibilityResolved->setVisibility($productVisibilityResolved->getVisibility());
-            $accountProductVisibilityResolved->setSourceProductVisibility(
-                $productVisibilityResolved->getSourceProductVisibility()
-            );
+        } elseif ($selectedVisibility === AccountProductVisibility::ACCOUNT_GROUP) {
+            if ($accountProductVisibilityResolved) {
+                $em->remove($accountProductVisibilityResolved);
+            }
         } else {
             $this->resolveStaticValues(
                 $accountProductVisibility,

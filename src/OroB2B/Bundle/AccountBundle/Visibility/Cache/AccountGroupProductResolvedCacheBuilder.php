@@ -4,11 +4,12 @@ namespace OroB2B\Bundle\AccountBundle\Visibility\Cache;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-class AccountGroupProductResolvedCacheBuilder extends AbstractCacheBuilder implements CacheBuilderInterface
+class AccountGroupProductResolvedCacheBuilder extends AbstractCacheBuilder
 {
     /**
      * @param AccountGroupProductVisibility $accountGroupProductVisibility
@@ -26,7 +27,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractCacheBuilder imple
         );
         $accountGroupProductVisibilityResolved = $em
             ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved')
-            ->findOneBy(['product' => $product, 'website' => $website, 'accountGroup' => $accountGroup]);
+            ->findByPrimaryKey($accountGroup, $product, $website);
 
         if (!$accountGroupProductVisibilityResolved
             && $selectedVisibility !== AccountGroupProductVisibility::CURRENT_PRODUCT
@@ -39,31 +40,25 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractCacheBuilder imple
             $em->persist($accountGroupProductVisibilityResolved);
         }
 
-        if ($selectedVisibility == AccountGroupProductVisibility::CATEGORY) {
+        if ($selectedVisibility === AccountGroupProductVisibility::CATEGORY) {
             $category = $this->registry
                 ->getManagerForClass('OroB2BCatalogBundle:Category')
                 ->getRepository('OroB2BCatalogBundle:Category')
                 ->findOneByProduct($product);
-            if (!$category instanceof Category) {
+            if ($category) {
                 $accountGroupProductVisibilityResolved->setVisibility(
-                    $this->getVisibilityFromConfig($this->configManager)
+                    $this->categoryVisibilityResolver->getCategoryVisibilityForAccountGroup($category, $accountGroup)
                 );
-                $accountGroupProductVisibilityResolved->setSourceProductVisibility(null);
-                $accountGroupProductVisibilityResolved->setSource(null);
-                $accountGroupProductVisibilityResolved->setCategoryId(null);
-
-                return;
+                $accountGroupProductVisibilityResolved->setSourceProductVisibility($accountGroupProductVisibility);
+                $accountGroupProductVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_CATEGORY);
+                $accountGroupProductVisibilityResolved->setCategoryId($category->getId());
+            } else {
+                $this->resolveConfigValue($accountGroupProductVisibility, $accountGroupProductVisibilityResolved);
             }
-            $accountGroupProductVisibilityResolved->setVisibility(
-                $this->categoryVisibilityResolver->getCategoryVisibilityForAccountGroup($category, $accountGroup)
-            );
-            $accountGroupProductVisibilityResolved->setSourceProductVisibility($accountGroupProductVisibility);
-            $accountGroupProductVisibilityResolved->setSource(AccountGroupProductVisibilityResolved::SOURCE_CATEGORY);
-            $accountGroupProductVisibilityResolved->setCategoryId($category->getId());
-        } elseif ($selectedVisibility == AccountGroupProductVisibility::CURRENT_PRODUCT
-            && $accountGroupProductVisibilityResolved
-        ) {
-            $em->remove($accountGroupProductVisibilityResolved);
+        } elseif ($selectedVisibility === AccountGroupProductVisibility::CURRENT_PRODUCT) {
+            if ($accountGroupProductVisibilityResolved) {
+                $em->remove($accountGroupProductVisibilityResolved);
+            }
         } else {
             $this->resolveStaticValues(
                 $accountGroupProductVisibility,

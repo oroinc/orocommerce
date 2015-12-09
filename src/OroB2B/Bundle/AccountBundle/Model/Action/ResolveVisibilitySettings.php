@@ -2,50 +2,61 @@
 
 namespace OroB2B\Bundle\AccountBundle\Model\Action;
 
-use Oro\Bundle\WorkflowBundle\Exception\InvalidParameterException;
 use Oro\Bundle\WorkflowBundle\Model\Action\AbstractAction;
-use Oro\Bundle\WorkflowBundle\Model\ContextAccessor;
 use Oro\Bundle\WorkflowBundle\Model\ProcessData;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
 
-class VisibilitySettingsResolver extends AbstractAction
+class ResolveVisibilitySettings extends AbstractAction
 {
     /** @var CacheBuilderInterface */
     protected $cacheBuilder;
 
     /** @var bool */
-    protected $deleted;
+    protected $resetVisibility = false;
 
     /**
-     * @param ContextAccessor $contextAccessor
-     * @param CacheBuilderInterface $cacheBuilder
+     * Empty constructor, no extra dependencies
      */
-    public function __construct(ContextAccessor $contextAccessor, CacheBuilderInterface $cacheBuilder)
+    public function __construct()
     {
-        $this->cacheBuilder = $cacheBuilder;
-        parent::__construct($contextAccessor);
     }
 
     /**
-     * @param ProcessData $context
+     * @param CacheBuilderInterface $cacheBuilder
+     */
+    public function setCacheBuilder(CacheBuilderInterface $cacheBuilder)
+    {
+        $this->cacheBuilder = $cacheBuilder;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     protected function executeAction($context)
     {
-        /** @var VisibilityInterface $visibility */
+        if (!$context instanceof ProcessData) {
+            throw new \LogicException('This action can be called only from process context');
+        }
+
         $visibility = $context->getEntity();
-        if ($this->deleted) {
+        if (!$visibility instanceof VisibilityInterface) {
+            throw new \LogicException('Resolvable entity must implement VisibilityInterface');
+        }
+
+        if ($this->resetVisibility) {
             $visibility->setVisibility($visibility::getDefault($visibility));
         }
+
         $this->cacheBuilder->resolveVisibilitySettings($visibility);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function initialize(array $options)
     {
-        if (empty($options['visibility_entity'])) {
-            throw new InvalidParameterException('visibility_entity parameter is required');
-        }
-        $this->deleted = isset($options['deleted']) && $options['deleted'];
+        $this->resetVisibility = array_key_exists('reset_visibility', $options) && $options['reset_visibility'];
     }
 }
