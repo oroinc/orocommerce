@@ -42,7 +42,7 @@ class Tax
     /**
      * @var string
      *
-     * @ORM\Column(type="text", length=255)
+     * @ORM\Column(type="text", length=255, nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={

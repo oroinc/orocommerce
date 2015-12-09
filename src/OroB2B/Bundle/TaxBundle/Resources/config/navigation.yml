@@ -28,7 +28,7 @@ oro_menu_config:
             route:           'orob2b_tax_tax_index'
             extras:
                 position:    100
-                routes:      ['/^orob2b_tax_tax/']
+                routes:      ['orob2b_tax_tax_index', 'orob2b_tax_tax_view', 'orob2b_tax_tax_update', 'orob2b_tax_tax_create']
                 description: 'orob2b.tax.tax.description'
 
     tree:

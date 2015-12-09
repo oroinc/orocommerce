@@ -70,7 +70,7 @@ class OroB2BTaxBundle implements Migration
         $table = $schema->createTable('orob2b_tax_tax');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('code', 'string', ['length' => 255]);
-        $table->addColumn('description', 'text', []);
+        $table->addColumn('description', 'text', ['notnull' => false]);
         $table->addColumn('rate', 'float', []);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
