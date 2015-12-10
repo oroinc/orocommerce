@@ -19,8 +19,6 @@ class AccountGroupCategoryVisibility implements VisibilityInterface, AccountGrou
 {
     const PARENT_CATEGORY = 'parent_category';
     const CATEGORY = 'category';
-    const VISIBLE = 'visible';
-    const HIDDEN = 'hidden';
 
     /**
      * @var integer

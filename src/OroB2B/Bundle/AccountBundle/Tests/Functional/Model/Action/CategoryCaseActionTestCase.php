@@ -27,6 +27,8 @@ abstract class CategoryCaseActionTestCase extends WebTestCase
     {
         $this->initClient();
 
+        $this->disableActions();
+
         $this->loadFixtures([
             'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures'
             . '\LoadProductVisibilityResolvedFallbackCategoryData'
@@ -35,6 +37,19 @@ abstract class CategoryCaseActionTestCase extends WebTestCase
         $this->context = $this->getMock('Oro\Bundle\ActionBundle\Model\ActionContext');
 
         $this->action = $this->getContainer()->get($this->getActionContainerId());
+    }
+
+    protected function disableActions()
+    {
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroWorkflowBundle:ProcessDefinition');
+        $definitions = $em->getRepository('OroWorkflowBundle:ProcessDefinition')
+            ->findAll();
+
+        foreach ($definitions as $definition) {
+            $definition->setEnabled(false);
+        }
+
+        $em->flush();
     }
 
     /**

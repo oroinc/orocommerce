@@ -213,7 +213,7 @@ class LoadProductVisibilityResolvedFallbackCategoryData extends AbstractFixture 
         $productVisibility = (new ProductVisibility())
             ->setProduct($product)
             ->setWebsite($this->website)
-            ->setVisibility($this->getVisibilityByResolved($visibility));
+            ->setVisibility(ProductVisibility::CATEGORY);
 
         $this->em->persist($productVisibility);
 
@@ -249,7 +249,7 @@ class LoadProductVisibilityResolvedFallbackCategoryData extends AbstractFixture 
             ->setProduct($product)
             ->setAccountGroup($accountGroup)
             ->setWebsite($this->website)
-            ->setVisibility($this->getAccountGroupVisibilityByResolved($visibility));
+            ->setVisibility(AccountGroupProductVisibility::CATEGORY);
 
         $this->em->persist($accountGroupVisibility);
 
@@ -260,15 +260,6 @@ class LoadProductVisibilityResolvedFallbackCategoryData extends AbstractFixture 
             ->setCategoryId($this->getCategoryByProduct($product)->getId());
 
         $this->em->persist($resolvedVisibility);
-    }
-
-    /**
-     * @param integer $visibility
-     * @return string
-     */
-    protected function getAccountGroupVisibilityByResolved($visibility)
-    {
-        return $visibility === 1 ? AccountGroupProductVisibility::VISIBLE : AccountGroupProductVisibility::HIDDEN;
     }
 
     /**
@@ -285,7 +276,7 @@ class LoadProductVisibilityResolvedFallbackCategoryData extends AbstractFixture 
             ->setProduct($product)
             ->setAccount($account)
             ->setWebsite($this->website)
-            ->setVisibility($this->getAccountVisibilityByResolved($visibility));
+            ->setVisibility(AccountProductVisibility::CATEGORY);
 
         $this->em->persist($accountVisibility);
 
@@ -296,15 +287,6 @@ class LoadProductVisibilityResolvedFallbackCategoryData extends AbstractFixture 
             ->setCategoryId($this->getCategoryByProduct($product)->getId());
 
         $this->em->persist($resolvedVisibility);
-    }
-
-    /**
-     * @param integer $visibility
-     * @return string
-     */
-    protected function getAccountVisibilityByResolved($visibility)
-    {
-        return $visibility === 1 ? AccountProductVisibility::VISIBLE : AccountProductVisibility::HIDDEN;
     }
 
     /**

@@ -2,10 +2,10 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category;
 
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\AbstractComposeCacheBuilder;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\AbstractCacheBuilder;
 
-class CacheBuilder extends AbstractCacheBuilder implements CacheBuilderInterface
+class CacheBuilder extends AbstractComposeCacheBuilder
 {
     /**
      * @var CacheBuilderInterface[]

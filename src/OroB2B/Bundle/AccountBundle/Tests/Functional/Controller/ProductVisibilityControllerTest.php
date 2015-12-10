@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller;
 
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -11,6 +9,8 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Component\Testing\WebTestCase;
 
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
@@ -109,6 +109,12 @@ class ProductVisibilityControllerTest extends WebTestCase
         );
     }
 
+    public function tearDown()
+    {
+        $this->client->getContainer()->get('doctrine')->getManager()->clear();
+        parent::tearDown();
+    }
+
     public function testUpdate()
     {
         $this->submitForm();
@@ -196,9 +202,7 @@ class ProductVisibilityControllerTest extends WebTestCase
                 ],
             ]
         );
-
         $this->submitForm();
-
         $this->assertCountVisibilities(3);
     }
 

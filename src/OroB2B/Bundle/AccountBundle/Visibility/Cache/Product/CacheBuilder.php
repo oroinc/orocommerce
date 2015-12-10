@@ -2,10 +2,11 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product;
 
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\AbstractComposeCacheBuilder;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
-class CacheBuilder extends AbstractCacheBuilder implements ProductCaseCacheBuilderInterface
+class CacheBuilder extends AbstractComposeCacheBuilder implements ProductCaseCacheBuilderInterface
 {
     /**
      * @var ProductCaseCacheBuilderInterface[]

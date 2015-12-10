@@ -38,8 +38,7 @@ class AccountRepositoryTest extends WebTestCase
             [
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
                 'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountCategoryVisibilities'
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData'
             ]
         );
 
@@ -156,19 +155,7 @@ class AccountRepositoryTest extends WebTestCase
                 'categoryName' => LoadCategoryData::FIRST_LEVEL,
                 'visibility' => AccountCategoryVisibility::VISIBLE,
                 'expectedAccounts' => [
-                    'AccountUser AccountUser',
-                    'account.orphan',
-                    'account.level_1',
-                    'account.level_1.1',
-                    'account.level_1.1.1',
-                    'account.level_1.2',
-                    'account.level_1.2.1',
-                    'account.level_1.2.1.1',
-                    'account.level_1.3',
-                    'account.level_1.3.1',
-                    'account.level_1.3.1.1',
                     'account.level_1.4',
-                    'account.level_1_1',
                 ]
             ],
             'FIRST_LEVEL with HIDDEN' => [

@@ -44,7 +44,7 @@ class ProductControllerTest extends WebTestCase
         $count = count($expected);
         $this->assertCount($count, $result['data']);
         foreach ($result['data'] as $data) {
-            $this->assertContains($data['productName'], $expected);
+            $this->assertContains($data['sku'], $expected);
         }
     }
 

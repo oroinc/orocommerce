@@ -6,11 +6,10 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
-class CategoryVisibilityResolver
+class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
 {
     /**
-     * @param Category $category
-     * @return bool
+     * {@inheritdoc}
      */
     public function isCategoryVisible(Category $category)
     {
@@ -18,9 +17,7 @@ class CategoryVisibilityResolver
     }
 
     /**
-     * @param Category $category
-     * @param AccountGroup $accountGroup
-     * @return bool
+     * {@inheritdoc}
      */
     public function isCategoryVisibleForAccountGroup(Category $category, AccountGroup $accountGroup)
     {
@@ -28,9 +25,7 @@ class CategoryVisibilityResolver
     }
 
     /**
-     * @param Category $category
-     * @param Account $account
-     * @return bool
+     * {@inheritdoc}
      */
     public function isCategoryVisibleForAccount(Category $category, Account $account)
     {

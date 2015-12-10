@@ -87,7 +87,7 @@ abstract class AbstractSubtreeCacheBuilder
         $qb = $this->registry
             ->getManagerForClass('OroB2BCatalogBundle:Category')
             ->getRepository('OroB2BCatalogBundle:Category')
-            ->getChildrenQueryBuilder($category);
+            ->getChildrenQueryBuilder($category, false, 'level');
 
         $qb = $this->joinCategoryVisibility($qb, $target);
         $qb = $this->restrictStaticFallback($qb);
@@ -109,7 +109,7 @@ abstract class AbstractSubtreeCacheBuilder
         $qb = $this->registry
             ->getManagerForClass('OroB2BCatalogBundle:Category')
             ->getRepository('OroB2BCatalogBundle:Category')
-            ->getChildrenQueryBuilder($category);
+            ->getChildrenQueryBuilder($category, false, 'level');
 
         $qb = $this->joinCategoryVisibility($qb, $target);
         $qb = $this->restrictToParentFallback($qb);
