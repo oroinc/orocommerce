@@ -6,6 +6,8 @@ parameters:
     oro_action.attribute_guesser.class: Oro\Bundle\WorkflowBundle\Model\AttributeGuesser
     oro_action.form_options_assembler.class: Oro\Bundle\ActionBundle\Model\FormOptionsAssembler
     oro_action.form_manager.class: Oro\Bundle\ActionBundle\Model\ActionFormManager
+    oro_action.datagrid.action_extension.class: Oro\Bundle\ActionBundle\Datagrid\Extension\ActionExtension
+    oro_action.datagrid.action.action_widget_action.class: Oro\Bundle\ActionBundle\Datagrid\Action\ActionWidgetAction
 
 services:
     oro_action.helper.context:
@@ -82,3 +84,20 @@ services:
             - @form.factory
             - @oro_action.manager
             - @oro_action.helper.context
+
+    oro_action.datagrid.extension.action:
+        class: %oro_action.datagrid.action_extension.class%
+        arguments:
+            - @translator
+            - @oro_action.manager
+        tags:
+            - { name: oro_datagrid.extension }
+        lazy: true
+
+    oro_action.datagrid.action.action_widget_action:
+        class: %oro_action.datagrid.action.action_widget_action.class%
+        arguments:
+            - @translator
+        scope: prototype
+        tags:
+            - { name: oro_datagrid.extension.action.type, type: action-widget }

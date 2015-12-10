@@ -44,6 +44,11 @@ class ActionManager
     private $entities;
 
     /**
+     * @var array
+     */
+    private $datagrids;
+
+    /**
      * @param DoctrineHelper $doctrineHelper
      * @param ContextHelper $contextHelper
      * @param ActionConfigurationProvider $configurationProvider
@@ -118,6 +123,17 @@ class ActionManager
     }
 
     /**
+     * @param string $datagridName
+     * @return Action[]
+     */
+    public function getActionsForDatagrid($datagridName)
+    {
+        $this->loadActions();
+
+        return isset($this->datagrids[$datagridName]) ? $this->datagrids[$datagridName] : [];
+    }
+
+    /**
      * @param string $actionName
      * @param array|null $context
      * @return null|Action
@@ -185,12 +201,13 @@ class ActionManager
 
     protected function loadActions()
     {
-        if ($this->entities !== null || $this->routes !== null) {
+        if ($this->entities !== null || $this->routes !== null || $this->datagrids !== null) {
             return;
         }
 
         $this->routes = [];
         $this->entities = [];
+        $this->datagrids = [];
 
         $configuration = $this->configurationProvider->getActionConfiguration();
         $actions = $this->assembler->assemble($configuration);
@@ -198,6 +215,7 @@ class ActionManager
         foreach ($actions as $action) {
             $this->mapActionRoutes($action);
             $this->mapActionEntities($action);
+            $this->mapActionDatagrids($action);
         }
     }
 
@@ -221,6 +239,16 @@ class ActionManager
                 continue;
             }
             $this->entities[$className][$action->getName()] = $action;
+        }
+    }
+
+    /**
+     * @param Action $action
+     */
+    protected function mapActionDatagrids(Action $action)
+    {
+        foreach ($action->getDefinition()->getDatagrids() as $datagridName) {
+            $this->datagrids[$datagridName][$action->getName()] = $action;
         }
     }
 
