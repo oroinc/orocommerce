@@ -6,10 +6,12 @@ use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountProductVisibilityResolvedRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\AccountProductResolvedCacheBuilder;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
  * @dbIsolation
@@ -31,7 +33,6 @@ class AccountProductResolvedCacheBuilderTest extends WebTestCase
         $this->loadFixtures(
             [
                 'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityResolvedData',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
                 'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
@@ -42,20 +43,28 @@ class AccountProductResolvedCacheBuilderTest extends WebTestCase
 
     public function testBuildCache()
     {
+        /** @var Account $account */
+        $account = $this->getReference('account.level_1');
+        $apv = $this->getContainer()->get('doctrine')->getRepository(
+            'OroB2BAccountBundle:Visibility\AccountProductVisibility'
+        )
+            ->findOneBy(['product' => $this->getReference(LoadProductData::PRODUCT_1), 'account' => $account]);
+        $apv->setVisibility(AccountProductVisibility::CATEGORY);
+        $this->getContainer()->get('doctrine')->getManager()->flush();
         $this->getContainer()->get('doctrine')
             ->getManager()
             ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved')
             ->findAll();
         $this->cacheBuilder->buildCache();
 
-        $this->assertCount(156, $this->getRepository()->findAll());
+        $this->assertCount(3, $this->getRepository()->findAll());
 
         $this->assertCount(
             2,
             $this->getRepository()->findBy(['source' => BaseProductVisibilityResolved::SOURCE_STATIC])
         );
         $this->assertCount(
-            154,
+            1,
             $this->getRepository()->findBy(['source' => BaseProductVisibilityResolved::SOURCE_CATEGORY])
         );
     }

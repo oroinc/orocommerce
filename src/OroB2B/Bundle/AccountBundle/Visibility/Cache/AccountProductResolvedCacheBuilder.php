@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache;
 
-use Symfony\Bridge\Doctrine\RegistryInterface;
-
 use Doctrine\ORM\EntityManagerInterface;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
@@ -17,11 +15,6 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountProductResolvedCacheBuilder extends AbstractCacheBuilder
 {
-    /**
-     * @var RegistryInterface
-     */
-    protected $doctrine;
-
     /**
      * @param AccountProductVisibility $accountProductVisibility
      */
@@ -137,7 +130,10 @@ class AccountProductResolvedCacheBuilder extends AbstractCacheBuilder
                 );
             }
             $this->getRepository()->insertStatic($this->insertFromSelectQueryExecutor);
-            $this->getRepository()->insertForCurrentProductFallback($this->insertFromSelectQueryExecutor, 'config');
+            $this->getRepository()->insertForCurrentProductFallback(
+                $this->insertFromSelectQueryExecutor,
+                $this->getVisibilityFromConfig()
+            );
 
             $this->getManager()->commit();
         } catch (\Exception $exception) {
@@ -145,7 +141,6 @@ class AccountProductResolvedCacheBuilder extends AbstractCacheBuilder
             throw $exception;
         }
     }
-
 
     /**
      * @return AccountProductVisibilityResolvedRepository
@@ -162,7 +157,7 @@ class AccountProductResolvedCacheBuilder extends AbstractCacheBuilder
      */
     protected function getManager()
     {
-        return $this->doctrine->getManagerForClass(
+        return $this->registry->getManagerForClass(
             'OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved'
         );
     }
@@ -173,12 +168,12 @@ class AccountProductResolvedCacheBuilder extends AbstractCacheBuilder
     protected function getCategories()
     {
         /** @var Category[] $categories */
-        $categories = $this->doctrine
+        $categories = $this->registry
             ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountProductVisibility')
             ->getRepository('OroB2BAccountBundle:Visibility\AccountProductVisibility')
             ->getCategoriesByAccountProductVisibility();
 
-        $accounts = $this->doctrine
+        $accounts = $this->registry
             ->getManagerForClass('OroB2BAccountBundle:Account')
             ->getRepository('OroB2BAccountBundle:Account')
             ->getPartialAccounts();

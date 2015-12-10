@@ -34,7 +34,6 @@ class AccountProductVisibilityResolvedRepositoryTest extends WebTestCase
             ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved');
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityResolvedData',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
                 'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
@@ -58,9 +57,6 @@ class AccountProductVisibilityResolvedRepositoryTest extends WebTestCase
         $this->assertEquals(3, $deletedCount);
     }
 
-    /**
-     * @depends testClearTable
-     */
     public function testInsertByCategory()
     {
         /** @var Account $account */
@@ -69,7 +65,7 @@ class AccountProductVisibilityResolvedRepositoryTest extends WebTestCase
             ->findOneBy(['product' => $this->getReference(LoadProductData::PRODUCT_1), 'account' => $account]);
         $apv->setVisibility(AccountProductVisibility::CATEGORY);
         $this->registry->getManager()->flush();
-        $this->assertCount(0, $this->getResolvedValues());
+        $this->getRepository()->clearTable();
         $visibilityValue = BaseProductVisibilityResolved::VISIBILITY_HIDDEN;
         $this->getRepository()->insertByCategory(
             $this->getInsertFromSelectExecutor(),
