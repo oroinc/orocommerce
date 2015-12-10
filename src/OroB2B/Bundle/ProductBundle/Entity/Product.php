@@ -109,8 +109,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *              "auditable"=true
      *          },
      *          "importexport"={
-     *              "order"=60,
-     *              "excluded"=true
+     *              "order"=60
      *          }
      *      }
      * )
@@ -145,7 +144,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *          },
      *          "importexport"={
      *              "order"=70,
-     *              "excluded"=true
+     *              "process_as_scalar"=true
      *          }
      *      }
      * )
@@ -306,8 +305,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      *      defaultValues={
      *          "importexport"={
      *              "order"=80,
-     *              "full"=false,
-     *              "excluded"=true
+     *              "full"=true,
      *          }
      *      }
      * )
