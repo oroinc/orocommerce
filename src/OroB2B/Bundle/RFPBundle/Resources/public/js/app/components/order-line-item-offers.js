@@ -15,13 +15,20 @@ define(function(require) {
         options: {
             offersSelector: '.order-line-item-offers',
             quantitySelector: '.order-line-item-quantity input',
-            unitSelector: '.order-line-item-quantity select'
+            unitSelector: '.order-line-item-quantity select',
+            productSelector: '.order-line-item-product input',
+            offersDataSelector: '.order-line-item-offers-data input'
         },
 
         /**
          * @property {Object}
          */
         objects: {},
+
+        /**
+         * @property {jQuery.Element}
+         */
+        $product: null,
 
         /**
          * @inheritDoc
@@ -31,6 +38,10 @@ define(function(require) {
 
             this.options._sourceElement
                 .on('click', this.options.offersSelector, _.bind(this.onRadioClick, this));
+
+            this.$product = $(this.options.productSelector);
+            this.$product
+                .on('change', _.bind(this.onProductChange, this));
         },
 
         /**
@@ -50,6 +61,12 @@ define(function(require) {
                     .val(target.data('unit'))
                     .trigger('change');
             }
+        },
+
+        onProductChange: function() {
+            $(this.options.offersDataSelector).val(null);
+
+            this.options._sourceElement.remove();
         },
 
         /**
@@ -74,6 +91,7 @@ define(function(require) {
                 return;
             }
 
+            this.$product.off();
             this.options._sourceElement.off();
 
             OrderLineItemOffers.__super__.dispose.call(this);

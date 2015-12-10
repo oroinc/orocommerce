@@ -140,4 +140,4 @@ orob2b.frontendadmin:
     system_configuration:
         frontend_application_group_title: 'Frontend Application'
 
-orob2b.order.orderlineitem.offers.label: 'Offers'
+orob2b.order.orderlineitem.offers.label: 'Requested QTY and price'
