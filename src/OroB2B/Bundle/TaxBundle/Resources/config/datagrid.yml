@@ -130,6 +130,7 @@ datagrid:
                 label: orob2b.tax.description.label
             rate:
                 label: orob2b.tax.rate.label
+                frontend_type: percent
         sorters:
             columns:
                 code:

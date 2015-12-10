@@ -37,7 +37,7 @@
     {% set taxInfo %}
         {{ UI.renderProperty('orob2b.tax.code.label'|trans, entity.code) }}
         {{ UI.renderProperty('orob2b.tax.description.label'|trans, entity.description) }}
-        {{ UI.renderProperty('orob2b.tax.rate.label'|trans, entity.rate) }}
+        {{ UI.renderProperty('orob2b.tax.rate.label'|trans, entity.rate|oro_format_percent) }}
     {% endset %}
 
     {% set dataBlocks = [{
