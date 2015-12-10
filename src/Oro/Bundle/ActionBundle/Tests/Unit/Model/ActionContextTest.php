@@ -113,4 +113,29 @@ class ActionContextTest extends \PHPUnit_Framework_TestCase
         $data = new ActionContext($array);
         $this->assertEquals($array, $data->toArray());
     }
+
+    public function testGetRedirectUrl()
+    {
+        $data = new ActionContext();
+        $this->assertNull($data->getRedirectUrl());
+
+        $url = 'my/test/url';
+
+        $data->offsetSet('redirectUrl', $url);
+        $this->assertEquals($url, $data->getRedirectUrl());
+    }
+
+    public function testGetValues()
+    {
+        $date = new \DateTime();
+        $array = ['foo' => 'bar', 'bar' => 'foo', 'baz' => $date, 'tango' => null];
+
+        $data = new ActionContext($array);
+        $this->assertEquals($array, $data->getValues());
+
+        $this->assertEquals(
+            ['foo' => 'bar', 'baz' => $date, 'tango' => null, 'test' => null],
+            $data->getValues(['foo', 'baz', 'tango', 'test'])
+        );
+    }
 }

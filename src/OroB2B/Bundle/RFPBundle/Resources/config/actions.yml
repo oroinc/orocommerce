@@ -1,11 +1,49 @@
-parameters:
-    orob2b_rfp.datagrid.action.request_change_status_dialog.class: OroB2B\Bundle\RFPBundle\Datagrid\Action\RequestChangeStatusDialogAction
-
-services:
-    orob2b_rfp.datagrid.action.request_change_status_dialog:
-        class: %orob2b_rfp.datagrid.action.request_change_status_dialog.class%
-        arguments:
-            - @translator
-        scope: prototype
-        tags:
-            - { name: oro_datagrid.extension.action.type, type: request-change-status-dialog }
+actions:
+    orob2b_rfp_change_status_action:
+        label: orob2b.rfp.btn.change_status
+        enabled: true
+        applications:
+            - backend
+            - frontend
+        routes:
+            - orob2b_rfp_request_view
+        order: 10
+        attributes:
+            request_status:
+                property_path: entity.status
+            request_note:
+                property_path: entity.note
+                label: oro.note.entity_label
+                type: string
+        form_options:
+            attribute_fields:
+                request_status:
+                    form_type: orob2b_rfp_request_status_select
+                    options:
+                        required: true
+                request_note:
+                    form_type: oro_rich_text
+            attribute_default_values:
+                request_status: $status
+        frontend_options:
+            icon: icon-edit
+            template: OroB2BRFPBundle:Action:changeStatusButton.html.twig
+            dialog_template: OroB2BRFPBundle:Action:changeStatusForm.html.twig
+        postfunctions:
+            - @assign_value: [$status, $.request_status]
+            - @format_string:
+                attribute: $.message
+                string: 'New status: %%status%% <p></p> %%note%%'
+                arguments:
+                    status: $.request_status.label
+                    note: $.request_note
+            - @create_entity:
+                class: Oro\Bundle\NoteBundle\Entity\Note
+                attribute: $.note
+                data:
+                    target: $.data
+                    message: $.message
+                flush: true
+            - @flash_message:
+                message: orob2b.rfp.message.request_status_changed
+                type: 'info'

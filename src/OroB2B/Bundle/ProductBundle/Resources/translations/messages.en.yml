@@ -129,7 +129,9 @@ orob2b:
     product_unit.each:
         label:
             full: each
+            full_plural: each
             short: ea
+            short_plural: ea
         value:
             full: '{0} none|{1} %count% each|]1,Inf] %count% each'
             short: '{0} none|{1} %count% ea|]1,Inf] %count% ea'
@@ -137,7 +139,9 @@ orob2b:
     product_unit.hour:
         label:
             full: hour
+            full_plural: hours
             short: hr
+            short_plural: hrs
         value:
             full: '{0} none|{1} %count% hour|]1,Inf] %count% hours'
             short: '{0} none|{1} %count% hr|]1,Inf] %count% hrs'
@@ -145,7 +149,9 @@ orob2b:
     product_unit.item:
         label:
             full: item
+            full_plural: items
             short: item
+            short_plural: items
         value:
             full: '{0} none|{1} %count% item|]1,Inf] %count% items'
             short: '{0} none|{1} %count% item|]1,Inf] %count% items'
@@ -153,7 +159,9 @@ orob2b:
     product_unit.kg:
         label:
             full: kilogram
+            full_plural: kilograms
             short: kg
+            short_plural: kgs
         value:
             full: '{0} none|{1} %count% kilogram|]1,Inf] %count% kilograms'
             short: '{0} none|{1} %count% kg|]1,Inf] %count% kg'
@@ -161,7 +169,9 @@ orob2b:
     product_unit.piece:
         label:
             full: piece
+            full_plural: pieces
             short: pc
+            short_plural: pcs
         value:
             full: '{0} none|{1} %count% piece|]1,Inf] %count% pieces'
             short: '{0} none|{1} %count% pc|]1,Inf] %count% pcs'
@@ -169,7 +179,9 @@ orob2b:
     product_unit.set:
         label:
             full: set
+            full_plural: sets
             short: set
+            short_plural: sets
         value:
             full: '{0} none|{1} %count% set|]1,Inf] %count% sets'
             short: '{0} none|{1} %count% set|]1,Inf] %count% sets'

@@ -13,6 +13,14 @@ class ActionContext extends AbstractStorage implements EntityAwareInterface
     }
 
     /**
+     * @return string|null
+     */
+    public function getRedirectUrl()
+    {
+        return $this->offsetGet('redirectUrl');
+    }
+
+    /**
      * @param string $name
      * @return mixed
      */
@@ -45,5 +53,24 @@ class ActionContext extends AbstractStorage implements EntityAwareInterface
     public function __isset($name)
     {
         return $this->offsetExists($name);
+    }
+
+    /**
+     * @param array $names
+     * @return array
+     */
+    public function getValues(array $names = [])
+    {
+        if (!$names) {
+            return $this->data;
+        }
+
+        $result = [];
+
+        foreach ($names as $name) {
+            $result[$name] = $this->offsetGet($name);
+        }
+
+        return $result;
     }
 }

@@ -294,7 +294,7 @@ class ProductPrice implements ProductUnitHolderInterface, ProductHolderInterface
     public function updatePrice()
     {
         if ($this->price) {
-            $this->value    = $this->price->getValue();
+            $this->value = $this->price->getValue();
             $this->currency = $this->price->getCurrency();
         }
     }

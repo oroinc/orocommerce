@@ -80,6 +80,14 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
     protected $precision;
 
     /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
      * Set product
      *
      * @param Product $product
