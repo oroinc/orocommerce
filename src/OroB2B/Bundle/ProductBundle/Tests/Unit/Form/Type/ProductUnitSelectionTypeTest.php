@@ -279,16 +279,6 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         $precision->setUnit($unit);
 
         return [
-            'empty item' => [
-                'inputData' => [
-                    'options' => [],
-                    'productUnitHolder' => null,
-                ],
-                'expectedData' => [
-                    'empty_value' => null,
-                    'choices' => array_combine($this->units, $this->units),
-                ],
-            ],
             'without parent form' => [
                 'inputData' => [
                     'options' => [],
@@ -304,6 +294,19 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
                     'choices' => array_combine($this->units, $this->units),
                 ],
                 false,
+            ],
+            'without product holder' => [
+                'inputData' => [
+                    'options' => [],
+                    'productUnitHolder' => null,
+                ],
+                'expectedData' => [
+                    'empty_value' => null,
+                    'choices' => array_combine(
+                        $this->units,
+                        ['orob2b.product_unit.test01.label.full', 'orob2b.product_unit.test02.label.full']
+                    ),
+                ],
             ],
             'filled item' => [
                 'inputData' => [

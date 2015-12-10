@@ -36,6 +36,8 @@ class LoadLocaleData extends AbstractFixture
             }
             $localesRegistry[$item['code']] = $locale;
 
+            $this->setReference($item['code'], $locale);
+
             $manager->persist($locale);
         }
 

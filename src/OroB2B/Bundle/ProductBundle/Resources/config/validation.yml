@@ -1,6 +1,7 @@
 OroB2B\Bundle\ProductBundle\Entity\Product:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: sku
+        - OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductVariantField: ~
         - OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks: ~
     properties:
         sku:
@@ -25,6 +26,8 @@ OroB2B\Bundle\ProductBundle\Entity\Product:
             - NotBlank: ~
         inventory_status:
             - NotBlank: ~
+        variantLinks:
+            - Valid: ~
 
 OroB2B\Bundle\ProductBundle\Entity\ProductUnit:
     properties:
@@ -44,6 +47,10 @@ OroB2B\Bundle\ProductBundle\Entity\ProductVariantLink:
         visible:
             - Type:
                 type: boolean
+        parentProduct:
+            - NotBlank: ~
+        product:
+            - NotBlank: ~
 
 OroB2B\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     constraints:
