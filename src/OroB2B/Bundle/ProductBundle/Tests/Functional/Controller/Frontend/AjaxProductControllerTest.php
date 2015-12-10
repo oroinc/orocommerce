@@ -57,9 +57,9 @@ class AjaxProductControllerTest extends WebTestCase
                     LoadProductData::PRODUCT_4,
                 ],
                 'expectedData' => [
-                    LoadProductData::PRODUCT_1 => ['name' => LoadProductData::PRODUCT_1],
-                    LoadProductData::PRODUCT_2 => ['name' => LoadProductData::PRODUCT_2],
-                    LoadProductData::PRODUCT_3 => ['name' => LoadProductData::PRODUCT_3],
+                    LoadProductData::PRODUCT_1 => ['name' => 'product.1.names.default'],
+                    LoadProductData::PRODUCT_2 => ['name' => 'product.2.names.default'],
+                    LoadProductData::PRODUCT_3 => ['name' => 'product.3.names.default'],
                 ],
             ],
             'allowed' => [
@@ -69,8 +69,8 @@ class AjaxProductControllerTest extends WebTestCase
                     LoadProductData::PRODUCT_2,
                 ],
                 'expectedData' => [
-                    LoadProductData::PRODUCT_1 => ['name' => LoadProductData::PRODUCT_1],
-                    LoadProductData::PRODUCT_2 => ['name' => LoadProductData::PRODUCT_2],
+                    LoadProductData::PRODUCT_1 => ['name' => 'product.1.names.default'],
+                    LoadProductData::PRODUCT_2 => ['name' => 'product.2.names.default'],
                 ],
             ],
         ];
