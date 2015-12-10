@@ -105,7 +105,6 @@ parameters:
 
     orob2b_account.calculator.category_visibility_calculator: OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityCalculator
     orob2b_account.calculator.category_visibility_resolver.class: OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityResolver
-    orob2b_account.calculator.category_visibility_resolver_adapter.class: OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityResolverAdapter
 
     #Model
     orob2b_account.model.product_visibility_query_builder_modifier.class: OroB2B\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier
@@ -616,11 +615,6 @@ services:
     orob2b_account.calculator.category_visibility_resolver:
         class: %orob2b_account.calculator.category_visibility_resolver.class%
 
-    orob2b_account.calculator.category_visibility_resolver_adapter:
-        class: %orob2b_account.calculator.category_visibility_resolver_adapter.class%
-        arguments:
-            - @orob2b_account.calculator.category_visibility_resolver
-
     orob2b_account.storage.category_visibility_storage:
         class: %orob2b_account.storage.category_visibility_storage.class%
         arguments:
@@ -659,7 +653,7 @@ services:
         abstract: true
         arguments:
             - @doctrine
-            - @orob2b_account.calculator.category_visibility_resolver_adapter
+            - @orob2b_account.calculator.category_visibility_resolver
             - @oro_config.global
 
     orob2b_account.visibility.cache.account_group_product_resolved_cache_builder:

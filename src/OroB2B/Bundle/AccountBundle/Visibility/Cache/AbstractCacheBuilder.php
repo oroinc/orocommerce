@@ -8,14 +8,14 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityResolverAdapterInterface;
+use OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityResolver;
 
 abstract class AbstractCacheBuilder implements CacheBuilderInterface
 {
     /** @var  ManagerRegistry */
     protected $registry;
 
-    /** @var  CategoryVisibilityResolverAdapterInterface */
+    /** @var  CategoryVisibilityResolver */
     protected $categoryVisibilityResolver;
 
     /** @var  ConfigManager */
@@ -23,12 +23,12 @@ abstract class AbstractCacheBuilder implements CacheBuilderInterface
 
     /**
      * @param ManagerRegistry $registry
-     * @param CategoryVisibilityResolverAdapterInterface $categoryVisibilityResolver
+     * @param CategoryVisibilityResolver $categoryVisibilityResolver
      * @param ConfigManager $configManager
      */
     public function __construct(
         ManagerRegistry $registry,
-        CategoryVisibilityResolverAdapterInterface $categoryVisibilityResolver,
+        CategoryVisibilityResolver $categoryVisibilityResolver,
         ConfigManager $configManager
     ) {
         $this->registry = $registry;
@@ -79,5 +79,15 @@ abstract class AbstractCacheBuilder implements CacheBuilderInterface
         $visibility = $visibilityFromConfig === VisibilityInterface::VISIBLE ? 1 : -1;
 
         return $visibility;
+    }
+
+    /**
+     * @param boolean $isVisible
+     * @return integer
+     */
+    protected function convertVisibility($isVisible)
+    {
+        return $isVisible ? BaseProductVisibilityResolved::VISIBILITY_VISIBLE
+            : BaseProductVisibilityResolved::VISIBILITY_HIDDEN;
     }
 }

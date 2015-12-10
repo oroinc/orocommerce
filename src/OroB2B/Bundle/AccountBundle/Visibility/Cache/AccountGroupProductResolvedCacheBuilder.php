@@ -47,7 +47,9 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractCacheBuilder
                 ->findOneByProduct($product);
             if ($category) {
                 $accountGroupProductVisibilityResolved->setVisibility(
-                    $this->categoryVisibilityResolver->getCategoryVisibilityForAccountGroup($category, $accountGroup)
+                    $this->convertVisibility(
+                        $this->categoryVisibilityResolver->isCategoryVisibleForAccountGroup($category, $accountGroup)
+                    )
                 );
                 $accountGroupProductVisibilityResolved->setSourceProductVisibility($accountGroupProductVisibility);
                 $accountGroupProductVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_CATEGORY);
