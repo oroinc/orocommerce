@@ -46,7 +46,7 @@ class AccountController extends Controller
     public function viewAction(Account $account)
     {
         return [
-            'entity' => $account
+            'entity' => $account,
         ];
     }
 
@@ -97,13 +97,13 @@ class AccountController extends Controller
             function (Account $account) {
                 return [
                     'route' => 'orob2b_account_update',
-                    'parameters' => ['id' => $account->getId()]
+                    'parameters' => ['id' => $account->getId()],
                 ];
             },
             function (Account $account) {
                 return [
                     'route' => 'orob2b_account_view',
-                    'parameters' => ['id' => $account->getId()]
+                    'parameters' => ['id' => $account->getId()],
                 ];
             },
             $this->get('translator')->trans('orob2b.account.controller.account.saved.message')
@@ -122,7 +122,7 @@ class AccountController extends Controller
     {
         return [
             'entity' => $account,
-            'treeData' => $this->get('orob2b_account.account_tree_handler')->createTree($account->getId())
+            'treeData' => $this->get('orob2b_account.account_tree_handler')->createTree($account->getId()),
         ];
     }
 }

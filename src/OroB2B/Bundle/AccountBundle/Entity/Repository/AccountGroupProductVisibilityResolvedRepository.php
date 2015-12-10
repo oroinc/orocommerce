@@ -7,9 +7,19 @@ use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Composite primary key fields order:
+ *  - accountGroup
+ *  - website
+ *  - product
+ */
 class AccountGroupProductVisibilityResolvedRepository extends EntityRepository
 {
     /**
@@ -107,5 +117,16 @@ class AccountGroupProductVisibilityResolvedRepository extends EntityRepository
             ->delete()
             ->getQuery()
             ->execute();
+    }
+
+    /**
+     * @param AccountGroup $accountGroup
+     * @param Product $product
+     * @param Website $website
+     * @return null|AccountGroupProductVisibilityResolved
+     */
+    public function findByPrimaryKey(AccountGroup $accountGroup, Product $product, Website $website)
+    {
+        return $this->findOneBy(['accountGroup' => $accountGroup, 'website' => $website, 'product' => $product]);
     }
 }

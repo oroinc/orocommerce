@@ -2,25 +2,23 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache;
 
+use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupProductVisibilityResolvedRepository;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Doctrine\ORM\EntityManagerInterface;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupProductVisibilityResolvedRepository;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
-use OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityResolver;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-class AccountGroupProductResolvedCacheBuilder implements CacheBuilderInterface
+class AccountGroupProductResolvedCacheBuilder extends AbstractCacheBuilder
 {
-    const VISIBLE = 'visible';
-    const HIDDEN = 'hidden';
-
     /**
      * @var InsertFromSelectQueryExecutor
      */
@@ -32,28 +30,62 @@ class AccountGroupProductResolvedCacheBuilder implements CacheBuilderInterface
     protected $doctrine;
 
     /**
-     * ProductResolvedCacheBuilder constructor.
-     * @param RegistryInterface $doctrine
-     * @param InsertFromSelectQueryExecutor $executor
-     * @param CategoryVisibilityResolver $categoryVisibilityResolver
+     * @param AccountGroupProductVisibility $accountGroupProductVisibility
      */
-    public function __construct(
-        RegistryInterface $doctrine,
-        InsertFromSelectQueryExecutor $executor,
-        CategoryVisibilityResolver $categoryVisibilityResolver
-    ) {
-        $this->doctrine = $doctrine;
-        $this->insertFromSelectExecutor = $executor;
-        $this->categoryVisibilityResolver = $categoryVisibilityResolver;
-    }
-
-
-    /**
-     * {@inheritdoc}
-     */
-    public function resolveVisibilitySettings($visibilitySettings)
+    public function resolveVisibilitySettings($accountGroupProductVisibility)
     {
-        // TODO: Implement resolveVisibilitySettings() method.
+        $product = $accountGroupProductVisibility->getProduct();
+        $website = $accountGroupProductVisibility->getWebsite();
+        $accountGroup = $accountGroupProductVisibility->getAccountGroup();
+
+        $selectedVisibility = $accountGroupProductVisibility->getVisibility();
+
+        $em = $this->registry->getManagerForClass(
+            'OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved'
+        );
+        $accountGroupProductVisibilityResolved = $em
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved')
+            ->findByPrimaryKey($accountGroup, $product, $website);
+
+        if (!$accountGroupProductVisibilityResolved
+            && $selectedVisibility !== AccountGroupProductVisibility::CURRENT_PRODUCT
+        ) {
+            $accountGroupProductVisibilityResolved = new AccountGroupProductVisibilityResolved(
+                $website,
+                $product,
+                $accountGroup
+            );
+            $em->persist($accountGroupProductVisibilityResolved);
+        }
+
+        if ($selectedVisibility === AccountGroupProductVisibility::CATEGORY) {
+            $category = $this->registry
+                ->getManagerForClass('OroB2BCatalogBundle:Category')
+                ->getRepository('OroB2BCatalogBundle:Category')
+                ->findOneByProduct($product);
+            if ($category) {
+                $accountGroupProductVisibilityResolved->setVisibility(
+                    $this->convertVisibility(
+                        $this->categoryVisibilityResolver->isCategoryVisibleForAccountGroup($category, $accountGroup)
+                    )
+                );
+                $accountGroupProductVisibilityResolved->setSourceProductVisibility($accountGroupProductVisibility);
+                $accountGroupProductVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_CATEGORY);
+                $accountGroupProductVisibilityResolved->setCategoryId($category->getId());
+            } else {
+                $this->resolveConfigValue($accountGroupProductVisibilityResolved, $accountGroupProductVisibility);
+            }
+        } elseif ($selectedVisibility === AccountGroupProductVisibility::CURRENT_PRODUCT) {
+            if ($accountGroupProductVisibilityResolved) {
+                $em->remove($accountGroupProductVisibilityResolved);
+            }
+        } else {
+            $this->resolveStaticValues(
+                $accountGroupProductVisibilityResolved,
+                $accountGroupProductVisibility,
+                $selectedVisibility
+            );
+        }
     }
 
     /**
@@ -94,13 +126,13 @@ class AccountGroupProductResolvedCacheBuilder implements CacheBuilderInterface
                 $this->getRepository()->insertByCategory(
                     $this->insertFromSelectExecutor,
                     BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
-                    $categoriesGroupedByAccountGroup[self::VISIBLE],
+                    $categoriesGroupedByAccountGroup[VisibilityInterface::VISIBLE],
                     $accountGroupId
                 );
                 $this->getRepository()->insertByCategory(
                     $this->insertFromSelectExecutor,
                     BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
-                    $categoriesGroupedByAccountGroup[self::HIDDEN],
+                    $categoriesGroupedByAccountGroup[VisibilityInterface::HIDDEN],
                     $accountGroupId
                 );
             }
@@ -151,12 +183,12 @@ class AccountGroupProductResolvedCacheBuilder implements CacheBuilderInterface
 
         $categoriesGrouped = [];
         foreach ($accountGroups as $accountGroup) {
-            $categoriesGrouped[$accountGroup->getId()] = [self::VISIBLE => [], self::HIDDEN => []];
+            $categoriesGrouped[$accountGroup->getId()] = [VisibilityInterface::VISIBLE => [], VisibilityInterface::HIDDEN => []];
             foreach ($categories as $category) {
                 if ($this->categoryVisibilityResolver->isCategoryVisibleForAccountGroup($category, $accountGroup)) {
-                    $categoriesGrouped[$accountGroup->getId()][self::VISIBLE][] = $category->getId();
+                    $categoriesGrouped[$accountGroup->getId()][VisibilityInterface::VISIBLE][] = $category->getId();
                 } else {
-                    $categoriesGrouped[$accountGroup->getId()][self::HIDDEN][] = $category->getId();
+                    $categoriesGrouped[$accountGroup->getId()][VisibilityInterface::HIDDEN][] = $category->getId();
                 }
             }
         }
