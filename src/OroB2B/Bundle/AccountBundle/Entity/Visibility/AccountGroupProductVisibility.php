@@ -13,7 +13,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupProductVisibilityRepository")
  * @ORM\Table(name="orob2b_acc_grp_prod_visibility")
  * @Config
  */

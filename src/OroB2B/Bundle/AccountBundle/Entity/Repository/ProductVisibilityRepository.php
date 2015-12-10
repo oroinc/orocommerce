@@ -12,7 +12,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 class ProductVisibilityRepository extends EntityRepository
 {
     /**
-     * Update ToConfig ProductVisibility for Products without category with FallbackToCategory
+     * Update to 'config' ProductVisibility for products without category with fallback to 'category'
      * @param InsertFromSelectQueryExecutor $executor
      */
     public function updateToConfigProductVisibility(InsertFromSelectQueryExecutor $executor)

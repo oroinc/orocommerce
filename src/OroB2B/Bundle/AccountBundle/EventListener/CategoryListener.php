@@ -38,6 +38,8 @@ class CategoryListener
         $category = $args->getEntity();
         if ($category instanceof Category) {
             $this->updateToConfigProductVisibility();
+            $this->setToDefaultValueProductAccountGroupProductVisibilityForProductsWithoutCategory();
+            $this->setToDefaultValueAccountProductVisibilityForProductsWithoutCategory();
         }
     }
 
@@ -46,5 +48,19 @@ class CategoryListener
         $this->registry->getManagerForClass('OroB2BAccountBundle:Visibility\ProductVisibility')
             ->getRepository('OroB2BAccountBundle:Visibility\ProductVisibility')
             ->updateToConfigProductVisibility($this->insertFromSelectQueryExecutor);
+    }
+
+    protected function setToDefaultValueProductAccountGroupProductVisibilityForProductsWithoutCategory()
+    {
+        $this->registry->getManagerForClass('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
+            ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
+            ->setToDefaultValueProductAccountGroupProductVisibilityForProductsWithoutCategory();
+    }
+
+    protected function setToDefaultValueAccountProductVisibilityForProductsWithoutCategory()
+    {
+        $this->registry->getManagerForClass('OroB2BAccountBundle:Visibility\AccountProductVisibility')
+            ->getRepository('OroB2BAccountBundle:Visibility\AccountProductVisibility')
+            ->setToDefaultValueAccountProductVisibilityForProductsWithoutCategory();
     }
 }

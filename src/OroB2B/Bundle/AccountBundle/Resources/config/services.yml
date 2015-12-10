@@ -585,7 +585,9 @@ services:
 
     orob2b_account.provider.visibility_choices:
         class: %orob2b_account.provider.visibility_choices.class%
-        arguments: [ @translator ]
+        arguments:
+            - @translator
+            - @doctrine
 
     orob2b_account.helper.account_user_role_privileges:
         class: %orob2b_account.helper.account_user_role_privileges.class%
