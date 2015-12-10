@@ -20,8 +20,6 @@ class AccountCategoryVisibility implements VisibilityInterface, AccountAwareInte
     const PARENT_CATEGORY = 'parent_category';
     const CATEGORY = 'category';
     const ACCOUNT_GROUP = 'account_group';
-    const VISIBLE = 'visible';
-    const HIDDEN = 'hidden';
 
     /**
      * @var integer

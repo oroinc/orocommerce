@@ -24,8 +24,6 @@ class AccountProductVisibility implements VisibilityInterface, AccountAwareInter
     const ACCOUNT_GROUP = 'account_group';
     const CURRENT_PRODUCT = 'current_product';
     const CATEGORY = 'category';
-    const HIDDEN = 'hidden';
-    const VISIBLE = 'visible';
 
     /**
      * @var integer

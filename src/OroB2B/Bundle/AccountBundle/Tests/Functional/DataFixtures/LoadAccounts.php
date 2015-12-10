@@ -6,11 +6,16 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Oro\Bundle\UserBundle\Entity\User;
+
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 
 class LoadAccounts extends AbstractFixture implements DependentFixtureInterface
 {
+    use UserUtilityTrait;
+
     const DEFAULT_ACCOUNT_NAME = 'account.orphan';
 
     /**
@@ -39,34 +44,36 @@ class LoadAccounts extends AbstractFixture implements DependentFixtureInterface
      */
     public function load(ObjectManager $manager)
     {
-        $this->createAccount($manager, self::DEFAULT_ACCOUNT_NAME);
-
+        $owner = $this->getFirstUser($manager);
+        $this->createAccount($manager, self::DEFAULT_ACCOUNT_NAME, $owner);
         $levelOne = $this->createAccount(
             $manager,
             'account.level_1',
+            $owner,
             null,
             $this->getAccountGroup('account_group.group1')
         );
 
-        $levelTwoFirst = $this->createAccount($manager, 'account.level_1.1', $levelOne);
-        $this->createAccount($manager, 'account.level_1.1.1', $levelTwoFirst);
+        $levelTwoFirst = $this->createAccount($manager, 'account.level_1.1', $owner, $levelOne);
+        $this->createAccount($manager, 'account.level_1.1.1', $owner, $levelTwoFirst);
 
-        $levelTwoSecond = $this->createAccount($manager, 'account.level_1.2', $levelOne);
-        $levelTreeFirst = $this->createAccount($manager, 'account.level_1.2.1', $levelTwoSecond);
-        $this->createAccount($manager, 'account.level_1.2.1.1', $levelTreeFirst);
+        $levelTwoSecond = $this->createAccount($manager, 'account.level_1.2', $owner, $levelOne);
+        $levelTreeFirst = $this->createAccount($manager, 'account.level_1.2.1', $owner, $levelTwoSecond);
+        $this->createAccount($manager, 'account.level_1.2.1.1', $owner, $levelTreeFirst);
 
         $levelTwoThird = $this->createAccount(
             $manager,
             'account.level_1.3',
+            $owner,
             $levelOne,
             $this->getAccountGroup('account_group.group1')
         );
-        $levelTreeFirst = $this->createAccount($manager, 'account.level_1.3.1', $levelTwoThird);
-        $this->createAccount($manager, 'account.level_1.3.1.1', $levelTreeFirst);
+        $levelTreeFirst = $this->createAccount($manager, 'account.level_1.3.1', $owner, $levelTwoThird);
+        $this->createAccount($manager, 'account.level_1.3.1.1', $owner, $levelTreeFirst);
 
-        $this->createAccount($manager, 'account.level_1.4', $levelOne);
+        $this->createAccount($manager, 'account.level_1.4', $owner, $levelOne);
 
-        $this->createAccount($manager, 'account.level_1_1');
+        $this->createAccount($manager, 'account.level_1_1', $owner);
 
         $manager->flush();
     }
@@ -83,6 +90,7 @@ class LoadAccounts extends AbstractFixture implements DependentFixtureInterface
     /**
      * @param ObjectManager $manager
      * @param string $name
+     * @param User $owner
      * @param Account $parent
      * @param AccountGroup $group
      * @return Account
@@ -90,11 +98,13 @@ class LoadAccounts extends AbstractFixture implements DependentFixtureInterface
     protected function createAccount(
         ObjectManager $manager,
         $name,
+        User $owner,
         Account $parent = null,
         AccountGroup $group = null
     ) {
         $account = new Account();
         $account->setName($name);
+        $account->setOwner($owner);
         $organization = $manager
             ->getRepository('OroOrganizationBundle:Organization')
             ->getFirst();
