@@ -103,10 +103,7 @@ class LoadAccounts extends AbstractFixture implements DependentFixtureInterface
         $account = new Account();
         $account->setName($name);
         $account->setOwner($owner);
-        $organization = $manager
-            ->getRepository('OroOrganizationBundle:Organization')
-            ->getFirst();
-        $account->setOrganization($organization);
+        $account->setOrganization($owner->getOrganization());
         if ($parent) {
             $account->setParent($parent);
         }
