@@ -33,7 +33,6 @@ class AccountGroupProductResolvedCacheBuilderTest extends WebTestCase
         $this->loadFixtures(
             [
                 'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityResolvedData',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
                 'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',

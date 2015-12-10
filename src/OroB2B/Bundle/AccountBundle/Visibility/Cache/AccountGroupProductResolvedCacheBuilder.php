@@ -2,14 +2,13 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache;
 
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupProductVisibilityResolvedRepository;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use Doctrine\ORM\EntityManagerInterface;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
+use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupProductVisibilityResolvedRepository;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
@@ -19,16 +18,6 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountGroupProductResolvedCacheBuilder extends AbstractCacheBuilder
 {
-    /**
-     * @var InsertFromSelectQueryExecutor
-     */
-    protected $insertFromSelectExecutor;
-
-    /**
-     * @var RegistryInterface
-     */
-    protected $doctrine;
-
     /**
      * @param AccountGroupProductVisibility $accountGroupProductVisibility
      */
@@ -124,19 +113,19 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractCacheBuilder
             $categoriesGrouped = $this->getCategories();
             foreach ($categoriesGrouped as $accountGroupId => $categoriesGroupedByAccountGroup) {
                 $this->getRepository()->insertByCategory(
-                    $this->insertFromSelectExecutor,
+                    $this->insertFromSelectQueryExecutor,
                     BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
                     $categoriesGroupedByAccountGroup[VisibilityInterface::VISIBLE],
                     $accountGroupId
                 );
                 $this->getRepository()->insertByCategory(
-                    $this->insertFromSelectExecutor,
+                    $this->insertFromSelectQueryExecutor,
                     BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
                     $categoriesGroupedByAccountGroup[VisibilityInterface::HIDDEN],
                     $accountGroupId
                 );
             }
-            $this->getRepository()->insertStatic($this->insertFromSelectExecutor);
+            $this->getRepository()->insertStatic($this->insertFromSelectQueryExecutor);
             $this->getManager()->commit();
         } catch (\Exception $exception) {
             $this->getManager()->rollback();
@@ -160,7 +149,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractCacheBuilder
      */
     protected function getManager()
     {
-        return $this->doctrine
+        return $this->registry
             ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved');
     }
 
@@ -171,12 +160,12 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractCacheBuilder
     {
         // temporary
         /** @var Category[] $categories */
-        $categories = $this->doctrine
+        $categories = $this->registry
             ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
             ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
             ->getCategoriesByAccountGroupProductVisibility();
 
-        $accountGroups = $this->doctrine
+        $accountGroups = $this->registry
             ->getManagerForClass('OroB2BAccountBundle:AccountGroup')
             ->getRepository('OroB2BAccountBundle:AccountGroup')
             ->getPartialAccountGroups();
