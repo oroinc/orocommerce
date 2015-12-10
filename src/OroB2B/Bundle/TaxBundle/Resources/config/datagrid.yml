@@ -108,3 +108,80 @@ datagrid:
                 acl_resource:  orob2b_tax_account_tax_code_update
             delete:
                 acl_resource:  orob2b_tax_account_tax_code_delete
+
+    tax-taxes-grid:
+        options:
+            entityHint: tax
+        source:
+            acl_resource: orob2b_tax_tax_view
+            type:         orm
+            query:
+                select:
+                    - tax.id
+                    - tax.code
+                    - tax.description
+                    - tax.rate
+                from:
+                    - { table: %orob2b_tax.entity.tax.class%, alias: tax }
+        columns:
+            code:
+                label: orob2b.tax.code.label
+            description:
+                label: orob2b.tax.description.label
+            rate:
+                label: orob2b.tax.rate.label
+        sorters:
+            columns:
+                code:
+                    data_name: tax.code
+                description:
+                    data_name: tax.description
+                rate:
+                    data_name: tax.rate
+            default:
+                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                code:
+                    type:      string
+                    data_name: tax.code
+                description:
+                    type:      string
+                    data_name: tax.description
+                rate:
+                    type:      string
+                    data_name: tax.rate
+        properties:
+            id: ~
+            view_link:
+                type:  url
+                route: orob2b_tax_tax_view
+                params: [ id ]
+            update_link:
+                type:   url
+                route:  orob2b_tax_tax_update
+                params: [ id ]
+            delete_link:
+                type:   url
+                route:  orob2b_api_tax_delete_tax
+                params: [ id ]
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  orob2b_tax_tax_view
+                rowAction:     true
+            update:
+                type:          navigate
+                label:         oro.grid.action.update
+                link:          update_link
+                icon:          edit
+                acl_resource:  orob2b_tax_tax_update
+            delete:
+                type:          delete
+                label:         oro.grid.action.delete
+                link:          delete_link
+                icon:          trash
+                acl_resource:  orob2b_tax_tax_delete

@@ -1,6 +1,10 @@
 orob2b.tax:
-#    code.label: 'Code'
-#    description.label: 'Description'
+    code.label: 'Code'
+    description.label: 'Description'
+    entity_label: 'Tax'
+    entity_plural_label: 'Taxes'
+    id.label: 'id'
+    rate.label: 'Rate'
 
     producttaxcode:
         entity_label: 'Product Tax Code'
@@ -31,3 +35,5 @@ orob2b.tax:
             saved.message: 'Account Tax Code has been saved'
         product_tax_code:
             saved.message: 'Product Tax Code has been saved'
+        tax:
+            saved.message: 'Tax has been saved'
