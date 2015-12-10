@@ -45,4 +45,4 @@ services:
         arguments:
             - @oro_entity.doctrine_helper
         tags:
-            - { name: form.type_extension, alias: orob2b_account }
+            - { name: form.type_extension, alias: orob2b_account_type }

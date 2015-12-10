@@ -28,7 +28,7 @@ class AccountTaxCodeAutocompleteType extends AbstractType
      */
     public function getParent()
     {
-        return OroAutocompleteType::NAME;
+        return 'oro_entity_create_or_select_inline';
     }
 
     /**
@@ -38,19 +38,10 @@ class AccountTaxCodeAutocompleteType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'autocomplete_alias' => 'orob2b_account_tax_code_autocomplete_handler',
-                'autocomplete' => [
-                    'route_name' => 'oro_form_autocomplete_search',
-                    'route_parameters' => [
-                        'name' => 'orob2b_account_tax_code_autocomplete_handler',
-                    ],
-                    'selection_template_twig' =>
-                        'OroB2BTaxBundle:Autocomplete:tax_code_autocomplete_selection.html.twig',
-                    //'componentModule' => 'orob2btax/js/app/components/tax-code-autocomplete-component',
-                    'componentModule' => 'oro/autocomplete-component',
-                ],
+                'autocomplete_alias' => 'orob2b_account_tax_code',
+                'grid_name' => 'accounts-tax-code-select-grid',
                 'account_tax_code' => null,
-                'account_tax_code_field' => 'taxCode',
+                'account_tax_code_field' => 'taxCode'
             ]
         );
 
@@ -80,7 +71,7 @@ class AccountTaxCodeAutocompleteType extends AbstractType
     protected function getAccountTax(FormInterface $form)
     {
         $options = $form->getConfig()->getOptions();
-        $accountTaxField = $options['account_tax_field'];
+        $accountTaxField = $options['account_tax_code_field'];
 
         $parent = $form->getParent();
         while ($parent && !$parent->has($accountTaxField)) {

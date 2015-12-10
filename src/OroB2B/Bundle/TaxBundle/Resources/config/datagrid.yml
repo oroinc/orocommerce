@@ -108,3 +108,75 @@ datagrid:
                 acl_resource:  orob2b_tax_account_tax_code_update
             delete:
                 acl_resource:  orob2b_tax_account_tax_code_delete
+
+    tax-base-tax-codes-select-grid:
+        extends: tax-base-tax-codes-grid
+        source:
+            type: orm
+            query:
+                select:
+                    - tax_code.id
+                    - tax_code.code
+                    - tax_code.description
+        sorters:
+            columns:
+                code:
+                    data_name: tax_code.code
+                description:
+                    data_name: tax_code.description
+            default:
+                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        filters:
+            columns:
+                code:
+                    type:      string
+                    data_name: tax_code.code
+                description:
+                    type:      string
+                    data_name: tax_code.description
+        properties:
+            id: ~
+
+    products-tax-code-select-grid:
+        extends: tax-base-tax-codes-select-grid
+        options:
+            entityHint: product tax code
+        source:
+            acl_resource: orob2b_tax_product_tax_code_view
+            query:
+                from:
+                    - { table: %orob2b_tax.entity.product_tax_code.class%, alias: tax_code }
+        columns:
+            code:
+                label: orob2b.tax.producttaxcode.code.label
+            description:
+                label: orob2b.tax.producttaxcode.description.label
+        properties:
+            view_link:
+                route: orob2b_tax_product_tax_code_view
+            update_link:
+                route:  orob2b_tax_product_tax_code_update
+            delete_link:
+                route:  orob2b_api_tax_delete_producttaxcode
+
+    accounts-tax-code-select-grid:
+        extends: tax-base-tax-codes-select-grid
+        options:
+            entityHint: account tax code
+        source:
+            acl_resource: orob2b_tax_account_tax_code_view
+            query:
+                from:
+                    - { table: %orob2b_tax.entity.account_tax_code.class%, alias: tax_code }
+        columns:
+            code:
+                label: orob2b.tax.accounttaxcode.code.label
+            description:
+                label: orob2b.tax.accounttaxcode.description.label
+        properties:
+            view_link:
+                route: orob2b_tax_account_tax_code_view
+            update_link:
+                route:  orob2b_tax_account_tax_code_update
+            delete_link:
+                route:  orob2b_api_tax_delete_accounttaxcode

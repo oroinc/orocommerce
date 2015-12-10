@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormError;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
@@ -19,6 +20,9 @@ class AccountTaxExtension extends AbstractTypeExtension
 {
     /** @var DoctrineHelper */
     protected $doctrineHelper;
+
+    /** @var AccountTaxCodeRepository  */
+    protected $repository;
 
     /**
      * @param DoctrineHelper $doctrineHelper
@@ -55,6 +59,7 @@ class AccountTaxExtension extends AbstractTypeExtension
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData']);
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit'], 10);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -89,17 +94,25 @@ class AccountTaxExtension extends AbstractTypeExtension
 
         $entityManager = $this->doctrineHelper->getEntityManager('OroB2BTaxBundle:AccountTaxCode');
 
-        $taxCodeData = (array)$form->get('taxCode')->getData();
+        $taxCodeNew = $form->get('taxCode')->getData();
         $taxCode = $this->getAccountTaxCode($account);
 
-        if ($taxCodeData) {
-            if (!$taxCode) {
-                $taxCode = new AccountTaxCode;
+        if (!$taxCodeNew) {
+            if ($taxCode) {
+                $taxCode->removeAccount($account);
+                $entityManager->flush();
             }
-            $taxCode->setAccount($account);
-            $entityManager->persist($taxCode);
-        } else {
-            $entityManager->remove($taxCode);
+            return;
+        }
+
+        $taxCodeId = $taxCode ? $taxCode->getId() : 0;
+
+        if ($taxCodeId != $taxCodeNew->getId()) {
+            if ($taxCode) {
+                $taxCode->removeAccount($account);
+            }
+            $taxCodeNew->addAccount($account);
+            $entityManager->flush();
         }
     }
 
@@ -109,9 +122,8 @@ class AccountTaxExtension extends AbstractTypeExtension
      */
     protected function getAccountTaxCode($account)
     {
-        /** @var AccountTaxCodeRepository $repository */
-        $repository = $this->doctrineHelper->getEntityRepository('OroB2BTaxBundle:AccountTaxCode');
+        $this->repository = $this->doctrineHelper->getEntityRepository('OroB2BTaxBundle:AccountTaxCode');
 
-        return $repository->findOneByAccount($account);
+        return $this->repository->findOneByAccount($account);
     }
 }

@@ -28,7 +28,7 @@ class ProductTaxCodeAutocompleteType extends AbstractType
      */
     public function getParent()
     {
-        return OroAutocompleteType::NAME;
+        return 'oro_entity_create_or_select_inline';
     }
 
     /**
@@ -38,19 +38,10 @@ class ProductTaxCodeAutocompleteType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'autocomplete_alias' => 'orob2b_product_tax_code_autocomplete_handler',
-                'autocomplete' => [
-                    'route_name' => 'oro_form_autocomplete_search',
-                    'route_parameters' => [
-                        'name' => 'orob2b_product_tax_code_autocomplete_handler',
-                    ],
-                    'selection_template_twig' =>
-                        'OroB2BTaxBundle:Autocomplete:tax_code_autocomplete_selection.html.twig',
-                    //'componentModule' => 'orob2btax/js/app/components/tax-code-autocomplete-component',
-                    'componentModule' => 'oro/autocomplete-component',
-                ],
+                'autocomplete_alias' => 'orob2b_product_tax_code',
+                'grid_name' => 'products-tax-code-select-grid',
                 'product_tax_code' => null,
-                'product_tax_code_field' => 'taxCode',
+                'product_tax_code_field' => 'taxCode'
             ]
         );
 

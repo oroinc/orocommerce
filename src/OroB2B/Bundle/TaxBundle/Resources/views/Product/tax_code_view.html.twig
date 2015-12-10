@@ -1,9 +1,9 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 
 {%- if entity and resource_granted('EDIT', entity) -%}
-    {% set productTaxCode = UI.renderUrl(path('orob2b_tax_product_tax_code_update', {'id': entity.id}), entity.code) %}
+    {% set productTaxCode = UI.renderUrl(path('orob2b_tax_product_tax_code_update', {'id': entity.id}), entity.code) ~ ' (' ~ entity.description ~ ')' %}
 {%- elseif entity -%}
-    {% set productTaxCode = entity ? entity.code : '' %}
+    {% set productTaxCode = entity.code ~ ' (' ~ entity.description ~ ')' %}
 {%- else -%}
     {% set productTaxCode = '' %}
 {%- endif -%}

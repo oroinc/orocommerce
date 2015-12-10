@@ -28,7 +28,7 @@ services:
             - %orob2b_tax.entity.product_tax_code.class%
             - ["code"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: orob2b_product_tax_code_autocomplete_handler }
+            - { name: oro_form.autocomplete.search_handler, alias: orob2b_product_tax_code }
         lazy: true
 
     orob2b_tax.form.autocomplete.account_tax_code.search_handler:
@@ -37,7 +37,7 @@ services:
             - %orob2b_tax.entity.account_tax_code.class%
             - ["code"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: orob2b_account_tax_code_autocomplete_handler }
+            - { name: oro_form.autocomplete.search_handler, alias: orob2b_account_tax_code }
         lazy: true
 
     orob2b_tax.event_listener.form_view:
