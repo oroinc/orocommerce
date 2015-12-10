@@ -15,6 +15,7 @@ class OroB2BTaxBundle implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
+        $this->createOroB2BTaxTaxTable($schema);
         $this->createOrob2BTaxAccTaxCodeAccTable($schema);
         $this->createOrob2BTaxAccountTaxCodeTable($schema);
         $this->createOrob2BTaxProdTaxCodeProdTable($schema);
@@ -85,6 +86,24 @@ class OroB2BTaxBundle implements Migration
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['code'], 'UNIQ_5AF53A4A77153098');
+    }
+
+    /**
+     * Create orob2b_tax_tax table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BTaxTaxTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_tax_tax');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('code', 'string', ['length' => 255]);
+        $table->addColumn('description', 'text', ['notnull' => false]);
+        $table->addColumn('rate', 'percent', ['comment' => '(DC2Type:percent)']);
+        $table->addColumn('created_at', 'datetime', []);
+        $table->addColumn('updated_at', 'datetime', []);
+        $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['code'], 'UNIQ_E132B24377153098');
     }
 
     /**
