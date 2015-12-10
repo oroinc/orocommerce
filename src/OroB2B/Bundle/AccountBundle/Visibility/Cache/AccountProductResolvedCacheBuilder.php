@@ -108,24 +108,9 @@ class AccountProductResolvedCacheBuilder implements CacheBuilderInterface
                     $accountId
                 );
             }
-            $this->getRepository()->deleteByVisibility(AccountProductVisibility::ACCOUNT_GROUP);
+            $this->getRepository()->insertStatic($this->insertFromSelectExecutor);
+            $this->getRepository()->insertForCurrentProductFallback($this->insertFromSelectExecutor, 'config');
 
-            $this->getRepository()->updateFromBaseTableForCurrentProduct(
-                BaseProductVisibilityResolved::VISIBILITY_VISIBLE
-            );
-
-            $this->getRepository()->updateFromBaseTableForCurrentProduct(
-                BaseProductVisibilityResolved::VISIBILITY_HIDDEN
-            );
-
-            $this->getRepository()->updateFromBaseTable(
-                BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
-                AccountProductVisibility::VISIBLE
-            );
-            $this->getRepository()->updateFromBaseTable(
-                BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
-                AccountProductVisibility::HIDDEN
-            );
             $this->getManager()->commit();
         } catch (\Exception $exception) {
             $this->getManager()->rollback();
@@ -155,12 +140,11 @@ class AccountProductResolvedCacheBuilder implements CacheBuilderInterface
      */
     protected function getCategories()
     {
-        // temporary
         /** @var Category[] $categories */
         $categories = $this->doctrine
-            ->getManagerForClass('OroB2BCatalogBundle:Category')
-            ->getRepository('OroB2BCatalogBundle:Category')
-            ->getPartialCategories();
+            ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountProductVisibility')
+            ->getRepository('OroB2BAccountBundle:Visibility\AccountProductVisibility')
+            ->getCategoriesByAccountProductVisibility();
 
         $accounts = $this->doctrine
             ->getManagerForClass('OroB2BAccountBundle:Account')
