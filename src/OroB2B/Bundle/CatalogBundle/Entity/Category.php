@@ -72,6 +72,13 @@ class Category extends ExtendCategory
      *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
      *      }
      * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $titles;
 
@@ -96,6 +103,13 @@ class Category extends ExtendCategory
      *
      * @ORM\OneToMany(targetEntity="Category", mappedBy="parentCategory", cascade={"persist"})
      * @ORM\OrderBy({"left" = "ASC"})
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $childCategories;
 
@@ -140,6 +154,13 @@ class Category extends ExtendCategory
      *          @ORM\JoinColumn(name="product_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
      *      }
      * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $products;
 
@@ -160,6 +181,13 @@ class Category extends ExtendCategory
      *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
      *      }
      * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $shortDescriptions;
 
@@ -178,6 +206,13 @@ class Category extends ExtendCategory
      *      },
      *      inverseJoinColumns={
      *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *      }
+     * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
      *      }
      * )
      */

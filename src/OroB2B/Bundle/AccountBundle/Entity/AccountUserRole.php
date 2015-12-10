@@ -67,13 +67,6 @@ class AccountUserRole extends AbstractRole implements OrganizationAwareInterface
      * @var string
      *
      * @ORM\Column(type="string", length=255, unique=true, nullable=false)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
     protected $role;
 

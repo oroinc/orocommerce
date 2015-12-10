@@ -90,6 +90,13 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      *          @ORM\JoinColumn(name="account_user_role_id", referencedColumnName="id", onDelete="CASCADE")
      *      }
      * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $roles;
 
@@ -109,7 +116,7 @@ class AccountUser extends AbstractUser implements FullNameInterface, EmailHolder
      *          }
      *      }
      * )
-     **/
+     */
     protected $account;
 
     /**

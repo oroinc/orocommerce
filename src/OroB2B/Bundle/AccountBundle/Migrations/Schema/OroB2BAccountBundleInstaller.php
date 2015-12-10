@@ -106,7 +106,7 @@ class OroB2BAccountBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_2';
     }
 
     /**
@@ -290,7 +290,10 @@ class OroB2BAccountBundleInstaller implements
             $schema,
             static::ORO_B2B_ACCOUNT_TABLE_NAME,
             'internal_rating',
-            Account::INTERNAL_RATING_CODE
+            Account::INTERNAL_RATING_CODE,
+            false,
+            false,
+            ['dataaudit' => ['auditable' => true]]
         );
     }
 

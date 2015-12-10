@@ -284,6 +284,13 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
      * @ORM\OneToMany(targetEntity="OroB2B\Bundle\OrderBundle\Entity\OrderLineItem",
      *      mappedBy="order", cascade={"ALL"}, orphanRemoval=true
      * )
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $lineItems;
 
@@ -310,6 +317,14 @@ class Order extends ExtendOrder implements OrganizationAwareInterface, EmailHold
         parent::__construct();
 
         $this->lineItems = new ArrayCollection();
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->identifier;
     }
 
     /**

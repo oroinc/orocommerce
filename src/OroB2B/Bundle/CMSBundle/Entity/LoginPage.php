@@ -81,6 +81,14 @@ class LoginPage extends ExtendLoginPage
     protected $css;
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->id;
+    }
+
+    /**
      * @return int
      */
     public function getId()

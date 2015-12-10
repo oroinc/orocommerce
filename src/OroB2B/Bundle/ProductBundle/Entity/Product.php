@@ -258,6 +258,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * )
      * @ConfigField(
      *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
      *          "importexport"={
      *              "order"=40,
      *              "full"=true,
@@ -287,6 +290,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * )
      * @ConfigField(
      *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
      *          "importexport"={
      *              "order"=50,
      *              "full"=true,
@@ -303,6 +309,9 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
      * @ORM\OneToMany(targetEntity="ProductVariantLink", mappedBy="parentProduct", cascade={"ALL"}, orphanRemoval=true)
      * @ConfigField(
      *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
      *          "importexport"={
      *              "order"=80,
      *              "full"=true,
