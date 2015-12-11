@@ -28,3 +28,7 @@ orob2b_rfp_frontend:
     prefix: /account/rfp
     options:
         frontend: true
+orob2b_rfp_request_order:
+    resource:     "@OroB2BRFPBundle/Controller/OrderController.php"
+    type:         annotation
+    prefix:       /rfp/order

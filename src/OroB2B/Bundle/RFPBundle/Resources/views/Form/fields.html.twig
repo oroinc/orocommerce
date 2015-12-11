@@ -153,3 +153,55 @@
         {{ form_errors(form.price.currency) }}
     </td>
 {% endblock %}
+
+{% block _orob2b_order_type_lineItems_entry_offers_widget %}
+    {% if offers is defined and offers|length %}
+    {% set page_component_options = {
+        offersSelector: '[name="%s"]'|format(full_name),
+        quantitySelector: '#%s'|format(form.parent.quantity.vars.id),
+        unitSelector: '#%s'|format(form.parent.productUnit.vars.id),
+        productSelector: '#%s'|format(form.parent.product.vars.id),
+        productSkuSelector: '#%s'|format(form.parent.productSku.vars.id),
+        offersDataSelector: '#%s'|format(form.parent.offers_data.vars.id),
+    } %}
+
+    <table class="grid table table-hover table-bordered order-line-item-offers"
+           data-page-component-module="orob2brfp/js/app/components/order-line-item-offers"
+           data-page-component-options="{{ page_component_options|json_encode }}">
+        <tbody>
+            {% for child in form.children %}
+                <tr>
+                    {{ form_row(child, {offer: offers[loop.index-1]}) }}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+{% endblock %}
+
+{% block _orob2b_order_type_lineItems_entry_offers_entry_row %}
+    <td class="order-line-item-offers-radio">
+        {{ form_widget(form, {
+            attr: {
+                'data-quantity': offer.quantity|default,
+                'data-unit': offer.unit|default,
+                'data-price': offer.price|default,
+                'data-currenct': offer.currency|default
+            }
+        }) }}
+    </td>
+    <td class="order-line-item-offers-quantity">
+        {% if offer.quantity is defined and offer.unit is defined %}
+            <label for="{{ id }}">
+                {{ offer.quantity|orob2b_format_product_unit_code(offer.unit) }}
+            </label>
+        {% endif %}
+    </td>
+    <td class="order-line-item-offers-price">
+        {% if offer.price is defined and offer.currency is defined %}
+            <label for="{{ id }}">
+                {{ offer.price|oro_format_currency({'currency': offer.currency}) }}
+            </label>
+        {% endif %}
+    </td>
+{% endblock %}

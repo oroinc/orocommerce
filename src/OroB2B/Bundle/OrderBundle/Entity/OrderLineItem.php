@@ -29,6 +29,7 @@ use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
  *      }
  * )
  * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class OrderLineItem extends ExtendOrderLineItem implements ProductUnitHolderInterface, ProductHolderInterface
 {

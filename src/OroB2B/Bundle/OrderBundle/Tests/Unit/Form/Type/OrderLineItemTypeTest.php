@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\PreloadedExtension;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
@@ -34,8 +35,8 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
     {
         $productSelectType = new ProductSelectEntityTypeStub(
             [
-                1 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 1, 'id'),
-                2 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 2, 'id'),
+                1 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 1]),
+                2 => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 2]),
             ]
         );
 
@@ -64,10 +65,14 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
             ->getMock();
         $repository->expects($this->any())
             ->method('findBy')
-            ->will($this->returnValue([
-                'item' => 'item',
-                'kg' => 'kilogram',
-            ]));
+            ->will(
+                $this->returnValue(
+                    [
+                        'item' => 'item',
+                        'kg' => 'kilogram',
+                    ]
+                )
+            );
 
         $this->registry->expects($this->any())
             ->method('getRepository')
@@ -90,7 +95,7 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
     public function submitDataProvider()
     {
         /** @var Product $product */
-        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', 1, 'id');
+        $product = $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\Product', ['id' => 1]);
         $date = \DateTime::createFromFormat('Y-m-d H:i:s', '2015-02-03 00:00:00', new \DateTimeZone('UTC'));
 
         return [
@@ -116,11 +121,13 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                 'expectedData' => (new OrderLineItem())
                     ->setProduct($product)
                     ->setQuantity(10)
-                    ->setProductUnit($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code'))
+                    ->setProductUnit(
+                        $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'item'])
+                    )
                     ->setPrice(Price::create(5, 'USD'))
                     ->setPriceType(OrderLineItem::PRICE_TYPE_BUNDLED)
                     ->setShipBy($date)
-                    ->setComment('Comment')
+                    ->setComment('Comment'),
             ],
             'free form entry' => [
                 'options' => [
@@ -144,11 +151,13 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
                     ->setQuantity(1)
                     ->setFreeFormProduct('Service')
                     ->setProductSku('SKU02')
-                    ->setProductUnit($this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code'))
+                    ->setProductUnit(
+                        $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'item'])
+                    )
                     ->setPrice(Price::create(5, 'USD'))
                     ->setPriceType(OrderLineItem::PRICE_TYPE_UNIT)
                     ->setShipBy($date)
-                    ->setComment('Comment')
+                    ->setComment('Comment'),
             ],
         ];
     }
@@ -156,5 +165,41 @@ class OrderLineItemTypeTest extends AbstractOrderLineItemTypeTest
     public function testBuildView()
     {
         $this->assertDefaultBuildViewCalled();
+    }
+
+    /** {@inheritdoc} */
+    protected function getExpectedSections()
+    {
+        return new ArrayCollection(
+            [
+                'quantity' => ['data' => ['quantity' => [], 'productUnit' => []], 'order' => 10],
+                'price' => ['data' => ['price' => [], 'priceType' => []], 'order' => 20],
+                'ship_by' => ['data' => ['shipBy' => []], 'order' => 30],
+                'comment' => [
+                    'data' => [
+                        'comment' => ['page_component' => 'orob2border/js/app/components/notes-component'],
+                    ],
+                    'order' => 40,
+                ],
+            ]
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getExpectedOptions()
+    {
+        return [
+            'currency' => null,
+            'data_class' => 'OroB2B\Bundle\OrderBundle\Entity\OrderLineItem',
+            'intention' => 'order_line_item',
+            'page_component' => 'oroui/js/app/components/view-component',
+            'page_component_options' => [
+                'view' => 'orob2border/js/app/views/line-item-view',
+                'freeFormUnits' => null,
+            ],
+            'sections' => $this->getExpectedSections()->toArray()
+        ];
     }
 }

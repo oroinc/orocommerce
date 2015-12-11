@@ -144,7 +144,7 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="body", type="text")
+     * @ORM\Column(name="note", type="text")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -153,7 +153,7 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
      *      }
      * )
      */
-    protected $body;
+    protected $note;
 
     /**
      * @var RequestStatus
@@ -544,26 +544,26 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
     }
 
     /**
-     * Set body
+     * Set note
      *
-     * @param string $body
+     * @param string $note
      * @return Request
      */
-    public function setBody($body)
+    public function setNote($note)
     {
-        $this->body = $body;
+        $this->note = $note;
 
         return $this;
     }
 
     /**
-     * Get body
+     * Get note
      *
      * @return string
      */
-    public function getBody()
+    public function getNote()
     {
-        return $this->body;
+        return $this->note;
     }
 
     /**
