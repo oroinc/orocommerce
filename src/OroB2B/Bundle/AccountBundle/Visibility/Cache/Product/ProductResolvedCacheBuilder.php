@@ -3,22 +3,18 @@
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product;
 
 use Doctrine\ORM\EntityManagerInterface;
-
 use Doctrine\ORM\Query;
+
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\ProductVisibilityResolvedRepository;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 
 class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
 {
@@ -27,7 +23,6 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
 
     /**
      * @var InsertFromSelectQueryExecutor
-     * @param VisibilityInterface|ProductVisibility $productVisibility
      */
     protected $insertFromSelectExecutor;
 
@@ -53,9 +48,8 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
     }
 
     /**
-     * {@inheritdoc}
+     * @param VisibilityInterface|ProductVisibility $productVisibility
      */
-    public function resolveVisibilitySettings($productVisibility)
     public function resolveVisibilitySettings(VisibilityInterface $productVisibility)
     {
         $product = $productVisibility->getProduct();
@@ -112,7 +106,6 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
      * {@inheritdoc}
      */
     public function isVisibilitySettingsSupported(VisibilityInterface$visibilitySettings)
-    public function isVisibilitySettingsSupported($visibilitySettings)
     {
         return $visibilitySettings instanceof ProductVisibility;
     }

@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductResolvedCacheBuilder;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\ProductResolvedCacheBuilder;
 
 /**
  * @dbIsolation
@@ -21,7 +21,7 @@ class ProductResolvedCacheBuilderTest extends WebTestCase
         $this->initClient();
 
         $this->cacheBuilder = $this->client->getContainer()
-            ->get('orob2b_account.visibility.cache.product_resolved_cache_builder');
+            ->get('orob2b_account.visibility.cache.product.product_resolved_cache_builder');
 
         $this->loadFixtures(
             [
