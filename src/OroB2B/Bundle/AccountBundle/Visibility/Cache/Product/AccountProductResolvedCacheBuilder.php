@@ -118,6 +118,7 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
         if (!$resolvedVisibility) {
             foreach ($em->getUnitOfWork()->getScheduledEntityInsertions() as $entity) {
                 if ($entity instanceof ProductVisibilityResolved
+                    && $entity->getProduct() && $entity->getWebsite()
                     && $entity->getProduct()->getId() === $product->getId()
                     && $entity->getWebsite()->getId() === $website->getId()
                 ) {
