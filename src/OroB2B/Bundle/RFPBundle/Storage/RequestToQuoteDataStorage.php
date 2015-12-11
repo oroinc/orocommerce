@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\RFPBundle\Storage;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 
-class RequestDataStorage
+class RequestToQuoteDataStorage
 {
     /** @var ProductDataStorage */
     protected $storage;

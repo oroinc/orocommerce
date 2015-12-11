@@ -11,7 +11,7 @@ parameters:
     orob2b_rfp.storage.offers_data_storage.class: OroB2B\Bundle\RFPBundle\Storage\OffersDataStorage
     orob2b_rfp.storage.offers_form_storage.class: OroB2B\Bundle\RFPBundle\Storage\OffersFormStorage
 
-    orob2b_rfp.service.request_data_storage.class: OroB2B\Bundle\RFPBundle\Storage\RequestDataStorage
+    orob2b_rfp.service.request_to_quote_data_storage.class: OroB2B\Bundle\RFPBundle\Storage\RequestToQuoteDataStorage
 
 services:
     orob2b_rfp.datagrid.action_permission_provider:
@@ -53,10 +53,10 @@ services:
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
 
-    orob2b_rfp.service.request_data_storage:
-        class: %orob2b_rfp.service.request_data_storage.class%
+    orob2b_rfp.service.request_to_quote_data_storage:
+        class: %orob2b_rfp.service.request_to_quote_data_storage.class%
         arguments:
-            - @orob2b_product.service.product_data_storage
+            - @orob2b_product.storage.product_data_storage
 
     orob2b_rfp.storage.offers_data_storage:
         class: %orob2b_rfp.storage.offers_data_storage.class%

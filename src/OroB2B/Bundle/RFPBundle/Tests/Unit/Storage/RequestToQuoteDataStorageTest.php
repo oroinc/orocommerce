@@ -11,17 +11,17 @@ use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProduct;
 use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
-use OroB2B\Bundle\RFPBundle\Storage\RequestDataStorage;
+use OroB2B\Bundle\RFPBundle\Storage\RequestToQuoteDataStorage;
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 
-class RequestDataStorageTest extends \PHPUnit_Framework_TestCase
+class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|ProductDataStorage */
     protected $storage;
 
-    /** @var RequestDataStorage */
+    /** @var RequestToQuoteDataStorage */
     protected $requestDataStorage;
 
     protected function setUp()
@@ -30,7 +30,7 @@ class RequestDataStorageTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->requestDataStorage = new RequestDataStorage($this->storage);
+        $this->requestDataStorage = new RequestToQuoteDataStorage($this->storage);
     }
 
     protected function tearDown()
