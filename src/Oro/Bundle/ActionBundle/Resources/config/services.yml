@@ -8,6 +8,7 @@ parameters:
     oro_action.form_manager.class: Oro\Bundle\ActionBundle\Model\ActionFormManager
     oro_action.datagrid.action_extension.class: Oro\Bundle\ActionBundle\Datagrid\Extension\ActionExtension
     oro_action.datagrid.action.action_widget_action.class: Oro\Bundle\ActionBundle\Datagrid\Action\ActionWidgetAction
+    oro_action.datagrid.action_permission_provider.class: Oro\Bundle\ActionBundle\Datagrid\ActionPermissionProvider
 
 services:
     oro_action.helper.context:
@@ -90,6 +91,8 @@ services:
         arguments:
             - @translator
             - @oro_action.manager
+            - @oro_action.datagrid.action_permission_provider
+            - @oro_action.helper.context
         tags:
             - { name: oro_datagrid.extension }
         lazy: true
@@ -101,3 +104,8 @@ services:
         scope: prototype
         tags:
             - { name: oro_datagrid.extension.action.type, type: action-widget }
+
+    oro_action.datagrid.action_permission_provider:
+        class: %oro_action.datagrid.action_permission_provider.class%
+        arguments:
+            - @oro_config.manager
