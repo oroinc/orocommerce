@@ -47,7 +47,7 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
                 );
                 $accountProductVisibilityResolved->setSourceProductVisibility($accountProductVisibility);
                 $accountProductVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_CATEGORY);
-                $accountProductVisibilityResolved->setCategoryId($category->getId());
+                $accountProductVisibilityResolved->setCategory($category);
             } else {
                 $this->resolveConfigValue($accountProductVisibilityResolved, $accountProductVisibility);
             }
@@ -58,7 +58,7 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
                 ->findByPrimaryKey($product, $website);
             if ($productVisibilityResolved) {
                 $accountProductVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_STATIC);
-                $accountProductVisibilityResolved->setCategoryId(null);
+                $accountProductVisibilityResolved->setCategory(null);
                 $accountProductVisibilityResolved->setVisibility($productVisibilityResolved->getVisibility());
                 $accountProductVisibilityResolved->setSourceProductVisibility($accountProductVisibility);
             } else {

@@ -66,6 +66,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     LoadProductData::PRODUCT_4,
                     LoadProductData::PRODUCT_6,
                     LoadProductData::PRODUCT_7,
+                    LoadProductData::PRODUCT_8,
                 ],
             ],
             'disabled products' => [
@@ -89,6 +90,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     LoadProductData::PRODUCT_5,
                     LoadProductData::PRODUCT_6,
                     LoadProductData::PRODUCT_7,
+                    LoadProductData::PRODUCT_8,
                 ],
             ],
         ];

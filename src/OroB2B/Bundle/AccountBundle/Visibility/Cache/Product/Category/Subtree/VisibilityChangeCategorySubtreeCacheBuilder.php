@@ -174,7 +174,7 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
 
         $qb->update('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved', 'pvr')
             ->set('pvr.visibility', $visibility)
-            ->andWhere($qb->expr()->in('pvr.categoryId', ':categoryIds'))
+            ->andWhere($qb->expr()->in('IDENTITY(pvr.category)', ':categoryIds'))
             ->setParameter('categoryIds', $categoryIds);
 
         $qb->getQuery()->execute();

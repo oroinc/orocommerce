@@ -221,7 +221,7 @@ class LoadProductVisibilityResolvedFallbackCategoryData extends AbstractFixture 
             ->setVisibility($visibility)
             ->setSource(self::VISIBILITY_RESOLVED_SOURCE)
             ->setSourceProductVisibility($productVisibility)
-            ->setCategoryId($this->getCategoryByProduct($product)->getId());
+            ->setCategory($this->getCategoryByProduct($product));
 
         $this->em->persist($resolvedVisibility);
     }
@@ -257,7 +257,7 @@ class LoadProductVisibilityResolvedFallbackCategoryData extends AbstractFixture 
             ->setVisibility($visibility)
             ->setSource(self::VISIBILITY_RESOLVED_SOURCE)
             ->setSourceProductVisibility($accountGroupVisibility)
-            ->setCategoryId($this->getCategoryByProduct($product)->getId());
+            ->setCategory($this->getCategoryByProduct($product));
 
         $this->em->persist($resolvedVisibility);
     }
@@ -284,7 +284,7 @@ class LoadProductVisibilityResolvedFallbackCategoryData extends AbstractFixture 
             ->setVisibility($visibility)
             ->setSource(self::VISIBILITY_RESOLVED_SOURCE)
             ->setSourceProductVisibility($accountVisibility)
-            ->setCategoryId($this->getCategoryByProduct($product)->getId());
+            ->setCategory($this->getCategoryByProduct($product));
 
         $this->em->persist($resolvedVisibility);
     }

@@ -77,7 +77,7 @@ class AccountProductVisibilitySettingsResolverTest extends AbstractVisibilitySet
         $accountProductVisibility->setVisibility(AccountProductVisibility::CATEGORY);
         $emForProductVisibility->flush();
         $accountProductVisibilityResolved = $this->getAccountProductVisibilityResolved();
-        $this->assertEquals($accountProductVisibilityResolved->getCategoryId(), $category->getId());
+        $this->assertEquals($accountProductVisibilityResolved->getCategory()->getId(), $category->getId());
         $this->assertEquals(
             $accountProductVisibilityResolved->getSource(),
             BaseProductVisibilityResolved::SOURCE_CATEGORY
@@ -116,7 +116,7 @@ class AccountProductVisibilitySettingsResolverTest extends AbstractVisibilitySet
         $emForAccountProductVisibility->persist($accountProductVisibility);
         $emForAccountProductVisibility->flush();
         $accountProductVisibilityResolved = $this->getAccountProductVisibilityResolved();
-        $this->assertEquals($accountProductVisibilityResolved->getCategoryId(), null);
+        $this->assertEquals($accountProductVisibilityResolved->getCategory(), null);
         $this->assertEquals(
             $accountProductVisibilityResolved->getSource(),
             BaseProductVisibilityResolved::SOURCE_STATIC
@@ -147,7 +147,7 @@ class AccountProductVisibilitySettingsResolverTest extends AbstractVisibilitySet
         $emForAccountProductVisibility->persist($accountProductVisibility);
         $emForAccountProductVisibility->flush();
         $accountProductVisibilityResolved = $this->getAccountProductVisibilityResolved();
-        $this->assertEquals($accountProductVisibilityResolved->getCategoryId(), null);
+        $this->assertEquals($accountProductVisibilityResolved->getCategory(), null);
         $this->assertEquals(
             $accountProductVisibilityResolved->getSource(),
             BaseProductVisibilityResolved::SOURCE_STATIC

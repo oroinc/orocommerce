@@ -90,7 +90,7 @@ class ProductVisibilitySettingsResolverTest extends AbstractVisibilitySettingsRe
         $emForProductVisibility->remove($productVisibility);
         $emForProductVisibility->flush();
         $productVisibilityResolved = $this->getProductVisibilityResolved();
-        $this->assertEquals($productVisibilityResolved->getCategoryId(), $category->getId());
+        $this->assertEquals($productVisibilityResolved->getCategory()->getId(), $category->getId());
         $this->assertEquals($productVisibilityResolved->getSource(), BaseProductVisibilityResolved::SOURCE_CATEGORY);
         $this->assertNull($productVisibilityResolved->getSourceProductVisibility());
         $this->assertEquals(

@@ -55,7 +55,7 @@ abstract class AbstractVisibilitySettingsResolverTest extends WebTestCase
         $expectedVisibility
     ) {
         $this->assertNotNull($productVisibilityResolved);
-        $this->assertNull($productVisibilityResolved->getCategoryId());
+        $this->assertNull($productVisibilityResolved->getCategory());
         $this->assertEquals($productVisibilityResolved->getProduct(), $this->product);
         $this->assertEquals($productVisibilityResolved->getSource(), BaseProductVisibilityResolved::SOURCE_STATIC);
         $this->assertEquals($productVisibilityResolved->getSourceProductVisibility(), $productVisibility);

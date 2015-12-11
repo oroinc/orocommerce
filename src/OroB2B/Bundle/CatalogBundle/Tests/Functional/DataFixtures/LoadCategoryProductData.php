@@ -21,6 +21,7 @@ class LoadCategoryProductData extends AbstractFixture implements DependentFixtur
         LoadCategoryData::THIRD_LEVEL2 => LoadProductData::PRODUCT_4,
         LoadCategoryData::FOURTH_LEVEL1 => LoadProductData::PRODUCT_6,
         LoadCategoryData::FOURTH_LEVEL2 => LoadProductData::PRODUCT_7,
+        LoadCategoryData::FOURTH_LEVEL2 => LoadProductData::PRODUCT_8,
     ];
 
     /** {@inheritdoc} */

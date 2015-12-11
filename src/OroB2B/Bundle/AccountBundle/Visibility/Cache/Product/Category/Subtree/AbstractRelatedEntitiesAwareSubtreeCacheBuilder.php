@@ -281,9 +281,12 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
 
         $qb->update('OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved', 'agpvr')
             ->set('agpvr.visibility', $visibility)
-            ->where($qb->expr()->eq('agpvr.categoryId', $category->getId()))
+            ->where($qb->expr()->eq('agpvr.category', ':category'))
             ->andWhere($qb->expr()->in('agpvr.accountGroup', ':accountGroups'))
-            ->setParameter('accountGroups', $accountGroups);
+            ->setParameters([
+                'accountGroups' => $accountGroups,
+                'category' => $category
+            ]);
 
         $qb->getQuery()->execute();
     }
@@ -306,9 +309,12 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
 
         $qb->update('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved', 'apvr')
             ->set('apvr.visibility', $visibility)
-            ->where($qb->expr()->eq('apvr.categoryId', $category->getId()))
+            ->where($qb->expr()->eq('apvr.category', ':category'))
             ->andWhere($qb->expr()->in('apvr.account', ':accounts'))
-            ->setParameter('accounts', $accounts);
+            ->setParameters([
+                'accounts' => $accounts,
+                'category' => $category
+            ]);
 
         $qb->getQuery()->execute();
     }

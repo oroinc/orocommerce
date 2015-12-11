@@ -75,7 +75,7 @@ class AccountGroupProductVisibilitySettingsResolverTest extends AbstractVisibili
         $accountGroupProductVisibility->setVisibility(AccountGroupProductVisibility::CATEGORY);
         $emForProductVisibility->flush();
         $accountGroupProductVisibilityResolved = $this->getAccountGroupProductVisibilityResolved();
-        $this->assertEquals($accountGroupProductVisibilityResolved->getCategoryId(), $category->getId());
+        $this->assertEquals($accountGroupProductVisibilityResolved->getCategory()->getId(), $category->getId());
         $this->assertEquals(
             $accountGroupProductVisibilityResolved->getSource(),
             BaseProductVisibilityResolved::SOURCE_CATEGORY
