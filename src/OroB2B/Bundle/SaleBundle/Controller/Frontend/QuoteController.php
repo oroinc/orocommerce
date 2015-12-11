@@ -21,6 +21,7 @@ use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteToOrderType;
 use OroB2B\Bundle\SaleBundle\Form\Handler\QuoteToOrderHandler;
 use OroB2B\Bundle\SaleBundle\Model\QuoteToOrderConverter;
+use Oro\Bundle\LayoutBundle\Annotation\Layout;
 
 class QuoteController extends Controller
 {
@@ -48,7 +49,7 @@ class QuoteController extends Controller
 
     /**
      * @Route("/", name="orob2b_sale_quote_frontend_index")
-     * @Template("OroB2BSaleBundle:Quote/Frontend:index.html.twig")
+     * @Layout(vars={"entity_class"})
      * @Acl(
      *      id="orob2b_sale_quote_frontend_index",
      *      type="entity",

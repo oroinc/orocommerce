@@ -35,6 +35,12 @@ layout:
                     blockType: container
                 content:
                     blockType: container
+                sidebar_left:
+                    blockType: container
+                page_title:
+                    blockType: text
+                    options:
+                        text: ~
                 footer:
                     blockType: container
                 scripts:
@@ -55,6 +61,8 @@ layout:
                             header: ~
                             notification: ~
                             main:
-                                content: ~
+                                content:
+                                    page_title: ~
+                                sidebar_left: ~
                             footer: ~
                         scripts: ~
