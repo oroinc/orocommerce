@@ -4,10 +4,11 @@ namespace OroB2B\Bundle\AccountBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
-use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -16,74 +17,102 @@ class ProductVisibilityResolvedRepository extends EntityRepository
 {
     /**
      * @param InsertFromSelectQueryExecutor $executor
-     * @param string $cacheVisibility
+     * @param string $visibility
+     * @param Website $website
      * @param array $categories
      */
-    public function insertByCategory(InsertFromSelectQueryExecutor $executor, $cacheVisibility, array $categories)
-    {
-        $queryBuilder = $this->getEntityManager()
+    public function insertByCategory(
+        InsertFromSelectQueryExecutor $executor,
+        $visibility,
+        array $categories,
+        Website $website = null
+    ) {
+        $qb = $this->getEntityManager()
             ->getRepository('OroB2BCatalogBundle:Category')
             ->createQueryBuilder('category')
             ->select([
-                'website.id as websiteId',
-                'product.id as productId',
-                (string)$cacheVisibility,
+                'website.id as w_id',
+                'product.id as p_id',
+                (string)$visibility,
                 (string)BaseProductVisibilityResolved::SOURCE_CATEGORY,
-                'category.id as categoryId'
+                'category.id as c_id',
             ])
-            ->innerJoin('OroB2BProductBundle:Product', 'product', Join::WITH, 'product MEMBER OF category.products')
-            ->innerJoin('OroB2BWebsiteBundle:Website', 'website')
-            ->where('category.id in (:ids)')
+            ->innerJoin('category.products', 'product')
+            ->innerJoin('OroB2BWebsiteBundle:Website', 'website', Join::WITH, '1 = 1')
+            ->leftJoin(
+                'OroB2BAccountBundle:Visibility\ProductVisibility',
+                'pv',
+                Join::WITH,
+                'IDENTITY(pv.product) = product.id AND IDENTITY(pv.website) = website.id'
+            )
+            ->where('pv.id is null')
+            ->andWhere('category.id in (:ids)')
             ->setParameter('ids', $categories)
         ;
 
+        if ($website) {
+            $qb->andWhere('website = :website')
+                ->setParameter('website', $website);
+        }
+
+
         $executor->execute($this->getClassName(), [
             'website', 'product', 'visibility', 'source', 'categoryId'
-        ], $queryBuilder);
+        ], $qb);
     }
 
     /**
-     * @param string $baseVisibility
-     * @param string $cacheVisibility
-     * @return mixed
+     * @param InsertFromSelectQueryExecutor $executor
+     * @param Website|null $website
      */
-    public function updateFromBaseTable($cacheVisibility, $baseVisibility)
+    public function insertFromBaseTable(InsertFromSelectQueryExecutor $executor, Website $website = null)
     {
-        $qb = $this->createQueryBuilder('pvr');
-        return $qb->update()
-            ->set('pvr.visibility', $cacheVisibility)
-            ->set('pvr.source', BaseProductVisibilityResolved::SOURCE_STATIC)
-            ->set('pvr.categoryId', ':category_id')
-            ->setParameter('category_id', null)
-            ->where($this->getWhereExpr($qb))
-            ->setParameter('visibility', $baseVisibility)
-            ->getQuery()
-            ->execute()
-        ;
+        $visibilityCondition = sprintf(
+            "CASE WHEN pv.visibility = '%s' THEN %s ELSE %s END",
+            ProductVisibility::VISIBLE,
+            ProductVisibilityResolved::VISIBILITY_VISIBLE,
+            ProductVisibilityResolved::VISIBILITY_HIDDEN
+        );
+
+
+        $qb = $this->getEntityManager()
+            ->getRepository('OroB2BAccountBundle:Visibility\ProductVisibility')
+            ->createQueryBuilder('pv')
+            ->select(
+                'pv.id',
+                'IDENTITY(pv.website)',
+                'IDENTITY(pv.product)',
+                $visibilityCondition,
+                (string)ProductVisibilityResolved::SOURCE_STATIC
+            )
+            ->where('pv.visibility != :config')
+            ->setParameter('config', ProductVisibility::CONFIG);
+
+        if ($website) {
+            $qb->andWhere('pv.website = :website')
+                ->setParameter('website', $website);
+        }
+
+        $executor->execute($this->getClassName(), [
+            'sourceProductVisibility', 'website', 'product', 'visibility', 'source'
+        ], $qb);
     }
 
     /**
-     * @param string $visibility
-     */
-    public function deleteByVisibility($visibility)
-    {
-        $qb = $this->createQueryBuilder('pvr');
-        $qb->delete()
-            ->where($this->getWhereExpr($qb))
-            ->setParameter('visibility', $visibility)
-            ->getQuery()
-            ->execute()
-        ;
-    }
-
-    /**
+     * @param Website $website
      * @return int
      */
-    public function clearTable()
+    public function clearTable(Website $website = null)
     {
-        return $this->createQueryBuilder('pvr')
-            ->delete()
-            ->getQuery()
+        $qb = $this->createQueryBuilder('pvr')
+            ->delete();
+
+        if ($website) {
+            $qb->andWhere('pvr.website = :website')
+                ->setParameter('website', $website);
+        }
+
+        return $qb->getQuery()
             ->execute();
     }
 
@@ -95,36 +124,5 @@ class ProductVisibilityResolvedRepository extends EntityRepository
     public function findByPrimaryKey(Product $product, Website $website)
     {
         return $this->findOneBy(['website' => $website, 'product' => $product]);
-    }
-
-    /**
-     * @param QueryBuilder $qb
-     * @return \Doctrine\ORM\Query\Expr\Andx
-     */
-    protected function getWhereExpr(QueryBuilder $qb)
-    {
-        return $qb->expr()->andX(
-            $qb->expr()->in(
-                'IDENTITY(pvr.product)',
-                $this->getEntityManager()->createQueryBuilder()
-                    ->select('IDENTITY(pv_1.product)')
-                    ->from('OroB2BAccountBundle:Visibility\ProductVisibility', 'pv_1')
-                    ->where('IDENTITY(pv_1.product) = IDENTITY(pvr.product)')
-                    ->andWhere('IDENTITY(pv_1.website) = IDENTITY(pvr.website)')
-                    ->andWhere('pv_1.visibility = :visibility')
-                    ->getQuery()
-                    ->getDQL()
-            ),
-            $qb->expr()->in(
-                'IDENTITY(pvr.website)',
-                $this->getEntityManager()->createQueryBuilder()
-                    ->select('IDENTITY(pv_2.website)')
-                    ->from('OroB2BAccountBundle:Visibility\ProductVisibility', 'pv_2')
-                    ->where('IDENTITY(pv_2.product) = IDENTITY(pvr.product)')
-                    ->andWhere('IDENTITY(pv_2.website) = IDENTITY(pvr.website)')
-                    ->getQuery()
-                    ->getDQL()
-            )
-        );
     }
 }

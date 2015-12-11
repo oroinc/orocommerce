@@ -2,11 +2,15 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Repository;
 
+use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\ORM\Query;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Repository\ProductVisibilityResolvedRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @dbIsolation
@@ -18,32 +22,48 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
      */
     protected $repository;
 
+    /**
+     * @var Website
+     */
+    protected $website;
+
     protected function setUp()
     {
         $this->initClient();
+        $this->website = $this->getWebsites()[0];
 
         $this->repository = $this->getContainer()->get('doctrine')
             ->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityResolvedData',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
-                'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData'
             ]
         );
     }
 
     public function testClearTable()
     {
-        $deletedCount = $this->repository->clearTable();
+        $this->repository->clearTable();
         $actual = $this->repository->findAll();
 
         $this->assertSame(0, count($actual));
-        $this->assertSame(4, $deletedCount);
     }
 
+    /**
+     * @depends testClearTable
+     */
+    public function testInsertFromBaseTable()
+    {
+        $this->repository->insertFromBaseTable($this->getInsertFromSelectExecutor());
+        $actual = $this->getActualArray();
+
+        $this->assertCount(4, $actual);
+    }
+
+    /**
+     * @depends testInsertFromBaseTable
+     */
     public function testInsertByCategory()
     {
         $categories = $this->getCategories();
@@ -57,43 +77,60 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
             }, $categories)
         );
 
-        $actual = $this->repository->findAll();
-        $this->assertSame(15, count($actual));
-        foreach ($this->getWebsites() as $website) {
-            foreach ($categories as $category) {
-                $expected = $this->getContainer()->get('doctrine')
-                    ->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
-                    ->findBy([
-                        'website' => $website,
-                        'categoryId' => $category->getId(),
-                        'product' => $category->getProducts()[0],
-                        'source' => BaseProductVisibilityResolved::SOURCE_CATEGORY,
-                        'visibility' => BaseProductVisibilityResolved::VISIBILITY_VISIBLE
-                    ]);
-                $this->assertSame(1, count($expected));
-            }
-        }
+        $actual = $this->getActualArray();
+        $this->assertCount(12, $actual);
     }
 
-    public function testDeleteByVisibility()
+    public function testClearTableByWebsite()
     {
-        $this->repository->deleteByVisibility(ProductVisibility::CONFIG);
-        $actual = $this->repository->findAll();
-        $this->assertSame(14, count($actual));
+        $deleted = $this->repository->clearTable($this->website);
+        $actual = $this->repository->findBy(['website' => $this->website]);
+
+        $this->assertSame(0, count($actual));
+        $this->assertSame(4, $deleted);
     }
 
-    public function testUpdateFromBaseTable()
+    /**
+     * @depends testClearTableByWebsite
+     */
+    public function testInsertFromBaseTableByWebsite()
     {
-        $updatedHidden = $this->repository->updateFromBaseTable(
-            BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
-            ProductVisibility::HIDDEN
-        );
-        $updatedVisible = $this->repository->updateFromBaseTable(
+        $this->repository->insertFromBaseTable($this->getInsertFromSelectExecutor(), $this->website);
+        $actual = $this->getActualArray();
+
+        $this->assertCount(12, $actual);
+    }
+
+    /**
+     * @depends testInsertFromBaseTableByWebsite
+     */
+    public function testInsertByCategoryForWebsite()
+    {
+        $categories = $this->getCategories();
+
+        $this->repository->insertByCategory(
+            $this->getInsertFromSelectExecutor(),
             BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
-            ProductVisibility::VISIBLE
+            array_map(function ($category) {
+                /** @var \OroB2B\Bundle\CatalogBundle\Entity\Category $category */
+                return $category->getId();
+            }, $categories),
+            $this->website
         );
-        $this->assertSame(1, $updatedHidden);
-        $this->assertSame(3, $updatedVisible);
+
+        $actual = $this->getActualArray();
+        $this->assertCount(12, $actual);
+    }
+
+    /**
+     * @return array
+     */
+    protected function getActualArray()
+    {
+        return $this->repository->createQueryBuilder('pvr')
+            ->select('pvr')
+            ->getQuery()
+            ->getResult(Query::HYDRATE_ARRAY);
     }
 
     /**
@@ -105,6 +142,19 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
         return $this->getContainer()->get('doctrine')
             ->getManagerForClass($className)
             ->getRepository('OroB2BCatalogBundle:Category')
+            ->createQueryBuilder('c')
+            ->select('c', 'p')
+            ->leftJoin('c.products', 'p')
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     * @return array|\OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility[]
+     */
+    protected function getProductVisibilities()
+    {
+        return $this->getContainer()->get('doctrine')->getRepository('OroB2BAccountBundle:Visibility\ProductVisibility')
             ->findAll();
     }
 

@@ -665,6 +665,10 @@ services:
 
     orob2b_account.visibility.cache.product_resolved_cache_builder:
         class: %orob2b_account.visibility.cache.product_resolved_cache_builder.class%
+        parent: orob2b_account.visibility.cache.cache_builder.abstract
+        calls:
+            - [setInsertFromSelectExecutor, [@oro_entity.orm.insert_from_select_query_executor]]
+            - [setCacheClass, [%orob2b_account.entity.product_visibility_resolved.class%]]
 
     orob2b_account.visibility.cache.cache_builder:
         class: %orob2b_account.visibility.cache.cache_builder.class%

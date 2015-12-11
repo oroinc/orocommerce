@@ -25,15 +25,12 @@ class ProductResolvedCacheBuilderTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityResolvedData',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
-                'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData'
             ]
         );
     }
 
-    public function testClearBeforeBuildCache()
+    public function testBuildCache()
     {
         $this->cacheBuilder->buildCache();
         $actual = $this->getContainer()->get('doctrine')
@@ -42,6 +39,6 @@ class ProductResolvedCacheBuilderTest extends WebTestCase
             ->findAll()
         ;
 
-        $this->assertSame(14, count($actual));
+        $this->assertSame(12, count($actual));
     }
 }

@@ -2,36 +2,28 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache;
 
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
+use Doctrine\ORM\Query;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\AccountBundle\Entity\Repository\ProductVisibilityResolvedRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityResolver;
-use OroB2B\Bundle\AccountBundle\Entity\Repository\ProductVisibilityResolvedRepository;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 
 class ProductResolvedCacheBuilder extends AbstractCacheBuilder
 {
     const VISIBLE = 'visible';
     const HIDDEN = 'hidden';
+
     /**
-     * @param ProductVisibility $productVisibility
      * @var InsertFromSelectQueryExecutor
      */
     protected $insertFromSelectExecutor;
-
-    /**
-     * @var RegistryInterface
-     */
-    protected $doctrine;
 
     /**
      * @var string
@@ -39,29 +31,20 @@ class ProductResolvedCacheBuilder extends AbstractCacheBuilder
     protected $cacheClass;
 
     /**
-     * @var CategoryVisibilityResolver
+     * @param mixed $insertFromSelectExecutor
      */
-    protected $categoryVisibilityResolver;
-
-    /**
-     * ProductResolvedCacheBuilder constructor.
-     * @param RegistryInterface $doctrine
-     * @param InsertFromSelectQueryExecutor $executor
-     * @param CategoryVisibilityResolver $categoryVisibilityResolver
-     * @param string $cacheClass
-     */
-    public function __construct(
-        RegistryInterface $doctrine,
-        InsertFromSelectQueryExecutor $executor,
-        CategoryVisibilityResolver $categoryVisibilityResolver,
-        $cacheClass
-    ) {
-        $this->doctrine = $doctrine;
-        $this->insertFromSelectExecutor = $executor;
-        $this->cacheClass = $cacheClass;
-        $this->categoryVisibilityResolver = $categoryVisibilityResolver;
+    public function setInsertFromSelectExecutor(InsertFromSelectQueryExecutor $insertFromSelectExecutor)
+    {
+        $this->insertFromSelectExecutor = $insertFromSelectExecutor;
     }
 
+    /**
+     * @param string $cacheClass
+     */
+    public function setCacheClass($cacheClass)
+    {
+        $this->cacheClass = $cacheClass;
+    }
 
     /**
      * {@inheritdoc}
@@ -149,9 +132,10 @@ class ProductResolvedCacheBuilder extends AbstractCacheBuilder
     {
         $this->getManager()->beginTransaction();
         try {
-            $this->getRepository()->clearTable();
+            $this->getRepository()->clearTable($website);
 
             $categoriesGrouped = $this->getCategories();
+            $this->getRepository()->insertFromBaseTable($this->insertFromSelectExecutor);
             $this->getRepository()->insertByCategory(
                 $this->insertFromSelectExecutor,
                 BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
@@ -161,16 +145,6 @@ class ProductResolvedCacheBuilder extends AbstractCacheBuilder
                 $this->insertFromSelectExecutor,
                 BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
                 $categoriesGrouped[self::HIDDEN]
-            );
-
-            $this->getRepository()->deleteByVisibility(ProductVisibility::CONFIG);
-            $this->getRepository()->updateFromBaseTable(
-                BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
-                ProductVisibility::VISIBLE
-            );
-            $this->getRepository()->updateFromBaseTable(
-                BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
-                ProductVisibility::HIDDEN
             );
             $this->getManager()->commit();
         } catch (\Exception $exception) {
@@ -186,24 +160,14 @@ class ProductResolvedCacheBuilder extends AbstractCacheBuilder
     {
         // temporary
         /** @var Category[] $categories */
-        $categories = $this->doctrine->getManagerForClass('OroB2BCatalogBundle:Category')
+        $categories = $this->registry->getManagerForClass('OroB2BCatalogBundle:Category')
             ->getRepository('OroB2BCatalogBundle:Category')
             ->createQueryBuilder('category')
-            ->select('partial category.{id}')
+            ->select('category.id')
             ->getQuery()
-            ->getResult();
+            ->getScalarResult();
 
-        $categoriesGrouped = [self::VISIBLE => [], self::HIDDEN => []];
-
-        foreach ($categories as $category) {
-            if ($this->categoryVisibilityResolver->isCategoryVisible($category)) {
-                $categoriesGrouped[self::VISIBLE][] = $category->getId();
-            } else {
-                $categoriesGrouped[self::HIDDEN][] = $category->getId();
-            }
-        }
-
-        return $categoriesGrouped;
+        return [self::VISIBLE => array_map('current', $categories), self::HIDDEN => []];
     }
 
     /**
@@ -219,6 +183,6 @@ class ProductResolvedCacheBuilder extends AbstractCacheBuilder
      */
     protected function getManager()
     {
-        return $this->doctrine->getManagerForClass($this->cacheClass);
+        return $this->registry->getManagerForClass($this->cacheClass);
     }
 }
