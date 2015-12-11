@@ -1,33 +1,22 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Model\Action;
+namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product;
 
 use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
 /**
  * @dbIsolation
  */
-class AccountGroupProductVisibilitySettingsResolverTest extends AbstractVisibilitySettingsResolverTest
+class AccountGroupProductVisibilitySettingsResolverTest extends AbstractCacheBuilderTest
 {
-    /** @var  AccountGroup */
-    protected $accountGroup;
-
-    public function setUp()
-    {
-        parent::setUp();
-        $this->accountGroup = $this->getReference(LoadGroups::GROUP1);
-    }
-
     public function testChangeAccountGroupProductVisibilityToHidden()
     {
         $accountGroupProductVisibility = $this->createAccountGroupProductVisibility();
@@ -35,7 +24,7 @@ class AccountGroupProductVisibilitySettingsResolverTest extends AbstractVisibili
         $emForProductVisibility->persist($accountGroupProductVisibility);
         $emForProductVisibility->flush();
         $accountGroupProductVisibilityResolved = $this->getAccountGroupProductVisibilityResolved();
-        $this->checkStatic(
+        $this->assertStatic(
             $accountGroupProductVisibilityResolved,
             $accountGroupProductVisibility,
             BaseProductVisibilityResolved::VISIBILITY_HIDDEN
@@ -53,7 +42,7 @@ class AccountGroupProductVisibilitySettingsResolverTest extends AbstractVisibili
         $accountGroupProductVisibility->setVisibility(ProductVisibility::VISIBLE);
         $emForProductVisibility->flush();
         $accountGroupProductVisibilityResolved = $this->getAccountGroupProductVisibilityResolved();
-        $this->checkStatic(
+        $this->assertStatic(
             $accountGroupProductVisibilityResolved,
             $accountGroupProductVisibility,
             BaseProductVisibilityResolved::VISIBILITY_VISIBLE
@@ -88,7 +77,7 @@ class AccountGroupProductVisibilitySettingsResolverTest extends AbstractVisibili
             $accountGroupProductVisibilityResolved->getVisibility(),
             BaseProductVisibilityResolved::VISIBILITY_HIDDEN
         );
-        $this->checkProductIdentifyEntitiesAccessory($accountGroupProductVisibilityResolved);
+        $this->assertProductIdentifyEntitiesAccessory($accountGroupProductVisibilityResolved);
     }
 
     /**
@@ -140,9 +129,9 @@ class AccountGroupProductVisibilitySettingsResolverTest extends AbstractVisibili
     /**
      * @param BaseProductVisibilityResolved|AccountGroupProductVisibilityResolved $visibilityResolved
      */
-    protected function checkProductIdentifyEntitiesAccessory(BaseProductVisibilityResolved $visibilityResolved)
+    protected function assertProductIdentifyEntitiesAccessory(BaseProductVisibilityResolved $visibilityResolved)
     {
-        parent::checkProductIdentifyEntitiesAccessory($visibilityResolved);
+        parent::assertProductIdentifyEntitiesAccessory($visibilityResolved);
         $this->assertEquals($this->accountGroup, $visibilityResolved->getAccountGroup());
     }
 

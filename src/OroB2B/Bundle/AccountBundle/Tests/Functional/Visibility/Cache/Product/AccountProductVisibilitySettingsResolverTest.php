@@ -1,34 +1,22 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Model\Action;
+namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product;
 
 use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
 /**
  * @dbIsolation
  */
-class AccountProductVisibilitySettingsResolverTest extends AbstractVisibilitySettingsResolverTest
+class AccountProductVisibilitySettingsResolverTest extends AbstractCacheBuilderTest
 {
-    /** @var  Account */
-    protected $account;
-
-    public function setUp()
-    {
-        parent::setUp();
-        $this->account = $this->getReference(LoadAccounts::DEFAULT_ACCOUNT_NAME);
-    }
-
     public function testChangeAccountProductVisibilityToHidden()
     {
         $accountProductVisibility = $this->createAccountProductVisibility();
@@ -36,7 +24,7 @@ class AccountProductVisibilitySettingsResolverTest extends AbstractVisibilitySet
         $emForProductVisibility->persist($accountProductVisibility);
         $emForProductVisibility->flush();
         $accountProductVisibilityResolved = $this->getAccountProductVisibilityResolved();
-        $this->checkStatic(
+        $this->assertStatic(
             $accountProductVisibilityResolved,
             $accountProductVisibility,
             BaseProductVisibilityResolved::VISIBILITY_HIDDEN
@@ -55,7 +43,7 @@ class AccountProductVisibilitySettingsResolverTest extends AbstractVisibilitySet
         $accountProductVisibility->setVisibility(ProductVisibility::VISIBLE);
         $emForProductVisibility->flush();
         $accountProductVisibilityResolved = $this->getAccountProductVisibilityResolved();
-        $this->checkStatic(
+        $this->assertStatic(
             $accountProductVisibilityResolved,
             $accountProductVisibility,
             BaseProductVisibilityResolved::VISIBILITY_VISIBLE
@@ -87,7 +75,7 @@ class AccountProductVisibilitySettingsResolverTest extends AbstractVisibilitySet
             $accountProductVisibilityResolved->getVisibility(),
             BaseProductVisibilityResolved::VISIBILITY_HIDDEN
         );
-        $this->checkProductIdentifyEntitiesAccessory($accountProductVisibilityResolved);
+        $this->assertProductIdentifyEntitiesAccessory($accountProductVisibilityResolved);
     }
 
     /**
@@ -116,17 +104,17 @@ class AccountProductVisibilitySettingsResolverTest extends AbstractVisibilitySet
         $emForAccountProductVisibility->persist($accountProductVisibility);
         $emForAccountProductVisibility->flush();
         $accountProductVisibilityResolved = $this->getAccountProductVisibilityResolved();
-        $this->assertEquals($accountProductVisibilityResolved->getCategoryId(), null);
+        $this->assertNull($accountProductVisibilityResolved->getCategoryId());
         $this->assertEquals(
             $accountProductVisibilityResolved->getSource(),
             BaseProductVisibilityResolved::SOURCE_STATIC
         );
-        $this->assertEquals($accountProductVisibilityResolved->getSourceProductVisibility(), null);
+        $this->assertNull($accountProductVisibilityResolved->getSourceProductVisibility());
         $this->assertEquals(
             $accountProductVisibilityResolved->getVisibility(),
             BaseProductVisibilityResolved::VISIBILITY_VISIBLE
         );
-        $this->checkProductIdentifyEntitiesAccessory($accountProductVisibilityResolved);
+        $this->assertProductIdentifyEntitiesAccessory($accountProductVisibilityResolved);
     }
 
     /**
@@ -147,17 +135,17 @@ class AccountProductVisibilitySettingsResolverTest extends AbstractVisibilitySet
         $emForAccountProductVisibility->persist($accountProductVisibility);
         $emForAccountProductVisibility->flush();
         $accountProductVisibilityResolved = $this->getAccountProductVisibilityResolved();
-        $this->assertEquals($accountProductVisibilityResolved->getCategoryId(), null);
+        $this->assertNull($accountProductVisibilityResolved->getCategoryId());
         $this->assertEquals(
             $accountProductVisibilityResolved->getSource(),
             BaseProductVisibilityResolved::SOURCE_STATIC
         );
-        $this->assertEquals($accountProductVisibilityResolved->getSourceProductVisibility(), null);
+        $this->assertNull($accountProductVisibilityResolved->getSourceProductVisibility());
         $this->assertEquals(
             $accountProductVisibilityResolved->getVisibility(),
             $productVisibilityValue
         );
-        $this->checkProductIdentifyEntitiesAccessory($accountProductVisibilityResolved);
+        $this->assertProductIdentifyEntitiesAccessory($accountProductVisibilityResolved);
     }
 
     /**
@@ -194,9 +182,9 @@ class AccountProductVisibilitySettingsResolverTest extends AbstractVisibilitySet
     /**
      * @param BaseProductVisibilityResolved|AccountProductVisibilityResolved $visibilityResolved
      */
-    protected function checkProductIdentifyEntitiesAccessory(BaseProductVisibilityResolved $visibilityResolved)
+    protected function assertProductIdentifyEntitiesAccessory(BaseProductVisibilityResolved $visibilityResolved)
     {
-        parent::checkProductIdentifyEntitiesAccessory($visibilityResolved);
+        parent::assertProductIdentifyEntitiesAccessory($visibilityResolved);
         $this->assertEquals($this->account, $visibilityResolved->getAccount());
     }
 
