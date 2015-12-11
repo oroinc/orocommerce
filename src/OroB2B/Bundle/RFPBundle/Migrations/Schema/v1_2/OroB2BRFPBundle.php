@@ -32,6 +32,7 @@ class OroB2BRFPBundle implements Migration, RenameExtensionAwareInterface
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('orob2b_rfp_request');
+        $table->changeColumn('role', ['notnull' => false, 'length' => 255]);
         $this->renameExtension->renameColumn($schema, $queries, $table, 'body', 'note');
     }
 }

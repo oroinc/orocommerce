@@ -1,42 +1,28 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Controller;
-
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+namespace OroB2B\Bundle\RFPBundle\Storage;
 
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
 
-class QuoteController extends Controller
+class RequestToQuoteDataStorage
 {
-    /**
-     * @Route("/create/{id}", name="orob2b_rfp_quote_create", requirements={"id"="\d+"})
-     * @AclAncestor("orob2b_sale_quote_create")
-     *
-     * @param RFPRequest $rfpRequest
-     *
-     * @return RedirectResponse
-     */
-    public function createAction(RFPRequest $rfpRequest)
-    {
-        $this->saveToStorage($rfpRequest);
+    /** @var ProductDataStorage */
+    protected $storage;
 
-        return $this->redirectToRoute('orob2b_sale_quote_create', [ProductDataStorage::STORAGE_KEY => true]);
+    /**
+     * @param ProductDataStorage $storage
+     */
+    public function __construct(ProductDataStorage $storage)
+    {
+        $this->storage = $storage;
     }
 
     /**
      * @param RFPRequest $rfpRequest
      */
-    protected function saveToStorage(RFPRequest $rfpRequest)
+    public function saveToStorage(RFPRequest $rfpRequest)
     {
-        /** @var ProductDataStorage $storage */
-        $storage = $this->get('orob2b_product.storage.product_data_storage');
-
         $data = [
             ProductDataStorage::ENTITY_DATA_KEY => [
                 'accountUser' => $rfpRequest->getAccountUser() ? $rfpRequest->getAccountUser()->getId() : null,
@@ -52,8 +38,7 @@ class QuoteController extends Controller
             foreach ($requestProduct->getRequestProductItems() as $requestProductItem) {
                 $productUnitCode = $requestProductItem->getProductUnit()
                     ? $requestProductItem->getProductUnit()->getCode()
-                    : null
-                ;
+                    : null;
 
                 $items[] = [
                     'price' => $requestProductItem->getPrice(),
@@ -72,6 +57,6 @@ class QuoteController extends Controller
             ];
         }
 
-        $storage->set($data);
+        $this->storage->set($data);
     }
 }
