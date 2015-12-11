@@ -123,7 +123,7 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testSaveAndDuplicate()
     {
-        $entity = $this->getProductMock(2);
+        $entity = $this->getProductMock(0);
         $queryParameters = ['qwe' => 'rty'];
         $this->request->query = new ParameterBag($queryParameters);
         $this->request->expects($this->once())
@@ -186,13 +186,7 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('execute')
             ->with(
                 'orob2b_product_duplicate_action',
-                new ActionContext(['data' => $entity]),
-                null,
-                [
-                    ContextHelper::ROUTE_PARAM => 'orob2b_product_view',
-                    ContextHelper::ENTITY_ID_PARAM => $entity->getId(),
-                    ContextHelper::ENTITY_CLASS_PARAM => ClassUtils::getClass($entity)
-                ]
+                new ActionContext(['data' => $entity])
             )
             ->willReturn(new ActionContext(['redirectUrl' => 'generated_redirect_url']));
 
