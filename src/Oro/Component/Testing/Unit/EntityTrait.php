@@ -61,7 +61,7 @@ trait EntityTrait
      *
      * @return object
      *
-     * @deprecated Use getEntity instead
+     * @deprecated Use createEntity instead
      */
     protected function createEntity($className, $id)
     {

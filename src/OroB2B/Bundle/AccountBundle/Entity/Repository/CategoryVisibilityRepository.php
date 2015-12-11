@@ -47,7 +47,8 @@ class CategoryVisibilityRepository extends EntityRepository
         $qb->addSelect('accountGroupCategoryVisibility.visibility AS to_group');
 
         // parent categories should be first for optimized calculation because of some visibility dependency to parent
-        $qb->orderBy('category.level', 'ASC');
+        $qb->orderBy('category.level', 'ASC')
+            ->addOrderBy('category.left', 'ASC');
 
         return $qb->getQuery()->getResult();
     }
