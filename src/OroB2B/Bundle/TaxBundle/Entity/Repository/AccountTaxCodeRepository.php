@@ -17,6 +17,10 @@ class AccountTaxCodeRepository extends EntityRepository
      */
     public function findOneByAccount(Account $account)
     {
+        if (!$account->getId()) {
+            return null;
+        }
+
         return $this->createQueryBuilder('accountTaxCode')
             ->where(':account MEMBER OF accountTaxCode.accounts')
             ->setParameter('account', $account)

@@ -17,6 +17,10 @@ class ProductTaxCodeRepository extends EntityRepository
      */
     public function findOneByProduct(Product $product)
     {
+        if (!$product->getId()) {
+            return null;
+        }
+
         return $this->createQueryBuilder('productTaxCode')
             ->where(':product MEMBER OF productTaxCode.products')
             ->setParameter('product', $product)
