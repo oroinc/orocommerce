@@ -17,6 +17,7 @@ define(function(require) {
             quantitySelector: '.order-line-item-quantity input',
             unitSelector: '.order-line-item-quantity select',
             productSelector: '.order-line-item-product input',
+            productSkuSelector: '.order-line-item-product-sku input',
             offersDataSelector: '.order-line-item-offers-data input'
         },
 
@@ -65,7 +66,8 @@ define(function(require) {
 
         onProductChange: function() {
             $(this.options.offersDataSelector).val(null);
-
+            $(this.options.productSkuSelector).val(null);
+            this.$product.off();
             this.options._sourceElement.remove();
         },
 
