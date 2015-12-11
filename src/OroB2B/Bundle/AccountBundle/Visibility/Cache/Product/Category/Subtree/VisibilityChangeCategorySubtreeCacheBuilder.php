@@ -16,6 +16,8 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
      */
     public function resolveVisibilitySettings(Category $category)
     {
+        $this->clearChangedEntities();
+
         $visibility = $this->categoryVisibilityResolver->isCategoryVisible($category);
         $visibility = $this->convertVisibility($visibility);
 
@@ -41,7 +43,7 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
     }
 
     /**
-     * Get accounts with account visibility fallback to 'Visibility To All' for current category
+     * Get accounts groups with account visibility fallback to 'Visibility To All' for current category
      *
      * @param Category $category
      * @return AccountGroup[]
@@ -73,7 +75,7 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
     }
 
     /**
-     * Get account groups with account group visibility fallback to 'Visibility To All' for current category
+     * Get accounts with account group visibility fallback to 'Visibility To All' for current category
      *
      * @param Category $category
      * @return Account[]
@@ -161,6 +163,10 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
      */
     protected function updateProductVisibilityByCategory(array $categoryIds, $visibility)
     {
+        if (!$categoryIds) {
+            return;
+        }
+
         /** @var QueryBuilder $qb */
         $qb = $this->registry
             ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')

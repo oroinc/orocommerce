@@ -51,6 +51,10 @@ class VisibilityChangeAccountSubtreeCacheBuilder extends AbstractSubtreeCacheBui
      */
     protected function updateProductVisibilityByCategory(array $categoryIds, $visibility, Account $account)
     {
+        if (!$categoryIds) {
+            return;
+        }
+
         /** @var QueryBuilder $qb */
         $qb = $this->registry
             ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved')

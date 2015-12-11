@@ -21,6 +21,8 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
      */
     public function resolveVisibilitySettings(Category $category, AccountGroup $accountGroup)
     {
+        $this->clearChangedEntities();
+
         $visibility = $this->categoryVisibilityResolver->isCategoryVisibleForAccountGroup($category, $accountGroup);
         $visibility = $this->convertVisibility($visibility);
 
@@ -126,6 +128,10 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
      */
     protected function updateProductVisibilityByCategory(array $categoryIds, $visibility, AccountGroup $accountGroup)
     {
+        if (!$categoryIds) {
+            return;
+        }
+
         /** @var QueryBuilder $qb */
         $qb = $this->registry
             ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved')

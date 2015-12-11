@@ -57,7 +57,7 @@ class ChangeCategoryPositionTest extends CategoryCaseActionTestCase
         return [
             [
                 'categoryReference' => 'category_1_2',
-                'newParentCategoryReference' => 'category_1_5_6',
+                'newParentCategoryReference' => 'category_1_5',
                 'expectedData' => [
                     'hiddenProducts' => [
                         'product.2',
@@ -69,6 +69,7 @@ class ChangeCategoryPositionTest extends CategoryCaseActionTestCase
                             'product.7',
                         ],
                         'account_group.group3' => [
+                            'product.2',
                             'product.3',
                             'product.6',
                         ],
@@ -85,6 +86,7 @@ class ChangeCategoryPositionTest extends CategoryCaseActionTestCase
                             'product.7',
                         ],
                         'account.level_1.3.1' => [
+                            'product.2',
                             'product.3',
                             'product.6',
                             'product.4',
@@ -97,6 +99,7 @@ class ChangeCategoryPositionTest extends CategoryCaseActionTestCase
                             'product.4',
                         ],
                         'account.level_1.4' => [
+                            'product.2',
                             'product.3',
                         ],
                     ],

@@ -14,10 +14,10 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractSubtreeCacheBuilder
 {
     /** @var array */
-    protected $accountGroupsWithChangedVisibility;
+    protected $accountGroupsWithChangedVisibility = [];
 
     /** @var array */
-    protected $accountsWithChangedVisibility;
+    protected $accountsWithChangedVisibility = [];
 
     /**
      * {@inheritdoc}
@@ -29,17 +29,45 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
      */
     abstract protected function updateAccountsFirstLevel(Category $category, $visibility);
 
+    protected function clearChangedEntities()
+    {
+        $this->accountGroupsWithChangedVisibility = [];
+        $this->accountGroupsWithChangedVisibility = [];
+    }
+
     /**
      * @param Category $category
      * @param int $visibility
+     * @param array|null $accountGroupsWithChangedVisibility
+     * @param array|null $accountsWithChangedVisibility
      */
-    protected function updateProductVisibilitiesForCategoryRelatedEntities(Category $category, $visibility)
-    {
-        $this->accountGroupsWithChangedVisibility[$category->getId()]
-            = $this->updateAccountGroupsFirstLevel($category, $visibility);
+    protected function updateProductVisibilitiesForCategoryRelatedEntities(
+        Category $category,
+        $visibility,
+        array $accountGroupsWithChangedVisibility = null,
+        array $accountsWithChangedVisibility = null
+    ) {
+        if ($accountGroupsWithChangedVisibility === null) {
+            $this->accountGroupsWithChangedVisibility[$category->getId()]
+                = $this->updateAccountGroupsFirstLevel($category, $visibility);
+        } else {
+            $this->accountGroupsWithChangedVisibility[$category->getId()]
+                = $accountGroupsWithChangedVisibility;
+        }
 
-        $this->accountsWithChangedVisibility[$category->getId()]
-            = $this->updateAccountsFirstLevel($category, $visibility);
+        if ($accountsWithChangedVisibility === null) {
+            $this->accountsWithChangedVisibility[$category->getId()]
+                = $this->updateAccountsFirstLevel($category, $visibility);
+        } else {
+            $this->accountsWithChangedVisibility[$category->getId()]
+                = $accountsWithChangedVisibility;
+        }
+
+        if (!$this->accountGroupsWithChangedVisibility[$category->getId()] &&
+            !$this->accountsWithChangedVisibility[$category->getId()]
+        ) {
+            return;
+        }
 
         $childCategories = $this->registry
             ->getManagerForClass('OroB2BCatalogBundle:Category')
@@ -178,6 +206,10 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
      */
     protected function getAccountsForUpdate(Category $category, array $accountGroups)
     {
+        if (!$accountGroups) {
+            return [];
+        }
+
         /** @var QueryBuilder $qb */
         $qb = $this->registry
             ->getManagerForClass('OroB2BAccountBundle:Account')
@@ -238,6 +270,10 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
      */
     protected function updateAccountGroupsProductVisibility(Category $category, array $accountGroups, $visibility)
     {
+        if (!$accountGroups) {
+            return;
+        }
+
         /** @var QueryBuilder $qb */
         $qb = $this->registry
             ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved')
@@ -259,6 +295,10 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
      */
     protected function updateAccountsProductVisibility(Category $category, array $accounts, $visibility)
     {
+        if (!$accounts) {
+            return;
+        }
+
         /** @var QueryBuilder $qb */
         $qb = $this->registry
             ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved')

@@ -9,16 +9,18 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategorySubtreeCacheBuilder
 {
     /** @var AccountGroup[] */
-    protected $accountGroupsWithInverseVisibility;
+    protected $accountGroupsWithInverseVisibility = [];
 
     /** @var  Account[] */
-    protected $accountsWithInverseVisibility;
+    protected $accountsWithInverseVisibility = [];
 
     /**
      * @param Category $category
      */
     public function categoryPositionChanged(Category $category)
     {
+        $this->clearChangedEntities();
+
         $visibility = $this->categoryVisibilityResolver->isCategoryVisible($category);
         $visibility = $this->convertVisibility($visibility);
 
@@ -27,6 +29,14 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
 
         $this->updateAppropriateVisibilityRelatedEntities($category, $visibility);
         $this->updateInvertedVisibilityRelatedEntities($category, $visibility);
+    }
+
+    protected function clearChangedEntities()
+    {
+        parent::clearChangedEntities();
+
+        $this->accountGroupsWithInverseVisibility = [];
+        $this->accountsWithInverseVisibility = [];
     }
 
     /**
@@ -38,7 +48,12 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
         $this->updateAccountGroupsAppropriateVisibility($category, $visibility);
         $this->updateAccountsAppropriateVisibility($category, $visibility);
 
-        $this->updateProductVisibilitiesForCategoryRelatedEntities($category, $visibility);
+        $this->updateProductVisibilitiesForCategoryRelatedEntities(
+            $category,
+            $visibility,
+            $this->accountGroupsWithChangedVisibility[$category->getId()],
+            $this->accountsWithChangedVisibility[$category->getId()]
+        );
     }
 
     /**
@@ -114,9 +129,11 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
 
         $this->updateAccountsProductVisibility($category, $this->accountsWithInverseVisibility, $invertedVisibility);
 
-        $this->accountGroupsWithChangedVisibility[$category->getId()] = $this->accountGroupsWithInverseVisibility;
-        $this->accountsWithChangedVisibility[$category->getId()] = $this->accountsWithInverseVisibility;
-
-        $this->updateProductVisibilitiesForCategoryRelatedEntities($category, $invertedVisibility);
+        $this->updateProductVisibilitiesForCategoryRelatedEntities(
+            $category,
+            $invertedVisibility,
+            $this->accountGroupsWithInverseVisibility,
+            $this->accountsWithInverseVisibility
+        );
     }
 }
