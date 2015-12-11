@@ -91,6 +91,7 @@ class ActionType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $this->executeInitFunctions($builder, $options);
         $this->addEventListeners($builder, $options);
         $this->addAttributes($builder, $options);
     }
@@ -99,21 +100,22 @@ class ActionType extends AbstractType
      * @param FormBuilderInterface $builder
      * @param array $options
      */
+    protected function executeInitFunctions(FormBuilderInterface $builder, array $options)
+    {
+        /** @var ActionContext $context */
+        $context = $builder->getData();
+
+        /** @var Action $action */
+        $action = $options['action'];
+        $action->init($context);
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
     protected function addEventListeners(FormBuilderInterface $builder, array $options)
     {
-        $builder->addEventListener(
-            FormEvents::PRE_SET_DATA,
-            function (FormEvent $event) use ($options) {
-                /** @var Action $action */
-                $action = $options['action'];
-
-                /** @var ActionContext $context */
-                $context = $event->getData();
-
-                $action->init($context);
-            }
-        );
-
         if (!empty($options['attribute_default_values'])) {
             $builder->addEventListener(
                 FormEvents::PRE_SET_DATA,
@@ -162,6 +164,10 @@ class ActionType extends AbstractType
 
             if (null === $attributeOptions) {
                 $attributeOptions = [];
+            }
+
+            if (isset($actionContext->$attributeName)) {
+                $attributeOptions['options']['data'] = $actionContext->$attributeName;
             }
 
             $attributeOptions = $this->prepareAttributeOptions($attribute, $attributeOptions, $options);
