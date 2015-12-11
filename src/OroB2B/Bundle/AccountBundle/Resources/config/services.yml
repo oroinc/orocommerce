@@ -692,6 +692,7 @@ services:
 
     orob2b_account.visibility.cache.product.category.abstract_resolved_cache_builder:
         class: %orob2b_account.visibility.cache.product.category.abstract_resolved_cache_builder.class%
+        abstract: true
         arguments:
             - @doctrine
             - @orob2b_account.calculator.category_visibility_resolver

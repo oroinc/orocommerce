@@ -114,6 +114,10 @@ abstract class AbstractSubtreeCacheBuilder
         $qb = $this->joinCategoryVisibility($qb, $target);
         $qb = $this->restrictToParentFallback($qb);
 
+        /**
+         * Nodes with fallback different from 'toParent' and their children should be excluded
+         * Also excluded final leaf of category tree
+         */
         foreach ($categoriesWithStaticFallback as $node) {
             $qb->andWhere(
                 $qb->expr()->not(

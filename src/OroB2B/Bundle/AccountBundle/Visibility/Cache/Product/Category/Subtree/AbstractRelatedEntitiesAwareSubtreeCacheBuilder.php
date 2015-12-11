@@ -20,7 +20,9 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
     protected $accountsWithChangedVisibility = [];
 
     /**
-     * {@inheritdoc}
+     * @param Category $category
+     * @param int $visibility
+     * @return AccountGroup[]
      */
     abstract protected function updateAccountGroupsFirstLevel(Category $category, $visibility);
 
@@ -83,7 +85,7 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
         $firstSubCategoryLevel = $category->getLevel() + 1;
         if (!empty($childCategoryLevels)) {
             for ($level = $firstSubCategoryLevel; $level <= max(array_keys($childCategoryLevels)); $level++) {
-                $this->updateChildCategoriesByLevel($childCategoryLevels[$level], $visibility);
+                $this->updateLevelCategories($childCategoryLevels[$level], $visibility);
             }
         }
 
@@ -96,13 +98,13 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
     }
 
     /**
-     * @param array $childCategoryLevels
+     * @param Category[] $levelCategories
      * @param int $visibility
      */
-    protected function updateChildCategoriesByLevel($childCategoryLevels, $visibility)
+    protected function updateLevelCategories($levelCategories, $visibility)
     {
         /** @var Category $levelCategory */
-        foreach ($childCategoryLevels as $levelCategory) {
+        foreach ($levelCategories as $levelCategory) {
             $accountGroupsWithFallbackToParent = $this
                 ->getCategoryAccountGroupsWithVisibilityFallbackToParent($levelCategory);
             $parentAccountGroups
@@ -113,9 +115,14 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
                 $accountGroupsWithFallbackToParent
             );
 
+            /**
+             * Cache updated account groups for current subcategory into appropriate section
+             */
             $this->accountGroupsWithChangedVisibility[$levelCategory->getId()] = $updatedAccountGroups;
 
-            $this->updateAccountGroupsProductVisibility($levelCategory, $updatedAccountGroups, $visibility);
+            if (!empty($updatedAccountGroups)) {
+                $this->updateAccountGroupsProductVisibility($levelCategory, $updatedAccountGroups, $visibility);
+            }
 
             $accountsWithFallbackToParent = $this->getAccountsWithFallbackToParent($levelCategory);
 
@@ -136,11 +143,13 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
             }
 
             /**
-             * Cache updated account for current subcategory into appropriate section
+             * Cache updated accounts for current subcategory into appropriate section
              */
             $this->accountsWithChangedVisibility[$levelCategory->getId()] = $accountsForUpdate;
 
-            $this->updateAccountsProductVisibility($levelCategory, $accountsForUpdate, $visibility);
+            if (!empty($accountsForUpdate)) {
+                $this->updateAccountsProductVisibility($levelCategory, $accountsForUpdate, $visibility);
+            }
         }
     }
 
@@ -172,7 +181,7 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
      * @param Category $category
      * @return Account[]
      */
-    protected function getAccountsWithFallbackToALL(Category $category)
+    protected function getAccountsWithFallbackToAll(Category $category)
     {
         return $this->registry
             ->getManagerForClass('OroB2BAccountBundle:Account')

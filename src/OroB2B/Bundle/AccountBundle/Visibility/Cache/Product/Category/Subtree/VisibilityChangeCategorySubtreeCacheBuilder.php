@@ -82,7 +82,7 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
      */
     protected function getAccountsFirstLevel(Category $category)
     {
-        $accountsForUpdate = $this->getAccountsWithFallbackToALL($category);
+        $accountsForUpdate = $this->getAccountsWithFallbackToAll($category);
         $accountGroupsForUpdate = $this->accountGroupsWithChangedVisibility[$category->getId()];
         if (!empty($accountGroupsForUpdate)) {
             $updatedAccountGroupIds = [];

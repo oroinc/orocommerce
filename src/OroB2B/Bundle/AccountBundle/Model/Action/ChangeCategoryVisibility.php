@@ -40,6 +40,7 @@ class ChangeCategoryVisibility extends AbstractAction
     {
         $categoryVisibility = $context->getEntity();
 
+
         $this->cacheBuilder->resolveVisibilitySettings($categoryVisibility);
     }
 }
