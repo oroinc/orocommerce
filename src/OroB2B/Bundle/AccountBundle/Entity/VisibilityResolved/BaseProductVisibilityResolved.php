@@ -5,13 +5,17 @@ namespace OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved;
 use Doctrine\ORM\Mapping as ORM;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
+ * @method BaseProductVisibilityResolved setSourceProductVisibility(VisibilityInterface $sourceProductVisibility = null)
+ * @method VisibilityInterface getSourceProductVisibility()
+ *
  * @ORM\MappedSuperclass
  */
-class BaseProductVisibilityResolved
+abstract class BaseProductVisibilityResolved
 {
     const VISIBILITY_HIDDEN = -1;
     const VISIBILITY_VISIBLE = 1;

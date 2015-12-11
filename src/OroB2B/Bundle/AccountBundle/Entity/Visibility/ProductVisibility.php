@@ -19,8 +19,6 @@ class ProductVisibility implements VisibilityInterface, WebsiteAwareInterface
 {
     const CATEGORY = 'category';
     const CONFIG = 'config';
-    const HIDDEN = 'hidden';
-    const VISIBLE = 'visible';
 
     /**
      * @var integer

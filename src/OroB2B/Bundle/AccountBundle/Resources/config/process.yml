@@ -1,0 +1,53 @@
+definitions:
+    product_visibility_change:
+        enabled: true
+        label: Product visibility change
+        entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility
+        actions_configuration:
+            - @resolve_visibility_settings: ~
+
+    product_visibility_remove:
+        enabled: true
+        label: Product visibility change
+        entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility
+        actions_configuration:
+            - @resolve_visibility_settings:
+                reset_visibility: true  # manually set "category" fallback
+
+    account_group_product_visibility_change:
+        enabled: true
+        label: Account group product visibility change
+        entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility
+        actions_configuration:
+            - @resolve_visibility_settings: ~
+
+    account_product_visibility_change:
+        enabled: true
+        label: Account product visibility change
+        entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility
+        actions_configuration:
+            - @resolve_visibility_settings: ~
+
+
+triggers:
+    product_visibility_change:
+        -
+            event: create
+        -
+            event: update
+
+    product_visibility_remove:
+        -
+            event: delete
+
+    account_group_product_visibility_change:
+        -
+            event: create
+        -
+            event: update
+
+    account_product_visibility_change:
+        -
+            event: create
+        -
+            event: update
