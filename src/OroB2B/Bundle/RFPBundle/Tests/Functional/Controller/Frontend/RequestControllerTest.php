@@ -391,7 +391,7 @@ class RequestControllerTest extends WebTestCase
                     'phone' => static::PHONE,
                     'role' => static::ROLE,
                     'company' => static::COMPANY,
-                    'body' => static::REQUEST,
+                    'note' => static::REQUEST,
                     'poNumber' => static::PO_NUMBER,
 
                 ],
@@ -402,7 +402,7 @@ class RequestControllerTest extends WebTestCase
                     'phone' => static::PHONE,
                     'role' => static::ROLE,
                     'company' => static::COMPANY,
-                    'body' => static::REQUEST,
+                    'note' => static::REQUEST,
                     'poNumber' => static::PO_NUMBER
                 ]
             ],

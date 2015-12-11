@@ -50,7 +50,7 @@ class OroB2BRFPBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_2';
     }
 
     /**
@@ -94,7 +94,7 @@ class OroB2BRFPBundleInstaller implements
         $table->addColumn('phone', 'string', ['length' => 255]);
         $table->addColumn('company', 'string', ['length' => 255]);
         $table->addColumn('role', 'string', ['length' => 255]);
-        $table->addColumn('body', 'text', []);
+        $table->addColumn('note', 'text', []);
         $table->addColumn('po_number', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('ship_until', 'date', ['notnull' => false]);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);

@@ -65,8 +65,8 @@ class RequestType extends AbstractType
             ->add('status', RequestStatusSelectType::NAME, [
                 'label' => 'orob2b.rfp.request.status.label',
             ])
-            ->add('body', 'textarea', [
-                'label' => 'orob2b.rfp.request.body.label',
+            ->add('note', 'textarea', [
+                'label' => 'orob2b.rfp.request.note.label',
                 'required' => false,
             ])
             ->add('poNumber', 'text', [
