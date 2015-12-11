@@ -21,8 +21,6 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
      */
     public function resolveVisibilitySettings(Category $category, AccountGroup $accountGroup)
     {
-        $this->clearChangedEntities();
-
         $visibility = $this->categoryVisibilityResolver->isCategoryVisibleForAccountGroup($category, $accountGroup);
         $visibility = $this->convertVisibility($visibility);
 
@@ -32,6 +30,8 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
         $this->accountGroup = $accountGroup;
 
         $this->updateProductVisibilitiesForCategoryRelatedEntities($category, $visibility);
+
+        $this->clearChangedEntities();
     }
 
     /**

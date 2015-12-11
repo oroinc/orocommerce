@@ -19,8 +19,6 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
      */
     public function categoryPositionChanged(Category $category)
     {
-        $this->clearChangedEntities();
-
         $visibility = $this->categoryVisibilityResolver->isCategoryVisible($category);
         $visibility = $this->convertVisibility($visibility);
 
@@ -29,6 +27,8 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
 
         $this->updateAppropriateVisibilityRelatedEntities($category, $visibility);
         $this->updateInvertedVisibilityRelatedEntities($category, $visibility);
+
+        $this->clearChangedEntities();
     }
 
     protected function clearChangedEntities()

@@ -16,8 +16,6 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
      */
     public function resolveVisibilitySettings(Category $category)
     {
-        $this->clearChangedEntities();
-
         $visibility = $this->categoryVisibilityResolver->isCategoryVisible($category);
         $visibility = $this->convertVisibility($visibility);
 
@@ -25,6 +23,8 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
         $this->updateProductVisibilityByCategory($categoryIds, $visibility);
 
         $this->updateProductVisibilitiesForCategoryRelatedEntities($category, $visibility);
+
+        $this->clearChangedEntities();
     }
 
     /**
