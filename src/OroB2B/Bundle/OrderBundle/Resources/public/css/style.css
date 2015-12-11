@@ -63,6 +63,10 @@
     position: relative;
 }
 
+.order-line-item-comment div[data-page-component-module] {
+    display: none;
+}
+
 .order-line-item-price input[type="text"] {
     padding-left: 17px;
 }

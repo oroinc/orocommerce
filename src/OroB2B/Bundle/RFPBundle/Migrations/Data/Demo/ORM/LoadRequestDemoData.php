@@ -87,7 +87,7 @@ class LoadRequestDemoData extends AbstractFixture implements
                 ->setPhone($row['phone'])
                 ->setCompany($row['company'])
                 ->setRole($row['role'])
-                ->setBody($row['body'])
+                ->setNote($row['note'])
                 ->setShipUntil(new \DateTime('+10 day'))
                 ->setPoNumber($poNumber)
                 ->setAccountUser($accountUser)
