@@ -10,7 +10,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
-use OroB2B\Bundle\RFPBundle\Form\Extension\OrderDataStorageExtension;
+use OroB2B\Bundle\RFPBundle\Entity\RequestProductItem;
 
 class OrderController extends Controller
 {
@@ -24,34 +24,64 @@ class OrderController extends Controller
      */
     public function createAction(RFPRequest $request)
     {
-        $data = [
-            ProductDataStorage::ENTITY_DATA_KEY => [
-                'accountUser' => $request->getAccountUser()->getId(),
-                'account' => $request->getAccount()->getId(),
-            ],
-        ];
+        $data = [ProductDataStorage::ENTITY_DATA_KEY => $this->getEntityData($request)];
 
+        $offers = [];
         foreach ($request->getRequestProducts() as $lineItem) {
             $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY][] = [
                 ProductDataStorage::PRODUCT_SKU_KEY => $lineItem->getProduct()->getSku(),
                 'comment' => $lineItem->getComment(),
             ];
 
-            $offers = [];
+            $itemOffers = [];
             foreach ($lineItem->getRequestProductItems() as $productItem) {
-                $offers[] = [
-                    'quantity' => $productItem->getQuantity(),
-                    'unit' => $productItem->getProductUnit()->getCode(),
-                    'currency' => $productItem->getPrice() ? $productItem->getPrice()->getCurrency() : null,
-                    'price' => $productItem->getPrice() ? $productItem->getPrice()->getValue() : 0,
-                ];
+                $itemOffers[] = $this->getOfferData($productItem);
             }
-
-            $data[OrderDataStorageExtension::OFFERS_DATA_KEY][] = $offers;
+            $offers[] = $itemOffers;
         }
 
-        $this->get('orob2b_product.service.product_data_storage')->set($data);
+        $this->get('orob2b_product.storage.product_data_storage')->set($data);
+        $this->get('orob2b_rfp.storage.offers_data_storage')->set($offers);
 
         return $this->redirectToRoute('orob2b_order_create', [ProductDataStorage::STORAGE_KEY => true]);
+    }
+
+    /**
+     * @param RFPRequest $request
+     * @return array
+     */
+    protected function getEntityData(RFPRequest $request)
+    {
+        $data = [];
+
+        if ($request->getAccountUser()) {
+            $data['accountUser'] = $request->getAccountUser()->getId();
+        }
+
+        if ($request->getAccount()) {
+            $data['account'] = $request->getAccount()->getId();
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param RequestProductItem $productItem
+     * @return array
+     */
+    protected function getOfferData(RequestProductItem $productItem)
+    {
+        $data = [
+            'quantity' => $productItem->getQuantity(),
+            'unit' => $productItem->getProductUnitCode(),
+        ];
+
+        $price = $productItem->getPrice();
+        if ($price) {
+            $data['currency'] = $price->getCurrency();
+            $data['price'] = $price->getValue();
+        }
+
+        return $data;
     }
 }

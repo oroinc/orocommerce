@@ -98,6 +98,7 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
     protected function fillData($entity)
     {
         $data = $this->storage->get();
+        $this->storage->remove();
 
         if (!$data) {
             return;
@@ -115,8 +116,6 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
             $itemsData = $data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY];
             $this->fillItemsData($entity, $itemsData);
         }
-
-        $this->storage->remove();
     }
 
     /**

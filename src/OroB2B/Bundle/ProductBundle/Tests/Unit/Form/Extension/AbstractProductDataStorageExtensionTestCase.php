@@ -96,8 +96,7 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
 
         $this->assertRequestGetCalled();
 
-        $this->storage->expects($this->never())
-            ->method($this->anything());
+        $this->storage->expects($this->never())->method('get');
 
         $this->extension->buildForm($this->getBuilderMock(true), []);
     }
@@ -108,7 +107,7 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
         $this->doctrineHelper->expects($this->never())->method('getEntityRepository');
 
         $this->assertRequestGetCalled();
-        $this->assertStorageCalled([], false);
+        $this->assertStorageCalled([], true);
 
         $this->extension->buildForm($this->getBuilderMock(true), []);
     }
@@ -305,7 +304,7 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
                                 ->disableOriginalConstructor()
                                 ->getMock();
 
-                            $event->expects($this->once())->method('getData')->willReturn($this->entity);
+                            $event->expects($this->any())->method('getData')->willReturn($this->entity);
                             $closure($event);
 
                             return true;

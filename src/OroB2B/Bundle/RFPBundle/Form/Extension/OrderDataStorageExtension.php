@@ -9,12 +9,13 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+use OroB2B\Bundle\RFPBundle\Form\Type\OffersType;
+use OroB2B\Bundle\RFPBundle\Storage\OffersFormStorage;
+use OroB2B\Bundle\ProductBundle\Storage\DataStorageInterface;
 
 class OrderDataStorageExtension extends AbstractTypeExtension
 {
@@ -23,20 +24,30 @@ class OrderDataStorageExtension extends AbstractTypeExtension
     /** @var RequestStack */
     protected $requestStack;
 
-    /** @var ProductDataStorage */
-    protected $storage;
+    /** @var DataStorageInterface */
+    protected $sessionStorage;
 
-    /** @var array */
-    protected $offers = [];
+    /**
+     * @var array|bool false if not initialized
+     */
+    private $offers = false;
+
+    /** @var OffersFormStorage */
+    private $formStorage;
 
     /**
      * @param RequestStack $requestStack
-     * @param ProductDataStorage $storage
+     * @param DataStorageInterface $sessionStorage
+     * @param OffersFormStorage $formStorage
      */
-    public function __construct(RequestStack $requestStack, ProductDataStorage $storage)
-    {
+    public function __construct(
+        RequestStack $requestStack,
+        DataStorageInterface $sessionStorage,
+        OffersFormStorage $formStorage
+    ) {
         $this->requestStack = $requestStack;
-        $this->storage = $storage;
+        $this->sessionStorage = $sessionStorage;
+        $this->formStorage = $formStorage;
     }
 
     /** {@inheritdoc} */
@@ -46,31 +57,45 @@ class OrderDataStorageExtension extends AbstractTypeExtension
             return;
         }
 
-        $data = $this->storage->get();
-        if (array_key_exists(self::OFFERS_DATA_KEY, $data) && is_array($data[self::OFFERS_DATA_KEY])) {
-            $this->offers = $data[self::OFFERS_DATA_KEY];
-        }
-
         $builder->addEventListener(
             FormEvents::POST_SET_DATA,
             function (FormEvent $event) {
-                $event->getForm()->add(self::OFFERS_DATA_KEY, 'choice', ['mapped' => false, 'expanded' => true]);
+                $form = $event->getForm();
+                $offers = $this->getOffers($form);
+                $form->add(
+                    OffersFormStorage::DATA_KEY,
+                    'hidden',
+                    ['data' => $this->formStorage->getRawData($offers), 'mapped' => false]
+                );
+                $form->add(self::OFFERS_DATA_KEY, OffersType::NAME, [OffersType::OFFERS_OPTION => $offers]);
+            }
+        );
+
+        $builder->addEventListener(
+            FormEvents::PRE_SUBMIT,
+            function (FormEvent $event) {
+                $event->getForm()->add(
+                    self::OFFERS_DATA_KEY,
+                    OffersType::NAME,
+                    [OffersType::OFFERS_OPTION => $this->formStorage->getData($event->getData())]
+                );
             }
         );
     }
 
-    /** {@inheritdoc} */
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    /**
+     * @return array
+     */
+    protected function getOffersStorageData()
     {
-        if (!$this->isApplicable()) {
-            return;
+        if (false !== $this->offers) {
+            return $this->offers;
         }
 
-        if (!$view->offsetExists(self::OFFERS_DATA_KEY)) {
-            return;
-        }
+        $this->offers = $this->sessionStorage->get();
+        $this->sessionStorage->remove();
 
-        $view->offsetGet(self::OFFERS_DATA_KEY)->vars['offers'] = $this->getOffers($form);
+        return $this->offers;
     }
 
     /**
@@ -99,11 +124,12 @@ class OrderDataStorageExtension extends AbstractTypeExtension
             return [];
         }
 
-        if (!array_key_exists($key, $this->offers)) {
+        $offers = $this->getOffersStorageData();
+        if (!array_key_exists($key, $offers)) {
             return [];
         }
 
-        return (array)$this->offers[$key];
+        return (array)$offers[$key];
     }
 
     /** {@inheritdoc} */
@@ -116,7 +142,13 @@ class OrderDataStorageExtension extends AbstractTypeExtension
         $resolver->setNormalizer(
             'sections',
             function (Options $options, array $sections) {
-                $sections[self::OFFERS_DATA_KEY] = ['data' => [self::OFFERS_DATA_KEY => []], 'order' => 5];
+                $sections[self::OFFERS_DATA_KEY] = [
+                    'data' => [
+                        self::OFFERS_DATA_KEY => [],
+                        OffersFormStorage::DATA_KEY => [],
+                    ],
+                    'order' => 5,
+                ];
 
                 return $sections;
             }
@@ -130,7 +162,7 @@ class OrderDataStorageExtension extends AbstractTypeExtension
     {
         $request = $this->requestStack->getCurrentRequest();
 
-        return $request && $request->get(ProductDataStorage::STORAGE_KEY);
+        return $request && $request->get(DataStorageInterface::STORAGE_KEY);
     }
 
     /** {@inheritdoc} */
