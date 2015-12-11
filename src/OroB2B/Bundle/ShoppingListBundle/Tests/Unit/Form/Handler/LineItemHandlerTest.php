@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
+use OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService;
 use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -46,7 +46,7 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
     protected $lineItem;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|RoundingService
+     * @var \PHPUnit_Framework_MockObject_MockObject|QuantityRoundingService
      */
     protected $roundingService;
 
@@ -70,9 +70,19 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $this->roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\RoundingService')
+        $this->roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService')
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->roundingService->expects($this->any())
+            ->method('roundQuantity')
+            ->will(
+                $this->returnCallback(
+                    function ($value, $unit, $product) {
+                        return round($value, 0, PHP_ROUND_HALF_UP);
+                    }
+                )
+            );
 
         $this->lineItem = $this->getMock('OroB2B\Bundle\ShoppingListBundle\Entity\LineItem');
     }
@@ -83,7 +93,13 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->expects($this->never())
             ->method('getManagerForClass');
 
-        $handler = new LineItemHandler($this->form, $this->request, $this->registry, $this->shoppingListManager);
+        $handler = new LineItemHandler(
+            $this->form,
+            $this->request,
+            $this->registry,
+            $this->shoppingListManager,
+            $this->roundingService
+        );
         $this->assertFalse($handler->process($this->lineItem));
     }
 
@@ -112,7 +128,13 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('isValid')
             ->will($this->returnValue(false));
 
-        $handler = new LineItemHandler($this->form, $this->request, $this->registry, $this->shoppingListManager);
+        $handler = new LineItemHandler(
+            $this->form,
+            $this->request,
+            $this->registry,
+            $this->shoppingListManager,
+            $this->roundingService
+        );
         $this->assertFalse($handler->process($this->lineItem));
     }
 
@@ -142,7 +164,13 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getNotes')
             ->will($this->returnValue($newNotes));
 
-        $handler = new LineItemHandler($this->form, $this->request, $this->registry, $this->shoppingListManager);
+        $handler = new LineItemHandler(
+            $this->form,
+            $this->request,
+            $this->registry,
+            $this->shoppingListManager,
+            $this->roundingService
+        );
         $this->assertTrue($handler->process($this->lineItem));
         $this->assertEquals(['savedId' => 123], $handler->updateSavedId([]));
     }
@@ -188,7 +216,13 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->with($formData[FrontendLineItemType::NAME]['shoppingListLabel'])
             ->willReturn($newShoppingList);
 
-        $handler = new LineItemHandler($this->form, $this->request, $this->registry, $this->shoppingListManager);
+        $handler = new LineItemHandler(
+            $this->form,
+            $this->request,
+            $this->registry,
+            $this->shoppingListManager,
+            $this->roundingService
+        );
         $this->assertShoppingListId('', $this->request);
         $this->assertTrue($handler->process($this->lineItem));
         $this->assertShoppingListId($newShoppingListId, $this->request);
@@ -237,7 +271,13 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(self::LINE_ITEM_SHORTCUT)
             ->will($this->returnValue($manager));
 
-        $handler = new LineItemHandler($this->form, $this->request, $this->registry, $this->shoppingListManager);
+        $handler = new LineItemHandler(
+            $this->form,
+            $this->request,
+            $this->registry,
+            $this->shoppingListManager,
+            $this->roundingService
+        );
         $this->assertTrue($handler->process($this->lineItem));
         $this->assertEquals([], $handler->updateSavedId([]));
     }

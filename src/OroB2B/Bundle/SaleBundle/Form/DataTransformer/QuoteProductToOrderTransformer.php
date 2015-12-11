@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\SaleBundle\Form\DataTransformer;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Exception\UnexpectedTypeException;
 
-use OroB2B\Bundle\ProductBundle\Rounding\RoundingService;
+use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Form\Type\QuoteProductToOrderType;
@@ -19,7 +19,7 @@ class QuoteProductToOrderTransformer implements DataTransformerInterface
     protected $matcher;
 
     /**
-     * @var RoundingService
+     * @var RoundingServiceInterface
      */
     protected $roundingService;
 
@@ -30,12 +30,12 @@ class QuoteProductToOrderTransformer implements DataTransformerInterface
 
     /**
      * @param QuoteProductOfferMatcher $matcher
-     * @param RoundingService $roundingService
+     * @param RoundingServiceInterface $roundingService
      * @param QuoteProduct $quoteProduct
      */
     public function __construct(
         QuoteProductOfferMatcher $matcher,
-        RoundingService $roundingService,
+        RoundingServiceInterface $roundingService,
         QuoteProduct $quoteProduct
     ) {
         $this->matcher = $matcher;

@@ -8,7 +8,9 @@ use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class ProductVisibilityResolvedRepository extends EntityRepository
 {
@@ -83,6 +85,16 @@ class ProductVisibilityResolvedRepository extends EntityRepository
             ->delete()
             ->getQuery()
             ->execute();
+    }
+
+    /**
+     * @param Product $product
+     * @param Website $website
+     * @return null|ProductVisibilityResolved
+     */
+    public function findByPrimaryKey(Product $product, Website $website)
+    {
+        return $this->findOneBy(['website' => $website, 'product' => $product]);
     }
 
     /**

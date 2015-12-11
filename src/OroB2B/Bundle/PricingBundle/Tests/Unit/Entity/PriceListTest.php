@@ -2,16 +2,15 @@
 
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Entity;
 
-use Oro\Component\Testing\Unit\EntityTestCase;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 use OroB2B\Bundle\PricingBundle\Entity\ProductPrice;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-class PriceListTest extends EntityTestCase
+class PriceListTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTestCaseTrait;
+
     public function testAccessors()
     {
         $now = new \DateTime('now');
@@ -84,64 +83,6 @@ class PriceListTest extends EntityTestCase
 
         $priceList->removePrice($price);
         $this->assertCount(0, $priceList->getPrices());
-    }
-
-    /**
-     * @dataProvider relationsDataProvider
-     *
-     * @param Account|AccountGroup|Website $entity
-     * @param string $getCollectionMethod
-     * @param string $addMethod
-     * @param string $removeMethod
-     */
-    public function testRelations($entity, $getCollectionMethod, $addMethod, $removeMethod)
-    {
-        $priceList = $this->createPriceList();
-
-        $this->assertInstanceOf(
-            'Doctrine\Common\Collections\ArrayCollection',
-            $priceList->$getCollectionMethod()
-        );
-        $this->assertCount(0, $priceList->$getCollectionMethod());
-
-        $this->assertInstanceOf(
-            'OroB2B\Bundle\PricingBundle\Entity\PriceList',
-            $priceList->$addMethod($entity)
-        );
-        $this->assertCount(1, $priceList->$getCollectionMethod());
-
-        $priceList->$addMethod($entity);
-        $this->assertCount(1, $priceList->$getCollectionMethod());
-
-        $priceList->$removeMethod($entity);
-        $this->assertCount(0, $priceList->$getCollectionMethod());
-    }
-
-    /**
-     * @return array
-     */
-    public function relationsDataProvider()
-    {
-        return [
-            'account' => [
-                'entity' => new Account(),
-                'getCollectionMethod' => 'getAccounts',
-                'addMethod' => 'addAccount',
-                'removeMethod' => 'removeAccount',
-            ],
-            'accountGroup' => [
-                'entity' => new AccountGroup(),
-                'getCollectionMethod' => 'getAccountGroups',
-                'addMethod' => 'addAccountGroup',
-                'removeMethod' => 'removeAccountGroup',
-            ],
-            'website' => [
-                'entity' => new Website(),
-                'getCollectionMethod' => 'getWebsites',
-                'addMethod' => 'addWebsite',
-                'removeMethod' => 'removeWebsite',
-            ],
-        ];
     }
 
     /**

@@ -17,8 +17,6 @@ class CategoryVisibility implements VisibilityInterface
 {
     const PARENT_CATEGORY = 'parent_category';
     const CONFIG = 'config';
-    const VISIBLE = 'visible';
-    const HIDDEN = 'hidden';
 
     /**
      * @var integer
