@@ -1,0 +1,13 @@
+OroB2B\Bundle\TaxBundle\Entity\Tax:
+    alias:                          orob2b_tax_tax
+    title_fields:                   [code]
+    route:
+        name:                       orob2b_tax_tax_view
+        parameters:
+            id:                     id
+    search_template:                OroB2BTaxBundle:Tax:searchResult.html.twig
+    fields:
+        -
+            name:                   code
+            target_type:            text
+            target_fields:          [code]

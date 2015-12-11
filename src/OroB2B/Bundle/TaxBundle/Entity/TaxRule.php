@@ -9,20 +9,14 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="orob2b_tax_tax")
+ * @ORM\Table(name="orob2b_tax_tax_rule")
  * @ORM\HasLifecycleCallbacks
  * @Config(
- *      routeName="orob2b_tax_tax_index",
- *      routeView="orob2b_tax_tax_view",
- *      defaultValues={
-*           "form"={
- *              "form_type"="orob2b_tax_tax_select",
- *              "grid_name"="tax-taxes-select-grid",
- *          },
- *      }
+ *      routeName="orob2b_tax_tax_rule_index",
+ *      routeView="orob2b_tax_tax_rule_view"
  * )
  */
-class Tax
+class TaxRule
 {
     /**
      * @ORM\Id
@@ -30,20 +24,6 @@ class Tax
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="string", length=255, unique=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $code;
 
     /**
      * @var string
@@ -60,18 +40,28 @@ class Tax
     protected $description;
 
     /**
-     * @var int
+     * @var ProductTaxCode
      *
-     * @ORM\Column(type="percent")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode")
+     * @ORM\JoinColumn(name="product_tax_code_id", referencedColumnName="id", onDelete="SET NULL")
      */
-    protected $rate;
+    protected $productTaxCode;
+
+    /**
+     * @var AccountTaxCode
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode")
+     * @ORM\JoinColumn(name="account_tax_code_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $accountTaxCode;
+
+    /**
+     * @var Tax
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\TaxBundle\Entity\Tax")
+     * @ORM\JoinColumn(name="tax_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $tax;
 
     /**
      * @ORM\Column(name="created_at", type="datetime")
@@ -113,35 +103,16 @@ class Tax
     /**
      * @return string
      */
-    public function getCode()
-    {
-        return $this->code;
-    }
-
-    /**
-     * @param string $code
-     * @return $this
-     */
-    public function setCode($code)
-    {
-        $this->code = $code;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
     public function getDescription()
     {
         return $this->description;
     }
 
     /**
-     * @param string $description
+     * @param string|null $description
      * @return $this
      */
-    public function setDescription($description)
+    public function setDescription($description = null)
     {
         $this->description = $description;
 
@@ -149,22 +120,63 @@ class Tax
     }
 
     /**
-     * @return int
+     * @param ProductTaxCode $productTaxCode
+     *
+     * @return $this
      */
-    public function getRate()
+    public function setProductTaxCode(ProductTaxCode $productTaxCode = null)
     {
-        return $this->rate;
+        $this->productTaxCode = $productTaxCode;
+
+        return $this;
     }
 
     /**
-     * @param int $rate
+     * @return ProductTaxCode
+     */
+    public function getProductTaxCode()
+    {
+        return $this->productTaxCode;
+    }
+
+    /**
+     * @param AccountTaxCode $accountTaxCode
+     *
      * @return $this
      */
-    public function setRate($rate)
+    public function setAccountTaxCode(AccountTaxCode $accountTaxCode = null)
     {
-        $this->rate = $rate;
+        $this->accountTaxCode = $accountTaxCode;
 
         return $this;
+    }
+
+    /**
+     * @return AccountTaxCode
+     */
+    public function getAccountTaxCode()
+    {
+        return $this->accountTaxCode;
+    }
+
+    /**
+     * @param Tax $tax
+     *
+     * @return $this
+     */
+    public function setTax(Tax $tax = null)
+    {
+        $this->tax = $tax;
+
+        return $this;
+    }
+
+    /**
+     * @return Tax
+     */
+    public function getTax()
+    {
+        return $this->tax;
     }
 
     /**
@@ -224,13 +236,5 @@ class Tax
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return (string)$this->code;
     }
 }
