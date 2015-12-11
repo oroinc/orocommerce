@@ -24,6 +24,8 @@ class LoadProductVisibilityResolvedData extends AbstractFixture implements Depen
         'product.3.visibility.all',
         'product.4.visibility.all',
         'product.5.visibility.all',
+        'product.6.visibility.all',
+        'product.7.visibility.all',
     ];
 
     /**

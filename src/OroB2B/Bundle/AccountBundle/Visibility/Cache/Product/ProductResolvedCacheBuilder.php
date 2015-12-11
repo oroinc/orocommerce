@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Visibility\Cache;
+namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product;
 
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -9,19 +9,25 @@ use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\ProductVisibilityResolvedRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 
-class ProductResolvedCacheBuilder extends AbstractCacheBuilder
+class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
 {
     const VISIBLE = 'visible';
     const HIDDEN = 'hidden';
 
     /**
      * @var InsertFromSelectQueryExecutor
+     * @param VisibilityInterface|ProductVisibility $productVisibility
      */
     protected $insertFromSelectExecutor;
 
@@ -50,6 +56,7 @@ class ProductResolvedCacheBuilder extends AbstractCacheBuilder
      * {@inheritdoc}
      */
     public function resolveVisibilitySettings($productVisibility)
+    public function resolveVisibilitySettings(VisibilityInterface $productVisibility)
     {
         $product = $productVisibility->getProduct();
         $website = $productVisibility->getWebsite();
@@ -104,6 +111,7 @@ class ProductResolvedCacheBuilder extends AbstractCacheBuilder
     /**
      * {@inheritdoc}
      */
+    public function isVisibilitySettingsSupported(VisibilityInterface$visibilitySettings)
     public function isVisibilitySettingsSupported($visibilitySettings)
     {
         return $visibilitySettings instanceof ProductVisibility;
@@ -112,15 +120,7 @@ class ProductResolvedCacheBuilder extends AbstractCacheBuilder
     /**
      * {@inheritdoc}
      */
-    public function updateResolvedVisibilityByCategory(Category $category)
-    {
-        // TODO: Implement updateResolvedVisibilityByCategory() method.
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function updateProductResolvedVisibility(Product $product)
+    public function productCategoryChanged(Product $product)
     {
         // TODO: Implement updateProductResolvedVisibility() method.
     }

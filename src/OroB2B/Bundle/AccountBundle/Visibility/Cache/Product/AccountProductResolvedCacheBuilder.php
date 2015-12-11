@@ -1,20 +1,20 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Visibility\Cache;
+namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-class AccountProductResolvedCacheBuilder extends AbstractCacheBuilder
+class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
 {
     /**
-     * @param AccountProductVisibility $accountProductVisibility
+     * @param VisibilityInterface|AccountProductVisibility $accountProductVisibility
      */
-    public function resolveVisibilitySettings($accountProductVisibility)
+    public function resolveVisibilitySettings(VisibilityInterface $accountProductVisibility)
     {
         $product = $accountProductVisibility->getProduct();
         $website = $accountProductVisibility->getWebsite();
@@ -80,7 +80,7 @@ class AccountProductResolvedCacheBuilder extends AbstractCacheBuilder
     /**
      * {@inheritdoc}
      */
-    public function isVisibilitySettingsSupported($visibilitySettings)
+    public function isVisibilitySettingsSupported(VisibilityInterface $visibilitySettings)
     {
         return $visibilitySettings instanceof AccountProductVisibility;
     }
@@ -88,15 +88,7 @@ class AccountProductResolvedCacheBuilder extends AbstractCacheBuilder
     /**
      * {@inheritdoc}
      */
-    public function updateResolvedVisibilityByCategory(Category $category)
-    {
-        // TODO: Implement updateResolvedVisibilityByCategory() method.
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function updateProductResolvedVisibility(Product $product)
+    public function productCategoryChanged(Product $product)
     {
         // TODO: Implement updateProductResolvedVisibility() method.
     }

@@ -29,6 +29,8 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,
                     LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_7,
                 ],
             ],
             [
@@ -36,6 +38,8 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
                 'expectedProducts' => [
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_7,
                 ],
             ],
             [
@@ -53,6 +57,8 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
                 'expectedProducts' => [
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_7,
                 ],
             ],
         ];

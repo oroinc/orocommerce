@@ -16,6 +16,7 @@ class LoadAccountGroupCategoryVisibilities extends AbstractFixture implements De
     const VISIBILITY1 = 'account_group_category_visibility.1';
     const VISIBILITY2 = 'account_group_category_visibility.2';
     const VISIBILITY3 = 'account_group_category_visibility.3';
+    const VISIBILITY4 = 'account_group_category_visibility.4';
 
     /**
      * @var array
