@@ -2,15 +2,12 @@
 
 namespace OroB2B\Bundle\ProductBundle\Form\Handler;
 
-use Doctrine\Common\Util\ClassUtils;
-
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\ActionBundle\Model\ActionContext;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
-use Oro\Bundle\ActionBundle\Model\ContextHelper;
 use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\UIBundle\Route\Router;
 
@@ -78,13 +75,7 @@ class ProductUpdateHandler extends UpdateHandler
 
             $actionContext = $this->actionManager->execute(
                 'orob2b_product_duplicate_action',
-                new ActionContext(['data' => $entity]),
-                null,
-                [
-                    ContextHelper::ROUTE_PARAM => 'orob2b_product_view',
-                    ContextHelper::ENTITY_ID_PARAM => $entity->getId(),
-                    ContextHelper::ENTITY_CLASS_PARAM => ClassUtils::getClass($entity)
-                ]
+                new ActionContext(['data' => $entity])
             );
 
             if ($actionContext->getRedirectUrl()) {

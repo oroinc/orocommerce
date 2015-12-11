@@ -11,10 +11,10 @@ actions:
             icon: icon-copy
         postfunctions:
             - @call_service_method:
-                attribute: $.productCopy
                 service: orob2b_product.service.duplicator
                 method: duplicate
                 method_parameters: [$.data]
+                attribute: $.productCopy
             - @redirect:
                 parameters:
                     route: orob2b_product_view

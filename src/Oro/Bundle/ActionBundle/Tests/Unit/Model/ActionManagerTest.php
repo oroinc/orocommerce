@@ -228,7 +228,7 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testExecute(array $context, ActionContext $actionContext = null)
     {
-        $this->assertContextHelperCalled($context, 2, $actionContext ? 1 : 2);
+        $this->assertContextHelperCalled($context, 1, $actionContext ? 0 : 2);
 
         if ($actionContext && $actionContext->getEntity()) {
             $this->assertEntityManagerCalled('stdClass');
@@ -400,7 +400,7 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testExecuteException()
     {
-        $this->assertContextHelperCalled([], 2);
+        $this->assertContextHelperCalled([], 1);
 
         $this->manager->execute('test_action');
     }
@@ -419,7 +419,7 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
                 'entityClass' => 'stdClass',
                 'entityId' => 1
             ],
-            2
+            1
         );
 
         $this->assertEquals($expected, $this->manager->getDialogTemplate($actionName));

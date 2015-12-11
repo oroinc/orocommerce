@@ -44,6 +44,11 @@ class ActionManager
     private $entities;
 
     /**
+     * @var Action[]
+     */
+    private $actions;
+
+    /**
      * @param DoctrineHelper $doctrineHelper
      * @param ContextHelper $contextHelper
      * @param ActionConfigurationProvider $configurationProvider
@@ -75,7 +80,7 @@ class ActionManager
         Collection $errors = null,
         array $context = null
     ) {
-        $action = $this->getAction($actionName, $context);
+        $action = $this->getAction($actionName, $context, $actionContext);
         if (!$action) {
             throw new ActionNotFoundException($actionName);
         }
@@ -125,13 +130,23 @@ class ActionManager
     /**
      * @param string $actionName
      * @param array|null $context
+     * @param ActionContext|null $actionContext
      * @return null|Action
      */
-    public function getAction($actionName, array $context = null)
+    public function getAction($actionName, array $context = null, ActionContext $actionContext = null)
     {
-        $actions = $this->getActions($context);
+        $this->loadActions();
 
-        return array_key_exists($actionName, $actions) ? $actions[$actionName] : null;
+        $context = array_merge($this->contextHelper->getContext(), (array)$context);
+        if (null === $actionContext) {
+            $actionContext = $this->contextHelper->getActionContext($context);
+        }
+
+        /* @var $action Action */
+        $action = array_key_exists($actionName, $this->actions) ? $this->actions[$actionName] : null;
+        if ($action && $action->isAvailable($actionContext)) {
+            return $action;
+        }
     }
 
     /**
@@ -178,7 +193,7 @@ class ActionManager
 
         $actionContext = $this->contextHelper->getActionContext($context);
         $actions = array_filter($actions, function (Action $action) use ($actionContext) {
-            return $action->isEnabled() && $action->isAvailable($actionContext);
+            return $action->isAvailable($actionContext);
         });
 
         uasort($actions, function (Action $action1, Action $action2) {
@@ -190,19 +205,25 @@ class ActionManager
 
     protected function loadActions()
     {
-        if ($this->entities !== null || $this->routes !== null) {
+        if ($this->entities !== null || $this->routes !== null || $this->actions !== null) {
             return;
         }
 
         $this->routes = [];
         $this->entities = [];
+        $this->actions = [];
 
         $configuration = $this->configurationProvider->getActionConfiguration();
         $actions = $this->assembler->assemble($configuration);
 
         foreach ($actions as $action) {
+            if (!$action->isEnabled()) {
+                continue;
+            }
+
             $this->mapActionRoutes($action);
             $this->mapActionEntities($action);
+            $this->actions[$action->getName()] = $action;
         }
     }
 
