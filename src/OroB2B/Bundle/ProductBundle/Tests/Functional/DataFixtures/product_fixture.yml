@@ -40,3 +40,19 @@ product5:
         - { reference: product.5.names.default, string: product.5.names.default }
     descriptions:
         - { reference: product.5.descriptions.default, string: product.5.descriptions.default }
+product6:
+    productCode: product.6
+    inventoryStatus: in_stock
+    status: enabled
+    names:
+        - { reference: product.6.names.default, string: product.6.names.default }
+    descriptions:
+        - { reference: product.6.descriptions.default, string: product.6.descriptions.default }
+product7:
+    productCode: product.7
+    inventoryStatus: in_stock
+    status: enabled
+    names:
+        - { reference: product.7.names.default, string: product.7.names.default }
+    descriptions:
+        - { reference: product.7.descriptions.default, string: product.7.descriptions.default }

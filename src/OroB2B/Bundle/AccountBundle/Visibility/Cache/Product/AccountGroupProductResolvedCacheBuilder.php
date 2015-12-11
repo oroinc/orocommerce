@@ -1,20 +1,20 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Visibility\Cache;
+namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-class AccountGroupProductResolvedCacheBuilder extends AbstractCacheBuilder
+class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
 {
     /**
-     * @param AccountGroupProductVisibility $accountGroupProductVisibility
+     * @param VisibilityInterface|AccountGroupProductVisibility $accountGroupProductVisibility
      */
-    public function resolveVisibilitySettings($accountGroupProductVisibility)
+    public function resolveVisibilitySettings(VisibilityInterface $accountGroupProductVisibility)
     {
         $product = $accountGroupProductVisibility->getProduct();
         $website = $accountGroupProductVisibility->getWebsite();
@@ -73,7 +73,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractCacheBuilder
     /**
      * {@inheritdoc}
      */
-    public function isVisibilitySettingsSupported($visibilitySettings)
+    public function isVisibilitySettingsSupported(VisibilityInterface $visibilitySettings)
     {
         return $visibilitySettings instanceof AccountGroupProductVisibility;
     }
@@ -81,15 +81,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractCacheBuilder
     /**
      * {@inheritdoc}
      */
-    public function updateResolvedVisibilityByCategory(Category $category)
-    {
-        // TODO: Implement updateResolvedVisibilityByCategory() method.
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function updateProductResolvedVisibility(Product $product)
+    public function productCategoryChanged(Product $product)
     {
         // TODO: Implement updateProductResolvedVisibility() method.
     }
