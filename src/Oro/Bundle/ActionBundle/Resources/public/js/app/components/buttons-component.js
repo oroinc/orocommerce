@@ -115,9 +115,11 @@ define(function(require) {
             mediator.execute('hideLoading');
 
             if (response.flashMessages) {
-                for (var message in response.flashMessages) {
-                    var type = response.flashMessages[message];
-                    messenger.notificationFlashMessage(type[0], message);
+                for (var type in response.flashMessages) {
+                    var messages = response.flashMessages[type];
+                    for (var k in messages) {
+                        messenger.notificationFlashMessage(type, messages[k]);
+                    }
                 }
             }
 
