@@ -39,6 +39,6 @@ class ProductResolvedCacheBuilderTest extends WebTestCase
             ->findAll()
         ;
 
-        $this->assertSame(12, count($actual));
+        $this->assertSame(18, count($actual));
     }
 }
