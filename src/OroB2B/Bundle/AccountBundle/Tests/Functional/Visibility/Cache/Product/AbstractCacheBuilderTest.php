@@ -74,10 +74,10 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
     ) {
         $this->assertNotNull($productVisibilityResolved);
         $this->assertNull($productVisibilityResolved->getCategoryId());
-        $this->assertEquals($productVisibilityResolved->getProduct(), $this->product);
-        $this->assertEquals($productVisibilityResolved->getSource(), BaseProductVisibilityResolved::SOURCE_STATIC);
-        $this->assertEquals($productVisibilityResolved->getSourceProductVisibility(), $productVisibility);
-        $this->assertEquals($productVisibilityResolved->getVisibility(), $expectedVisibility);
+        $this->assertEquals($this->product, $productVisibilityResolved->getProduct());
+        $this->assertEquals(BaseProductVisibilityResolved::SOURCE_STATIC, $productVisibilityResolved->getSource());
+        $this->assertEquals($productVisibility, $productVisibilityResolved->getSourceProductVisibility());
+        $this->assertEquals($expectedVisibility, $productVisibilityResolved->getVisibility());
         $this->assertProductIdentifyEntitiesAccessory($productVisibilityResolved);
     }
 

@@ -158,11 +158,15 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
      */
     protected function getAccountVisibilityResolved()
     {
-        $em = $this->registry
+        $entityManager = $this->registry
             ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved');
-        $entity = $em->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved')
+        $entity = $entityManager
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved')
             ->findByPrimaryKey($this->account, $this->product, $this->website);
-        $em->refresh($entity);
+
+        if ($entity) {
+            $entityManager->refresh($entity);
+        }
 
         return $entity;
     }
