@@ -2,13 +2,14 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Repository;
 
-use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\ORM\Query;
+
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Repository\ProductVisibilityResolvedRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -32,7 +33,7 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
         $this->initClient();
         $this->website = $this->getWebsites()[0];
 
-        $this->repository = $this->getContainer()->get('doctrine')
+        $this->repository = $this->getPVRManager()
             ->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
 
         $this->loadFixtures(
@@ -59,6 +60,7 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
         $actual = $this->getActualArray();
 
         $this->assertCount(4, $actual);
+        $this->assertInsertedFromBaseTable($actual);
     }
 
     /**
@@ -66,19 +68,19 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
      */
     public function testInsertByCategory()
     {
-        $categories = $this->getCategories();
-
         $this->repository->insertByCategory(
             $this->getInsertFromSelectExecutor(),
             BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
             array_map(function ($category) {
                 /** @var \OroB2B\Bundle\CatalogBundle\Entity\Category $category */
                 return $category->getId();
-            }, $categories)
+            }, $this->getCategories())
         );
 
         $actual = $this->getActualArray();
-        $this->assertCount(12, $actual);
+
+        $this->assertCount(18, $actual);
+        $this->assertInsertedByCategory($actual);
     }
 
     public function testClearTableByWebsite()
@@ -86,8 +88,8 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
         $deleted = $this->repository->clearTable($this->website);
         $actual = $this->repository->findBy(['website' => $this->website]);
 
-        $this->assertSame(0, count($actual));
-        $this->assertSame(4, $deleted);
+        $this->assertCount(0, $actual);
+        $this->assertSame(6, $deleted);
     }
 
     /**
@@ -98,7 +100,8 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
         $this->repository->insertFromBaseTable($this->getInsertFromSelectExecutor(), $this->website);
         $actual = $this->getActualArray();
 
-        $this->assertCount(12, $actual);
+        $this->assertCount(16, $actual);
+        $this->assertInsertedFromBaseTable($actual);
     }
 
     /**
@@ -119,7 +122,103 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
         );
 
         $actual = $this->getActualArray();
-        $this->assertCount(12, $actual);
+        $this->assertCount(18, $actual);
+        $this->assertInsertedByCategory($actual, $this->website);
+    }
+
+    /**
+     * @param string $visibility
+     * @return int
+     */
+    protected function resolveVisibility($visibility)
+    {
+        switch ($visibility) {
+            case ProductVisibility::HIDDEN:
+                $visibility = BaseProductVisibilityResolved::VISIBILITY_HIDDEN;
+                break;
+            case ProductVisibility::VISIBLE:
+                $visibility = BaseProductVisibilityResolved::VISIBILITY_VISIBLE;
+                break;
+            default:
+                $visibility = null;
+        }
+
+        return $visibility;
+    }
+
+    /**
+     * @param array $actual
+     * @param Website $website
+     */
+    protected function assertInsertedByCategory(array $actual, Website $website = null)
+    {
+        $pv = $this->getProductVisibilities();
+        $products = $this->getProducts();
+        $websites = $website ? [$website] : $this->getWebsites();
+
+        foreach ($products as $product) {
+            foreach ($websites as $website) {
+                if (array_filter($pv, function (ProductVisibility $item) use ($website, $product) {
+                    return $website === $item->getWebsite() && $product === $item->getProduct();
+                })) {
+                    continue;
+                }
+
+                $expected = [
+                    'website' => $website->getId(),
+                    'product' => $product->getId(),
+                    'sourceProductVisibility' => null,
+                    'visibility' => BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
+                    'source' => ProductVisibilityResolved::SOURCE_CATEGORY,
+                    'category' => $this->getCategoryRepository()->findOneByProduct($product)->getId()
+                ];
+                $this->assertContains($expected, $actual);
+            }
+        }
+    }
+
+    /**
+     * @param array $actual
+     */
+    protected function assertInsertedFromBaseTable(array $actual)
+    {
+        foreach ($this->getProductVisibilities() as $pv) {
+            $visibility = $this->resolveVisibility($pv->getVisibility());
+
+            if (null !== $visibility) {
+                $expected = [
+                    'website' => $pv->getWebsite()->getId(),
+                    'product' => $pv->getProduct()->getId(),
+                    'sourceProductVisibility' => $pv->getId(),
+                    'visibility' => $visibility,
+                    'source' => ProductVisibilityResolved::SOURCE_STATIC,
+                    'category' => null
+                ];
+                $this->assertContains($expected, $actual);
+            }
+        }
+    }
+
+    /**
+     * @return array|\OroB2B\Bundle\ProductBundle\Entity\Product[]
+     */
+    protected function getProducts()
+    {
+        $repository = $this->getProductRepository();
+
+        return $repository->findAll();
+    }
+
+    /**
+     * @return \OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository
+     */
+    protected function getProductRepository()
+    {
+        $className = $this->getContainer()->getParameter('orob2b_product.product.class');
+
+        return $this->getContainer()->get('doctrine')
+            ->getManagerForClass($className)
+            ->getRepository('OroB2BProductBundle:Product');
     }
 
     /**
@@ -128,9 +227,47 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
     protected function getActualArray()
     {
         return $this->repository->createQueryBuilder('pvr')
-            ->select('pvr')
+            ->select(
+                'IDENTITY(pvr.website) as website',
+                'IDENTITY(pvr.product) as product',
+                'IDENTITY(pvr.sourceProductVisibility) as sourceProductVisibility',
+                'pvr.visibility as visibility',
+                'pvr.source as source',
+                'pvr.categoryId as category'
+            )
             ->getQuery()
-            ->getResult(Query::HYDRATE_ARRAY);
+            ->getResult();
+    }
+
+    /**
+     * @return array
+     */
+    protected function getActual()
+    {
+        return $this->repository->findAll();
+    }
+
+    /**
+     * @return \Doctrine\Common\Persistence\ObjectManager|null|object
+     */
+    protected function getPVRManager()
+    {
+        $className = $this->getContainer()->getParameter('orob2b_account.entity.product_visibility_resolved.class');
+
+        return $this->getContainer()->get('doctrine')
+            ->getManagerForClass($className);
+    }
+
+    /**
+     * @return \OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository
+     */
+    protected function getCategoryRepository()
+    {
+        $className = $this->getContainer()->getParameter('orob2b_catalog.category.class');
+
+        return $this->getContainer()->get('doctrine')
+            ->getManagerForClass($className)
+            ->getRepository('OroB2BCatalogBundle:Category');
     }
 
     /**
@@ -138,15 +275,7 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
      */
     protected function getCategories()
     {
-        $className = $this->getContainer()->getParameter('orob2b_catalog.category.class');
-        return $this->getContainer()->get('doctrine')
-            ->getManagerForClass($className)
-            ->getRepository('OroB2BCatalogBundle:Category')
-            ->createQueryBuilder('c')
-            ->select('c', 'p')
-            ->leftJoin('c.products', 'p')
-            ->getQuery()
-            ->execute();
+        return $this->getCategoryRepository()->findAll();
     }
 
     /**
@@ -154,7 +283,8 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
      */
     protected function getProductVisibilities()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroB2BAccountBundle:Visibility\ProductVisibility')
+        return $this->getContainer()->get('doctrine')
+            ->getRepository('OroB2BAccountBundle:Visibility\ProductVisibility')
             ->findAll();
     }
 
