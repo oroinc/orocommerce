@@ -89,7 +89,6 @@ services:
     oro_action.datagrid.extension.action:
         class: %oro_action.datagrid.action_extension.class%
         arguments:
-            - @translator
             - @oro_action.manager
             - @oro_action.datagrid.action_permission_provider
             - @oro_action.helper.context

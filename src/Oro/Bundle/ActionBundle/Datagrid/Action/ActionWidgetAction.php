@@ -49,10 +49,10 @@ class ActionWidgetAction extends AbstractAction
         $options = parent::getOptions();
         $finalOptions = array_replace_recursive($this->defaultOptions, $options->toArray());
 
-        if (isset($finalOptions['widgetOptions']['options']['dialogOptions']['title'])) {
-            $title = $this->translator->trans($finalOptions['widgetOptions']['options']['dialogOptions']['title']);
+        if (isset($finalOptions['options']['dialogOptions']['title'])) {
+            $title = $this->translator->trans($finalOptions['options']['dialogOptions']['title']);
 
-            $finalOptions['widgetOptions']['options']['dialogOptions']['title'] = $title;
+            $finalOptions['options']['dialogOptions']['title'] = $title;
         }
 
         $options->merge($finalOptions);

@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\ActionBundle\Datagrid\Extension;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\ActionBundle\Datagrid\ActionPermissionProvider;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 use Oro\Bundle\ActionBundle\Model\ContextHelper;
@@ -15,9 +13,6 @@ use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
 
 class ActionExtension extends AbstractExtension
 {
-    /** @var TranslatorInterface */
-    protected $translator;
-
     /** @var ActionManager */
     protected $actionManager;
 
@@ -31,18 +26,15 @@ class ActionExtension extends AbstractExtension
     protected $actionConfiguration = [];
 
     /**
-     * @param TranslatorInterface $translator
      * @param ActionManager $actionManager
      * @param ActionPermissionProvider $actionPermissionProvider
      * @param ContextHelper $contextHelper
      */
     public function __construct(
-        TranslatorInterface $translator,
         ActionManager $actionManager,
         ActionPermissionProvider $actionPermissionProvider,
         ContextHelper $contextHelper
     ) {
-        $this->translator = $translator;
         $this->actionManager = $actionManager;
         $this->actionPermissionProvider = $actionPermissionProvider;
         $this->contextHelper = $contextHelper;
@@ -76,7 +68,7 @@ class ActionExtension extends AbstractExtension
                     'datagrid' => $context['datagrid'],
                     'showDialog' => $action->hasForm(),
                     'dialogOptions' => [
-                        'title' => $this->translator->trans($action->getDefinition()->getLabel()),
+                        'title' => $action->getDefinition()->getLabel(),
                         'dialogOptions' => !empty($frontendOptions['dialog_options'])
                         ? $frontendOptions['dialog_options']
                         : [],
