@@ -6,10 +6,10 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\ActionBundle\Model\ActionContext;
+use Oro\Bundle\WorkflowBundle\Model\Action\AbstractAction;
 use Oro\Component\Testing\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Model\Action\CategoryCaseAction;
 
 abstract class CategoryCaseActionTestCase extends WebTestCase
 {
@@ -19,7 +19,7 @@ abstract class CategoryCaseActionTestCase extends WebTestCase
     protected $context;
 
     /**
-     * @var CategoryCaseAction
+     * @var AbstractAction
      */
     protected $action;
 

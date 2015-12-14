@@ -57,7 +57,7 @@ class ChangeCategoryPositionTest extends CategoryCaseActionTestCase
         return [
             [
                 'categoryReference' => 'category_1_2',
-                'newParentCategoryReference' => 'category_1_5',
+                'newParentCategoryReference' => 'category_1_5_6',
                 'expectedData' => [
                     'hiddenProducts' => [
                         'product.2',

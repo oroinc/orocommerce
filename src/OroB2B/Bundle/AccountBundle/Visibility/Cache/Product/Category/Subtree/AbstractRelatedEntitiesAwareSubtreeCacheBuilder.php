@@ -14,59 +14,61 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractSubtreeCacheBuilder
 {
     /** @var array */
-    protected $accountGroupsWithChangedVisibility = [];
+    protected $accountGroupIdsWithChangedVisibility = [];
 
     /** @var array */
-    protected $accountsWithChangedVisibility = [];
+    protected $accountIdsWithChangedVisibility = [];
 
     /**
      * @param Category $category
      * @param int $visibility
-     * @return AccountGroup[]
+     * @return array
      */
     abstract protected function updateAccountGroupsFirstLevel(Category $category, $visibility);
 
     /**
-     * {@inheritdoc}
+     * @param Category $category
+     * @param int $visibility
+     * @return array
      */
     abstract protected function updateAccountsFirstLevel(Category $category, $visibility);
 
     protected function clearChangedEntities()
     {
-        $this->accountGroupsWithChangedVisibility = [];
-        $this->accountGroupsWithChangedVisibility = [];
+        $this->accountGroupIdsWithChangedVisibility = [];
+        $this->accountIdsWithChangedVisibility = [];
     }
 
     /**
      * @param Category $category
      * @param int $visibility
-     * @param array|null $accountGroupsWithChangedVisibility
-     * @param array|null $accountsWithChangedVisibility
+     * @param array|null $accountGroupIdsWithChangedVisibility
+     * @param array|null $accountIdsWithChangedVisibility
      */
     protected function updateProductVisibilitiesForCategoryRelatedEntities(
         Category $category,
         $visibility,
-        array $accountGroupsWithChangedVisibility = null,
-        array $accountsWithChangedVisibility = null
+        array $accountGroupIdsWithChangedVisibility = null,
+        array $accountIdsWithChangedVisibility = null
     ) {
-        if ($accountGroupsWithChangedVisibility === null) {
-            $this->accountGroupsWithChangedVisibility[$category->getId()]
+        if ($accountGroupIdsWithChangedVisibility === null) {
+            $this->accountGroupIdsWithChangedVisibility[$category->getId()]
                 = $this->updateAccountGroupsFirstLevel($category, $visibility);
         } else {
-            $this->accountGroupsWithChangedVisibility[$category->getId()]
-                = $accountGroupsWithChangedVisibility;
+            $this->accountGroupIdsWithChangedVisibility[$category->getId()]
+                = $accountGroupIdsWithChangedVisibility;
         }
 
-        if ($accountsWithChangedVisibility === null) {
-            $this->accountsWithChangedVisibility[$category->getId()]
+        if ($accountIdsWithChangedVisibility === null) {
+            $this->accountIdsWithChangedVisibility[$category->getId()]
                 = $this->updateAccountsFirstLevel($category, $visibility);
         } else {
-            $this->accountsWithChangedVisibility[$category->getId()]
-                = $accountsWithChangedVisibility;
+            $this->accountIdsWithChangedVisibility[$category->getId()]
+                = $accountIdsWithChangedVisibility;
         }
 
-        if (!$this->accountGroupsWithChangedVisibility[$category->getId()] &&
-            !$this->accountsWithChangedVisibility[$category->getId()]
+        if (!$this->accountGroupIdsWithChangedVisibility[$category->getId()] &&
+            !$this->accountIdsWithChangedVisibility[$category->getId()]
         ) {
             return;
         }
@@ -105,117 +107,97 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
     {
         /** @var Category $levelCategory */
         foreach ($levelCategories as $levelCategory) {
-            $accountGroupsWithFallbackToParent = $this
-                ->getCategoryAccountGroupsWithVisibilityFallbackToParent($levelCategory);
             $parentAccountGroups
-                = $this->accountGroupsWithChangedVisibility[$levelCategory->getParentCategory()->getId()];
-
-            $updatedAccountGroups = $this->intersectRelatedEntities(
-                $parentAccountGroups,
-                $accountGroupsWithFallbackToParent
-            );
+                = $this->accountGroupIdsWithChangedVisibility[$levelCategory->getParentCategory()->getId()];
+            $updatedAccountGroupIds = $this
+                ->getCategoryAccountGroupIdsWithVisibilityFallbackToParent($levelCategory, $parentAccountGroups);
 
             /**
              * Cache updated account groups for current subcategory into appropriate section
              */
-            $this->accountGroupsWithChangedVisibility[$levelCategory->getId()] = $updatedAccountGroups;
+            $this->accountGroupIdsWithChangedVisibility[$levelCategory->getId()] = $updatedAccountGroupIds;
 
-            if (!empty($updatedAccountGroups)) {
-                $this->updateAccountGroupsProductVisibility($levelCategory, $updatedAccountGroups, $visibility);
+            if (!empty($updatedAccountGroupIds)) {
+                $this->updateAccountGroupsProductVisibility($levelCategory, $updatedAccountGroupIds, $visibility);
             }
 
-            $accountsWithFallbackToParent = $this->getAccountsWithFallbackToParent($levelCategory);
+            $parentAccounts = $this->accountIdsWithChangedVisibility[$levelCategory->getParentCategory()->getId()];
+            $accountIdsForUpdate = $this->getAccountIdsWithFallbackToParent($levelCategory, $parentAccounts);
 
-            $accountsForUpdate = $this->intersectRelatedEntities(
-                $accountsWithFallbackToParent,
-                $this->accountsWithChangedVisibility[$levelCategory->getParentCategory()->getId()]
-            );
-
-            if (!empty($updatedAccountGroups)) {
-                $updatedAccountGroupIds = [];
-                foreach ($updatedAccountGroups as $updatedAccountGroup) {
-                    $updatedAccountGroupIds[] = $updatedAccountGroup->getId();
-                }
-                $accountsForUpdate = array_merge(
-                    $accountsForUpdate,
-                    $this->getAccountsForUpdate($levelCategory, $updatedAccountGroupIds)
+            if (!empty($updatedAccountGroupIds)) {
+                $accountIdsForUpdate = array_merge(
+                    $accountIdsForUpdate,
+                    $this->getAccountIdsForUpdate($levelCategory, $updatedAccountGroupIds)
                 );
             }
 
             /**
              * Cache updated accounts for current subcategory into appropriate section
              */
-            $this->accountsWithChangedVisibility[$levelCategory->getId()] = $accountsForUpdate;
+            $this->accountIdsWithChangedVisibility[$levelCategory->getId()] = $accountIdsForUpdate;
 
-            if (!empty($accountsForUpdate)) {
-                $this->updateAccountsProductVisibility($levelCategory, $accountsForUpdate, $visibility);
+            if (!empty($accountIdsForUpdate)) {
+                $this->updateAccountsProductVisibility($levelCategory, $accountIdsForUpdate, $visibility);
             }
         }
     }
 
     /**
      * @param Category $category
-     * @return AccountGroup[]
+     * @param array $restrictedAccountGroupIds
+     * @return array
      */
-    protected function getCategoryAccountGroupsWithVisibilityFallbackToParent(Category $category)
-    {
+    protected function getCategoryAccountGroupIdsWithVisibilityFallbackToParent(
+        Category $category,
+        array $restrictedAccountGroupIds = null
+    ) {
         return $this->registry
             ->getManagerForClass('OroB2BAccountBundle:AccountGroup')
             ->getRepository('OroB2BAccountBundle:AccountGroup')
-            ->getCategoryAccountGroupsByVisibility($category, AccountGroupCategoryVisibility::PARENT_CATEGORY);
+            ->getCategoryAccountGroupsByVisibility(
+                $category,
+                AccountGroupCategoryVisibility::PARENT_CATEGORY,
+                $restrictedAccountGroupIds
+            );
     }
 
     /**
      * @param Category $category
-     * @return Account[]
+     * @param array $restrictedAccountIds
+     * @return array
      */
-    protected function getAccountsWithFallbackToParent(Category $category)
+    protected function getAccountIdsWithFallbackToParent(Category $category, array $restrictedAccountIds = null)
     {
         return $this->registry
             ->getManagerForClass('OroB2BAccountBundle:Account')
             ->getRepository('OroB2BAccountBundle:Account')
-            ->getCategoryAccountsByVisibility($category, AccountCategoryVisibility::PARENT_CATEGORY);
+            ->getCategoryAccountIdsByVisibility(
+                $category,
+                AccountCategoryVisibility::PARENT_CATEGORY,
+                $restrictedAccountIds
+            );
     }
 
     /**
      * @param Category $category
-     * @return Account[]
+     * @return array
      */
-    protected function getAccountsWithFallbackToAll(Category $category)
+    protected function getAccountIdsWithFallbackToAll(Category $category)
     {
         return $this->registry
             ->getManagerForClass('OroB2BAccountBundle:Account')
             ->getRepository('OroB2BAccountBundle:Account')
-            ->getCategoryAccountsByVisibility($category, AccountCategoryVisibility::CATEGORY);
-    }
-
-    /**
-     * @param AccountGroup[]|Account[] $relatedEntitiesWithFallbackToAll
-     * @param AccountGroup[]|Account[] $relatedEntitiesWithFallbackToParent
-     * @return AccountGroup[]|Account[]
-     */
-    protected function intersectRelatedEntities(
-        array $relatedEntitiesWithFallbackToAll,
-        array $relatedEntitiesWithFallbackToParent
-    ) {
-        $result = [];
-        foreach ($relatedEntitiesWithFallbackToAll as $entity) {
-            if (in_array($entity, $relatedEntitiesWithFallbackToParent)) {
-                $result[] = $entity;
-            }
-        }
-
-        return $result;
+            ->getCategoryAccountIdsByVisibility($category, AccountCategoryVisibility::CATEGORY);
     }
 
     /**
      * @param Category $category
-     * @param AccountGroup[] $accountGroups
-     * @return Account[]
+     * @param array $accountGroupIds
+     * @return array
      */
-    protected function getAccountsForUpdate(Category $category, array $accountGroups)
+    protected function getAccountIdsForUpdate(Category $category, array $accountGroupIds)
     {
-        if (!$accountGroups) {
+        if (!$accountGroupIds) {
             return [];
         }
 
@@ -237,14 +219,17 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
             ->where($subQueryQb->expr()->eq('accountCategoryVisibility.category', ':category'))
             ->distinct();
 
-        $qb->select('account')
+        $qb->select('account.id')
             ->from('OroB2BAccountBundle:Account', 'account')
             ->leftJoin('account.group', 'accountGroup')
             ->where($qb->expr()->notIn('account', $subQuery->getDQL()))
-            ->andWhere($qb->expr()->in('accountGroup', $accountGroups))
-            ->setParameter('category', $category);
+            ->andWhere($qb->expr()->in('accountGroup', ':accountGroupIds'))
+            ->setParameters([
+                'category' => $category,
+                'accountGroupIds' => $accountGroupIds
+            ]);
 
-        return $qb->getQuery()->getResult();
+        return array_map('current', $qb->getQuery()->getScalarResult());
     }
 
     /**
@@ -274,12 +259,12 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
 
     /**
      * @param Category $category
-     * @param AccountGroup[] $accountGroups
+     * @param array $accountGroupIds
      * @param int $visibility
      */
-    protected function updateAccountGroupsProductVisibility(Category $category, array $accountGroups, $visibility)
+    protected function updateAccountGroupsProductVisibility(Category $category, array $accountGroupIds, $visibility)
     {
-        if (!$accountGroups) {
+        if (!$accountGroupIds) {
             return;
         }
 
@@ -291,20 +276,20 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
         $qb->update('OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved', 'agpvr')
             ->set('agpvr.visibility', $visibility)
             ->where($qb->expr()->eq('agpvr.categoryId', $category->getId()))
-            ->andWhere($qb->expr()->in('agpvr.accountGroup', ':accountGroups'))
-            ->setParameter('accountGroups', $accountGroups);
+            ->andWhere($qb->expr()->in('agpvr.accountGroup', ':accountGroupIds'))
+            ->setParameter('accountGroupIds', $accountGroupIds);
 
         $qb->getQuery()->execute();
     }
 
     /**
      * @param Category $category
-     * @param Account[] $accounts
+     * @param array $accountIds
      * @param $visibility
      */
-    protected function updateAccountsProductVisibility(Category $category, array $accounts, $visibility)
+    protected function updateAccountsProductVisibility(Category $category, array $accountIds, $visibility)
     {
-        if (!$accounts) {
+        if (!$accountIds) {
             return;
         }
 
@@ -316,8 +301,8 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
         $qb->update('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved', 'apvr')
             ->set('apvr.visibility', $visibility)
             ->where($qb->expr()->eq('apvr.categoryId', $category->getId()))
-            ->andWhere($qb->expr()->in('apvr.account', ':accounts'))
-            ->setParameter('accounts', $accounts);
+            ->andWhere($qb->expr()->in('apvr.account', ':accountIds'))
+            ->setParameter('accountIds', $accountIds);
 
         $qb->getQuery()->execute();
     }
