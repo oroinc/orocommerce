@@ -206,23 +206,19 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
             ->getManagerForClass('OroB2BAccountBundle:Account')
             ->createQueryBuilder();
 
-        /** @var QueryBuilder $subQueryQb */
-        $subQueryQb = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountCategoryVisibility')
-            ->createQueryBuilder();
-
-        $subQuery = $subQueryQb->select('IDENTITY(accountCategoryVisibility.account)')
-            ->from(
-                'OroB2BAccountBundle:Visibility\AccountCategoryVisibility',
-                'accountCategoryVisibility'
-            )
-            ->where($subQueryQb->expr()->eq('accountCategoryVisibility.category', ':category'))
-            ->distinct();
-
         $qb->select('account.id')
             ->from('OroB2BAccountBundle:Account', 'account')
+            ->leftJoin(
+                'OroB2BAccountBundle:Visibility\AccountCategoryVisibility',
+                'accountCategoryVisibility',
+                Join::WITH,
+                $qb->expr()->andX(
+                    $qb->expr()->eq('accountCategoryVisibility.account', 'account'),
+                    $qb->expr()->eq('accountCategoryVisibility.category', ':category')
+                )
+            )
             ->leftJoin('account.group', 'accountGroup')
-            ->where($qb->expr()->notIn('account', $subQuery->getDQL()))
+            ->where($qb->expr()->isNull('accountCategoryVisibility.id'))
             ->andWhere($qb->expr()->in('accountGroup', ':accountGroupIds'))
             ->setParameters([
                 'category' => $category,
@@ -242,7 +238,7 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
         $qb = $this->registry
             ->getManagerForClass('OroB2BCatalogBundle:Category')
             ->getRepository('OroB2BCatalogBundle:Category')
-            ->getChildrenQueryBuilder($category);
+            ->getChildrenQueryBuilderPartial($category);
 
         $qb->leftJoin(
             'OroB2BAccountBundle:Visibility\CategoryVisibility',

@@ -59,17 +59,10 @@ abstract class AbstractSubtreeCacheBuilder
     protected function getCategoryIdsForUpdate(Category $category, $target)
     {
         $categoriesWithStaticFallback = $this->getChildCategoriesWithFallbackStatic($category, $target);
-        $childCategories = $this->getChildCategoriesWithFallbackToParent(
+        $categoryIds = $this->getChildCategoriesIdsWithFallbackToParent(
             $category,
             $categoriesWithStaticFallback,
             $target
-        );
-
-        $categoryIds = array_map(
-            function ($category) {
-                return $category['id'];
-            },
-            $childCategories
         );
 
         $categoryIds[] = $category->getId();
@@ -87,7 +80,7 @@ abstract class AbstractSubtreeCacheBuilder
         $qb = $this->registry
             ->getManagerForClass('OroB2BCatalogBundle:Category')
             ->getRepository('OroB2BCatalogBundle:Category')
-            ->getChildrenQueryBuilder($category, false, 'level');
+            ->getChildrenQueryBuilderPartial($category);
 
         $qb = $this->joinCategoryVisibility($qb, $target);
         $qb = $this->restrictStaticFallback($qb);
@@ -101,7 +94,7 @@ abstract class AbstractSubtreeCacheBuilder
      * @param $target
      * @return array
      */
-    protected function getChildCategoriesWithFallbackToParent(
+    protected function getChildCategoriesIdsWithFallbackToParent(
         Category $category,
         array $categoriesWithStaticFallback,
         $target
@@ -109,7 +102,8 @@ abstract class AbstractSubtreeCacheBuilder
         $qb = $this->registry
             ->getManagerForClass('OroB2BCatalogBundle:Category')
             ->getRepository('OroB2BCatalogBundle:Category')
-            ->getChildrenQueryBuilder($category, false, 'level');
+            ->getChildrenQueryBuilder($category)
+            ->select('partial node.{id}');
 
         $qb = $this->joinCategoryVisibility($qb, $target);
         $qb = $this->restrictToParentFallback($qb);
@@ -130,6 +124,6 @@ abstract class AbstractSubtreeCacheBuilder
             );
         }
 
-        return $qb->getQuery()->getArrayResult();
+        return array_map('current', $qb->getQuery()->getScalarResult());
     }
 }

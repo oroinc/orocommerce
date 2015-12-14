@@ -2,37 +2,10 @@
 
 namespace OroB2B\Bundle\AccountBundle\Model\Action;
 
-use Oro\Bundle\WorkflowBundle\Model\Action\AbstractAction;
+use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;
-
-class ChangeCategoryPosition extends AbstractAction
+class ChangeCategoryPosition extends AbstractCategoryCaseAction
 {
-    /**
-     * @var CategoryCaseCacheBuilderInterface
-     */
-    protected $cacheBuilder;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function initialize(array $options)
-    {
-        if (!$this->cacheBuilder) {
-            throw new \InvalidArgumentException('CacheBuilder for category position change is not provided');
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param CategoryCaseCacheBuilderInterface $cacheBuilder
-     */
-    public function setCacheBuilder(CategoryCaseCacheBuilderInterface $cacheBuilder)
-    {
-        $this->cacheBuilder = $cacheBuilder;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -40,6 +13,16 @@ class ChangeCategoryPosition extends AbstractAction
     {
         $category = $context->getEntity();
 
-        $this->cacheBuilder->categoryPositionChanged($category);
+        /** @var EntityManager $em */
+        $em = $this->registry->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
+        $em->getConnection()->beginTransaction();
+
+        try {
+            $this->cacheBuilder->categoryPositionChanged($category);
+            $em->getConnection()->commit();
+        } catch (\Exception $e) {
+            $em->getConnection()->rollback();
+            throw $e;
+        }
     }
 }

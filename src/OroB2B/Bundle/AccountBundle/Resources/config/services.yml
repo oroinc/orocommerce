@@ -108,6 +108,7 @@ parameters:
 
     #Model
     orob2b_account.model.product_visibility_query_builder_modifier.class: OroB2B\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier
+    orob2b_account.model.action.abstract_category_case_action.class: OroB2B\Bundle\AccountBundle\Model\Action\AbstractCategoryCaseAction
     orob2b_account.model.action.change_category_visibility.class: OroB2B\Bundle\AccountBundle\Model\Action\ChangeCategoryVisibility
     orob2b_account.model.action.change_category_position.class: OroB2B\Bundle\AccountBundle\Model\Action\ChangeCategoryPosition
     orob2b_account.action.resolve_visibility_settings.class: OroB2B\Bundle\AccountBundle\Model\Action\ResolveVisibilitySettings
@@ -754,21 +755,24 @@ services:
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
 
-    orob2b_account.model.action.change_category_visibility:
-        class: %orob2b_account.model.action.change_category_visibility.class%
+    orob2b_account.model.action.abstract_category_case_action:
+        class: %orob2b_account.model.action.abstract_category_case_action.class%
+        abstract: true
         arguments:
             - @oro_workflow.context_accessor
         calls:
-            - [setCacheBuilder, [@orob2b_account.visibility.cache.product.category.cache_builder]]
+            - [setCacheBuilder, [@orob2b_account.visibility.cache.product.category.product_resolved_cache_builder]]
+            - [setRegistry, [@doctrine]]
+
+    orob2b_account.model.action.change_category_visibility:
+        class: %orob2b_account.model.action.change_category_visibility.class%
+        parent: orob2b_account.model.action.abstract_category_case_action
         tags:
             - { name: oro_workflow.action, alias: change_category_visibility }
 
     orob2b_account.model.action.change_category_position:
         class: %orob2b_account.model.action.change_category_position.class%
-        arguments:
-            - @oro_workflow.context_accessor
-        calls:
-            - [setCacheBuilder, [@orob2b_account.visibility.cache.product.category.product_resolved_cache_builder]]
+        parent: orob2b_account.model.action.abstract_category_case_action
         tags:
             - { name: oro_workflow.action, alias: change_category_position }
 

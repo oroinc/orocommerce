@@ -31,14 +31,14 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
      */
     protected function updateAccountGroupsFirstLevel(Category $category, $visibility)
     {
-        $accountGroupsForUpdate = $this->getAccountGroupIdsFirstLevel($category);
-        if ($accountGroupsForUpdate === null) {
+        $accountGroupIdsForUpdate = $this->getAccountGroupIdsFirstLevel($category);
+        if ($accountGroupIdsForUpdate === null) {
             return [];
         }
 
-        $this->updateAccountGroupsProductVisibility($category, $accountGroupsForUpdate, $visibility);
+        $this->updateAccountGroupsProductVisibility($category, $accountGroupIdsForUpdate, $visibility);
 
-        return $accountGroupsForUpdate;
+        return $accountGroupIdsForUpdate;
     }
 
     /**
@@ -109,25 +109,18 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
             ->getManagerForClass('OroB2BAccountBundle:AccountGroup')
             ->createQueryBuilder();
 
-        /** @var QueryBuilder $subQueryQb */
-        $subQueryQb = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility')
-            ->createQueryBuilder();
-
-        $subQuery = $subQueryQb->select('IDENTITY(accountGroupCategoryVisibility.accountGroup)')
-            ->from(
-                'OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility',
-                'accountGroupCategoryVisibility'
-            )
-            ->where($subQueryQb->expr()->eq('accountGroupCategoryVisibility.category', ':category'))
-            ->distinct();
-
         $qb->select('accountGroup.id')
             ->from('OroB2BAccountBundle:AccountGroup', 'accountGroup')
-            ->where($qb->expr()->notIn(
-                'accountGroup',
-                $subQuery->getDQL()
-            ))
+            ->leftJoin(
+                'OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility',
+                'accountGroupCategoryVisibility',
+                Join::WITH,
+                $qb->expr()->andX(
+                    $qb->expr()->eq('accountGroupCategoryVisibility.accountGroup', 'accountGroup'),
+                    $qb->expr()->eq('accountGroupCategoryVisibility.category', ':category')
+                )
+            )
+            ->where($qb->expr()->isNull('accountGroupCategoryVisibility.id'))
             ->setParameter('category', $category);
 
         return array_map('current', $qb->getQuery()->getScalarResult());
