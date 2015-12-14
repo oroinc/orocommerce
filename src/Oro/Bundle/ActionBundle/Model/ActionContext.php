@@ -21,7 +21,7 @@ class ActionContext extends AbstractStorage implements EntityAwareInterface
     }
 
     /**
-     * @return string|null
+     * @return array|null
      */
     public function getRefreshGrid()
     {

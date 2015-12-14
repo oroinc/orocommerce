@@ -9,16 +9,16 @@ use Oro\Bundle\WorkflowBundle\Model\Action\AbstractAction;
 class RefreshGrid extends AbstractAction
 {
     /**
-     * @var string
+     * @var array
      */
-    protected $gridName;
+    protected $gridNames;
 
     /**
      * {@inheritDoc}
      */
     protected function executeAction($context)
     {
-        $this->contextAccessor->setValue($context, 'refreshGrid', $this->gridName);
+        $this->contextAccessor->setValue($context, 'refreshGrid', $this->gridNames);
     }
 
     /**
@@ -26,11 +26,11 @@ class RefreshGrid extends AbstractAction
      */
     public function initialize(array $options)
     {
-        if (count($options) !== 1 || empty($options[0])) {
+        if (empty($options)) {
             throw new InvalidParameterException('Gridname parameter must be specified');
         }
 
-        $this->gridName = $options[0];
+        $this->gridNames = array_unique($options);
 
         return $this;
     }

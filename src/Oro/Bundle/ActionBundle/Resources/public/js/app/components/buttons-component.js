@@ -55,6 +55,12 @@ define(function(require) {
 
                 $.getJSON($element.attr('href'))
                     .done(_.bind(function(response) {
+                        if (response.flashMessages) {
+                            for (var message in response.flashMessages) {
+                                var type = response.flashMessages[message];
+                                messenger.notificationFlashMessage(type[0], message);
+                            }
+                        }
                         this.doResponse(e, response);
                     }, this))
                     .fail(function(jqXHR) {
@@ -118,7 +124,9 @@ define(function(require) {
                 e.stopImmediatePropagation();
                 this.doRedirect(response.redirectUrl);
             } else if (response.refreshGrid) {
-                mediator.trigger('datagrid:doRefresh:' + response.refreshGrid);
+                for (var k in response.refreshGrid) {
+                    mediator.trigger('datagrid:doRefresh:' + response.refreshGrid[k]);
+                }
             } else {
                 this.doPageReload();
             }
