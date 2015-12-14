@@ -223,6 +223,8 @@ datagrid:
                 rate:
                     type:      string
                     data_name: tax.rate
+        properties:
+            id: ~
     tax-taxes-grid:
         extends: tax-taxes-grid-base
         properties:
@@ -272,7 +274,7 @@ datagrid:
             query:
                 select:
                     - tax_rule.id
-                    - tax.description
+                    - tax_rule.description
                     - account_tax_code.code as account_tax_code_code
                     - product_tax_code.code as product_tax_code_code
                     - tax.code as tax_code

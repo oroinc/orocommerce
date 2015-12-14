@@ -18,3 +18,10 @@ OroB2B\Bundle\TaxBundle\Entity\Tax:
                 min: 1
                 max: 255
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Alphanumeric: ~
+
+OroB2B\Bundle\TaxBundle\Entity\TaxRule:
+    properties:
+        description:
+            - NotBlank: ~
+        tax:
+            - NotBlank: ~

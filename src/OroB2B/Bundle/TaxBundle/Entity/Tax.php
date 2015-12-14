@@ -13,13 +13,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  * @ORM\HasLifecycleCallbacks
  * @Config(
  *      routeName="orob2b_tax_tax_index",
- *      routeView="orob2b_tax_tax_view",
- *      defaultValues={
-*           "form"={
- *              "form_type"="orob2b_tax_tax_select",
- *              "grid_name"="tax-taxes-select-grid",
- *          },
- *      }
+ *      routeView="orob2b_tax_tax_view"
  * )
  */
 class Tax

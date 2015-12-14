@@ -50,6 +50,8 @@
                 {
                     'data': [
                         form_row(form.description),
+                        form_row(form.accountTaxCode),
+                        form_row(form.productTaxCode),
                         form_row(form.tax),
                     ]
                 }
@@ -61,6 +63,8 @@
         'formErrors': form_errors(form),
         'dataBlocks': dataBlocks
     }%}
+
+
 
     {{ parent() }}
 {% endblock content_data %}

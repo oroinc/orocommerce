@@ -3,7 +3,7 @@ parameters:
     orob2b_tax.form.type.account_tax_code.class: OroB2B\Bundle\TaxBundle\Form\Type\AccountTaxCodeType
     orob2b_tax.form.type.tax.class: OroB2B\Bundle\TaxBundle\Form\Type\TaxType
     orob2b_tax.form.type.tax_rule.class: OroB2B\Bundle\TaxBundle\Form\Type\TaxRuleType
-    orob2b_tax.form.type.tax_select.class: OroB2B\src\OroB2B\Bundle\TaxBundle\Form\Type\TaxSelectType
+    orob2b_tax.form.type.tax_select.class: OroB2B\Bundle\TaxBundle\Form\Type\TaxSelectType
     orob2b_tax.form.type.product_tax_code_autocomplete.class: OroB2B\Bundle\TaxBundle\Form\Type\ProductTaxCodeAutocompleteType
     orob2b_tax.form.type.account_tax_code_autocomplete.class: OroB2B\Bundle\TaxBundle\Form\Type\AccountTaxCodeAutocompleteType
 

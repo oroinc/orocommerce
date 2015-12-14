@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\src\OroB2B\Bundle\TaxBundle\Form\Type;
+namespace OroB2B\Bundle\TaxBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -43,4 +43,3 @@ class TaxSelectType extends AbstractType
         return OroEntitySelectOrCreateInlineType::NAME;
     }
 }
-

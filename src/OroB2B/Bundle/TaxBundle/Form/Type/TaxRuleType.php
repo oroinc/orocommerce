@@ -2,10 +2,11 @@
 
 namespace OroB2B\Bundle\TaxBundle\Form\Type;
 
-use OroB2B\src\OroB2B\Bundle\TaxBundle\Form\Type\TaxSelectType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+
+use OroB2B\Bundle\TaxBundle\Form\Type\TaxSelectType;
 
 class TaxRuleType extends AbstractType
 {
@@ -34,10 +35,16 @@ class TaxRuleType extends AbstractType
                 'label' => 'orob2b.tax.taxrule.description.label',
                 'required' => true
             ])
-            ->add('tax', TaxSelectType::NAME, [
-//                'label' => 'test'
+            ->add('accountTaxCode', AccountTaxCodeAutocompleteType::NAME, [
+                'label' => 'orob2b.tax.taxrule.account_tax_code.label'
             ])
-            ;
+            ->add('productTaxCode', ProductTaxCodeAutocompleteType::NAME, [
+                'label' => 'orob2b.tax.taxrule.product_tax_code.label'
+            ])
+            ->add('tax', TaxSelectType::NAME, [
+                'label' => 'orob2b.tax.taxrule.tax.label',
+                'required' => true
+            ]);
     }
 
     /**
