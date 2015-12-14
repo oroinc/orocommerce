@@ -6,7 +6,6 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormError;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
@@ -20,9 +19,6 @@ class ProductTaxExtension extends AbstractTypeExtension
 {
     /** @var DoctrineHelper */
     protected $doctrineHelper;
-
-    /** @var ProductTaxCodeRepository  */
-    protected $repository;
 
     /**
      * @param DoctrineHelper $doctrineHelper
@@ -122,8 +118,9 @@ class ProductTaxExtension extends AbstractTypeExtension
      */
     protected function getProductTaxCode($product)
     {
-        $this->repository = $this->doctrineHelper->getEntityRepository('OroB2BTaxBundle:ProductTaxCode');
+        /** @var ProductTaxCodeRepository $repository */
+        $repository = $this->doctrineHelper->getEntityRepository('OroB2BTaxBundle:ProductTaxCode');
 
-        return $this->repository->findOneByProduct($product);
+        return $repository->findOneByProduct($product);
     }
 }

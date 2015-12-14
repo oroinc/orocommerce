@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: g
- * Date: 09.12.15
- * Time: 17:15
- */
 
 namespace OroB2B\Bundle\TaxBundle\EventListener;
 
