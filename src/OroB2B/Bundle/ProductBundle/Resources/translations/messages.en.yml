@@ -121,6 +121,17 @@ orob2b:
                 import_from_file:
                     title: Import From File
                     description: 'Import From File description'
+                import_validation:
+                    title: Import validation results
+                    total_items: Total number of records
+                    valid_items: Valid items
+                    invalid_items: Records with errors
+                    number_of_items: Number of items
+                    validator:
+                        not_found: 'Item number %sku% does not found.'
+                        invalid_format: 'Row #%id% has invalid format.'
+
+
                 continue.label: Continue
                 messages:
                     not_added_products: '{1} Product %sku% can’t be added.|]1,Inf]Products %sku% can’t be added.'

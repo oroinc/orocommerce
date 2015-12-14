@@ -46,7 +46,7 @@
 
     <div class="validation-info">
         <strong>
-            {{ 'Import validation results'|trans }}
+            {{ 'orob2b.product.frontend.quick_add.import_validation.title'|trans }}
         </strong>
 
         <table class="table table-condensed table-hover">
@@ -55,14 +55,14 @@
                 <th></th>
                 <th>
                     <div class="pull-right">
-                        {{ 'Number of items'|trans }}
+                        {{ 'orob2b.product.frontend.quick_add.import_validation.number_of_items'|trans }}
                     </div>
                 </th>
             </tr>
             </thead>
             <tbody>
             <tr>
-                <td>{{ 'Total number of records'|trans }}</td>
+                <td>{{ 'orob2b.product.frontend.quick_add.import_validation.total_items'|trans }}</td>
                 <td>
                     <div class="pull-right">
                         {{ totalRowsCount }}
@@ -70,7 +70,7 @@
                 </td>
             </tr>
             <tr>
-                <td>{{ 'Valid items'|trans }}</td>
+                <td>{{ 'orob2b.product.frontend.quick_add.import_validation.valid_items'|trans }}</td>
                 <td>
                     <div class="pull-right">
                         {{ validRowsCount }}
@@ -82,10 +82,10 @@
                 <td>
                     {% if invalidRowsCount %}
                         <a href="javascript: void(0)" class="error-toggle">
-                            {{ 'Records with errors '|trans }}
+                            {{ 'orob2b.product.frontend.quick_add.import_validation.invalid_items'|trans }}
                         </a>
                     {% else %}
-                        {{ 'Records with errors '|trans }}
+                        {{ 'orob2b.product.frontend.quick_add.import_validation.invalid_items'|trans }}
                     {% endif %}
                 </td>
                 <td>
@@ -105,9 +105,11 @@
                 {% for invalidRow in result.getInvalidRows() %}
                     <li>
                         {% if not invalidRow.isComplete %}
-                            Row #{{ invalidRow.getId() }} has invalid format.
+                            {{ 'orob2b.product.frontend.quick_add.import_validation.validator.invalid_format'
+                                |trans({'%id%' : invalidRow.getId()}) }}
                         {% else %}
-                            Item number {{ invalidRow.getSku() }} does not found.
+                            {{ 'orob2b.product.frontend.quick_add.import_validation.validator.not_found'
+                                |trans({'%sku%' : invalidRow.getSku()}) }}
                         {% endif %}
                     </li>
                 {% endfor %}
