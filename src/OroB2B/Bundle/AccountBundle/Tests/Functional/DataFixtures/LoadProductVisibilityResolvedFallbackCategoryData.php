@@ -116,7 +116,6 @@ class LoadProductVisibilityResolvedFallbackCategoryData extends AbstractFixture 
             'product.2',
             'product.3',
             'product.6',
-            'product.4',
         ],
         'account.level_1.4' => [
             'product.3',

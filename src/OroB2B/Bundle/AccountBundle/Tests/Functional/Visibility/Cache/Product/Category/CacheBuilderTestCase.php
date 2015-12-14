@@ -1,32 +1,24 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Model\Action;
+namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product\Category;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
-use Oro\Bundle\ActionBundle\Model\ActionContext;
 use Oro\Component\Testing\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Model\Action\CategoryCaseAction;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\CacheBuilder;
 
-abstract class CategoryCaseActionTestCase extends WebTestCase
+abstract class CacheBuilderTestCase extends WebTestCase
 {
     /**
-     * @var ActionContext|\PHPUnit_Framework_MockObject_MockObject
+     * @var CacheBuilder
      */
-    protected $context;
-
-    /**
-     * @var CategoryCaseAction
-     */
-    protected $action;
+    protected $cacheBuilder;
 
     public function setUp()
     {
-        $this->markTestIncomplete('Will be fixed in BB-1710');
-
         $this->initClient();
 
         $this->disableActions();
@@ -36,9 +28,9 @@ abstract class CategoryCaseActionTestCase extends WebTestCase
             . '\LoadProductVisibilityResolvedFallbackCategoryData'
         ]);
 
-        $this->context = $this->getMock('Oro\Bundle\ActionBundle\Model\ActionContext');
+        $this->cacheBuilder = $this->getContainer()->get($this->getCacheBuilderContainerId());
 
-        $this->action = $this->getContainer()->get($this->getActionContainerId());
+        $this->flushCategoryVisibilityCache();
     }
 
     protected function disableActions()
@@ -54,10 +46,15 @@ abstract class CategoryCaseActionTestCase extends WebTestCase
         $em->flush();
     }
 
+    protected function flushCategoryVisibilityCache()
+    {
+        $this->getContainer()->get('orob2b_account.storage.category_visibility_storage')->flush();
+    }
+
     /**
      * @return string
      */
-    abstract protected function getActionContainerId();
+    abstract protected function getCacheBuilderContainerId();
 
     /**
      * @param array $expectedData
