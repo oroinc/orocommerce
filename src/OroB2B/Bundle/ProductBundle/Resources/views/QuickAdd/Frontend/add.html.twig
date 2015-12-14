@@ -104,34 +104,21 @@
     </div>
 
     <script type="text/javascript">
-        require(['jquery', 'orotranslation/js/translator', 'oro/dialog-widget', 'oroui/js/mediator', 'ready!app'],
-                function($, __, DialogWidget, mediator) {
-
+        require(['jquery', 'orotranslation/js/translator', 'orob2bproduct/js/app/widget/quick-add-import-widget'],
+                function($, __, QuickAddImportWidget) {
                     $('.import-button').on('click', function(e) {
                         e.preventDefault();
 
-                        var widget = new DialogWidget({
+                        var widget = new QuickAddImportWidget({
                             'url': this.dataset.url,
-                            'title': {{ 'Import From File'|trans|json_encode|raw }},
-                            'stateEnabled': false,
-                            'incrementalPosition': false,
-                            'dialogOptions': {
-                                'width': 680,
-                                'autoResize': true,
-                                'modal': true,
-                                'height': 350
-                            }
+                            'title': __('Import From File')
                         });
 
                         widget.render();
-
                     });
-
-
                 });
-        require(['jquery', 'orotranslation/js/translator', 'oro/dialog-widget', 'oroui/js/mediator', 'ready!app'],
-                function($, __, DialogWidget, mediator) {
-
+        require(['jquery', 'orotranslation/js/translator', 'orob2bproduct/js/app/widget/quick-add-import-widget'],
+                function($, __, QuickAddImportWidget) {
                     $('.copy-paste-form').on('submit', function(e) {
                         e.preventDefault();
 
@@ -143,20 +130,18 @@
                             return false;
                         }
 
-                        var widget = new DialogWidget({
-                            'title': {{ 'Import Validation'|trans|json_encode|raw }},
-                            'stateEnabled': false,
-                            'incrementalPosition': false,
-                            'dialogOptions': {
-                                'width': 680,
-                                'autoResize': true,
-                                'modal': true,
-                                'height': 350
-                            }
+                        var widget = new QuickAddImportWidget({
+                            'title': __('Import Validation')
                         });
 
                         widget.render();
                         widget.trigger('beforeContentLoad');
+
+                        form.append($('<input>').attr({
+                            type: 'hidden',
+                            name: '_wid',
+                            value: widget.getWid()
+                        }));
 
                         $.ajax({
                             type: form.attr('method'),
@@ -166,7 +151,6 @@
                                 widget.setContent(data);
                                 widget.trigger('contentLoad');
                         });
-
                     });
                 });
     </script>

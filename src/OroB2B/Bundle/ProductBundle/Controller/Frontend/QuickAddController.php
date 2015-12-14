@@ -51,19 +51,18 @@ class QuickAddController extends Controller
     {
         $form = $this->createForm(QuickAddImportFromFileType::NAME)->handleRequest($request);
 
-        /** @var QuickAddCopyPaste $formData */
-        $formData = $form->getData();
+        $formData = $form->get(QuickAddType::PRODUCTS_FIELD_NAME)->getData();
 
-
-        if (!empty($formData[QuickAddType::PRODUCTS_FIELD_NAME])) {
+        if ($formData) {
             $resultForm = $this->createForm(QuickAddOrderType::NAME);
-            $resultForm->setData($formData[QuickAddType::PRODUCTS_FIELD_NAME]);
+            $resultForm->setData($formData);
 
             return $this->render(
                 'OroB2BProductBundle:QuickAdd\Frontend:validationResult.html.twig',
                 [
-                    'result' => $formData[QuickAddType::PRODUCTS_FIELD_NAME],
-                    'form' => $resultForm->createView()
+                    'result' => $formData,
+                    'form' => $resultForm->createView(),
+                    'backToUrl' => $request->getUri()
                 ]
             );
         }
@@ -103,7 +102,12 @@ class QuickAddController extends Controller
      */
     public function copyPasteAction(Request $request)
     {
-        $copyPasteForm = $this->createForm(QuickAddCopyPasteType::NAME, new QuickAddCopyPaste())->handleRequest($request);
+        $copyPasteForm = $this->createForm(
+            QuickAddCopyPasteType::NAME,
+            new QuickAddCopyPaste()
+        );
+
+        $copyPasteForm->handleRequest($request);
 
         $resultForm = $this->createForm(QuickAddOrderType::NAME);
 

@@ -1,5 +1,6 @@
 {% set widgetOptions = {
-    '_wid': app.request.get('_wid')
+    '_wid': app.request.get('_wid'),
+    'backToUrl': backToUrl|default(null)
 } %}
 <div class="widget-content"
      data-page-component-module="orob2bfrontend/js/app/components/widget-form-component"
@@ -12,7 +13,7 @@
             }
 
             .import-errors ol {
-                height: 198px;
+                height: 180px;
                 overflow: auto;
                 padding-left: 25px;
             }
@@ -120,8 +121,8 @@
     {% endif %}
 
     <script type="text/javascript">
-        require(['jquery', 'orotranslation/js/translator', 'oroui/js/widget-manager', 'oroui/js/messenger'],
-                function($, __, WidgetManager, Messenger) {
+        require(['jquery'],
+                function($) {
                     var container = $('#import-validation');
                     var toggleErrors = function(e) {
                         e.preventDefault();
@@ -157,22 +158,17 @@
         {{ form_widget(form.component) }}
         {{ form_widget(form.additional) }}
 
-        {% if  widgetOptions._wid %}
-            <div class="btn-group pull-left">
-                <button data-url="{{ path('orob2b_product_frontend_quick_add_import') }}" class="btn back-action">Back</button>
-            </div>
-        {% else %}
-            <div class="btn-group pull-left">
+        <div class="btn-group pull-left alt-actions">
+            {% if widgetOptions.backToUrl %}
+                <button data-url="{{ widgetOptions.backToUrl }}" class="btn back-action">Back</button>
+            {% else %}
                 <button type="reset" class="btn cancel-action">Cancel</button>
-            </div>
-        {% endif %}
-
-        <div class="btn-group pull-right">
-
+            {% endif %}
+        </div>
+        <div class="btn-group pull-right alt-actions">
             {% if validRowsCount > 0 %}
                 {% placeholder orob2b_product_quick_add_import_buttons  %}
             {% endif %}
-
         </div>
 
         <div class="widget-actions">
@@ -189,9 +185,14 @@
                     var wid = {{ widgetOptions._wid|json_encode|raw }};
 
                     widgetManager.getWidgetInstance(wid, function(widget) {
+
                         $('.back-action').on('click', function (e) {
                             widget.setUrl(this.dataset.url);
                             widget.loadContent();
+                        });
+
+                        $('.cancel-action').on('click', function (e) {
+                            widget.dispose()
                         });
                     });
                 });
