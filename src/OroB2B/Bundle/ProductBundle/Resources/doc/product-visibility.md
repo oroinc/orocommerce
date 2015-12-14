@@ -42,12 +42,12 @@ For `ProductVisibilityResolved`, entity is not written to resolved table is case
 For any create/update/delete in source visibility entities must be accompanied by a corresponding change in the resolve tables.
 
 
-|                                |                              | Product Visibility (to all)             |        |                                             |                                             |
-|--------------------------------|------------------------------|-----------------------------------------|--------|---------------------------------------------|---------------------------------------------|
-|                                |                              | Category                                | Config | Hidden                                      | Visible                                     |
-| ProductToAllVisibilityResolved | website (FK) (PK)            | Get website from old product visibility |    X   | Get website from current product visibility | Get website from current product visibility |
-|                                | product (FK)                 | Get product from old product visibility |    X   | Get product from current product visibility | Get product from current product visibility |
-|                                | visibility                   | Take from category visibility cache     |    X   |                   ::HIDDEN                  |                  ::VISIBLE                  |
-|                                | sourceProductVisibility (FK) |                   null                  |    X   | Current product visibility                  | Current product visibility                  |
-|                                | source                       |                ::CATEGORY               |    X   |                   ::STATIC                  |                   ::STATIC                  |
-|                                | category (FK)                | Get category from product               |    X   |                     null                    |                     null                    |
+|                                   |                              | Product Visibility (to all)                                                                                                                    |
+|-----------------------------------|------------------------------|-----------------------------------------|----------|---------------------------------------------|---------------------------------------------|
+|                                   |                              | *Category*                              | *Config* | *Hidden*                                    | *Visible*                                   |
+| *ProductToAll VisibilityResolved* | website (FK) (PK)            | Get website from old product visibility |    X     | Get website from current product visibility | Get website from current product visibility |
+|                                   | product (FK)                 | Get product from old product visibility |    X     | Get product from current product visibility | Get product from current product visibility |
+|                                   | visibility                   | Take from category visibility cache     |    X     |                   ::HIDDEN                  |                  ::VISIBLE                  |
+|                                   | sourceProductVisibility (FK) |                   null                  |    X     | Current product visibility                  | Current product visibility                  |
+|                                   | source                       |                ::CATEGORY               |    X     |                   ::STATIC                  |                   ::STATIC                  |
+|                                   | category (FK)                | Get category from product               |    X     |                     null                    |                     null                    |
