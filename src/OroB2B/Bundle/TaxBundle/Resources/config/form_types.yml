@@ -1,12 +1,14 @@
 parameters:
     orob2b_tax.form.type.product_tax_code.class: OroB2B\Bundle\TaxBundle\Form\Type\ProductTaxCodeType
     orob2b_tax.form.type.account_tax_code.class: OroB2B\Bundle\TaxBundle\Form\Type\AccountTaxCodeType
+
     orob2b_tax.form.type.product_tax_code_autocomplete.class: OroB2B\Bundle\TaxBundle\Form\Type\ProductTaxCodeAutocompleteType
     orob2b_tax.form.type.account_tax_code_autocomplete.class: OroB2B\Bundle\TaxBundle\Form\Type\AccountTaxCodeAutocompleteType
 
     orob2b_tax.form.extension.product_tax.class: OroB2B\Bundle\TaxBundle\Form\Extension\ProductTaxExtension
     orob2b_tax.form.extension.account_tax.class: OroB2B\Bundle\TaxBundle\Form\Extension\AccountTaxExtension
 
+    orob2b_tax.form.type.tax.class: OroB2B\Bundle\TaxBundle\Form\Type\TaxType
 
 services:
     orob2b_tax.form.type.product_tax_code:
@@ -46,3 +48,10 @@ services:
             - @oro_entity.doctrine_helper
         tags:
             - { name: form.type_extension, alias: orob2b_account_type }
+
+    orob2b_tax.form.type.tax:
+        class: %orob2b_tax.form.type.tax.class%
+        calls:
+            - [setDataClass, [%orob2b_tax.entity.tax.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_tax_tax_type }

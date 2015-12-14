@@ -2,21 +2,25 @@ parameters:
     orob2b_tax.entity.abstract_tax_code.class: OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode
     orob2b_tax.entity.product_tax_code.class: OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode
     orob2b_tax.entity.account_tax_code.class: OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode
+    orob2b_tax.entity.tax.class: OroB2B\Bundle\TaxBundle\Entity\Tax
 
     orob2b_tax.event_listener.form_view.class: OroB2B\Bundle\TaxBundle\EventListener\FormViewListener
 
     orob2b_tax.product_tax_code.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_tax.account_tax_code.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+
+    orob2b_tax.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+
 services:
     orob2b_tax.manager.product_tax_code.api:
-        class: %orob2b_tax.product_tax_code.manager.api.class%
+        class: %orob2b_tax.manager.api.attribute.class%
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - %orob2b_tax.entity.product_tax_code.class%
             - @doctrine.orm.entity_manager
 
     orob2b_tax.manager.account_tax_code.api:
-        class: %orob2b_tax.account_tax_code.manager.api.class%
+        class: %orob2b_tax.manager.api.attribute.class%
         parent: oro_soap.manager.entity_manager.abstract
         arguments:
             - %orob2b_tax.entity.account_tax_code.class%
@@ -51,3 +55,10 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onAccountView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-edit, method: onAccountEdit }
+
+    orob2b_tax.manager.tax.api:
+        class: %orob2b_tax.manager.api.attribute.class%
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - %orob2b_tax.entity.tax.class%
+            - @doctrine.orm.entity_manager

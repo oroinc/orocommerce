@@ -8,6 +8,11 @@ orob2b_tax_account_tax_code:
     type:         annotation
     prefix:       /tax/account
 
+orob2b_tax_tax:
+    resource:     "@OroB2BTaxBundle/Controller/TaxController.php"
+    type:         annotation
+    prefix:       /tax/tax
+
 orob2b_tax_bundle_api:
     resource:     "@OroB2BTaxBundle/Resources/config/oro/routing_api.yml"
     prefix:       api/rest/{version}/
