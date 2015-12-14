@@ -3,8 +3,6 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\DataTransformer;
 
 use OroB2B\Bundle\ProductBundle\Form\DataTransformer\TextareaToRowCollectionTransformer;
-use OroB2B\Bundle\ProductBundle\Model\QuickAddRow;
-use OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection;
 
 class TextareaToRowCollectionTransformerTest extends RowCollectionTransformerTest
 {
@@ -27,7 +25,7 @@ class TextareaToRowCollectionTransformerTest extends RowCollectionTransformerTes
      *
      * @param string $string
      */
-    public function testTransformsСommaSeparatedLines($string)
+    public function testReverseTransform($string)
     {
         $this->assertValidCollection($this->transformer->reverseTransform($string));
     }

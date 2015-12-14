@@ -2,12 +2,10 @@
 
 namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
-use OroB2B\Bundle\ProductBundle\Form\DataTransformer\QuickAddRowCollectionToQuickAddOrderTransformer;
-use OroB2B\Bundle\ProductBundle\Model\QuickAddRowCollection;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+
+use OroB2B\Bundle\ProductBundle\Form\DataTransformer\QuickAddRowCollectionToQuickAddOrderTransformer;
 
 class QuickAddOrderType extends AbstractType
 {
@@ -27,6 +25,4 @@ class QuickAddOrderType extends AbstractType
     {
         return self::NAME;
     }
-
-
 }

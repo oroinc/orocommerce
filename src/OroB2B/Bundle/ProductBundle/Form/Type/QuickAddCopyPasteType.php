@@ -35,7 +35,6 @@ class QuickAddCopyPasteType extends AbstractType
                             new QuickAddRowCollection()
                         ],
                         'label' => false,
-                        'data' => "HSSUC, 1\nHSTUC, 2\nHCCM, 3\nSKU1, 10\nSKU2,20\nSKU3, 30\n",
                     ]
                 )->addModelTransformer(new TextareaToRowCollectionTransformer())
             );
