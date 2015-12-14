@@ -21,7 +21,7 @@ class ContextHelper
     protected $requestStack;
 
     /** @var array */
-    protected $actionContexts = [];
+    protected $actionDatas = [];
 
     /** @var  PropertyAccessor */
     protected $propertyAccessor;
@@ -37,34 +37,33 @@ class ContextHelper
     }
 
     /**
+     * @param array|null $context
      * @return array
      */
-    public function getContext()
+    public function getContext(array $context = null)
     {
-        return $this->normalizeContext(
-            [
+        if (null === $context) {
+            $context = [
                 self::ROUTE_PARAM => $this->getRequestParameter(self::ROUTE_PARAM),
                 self::ENTITY_ID_PARAM => $this->getRequestParameter(self::ENTITY_ID_PARAM),
                 self::ENTITY_CLASS_PARAM => $this->getRequestParameter(self::ENTITY_CLASS_PARAM),
-            ]
-        );
+            ];
+        }
+
+        return $this->normalizeContext($context);
     }
 
     /**
      * @param array|null $context
-     * @return ActionContext
+     * @return ActionData
      */
-    public function getActionContext(array $context = null)
+    public function getActionData(array $context = null)
     {
-        if (!$context) {
-            $context = $this->getContext();
-        } else {
-            $context = $this->normalizeContext($context);
-        }
+        $context = $this->getContext($context);
 
         $hash = $this->generateHash($context, [self::ENTITY_CLASS_PARAM, self::ENTITY_ID_PARAM]);
 
-        if (!array_key_exists($hash, $this->actionContexts)) {
+        if (!array_key_exists($hash, $this->actionDatas)) {
             $entity = null;
 
             if ($context['entityClass']) {
@@ -74,10 +73,10 @@ class ContextHelper
                 );
             }
 
-            $this->actionContexts[$hash] = new ActionContext($entity ? ['data' => $entity] : []);
+            $this->actionDatas[$hash] = new ActionData($entity ? ['data' => $entity] : []);
         }
 
-        return $this->actionContexts[$hash];
+        return $this->actionDatas[$hash];
     }
 
     /**

@@ -40,23 +40,23 @@ class WidgetController extends Controller
      */
     public function formAction(Request $request, $actionName)
     {
-        $context = $this->getContextHelper()->getActionContext();
+        $data = $this->getContextHelper()->getActionData();
         $errors = new ArrayCollection();
         $params = [];
 
         try {
             /** @var Form $form */
-            $form = $this->get('oro_action.form_manager')->getActionForm($actionName);
+            $form = $this->get('oro_action.form_manager')->getActionForm($actionName, $data);
             $form->handleRequest($request);
 
             if ($form->isValid()) {
-                $context = $this->getActionManager()->execute($actionName, $form->getData(), $errors);
+                $data = $this->getActionManager()->execute($actionName, $form->getData(), $errors);
 
-                $params['response'] = $context->getRedirectUrl() ? ['redirectUrl' => $context->getRedirectUrl()] : [];
+                $params['response'] = $data->getRedirectUrl() ? ['redirectUrl' => $data->getRedirectUrl()] : [];
             }
 
             $params['form'] = $form->createView();
-            $params['context'] = $context->getValues();
+            $params['context'] = $data->getValues();
         } catch (\Exception $e) {
             if (!$errors->count()) {
                 $errors->add(['message' => $e->getMessage()]);

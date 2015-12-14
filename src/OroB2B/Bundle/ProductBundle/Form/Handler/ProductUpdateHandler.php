@@ -6,7 +6,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\ActionBundle\Model\ActionContext;
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\UIBundle\Route\Router;
@@ -75,7 +75,7 @@ class ProductUpdateHandler extends UpdateHandler
 
             $actionContext = $this->actionManager->execute(
                 'orob2b_product_duplicate_action',
-                new ActionContext(['data' => $entity])
+                new ActionData(['data' => $entity])
             );
 
             if ($actionContext->getRedirectUrl()) {
