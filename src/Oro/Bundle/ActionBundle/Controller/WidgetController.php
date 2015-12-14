@@ -46,12 +46,11 @@ class WidgetController extends Controller
 
         try {
             /** @var Form $form */
-            $form = $this->get('oro_action.form_manager')->getActionForm($actionName);
+            $form = $this->get('oro_action.form_manager')->getActionForm($actionName, $context);
             $form->handleRequest($request);
 
             if ($form->isValid()) {
-                $context = $this->getActionManager()->execute($actionName, $form->getData(), $errors);
-
+                $this->getActionManager()->executeByActionContext($actionName, $form->getData(), $errors);
                 $params['response'] = $context->getRedirectUrl() ? ['redirectUrl' => $context->getRedirectUrl()] : [];
             }
 

@@ -5,8 +5,6 @@ namespace Oro\Bundle\ActionBundle\Model;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormFactoryInterface;
 
-use Oro\Bundle\ActionBundle\Exception\ActionNotFoundException;
-
 class ActionFormManager
 {
     /** @var FormFactoryInterface */
@@ -35,22 +33,17 @@ class ActionFormManager
 
     /**
      * @param string $actionName
+     * @param ActionContext $actionContext
      * @return Form
-     * @throws ActionNotFoundException
      */
-    public function getActionForm($actionName)
+    public function getActionForm($actionName, ActionContext $actionContext)
     {
-        $action = $this->actionManager->getAction($actionName);
-        if (!$action) {
-            throw new ActionNotFoundException($actionName);
-        }
-
-        $context = $this->contextHelper->getActionContext();
+        $action = $this->actionManager->getAction($actionName, $actionContext);
 
         return $this->formFactory->create(
             $action->getDefinition()->getFormType(),
-            $context,
-            array_merge($action->getFormOptions($context), ['action' => $action])
+            $actionContext,
+            array_merge($action->getFormOptions($actionContext), ['action' => $action])
         );
     }
 }

@@ -81,10 +81,6 @@ class ActionFormManagerTest extends \PHPUnit_Framework_TestCase
 
         $context = new ActionContext(['data' => ['param']]);
 
-        $this->contextHelper->expects($this->once())
-            ->method('getActionContext')
-            ->willReturn($context);
-
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
 
         $this->formFactory->expects($this->once())
@@ -99,19 +95,6 @@ class ActionFormManagerTest extends \PHPUnit_Framework_TestCase
             )
             ->willReturn($form);
 
-        $this->assertSame($form, $this->manager->getActionForm($context));
-    }
-
-    /**
-     * @expectedException \Oro\Bundle\ActionBundle\Exception\ActionNotFoundException
-     * @expectedExceptionMessage Action with name "test" not found
-     */
-    public function testGetActionFormException()
-    {
-        $this->actionManager->expects($this->once())
-            ->method('getAction')
-            ->willReturn(null);
-
-        $this->manager->getActionForm('test');
+        $this->assertSame($form, $this->manager->getActionForm($context, new ActionContext(['data' => ['param']])));
     }
 }

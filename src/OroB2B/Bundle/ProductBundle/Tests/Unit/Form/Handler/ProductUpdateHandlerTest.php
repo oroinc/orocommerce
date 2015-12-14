@@ -183,12 +183,11 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
             ->with('orob2b.product.controller.product.saved_and_duplicated.message')
             ->will($this->returnValue($savedAndDuplicatedMessage));
         $this->actionManager->expects($this->once())
-            ->method('execute')
+            ->method('executeByActionContext')
             ->with(
                 'orob2b_product_duplicate_action',
                 new ActionContext(['data' => $entity])
-            )
-            ->willReturn(new ActionContext(['redirectUrl' => 'generated_redirect_url']));
+            );
 
         $result = $this->handler->handleUpdate(
             $entity,
@@ -198,7 +197,7 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
             $message
         );
 
-        $this->assertEquals('generated_redirect_url', $result->headers->get('location'));
+        $this->assertEquals('test_url', $result->headers->get('location'));
         $this->assertEquals(302, $result->getStatusCode());
     }
 

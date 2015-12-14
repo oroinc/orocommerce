@@ -68,26 +68,28 @@ class ActionManager
 
     /**
      * @param string $actionName
-     * @param ActionContext $actionContext
-     * @param Collection $errors
      * @param array $context
+     * @param Collection|null $errors
      * @return ActionContext
-     * @throws \Exception
      */
-    public function execute(
-        $actionName,
-        ActionContext $actionContext = null,
-        Collection $errors = null,
-        array $context = null
-    ) {
-        $action = $this->getAction($actionName, $context, $actionContext);
-        if (!$action) {
-            throw new ActionNotFoundException($actionName);
-        }
+    public function executeByContext($actionName, array $context = null, Collection $errors = null)
+    {
+        $actionContext = $this->contextHelper->getActionContext($context);
 
-        if (!$actionContext) {
-            $actionContext = $this->contextHelper->getActionContext();
-        }
+        $this->executeByActionContext($actionName, $actionContext, $errors);
+
+        return $actionContext;
+    }
+
+    /**
+     * @param string $actionName
+     * @param ActionContext $actionContext
+     * @param Collection|null $errors
+     */
+    public function executeByActionContext($actionName, ActionContext $actionContext, Collection $errors = null)
+    {
+        $action = $this->getAction($actionName, $actionContext);
+
         $action->execute($actionContext, $errors);
 
         $entity = $actionContext->getEntity();
@@ -103,8 +105,6 @@ class ActionManager
                 throw $e;
             }
         }
-
-        return $actionContext;
     }
 
     /**
@@ -124,39 +124,36 @@ class ActionManager
     {
         $this->loadActions();
 
-        return $this->findActions($context === null ? $this->contextHelper->getContext() : $context);
+        return $this->findActions($this->contextHelper->getContext($context));
+    }
+
+    /**
+     * @param string $actionName
+     * @param ActionContext $actionContext
+     * @return Action
+     * @throws ActionNotFoundException
+     */
+    public function getAction($actionName, ActionContext $actionContext)
+    {
+        $this->loadActions();
+
+        $action = array_key_exists($actionName, $this->actions) ? $this->actions[$actionName] : null;
+        if (!$action instanceof Action || !$action->isAvailable($actionContext)) {
+            throw new ActionNotFoundException($actionName);
+        }
+
+        return $action;
     }
 
     /**
      * @param string $actionName
      * @param array|null $context
-     * @param ActionContext|null $actionContext
-     * @return null|Action
-     */
-    public function getAction($actionName, array $context = null, ActionContext $actionContext = null)
-    {
-        $this->loadActions();
-
-        $context = array_merge($this->contextHelper->getContext(), (array)$context);
-        if (null === $actionContext) {
-            $actionContext = $this->contextHelper->getActionContext($context);
-        }
-
-        /* @var $action Action */
-        $action = array_key_exists($actionName, $this->actions) ? $this->actions[$actionName] : null;
-        if ($action && $action->isAvailable($actionContext)) {
-            return $action;
-        }
-    }
-
-    /**
-     * @param string $actionName
      * @return string
      */
-    public function getDialogTemplate($actionName)
+    public function getDialogTemplate($actionName, array $context = null)
     {
         $template = self::DEFAULT_DIALOG_TEMPLATE;
-        $action = $this->getAction($actionName);
+        $action = $this->getAction($actionName, $this->contextHelper->getActionContext($context));
 
         if ($action) {
             $frontendOptions = $action->getDefinition()->getFrontendOptions();
@@ -170,25 +167,24 @@ class ActionManager
     }
 
     /**
-     * @param array|null $context
+     * @param array $context
      * @return Action[]
      */
-    protected function findActions(array $context = null)
+    protected function findActions(array $context)
     {
         /** @var $actions Action[] */
         $actions = [];
 
-        $context = array_merge($this->contextHelper->getContext(), (array)$context);
-
-        if ($context['route'] && array_key_exists($context['route'], $this->routes)) {
-            $actions = $this->routes[$context['route']];
+        if ($context[ContextHelper::ROUTE_PARAM] &&
+            array_key_exists($context[ContextHelper::ROUTE_PARAM], $this->routes)) {
+            $actions = array_merge($actions, $this->routes[$context[ContextHelper::ROUTE_PARAM]]);
         }
 
-        if ($context['entityClass'] &&
-            $context['entityId'] &&
-            array_key_exists($context['entityClass'], $this->entities)
+        if ($context[ContextHelper::ENTITY_CLASS_PARAM] &&
+            $context[ContextHelper::ENTITY_ID_PARAM] &&
+            array_key_exists($context[ContextHelper::ENTITY_CLASS_PARAM], $this->entities)
         ) {
-            $actions = array_merge($actions, $this->entities[$context['entityClass']]);
+            $actions = array_merge($actions, $this->entities[$context[ContextHelper::ENTITY_CLASS_PARAM]]);
         }
 
         $actionContext = $this->contextHelper->getActionContext($context);
