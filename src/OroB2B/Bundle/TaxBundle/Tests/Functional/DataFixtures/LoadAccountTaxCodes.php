@@ -4,10 +4,11 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
 
-class LoadAccountTaxCodes extends AbstractFixture
+class LoadAccountTaxCodes extends AbstractFixture implements DependentFixtureInterface
 {
     const TAX_1 = 'TAX1';
     const TAX_2 = 'TAX2';
