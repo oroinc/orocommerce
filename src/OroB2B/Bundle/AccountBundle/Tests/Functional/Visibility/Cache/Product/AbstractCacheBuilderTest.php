@@ -36,17 +36,12 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
     public function setUp()
     {
         $this->initClient();
-        $this->loadFixtures(
-            array_merge(
-                [
-                    'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
-                    'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
-                    'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
-                    'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-                ],
-                $this->getAdditionalFixtures()
-            )
-        );
+        $this->loadFixtures([
+            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
+            'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
+            'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
+            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
+        ]);
         $this->registry = $this->client->getContainer()->get('doctrine');
         $this->website = $this->getReference(LoadWebsiteData::WEBSITE1);
         $this->product = $this->getReference(LoadProductData::PRODUCT_1);

@@ -19,7 +19,11 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
 {
     public function testChangeAccountProductVisibilityToHidden()
     {
-        $visibility = $this->createVisibility(ProductVisibility::HIDDEN);
+        $visibility = new AccountProductVisibility();
+        $visibility->setWebsite($this->website);
+        $visibility->setProduct($this->product);
+        $visibility->setAccount($this->account);
+        $visibility->setVisibility(ProductVisibility::HIDDEN);
 
         $entityManager = $this->getManagerForVisibility();
         $entityManager->persist($visibility);
@@ -217,21 +221,5 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
         return $this->getManagerForProductVisibility()
             ->getRepository('OroB2BAccountBundle:Visibility\ProductVisibility')
             ->findOneBy(['website' => $this->website, 'product' => $this->product]);
-    }
-
-    /**
-     * @param string $visibility
-     * @return AccountProductVisibility
-     */
-    protected function createVisibility($visibility)
-    {
-        $accountProductVisibility = new AccountProductVisibility();
-
-        $accountProductVisibility->setWebsite($this->website);
-        $accountProductVisibility->setProduct($this->product);
-        $accountProductVisibility->setAccount($this->account);
-        $accountProductVisibility->setVisibility($visibility);
-
-        return $accountProductVisibility;
     }
 }
