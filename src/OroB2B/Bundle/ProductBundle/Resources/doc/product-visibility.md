@@ -55,7 +55,7 @@ For any create/update/delete in source visibility entities must be accompanied b
 ####Visibility to Account Group
 | `ProductToAccountGroup` `VisibilityResolved` | **Current Product (Visibility to All)** | **Category**                                               | **Hidden**                                                | **Visible**                                               |
 |----------------------------------------------|-----------------------------------------|------------------------------------------------------------|-----------------------------------------------------------|-----------------------------------------------------------|
-| **website (FK) (PK)**                        |                    X                    | Get website from current account group product visibility  | Get website from currentaccount group product visibility  | Get website from currentaccount group product visibility  |
+| **website (FK) (PK)**                        |                    X                    | Get website from current account group product visibility  | Get website from current account group product visibility  | Get website from currentaccount group product visibility  |
 | **accountGroup (FK) (PK)**                   |                    X                    | Get group from current account group product visibility    | Get group from current account group product visibility   | Get group from current account group product visibility   |
 | **product (FK) (PK)**                        |                    X                    | Get product from current account group product visibility  | Get product from current account group product visibility | Get product from current account group product visibility |
 | **visibility**                               |                    X                    | Take from category visibility cache for this account group |                          ::HIDDEN                         |                         ::VISIBLE                         |
@@ -75,3 +75,9 @@ For any create/update/delete in source visibility entities must be accompanied b
 | **source**                              |         X         |                                              ::STATIC                                             |                      ::CATEGORY                      |                          ::STATIC                         |                          ::STATIC                         |
 | **category (FK)**                       |         X         |                                                null                                               |               Get category from product              |                            null                           |                            null                           |
 
+
+###Cache builder
+The above listed steps, with the resolved entities for manipulation with the source entities. But what if, for example you changed the product category or even to remove, and it will affect all the caches on products that have this category? For this, for all levels exist cache builders.
+To implement Cache Builder was used composite pattern.
+There is cache builder classes for each listed levels: `ProductResolvedCacheBuilder`, `AccountGroupProductResolvedCacheBuilder`, `AccountGroupProductResolvedCacheBuilder` each of which implement `CacheBuilderInterface`. These classes are leaves.
+Composite is `CacheBuilder` class, which aggregates all of the above leaves.
