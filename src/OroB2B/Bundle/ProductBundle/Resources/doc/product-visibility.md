@@ -42,7 +42,7 @@ For `ProductVisibilityResolved`, entity is not written to resolved table is case
 For any create/update/delete in source visibility entities must be accompanied by a corresponding change in the resolve tables.
 
 
-|                                   |                              | Product Visibility (to all)                                                                                                                    |
+|                                   |                              | Product Visibility (to all)             |          |                                             |                                             |
 |-----------------------------------|------------------------------|-----------------------------------------|----------|---------------------------------------------|---------------------------------------------|
 |                                   |                              | *Category*                              | *Config* | *Hidden*                                    | *Visible*                                   |
 | *ProductToAll VisibilityResolved* | website (FK) (PK)            | Get website from old product visibility |    X     | Get website from current product visibility | Get website from current product visibility |
