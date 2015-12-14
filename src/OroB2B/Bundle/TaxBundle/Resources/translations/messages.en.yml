@@ -36,6 +36,17 @@ orob2b.tax:
         tax.label: 'Tax'
 
 
+    taxjurisdiction:
+        entity_label: 'Tax Jurisdiction'
+        entity_plural_label: 'Tax Jurisdictions'
+        description: 'List of Tax Jurisdictions'
+        id.label: 'ID'
+        code.label: 'Code'
+        description.label: 'Description'
+        country.label: 'Country'
+        region.label: 'State'
+        region_text.label: 'State'
+
     menu:
         taxes_tab.label: 'Taxes'
 
@@ -59,3 +70,5 @@ orob2b.tax:
     account:
         section:
             taxes: 'Taxes'
+        tax_jurisdiction:
+            saved.message: 'Tax Jurisdiction has been saved'

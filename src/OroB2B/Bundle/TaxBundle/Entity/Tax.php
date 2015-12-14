@@ -82,7 +82,6 @@ class Tax
     protected $createdAt;
 
     /**
-     *
      * @ORM\Column(name="updated_at", type="datetime")
      * @ConfigField(
      *      defaultValues={

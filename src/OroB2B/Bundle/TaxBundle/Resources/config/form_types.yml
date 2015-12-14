@@ -1,6 +1,7 @@
 parameters:
     orob2b_tax.form.type.product_tax_code.class: OroB2B\Bundle\TaxBundle\Form\Type\ProductTaxCodeType
     orob2b_tax.form.type.account_tax_code.class: OroB2B\Bundle\TaxBundle\Form\Type\AccountTaxCodeType
+    orob2b_tax.form.type.tax_jurisdiction.class: OroB2B\Bundle\TaxBundle\Form\Type\TaxJurisdictionType
     orob2b_tax.form.type.tax.class: OroB2B\Bundle\TaxBundle\Form\Type\TaxType
     orob2b_tax.form.type.tax_rule.class: OroB2B\Bundle\TaxBundle\Form\Type\TaxRuleType
     orob2b_tax.form.type.tax_select.class: OroB2B\Bundle\TaxBundle\Form\Type\TaxSelectType
@@ -67,3 +68,12 @@ services:
             - [setDataClass, [%orob2b_tax.entity.tax_rule.class%]]
         tags:
             - { name: form.type, alias: orob2b_tax_tax_rule_type }
+
+    orob2b_tax.form.type.tax_jurisdiction:
+        class: %orob2b_tax.form.type.tax_jurisdiction.class%
+        arguments:
+            - @oro_address.form.listener.address
+        calls:
+            - [setDataClass, [%orob2b_tax.entity.tax_jurisdiction.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_tax_jurisdiction_type }

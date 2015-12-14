@@ -29,3 +29,14 @@ OroB2B\Bundle\TaxBundle\Entity\TaxRule:
             - NotBlank: ~
         tax:
             - NotBlank: ~
+OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: code
+        - Oro\Bundle\AddressBundle\Validator\Constraints\ValidRegion: ~
+    properties:
+        code:
+            - NotBlank: ~
+            - Length:
+                min: 1
+                max: 255
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Alphanumeric: ~
