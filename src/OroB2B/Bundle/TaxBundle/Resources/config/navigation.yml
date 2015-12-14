@@ -31,6 +31,14 @@ oro_menu_config:
                 routes:      ['orob2b_tax_tax_index', 'orob2b_tax_tax_view', 'orob2b_tax_tax_update', 'orob2b_tax_tax_create']
                 description: 'orob2b.tax.tax.description'
 
+        tax_jurisdiction:
+            label:           'orob2b.tax.taxjurisdiction.entity_plural_label'
+            route:           'orob2b_tax_jurisdiction_index'
+            extras:
+                position:    100
+                routes:      ['orob2b_tax_jurisdiction_index', 'orob2b_tax_jurisdiction_view', 'orob2b_tax_jurisdiction_update', 'orob2b_tax_jurisdiction_create']
+                description: 'orob2b.tax.taxjurisdiction.description'
+
     tree:
         application_menu:
             children:
@@ -39,6 +47,7 @@ oro_menu_config:
                         product_tax_code_list: ~
                         account_tax_code_list: ~
                         tax_list: ~
+                        tax_jurisdiction: ~
 
 oro_titles:
     orob2b_tax_product_tax_code_index: ~
@@ -55,3 +64,8 @@ oro_titles:
     orob2b_tax_tax_view:   '%%taxCode%% - oro.ui.view'
     orob2b_tax_tax_update: '%%taxCode%% - oro.ui.edit'
     orob2b_tax_tax_create: 'oro.ui.create_entity'
+
+    orob2b_tax_jurisdiction_index: ~
+    orob2b_tax_jurisdiction_view:   '%%code%% - oro.ui.view'
+    orob2b_tax_jurisdiction_update: '%%code%% - oro.ui.edit'
+    orob2b_tax_jurisdiction_create: 'oro.ui.create_entity'
