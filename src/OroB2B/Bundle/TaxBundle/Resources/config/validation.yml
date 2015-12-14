@@ -8,6 +8,7 @@ OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode:
             - Length:
                 min: 1
                 max: 255
+
 OroB2B\Bundle\TaxBundle\Entity\Tax:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: code
@@ -18,6 +19,9 @@ OroB2B\Bundle\TaxBundle\Entity\Tax:
                 min: 1
                 max: 255
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Alphanumeric: ~
+        rate:
+            - Range:
+                min: 0
 
 OroB2B\Bundle\TaxBundle\Entity\TaxRule:
     properties:

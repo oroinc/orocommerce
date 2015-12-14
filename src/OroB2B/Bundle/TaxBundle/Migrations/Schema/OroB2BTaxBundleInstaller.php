@@ -109,7 +109,7 @@ class OroB2BTaxBundleInstaller implements Installation
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('code', 'string', ['length' => 255]);
         $table->addColumn('description', 'text', ['notnull' => false]);
-        $table->addColumn('rate', 'float', []);
+        $table->addColumn('rate', 'percent', ['comment' => '(DC2Type:percent)']);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
