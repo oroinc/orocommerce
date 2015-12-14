@@ -7,7 +7,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
 use Oro\Bundle\ActionBundle\Action\CallServiceMethod;
-use Oro\Bundle\ActionBundle\Model\ActionContext;
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Tests\Unit\Action\Stub\TestService;
 
 use Oro\Bundle\WorkflowBundle\Model\ContextAccessor;
@@ -121,7 +121,7 @@ class CallServiceMethodTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertContainerCalled('test_service');
 
-        $context = new ActionContext(['param' => 'value']);
+        $context = new ActionData(['param' => 'value']);
         $options = [
             'service' => 'test_service',
             'method' => 'testMethod',
@@ -142,7 +142,7 @@ class CallServiceMethodTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertContainerCalled('test_service');
 
-        $context = new ActionContext(['param' => 'value']);
+        $context = new ActionData(['param' => 'value']);
         $options = array(
             'service' => 'test_service',
             'method' => 'testMethod',

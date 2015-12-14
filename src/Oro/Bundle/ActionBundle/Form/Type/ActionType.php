@@ -10,7 +10,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\ActionBundle\Model\Action;
-use Oro\Bundle\ActionBundle\Model\ActionContext;
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 use Oro\Bundle\ActionBundle\Form\EventListener\RequiredAttributesListener;
 use Oro\Bundle\WorkflowBundle\Model\Attribute;
@@ -70,7 +70,7 @@ class ActionType extends AbstractType
 
         $resolver->setDefaults(
             [
-                'data_class' => 'Oro\Bundle\ActionBundle\Model\ActionContext',
+                'data_class' => 'Oro\Bundle\ActionBundle\Model\ActionData',
                 'attribute_fields' => [],
                 'attribute_default_values' => []
             ]
@@ -107,7 +107,7 @@ class ActionType extends AbstractType
                 /** @var Action $action */
                 $action = $options['action'];
 
-                /** @var ActionContext $context */
+                /** @var ActionData $context */
                 $context = $event->getData();
 
                 $action->init($context);
@@ -118,7 +118,7 @@ class ActionType extends AbstractType
             $builder->addEventListener(
                 FormEvents::PRE_SET_DATA,
                 function (FormEvent $event) use ($options) {
-                    /** @var ActionContext $context */
+                    /** @var ActionData $context */
                     $context = $event->getData();
 
                     foreach ($options['attribute_default_values'] as $attributeName => $value) {
@@ -145,11 +145,11 @@ class ActionType extends AbstractType
         /** @var Action $action */
         $action = $options['action'];
 
-        /** @var ActionContext $actionContext */
-        $actionContext = $builder->getData();
+        /** @var ActionData $actionData */
+        $actionData = $builder->getData();
 
         foreach ($options['attribute_fields'] as $attributeName => $attributeOptions) {
-            $attribute = $action->getAttributeManager($actionContext)->getAttribute($attributeName);
+            $attribute = $action->getAttributeManager($actionData)->getAttribute($attributeName);
             if (!$attribute) {
                 throw new InvalidConfigurationException(
                     sprintf(

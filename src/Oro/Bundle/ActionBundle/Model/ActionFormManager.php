@@ -33,10 +33,10 @@ class ActionFormManager
 
     /**
      * @param string $actionName
-     * @param ActionContext $context
+     * @param ActionData $context
      * @return Form
      */
-    public function getActionForm($actionName, ActionContext $context)
+    public function getActionForm($actionName, ActionData $context)
     {
         $action = $this->actionManager->getAction($actionName, $context);
 

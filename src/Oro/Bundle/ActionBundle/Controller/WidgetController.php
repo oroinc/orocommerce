@@ -40,7 +40,7 @@ class WidgetController extends Controller
      */
     public function formAction(Request $request, $actionName)
     {
-        $context = $this->getContextHelper()->getActionContext();
+        $context = $this->getContextHelper()->getActionData();
         $errors = new ArrayCollection();
         $params = [];
 
@@ -50,7 +50,7 @@ class WidgetController extends Controller
             $form->handleRequest($request);
 
             if ($form->isValid()) {
-                $context = $this->getActionManager()->executeByActionContext($actionName, $form->getData(), $errors);
+                $context = $this->getActionManager()->execute($actionName, $form->getData(), $errors);
 
                 $params['response'] = $context->getRedirectUrl() ? ['redirectUrl' => $context->getRedirectUrl()] : [];
             }

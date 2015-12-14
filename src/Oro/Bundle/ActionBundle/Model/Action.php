@@ -90,19 +90,19 @@ class Action
     }
 
     /**
-     * @param ActionContext $context
+     * @param ActionData $context
      */
-    public function init(ActionContext $context)
+    public function init(ActionData $context)
     {
         $this->executeFunctions($context, ActionDefinition::INITFUNCTIONS);
     }
 
     /**
-     * @param ActionContext $context
+     * @param ActionData $context
      * @param Collection $errors
      * @throws ForbiddenActionException
      */
-    public function execute(ActionContext $context, Collection $errors = null)
+    public function execute(ActionData $context, Collection $errors = null)
     {
         if (!$this->isAllowed($context, $errors)) {
             throw new ForbiddenActionException(sprintf('Action "%s" is not allowed.', $this->getName()));
@@ -114,11 +114,11 @@ class Action
     /**
      * Check that action is available to show
      *
-     * @param ActionContext $context
+     * @param ActionData $context
      * @param Collection $errors
      * @return bool
      */
-    public function isAvailable(ActionContext $context, Collection $errors = null)
+    public function isAvailable(ActionData $context, Collection $errors = null)
     {
         if ($this->hasForm()) {
             return $this->isPreConditionAllowed($context, $errors);
@@ -130,22 +130,22 @@ class Action
     /**
      * Check is action allowed to execute
      *
-     * @param ActionContext $context
+     * @param ActionData $context
      * @param Collection|null $errors
      * @return bool
      */
-    public function isAllowed(ActionContext $context, Collection $errors = null)
+    public function isAllowed(ActionData $context, Collection $errors = null)
     {
         return $this->isPreConditionAllowed($context, $errors) &&
             $this->evaluateConditions($context, ActionDefinition::CONDITIONS, $errors);
     }
 
     /**
-     * @param ActionContext $context
+     * @param ActionData $context
      * @param Collection $errors
      * @return bool
      */
-    protected function isPreConditionAllowed(ActionContext $context, Collection $errors = null)
+    protected function isPreConditionAllowed(ActionData $context, Collection $errors = null)
     {
         $this->executeFunctions($context, ActionDefinition::PREFUNCTIONS);
 
@@ -153,10 +153,10 @@ class Action
     }
 
     /**
-     * @param ActionContext $context
+     * @param ActionData $context
      * @return AttributeManager
      */
-    public function getAttributeManager(ActionContext $context)
+    public function getAttributeManager(ActionData $context)
     {
         $hash = spl_object_hash($context);
 
@@ -175,10 +175,10 @@ class Action
     }
 
     /**
-     * @param ActionContext $context
+     * @param ActionData $context
      * @return array
      */
-    public function getFormOptions(ActionContext $context)
+    public function getFormOptions(ActionData $context)
     {
         if ($this->formOptions === null) {
             $this->formOptions = [];
@@ -193,10 +193,10 @@ class Action
     }
 
     /**
-     * @param ActionContext $context
+     * @param ActionData $context
      * @param string $name
      */
-    protected function executeFunctions(ActionContext $context, $name)
+    protected function executeFunctions(ActionData $context, $name)
     {
         if (!array_key_exists($name, $this->functions)) {
             $this->functions[$name] = false;
@@ -213,12 +213,12 @@ class Action
     }
 
     /**
-     * @param ActionContext $context
+     * @param ActionData $context
      * @param string $name
      * @param Collection $errors
      * @return boolean
      */
-    protected function evaluateConditions(ActionContext $context, $name, Collection $errors = null)
+    protected function evaluateConditions(ActionData $context, $name, Collection $errors = null)
     {
         if (!array_key_exists($name, $this->conditions)) {
             $this->conditions[$name] = false;

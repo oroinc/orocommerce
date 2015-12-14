@@ -5,7 +5,7 @@ namespace Oro\Bundle\ActionBundle\Tests\Unit\Model;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\ActionBundle\Model\Action;
-use Oro\Bundle\ActionBundle\Model\ActionContext;
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionDefinition;
 use Oro\Bundle\ActionBundle\Model\AttributeAssembler;
 use Oro\Bundle\ActionBundle\Model\FormOptionsAssembler;
@@ -40,7 +40,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
     /** @var Action */
     protected $action;
 
-    /** @var ActionContext */
+    /** @var ActionData */
     protected $context;
 
     protected function setUp()
@@ -73,7 +73,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             $this->definition
         );
 
-        $this->context = new ActionContext();
+        $this->context = new ActionData();
     }
 
     public function testGetName()
@@ -123,7 +123,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param ActionContext $context
+     * @param ActionData $context
      * @param array $config
      * @param array $functions
      * @param array $conditions
@@ -133,7 +133,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
      * @dataProvider executeProvider
      */
     public function testExecute(
-        ActionContext $context,
+        ActionData $context,
         array $config,
         array $functions,
         array $conditions,
@@ -210,7 +210,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
      */
     public function isAvailableProvider()
     {
-        $context = new ActionContext();
+        $context = new ActionData();
 
         return [
             'no conditions' => [
@@ -435,7 +435,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
      */
     public function executeProvider()
     {
-        $context = new ActionContext();
+        $context = new ActionData();
 
         $config = [
             ['prefunctions', ['prefunctions']],
@@ -494,7 +494,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
      */
     public function isAllowedProvider()
     {
-        $context = new ActionContext();
+        $context = new ActionData();
 
         return [
             'no conditions' => [
@@ -612,12 +612,12 @@ class ActionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param \PHPUnit_Framework_MockObject_Matcher_InvokedCount $expects
-     * @param ActionContext $context
+     * @param ActionData $context
      * @return FunctionInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function createFunction(
         \PHPUnit_Framework_MockObject_Matcher_InvokedCount $expects,
-        ActionContext $context
+        ActionData $context
     ) {
         /* @var $function FunctionInterface|\PHPUnit_Framework_MockObject_MockObject */
         $function = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Action\ActionInterface')
@@ -633,13 +633,13 @@ class ActionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param \PHPUnit_Framework_MockObject_Matcher_InvokedCount $expects
-     * @param ActionContext $context
+     * @param ActionData $context
      * @param bool $returnValue
      * @return ConfigurableCondition|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function createCondition(
         \PHPUnit_Framework_MockObject_Matcher_InvokedCount $expects,
-        ActionContext $context,
+        ActionData $context,
         $returnValue
     ) {
         /* @var $condition ConfigurableCondition|\PHPUnit_Framework_MockObject_MockObject */

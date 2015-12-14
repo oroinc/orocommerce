@@ -6,7 +6,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-use Oro\Bundle\ActionBundle\Model\ActionContext;
+use Oro\Bundle\ActionBundle\Model\ActionData;
 
 /**
  * This listener removes attributes from context if they are not present in form in PRE_SET_DATA event
@@ -16,7 +16,7 @@ use Oro\Bundle\ActionBundle\Model\ActionContext;
  */
 class RequiredAttributesListener implements EventSubscriberInterface
 {
-    /** @var ActionContext */
+    /** @var ActionData */
     protected $context;
 
     /** @var array */
@@ -37,12 +37,12 @@ class RequiredAttributesListener implements EventSubscriberInterface
      */
     public function onPreSetData(FormEvent $event)
     {
-        /** @var ActionContext $data */
+        /** @var ActionData $data */
         $data = $event->getData();
-        if ($data instanceof ActionContext) {
+        if ($data instanceof ActionData) {
             $this->context = $data;
 
-            $event->setData(new ActionContext($data->getValues($this->attributeNames)));
+            $event->setData(new ActionData($data->getValues($this->attributeNames)));
         }
     }
 
@@ -53,9 +53,9 @@ class RequiredAttributesListener implements EventSubscriberInterface
      */
     public function onSubmit(FormEvent $event)
     {
-        /** @var ActionContext $data */
+        /** @var ActionData $data */
         $data = $event->getData();
-        if ($this->context && $data instanceof ActionContext) {
+        if ($this->context && $data instanceof ActionData) {
             foreach ($data->getValues() as $name => $value) {
                 $this->context->$name = $value;
             }

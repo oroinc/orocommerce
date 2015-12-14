@@ -27,12 +27,12 @@ class AttributeAssembler extends AbstractAssembler
     }
 
     /**
-     * @param ActionContext $context
+     * @param ActionData $context
      * @param array $configuration
      * @return ArrayCollection
      * @throws AssemblerException If configuration is invalid
      */
-    public function assemble(ActionContext $context, array $configuration)
+    public function assemble(ActionData $context, array $configuration)
     {
         $entityAttributeName = WorkflowConfiguration::DEFAULT_ENTITY_ATTRIBUTE;
         if (!array_key_exists($entityAttributeName, $configuration)) {
@@ -55,12 +55,12 @@ class AttributeAssembler extends AbstractAssembler
     }
 
     /**
-     * @param ActionContext $context
+     * @param ActionData $context
      * @param string $name
      * @param array $options
      * @return Attribute
      */
-    protected function assembleAttribute(ActionContext $context, $name, array $options = [])
+    protected function assembleAttribute(ActionData $context, $name, array $options = [])
     {
         if (!empty($options['property_path'])) {
             $options = $this->guessOptions(

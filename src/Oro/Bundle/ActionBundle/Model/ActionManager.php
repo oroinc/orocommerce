@@ -70,31 +70,31 @@ class ActionManager
      * @param string $actionName
      * @param array|null $context
      * @param Collection|null $errors
-     * @return ActionContext
+     * @return ActionData
      */
     public function executeByContext($actionName, array $context = null, Collection $errors = null)
     {
-        $actionContext = $this->contextHelper->getActionContext($context);
+        $actionData = $this->contextHelper->getActionData($context);
 
-        $this->executeByActionContext($actionName, $actionContext, $errors);
+        $this->execute($actionName, $actionData, $errors);
 
-        return $actionContext;
+        return $actionData;
     }
 
     /**
      * @param string $actionName
-     * @param ActionContext $actionContext
+     * @param ActionData $actionData
      * @param Collection|null $errors
-     * @return ActionContext
+     * @return ActionData
      * @throws \Exception
      */
-    public function executeByActionContext($actionName, ActionContext $actionContext, Collection $errors = null)
+    public function execute($actionName, ActionData $actionData, Collection $errors = null)
     {
-        $action = $this->getAction($actionName, $actionContext);
+        $action = $this->getAction($actionName, $actionData);
 
-        $action->execute($actionContext, $errors);
+        $action->execute($actionData, $errors);
 
-        $entity = $actionContext->getEntity();
+        $entity = $actionData->getEntity();
         if ($entity) {
             $manager = $this->doctrineHelper->getEntityManager($entity);
             $manager->beginTransaction();
@@ -108,7 +108,7 @@ class ActionManager
             }
         }
 
-        return $actionContext;
+        return $actionData;
     }
 
     /**
@@ -133,16 +133,16 @@ class ActionManager
 
     /**
      * @param string $actionName
-     * @param ActionContext $actionContext
+     * @param ActionData $actionData
      * @return Action
      * @throws ActionNotFoundException
      */
-    public function getAction($actionName, ActionContext $actionContext)
+    public function getAction($actionName, ActionData $actionData)
     {
         $this->loadActions();
 
         $action = array_key_exists($actionName, $this->actions) ? $this->actions[$actionName] : null;
-        if (!$action instanceof Action || !$action->isAvailable($actionContext)) {
+        if (!$action instanceof Action || !$action->isAvailable($actionData)) {
             throw new ActionNotFoundException($actionName);
         }
 
@@ -157,7 +157,7 @@ class ActionManager
     public function getDialogTemplate($actionName, array $context = null)
     {
         $template = self::DEFAULT_DIALOG_TEMPLATE;
-        $action = $this->getAction($actionName, $this->contextHelper->getActionContext($context));
+        $action = $this->getAction($actionName, $this->contextHelper->getActionData($context));
 
         if ($action) {
             $frontendOptions = $action->getDefinition()->getFrontendOptions();
@@ -191,9 +191,9 @@ class ActionManager
             $actions = array_merge($actions, $this->entities[$context[ContextHelper::ENTITY_CLASS_PARAM]]);
         }
 
-        $actionContext = $this->contextHelper->getActionContext($context);
-        $actions = array_filter($actions, function (Action $action) use ($actionContext) {
-            return $action->isAvailable($actionContext);
+        $actionData = $this->contextHelper->getActionData($context);
+        $actions = array_filter($actions, function (Action $action) use ($actionData) {
+            return $action->isAvailable($actionData);
         });
 
         uasort($actions, function (Action $action1, Action $action2) {

@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Handler;
 
-use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -13,9 +12,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Bundle\ActionBundle\Model\ActionContext;
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
-use Oro\Bundle\ActionBundle\Model\ContextHelper;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Route\Router;
 
@@ -183,12 +181,12 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
             ->with('orob2b.product.controller.product.saved_and_duplicated.message')
             ->will($this->returnValue($savedAndDuplicatedMessage));
         $this->actionManager->expects($this->once())
-            ->method('executeByActionContext')
+            ->method('execute')
             ->with(
                 'orob2b_product_duplicate_action',
-                new ActionContext(['data' => $entity])
+                new ActionData(['data' => $entity])
             )
-            ->willReturn(new ActionContext(['redirectUrl' => 'generated_redirect_url']));
+            ->willReturn(new ActionData(['redirectUrl' => 'generated_redirect_url']));
 
         $result = $this->handler->handleUpdate(
             $entity,

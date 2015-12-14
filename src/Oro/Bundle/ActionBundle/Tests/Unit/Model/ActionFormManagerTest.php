@@ -5,7 +5,7 @@ namespace Oro\Bundle\ActionBundle\Tests\Unit\Model;
 use Symfony\Component\Form\FormFactoryInterface;
 
 use Oro\Bundle\ActionBundle\Model\Action;
-use Oro\Bundle\ActionBundle\Model\ActionContext;
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionDefinition;
 use Oro\Bundle\ActionBundle\Model\ActionFormManager;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
@@ -79,7 +79,7 @@ class ActionFormManagerTest extends \PHPUnit_Framework_TestCase
                 return $this->action;
             });
 
-        $context = new ActionContext(['data' => ['param']]);
+        $context = new ActionData(['data' => ['param']]);
 
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
 
@@ -95,6 +95,6 @@ class ActionFormManagerTest extends \PHPUnit_Framework_TestCase
             )
             ->willReturn($form);
 
-        $this->assertSame($form, $this->manager->getActionForm($context, new ActionContext(['data' => ['param']])));
+        $this->assertSame($form, $this->manager->getActionForm($context, new ActionData(['data' => ['param']])));
     }
 }
