@@ -206,28 +206,6 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param array $expectedActions
-     * @param array $inputContext
-     */
-    protected function assertGetActions(array $expectedActions, array $inputContext)
-    {
-        $this->contextHelper->expects($this->any())
-            ->method('getContext')
-            ->willReturnCallback(function ($context) {
-                return array_merge(
-                    ['route' => null, 'entityId' => null, 'entityClass' => null],
-                    $context
-                );
-            });
-
-        $this->contextHelper->expects($this->any())
-            ->method('getActionContext')
-            ->willReturn(new ActionContext());
-
-        $this->assertEquals($expectedActions, array_keys($this->manager->getActions($inputContext)));
-    }
-
-    /**
      * @dataProvider executeByContextDataProvider
      *
      * @param array $context
@@ -484,6 +462,28 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->assertEquals($expected, $this->manager->getDialogTemplate($actionName));
+    }
+
+    /**
+     * @param array $expectedActions
+     * @param array $inputContext
+     */
+    protected function assertGetActions(array $expectedActions, array $inputContext)
+    {
+        $this->contextHelper->expects($this->any())
+            ->method('getContext')
+            ->willReturnCallback(function ($context) {
+                return array_merge(
+                    ['route' => null, 'entityId' => null, 'entityClass' => null],
+                    $context
+                );
+            });
+
+        $this->contextHelper->expects($this->any())
+            ->method('getActionContext')
+            ->willReturn(new ActionContext());
+
+        $this->assertEquals($expectedActions, array_keys($this->manager->getActions($inputContext)));
     }
 
     /**

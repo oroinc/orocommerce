@@ -187,7 +187,8 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(
                 'orob2b_product_duplicate_action',
                 new ActionContext(['data' => $entity])
-            );
+            )
+            ->willReturn(new ActionContext(['redirectUrl' => 'generated_redirect_url']));
 
         $result = $this->handler->handleUpdate(
             $entity,
@@ -197,7 +198,7 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
             $message
         );
 
-        $this->assertEquals('test_url', $result->headers->get('location'));
+        $this->assertEquals('generated_redirect_url', $result->headers->get('location'));
         $this->assertEquals(302, $result->getStatusCode());
     }
 

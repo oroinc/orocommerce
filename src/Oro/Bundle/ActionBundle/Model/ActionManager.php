@@ -85,6 +85,8 @@ class ActionManager
      * @param string $actionName
      * @param ActionContext $actionContext
      * @param Collection|null $errors
+     * @return ActionContext
+     * @throws \Exception
      */
     public function executeByActionContext($actionName, ActionContext $actionContext, Collection $errors = null)
     {
@@ -105,6 +107,8 @@ class ActionManager
                 throw $e;
             }
         }
+
+        return $actionContext;
     }
 
     /**
