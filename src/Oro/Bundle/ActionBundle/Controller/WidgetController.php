@@ -51,6 +51,7 @@ class WidgetController extends Controller
 
             if ($form->isValid()) {
                 $context = $this->getActionManager()->executeByActionContext($actionName, $form->getData(), $errors);
+
                 $params['response'] = $context->getRedirectUrl() ? ['redirectUrl' => $context->getRedirectUrl()] : [];
             }
 

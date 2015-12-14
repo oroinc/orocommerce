@@ -68,7 +68,7 @@ class ActionManager
 
     /**
      * @param string $actionName
-     * @param array $context
+     * @param array|null $context
      * @param Collection|null $errors
      * @return ActionContext
      */
