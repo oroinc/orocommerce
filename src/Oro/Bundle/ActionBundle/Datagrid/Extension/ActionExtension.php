@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ActionBundle\Datagrid\Extension;
 
-use Oro\Bundle\ActionBundle\Datagrid\ActionPermissionProvider;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 use Oro\Bundle\ActionBundle\Model\ContextHelper;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
@@ -16,9 +15,6 @@ class ActionExtension extends AbstractExtension
     /** @var ActionManager */
     protected $actionManager;
 
-    /** @var ActionPermissionProvider */
-    protected $actionPermissionProvider;
-
     /** @var ContextHelper */
     protected $contextHelper;
 
@@ -27,16 +23,13 @@ class ActionExtension extends AbstractExtension
 
     /**
      * @param ActionManager $actionManager
-     * @param ActionPermissionProvider $actionPermissionProvider
      * @param ContextHelper $contextHelper
      */
     public function __construct(
         ActionManager $actionManager,
-        ActionPermissionProvider $actionPermissionProvider,
         ContextHelper $contextHelper
     ) {
         $this->actionManager = $actionManager;
-        $this->actionPermissionProvider = $actionPermissionProvider;
         $this->contextHelper = $contextHelper;
     }
 
