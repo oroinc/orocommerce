@@ -612,7 +612,7 @@ services:
         tags:
             - {name: kernel.event_listener, event: orob2b_catalog.category.tree.create_after, method: onCreateAfter }
 
-    oro_windows.manager.windows_state:
+    orob2b_account.manager.windows_state:
         parent: oro_windows.manager.windows_state.abstract
         arguments:
             - %orob2b_account.entity.windows_state.class%
