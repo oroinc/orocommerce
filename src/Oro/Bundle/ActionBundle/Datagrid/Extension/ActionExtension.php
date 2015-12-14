@@ -53,7 +53,8 @@ class ActionExtension extends AbstractExtension
      */
     public function isApplicable(DatagridConfiguration $config)
     {
-        $actions = $this->actionManager->getActionsForDatagrid($config->getName());
+        $context = $this->getContext($config);
+        $actions = $this->actionManager->getActions($context);
         if (0 === count($actions)) {
             return false;
         }
@@ -71,7 +72,8 @@ class ActionExtension extends AbstractExtension
                     : 'edit',
                 'options' => [
                     'actionName' => $action->getName(),
-                    'entityClass' => $config->offsetGetByPath('[extended_entity_name]', false),
+                    'entityClass' => $context['entityClass'],
+                    'datagrid' => $context['datagrid'],
                     'showDialog' => $action->hasForm(),
                     'dialogOptions' => [
                         'title' => $this->translator->trans($action->getDefinition()->getLabel()),
@@ -91,13 +93,13 @@ class ActionExtension extends AbstractExtension
         return true;
     }
 
-
     /**
      * {@inheritDoc}
      */
     public function visitResult(DatagridConfiguration $config, ResultsObject $result)
     {
-        $actions = $this->actionManager->getActionsForDatagrid($config->getName());
+        $context = $this->getContext($config);
+        $actions = $this->actionManager->getActions($context);
         if (0 === count($actions)) {
             return;
         }
@@ -107,7 +109,7 @@ class ActionExtension extends AbstractExtension
         foreach ($rows as &$record) {
             $context = [
                 'entityId' => $record->getValue('id'),
-                'entityClass' => $config->offsetGetByPath('[extended_entity_name]', false),
+                'entityClass' => $context['entityClass'],
             ];
             $actionContext = $this->contextHelper->getActionContext($context);
             $actionsList = [];
@@ -118,7 +120,6 @@ class ActionExtension extends AbstractExtension
         }
         unset($record);
 
-        // set results
         $result->offsetSet('data', $rows);
     }
 
@@ -140,5 +141,18 @@ class ActionExtension extends AbstractExtension
         $actionsNew = is_array($actionsNew) ? $actionsNew : [];
 
         return array_merge($actionsOld, $actionsNew);
+    }
+
+    /**
+     * @param DatagridConfiguration $config
+     *
+     * @return array
+     */
+    protected function getContext(DatagridConfiguration $config)
+    {
+        return [
+            'entityClass' => $config->offsetGetByPath('[extended_entity_name]'),
+            'datagrid' => $config->getName()
+        ];
     }
 }

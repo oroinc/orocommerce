@@ -42,6 +42,7 @@ class ContextHelper
                 'route' => $this->getRequestParameter('route'),
                 'entityId' => $this->getRequestParameter('entityId'),
                 'entityClass' => $this->getRequestParameter('entityClass'),
+                'datagrid' => $this->getRequestParameter('datagrid'),
             ]
         );
     }
@@ -132,8 +133,9 @@ class ContextHelper
         foreach ($properties as $property) {
             $array[$property] = $this->getPropertyAccessor()->getValue($context, sprintf('[%s]', $property));
         }
+        array_multisort($array);
 
-        return md5(json_encode(array_multisort($array), JSON_NUMERIC_CHECK));
+        return md5(json_encode($array, JSON_NUMERIC_CHECK));
     }
 
     /**

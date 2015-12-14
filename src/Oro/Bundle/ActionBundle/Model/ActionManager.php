@@ -123,17 +123,6 @@ class ActionManager
     }
 
     /**
-     * @param string $datagridName
-     * @return Action[]
-     */
-    public function getActionsForDatagrid($datagridName)
-    {
-        $this->loadActions();
-
-        return isset($this->datagrids[$datagridName]) ? $this->datagrids[$datagridName] : [];
-    }
-
-    /**
      * @param string $actionName
      * @param array|null $context
      * @return null|Action
@@ -178,6 +167,10 @@ class ActionManager
 
         if ($context['route'] && array_key_exists($context['route'], $this->routes)) {
             $actions = $this->routes[$context['route']];
+        }
+
+        if ($context['datagrid'] && array_key_exists($context['datagrid'], $this->datagrids)) {
+            $actions = $this->datagrids[$context['datagrid']];
         }
 
         if ($context['entityClass'] &&

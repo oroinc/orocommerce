@@ -96,11 +96,11 @@ define(function(require) {
          */
         run: function() {
             var entityId = this.model[this.model.idAttribute];
-
             var routeParams = {
                 'actionName': this.options.actionName,
                 'entityId': entityId,
-                'entityClass': this.options.entityClass
+                'entityClass': this.options.entityClass,
+                'datagrid': this.options.datagrid
             };
             if (this.options.showDialog) {
                 var dialogUrl = routing.generate('oro_action_widget_form', routeParams);
