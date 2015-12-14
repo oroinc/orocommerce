@@ -46,7 +46,7 @@ class ContextHelperTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetContext($request, array $expected)
     {
-        $this->requestStack->expects($this->exactly(3))
+        $this->requestStack->expects($this->exactly(4))
             ->method('getCurrentRequest')
             ->willReturn($request);
 
@@ -64,7 +64,8 @@ class ContextHelperTest extends \PHPUnit_Framework_TestCase
                 'expected' => [
                     'route' => null,
                     'entityId' => null,
-                    'entityClass' => null
+                    'entityClass' => null,
+                    'datagrid' => null,
                 ]
             ],
             [
@@ -72,7 +73,8 @@ class ContextHelperTest extends \PHPUnit_Framework_TestCase
                 'expected' => [
                     'route' => null,
                     'entityId' => null,
-                    'entityClass' => null
+                    'entityClass' => null,
+                    'datagrid' => null,
                 ]
             ],
             [
@@ -80,13 +82,15 @@ class ContextHelperTest extends \PHPUnit_Framework_TestCase
                     [
                         'route' => 'test_route',
                         'entityId' => '42',
-                        'entityClass' => 'stdClass'
+                        'entityClass' => 'stdClass',
+                        'datagrid' => 'test_datagrid',
                     ]
                 ),
                 'expected' => [
                     'route' => 'test_route',
                     'entityId' => '42',
-                    'entityClass' => 'stdClass'
+                    'entityClass' => 'stdClass',
+                    'datagrid' => 'test_datagrid',
                 ]
             ]
         ];
@@ -110,7 +114,7 @@ class ContextHelperTest extends \PHPUnit_Framework_TestCase
             ->willReturn($request);
 
         if ($expected->getEntity()) {
-            $this->doctrineHelper->expects($this->once())
+            $this->doctrineHelper->expects($this->any())
                 ->method('isManageableEntity')
                 ->with('stdClass')
                 ->willReturn(true);
@@ -145,12 +149,12 @@ class ContextHelperTest extends \PHPUnit_Framework_TestCase
         return [
             'without request' => [
                 'request' => null,
-                'requestStackCalls' => 3,
+                'requestStackCalls' => 4,
                 'expected' => new ActionContext()
             ],
             'empty request' => [
                 'request' => new Request(),
-                'requestStackCalls' => 3,
+                'requestStackCalls' => 4,
                 'expected' => new ActionContext()
             ],
             'route1 without entity id' => [
@@ -160,7 +164,7 @@ class ContextHelperTest extends \PHPUnit_Framework_TestCase
                         'entityClass' => 'stdClass'
                     ]
                 ),
-                'requestStackCalls' => 3,
+                'requestStackCalls' => 4,
                 'expected' => new ActionContext(['data' => new \stdClass()])
             ],
             'entity' => [
@@ -206,11 +210,11 @@ class ContextHelperTest extends \PHPUnit_Framework_TestCase
             'entityClass' => 'stdClass'
         ];
 
-        $this->doctrineHelper->expects($this->once())
+        $this->doctrineHelper->expects($this->any())
             ->method('isManageableEntity')
             ->with('stdClass')
             ->willReturn(true);
-        $this->doctrineHelper->expects($this->once())
+        $this->doctrineHelper->expects($this->any())
             ->method('getEntityReference')
             ->willReturn($entity);
 
