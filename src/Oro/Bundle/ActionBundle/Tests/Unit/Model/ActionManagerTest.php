@@ -265,15 +265,6 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
             $this->assertEntityManagerCalled(get_class($actionContext->getEntity()));
         }
 
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityReference')
-            ->willReturnCallback(function ($className, $id) {
-                $obj = new $className();
-                $obj->id = $id;
-
-                return $obj;
-            });
-
         $action = $this->createActionMock();
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|ActionAssembler $assembler */
@@ -283,6 +274,15 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
         $assembler->expects($this->once())
             ->method('assemble')
             ->willReturn(['test_action' => $action]);
+
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityReference')
+            ->willReturnCallback(function ($className, $id) {
+                $obj = new $className();
+                $obj->id = $id;
+
+                return $obj;
+            });
 
         $this->manager = new ActionManager(
             $this->doctrineHelper,
