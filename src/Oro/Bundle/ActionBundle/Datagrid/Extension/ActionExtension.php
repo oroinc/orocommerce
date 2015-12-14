@@ -27,6 +27,9 @@ class ActionExtension extends AbstractExtension
     /** @var ContextHelper */
     protected $contextHelper;
 
+    /** @var array */
+    protected $actionConfiguration = [];
+
     /**
      * @param TranslatorInterface $translator
      * @param ActionManager $actionManager
@@ -80,11 +83,10 @@ class ActionExtension extends AbstractExtension
             ];
         }
         $config->offsetSet('actions', $actionsConfig);
-//        $actionConfigurationConfig = $config->offsetExists('action_configuration')
-//            ? $config->offsetGet('action_configuration') : [];
-        $actionConfigurationConfig = [$this, 'getActionsPermissions'];
 
-        $config->offsetSet('action_configuration', $actionConfigurationConfig);
+        $this->actionConfiguration = $config->offsetGetOr('action_configuration', []);
+
+        $config->offsetSet('action_configuration', [$this, 'getActionsPermissions']);
 
         return true;
     }
@@ -127,8 +129,16 @@ class ActionExtension extends AbstractExtension
      */
     public function getActionsPermissions(ResultRecordInterface $record)
     {
-        $actions = $record->getValue('actions');
+        $actionsOld = [];
+        // process own permissions of the datagrid
+        if ($this->actionConfiguration && is_callable($this->actionConfiguration)) {
+            $actionsOld = call_user_func($this->actionConfiguration, $record);
 
-        return $actions ? : [];
+            $actionsOld = is_array($actionsOld) ? $actionsOld : [];
+        };
+        $actionsNew = $record->getValue('actions');
+        $actionsNew = is_array($actionsNew) ? $actionsNew : [];
+
+        return array_merge($actionsOld, $actionsNew);
     }
 }
