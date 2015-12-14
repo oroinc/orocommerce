@@ -70,7 +70,7 @@ use Oro\Bundle\UserBundle\Entity\User;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
-class AccountUser extends AbstractUser implements FullNameInterface, EmailHolderInterface
+class AccountUser extends AbstractUser implements FullNameInterface, EmailHolderInterface, CustomerUserIdentity
 {
     const SECURITY_GROUP = 'commerce';
 

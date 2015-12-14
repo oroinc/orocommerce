@@ -139,3 +139,15 @@ orob2b_account_frontend_entity_pagination_last:
     defaults: { _controller: OroEntityPaginationBundle:EntityPagination:last }
     options:
         frontend: true
+
+orob2b_frontend_windows_api:
+    resource: "@OroB2BAccountBundle/Controller/Api/Rest/FrontendWindowsStateController.php"
+    type: rest
+    prefix: api/rest/{version}/
+    requirements:
+        version:  latest|v1
+        _format:  json
+    defaults:
+        version: latest
+    options:
+        frontend: true

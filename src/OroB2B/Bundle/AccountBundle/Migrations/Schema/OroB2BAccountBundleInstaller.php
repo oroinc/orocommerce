@@ -153,6 +153,8 @@ class OroB2BAccountBundleInstaller implements
         $this->createOroB2BAccountProductVisibilityTable($schema);
         $this->createOroB2BAccountGroupProductVisibilityTable($schema);
 
+        $this->createOrob2BWindowsStateTable($schema);
+
         /** Foreign keys generation **/
         $this->addOroB2BAccountUserForeignKeys($schema);
         $this->addOroB2BAccountUserAccessAccountUserRoleForeignKeys($schema);
@@ -180,6 +182,8 @@ class OroB2BAccountBundleInstaller implements
         $this->addOroB2BProductVisibilityForeignKeys($schema);
         $this->addOroB2BAccountProductVisibilityForeignKeys($schema);
         $this->addOroB2BAccountGroupProductVisibilityForeignKeys($schema);
+
+        $this->addOrob2BWindowsStateForeignKeys($schema);
     }
 
     /**
@@ -1179,6 +1183,23 @@ class OroB2BAccountBundleInstaller implements
     }
 
     /**
+     * Create orob2b_windows_state table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BWindowsStateTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_windows_state');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('customer_user_id', 'integer', []);
+        $table->addColumn('data', 'text', []);
+        $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addIndex(['customer_user_id'], 'orob2b_windows_st_cust_user_idx', []);
+        $table->setPrimaryKey(['id']);
+    }
+
+    /**
      * Add orob2b_category_visibility foreign keys.
      *
      * @param Schema $schema
@@ -1313,6 +1334,22 @@ class OroB2BAccountBundleInstaller implements
             ['account_group_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add orob2b_windows_state foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BWindowsStateForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_windows_state');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account_user'),
+            ['customer_user_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
 }

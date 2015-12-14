@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Controller\Api\Rest;
+namespace OroB2B\Bundle\AccountBundle\Controller\Api\Rest;
 
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
@@ -9,8 +9,15 @@ use Oro\Bundle\WindowsBundle\Controller\Api\WindowsStateController;
 
 /**
  * @RouteResource("windows")
- * @NamePrefix("orob2b_frontend_api_")
+ * @NamePrefix("orob2b_api_account_")
  */
 class FrontendWindowsStateController extends WindowsStateController
 {
+    /**
+     * @retrun WindowsStateManager
+     */
+    protected function getWindowsStatesManager()
+    {
+        return $this->get('oro_windows.manager.windows_state');
+    }
 }

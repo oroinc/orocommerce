@@ -50,6 +50,10 @@ placeholders:
             product_visibility_button:
                 order: 100
 
+    scripts_after:
+        items:
+            frontend_window_bundle_js:
+                order: 200
 items:
     frontend_menu:
         template: OroB2BAccountBundle:Menu:frontendMenu.html.twig
@@ -86,3 +90,6 @@ items:
         applicable:
             - @oro_ui.placeholder.filter->isInstanceOf($entity$, %orob2b_product.product.class%)
             - @orob2b_frontend.placeholder.filter->isBackendRoute()
+    frontend_window_bundle_js:
+        template: OroB2BAccountBundle:Windows:javascript.html.twig
+        applicable: @orob2b_frontend.placeholder.filter->isFrontendRoute()
