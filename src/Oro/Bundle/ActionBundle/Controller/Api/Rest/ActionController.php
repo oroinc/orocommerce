@@ -31,7 +31,7 @@ class ActionController extends FOSRestController
     public function executeAction($actionName)
     {
         try {
-            $context = $this->getActionManager()->executeByContext($actionName);
+            $data = $this->getActionManager()->executeByContext($actionName);
         } catch (ActionNotFoundException $e) {
             return $this->handleError($e->getMessage(), Codes::HTTP_NOT_FOUND);
         } catch (ForbiddenActionException $e) {
@@ -40,7 +40,7 @@ class ActionController extends FOSRestController
             return $this->handleError($e->getMessage(), Codes::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        $response = $context->getRedirectUrl() ? ['redirectUrl' => $context->getRedirectUrl()] : [];
+        $response = $data->getRedirectUrl() ? ['redirectUrl' => $data->getRedirectUrl()] : [];
 
         return $this->handleView(
             $this->view($response, Codes::HTTP_OK)

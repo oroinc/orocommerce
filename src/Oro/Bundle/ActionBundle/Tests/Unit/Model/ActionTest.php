@@ -41,7 +41,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
     protected $action;
 
     /** @var ActionData */
-    protected $context;
+    protected $data;
 
     protected function setUp()
     {
@@ -73,7 +73,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             $this->definition
         );
 
-        $this->context = new ActionData();
+        $this->data = new ActionData();
     }
 
     public function testGetName()
@@ -106,7 +106,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
         ];
 
         $functions = [
-            'initfunctions' => $this->createFunction($this->once(), $this->context),
+            'initfunctions' => $this->createFunction($this->once(), $this->data),
         ];
 
         $this->definition->expects($this->any())
@@ -119,11 +119,11 @@ class ActionTest extends \PHPUnit_Framework_TestCase
                 return $functions[$config[0]];
             });
 
-        $this->action->init($this->context);
+        $this->action->init($this->data);
     }
 
     /**
-     * @param ActionData $context
+     * @param ActionData $data
      * @param array $config
      * @param array $functions
      * @param array $conditions
@@ -133,7 +133,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
      * @dataProvider executeProvider
      */
     public function testExecute(
-        ActionData $context,
+        ActionData $data,
         array $config,
         array $functions,
         array $conditions,
@@ -173,7 +173,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             );
         }
 
-        $this->action->execute($context, $errors);
+        $this->action->execute($data, $errors);
 
         $this->assertEmpty($errors->toArray());
     }
@@ -200,7 +200,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
                 return $inputData['conditions'][$config[0]];
             });
 
-        $this->assertEquals($expectedData['available'], $this->action->isAvailable($inputData['context']));
+        $this->assertEquals($expectedData['available'], $this->action->isAvailable($inputData['data']));
     }
 
     /**
@@ -210,12 +210,12 @@ class ActionTest extends \PHPUnit_Framework_TestCase
      */
     public function isAvailableProvider()
     {
-        $context = new ActionData();
+        $data = new ActionData();
 
         return [
             'no conditions' => [
                 'input' => [
-                    'context' => $context,
+                    'data' => $data,
                     'config' => [
                         'conditions' => [],
                         'form_options' => [],
@@ -229,7 +229,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             ],
             '!isPreConditionAllowed' => [
                 'input' => [
-                    'context' => $context,
+                    'data' => $data,
                     'config' => [
                         'conditions' => [
                             ['preconditions', ['preconditions']],
@@ -238,8 +238,8 @@ class ActionTest extends \PHPUnit_Framework_TestCase
                         'form_options' => [],
                     ],
                     'conditions' => [
-                        'preconditions' => $this->createCondition($this->once(), $context, false),
-                        'conditions' => $this->createCondition($this->never(), $context, true),
+                        'preconditions' => $this->createCondition($this->once(), $data, false),
+                        'conditions' => $this->createCondition($this->never(), $data, true),
                     ],
                 ],
                 'expected' => [
@@ -249,7 +249,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             ],
             '!isConditionAllowed' => [
                 'input' => [
-                    'context' => $context,
+                    'data' => $data,
                     'config' => [
                         'conditions' => [
                             ['preconditions', ['preconditions']],
@@ -258,8 +258,8 @@ class ActionTest extends \PHPUnit_Framework_TestCase
                         'form_options' => [],
                     ],
                     'conditions' => [
-                        'preconditions' => $this->createCondition($this->once(), $context, true),
-                        'conditions' => $this->createCondition($this->once(), $context, false),
+                        'preconditions' => $this->createCondition($this->once(), $data, true),
+                        'conditions' => $this->createCondition($this->once(), $data, false),
                     ],
                 ],
                 'expected' => [
@@ -270,7 +270,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             ],
             'allowed' => [
                 'input' => [
-                    'context' => $context,
+                    'data' => $data,
                     'config' => [
                         'conditions' => [
                             ['preconditions', ['preconditions']],
@@ -279,8 +279,8 @@ class ActionTest extends \PHPUnit_Framework_TestCase
                         'form_options' => [],
                     ],
                     'conditions' => [
-                        'preconditions' => $this->createCondition($this->once(), $context, true),
-                        'conditions' => $this->createCondition($this->once(), $context, true),
+                        'preconditions' => $this->createCondition($this->once(), $data, true),
+                        'conditions' => $this->createCondition($this->once(), $data, true),
                     ],
                 ],
                 'expected' => [
@@ -291,7 +291,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             ],
             'hasForm and no conditions' => [
                 'input' => [
-                    'context' => $context,
+                    'data' => $data,
                     'config' => [
                         'conditions' => [],
                         'form_options' => [
@@ -309,7 +309,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             ],
             'hasForm and !isPreConditionAllowed' => [
                 'input' => [
-                    'context' => $context,
+                    'data' => $data,
                     'config' => [
                         'conditions' => [
                             ['preconditions', ['preconditions']],
@@ -322,8 +322,8 @@ class ActionTest extends \PHPUnit_Framework_TestCase
                         ],
                     ],
                     'conditions' => [
-                        'preconditions' => $this->createCondition($this->once(), $context, false),
-                        'conditions' => $this->createCondition($this->never(), $context, true),
+                        'preconditions' => $this->createCondition($this->once(), $data, false),
+                        'conditions' => $this->createCondition($this->never(), $data, true),
                     ],
                 ],
                 'expected' => [
@@ -333,7 +333,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             ],
             'hasForm and allowed' => [
                 'input' => [
-                    'context' => $context,
+                    'data' => $data,
                     'config' => [
                         'conditions' => [
                             ['preconditions', ['preconditions']],
@@ -346,8 +346,8 @@ class ActionTest extends \PHPUnit_Framework_TestCase
                         ],
                     ],
                     'conditions' => [
-                        'preconditions' => $this->createCondition($this->once(), $context, true),
-                        'conditions' => $this->createCondition($this->never(), $context, true),
+                        'preconditions' => $this->createCondition($this->once(), $data, true),
+                        'conditions' => $this->createCondition($this->never(), $data, true),
                     ],
                 ],
                 'expected' => [
@@ -377,7 +377,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
                 return $inputData['conditions'][$config[0]];
             });
 
-        $this->assertEquals($expectedData['allowed'], $this->action->isAllowed($inputData['context']));
+        $this->assertEquals($expectedData['allowed'], $this->action->isAllowed($inputData['data']));
     }
 
     /**
@@ -404,7 +404,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
 
             $this->attributeAssembler->expects($this->once())
                 ->method('assemble')
-                ->with($this->context, $attributes)
+                ->with($this->data, $attributes)
                 ->willReturn(new ArrayCollection(['test_attr' => $attribute]));
 
             $this->formOptionsAssembler->expects($this->once())
@@ -413,7 +413,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
                 ->willReturn($expected);
         }
 
-        $this->assertEquals($expected, $this->action->getFormOptions($this->context));
+        $this->assertEquals($expected, $this->action->getFormOptions($this->data));
     }
 
     /**
@@ -435,7 +435,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
      */
     public function executeProvider()
     {
-        $context = new ActionData();
+        $data = new ActionData();
 
         $config = [
             ['prefunctions', ['prefunctions']],
@@ -446,43 +446,43 @@ class ActionTest extends \PHPUnit_Framework_TestCase
 
         return [
             '!isPreConditionAllowed' => [
-                'context' => $context,
+                'data' => $data,
                 'config' => $config,
                 'functions' => [
-                    'prefunctions' => $this->createFunction($this->once(), $context),
-                    'postfunctions' => $this->createFunction($this->never(), $context),
+                    'prefunctions' => $this->createFunction($this->once(), $data),
+                    'postfunctions' => $this->createFunction($this->never(), $data),
                 ],
                 'conditions' => [
-                    'preconditions' => $this->createCondition($this->once(), $context, false),
-                    'conditions' => $this->createCondition($this->never(), $context, true),
+                    'preconditions' => $this->createCondition($this->once(), $data, false),
+                    'conditions' => $this->createCondition($this->never(), $data, true),
                 ],
                 'actionName' => 'TestName1',
                 'exception' => 'Action "TestName1" is not allowed.'
             ],
             '!isConditionAllowed' => [
-                'context' => $context,
+                'data' => $data,
                 'config' => $config,
                 'functions' => [
-                    'prefunctions' => $this->createFunction($this->once(), $context),
-                    'postfunctions' => $this->createFunction($this->never(), $context),
+                    'prefunctions' => $this->createFunction($this->once(), $data),
+                    'postfunctions' => $this->createFunction($this->never(), $data),
                 ],
                 'conditions' => [
-                    'preconditions' => $this->createCondition($this->once(), $context, true),
-                    'conditions' => $this->createCondition($this->once(), $context, false),
+                    'preconditions' => $this->createCondition($this->once(), $data, true),
+                    'conditions' => $this->createCondition($this->once(), $data, false),
                 ],
                 'actionName' => 'TestName2',
                 'exception' => 'Action "TestName2" is not allowed.'
             ],
             'isAllowed' => [
-                'context' => $context,
+                'data' => $data,
                 'config' => $config,
                 'functions' => [
-                    'prefunctions' => $this->createFunction($this->once(), $context),
-                    'postfunctions' => $this->createFunction($this->once(), $context),
+                    'prefunctions' => $this->createFunction($this->once(), $data),
+                    'postfunctions' => $this->createFunction($this->once(), $data),
                 ],
                 'conditions' => [
-                    'preconditions' => $this->createCondition($this->once(), $context, true),
-                    'conditions' => $this->createCondition($this->once(), $context, true),
+                    'preconditions' => $this->createCondition($this->once(), $data, true),
+                    'conditions' => $this->createCondition($this->once(), $data, true),
                 ],
                 'actionName' => 'TestName3',
             ],
@@ -494,12 +494,12 @@ class ActionTest extends \PHPUnit_Framework_TestCase
      */
     public function isAllowedProvider()
     {
-        $context = new ActionData();
+        $data = new ActionData();
 
         return [
             'no conditions' => [
                 'input' => [
-                    'context' => $context,
+                    'data' => $data,
                     'config' => [
                         'conditions' => [],
                     ],
@@ -512,7 +512,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             ],
             '!isPreConditionAllowed' => [
                 'input' => [
-                    'context' => $context,
+                    'data' => $data,
                     'config' => [
                         'conditions' => [
                             ['preconditions', ['preconditions']],
@@ -520,8 +520,8 @@ class ActionTest extends \PHPUnit_Framework_TestCase
                         ],
                     ],
                     'conditions' => [
-                        'preconditions' => $this->createCondition($this->once(), $context, false),
-                        'conditions' => $this->createCondition($this->never(), $context, true),
+                        'preconditions' => $this->createCondition($this->once(), $data, false),
+                        'conditions' => $this->createCondition($this->never(), $data, true),
                     ],
                 ],
                 'expected' => [
@@ -531,7 +531,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             ],
             '!isConditionAllowed' => [
                 'input' => [
-                    'context' => $context,
+                    'data' => $data,
                     'config' => [
                         'conditions' => [
                             ['preconditions', ['preconditions']],
@@ -539,8 +539,8 @@ class ActionTest extends \PHPUnit_Framework_TestCase
                         ],
                     ],
                     'conditions' => [
-                        'preconditions' => $this->createCondition($this->once(), $context, true),
-                        'conditions' => $this->createCondition($this->once(), $context, false),
+                        'preconditions' => $this->createCondition($this->once(), $data, true),
+                        'conditions' => $this->createCondition($this->once(), $data, false),
                     ],
                 ],
                 'expected' => [
@@ -551,7 +551,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             ],
             'allowed' => [
                 'input' => [
-                    'context' => $context,
+                    'data' => $data,
                     'config' => [
                         'conditions' => [
                             ['preconditions', ['preconditions']],
@@ -559,8 +559,8 @@ class ActionTest extends \PHPUnit_Framework_TestCase
                         ],
                     ],
                     'conditions' => [
-                        'preconditions' => $this->createCondition($this->once(), $context, true),
-                        'conditions' => $this->createCondition($this->once(), $context, true),
+                        'preconditions' => $this->createCondition($this->once(), $data, true),
+                        'conditions' => $this->createCondition($this->once(), $data, true),
                     ],
                 ],
                 'expected' => [
@@ -612,12 +612,12 @@ class ActionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param \PHPUnit_Framework_MockObject_Matcher_InvokedCount $expects
-     * @param ActionData $context
+     * @param ActionData $data
      * @return FunctionInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function createFunction(
         \PHPUnit_Framework_MockObject_Matcher_InvokedCount $expects,
-        ActionData $context
+        ActionData $data
     ) {
         /* @var $function FunctionInterface|\PHPUnit_Framework_MockObject_MockObject */
         $function = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\Action\ActionInterface')
@@ -626,20 +626,20 @@ class ActionTest extends \PHPUnit_Framework_TestCase
 
         $function->expects($expects)
             ->method('execute')
-            ->with($context);
+            ->with($data);
 
         return $function;
     }
 
     /**
      * @param \PHPUnit_Framework_MockObject_Matcher_InvokedCount $expects
-     * @param ActionData $context
+     * @param ActionData $data
      * @param bool $returnValue
      * @return ConfigurableCondition|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function createCondition(
         \PHPUnit_Framework_MockObject_Matcher_InvokedCount $expects,
-        ActionData $context,
+        ActionData $data,
         $returnValue
     ) {
         /* @var $condition ConfigurableCondition|\PHPUnit_Framework_MockObject_MockObject */
@@ -649,7 +649,7 @@ class ActionTest extends \PHPUnit_Framework_TestCase
 
         $condition->expects($expects)
             ->method('evaluate')
-            ->with($context)
+            ->with($data)
             ->willReturn($returnValue);
 
         return $condition;
@@ -663,17 +663,17 @@ class ActionTest extends \PHPUnit_Framework_TestCase
             ->method('getAttributes')
             ->willReturn($attributes);
 
-        $this->context['data'] = new \stdClass();
+        $this->data['data'] = new \stdClass();
 
         $attribute = new Attribute();
         $attribute->setName('test_attr');
 
         $this->attributeAssembler->expects($this->once())
             ->method('assemble')
-            ->with($this->context, $attributes)
+            ->with($this->data, $attributes)
             ->willReturn(new ArrayCollection([$attribute]));
 
-        $attributeManager = $this->action->getAttributeManager($this->context);
+        $attributeManager = $this->action->getAttributeManager($this->data);
 
         $this->assertInstanceOf('Oro\Bundle\WorkflowBundle\Model\AttributeManager', $attributeManager);
         $this->assertEquals(new ArrayCollection(['test_attr' => $attribute]), $attributeManager->getAttributes());

@@ -121,7 +121,7 @@ class CallServiceMethodTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertContainerCalled('test_service');
 
-        $context = new ActionData(['param' => 'value']);
+        $data = new ActionData(['param' => 'value']);
         $options = [
             'service' => 'test_service',
             'method' => 'testMethod',
@@ -130,11 +130,11 @@ class CallServiceMethodTest extends \PHPUnit_Framework_TestCase
         ];
 
         $this->action->initialize($options);
-        $this->action->execute($context);
+        $this->action->execute($data);
 
         $this->assertEquals(
             ['param' => 'value', 'test' => TestService::TEST_METHOD_RESULT . 'value'],
-            $context->getValues()
+            $data->getValues()
         );
     }
 
@@ -142,7 +142,7 @@ class CallServiceMethodTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertContainerCalled('test_service');
 
-        $context = new ActionData(['param' => 'value']);
+        $data = new ActionData(['param' => 'value']);
         $options = array(
             'service' => 'test_service',
             'method' => 'testMethod',
@@ -150,9 +150,9 @@ class CallServiceMethodTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->action->initialize($options);
-        $this->action->execute($context);
+        $this->action->execute($data);
 
-        $this->assertEquals(['param' => 'value'], $context->getValues());
+        $this->assertEquals(['param' => 'value'], $data->getValues());
     }
 
     /**

@@ -90,75 +90,75 @@ class Action
     }
 
     /**
-     * @param ActionData $context
+     * @param ActionData $data
      */
-    public function init(ActionData $context)
+    public function init(ActionData $data)
     {
-        $this->executeFunctions($context, ActionDefinition::INITFUNCTIONS);
+        $this->executeFunctions($data, ActionDefinition::INITFUNCTIONS);
     }
 
     /**
-     * @param ActionData $context
+     * @param ActionData $data
      * @param Collection $errors
      * @throws ForbiddenActionException
      */
-    public function execute(ActionData $context, Collection $errors = null)
+    public function execute(ActionData $data, Collection $errors = null)
     {
-        if (!$this->isAllowed($context, $errors)) {
+        if (!$this->isAllowed($data, $errors)) {
             throw new ForbiddenActionException(sprintf('Action "%s" is not allowed.', $this->getName()));
         }
 
-        $this->executeFunctions($context, ActionDefinition::POSTFUNCTIONS);
+        $this->executeFunctions($data, ActionDefinition::POSTFUNCTIONS);
     }
 
     /**
      * Check that action is available to show
      *
-     * @param ActionData $context
+     * @param ActionData $data
      * @param Collection $errors
      * @return bool
      */
-    public function isAvailable(ActionData $context, Collection $errors = null)
+    public function isAvailable(ActionData $data, Collection $errors = null)
     {
         if ($this->hasForm()) {
-            return $this->isPreConditionAllowed($context, $errors);
+            return $this->isPreConditionAllowed($data, $errors);
         } else {
-            return $this->isAllowed($context, $errors);
+            return $this->isAllowed($data, $errors);
         }
     }
 
     /**
      * Check is action allowed to execute
      *
-     * @param ActionData $context
+     * @param ActionData $data
      * @param Collection|null $errors
      * @return bool
      */
-    public function isAllowed(ActionData $context, Collection $errors = null)
+    public function isAllowed(ActionData $data, Collection $errors = null)
     {
-        return $this->isPreConditionAllowed($context, $errors) &&
-            $this->evaluateConditions($context, ActionDefinition::CONDITIONS, $errors);
+        return $this->isPreConditionAllowed($data, $errors) &&
+            $this->evaluateConditions($data, ActionDefinition::CONDITIONS, $errors);
     }
 
     /**
-     * @param ActionData $context
+     * @param ActionData $data
      * @param Collection $errors
      * @return bool
      */
-    protected function isPreConditionAllowed(ActionData $context, Collection $errors = null)
+    protected function isPreConditionAllowed(ActionData $data, Collection $errors = null)
     {
-        $this->executeFunctions($context, ActionDefinition::PREFUNCTIONS);
+        $this->executeFunctions($data, ActionDefinition::PREFUNCTIONS);
 
-        return $this->evaluateConditions($context, ActionDefinition::PRECONDITIONS, $errors);
+        return $this->evaluateConditions($data, ActionDefinition::PRECONDITIONS, $errors);
     }
 
     /**
-     * @param ActionData $context
+     * @param ActionData $data
      * @return AttributeManager
      */
-    public function getAttributeManager(ActionData $context)
+    public function getAttributeManager(ActionData $data)
     {
-        $hash = spl_object_hash($context);
+        $hash = spl_object_hash($data);
 
         if (!array_key_exists($hash, $this->attributeManagers)) {
             $this->attributeManagers[$hash] = false;
@@ -166,7 +166,7 @@ class Action
             $config = $this->definition->getAttributes();
             if ($config) {
                 $this->attributeManagers[$hash] = new AttributeManager(
-                    $this->attributeAssembler->assemble($context, $config)
+                    $this->attributeAssembler->assemble($data, $config)
                 );
             }
         }
@@ -175,17 +175,17 @@ class Action
     }
 
     /**
-     * @param ActionData $context
+     * @param ActionData $data
      * @return array
      */
-    public function getFormOptions(ActionData $context)
+    public function getFormOptions(ActionData $data)
     {
         if ($this->formOptions === null) {
             $this->formOptions = [];
             $formOptionsConfig = $this->definition->getFormOptions();
             if ($formOptionsConfig) {
                 $this->formOptions = $this->formOptionsAssembler
-                    ->assemble($formOptionsConfig, $this->getAttributeManager($context)->getAttributes());
+                    ->assemble($formOptionsConfig, $this->getAttributeManager($data)->getAttributes());
             }
         }
 
@@ -193,10 +193,10 @@ class Action
     }
 
     /**
-     * @param ActionData $context
+     * @param ActionData $data
      * @param string $name
      */
-    protected function executeFunctions(ActionData $context, $name)
+    protected function executeFunctions(ActionData $data, $name)
     {
         if (!array_key_exists($name, $this->functions)) {
             $this->functions[$name] = false;
@@ -208,17 +208,17 @@ class Action
         }
 
         if ($this->functions[$name] instanceof FunctionInterface) {
-            $this->functions[$name]->execute($context);
+            $this->functions[$name]->execute($data);
         }
     }
 
     /**
-     * @param ActionData $context
+     * @param ActionData $data
      * @param string $name
      * @param Collection $errors
      * @return boolean
      */
-    protected function evaluateConditions(ActionData $context, $name, Collection $errors = null)
+    protected function evaluateConditions(ActionData $data, $name, Collection $errors = null)
     {
         if (!array_key_exists($name, $this->conditions)) {
             $this->conditions[$name] = false;
@@ -230,7 +230,7 @@ class Action
         }
 
         if ($this->conditions[$name] instanceof ConfigurableCondition) {
-            return $this->conditions[$name]->evaluate($context, $errors);
+            return $this->conditions[$name]->evaluate($data, $errors);
         }
 
         return true;

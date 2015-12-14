@@ -39,11 +39,11 @@ class RequiredAttributesListenerTest extends \PHPUnit_Framework_TestCase
         $attributeNames = ['test'];
         $values = ['test' => 'value'];
 
-        $context = $this->createActionData();
-        $context->expects($this->once())->method('getValues')->with($attributeNames)->willReturn($values);
+        $data = $this->createActionData();
+        $data->expects($this->once())->method('getValues')->with($attributeNames)->willReturn($values);
 
         $event = $this->createFormEvent();
-        $event->expects($this->once())->method('getData')->willReturn($context);
+        $event->expects($this->once())->method('getData')->willReturn($data);
         $event->expects($this->once())
             ->method('setData')
             ->with($this->isInstanceOf('Oro\Bundle\ActionBundle\Model\ActionData'));
@@ -55,7 +55,7 @@ class RequiredAttributesListenerTest extends \PHPUnit_Framework_TestCase
         $formData = $this->createActionData();
         $formData->expects($this->once())->method('getValues')->willReturn($values);
 
-        $context->expects($this->once())->method('__set')->with('test', 'value');
+        $data->expects($this->once())->method('__set')->with('test', 'value');
 
         $submitEvent = $this->createFormEvent();
         $submitEvent->expects($this->once())->method('getData')->willReturn($formData);
@@ -68,11 +68,11 @@ class RequiredAttributesListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnSubmitNoActionData()
     {
-        $context = $this->createActionData();
-        $context->expects($this->never())->method($this->anything());
+        $data = $this->createActionData();
+        $data->expects($this->never())->method($this->anything());
 
         $event = $this->createFormEvent();
-        $event->expects($this->once())->method('getData')->willReturn($context);
+        $event->expects($this->once())->method('getData')->willReturn($data);
         $event->expects($this->never())->method('setData');
 
         $this->listener->onSubmit($event);

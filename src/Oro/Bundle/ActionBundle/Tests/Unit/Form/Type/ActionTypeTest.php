@@ -207,13 +207,13 @@ class ActionTypeTest extends FormIntegrationTestCase
      * @param array $options
      * @param string $exception
      * @param string $message
-     * @param ActionData $context
+     * @param ActionData $data
      */
-    public function testException(array $options, $exception, $message, ActionData $context = null)
+    public function testException(array $options, $exception, $message, ActionData $data = null)
     {
         $this->setExpectedException($exception, $message);
 
-        $this->factory->create($this->formType, $context, $options);
+        $this->factory->create($this->formType, $data, $options);
     }
 
     /**
@@ -269,14 +269,14 @@ class ActionTypeTest extends FormIntegrationTestCase
      */
     protected function createActionData(array $data = [], $modified = false)
     {
-        $context = new ActionData($data);
+        $actionData = new ActionData($data);
 
         if ($modified) {
-            $context->modifiedData = null;
-            unset($context->modifiedData);
+            $actionData->modifiedData = null;
+            unset($actionData->modifiedData);
         }
 
-        return $context;
+        return $actionData;
     }
 
     /**

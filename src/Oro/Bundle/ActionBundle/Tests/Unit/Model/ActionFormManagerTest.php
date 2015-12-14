@@ -79,7 +79,7 @@ class ActionFormManagerTest extends \PHPUnit_Framework_TestCase
                 return $this->action;
             });
 
-        $context = new ActionData(['data' => ['param']]);
+        $data = new ActionData(['data' => ['param']]);
 
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
 
@@ -87,7 +87,7 @@ class ActionFormManagerTest extends \PHPUnit_Framework_TestCase
             ->method('create')
             ->with(
                 'form_type',
-                $context,
+                $data,
                 [
                     'some_option' => 'option_value',
                     'action' => $this->action
@@ -95,6 +95,6 @@ class ActionFormManagerTest extends \PHPUnit_Framework_TestCase
             )
             ->willReturn($form);
 
-        $this->assertSame($form, $this->manager->getActionForm($context, new ActionData(['data' => ['param']])));
+        $this->assertSame($form, $this->manager->getActionForm($data, new ActionData(['data' => ['param']])));
     }
 }

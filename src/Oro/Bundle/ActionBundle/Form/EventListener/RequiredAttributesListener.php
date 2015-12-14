@@ -17,7 +17,7 @@ use Oro\Bundle\ActionBundle\Model\ActionData;
 class RequiredAttributesListener implements EventSubscriberInterface
 {
     /** @var ActionData */
-    protected $context;
+    protected $data;
 
     /** @var array */
     protected $attributeNames;
@@ -31,7 +31,7 @@ class RequiredAttributesListener implements EventSubscriberInterface
     }
 
     /**
-     * Extract only required attributes for form and create new context based on them
+     * Extract only required attributes for form and create new data based on them
      *
      * @param FormEvent $event
      */
@@ -40,14 +40,14 @@ class RequiredAttributesListener implements EventSubscriberInterface
         /** @var ActionData $data */
         $data = $event->getData();
         if ($data instanceof ActionData) {
-            $this->context = $data;
+            $this->data = $data;
 
             $event->setData(new ActionData($data->getValues($this->attributeNames)));
         }
     }
 
     /**
-     * Copy submitted data to existing context
+     * Copy submitted data to existing data
      *
      * @param FormEvent $event
      */
@@ -55,12 +55,12 @@ class RequiredAttributesListener implements EventSubscriberInterface
     {
         /** @var ActionData $data */
         $data = $event->getData();
-        if ($this->context && $data instanceof ActionData) {
+        if ($this->data && $data instanceof ActionData) {
             foreach ($data->getValues() as $name => $value) {
-                $this->context->$name = $value;
+                $this->data->$name = $value;
             }
 
-            $event->setData($this->context);
+            $event->setData($this->data);
         }
     }
 

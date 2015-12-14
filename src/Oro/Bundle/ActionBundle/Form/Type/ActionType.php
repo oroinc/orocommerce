@@ -107,10 +107,10 @@ class ActionType extends AbstractType
                 /** @var Action $action */
                 $action = $options['action'];
 
-                /** @var ActionData $context */
-                $context = $event->getData();
+                /** @var ActionData $data */
+                $data = $event->getData();
 
-                $action->init($context);
+                $action->init($data);
             }
         );
 
@@ -118,11 +118,11 @@ class ActionType extends AbstractType
             $builder->addEventListener(
                 FormEvents::PRE_SET_DATA,
                 function (FormEvent $event) use ($options) {
-                    /** @var ActionData $context */
-                    $context = $event->getData();
+                    /** @var ActionData $data */
+                    $data = $event->getData();
 
                     foreach ($options['attribute_default_values'] as $attributeName => $value) {
-                        $context->$attributeName = $this->contextAccessor->getValue($context, $value);
+                        $data->$attributeName = $this->contextAccessor->getValue($data, $value);
                     }
                 }
             );

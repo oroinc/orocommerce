@@ -27,12 +27,12 @@ class AttributeAssembler extends AbstractAssembler
     }
 
     /**
-     * @param ActionData $context
+     * @param ActionData $data
      * @param array $configuration
      * @return ArrayCollection
      * @throws AssemblerException If configuration is invalid
      */
-    public function assemble(ActionData $context, array $configuration)
+    public function assemble(ActionData $data, array $configuration)
     {
         $entityAttributeName = WorkflowConfiguration::DEFAULT_ENTITY_ATTRIBUTE;
         if (!array_key_exists($entityAttributeName, $configuration)) {
@@ -40,14 +40,14 @@ class AttributeAssembler extends AbstractAssembler
                 'label' => $entityAttributeName,
                 'type' => 'entity',
                 'options' => [
-                    'class' => ClassUtils::getClass($context->getEntity()),
+                    'class' => ClassUtils::getClass($data->getEntity()),
                 ]
             ];
         }
 
         $attributes = new ArrayCollection();
         foreach ($configuration as $name => $options) {
-            $attribute = $this->assembleAttribute($context, $name, $options);
+            $attribute = $this->assembleAttribute($data, $name, $options);
             $attributes->set($name, $attribute);
         }
 
@@ -55,17 +55,17 @@ class AttributeAssembler extends AbstractAssembler
     }
 
     /**
-     * @param ActionData $context
+     * @param ActionData $data
      * @param string $name
      * @param array $options
      * @return Attribute
      */
-    protected function assembleAttribute(ActionData $context, $name, array $options = [])
+    protected function assembleAttribute(ActionData $data, $name, array $options = [])
     {
         if (!empty($options['property_path'])) {
             $options = $this->guessOptions(
                 $options,
-                ClassUtils::getClass($context->getEntity()),
+                ClassUtils::getClass($data->getEntity()),
                 $options['property_path']
             );
         }

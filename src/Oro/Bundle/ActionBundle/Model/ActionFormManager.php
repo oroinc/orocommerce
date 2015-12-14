@@ -33,17 +33,17 @@ class ActionFormManager
 
     /**
      * @param string $actionName
-     * @param ActionData $context
+     * @param ActionData $data
      * @return Form
      */
-    public function getActionForm($actionName, ActionData $context)
+    public function getActionForm($actionName, ActionData $data)
     {
-        $action = $this->actionManager->getAction($actionName, $context);
+        $action = $this->actionManager->getAction($actionName, $data);
 
         return $this->formFactory->create(
             $action->getDefinition()->getFormType(),
-            $context,
-            array_merge($action->getFormOptions($context), ['action' => $action])
+            $data,
+            array_merge($action->getFormOptions($data), ['action' => $action])
         );
     }
 }
