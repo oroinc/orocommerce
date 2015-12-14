@@ -86,6 +86,13 @@ actions:
             group: aсme.demo.actions.demogroup.label                # (optional) group action to drop-down on the label
             template: customTemplate.html.twig                      # (optional) custom button template
             dialog_template: customDialogTemplate.html.twig         # (optional) custom dialog template
+            dialog_title: Custom Dialog Title                       # (optional) custom dialog title
+            dialog_options:                                         # (optional) modal dialog options
+                allowMaximize: true
+                allowMinimize: true
+                dblclick: maximize
+                maximizedHeightDecreaseBy: minimize-bar
+                width: 1000
 
         attributes:                                                 # (optional) list of all existing attributes
             demo_attr:                                              # attribute name

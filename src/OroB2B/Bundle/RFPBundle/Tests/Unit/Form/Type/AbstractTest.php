@@ -313,7 +313,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
      * @param string $firstName
      * @param string $lastName
      * @param string $email
-     * @param string $body
+     * @param string $note
      * @param string $company
      * @param string $role
      * @param string $phone
@@ -325,7 +325,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
         $firstName = null,
         $lastName = null,
         $email = null,
-        $body = null,
+        $note = null,
         $company = null,
         $role = null,
         $phone = null,
@@ -338,7 +338,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
             ->setFirstName($firstName)
             ->setLastName($lastName)
             ->setEmail($email)
-            ->setBody($body)
+            ->setNote($note)
             ->setCompany($company)
             ->setRole($role)
             ->setPhone($phone)
