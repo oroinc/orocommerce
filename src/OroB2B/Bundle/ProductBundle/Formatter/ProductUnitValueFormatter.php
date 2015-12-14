@@ -28,7 +28,7 @@ class ProductUnitValueFormatter
      */
     public function format($value, ProductUnit $unit)
     {
-        return $this->formatData($value, $unit);
+        return $this->formatCode($value, $unit->getCode());
     }
 
     /**
@@ -38,16 +38,16 @@ class ProductUnitValueFormatter
      */
     public function formatShort($value, ProductUnit $unit)
     {
-        return $this->formatData($value, $unit, true);
+        return $this->formatCode($value, $unit->getCode(), true);
     }
 
     /**
      * @param float|integer $value
-     * @param ProductUnit $unit
+     * @param string $unitCode
      * @param boolean $isShort
      * @return string
      */
-    protected function formatData($value, ProductUnit $unit, $isShort = false)
+    public function formatCode($value, $unitCode, $isShort = false)
     {
         if (!is_numeric($value)) {
             throw new \InvalidArgumentException(
@@ -55,7 +55,7 @@ class ProductUnitValueFormatter
             );
         }
 
-        $translationKey = sprintf('orob2b.product_unit.%s.value.' . ($isShort ? 'short' : 'full'), $unit->getCode());
+        $translationKey = sprintf('orob2b.product_unit.%s.value.' . ($isShort ? 'short' : 'full'), $unitCode);
 
         return $this->translator->transChoice($translationKey, $value, ['%count%' => $value]);
     }
