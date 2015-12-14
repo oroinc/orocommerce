@@ -21,6 +21,14 @@ class ActionContext extends AbstractStorage implements EntityAwareInterface
     }
 
     /**
+     * @return string|null
+     */
+    public function getRefreshGrid()
+    {
+        return $this->offsetGet('refreshGrid');
+    }
+
+    /**
      * @param string $name
      * @return mixed
      */

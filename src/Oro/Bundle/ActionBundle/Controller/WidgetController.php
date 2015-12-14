@@ -12,6 +12,7 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Oro\Bundle\ActionBundle\Model\ActionContext;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 use Oro\Bundle\ActionBundle\Model\ContextHelper;
 
@@ -52,7 +53,7 @@ class WidgetController extends Controller
             if ($form->isValid()) {
                 $context = $this->getActionManager()->execute($actionName, $form->getData(), $errors);
 
-                $params['response'] = $context->getRedirectUrl() ? ['redirectUrl' => $context->getRedirectUrl()] : [];
+                $params['response'] = $this->getResponse($context);
             }
 
             $params['form'] = $form->createView();
@@ -82,5 +83,22 @@ class WidgetController extends Controller
     protected function getContextHelper()
     {
         return $this->get('oro_action.helper.context');
+    }
+
+    /**
+     * @param ActionContext $context
+     * @return array
+     */
+    protected function getResponse(ActionContext $context)
+    {
+        $response = [];
+        if ($context->getRedirectUrl()) {
+            $response['redirectUrl'] = $context->getRedirectUrl();
+        }
+        if ($context->getRefreshGrid()) {
+            $response['refreshGrid'] = $context->getRefreshGrid();
+        }
+
+        return $response;
     }
 }

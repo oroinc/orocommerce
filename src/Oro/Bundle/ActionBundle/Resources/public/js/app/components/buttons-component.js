@@ -117,6 +117,8 @@ define(function(require) {
             if (response.redirectUrl) {
                 e.stopImmediatePropagation();
                 this.doRedirect(response.redirectUrl);
+            } else if (response.refreshGrid) {
+                mediator.trigger('datagrid:doRefresh:' + response.refreshGrid);
             } else {
                 this.doPageReload();
             }
