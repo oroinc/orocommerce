@@ -39,7 +39,7 @@ class RefreshGridTest extends \PHPUnit_Framework_TestCase
             $this->action->initialize([$gridname])
         );
 
-        $this->assertAttributeEquals($gridname, 'gridName', $this->action);
+        $this->assertAttributeEquals([$gridname], 'gridNames', $this->action);
     }
 
     /**
@@ -60,6 +60,6 @@ class RefreshGridTest extends \PHPUnit_Framework_TestCase
         $this->action->initialize([$gridname]);
         $this->action->execute($context);
 
-        $this->assertEquals(['param' => 'value', 'refreshGrid' => $gridname], $context->getValues());
+        $this->assertEquals(['param' => 'value', 'refreshGrid' => [$gridname]], $context->getValues());
     }
 }

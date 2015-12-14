@@ -27,28 +27,6 @@ class ProductPriceTest extends WebTestCase
         );
     }
 
-    public function testCreate()
-    {
-        /** @var PriceList $priceList */
-        $priceList = $this->getReference('price_list_1');
-        /** @var ProductUnit $unit */
-        $unit = $this->getReference('product_unit.bottle');
-        /** @var Product $product */
-        $product = $this->getReference('product.1');
-
-        $form = $this->getWidgetForm($priceList);
-        $form['oro_action[price][product]'] = $product->getId();
-        $form['oro_action[price][quantity]'] = 10;
-        $form['oro_action[price][unit]'] = $unit->getCode();
-        $form['oro_action[price][price][value]'] = 20;
-        $form['oro_action[price][price][currency]'] = 'USD';
-
-        $crawler = $this->client->submit($form);
-
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertContains('widget.trigger(\'formSave\', []);', $crawler->html());
-    }
-
     public function testCreateDuplicateEntry()
     {
         /** @var ProductPrice $productPrice */
