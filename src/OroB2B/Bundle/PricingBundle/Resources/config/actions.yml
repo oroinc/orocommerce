@@ -50,7 +50,7 @@ actions:
                     unit: $.price.unit
                     price: $.price.price
                 flush: true
-            - @refresh_grid: [price-list-product-prices-grid]
+            - @refresh_grid: price-list-product-prices-grid
             - @flash_message:
                 message: orob2b.pricing.productprice.save.success
                 type: 'success'
