@@ -48,7 +48,6 @@ class CacheBuilderTest extends CacheBuilderTestCase
 
         $categoryVisibility->setVisibility($this->getInversedVisibility($visibility));
         $em->flush();
-        $this->flushCategoryVisibilityCache();
 
         $this->cacheBuilder->resolveVisibilitySettings($categoryVisibility);
     }

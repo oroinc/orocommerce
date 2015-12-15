@@ -21,29 +21,14 @@ abstract class CacheBuilderTestCase extends WebTestCase
     {
         $this->initClient();
 
-        $this->disableActions();
+        $this->flushCategoryVisibilityCache();
 
         $this->loadFixtures([
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures'
-            . '\LoadProductVisibilityResolvedFallbackCategoryData'
+            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityFallbackCategoryData'
         ]);
 
         $this->cacheBuilder = $this->getContainer()->get($this->getCacheBuilderContainerId());
 
-        $this->flushCategoryVisibilityCache();
-    }
-
-    protected function disableActions()
-    {
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroWorkflowBundle:ProcessDefinition');
-        $definitions = $em->getRepository('OroWorkflowBundle:ProcessDefinition')
-            ->findAll();
-
-        foreach ($definitions as $definition) {
-            $definition->setEnabled(false);
-        }
-
-        $em->flush();
     }
 
     protected function flushCategoryVisibilityCache()

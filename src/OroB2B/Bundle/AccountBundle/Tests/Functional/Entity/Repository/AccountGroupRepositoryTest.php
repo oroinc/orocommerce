@@ -60,6 +60,7 @@ class AccountGroupRepositoryTest extends WebTestCase
             $accountGroups
         );
 
+        sort($accountGroups);
         $this->assertEquals($expectedAccountGroups, $accountGroups);
     }
 
