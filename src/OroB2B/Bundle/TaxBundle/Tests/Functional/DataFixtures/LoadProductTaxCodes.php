@@ -6,6 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
 
 class LoadProductTaxCodes extends AbstractFixture implements DependentFixtureInterface
@@ -47,7 +48,8 @@ class LoadProductTaxCodes extends AbstractFixture implements DependentFixtureInt
         $productTaxCode->setCode($code);
         $productTaxCode->setDescription($description);
         foreach ($productRefs as $productRef) {
-            $product = $manager->getRepository('OroB2B\Bundle\ProductBundle\Entity\Product')->findOneBySku($productRef);
+            /** @var Product $product */
+            $product = $this->getReference($productRef);
             $productTaxCode->addProduct($product);
         }
 

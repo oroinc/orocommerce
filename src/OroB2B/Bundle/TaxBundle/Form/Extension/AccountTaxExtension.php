@@ -2,36 +2,17 @@
 
 namespace OroB2B\Bundle\TaxBundle\Form\Extension;
 
-use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormError;
-
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountType;
+use OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode;
 use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
 use OroB2B\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository;
 use OroB2B\Bundle\TaxBundle\Form\Type\AccountTaxCodeAutocompleteType;
 
-class AccountTaxExtension extends AbstractTypeExtension
+class AccountTaxExtension extends AbstractTaxExtension
 {
-    /** @var DoctrineHelper */
-    protected $doctrineHelper;
-
-    /** @var AccountTaxCodeRepository  */
-    protected $repository;
-
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
-    public function __construct(DoctrineHelper $doctrineHelper)
-    {
-        $this->doctrineHelper = $doctrineHelper;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -43,7 +24,7 @@ class AccountTaxExtension extends AbstractTypeExtension
     /**
      * {@inheritdoc}
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    protected function addTaxCodeField(FormBuilderInterface $builder)
     {
         $builder
             ->add(
@@ -52,78 +33,36 @@ class AccountTaxExtension extends AbstractTypeExtension
                 [
                     'required' => false,
                     'mapped' => false,
-                    'label' => 'orob2b.tax.accounttaxcode.entity_label'
+                    'label' => 'orob2b.tax.accounttaxcode.entity_label',
                 ]
             );
-        
-        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData']);
-        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit'], 10);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function onPostSetData(FormEvent $event)
-    {
-        /** @var Account|null $account */
-        $account = $event->getData();
-        if (!$account || !$account->getId()) {
-            return;
-        }
-
-        $taxCode = $this->getAccountTaxCode($account);
-
-        $event->getForm()->get('taxCode')->setData($taxCode);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function onPostSubmit(FormEvent $event)
-    {
-        /** @var Account|null $account */
-        $account = $event->getData();
-        if (!$account) {
-            return;
-        }
-
-        $form = $event->getForm();
-        if (!$form->isValid()) {
-            return;
-        }
-
-        $entityManager = $this->doctrineHelper->getEntityManager('OroB2BTaxBundle:AccountTaxCode');
-
-        $taxCodeNew = $form->get('taxCode')->getData();
-        $taxCode = $this->getAccountTaxCode($account);
-
-        if (!$taxCodeNew) {
-            if ($taxCode) {
-                $taxCode->removeAccount($account);
-                $entityManager->flush();
-            }
-            return;
-        }
-
-        $taxCodeId = $taxCode ? $taxCode->getId() : 0;
-
-        if ($taxCodeId != $taxCodeNew->getId()) {
-            if ($taxCode) {
-                $taxCode->removeAccount($account);
-            }
-            $taxCodeNew->addAccount($account);
-            $entityManager->flush();
-        }
     }
 
     /**
      * @param Account $account
-     * @return AccountTaxCode|null
+     * @param AccountTaxCode|AbstractTaxCode $taxCode
+     * @param AccountTaxCode|AbstractTaxCode $taxCodeNew
      */
-    protected function getAccountTaxCode($account)
+    protected function handleTaxCode($account, AbstractTaxCode $taxCode = null, AbstractTaxCode $taxCodeNew = null)
     {
-        $this->repository = $this->doctrineHelper->getEntityRepository('OroB2BTaxBundle:AccountTaxCode');
+        if ($taxCode) {
+            $taxCode->removeAccount($account);
+        }
 
-        return $this->repository->findOneByAccount($account);
+        if ($taxCodeNew) {
+            $taxCodeNew->addAccount($account);
+        }
+    }
+
+    /**
+     * @param Account $object
+     * @return AccountTaxCode
+     */
+    protected function getTaxCode($object)
+    {
+        /** @var AccountTaxCodeRepository $repository */
+        $repository = $this->getRepository();
+
+        return $repository->findOneByAccount($object);
     }
 }

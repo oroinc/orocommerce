@@ -3,47 +3,34 @@
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Extension;
 
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Symfony\Component\Form\FormInterface;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountType;
 use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
 use OroB2B\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository;
-use OroB2B\Bundle\TaxBundle\Form\Type\AccountTaxCodeAutocompleteType;
 use OroB2B\Bundle\TaxBundle\Form\Extension\AccountTaxExtension;
+use OroB2B\Bundle\TaxBundle\Form\Type\AccountTaxCodeAutocompleteType;
 
-class AccountTaxExtensionTest extends \PHPUnit_Framework_TestCase
+class AccountTaxExtensionTest extends AbstractTaxExtensionText
 {
-    /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $doctrineHelper;
-
     /**
      * @var AccountTaxCodeRepository|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $entityRepository;
 
     /**
-     * @var AccountTaxExtension
+     * @return AccountTaxExtension
      */
-    protected $extension;
-
-    protected function setUp()
+    protected function getExtension()
     {
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->extension = new AccountTaxExtension($this->doctrineHelper);
+        return new AccountTaxExtension($this->doctrineHelper, 'OroB2BTaxBundle:AccountTaxCode');
     }
 
     public function testGetExtendedType()
     {
-        $this->assertEquals(AccountType::NAME, $this->extension->getExtendedType());
+        $this->assertEquals(AccountType::NAME, $this->getExtension()->getExtendedType());
     }
 
     /**
@@ -52,15 +39,6 @@ class AccountTaxExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function prepareDoctrineHelper($expectsManager = false, $expectsRepository = false)
     {
-        $entityManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
-        $entityManager->expects($expectsManager ? $this->once() : $this->never())
-            ->method('flush');
-
-        $this->doctrineHelper->expects($expectsManager ? $this->once() : $this->never())
-            ->method('getEntityManager')
-            ->with('OroB2BTaxBundle:AccountTaxCode')
-            ->willReturn($entityManager);
-
         $this->entityRepository = $this
             ->getMockBuilder('OroB2B\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository')
             ->disableOriginalConstructor()
@@ -74,6 +52,8 @@ class AccountTaxExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildForm()
     {
+        $accountTaxExtension = $this->getExtension();
+
         /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
         $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
         $builder->expects($this->once())
@@ -84,44 +64,26 @@ class AccountTaxExtensionTest extends \PHPUnit_Framework_TestCase
                 [
                     'required' => false,
                     'mapped' => false,
-                    'label' => 'orob2b.tax.accounttaxcode.entity_label'
+                    'label' => 'orob2b.tax.accounttaxcode.entity_label',
                 ]
             );
         $builder->expects($this->exactly(2))
             ->method('addEventListener');
         $builder->expects($this->at(1))
             ->method('addEventListener')
-            ->with(FormEvents::POST_SET_DATA, [$this->extension, 'onPostSetData']);
+            ->with(FormEvents::POST_SET_DATA, [$accountTaxExtension, 'onPostSetData']);
         $builder->expects($this->at(2))
             ->method('addEventListener')
-            ->with(FormEvents::POST_SUBMIT, [$this->extension, 'onPostSubmit'], 10);
+            ->with(FormEvents::POST_SUBMIT, [$accountTaxExtension, 'onPostSubmit'], 10);
 
-        $this->extension->buildForm($builder, []);
-    }
-
-    public function testOnPostSetDataNoAccount()
-    {
-        $this->prepareDoctrineHelper();
-
-        $event = $this->createEvent(null);
-
-        $this->extension->onPostSetData($event);
-    }
-
-    public function testOnPostSetDataNewAccount()
-    {
-        $this->prepareDoctrineHelper();
-
-        $event = $this->createEvent($this->createAccount());
-
-        $this->extension->onPostSetData($event);
+        $accountTaxExtension->buildForm($builder, []);
     }
 
     public function testOnPostSetDataExistingAccount()
     {
         $this->prepareDoctrineHelper(false, true);
 
-        $account = $this->createAccount(1);
+        $account = $this->createTaxCodeTarget(1);
         $event = $this->createEvent($account);
 
         $taxCode = $this->createTaxCode();
@@ -137,43 +99,15 @@ class AccountTaxExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('setData')
             ->with($taxCode);
 
-        $this->extension->onPostSetData($event);
-    }
-
-    public function testOnPostSubmitNoAccount()
-    {
-        $event = $this->createEvent(null);
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $mainForm */
-        $mainForm = $event->getForm();
-        $mainForm->expects($this->never())
-            ->method('isValid');
-
-        $this->extension->onPostSubmit($event);
-    }
-
-    public function testOnPostSubmitInvalidForm()
-    {
-        $event = $this->createEvent($this->createAccount());
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $mainForm */
-        $mainForm = $event->getForm();
-        $mainForm->expects($this->once())
-            ->method('isValid')
-            ->willReturn(false);
-
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $taxCodeForm */
-        $taxCodeForm = $mainForm->get('taxCode');
-        $taxCodeForm->expects($this->never())
-            ->method('getData');
-
-        $this->extension->onPostSubmit($event);
+        $this->getExtension()->onPostSetData($event);
     }
 
     public function testOnPostSubmitNewAccount()
     {
         $this->prepareDoctrineHelper(true, true);
 
-        $account = $this->createAccount();
-        $event   = $this->createEvent($account);
+        $account = $this->createTaxCodeTarget();
+        $event = $this->createEvent($account);
 
         $taxCode = $this->createTaxCode(1);
 
@@ -181,7 +115,7 @@ class AccountTaxExtensionTest extends \PHPUnit_Framework_TestCase
         $this->entityRepository->expects($this->once())
             ->method('findOneByAccount');
 
-        $this->extension->onPostSubmit($event);
+        $this->getExtension()->onPostSubmit($event);
 
         $this->assertEquals([$account], $taxCode->getAccounts()->toArray());
     }
@@ -190,10 +124,10 @@ class AccountTaxExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $this->prepareDoctrineHelper(true, true);
 
-        $account = $this->createAccount(1);
-        $event   = $this->createEvent($account);
+        $account = $this->createTaxCodeTarget(1);
+        $event = $this->createEvent($account);
 
-        $newTaxCode         = $this->createTaxCode(1);
+        $newTaxCode = $this->createTaxCode(1);
         $taxCodeWithAccount = $this->createTaxCode(2);
         $taxCodeWithAccount->addAccount($account);
 
@@ -202,29 +136,10 @@ class AccountTaxExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('findOneByAccount')
             ->will($this->returnValue($taxCodeWithAccount));
 
-        $this->extension->onPostSubmit($event);
+        $this->getExtension()->onPostSubmit($event);
 
         $this->assertEquals([$account], $newTaxCode->getAccounts()->toArray());
         $this->assertEquals([], $taxCodeWithAccount->getAccounts()->toArray());
-    }
-
-    /**
-     * @param mixed $data
-     *
-     * @return FormEvent
-     */
-    protected function createEvent($data)
-    {
-        $taxCodeForm = $this->getMock('Symfony\Component\Form\FormInterface');
-
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $mainForm */
-        $mainForm = $this->getMock('Symfony\Component\Form\FormInterface');
-        $mainForm->expects($this->any())
-            ->method('get')
-            ->with('taxCode')
-            ->willReturn($taxCodeForm);
-
-        return new FormEvent($mainForm, $data);
     }
 
     /**
@@ -232,9 +147,9 @@ class AccountTaxExtensionTest extends \PHPUnit_Framework_TestCase
      *
      * @return Account
      */
-    protected function createAccount($id = null)
+    protected function createTaxCodeTarget($id = null)
     {
-        return $this->createEntity('OroB2B\Bundle\AccountBundle\Entity\Account', $id);
+        return $this->getEntity('OroB2B\Bundle\AccountBundle\Entity\Account', ['id' => $id]);
     }
 
     /**
@@ -244,43 +159,6 @@ class AccountTaxExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function createTaxCode($id = null)
     {
-        return $this->createEntity('OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode', $id);
-    }
-
-    /**
-     * @param          $class string
-     * @param int|null $id
-     *
-     * @return object
-     */
-    protected function createEntity($class, $id = null)
-    {
-        $entity = new $class();
-        if ($id) {
-            $reflection = new \ReflectionProperty($class, 'id');
-            $reflection->setAccessible(true);
-            $reflection->setValue($entity, $id);
-        }
-
-        return $entity;
-    }
-
-    /**
-     * @param FormEvent $event
-     * @param AccountTaxCode  $taxCode
-     */
-    protected function assertTaxCodeAdd(FormEvent $event, AccountTaxCode $taxCode)
-    {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $mainForm */
-        $mainForm = $event->getForm();
-        $mainForm->expects($this->once())
-            ->method('isValid')
-            ->willReturn(true);
-
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $taxCodeForm */
-        $taxCodeForm = $mainForm->get('taxCode');
-        $taxCodeForm->expects($this->once())
-            ->method('getData')
-            ->will($this->returnValue($taxCode));
+        return $this->getEntity('OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode', ['id' => $id]);
     }
 }

@@ -39,6 +39,7 @@ services:
         class: %orob2b_tax.form.extension.product_tax.class%
         arguments:
             - @oro_entity.doctrine_helper
+            - %orob2b_tax.entity.product_tax_code.class%
         tags:
             - { name: form.type_extension, alias: orob2b_product }
 
@@ -46,6 +47,7 @@ services:
         class: %orob2b_tax.form.extension.account_tax.class%
         arguments:
             - @oro_entity.doctrine_helper
+            - %orob2b_tax.entity.account_tax_code.class%
         tags:
             - { name: form.type_extension, alias: orob2b_account_type }
 

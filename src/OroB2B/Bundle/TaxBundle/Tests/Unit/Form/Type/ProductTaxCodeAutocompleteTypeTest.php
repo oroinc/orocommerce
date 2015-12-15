@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\TaxBundle\Form\Type\ProductTaxCodeAutocompleteType;
 
@@ -23,23 +24,37 @@ class ProductTaxCodeAutocompleteTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * @return ProductTaxCodeAutocompleteType
      */
     protected function createTaxCodeAutocompleteType()
     {
         return new ProductTaxCodeAutocompleteType();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function testGetName()
     {
         $this->assertEquals('orob2b_product_tax_code_autocomplete', $this->formType->getName());
     }
 
+    public function testGetParent()
+    {
+        $this->assertEquals('oro_entity_create_or_select_inline', $this->formType->getParent());
+    }
+
+    public function testConfigureOptions()
+    {
+        $resolver = new OptionsResolver();
+        $this->formType->configureOptions($resolver);
+        $options = $resolver->resolve();
+
+        $this->assertArrayHasKey('autocomplete_alias', $options);
+        $this->assertEquals('orob2b_product_tax_code', $options['autocomplete_alias']);
+        $this->assertArrayHasKey('grid_name', $options);
+        $this->assertEquals('products-tax-code-select-grid', $options['grid_name']);
+    }
+
     /**
-     * {@inheritdoc}
+     * @return string
      */
     protected function getDataClass()
     {

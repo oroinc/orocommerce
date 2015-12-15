@@ -2,32 +2,17 @@
 
 namespace OroB2B\Bundle\TaxBundle\Form\Extension;
 
-use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Form\Type\ProductType;
+use OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode;
 use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
 use OroB2B\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository;
 use OroB2B\Bundle\TaxBundle\Form\Type\ProductTaxCodeAutocompleteType;
 
-class ProductTaxExtension extends AbstractTypeExtension
+class ProductTaxExtension extends AbstractTaxExtension
 {
-    /** @var DoctrineHelper */
-    protected $doctrineHelper;
-
-    /**
-     * @param DoctrineHelper $doctrineHelper
-     */
-    public function __construct(DoctrineHelper $doctrineHelper)
-    {
-        $this->doctrineHelper = $doctrineHelper;
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -36,10 +21,8 @@ class ProductTaxExtension extends AbstractTypeExtension
         return ProductType::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    /** {@inheritdoc} */
+    protected function addTaxCodeField(FormBuilderInterface $builder)
     {
         $builder
             ->add(
@@ -48,78 +31,35 @@ class ProductTaxExtension extends AbstractTypeExtension
                 [
                     'required' => false,
                     'mapped' => false,
-                    'label' => 'orob2b.tax.producttaxcode.entity_label'
+                    'label' => 'orob2b.tax.producttaxcode.entity_label',
                 ]
             );
-
-        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData']);
-        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit'], 10);
     }
 
     /**
-     * {@inheritdoc}
+     * @param Product $product
+     * @param ProductTaxCode|AbstractTaxCode $taxCode
+     * @param ProductTaxCode|AbstractTaxCode $taxCodeNew
      */
-    public function onPostSetData(FormEvent $event)
+    protected function handleTaxCode($product, AbstractTaxCode $taxCode = null, AbstractTaxCode $taxCodeNew = null)
     {
-        /** @var Product|null $product */
-        $product = $event->getData();
-        if (!$product || !$product->getId()) {
-            return;
+        if ($taxCode) {
+            $taxCode->removeProduct($product);
         }
 
-        $taxCode = $this->getProductTaxCode($product);
-
-        $event->getForm()->get('taxCode')->setData($taxCode);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function onPostSubmit(FormEvent $event)
-    {
-        /** @var Product|null $product */
-        $product = $event->getData();
-        if (!$product) {
-            return;
-        }
-
-        $form = $event->getForm();
-        if (!$form->isValid()) {
-            return;
-        }
-
-        $entityManager = $this->doctrineHelper->getEntityManager('OroB2BTaxBundle:ProductTaxCode');
-
-        $taxCodeNew = $form->get('taxCode')->getData();
-        $taxCode = $this->getProductTaxCode($product);
-
-        if (!$taxCodeNew) {
-            if ($taxCode) {
-                $taxCode->removeProduct($product);
-                $entityManager->flush();
-            }
-            return;
-        }
-
-        $taxCodeId = $taxCode ? $taxCode->getId() : 0;
-
-        if ($taxCodeId != $taxCodeNew->getId()) {
-            if ($taxCode) {
-                $taxCode->removeProduct($product);
-            }
+        if ($taxCodeNew) {
             $taxCodeNew->addProduct($product);
-            $entityManager->flush();
         }
     }
 
     /**
      * @param Product $product
-     * @return ProductTaxCode|null
+     * @return ProductTaxCode
      */
-    protected function getProductTaxCode($product)
+    protected function getTaxCode($product)
     {
         /** @var ProductTaxCodeRepository $repository */
-        $repository = $this->doctrineHelper->getEntityRepository('OroB2BTaxBundle:ProductTaxCode');
+        $repository = $this->getRepository();
 
         return $repository->findOneByProduct($product);
     }
