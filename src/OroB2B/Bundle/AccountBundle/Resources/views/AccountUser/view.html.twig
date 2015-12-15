@@ -42,25 +42,6 @@
                 'path' : path('orob2b_account_account_user_update', { 'id': entity.id }),
                 'entity_label': 'orob2b.account.accountuser.entity_label'|trans
             }) }}
-            <div class="btn-group" data-page-component-module="orob2baccount/js/app/components/account-user-management-component">
-            {% if entity.enabled %}
-                {{ UI.button({
-                    'aCss':  'no-hash',
-                    'iCss':  'icon-remove',
-                    'label': 'orob2b.account.action.account_user.disable'|trans,
-                    'path':  path('orob2b_account_account_user_disable', {'id': entity.id}),
-                    'title': 'orob2b.account.action.account_user.disable'|trans
-                }) }}
-            {% else %}
-                {{ UI.button({
-                    'aCss':  'no-hash',
-                    'iCss':  'icon-ok',
-                    'label': 'orob2b.account.action.account_user.enable'|trans,
-                    'path':  path('orob2b_account_account_user_enable', {'id': entity.id}),
-                    'title': 'orob2b.account.action.account_user.enable'|trans
-                }) }}
-            {% endif %}
-            </div>
             {% if not entity.confirmed %}
                 <div class="btn-group" data-page-component-module="orob2baccount/js/app/components/account-user-management-component">
                     {{ UI.button({
