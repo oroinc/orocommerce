@@ -1,11 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\SaleBundle\Tests\Functional\Controller;
+namespace OroB2B\Bundle\SaleBundle\Tests\Functional;
 
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\SaleBundle\Entity\Quote;
 use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
@@ -13,21 +12,18 @@ use OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 /**
  * @dbIsolation
  */
-class QuoteNotificationControllerTest extends WebTestCase
+class QuoteNotificationTest extends WebTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp()
     {
         $this->markTestIncomplete('Skipped due to issue with DOMDocument https://bugs.php.net/bug.php?id=52012');
 
-        $this->initClient([], static::generateBasicAuthHeader());
+        $this->initClient([], $this->generateBasicAuthHeader());
 
         $this->loadFixtures(
             [
                 'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData',
-                'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData',
+                'OroB2B\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData'
             ]
         );
     }
@@ -39,12 +35,16 @@ class QuoteNotificationControllerTest extends WebTestCase
         $crawler = $this->client->request(
             'GET',
             $this->getUrl(
-                'quote_notification_email',
-                ['id' => $quote->getId()]
+                'oro_action_widget_form',
+                [
+                    'actionName' => 'orob2b_sale_notify_customer_by_email_action',
+                    'entityClass' => 'OroB2B\Bundle\SaleBundle\Entity\Quote',
+                    'entityId' => $quote->getId()
+                ]
             )
         );
 
-        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         /* @var $form Form */
         $form = $crawler->selectButton('Notify and Lock')->form();
@@ -53,16 +53,7 @@ class QuoteNotificationControllerTest extends WebTestCase
         $crawler = $this->client->submit($form);
 
         $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('The email was sent', $crawler->html());
-    }
-
-    /**
-     * @param string $username
-     * @return User
-     */
-    protected function getUser($username)
-    {
-        return $this->getReference($username);
     }
 }
