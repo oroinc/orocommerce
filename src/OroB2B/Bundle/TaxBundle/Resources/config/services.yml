@@ -6,6 +6,8 @@ parameters:
     orob2b_tax.entity.tax.class: OroB2B\Bundle\TaxBundle\Entity\Tax
     orob2b_tax.entity.tax_rule.class: OroB2B\Bundle\TaxBundle\Entity\TaxRule
 
+    orob2b_tax.validator.zip_code_fields.class: OroB2B\Bundle\TaxBundle\Validator\ZipCodeFieldsValidator
+
     orob2b_tax.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     
     orob2b_tax.event_listener.form_view.class: OroB2B\Bundle\TaxBundle\EventListener\FormViewListener
@@ -85,3 +87,8 @@ services:
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_tax_jurisdiction_autocomplete, acl_resource: orob2b_tax_jurisdiction_view }
         lazy: true
+
+    orob2b_tax.validator.zip_code_fields:
+        class: %orob2b_tax.validator.zip_code_fields.class%
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_tax_zip_code_fields }
