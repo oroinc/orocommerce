@@ -24,7 +24,10 @@ class CategoryVisibilityCalculatorTest extends WebTestCase
             $this->generateBasicAuthHeader(LoadAccountUserData::EMAIL, LoadAccountUserData::PASSWORD)
         );
 
-        $this->loadFixtures(['OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData']);
+        $this->loadFixtures([
+            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
+            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
+        ]);
     }
 
     /**
@@ -46,17 +49,15 @@ class CategoryVisibilityCalculatorTest extends WebTestCase
             [
                 'visibleCategories' => [
                     'Product Catalog',
-                    'category_1_2',
-                    'category_1_2_6',
-                    'category_1_2_6_8',
-                    'category_1_2_9',
-                    'category_1_10',
+                    'category_1',
+                    'category_1_5',
                 ],
                 'invisibleCategories' => [
+                    'category_1_2',
                     'category_1_2_3',
                     'category_1_2_3_4',
-                    'category_1_2_3_5',
-                    'category_1_2_6_7'
+                    'category_1_5_6',
+                    'category_1_5_6_7',
                 ]
             ]
         ];
@@ -64,15 +65,17 @@ class CategoryVisibilityCalculatorTest extends WebTestCase
 
     /**
      * @dataProvider changeAccountGroupCategoryVisibilityToHiddenDataProvider
+     * @param string $categoryToHide
      * @param array $visibleCategories
      * @param array $invisibleCategories
      */
     public function testChangeAccountGroupCategoryVisibilityToHidden(
+        $categoryToHide,
         array $visibleCategories,
         array $invisibleCategories
     ) {
         /** @var Category $category */
-        $category = $this->getReference('category_1_2_6');
+        $category = $this->getReference($categoryToHide);
         $this->createAccountGroupCategoryVisibility($category, AccountGroupCategoryVisibility::HIDDEN);
 
         $this->assertTreeCategories($visibleCategories, $invisibleCategories);
@@ -85,19 +88,18 @@ class CategoryVisibilityCalculatorTest extends WebTestCase
     {
         return [
             [
+                'categoryToHide' => 'category_1_5',
                 'visibleCategories' => [
                     'Product Catalog',
-                    'category_1_2',
-                    'category_1_2_9',
-                    'category_1_10',
+                    'category_1',
                 ],
                 'invisibleCategories' => [
+                    'category_1_2',
                     'category_1_2_3',
                     'category_1_2_3_4',
-                    'category_1_2_3_5',
-                    'category_1_2_6',
-                    'category_1_2_6_8',
-                    'category_1_2_6_7'
+                    'category_1_5',
+                    'category_1_5_6',
+                    'category_1_5_6_7',
                 ]
             ]
         ];
@@ -106,15 +108,17 @@ class CategoryVisibilityCalculatorTest extends WebTestCase
     /**
      * @depends testChangeAccountGroupCategoryVisibilityToHidden
      * @dataProvider changeAccountGroupCategoryVisibilityToVisibleDataProvider
+     * @param string $categoryToShow
      * @param array $visibleCategories
      * @param array $invisibleCategories
      */
     public function testChangeAccountGroupCategoryVisibilityToVisible(
+        $categoryToShow,
         array $visibleCategories,
         array $invisibleCategories
     ) {
         /** @var Category $category */
-        $category = $this->getReference('category_1_2_6');
+        $category = $this->getReference($categoryToShow);
 
         $this->updateAccountGroupCategoryVisibility($category, AccountGroupCategoryVisibility::VISIBLE);
 
@@ -128,33 +132,37 @@ class CategoryVisibilityCalculatorTest extends WebTestCase
     {
         return [
             [
+                'categoryToShow' => 'category_1_2',
                 'visibleCategories' => [
                     'Product Catalog',
+                    'category_1',
                     'category_1_2',
-                    'category_1_2_6',
-                    'category_1_2_6_8',
-                    'category_1_2_9',
-                    'category_1_10',
-                ],
-                'invisibleCategories' => [
                     'category_1_2_3',
                     'category_1_2_3_4',
-                    'category_1_2_3_5',
-                    'category_1_2_6_7'
+                ],
+                'invisibleCategories' => [
+                    'category_1_5',
+                    'category_1_5_6',
+                    'category_1_5_6_7',
                 ]
             ]
         ];
     }
 
     /**
-     * @dataProvider changeAccountCategoryVisibilityDataProvider
+     * @depends testChangeAccountGroupCategoryVisibilityToVisible
+     * @dataProvider changeAccountCategoryVisibilityToHiddenDataProvider
+     * @param string $categoryToShow
      * @param array $visibleCategories
      * @param array $invisibleCategories
      */
-    public function testChangeAccountCategoryVisibility(array $visibleCategories, array $invisibleCategories)
-    {
+    public function testChangeAccountCategoryVisibilityToHidden(
+        $categoryToShow,
+        array $visibleCategories,
+        array $invisibleCategories
+    ) {
         /** @var Category $category */
-        $category = $this->getReference('category_1_10');
+        $category = $this->getReference($categoryToShow);
         $this->updateAccountCategoryVisibility($category, AccountCategoryVisibility::HIDDEN);
 
         $this->assertTreeCategories($visibleCategories, $invisibleCategories);
@@ -163,23 +171,65 @@ class CategoryVisibilityCalculatorTest extends WebTestCase
     /**
      * @return array
      */
-    public function changeAccountCategoryVisibilityDataProvider()
+    public function changeAccountCategoryVisibilityToHiddenDataProvider()
     {
         return [
             [
+                'categoryToShow' => 'category_1',
                 'visibleCategories' => [
                     'Product Catalog',
-                    'category_1_2',
-                    'category_1_2_6',
-                    'category_1_2_6_8',
-                    'category_1_2_9'
                 ],
                 'invisibleCategories' => [
+                    'category_1',
+                    'category_1_2',
                     'category_1_2_3',
                     'category_1_2_3_4',
-                    'category_1_2_3_5',
-                    'category_1_2_6_7',
-                    'category_1_10'
+                    'category_1_5',
+                    'category_1_5_6',
+                    'category_1_5_6_7',
+                ]
+            ]
+        ];
+    }
+
+    /**
+     * @depends testChangeAccountCategoryVisibilityToHidden
+     * @dataProvider changeAccountCategoryVisibilityToVisibleDataProvider
+     * @param string $categoryToShow
+     * @param array $visibleCategories
+     * @param array $invisibleCategories
+     */
+    public function testChangeAccountCategoryVisibility(
+        $categoryToShow,
+        array $visibleCategories,
+        array $invisibleCategories
+    ) {
+        /** @var Category $category */
+        $category = $this->getReference($categoryToShow);
+        $this->updateAccountCategoryVisibility($category, AccountCategoryVisibility::VISIBLE);
+
+        $this->assertTreeCategories($visibleCategories, $invisibleCategories);
+    }
+
+    /**
+     * @return array
+     */
+    public function changeAccountCategoryVisibilityToVisibleDataProvider()
+    {
+        return [
+            [
+                'categoryToShow' => 'category_1',
+                'visibleCategories' => [
+                    'Product Catalog',
+                    'category_1',
+                    'category_1_2',
+                    'category_1_2_3',
+                    'category_1_2_3_4',
+                ],
+                'invisibleCategories' => [
+                    'category_1_5',
+                    'category_1_5_6',
+                    'category_1_5_6_7',
                 ]
             ]
         ];

@@ -11,12 +11,16 @@
             'dialogUrl': dialogUrl
         }) %}
 
-        {% set template = params.template|default('OroActionBundle::Action/button.html.twig') %}
+        {% set template = params.template|default('OroActionBundle:Action:button.html.twig') %}
         {% set groupName = action.definition.frontendOptions.group|default(null) %}
         {% if groupName %}
             {% set link %}
                 <li>
-                    {% include template with {'params': params, 'context': context, 'onlyLink': true} %}
+                    {% include template with {
+                        'params': params|merge({'class': params.class|default('') ~ ' action-button'}),
+                        'context': context,
+                        'onlyLink': true
+                    } %}
                 </li>
             {% endset %}
 
@@ -24,7 +28,7 @@
         {% else %}
             {% set button %}
                 {% include template with {
-                    'params': params|merge({'class': (params.class is defined ? params.class : 'back icons-holder-text action-button') ~ ' btn'}),
+                    'params': params|merge({'class': params.class|default('back icons-holder-text') ~ ' btn action-button'}),
                     'context': context
                 } %}
             {% endset %}

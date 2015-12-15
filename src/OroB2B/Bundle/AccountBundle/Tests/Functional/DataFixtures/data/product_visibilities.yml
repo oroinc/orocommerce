@@ -54,3 +54,17 @@ product.5:
         account.level_1:
             visibility: current_product
             reference: product.5.visibility.account.level_1
+product.6:
+    website: US
+    all:
+        visibility: config
+        reference: product.6.visibility.all
+    groups: {}
+    accounts: {}
+product.7:
+    website: US
+    all:
+        visibility: config
+        reference: product.7.visibility.all
+    groups: {}
+    accounts: {}

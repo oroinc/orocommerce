@@ -11,6 +11,7 @@ use Symfony\Component\Yaml\Yaml;
 
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
@@ -26,6 +27,8 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
     const PRODUCT_3 = 'product.3';
     const PRODUCT_4 = 'product.4';
     const PRODUCT_5 = 'product.5';
+    const PRODUCT_6 = 'product.6';
+    const PRODUCT_7 = 'product.7';
 
     /**
      * {@inheritdoc}

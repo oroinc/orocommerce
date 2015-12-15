@@ -1,4 +1,32 @@
 definitions:
+    change_category_position:
+        label: 'Changed Category Position In Tree'
+        enabled: true
+        entity: OroB2B\Bundle\CatalogBundle\Entity\Category
+        actions_configuration:
+            - @change_category_position: ~
+
+    change_category_visibility:
+        label: 'Changed Category Visibility For All'
+        enabled: true
+        entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility
+        actions_configuration:
+            - @change_category_visibility: ~
+
+    change_account_group_category_visibility:
+        label: 'Changed Category Visibility For Account Group'
+        enabled: true
+        entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility
+        actions_configuration:
+            - @change_category_visibility: ~
+
+    change_account_category_visibility:
+        label: 'Changed Category visibility For Account'
+        enabled: true
+        entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility
+        actions_configuration:
+            - @change_category_visibility: ~
+
     product_visibility_change:
         enabled: true
         label: Product visibility change
@@ -28,8 +56,36 @@ definitions:
         actions_configuration:
             - @resolve_visibility_settings: ~
 
-
 triggers:
+    change_category_position:
+        -
+            event: update
+            field: parentCategory
+
+    change_category_visibility:
+        -
+            event: create
+        -
+            event: update
+        -
+            event: delete
+
+    change_account_group_category_visibility:
+        -
+            event: create
+        -
+            event: update
+        -
+            event: delete
+
+    change_account_category_visibility:
+        -
+            event: create
+        -
+            event: update
+        -
+            event: delete
+
     product_visibility_change:
         -
             event: create
