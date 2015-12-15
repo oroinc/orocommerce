@@ -154,7 +154,7 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
         return $this->registry
             ->getManagerForClass('OroB2BAccountBundle:AccountGroup')
             ->getRepository('OroB2BAccountBundle:AccountGroup')
-            ->getCategoryAccountGroupsByVisibility(
+            ->getCategoryAccountGroupIdsByVisibility(
                 $category,
                 AccountGroupCategoryVisibility::PARENT_CATEGORY,
                 $restrictedAccountGroupIds

@@ -16,7 +16,7 @@ class AccountGroupRepository extends EntityRepository
      * @param array $restrictedAccountGroupIds
      * @return array
      */
-    public function getCategoryAccountGroupsByVisibility(
+    public function getCategoryAccountGroupIdsByVisibility(
         Category $category,
         $visibility,
         array $restrictedAccountGroupIds = null

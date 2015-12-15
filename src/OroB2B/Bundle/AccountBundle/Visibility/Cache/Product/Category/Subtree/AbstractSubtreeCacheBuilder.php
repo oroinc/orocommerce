@@ -12,6 +12,11 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 abstract class AbstractSubtreeCacheBuilder
 {
     /**
+     * @var array
+     */
+    protected $excludedCategories = [];
+
+    /**
      * @param Registry $registry
      * @param CategoryVisibilityResolver $categoryVisibilityResolver
      */
@@ -108,22 +113,56 @@ abstract class AbstractSubtreeCacheBuilder
         $qb = $this->joinCategoryVisibility($qb, $target);
         $qb = $this->restrictToParentFallback($qb);
 
+        $finalLeafIds = [];
+
         /**
          * Nodes with fallback different from 'toParent' and their children should be excluded
          * Also excluded final leaf of category tree
+         * To optimize performance exclude nodes whose parents are already processed
          */
         foreach ($categoriesWithStaticFallback as $node) {
-            $qb->andWhere(
-                $qb->expr()->not(
-                    $qb->expr()->andX(
-                        $qb->expr()->gt('node.level', $node['level']),
-                        $qb->expr()->gt('node.left', $node['left']),
-                        $qb->expr()->lt('node.right', $node['right'])
+            $this->excludedCategories[] = $node;
+            if ($this->checkExcludedByParent($node)) {
+                continue;
+            } elseif ($node['left'] + 1 == $node['right']) {
+                $finalLeafIds[] = $node['id'];
+            } else {
+                $qb->andWhere(
+                    $qb->expr()->not(
+                        $qb->expr()->andX(
+                            $qb->expr()->gte('node.level', $node['level']),
+                            $qb->expr()->gte('node.left', $node['left']),
+                            $qb->expr()->lte('node.right', $node['right'])
+                        )
                     )
-                )
-            );
+                );
+            }
+        }
+
+        if (!empty($finalLeafIds)) {
+            $qb->andWhere($qb->expr()->notIn('node', ':finalLeafIds'))
+                ->setParameter('finalLeafIds', $finalLeafIds);
         }
 
         return array_map('current', $qb->getQuery()->getScalarResult());
+    }
+
+    /**
+     * @param array $node
+     * @return bool
+     */
+    protected function checkExcludedByParent(array $node)
+    {
+        $excludedByParent = false;
+        foreach ($this->excludedCategories as $excludedCategory) {
+            if ($node['level'] > $excludedCategory['level']
+                && $node['left'] > $excludedCategory['left']
+                && $node['right'] < $excludedCategory['right']
+            ) {
+                $excludedByParent = true;
+            }
+        }
+
+        return $excludedByParent;
     }
 }
