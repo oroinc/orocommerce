@@ -54,13 +54,6 @@ class AccountGroupProductVisibilityRepositoryTest extends WebTestCase
 
     public function testGetAccountGroupsForCategoryType()
     {
-        $this->assertCount(0, $this->repository->getAccountsGroupsForCategoryType());
-        $accountGroupProductVisibility = $this
-            ->registry
-            ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
-            ->findOneBy([]);
-        $accountGroupProductVisibility->setVisibility(AccountGroupProductVisibility::CATEGORY);
-        $this->registry->getEntityManager()->flush();
         $this->assertCount(1, $this->repository->getAccountsGroupsForCategoryType());
     }
 }
