@@ -77,16 +77,14 @@
                 {{ form_widget(form.email) }}
                 {{ form_rest(form) }}
 
-                <div class="widget-actions form-actions" style="display: none;">
-                    {% block page_container_form_actions %}
-                        <button class="btn" type="reset">{{ 'orob2b.sale.btn.cancel'|trans }}</button>
+                <div class="widget-actions form-actions">
+                    <button class="btn" type="reset">{{ 'orob2b.sale.btn.cancel'|trans }}</button>
 
-                        {% set button_text = 'orob2b.sale.btn.notify_and_lock'|trans %}
-                        {% if context.data.locked %}
-                            {% set button_text = 'orob2b.sale.btn.send'|trans %}
-                        {% endif %}
-                        <button class="btn btn-primary" type="submit">{{ button_text }}</button>
-                    {% endblock %}
+                    {% set button_text = 'orob2b.sale.btn.notify_and_lock'|trans %}
+                    {% if context.data.locked %}
+                        {% set button_text = 'orob2b.sale.btn.send'|trans %}
+                    {% endif %}
+                    <button class="btn btn-primary" type="submit">{{ button_text }}</button>
                 </div>
             </fieldset>
         </form>

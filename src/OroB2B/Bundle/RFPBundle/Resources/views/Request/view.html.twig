@@ -22,6 +22,17 @@
                 'entity_label': 'orob2b.rfp.request.entity_label'|trans
             }) }}
         {% endif %}
+
+        {% if resource_granted('orob2b_order_create') %}
+            <div class="btn-group">
+                {{ UI.link({
+                    path: path('orob2b_rfp_request_create_order', {id: entity.id}),
+                    label: 'oro.ui.create_entity'|trans({'%entityName%': 'orob2b.order.entity_label'|trans}),
+                    class: 'btn',
+                    iCss: 'icon-briefcase',
+                }) }}
+            </div>
+        {% endif %}
     {% endblock navButtons %}
     {% placeholder rfp_view_navButtons_after with {entity: entity} %}
 {% endblock navButtonContainer%}
@@ -92,18 +103,18 @@
         }]) %}
     {% endif %}
 
-    {% set requestContent %}
+    {% set noteContent %}
         <div class="row-fluid form-horizontal">
             <div class="responsive-block">
-                {{ entity.body|nl2br }}
+                {{ entity.note|nl2br }}
             </div>
         </div>
     {% endset %}
 
     {% set dataBlocks = dataBlocks|merge([{
-        'title': 'orob2b.rfp.sections.body'|trans,
+        'title': 'orob2b.rfp.sections.note'|trans,
         'class': 'active',
-        'subblocks': [{'data' : [requestContent]}]
+        'subblocks': [{'data' : [noteContent]}]
     }]) %}
 
     {% set id = 'request-view' %}

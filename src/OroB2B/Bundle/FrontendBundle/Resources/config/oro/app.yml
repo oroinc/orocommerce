@@ -19,6 +19,10 @@ security:
             pattern:                        ^%web_backend_prefix%/api/(rest|soap).*
 
         # override pattern
+        api_wsse_secured:
+            pattern:                        ^%web_backend_prefix%/api/(?!doc($|/.*))
+
+        # override pattern
         login:
             pattern:                        ^%web_backend_prefix%/user/(login|reset-request|send-email|check-email)$
 
