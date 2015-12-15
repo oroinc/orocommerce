@@ -80,5 +80,5 @@ For any create/update/delete in source visibility entities must be accompanied b
 The above listed steps, with the resolved entities for manipulation with the source entities. But what if, for example you changed the product category or even to remove, and it will affect all the caches on products that have this category? For this, for all levels exist cache builders.
 
 To implement Cache Builder was used composite pattern.
-There is cache builder classes for each listed levels: `ProductResolvedCacheBuilder`, `AccountGroupProductResolvedCacheBuilder`, `AccountGroupProductResolvedCacheBuilder` each of which implement `CacheBuilderInterface`. These classes are leaves.
+There is cache builder classes for each listed levels: `ProductResolvedCacheBuilder`, `AccountProductResolvedCacheBuilder`, `AccountGroupProductResolvedCacheBuilder` each of which implement `CacheBuilderInterface`. These classes are leaves.
 Composite is `CacheBuilder` class, which aggregates all of the above leaves.
