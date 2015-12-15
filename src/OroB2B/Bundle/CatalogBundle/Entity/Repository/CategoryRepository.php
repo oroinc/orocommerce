@@ -119,4 +119,15 @@ class CategoryRepository extends NestedTreeRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    /**
+     * @param Category $category
+     * @return Category[]
+     */
+    public function getAllChildCategories(Category $category)
+    {
+         return $this->getChildrenQueryBuilder($category, false, ['level'])
+            ->getQuery()
+            ->getResult();
+    }
 }

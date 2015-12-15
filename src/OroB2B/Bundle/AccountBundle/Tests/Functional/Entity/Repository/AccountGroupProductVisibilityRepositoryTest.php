@@ -2,13 +2,14 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Repository;
 
+use Symfony\Bridge\Doctrine\RegistryInterface;
+
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupProductVisibilityRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
  * @dbIsolation
@@ -49,5 +50,17 @@ class AccountGroupProductVisibilityRepositoryTest extends WebTestCase
         $categories = $this->repository->getCategoriesByAccountGroupProductVisibility();
         $this->assertCount(1, $categories);
         $this->assertEquals($categories[0], $this->getReference(LoadCategoryData::FIRST_LEVEL));
+    }
+
+    public function testGetAccountGroupsForCategoryType()
+    {
+        $this->assertCount(0, $this->repository->getAccountsGroupsForCategoryType());
+        $accountGroupProductVisibility = $this
+            ->registry
+            ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
+            ->findOneBy([]);
+        $accountGroupProductVisibility->setVisibility(AccountGroupProductVisibility::CATEGORY);
+        $this->registry->getEntityManager()->flush();
+        $this->assertCount(1, $this->repository->getAccountsGroupsForCategoryType());
     }
 }

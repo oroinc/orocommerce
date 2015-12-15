@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\CategoryVisibilityRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
@@ -39,6 +40,7 @@ class CategoryVisibilityRepositoryTest extends WebTestCase
      */
     public function testGetVisibilityToAll()
     {
+        /** @var Account $account */
         $account = $this->getReference('account.level_1.3');
         /** @var array $actual */
         $actualItems = $this->repository->getVisibilityToAll($account);
@@ -57,17 +59,20 @@ class CategoryVisibilityRepositoryTest extends WebTestCase
                 'to_all' => null,
                 'to_account' => null,
                 'to_group' => AccountGroupCategoryVisibility::VISIBLE,
-
             ],
             [
                 'categoryEntity' => $this->getReference(LoadCategoryData::SECOND_LEVEL1),
                 'to_all' => null,
                 'to_account' => null,
                 'to_group' => AccountGroupCategoryVisibility::HIDDEN,
-
             ],
             [
-
+                'categoryEntity' => $this->getReference(LoadCategoryData::SECOND_LEVEL2),
+                'to_all' => null,
+                'to_account' => null,
+                'to_group' => null,
+            ],
+            [
                 'categoryEntity' => $this->getReference(LoadCategoryData::THIRD_LEVEL1),
                 'to_all' => null,
                 'to_account' => null,
@@ -78,10 +83,23 @@ class CategoryVisibilityRepositoryTest extends WebTestCase
                 'to_all' => null,
                 'to_account' => null,
                 'to_group' => null,
+            ],
+            [
+                'categoryEntity' => $this->getReference(LoadCategoryData::FOURTH_LEVEL1),
+                'to_all' => null,
+                'to_account' => null,
+                'to_group' => null,
+            ],
+            [
+                'categoryEntity' => $this->getReference(LoadCategoryData::FOURTH_LEVEL2),
+                'to_all' => null,
+                'to_account' => null,
+                'to_group' => null,
             ]
         ];
-        foreach ($expectedItems as $i => $expected) {
-            $actual = $actualItems[$i];
+        foreach ($actualItems as $i => $actual) {
+            $this->assertArrayHasKey($i, $expectedItems);
+            $expected = $expectedItems[$i];
             $this->assertEquals($expected['categoryEntity']->getId(), $actual['categoryEntity']->getId());
             $this->assertEquals($expected['to_all'], $actual['to_all']);
             $this->assertEquals($expected['to_account'], $actual['to_account']);

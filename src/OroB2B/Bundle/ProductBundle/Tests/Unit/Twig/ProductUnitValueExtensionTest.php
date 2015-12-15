@@ -35,17 +35,17 @@ class ProductUnitValueExtensionTest extends \PHPUnit_Framework_TestCase
         /** @var \Twig_SimpleFilter[] $filters */
         $filters = $this->extension->getFilters();
 
-        $this->assertCount(2, $filters);
-
-        $this->assertInstanceOf('Twig_SimpleFilter', $filters[0]);
-        $this->assertEquals('orob2b_format_product_unit_value', $filters[0]->getName());
-
-        $this->assertInstanceOf('Twig_SimpleFilter', $filters[1]);
-        $this->assertEquals('orob2b_format_short_product_unit_value', $filters[1]->getName());
+        $this->assertInternalType('array', $filters);
+        foreach ($filters as $filter) {
+            $this->assertInstanceOf('Twig_SimpleFilter', $filter);
+        }
     }
 
     public function testFormat()
     {
+        /** @var \Twig_SimpleFilter[] $filters */
+        $filters = $this->extension->getFilters();
+
         $value = 42;
         $unit = (new ProductUnit())->setCode('kg');
         $expectedResult = '42 kilograms';
@@ -55,11 +55,14 @@ class ProductUnitValueExtensionTest extends \PHPUnit_Framework_TestCase
             ->with($value, $unit)
             ->willReturn($expectedResult);
 
-        $this->assertEquals($expectedResult, $this->extension->format($value, $unit));
+        $this->assertEquals($expectedResult, call_user_func_array($filters[0]->getCallable(), [$value, $unit]));
     }
 
     public function testFormatShort()
     {
+        /** @var \Twig_SimpleFilter[] $filters */
+        $filters = $this->extension->getFilters();
+
         $value = 42;
         $unit = (new ProductUnit())->setCode('kg');
         $expectedResult = '42 kg';
@@ -69,7 +72,24 @@ class ProductUnitValueExtensionTest extends \PHPUnit_Framework_TestCase
             ->with($value, $unit)
             ->willReturn($expectedResult);
 
-        $this->assertEquals($expectedResult, $this->extension->formatShort($value, $unit));
+        $this->assertEquals($expectedResult, call_user_func_array($filters[1]->getCallable(), [$value, $unit]));
+    }
+
+    public function testFormatCode()
+    {
+        /** @var \Twig_SimpleFilter[] $filters */
+        $filters = $this->extension->getFilters();
+
+        $value = 42;
+        $unitCode = 'kg';
+        $expectedResult = '42 kg';
+
+        $this->formatter->expects($this->once())
+            ->method('formatCode')
+            ->with($value, $unitCode)
+            ->willReturn($expectedResult);
+
+        $this->assertEquals($expectedResult, call_user_func_array($filters[2]->getCallable(), [$value, $unitCode]));
     }
 
     public function testGetName()
