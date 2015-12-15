@@ -4,6 +4,8 @@ parameters:
     orob2b_tax.entity.tax_jurisdiction.class: OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction
     orob2b_tax.entity.tax.class: OroB2B\Bundle\TaxBundle\Entity\Tax
 
+    orob2b_tax.validator.zip_code_fields.class: OroB2B\Bundle\TaxBundle\Validator\ZipCodeFieldsValidator
+
     orob2b_tax.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 services:
     orob2b_tax.manager.product_tax_code.api:
@@ -33,3 +35,8 @@ services:
         arguments:
             - %orob2b_tax.entity.tax_jurisdiction.class%
             - @doctrine.orm.entity_manager
+
+    orob2b_tax.validator.zip_code_fields:
+        class: %orob2b_tax.validator.zip_code_fields.class%
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_tax_zip_code_fields }

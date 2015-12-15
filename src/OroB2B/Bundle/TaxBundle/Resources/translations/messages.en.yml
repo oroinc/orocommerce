@@ -34,6 +34,7 @@ orob2b.tax:
         country.label: 'Country'
         region.label: 'State'
         region_text.label: 'State'
+        zip_codes.label: 'Zip Codes'
 
     menu:
         taxes_tab.label: 'Taxes'

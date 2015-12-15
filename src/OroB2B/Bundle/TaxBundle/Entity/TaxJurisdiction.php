@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\TaxBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
@@ -64,6 +66,18 @@ class TaxJurisdiction
     protected $regionText;
 
     /**
+     * @var Collection|ZipCode[]
+     *
+     * @ORM\OneToMany(
+     *      targetEntity="OroB2B\Bundle\TaxBundle\Entity\ZipCode",
+     *      mappedBy="taxJurisdiction",
+     *      cascade={"all"},
+     *      orphanRemoval=true
+     * )
+     */
+    protected $zipCodes;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="created_at", type="datetime")
@@ -90,6 +104,14 @@ class TaxJurisdiction
      * )
      */
     protected $updatedAt;
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->zipCodes = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -219,6 +241,58 @@ class TaxJurisdiction
     public function getRegionText()
     {
         return $this->regionText;
+    }
+
+    /**
+     * Get name of region
+     *
+     * @return string
+     */
+    public function getRegionName()
+    {
+        return $this->getRegion() ? $this->getRegion()->getName() : $this->getRegionText();
+    }
+
+    /**
+     * Add zipCode
+     *
+     * @param ZipCode $zipCode
+     *
+     * @return TaxJurisdiction
+     */
+    public function addZipCode(ZipCode $zipCode)
+    {
+        if (!$this->zipCodes->contains($zipCode)) {
+            $zipCode->setTaxJurisdiction($this);
+            $this->zipCodes[] = $zipCode;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove zipCode
+     *
+     * @param ZipCode $zipCode
+     * @return $this
+     */
+    public function removeZipCode(ZipCode $zipCode)
+    {
+        if ($this->zipCodes->contains($zipCode)) {
+            $this->zipCodes->removeElement($zipCode);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get zipCodes
+     *
+     * @return Collection
+     */
+    public function getZipCodes()
+    {
+        return $this->zipCodes;
     }
 
     /**

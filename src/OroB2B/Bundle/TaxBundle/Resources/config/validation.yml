@@ -34,3 +34,17 @@ OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction:
                 min: 1
                 max: 255
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Alphanumeric: ~
+
+OroB2B\Bundle\TaxBundle\Entity\ZipCode:
+    constraints:
+        - OroB2B\Bundle\TaxBundle\Validator\ZipCodeFields: ~
+    properties:
+        zipCode:
+            - Length:
+                  max: 255
+        zipRangeStart:
+            - Length:
+                  max: 255
+        zipRangeEnd:
+            - Length:
+                  max: 255
