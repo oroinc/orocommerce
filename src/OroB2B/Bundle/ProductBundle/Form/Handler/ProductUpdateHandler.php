@@ -4,9 +4,10 @@ namespace OroB2B\Bundle\ProductBundle\Form\Handler;
 
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Oro\Bundle\ActionBundle\Model\ActionData;
+use Oro\Bundle\ActionBundle\Model\ActionManager;
 use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\UIBundle\Route\Router;
 
@@ -17,9 +18,9 @@ class ProductUpdateHandler extends UpdateHandler
     const ACTION_SAVE_AND_DUPLICATE = 'save_and_duplicate';
 
     /**
-     * @var UrlGeneratorInterface
+     * @var ActionManager
      */
-    private $urlGenerator;
+    private $actionManager;
 
     /**
      * @var TranslatorInterface
@@ -27,11 +28,11 @@ class ProductUpdateHandler extends UpdateHandler
     private $translator;
 
     /**
-     * @param UrlGeneratorInterface $urlGenerator
+     * @param ActionManager $actionManager
      */
-    public function setUrlGenerator(UrlGeneratorInterface $urlGenerator)
+    public function setActionManager(ActionManager $actionManager)
     {
-        $this->urlGenerator = $urlGenerator;
+        $this->actionManager = $actionManager;
     }
 
     /**
@@ -72,10 +73,14 @@ class ProductUpdateHandler extends UpdateHandler
             $saveMessage = $this->translator->trans('orob2b.product.controller.product.saved_and_duplicated.message');
             $this->session->getFlashBag()->set('success', $saveMessage);
 
-            return new RedirectResponse($this->urlGenerator->generate(
-                'orob2b_product_duplicate',
-                ['id' => $entity->getId()]
-            ));
+            $actionData = $this->actionManager->execute(
+                'orob2b_product_duplicate_action',
+                new ActionData(['data' => $entity])
+            );
+
+            if ($actionData->getRedirectUrl()) {
+                return new RedirectResponse($actionData->getRedirectUrl());
+            }
         }
 
         return $result;
