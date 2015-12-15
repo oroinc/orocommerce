@@ -115,7 +115,7 @@ services:
         parent: oro_form.model.update_handler
         scope: request
         calls:
-            - [setUrlGenerator, [@router]]
+            - [setActionManager, [@oro_action.manager]]
             - [setTranslator, [@translator]]
 
     orob2b_product.storage.product_data_bag:

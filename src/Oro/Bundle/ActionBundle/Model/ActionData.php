@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ActionBundle\Model;
 
-class ActionContext extends AbstractStorage implements EntityAwareInterface
+class ActionData extends AbstractStorage implements EntityAwareInterface
 {
     /**
      * @return object

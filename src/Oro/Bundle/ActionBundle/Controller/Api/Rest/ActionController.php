@@ -33,7 +33,7 @@ class ActionController extends FOSRestController
     public function executeAction($actionName)
     {
         try {
-            $context = $this->getActionManager()->execute($actionName);
+            $data = $this->getActionManager()->executeByContext($actionName);
         } catch (ActionNotFoundException $e) {
             return $this->handleError($e->getMessage(), Codes::HTTP_NOT_FOUND);
         } catch (ForbiddenActionException $e) {
