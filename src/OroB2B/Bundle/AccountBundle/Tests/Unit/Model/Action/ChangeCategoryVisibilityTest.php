@@ -4,12 +4,15 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Model\Action;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\ORM\EntityManager;
+
 use Oro\Bundle\WorkflowBundle\Model\ProcessData;
 use Oro\Bundle\WorkflowBundle\Model\ContextAccessor;
 
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\CacheBuilder;
-use OroB2B\Bundle\AccountBundle\Model\Action\ChangeCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;
+use OroB2B\Bundle\AccountBundle\Model\Action\ChangeCategoryVisibility;
 
 class ChangeCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
 {
@@ -17,6 +20,11 @@ class ChangeCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
      * @var ChangeCategoryVisibility
      */
     protected $action;
+
+    /**
+     * @var string
+     */
+    protected $cacheBuilderMethod = 'resolveVisibilitySettings';
 
     protected function setUp()
     {
@@ -30,6 +38,11 @@ class ChangeCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
         $this->action->setDispatcher($dispatcher);
     }
 
+    protected function tearDown()
+    {
+        unset($this->action);
+    }
+
     /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage CacheBuilder is not provided
@@ -39,18 +52,73 @@ class ChangeCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
         $this->action->initialize([]);
     }
 
-    public function testExecuteAction()
+    /**
+     * @dataProvider executeActionDataProvider
+     * @param bool $throwException
+     */
+    public function testExecuteAction($throwException = false)
     {
         $categoryVisibility = new CategoryVisibility();
 
-        /** @var CacheBuilder|\PHPUnit_Framework_MockObject_MockObject $cacheBuilder */
-        $cacheBuilder = $this->getMock('OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\CacheBuilder');
-        $cacheBuilder->expects($this->once())
-            ->method('resolveVisibilitySettings')
-            ->with($categoryVisibility);
+        /** @var CategoryCaseCacheBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $cacheBuilder */
+        $cacheBuilder = $this
+            ->getMock('OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface');
+
+        /** @var Registry|\PHPUnit_Framework_MockObject_MockObject $registry */
+        $registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $em */
+        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        if ($throwException) {
+            $cacheBuilder->expects($this->once())
+                ->method($this->cacheBuilderMethod)
+                ->with($categoryVisibility)
+                ->will($this->throwException(new \Exception('Error')));
+
+            $em->expects($this->once())
+                ->method('rollback');
+
+            $this->setExpectedException('\Exception', 'Error');
+        } else {
+            $cacheBuilder->expects($this->once())
+                ->method($this->cacheBuilderMethod)
+                ->with($categoryVisibility);
+
+            $em->expects($this->once())
+                ->method('commit');
+        }
+
+        $registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
+            ->willReturn($em);
 
         $this->action->setCacheBuilder($cacheBuilder);
+        $this->action->setRegistry($registry);
         $this->action->initialize([]);
         $this->action->execute(new ProcessData(['data' => $categoryVisibility]));
+    }
+
+    /**
+     * @return array
+     */
+    public function executeActionDataProvider()
+    {
+        return [
+            [
+                'throwException' => true
+            ],
+            [
+                'throwException' => false
+            ],
+        ];
     }
 }

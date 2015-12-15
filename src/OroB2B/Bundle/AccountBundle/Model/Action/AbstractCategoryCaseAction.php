@@ -26,7 +26,7 @@ abstract class AbstractCategoryCaseAction extends AbstractAction
     public function initialize(array $options)
     {
         if (!$this->cacheBuilder) {
-            throw new \InvalidArgumentException('CacheBuilder for category position change is not provided');
+            throw new \InvalidArgumentException('CacheBuilder is not provided');
         }
 
         if (!$this->registry) {
