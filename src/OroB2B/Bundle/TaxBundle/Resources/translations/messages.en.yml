@@ -34,7 +34,7 @@ orob2b.tax:
         account_tax_code.label: 'Account Tax Code'
         product_tax_code.label: 'Product Tax Code'
         tax.label: 'Tax'
-        taxjurisdiction.label: 'Tax Jurisdiction'
+        tax_jurisdiction.label: 'Tax Jurisdiction'
 
     taxjurisdiction:
         entity_label: 'Tax Jurisdiction'

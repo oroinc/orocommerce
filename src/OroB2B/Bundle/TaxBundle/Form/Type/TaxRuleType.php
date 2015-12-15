@@ -49,7 +49,7 @@ class TaxRuleType extends AbstractType
                 'required' => true
             ])
             ->add('taxJurisdiction', TaxJurisdictionSelectType::NAME, [
-                'label' => 'orob2b.tax.taxrule.taxjurisdiction.label',
+                'label' => 'orob2b.tax.taxrule.tax_jurisdiction.label',
                 'required' => true
             ]);
     }
