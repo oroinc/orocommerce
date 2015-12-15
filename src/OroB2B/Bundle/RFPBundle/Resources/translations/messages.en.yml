@@ -14,7 +14,7 @@ orob2b:
             company.label: 'Company'
             role.label: 'Role'
             status.label: 'Status'
-            body.label: 'Request'
+            note.label: 'Notes'
             account_user.label: 'Submitted By'
             account.label: 'Account'
             organization.label: 'Organization'
@@ -73,7 +73,7 @@ orob2b:
 
         sections:
             general:    'General'
-            body:       'Request'
+            note:       'Notes'
             additional: 'Additional'
             request_products: 'Line Items'
             label_translation: 'Labels'
@@ -139,3 +139,5 @@ orob2b:
 orob2b.frontendadmin:
     system_configuration:
         frontend_application_group_title: 'Frontend Application'
+
+orob2b.order.orderlineitem.offers.label: 'Requested QTY and price'

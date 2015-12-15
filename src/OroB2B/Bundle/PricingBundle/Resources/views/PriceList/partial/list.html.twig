@@ -1,0 +1,26 @@
+<div class="clearfix">
+    {% if entities %}
+        <table class="grid table-hover table table-bordered">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>{{ 'orob2b.pricing.pricelist.name.label'|trans }}</th>
+                <th>{{ 'orob2b.pricing.pricelist.priority.label'|trans }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for entity in entities %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td><a href="{{ path('orob2b_pricing_price_list_view', {'id': entity.priceList.id}) }}">{{ entity.priceList.name }}</a></td>
+                    <td>{{ entity.priority }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="no-data">
+            <span>{{ "orob2b.pricing.no_price_lists"|trans }}</span>
+        </div>
+    {% endif %}
+</div>

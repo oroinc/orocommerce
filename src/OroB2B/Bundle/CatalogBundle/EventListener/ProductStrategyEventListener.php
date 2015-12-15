@@ -21,17 +21,20 @@ class ProductStrategyEventListener extends AbstractProductImportEventListener
         }
 
         $categoryDefaultTitle = $rawData[self::CATEGORY_KEY];
-        $category = $this->getCategoryByDefaultTitle($categoryDefaultTitle);
         $product = $event->getProduct();
+
+        $category = $this->getCategoryByDefaultTitle($categoryDefaultTitle);
         if ($category) {
             $category->addProduct($product);
 
             return;
         }
 
-        $category = $this->getCategoryByProduct($product);
-        if ($category) {
-            $category->removeProduct($product);
+        if ($product->getId()) {
+            $category = $this->getCategoryByProduct($product);
+            if ($category) {
+                $category->removeProduct($product);
+            }
         }
     }
 }

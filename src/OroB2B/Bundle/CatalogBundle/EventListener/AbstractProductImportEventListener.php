@@ -79,9 +79,10 @@ abstract class AbstractProductImportEventListener
 
     /**
      * @param Product $product
+     * @param bool $includeTitles
      * @return null|Category
      */
-    protected function getCategoryByProduct(Product $product)
+    protected function getCategoryByProduct(Product $product, $includeTitles = false)
     {
         $sku = $product->getSku();
 
@@ -89,7 +90,7 @@ abstract class AbstractProductImportEventListener
             return $this->categoriesByProduct[$sku];
         }
 
-        $category = $this->getCategoryRepository()->findOneByProductSku($sku);
+        $category = $this->getCategoryRepository()->findOneByProductSku($sku, $includeTitles);
         if (!$category) {
             $this->categoriesByProduct[$sku] = null;
 

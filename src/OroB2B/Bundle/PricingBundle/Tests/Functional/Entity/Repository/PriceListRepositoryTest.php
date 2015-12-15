@@ -64,28 +64,22 @@ class PriceListRepositoryTest extends WebTestCase
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_3');
 
-        $this->assertTrue($priceList->getAccounts()->contains($account));
+        $priceListToAccount = $this->getContainer()
+            ->get('doctrine')
+            ->getRepository('OroB2BPricingBundle:PriceListToAccount')
+            ->findOneBy(['account' => $account, 'priceList' => $priceList]);
+        $this->assertNotNull($priceListToAccount);
 
         $this->assertEquals(
             $priceList->getId(),
             $this->getRepository()->getPriceListByAccount($account)->getId()
         );
-        $this->getRepository()->setPriceListToAccount($account, null);
-        $this->getManager()->flush();
-
-        /** @var PriceList $newPriceList */
-        $newPriceList = $this->getReference('price_list_2');
-
-        $this->getRepository()->setPriceListToAccount($account, $newPriceList);
-        $this->getManager()->flush();
-
-        $this->assertFalse($priceList->getAccounts()->contains($account));
-        $this->assertTrue($newPriceList->getAccounts()->contains($account));
-
-        $this->assertEquals(
-            $newPriceList->getId(),
-            $this->getRepository()->getPriceListByAccount($account)->getId()
-        );
+        $em = $this->getContainer()
+            ->get('doctrine')
+            ->getManagerForClass('OroB2BPricingBundle:PriceListToAccount');
+        $em->remove($priceListToAccount);
+        $em->flush();
+        $this->assertNull($this->getRepository()->getPriceListByAccount($account));
     }
 
     public function testAccountGroupPriceList()
@@ -96,27 +90,22 @@ class PriceListRepositoryTest extends WebTestCase
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_1');
 
-        $this->assertTrue($priceList->getAccountGroups()->contains($accountGroup));
+        $priceListToAccountGroup = $this->getContainer()
+            ->get('doctrine')
+            ->getRepository('OroB2BPricingBundle:PriceListToAccountGroup')
+            ->findOneBy(['accountGroup' => $accountGroup, 'priceList' => $priceList]);
+        $this->assertNotNull($priceListToAccountGroup);
 
         $this->assertEquals(
             $priceList->getId(),
             $this->getRepository()->getPriceListByAccountGroup($accountGroup)->getId()
         );
-
-        /** @var PriceList $newPriceList */
-        $newPriceList = $this->getReference('price_list_2');
-
-        $this->getRepository()->setPriceListToAccountGroup($accountGroup, $newPriceList);
-
-        $this->getManager()->flush();
-
-        $this->assertFalse($priceList->getAccountGroups()->contains($accountGroup));
-        $this->assertTrue($newPriceList->getAccountGroups()->contains($accountGroup));
-
-        $this->assertEquals(
-            $newPriceList->getId(),
-            $this->getRepository()->getPriceListByAccountGroup($accountGroup)->getId()
-        );
+        $em = $this->getContainer()
+            ->get('doctrine')
+            ->getManagerForClass('OroB2BPricingBundle:PriceListToAccountGroup');
+        $em->remove($priceListToAccountGroup);
+        $em->flush();
+        $this->assertNull($this->getRepository()->getPriceListByAccountGroup($accountGroup));
     }
 
     public function testWebsitePriceList()
@@ -127,27 +116,22 @@ class PriceListRepositoryTest extends WebTestCase
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_1');
 
-        $this->assertTrue($priceList->getWebsites()->contains($website));
+        $priceListToAccountGroup = $this->getContainer()
+            ->get('doctrine')
+            ->getRepository('OroB2BPricingBundle:PriceListToWebsite')
+            ->findOneBy(['website' => $website, 'priceList' => $priceList]);
+        $this->assertNotNull($priceListToAccountGroup);
 
         $this->assertEquals(
             $priceList->getId(),
             $this->getRepository()->getPriceListByWebsite($website)->getId()
         );
-
-        /** @var PriceList $newPriceList */
-        $newPriceList = $this->getReference('price_list_2');
-
-        $this->getRepository()->setPriceListToWebsite($website, $newPriceList);
-
-        $this->getManager()->flush();
-
-        $this->assertFalse($priceList->getWebsites()->contains($website));
-        $this->assertTrue($newPriceList->getWebsites()->contains($website));
-
-        $this->assertEquals(
-            $newPriceList->getId(),
-            $this->getRepository()->getPriceListByWebsite($website)->getId()
-        );
+        $em = $this->getContainer()
+            ->get('doctrine')
+            ->getManagerForClass('OroB2BPricingBundle:PriceListToWebsite');
+        $em->remove($priceListToAccountGroup);
+        $em->flush();
+        $this->assertNull($this->getRepository()->getPriceListByWebsite($website));
     }
 
     /**

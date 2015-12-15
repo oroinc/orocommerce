@@ -83,7 +83,7 @@ class QuickAddTest extends WebTestCase
         $form['orob2b_rfp_frontend_request[phone]'] = '55555555';
         $form['orob2b_rfp_frontend_request[company]'] = 'Test Company';
         $form['orob2b_rfp_frontend_request[role]'] = 'Test Role';
-        $form['orob2b_rfp_frontend_request[body]'] = 'Test Body';
+        $form['orob2b_rfp_frontend_request[note]'] = 'Test notes';
         $form['orob2b_rfp_frontend_request[requestProducts][0][requestProductItems][0][price][value]'] = 100;
         $form['orob2b_rfp_frontend_request[requestProducts][0][requestProductItems][0][price][currency]'] = 'USD';
 
