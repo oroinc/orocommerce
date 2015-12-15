@@ -34,6 +34,7 @@ class AccountTaxExtension extends AbstractTaxExtension
                     'required' => false,
                     'mapped' => false,
                     'label' => 'orob2b.tax.accounttaxcode.entity_label',
+                    'create_form_route' => null,
                 ]
             );
     }

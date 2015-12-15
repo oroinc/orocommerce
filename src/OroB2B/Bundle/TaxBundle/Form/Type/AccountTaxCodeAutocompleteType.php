@@ -36,6 +36,7 @@ class AccountTaxCodeAutocompleteType extends AbstractType
             [
                 'autocomplete_alias' => 'orob2b_account_tax_code',
                 'grid_name' => 'accounts-tax-code-select-grid',
+                'create_form_route' => 'orob2b_tax_account_tax_code_create',
             ]
         );
     }

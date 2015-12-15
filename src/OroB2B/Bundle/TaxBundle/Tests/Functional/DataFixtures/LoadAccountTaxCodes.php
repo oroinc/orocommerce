@@ -7,6 +7,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
 
 class LoadAccountTaxCodes extends AbstractFixture implements DependentFixtureInterface
@@ -27,8 +28,8 @@ class LoadAccountTaxCodes extends AbstractFixture implements DependentFixtureInt
      */
     public function load(ObjectManager $manager)
     {
-        $this->createAccountTaxCode($manager, 'TAX1', 'Tax description 1', ['account.orphan']);
-        $this->createAccountTaxCode($manager, 'TAX2', 'Tax description 2', []);
+        $this->createAccountTaxCode($manager, self::TAX_1, 'Tax description 1', [LoadAccounts::DEFAULT_ACCOUNT_NAME]);
+        $this->createAccountTaxCode($manager, self::TAX_2, 'Tax description 2', []);
 
         $manager->flush();
     }

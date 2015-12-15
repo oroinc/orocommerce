@@ -70,6 +70,7 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionText
                     'required' => false,
                     'mapped' => false,
                     'label' => 'orob2b.tax.producttaxcode.entity_label',
+                    'create_form_route' => null,
                 ]
             );
         $builder->expects($this->exactly(2))

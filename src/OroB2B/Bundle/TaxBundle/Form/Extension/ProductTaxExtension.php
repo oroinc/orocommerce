@@ -32,6 +32,7 @@ class ProductTaxExtension extends AbstractTaxExtension
                     'required' => false,
                     'mapped' => false,
                     'label' => 'orob2b.tax.producttaxcode.entity_label',
+                    'create_form_route' => null,
                 ]
             );
     }

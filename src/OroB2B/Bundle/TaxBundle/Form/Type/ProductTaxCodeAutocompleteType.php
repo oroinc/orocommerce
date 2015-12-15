@@ -36,6 +36,7 @@ class ProductTaxCodeAutocompleteType extends AbstractType
             [
                 'autocomplete_alias' => 'orob2b_product_tax_code',
                 'grid_name' => 'products-tax-code-select-grid',
+                'create_form_route' => 'orob2b_tax_product_tax_code_create',
             ]
         );
     }

@@ -7,6 +7,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
 
 class LoadProductTaxCodes extends AbstractFixture implements DependentFixtureInterface
@@ -28,9 +29,14 @@ class LoadProductTaxCodes extends AbstractFixture implements DependentFixtureInt
      */
     public function load(ObjectManager $manager)
     {
-        $this->createProductTaxCode($manager, 'TAX1', 'Tax description 1', ['product.1', 'product.2']);
-        $this->createProductTaxCode($manager, 'TAX2', 'Tax description 2', ['product.3']);
-        $this->createProductTaxCode($manager, 'TAX3', 'Tax description 3', []);
+        $this->createProductTaxCode(
+            $manager,
+            self::TAX_1,
+            'Tax description 1',
+            [LoadProductData::PRODUCT_1, LoadProductData::PRODUCT_2]
+        );
+        $this->createProductTaxCode($manager, self::TAX_2, 'Tax description 2', [LoadProductData::PRODUCT_3]);
+        $this->createProductTaxCode($manager, self::TAX_3, 'Tax description 3', []);
 
         $manager->flush();
     }
