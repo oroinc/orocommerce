@@ -47,7 +47,11 @@ layout:
                     blockType: script
                     options:
                         content: 'require(["orob2bfrontend/default/js/main.min"])'
-                requirejs:
+                scripts_before:
+                    blockType: block
+                require_js:
+                    blockType: block
+                require_modules:
                     blockType: block
             tree:
                 root:
@@ -55,7 +59,9 @@ layout:
                         meta_charset: ~
                         meta_viewport: ~
                         styles: ~
-                        requirejs: ~
+                        scripts_before: ~
+                        require_js: ~
+                        require_modules: ~
                     body:
                         wrapper:
                             header: ~
