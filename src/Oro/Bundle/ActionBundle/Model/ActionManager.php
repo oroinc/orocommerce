@@ -65,7 +65,6 @@ class ActionManager
      * @param string $actionName
      * @param ActionContext $actionContext
      * @param Collection $errors
-     * @param ActionContext $actionContext
      * @return ActionContext
      * @throws \Exception
      */
@@ -159,8 +158,7 @@ class ActionManager
         /** @var $actions Action[] */
         $actions = [];
 
-        $context = array_merge($this->contextHelper->getContext(), $context);
-        $actionContext = $this->contextHelper->getActionContext($context);
+        $context = array_merge($this->contextHelper->getContext(), (array)$context);
 
         if ($context['route'] && array_key_exists($context['route'], $this->routes)) {
             $actions = $this->routes[$context['route']];
@@ -173,6 +171,7 @@ class ActionManager
             $actions = array_merge($actions, $this->entities[$context['entityClass']]);
         }
 
+        $actionContext = $this->contextHelper->getActionContext($context);
         $actions = array_filter($actions, function (Action $action) use ($actionContext) {
             return $action->isEnabled() && $action->isAvailable($actionContext);
         });
