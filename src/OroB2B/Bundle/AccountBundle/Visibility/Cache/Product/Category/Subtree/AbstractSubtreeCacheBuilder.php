@@ -12,6 +12,11 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 abstract class AbstractSubtreeCacheBuilder
 {
     /**
+     * @var array
+     */
+    protected $excludedCategories = [];
+
+    /**
      * @param Registry $registry
      * @param CategoryVisibilityResolverInterface $categoryVisibilityResolver
      */
@@ -59,17 +64,10 @@ abstract class AbstractSubtreeCacheBuilder
     protected function getCategoryIdsForUpdate(Category $category, $target)
     {
         $categoriesWithStaticFallback = $this->getChildCategoriesWithFallbackStatic($category, $target);
-        $childCategories = $this->getChildCategoriesWithFallbackToParent(
+        $categoryIds = $this->getChildCategoriesIdsWithFallbackToParent(
             $category,
             $categoriesWithStaticFallback,
             $target
-        );
-
-        $categoryIds = array_map(
-            function ($category) {
-                return $category['id'];
-            },
-            $childCategories
         );
 
         $categoryIds[] = $category->getId();
@@ -87,7 +85,7 @@ abstract class AbstractSubtreeCacheBuilder
         $qb = $this->registry
             ->getManagerForClass('OroB2BCatalogBundle:Category')
             ->getRepository('OroB2BCatalogBundle:Category')
-            ->getChildrenQueryBuilder($category, false, 'level');
+            ->getChildrenQueryBuilderPartial($category);
 
         $qb = $this->joinCategoryVisibility($qb, $target);
         $qb = $this->restrictStaticFallback($qb);
@@ -101,7 +99,7 @@ abstract class AbstractSubtreeCacheBuilder
      * @param $target
      * @return array
      */
-    protected function getChildCategoriesWithFallbackToParent(
+    protected function getChildCategoriesIdsWithFallbackToParent(
         Category $category,
         array $categoriesWithStaticFallback,
         $target
@@ -109,23 +107,61 @@ abstract class AbstractSubtreeCacheBuilder
         $qb = $this->registry
             ->getManagerForClass('OroB2BCatalogBundle:Category')
             ->getRepository('OroB2BCatalogBundle:Category')
-            ->getChildrenQueryBuilder($category, false, 'level');
+            ->getChildrenQueryBuilder($category)
+            ->select('partial node.{id}');
 
         $qb = $this->joinCategoryVisibility($qb, $target);
         $qb = $this->restrictToParentFallback($qb);
 
+        $leafIds = [];
+
+        /**
+         * Nodes with fallback different from 'toParent' and their children should be excluded
+         * Also excluded final leaf of category tree
+         * To optimize performance exclude nodes whose parents are already processed
+         */
         foreach ($categoriesWithStaticFallback as $node) {
-            $qb->andWhere(
-                $qb->expr()->not(
-                    $qb->expr()->andX(
-                        $qb->expr()->gt('node.level', $node['level']),
-                        $qb->expr()->gt('node.left', $node['left']),
-                        $qb->expr()->lt('node.right', $node['right'])
+            $this->excludedCategories[] = $node;
+            if ($this->isExcludedByParent($node)) {
+                continue;
+            } elseif ($node['left'] + 1 == $node['right']) {
+                $leafIds[] = $node['id'];
+            } else {
+                $qb->andWhere(
+                    $qb->expr()->not(
+                        $qb->expr()->andX(
+                            $qb->expr()->gte('node.level', $node['level']),
+                            $qb->expr()->gte('node.left', $node['left']),
+                            $qb->expr()->lte('node.right', $node['right'])
+                        )
                     )
-                )
-            );
+                );
+            }
         }
 
-        return $qb->getQuery()->getArrayResult();
+        if (!empty($leafIds)) {
+            $qb->andWhere($qb->expr()->notIn('node', ':leafIds'))
+                ->setParameter('leafIds', $leafIds);
+        }
+
+        return array_map('current', $qb->getQuery()->getScalarResult());
+    }
+
+    /**
+     * @param array $node
+     * @return bool
+     */
+    protected function isExcludedByParent(array $node)
+    {
+        foreach ($this->excludedCategories as $excludedCategory) {
+            if ($node['level'] > $excludedCategory['level']
+                && $node['left'] > $excludedCategory['left']
+                && $node['right'] < $excludedCategory['right']
+            ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
