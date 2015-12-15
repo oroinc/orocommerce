@@ -57,8 +57,15 @@ class ActionControllerTest extends WebTestCase
      * @param int $statusCode
      * @param string $message
      */
-    public function testExecuteAction(array $config, $route, $entityId, $entityClass, $statusCode, $message)
-    {
+    public function testExecuteAction(
+        array $config,
+        $route,
+        $datagrid,
+        $entityId,
+        $entityClass,
+        $statusCode,
+        $message
+    ) {
         $this->cacheProvider->save(ActionConfigurationProvider::ROOT_NODE_NAME, $config);
 
         $this->assertEquals(self::MESSAGE_DEFAULT, $this->entity->getMessage());
@@ -70,6 +77,7 @@ class ActionControllerTest extends WebTestCase
                 [
                     'actionName' => 'oro_action_test_action',
                     'route' => $route,
+                    'datagrid' => $datagrid,
                     'entityId' => $entityId ? $this->entity->getId() : null,
                     'entityClass' => $entityClass,
                 ]
@@ -116,6 +124,7 @@ class ActionControllerTest extends WebTestCase
                     ]
                 ),
                 'route' => 'oro_action_test_route',
+                'datagrid' => '',
                 'entityId' => true,
                 'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
                 'statusCode' => 200,
@@ -132,6 +141,7 @@ class ActionControllerTest extends WebTestCase
                     ]
                 ),
                 'route' => 'oro_action_test_route',
+                'datagrid' => '',
                 'entityId' => true,
                 'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
                 'statusCode' => 404,
@@ -143,6 +153,7 @@ class ActionControllerTest extends WebTestCase
                     ['oro_action_test_action' => ['entities' => ['Oro\Bundle\TestFrameworkBundle\Enti\UnknownEntity']]]
                 ),
                 'route' => 'oro_action_test_route',
+                'datagrid' => '',
                 'entityId' => true,
                 'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
                 'statusCode' => 404,
@@ -154,6 +165,7 @@ class ActionControllerTest extends WebTestCase
                     ['oro_action_test_action' => ['routes' => ['oro_action_unknown_route']]]
                 ),
                 'route' => 'oro_action_test_route',
+                'datagrid' => '',
                 'entityId' => false,
                 'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
                 'statusCode' => 404,
@@ -162,9 +174,22 @@ class ActionControllerTest extends WebTestCase
             'empty context' => [
                 'config' => $config,
                 'route' => 'oro_action_test_route',
+                'datagrid' => '',
                 'entityId' => true,
                 'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
                 'statusCode' => 404,
+                'message' => self::MESSAGE_DEFAULT,
+            ],
+            'datagrid' => [
+                'config' => array_merge_recursive(
+                    $config,
+                    ['oro_action_test_action' => ['datagrids' => ['test_datagrid']]]
+                ),
+                'route' => 'oro_action_test_route',
+                'datagrid' => 'test_datagrid',
+                'entityId' => true,
+                'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
+                'statusCode' => 200,
                 'message' => self::MESSAGE_DEFAULT,
             ],
         ];

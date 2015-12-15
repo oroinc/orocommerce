@@ -14,6 +14,7 @@ define(function(require) {
     var routing = require('routing');
     var Backbone = require('backbone');
     var DialogWidget = require('oro/dialog-widget');
+    var DeleteConfirmation = require('oroui/js/delete-confirmation');
 
     /**
      * @export oro/datagrid/action/action-widget-action
@@ -22,6 +23,7 @@ define(function(require) {
      */
     ActionWidgetAction = ModelAction.extend({
         options: {
+            datagridConfirm: null,
             dialogUrl: null,
             dialogOptions: {
                 title: 'Action',
@@ -33,6 +35,16 @@ define(function(require) {
                 width: 550
             }
         },
+
+        defaultMessages: {
+            confirm_title: __('oro.action.datagrid.confirm_title'),
+            confirm_content: 'Are you sure you want to perform this action?',
+            confirm_ok: 'Yes',
+            confirm_cancel: 'Cancel'
+        },
+
+        /** @property {Function} */
+        confirmModalConstructor: DeleteConfirmation,
 
         /**
          * @return {Object}
@@ -68,6 +80,18 @@ define(function(require) {
         },
 
         /**
+         * @inheritDoc
+         */
+        run: function() {
+            if (this.options.datagridConfirm) {
+                this.messages.confirm_content = this.options.datagridConfirm;
+                this.getConfirmDialog(_.bind(this.doRun, this)).open();
+            } else {
+                this.doRun();
+            }
+        },
+
+        /**
          * @param {Object} response
          */
         doResponse: function(response) {
@@ -94,7 +118,7 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        run: function() {
+        doRun: function() {
             var entityId = this.model[this.model.idAttribute];
             var routeParams = {
                 'actionName': this.options.actionName,

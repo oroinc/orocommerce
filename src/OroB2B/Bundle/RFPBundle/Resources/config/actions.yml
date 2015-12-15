@@ -5,8 +5,8 @@ actions:
         applications:
             - backend
             - frontend
-        entities:
-            - OroB2B\Bundle\RFPBundle\Entity\Request
+        routes:
+            - orob2b_rfp_request_view
         datagrids:
             - rfp-requests-grid
         order: 10

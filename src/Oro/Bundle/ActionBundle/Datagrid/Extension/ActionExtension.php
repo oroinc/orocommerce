@@ -125,6 +125,9 @@ class ActionExtension extends AbstractExtension
                     'actionName' => $action->getName(),
                     'entityClass' => $context['entityClass'],
                     'datagrid' => $context['datagrid'],
+                    'datagridConfirm' =>  !empty($frontendOptions['datagrid_confirm'])
+                        ? $frontendOptions['datagrid_confirm']
+                        : '',
                     'showDialog' => $action->hasForm(),
                     'dialogOptions' => [
                         'title' => $action->getDefinition()->getLabel(),
