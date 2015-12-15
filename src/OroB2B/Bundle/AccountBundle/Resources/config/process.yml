@@ -2,6 +2,7 @@ definitions:
     change_category_position:
         label: 'Changed Category Position In Tree'
         enabled: true
+        order: 20
         entity: OroB2B\Bundle\CatalogBundle\Entity\Category
         actions_configuration:
             - @change_category_position: ~
@@ -9,6 +10,7 @@ definitions:
     change_category_visibility:
         label: 'Changed Category Visibility For All'
         enabled: true
+        order: 20
         entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility
         actions_configuration:
             - @change_category_visibility: ~
@@ -16,6 +18,7 @@ definitions:
     change_account_group_category_visibility:
         label: 'Changed Category Visibility For Account Group'
         enabled: true
+        order: 20
         entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility
         actions_configuration:
             - @change_category_visibility: ~
@@ -23,20 +26,21 @@ definitions:
     change_account_category_visibility:
         label: 'Changed Category visibility For Account'
         enabled: true
+        order: 20
         entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility
         actions_configuration:
             - @change_category_visibility: ~
 
     product_visibility_change:
         enabled: true
-        label: Product visibility change
+        label: 'Product visibility change'
         entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility
         actions_configuration:
             - @resolve_visibility_settings: ~
 
     product_visibility_remove:
         enabled: true
-        label: Product visibility change
+        label: 'Product visibility change'
         entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility
         actions_configuration:
             - @resolve_visibility_settings:
@@ -44,17 +48,59 @@ definitions:
 
     account_group_product_visibility_change:
         enabled: true
-        label: Account group product visibility change
+        label: 'Account group product visibility change'
         entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility
         actions_configuration:
             - @resolve_visibility_settings: ~
 
     account_product_visibility_change:
         enabled: true
-        label: Account product visibility change
+        label: 'Account product visibility change'
         entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility
         actions_configuration:
             - @resolve_visibility_settings: ~
+
+    # Category visibility cache clear
+
+    category_position_cache_clear:
+        label: 'Clear Cache On Changing Category Position In Tree'
+        enabled: true
+        order: 10
+        entity: OroB2B\Bundle\CatalogBundle\Entity\Category
+        actions_configuration:
+            - @category_visibility_cache_clear: ~
+
+    account_group_changed_cache_clear:
+        label: 'Clear Cache On Changing Category Position In Tree'
+        enabled: true
+        order: 10
+        entity: OroB2B\Bundle\CatalogBundle\Entity\Category
+        actions_configuration:
+            - @category_visibility_cache_clear: ~
+
+    category_visibility_cache_clear:
+        label: 'Clear Cache On Changing Category Visibility For All'
+        enabled: true
+        order: 10
+        entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility
+        actions_configuration:
+            - @category_visibility_cache_clear: ~
+
+    account_group_category_visibility_cache_clear:
+        label: 'Clear Cache On Changing Category Visibility For Account Group'
+        enabled: true
+        order: 10
+        entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility
+        actions_configuration:
+            - @category_visibility_cache_clear: ~
+
+    account_category_visibility_cache_clear:
+        label: 'Clear Cache On Changing Category Visibility For Account'
+        enabled: true
+        order: 10
+        entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility
+        actions_configuration:
+            - @category_visibility_cache_clear: ~
 
 triggers:
     change_category_position:
@@ -107,3 +153,39 @@ triggers:
             event: create
         -
             event: update
+
+    category_position_cache_clear:
+        -
+            event: update
+            field: parentCategory
+        -
+            event: delete
+
+    account_group_changed_cache_clear:
+        -
+            event: update
+            field: group
+
+    category_visibility_cache_clear:
+        -
+            event: create
+        -
+            event: update
+        -
+            event: delete
+
+    account_group_category_visibility_cache_clear:
+        -
+            event: create
+        -
+            event: update
+        -
+            event: delete
+
+    account_category_visibility_cache_clear:
+        -
+            event: create
+        -
+            event: update
+        -
+            event: delete

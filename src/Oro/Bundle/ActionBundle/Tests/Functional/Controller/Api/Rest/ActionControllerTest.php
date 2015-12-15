@@ -145,7 +145,7 @@ class ActionControllerTest extends WebTestCase
                 'route' => 'oro_action_test_route',
                 'entityId' => true,
                 'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
-                'statusCode' => 404,
+                'statusCode' => 200,
                 'message' => self::MESSAGE_DEFAULT,
             ],
             'unknown route' => [
@@ -156,7 +156,7 @@ class ActionControllerTest extends WebTestCase
                 'route' => 'oro_action_test_route',
                 'entityId' => false,
                 'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
-                'statusCode' => 404,
+                'statusCode' => 200,
                 'message' => self::MESSAGE_DEFAULT,
             ],
             'empty context' => [
@@ -164,7 +164,7 @@ class ActionControllerTest extends WebTestCase
                 'route' => 'oro_action_test_route',
                 'entityId' => true,
                 'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
-                'statusCode' => 404,
+                'statusCode' => 200,
                 'message' => self::MESSAGE_DEFAULT,
             ],
         ];

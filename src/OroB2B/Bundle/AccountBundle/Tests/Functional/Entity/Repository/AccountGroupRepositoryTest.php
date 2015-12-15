@@ -32,8 +32,7 @@ class AccountGroupRepositoryTest extends WebTestCase
             [
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
                 'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountCategoryVisibilities',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountGroupCategoryVisibilities',
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
             ]
         );
     }
@@ -61,6 +60,7 @@ class AccountGroupRepositoryTest extends WebTestCase
             $accountGroups
         );
 
+        sort($accountGroups);
         $this->assertEquals($expectedAccountGroups, $accountGroups);
     }
 
@@ -70,18 +70,19 @@ class AccountGroupRepositoryTest extends WebTestCase
     public function getCategoryAccountGroupsByVisibilityDataProvider()
     {
         return [
-            'FIRST_LEVEL with VISIBLE' => [
+            'FIRST_LEVEL with HIDDEN' => [
                 'categoryName' => LoadCategoryData::FIRST_LEVEL,
-                'visibility' => AccountGroupCategoryVisibility::VISIBLE,
+                'visibility' => AccountGroupCategoryVisibility::HIDDEN,
                 'expectedAccountGroups' => [
                     'account_group.group1'
                 ]
             ],
-            'SECOND_LEVEL1 with HIDDEN' => [
-                'categoryName' => LoadCategoryData::SECOND_LEVEL1,
-                'visibility' => AccountGroupCategoryVisibility::HIDDEN,
+            'FOURTH_LEVEL1 with PARENT_CATEGORY' => [
+                'categoryName' => LoadCategoryData::FOURTH_LEVEL1,
+                'visibility' => AccountGroupCategoryVisibility::PARENT_CATEGORY,
                 'expectedAccountGroups' => [
-                    'account_group.group1'
+                    'account_group.group1',
+                    'account_group.group3',
                 ]
             ],
         ];
