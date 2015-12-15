@@ -113,7 +113,7 @@ abstract class AbstractSubtreeCacheBuilder
         $qb = $this->joinCategoryVisibility($qb, $target);
         $qb = $this->restrictToParentFallback($qb);
 
-        $finalLeafIds = [];
+        $leafIds = [];
 
         /**
          * Nodes with fallback different from 'toParent' and their children should be excluded
@@ -122,10 +122,10 @@ abstract class AbstractSubtreeCacheBuilder
          */
         foreach ($categoriesWithStaticFallback as $node) {
             $this->excludedCategories[] = $node;
-            if ($this->checkExcludedByParent($node)) {
+            if ($this->isExcludedByParent($node)) {
                 continue;
             } elseif ($node['left'] + 1 == $node['right']) {
-                $finalLeafIds[] = $node['id'];
+                $leafIds[] = $node['id'];
             } else {
                 $qb->andWhere(
                     $qb->expr()->not(
@@ -139,9 +139,9 @@ abstract class AbstractSubtreeCacheBuilder
             }
         }
 
-        if (!empty($finalLeafIds)) {
-            $qb->andWhere($qb->expr()->notIn('node', ':finalLeafIds'))
-                ->setParameter('finalLeafIds', $finalLeafIds);
+        if (!empty($leafIds)) {
+            $qb->andWhere($qb->expr()->notIn('node', ':leafIds'))
+                ->setParameter('leafIds', $leafIds);
         }
 
         return array_map('current', $qb->getQuery()->getScalarResult());
@@ -151,18 +151,17 @@ abstract class AbstractSubtreeCacheBuilder
      * @param array $node
      * @return bool
      */
-    protected function checkExcludedByParent(array $node)
+    protected function isExcludedByParent(array $node)
     {
-        $excludedByParent = false;
         foreach ($this->excludedCategories as $excludedCategory) {
             if ($node['level'] > $excludedCategory['level']
                 && $node['left'] > $excludedCategory['left']
                 && $node['right'] < $excludedCategory['right']
             ) {
-                $excludedByParent = true;
+                return true;
             }
         }
 
-        return $excludedByParent;
+        return false;
     }
 }
