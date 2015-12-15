@@ -7,7 +7,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
 use Oro\Bundle\ActionBundle\Action\CallServiceMethod;
-use Oro\Bundle\ActionBundle\Model\ActionContext;
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Tests\Unit\Action\Stub\TestService;
 
 use Oro\Bundle\WorkflowBundle\Model\ContextAccessor;
@@ -121,7 +121,7 @@ class CallServiceMethodTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertContainerCalled('test_service');
 
-        $context = new ActionContext(['param' => 'value']);
+        $data = new ActionData(['param' => 'value']);
         $options = [
             'service' => 'test_service',
             'method' => 'testMethod',
@@ -130,11 +130,11 @@ class CallServiceMethodTest extends \PHPUnit_Framework_TestCase
         ];
 
         $this->action->initialize($options);
-        $this->action->execute($context);
+        $this->action->execute($data);
 
         $this->assertEquals(
             ['param' => 'value', 'test' => TestService::TEST_METHOD_RESULT . 'value'],
-            $context->getValues()
+            $data->getValues()
         );
     }
 
@@ -142,7 +142,7 @@ class CallServiceMethodTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertContainerCalled('test_service');
 
-        $context = new ActionContext(['param' => 'value']);
+        $data = new ActionData(['param' => 'value']);
         $options = array(
             'service' => 'test_service',
             'method' => 'testMethod',
@@ -150,9 +150,9 @@ class CallServiceMethodTest extends \PHPUnit_Framework_TestCase
         );
 
         $this->action->initialize($options);
-        $this->action->execute($context);
+        $this->action->execute($data);
 
-        $this->assertEquals(['param' => 'value'], $context->getValues());
+        $this->assertEquals(['param' => 'value'], $data->getValues());
     }
 
     /**

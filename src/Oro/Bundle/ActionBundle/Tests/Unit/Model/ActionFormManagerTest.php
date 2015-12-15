@@ -6,7 +6,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 
 use Oro\Bundle\ActionBundle\Helper\ContextHelper;
 use Oro\Bundle\ActionBundle\Model\Action;
-use Oro\Bundle\ActionBundle\Model\ActionContext;
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionDefinition;
 use Oro\Bundle\ActionBundle\Model\ActionFormManager;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
@@ -79,11 +79,7 @@ class ActionFormManagerTest extends \PHPUnit_Framework_TestCase
                 return $this->action;
             });
 
-        $context = new ActionContext(['data' => ['param']]);
-
-        $this->contextHelper->expects($this->once())
-            ->method('getActionContext')
-            ->willReturn($context);
+        $data = new ActionData(['data' => ['param']]);
 
         $form = $this->getMock('Symfony\Component\Form\FormInterface');
 
@@ -91,7 +87,7 @@ class ActionFormManagerTest extends \PHPUnit_Framework_TestCase
             ->method('create')
             ->with(
                 'form_type',
-                $context,
+                $data,
                 [
                     'some_option' => 'option_value',
                     'action' => $this->action
@@ -99,19 +95,6 @@ class ActionFormManagerTest extends \PHPUnit_Framework_TestCase
             )
             ->willReturn($form);
 
-        $this->assertSame($form, $this->manager->getActionForm($context));
-    }
-
-    /**
-     * @expectedException \Oro\Bundle\ActionBundle\Exception\ActionNotFoundException
-     * @expectedExceptionMessage Action with name "test" not found
-     */
-    public function testGetActionFormException()
-    {
-        $this->actionManager->expects($this->once())
-            ->method('getAction')
-            ->willReturn(null);
-
-        $this->manager->getActionForm('test');
+        $this->assertSame($form, $this->manager->getActionForm($data, new ActionData(['data' => ['param']])));
     }
 }
