@@ -1,0 +1,10 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{%- if entity and resource_granted('EDIT', entity) -%}
+    {% set accountTaxCode = UI.renderUrl(path('orob2b_tax_account_tax_code_update', {'id': entity.id}), entity.code) ~ ' (' ~ entity.description ~ ')' %}
+{%- elseif entity -%}
+    {% set accountTaxCode = entity.code ~ ' (' ~ entity.description ~ ')' %}
+{%- else -%}
+    {% set accountTaxCode = '' %}
+{%- endif -%}
+{{ UI.renderHtmlProperty('orob2b.tax.accounttaxcode.entity_label'|trans, accountTaxCode) }}
