@@ -49,14 +49,6 @@ class CategoryVisibilityCalculator
     protected $configPath;
 
     /**
-     * @param string $configPath
-     */
-    public function setVisibilityConfigurationPath($configPath)
-    {
-        $this->configPath = $configPath;
-    }
-
-    /**
      * @param ManagerRegistry $registry
      * @param ConfigManager $configManager
      */
@@ -64,6 +56,14 @@ class CategoryVisibilityCalculator
     {
         $this->registry = $registry;
         $this->configManager = $configManager;
+    }
+
+    /**
+     * @param string $configPath
+     */
+    public function setVisibilityConfigurationPath($configPath)
+    {
+        $this->configPath = $configPath;
     }
 
     /**
@@ -119,8 +119,8 @@ class CategoryVisibilityCalculator
         $iterator = new BufferedQueryResultIterator($queryBuilder);
 
         $result = [
-            'hidden' => [],
-            'visible' => [],
+            CategoryVisibilityData::HIDDEN_KEY => [],
+            CategoryVisibilityData::VISIBLE_KEY => [],
         ];
         foreach ($iterator as $data) {
             $visibility = call_user_func([$this, $visibilityMethodName], $data);
@@ -128,14 +128,15 @@ class CategoryVisibilityCalculator
             if ($field && empty($data[$field])) {
                 continue;
             }
-            $result[$visibility ? 'visible' : 'hidden'][] = $data['category_id'];
+            $visibilityKey = $visibility ? CategoryVisibilityData::VISIBLE_KEY : CategoryVisibilityData::HIDDEN_KEY;
+            $result[$visibilityKey][] = $data['category_id'];
         }
 
-        return new CategoryVisibilityData($result['visible'], $result['hidden']);
+        return CategoryVisibilityData::fromArray($result);
     }
 
     /**
-     * @param $data
+     * @param array|null $data
      * @return bool
      * @throws InvalidVisibilityValueException
      */
@@ -241,6 +242,6 @@ class CategoryVisibilityCalculator
                 'Visibility configuration path not configured for AbstractCategoryVisibilityCalculator'
             );
         }
-        return $this->configManager->get($this->configPath) === CategoryVisibility::VISIBLE ? true : false;
+        return $this->configManager->get($this->configPath) === CategoryVisibility::VISIBLE;
     }
 }
