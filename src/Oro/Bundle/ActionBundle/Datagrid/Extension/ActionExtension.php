@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ActionBundle\Datagrid\Extension;
 
+use Oro\Bundle\ActionBundle\Model\Action;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 use Oro\Bundle\ActionBundle\Model\ContextHelper;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
@@ -43,36 +44,9 @@ class ActionExtension extends AbstractExtension
         if (0 === count($actions)) {
             return false;
         }
-        $actionsConfig = $config->offsetGet('actions');
-
-        foreach ($actions as $action) {
-            $frontendOptions = $action->getDefinition()->getFrontendOptions();
-            $actionsConfig[$action->getName()] = [
-                'type' => 'action-widget',
-                'label' => $action->getDefinition()->getLabel(),
-                'rowAction' => false,
-                'link' => '#',
-                'icon' => !empty($frontendOptions['icon'])
-                    ? str_ireplace('icon-', '', $frontendOptions['icon'])
-                    : 'edit',
-                'options' => [
-                    'actionName' => $action->getName(),
-                    'entityClass' => $context['entityClass'],
-                    'datagrid' => $context['datagrid'],
-                    'showDialog' => $action->hasForm(),
-                    'dialogOptions' => [
-                        'title' => $action->getDefinition()->getLabel(),
-                        'dialogOptions' => !empty($frontendOptions['dialog_options'])
-                        ? $frontendOptions['dialog_options']
-                        : [],
-                    ]
-                ]
-            ];
-        }
-        $config->offsetSet('actions', $actionsConfig);
+        $this->processActionsConfig($config, $actions, $context);
 
         $this->actionConfiguration = $config->offsetGetOr('action_configuration', []);
-
         $config->offsetSet('action_configuration', [$this, 'getActionsPermissions']);
 
         return true;
@@ -130,6 +104,43 @@ class ActionExtension extends AbstractExtension
 
     /**
      * @param DatagridConfiguration $config
+     * @param Action[] $actions
+     * @param array $context
+     */
+    protected function processActionsConfig(DatagridConfiguration $config, array $actions, array $context)
+    {
+        $actionsConfig = $config->offsetGetOr('actions', []);
+
+        foreach ($actions as $action) {
+            $frontendOptions = $action->getDefinition()->getFrontendOptions();
+            $actionsConfig[$action->getName()] = [
+                'type' => 'action-widget',
+                'label' => $action->getDefinition()->getLabel(),
+                'rowAction' => false,
+                'link' => '#',
+                'icon' => !empty($frontendOptions['icon'])
+                    ? str_ireplace('icon-', '', $frontendOptions['icon'])
+                    : 'edit',
+                'options' => [
+                    'actionName' => $action->getName(),
+                    'entityClass' => $context['entityClass'],
+                    'datagrid' => $context['datagrid'],
+                    'showDialog' => $action->hasForm(),
+                    'dialogOptions' => [
+                        'title' => $action->getDefinition()->getLabel(),
+                        'dialogOptions' => !empty($frontendOptions['dialog_options'])
+                            ? $frontendOptions['dialog_options']
+                            : [],
+                    ]
+                ]
+            ];
+        }
+
+        $config->offsetSet('actions', $actionsConfig);
+    }
+
+    /**
+     * @param DatagridConfiguration $config
      *
      * @return array
      */
@@ -137,7 +148,7 @@ class ActionExtension extends AbstractExtension
     {
         return [
             'entityClass' => $config->offsetGetByPath('[extended_entity_name]'),
-            'datagrid' => $config->getName()
+            'datagrid' => $config->offsetGetByPath('[name]')
         ];
     }
 }
