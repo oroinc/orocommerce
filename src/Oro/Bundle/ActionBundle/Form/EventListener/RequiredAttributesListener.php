@@ -6,7 +6,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-use Oro\Bundle\ActionBundle\Model\ActionContext;
+use Oro\Bundle\ActionBundle\Model\ActionData;
 
 /**
  * This listener removes attributes from context if they are not present in form in PRE_SET_DATA event
@@ -16,8 +16,8 @@ use Oro\Bundle\ActionBundle\Model\ActionContext;
  */
 class RequiredAttributesListener implements EventSubscriberInterface
 {
-    /** @var ActionContext */
-    protected $context;
+    /** @var ActionData */
+    protected $data;
 
     /** @var array */
     protected $attributeNames;
@@ -31,36 +31,36 @@ class RequiredAttributesListener implements EventSubscriberInterface
     }
 
     /**
-     * Extract only required attributes for form and create new context based on them
+     * Extract only required attributes for form and create new data based on them
      *
      * @param FormEvent $event
      */
     public function onPreSetData(FormEvent $event)
     {
-        /** @var ActionContext $data */
+        /** @var ActionData $data */
         $data = $event->getData();
-        if ($data instanceof ActionContext) {
-            $this->context = $data;
+        if ($data instanceof ActionData) {
+            $this->data = $data;
 
-            $event->setData(new ActionContext($data->getValues($this->attributeNames)));
+            $event->setData(new ActionData($data->getValues($this->attributeNames)));
         }
     }
 
     /**
-     * Copy submitted data to existing context
+     * Copy submitted data to existing data
      *
      * @param FormEvent $event
      */
     public function onSubmit(FormEvent $event)
     {
-        /** @var ActionContext $data */
+        /** @var ActionData $data */
         $data = $event->getData();
-        if ($this->context && $data instanceof ActionContext) {
+        if ($this->data && $data instanceof ActionData) {
             foreach ($data->getValues() as $name => $value) {
-                $this->context->$name = $value;
+                $this->data->$name = $value;
             }
 
-            $event->setData($this->context);
+            $event->setData($this->data);
         }
     }
 
