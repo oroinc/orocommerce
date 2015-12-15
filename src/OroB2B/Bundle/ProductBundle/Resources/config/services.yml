@@ -233,7 +233,7 @@ services:
         class: %orob2b_product.form_handler.quick_add_import.class%
         arguments:
             - @translator
-            - @form.factory
+            - @router
             - @orob2b_product.component_processor.registry
 
     orob2b_product.model.product_visibility_query_builder_modifier:

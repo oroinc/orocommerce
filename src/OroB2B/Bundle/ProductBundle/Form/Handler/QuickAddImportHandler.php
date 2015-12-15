@@ -2,18 +2,17 @@
 
 namespace OroB2B\Bundle\ProductBundle\Form\Handler;
 
-use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
-use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
-use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
-use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddOrderType;
-use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorInterface;
+use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
+use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddOrderType;
+use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class QuickAddImportHandler
 {
@@ -23,9 +22,9 @@ class QuickAddImportHandler
     protected $translator;
 
     /**
-     * @var FormFactoryInterface
+     * @var UrlGeneratorInterface
      */
-    protected $formFactory;
+    protected $urlGenerator;
 
     /**
      * @var ComponentProcessorRegistry
@@ -34,75 +33,49 @@ class QuickAddImportHandler
 
     /**
      * @param TranslatorInterface $translator
-     * @param FormFactoryInterface $formFactory
+     * @param UrlGeneratorInterface $urlGenerator
      * @param ComponentProcessorRegistry $componentRegistry
      */
     public function __construct(
         TranslatorInterface $translator,
-        FormFactoryInterface $formFactory,
+        UrlGeneratorInterface $urlGenerator,
         ComponentProcessorRegistry $componentRegistry
     ) {
         $this->translator = $translator;
-        $this->formFactory = $formFactory;
+        $this->urlGenerator = $urlGenerator;
         $this->componentRegistry = $componentRegistry;
     }
 
     /**
      * @param Request $request
-     * @return array ['form' => FormInterface, 'response' => Response|null]
+     * @return RedirectResponse
      */
     public function process(Request $request)
     {
-        $response = null;
-        $processor = $this->getProcessor($this->getComponentName($request));
+        if (!$products = $this->getProducts($request)) {
+            $this->setFlashError($request, 'orob2b.product.frontend.messages.invalid_request');
 
-        $products = $request->get(
-            sprintf('%s[%s]', QuickAddOrderType::NAME, QuickAddType::PRODUCTS_FIELD_NAME),
-            [],
-            true
-        );
-        $products = is_array($products) ? $products : [];
-
-        $shoppingListId = (int) $request->get(
-            sprintf('%s[%s]', QuickAddOrderType::NAME, QuickAddType::ADDITIONAL_FIELD_NAME),
-            0,
-            true
-        );
-
-        if ($products) {
-            if ($processor && $processor->isAllowed()) {
-                    $response = $processor->process(
-                        [
-                            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products,
-                            ProductDataStorage::ADDITIONAL_DATA_KEY => [
-                                ProductDataStorage::SHOPPING_LIST_ID_KEY => $shoppingListId
-                            ]
-                        ],
-                        $request
-                    );
-                    if (!$response) {
-                        // reset form
-                        $form = $this->createQuickAddOrderForm();
-                    }
-            } else {
-                /** @var Session $session */
-                $session = $request->getSession();
-                $session->getFlashBag()->add(
-                    'error',
-                    $this->translator->trans('orob2b.product.frontend.component_not_accessible.message')
-                );
-            }
+            return $this->redirectToQuickAddPage();
         }
 
-        return ['form' => $form, 'response' => $response];
-    }
+        $processor = $this->getProcessor($this->getComponentName($request));
 
-    /**
-     * @return FormInterface
-     */
-    protected function createQuickAddOrderForm()
-    {
-        return $this->formFactory->create(QuickAddOrderType::NAME);
+        if ($processor && $processor->isAllowed()) {
+            $response = $processor->process(
+                [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $products,
+                    ProductDataStorage::ADDITIONAL_DATA_KEY => [
+                        ProductDataStorage::SHOPPING_LIST_ID_KEY => $this->getShoppingListId($request)
+                    ]
+                ],
+                $request
+            );
+        } else {
+            $this->setFlashError($request, 'orob2b.product.frontend.messages.component_not_accessible');
+            $response = null;
+        }
+
+        return $response instanceof RedirectResponse ? $response : $this->redirectToQuickAddPage();
     }
 
     /**
@@ -128,5 +101,52 @@ class QuickAddImportHandler
     protected function getProcessor($name)
     {
         return $this->componentRegistry->getProcessorByName($name);
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+    private function getProducts(Request $request)
+    {
+        $products = $request->get(
+            sprintf('%s[%s]', QuickAddOrderType::NAME, QuickAddType::PRODUCTS_FIELD_NAME),
+            [],
+            true
+        );
+
+        return is_array($products) ? $products : [];
+    }
+
+    /**
+     * @param Request $request
+     * @return int
+     */
+    private function getShoppingListId(Request $request)
+    {
+        return (int) $request->get(
+            sprintf('%s[%s]', QuickAddOrderType::NAME, QuickAddType::ADDITIONAL_FIELD_NAME),
+            0,
+            true
+        );
+    }
+
+    /**
+     * @param Request $request
+     * @param string $message
+     */
+    private function setFlashError(Request $request, $message)
+    {
+        /** @var Session $session */
+        $session = $request->getSession();
+        $session->getFlashBag()->add('error', $this->translator->trans($message));
+    }
+
+    /**
+     * @return RedirectResponse
+     */
+    private function redirectToQuickAddPage()
+    {
+        return new RedirectResponse($this->urlGenerator->generate('orob2b_product_frontend_quick_add'));
     }
 }

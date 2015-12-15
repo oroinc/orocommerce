@@ -77,18 +77,11 @@ class QuickAddController extends Controller
      * @Template("OroB2BProductBundle:QuickAdd\Frontend:validationRedirectResult.html.twig")
      *
      * @param Request $request
-     * @return Response
+     * @return array
      */
     public function validationResultAction(Request $request)
     {
-        $result = $this->get('orob2b_product.form_handler.quick_add_import')->process($request);
-
-        /** @var RedirectResponse $response */
-        $response = $result['response'];
-
-        if (!$response) {
-            $response = new RedirectResponse($this->generateUrl('orob2b_product_frontend_quick_add'));
-        }
+        $response = $this->get('orob2b_product.form_handler.quick_add_import')->process($request);
 
         return ['targetUrl' => $response->getTargetUrl()];
     }
@@ -98,7 +91,7 @@ class QuickAddController extends Controller
      * @Template("OroB2BProductBundle:QuickAdd\Frontend:validationResult.html.twig")
      *
      * @param Request $request
-     * @return array|Response
+     * @return array
      */
     public function copyPasteAction(Request $request)
     {

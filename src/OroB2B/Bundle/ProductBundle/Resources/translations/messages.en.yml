@@ -135,7 +135,8 @@ orob2b:
                 continue.label: Continue
                 messages:
                     not_added_products: '{1} Product %sku% can’t be added.|]1,Inf]Products %sku% can’t be added.'
-            component_not_accessible.message: Can't process request, component not accessible
+                    component_not_accessible: Can't process request, component not accessible
+                    invalid_request: Invalid request submitted
 
     product_unit.each:
         label:
