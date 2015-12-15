@@ -627,7 +627,7 @@ services:
         class: %orob2b_account.calculator.category_visibility_calculator.class%
         arguments:
             - @doctrine
-            - @oro_config.manager
+            - @oro_config.global
         calls:
             - [setVisibilityConfigurationPath, ['oro_b2b_account.category_visibility']]
 

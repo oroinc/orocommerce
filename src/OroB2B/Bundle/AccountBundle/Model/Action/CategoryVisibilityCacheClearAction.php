@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AccountBundle\Model\Action;
 
 use Oro\Bundle\WorkflowBundle\Model\Action\AbstractAction;
+use Oro\Bundle\WorkflowBundle\Model\ProcessData;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
@@ -11,8 +12,27 @@ use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Visibility\Storage\CategoryVisibilityStorage;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
+/**
+ * Clearing category visibility storage depending on context entity
+ * Usage:
+ * @category_visibility_cache_clear: ~
+ *
+ * or
+ *
+ * @category_visibility_cache_clear:
+ *    entity: $some.path
+ *
+ * or
+ *
+ * @category_visibility_cache_clear:[$some.path]
+ */
 class CategoryVisibilityCacheClearAction extends AbstractAction
 {
+    /**
+     * @var string
+     */
+    protected $attribute;
+
     /**
      * @var CategoryVisibilityStorage
      */
@@ -31,7 +51,15 @@ class CategoryVisibilityCacheClearAction extends AbstractAction
      */
     protected function executeAction($context)
     {
-        $entity = $context->getEntity();
+        if (!$context instanceof ProcessData) {
+            throw new \LogicException('This action can be called only from process context');
+        }
+
+        if ($this->attribute) {
+            $entity = $this->contextAccessor->getValue($context, $this->attribute);
+        } else {
+            $entity = $context->getEntity();
+        }
 
         if ($entity instanceof Category) {
             $this->categoryVisibilityStorage->flush();
@@ -53,6 +81,12 @@ class CategoryVisibilityCacheClearAction extends AbstractAction
     {
         if (!$this->categoryVisibilityStorage) {
             throw new \InvalidArgumentException('CategoryVisibilityStorage is not provided');
+        }
+
+        if (isset($options['entity'])) {
+            $this->attribute = $options['entity'];
+        } elseif (isset($options[0])) {
+            $this->attribute = $options[0];
         }
 
         return $this;

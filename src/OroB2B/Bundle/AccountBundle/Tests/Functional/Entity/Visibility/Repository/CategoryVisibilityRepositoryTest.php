@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Visibility\Repository;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository\CategoryVisibilityRepository;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
@@ -11,92 +9,84 @@ use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 /**
  * @dbIsolation
  */
-class CategoryVisibilityRepositoryTest extends WebTestCase
+class CategoryVisibilityRepositoryTest extends CategoryVisibilityTestCase
 {
     /**
      * @var CategoryVisibilityRepository
      */
     protected $repository;
 
-    protected function setUp()
+    /**
+     * @inheritDoc
+     */
+    protected function getRepositoryName()
     {
-        $this->initClient();
-
-        $this->repository = $this->getContainer()
-            ->get('doctrine')
-            ->getRepository('OroB2BAccountBundle:Visibility\CategoryVisibility');
-
-        $this->loadFixtures(['OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData']);
+        return 'OroB2BAccountBundle:Visibility\CategoryVisibility';
     }
 
     /**
-     * dataProvider getVisibilityToAllDataProvider
+     * @dataProvider getCategoriesVisibilitiesQueryBuilderDataProvider
+     * @param array $expectedData
      */
-    public function testGetVisibilityToAll()
+    public function testGetCategoriesVisibilitiesQueryBuilder(array $expectedData)
     {
-        /** @var array $actualItems */
-        $actualItems = $this->repository->getCategoriesVisibilitiesQueryBuilder()->addOrderBy('c.left')
+        /** @var array $actualData */
+        $actualData = $this->repository->getCategoriesVisibilitiesQueryBuilder()->addOrderBy('c.left')
             ->getQuery()->execute();
 
-        $root = $this->getContainer()->get('doctrine')->getRepository('OroB2BCatalogBundle:Category')
-            ->getMasterCatalogRoot();
-        $expectedItems = [
-            [
-                'category_id' => $root->getId(),
-                'visibility' => null,
-                'category_parent_id' => null,
-            ],
-            [
-                'category_id' => $this->getReference(LoadCategoryData::FIRST_LEVEL)->getId(),
-                'visibility' => CategoryVisibility::VISIBLE,
-                'category_parent_id' => $root->getId(),
-            ],
-            [
-                'category_id' => $this->getReference(LoadCategoryData::SECOND_LEVEL1)->getId(),
-                'visibility' => null,
-                'category_parent_id' => $this->getReference(LoadCategoryData::FIRST_LEVEL)->getId(),
-            ],
-            [
-                'category_id' => $this->getReference(LoadCategoryData::SECOND_LEVEL2)->getId(),
-                'visibility' => null,
-                'category_parent_id' => $this->getReference(LoadCategoryData::FIRST_LEVEL)->getId(),
-            ],
-            [
-                'category_id' => $this->getReference(LoadCategoryData::THIRD_LEVEL1)->getId(),
-                'visibility' => CategoryVisibility::VISIBLE,
-                'category_parent_id' => $this->getReference(LoadCategoryData::SECOND_LEVEL1)->getId(),
-            ],
-            [
-                'category_id' => $this->getReference(LoadCategoryData::THIRD_LEVEL2)->getId(),
-                'visibility' => CategoryVisibility::HIDDEN,
-                'category_parent_id' => $this->getReference(LoadCategoryData::SECOND_LEVEL2)->getId(),
-            ],
-            [
-                'category_id' => $this->getReference(LoadCategoryData::FOURTH_LEVEL1)->getId(),
-                'visibility' => null,
-                'category_parent_id' => $this->getReference(LoadCategoryData::THIRD_LEVEL1)->getId(),
-            ],
-            [
-                'category_id' => $this->getReference(LoadCategoryData::FOURTH_LEVEL2)->getId(),
-                'visibility' => null,
-                'category_parent_id' => $this->getReference(LoadCategoryData::THIRD_LEVEL2)->getId(),
-            ]
-        ];
-        $this->assertCount(count($expectedItems), $actualItems);
-        foreach ($actualItems as $i => $actual) {
-            $this->assertArrayHasKey($i, $expectedItems);
-            $expected = $expectedItems[$i];
-            $this->assertEquals($expected['category_id'], $actual['category_id']);
-            $this->assertEquals($expected['category_parent_id'], $actual['category_parent_id']);
-            $this->assertEquals($expected['visibility'], $actual['visibility']);
-        }
+        $this->assertVisibilities($expectedData, $actualData);
     }
 
     /**
      * @return array
      */
-    public function getVisibilityToAllDataProvider()
+    public function getCategoriesVisibilitiesQueryBuilderDataProvider()
     {
-        return [];
+        return [
+            [
+                'expectedData' => [
+                    [
+                        'category' => self::ROOT_CATEGORY,
+                        'visibility' => null,
+                        'category_parent' => null,
+                    ],
+                    [
+                        'category' => LoadCategoryData::FIRST_LEVEL,
+                        'visibility' => CategoryVisibility::VISIBLE,
+                        'category_parent' => self::ROOT_CATEGORY,
+                    ],
+                    [
+                        'category' => LoadCategoryData::SECOND_LEVEL1,
+                        'visibility' => null,
+                        'category_parent' => LoadCategoryData::FIRST_LEVEL,
+                    ],
+                    [
+                        'category' => LoadCategoryData::SECOND_LEVEL2,
+                        'visibility' => null,
+                        'category_parent' => LoadCategoryData::FIRST_LEVEL,
+                    ],
+                    [
+                        'category' => LoadCategoryData::THIRD_LEVEL1,
+                        'visibility' => CategoryVisibility::VISIBLE,
+                        'category_parent' => LoadCategoryData::SECOND_LEVEL1,
+                    ],
+                    [
+                        'category' => LoadCategoryData::THIRD_LEVEL2,
+                        'visibility' => CategoryVisibility::HIDDEN,
+                        'category_parent' => LoadCategoryData::SECOND_LEVEL2,
+                    ],
+                    [
+                        'category' => LoadCategoryData::FOURTH_LEVEL1,
+                        'visibility' => null,
+                        'category_parent' => LoadCategoryData::THIRD_LEVEL1,
+                    ],
+                    [
+                        'category' => LoadCategoryData::FOURTH_LEVEL2,
+                        'visibility' => null,
+                        'category_parent' => LoadCategoryData::THIRD_LEVEL2,
+                    ]
+                ]
+            ]
+        ];
     }
 }
