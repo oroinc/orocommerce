@@ -10,7 +10,7 @@ use OroB2B\Bundle\TaxBundle\Form\Type\TaxSelectType;
 
 class TaxRuleType extends AbstractType
 {
-    const NAME = 'orob2b_tax_tax_rule_type';
+    const NAME = 'orob2b_tax_rule_type';
 
     /**
      * @var string
@@ -43,6 +43,10 @@ class TaxRuleType extends AbstractType
             ])
             ->add('tax', TaxSelectType::NAME, [
                 'label' => 'orob2b.tax.taxrule.tax.label',
+                'required' => true
+            ])
+            ->add('taxJurisdiction', TaxJurisdictionSelectType::NAME, [
+                'label' => 'orob2b.tax.taxrule.tax_jurisdiction.label',
                 'required' => true
             ]);
     }

@@ -6,11 +6,11 @@ orob2b_tax_account_tax_code_api:
     resource: "@OroB2BTaxBundle/Controller/Api/Rest/AccountTaxCodeController.php"
     type:     rest
 
-orob2b_tax_tax_api:
+orob2b_tax_api:
     resource: "@OroB2BTaxBundle/Controller/Api/Rest/TaxController.php"
     type:     rest
 
-orob2b_tax_tax_rule_api:
+orob2b_tax_rule_api:
     resource: "@OroB2BTaxBundle/Controller/Api/Rest/TaxRuleController.php"
     type:     rest
 

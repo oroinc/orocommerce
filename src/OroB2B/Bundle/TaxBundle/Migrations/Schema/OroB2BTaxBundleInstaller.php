@@ -28,12 +28,12 @@ class OroB2BTaxBundleInstaller implements Installation
         $this->createOrob2BTaxProdTaxCodeProdTable($schema);
         $this->createOrob2BTaxProductTaxCodeTable($schema);
         $this->createOroB2BTaxTaxTable($schema);
-        $this->createOroB2BTaxTaxRuleTable($schema);
+        $this->createOroB2BTaxRuleTable($schema);
 
         /** Foreign keys generation **/
         $this->addOrob2BTaxAccTaxCodeAccForeignKeys($schema);
         $this->addOrob2BTaxProdTaxCodeProdForeignKeys($schema);
-        $this->addOroB2BTaxTaxRuleForeignKeys($schema);
+        $this->addOroB2BTaxRuleForeignKeys($schema);
     }
 
     /**
@@ -99,13 +99,13 @@ class OroB2BTaxBundleInstaller implements Installation
     }
 
     /**
-     * Create orob2b_tax_tax table
+     * Create orob2b_tax table
      *
      * @param Schema $schema
      */
     protected function createOroB2BTaxTaxTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_tax_tax');
+        $table = $schema->createTable('orob2b_tax');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('code', 'string', ['length' => 255]);
         $table->addColumn('description', 'text', ['notnull' => false]);
@@ -117,17 +117,18 @@ class OroB2BTaxBundleInstaller implements Installation
     }
 
     /**
-     * Create orob2b_tax_tax_rule table
+     * Create orob2b_tax_rule table
      *
      * @param Schema $schema
      */
-    protected function createOroB2BTaxTaxRuleTable(Schema $schema)
+    protected function createOroB2BTaxRuleTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_tax_tax_rule');
+        $table = $schema->createTable('orob2b_tax_rule');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('tax_id', 'integer', ['notnull' => false]);
         $table->addColumn('account_tax_code_id', 'integer', ['notnull' => false]);
         $table->addColumn('product_tax_code_id', 'integer', ['notnull' => false]);
+        $table->addColumn('tax_jurisdiction_id', 'integer', ['notnull' => false]);
         $table->addColumn('description', 'text', ['notnull' => false]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
@@ -180,15 +181,15 @@ class OroB2BTaxBundleInstaller implements Installation
     }
 
     /**
-     * Add orob2b_tax_tax_rule foreign keys.
+     * Add orob2b_tax_rule foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOroB2BTaxTaxRuleForeignKeys(Schema $schema)
+    protected function addOroB2BTaxRuleForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_tax_tax_rule');
+        $table = $schema->getTable('orob2b_tax_rule');
         $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_tax_tax'),
+            $schema->getTable('orob2b_tax'),
             ['tax_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
@@ -202,6 +203,12 @@ class OroB2BTaxBundleInstaller implements Installation
         $table->addForeignKeyConstraint(
             $schema->getTable('orob2b_tax_product_tax_code'),
             ['product_tax_code_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_tax_jurisdiction'),
+            ['tax_jurisdiction_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );

@@ -1,6 +1,6 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
 
-{% set formAction = entity.id ? path('orob2b_tax_tax_update', {id: entity.id}) : path('orob2b_tax_tax_create') %}
+{% set formAction = entity.id ? path('orob2b_tax_update', {id: entity.id}) : path('orob2b_tax_create') %}
 
 {% oro_title_set({params : {"%taxCode%": entity.code|default('N/A'|trans), '%entityName%': 'orob2b.tax.entity_label'|trans} }) %}
 
@@ -8,7 +8,7 @@
     {% if entity.id and resource_granted('DELETE', entity) %}
         {{ UI.deleteButton({
             'dataUrl': path('orob2b_api_tax_delete_tax', {'id': entity.id}),
-            'dataRedirect': path('orob2b_tax_tax_index'),
+            'dataRedirect': path('orob2b_tax_index'),
             'aCss': 'no-hash remove-button',
             'dataId': entity.id,
             'id': 'btn-remove-attribute',
@@ -16,9 +16,9 @@
         }) }}
         {{ UI.buttonSeparator() }}
     {% endif %}
-    {{ UI.cancelButton(path('orob2b_tax_tax_index')) }}
+    {{ UI.cancelButton(path('orob2b_tax_index')) }}
     {% set html = UI.saveAndCloseButton() %}
-    {% if entity.id or resource_granted('orob2b_tax_tax_update') %}
+    {% if entity.id or resource_granted('orob2b_tax_update') %}
         {% set html = html ~ UI.saveAndStayButton() %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
@@ -28,7 +28,7 @@
     {% if entity.id %}
         {% set breadcrumbs = {
             'entity':      entity,
-            'indexPath':   path('orob2b_tax_tax_index'),
+            'indexPath':   path('orob2b_tax_index'),
             'indexLabel': 'orob2b.tax.entity_plural_label'|trans,
             'entityTitle': entity.code|default('N/A'|trans)
         } %}

@@ -7,6 +7,7 @@ use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
 use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
 use OroB2B\Bundle\TaxBundle\Entity\Tax;
+use OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction;
 use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
 
 class TaxRuleTest extends \PHPUnit_Framework_TestCase
@@ -24,6 +25,7 @@ class TaxRuleTest extends \PHPUnit_Framework_TestCase
             ['productTaxCode', new ProductTaxCode()],
             ['accountTaxCode', new AccountTaxCode()],
             ['tax', new Tax()],
+            ['taxJurisdiction', new TaxJurisdiction()],
             ['createdAt', new \DateTime()],
             ['updatedAt', new \DateTime()],
         ]);

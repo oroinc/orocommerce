@@ -9,11 +9,11 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="orob2b_tax_tax_rule")
+ * @ORM\Table(name="orob2b_tax_rule")
  * @ORM\HasLifecycleCallbacks
  * @Config(
- *      routeName="orob2b_tax_tax_rule_index",
- *      routeView="orob2b_tax_tax_rule_view"
+ *      routeName="orob2b_tax_rule_index",
+ *      routeView="orob2b_tax_rule_view"
  * )
  */
 class TaxRule
@@ -62,6 +62,14 @@ class TaxRule
      * @ORM\JoinColumn(name="tax_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $tax;
+
+    /**
+     * @var TaxJurisdiction
+     *
+     * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction")
+     * @ORM\JoinColumn(name="tax_jurisdiction_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $taxJurisdiction;
 
     /**
      * @ORM\Column(name="created_at", type="datetime")
@@ -177,6 +185,26 @@ class TaxRule
     public function getTax()
     {
         return $this->tax;
+    }
+
+    /**
+     * @param TaxJurisdiction $taxJurisdiction
+     *
+     * @return $this
+     */
+    public function setTaxJurisdiction(TaxJurisdiction $taxJurisdiction = null)
+    {
+        $this->taxJurisdiction = $taxJurisdiction;
+
+        return $this;
+    }
+
+    /**
+     * @return TaxJurisdiction
+     */
+    public function getTaxJurisdiction()
+    {
+        return $this->taxJurisdiction;
     }
 
     /**

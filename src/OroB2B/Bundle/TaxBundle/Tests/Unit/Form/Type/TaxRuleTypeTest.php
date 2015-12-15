@@ -13,6 +13,7 @@ use OroB2B\Bundle\TaxBundle\Form\Type\TaxType;
 use OroB2B\Bundle\TaxBundle\Form\Type\AccountTaxCodeAutocompleteType;
 use OroB2B\Bundle\TaxBundle\Form\Type\ProductTaxCodeAutocompleteType;
 use OroB2B\Bundle\TaxBundle\Form\Type\TaxSelectType;
+use OroB2B\Bundle\TaxBundle\Form\Type\TaxJurisdictionSelectType;
 
 class TaxRuleTypeTest extends FormIntegrationTestCase
 {
@@ -54,12 +55,21 @@ class TaxRuleTypeTest extends FormIntegrationTestCase
             TaxSelectType::NAME
         );
 
+        $taxJurisdictionSelect = new EntityType(
+            [
+                1 => $this->getEntity('OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction', ['id' => 1]),
+                2 => $this->getEntity('\OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction', ['id' => 2])
+            ],
+            TaxJurisdictionSelectType::NAME
+        );
+
         return [
             new PreloadedExtension(
                 [
                     AccountTaxCodeAutocompleteType::NAME => $accountTaxCodeAutocomplete,
                     ProductTaxCodeAutocompleteType::NAME => $productTaxCodeAutocomplete,
-                    TaxSelectType::NAME => $taxSelect
+                    TaxSelectType::NAME => $taxSelect,
+                    TaxJurisdictionSelectType::NAME => $taxJurisdictionSelect
                 ],
                 []
             )
@@ -149,12 +159,15 @@ class TaxRuleTypeTest extends FormIntegrationTestCase
                     'accountTaxCode' => 1,
                     'productTaxCode' => null,
                     'tax' => 1,
+                    'taxJurisdiction' => 1
                 ],
                 'expectedData' => [
                     'description' => 'description',
                     'accountTaxCode' => $this->getEntity('OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode', ['id' => 1]),
                     'productTaxCode' => null,
                     'tax' => $this->getEntity('OroB2B\Bundle\TaxBundle\Entity\Tax', ['id' => 1]),
+                    'taxJurisdiction' =>
+                        $this->getEntity('OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction', ['id' => 1]),
                 ]
             ],
             'set product tax code' => [
@@ -166,12 +179,15 @@ class TaxRuleTypeTest extends FormIntegrationTestCase
                     'accountTaxCode' => null,
                     'productTaxCode' => 1,
                     'tax' => 2,
+                    'taxJurisdiction' => 2
                 ],
                 'expectedData' => [
                     'description' => 'description product tax code',
                     'accountTaxCode' => null,
                     'productTaxCode' => $this->getEntity('OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode', ['id' => 1]),
                     'tax' => $this->getEntity('OroB2B\Bundle\TaxBundle\Entity\Tax', ['id' => 2]),
+                    'taxJurisdiction' =>
+                        $this->getEntity('OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction', ['id' => 2]),
                 ]
             ]
         ];

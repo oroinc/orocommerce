@@ -25,7 +25,7 @@ class TaxRuleController extends RestController implements ClassResourceInterface
      *      resource=true
      * )
      * @Acl(
-     *      id="orob2b_tax_tax_rule_delete",
+     *      id="orob2b_tax_rule_delete",
      *      type="entity",
      *      class="OroB2BTaxBundle:TaxRule",
      *      permission="DELETE"

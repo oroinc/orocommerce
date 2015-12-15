@@ -74,5 +74,14 @@ services:
             - %orob2b_tax.entity.tax.class%
             - ["code"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: orob2b_tax_tax_autocomplete, acl_resource: orob2b_tax_tax_view }
+            - { name: oro_form.autocomplete.search_handler, alias: orob2b_tax_autocomplete, acl_resource: orob2b_tax_view }
+        lazy: true
+
+    orob2b_tax.form.autocomplete.tax_jurisdiction.search_handler:
+        parent: oro_form.autocomplete.search_handler
+        arguments:
+            - %orob2b_tax.entity.tax_jurisdiction.class%
+            - ["code"]
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: orob2b_tax_jurisdiction_autocomplete, acl_resource: orob2b_tax_jurisdiction_view }
         lazy: true

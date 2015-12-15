@@ -46,6 +46,7 @@ orob2b.tax:
         country.label: 'Country'
         region.label: 'State'
         region_text.label: 'State'
+        form.choose: 'Choose Taxc Jurisdiction'
 
     menu:
         taxes_tab.label: 'Taxes'

@@ -185,7 +185,7 @@ datagrid:
         options:
             entityHint: tax
         source:
-            acl_resource: orob2b_tax_tax_view
+            acl_resource: orob2b_tax_view
             type:         orm
             query:
                 select:
@@ -226,17 +226,18 @@ datagrid:
                     data_name: tax.rate
         properties:
             id: ~
+
     tax-taxes-grid:
         extends: tax-taxes-grid-base
         properties:
             id: ~
             view_link:
                 type:  url
-                route: orob2b_tax_tax_view
+                route: orob2b_tax_view
                 params: [ id ]
             update_link:
                 type:   url
-                route:  orob2b_tax_tax_update
+                route:  orob2b_tax_update
                 params: [ id ]
             delete_link:
                 type:   url
@@ -248,20 +249,20 @@ datagrid:
                 label:         oro.grid.action.view
                 link:          view_link
                 icon:          eye-open
-                acl_resource:  orob2b_tax_tax_view
+                acl_resource:  orob2b_tax_view
                 rowAction:     true
             update:
                 type:          navigate
                 label:         oro.grid.action.update
                 link:          update_link
                 icon:          edit
-                acl_resource:  orob2b_tax_tax_update
+                acl_resource:  orob2b_tax_update
             delete:
                 type:          delete
                 label:         oro.grid.action.delete
                 link:          delete_link
                 icon:          trash
-                acl_resource:  orob2b_tax_tax_delete
+                acl_resource:  orob2b_tax_delete
 
     tax-taxes-select-grid:
         extends: tax-taxes-grid-base
@@ -270,7 +271,7 @@ datagrid:
         options:
             entityHint: tax
         source:
-            acl_resource: orob2b_tax_tax_rule_view
+            acl_resource: orob2b_tax_rule_view
             type:         orm
             query:
                 select:
@@ -340,11 +341,11 @@ datagrid:
             id: ~
             view_link:
                 type:  url
-                route: orob2b_tax_tax_rule_view
+                route: orob2b_tax_rule_view
                 params: [ id ]
             update_link:
                 type:   url
-                route:  orob2b_tax_tax_rule_update
+                route:  orob2b_tax_rule_update
                 params: [ id ]
             delete_link:
                 type:   url
@@ -356,22 +357,22 @@ datagrid:
                 label:         oro.grid.action.view
                 link:          view_link
                 icon:          eye-open
-                acl_resource:  orob2b_tax_tax_rule_view
+                acl_resource:  orob2b_tax_rule_view
                 rowAction:     true
             update:
                 type:          navigate
                 label:         oro.grid.action.update
                 link:          update_link
                 icon:          edit
-                acl_resource:  orob2b_tax_tax_rule_update
+                acl_resource:  orob2b_tax_rule_update
             delete:
                 type:          delete
                 label:         oro.grid.action.delete
                 link:          delete_link
                 icon:          trash
-                acl_resource:  orob2b_tax_tax_rule_delete
+                acl_resource:  orob2b_tax_rule_delete
 
-    tax-jurisdiction-grid:
+    tax-jurisdiction-base-grid:
         source:
             acl_resource: orob2b_tax_jurisdiction_view
             type: orm
@@ -395,6 +396,14 @@ datagrid:
                     data_name: jurisdiction.description
             default:
                 id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
+        properties:
+            id: ~
+
+    tax-jurisdiction-select-grid:
+        extends: tax-jurisdiction-base-grid
+
+    tax-jurisdiction-grid:
+        extends: tax-jurisdiction-base-grid
         filters:
             columns:
                 code:
@@ -403,8 +412,7 @@ datagrid:
                 description:
                     type:      string
                     data_name: jurisdiction.description
-        properties:
-            id: ~
+
             view_link:
                 type:   url
                 route: orob2b_tax_jurisdiction_view

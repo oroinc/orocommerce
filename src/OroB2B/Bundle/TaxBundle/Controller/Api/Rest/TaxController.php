@@ -23,7 +23,7 @@ class TaxController extends RestController implements ClassResourceInterface
      *      resource=true
      * )
      * @Acl(
-     *      id="orob2b_tax_tax_delete",
+     *      id="orob2b_tax_delete",
      *      type="entity",
      *      class="OroB2BTaxBundle:Tax",
      *      permission="DELETE"

@@ -7,9 +7,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 
-class TaxSelectType extends AbstractType
+class TaxJurisdictionSelectType extends AbstractType
 {
-    const NAME = 'orob2b_tax_select';
+    const NAME = 'orob2b_tax_jurisdiction_select';
 
     /**
      * {@inheritdoc}
@@ -18,11 +18,11 @@ class TaxSelectType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'autocomplete_alias' => 'orob2b_tax_autocomplete',
-                'create_form_route' => 'orob2b_tax_create',
-                'grid_name' => 'tax-taxes-select-grid',
+                'autocomplete_alias' => 'orob2b_tax_jurisdiction_autocomplete',
+                'create_form_route' => 'orob2b_tax_jurisdiction_create',
+                'grid_name' => 'tax-jurisdiction-select-grid',
                 'configs' => [
-                    'placeholder' => 'orob2b.tax.form.choose',
+                    'placeholder' => 'orob2b.tax.taxjurisdiction.form.choose',
                 ],
             ]
         );
