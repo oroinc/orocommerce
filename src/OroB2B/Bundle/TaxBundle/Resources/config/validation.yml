@@ -29,6 +29,12 @@ OroB2B\Bundle\TaxBundle\Entity\TaxRule:
             - NotBlank: ~
         tax:
             - NotBlank: ~
+        productTaxCode:
+            - NotBlank: ~
+        accountTaxCode:
+            - NotBlank: ~
+        taxJurisdiction:
+            - NotBlank: ~
 OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: code

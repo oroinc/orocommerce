@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\TaxBundle\Controller\Api\Rest;
 
-use FOS\RestBundle\Controller\Annotations\RouteResource;
 use Symfony\Component\HttpFoundation\Response;
 
+use FOS\RestBundle\Controller\Annotations\RouteResource;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Routing\ClassResourceInterface;
 
@@ -44,7 +44,7 @@ class TaxRuleController extends RestController implements ClassResourceInterface
      */
     public function getManager()
     {
-        return $this->get('orob2b_tax.manager.tax.api');
+        return $this->get('orob2b_tax.manager.tax_rule.api');
     }
 
     /**

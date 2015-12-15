@@ -36,17 +36,20 @@ class TaxRuleType extends AbstractType
                 'required' => true
             ])
             ->add('accountTaxCode', AccountTaxCodeAutocompleteType::NAME, [
-                'label' => 'orob2b.tax.taxrule.account_tax_code.label'
+                'label' => 'orob2b.tax.taxrule.account_tax_code.label',
+                'required' => true
             ])
             ->add('productTaxCode', ProductTaxCodeAutocompleteType::NAME, [
-                'label' => 'orob2b.tax.taxrule.product_tax_code.label'
+                'label' => 'orob2b.tax.taxrule.product_tax_code.label',
+                'required' => true
+
             ])
             ->add('tax', TaxSelectType::NAME, [
                 'label' => 'orob2b.tax.taxrule.tax.label',
                 'required' => true
             ])
             ->add('taxJurisdiction', TaxJurisdictionSelectType::NAME, [
-                'label' => 'orob2b.tax.taxrule.tax_jurisdiction.label',
+                'label' => 'orob2b.tax.taxrule.taxjurisdiction.label',
                 'required' => true
             ]);
     }
