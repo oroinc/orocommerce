@@ -1,12 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Validator;
+namespace OroB2B\Bundle\TaxBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
 class ZipCodeFields extends Constraint
 {
-    public $message = 'Zip code should have only single code or range';
+    public $onlyOneTypeMessage = 'Zip code has to have only single code or range';
+    public $rangeBothFieldMessage = 'Zip code range has to have start and end';
 
     /**
      * {@inheritdoc}

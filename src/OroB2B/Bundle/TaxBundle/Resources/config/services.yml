@@ -4,7 +4,7 @@ parameters:
     orob2b_tax.entity.tax_jurisdiction.class: OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction
     orob2b_tax.entity.tax.class: OroB2B\Bundle\TaxBundle\Entity\Tax
 
-    orob2b_tax.validator.zip_code_fields.class: OroB2B\Bundle\TaxBundle\Validator\ZipCodeFieldsValidator
+    orob2b_tax.validator.zip_code_fields.class: OroB2B\Bundle\TaxBundle\Validator\Constraints\ZipCodeFieldsValidator
 
     orob2b_tax.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 services:

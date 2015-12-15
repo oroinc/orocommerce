@@ -38,20 +38,18 @@ class ZipCodeTransformer implements DataTransformerInterface
     public function reverseTransform($value)
     {
         $collection = new ArrayCollection();
-        $codes = explode(self::RECORD_DELIMITER, $value);
+        $codes = array_unique($this->prepareCodes(explode(self::RECORD_DELIMITER, $value)));
 
         foreach ($codes as $code) {
-            $code = trim($code);
             $zipCode = new ZipCode();
 
-            // TODO: Validation required
             if (false !== strstr($code, self::RANGE_DELIMITER)) {
-                $codeRange = explode(self::RANGE_DELIMITER, $code, 2);
-                array_map('trim', $codeRange);
+                $codeRange = $this->prepareCodes(explode(self::RANGE_DELIMITER, $code, 2));
                 sort($codeRange, SORT_NUMERIC);
+                list ($rangeStart, $rangeEnd) = array_pad($codeRange, 2, null);
 
-                $zipCode->setZipRangeStart($codeRange[0]);
-                $zipCode->setZipRangeEnd($codeRange[1]);
+                $zipCode->setZipRangeStart($rangeStart);
+                $zipCode->setZipRangeEnd($rangeEnd);
             } else {
                 $zipCode->setZipCode($code);
             }
@@ -60,5 +58,14 @@ class ZipCodeTransformer implements DataTransformerInterface
         }
 
         return $collection;
+    }
+
+    /**
+     * @param array $codes
+     * @return array
+     */
+    private function prepareCodes($codes)
+    {
+        return array_filter(array_map('trim', $codes));
     }
 }
