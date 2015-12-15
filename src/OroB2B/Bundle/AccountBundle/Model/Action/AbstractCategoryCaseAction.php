@@ -2,18 +2,23 @@
 
 namespace OroB2B\Bundle\AccountBundle\Model\Action;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
+
 use Oro\Bundle\WorkflowBundle\Model\Action\AbstractAction;
 
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 
-abstract class CategoryCaseAction extends AbstractAction
+abstract class AbstractCategoryCaseAction extends AbstractAction
 {
     /**
-     * @var ProductCaseCacheBuilderInterface|CategoryCaseCacheBuilderInterface
+     * @var CacheBuilderInterface
      */
     protected $cacheBuilder;
+
+    /**
+     * @var Registry
+     */
+    protected $registry;
 
     /**
      * {@inheritdoc}
@@ -22,6 +27,10 @@ abstract class CategoryCaseAction extends AbstractAction
     {
         if (!$this->cacheBuilder) {
             throw new \InvalidArgumentException('CacheBuilder is not provided');
+        }
+
+        if (!$this->registry) {
+            throw new \InvalidArgumentException('Registry is not provided');
         }
 
         return $this;
@@ -33,5 +42,13 @@ abstract class CategoryCaseAction extends AbstractAction
     public function setCacheBuilder(CacheBuilderInterface $cacheBuilder)
     {
         $this->cacheBuilder = $cacheBuilder;
+    }
+
+    /**
+     * @param Registry $registry
+     */
+    public function setRegistry(Registry $registry)
+    {
+        $this->registry = $registry;
     }
 }

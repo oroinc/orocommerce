@@ -1,61 +1,45 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Model\Action;
+namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product\Category;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
-use Oro\Bundle\WorkflowBundle\Model\ProcessData;
 use Oro\Component\Testing\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Model\Action\CategoryCaseAction;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\CacheBuilder;
 
-abstract class CategoryCaseActionTestCase extends WebTestCase
+abstract class CacheBuilderTestCase extends WebTestCase
 {
     /**
-     * @var ProcessData|\PHPUnit_Framework_MockObject_MockObject
+     * @var CacheBuilder
      */
-    protected $context;
-
-    /**
-     * @var CategoryCaseAction
-     */
-    protected $action;
+    protected $cacheBuilder;
 
     public function setUp()
     {
         $this->initClient();
 
-        $this->disableActions();
+        $this->flushCategoryVisibilityCache();
 
         $this->loadFixtures([
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures'
-            . '\LoadProductVisibilityResolvedFallbackCategoryData'
+            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityFallbackCategoryData'
         ]);
 
-        $this->context = $this->getMock('Oro\Bundle\WorkflowBundle\Model\ProcessData');
+        $this->cacheBuilder = $this->getContainer()->get($this->getCacheBuilderContainerId());
 
-        $this->action = $this->getContainer()->get($this->getActionContainerId());
     }
 
-    protected function disableActions()
+    protected function flushCategoryVisibilityCache()
     {
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass('OroWorkflowBundle:ProcessDefinition');
-        $definitions = $em->getRepository('OroWorkflowBundle:ProcessDefinition')
-            ->findAll();
-
-        foreach ($definitions as $definition) {
-            $definition->setEnabled(false);
-        }
-
-        $em->flush();
+        $this->getContainer()->get('orob2b_account.storage.category_visibility_storage')->flush();
     }
 
     /**
      * @return string
      */
-    abstract protected function getActionContainerId();
+    abstract protected function getCacheBuilderContainerId();
 
     /**
      * @param array $expectedData

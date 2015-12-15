@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Calculator;
+namespace OroB2B\Bundle\AccountBundle\Tests\Functional\EventListener;
 
 use Oro\Component\Testing\WebTestCase;
 
@@ -15,7 +15,7 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
  * @dbIsolation
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class CategoryVisibilityCalculatorTest extends WebTestCase
+class CategoryTreeHandlerListenerTest extends WebTestCase
 {
     protected function setUp()
     {
@@ -271,7 +271,7 @@ class CategoryVisibilityCalculatorTest extends WebTestCase
 
         /** @var AccountGroup $accountGroup */
         $accountGroup = $this->getReference('account_group.group1');
-
+        /** @var AccountGroupCategoryVisibility $accountGroupVisibility */
         $accountGroupVisibility = $em
             ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility')
             ->findOneBy(
@@ -299,6 +299,7 @@ class CategoryVisibilityCalculatorTest extends WebTestCase
 
         /** @var Account $account */
         $account = $this->getReference('account.level_1');
+        /** @var AccountCategoryVisibility $accountVisibility */
         $accountVisibility = $em
             ->getRepository('OroB2BAccountBundle:Visibility\AccountCategoryVisibility')
             ->findOneBy(['category' => $category, 'account' => $account]);

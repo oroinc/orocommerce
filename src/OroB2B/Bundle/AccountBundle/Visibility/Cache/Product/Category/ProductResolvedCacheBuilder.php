@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;
@@ -14,12 +12,6 @@ use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\Visibi
 
 class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implements CategoryCaseCacheBuilderInterface
 {
-    /** @var AccountGroup[] */
-    protected $intersectAccountGroupsWithFallbackToParent;
-
-    /** @var Account[] */
-    protected $accountsForUpdate;
-
     /** @var VisibilityChangeCategorySubtreeCacheBuilder */
     protected $visibilityChangeCategorySubtreeCacheBuilder;
 
