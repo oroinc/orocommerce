@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 
-use Oro\Bundle\ActionBundle\Model\ActionContext;
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 use Oro\Bundle\ActionBundle\Model\ContextHelper;
 
@@ -54,7 +54,7 @@ class WidgetController extends Controller
             if ($form->isValid()) {
                 $data = $this->getActionManager()->execute($actionName, $form->getData(), $errors);
 
-                $params['response'] = $this->getResponse($context);
+                $params['response'] = $this->getResponse($data);
             }
 
             $params['form'] = $form->createView();
@@ -87,10 +87,10 @@ class WidgetController extends Controller
     }
 
     /**
-     * @param ActionContext $context
+     * @param ActionData $context
      * @return array
      */
-    protected function getResponse(ActionContext $context)
+    protected function getResponse(ActionData $context)
     {
         /* @var $session Session */
         $session = $this->getRequest()->getSession();

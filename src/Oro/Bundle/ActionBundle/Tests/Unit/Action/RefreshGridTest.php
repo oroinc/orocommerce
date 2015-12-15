@@ -5,7 +5,7 @@ namespace Oro\Bundle\ActionBundle\Tests\Unit\Action;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\ActionBundle\Action\RefreshGrid;
-use Oro\Bundle\ActionBundle\Model\ActionContext;
+use Oro\Bundle\ActionBundle\Model\ActionData;
 
 use Oro\Bundle\WorkflowBundle\Model\ContextAccessor;
 
@@ -55,7 +55,7 @@ class RefreshGridTest extends \PHPUnit_Framework_TestCase
     {
         $gridname = 'test_grid';
 
-        $context = new ActionContext(['param' => 'value']);
+        $context = new ActionData(['param' => 'value']);
 
         $this->action->initialize([$gridname]);
         $this->action->execute($context);

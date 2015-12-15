@@ -130,7 +130,7 @@ class ActionDataTest extends \PHPUnit_Framework_TestCase
 
     public function testGetRefreshGrid()
     {
-        $data = new ActionContext();
+        $data = new ActionData();
         $this->assertNull($data->getRefreshGrid());
 
         $name = 'test_grid_dame';

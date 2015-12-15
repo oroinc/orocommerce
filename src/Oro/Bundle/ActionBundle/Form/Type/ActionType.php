@@ -102,7 +102,7 @@ class ActionType extends AbstractType
      */
     protected function executeInitFunctions(FormBuilderInterface $builder, array $options)
     {
-        /** @var ActionContext $data */
+        /** @var ActionData $data */
         $data = $builder->getData();
 
         /** @var Action $action */
@@ -166,8 +166,8 @@ class ActionType extends AbstractType
                 $attributeOptions = [];
             }
 
-            if (isset($actionContext->$attributeName)) {
-                $attributeOptions['options']['data'] = $actionContext->$attributeName;
+            if (isset($actionData->$attributeName)) {
+                $attributeOptions['options']['data'] = $actionData->$attributeName;
             }
 
             $attributeOptions = $this->prepareAttributeOptions($attribute, $attributeOptions, $options);
