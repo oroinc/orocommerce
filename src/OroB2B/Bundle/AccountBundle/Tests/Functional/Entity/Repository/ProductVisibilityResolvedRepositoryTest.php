@@ -44,7 +44,6 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
         $this->loadFixtures(['OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData']);
     }
 
-
     public function testFindByPrimaryKey()
     {
         /** @var ProductVisibilityResolved $actualEntity */

@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Model\Action;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
-use Oro\Bundle\ActionBundle\Model\ActionContext;
+use Oro\Bundle\WorkflowBundle\Model\ProcessData;
 use Oro\Component\Testing\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
@@ -14,7 +14,7 @@ use OroB2B\Bundle\AccountBundle\Model\Action\CategoryCaseAction;
 abstract class CategoryCaseActionTestCase extends WebTestCase
 {
     /**
-     * @var ActionContext|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProcessData|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $context;
 
@@ -34,7 +34,7 @@ abstract class CategoryCaseActionTestCase extends WebTestCase
             . '\LoadProductVisibilityResolvedFallbackCategoryData'
         ]);
 
-        $this->context = $this->getMock('Oro\Bundle\ActionBundle\Model\ActionContext');
+        $this->context = $this->getMock('Oro\Bundle\WorkflowBundle\Model\ProcessData');
 
         $this->action = $this->getContainer()->get($this->getActionContainerId());
     }
