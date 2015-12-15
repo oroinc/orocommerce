@@ -6,6 +6,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 use OroB2B\Bundle\ProductBundle\DependencyInjection\CompilerPass\ComponentProcessorPass;
+use OroB2B\Bundle\ProductBundle\DependencyInjection\CompilerPass\ProductDataStorageSessionBagPass;
 use OroB2B\Bundle\ProductBundle\DependencyInjection\OroB2BProductExtension;
 
 class OroB2BProductBundle extends Bundle
@@ -30,6 +31,7 @@ class OroB2BProductBundle extends Bundle
         parent::build($container);
 
         $container
-            ->addCompilerPass(new ComponentProcessorPass());
+            ->addCompilerPass(new ComponentProcessorPass())
+            ->addCompilerPass(new ProductDataStorageSessionBagPass());
     }
 }

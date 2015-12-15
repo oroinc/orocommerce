@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
@@ -66,6 +67,15 @@ class OrderLineItemType extends AbstractOrderLineItemType
                 'freeFormUnits' => $this->getFreeFormUnits(),
             ]
         );
+
+        $resolver->setNormalizer(
+            'sections',
+            function (Options $options, array $sections) {
+                $sections['price'] = ['data' => ['price' => [], 'priceType' => []], 'order' => 20];
+
+                return $sections;
+            }
+        );
     }
 
     /**
@@ -112,7 +122,7 @@ class OrderLineItemType extends AbstractOrderLineItemType
                     'required' => true,
                     'label' => 'orob2b.order.orderlineitem.price.label',
                     'hide_currency' => true,
-                    'default_currency' => $options['currency']
+                    'default_currency' => $options['currency'],
                 ]
             )
             ->add('priceType', 'hidden', [
@@ -145,15 +155,19 @@ class OrderLineItemType extends AbstractOrderLineItemType
             ProductUnitSelectionType::NAME,
             [
                 'label' => 'orob2b.product.productunit.entity_label',
-                'required' => true
+                'required' => true,
             ]
         );
     }
 
+    /**
+     * @return array
+     */
     protected function getFreeFormUnits()
     {
         $units = $this->registry->getRepository($this->productUnitClass)->findBy([], ['code' => 'ASC']);
         $units = $this->productUnitFormatter->formatChoices($units);
+
         return $units;
     }
 }
