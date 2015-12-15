@@ -4,9 +4,10 @@ namespace Oro\Bundle\ActionBundle\Model;
 
 use Doctrine\Common\Collections\Collection;
 
+use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
 use Oro\Bundle\ActionBundle\Configuration\ActionConfigurationProvider;
 use Oro\Bundle\ActionBundle\Exception\ActionNotFoundException;
-
+use Oro\Bundle\ActionBundle\Helper\ContextHelper;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 class ActionManager
@@ -34,6 +35,11 @@ class ActionManager
     protected $assembler;
 
     /**
+     * @var ApplicationsHelper
+     */
+    protected $applicationsHelper;
+
+    /**
      * @var array
      */
     private $routes;
@@ -48,17 +54,20 @@ class ActionManager
      * @param ContextHelper $contextHelper
      * @param ActionConfigurationProvider $configurationProvider
      * @param ActionAssembler $assembler
+     * @param ApplicationsHelper $applicationsHelper
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ContextHelper $contextHelper,
         ActionConfigurationProvider $configurationProvider,
-        ActionAssembler $assembler
+        ActionAssembler $assembler,
+        ApplicationsHelper $applicationsHelper
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->contextHelper = $contextHelper;
         $this->configurationProvider = $configurationProvider;
         $this->assembler = $assembler;
+        $this->applicationsHelper = $applicationsHelper;
     }
 
     /**
@@ -196,6 +205,10 @@ class ActionManager
         $actions = $this->assembler->assemble($configuration);
 
         foreach ($actions as $action) {
+            if (!$this->applicationsHelper->isApplicationsValid($action)) {
+                continue;
+            }
+
             $this->mapActionRoutes($action);
             $this->mapActionEntities($action);
         }
