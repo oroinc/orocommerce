@@ -75,7 +75,9 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                     'initfunctions' => [],
                     'postfunctions' => [],
                     'attributes' => [],
-                    'frontend_options' => [],
+                    'frontend_options' => [
+                        'dialog_options' => [],
+                    ],
                 ],
             ],
             'full valid configuration' => [
@@ -93,6 +95,8 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                             'group' => 'group label',
                             'template' => 'template',
                             'dialog_template' => 'template',
+                            'dialog_title' => 'dialog title',
+                            'dialog_options' => ['width' => 400],
                         ],
                         'form_options' => [
                             'attribute_fields' => [
@@ -161,6 +165,8 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'group' => 'group label',
                         'template' => 'template',
                         'dialog_template' => 'template',
+                        'dialog_title' => 'dialog title',
+                        'dialog_options' => ['width' => 400],
                     ],
                     'form_options' => [
                         'attribute_fields' => [
