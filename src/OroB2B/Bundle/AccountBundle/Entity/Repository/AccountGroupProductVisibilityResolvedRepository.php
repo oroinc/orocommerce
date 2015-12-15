@@ -74,9 +74,8 @@ class AccountGroupProductVisibilityResolvedRepository extends EntityRepository
     /**
      * @param InsertFromSelectQueryExecutor $insertFromSelect
      */
-    public function insertStatic(
-        InsertFromSelectQueryExecutor $insertFromSelect
-    ) {
+    public function insertStatic(InsertFromSelectQueryExecutor $insertFromSelect)
+    {
         $queryBuilder = $this->getEntityManager()
             ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
             ->createQueryBuilder('agpv')

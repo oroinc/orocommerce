@@ -96,7 +96,7 @@ class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
             ->findAll();
     }
 
-    public function testUpdateFromBaseTable()
+    public function testInsertStatic()
     {
         $this->getRepository()->clearTable();
         $this->getRepository()->insertStatic($this->getInsertFromSelectExecutor());

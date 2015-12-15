@@ -2,10 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache;
 
-
 use Doctrine\ORM\EntityManagerInterface;
-
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupProductVisibilityResolvedRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
@@ -133,7 +130,6 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractCacheBuilder
         }
     }
 
-
     /**
      * @return AccountGroupProductVisibilityResolvedRepository
      */
@@ -172,7 +168,10 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractCacheBuilder
 
         $categoriesGrouped = [];
         foreach ($accountGroups as $accountGroup) {
-            $categoriesGrouped[$accountGroup->getId()] = [VisibilityInterface::VISIBLE => [], VisibilityInterface::HIDDEN => []];
+            $categoriesGrouped[$accountGroup->getId()] = [
+                VisibilityInterface::VISIBLE => [],
+                VisibilityInterface::HIDDEN => []
+            ];
             foreach ($categories as $category) {
                 if ($this->categoryVisibilityResolver->isCategoryVisibleForAccountGroup($category, $accountGroup)) {
                     $categoriesGrouped[$accountGroup->getId()][VisibilityInterface::VISIBLE][] = $category->getId();
