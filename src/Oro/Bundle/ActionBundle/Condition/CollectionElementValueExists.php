@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\Collection;
 
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
 
-use Oro\Bundle\ActionBundle\Model\ActionContext;
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Component\ConfigExpression\Condition\AbstractComparison;
 use Oro\Component\ConfigExpression\Exception;
 
@@ -87,7 +87,7 @@ class CollectionElementValueExists extends AbstractComparison
             $result = [];
 
             foreach ($data as $item) {
-                $result[] = $this->resolvePath(new ActionContext(['data' => $item]), $propertyPath, $propertyPaths);
+                $result[] = $this->resolvePath(new ActionData(['data' => $item]), $propertyPath, $propertyPaths);
             }
 
             return $result;
