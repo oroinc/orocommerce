@@ -125,8 +125,8 @@ class CategoryVisibilityCalculator
         $iterator = new BufferedQueryResultIterator($queryBuilder);
 
         $result = [
-            CategoryVisibilityData::HIDDEN_KEY => [],
-            CategoryVisibilityData::VISIBLE_KEY => [],
+            'hidden' => [],
+            'visible' => [],
         ];
         foreach ($iterator as $data) {
             $visibility = call_user_func($closure, $data);
@@ -134,11 +134,10 @@ class CategoryVisibilityCalculator
             if ($field && empty($data[$field])) {
                 continue;
             }
-            $visibilityKey = $visibility ? CategoryVisibilityData::VISIBLE_KEY : CategoryVisibilityData::HIDDEN_KEY;
-            $result[$visibilityKey][] = $data['category_id'];
+            $result[$visibility ? 'visible' : 'hidden'][] = $data['category_id'];
         }
 
-        return CategoryVisibilityData::fromArray($result);
+        return new CategoryVisibilityData($result['visible'], $result['hidden']);
     }
 
     /**
