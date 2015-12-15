@@ -60,7 +60,6 @@ parameters:
     orob2b_account.visibility.listener.abstract.class: OroB2B\Bundle\AccountBundle\EventListener\VisibilityAbstractListener
 
     orob2b_account.event_listener.system_config.category_visibility.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigCategoryVisibilityListener
-    orob2b_account.event_listener.category_visibility_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryVisibilityListener
     orob2b_account.event_listener.category_tree_handler_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryTreeHandlerListener
     orob2b_account.event_listener.product_duplicate_listener.class: OroB2B\Bundle\AccountBundle\EventListener\ProductDuplicateListener
 
