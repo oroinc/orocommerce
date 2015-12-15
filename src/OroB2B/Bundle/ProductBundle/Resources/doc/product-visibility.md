@@ -11,14 +11,14 @@ On the each product view / edit page there is a visibility setting the following
 
 ###Visibility to Account Groups:
 * **Current Product (Visibility to All)** - `Default value`. Fallback on previous level
-* **Category** - Value is taken from the category of this product
+* **Category** - Value is taken from the category of this product for selected account group
 * **Hidden** - Specific static value
 * **Visible** - Specific static value
 
 ###Visibility to Accounts:
 * **Account Group (Visibility to this Account's Group)** - `Default value`. Fallback on previous level
 * **Current Product (Visibility to All)**  - Fallback to *"Visibility to All"* level
-* **Category (Visibility to this Account)** - Value is taken from the category of this product
+* **Category (Visibility to this Account)** - Value is taken from the category of this product for selected account
 * **Hidden** - Specific static value
 * **Visible** - Specific static value
 
@@ -28,7 +28,6 @@ There is entities in database for each listed levels:
 ###Addition information:
 * If any level is selected by default - the entity is not written to the database.
 * If product hasn't category, then "Category" option is not available for all levels. If visibility setting already exist with "category" value, and category is deleted for specific product, then setting value is changed to default value (for visibility to account and visibility to account group), for visibility to all that value changed to "config".     
-* If account hasn't account group, then "Account Group" option is not available for Visibility to Accounts.  If visibility setting already exist with "Account Group" value, and account group is deleted for specific account, then setting value is changed to "Current Product".
 
 ##Cache for Product Visibility
 Resolved visibility settings must be pre-calculated and cached for greater performance. To do this for each of the levels create resolved entity, which contains only static visibility values (visible or hidden):
@@ -79,6 +78,18 @@ For any create/update/delete in source visibility entities must be accompanied b
 ###Cache builder
 The above listed steps, with the resolved entities for manipulation with the source entities. But what if, for example you changed the product category or even to remove, and it will affect all the caches on products that have this category? For this, for all levels exist cache builders.
 
+
 To implement Cache Builder was used composite pattern.
 There is cache builder classes for each listed levels: `ProductResolvedCacheBuilder`, `AccountProductResolvedCacheBuilder`, `AccountGroupProductResolvedCacheBuilder` each of which implement `CacheBuilderInterface`. These classes are leaves.
 Composite is `CacheBuilder` class, which aggregates all of the above leaves.
+To update the cache for all product visibility levels you can run command: `orob2b:account:product_visibility:cache:build`
+To build a cache for all levels of visibility categories, there are also the corresponding cache Builder.
+
+#####It is a list of possible occasions that need to update the cache:
+| **Operation**                                            | **Action**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+|----------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Updating visibility setting for any product at any level | Updating product visibility cache for that specific visibility (see table above)                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| Delete category from product                             | Rebuild product visibility cache (on all levels) for all products in which it was removed, but only where been selected "category" option in source visibility                                                                                                                                                                                                                                                                                                                                     |
+| Update category in product                               | Updating product visibility cache for that product where been selected "category" option in source visibility (for all levels)                                                                                                                                                                                                                                                                                                                                                                     |
+| Moving category in the tree                              | If visibility setting of that category (for any category visibility level) was selected as "parent category" - Rebuild product visibility cache (on all product visibility levels) for all products which included in this category, but only where been selected "category" option in source visibility. <br> If there is at least one category, the parent of which is this moving category - similar Rebuild product visibility cache for all products which included in all subtree categories. |
+| Change category visibility                               | Rebuild product visibility cache (on all levels) for all products which included in this category, but only where been selected "category" option in source visibility                                                                                                                                                                                                                                                                                                                             |
