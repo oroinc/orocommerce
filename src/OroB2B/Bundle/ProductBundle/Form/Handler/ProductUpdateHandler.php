@@ -73,13 +73,13 @@ class ProductUpdateHandler extends UpdateHandler
             $saveMessage = $this->translator->trans('orob2b.product.controller.product.saved_and_duplicated.message');
             $this->session->getFlashBag()->set('success', $saveMessage);
 
-            $actionContext = $this->actionManager->execute(
+            $actionData = $this->actionManager->execute(
                 'orob2b_product_duplicate_action',
                 new ActionData(['data' => $entity])
             );
 
-            if ($actionContext->getRedirectUrl()) {
-                return new RedirectResponse($actionContext->getRedirectUrl());
+            if ($actionData->getRedirectUrl()) {
+                return new RedirectResponse($actionData->getRedirectUrl());
             }
         }
 
