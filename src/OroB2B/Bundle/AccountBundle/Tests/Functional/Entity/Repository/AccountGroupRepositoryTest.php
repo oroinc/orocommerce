@@ -33,7 +33,6 @@ class AccountGroupRepositoryTest extends WebTestCase
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
                 'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountGroupCategoryVisibilities',
             ]
         );
     }
@@ -66,13 +65,16 @@ class AccountGroupRepositoryTest extends WebTestCase
             $expectedAccountGroupIds[] = $accountGroup->getId();
         }
 
+        sort($expectedAccountGroupIds);
+        sort($accountGroupIds);
+
         $this->assertEquals($expectedAccountGroupIds, $accountGroupIds);
     }
 
     /**
      * @return array
      */
-    public function getCategoryAccountGroupsByVisibilityDataProvider()
+    public function getCategoryAccountGroupIdsByVisibilityDataProvider()
     {
         return [
             'FIRST_LEVEL with HIDDEN' => [

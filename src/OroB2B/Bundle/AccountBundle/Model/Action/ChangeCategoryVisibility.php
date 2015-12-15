@@ -2,37 +2,14 @@
 
 namespace OroB2B\Bundle\AccountBundle\Model\Action;
 
-use Oro\Bundle\WorkflowBundle\Model\Action\AbstractAction;
+use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
+use Oro\Bundle\WorkflowBundle\Model\ProcessData;
 
-class ChangeCategoryVisibility extends AbstractAction
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+
+class ChangeCategoryVisibility extends AbstractCategoryCaseAction
 {
-    /**
-     * @var CacheBuilderInterface
-     */
-    protected $cacheBuilder;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function initialize(array $options)
-    {
-        if (!$this->cacheBuilder) {
-            throw new \InvalidArgumentException('CacheBuilder is not provided');
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param CacheBuilderInterface $cacheBuilder
-     */
-    public function setCacheBuilder(CacheBuilderInterface $cacheBuilder)
-    {
-        $this->cacheBuilder = $cacheBuilder;
-    }
-
     /**
      * {@inheritdoc}
      */
