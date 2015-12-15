@@ -76,7 +76,9 @@ class CategoryVisibilityCalculator
             ->getRepository('OroB2BAccountBundle:Visibility\CategoryVisibility')
             ->getCategoriesVisibilitiesQueryBuilder();
 
-        return $this->calculateProcess($queryBuilder, 'calculateVisibility');
+        return $this->calculateProcess($queryBuilder, function (array $data) {
+            return $this->calculateVisibility($data);
+        });
     }
 
     /**
@@ -90,7 +92,9 @@ class CategoryVisibilityCalculator
             ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility')
             ->getCategoryWithVisibilitiesForAccountGroup($accountGroup);
 
-        return $this->calculateProcess($queryBuilder, 'calculateAccountGroupVisibility', 'account_group_visibility');
+        return $this->calculateProcess($queryBuilder, function (array $data) {
+            return $this->calculateAccountGroupVisibility($data);
+        }, 'account_group_visibility');
     }
 
     /**
@@ -104,17 +108,19 @@ class CategoryVisibilityCalculator
             ->getRepository('OroB2BAccountBundle:Visibility\AccountCategoryVisibility')
             ->getCategoryVisibilitiesForAccount($account);
 
-        return $this->calculateProcess($queryBuilder, 'calculateAccountVisibility', 'account_visibility');
+        return $this->calculateProcess($queryBuilder, function (array $data) {
+            return $this->calculateAccountVisibility($data);
+        }, 'account_visibility');
     }
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @param string $visibilityMethodName
+     * @param \Closure $closure
      * @param string $field
      * @return CategoryVisibilityData
      * @throws InvalidVisibilityValueException
      */
-    protected function calculateProcess(QueryBuilder $queryBuilder, $visibilityMethodName, $field = null)
+    protected function calculateProcess(QueryBuilder $queryBuilder, \Closure $closure, $field = null)
     {
         $iterator = new BufferedQueryResultIterator($queryBuilder);
 
@@ -123,7 +129,7 @@ class CategoryVisibilityCalculator
             CategoryVisibilityData::VISIBLE_KEY => [],
         ];
         foreach ($iterator as $data) {
-            $visibility = call_user_func([$this, $visibilityMethodName], $data);
+            $visibility = call_user_func($closure, $data);
             // get only non default values to decrease storage size
             if ($field && empty($data[$field])) {
                 continue;

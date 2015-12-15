@@ -39,7 +39,9 @@ class CategoryVisibilityStorage
      */
     public function getCategoryVisibilityData()
     {
-        return $this->getData($this->getCacheId(), 'calculate');
+        return $this->getData($this->getCacheId(), function () {
+            return $this->calculator->calculate();
+        });
     }
 
     /**
@@ -49,7 +51,9 @@ class CategoryVisibilityStorage
     public function getCategoryVisibilityDataForAccountGroup(AccountGroup $accountGroup)
     {
         return $this->getCategoryVisibilityData()->merge(
-            $this->getData($this->getCacheIdForAccountGroup($accountGroup), 'calculateForAccountGroup', $accountGroup)
+            $this->getData($this->getCacheIdForAccountGroup($accountGroup), function () use ($accountGroup) {
+                return $this->calculator->calculateForAccountGroup($accountGroup);
+            })
         );
     }
 
@@ -68,7 +72,9 @@ class CategoryVisibilityStorage
             $categoryVisibilityData = $this->getCategoryVisibilityData();
         }
         return $categoryVisibilityData->merge(
-            $this->getData($this->getCacheIdForAccount($account), 'calculateForAccount', $account)
+            $this->getData($this->getCacheIdForAccount($account), function () use ($account) {
+                return $this->calculator->calculateForAccount($account);
+            })
         );
     }
 
@@ -126,17 +132,16 @@ class CategoryVisibilityStorage
 
     /**
      * @param string $cacheId
-     * @param string $calculatorVisibilityMethodName
-     * @param AccountGroup|Account|null $entity
-     * @return CategoryVisibilityData
+     * @param \Closure $closure
+     * @return false|mixed|CategoryVisibilityData
      */
-    protected function getData($cacheId, $calculatorVisibilityMethodName, $entity = null)
+    protected function getData($cacheId, \Closure $closure)
     {
         $data = $this->cacheProvider->fetch($cacheId);
         if ($data) {
             return CategoryVisibilityData::fromArray($data);
         }
-        $data = call_user_func([$this->calculator, $calculatorVisibilityMethodName], $entity);
+        $data = call_user_func($closure);
         $this->cacheProvider->save($cacheId, $data->toArray());
 
         return $data;
