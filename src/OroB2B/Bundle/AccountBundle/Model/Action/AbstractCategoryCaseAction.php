@@ -6,12 +6,12 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 
 use Oro\Bundle\WorkflowBundle\Model\Action\AbstractAction;
 
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
 
 abstract class AbstractCategoryCaseAction extends AbstractAction
 {
     /**
-     * @var CategoryCaseCacheBuilderInterface
+     * @var CacheBuilderInterface
      */
     protected $cacheBuilder;
 
@@ -37,9 +37,9 @@ abstract class AbstractCategoryCaseAction extends AbstractAction
     }
 
     /**
-     * @param CategoryCaseCacheBuilderInterface $cacheBuilder
+     * @param CacheBuilderInterface $cacheBuilder
      */
-    public function setCacheBuilder(CategoryCaseCacheBuilderInterface $cacheBuilder)
+    public function setCacheBuilder(CacheBuilderInterface $cacheBuilder)
     {
         $this->cacheBuilder = $cacheBuilder;
     }

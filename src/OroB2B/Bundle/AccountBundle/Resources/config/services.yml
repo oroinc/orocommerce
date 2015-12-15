@@ -136,8 +136,6 @@ parameters:
     orob2b_account.visibility.cache.product.cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\CacheBuilder
     orob2b_account.visibility.cache.product.category.cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\CacheBuilder
 
-
-
 services:
     orob2b_account.security.account_user_provider:
         class: %orob2b_account.security.account_user_provider.class%
@@ -759,18 +757,21 @@ services:
         arguments:
             - @oro_workflow.context_accessor
         calls:
-            - [setCacheBuilder, [@orob2b_account.visibility.cache.product.category.product_resolved_cache_builder]]
             - [setRegistry, [@doctrine]]
 
     orob2b_account.model.action.change_category_visibility:
         class: %orob2b_account.model.action.change_category_visibility.class%
         parent: orob2b_account.model.action.abstract_category_case_action
+        calls:
+            - [setCacheBuilder, [@orob2b_account.visibility.cache.product.category.cache_builder]]
         tags:
             - { name: oro_workflow.action, alias: change_category_visibility }
 
     orob2b_account.model.action.change_category_position:
         class: %orob2b_account.model.action.change_category_position.class%
         parent: orob2b_account.model.action.abstract_category_case_action
+        calls:
+            - [setCacheBuilder, [@orob2b_account.visibility.cache.product.category.product_resolved_cache_builder]]
         tags:
             - { name: oro_workflow.action, alias: change_category_position }
 

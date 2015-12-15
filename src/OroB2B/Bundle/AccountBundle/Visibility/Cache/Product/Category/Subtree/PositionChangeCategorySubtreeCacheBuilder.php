@@ -70,8 +70,9 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
         foreach ($accountGroupIdsWithFallbackToParent as $accountGroupId) {
             $accountGroupEm = $this->registry->getManagerForClass('OroB2BAccountBundle:AccountGroup');
             $accountGroup = $accountGroupEm->getReference('OroB2BAccountBundle:AccountGroup', $accountGroupId);
-            $accountGroupVisibility = $this->categoryVisibilityResolver
-                ->isCategoryVisibleForAccountGroup($category, $accountGroup);
+            $accountGroupVisibility = $this->convertVisibility(
+                $this->categoryVisibilityResolver->isCategoryVisibleForAccountGroup($category, $accountGroup)
+            );
             if ($accountGroupVisibility === $visibility) {
                 $accountGroupIdsForUpdate[] = $accountGroupId;
             } else {
@@ -102,7 +103,9 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
         foreach ($accountIdsWithFallbackToParent as $accountId) {
             $accountEm = $this->registry->getManagerForClass('OroB2BAccountBundle:Account');
             $account = $accountEm->getReference('OroB2BAccountBundle:Account', $accountId);
-            $accountVisibility = $this->categoryVisibilityResolver->isCategoryVisibleForAccount($category, $account);
+            $accountVisibility = $this->convertVisibility(
+                $this->categoryVisibilityResolver->isCategoryVisibleForAccount($category, $account)
+            );
             if ($accountVisibility === $visibility) {
                 $accountForUpdate[] = $account;
             } else {
