@@ -32,7 +32,7 @@ class AccountGroupRepositoryTest extends WebTestCase
             [
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
                 'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountCategoryVisibilities',
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountGroupCategoryVisibilities',
             ]
         );
@@ -72,15 +72,15 @@ class AccountGroupRepositoryTest extends WebTestCase
     /**
      * @return array
      */
-    public function getCategoryAccountGroupIdsByVisibilityDataProvider()
+    public function getCategoryAccountGroupsByVisibilityDataProvider()
     {
         return [
-            'FIRST_LEVEL with VISIBLE' => [
+            'FIRST_LEVEL with HIDDEN' => [
                 'categoryName' => LoadCategoryData::FIRST_LEVEL,
-                'visibility' => AccountGroupCategoryVisibility::VISIBLE,
+                'visibility' => AccountGroupCategoryVisibility::HIDDEN,
                 'expectedAccountGroups' => [
                     'account_group.group1'
-                ],
+                ]
             ],
             'FIRST_LEVEL with VISIBLE restricted' => [
                 'categoryName' => LoadCategoryData::FIRST_LEVEL,
@@ -88,11 +88,12 @@ class AccountGroupRepositoryTest extends WebTestCase
                 'expectedAccountGroups' => [],
                 'restricted' => []
             ],
-            'SECOND_LEVEL1 with HIDDEN' => [
-                'categoryName' => LoadCategoryData::SECOND_LEVEL1,
-                'visibility' => AccountGroupCategoryVisibility::HIDDEN,
+            'FOURTH_LEVEL1 with PARENT_CATEGORY' => [
+                'categoryName' => LoadCategoryData::FOURTH_LEVEL1,
+                'visibility' => AccountGroupCategoryVisibility::PARENT_CATEGORY,
                 'expectedAccountGroups' => [
-                    'account_group.group1'
+                    'account_group.group1',
+                    'account_group.group3',
                 ]
             ],
         ];

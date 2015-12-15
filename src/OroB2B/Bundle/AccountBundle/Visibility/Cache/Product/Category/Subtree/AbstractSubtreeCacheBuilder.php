@@ -6,7 +6,7 @@ use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\QueryBuilder;
 
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityResolver;
+use OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 abstract class AbstractSubtreeCacheBuilder
@@ -18,9 +18,9 @@ abstract class AbstractSubtreeCacheBuilder
 
     /**
      * @param Registry $registry
-     * @param CategoryVisibilityResolver $categoryVisibilityResolver
+     * @param CategoryVisibilityResolverInterface $categoryVisibilityResolver
      */
-    public function __construct(Registry $registry, CategoryVisibilityResolver $categoryVisibilityResolver)
+    public function __construct(Registry $registry, CategoryVisibilityResolverInterface $categoryVisibilityResolver)
     {
         $this->registry = $registry;
         $this->categoryVisibilityResolver = $categoryVisibilityResolver;

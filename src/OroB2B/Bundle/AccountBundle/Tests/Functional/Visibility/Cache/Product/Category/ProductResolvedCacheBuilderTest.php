@@ -1,26 +1,26 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Model\Action;
+namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product\Category;
 
-use OroB2B\Bundle\AccountBundle\Model\Action\ChangeCategoryPosition;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\ProductResolvedCacheBuilder;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 /**
  * @dbIsolation
  */
-class ChangeCategoryPositionTest extends CategoryCaseActionTestCase
+class ProductResolvedCacheBuilderTest extends CacheBuilderTestCase
 {
     /**
-     * @var ChangeCategoryPosition
+     * @var ProductResolvedCacheBuilder
      */
-    protected $action;
+    protected $cacheBuilder;
 
     /**
      * @return string
      */
-    protected function getActionContainerId()
+    protected function getCacheBuilderContainerId()
     {
-        return 'orob2b_account.model.action.change_category_position';
+        return 'orob2b_account.visibility.cache.product.category.product_resolved_cache_builder';
     }
 
     /**
@@ -40,11 +40,11 @@ class ChangeCategoryPositionTest extends CategoryCaseActionTestCase
 
         $category->setParentCategory($newParentCategory);
 
-        $this->context->expects($this->once())
-            ->method('getEntity')
-            ->willReturn($category);
+        $em = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BAccountBundle:Visibility\CategoryVisibility');
+        $em->flush();
 
-        $this->action->execute($this->context);
+        $this->cacheBuilder->categoryPositionChanged($category);
 
         $this->assertProductVisibilityResolvedCorrect($expectedData);
     }
@@ -96,7 +96,6 @@ class ChangeCategoryPositionTest extends CategoryCaseActionTestCase
                             'product.2',
                             'product.3',
                             'product.6',
-                            'product.4',
                         ],
                         'account.level_1.4' => [
                             'product.2',

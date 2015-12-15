@@ -8,7 +8,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityResolver;
+use OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 
 abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderInterface
@@ -16,7 +16,7 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
     /** @var  ManagerRegistry */
     protected $registry;
 
-    /** @var  CategoryVisibilityResolver */
+    /** @var  CategoryVisibilityResolverInterface */
     protected $categoryVisibilityResolver;
 
     /** @var  ConfigManager */
@@ -24,12 +24,12 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
 
     /**
      * @param ManagerRegistry $registry
-     * @param CategoryVisibilityResolver $categoryVisibilityResolver
+     * @param CategoryVisibilityResolverInterface $categoryVisibilityResolver
      * @param ConfigManager $configManager
      */
     public function __construct(
         ManagerRegistry $registry,
-        CategoryVisibilityResolver $categoryVisibilityResolver,
+        CategoryVisibilityResolverInterface $categoryVisibilityResolver,
         ConfigManager $configManager
     ) {
         $this->registry = $registry;
