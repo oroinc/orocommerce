@@ -54,7 +54,6 @@ class LoadProductVisibilityResolvedData extends AbstractFixture implements Depen
     {
         return [
             'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountCategoryVisibilities',
         ];
     }
 
@@ -80,8 +79,6 @@ class LoadProductVisibilityResolvedData extends AbstractFixture implements Depen
             $accountProductVisibility = $this->getReference($accountProductVisibilityReference);
             $this->createAccountProductVisibilityResolved($manager, $accountProductVisibility);
         }
-
-        $this->addProductsToCategories($manager);
 
         $manager->flush();
     }
@@ -166,19 +163,6 @@ class LoadProductVisibilityResolvedData extends AbstractFixture implements Depen
             ;
 
             $manager->persist($accountProductVisibilityResolved);
-        }
-    }
-
-    /**
-     * @param ObjectManager $manager
-     */
-    protected function addProductsToCategories(ObjectManager $manager)
-    {
-        $categories = $manager->getRepository('OroB2BCatalogBundle:Category')->findAll();
-        $products = $manager->getRepository('OroB2BProductBundle:Product')->findAll();
-
-        foreach ($categories as $index => $category) {
-            $category->addProduct($products[$index]);
         }
     }
 }

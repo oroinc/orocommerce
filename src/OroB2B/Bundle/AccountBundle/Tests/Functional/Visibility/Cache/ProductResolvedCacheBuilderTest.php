@@ -23,11 +23,7 @@ class ProductResolvedCacheBuilderTest extends WebTestCase
         $this->cacheBuilder = $this->client->getContainer()
             ->get('orob2b_account.visibility.cache.product.product_resolved_cache_builder');
 
-        $this->loadFixtures(
-            [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
-            ]
-        );
+        $this->loadFixtures(['OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData']);
     }
 
     public function testBuildCache()
@@ -36,9 +32,11 @@ class ProductResolvedCacheBuilderTest extends WebTestCase
         $actual = $this->getContainer()->get('doctrine')
             ->getManager()
             ->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
-            ->findAll()
-        ;
+            ->findAll();
 
-        $this->assertSame(18, count($actual));
+        // TODO: Add assertions of all generated resolved entities,
+        // TODO: should be done after new interface for CategoryVisibilityResolver introduced in scope of BB-1647
+
+        $this->assertCount(18, $actual);
     }
 }

@@ -32,7 +32,7 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
     protected $cacheClass;
 
     /**
-     * @param mixed $insertFromSelectExecutor
+     * @param InsertFromSelectQueryExecutor $insertFromSelectExecutor
      */
     public function setInsertFromSelectExecutor(InsertFromSelectQueryExecutor $insertFromSelectExecutor)
     {
@@ -123,25 +123,29 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
      */
     public function buildCache(Website $website = null)
     {
-        $this->getManager()->beginTransaction();
-        try {
-            $this->getRepository()->clearTable($website);
+        $manager = $this->getManager();
+        $repository = $this->getRepository();
 
+        $manager->beginTransaction();
+        try {
+            $repository->clearTable($website);
+            $repository->insertFromBaseTable($this->insertFromSelectExecutor, $website);
             $categoriesGrouped = $this->getCategories();
-            $this->getRepository()->insertFromBaseTable($this->insertFromSelectExecutor);
-            $this->getRepository()->insertByCategory(
+            $repository->insertByCategory(
                 $this->insertFromSelectExecutor,
                 BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
-                $categoriesGrouped[self::VISIBLE]
+                $categoriesGrouped[self::VISIBLE],
+                $website
             );
-            $this->getRepository()->insertByCategory(
+            $repository->insertByCategory(
                 $this->insertFromSelectExecutor,
                 BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
-                $categoriesGrouped[self::HIDDEN]
+                $categoriesGrouped[self::HIDDEN],
+                $website
             );
-            $this->getManager()->commit();
+            $manager->commit();
         } catch (\Exception $exception) {
-            $this->getManager()->rollback();
+            $manager->rollback();
             throw $exception;
         }
     }
@@ -151,7 +155,7 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
      */
     protected function getCategories()
     {
-        // temporary
+        // TODO: Fix after new interface for CategoryVisibilityResolver introduced in scope of BB-1647
         /** @var Category[] $categories */
         $categories = $this->registry->getManagerForClass('OroB2BCatalogBundle:Category')
             ->getRepository('OroB2BCatalogBundle:Category')

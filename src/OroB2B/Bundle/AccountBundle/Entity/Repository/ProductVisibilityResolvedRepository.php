@@ -13,11 +13,16 @@ use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResol
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * Composite primary key fields order:
+ *  - website
+ *  - product
+ */
 class ProductVisibilityResolvedRepository extends EntityRepository
 {
     /**
      * @param InsertFromSelectQueryExecutor $executor
-     * @param string $visibility
+     * @param int $visibility
      * @param Website $website
      * @param array $categories
      */
@@ -29,8 +34,16 @@ class ProductVisibilityResolvedRepository extends EntityRepository
     ) {
         $qb = $this->getEntityManager()
             ->getRepository('OroB2BCatalogBundle:Category')
-            ->createQueryBuilder('category')
-            ->select([
+            ->createQueryBuilder('category');
+
+        // DQL requires condition to be presented in join, "1 = 1" is used as a dummy condition
+        $websiteJoinCondition = '1 = 1';
+        if ($website) {
+            $websiteJoinCondition = 'website.id = :websiteId';
+            $qb->setParameter('websiteId', $website->getId());
+        }
+
+        $qb->select([
                 'website.id as w_id',
                 'product.id as p_id',
                 (string)$visibility,
@@ -38,7 +51,7 @@ class ProductVisibilityResolvedRepository extends EntityRepository
                 'category.id as c_id',
             ])
             ->innerJoin('category.products', 'product')
-            ->innerJoin('OroB2BWebsiteBundle:Website', 'website', Join::WITH, '1 = 1')
+            ->innerJoin('OroB2BWebsiteBundle:Website', 'website', Join::WITH, $websiteJoinCondition)
             ->leftJoin(
                 'OroB2BAccountBundle:Visibility\ProductVisibility',
                 'pv',
@@ -47,18 +60,13 @@ class ProductVisibilityResolvedRepository extends EntityRepository
             )
             ->where('pv.id is null')
             ->andWhere('category.id in (:ids)')
-            ->setParameter('ids', $categories)
-        ;
+            ->setParameter('ids', $categories);
 
-        if ($website) {
-            $qb->andWhere('website = :website')
-                ->setParameter('website', $website);
-        }
-
-
-        $executor->execute($this->getClassName(), [
-            'website', 'product', 'visibility', 'source', 'categoryId'
-        ], $qb);
+        $executor->execute(
+            $this->getClassName(),
+            ['website', 'product', 'visibility', 'source', 'categoryId'],
+            $qb
+        );
     }
 
     /**
@@ -73,7 +81,6 @@ class ProductVisibilityResolvedRepository extends EntityRepository
             ProductVisibilityResolved::VISIBILITY_VISIBLE,
             ProductVisibilityResolved::VISIBILITY_HIDDEN
         );
-
 
         $qb = $this->getEntityManager()
             ->getRepository('OroB2BAccountBundle:Visibility\ProductVisibility')
@@ -93,9 +100,11 @@ class ProductVisibilityResolvedRepository extends EntityRepository
                 ->setParameter('website', $website);
         }
 
-        $executor->execute($this->getClassName(), [
-            'sourceProductVisibility', 'website', 'product', 'visibility', 'source'
-        ], $qb);
+        $executor->execute(
+            $this->getClassName(),
+            ['sourceProductVisibility', 'website', 'product', 'visibility', 'source'],
+            $qb
+        );
     }
 
     /**
@@ -104,6 +113,7 @@ class ProductVisibilityResolvedRepository extends EntityRepository
      */
     public function clearTable(Website $website = null)
     {
+        // TRUNCATE can't be used because it can't be rolled back in case of DB error
         $qb = $this->createQueryBuilder('pvr')
             ->delete();
 
