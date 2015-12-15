@@ -31,7 +31,7 @@ class CategoryVisibilityCacheClearAction extends AbstractAction
     /**
      * @var string
      */
-    protected $attribute;
+    protected $entity;
 
     /**
      * @var CategoryVisibilityStorage
@@ -55,8 +55,8 @@ class CategoryVisibilityCacheClearAction extends AbstractAction
             throw new \LogicException('This action can be called only from process context');
         }
 
-        if ($this->attribute) {
-            $entity = $this->contextAccessor->getValue($context, $this->attribute);
+        if ($this->entity) {
+            $entity = $this->contextAccessor->getValue($context, $this->entity);
         } else {
             $entity = $context->getEntity();
         }
@@ -84,9 +84,9 @@ class CategoryVisibilityCacheClearAction extends AbstractAction
         }
 
         if (isset($options['entity'])) {
-            $this->attribute = $options['entity'];
+            $this->entity = $options['entity'];
         } elseif (isset($options[0])) {
-            $this->attribute = $options[0];
+            $this->entity = $options[0];
         }
 
         return $this;
