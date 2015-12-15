@@ -17,7 +17,7 @@ class CategoryVisibilityRepositoryTest extends CategoryVisibilityTestCase
     protected $repository;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function getRepositoryName()
     {

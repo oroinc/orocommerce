@@ -19,7 +19,7 @@ class AccountGroupCategoryVisibilityRepositoryTest extends CategoryVisibilityTes
     protected $repository;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function getRepositoryName()
     {

@@ -35,7 +35,6 @@ abstract class CategoryVisibilityTestCase extends WebTestCase
      * @param array $expectedData
      * @param array $actualData
      * @param array $fields
-     *
      */
     protected function assertVisibilities(array $expectedData, array $actualData, array $fields = [])
     {
@@ -65,11 +64,12 @@ abstract class CategoryVisibilityTestCase extends WebTestCase
             $item['category_parent_id'] = $this->getCategoryId($item['category_parent']);
             unset($item['category_parent']);
         }
+
         return $expectedData;
     }
 
     /**
-     * @param $reference
+     * @param string $reference
      * @return integer
      */
     protected function getCategoryId($reference)
@@ -78,6 +78,7 @@ abstract class CategoryVisibilityTestCase extends WebTestCase
             return $this->getContainer()->get('doctrine')->getRepository('OroB2BCatalogBundle:Category')
                 ->getMasterCatalogRoot()->getId();
         }
+
         return $reference ? $this->getReference($reference)->getId() : null;
     }
 }

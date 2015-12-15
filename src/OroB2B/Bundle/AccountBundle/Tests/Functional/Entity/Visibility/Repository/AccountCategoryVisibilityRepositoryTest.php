@@ -20,7 +20,7 @@ class AccountCategoryVisibilityRepositoryTest extends CategoryVisibilityTestCase
     protected $repository;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function getRepositoryName()
     {
@@ -29,7 +29,7 @@ class AccountCategoryVisibilityRepositoryTest extends CategoryVisibilityTestCase
 
     /**
      * @dataProvider getCategoryVisibilitiesForAccountDataProvider
-     * @param $accountReference
+     * @param string $accountReference
      * @param array $expectedData
      */
     public function testGetCategoryVisibilitiesForAccount($accountReference, array $expectedData)

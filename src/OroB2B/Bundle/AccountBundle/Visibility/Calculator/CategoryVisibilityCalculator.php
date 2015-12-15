@@ -76,9 +76,12 @@ class CategoryVisibilityCalculator
             ->getRepository('OroB2BAccountBundle:Visibility\CategoryVisibility')
             ->getCategoriesVisibilitiesQueryBuilder();
 
-        return $this->calculateProcess($queryBuilder, function (array $data) {
-            return $this->calculateVisibility($data);
-        });
+        return $this->calculateProcess(
+            $queryBuilder,
+            function (array $data) {
+                return $this->calculateVisibility($data);
+            }
+        );
     }
 
     /**
@@ -92,9 +95,13 @@ class CategoryVisibilityCalculator
             ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility')
             ->getCategoryWithVisibilitiesForAccountGroup($accountGroup);
 
-        return $this->calculateProcess($queryBuilder, function (array $data) {
-            return $this->calculateAccountGroupVisibility($data);
-        }, 'account_group_visibility');
+        return $this->calculateProcess(
+            $queryBuilder,
+            function (array $data) {
+                return $this->calculateAccountGroupVisibility($data);
+            },
+            'account_group_visibility'
+        );
     }
 
     /**
@@ -108,9 +115,13 @@ class CategoryVisibilityCalculator
             ->getRepository('OroB2BAccountBundle:Visibility\AccountCategoryVisibility')
             ->getCategoryVisibilitiesForAccount($account);
 
-        return $this->calculateProcess($queryBuilder, function (array $data) {
-            return $this->calculateAccountVisibility($data);
-        }, 'account_visibility');
+        return $this->calculateProcess(
+            $queryBuilder,
+            function (array $data) {
+                return $this->calculateAccountVisibility($data);
+            },
+            'account_visibility'
+        );
     }
 
     /**
@@ -247,6 +258,7 @@ class CategoryVisibilityCalculator
                 'Visibility configuration path not configured for AbstractCategoryVisibilityCalculator'
             );
         }
+
         return $this->configManager->get($this->configPath) === CategoryVisibility::VISIBLE;
     }
 }
