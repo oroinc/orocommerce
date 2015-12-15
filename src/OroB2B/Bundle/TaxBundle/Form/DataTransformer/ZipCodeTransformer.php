@@ -20,6 +20,10 @@ class ZipCodeTransformer implements DataTransformerInterface
      */
     public function transform($zipCodes)
     {
+        if (null === $zipCodes) {
+            return '';
+        }
+
         $transformedCodes = [];
         foreach ($zipCodes as $code) {
             if ($code->isSingleZipCode()) {
@@ -37,6 +41,10 @@ class ZipCodeTransformer implements DataTransformerInterface
      */
     public function reverseTransform($value)
     {
+        if (!$value) {
+            return new ArrayCollection();
+        }
+
         $collection = new ArrayCollection();
         $codes = array_unique($this->prepareCodes(explode(self::RECORD_DELIMITER, $value)));
 
