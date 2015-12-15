@@ -45,18 +45,16 @@ class AccountGroupProductVisibilityRepositoryTest extends WebTestCase
         $categoryName,
         array $deletedCategoryProducts
     ) {
-        $productsAccountGroupProductVisibilitiesBefore = $this->getProductsAccountGroupProductVisibilities();
         foreach ($deletedCategoryProducts as $deletedCategoryProduct) {
-            $this->assertContains($deletedCategoryProduct, $productsAccountGroupProductVisibilitiesBefore);
+            $this->assertContains($deletedCategoryProduct, $this->getProductsAccountGroupProductVisibilities());
         }
 
         /** @var Category $category */
         $category = $this->getReference($categoryName);
         $this->deleteCategory($category);
 
-        $productsAccountGroupProductVisibilitiesAfter = $this->getProductsAccountGroupProductVisibilities();
         foreach ($deletedCategoryProducts as $deletedCategoryProduct) {
-            $this->assertNotContains($deletedCategoryProduct, $productsAccountGroupProductVisibilitiesAfter);
+            $this->assertNotContains($deletedCategoryProduct, $this->getProductsAccountGroupProductVisibilities());
         }
     }
 
@@ -78,16 +76,12 @@ class AccountGroupProductVisibilityRepositoryTest extends WebTestCase
      */
     protected function getProductsAccountGroupProductVisibilities()
     {
-        $AccountGroupProductVisibilities = $this->repository->findAll();
-
-        $AccountGroupProductVisibilities = array_map(
+        return array_map(
             function (AccountGroupProductVisibility $visibility) {
                 return $visibility->getProduct()->getSku();
             },
-            $AccountGroupProductVisibilities
+            $this->repository->findAll()
         );
-
-        return $AccountGroupProductVisibilities;
     }
 
     /**

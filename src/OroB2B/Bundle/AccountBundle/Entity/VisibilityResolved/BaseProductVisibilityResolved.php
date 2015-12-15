@@ -117,10 +117,10 @@ abstract class BaseProductVisibilityResolved
     }
 
     /**
-     * @param Category|null $category
+     * @param Category $category
      * @return $this
      */
-    public function setCategory($category)
+    public function setCategory(Category $category = null)
     {
         $this->category = $category;
 

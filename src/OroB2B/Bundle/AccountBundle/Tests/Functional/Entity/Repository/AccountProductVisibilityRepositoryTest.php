@@ -45,18 +45,16 @@ class AccountProductVisibilityRepositoryTest extends WebTestCase
         $categoryName,
         array $deletedCategoryProducts
     ) {
-        $productsAccountProductVisibilitiesBefore = $this->getProductsAccountProductVisibilities();
         foreach ($deletedCategoryProducts as $deletedCategoryProduct) {
-            $this->assertContains($deletedCategoryProduct, $productsAccountProductVisibilitiesBefore);
+            $this->assertContains($deletedCategoryProduct, $this->getProductsAccountProductVisibilities());
         }
 
         /** @var Category $category */
         $category = $this->getReference($categoryName);
         $this->deleteCategory($category);
 
-        $productsAccountProductVisibilitiesAfter = $this->getProductsAccountProductVisibilities();
         foreach ($deletedCategoryProducts as $deletedCategoryProduct) {
-            $this->assertNotContains($deletedCategoryProduct, $productsAccountProductVisibilitiesAfter);
+            $this->assertNotContains($deletedCategoryProduct, $this->getProductsAccountProductVisibilities());
         }
     }
 

@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\AccountBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 
@@ -16,7 +17,24 @@ class AccountProductVisibilityRepository extends EntityRepository
     {
         $qb = $this->createQueryBuilder('accountProductVisibility');
 
-        $accountProductVisibilities = $qb->select('accountProductVisibility.id')
+        while ($accountProductVisibilities = $this->getAccountProductVisibilityForDelete($qb)) {
+            $accountProductVisibilityIds = array_map('current', $accountProductVisibilities);
+
+            $qb = $this->createQueryBuilder('accountProductVisibility');
+            $qb->delete()
+                ->where($qb->expr()->in('accountProductVisibility.id', $accountProductVisibilityIds))
+                ->getQuery()
+                ->execute();
+        }
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @return array
+     */
+    protected function getAccountProductVisibilityForDelete(QueryBuilder $qb)
+    {
+        return $qb->select('accountProductVisibility.id')
             ->leftJoin('accountProductVisibility.product', 'product')
             ->leftJoin(
                 'OroB2BCatalogBundle:Category',
@@ -26,18 +44,9 @@ class AccountProductVisibilityRepository extends EntityRepository
             )
             ->where($qb->expr()->isNull('category.id'))
             ->andWhere($qb->expr()->eq('accountProductVisibility.visibility', ':visibility'))
+            ->setMaxResults(1000)
             ->setParameter('visibility', AccountProductVisibility::CATEGORY)
             ->getQuery()
             ->getScalarResult();
-
-        if (!empty($accountProductVisibilities)) {
-            $accountProductVisibilityIds = array_map('current', $accountProductVisibilities);
-
-            $qb = $this->createQueryBuilder('accountProductVisibility');
-            $qb->delete()
-                ->where($qb->expr()->in('accountProductVisibility.id', $accountProductVisibilityIds))
-                ->getQuery()
-                ->execute();
-        }
     }
 }
