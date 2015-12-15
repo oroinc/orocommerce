@@ -16,7 +16,7 @@ actions:
                     route: orob2b_order_create
                     route_parameters: {'storage': true}
 
-    orob2b_frontend_shoppinglist_action_createorder:
+    orob2b_shoppinglist_frontend_action_createorder:
         label: orob2b.frontend.shoppinglist.btn.create_order
         routes:
             - orob2b_shopping_list_frontend_view
