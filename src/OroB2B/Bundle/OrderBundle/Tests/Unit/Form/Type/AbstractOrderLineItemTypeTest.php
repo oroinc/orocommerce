@@ -2,6 +2,8 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\PreloadedExtension;
@@ -9,6 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
@@ -20,7 +23,7 @@ use OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
 abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
 {
-    use QuantityTypeTrait;
+    use QuantityTypeTrait, EntityTrait;
 
     /**
      * @var AbstractOrderLineItemType
@@ -34,8 +37,8 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
     {
         $unitSelectType = new EntityType(
             [
-                'kg' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'kg', 'code'),
-                'item' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', 'item', 'code'),
+                'kg' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'kg']),
+                'item' => $this->getEntity('OroB2B\Bundle\ProductBundle\Entity\ProductUnit', ['code' => 'item']),
             ],
             ProductUnitSelectionType::NAME
         );
@@ -62,19 +65,22 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
-        /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
-        $resolver->expects($this->once())
-            ->method('setDefaults')
-            ->with($this->isType('array'))
-            ->will($this->returnSelf());
-        $resolver->expects($this->once())
-            ->method('setRequired')
-            ->with(['currency'])
-            ->will($this->returnSelf());
-
+        $expectedOptions = $this->getExpectedOptions();
+        $resolver = new OptionsResolver();
         $this->formType->configureOptions($resolver);
+
+        $resolvedOptions = $resolver->resolve();
+        foreach ($resolver->getDefinedOptions() as $option) {
+            $this->assertArrayHasKey($option, $expectedOptions);
+            $this->assertArrayHasKey($option, $resolvedOptions);
+            $this->assertEquals($expectedOptions[$option], $resolvedOptions[$option]);
+        }
     }
+
+    /**
+     * @return array
+     */
+    abstract public function getExpectedOptions();
 
     /**
      * @dataProvider submitDataProvider
@@ -108,13 +114,25 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
 
         $possibleOptions = [
             [
-                'options' => ['currency' => 'USD'],
-                'expected' => ['page_component' => null, 'page_component_options' => ['currency' => 'USD']]
+                'options' => ['currency' => 'USD', 'sections' => $this->getExpectedSections()],
+                'expected' => [
+                    'page_component' => null,
+                    'page_component_options' => ['currency' => 'USD'],
+                ],
             ],
             [
-                'options' => ['currency' => 'USD', 'page_component' => 'test', 'page_component_options' => ['v2']],
-                'expected' => ['page_component' => 'test', 'page_component_options' => ['v2', 'currency' => 'USD']]
-            ]
+                'options' => [
+                    'currency' => 'USD',
+                    'page_component' => 'test',
+                    'page_component_options' => ['v2'],
+                    'sections' => $this->getExpectedSections(),
+                ],
+                'expected' => [
+                    'page_component' => 'test',
+                    'page_component_options' => ['v2', 'currency' => 'USD'],
+
+                ],
+            ],
         ];
 
         foreach ($possibleOptions as $optionsData) {
@@ -122,6 +140,22 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
             $this->assertBuildView($view, $optionsData['expected']);
         }
     }
+
+    public function testFinishView()
+    {
+        $view = new FormView();
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $options = ['sections' => $this->getExpectedSections()->toArray()];
+        $this->formType->finishView($view, $form, $options);
+
+        $this->assertEquals($this->getExpectedSections(), $view->vars['sections']);
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    abstract protected function getExpectedSections();
 
     /**
      * @param FormView $view
@@ -139,22 +173,4 @@ abstract class AbstractOrderLineItemTypeTest extends FormIntegrationTestCase
      * @return array
      */
     abstract public function submitDataProvider();
-
-    /**
-     * @param string $className
-     * @param int $id
-     * @param string $property
-     * @return object
-     */
-    protected function getEntity($className, $id, $property = 'id')
-    {
-        $entity = new $className;
-
-        $reflectionClass = new \ReflectionClass($className);
-        $method = $reflectionClass->getProperty($property);
-        $method->setAccessible(true);
-        $method->setValue($entity, $id);
-
-        return $entity;
-    }
 }

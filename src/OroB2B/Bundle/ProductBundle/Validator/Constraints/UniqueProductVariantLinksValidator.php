@@ -27,7 +27,12 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
         $variantFields = $value->getVariantFields();
 
         foreach ($value->getVariantLinks() as $variantLink) {
-            $variantHashes[] = $this->getVariantFieldsHash($variantFields, $variantLink->getProduct());
+            $product = $variantLink->getProduct();
+            if (!$product) {
+                continue;
+            }
+
+            $variantHashes[] = $this->getVariantFieldsHash($variantFields, $product);
         }
 
         if (count($variantHashes) !== count(array_unique($variantHashes))) {
@@ -46,7 +51,9 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
 
         $fields = [];
         foreach ($variantFields as $fieldName) {
-            $fields[$fieldName] = $propertyAccessor->getValue($product, $fieldName);
+            if ($propertyAccessor->isReadable($product, $fieldName)) {
+                $fields[$fieldName] = $propertyAccessor->getValue($product, $fieldName);
+            }
         }
 
         return md5(json_encode($fields));

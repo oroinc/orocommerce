@@ -23,7 +23,12 @@ trait EntityTrait
     protected function getEntity($className, array $properties = [], array $constructorArgs = null)
     {
         $reflectionClass = new \ReflectionClass($className);
-        $entity = $reflectionClass->newInstance($constructorArgs);
+
+        if ($reflectionClass->hasMethod('__construct')) {
+            $entity = $reflectionClass->newInstance($constructorArgs);
+        } else {
+            $entity = $reflectionClass->newInstanceWithoutConstructor();
+        }
 
         foreach ($properties as $property => $value) {
             try {
@@ -49,18 +54,5 @@ trait EntityTrait
         }
 
         return $this->propertyAccessor;
-    }
-
-    /**
-     * @param string $className
-     * @param int $id
-     *
-     * @return object
-     *
-     * @deprecated Use createEntity instead
-     */
-    protected function createEntity($className, $id)
-    {
-        return $this->getEntity($className, ['id' => $id]);
     }
 }

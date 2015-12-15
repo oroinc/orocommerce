@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\OrderBundle\Tests\Unit\Form\Extension;
 
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use OroB2B\Bundle\OrderBundle\Entity\Order;
@@ -48,7 +47,7 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
                 ],
             ]
         ];
-        $order = new Order();
+        $this->entity = new Order();
 
         $productUnit = new ProductUnit();
         $productUnit->setCode('item');
@@ -60,13 +59,11 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         $this->assertStorageCalled($data);
         $this->assertProductRepositoryCalled($product);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface $builder */
-        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
-        $this->extension->buildForm($builder, ['data' => $order]);
+        $this->extension->buildForm($this->getBuilderMock(true), []);
 
-        $this->assertCount(1, $order->getLineItems());
+        $this->assertCount(1, $this->entity->getLineItems());
         /** @var OrderLineItem $lineItem */
-        $lineItem = $order->getLineItems()->first();
+        $lineItem = $this->entity->getLineItems()->first();
 
         $this->assertEquals($product, $lineItem->getProduct());
         $this->assertEquals($product->getSku(), $lineItem->getProductSku());
@@ -96,9 +93,7 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         $this->assertStorageCalled($data);
         $this->assertProductRepositoryCalled($product);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface $builder */
-        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
-        $this->extension->buildForm($builder, ['data' => $order]);
+        $this->extension->buildForm($this->getBuilderMock(true), []);
 
         $this->assertEmpty($order->getLineItems());
     }

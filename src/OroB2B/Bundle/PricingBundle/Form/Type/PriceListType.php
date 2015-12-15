@@ -7,7 +7,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceList;
 
@@ -86,66 +85,6 @@ class PriceListType extends AbstractType
                     'required' => true,
                     'label' => 'orob2b.pricing.pricelist.currencies.label',
                     'additional_currencies' => $priceList ? $priceList->getCurrencies() : [],
-                ]
-            )
-            ->add(
-                'appendAccounts',
-                EntityIdentifierType::NAME,
-                [
-                    'class' => $this->accountClass,
-                    'required' => false,
-                    'mapped' => false,
-                    'multiple' => true,
-                ]
-            )
-            ->add(
-                'removeAccounts',
-                EntityIdentifierType::NAME,
-                [
-                    'class' => $this->accountClass,
-                    'required' => false,
-                    'mapped' => false,
-                    'multiple' => true,
-                ]
-            )
-            ->add(
-                'appendAccountGroups',
-                EntityIdentifierType::NAME,
-                [
-                    'class' => $this->accountGroupClass,
-                    'required' => false,
-                    'mapped' => false,
-                    'multiple' => true,
-                ]
-            )
-            ->add(
-                'removeAccountGroups',
-                EntityIdentifierType::NAME,
-                [
-                    'class' => $this->accountGroupClass,
-                    'required' => false,
-                    'mapped' => false,
-                    'multiple' => true,
-                ]
-            )
-            ->add(
-                'appendWebsites',
-                EntityIdentifierType::NAME,
-                [
-                    'class' => $this->websiteClass,
-                    'required' => false,
-                    'mapped' => false,
-                    'multiple' => true,
-                ]
-            )
-            ->add(
-                'removeWebsites',
-                EntityIdentifierType::NAME,
-                [
-                    'class' => $this->websiteClass,
-                    'required' => false,
-                    'mapped' => false,
-                    'multiple' => true,
                 ]
             );
         ;

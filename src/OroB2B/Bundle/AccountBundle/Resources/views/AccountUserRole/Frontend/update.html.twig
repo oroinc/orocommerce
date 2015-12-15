@@ -40,7 +40,15 @@
     {{ UI.cancelButton(path('orob2b_account_frontend_account_user_role_index')) }}
     {% set html = UI.buttonType({'type': 'button', 'class': 'btn-success role-submit', 'label': 'Save and Close'|trans}) %}
     {% if entity.id or resource_granted('orob2b_account_frontend_account_user_role_update') %}
-        {% set html = html ~ UI.buttonType({'type': 'button', 'class': 'btn-success main-group', 'label': 'Save'|trans}) %}
+        {# button attribute 'action' is avoided because of there is unacceptable submit binding on .action-button in init-layout.js #}
+        {% set html = html ~ UI.buttonType({
+            'type': 'button',
+            'class': 'btn-success main-group role-submit',
+            'label': 'Save'|trans,
+            'data': {
+                'action': 'save_and_stay'
+            }
+        }) %}
     {% endif %}
     {{ UI.dropdownSaveButton({'html': html}) }}
 {% endblock %}

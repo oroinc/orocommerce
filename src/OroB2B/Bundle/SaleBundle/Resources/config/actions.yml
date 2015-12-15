@@ -10,27 +10,8 @@ actions:
         order: 10
         frontend_options:
             icon: icon-time
-        prefunctions:
-            - @create_datetime:
-                attribute: $.compare_date
-            - @call_method:
-                object: $.compare_date
-                method: modify
-                method_parameters: ['+7 days']
         preconditions:
-            @or:
-                - @and:
-                    - @equal: [$expired, false]
-                    - @not:
-                        - @collection_element_value_exists: [$quoteProducts, $productSku, 'abc123']
-                    - @or:
-                        - @empty: $shipUntil
-                        - @lt: [$shipUntil, $.compare_date]
-                - @and:
-                    - @equal: [$expired, false]
-                    - @or:
-                        - @empty: $shipUntil
-                        - @gt: [$shipUntil, $.compare_date]
+            @equal: [$expired, false]
         postfunctions:
             - @assign_value: [$expired, true]
             - @flash_message:
@@ -40,3 +21,54 @@ actions:
                     id: $id
             - @redirect:
                 route: 'orob2b_sale_quote_index'
+
+    orob2b_sale_notify_customer_by_email_action:
+        label: orob2b.sale.quote.notify_customer.by_email.link.text
+        enabled: true
+        applications: [backend, frontend]
+        entities:
+            - OroB2B\Bundle\SaleBundle\Entity\Quote
+        order: 20
+        acl_resource: oro_email_email_create
+
+        frontend_options:
+            icon: icon-envelope
+            group: orob2b.sale.quote.notify_customer.label
+            dialog_template: OroB2BSaleBundle:Action:emailNotification.html.twig
+            dialog_title: orob2b.sale.quote.notify_customer.by_email.link.text
+            dialog_options:
+                allowMaximize: true
+                allowMinimize: true
+                dblclick: maximize
+                maximizedHeightDecreaseBy: minimize-bar
+                width: 1000
+
+        attributes:
+            email:
+                label: ' '
+                type: object
+                options:
+                    class: Oro\Bundle\EmailBundle\Form\Model\Email
+
+        form_options:
+            attribute_fields:
+                email:
+                    form_type: oro_email_email
+
+        initfunctions:
+            - @call_service_method:
+                attribute: $.email
+                service: orob2b_sale.helper.notification
+                method: getEmailModel
+                method_parameters: [$.data]
+            - @call_service_method:
+                attribute: $.appendSignature
+                service: oro_config.user
+                method: get
+                method_parameters: ['oro_email.append_signature']
+
+        postfunctions:
+            - @call_service_method:
+                service: orob2b_sale.helper.notification
+                method: send
+                method_parameters: [$.email, $.data]
