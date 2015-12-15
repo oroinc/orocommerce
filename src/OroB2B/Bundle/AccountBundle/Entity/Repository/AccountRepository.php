@@ -42,18 +42,6 @@ class AccountRepository extends EntityRepository
     }
 
     /**
-     * @return Account[]
-     */
-    public function getPartialAccounts()
-    {
-        return $this
-            ->createQueryBuilder('account')
-            ->select('partial account.{id}')
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
      * @param Category $category
      * @param $visibility
      * @return Account[]

@@ -160,16 +160,12 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
      */
     protected function getCategories()
     {
-        /** @var Category[] $categories */
-        $categories = $this->registry
+        $repo = $this->registry
             ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountProductVisibility')
-            ->getRepository('OroB2BAccountBundle:Visibility\AccountProductVisibility')
-            ->getCategoriesByAccountProductVisibility();
+            ->getRepository('OroB2BAccountBundle:Visibility\AccountProductVisibility');
 
-        $accounts = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:Account')
-            ->getRepository('OroB2BAccountBundle:Account')
-            ->getPartialAccounts();
+        $categories = $repo->getCategoriesByAccountProductVisibility();
+        $accounts = $repo->getAccountsForCategoryType();
 
         $categoriesGrouped = [];
         foreach ($accounts as $account) {

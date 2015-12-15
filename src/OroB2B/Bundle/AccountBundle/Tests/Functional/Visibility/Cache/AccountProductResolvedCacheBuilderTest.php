@@ -10,7 +10,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountProductVisibilityResolvedRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\AccountProductResolvedCacheBuilder;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\AccountProductResolvedCacheBuilder;
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
@@ -28,7 +28,7 @@ class AccountProductResolvedCacheBuilderTest extends WebTestCase
         $this->initClient();
 
         $this->cacheBuilder = $this->client->getContainer()
-            ->get('orob2b_account.visibility.cache.account_product_resolved_cache_builder');
+            ->get('orob2b_account.visibility.cache.product.account_product_resolved_cache_builder');
 
         $this->loadFixtures(
             [

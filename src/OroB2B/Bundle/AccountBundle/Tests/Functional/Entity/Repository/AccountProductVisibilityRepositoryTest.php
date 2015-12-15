@@ -51,4 +51,11 @@ class AccountProductVisibilityRepositoryTest extends WebTestCase
         $this->assertCount(1, $categories);
         $this->assertEquals($categories[0], $this->getReference(LoadCategoryData::FIRST_LEVEL));
     }
+
+    public function testGetAccountsForCategoryType()
+    {
+        $categories = $this->repository->getAccountsForCategoryType();
+        $this->assertCount(1, $categories);
+
+    }
 }
