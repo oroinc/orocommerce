@@ -179,6 +179,8 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
             );
         }
 
+        $this->assertApplicationsHelperCalled();
+
         $action = $this->manager->getAction($actionName, new ActionData());
 
         if ($expected) {
@@ -280,6 +282,7 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
             $this->assertEntityManagerCalled(get_class($actionData->getEntity()));
         }
 
+        $this->assertApplicationsHelperCalled();
         $action = $this->createActionMock();
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|ActionAssembler $assembler */
@@ -303,7 +306,8 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
             $this->doctrineHelper,
             $this->contextHelper,
             $this->configurationProvider,
-            $assembler
+            $assembler,
+            $this->applicationsHelper
         );
 
         $errors = new ArrayCollection();

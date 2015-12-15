@@ -12,8 +12,8 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Oro\Bundle\ActionBundle\Helper\ContextHelper;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
-use Oro\Bundle\ActionBundle\Model\ContextHelper;
 
 class WidgetController extends Controller
 {
