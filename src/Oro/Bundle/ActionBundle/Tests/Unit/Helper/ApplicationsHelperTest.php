@@ -75,7 +75,7 @@ class ApplicationsHelperTest extends \PHPUnit_Framework_TestCase
             [
                 'applications' => [],
                 'token' => $this->createToken($user),
-                'expectedResult' => false
+                'expectedResult' => true
             ],
             [
                 'applications' => ['backend', 'frontend'],
@@ -95,7 +95,7 @@ class ApplicationsHelperTest extends \PHPUnit_Framework_TestCase
             [
                 'applications' => [],
                 'token' => $this->createToken($otherUser),
-                'expectedResult' => false
+                'expectedResult' => true
             ],
             [
                 'applications' => ['backend', 'frontend'],

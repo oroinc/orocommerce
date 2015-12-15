@@ -33,6 +33,10 @@ class ApplicationsHelper
         }
 
         $applications = $action->getDefinition()->getApplications();
+        if (empty($applications)) {
+            return true;
+        }
+
         $isBackendApplicationSet = in_array('backend', $applications, true);
 
         if ($this->isBackend()) {
