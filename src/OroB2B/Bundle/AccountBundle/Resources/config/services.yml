@@ -21,6 +21,7 @@ parameters:
     orob2b_account.entity.product_visibility.class: OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility
     orob2b_account.entity.account_product_visibility.class: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility
     orob2b_account.entity.account_group_product_visibility.class: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility
+    orob2b_account.entity.product_visibility_resolved.class: OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved
 
     orob2b_account.account_tree_handler.class: OroB2B\Bundle\AccountBundle\JsTree\AccountTreeHandler
     orob2b_account.account_delete_handler.class: OroB2B\Bundle\AccountBundle\Handler\UserDeleteHandler
@@ -683,6 +684,9 @@ services:
     orob2b_account.visibility.cache.product.product_resolved_cache_builder:
         class: %orob2b_account.visibility.cache.product.product_resolved_cache_builder.class%
         parent: orob2b_account.visibility.cache.product.cache_builder.abstract
+        calls:
+            - [setInsertFromSelectExecutor, [@oro_entity.orm.insert_from_select_query_executor]]
+            - [setCacheClass, [%orob2b_account.entity.product_visibility_resolved.class%]]
 
     orob2b_account.visibility.cache.product.cache_builder:
         class: %orob2b_account.visibility.cache.product.cache_builder.class%
