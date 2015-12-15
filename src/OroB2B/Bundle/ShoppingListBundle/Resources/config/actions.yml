@@ -1,0 +1,34 @@
+actions:
+    orob2b_shoppinglist_action_createorder:
+        label: orob2b.shoppinglist.btn.create_order
+        routes:
+            - orob2b_shopping_list_view
+        acl_resource: orob2b_order_create
+        frontend_options:
+            icon: icon-briefcase
+        postfunctions:
+            - @call_service_method:
+                service: orob2b_shopping_list.service.product_data_storage
+                method: saveToStorage
+                method_parameters: [$.data]
+            - @redirect:
+                parameters:
+                    route: orob2b_order_create
+                    route_parameters: {'storage': true}
+
+    orob2b_frontend_shoppinglist_action_createorder:
+        label: orob2b.frontend.shoppinglist.btn.create_order
+        routes:
+            - orob2b_shopping_list_frontend_view
+        acl_resource: orob2b_order_frontend_create
+        frontend_options:
+            icon: icon-briefcase
+        postfunctions:
+            - @call_service_method:
+                service: orob2b_shopping_list.service.product_data_storage
+                method: saveToStorage
+                method_parameters: [$.data]
+            - @redirect:
+                parameters:
+                    route: orob2b_order_frontend_create
+                    route_parameters: {'storage': true}
