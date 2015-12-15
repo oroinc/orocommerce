@@ -574,6 +574,7 @@
             <arg line="--exclude=WebsiteBundle/Migrations/Schema"/>
             <arg line="--exclude=CatalogBundle/Migrations/Schema"/>
             <arg line="--exclude=CMSBundle/Migrations/Schema"/>
+            <arg line="--exclude=WarehouseBundle/Migrations/Schema"/>
             <arg line="${srcdir}"/>
         </exec>
     </target>

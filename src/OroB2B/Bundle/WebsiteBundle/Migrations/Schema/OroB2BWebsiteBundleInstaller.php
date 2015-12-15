@@ -6,15 +6,30 @@ use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
+use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
-class OroB2BWebsiteBundleInstaller implements Installation
+class OroB2BWebsiteBundleInstaller implements Installation, NoteExtensionAwareInterface
 {
+    const WEBSITE_TABLE_NAME = 'orob2b_website';
+
+    /** @var NoteExtension */
+    protected $noteExtension;
+
+    /**
+     * @inheritDoc
+     */
+    public function setNoteExtension(NoteExtension $noteExtension)
+    {
+        $this->noteExtension = $noteExtension;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_2';
     }
 
     /**
@@ -33,6 +48,7 @@ class OroB2BWebsiteBundleInstaller implements Installation
         $this->addOrob2BRelatedWebsiteForeignKeys($schema);
         $this->addOrob2BWebsiteForeignKeys($schema);
         $this->addOrob2BWebsitesLocalesForeignKeys($schema);
+        $this->addNoteAssociations($schema);
     }
 
     /**
@@ -74,12 +90,12 @@ class OroB2BWebsiteBundleInstaller implements Installation
      */
     protected function createOrob2BWebsiteTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_website');
+        $table = $schema->createTable(self::WEBSITE_TABLE_NAME);
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('business_unit_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('name', 'string', ['length' => 255]);
-        $table->addColumn('url', 'string', ['length' => 255]);
+        $table->addColumn('url', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
 
@@ -87,6 +103,8 @@ class OroB2BWebsiteBundleInstaller implements Installation
 
         $table->addUniqueIndex(['name']);
         $table->addUniqueIndex(['url']);
+        $table->addIndex(['created_at'], 'idx_orob2b_website_created_at', []);
+        $table->addIndex(['updated_at'], 'idx_orob2b_website_updated_at', []);
     }
 
     /**
@@ -147,7 +165,7 @@ class OroB2BWebsiteBundleInstaller implements Installation
      */
     protected function addOrob2BWebsiteForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('orob2b_website');
+        $table = $schema->getTable(self::WEBSITE_TABLE_NAME);
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_organization'),
             ['organization_id'],
@@ -182,5 +200,13 @@ class OroB2BWebsiteBundleInstaller implements Installation
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addNoteAssociations(Schema $schema)
+    {
+        $this->noteExtension->addNoteAssociation($schema, self::WEBSITE_TABLE_NAME);
     }
 }

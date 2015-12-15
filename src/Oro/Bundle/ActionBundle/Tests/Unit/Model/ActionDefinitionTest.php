@@ -58,6 +58,38 @@ class ActionDefinitionTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    public function testSetAndGetConditions()
+    {
+        $this->definition->setConditions('name1', ['cond1', 'cond2']);
+
+        $this->assertEquals(['cond1', 'cond2'], $this->definition->getConditions('name1'));
+        $this->assertEquals(['name1' => ['cond1', 'cond2']], $this->definition->getConditions());
+    }
+
+    public function testSetAndGetFunctions()
+    {
+        $this->definition->setFunctions('name1', ['func1', 'func2']);
+
+        $this->assertEquals(['func1', 'func2'], $this->definition->getFunctions('name1'));
+        $this->assertEquals(['name1' => ['func1', 'func2']], $this->definition->getFunctions());
+    }
+
+    public function testGetAllowedConditions()
+    {
+        $this->assertEquals(
+            [ActionDefinition::PRECONDITIONS, ActionDefinition::CONDITIONS],
+            ActionDefinition::getAllowedConditions()
+        );
+    }
+
+    public function testGetAllowedFunctions()
+    {
+        $this->assertEquals(
+            [ActionDefinition::PREFUNCTIONS, ActionDefinition::INITFUNCTIONS, ActionDefinition::POSTFUNCTIONS],
+            ActionDefinition::getAllowedFunctions()
+        );
+    }
+
     public function testGettersAndSetters()
     {
         static::assertPropertyAccessors(
@@ -72,11 +104,8 @@ class ActionDefinitionTest extends \PHPUnit_Framework_TestCase
                 ['order', 77],
                 ['frontendOptions', ['config1', 'config2']],
                 ['formOptions', ['config1', 'config2']],
+                ['formType', 'test_form_type'],
                 ['attributes', ['config1', 'config2']],
-                ['preConditions', ['config1', 'config2']],
-                ['conditions', ['config1', 'config2']],
-                ['initStep', ['config1', 'config2']],
-                ['executionStep', ['config1', 'config2']],
             ]
         );
     }

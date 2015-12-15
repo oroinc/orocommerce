@@ -3,7 +3,6 @@ oro_system_configuration:
         product:
             title: orob2b.product.system_configuration.groups.product.title
             icon: 'icon-briefcase'
-            page_reload: true
         product_unit_settings:
             title: orob2b.product.system_configuration.groups.product_unit_settings.title
         default_visibility:
@@ -16,7 +15,7 @@ oro_system_configuration:
     fields:
         orob2b_product.unit_rounding_type:
             data_type: string
-            type: orob2b_product_unit_rounding_type
+            type: choice
             priority: 10
             options:
                 label: orob2b.product.system_configuration.fields.unit_rounding_type.label
@@ -24,6 +23,13 @@ oro_system_configuration:
                 required: true
                 constraints:
                     - NotBlank: ~
+                choice_translation_domain: messages
+                choices:
+                    half_up: orob2b.product.rounding.type.half_up.label
+                    half_down: orob2b.product.rounding.type.half_down.label
+                    ceil: orob2b.product.rounding.type.ceil.label
+                    floor: orob2b.product.rounding.type.floor.label
+
         orob2b_product.general_frontend_product_visibility:
             data_type: array
             type: orob2b_product_inventory_status_select
@@ -34,15 +40,6 @@ oro_system_configuration:
         system_configuration:
             platform:
                 children:
-                    general_setup:
-                        children:
-                            product:
-                                priority: 220
-                                children:
-                                    product_unit_settings:
-                                        priority: 100
-                                        children:
-                                            - orob2b_product.unit_rounding_type
                     catalog:
                         children:
                             product_settings:
@@ -50,3 +47,6 @@ oro_system_configuration:
                                     frontend_inventory_statuses_visibility:
                                         children:
                                             - orob2b_product.general_frontend_product_visibility
+                                    product_unit_settings:
+                                        children:
+                                            - orob2b_product.unit_rounding_type

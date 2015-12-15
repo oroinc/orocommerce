@@ -3,17 +3,24 @@
 namespace OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
+use Symfony\Component\Yaml\Yaml;
+
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
-use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
 use OroB2B\Bundle\FallbackBundle\Entity\LocalizedFallbackValue;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\WebsiteBundle\Entity\Locale;
 
-class LoadProductData extends AbstractFixture
+class LoadProductData extends AbstractFixture implements DependentFixtureInterface
 {
+    use UserUtilityTrait;
+
     const PRODUCT_1 = 'product.1';
     const PRODUCT_2 = 'product.2';
     const PRODUCT_3 = 'product.3';
@@ -21,35 +28,12 @@ class LoadProductData extends AbstractFixture
     const PRODUCT_5 = 'product.5';
 
     /**
-     * @var array
+     * {@inheritdoc}
      */
-    protected $products = [
-        [
-            'productCode' => self::PRODUCT_1,
-            'inventoryStatus' =>  Product::INVENTORY_STATUS_IN_STOCK,
-            'status' => Product::STATUS_ENABLED
-        ],
-        [
-            'productCode' => self::PRODUCT_2,
-            'inventoryStatus' =>  Product::INVENTORY_STATUS_IN_STOCK,
-            'status' => Product::STATUS_ENABLED
-        ],
-        [
-            'productCode' => self::PRODUCT_3,
-            'inventoryStatus' =>  Product::INVENTORY_STATUS_OUT_OF_STOCK,
-            'status' => Product::STATUS_ENABLED
-        ],
-        [
-            'productCode' => self::PRODUCT_4,
-            'inventoryStatus' =>  Product::INVENTORY_STATUS_DISCONTINUED,
-            'status' => Product::STATUS_ENABLED
-        ],
-        [
-            'productCode' => self::PRODUCT_5,
-            'inventoryStatus' =>  Product::INVENTORY_STATUS_IN_STOCK,
-            'status' => Product::STATUS_DISABLED
-        ],
-    ];
+    public function getDependencies()
+    {
+        return ['OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadLocaleData'];
+    }
 
     /**
      * {@inheritdoc}
@@ -57,11 +41,12 @@ class LoadProductData extends AbstractFixture
     public function load(ObjectManager $manager)
     {
         /** @var EntityManager $manager */
-        $user = $this->getUser($manager);
+        $user = $this->getFirstUser($manager);
         $businessUnit = $user->getOwner();
         $organization = $user->getOrganization();
 
         $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
+        /** @var AbstractEnumValue[] $enumInventoryStatuses */
         $enumInventoryStatuses = $manager->getRepository($inventoryStatusClassName)->findAll();
 
         $inventoryStatuses = [];
@@ -69,24 +54,62 @@ class LoadProductData extends AbstractFixture
             $inventoryStatuses[$inventoryStatus->getId()] = $inventoryStatus;
         }
 
-        foreach ($this->products as $item) {
+        $filePath = __DIR__ . DIRECTORY_SEPARATOR . 'product_fixture.yml';
+
+        $data = Yaml::parse($filePath);
+
+        foreach ($data as $item) {
             $product = new Product();
-            $product->setOwner($businessUnit)
+            $product
+                ->setOwner($businessUnit)
                 ->setOrganization($organization)
-                ->setSku($item['productCode']);
-            $name = new LocalizedFallbackValue();
-            $name->setString($item['productCode']);
-            $product->addName($name);
-            $product->setInventoryStatus($inventoryStatuses[$item['inventoryStatus']]);
-            $product->setStatus($item['status']);
-            $description = new LocalizedFallbackValue();
-            $description->setString($item['productCode']);
-            $product->addDescription($description);
+                ->setSku($item['productCode'])
+                ->setInventoryStatus($inventoryStatuses[$item['inventoryStatus']])
+                ->setStatus($item['status']);
+
+            if (!empty($item['names'])) {
+                foreach ($item['names'] as $name) {
+                    $product->addName($this->createValue($name));
+                }
+            }
+
+            if (!empty($item['descriptions'])) {
+                foreach ($item['descriptions'] as $name) {
+                    $product->addDescription($this->createValue($name));
+                }
+            }
+
             $manager->persist($product);
             $this->addReference($item['productCode'], $product);
         }
 
         $manager->flush();
+    }
+
+    /**
+     * @param array $name
+     * @return LocalizedFallbackValue
+     */
+    protected function createValue(array $name)
+    {
+        $value = new LocalizedFallbackValue();
+        if (array_key_exists('locale', $name)) {
+            /** @var Locale $locale */
+            $locale = $this->getReference($name['locale']);
+            $value->setLocale($locale);
+        }
+        if (array_key_exists('fallback', $name)) {
+            $value->setFallback($name['fallback']);
+        }
+        if (array_key_exists('string', $name)) {
+            $value->setString($name['string']);
+        }
+        if (array_key_exists('text', $name)) {
+            $value->setText($name['text']);
+        }
+        $this->setReference($name['reference'], $value);
+
+        return $value;
     }
 
     /**

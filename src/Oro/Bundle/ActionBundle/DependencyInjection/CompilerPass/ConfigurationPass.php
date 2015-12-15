@@ -46,7 +46,7 @@ class ConfigurationPass implements CompilerPassInterface
             }
 
             $providerDef = $container->getDefinition(self::PROVIDER_SERVICE_ID);
-            $providerDef->replaceArgument(2, $config);
+            $providerDef->replaceArgument(3, $config);
         }
 
         $container->get(self::CACHE_SERVICE_ID)->deleteAll();

@@ -4,7 +4,6 @@ parameters:
     orob2b_shopping_list.entity.line_item.class: OroB2B\Bundle\ShoppingListBundle\Entity\LineItem
     orob2b_shopping_list.shopping_list.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
     orob2b_shopping_list.shopping_list.manager.class: OroB2B\Bundle\ShoppingListBundle\Manager\ShoppingListManager
-    orob2b_shopping_list.line_item.manager.class: OroB2B\Bundle\ShoppingListBundle\Manager\LineItemManager
     orob2b_shopping_list.validator.line_item.class: OroB2B\Bundle\ShoppingListBundle\Validator\Constraints\LineItemValidator
     orob2b_shopping_list.handler.shopping_list_line_item.class: OroB2B\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler
     orob2b_shopping_list.processor.quick_add.class:  OroB2B\Bundle\ShoppingListBundle\Processor\QuickAddProcessor
@@ -39,11 +38,7 @@ services:
             - @doctrine
             - @security.token_storage
             - @translator
-
-    orob2b_shopping_list.line_item.manager:
-        class: %orob2b_shopping_list.line_item.manager.class%
-        arguments:
-            - @orob2b_product.service.rounding
+            - @orob2b_product.service.quantity_rounding
 
     orob2b_shopping_list.placeholder.filter:
         class: %orob2b_shopping_list.placeholder.filter.class%
@@ -80,7 +75,7 @@ services:
     orob2b_shopping_list.service.product_data_storage:
         class: %orob2b_shopping_list.service.product_data_storage.class%
         arguments:
-            - @orob2b_product.service.product_data_storage
+            - @orob2b_product.storage.product_data_storage
 
     orob2b_shopping_list.event_listener.product_select_db_query:
         class: %orob2b_product.event_listener.scoped_product_select_db_query.class%

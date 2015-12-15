@@ -53,6 +53,24 @@ class ProductUnitValueFormatterTest extends \PHPUnit_Framework_TestCase
         $this->formatter->formatShort(42, (new ProductUnit())->setCode('item'));
     }
 
+    public function testFormatCodeShort()
+    {
+        $this->translator->expects($this->once())
+            ->method('transChoice')
+            ->with('orob2b.product_unit.item.value.short', 42);
+
+        $this->formatter->formatCode(42, 'item', true);
+    }
+
+    public function testFormatCodeFull()
+    {
+        $this->translator->expects($this->once())
+            ->method('transChoice')
+            ->with('orob2b.product_unit.item.value.full', 42);
+
+        $this->formatter->formatCode(42, 'item');
+    }
+
     /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage The parameter "value" must be a numeric, but it is of type string.

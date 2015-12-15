@@ -24,34 +24,69 @@ class ProductUnitLabelFormatterTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->translator   = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
 
-        $this->formatter    = new ProductUnitLabelFormatter($this->translator);
+        $this->formatter = new ProductUnitLabelFormatter($this->translator);
     }
 
     /**
      * @param string $unitCode
      * @param bool $isShort
+     * @param bool $isPlural
      * @param string $expected
      *
      * @dataProvider formatProvider
      */
-    public function testFormat($unitCode, $isShort, $expected)
+    public function testFormat($unitCode, $isShort, $isPlural, $expected)
     {
         $this->translator->expects($this->once())
             ->method('trans')
             ->with($expected);
 
-        $this->formatter->format($unitCode, $isShort);
+        $this->formatter->format($unitCode, $isShort, $isPlural);
+    }
+
+    /**
+     * @return array
+     */
+    public function formatProvider()
+    {
+        return [
+            'format full single' => [
+                'unitCode'  => 'kg',
+                'isShort'   => false,
+                'isPlural'  => false,
+                'expected'  => 'orob2b.product_unit.kg.label.full',
+            ],
+            'format full plural' => [
+                'unitCode'  => 'kg',
+                'isShort'   => false,
+                'isPlural'  => true,
+                'expected'  => 'orob2b.product_unit.kg.label.full_plural',
+            ],
+            'format short single' => [
+                'unitCode'  => 'item',
+                'isShort'   => true,
+                'isPlural'   => false,
+                'expected'  => 'orob2b.product_unit.item.label.short',
+            ],
+            'format short plural' => [
+                'unitCode'  => 'item',
+                'isShort'   => true,
+                'isPlural'  => true,
+                'expected'  => 'orob2b.product_unit.item.label.short_plural',
+            ],
+        ];
     }
 
     /**
      * @param bool $isShort
+     * @param bool $isPlural
      * @param array $expected
      *
      * @dataProvider formatChoicesProvider
      */
-    public function testFormatChoices($isShort, array $expected)
+    public function testFormatChoices($isShort, $isPlural, array $expected)
     {
         $units = [
             (new ProductUnit())->setCode('kg'),
@@ -62,31 +97,16 @@ class ProductUnitLabelFormatterTest extends \PHPUnit_Framework_TestCase
             ->method('trans')
             ->will($this->returnValueMap([
                 ['orob2b.product_unit.kg.label.full', [], null, null, '_KG'],
+                ['orob2b.product_unit.kg.label.full_plural', [], null, null, '_KG_PLURAL'],
                 ['orob2b.product_unit.item.label.full', [], null, null, '_ITEM'],
+                ['orob2b.product_unit.item.label.full_plural', [], null, null, '_ITEM_PLURAL'],
                 ['orob2b.product_unit.kg.label.short', [], null, null, '_KG_SHORT'],
+                ['orob2b.product_unit.kg.label.short_plural', [], null, null, '_KG_SHORT_PLURAL'],
                 ['orob2b.product_unit.item.label.short', [], null, null, '_ITEM_SHORT'],
+                ['orob2b.product_unit.item.label.short_plural', [], null, null, '_ITEM_SHORT_PLURAL'],
             ]));
 
-        $this->assertEquals($expected, $this->formatter->formatChoices($units, $isShort));
-    }
-
-    /**
-     * @return array
-     */
-    public function formatProvider()
-    {
-        return [
-            'format' => [
-                'unitCode'  => 'kg',
-                'isShort'   => false,
-                'expected'  => 'orob2b.product_unit.kg.label.full',
-            ],
-            'format short' => [
-                'unitCode'  => 'item',
-                'isShort'   => true,
-                'expected'  => 'orob2b.product_unit.item.label.short',
-            ],
-        ];
+        $this->assertEquals($expected, $this->formatter->formatChoices($units, $isShort, $isPlural));
     }
 
     /**
@@ -95,18 +115,36 @@ class ProductUnitLabelFormatterTest extends \PHPUnit_Framework_TestCase
     public function formatChoicesProvider()
     {
         return [
-            'full labels' => [
+            'format choices full single' => [
                 'isShort' => false,
+                'isPlural' => false,
                 'expected' => [
                     'kg' => '_KG',
                     'item' => '_ITEM'
                 ],
             ],
-            'short labels' => [
+            'format choices full plural' => [
+                'isShort' => false,
+                'isPlural' => true,
+                'expected' => [
+                    'kg' => '_KG_PLURAL',
+                    'item' => '_ITEM_PLURAL'
+                ],
+            ],
+            'format choices short single' => [
                 'isShort' => true,
+                'isPlural' => false,
                 'expected' => [
                     'kg' => '_KG_SHORT',
                     'item' => '_ITEM_SHORT'
+                ],
+            ],
+            'format choices short plural' => [
+                'isShort' => true,
+                'isPlural' => true,
+                'expected' => [
+                    'kg' => '_KG_SHORT_PLURAL',
+                    'item' => '_ITEM_SHORT_PLURAL'
                 ],
             ],
         ];

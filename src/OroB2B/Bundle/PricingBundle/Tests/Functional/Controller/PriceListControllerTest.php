@@ -25,7 +25,10 @@ class PriceListControllerTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
 
-        $this->loadFixtures(['OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists']);
+        $this->loadFixtures([
+            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists',
+            'OroB2B\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices',
+        ]);
     }
 
     public function testIndex()
@@ -50,18 +53,6 @@ class PriceListControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save and Close')->form(
             [
                 'orob2b_pricing_price_list[name]' => self::PRICE_LIST_NAME,
-                'orob2b_pricing_price_list[appendAccounts]' => implode(
-                    ',',
-                    [$this->getAccount('account.orphan')->getId(), $this->getAccount('account.level_1')->getId()]
-                ),
-                'orob2b_pricing_price_list[appendAccountGroups]' => implode(
-                    ',',
-                    [
-                        $this->getAccountGroup('account_group.group1')->getId(),
-                        $this->getAccountGroup('account_group.group2')->getId()
-                    ]
-                ),
-                'orob2b_pricing_price_list[appendWebsites]' => implode(',', [$this->getWebsite('US')->getId()])
             ]
         );
 
@@ -73,16 +64,6 @@ class PriceListControllerTest extends WebTestCase
         $html = $crawler->html();
 
         $this->assertContains('Price List has been saved', $html);
-        $accountsGrid = $crawler->filter('.inner-grid')->eq(1)->attr('data-page-component-options');
-        $this->assertContains($this->getAccount('account.orphan')->getName(), $accountsGrid);
-        $this->assertContains($this->getAccount('account.level_1')->getName(), $accountsGrid);
-
-        $accountsGroupGrid = $crawler->filter('.inner-grid')->eq(2)->attr('data-page-component-options');
-        $this->assertContains($this->getAccountGroup('account_group.group1')->getName(), $accountsGroupGrid);
-        $this->assertContains($this->getAccountGroup('account_group.group2')->getName(), $accountsGroupGrid);
-
-        $websitesGrid = $crawler->filter('.inner-grid')->eq(3)->attr('data-page-component-options');
-        $this->assertContains($this->getWebsite('US')->getName(), $websitesGrid);
     }
 
     /**
@@ -133,19 +114,6 @@ class PriceListControllerTest extends WebTestCase
             [
                 'orob2b_pricing_price_list[name]' => self::PRICE_LIST_NAME_EDIT,
                 'orob2b_pricing_price_list[currencies]' => self::CURRENCY,
-                'orob2b_pricing_price_list[appendAccounts]' => $this->getAccount('account.level_1.1')->getId(),
-                'orob2b_pricing_price_list[appendAccountGroups]' => $this
-                    ->getAccountGroup('account_group.group3')->getId(),
-                'orob2b_pricing_price_list[appendWebsites]' => $this->getWebsite('Canada')->getId(),
-                'orob2b_pricing_price_list[removeAccounts]' => $this->getAccount('account.orphan')->getId(),
-                'orob2b_pricing_price_list[removeAccountGroups]' => implode(
-                    ',',
-                    [
-                        $this->getAccountGroup('account_group.group1')->getId(),
-                        $this->getAccountGroup('account_group.group2')->getId()
-                    ]
-                ),
-                'orob2b_pricing_price_list[removeWebsites]' => $this->getWebsite('US')->getId()
             ]
         );
 
@@ -158,21 +126,38 @@ class PriceListControllerTest extends WebTestCase
         $this->assertContains(self::PRICE_LIST_NAME_EDIT, $crawler->html());
         $this->assertContains(Intl::getCurrencyBundle()->getCurrencyName(self::CURRENCY), $crawler->html());
 
-        $accountsGrid = $crawler->filter('.inner-grid')->eq(1)->attr('data-page-component-options');
-        $this->assertContains($this->getAccount('account.level_1')->getName(), $accountsGrid);
-        $this->assertContains($this->getAccount('account.level_1.1')->getName(), $accountsGrid);
-        $this->assertNotContains($this->getAccount('account.orphan')->getName(), $accountsGrid);
-
-        $accountsGroupGrid = $crawler->filter('.inner-grid')->eq(2)->attr('data-page-component-options');
-        $this->assertContains($this->getAccountGroup('account_group.group3')->getName(), $accountsGroupGrid);
-        $this->assertNotContains($this->getAccountGroup('account_group.group1')->getName(), $accountsGroupGrid);
-        $this->assertNotContains($this->getAccountGroup('account_group.group2')->getName(), $accountsGroupGrid);
-
-        $websitesGrid = $crawler->filter('.inner-grid')->eq(3)->attr('data-page-component-options');
-        $this->assertContains($this->getWebsite('Canada')->getName(), $websitesGrid);
-        $this->assertNotContains($this->getWebsite('US')->getName(), $websitesGrid);
-
         return $id;
+    }
+
+    public function testUpdateCurrenciesError()
+    {
+        $id = $this->getReference('product_price.11')->getPriceList()->getId();
+
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('orob2b_pricing_price_list_update', ['id' => $id])
+        );
+
+        $form = $crawler->selectButton('Save and Close')->form(
+            [
+                'orob2b_pricing_price_list[currencies]' => ['USD'],
+            ]
+        );
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->submit($form);
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $message = $this->getContainer()->get('translator')
+            ->trans(
+                'orob2b.pricing.validators.price_list.product_price_currency.message',
+                ['%invalidCurrency%' => 'EUR'],
+                'validators'
+            );
+
+        $this->assertContains($message, $crawler->html());
     }
 
     /**
