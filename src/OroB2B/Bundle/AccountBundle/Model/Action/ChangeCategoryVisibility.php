@@ -4,12 +4,12 @@ namespace OroB2B\Bundle\AccountBundle\Model\Action;
 
 use Oro\Bundle\WorkflowBundle\Model\Action\AbstractAction;
 
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\CacheBuilder;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
 
 class ChangeCategoryVisibility extends AbstractAction
 {
     /**
-     * @var CacheBuilder
+     * @var CacheBuilderInterface
      */
     protected $cacheBuilder;
 
@@ -26,9 +26,9 @@ class ChangeCategoryVisibility extends AbstractAction
     }
 
     /**
-     * @param CacheBuilder $cacheBuilder
+     * @param CacheBuilderInterface $cacheBuilder
      */
-    public function setCacheBuilder(CacheBuilder $cacheBuilder)
+    public function setCacheBuilder(CacheBuilderInterface $cacheBuilder)
     {
         $this->cacheBuilder = $cacheBuilder;
     }
