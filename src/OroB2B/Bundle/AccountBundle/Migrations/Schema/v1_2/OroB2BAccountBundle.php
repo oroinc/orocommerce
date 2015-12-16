@@ -38,7 +38,7 @@ class OroB2BAccountBundle implements Migration
         $table->addColumn('data', Type::JSON_ARRAY, ['comment' => '(DC2Type:json_array)']);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addIndex(['customer_user_id'], 'orob2b_windows_st_cust_user_idx', []);
+        $table->addIndex(['customer_user_id'], 'orob2b_windows_state_acu_idx', []);
         $table->setPrimaryKey(['id']);
     }
 

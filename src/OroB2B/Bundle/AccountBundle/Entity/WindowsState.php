@@ -11,7 +11,7 @@ use Oro\Bundle\WindowsBundle\Entity\AbstractWindowsState;
 /**
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Repository\WindowsStateRepository")
  * @ORM\Table(name="orob2b_windows_state",
- *      indexes={@ORM\Index(name="orob2b_windows_st_cust_user_idx", columns={"customer_user_id"})})
+ *      indexes={@ORM\Index(name="orob2b_windows_state_acu_idx", columns={"customer_user_id"})})
  */
 class WindowsState extends AbstractWindowsState
 {
