@@ -23,6 +23,18 @@ OroB2B\Bundle\TaxBundle\Entity\Tax:
             - Range:
                 min: 0
 
+OroB2B\Bundle\TaxBundle\Entity\TaxRule:
+    properties:
+        description:
+            - NotBlank: ~
+        tax:
+            - NotBlank: ~
+        productTaxCode:
+            - NotBlank: ~
+        accountTaxCode:
+            - NotBlank: ~
+        taxJurisdiction:
+            - NotBlank: ~
 OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: code

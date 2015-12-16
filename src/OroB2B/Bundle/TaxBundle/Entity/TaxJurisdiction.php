@@ -363,4 +363,12 @@ class TaxJurisdiction
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->code;
+    }
 }

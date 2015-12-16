@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\TaxBundle\Controller\Api\Rest;
 
 use Symfony\Component\HttpFoundation\Response;
 
+use FOS\RestBundle\Controller\Annotations\RouteResource;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Routing\ClassResourceInterface;
 
@@ -14,18 +15,19 @@ use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
 
 /**
  * @NamePrefix("orob2b_api_tax_")
+ * @RouteResource("taxrule")
  */
-class TaxController extends RestController implements ClassResourceInterface
+class TaxRuleController extends RestController implements ClassResourceInterface
 {
     /**
      * @ApiDoc(
-     *      description="Delete tax",
+     *      description="Delete tax rule",
      *      resource=true
      * )
      * @Acl(
-     *      id="orob2b_tax_delete",
+     *      id="orob2b_tax_rule_delete",
      *      type="entity",
-     *      class="OroB2BTaxBundle:Tax",
+     *      class="OroB2BTaxBundle:TaxRule",
      *      permission="DELETE"
      * )
      *
@@ -42,7 +44,7 @@ class TaxController extends RestController implements ClassResourceInterface
      */
     public function getManager()
     {
-        return $this->get('orob2b_tax.manager.tax.api');
+        return $this->get('orob2b_tax.manager.tax_rule.api');
     }
 
     /**

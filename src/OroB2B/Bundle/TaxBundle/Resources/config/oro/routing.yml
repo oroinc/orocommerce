@@ -8,10 +8,15 @@ orob2b_tax_account_tax_code:
     type:         annotation
     prefix:       /tax/account
 
-orob2b_tax_tax:
+orob2b_tax:
     resource:     "@OroB2BTaxBundle/Controller/TaxController.php"
     type:         annotation
-    prefix:       /tax/tax
+    prefix:       /tax
+
+orob2b_tax_rule:
+    resource:     "@OroB2BTaxBundle/Controller/TaxRuleController.php"
+    type:         annotation
+    prefix:       /tax/rule
 
 orob2b_tax_jurisdiction:
     resource:     "@OroB2BTaxBundle/Controller/TaxJurisdictionController.php"
