@@ -36,14 +36,14 @@ definitions:
         label: 'Product visibility change'
         entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility
         actions_configuration:
-            - @resolve_visibility_settings: ~
+            - @resolve_product_visibility: ~
 
     product_visibility_remove:
         enabled: true
         label: 'Product visibility change'
         entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility
         actions_configuration:
-            - @resolve_visibility_settings:
+            - @resolve_product_visibility:
                 reset_visibility: true  # manually set "category" fallback
 
     account_group_product_visibility_change:
@@ -51,14 +51,14 @@ definitions:
         label: 'Account group product visibility change'
         entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility
         actions_configuration:
-            - @resolve_visibility_settings: ~
+            - @resolve_product_visibility: ~
 
     account_product_visibility_change:
         enabled: true
         label: 'Account product visibility change'
         entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility
         actions_configuration:
-            - @resolve_visibility_settings: ~
+            - @resolve_product_visibility: ~
 
     # Category visibility cache clear
 

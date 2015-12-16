@@ -2,18 +2,30 @@
 
 namespace OroB2B\Bundle\AccountBundle\Model\Action;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
+
 use Oro\Bundle\WorkflowBundle\Model\Action\AbstractAction;
 use Oro\Bundle\WorkflowBundle\Model\ProcessData;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
 
-class ResolveVisibilitySettings extends AbstractAction
+class ResolveProductVisibility extends AbstractAction
 {
-    /** @var CacheBuilderInterface */
+    /**
+     * @var CacheBuilderInterface
+     */
     protected $cacheBuilder;
 
-    /** @var bool */
+    /**
+     * @var ManagerRegistry
+     */
+    protected $registry;
+
+    /**
+     * @var bool
+     */
     protected $resetVisibility = false;
 
     /**
@@ -21,6 +33,14 @@ class ResolveVisibilitySettings extends AbstractAction
      */
     public function __construct()
     {
+    }
+
+    /**
+     * @param ManagerRegistry $registry
+     */
+    public function setRegistry(ManagerRegistry $registry)
+    {
+        $this->registry = $registry;
     }
 
     /**
@@ -40,16 +60,20 @@ class ResolveVisibilitySettings extends AbstractAction
             throw new \LogicException('This action can be called only from process context');
         }
 
-        $visibility = $context->getEntity();
-        if (!$visibility instanceof VisibilityInterface) {
+        $visibilityEntity = $context->getEntity();
+        if (!$visibilityEntity instanceof VisibilityInterface) {
             throw new \LogicException('Resolvable entity must implement VisibilityInterface');
         }
 
         if ($this->resetVisibility) {
-            $visibility->setVisibility($visibility::getDefault($visibility));
+            $visibilityEntity->setVisibility($visibilityEntity::getDefault($visibilityEntity));
         }
 
-        $this->cacheBuilder->resolveVisibilitySettings($visibility);
+        $this->getEntityManager()->transactional(
+            function () use ($visibilityEntity) {
+                $this->cacheBuilder->resolveVisibilitySettings($visibilityEntity);
+            }
+        );
     }
 
     /**
@@ -58,5 +82,15 @@ class ResolveVisibilitySettings extends AbstractAction
     public function initialize(array $options)
     {
         $this->resetVisibility = array_key_exists('reset_visibility', $options) && $options['reset_visibility'];
+    }
+
+    /**
+     * All resolved product visibility entities should be stored together, so entity manager should be the same too
+     *
+     * @return EntityManager
+     */
+    protected function getEntityManager()
+    {
+        return $this->registry->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
     }
 }

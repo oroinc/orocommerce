@@ -44,6 +44,22 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
         $this->loadFixtures(['OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData']);
     }
 
+    public function testFindByPrimaryKey()
+    {
+        /** @var ProductVisibilityResolved $actualEntity */
+        $actualEntity = $this->repository->findOneBy([]);
+        if (!$actualEntity) {
+            $this->markTestSkipped('Can\'t test method because fixture was not loaded.');
+        }
+
+        $expectedEntity = $this->repository->findByPrimaryKey(
+            $actualEntity->getProduct(),
+            $actualEntity->getWebsite()
+        );
+
+        $this->assertEquals(spl_object_hash($expectedEntity), spl_object_hash($actualEntity));
+    }
+
     public function testClearTable()
     {
         $this->repository->clearTable();

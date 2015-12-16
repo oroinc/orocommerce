@@ -60,7 +60,6 @@ parameters:
     orob2b_account.visibility.listener.abstract.class: OroB2B\Bundle\AccountBundle\EventListener\VisibilityAbstractListener
 
     orob2b_account.event_listener.system_config.category_visibility.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigCategoryVisibilityListener
-    orob2b_account.event_listener.category_visibility_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryVisibilityListener
     orob2b_account.event_listener.category_tree_handler_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryTreeHandlerListener
     orob2b_account.event_listener.product_duplicate_listener.class: OroB2B\Bundle\AccountBundle\EventListener\ProductDuplicateListener
 
@@ -114,7 +113,7 @@ parameters:
     orob2b_account.model.action.abstract_category_case_action.class: OroB2B\Bundle\AccountBundle\Model\Action\AbstractCategoryCaseAction
     orob2b_account.model.action.change_category_visibility.class: OroB2B\Bundle\AccountBundle\Model\Action\ChangeCategoryVisibility
     orob2b_account.model.action.change_category_position.class: OroB2B\Bundle\AccountBundle\Model\Action\ChangeCategoryPosition
-    orob2b_account.model.action.resolve_visibility_settings.class: OroB2B\Bundle\AccountBundle\Model\Action\ResolveVisibilitySettings
+    orob2b_account.action.resolve_product_visibility.class: OroB2B\Bundle\AccountBundle\Model\Action\ResolveProductVisibility
     orob2b_account.model.action.category_visibility_cache_clear.class: OroB2B\Bundle\AccountBundle\Model\Action\CategoryVisibilityCacheClearAction
 
     # Visibility cache
@@ -775,12 +774,13 @@ services:
         tags:
             - { name: oro_workflow.action, alias: change_category_position }
 
-    orob2b_account.action.resolve_visibility_settings:
-        class: %orob2b_account.model.action.resolve_visibility_settings.class%
+    orob2b_account.action.resolve_product_visibility:
+        class: %orob2b_account.action.resolve_product_visibility.class%
         calls:
+            - [setRegistry, [@doctrine]]
             - [setCacheBuilder, [@orob2b_account.visibility.cache.product.cache_builder]]
         tags:
-            - { name: oro_workflow.action, alias: resolve_visibility_settings }
+            - { name: oro_workflow.action, alias: resolve_product_visibility }
 
     orob2b_account.model.action.category_visibility_cache_clear:
         class: %orob2b_account.model.action.category_visibility_cache_clear.class%
