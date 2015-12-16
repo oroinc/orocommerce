@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\TaxBundle\Validator;
+namespace OroB2B\Bundle\TaxBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
@@ -18,7 +18,11 @@ class ZipCodeFieldsValidator extends ConstraintValidator
         $propertyPath = $this->context->getPropertyPath() . '.zipCodes';
 
         if ($entity->getZipCode() && ($entity->getZipRangeStart() || $entity->getZipRangeEnd())) {
-            $this->context->addViolationAt($propertyPath, $constraint->message);
+            $this->context->addViolationAt($propertyPath, $constraint->onlyOneTypeMessage);
+        }
+
+        if ($entity->getZipRangeStart() xor $entity->getZipRangeEnd()) {
+            $this->context->addViolationAt($propertyPath, $constraint->rangeBothFieldMessage);
         }
     }
 }

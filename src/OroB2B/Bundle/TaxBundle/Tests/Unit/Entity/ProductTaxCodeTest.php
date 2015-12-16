@@ -14,7 +14,7 @@ class ProductTaxCodeTest extends \PHPUnit_Framework_TestCase
     public function testProperties()
     {
         $properties = [
-            ['id', '1'],
+            ['id', 1],
             ['code', 'fr4a'],
             ['description', 'description'],
             ['createdAt', new \DateTime()],

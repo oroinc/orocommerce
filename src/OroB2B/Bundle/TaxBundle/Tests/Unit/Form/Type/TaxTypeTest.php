@@ -13,6 +13,7 @@ use OroB2B\Bundle\TaxBundle\Form\Type\TaxType;
 class TaxTypeTest extends FormIntegrationTestCase
 {
     const DATA_CLASS = 'OroB2B\Bundle\TaxBundle\Entity\Tax';
+
     /**
      * @var TaxType
      */
@@ -55,7 +56,7 @@ class TaxTypeTest extends FormIntegrationTestCase
     public function testGetName()
     {
         $this->assertInternalType('string', $this->formType->getName());
-        $this->assertEquals(TaxType::NAME, $this->formType->getName());
+        $this->assertEquals('orob2b_tax_type', $this->formType->getName());
     }
 
     public function testBuildForm()

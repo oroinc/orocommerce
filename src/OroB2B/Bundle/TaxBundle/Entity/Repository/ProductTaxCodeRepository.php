@@ -13,7 +13,6 @@ class ProductTaxCodeRepository extends EntityRepository
      * @param Product $product
      *
      * @return ProductTaxCode|null
-     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function findOneByProduct(Product $product)
     {
@@ -24,6 +23,8 @@ class ProductTaxCodeRepository extends EntityRepository
         return $this->createQueryBuilder('productTaxCode')
             ->where(':product MEMBER OF productTaxCode.products')
             ->setParameter('product', $product)
-            ->getQuery()->getOneOrNullResult();
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }
