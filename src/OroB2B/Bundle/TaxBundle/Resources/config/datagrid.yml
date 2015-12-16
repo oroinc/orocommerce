@@ -24,6 +24,7 @@ datagrid:
                     type:      string
                     data_name: tax_code.description
         properties:
+            id: ~
             view_link:
                 type:   url
                 params: [ id ]
