@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ActionBundle\Model;
 
-class ActionContext extends AbstractStorage implements EntityAwareInterface
+class ActionData extends AbstractStorage implements EntityAwareInterface
 {
     /**
      * @return object
@@ -18,6 +18,14 @@ class ActionContext extends AbstractStorage implements EntityAwareInterface
     public function getRedirectUrl()
     {
         return $this->offsetGet('redirectUrl');
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getRefreshGrid()
+    {
+        return $this->offsetGet('refreshGrid');
     }
 
     /**

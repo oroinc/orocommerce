@@ -1,0 +1,14 @@
+{% set params = oro_action_widget_parameters() %}
+
+{% if has_actions(params) %}
+    {{ oro_widget_render({
+        'widgetType': 'buttons',
+        'url': path(
+            'orob2b_frontend_action_widget_buttons', params|merge({
+                dialogRoute: 'orob2b_frontend_action_widget_form',
+                executionRoute: 'orob2b_api_frontend_action_execute'
+            })
+        ),
+        'alias': 'actions_buttons'
+    }) }}
+{% endif %}

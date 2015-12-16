@@ -25,6 +25,18 @@ placeholders:
             web_settings:
                 order: 300
 
+    index_navButtons_before:
+        items:
+            frontend_actions_buttons: ~
+
+    view_navButtons_before:
+        items:
+            frontend_actions_buttons: ~
+
+    update_navButtons_before:
+        items:
+            frontend_actions_buttons: ~
+
 items:
     logo:
         template: OroB2BFrontendBundle:Organization:logo.html.twig
@@ -52,3 +64,6 @@ items:
         template: OroActivityListBundle:ActivityList:activities.html.twig
     web_settings:
         template: OroB2BFrontendBundle:InstallConfiguration:web.html.twig
+    frontend_actions_buttons:
+        template: OroB2BFrontendBundle:Action:buttons.html.twig
+        applicable: @orob2b_frontend.placeholder.filter->isFrontendRoute()
