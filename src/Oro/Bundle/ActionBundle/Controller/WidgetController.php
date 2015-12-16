@@ -11,7 +11,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 use Oro\Bundle\ActionBundle\Model\ContextHelper;
 
@@ -40,23 +42,23 @@ class WidgetController extends Controller
      */
     public function formAction(Request $request, $actionName)
     {
-        $context = $this->getContextHelper()->getActionContext();
+        $data = $this->getContextHelper()->getActionData();
         $errors = new ArrayCollection();
         $params = [];
 
         try {
             /** @var Form $form */
-            $form = $this->get('oro_action.form_manager')->getActionForm($actionName);
+            $form = $this->get('oro_action.form_manager')->getActionForm($actionName, $data);
             $form->handleRequest($request);
 
             if ($form->isValid()) {
-                $context = $this->getActionManager()->execute($actionName, $form->getData(), $errors);
+                $data = $this->getActionManager()->execute($actionName, $form->getData(), $errors);
 
-                $params['response'] = $context->getRedirectUrl() ? ['redirectUrl' => $context->getRedirectUrl()] : [];
+                $params['response'] = $this->getResponse($data);
             }
 
             $params['form'] = $form->createView();
-            $params['context'] = $context->getValues();
+            $params['context'] = $data->getValues();
         } catch (\Exception $e) {
             if (!$errors->count()) {
                 $errors->add(['message' => $e->getMessage()]);
@@ -82,5 +84,25 @@ class WidgetController extends Controller
     protected function getContextHelper()
     {
         return $this->get('oro_action.helper.context');
+    }
+
+    /**
+     * @param ActionData $context
+     * @return array
+     */
+    protected function getResponse(ActionData $context)
+    {
+        /* @var $session Session */
+        $session = $this->getRequest()->getSession();
+
+        $response = [];
+        if ($context->getRedirectUrl()) {
+            $response['redirectUrl'] = $context->getRedirectUrl();
+        } elseif ($context->getRefreshGrid()) {
+            $response['refreshGrid'] = $context->getRefreshGrid();
+            $response['flashMessages'] = $session->getFlashBag()->all();
+        }
+
+        return $response;
     }
 }

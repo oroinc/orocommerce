@@ -197,7 +197,7 @@ services:
         tags:
             - { name: oro_action.function, alias: assign_constant_value }
 
-    oro_action.function.copy_tagging.class:
+    oro_action.function.copy_tagging:
         class: %oro_action.function.copy_tagging.class%
         arguments:
             - @oro_action.context_accessor
@@ -212,3 +212,10 @@ services:
             - @service_container
         tags:
             - { name: oro_action.function, alias: call_service_method }
+
+    oro_action.function.refresh_grid:
+        class: Oro\Bundle\ActionBundle\Action\RefreshGrid
+        arguments:
+            - @oro_action.context_accessor
+        tags:
+            - { name: oro_action.function, alias: refresh_grid }

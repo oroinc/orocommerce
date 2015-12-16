@@ -69,7 +69,7 @@ actions:
             @equal: [$status.draft, false]
         postfunctions:
             - @call_service_method:
-                service: orob2b_rfp.service.request_data_storage
+                service: orob2b_rfp.service.request_to_quote_data_storage
                 method: saveToStorage
                 method_parameters: [$.data]
             - @redirect:
