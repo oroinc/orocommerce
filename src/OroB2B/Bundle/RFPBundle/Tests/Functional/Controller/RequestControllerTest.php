@@ -17,6 +17,12 @@ class RequestControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+
+        $this->loadFixtures(
+            [
+                'OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData'
+            ]
+        );
     }
 
     public function testIndex()
