@@ -8,7 +8,7 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 /**
  * @dbIsolation
  */
-class ProductResolvedCacheBuilderTest extends CacheBuilderTestCase
+class CategoryPositionChangeTest extends CategoryCacheTestCase
 {
     /**
      * @var ProductResolvedCacheBuilder
@@ -40,11 +40,9 @@ class ProductResolvedCacheBuilderTest extends CacheBuilderTestCase
 
         $category->setParentCategory($newParentCategory);
 
-        $em = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroB2BAccountBundle:Visibility\CategoryVisibility');
-        $em->flush();
-
-        $this->cacheBuilder->categoryPositionChanged($category);
+        $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BAccountBundle:Visibility\CategoryVisibility')
+            ->flush();
 
         $this->assertProductVisibilityResolvedCorrect($expectedData);
     }
@@ -76,6 +74,7 @@ class ProductResolvedCacheBuilderTest extends CacheBuilderTestCase
                     ],
                     'hiddenProductsByAccounts' => [
                         'account.level_1.1' => [
+                            'product.1',
                             'product.2',
                             'product.3',
                             'product.6',

@@ -8,29 +8,19 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Component\Testing\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\CacheBuilder;
 
-abstract class CacheBuilderTestCase extends WebTestCase
+abstract class CategoryCacheTestCase extends WebTestCase
 {
-    /**
-     * @var CacheBuilder
-     */
-    protected $cacheBuilder;
-
     public function setUp()
     {
         $this->initClient();
 
-        $this->flushCategoryVisibilityCache();
-
         $this->loadFixtures([
             'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityFallbackCategoryData'
         ]);
-
-        $this->cacheBuilder = $this->getContainer()->get($this->getCacheBuilderContainerId());
     }
 
-    protected function flushCategoryVisibilityCache()
+    public function tearDown()
     {
         $this->getContainer()->get('orob2b_account.storage.category_visibility_storage')->flush();
     }
