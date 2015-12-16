@@ -21,16 +21,33 @@ class ChangeCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
      */
     protected $action;
 
+    /**
+     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $registry;
+
+    /**
+     * @var  CategoryCaseCacheBuilderInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $cacheBuilder;
+
     protected function setUp()
     {
         $contextAccessor = new ContextAccessor();
-        $this->action    = new ChangeCategoryVisibility($contextAccessor);
+        $this->action = new ChangeCategoryVisibility($contextAccessor);
+
+        $this->registry = $this->getMock('Symfony\Bridge\Doctrine\RegistryInterface');
+        $this->cacheBuilder = $this
+            ->getMock('OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface');
+
         /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject $dispatcher */
         $dispatcher = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcher')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->action->setDispatcher($dispatcher);
+        $this->action->setRegistry($this->registry);
+        $this->action->setCacheBuilder($this->cacheBuilder);
     }
 
     protected function tearDown()

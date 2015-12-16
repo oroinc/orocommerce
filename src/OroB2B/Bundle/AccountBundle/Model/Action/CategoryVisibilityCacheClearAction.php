@@ -2,11 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Model\Action;
 
-use Symfony\Component\PropertyAccess\PropertyPathInterface;
-
-use Oro\Bundle\WorkflowBundle\Model\Action\AbstractAction;
-use Oro\Bundle\WorkflowBundle\Model\ProcessData;
-
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
@@ -28,13 +23,8 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
  *
  * @category_visibility_cache_clear:[$some.path]
  */
-class CategoryVisibilityCacheClearAction extends AbstractAction
+class CategoryVisibilityCacheClearAction extends AbstractEntityAwareAction
 {
-    /**
-     * @var PropertyPathInterface|object
-     */
-    protected $entity;
-
     /**
      * @var CategoryVisibilityStorage
      */
@@ -53,15 +43,7 @@ class CategoryVisibilityCacheClearAction extends AbstractAction
      */
     protected function executeAction($context)
     {
-        if (!$context instanceof ProcessData) {
-            throw new \LogicException('This action can be called only from process context');
-        }
-
-        if ($this->entity) {
-            $entity = $this->contextAccessor->getValue($context, $this->entity);
-        } else {
-            $entity = $context->getEntity();
-        }
+        $entity = $this->getEntity($context);
 
         if ($entity instanceof Category) {
             $this->categoryVisibilityStorage->flush();
@@ -85,12 +67,6 @@ class CategoryVisibilityCacheClearAction extends AbstractAction
             throw new \InvalidArgumentException('CategoryVisibilityStorage is not provided');
         }
 
-        if (isset($options['entity'])) {
-            $this->entity = $options['entity'];
-        } elseif (isset($options[0])) {
-            $this->entity = $options[0];
-        }
-
-        return $this;
+        return parent::initialize($options);
     }
 }

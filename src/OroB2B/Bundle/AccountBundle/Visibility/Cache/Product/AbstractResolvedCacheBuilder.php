@@ -49,7 +49,7 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
     ) {
         $productVisibilityResolved->setSourceProductVisibility($productVisibility);
         $productVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_STATIC);
-        $productVisibilityResolved->setCategoryId(null);
+        $productVisibilityResolved->setCategory(null);
         if ($selectedVisibility === VisibilityInterface::VISIBLE) {
             $productVisibilityResolved->setVisibility(BaseProductVisibilityResolved::VISIBILITY_VISIBLE);
         } elseif ($selectedVisibility === VisibilityInterface::HIDDEN) {
@@ -67,7 +67,7 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
     ) {
         $productVisibilityResolved->setSourceProductVisibility($productVisibility);
         $productVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_STATIC);
-        $productVisibilityResolved->setCategoryId(null);
+        $productVisibilityResolved->setCategory(null);
         $productVisibilityResolved->setVisibility($this->getVisibilityFromConfig());
     }
 

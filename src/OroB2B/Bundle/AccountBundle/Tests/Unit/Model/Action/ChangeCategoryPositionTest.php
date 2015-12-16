@@ -21,6 +21,16 @@ class ChangeCategoryPositionTest extends \PHPUnit_Framework_TestCase
      */
     protected $action;
 
+    /**
+     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $registry;
+
+    /**
+     * @var CategoryCaseCacheBuilderInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $cacheBuilder;
+
     protected function setUp()
     {
         $contextAccessor = new ContextAccessor();
@@ -30,7 +40,13 @@ class ChangeCategoryPositionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->registry = $this->getMock('Symfony\Bridge\Doctrine\RegistryInterface');
+        $this->cacheBuilder = $this
+            ->getMock('OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface');
+
         $this->action->setDispatcher($dispatcher);
+        $this->action->setRegistry($this->registry);
+        $this->action->setCacheBuilder($this->cacheBuilder);
     }
 
     /**
