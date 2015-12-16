@@ -115,7 +115,6 @@ parameters:
     orob2b_account.model.action.change_category_position.class: OroB2B\Bundle\AccountBundle\Model\Action\ChangeCategoryPosition
     orob2b_account.action.resolve_product_visibility.class: OroB2B\Bundle\AccountBundle\Model\Action\ResolveProductVisibility
     orob2b_account.model.action.category_visibility_cache_clear.class: OroB2B\Bundle\AccountBundle\Model\Action\CategoryVisibilityCacheClearAction
-    orob2b_account.model.action.product_visibility_website_added.class: OroB2B\Bundle\AccountBundle\Model\Action\ProductVisibilityWebsiteAddedAction
 
     # Visibility cache
     orob2b_account.visibility.cache.product.account_group_product_resolved_cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\AccountGroupProductResolvedCacheBuilder
@@ -791,12 +790,3 @@ services:
             - [setCategoryVisibilityStorage, [@orob2b_account.storage.category_visibility_storage]]
         tags:
             - { name: oro_workflow.action, alias: category_visibility_cache_clear }
-
-    orob2b_account.model.action.product_visibility_website_added:
-        class: %orob2b_account.model.action.product_visibility_website_added.class%
-        arguments:
-            - @oro_workflow.context_accessor
-        calls:
-            - [setCacheBuilder, [@orob2b_account.visibility.cache.product.product_resolved_cache_builder]]
-        tags:
-            - { name: oro_workflow.action, alias: product_visibility_website_added }
