@@ -43,7 +43,7 @@ class ActionManager
      */
     private $entities;
 
-
+    /**
      * @var array
      */
     private $datagrids;
@@ -185,19 +185,21 @@ class ActionManager
         $actions = [];
 
         if ($context[ContextHelper::ROUTE_PARAM] &&
-            array_key_exists($context[ContextHelper::ROUTE_PARAM], $this->routes)) {
+            array_key_exists($context[ContextHelper::ROUTE_PARAM], $this->routes)
+        ) {
             $actions = array_merge($actions, $this->routes[$context[ContextHelper::ROUTE_PARAM]]);
         }
 
-
-        if ($context['datagrid'] && array_key_exists($context['datagrid'], $this->datagrids)) {
-            $actions = $this->datagrids[$context['datagrid']];
+        if ($context[ContextHelper::DATAGRID_PARAM] &&
+            array_key_exists($context[ContextHelper::DATAGRID_PARAM], $this->datagrids)
+        ) {
+            $actions = $this->datagrids[$context[ContextHelper::DATAGRID_PARAM]];
         }
 
         if ($context[ContextHelper::ENTITY_CLASS_PARAM] &&
             $context[ContextHelper::ENTITY_ID_PARAM] &&
             array_key_exists($context[ContextHelper::ENTITY_CLASS_PARAM], $this->entities)
-        {
+        ) {
             $actions = array_merge($actions, $this->entities[$context[ContextHelper::ENTITY_CLASS_PARAM]]);
         }
 
@@ -215,7 +217,11 @@ class ActionManager
 
     protected function loadActions()
     {
-        if ($this->entities !== null || $this->routes !== null || $this->datagrids !== null || $this->actions !== null) {
+        if ($this->entities !== null ||
+            $this->routes !== null ||
+            $this->datagrids !== null ||
+            $this->actions !== null
+        ) {
             return;
         }
 

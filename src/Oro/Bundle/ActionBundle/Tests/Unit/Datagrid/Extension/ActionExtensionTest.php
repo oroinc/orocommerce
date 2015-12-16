@@ -4,7 +4,7 @@ namespace Oro\Bundle\ActionBundle\Tests\Unit\Datagrid\Extension;
 
 use Oro\Bundle\ActionBundle\Datagrid\Extension\ActionExtension;
 use Oro\Bundle\ActionBundle\Model\Action;
-use Oro\Bundle\ActionBundle\Model\ActionContext;
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionDefinition;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 use Oro\Bundle\ActionBundle\Model\ContextHelper;
@@ -34,11 +34,11 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $context = new ActionContext(['data' => ['param']]);
+        $actionData = new ActionData(['data' => ['param']]);
 
         $contextHelper->expects($this->any())
-            ->method('getActionContext')
-            ->willReturn($context);
+            ->method('getActionData')
+            ->willReturn($actionData);
 
         $this->extension = new ActionExtension($this->manager, $contextHelper);
     }

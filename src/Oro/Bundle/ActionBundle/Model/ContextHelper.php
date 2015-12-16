@@ -13,6 +13,7 @@ class ContextHelper
     const ROUTE_PARAM = 'route';
     const ENTITY_ID_PARAM = 'entityId';
     const ENTITY_CLASS_PARAM = 'entityClass';
+    const DATAGRID_PARAM = 'datagrid';
 
     /** @var DoctrineHelper */
     protected $doctrineHelper;
@@ -47,7 +48,7 @@ class ContextHelper
                 self::ROUTE_PARAM => $this->getRequestParameter(self::ROUTE_PARAM),
                 self::ENTITY_ID_PARAM => $this->getRequestParameter(self::ENTITY_ID_PARAM),
                 self::ENTITY_CLASS_PARAM => $this->getRequestParameter(self::ENTITY_CLASS_PARAM),
-                'datagrid' => $this->getRequestParameter('datagrid'),
+                self::DATAGRID_PARAM => $this->getRequestParameter(self::DATAGRID_PARAM),
             ];
         }
 
@@ -103,6 +104,7 @@ class ContextHelper
                 self::ROUTE_PARAM => null,
                 self::ENTITY_ID_PARAM => null,
                 self::ENTITY_CLASS_PARAM => null,
+                self::DATAGRID_PARAM => null,
             ],
             $context
         );

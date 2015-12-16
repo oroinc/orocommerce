@@ -478,7 +478,7 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
             ->method('getContext')
             ->willReturnCallback(function ($context) {
                 return array_merge(
-                    ['route' => null, 'entityId' => null, 'entityClass' => null],
+                    ['route' => null, 'entityId' => null, 'entityClass' => null, 'datagrid' => null],
                     $context
                 );
             });

@@ -70,10 +70,10 @@ class ActionExtension extends AbstractExtension
                 'entityId' => $record->getValue('id'),
                 'entityClass' => $context['entityClass'],
             ];
-            $actionContext = $this->contextHelper->getActionContext($context);
+            $actionData = $this->contextHelper->getActionData($context);
             $actionsList = [];
             foreach ($actions as $action) {
-                $actionsList[$action->getName()] = $action->isAllowed($actionContext);
+                $actionsList[$action->getName()] = $action->isAllowed($actionData);
             }
             $record->addData(['actions' => $actionsList]);
         }

@@ -108,7 +108,8 @@ class ActionControllerTest extends WebTestCase
                 'frontend_options' => [],
                 'entities' => [],
                 'routes' => [],
-                'postfunctions' => [['@assign_value' => ['$message', 'new test message']]],
+                'datagrids' => [],
+                'postfunctions' => [['@assign_value' => ['$message', self::MESSAGE_NEW]]],
             ]
         ];
 
