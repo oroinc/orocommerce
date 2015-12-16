@@ -68,3 +68,16 @@ product.7:
         reference: product.7.visibility.all
     groups: {}
     accounts: {}
+product.8:
+    website: US
+    all:
+        visibility: config
+        reference: product.8.visibility.all
+    groups:
+        account_group.group1:
+            visibility: category
+            reference: product.8.visibility.account_group.group1
+    accounts:
+        account.level_1:
+            visibility: category
+            reference: product.8.visibility.account.level_1

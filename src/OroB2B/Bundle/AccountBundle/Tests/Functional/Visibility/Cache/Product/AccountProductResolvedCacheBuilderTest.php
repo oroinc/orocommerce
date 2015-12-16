@@ -67,7 +67,7 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
         $visibilityResolved = $this->getVisibilityResolved();
         $this->assertEquals($visibility, $visibilityResolved->getSourceProductVisibility());
         $this->assertEquals(BaseProductVisibilityResolved::SOURCE_CATEGORY, $visibilityResolved->getSource());
-        $this->assertEquals($category->getId(), $visibilityResolved->getCategoryId());
+        $this->assertEquals($category->getId(), $visibilityResolved->getCategory()->getId());
         $this->assertEquals(BaseProductVisibilityResolved::VISIBILITY_HIDDEN, $visibilityResolved->getVisibility());
         $this->assertProductIdentifyEntitiesAccessory($visibilityResolved);
     }
@@ -112,7 +112,7 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
 
         $visibilityResolved = $this->getVisibilityResolved();
         $this->assertEquals($visibility, $visibilityResolved->getSourceProductVisibility());
-        $this->assertNull($visibilityResolved->getCategoryId());
+        $this->assertNull($visibilityResolved->getCategory());
         $this->assertEquals(BaseProductVisibilityResolved::SOURCE_STATIC, $visibilityResolved->getSource());
         $this->assertEquals(BaseProductVisibilityResolved::VISIBILITY_HIDDEN, $visibilityResolved->getVisibility());
         $this->assertProductIdentifyEntitiesAccessory($visibilityResolved);
@@ -145,7 +145,7 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
 
         $visibilityResolved = $this->getVisibilityResolved();
         $this->assertEquals($visibility, $visibilityResolved->getSourceProductVisibility());
-        $this->assertNull($visibilityResolved->getCategoryId());
+        $this->assertNull($visibilityResolved->getCategory());
         $this->assertEquals(BaseProductVisibilityResolved::SOURCE_STATIC, $visibilityResolved->getSource());
         $this->assertEquals(BaseProductVisibilityResolved::VISIBILITY_VISIBLE, $visibilityResolved->getVisibility());
         $this->assertProductIdentifyEntitiesAccessory($visibilityResolved);

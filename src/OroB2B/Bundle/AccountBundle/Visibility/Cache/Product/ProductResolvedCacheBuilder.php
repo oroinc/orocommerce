@@ -79,7 +79,7 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
                     $this->convertVisibility($this->categoryVisibilityResolver->isCategoryVisible($category))
                 );
                 $productVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_CATEGORY);
-                $productVisibilityResolved->setCategoryId($category->getId());
+                $productVisibilityResolved->setCategory($category);
             } else {
                 $this->resolveConfigValue($productVisibilityResolved);
             }

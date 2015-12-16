@@ -134,6 +134,6 @@ abstract class CacheBuilderTestCase extends WebTestCase
                 $alias . '.visibility',
                 BaseProductVisibilityResolved::VISIBILITY_HIDDEN
             ))
-            ->orderBy($alias . '.categoryId');
+            ->orderBy($alias . '.category');
     }
 }
