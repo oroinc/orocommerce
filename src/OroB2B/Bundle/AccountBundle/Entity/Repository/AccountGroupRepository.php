@@ -12,13 +12,17 @@ class AccountGroupRepository extends EntityRepository
     /**
      * @param Category $category
      * @param string $visibility
+     * @param array $restrictedAccountGroupIds
      * @return array
      */
-    public function getCategoryAccountGroupsByVisibility(Category $category, $visibility)
-    {
+    public function getCategoryAccountGroupIdsByVisibility(
+        Category $category,
+        $visibility,
+        array $restrictedAccountGroupIds = null
+    ) {
         $qb = $this->createQueryBuilder('accountGroup');
 
-        $qb->select('accountGroup')
+        $qb->select('accountGroup.id')
             ->leftJoin(
                 'OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility',
                 'AccountGroupCategoryVisibility',
@@ -32,6 +36,12 @@ class AccountGroupRepository extends EntityRepository
                 'visibility' => $visibility
             ]);
 
-        return $qb->getQuery()->getResult();
+        if ($restrictedAccountGroupIds !== null) {
+            $qb->andWhere($qb->expr()->in('accountGroup.id', ':restrictedAccountGroupIds'))
+            ->setParameter('restrictedAccountGroupIds', $restrictedAccountGroupIds);
+        }
+
+        // Return only account group ids
+        return array_map('current', $qb->getQuery()->getScalarResult());
     }
 }

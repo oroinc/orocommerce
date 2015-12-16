@@ -54,7 +54,7 @@ class SystemConfigCategoryVisibilityListenerTest extends \PHPUnit_Framework_Test
             ->will($this->returnValue($settings));
 
         $this->categoryVisibilityStorage->expects($clearAll ? $this->once() : $this->never())
-            ->method('clearData');
+            ->method('flush');
 
         $this->listener->onSettingsSaveBefore($event);
     }

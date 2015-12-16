@@ -2,11 +2,14 @@
 
 namespace OroB2B\Bundle\AccountBundle\Model\Action;
 
-use Oro\Bundle\WorkflowBundle\Model\Action\AbstractAction;
+use Doctrine\ORM\EntityManager;
 
+use Oro\Bundle\WorkflowBundle\Model\ProcessData;
+
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;
 
-class ChangeCategoryPosition extends AbstractAction
+class ChangeCategoryPosition extends AbstractCategoryCaseAction
 {
     /**
      * @var CategoryCaseCacheBuilderInterface
@@ -18,19 +21,11 @@ class ChangeCategoryPosition extends AbstractAction
      */
     public function initialize(array $options)
     {
-        if (!$this->cacheBuilder) {
-            throw new \InvalidArgumentException('CacheBuilder for category position change is not provided');
+        parent::initialize($options);
+
+        if (!$this->cacheBuilder instanceof CategoryCaseCacheBuilderInterface) {
+            throw new \InvalidArgumentException('Cache builder must impelement CategoryCaseCacheBuilderInterface');
         }
-
-        return $this;
-    }
-
-    /**
-     * @param CategoryCaseCacheBuilderInterface $cacheBuilder
-     */
-    public function setCacheBuilder(CategoryCaseCacheBuilderInterface $cacheBuilder)
-    {
-        $this->cacheBuilder = $cacheBuilder;
     }
 
     /**
@@ -38,8 +33,21 @@ class ChangeCategoryPosition extends AbstractAction
      */
     protected function executeAction($context)
     {
-        $category = $context->getEntity();
+        if (!$context instanceof ProcessData) {
+            throw new \LogicException('This action can be called only from process context');
+        }
 
-        $this->cacheBuilder->categoryPositionChanged($category);
+        $category = $context->getEntity();
+        if (!$category instanceof Category) {
+            throw new \LogicException('Action can be applied only to Category entity');
+        }
+
+        /** @var EntityManager $em */
+        $em = $this->registry->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
+        $em->transactional(
+            function () use ($category) {
+                $this->cacheBuilder->categoryPositionChanged($category);
+            }
+        );
     }
 }

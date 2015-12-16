@@ -11,7 +11,9 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountAwareInterface;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(
+ *     repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository\AccountCategoryVisibilityRepository"
+ * )
  * @ORM\Table(name="orob2b_acc_category_visibility")
  * @Config
  */
