@@ -58,13 +58,16 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
         $selectedVisibility = $productVisibility->getVisibility();
 
         $em = $this->registry->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
-        $productVisibilityResolved = $em
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
-            ->findByPrimaryKey($product, $website);
+        $er = $em->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
+        $productVisibilityResolved = $er->findByPrimaryKey($product, $website);
+
+        $insert = false;
+        $delete = false;
+        $update = [];
+        $where = ['website' => $website, 'product' => $product];
 
         if (!$productVisibilityResolved && $selectedVisibility !== ProductVisibility::CONFIG) {
-            $productVisibilityResolved = new ProductVisibilityResolved($website, $product);
-            $em->persist($productVisibilityResolved);
+            $insert = true;
         }
 
         if ($selectedVisibility === ProductVisibility::CATEGORY) {
@@ -74,26 +77,30 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
                 ->findOneByProduct($product);
 
             if ($category) {
-                $productVisibilityResolved->setSourceProductVisibility(null);
-                $productVisibilityResolved->setVisibility(
-                    $this->convertVisibility($this->categoryVisibilityResolver->isCategoryVisible($category))
-                );
-                $productVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_CATEGORY);
-                $productVisibilityResolved->setCategoryId($category->getId());
+                $update = [
+                    'sourceProductVisibility' => null,
+                    'visibility' => $this->convertVisibility(
+                        $this->categoryVisibilityResolver->isCategoryVisible($category)
+                    ),
+                    'source' => BaseProductVisibilityResolved::SOURCE_CATEGORY,
+                    'categoryId' => $category->getId()
+                ];
             } else {
-                $this->resolveConfigValue($productVisibilityResolved);
+                $update = $this->resolveConfigValue($productVisibility);
             }
         } elseif ($selectedVisibility === ProductVisibility::CONFIG) {
             if ($productVisibilityResolved) {
-                $em->remove($productVisibilityResolved);
+                $delete = true;
             }
         } else {
-            $this->resolveStaticValues($productVisibilityResolved, $productVisibility, $selectedVisibility);
+            $update = $this->resolveStaticValues($productVisibility, $selectedVisibility);
         }
 
+        $this->executeDbQuery($er, $insert, $delete, $update, $where);
+
         // set calculated visibility to account resolved values
-        if ($productVisibilityResolved && $selectedVisibility !== ProductVisibility::CONFIG) {
-            $visibility = $productVisibilityResolved->getVisibility();
+        if ($selectedVisibility !== ProductVisibility::CONFIG) {
+            $visibility = $update['visibility'];
         } else {
             $visibility = $this->getVisibilityFromConfig();
         }

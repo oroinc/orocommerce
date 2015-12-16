@@ -4,8 +4,10 @@ namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
+use OroB2B\Bundle\AccountBundle\Entity\Repository\ProductResolvedRepositoryTrait;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
@@ -41,34 +43,55 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
      * @param BaseProductVisibilityResolved $productVisibilityResolved
      * @param VisibilityInterface $productVisibility
      * @param string $selectedVisibility
+     * @return array
      */
-    protected function resolveStaticValues(
-        BaseProductVisibilityResolved $productVisibilityResolved,
-        VisibilityInterface $productVisibility,
-        $selectedVisibility
-    ) {
-        $productVisibilityResolved->setSourceProductVisibility($productVisibility);
-        $productVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_STATIC);
-        $productVisibilityResolved->setCategoryId(null);
+    protected function resolveStaticValues(VisibilityInterface $productVisibility, $selectedVisibility)
+    {
+        $updateData = [
+            'sourceProductVisibility' => $productVisibility,
+            'source' => BaseProductVisibilityResolved::SOURCE_STATIC,
+            'categoryId' => null,
+        ];
+
         if ($selectedVisibility === VisibilityInterface::VISIBLE) {
-            $productVisibilityResolved->setVisibility(BaseProductVisibilityResolved::VISIBILITY_VISIBLE);
+            $updateData['visibility'] = BaseProductVisibilityResolved::VISIBILITY_VISIBLE;
         } elseif ($selectedVisibility === VisibilityInterface::HIDDEN) {
-            $productVisibilityResolved->setVisibility(BaseProductVisibilityResolved::VISIBILITY_HIDDEN);
+            $updateData['visibility'] = BaseProductVisibilityResolved::VISIBILITY_HIDDEN;
         }
+
+        return $updateData;
     }
 
     /**
-     * @param BaseProductVisibilityResolved $productVisibilityResolved
      * @param VisibilityInterface|null $productVisibility
+     * @return array
      */
-    protected function resolveConfigValue(
-        BaseProductVisibilityResolved $productVisibilityResolved,
-        VisibilityInterface $productVisibility = null
-    ) {
-        $productVisibilityResolved->setSourceProductVisibility($productVisibility);
-        $productVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_STATIC);
-        $productVisibilityResolved->setCategoryId(null);
-        $productVisibilityResolved->setVisibility($this->getVisibilityFromConfig());
+    protected function resolveConfigValue(VisibilityInterface $productVisibility = null)
+    {
+        return [
+            'sourceProductVisibility' => $productVisibility,
+            'visibility' => $this->getVisibilityFromConfig(),
+            'source' => BaseProductVisibilityResolved::SOURCE_STATIC,
+            'categoryId' => null,
+        ];
+    }
+
+    /**
+     * @param EntityRepository|ProductResolvedRepositoryTrait $repository
+     * @param bool $insert
+     * @param bool $delete
+     * @param array $update
+     * @param array $where
+     */
+    protected function executeDbQuery(EntityRepository $repository, $insert, $delete, array $update, array $where)
+    {
+        if ($insert) {
+            $repository->insertEntity(array_merge($update, $where));
+        } elseif ($delete) {
+            $repository->deleteEntity($where);
+        } elseif ($update) {
+            $repository->updateEntity($update, $where);
+        }
     }
 
     /**

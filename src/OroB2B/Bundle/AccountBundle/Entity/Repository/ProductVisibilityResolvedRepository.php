@@ -20,6 +20,8 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  */
 class ProductVisibilityResolvedRepository extends EntityRepository
 {
+    use ProductResolvedRepositoryTrait;
+
     /**
      * @param InsertFromSelectQueryExecutor $executor
      * @param int $visibility

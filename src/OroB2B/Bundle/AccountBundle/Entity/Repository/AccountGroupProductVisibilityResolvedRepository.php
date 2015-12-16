@@ -17,6 +17,8 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  */
 class AccountGroupProductVisibilityResolvedRepository extends EntityRepository
 {
+    use ProductResolvedRepositoryTrait;
+
     /**
      * @param AccountGroup $accountGroup
      * @param Product $product

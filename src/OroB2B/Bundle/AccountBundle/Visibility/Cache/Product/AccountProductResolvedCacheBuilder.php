@@ -25,16 +25,19 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
 
         $selectedVisibility = $accountProductVisibility->getVisibility();
 
-        $em = $this->registry->getManagerForClass(
-            'OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved'
-        );
-        $accountProductVisibilityResolved = $em
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved')
-            ->findByPrimaryKey($account, $product, $website);
+        $em = $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved');
+        $er = $accountProductVisibilityResolved = $em
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved');
+        $accountProductVisibilityResolved = $er->findByPrimaryKey($account, $product, $website);
+
+        $insert = false;
+        $delete = false;
+        $update = [];
+        $where = ['account' => $account, 'website' => $website, 'product' => $product];
 
         if (!$accountProductVisibilityResolved && $selectedVisibility !== AccountProductVisibility::ACCOUNT_GROUP) {
-            $accountProductVisibilityResolved = new AccountProductVisibilityResolved($website, $product, $account);
-            $em->persist($accountProductVisibilityResolved);
+            $insert = true;
         }
 
         if ($selectedVisibility === AccountProductVisibility::CATEGORY) {
@@ -43,38 +46,38 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
                 ->getRepository('OroB2BCatalogBundle:Category')
                 ->findOneByProduct($product);
             if ($category) {
-                $accountProductVisibilityResolved->setVisibility(
-                    $this->convertVisibility(
+                $update = [
+                    'sourceProductVisibility' => $accountProductVisibility,
+                    'visibility' => $this->convertVisibility(
                         $this->categoryVisibilityResolver->isCategoryVisibleForAccount($category, $account)
-                    )
-                );
-                $accountProductVisibilityResolved->setSourceProductVisibility($accountProductVisibility);
-                $accountProductVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_CATEGORY);
-                $accountProductVisibilityResolved->setCategoryId($category->getId());
+                    ),
+                    'source' => BaseProductVisibilityResolved::SOURCE_CATEGORY,
+                    'categoryId' => $category->getId()
+                ];
             } else {
-                $this->resolveConfigValue($accountProductVisibilityResolved, $accountProductVisibility);
+                $update = $this->resolveConfigValue($accountProductVisibility);
             }
         } elseif ($selectedVisibility === AccountProductVisibility::CURRENT_PRODUCT) {
             $productVisibilityResolved = $this->getProductVisibilityResolved($product, $website);
             if ($productVisibilityResolved) {
-                $accountProductVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_STATIC);
-                $accountProductVisibilityResolved->setCategoryId(null);
-                $accountProductVisibilityResolved->setVisibility($productVisibilityResolved->getVisibility());
-                $accountProductVisibilityResolved->setSourceProductVisibility($accountProductVisibility);
+                $update = [
+                    'sourceProductVisibility' => $accountProductVisibility,
+                    'visibility' => $productVisibilityResolved->getVisibility(),
+                    'source' => BaseProductVisibilityResolved::SOURCE_STATIC,
+                    'categoryId' => null,
+                ];
             } else {
-                $this->resolveConfigValue($accountProductVisibilityResolved, $accountProductVisibility);
+                $update = $this->resolveConfigValue($accountProductVisibility);
             }
         } elseif ($selectedVisibility === AccountProductVisibility::ACCOUNT_GROUP) {
             if ($accountProductVisibilityResolved) {
-                $em->remove($accountProductVisibilityResolved);
+                $delete = true;
             }
         } else {
-            $this->resolveStaticValues(
-                $accountProductVisibilityResolved,
-                $accountProductVisibility,
-                $selectedVisibility
-            );
+            $update = $this->resolveStaticValues($accountProductVisibility, $selectedVisibility);
         }
+
+        $this->executeDbQuery($er, $insert, $delete, $update, $where);
     }
 
     /**

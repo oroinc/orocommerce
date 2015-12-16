@@ -69,11 +69,16 @@ class ResolveProductVisibility extends AbstractAction
             $visibilityEntity->setVisibility($visibilityEntity::getDefault($visibilityEntity));
         }
 
-        $this->getEntityManager()->transactional(
-            function () use ($visibilityEntity) {
-                $this->cacheBuilder->resolveVisibilitySettings($visibilityEntity);
-            }
-        );
+
+        $em = $this->getEntityManager();
+        $em->beginTransaction();
+        try {
+            $this->cacheBuilder->resolveVisibilitySettings($visibilityEntity);
+            $em->commit();
+        } catch (\Exception $e) {
+            $em->rollback();
+            throw $e;
+        }
     }
 
     /**

@@ -1,0 +1,120 @@
+<?php
+
+namespace OroB2B\Bundle\AccountBundle\Entity\Repository;
+
+use Doctrine\Common\Util\ClassUtils;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\ClassMetadataInfo;
+use Doctrine\ORM\QueryBuilder;
+
+/**
+ * @method ClassMetadataInfo getClassMetadata()
+ * @method EntityManager getEntityManager()
+ * @method string getEntityName()
+ * @method QueryBuilder createQueryBuilder($alias)
+ */
+trait ProductResolvedRepositoryTrait
+{
+    /**
+     * @param array $data
+     */
+    public function insertEntity(array $data)
+    {
+        $metadata = $this->getClassMetadata();
+        $columns = [];
+        $parameters = [];
+
+        foreach ($data as $fieldName => $fieldValue) {
+            if ($metadata->hasField($fieldName)) {
+                $column = $metadata->getColumnName($fieldName);
+            } elseif ($metadata->hasAssociation($fieldName)) {
+                $column = $metadata->getAssociationMapping($fieldName)['joinColumns'][0]['name'];
+            } else {
+                $column = $fieldName;
+            }
+            $columns[$column] = '?';
+
+            if (is_object($fieldValue)) {
+                $parameters[] = $this->getEntityIdentifier($fieldValue);
+            } else {
+                $parameters[] = $fieldValue;
+            }
+        }
+
+        $this->getEntityManager()->getConnection()->createQueryBuilder()
+            ->insert($metadata->getTableName())
+            ->values($columns)
+            ->setParameters($parameters)
+            ->execute();
+    }
+
+    /**
+     * @param array $set
+     * @param array $where
+     */
+    public function updateEntity(array $set, array $where)
+    {
+        $queryBuilder = $this->createQueryBuilder('entity')
+            ->update($this->getEntityName(), 'entity');
+
+        $parameterIndex = 0;
+
+        foreach ($set as $field => $value) {
+            $parameterIndex++;
+            $parameterName = 'parameter' . $parameterIndex;
+            $queryBuilder->set('entity.' . $field, ':' . $parameterName)
+                ->setParameter($parameterName, $value);
+        }
+
+        foreach ($where as $field => $value) {
+            $parameterIndex++;
+            $parameterName = 'parameter' . $parameterIndex;
+            $queryBuilder->andWhere(sprintf('entity.%s = :%s', $field, $parameterName))
+                ->setParameter($parameterName, $value);
+        }
+
+        $queryBuilder
+            ->setMaxResults(1)
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     * @param array $where
+     */
+    public function deleteEntity(array $where)
+    {
+        $queryBuilder = $this->createQueryBuilder('entity')
+            ->delete($this->getEntityName(), 'entity');
+
+        $parameterIndex = 0;
+        foreach ($where as $field => $value) {
+            $parameterIndex++;
+            $parameterName = 'parameter' . $parameterIndex;
+            $queryBuilder->andWhere(sprintf('entity.%s = :%s', $field, $parameterName))
+                ->setParameter($parameterName, $value);
+        }
+
+        $queryBuilder
+            ->setMaxResults(1)
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     * @param object $entity
+     * @return int
+     */
+    protected function getEntityIdentifier($entity)
+    {
+        $fieldClass = ClassUtils::getClass($entity);
+        $metadataFactory = $this->getEntityManager()->getMetadataFactory();
+        if ($metadataFactory->hasMetadataFor($fieldClass)) {
+            $valueMetadata = $metadataFactory->getMetadataFor($fieldClass);
+            $identifiers = $valueMetadata->getIdentifierValues($entity);
+            return reset($identifiers);
+        } else {
+            throw new \LogicException('Can\'t get metadata for inserted entity');
+        }
+    }
+}

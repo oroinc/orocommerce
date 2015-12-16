@@ -148,9 +148,16 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
      */
     protected function getVisibilityResolved()
     {
-        return $this->getManagerForVisibilityResolved()
+        $entityManager = $this->getManagerForVisibilityResolved();
+        $entity = $entityManager
             ->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
             ->findByPrimaryKey($this->product, $this->website);
+
+        if ($entity) {
+            $entityManager->refresh($entity);
+        }
+
+        return $entity;
     }
 
     /**
