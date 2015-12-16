@@ -13,6 +13,11 @@ orob2b_tax_tax:
     type:         annotation
     prefix:       /tax/tax
 
+orob2b_tax_jurisdiction:
+    resource:     "@OroB2BTaxBundle/Controller/TaxJurisdictionController.php"
+    type:         annotation
+    prefix:       /tax/jurisdiction
+
 orob2b_tax_bundle_api:
     resource:     "@OroB2BTaxBundle/Resources/config/oro/routing_api.yml"
     prefix:       api/rest/{version}/

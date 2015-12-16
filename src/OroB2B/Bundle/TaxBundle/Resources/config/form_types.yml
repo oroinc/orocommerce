@@ -1,6 +1,7 @@
 parameters:
     orob2b_tax.form.type.product_tax_code.class: OroB2B\Bundle\TaxBundle\Form\Type\ProductTaxCodeType
     orob2b_tax.form.type.account_tax_code.class: OroB2B\Bundle\TaxBundle\Form\Type\AccountTaxCodeType
+    orob2b_tax.form.type.tax_jurisdiction.class: OroB2B\Bundle\TaxBundle\Form\Type\TaxJurisdictionType
 
     orob2b_tax.form.type.product_tax_code_autocomplete.class: OroB2B\Bundle\TaxBundle\Form\Type\ProductTaxCodeAutocompleteType
     orob2b_tax.form.type.account_tax_code_autocomplete.class: OroB2B\Bundle\TaxBundle\Form\Type\AccountTaxCodeAutocompleteType
@@ -9,6 +10,7 @@ parameters:
     orob2b_tax.form.extension.account_tax.class: OroB2B\Bundle\TaxBundle\Form\Extension\AccountTaxExtension
 
     orob2b_tax.form.type.tax.class: OroB2B\Bundle\TaxBundle\Form\Type\TaxType
+    orob2b_tax.form.type.zip_code.class: OroB2B\Bundle\TaxBundle\Form\Type\ZipCodeType
 
 services:
     orob2b_tax.form.type.product_tax_code:
@@ -56,4 +58,18 @@ services:
         calls:
             - [setDataClass, [%orob2b_tax.entity.tax.class%]]
         tags:
-            - { name: form.type, alias: orob2b_tax_tax_type }
+            - { name: form.type, alias: orob2b_tax_type }
+
+    orob2b_tax.form.type.tax_jurisdiction:
+        class: %orob2b_tax.form.type.tax_jurisdiction.class%
+        arguments:
+            - @oro_address.form.listener.address
+        calls:
+            - [setDataClass, [%orob2b_tax.entity.tax_jurisdiction.class%]]
+        tags:
+            - { name: form.type, alias: orob2b_tax_jurisdiction_type }
+
+    orob2b_tax.form.type.zip_code:
+        class: %orob2b_tax.form.type.zip_code.class%
+        tags:
+            - { name: form.type, alias: orob2b_tax_zip_code_type }

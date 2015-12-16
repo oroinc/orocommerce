@@ -7,6 +7,9 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class OroB2BTaxBundleInstaller implements Installation
 {
     /**
@@ -28,10 +31,14 @@ class OroB2BTaxBundleInstaller implements Installation
         $this->createOrob2BTaxAccountTaxCodeTable($schema);
         $this->createOrob2BTaxProdTaxCodeProdTable($schema);
         $this->createOrob2BTaxProductTaxCodeTable($schema);
+        $this->createOroB2BTaxJurisdictionTable($schema);
+        $this->createOrob2BTaxZipCodeTable($schema);
 
         /** Foreign keys generation **/
         $this->addOrob2BTaxAccTaxCodeAccForeignKeys($schema);
         $this->addOrob2BTaxProdTaxCodeProdForeignKeys($schema);
+        $this->addOroB2BTaxJurisdictionForeignKeys($schema);
+        $this->addOrob2BTaxZipCodeForeignKeys($schema);
     }
 
     /**
@@ -115,6 +122,44 @@ class OroB2BTaxBundleInstaller implements Installation
     }
 
     /**
+     * Create orob2b_tax_jurisdiction table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BTaxJurisdictionTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_tax_jurisdiction');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
+        $table->addColumn('country_code', 'string', ['notnull' => false, 'length' => 2]);
+        $table->addColumn('created_at', 'datetime', []);
+        $table->addColumn('updated_at', 'datetime', []);
+        $table->addColumn('code', 'string', ['length' => 255]);
+        $table->addColumn('description', 'text', ['notnull' => false]);
+        $table->addColumn('region_text', 'string', ['notnull' => false, 'length' => 255]);
+        $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['code'], 'UNIQ_2CBEF9AE77153098');
+    }
+
+    /**
+     * Create orob2b_tax_zip_code table
+     *
+     * @param Schema $schema
+     */
+    protected function createOrob2BTaxZipCodeTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_tax_zip_code');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('tax_jurisdiction_id', 'integer', []);
+        $table->addColumn('zip_code', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('zip_range_start', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('zip_range_end', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('created_at', 'datetime', []);
+        $table->addColumn('updated_at', 'datetime', []);
+        $table->setPrimaryKey(['id']);
+    }
+
+    /**
      * Add orob2b_tax_acc_tax_code_acc foreign keys.
      *
      * @param Schema $schema
@@ -155,6 +200,44 @@ class OroB2BTaxBundleInstaller implements Installation
             ['product_tax_code_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add orob2b_tax_jurisdiction foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BTaxJurisdictionForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_tax_jurisdiction');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_dictionary_region'),
+            ['region_code'],
+            ['combined_code'],
+            ['onDelete' => null, 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_dictionary_country'),
+            ['country_code'],
+            ['iso2_code'],
+            ['onDelete' => null, 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add orob2b_tax_zip_code foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrob2BTaxZipCodeForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_tax_zip_code');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_tax_jurisdiction'),
+            ['tax_jurisdiction_id'],
+            ['id'],
+            ['onDelete' => null, 'onUpdate' => null]
         );
     }
 }

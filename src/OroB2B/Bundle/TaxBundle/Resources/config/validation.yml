@@ -22,3 +22,33 @@ OroB2B\Bundle\TaxBundle\Entity\Tax:
         rate:
             - Range:
                 min: 0
+
+OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: code
+        - Oro\Bundle\AddressBundle\Validator\Constraints\ValidRegion: ~
+    properties:
+        code:
+            - NotBlank: ~
+            - Length:
+                min: 1
+                max: 255
+            - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Alphanumeric: ~
+        zipCodes:
+            - Valid: ~
+        country:
+            - NotBlank: ~
+
+OroB2B\Bundle\TaxBundle\Entity\ZipCode:
+    constraints:
+        - OroB2B\Bundle\TaxBundle\Validator\Constraints\ZipCodeFields: ~
+    properties:
+        zipCode:
+            - Length:
+                  max: 255
+        zipRangeStart:
+            - Length:
+                  max: 255
+        zipRangeEnd:
+            - Length:
+                  max: 255
