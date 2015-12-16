@@ -76,6 +76,9 @@ class ProductResolvedCacheBuilderTest extends CacheBuilderTestCase
                     ],
                     'hiddenProductsByAccounts' => [
                         'account.level_1.1' => [
+                            'product.2',
+                            'product.3',
+                            'product.6',
                             'product.4',
                             'product.7',
                         ],

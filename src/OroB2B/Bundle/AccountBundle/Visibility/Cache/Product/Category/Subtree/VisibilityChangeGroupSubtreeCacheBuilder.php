@@ -39,7 +39,7 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
      */
     protected function updateAccountGroupsFirstLevel(Category $category, $visibility)
     {
-        return [$this->accountGroup];
+        return [$this->accountGroup->getId()];
     }
 
     /**
@@ -47,18 +47,18 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
      */
     protected function updateAccountsFirstLevel(Category $category, $visibility)
     {
-        $accountsForUpdate = $this->getAccountsWithFallbackToCurrentGroup($category, $this->accountGroup);
-        $this->updateAccountsProductVisibility($category, $accountsForUpdate, $visibility);
+        $accountIdsForUpdate = $this->getAccountIdsWithFallbackToCurrentGroup($category, $this->accountGroup);
+        $this->updateAccountsProductVisibility($category, $accountIdsForUpdate, $visibility);
 
-        return $accountsForUpdate;
+        return $accountIdsForUpdate;
     }
 
     /**
      * @param Category $category
      * @param AccountGroup $accountGroup
-     * @return Account[]
+     * @return array
      */
-    protected function getAccountsWithFallbackToCurrentGroup(Category $category, AccountGroup $accountGroup)
+    protected function getAccountIdsWithFallbackToCurrentGroup(Category $category, AccountGroup $accountGroup)
     {
         /** @var Account[] $groupAccounts */
         $groupAccounts = $accountGroup->getAccounts()->toArray();
@@ -77,29 +77,25 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
             ->getManagerForClass('OroB2BAccountBundle:Account')
             ->createQueryBuilder();
 
-        /** @var QueryBuilder $subQueryQb */
-        $subQueryQb = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountCategoryVisibility')
-            ->createQueryBuilder();
-
-        $subQuery = $subQueryQb->select('IDENTITY(accountCategoryVisibility.account)')
-            ->from(
-                'OroB2BAccountBundle:Visibility\AccountCategoryVisibility',
-                'accountCategoryVisibility'
-            )
-            ->where($subQueryQb->expr()->eq('accountCategoryVisibility.category', ':category'))
-            ->distinct();
-
-        $qb->select('account')
+        $qb->select('account.id')
             ->from('OroB2BAccountBundle:Account', 'account')
-            ->where($qb->expr()->notIn(
-                'account',
-                $subQuery->getDQL()
-            ))
-            ->andWhere($qb->expr()->in('account', $groupAccountIds))
-            ->setParameter('category', $category);
+            ->leftJoin(
+                'OroB2BAccountBundle:Visibility\AccountCategoryVisibility',
+                'accountCategoryVisibility',
+                Join::WITH,
+                $qb->expr()->andX(
+                    $qb->expr()->eq('accountCategoryVisibility.account', 'account'),
+                    $qb->expr()->eq('accountCategoryVisibility.category', ':category')
+                )
+            )
+            ->where($qb->expr()->isNull('accountCategoryVisibility.id'))
+            ->andWhere($qb->expr()->in('account', ':groupAccountIds'))
+            ->setParameters([
+                'category' => $category,
+                'groupAccountIds' => $groupAccountIds
+            ]);
 
-        return $qb->getQuery()->getResult();
+        return array_map('current', $qb->getQuery()->getScalarResult());
     }
 
     /**
