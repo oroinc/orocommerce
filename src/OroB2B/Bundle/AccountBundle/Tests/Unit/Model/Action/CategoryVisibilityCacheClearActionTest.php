@@ -53,17 +53,6 @@ class CategoryVisibilityCacheClearActionTest extends \PHPUnit_Framework_TestCase
         $this->action->initialize([]);
     }
 
-    /**
-     * @expectedException \LogicException
-     * @expectedExceptionMessage This action can be called only from process context
-     */
-    public function testContext()
-    {
-        $this->action->setCategoryVisibilityStorage($this->categoryVisibilityStorage);
-        $this->action->initialize([]);
-        $this->action->execute([]);
-    }
-
     public function testOptionHash()
     {
         $category = $this->getMock('OroB2B\Bundle\CatalogBundle\Entity\Category');
