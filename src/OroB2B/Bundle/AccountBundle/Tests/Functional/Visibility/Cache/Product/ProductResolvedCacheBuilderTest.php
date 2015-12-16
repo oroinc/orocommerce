@@ -93,8 +93,9 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
         $visibility = $this->getVisibility();
         $this->assertNotNull($visibility);
 
+        $visibility->setVisibility(ProductVisibility::CATEGORY);
+
         $entityManager = $this->getManagerForVisibility();
-        $entityManager->remove($visibility);
         $entityManager->flush();
 
         $resolvedVisibility = $this->getVisibilityResolved();

@@ -2,10 +2,10 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Model\Action;
 
-use Doctrine\ORM\EntityManager;
-
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Bridge\Doctrine\RegistryInterface;
+
+use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\WorkflowBundle\Model\ProcessData;
 use Oro\Bundle\WorkflowBundle\Model\ContextAccessor;
@@ -55,32 +55,82 @@ class ChangeCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
         unset($this->action);
     }
 
-    public function testExecuteAction()
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage CacheBuilder is not provided
+     */
+    public function testInitializeFailed()
+    {
+        $this->action->initialize([]);
+    }
+
+    /**
+     * @dataProvider executeActionDataProvider
+     * @param bool $throwException
+     */
+    public function testExecuteAction($throwException = false)
     {
         $categoryVisibility = new CategoryVisibility();
+
+        /** @var CategoryCaseCacheBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $cacheBuilder */
+        $cacheBuilder = $this
+            ->getMock('OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface');
+
+        /** @var Registry|\PHPUnit_Framework_MockObject_MockObject $registry */
+        $registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $em */
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $em->expects($this->any())
-            ->method('transactional')
-            ->willReturnCallback(
-                function ($callback) {
-                    call_user_func($callback);
-                }
-            );
 
-        $this->registry->expects($this->once())
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        if ($throwException) {
+            $cacheBuilder->expects($this->once())
+                ->method('resolveVisibilitySettings')
+                ->with($categoryVisibility)
+                ->will($this->throwException(new \Exception('Error')));
+
+            $em->expects($this->once())
+                ->method('rollback');
+
+            $this->setExpectedException('\Exception', 'Error');
+        } else {
+            $cacheBuilder->expects($this->once())
+                ->method('resolveVisibilitySettings')
+                ->with($categoryVisibility);
+
+            $em->expects($this->once())
+                ->method('commit');
+        }
+
+        $registry->expects($this->once())
             ->method('getManagerForClass')
             ->with('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
             ->willReturn($em);
 
-        $this->cacheBuilder->expects($this->once())
-            ->method('resolveVisibilitySettings')
-            ->with($categoryVisibility);
-
+        $this->action->setCacheBuilder($cacheBuilder);
+        $this->action->setRegistry($registry);
         $this->action->initialize([]);
         $this->action->execute(new ProcessData(['data' => $categoryVisibility]));
+    }
+
+    /**
+     * @return array
+     */
+    public function executeActionDataProvider()
+    {
+        return [
+            [
+                'throwException' => true
+            ],
+            [
+                'throwException' => false
+            ],
+        ];
     }
 }

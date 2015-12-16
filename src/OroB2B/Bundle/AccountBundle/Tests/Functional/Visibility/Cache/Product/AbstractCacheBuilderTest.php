@@ -33,7 +33,7 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
     /** @var  Account */
     protected $account;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->initClient();
         $this->getContainer()->get('doctrine')->getManager()->clear();
