@@ -3,9 +3,9 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Model\Action;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
+use Oro\Bundle\WorkflowBundle\Model\ContextAccessor;
 use Oro\Bundle\WorkflowBundle\Model\ProcessData;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
@@ -17,7 +17,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 class ResolveProductVisibilityTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $registry;
 
@@ -33,12 +33,13 @@ class ResolveProductVisibilityTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->getMock('Symfony\Bridge\Doctrine\RegistryInterface');
         $this->cacheBuilder = $this->getMock('OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface');
         /** @var EventDispatcherInterface $eventDispatcher */
         $eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
-        $this->action = new ResolveProductVisibility();
+        $contextAccessor = new ContextAccessor();
+        $this->action = new ResolveProductVisibility($contextAccessor);
         $this->action->setRegistry($this->registry);
         $this->action->setCacheBuilder($this->cacheBuilder);
         $this->action->setDispatcher($eventDispatcher);

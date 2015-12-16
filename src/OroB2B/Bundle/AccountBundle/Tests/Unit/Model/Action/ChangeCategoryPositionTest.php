@@ -2,9 +2,9 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Model\Action;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
 
+use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\WorkflowBundle\Model\ProcessData;
@@ -21,6 +21,16 @@ class ChangeCategoryPositionTest extends \PHPUnit_Framework_TestCase
      */
     protected $action;
 
+    /**
+     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $registry;
+
+    /**
+     * @var CategoryCaseCacheBuilderInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $cacheBuilder;
+
     protected function setUp()
     {
         $contextAccessor = new ContextAccessor();
@@ -30,30 +40,18 @@ class ChangeCategoryPositionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->action->setDispatcher($dispatcher);
-    }
+        $this->registry = $this->getMock('Symfony\Bridge\Doctrine\RegistryInterface');
+        $this->cacheBuilder = $this
+            ->getMock('OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface');
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage CacheBuilder is not provided
-     */
-    public function testInitializeFailed()
-    {
-        $this->action->initialize([]);
+        $this->action->setDispatcher($dispatcher);
+        $this->action->setRegistry($this->registry);
+        $this->action->setCacheBuilder($this->cacheBuilder);
     }
 
     public function testExecuteAction()
     {
         $category = new Category();
-
-        /** @var CategoryCaseCacheBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $cacheBuilder */
-        $cacheBuilder = $this
-            ->getMock('OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface');
-
-        /** @var Registry|\PHPUnit_Framework_MockObject_MockObject $registry */
-        $registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
-            ->disableOriginalConstructor()
-            ->getMock();
 
         /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $em */
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
@@ -67,17 +65,15 @@ class ChangeCategoryPositionTest extends \PHPUnit_Framework_TestCase
                 }
             );
 
-        $cacheBuilder->expects($this->once())
-            ->method('categoryPositionChanged')
-            ->with($category);
-
-        $registry->expects($this->once())
+        $this->registry->expects($this->once())
             ->method('getManagerForClass')
             ->with('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
             ->willReturn($em);
 
-        $this->action->setCacheBuilder($cacheBuilder);
-        $this->action->setRegistry($registry);
+        $this->cacheBuilder->expects($this->once())
+            ->method('categoryPositionChanged')
+            ->with($category);
+
         $this->action->initialize([]);
         $this->action->execute(new ProcessData(['data' => $category]));
     }

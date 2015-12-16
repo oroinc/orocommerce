@@ -4,26 +4,16 @@ namespace OroB2B\Bundle\AccountBundle\Model\Action;
 
 use Doctrine\ORM\EntityManager;
 
-use Oro\Bundle\WorkflowBundle\Model\ProcessData;
-
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 
-class ChangeCategoryVisibility extends AbstractCategoryCaseAction
+class ChangeCategoryVisibility extends AbstractVisibilityRegistryAwareAction
 {
     /**
      * {@inheritdoc}
      */
     protected function executeAction($context)
     {
-        if (!$context instanceof ProcessData) {
-            throw new \LogicException('This action can be called only from process context');
-        }
-
-        $categoryVisibility = $context->getEntity();
-        if (!$categoryVisibility instanceof VisibilityInterface) {
-            throw new \LogicException('Resolvable entity must implement VisibilityInterface');
-        }
-
+        $categoryVisibility = $this->getEntity($context);
         /** @var EntityManager $em */
         $em = $this->registry->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
         $em->transactional(
@@ -31,5 +21,19 @@ class ChangeCategoryVisibility extends AbstractCategoryCaseAction
                 $this->cacheBuilder->resolveVisibilitySettings($categoryVisibility);
             }
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getEntity($context)
+    {
+        $entity = parent::getEntity($context);
+
+        if (!$entity instanceof VisibilityInterface) {
+            throw new \LogicException('Resolvable entity must implement VisibilityInterface');
+        }
+
+        return $entity;
     }
 }
