@@ -72,6 +72,7 @@ class DefaultVisibilityListenerTest extends WebTestCase
     /**
      * @param string $entityClass
      * @param array $parameters
+     * @param string|null $entityClassToClear
      * @dataProvider onFlushDataProvider
      */
     public function testOnFlushVisibility($entityClass, array $parameters, $entityClassToClear = null)

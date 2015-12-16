@@ -80,6 +80,6 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
 
     protected function clearCategoryCache()
     {
-        $this->getContainer()->get('orob2b_account.storage.category_visibility_storage')->clear();
+        $this->getContainer()->get('orob2b_account.storage.category_visibility_storage')->flush();
     }
 }
