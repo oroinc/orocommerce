@@ -5,12 +5,49 @@ namespace OroB2B\Bundle\AccountBundle\Controller\Frontend;
 use Symfony\Component\Routing\Annotation\Route;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\SecurityBundle\Exception\ForbiddenException;
 
 use OroB2B\Bundle\AccountBundle\Controller\AbstractAjaxAccountUserController;
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 
 class AjaxAccountUserController extends AbstractAjaxAccountUserController
 {
+    /**
+     * @Route(
+     *      "/enable/{id}",
+     *      name="orob2b_account_frontend_account_user_enable",
+     *      requirements={"id"="\d+"}
+     * )
+     * @AclAncestor("orob2b_account_frontend_account_user_update")
+     *
+     * {@inheritdoc}
+     */
+    public function enableAction(AccountUser $accountUser)
+    {
+        return parent::enableAction($accountUser);
+    }
+
+    /**
+     * @Route(
+     *      "/disable/{id}",
+     *      name="orob2b_account_frontend_account_user_disable",
+     *      requirements={"id"="\d+"}
+     * )
+     * @AclAncestor("orob2b_account_frontend_account_user_update")
+     *
+     * {@inheritdoc}
+     */
+    public function disableAction(AccountUser $accountUser)
+    {
+        /** @var $user AccountUser */
+        $user = $this->getUser();
+        if ($user->getId() == $accountUser->getId()) {
+            throw new ForbiddenException('self disable');
+        }
+
+        return parent::disableAction($accountUser);
+    }
+
     /**
      * @Route("/get-account/{id}",
      *      name="orob2b_account_frontend_account_user_get_account",
