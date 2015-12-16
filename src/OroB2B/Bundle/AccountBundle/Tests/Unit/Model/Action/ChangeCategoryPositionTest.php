@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Model\Action;
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
 
+use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Oro\Bundle\WorkflowBundle\Model\ProcessData;
@@ -47,15 +48,6 @@ class ChangeCategoryPositionTest extends \PHPUnit_Framework_TestCase
         $this->action->setDispatcher($dispatcher);
         $this->action->setRegistry($this->registry);
         $this->action->setCacheBuilder($this->cacheBuilder);
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage CacheBuilder is not provided
-     */
-    public function testInitializeFailed()
-    {
-        $this->action->initialize([]);
     }
 
     /**

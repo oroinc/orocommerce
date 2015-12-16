@@ -51,14 +51,6 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
     }
 
     /**
-     * @inheritDoc
-     */
-    protected function getAdditionalFixtures()
-    {
-        return [];
-    }
-
-    /**
      * @param BaseProductVisibilityResolved $productVisibilityResolved
      * @param VisibilityInterface $productVisibility
      * @param integer $expectedVisibility
@@ -84,5 +76,10 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
     {
         $this->assertEquals($this->website, $visibilityResolved->getWebsite());
         $this->assertEquals($this->product, $visibilityResolved->getProduct());
+    }
+
+    protected function clearCategoryCache()
+    {
+        $this->getContainer()->get('orob2b_account.storage.category_visibility_storage')->clear();
     }
 }
