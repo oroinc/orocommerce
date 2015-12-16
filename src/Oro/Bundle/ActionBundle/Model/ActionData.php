@@ -21,6 +21,14 @@ class ActionData extends AbstractStorage implements EntityAwareInterface
     }
 
     /**
+     * @return array|null
+     */
+    public function getRefreshGrid()
+    {
+        return $this->offsetGet('refreshGrid');
+    }
+
+    /**
      * @param string $name
      * @return mixed
      */

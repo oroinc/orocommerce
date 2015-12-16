@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\PricingBundle\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -21,34 +20,6 @@ use OroB2B\Bundle\PricingBundle\Form\Type\PriceListProductPriceType;
 
 class AjaxProductPriceController extends AbstractAjaxProductPriceController
 {
-    /**
-     * Create product form
-     *
-     * @Route(
-     *      "/create/{priceListId}",
-     *      name="orob2b_product_price_create_widget",
-     *      requirements={"priceListId"="\d+"}
-     * )
-     * @Template("OroB2BPricingBundle:ProductPrice:widget/update.html.twig")
-     * @Acl(
-     *      id="orob2b_pricing_product_price_create",
-     *      type="entity",
-     *      class="OroB2BPricingBundle:ProductPrice",
-     *      permission="CREATE"
-     * )
-     * @ParamConverter("priceList", class="OroB2BPricingBundle:PriceList", options={"id" = "priceListId"})
-     *
-     * @param PriceList $priceList
-     * @return array|RedirectResponse
-     */
-    public function createAction(PriceList $priceList)
-    {
-        $productPrice = new ProductPrice();
-        $productPrice->setPriceList($priceList);
-
-        return $this->update($productPrice);
-    }
-
     /**
      * Edit product form
      *
