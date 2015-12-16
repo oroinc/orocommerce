@@ -66,7 +66,7 @@ class ProductVisibilityResolvedRepository extends EntityRepository
 
         $executor->execute(
             $this->getClassName(),
-            ['website', 'product', 'visibility', 'source', 'categoryId'],
+            ['website', 'product', 'visibility', 'source', 'category'],
             $qb
         );
     }

@@ -52,7 +52,7 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
                         $this->categoryVisibilityResolver->isCategoryVisibleForAccount($category, $account)
                     ),
                     'source' => BaseProductVisibilityResolved::SOURCE_CATEGORY,
-                    'categoryId' => $category->getId()
+                    'category' => $category
                 ];
             } else {
                 $update = $this->resolveConfigValue($accountProductVisibility);
@@ -64,7 +64,7 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
                     'sourceProductVisibility' => $accountProductVisibility,
                     'visibility' => $productVisibilityResolved->getVisibility(),
                     'source' => BaseProductVisibilityResolved::SOURCE_STATIC,
-                    'categoryId' => null,
+                    'category' => null,
                 ];
             } else {
                 $update = $this->resolveConfigValue($accountProductVisibility);

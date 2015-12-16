@@ -48,6 +48,7 @@ parameters:
     orob2b_account.account_user.password_reset.handler.class: OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserPasswordResetHandler
 
     #Listeners
+    orob2b_account.event_listener.category_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryListener
     orob2b_account.event_listener.login.class: OroB2B\Bundle\AccountBundle\EventListener\LoginListener
     orob2b_account.event_listener.ormdatasource_acl.class: OroB2B\Bundle\AccountBundle\EventListener\OrmDatasourceAclListener
     orob2b_account.event_listener.system_config.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigListener
@@ -614,7 +615,9 @@ services:
 
     orob2b_account.provider.visibility_choices:
         class: %orob2b_account.provider.visibility_choices.class%
-        arguments: [ @translator ]
+        arguments:
+            - @translator
+            - @doctrine
 
     orob2b_account.helper.account_user_role_privileges:
         class: %orob2b_account.helper.account_user_role_privileges.class%
@@ -810,3 +813,11 @@ services:
             - [setCategoryVisibilityStorage, [@orob2b_account.storage.category_visibility_storage]]
         tags:
             - { name: oro_workflow.action, alias: category_visibility_cache_clear }
+
+    orob2b_account.event_listener.category_listener:
+        arguments:
+            - @doctrine
+            - @oro_entity.orm.insert_from_select_query_executor
+        class: %orob2b_account.event_listener.category_listener.class%
+        tags:
+            - { name: doctrine.event_listener, event: postRemove }

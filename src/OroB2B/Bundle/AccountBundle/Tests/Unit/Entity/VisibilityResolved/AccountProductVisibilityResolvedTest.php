@@ -8,6 +8,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -54,7 +55,7 @@ class AccountProductVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
                 ['visibility', 0],
                 ['sourceProductVisibility', new AccountProductVisibility()],
                 ['source', BaseProductVisibilityResolved::VISIBILITY_VISIBLE],
-                ['categoryId', '123']
+                ['category', new Category()]
             ]
         );
     }

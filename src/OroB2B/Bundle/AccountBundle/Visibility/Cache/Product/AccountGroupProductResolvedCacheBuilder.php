@@ -50,7 +50,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
                         $this->categoryVisibilityResolver->isCategoryVisibleForAccountGroup($category, $accountGroup)
                     ),
                     'source' => BaseProductVisibilityResolved::SOURCE_CATEGORY,
-                    'categoryId' => $category->getId()
+                    'category' => $category
                 ];
             } else {
                 $update = $this->resolveConfigValue($accountGroupProductVisibility);

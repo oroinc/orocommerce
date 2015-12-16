@@ -50,7 +50,7 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
         $updateData = [
             'sourceProductVisibility' => $productVisibility,
             'source' => BaseProductVisibilityResolved::SOURCE_STATIC,
-            'categoryId' => null,
+            'category' => null,
         ];
 
         if ($selectedVisibility === VisibilityInterface::VISIBLE) {
@@ -72,7 +72,7 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
             'sourceProductVisibility' => $productVisibility,
             'visibility' => $this->getVisibilityFromConfig(),
             'source' => BaseProductVisibilityResolved::SOURCE_STATIC,
-            'categoryId' => null,
+            'category' => null,
         ];
     }
 
