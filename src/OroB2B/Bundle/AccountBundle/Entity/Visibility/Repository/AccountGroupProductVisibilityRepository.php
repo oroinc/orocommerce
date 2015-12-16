@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity\Repository;
+namespace OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
@@ -14,14 +14,14 @@ class AccountGroupProductVisibilityRepository extends EntityRepository
     /**
      * Return categories list of categories of products which has "category" fallback in AccountGroupProductVisibility
      *
-     * @return Category[]
+     * @return integer[]
      */
-    public function getCategoriesByAccountGroupProductVisibility()
+    public function getCategoryIdsByAccountGroupProductVisibility()
     {
         $result = $this->getEntityManager()
             ->getRepository('OroB2BCatalogBundle:Category')
             ->createQueryBuilder('category')
-            ->select('partial category.{id}')
+            ->select('category.id')
             ->distinct()
             ->innerJoin('category.products', 'product')
             ->innerJoin(
@@ -32,15 +32,15 @@ class AccountGroupProductVisibilityRepository extends EntityRepository
             )
             ->setParameter('category', AccountGroupProductVisibility::CATEGORY)
             ->getQuery()
-            ->getResult();
+            ->getScalarResult();
 
-        return $result;
+        return array_map('current', $result);
     }
 
     /**
      * @return AccountGroup[]
      */
-    public function getAccountsGroupsForCategoryType()
+    public function getAccountGroupsWithCategoryVisibiliy()
     {
         return $this->getEntityManager()
             ->getRepository('OroB2BAccountBundle:AccountGroup')

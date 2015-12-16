@@ -4,13 +4,15 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product;
 
 use Doctrine\ORM\EntityManager;
 
+use Doctrine\ORM\EntityRepository;
+use OroB2B\Bundle\AccountBundle\Entity\Repository\ProductVisibilityResolvedRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -85,11 +87,6 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
      */
     public function testChangeProductVisibilityToCategory()
     {
-        /** @var Category $category */
-        $category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
-        $category->addProduct($this->product);
-        $this->registry->getManagerForClass('OroB2BCatalogBundle:Category')->flush();
-
         $visibility = $this->getVisibility();
         $this->assertNotNull($visibility);
 
@@ -99,12 +96,15 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
 
         $resolvedVisibility = $this->getVisibilityResolved();
         $this->assertNotNull($resolvedVisibility);
-        $this->assertEquals($resolvedVisibility->getCategoryId(), $category->getId());
+        $this->assertEquals(
+            $resolvedVisibility->getCategoryId(),
+            $this->getReference(LoadCategoryData::FIRST_LEVEL)->getId()
+        );
         $this->assertEquals($resolvedVisibility->getSource(), BaseProductVisibilityResolved::SOURCE_CATEGORY);
         $this->assertNull($resolvedVisibility->getSourceProductVisibility());
-        $this->assertEquals($resolvedVisibility->getVisibility(), BaseProductVisibilityResolved::VISIBILITY_HIDDEN);
+        $this->assertEquals($resolvedVisibility->getVisibility(), BaseProductVisibilityResolved::VISIBILITY_VISIBLE);
         $this->assertProductIdentifyEntitiesAccessory($resolvedVisibility);
-        $this->assertAccountVisibilityResolved(BaseProductVisibilityResolved::VISIBILITY_HIDDEN);
+        $this->assertAccountVisibilityResolved(BaseProductVisibilityResolved::VISIBILITY_VISIBLE);
     }
 
     /**
@@ -169,5 +169,60 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
         }
 
         return $entity;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getSourceRepository()
+    {
+        return $this->getContainer()->get('doctrine')->getRepository(
+            'OroB2BAccountBundle:Visibility\ProductVisibility'
+        );
+    }
+
+    /**
+     * @return ProductVisibilityResolvedRepository|EntityRepository
+     */
+    protected function getRepository()
+    {
+        return $this->getContainer()->get('doctrine')->getRepository(
+            'OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved'
+        );
+    }
+
+
+    /**
+     * @inheritdoc
+     */
+    public function buildCacheDataProvider()
+    {
+        return [
+            'without_website' => [
+                'expectedStaticCount' => 4,
+                'expectedCategoryCount' => 14,
+                'websiteReference' => null,
+            ],
+            'with_website1' => [
+                'expectedStaticCount' => 0,
+                'expectedCategoryCount' => 5,
+                'websiteReference' => LoadWebsiteData::WEBSITE1,
+            ],
+            'with_website2' => [
+                'expectedStaticCount' => 0,
+                'expectedCategoryCount' => 7,
+                'websiteReference' => LoadWebsiteData::WEBSITE2,
+            ],
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCacheBuilder()
+    {
+        return $this->client
+            ->getContainer()
+            ->get('orob2b_account.visibility.cache.product.product_resolved_cache_builder');
     }
 }

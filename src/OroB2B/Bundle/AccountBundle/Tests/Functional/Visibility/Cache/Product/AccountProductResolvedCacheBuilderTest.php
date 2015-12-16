@@ -3,7 +3,9 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 
+use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountProductVisibilityResolvedRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
@@ -53,11 +55,6 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
      */
     public function testChangeAccountProductVisibilityToCategory()
     {
-        /** @var Category $category */
-        $category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
-        $category->addProduct($this->product);
-        $this->registry->getManagerForClass('OroB2BCatalogBundle:Category')->flush();
-
         $visibility = $this->getVisibility();
         $visibility->setVisibility(AccountProductVisibility::CATEGORY);
 
@@ -67,8 +64,11 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
         $visibilityResolved = $this->getVisibilityResolved();
         $this->assertEquals($visibility, $visibilityResolved->getSourceProductVisibility());
         $this->assertEquals(BaseProductVisibilityResolved::SOURCE_CATEGORY, $visibilityResolved->getSource());
-        $this->assertEquals($category->getId(), $visibilityResolved->getCategoryId());
-        $this->assertEquals(BaseProductVisibilityResolved::VISIBILITY_HIDDEN, $visibilityResolved->getVisibility());
+        $this->assertEquals(
+            $this->getReference(LoadCategoryData::FIRST_LEVEL)->getId(),
+            $visibilityResolved->getCategoryId()
+        );
+        $this->assertEquals(BaseProductVisibilityResolved::VISIBILITY_VISIBLE, $visibilityResolved->getVisibility());
         $this->assertProductIdentifyEntitiesAccessory($visibilityResolved);
     }
 
@@ -221,5 +221,43 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
         return $this->getManagerForProductVisibility()
             ->getRepository('OroB2BAccountBundle:Visibility\ProductVisibility')
             ->findOneBy(['website' => $this->website, 'product' => $this->product]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getSourceRepository()
+    {
+        return $this->getContainer()->get('doctrine')->getRepository(
+            'OroB2BAccountBundle:Visibility\AccountProductVisibility'
+        );
+    }
+
+    /**
+     * @return AccountProductVisibilityResolvedRepository|EntityRepository
+     */
+    protected function getRepository()
+    {
+        return $this->getContainer()->get('doctrine')->getRepository(
+            'OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved'
+        );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function buildCacheDataProvider()
+    {
+        return [[1, 2, null]];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCacheBuilder()
+    {
+        return $this->client
+            ->getContainer()
+            ->get('orob2b_account.visibility.cache.product.account_product_resolved_cache_builder');
     }
 }

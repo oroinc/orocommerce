@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity\Repository;
+namespace OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
@@ -27,12 +27,14 @@ class AccountGroupProductVisibilityResolvedRepository extends EntityRepository
      * @param integer $cacheVisibility
      * @param integer[] $categories
      * @param integer $accountGroupId
+     * @param Website|null $website
      */
     public function insertByCategory(
         InsertFromSelectQueryExecutor $insertFromSelect,
         $cacheVisibility,
         $categories,
-        $accountGroupId
+        $accountGroupId,
+        Website $website = null
     ) {
         $queryBuilder = $this->getEntityManager()
             ->getRepository('OroB2BCatalogBundle:Category')
@@ -52,11 +54,17 @@ class AccountGroupProductVisibilityResolvedRepository extends EntityRepository
                 Join::WITH,
                 'agpv.product = product AND agpv.visibility = :category AND IDENTITY(agpv.accountGroup) = :accGroupId'
             )
-            ->where('category.id in (:ids)')
+            ->where('category.id in (:ids)');
+
+        $queryBuilder
             ->setParameter('ids', $categories)
             ->setParameter('accGroupId', $accountGroupId)
             ->setParameter('category', AccountGroupProductVisibility::CATEGORY);
 
+        if ($website) {
+            $queryBuilder->andWhere('agpv.website = :website')
+                ->setParameter('website', $website);
+        }
         $insertFromSelect->execute(
             $this->getClassName(),
             [
@@ -73,8 +81,9 @@ class AccountGroupProductVisibilityResolvedRepository extends EntityRepository
 
     /**
      * @param InsertFromSelectQueryExecutor $insertFromSelect
+     * @param Website|null $website
      */
-    public function insertStatic(InsertFromSelectQueryExecutor $insertFromSelect)
+    public function insertStatic(InsertFromSelectQueryExecutor $insertFromSelect, Website $website = null)
     {
         $queryBuilder = $this->getEntityManager()
             ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
@@ -94,6 +103,11 @@ class AccountGroupProductVisibilityResolvedRepository extends EntityRepository
             ->setParameter('cacheVisible', BaseProductVisibilityResolved::VISIBILITY_VISIBLE)
             ->setParameter('cacheHidden', BaseProductVisibilityResolved::VISIBILITY_HIDDEN);
 
+        if ($website) {
+            $queryBuilder->andWhere('agpv.website = :website')
+                ->setParameter('website', $website);
+        }
+
         $insertFromSelect->execute(
             $this->getClassName(),
             [
@@ -108,13 +122,20 @@ class AccountGroupProductVisibilityResolvedRepository extends EntityRepository
     }
 
     /**
+     * @param Website $website
      * @return int
      */
-    public function clearTable()
+    public function clearTable(Website $website = null)
     {
-        return $this->createQueryBuilder('agpvr')
-            ->delete()
-            ->getQuery()
+        $qb = $this->createQueryBuilder('agpvr')
+            ->delete();
+
+        if ($website) {
+            $qb->andWhere('agpvr.website = :website')
+                ->setParameter('website', $website);
+        }
+
+        return $qb->getQuery()
             ->execute();
     }
 

@@ -14,7 +14,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 /**
  * @ORM\Entity(
- * repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupProductVisibilityRepository"
+ * repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository\AccountGroupProductVisibilityRepository"
  * )
  * @ORM\Table(name="orob2b_acc_grp_prod_visibility")
  * @Config

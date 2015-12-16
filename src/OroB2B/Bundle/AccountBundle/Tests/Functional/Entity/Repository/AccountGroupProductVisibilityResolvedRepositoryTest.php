@@ -13,9 +13,8 @@ use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupProductVisibilityR
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
-use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @dbIsolation
@@ -53,37 +52,35 @@ class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
 
     public function testClearTable()
     {
-        $this->assertCount(4, $this->getRepository()->findAll());
+        $this->assertCount(5, $this->getRepository()->findAll());
         $deletedCount = $this->getRepository()->clearTable();
 
         $this->assertCount(0, $this->getRepository()->findAll());
-        $this->assertEquals(4, $deletedCount);
+        $this->assertEquals(5, $deletedCount);
     }
 
     public function testInsertByCategory()
     {
-        /** @var AccountGroup $group */
-        $group = $this->getReference(LoadGroups::GROUP1);
         $agpv = $this->registry->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
-            ->findOneBy(['product' => $this->getReference(LoadProductData::PRODUCT_1), 'accountGroup' => $group]);
-        $agpv->setVisibility(AccountGroupProductVisibility::CATEGORY);
-        $this->registry->getManager()->flush();
+            ->findOneBy(['visibility' => AccountGroupProductVisibility::CATEGORY]);
+        $groupId = $agpv->getAccountGroup()->getId();
         $this->getRepository()->clearTable();
         $visibilityValue = BaseProductVisibilityResolved::VISIBILITY_HIDDEN;
         $this->getRepository()->insertByCategory(
             $this->getInsertFromSelectExecutor(),
             $visibilityValue,
             $this->registry->getRepository('OroB2BCatalogBundle:Category')->findAll(),
-            $group->getId()
+            $groupId
         );
         $resolved = $this->getResolvedValues();
         $this->assertCount(1, $resolved);
         $resolvedValue = $resolved[0];
-        $this->assertEquals($resolvedValue->getAccountGroup(), $group);
-        $this->assertEquals(
-            $resolvedValue->getCategoryId(),
-            $this->getReference(LoadCategoryData::FIRST_LEVEL)->getId()
-        );
+        $this->assertEquals($resolvedValue->getAccountGroup()->getId(), $groupId);
+        $expectedCategoryId = $this->registry
+            ->getRepository('OroB2BCatalogBundle:Category')
+            ->findOneByProduct($agpv->getProduct())
+            ->getId();
+        $this->assertEquals($expectedCategoryId, $resolvedValue->getCategoryId());
         $this->assertEquals($resolvedValue->getWebsite(), $agpv->getWebsite());
         $this->assertEquals($resolvedValue->getProduct(), $agpv->getProduct());
         $this->assertEquals($resolvedValue->getVisibility(), $visibilityValue);
@@ -104,17 +101,17 @@ class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
         $this->getRepository()->clearTable();
         $this->getRepository()->insertStatic($this->getInsertFromSelectExecutor());
         $resolved = $this->getResolvedValues();
-        $this->assertCount(3, $resolved);
+        $this->assertCount(4, $resolved);
+        $visibilities = $this->registry
+            ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
+            ->findAll();
         foreach ($resolved as $resolvedValue) {
-            $source = $this->registry
-                ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
-                ->findOneBy(
-                    [
-                        'product' => $resolvedValue->getProduct(),
-                        'accountGroup' => $resolvedValue->getAccountGroup(),
-                        'website' => $resolvedValue->getWebsite(),
-                    ]
-                );
+            $source = $this->getVisibility(
+                $visibilities,
+                $resolvedValue->getProduct(),
+                $resolvedValue->getAccountGroup(),
+                $resolvedValue->getWebsite()
+            );
             $this->assertNotNull($source);
             if ($resolvedValue->getVisibility() == BaseProductVisibilityResolved::VISIBILITY_HIDDEN) {
                 $visibility = AccountGroupProductVisibility::HIDDEN;
@@ -129,9 +126,35 @@ class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
     }
 
     /**
+     * @param AccountGroupProductVisibility[] $visibilities
+     * @param Product $product
+     * @param AccountGroup $accountGroup
+     * @param Website $website
+     * @return AccountGroupProductVisibility|null
+     */
+    protected function getVisibility(
+        $visibilities,
+        Product $product,
+        AccountGroup $accountGroup,
+        Website $website
+    ) {
+        foreach ($visibilities as $visibility) {
+            if (spl_object_hash($product) == spl_object_hash($visibility->getProduct())
+                && spl_object_hash($accountGroup) == spl_object_hash($visibility->getAccountGroup())
+                && spl_object_hash($website) == spl_object_hash($visibility->getWebsite())
+            ) {
+                return $visibility;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @return InsertFromSelectQueryExecutor
      */
-    protected function getInsertFromSelectExecutor()
+    protected
+    function getInsertFromSelectExecutor()
     {
         return $this->getContainer()
             ->get('oro_entity.orm.insert_from_select_query_executor');
@@ -140,7 +163,8 @@ class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
     /**
      * @return EntityRepository
      */
-    protected function getSourceRepository()
+    protected
+    function getSourceRepository()
     {
         return $this->getContainer()->get('doctrine')->getRepository(
             'OroB2BAccountBundle:Visibility\AccountGroupProductVisibility'
@@ -150,14 +174,16 @@ class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
     /**
      * @return AccountGroupProductVisibilityResolvedRepository
      */
-    protected function getRepository()
+    protected
+    function getRepository()
     {
         return $this->getContainer()->get('doctrine')->getRepository(
             'OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved'
         );
     }
 
-    public function testFindByPrimaryKey()
+    public
+    function testFindByPrimaryKey()
     {
         /** @var AccountGroupProductVisibilityResolved $actualEntity */
         $actualEntity = $this->repository->findOneBy([]);

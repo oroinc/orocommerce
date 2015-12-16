@@ -47,13 +47,13 @@ class AccountGroupProductVisibilityRepositoryTest extends WebTestCase
         $agpv->setVisibility(AccountGroupProductVisibility::CATEGORY);
 
         $this->registry->getEntityManager()->flush();
-        $categories = $this->repository->getCategoriesByAccountGroupProductVisibility();
+        $categories = $this->repository->getCategoryIdsByAccountGroupProductVisibility();
         $this->assertCount(1, $categories);
-        $this->assertEquals($categories[0], $this->getReference(LoadCategoryData::FIRST_LEVEL));
+        $this->assertEquals($categories[0], $this->getReference(LoadCategoryData::FIRST_LEVEL)->getId());
     }
 
     public function testGetAccountGroupsForCategoryType()
     {
-        $this->assertCount(1, $this->repository->getAccountsGroupsForCategoryType());
+        $this->assertCount(1, $this->repository->getAccountGroupsWithCategoryVisibiliy());
     }
 }

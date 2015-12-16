@@ -4,11 +4,11 @@ namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product;
 
 use Doctrine\ORM\EntityManagerInterface;
 
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupProductVisibilityResolvedRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountGroupProductVisibilityResolvedRepository;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -97,24 +97,25 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
     {
         $this->getManager()->beginTransaction();
         try {
-            $this->getRepository()->clearTable();
-
+            $this->getRepository()->clearTable($website);
             $categoriesGrouped = $this->getCategories();
             foreach ($categoriesGrouped as $accountGroupId => $categoriesGroupedByAccountGroup) {
                 $this->getRepository()->insertByCategory(
                     $this->insertFromSelectQueryExecutor,
                     BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
                     $categoriesGroupedByAccountGroup[VisibilityInterface::VISIBLE],
-                    $accountGroupId
+                    $accountGroupId,
+                    $website
                 );
                 $this->getRepository()->insertByCategory(
                     $this->insertFromSelectQueryExecutor,
                     BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
                     $categoriesGroupedByAccountGroup[VisibilityInterface::HIDDEN],
-                    $accountGroupId
+                    $accountGroupId,
+                    $website
                 );
             }
-            $this->getRepository()->insertStatic($this->insertFromSelectQueryExecutor);
+            $this->getRepository()->insertStatic($this->insertFromSelectQueryExecutor, $website);
             $this->getManager()->commit();
         } catch (\Exception $exception) {
             $this->getManager()->rollback();
@@ -150,22 +151,23 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
             ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
             ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility');
 
-        $categories = $repo->getCategoriesByAccountGroupProductVisibility();
-        $accountGroups = $repo->getAccountsGroupsForCategoryType();
+        $categories = $repo->getCategoryIdsByAccountGroupProductVisibility();
+        $accountGroups = $repo->getAccountGroupsWithCategoryVisibiliy();
 
         $categoriesGrouped = [];
+
         foreach ($accountGroups as $accountGroup) {
             $categoriesGrouped[$accountGroup->getId()] = [
-                VisibilityInterface::VISIBLE => [],
-                VisibilityInterface::HIDDEN => [],
+                VisibilityInterface::VISIBLE => array_intersect(
+                    $this->categoryVisibilityResolver->getVisibleCategoryIdsForAccountGroup($accountGroup),
+                    $categories
+                ),
+                VisibilityInterface::HIDDEN => array_intersect(
+                    $this->categoryVisibilityResolver->getHiddenCategoryIdsForAccountGroup($accountGroup),
+                    $categories
+                ),
             ];
-            foreach ($categories as $category) {
-                if ($this->categoryVisibilityResolver->isCategoryVisibleForAccountGroup($category, $accountGroup)) {
-                    $categoriesGrouped[$accountGroup->getId()][VisibilityInterface::VISIBLE][] = $category->getId();
-                } else {
-                    $categoriesGrouped[$accountGroup->getId()][VisibilityInterface::HIDDEN][] = $category->getId();
-                }
-            }
+
         }
 
         return $categoriesGrouped;

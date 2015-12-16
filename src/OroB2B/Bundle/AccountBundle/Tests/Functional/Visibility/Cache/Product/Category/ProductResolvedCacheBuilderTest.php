@@ -60,25 +60,34 @@ class ProductResolvedCacheBuilderTest extends CacheBuilderTestCase
                 'newParentCategoryReference' => 'category_1_5_6',
                 'expectedData' => [
                     'hiddenProducts' => [
-                        'product.2',
                         'product.4',
                         'product.7',
                     ],
                     'hiddenProductsByAccountGroups' => [
+                        'account_group.group3' => [
+                            'product.3',
+                            'product.6',
+                        ],
                         'account_group.group2' => [
                             'product.7',
                         ],
-                        'account_group.group3' => [
+                    ],
+                    'hiddenProductsByAccounts' => [
+                        'account.level_1.3.1.1' => [
                             'product.2',
                             'product.3',
                             'product.6',
                         ],
-                    ],
-                    'hiddenProductsByAccounts' => [
-                        'account.level_1.1' => [
-                            'product.2',
+                        'account.level_1.3.1' => [
                             'product.3',
                             'product.6',
+                            'product.4',
+                            'product.7',
+                        ],
+                        'account.level_1.4' => [
+                            'product.3',
+                        ],
+                        'account.level_1.1' => [
                             'product.4',
                             'product.7',
                         ],
@@ -87,22 +96,6 @@ class ProductResolvedCacheBuilderTest extends CacheBuilderTestCase
                         ],
                         'account.level_1.2.1' => [
                             'product.7',
-                        ],
-                        'account.level_1.3.1' => [
-                            'product.2',
-                            'product.3',
-                            'product.6',
-                            'product.4',
-                            'product.7',
-                        ],
-                        'account.level_1.3.1.1' => [
-                            'product.2',
-                            'product.3',
-                            'product.6',
-                        ],
-                        'account.level_1.4' => [
-                            'product.2',
-                            'product.3',
                         ],
                     ],
                 ]

@@ -66,5 +66,8 @@ product.7:
     all:
         visibility: config
         reference: product.7.visibility.all
-    groups: {}
+    groups:
+        account_group.group1:
+            visibility: category
+            reference: product.7.visibility.account_group.group1
     accounts: {}
