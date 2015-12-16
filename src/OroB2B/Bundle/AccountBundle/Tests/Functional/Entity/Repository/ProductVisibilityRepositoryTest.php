@@ -31,7 +31,6 @@ class ProductVisibilityRepositoryTest extends WebTestCase
         $this->loadFixtures(
             [
                 'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData'
             ]
         );
     }
@@ -43,8 +42,6 @@ class ProductVisibilityRepositoryTest extends WebTestCase
      */
     public function testUpdateToConfigProductVisibility($categoryName, array $expected)
     {
-        $this->setProductsVisibilitiesToDefault();
-
         /** @var Category $category */
         $category = $this->getReference($categoryName);
 
@@ -64,9 +61,7 @@ class ProductVisibilityRepositoryTest extends WebTestCase
             $productVisibilities
         );
 
-        foreach ($productVisibilities as $productVisibility) {
-            $this->assertContains($productVisibility, $expected);
-        }
+        $this->assertEquals($expected, $productVisibilities);
     }
 
     /**
@@ -76,19 +71,9 @@ class ProductVisibilityRepositoryTest extends WebTestCase
     public function updateToConfigProductVisibilityDataProvider()
     {
         return [
-            'Delete Test Third Level 2' => [
-                'categoryName' => LoadCategoryData::THIRD_LEVEL2,
+            'Delete FOURTH_LEVEL2' => [
+                'categoryName' => LoadCategoryData::FOURTH_LEVEL2,
                 'expected' => [
-                    [
-                        'product' => 'product.4',
-                        'website' => 'Default',
-                        'visibility' => ProductVisibility::CONFIG
-                    ],
-                    [
-                        'product' => 'product.5',
-                        'website' => 'Default',
-                        'visibility' => ProductVisibility::CONFIG
-                    ],
                     [
                         'product' => 'product.7',
                         'website' => 'Default',
@@ -99,69 +84,10 @@ class ProductVisibilityRepositoryTest extends WebTestCase
                         'product' => 'product.8',
                         'website' => 'Default',
                         'visibility' => ProductVisibility::CONFIG
-                    ],
-                    [
-                        'product' => 'product.4',
-                        'website' => 'US',
-                        'visibility' => ProductVisibility::CONFIG
-                    ],
-                    [
-                        'product' => 'product.5',
-                        'website' => 'US',
-                        'visibility' => ProductVisibility::CONFIG
-                    ],
-                    [
-                        'product' => 'product.7',
-                        'website' => 'US',
-                        'visibility' => ProductVisibility::CONFIG
-                    ],
-                    [
-                        'product' => 'product.8',
-                        'website' => 'US',
-                        'visibility' => ProductVisibility::CONFIG
-                    ],
-                    [
-                        'product' => 'product.4',
-                        'website' => 'Canada',
-                        'visibility' => ProductVisibility::CONFIG
-                    ],
-                    [
-                        'product' => 'product.5',
-                        'website' => 'Canada',
-                        'visibility' => ProductVisibility::CONFIG
-                    ],
-                    [
-                        'product' => 'product.7',
-                        'website' => 'Canada',
-                        'visibility' => ProductVisibility::CONFIG
-                    ],
-                    [
-                        'product' => 'product.8',
-                        'website' => 'Canada',
-                        'visibility' => ProductVisibility::CONFIG
-                    ],
+                    ]
                 ]
             ],
         ];
-    }
-
-    /**
-     * Remove all product visibilities.
-     * It's similarly to set product visibilities to default value 'Visibility To Parent Category'.
-     */
-    protected function setProductsVisibilitiesToDefault()
-    {
-        $em = $this->getContainer()
-            ->get('doctrine')
-            ->getManagerForClass('OroB2BAccountBundle:Visibility\ProductVisibility');
-
-        $productVisibilities = $this->repository->findAll();
-
-        foreach ($productVisibilities as $productVisibility) {
-            $em->remove($productVisibility);
-        }
-
-        $em->flush();
     }
 
     /**

@@ -110,6 +110,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product.5',
                     'product.6',
                     'product.7',
+                    'product.8',
                 ]
             ],
             'config hidden' => [
@@ -130,6 +131,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product.5',
                     'product.6',
                     'product.7',
+                    'product.8',
                 ]
             ],
             'anonymous config hidden' => [

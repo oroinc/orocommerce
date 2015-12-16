@@ -33,7 +33,10 @@ class ProductVisibilityRepository extends EntityRepository
                 'OroB2BAccountBundle:Visibility\ProductVisibility',
                 'productVisibility',
                 Join::WITH,
-                $qb->expr()->eq('productVisibility.product', 'product')
+                $qb->expr()->andX(
+                    $qb->expr()->eq('productVisibility.product', 'product'),
+                    $qb->expr()->eq('productVisibility.website', 'website')
+                )
             )
             ->where($qb->expr()->isNull('productVisibility.id'))
             ->andWhere($qb->expr()->isNull('category.id'));

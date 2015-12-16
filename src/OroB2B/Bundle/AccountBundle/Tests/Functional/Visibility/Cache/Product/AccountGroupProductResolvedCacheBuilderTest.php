@@ -65,7 +65,7 @@ class AccountGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTe
         $entityManager->flush();
 
         $visibilityResolved = $this->getVisibilityResolved();
-        $this->assertEquals($category->getId(), $visibilityResolved->getCategoryId());
+        $this->assertEquals($category->getId(), $visibilityResolved->getCategory()->getId());
         $this->assertEquals(BaseProductVisibilityResolved::SOURCE_CATEGORY, $visibilityResolved->getSource());
         $this->assertEquals($visibility, $visibilityResolved->getSourceProductVisibility());
         $this->assertEquals(BaseProductVisibilityResolved::VISIBILITY_HIDDEN, $visibilityResolved->getVisibility());
