@@ -102,6 +102,13 @@ definitions:
         actions_configuration:
             - @category_visibility_cache_clear: ~
 
+    product_visibility_website_added:
+        enabled: true
+        label: 'Update product visibility by adding Website'
+        entity: OroB2B\Bundle\WebsiteBundle\Entity\Website
+        actions_configuration:
+            - @product_visibility_website_added: ~
+
 triggers:
     change_category_position:
         -
@@ -189,3 +196,7 @@ triggers:
             event: update
         -
             event: delete
+
+    product_visibility_website_added:
+        -
+            event: create
