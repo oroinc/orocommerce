@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Model\Action;
 
+use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
@@ -53,15 +54,6 @@ class ChangeCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         unset($this->action);
-    }
-
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage CacheBuilder is not provided
-     */
-    public function testInitializeFailed()
-    {
-        $this->action->initialize([]);
     }
 
     /**

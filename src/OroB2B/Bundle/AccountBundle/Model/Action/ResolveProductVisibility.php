@@ -23,7 +23,6 @@ class ResolveProductVisibility extends AbstractVisibilityRegistryAwareAction
             $visibilityEntity->setVisibility($visibilityEntity::getDefault($visibilityEntity));
         }
 
-
         $em = $this->getEntityManager();
         $em->beginTransaction();
         try {
