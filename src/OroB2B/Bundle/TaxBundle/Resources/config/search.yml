@@ -1,0 +1,17 @@
+OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode:
+    alias:            orob2b_product_tax_code
+    search_template:  OroB2BTaxBundle:Autocomplete:product_tax_autocomplete_selection.html.twig
+    fields:
+        -
+            name:                   code
+            target_type:            text
+            target_fields:          [code]
+
+OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode:
+    alias:            orob2b_account_tax_code
+    search_template:  OroB2BTaxBundle:Autocomplete:account_tax_autocomplete_selection.html.twig
+    fields:
+        -
+            name:                   code
+            target_type:            text
+            target_fields:          [code]

@@ -1,0 +1,12 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{% if entity %}
+    {% set isGranted = resource_granted('VIEW', entity) %}
+    {% set taxCode %}
+        {% if isGranted %}<a href="{{ path('orob2b_tax_account_tax_code_view', {'id': entity.id}) }}">{% endif %}
+        {{ entity.code }}
+        {% if isGranted %}</a>{% endif %}
+    {% endset %}
+
+    {{ UI.renderHtmlProperty('orob2b.tax.accounttaxcode.entity_label'|trans, taxCode) }}
+{% endif %}

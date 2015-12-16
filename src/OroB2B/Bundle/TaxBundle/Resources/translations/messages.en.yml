@@ -51,3 +51,11 @@ orob2b.tax:
             saved.message: 'Tax has been saved'
         tax_jurisdiction:
             saved.message: 'Tax Jurisdiction has been saved'
+
+    product:
+        section:
+            taxes: 'Taxes'
+
+    account:
+        section:
+            taxes: 'Taxes'
