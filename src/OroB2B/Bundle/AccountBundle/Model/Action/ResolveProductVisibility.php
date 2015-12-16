@@ -60,15 +60,12 @@ class ResolveProductVisibility extends AbstractAction
             throw new \LogicException('Resolvable entity must implement VisibilityInterface');
         }
 
-        $em = $this->getEntityManager();
-        $em->beginTransaction();
-        try {
-            $this->cacheBuilder->resolveVisibilitySettings($visibilityEntity);
-            $em->commit();
-        } catch (\Exception $e) {
-            $em->rollback();
-            throw $e;
-        }
+        // TODO: Will be refactored in BB-1745
+        $this->getEntityManager()->transactional(
+            function () use ($visibilityEntity) {
+                $this->cacheBuilder->resolveVisibilitySettings($visibilityEntity);
+            }
+        );
     }
 
     /**
