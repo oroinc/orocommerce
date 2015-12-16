@@ -106,6 +106,10 @@ class ZipCodeTransformerTest extends \PHPUnit_Framework_TestCase
                     ZipCodeTestHelper::getSingleValueZipCode('123'),
                 ],
             ],
+            'empty value' => [
+                'value' => null,
+                'expectedCodes' => [],
+            ],
             'success way (with spaces)' => [
                 'value' => '0100-0200 , 0500 , 34600 , 123',
                 'expectedCodes' => [

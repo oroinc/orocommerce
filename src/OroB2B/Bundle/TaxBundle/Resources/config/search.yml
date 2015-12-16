@@ -11,7 +11,7 @@ OroB2B\Bundle\TaxBundle\Entity\Tax:
             name:                   code
             target_type:            text
             target_fields:          [code]
-            
+
 OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode:
     alias:            orob2b_product_tax_code
     search_template:  OroB2BTaxBundle:Autocomplete:product_tax_autocomplete_selection.html.twig
@@ -20,6 +20,10 @@ OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode:
             name:                   code
             target_type:            text
             target_fields:          [code]
+        -
+            name:                   description
+            target_type:            text
+            target_fields:          [description]
 
 OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode:
     alias:            orob2b_account_tax_code
@@ -29,6 +33,10 @@ OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode:
             name:                   code
             target_type:            text
             target_fields:          [code]
+        -
+            name:                   description
+            target_type:            text
+            target_fields:          [description]
 
 OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction:
     alias:                          orob2b_tax_jurisdiction

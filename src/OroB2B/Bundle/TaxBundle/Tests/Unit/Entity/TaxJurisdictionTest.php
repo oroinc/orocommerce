@@ -74,4 +74,11 @@ class TaxJurisdictionTest extends \PHPUnit_Framework_TestCase
     {
         return new TaxJurisdiction();
     }
+
+    public function testToString()
+    {
+        $tax = $this->createTaxJurisdiction();
+        $tax->setCode('code');
+        $this->assertEquals('code', (string)$tax);
+    }
 }

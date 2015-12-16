@@ -6,8 +6,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use OroB2B\Bundle\TaxBundle\Form\Type\TaxSelectType;
-
 class TaxRuleType extends AbstractType
 {
     const NAME = 'orob2b_tax_rule_type';

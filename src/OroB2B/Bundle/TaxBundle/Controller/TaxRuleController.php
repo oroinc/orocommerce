@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\TaxBundle\Controller;
 
-use OroB2B\Bundle\TaxBundle\Form\Type\TaxRuleType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
@@ -13,6 +12,7 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use OroB2B\Bundle\TaxBundle\Entity\TaxRule;
+use OroB2B\Bundle\TaxBundle\Form\Type\TaxRuleType;
 
 class TaxRuleController extends Controller
 {
