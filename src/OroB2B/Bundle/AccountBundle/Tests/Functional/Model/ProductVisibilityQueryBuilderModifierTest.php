@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Model;
 
+use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use Oro\Component\Testing\WebTestCase;
@@ -38,8 +39,6 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
      */
     protected function setUp()
     {
-        $this->markTestSkipped('Must be fixed in scope of BB-1550');
-
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(AccountLoadAccountUserData::EMAIL, AccountLoadAccountUserData::PASSWORD)
@@ -49,8 +48,8 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
             'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
             'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
             'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityResolvedData',
             'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
+            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
         ]);
 
         $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
@@ -71,15 +70,19 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
      *
      * @param string $configValue
      * @param string|null $user
+     * @param string|null $group
      * @param array $expectedData
      */
-    public function testModify($configValue, $user, $expectedData)
+    public function testModify($configValue, $user, $group, $expectedData)
     {
         if ($user) {
             $user = $this->getReference($user);
         }
+        if ($group) {
+            $group = $this->getReference($group);
+        }
 
-        $this->setupTokenStorage($user);
+        $this->setupTokenStorage($user, $group);
 
         $queryBuilder = $this->getProductRepository()->createQueryBuilder('p')
             ->select('p.sku')->orderBy('p.sku');
@@ -107,6 +110,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
             'config visible' => [
                 'configValue' => ProductVisibility::VISIBLE,
                 'user' => AccountLoadAccountUserData::EMAIL,
+                'accountGroup' => LoadGroups::GROUP1,
                 'expectedData' => [
                     'product.1',
                     'product.5',
@@ -117,6 +121,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
             'config hidden' => [
                 'configValue' => ProductVisibility::HIDDEN,
                 'user' => AccountLoadAccountUserData::EMAIL,
+                'accountGroup' => LoadGroups::GROUP1,
                 'expectedData' => [
                     'product.1',
                     'product.5',
@@ -125,6 +130,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
             'anonymous config visible' => [
                 'configValue' => ProductVisibility::VISIBLE,
                 'user' => null,
+                'accountGroup' => null,
                 'expectedData' => [
                     'product.1',
                     'product.2',
@@ -137,10 +143,23 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
             'anonymous config hidden' => [
                 'configValue' => ProductVisibility::HIDDEN,
                 'user' => null,
+                'accountGroup' => null,
                 'expectedData' => [
                     'product.2',
                     'product.3',
                     'product.5',
+                ]
+            ],
+            'group config visible' => [
+                'configValue' => ProductVisibility::VISIBLE,
+                'user' => AccountLoadAccountUserData::EMAIL,
+                'accountGroup' => LoadGroups::GROUP2,
+                'expectedData' => [
+                    'product.1',
+                    'product.3',
+                    'product.5',
+                    'product.6',
+                    'product.7',
                 ]
             ],
         ];
@@ -158,8 +177,9 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 
     /**
      * @param object|null $user
+     * @param object|null $group
      */
-    protected function setupTokenStorage($user = null)
+    protected function setupTokenStorage($user = null, $group = null)
     {
         $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $token->expects($this->any())
@@ -169,6 +189,11 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         $this->tokenStorage->expects($this->any())
             ->method('getToken')
             ->willReturn($token);
+
+        if ($user) {
+            $user->getAccount()->setGroup($group);
+        }
+
     }
 
     /**
