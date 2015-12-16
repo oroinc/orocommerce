@@ -23,13 +23,16 @@ class WidgetController extends Controller
      * @Route("/buttons", name="oro_action_widget_buttons")
      * @Template()
      *
+     * @param Request $request
      * @return array
      */
-    public function buttonsAction()
+    public function buttonsAction(Request $request)
     {
         return [
             'actions' => $this->getActionManager()->getActions(),
-            'context' => $this->getContextHelper()->getContext()
+            'context' => $this->getContextHelper()->getContext(),
+            'dialogRoute' => $request->get('dialogRoute'),
+            'executionRoute' => $request->get('executionRoute')
         ];
     }
 
@@ -93,7 +96,7 @@ class WidgetController extends Controller
     protected function getResponse(ActionData $context)
     {
         /* @var $session Session */
-        $session = $this->getRequest()->getSession();
+        $session = $this->get('session');
 
         $response = [];
         if ($context->getRedirectUrl()) {
