@@ -4,7 +4,11 @@ namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Doctrine\Common\Util\ClassUtils;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\UnitOfWork;
+
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\AccountBundle\Entity\Repository\ProductResolvedRepositoryTrait;
@@ -40,12 +44,11 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
     }
 
     /**
-     * @param BaseProductVisibilityResolved $productVisibilityResolved
-     * @param VisibilityInterface $productVisibility
      * @param string $selectedVisibility
+     * @param VisibilityInterface $productVisibility|null
      * @return array
      */
-    protected function resolveStaticValues(VisibilityInterface $productVisibility, $selectedVisibility)
+    protected function resolveStaticValues($selectedVisibility, VisibilityInterface $productVisibility = null)
     {
         $updateData = [
             'sourceProductVisibility' => $productVisibility,
@@ -113,5 +116,29 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
     {
         return $isVisible ? BaseProductVisibilityResolved::VISIBILITY_VISIBLE
             : BaseProductVisibilityResolved::VISIBILITY_HIDDEN;
+    }
+
+    /**
+     * @param object $entity
+     * @return object|null
+     */
+    protected function refreshEntity($entity)
+    {
+        $entityClass = ClassUtils::getClass($entity);
+        /** @var EntityManager $entityManager */
+        $entityManager = $this->registry->getManagerForClass($entityClass);
+
+        if ($entityManager->getUnitOfWork()->getEntityState($entity) !== UnitOfWork::STATE_MANAGED) {
+            $identifier = $entityManager->getClassMetadata($entityClass)->getIdentifierValues($entity);
+            if ($identifier) {
+                $entity = $entityManager->getRepository($entityClass)->find($identifier);
+            } else {
+                $entity = null;
+            }
+        } else {
+            $entityManager->refresh($entity);
+        }
+
+        return $entity;
     }
 }

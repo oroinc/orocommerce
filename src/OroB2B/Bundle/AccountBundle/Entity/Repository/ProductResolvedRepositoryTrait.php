@@ -66,12 +66,7 @@ trait ProductResolvedRepositoryTrait
                 ->setParameter($parameterName, $value);
         }
 
-        foreach ($where as $field => $value) {
-            $parameterIndex++;
-            $parameterName = 'parameter' . $parameterIndex;
-            $queryBuilder->andWhere(sprintf('entity.%s = :%s', $field, $parameterName))
-                ->setParameter($parameterName, $value);
-        }
+        $this->applyWhereCondition($queryBuilder, $where, $parameterIndex);
 
         $queryBuilder
             ->setMaxResults(1)
@@ -87,18 +82,41 @@ trait ProductResolvedRepositoryTrait
         $queryBuilder = $this->createQueryBuilder('entity')
             ->delete($this->getEntityName(), 'entity');
 
-        $parameterIndex = 0;
+        $this->applyWhereCondition($queryBuilder, $where);
+
+        $queryBuilder
+            ->setMaxResults(1)
+            ->getQuery()
+            ->execute();
+    }
+
+
+    public function hasEntity(array $where)
+    {
+        $queryBuilder = $this->createQueryBuilder('entity')
+            ->select('entity.visibility');
+
+        $this->applyWhereCondition($queryBuilder, $where);
+
+        return $queryBuilder
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult() !== null;
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param array $where
+     * @param int $parameterIndex
+     */
+    protected function applyWhereCondition(QueryBuilder $queryBuilder, array $where, $parameterIndex = 0)
+    {
         foreach ($where as $field => $value) {
             $parameterIndex++;
             $parameterName = 'parameter' . $parameterIndex;
             $queryBuilder->andWhere(sprintf('entity.%s = :%s', $field, $parameterName))
                 ->setParameter($parameterName, $value);
         }
-
-        $queryBuilder
-            ->setMaxResults(1)
-            ->getQuery()
-            ->execute();
     }
 
     /**

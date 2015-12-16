@@ -48,25 +48,26 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
     }
 
     /**
-     * @param VisibilityInterface|ProductVisibility $productVisibility
+     * @param VisibilityInterface|ProductVisibility $visibilitySettings
      */
-    public function resolveVisibilitySettings(VisibilityInterface $productVisibility)
+    public function resolveVisibilitySettings(VisibilityInterface $visibilitySettings)
     {
-        $product = $productVisibility->getProduct();
-        $website = $productVisibility->getWebsite();
+        $product = $visibilitySettings->getProduct();
+        $website = $visibilitySettings->getWebsite();
 
-        $selectedVisibility = $productVisibility->getVisibility();
-
-        $em = $this->registry->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
-        $er = $em->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
-        $productVisibilityResolved = $er->findByPrimaryKey($product, $website);
+        $selectedVisibility = $visibilitySettings->getVisibility();
+        $visibilitySettings = $this->refreshEntity($visibilitySettings);
 
         $insert = false;
         $delete = false;
         $update = [];
         $where = ['website' => $website, 'product' => $product];
 
-        if (!$productVisibilityResolved && $selectedVisibility !== ProductVisibility::CONFIG) {
+        $em = $this->registry->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
+        $er = $em->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
+        $hasProductVisibilityResolved = $er->hasEntity($where);
+
+        if (!$hasProductVisibilityResolved && $selectedVisibility !== ProductVisibility::CONFIG) {
             $insert = true;
         }
 
@@ -75,7 +76,6 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
                 ->getManagerForClass('OroB2BCatalogBundle:Category')
                 ->getRepository('OroB2BCatalogBundle:Category')
                 ->findOneByProduct($product);
-
             if ($category) {
                 $update = [
                     'sourceProductVisibility' => null,
@@ -86,14 +86,14 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
                     'category' => $category
                 ];
             } else {
-                $update = $this->resolveConfigValue($productVisibility);
+                $update = $this->resolveConfigValue($visibilitySettings);
             }
         } elseif ($selectedVisibility === ProductVisibility::CONFIG) {
-            if ($productVisibilityResolved) {
+            if ($hasProductVisibilityResolved) {
                 $delete = true;
             }
         } else {
-            $update = $this->resolveStaticValues($productVisibility, $selectedVisibility);
+            $update = $this->resolveStaticValues($selectedVisibility, $visibilitySettings);
         }
 
         $this->executeDbQuery($er, $insert, $delete, $update, $where);

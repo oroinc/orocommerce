@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product;
 
-use Doctrine\ORM\EntityManager;
-
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
@@ -15,28 +13,28 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
 {
     /**
-     * @param VisibilityInterface|AccountProductVisibility $accountProductVisibility
+     * @param VisibilityInterface|AccountProductVisibility $visibilitySettings
      */
-    public function resolveVisibilitySettings(VisibilityInterface $accountProductVisibility)
+    public function resolveVisibilitySettings(VisibilityInterface $visibilitySettings)
     {
-        $product = $accountProductVisibility->getProduct();
-        $website = $accountProductVisibility->getWebsite();
-        $account = $accountProductVisibility->getAccount();
+        $product = $visibilitySettings->getProduct();
+        $website = $visibilitySettings->getWebsite();
+        $account = $visibilitySettings->getAccount();
 
-        $selectedVisibility = $accountProductVisibility->getVisibility();
-
-        $em = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved');
-        $er = $accountProductVisibilityResolved = $em
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved');
-        $accountProductVisibilityResolved = $er->findByPrimaryKey($account, $product, $website);
+        $selectedVisibility = $visibilitySettings->getVisibility();
+        $visibilitySettings = $this->refreshEntity($visibilitySettings);
 
         $insert = false;
         $delete = false;
         $update = [];
         $where = ['account' => $account, 'website' => $website, 'product' => $product];
 
-        if (!$accountProductVisibilityResolved && $selectedVisibility !== AccountProductVisibility::ACCOUNT_GROUP) {
+        $em = $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved');
+        $er = $em->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved');
+        $hasAccountProductVisibilityResolved = $er->hasEntity($where);
+
+        if (!$hasAccountProductVisibilityResolved && $selectedVisibility !== AccountProductVisibility::ACCOUNT_GROUP) {
             $insert = true;
         }
 
@@ -47,7 +45,7 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
                 ->findOneByProduct($product);
             if ($category) {
                 $update = [
-                    'sourceProductVisibility' => $accountProductVisibility,
+                    'sourceProductVisibility' => $visibilitySettings,
                     'visibility' => $this->convertVisibility(
                         $this->categoryVisibilityResolver->isCategoryVisibleForAccount($category, $account)
                     ),
@@ -55,26 +53,26 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
                     'category' => $category
                 ];
             } else {
-                $update = $this->resolveConfigValue($accountProductVisibility);
+                $update = $this->resolveConfigValue($visibilitySettings);
             }
         } elseif ($selectedVisibility === AccountProductVisibility::CURRENT_PRODUCT) {
             $productVisibilityResolved = $this->getProductVisibilityResolved($product, $website);
             if ($productVisibilityResolved) {
                 $update = [
-                    'sourceProductVisibility' => $accountProductVisibility,
+                    'sourceProductVisibility' => $visibilitySettings,
                     'visibility' => $productVisibilityResolved->getVisibility(),
                     'source' => BaseProductVisibilityResolved::SOURCE_STATIC,
                     'category' => null,
                 ];
             } else {
-                $update = $this->resolveConfigValue($accountProductVisibility);
+                $update = $this->resolveConfigValue($visibilitySettings);
             }
         } elseif ($selectedVisibility === AccountProductVisibility::ACCOUNT_GROUP) {
-            if ($accountProductVisibilityResolved) {
+            if ($hasAccountProductVisibilityResolved) {
                 $delete = true;
             }
         } else {
-            $update = $this->resolveStaticValues($accountProductVisibility, $selectedVisibility);
+            $update = $this->resolveStaticValues($selectedVisibility, $visibilitySettings);
         }
 
         $this->executeDbQuery($er, $insert, $delete, $update, $where);
@@ -111,25 +109,9 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
      */
     protected function getProductVisibilityResolved(Product $product, Website $website)
     {
-        /** @var EntityManager $em */
-        $em = $resolvedVisibility = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
-        $resolvedVisibility = $em->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
+        return $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
             ->findByPrimaryKey($product, $website);
-
-        // entity might be inserted, but not saved yet
-        if (!$resolvedVisibility) {
-            foreach ($em->getUnitOfWork()->getScheduledEntityInsertions() as $entity) {
-                if ($entity instanceof ProductVisibilityResolved
-                    && $entity->getProduct() && $entity->getWebsite()
-                    && $entity->getProduct()->getId() === $product->getId()
-                    && $entity->getWebsite()->getId() === $website->getId()
-                ) {
-                    return $entity;
-                }
-            }
-        }
-
-        return $resolvedVisibility;
     }
 }

@@ -12,27 +12,28 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
 {
     /**
-     * @param VisibilityInterface|AccountGroupProductVisibility $accountGroupProductVisibility
+     * @param VisibilityInterface|AccountGroupProductVisibility $visibilitySettings
      */
-    public function resolveVisibilitySettings(VisibilityInterface $accountGroupProductVisibility)
+    public function resolveVisibilitySettings(VisibilityInterface $visibilitySettings)
     {
-        $product = $accountGroupProductVisibility->getProduct();
-        $website = $accountGroupProductVisibility->getWebsite();
-        $accountGroup = $accountGroupProductVisibility->getAccountGroup();
+        $product = $visibilitySettings->getProduct();
+        $website = $visibilitySettings->getWebsite();
+        $accountGroup = $visibilitySettings->getAccountGroup();
 
-        $selectedVisibility = $accountGroupProductVisibility->getVisibility();
-
-        $em = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved');
-        $er = $em->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved');
-        $accountGroupProductVisibilityResolved = $er->findByPrimaryKey($accountGroup, $product, $website);
+        $selectedVisibility = $visibilitySettings->getVisibility();
+        $visibilitySettings = $this->refreshEntity($visibilitySettings);
 
         $insert = false;
         $delete = false;
         $update = [];
         $where = ['accountGroup' => $accountGroup, 'website' => $website, 'product' => $product];
 
-        if (!$accountGroupProductVisibilityResolved
+        $em = $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved');
+        $er = $em->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved');
+        $hasAccountGroupProductVisibilityResolved = $er->hasEntity($where);
+
+        if (!$hasAccountGroupProductVisibilityResolved
             && $selectedVisibility !== AccountGroupProductVisibility::CURRENT_PRODUCT
         ) {
             $insert = true;
@@ -45,7 +46,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
                 ->findOneByProduct($product);
             if ($category) {
                 $update = [
-                    'sourceProductVisibility' => $accountGroupProductVisibility,
+                    'sourceProductVisibility' => $visibilitySettings,
                     'visibility' => $this->convertVisibility(
                         $this->categoryVisibilityResolver->isCategoryVisibleForAccountGroup($category, $accountGroup)
                     ),
@@ -53,14 +54,14 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
                     'category' => $category
                 ];
             } else {
-                $update = $this->resolveConfigValue($accountGroupProductVisibility);
+                $update = $this->resolveConfigValue($visibilitySettings);
             }
         } elseif ($selectedVisibility === AccountGroupProductVisibility::CURRENT_PRODUCT) {
-            if ($accountGroupProductVisibilityResolved) {
+            if ($hasAccountGroupProductVisibilityResolved) {
                 $delete = true;
             }
         } else {
-            $update = $this->resolveStaticValues($accountGroupProductVisibility, $selectedVisibility);
+            $update = $this->resolveStaticValues($selectedVisibility, $visibilitySettings);
         }
 
         $this->executeDbQuery($er, $insert, $delete, $update, $where);
