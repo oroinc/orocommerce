@@ -2,9 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\Repository\ProductVisibilityRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
@@ -12,11 +9,8 @@ use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 /**
  * @dbIsolation
  */
-class ProductVisibilityRepositoryTest extends WebTestCase
+class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositoryTestCase
 {
-    /** @var ProductVisibilityRepository */
-    protected $repository;
-
     /**
      * {@inheritdoc}
      */
@@ -36,11 +30,11 @@ class ProductVisibilityRepositoryTest extends WebTestCase
     }
 
     /**
-     * @dataProvider updateToConfigProductVisibilityDataProvider
+     * @dataProvider setToDefaultWithoutCategoryDataProvider
      * @param $categoryName
      * @param array $expected
      */
-    public function testUpdateToConfigProductVisibility($categoryName, array $expected)
+    public function testSetToDefaultWithoutCategory($categoryName, array $expected)
     {
         /** @var Category $category */
         $category = $this->getReference($categoryName);
@@ -48,27 +42,13 @@ class ProductVisibilityRepositoryTest extends WebTestCase
         // updateToConfigProductVisibility called in CategoryListener when removed category
         $this->deleteCategory($category);
 
-        $productVisibilities = $this->repository->findAll();
-
-        $productVisibilities = array_map(
-            function (ProductVisibility $visibility) {
-                return [
-                    'product' => $visibility->getProduct()->getSku(),
-                    'website' => $visibility->getWebsite()->getName(),
-                    'visibility' => $visibility->getVisibility()
-                ];
-            },
-            $productVisibilities
-        );
-
-        $this->assertEquals($expected, $productVisibilities);
+        $this->assertEquals($expected, $this->getProductsByVisibilities());
     }
 
     /**
      * @return array
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function updateToConfigProductVisibilityDataProvider()
+    public function setToDefaultWithoutCategoryDataProvider()
     {
         return [
             'Delete FOURTH_LEVEL2' => [
@@ -91,15 +71,19 @@ class ProductVisibilityRepositoryTest extends WebTestCase
     }
 
     /**
-     * @param Category $category
+     * @return array
      */
-    protected function deleteCategory(Category $category)
+    protected function getProductsByVisibilities()
     {
-        $em = $this->getContainer()
-            ->get('doctrine')
-            ->getManagerForClass('OroB2BCatalogBundle:Category');
-
-        $em->remove($category);
-        $em->flush();
+        return array_map(
+            function (ProductVisibility $visibility) {
+                return [
+                    'product' => $visibility->getProduct()->getSku(),
+                    'website' => $visibility->getWebsite()->getName(),
+                    'visibility' => $visibility->getVisibility()
+                ];
+            },
+            $this->repository->findAll()
+        );
     }
 }

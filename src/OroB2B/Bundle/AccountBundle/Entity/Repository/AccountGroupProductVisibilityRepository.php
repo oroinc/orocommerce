@@ -4,48 +4,51 @@ namespace OroB2B\Bundle\AccountBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
-use Doctrine\ORM\QueryBuilder;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 
 class AccountGroupProductVisibilityRepository extends EntityRepository
 {
+    const BATCH_SIZE = 1000;
+
     /**
      * Delete from AccountGroupProductVisibility visibilities with fallback to 'category' when category is absent
      */
     public function setToDefaultValueProductAccountGroupProductVisibilityForProductsWithoutCategory()
     {
         $qb = $this->createQueryBuilder('accountGroupProductVisibility');
+        $qb->delete()
+            ->where($qb->expr()->in('accountGroupProductVisibility.id', ':accountGroupProductVisibilityIds'));
 
-        while ($accountGroupProductVisibilities = $this->getAccountGroupProductVisibilityForDelete($qb)) {
-            $accountGroupProductVisibilityIds = array_map('current', $accountGroupProductVisibilities);
-
-            $qb = $this->createQueryBuilder('accountGroupProductVisibility');
-            $qb->delete()
-                ->where($qb->expr()->in('accountGroupProductVisibility.id', $accountGroupProductVisibilityIds))
-                ->getQuery()
-                ->execute();
+        while ($accountGroupProductVisibilityIds = $this->getAccountGroupProductVisibilityForDelete()) {
+            $qb->getQuery()->execute(['accountGroupProductVisibilityIds' => $accountGroupProductVisibilityIds]);
         }
     }
 
     /**
-     * @param QueryBuilder $qb
-     * @return array
+     * @return int[]
      */
-    protected function getAccountGroupProductVisibilityForDelete(QueryBuilder $qb)
+    protected function getAccountGroupProductVisibilityForDelete()
     {
-        return $qb->select('accountGroupProductVisibility.id')
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $accountGroupProductVisibilities = $qb
+            ->select('accountGroupProductVisibility.id')
+            ->from($this->getEntityName(), 'accountGroupProductVisibility')
             ->leftJoin('accountGroupProductVisibility.product', 'product')
             ->leftJoin(
                 'OroB2BCatalogBundle:Category',
                 'category',
                 Join::WITH,
-                'product MEMBER OF category.products'
+                $qb->expr()->isMemberOf('product', 'category.products')
             )
             ->where($qb->expr()->isNull('category.id'))
             ->andWhere($qb->expr()->eq('accountGroupProductVisibility.visibility', ':visibility'))
+            ->setMaxResults(self::BATCH_SIZE)
             ->setParameter('visibility', AccountGroupProductVisibility::CATEGORY)
             ->getQuery()
             ->getScalarResult();
+
+        return array_map('current', $accountGroupProductVisibilities);
     }
 }

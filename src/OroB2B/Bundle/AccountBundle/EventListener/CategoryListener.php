@@ -11,7 +11,9 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class CategoryListener
 {
-    /** @var Registry */
+    /**
+     * @var Registry
+     */
     protected $registry;
 
     /**

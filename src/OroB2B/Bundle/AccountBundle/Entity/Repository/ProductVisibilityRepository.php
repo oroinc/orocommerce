@@ -12,22 +12,34 @@ use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 class ProductVisibilityRepository extends EntityRepository
 {
     /**
-     * Update to 'config' ProductVisibility for products without category with fallback to 'category'
+     * Update to 'config' ProductVisibility for products without category with fallback to 'category'.
+     *
      * @param InsertFromSelectQueryExecutor $executor
      */
     public function updateToConfigProductVisibility(InsertFromSelectQueryExecutor $executor)
     {
-        $qb = $this->getEntityManager()
-            ->getRepository('OroB2BProductBundle:Product')
-            ->createQueryBuilder('product');
+        $qb = $this->getEntityManager()->createQueryBuilder();
 
-        $qb->select("product.id as productId, website.id as websiteId, '". ProductVisibility::CONFIG ."'")
-            ->innerJoin('OroB2BWebsiteBundle:Website', 'website', Join::WITH, '1 = 1')
+        $qb
+            ->select(
+                [
+                    'product.id',
+                    'website.id',
+                    (string)$qb->expr()->literal(ProductVisibility::CONFIG)
+                ]
+            )
+            ->from('OroB2BProductBundle:Product', 'product')
+            ->innerJoin(
+                'OroB2BWebsiteBundle:Website',
+                'website',
+                Join::WITH,
+                $qb->expr()->eq(1, 1)
+            )
             ->leftJoin(
                 'OroB2BCatalogBundle:Category',
                 'category',
                 Join::WITH,
-                'product MEMBER OF category.products'
+                $qb->expr()->isMemberOf('product', 'category.products')
             )
             ->leftJoin(
                 'OroB2BAccountBundle:Visibility\ProductVisibility',

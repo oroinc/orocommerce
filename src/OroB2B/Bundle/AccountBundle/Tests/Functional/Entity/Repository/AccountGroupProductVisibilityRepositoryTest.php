@@ -2,21 +2,14 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupProductVisibilityRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
 /**
  * @dbIsolation
  */
-class AccountGroupProductVisibilityRepositoryTest extends WebTestCase
+class AccountGroupProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositoryTestCase
 {
-    /** @var AccountGroupProductVisibilityRepository */
-    protected $repository;
-
     /**
      * {@inheritdoc}
      */
@@ -37,31 +30,9 @@ class AccountGroupProductVisibilityRepositoryTest extends WebTestCase
     }
 
     /**
-     * @dataProvider setToDefaultValueAccountGroupProductVisibilityForProductsWithoutCategoryDataProvider
-     * @param string $categoryName
-     * @param array $deletedCategoryProducts
-     */
-    public function testSetToDefaultValueAccountGroupProductVisibilityForProductsWithoutCategory(
-        $categoryName,
-        array $deletedCategoryProducts
-    ) {
-        foreach ($deletedCategoryProducts as $deletedCategoryProduct) {
-            $this->assertContains($deletedCategoryProduct, $this->getProductsAccountGroupProductVisibilities());
-        }
-
-        /** @var Category $category */
-        $category = $this->getReference($categoryName);
-        $this->deleteCategory($category);
-
-        foreach ($deletedCategoryProducts as $deletedCategoryProduct) {
-            $this->assertNotContains($deletedCategoryProduct, $this->getProductsAccountGroupProductVisibilities());
-        }
-    }
-
-    /**
      * @return array
      */
-    public function setToDefaultValueAccountGroupProductVisibilityForProductsWithoutCategoryDataProvider()
+    public function setToDefaultWithoutCategoryDataProvider()
     {
         return [
             [
@@ -69,31 +40,5 @@ class AccountGroupProductVisibilityRepositoryTest extends WebTestCase
                 'deletedCategoryProducts' => ['product.8'],
             ]
         ];
-    }
-
-    /**
-     * @return array
-     */
-    protected function getProductsAccountGroupProductVisibilities()
-    {
-        return array_map(
-            function (AccountGroupProductVisibility $visibility) {
-                return $visibility->getProduct()->getSku();
-            },
-            $this->repository->findAll()
-        );
-    }
-
-    /**
-     * @param Category $category
-     */
-    protected function deleteCategory(Category $category)
-    {
-        $em = $this->getContainer()
-            ->get('doctrine')
-            ->getManagerForClass('OroB2BCatalogBundle:Category');
-
-        $em->remove($category);
-        $em->flush();
     }
 }
