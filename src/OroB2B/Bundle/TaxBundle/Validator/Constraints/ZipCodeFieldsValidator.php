@@ -19,6 +19,7 @@ class ZipCodeFieldsValidator extends ConstraintValidator
 
         if ($entity->getZipCode() && ($entity->getZipRangeStart() || $entity->getZipRangeEnd())) {
             $this->context->addViolationAt($propertyPath, $constraint->onlyOneTypeMessage);
+            return;
         }
 
         if ($entity->getZipRangeStart() xor $entity->getZipRangeEnd()) {
