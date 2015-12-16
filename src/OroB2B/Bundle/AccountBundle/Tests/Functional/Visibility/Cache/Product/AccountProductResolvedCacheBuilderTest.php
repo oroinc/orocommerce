@@ -103,11 +103,15 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
         $entityManager->persist($productVisibility);
         $entityManager->flush();
 
-        // assert account visibility fallback to product
-        $visibility = $this->getVisibility();
+        // create new visibility because old one was automatically removed
+        $visibility = new AccountProductVisibility();
+        $visibility->setWebsite($this->website);
+        $visibility->setProduct($this->product);
+        $visibility->setAccount($this->account);
         $visibility->setVisibility(AccountProductVisibility::CURRENT_PRODUCT);
 
         $entityManager = $this->getManagerForVisibility();
+        $entityManager->persist($visibility);
         $entityManager->flush();
 
         $visibilityResolved = $this->getVisibilityResolved();
@@ -187,7 +191,7 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     }
 
     /**
-     * @return null|ProductVisibility
+     * @return null|AccountProductVisibility
      */
     protected function getVisibility()
     {
@@ -197,7 +201,7 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     }
 
     /**
-     * @return null|ProductVisibilityResolved
+     * @return null|AccountProductVisibilityResolved
      */
     protected function getVisibilityResolved()
     {

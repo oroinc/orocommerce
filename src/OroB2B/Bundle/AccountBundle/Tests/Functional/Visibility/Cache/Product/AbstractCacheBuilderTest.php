@@ -33,9 +33,10 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
     /** @var  Account */
     protected $account;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->initClient();
+        $this->getContainer()->get('doctrine')->getManager()->clear();
         $this->loadFixtures([
             'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
             'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',

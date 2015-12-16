@@ -44,23 +44,9 @@ class ResolveProductVisibilityTest extends \PHPUnit_Framework_TestCase
         $this->action->setDispatcher($eventDispatcher);
     }
 
-    /**
-     * @param bool $resetVisibility
-     * @dataProvider executeDataProvider
-     */
-    public function testExecute($resetVisibility)
+    public function testExecute()
     {
-        $originalVisibility = ProductVisibility::VISIBLE;
-        $defaultVisibility = ProductVisibility::getDefault(new Product());
-        $expectedVisibility = $resetVisibility ? $defaultVisibility : $originalVisibility;
-
         $entity = new ProductVisibility();
-        $entity->setVisibility($originalVisibility);
-
-        $options = [];
-        if ($resetVisibility) {
-            $options['reset_visibility'] = true;
-        }
 
         $entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
@@ -80,25 +66,9 @@ class ResolveProductVisibilityTest extends \PHPUnit_Framework_TestCase
 
         $this->cacheBuilder->expects($this->once())
             ->method('resolveVisibilitySettings')
-            ->with($entity)
-            ->willReturnCallback(
-                function (VisibilityInterface $visibilitySettings) use ($expectedVisibility) {
-                    $this->assertEquals($expectedVisibility, $visibilitySettings->getVisibility());
-                }
-            );
+            ->with($entity);
 
-        $this->action->initialize($options);
+        $this->action->initialize([]);
         $this->action->execute(new ProcessData(['data' => $entity]));
-    }
-
-    /**
-     * @return array
-     */
-    public function executeDataProvider()
-    {
-        return [
-            'default' => [false],
-            'reset visibility' => [true],
-        ];
     }
 }

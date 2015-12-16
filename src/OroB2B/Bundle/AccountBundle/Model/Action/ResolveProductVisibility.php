@@ -24,11 +24,6 @@ class ResolveProductVisibility extends AbstractAction
     protected $registry;
 
     /**
-     * @var bool
-     */
-    protected $resetVisibility = false;
-
-    /**
      * Empty constructor, no extra dependencies
      */
     public function __construct()
@@ -65,10 +60,6 @@ class ResolveProductVisibility extends AbstractAction
             throw new \LogicException('Resolvable entity must implement VisibilityInterface');
         }
 
-        if ($this->resetVisibility) {
-            $visibilityEntity->setVisibility($visibilityEntity::getDefault($visibilityEntity));
-        }
-
         $this->getEntityManager()->transactional(
             function () use ($visibilityEntity) {
                 $this->cacheBuilder->resolveVisibilitySettings($visibilityEntity);
@@ -81,7 +72,6 @@ class ResolveProductVisibility extends AbstractAction
      */
     public function initialize(array $options)
     {
-        $this->resetVisibility = array_key_exists('reset_visibility', $options) && $options['reset_visibility'];
     }
 
     /**

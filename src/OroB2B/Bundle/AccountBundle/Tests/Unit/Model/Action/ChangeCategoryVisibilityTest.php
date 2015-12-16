@@ -47,7 +47,11 @@ class ChangeCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
         $this->action->initialize([]);
     }
 
-    public function testExecuteAction()
+    /**
+     * @dataProvider executeActionDataProvider
+     * @param bool $throwException
+     */
+    public function testExecuteAction($throwException = false)
     {
         $categoryVisibility = new CategoryVisibility();
 
@@ -64,17 +68,28 @@ class ChangeCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $em->expects($this->any())
-            ->method('transactional')
-            ->willReturnCallback(
-                function ($callback) {
-                    call_user_func($callback);
-                }
-            );
 
-        $cacheBuilder->expects($this->once())
-            ->method('resolveVisibilitySettings')
-            ->with($categoryVisibility);
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        if ($throwException) {
+            $cacheBuilder->expects($this->once())
+                ->method('resolveVisibilitySettings')
+                ->with($categoryVisibility)
+                ->will($this->throwException(new \Exception('Error')));
+
+            $em->expects($this->once())
+                ->method('rollback');
+
+            $this->setExpectedException('\Exception', 'Error');
+        } else {
+            $cacheBuilder->expects($this->once())
+                ->method('resolveVisibilitySettings')
+                ->with($categoryVisibility);
+
+            $em->expects($this->once())
+                ->method('commit');
+        }
 
         $registry->expects($this->once())
             ->method('getManagerForClass')
@@ -85,5 +100,20 @@ class ChangeCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
         $this->action->setRegistry($registry);
         $this->action->initialize([]);
         $this->action->execute(new ProcessData(['data' => $categoryVisibility]));
+    }
+
+    /**
+     * @return array
+     */
+    public function executeActionDataProvider()
+    {
+        return [
+            [
+                'throwException' => true
+            ],
+            [
+                'throwException' => false
+            ],
+        ];
     }
 }
