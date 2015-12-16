@@ -11,7 +11,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository")
  * @ORM\Table(name="orob2b_tax_product_tax_code")
  * @ORM\HasLifecycleCallbacks
  * @Config(

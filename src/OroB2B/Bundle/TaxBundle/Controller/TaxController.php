@@ -17,9 +17,9 @@ use OroB2B\Bundle\TaxBundle\Form\Type\TaxType;
 class TaxController extends Controller
 {
     /**
-     * @Route("/", name="orob2b_tax_tax_index")
+     * @Route("/", name="orob2b_tax_index")
      * @Template
-     * @AclAncestor("orob2b_tax_tax_view")
+     * @AclAncestor("orob2b_tax_view")
      *
      * @return array
      */
@@ -31,10 +31,10 @@ class TaxController extends Controller
     }
 
     /**
-     * @Route("/view/{id}", name="orob2b_tax_tax_view", requirements={"id"="\d+"})
+     * @Route("/view/{id}", name="orob2b_tax_view", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_tax_tax_view",
+     *      id="orob2b_tax_view",
      *      type="entity",
      *      class="OroB2BTaxBundle:Tax",
      *      permission="VIEW"
@@ -51,10 +51,10 @@ class TaxController extends Controller
     }
 
     /**
-     * @Route("/create", name="orob2b_tax_tax_create")
+     * @Route("/create", name="orob2b_tax_create")
      * @Template("OroB2BTaxBundle:Tax:update.html.twig")
      * @Acl(
-     *      id="orob2b_tax_tax_create",
+     *      id="orob2b_tax_create",
      *      type="entity",
      *      class="OroB2BTaxBundle:Tax",
      *      permission="CREATE"
@@ -68,10 +68,10 @@ class TaxController extends Controller
     }
 
     /**
-     * @Route("/update/{id}", name="orob2b_tax_tax_update", requirements={"id"="\d+"})
+     * @Route("/update/{id}", name="orob2b_tax_update", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="orob2b_tax_tax_update",
+     *      id="orob2b_tax_update",
      *      type="entity",
      *      class="OroB2BTaxBundle:Tax",
      *      permission="EDIT"
@@ -96,13 +96,13 @@ class TaxController extends Controller
             $this->createForm(TaxType::NAME, $tax),
             function (Tax $tax) {
                 return [
-                    'route' => 'orob2b_tax_tax_update',
+                    'route' => 'orob2b_tax_update',
                     'parameters' => ['id' => $tax->getId()]
                 ];
             },
             function (Tax $tax) {
                 return [
-                    'route' => 'orob2b_tax_tax_view',
+                    'route' => 'orob2b_tax_view',
                     'parameters' => ['id' => $tax->getId()]
                 ];
             },

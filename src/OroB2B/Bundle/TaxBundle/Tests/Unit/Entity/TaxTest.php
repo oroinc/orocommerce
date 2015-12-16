@@ -46,4 +46,11 @@ class TaxTest extends \PHPUnit_Framework_TestCase
     {
         return new Tax();
     }
+
+    public function testToString()
+    {
+        $tax = $this->createTaxEntity();
+        $tax->setCode('code');
+        $this->assertEquals('code', (string)$tax);
+    }
 }

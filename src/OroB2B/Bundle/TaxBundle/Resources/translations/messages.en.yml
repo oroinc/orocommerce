@@ -5,6 +5,7 @@ orob2b.tax:
     entity_plural_label: 'Taxes'
     id.label: 'id'
     rate.label: 'Rate'
+    form.choose: 'Choose a tax'
 
     producttaxcode:
         entity_label: 'Product Tax Code'
@@ -24,6 +25,30 @@ orob2b.tax:
         code.label: 'Code'
         description.label: 'Description'
 
+    taxrule:
+        entity_label: 'Tax Rule'
+        entity_plural_label: 'Tax Rules'
+        description: 'List of Tax Rules'
+        description.label: 'Description'
+        id.label: 'ID'
+        account_tax_code.label: 'Account Tax Code'
+        product_tax_code.label: 'Product Tax Code'
+        tax.label: 'Tax'
+        tax_jurisdiction.label: 'Tax Jurisdiction'
+
+    taxjurisdiction:
+        entity_label: 'Tax Jurisdiction'
+        entity_plural_label: 'Tax Jurisdictions'
+        description: 'List of Tax Jurisdictions'
+        id.label: 'ID'
+        code.label: 'Code'
+        description.label: 'Description'
+        country.label: 'Country'
+        region.label: 'State'
+        region_text.label: 'State'
+        form.choose: 'Choose Tax Jurisdiction'
+        zip_codes.label: 'Zip Codes'
+
     menu:
         taxes_tab.label: 'Taxes'
 
@@ -37,3 +62,17 @@ orob2b.tax:
             saved.message: 'Product Tax Code has been saved'
         tax:
             saved.message: 'Tax has been saved'
+        taxrule:
+            saved.message: 'Tax Rule has been saved'
+        tax_jurisdiction:
+            saved.message: 'Tax Jurisdiction has been saved'
+
+    product:
+        section:
+            taxes: 'Taxes'
+
+    account:
+        section:
+            taxes: 'Taxes'
+        tax_jurisdiction:
+            saved.message: 'Tax Jurisdiction has been saved'
