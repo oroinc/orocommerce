@@ -11,7 +11,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 use Oro\Bundle\ActionBundle\Model\ContextHelper;
 
@@ -52,7 +54,7 @@ class WidgetController extends Controller
             if ($form->isValid()) {
                 $data = $this->getActionManager()->execute($actionName, $form->getData(), $errors);
 
-                $params['response'] = $data->getRedirectUrl() ? ['redirectUrl' => $data->getRedirectUrl()] : [];
+                $params['response'] = $this->getResponse($data);
             }
 
             $params['form'] = $form->createView();
@@ -82,5 +84,25 @@ class WidgetController extends Controller
     protected function getContextHelper()
     {
         return $this->get('oro_action.helper.context');
+    }
+
+    /**
+     * @param ActionData $context
+     * @return array
+     */
+    protected function getResponse(ActionData $context)
+    {
+        /* @var $session Session */
+        $session = $this->getRequest()->getSession();
+
+        $response = [];
+        if ($context->getRedirectUrl()) {
+            $response['redirectUrl'] = $context->getRedirectUrl();
+        } elseif ($context->getRefreshGrid()) {
+            $response['refreshGrid'] = $context->getRefreshGrid();
+            $response['flashMessages'] = $session->getFlashBag()->all();
+        }
+
+        return $response;
     }
 }

@@ -9,7 +9,9 @@ use FOS\RestBundle\Util\Codes;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 use Oro\Bundle\ActionBundle\Exception\ActionNotFoundException;
 use Oro\Bundle\ActionBundle\Exception\ForbiddenActionException;
@@ -40,10 +42,8 @@ class ActionController extends FOSRestController
             return $this->handleError($e->getMessage(), Codes::HTTP_INTERNAL_SERVER_ERROR);
         }
 
-        $response = $data->getRedirectUrl() ? ['redirectUrl' => $data->getRedirectUrl()] : [];
-
         return $this->handleView(
-            $this->view($response, Codes::HTTP_OK)
+            $this->view($this->getResponse($data), Codes::HTTP_OK)
         );
     }
 
@@ -74,5 +74,25 @@ class ActionController extends FOSRestController
     protected function formatErrorResponse($message)
     {
         return ['message' => $message];
+    }
+
+    /**
+     * @param ActionData $data
+     * @return array
+     */
+    protected function getResponse(ActionData $data)
+    {
+        /* @var $session Session */
+        $session = $this->get('session');
+
+        $response = [];
+        if ($data->getRedirectUrl()) {
+            $response['redirectUrl'] = $data->getRedirectUrl();
+        } elseif ($data->getRefreshGrid()) {
+            $response['refreshGrid'] = $data->getRefreshGrid();
+            $response['flashMessages'] = $session->getFlashBag()->all();
+        }
+
+        return $response;
     }
 }
