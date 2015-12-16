@@ -57,6 +57,7 @@ parameters:
     orob2b_account.event_listener.abstract_visibility_post_submit.form_handler.class: OroB2B\Bundle\AccountBundle\EventListener\AbstractVisibilityPostSubmitListener
     orob2b_account.event_listener.category_visibility.form_handler.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryVisibilityPostSubmitListener
     orob2b_account.event_listener.product_visibility.form_handler.class: OroB2B\Bundle\AccountBundle\EventListener\ProductVisibilityPostSubmitListener
+    orob2b_account.event_listener.default_visibility.class: OroB2B\Bundle\AccountBundle\EventListener\DefaultVisibilityListener
 
     orob2b_account.visibility.listener.abstract.class: OroB2B\Bundle\AccountBundle\EventListener\VisibilityAbstractListener
 
@@ -574,6 +575,11 @@ services:
             - [ setVisibilityAccountGroupClassName, [ %orob2b_account.entity.account_group_product_visibility.class% ] ]
             - [ setVisibilityAccountClassName, [ %orob2b_account.entity.account_product_visibility.class% ] ]
             - [ setFieldName, ['product'] ]
+
+    orob2b_account.event_listener.default_visibility:
+        class: %orob2b_account.event_listener.default_visibility.class%
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
 
     orob2b_account.visibility.listener.abstract:
         class: %orob2b_account.visibility.listener.abstract.class%

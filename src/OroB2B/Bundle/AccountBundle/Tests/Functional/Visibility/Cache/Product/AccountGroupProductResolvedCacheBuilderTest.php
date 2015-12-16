@@ -53,6 +53,8 @@ class AccountGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTe
      */
     public function testChangeAccountGroupProductVisibilityToCategory()
     {
+        $this->clearCategoryCache();
+
         /** @var Category $category */
         $category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
         $category->addProduct($this->product);
@@ -68,7 +70,7 @@ class AccountGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTe
         $this->assertEquals($category->getId(), $visibilityResolved->getCategory()->getId());
         $this->assertEquals(BaseProductVisibilityResolved::SOURCE_CATEGORY, $visibilityResolved->getSource());
         $this->assertEquals($visibility, $visibilityResolved->getSourceProductVisibility());
-        $this->assertEquals(BaseProductVisibilityResolved::VISIBILITY_HIDDEN, $visibilityResolved->getVisibility());
+        $this->assertEquals(BaseProductVisibilityResolved::VISIBILITY_VISIBLE, $visibilityResolved->getVisibility());
         $this->assertProductIdentifyEntitiesAccessory($visibilityResolved);
     }
 

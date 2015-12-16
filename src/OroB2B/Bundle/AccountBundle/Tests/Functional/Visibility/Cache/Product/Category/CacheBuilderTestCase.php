@@ -28,7 +28,6 @@ abstract class CacheBuilderTestCase extends WebTestCase
         ]);
 
         $this->cacheBuilder = $this->getContainer()->get($this->getCacheBuilderContainerId());
-
     }
 
     protected function flushCategoryVisibilityCache()

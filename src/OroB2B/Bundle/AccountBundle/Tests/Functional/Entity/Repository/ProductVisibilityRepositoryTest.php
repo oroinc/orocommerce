@@ -42,7 +42,12 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
         // updateToConfigProductVisibility called in CategoryListener when removed category
         $this->deleteCategory($category);
 
-        $this->assertEquals($expected, $this->getProductsByVisibilities());
+        $actual = $this->getProductsByVisibilities();
+
+        $this->assertSameSize($expected, $actual);
+        foreach ($actual as $value) {
+            $this->assertContains($value, $expected);
+        }
     }
 
     /**

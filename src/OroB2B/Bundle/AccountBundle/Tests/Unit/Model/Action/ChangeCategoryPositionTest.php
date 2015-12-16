@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Model\Action;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -49,32 +50,73 @@ class ChangeCategoryPositionTest extends \PHPUnit_Framework_TestCase
         $this->action->setCacheBuilder($this->cacheBuilder);
     }
 
-    public function testExecuteAction()
+    /**
+     * @dataProvider executeActionDataProvider
+     * @param bool $throwException
+     */
+    public function testExecuteAction($throwException = false)
     {
         $category = new Category();
+
+        /** @var CategoryCaseCacheBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $cacheBuilder */
+        $cacheBuilder = $this
+            ->getMock('OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface');
+
+        /** @var Registry|\PHPUnit_Framework_MockObject_MockObject $registry */
+        $registry = $this->getMockBuilder('Doctrine\Bundle\DoctrineBundle\Registry')
+            ->disableOriginalConstructor()
+            ->getMock();
 
         /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $em */
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $em->expects($this->any())
-            ->method('transactional')
-            ->willReturnCallback(
-                function ($callback) {
-                    call_user_func($callback);
-                }
-            );
 
-        $this->registry->expects($this->once())
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        if ($throwException) {
+            $cacheBuilder->expects($this->once())
+                ->method('categoryPositionChanged')
+                ->with($category)
+                ->will($this->throwException(new \Exception('Error')));
+
+            $em->expects($this->once())
+                ->method('rollback');
+
+            $this->setExpectedException('\Exception', 'Error');
+        } else {
+            $cacheBuilder->expects($this->once())
+                ->method('categoryPositionChanged')
+                ->with($category);
+
+            $em->expects($this->once())
+                ->method('commit');
+        }
+
+        $registry->expects($this->once())
             ->method('getManagerForClass')
             ->with('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
             ->willReturn($em);
 
-        $this->cacheBuilder->expects($this->once())
-            ->method('categoryPositionChanged')
-            ->with($category);
-
+        $this->action->setCacheBuilder($cacheBuilder);
+        $this->action->setRegistry($registry);
         $this->action->initialize([]);
         $this->action->execute(new ProcessData(['data' => $category]));
+    }
+
+    /**
+     * @return array
+     */
+    public function executeActionDataProvider()
+    {
+        return [
+            [
+                'throwException' => true
+            ],
+            [
+                'throwException' => false
+            ],
+        ];
     }
 }

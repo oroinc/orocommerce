@@ -37,11 +37,14 @@ class ChangeCategoryPosition extends AbstractVisibilityRegistryAwareAction
 
         /** @var EntityManager $em */
         $em = $this->registry->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
-        $em->transactional(
-            function () use ($category) {
-                $this->cacheBuilder->categoryPositionChanged($category);
-            }
-        );
+        $em->beginTransaction();
+        try {
+            $this->cacheBuilder->categoryPositionChanged($category);
+            $em->commit();
+        } catch (\Exception $e) {
+            $em->rollback();
+            throw $e;
+        }
     }
 
     /**

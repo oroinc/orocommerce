@@ -16,11 +16,14 @@ class ChangeCategoryVisibility extends AbstractVisibilityRegistryAwareAction
         $categoryVisibility = $this->getEntity($context);
         /** @var EntityManager $em */
         $em = $this->registry->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
-        $em->transactional(
-            function () use ($categoryVisibility) {
-                $this->cacheBuilder->resolveVisibilitySettings($categoryVisibility);
-            }
-        );
+        $em->beginTransaction();
+        try {
+            $this->cacheBuilder->resolveVisibilitySettings($categoryVisibility);
+            $em->commit();
+        } catch (\Exception $e) {
+            $em->rollback();
+            throw $e;
+        }
     }
 
     /**

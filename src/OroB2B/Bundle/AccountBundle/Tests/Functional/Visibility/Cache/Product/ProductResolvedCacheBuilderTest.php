@@ -85,6 +85,8 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
      */
     public function testChangeProductVisibilityToCategory()
     {
+        $this->clearCategoryCache();
+
         /** @var Category $category */
         $category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
         $category->addProduct($this->product);
@@ -93,8 +95,9 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
         $visibility = $this->getVisibility();
         $this->assertNotNull($visibility);
 
+        $visibility->setVisibility(ProductVisibility::CATEGORY);
+
         $entityManager = $this->getManagerForVisibility();
-        $entityManager->remove($visibility);
         $entityManager->flush();
 
         $resolvedVisibility = $this->getVisibilityResolved();
@@ -102,9 +105,9 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
         $this->assertEquals($resolvedVisibility->getCategory()->getId(), $category->getId());
         $this->assertEquals($resolvedVisibility->getSource(), BaseProductVisibilityResolved::SOURCE_CATEGORY);
         $this->assertNull($resolvedVisibility->getSourceProductVisibility());
-        $this->assertEquals($resolvedVisibility->getVisibility(), BaseProductVisibilityResolved::VISIBILITY_HIDDEN);
+        $this->assertEquals($resolvedVisibility->getVisibility(), BaseProductVisibilityResolved::VISIBILITY_VISIBLE);
         $this->assertProductIdentifyEntitiesAccessory($resolvedVisibility);
-        $this->assertAccountVisibilityResolved(BaseProductVisibilityResolved::VISIBILITY_HIDDEN);
+        $this->assertAccountVisibilityResolved(BaseProductVisibilityResolved::VISIBILITY_VISIBLE);
     }
 
     /**
