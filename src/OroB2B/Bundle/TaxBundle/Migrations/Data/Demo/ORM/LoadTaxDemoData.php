@@ -37,27 +37,27 @@ class LoadTaxDemoData extends AbstractFixture implements
     protected $manager;
 
     /**
-     * @var ContainerInterface
+     * @var array
      */
     protected $zipCodes = [];
 
     /**
-     * @var array|Tax[]
+     * @var array
      */
     protected $taxes = [];
 
     /**
-     * @var array|TaxJurisdiction[]
+     * @var array
      */
     protected $jurisdictions = [];
 
     /**
-     * @var array|ProductTaxCode[]
+     * @var array
      */
     protected $productTaxCodes = [];
 
     /**
-     * @var array|AccountTaxCode[]
+     * @var array
      */
     protected $accountTaxCodes = [];
 
@@ -133,19 +133,28 @@ class LoadTaxDemoData extends AbstractFixture implements
 
             fclose($handler);
         }
-        $codes = array_values($this->productTaxCodes);
+
+
+        $codes = array_keys($this->productTaxCodes);
         $products = $this->getProducts($manager);
         foreach ($products as $product) {
+            $code = $codes[rand(0, count($codes) - 1)];
             /* @var ProductTaxCode $productTaxCode */
-            $productTaxCode = $codes[rand(0, count($codes) - 1)];
+            $productTaxCode = $this->manager
+                ->getRepository('OroB2BTaxBundle:ProductTaxCode')
+                ->findOneBy(['code' => $code]);
+
             $productTaxCode->addProduct($product);
         }
 
-        $codes = array_values($this->accountTaxCodes);
+        $codes = array_keys($this->accountTaxCodes);
         $accounts = $this->getAccounts($manager);
         foreach ($accounts as $account) {
+            $code = $codes[rand(0, count($codes) - 1)];
             /* @var AccountTaxCode $accountTaxCode */
-            $accountTaxCode = $codes[rand(0, count($codes) - 1)];
+            $accountTaxCode = $this->manager
+                ->getRepository('OroB2BTaxBundle:AccountTaxCode')
+                ->findOneBy(['code' => $code]);
             $accountTaxCode->addAccount($account);
         }
 
@@ -160,13 +169,13 @@ class LoadTaxDemoData extends AbstractFixture implements
     protected function getZipCode($zip)
     {
         if (isset($this->zipCodes[$zip])) {
-            $zipCode = $this->zipCodes[$zip];
+            $zipCode = $this->manager->getRepository('OroB2BTaxBundle:ZipCode')->findOneBy(['zipCode' => $zip]);
         } else {
             $zipCode = new ZipCode();
             $zipCode->setZipCode($zip);
 
             $this->manager->persist($zipCode);
-            $this->zipCodes[$zip] = $zipCode;
+            $this->zipCodes[$zip] = 0;
         }
 
         return $zipCode;
@@ -179,7 +188,7 @@ class LoadTaxDemoData extends AbstractFixture implements
     protected function getTax($rate)
     {
         if (isset($this->taxes[(string)$rate])) {
-            $tax = $this->taxes[(string)$rate];
+            $tax = $this->manager->getRepository('OroB2BTaxBundle:Tax')->findOneBy(['rate' => $rate]);
         } else {
             $tax = new Tax();
             $tax
@@ -187,7 +196,7 @@ class LoadTaxDemoData extends AbstractFixture implements
                 ->setRate($rate);
 
             $this->manager->persist($tax);
-            $this->taxes[(string)$rate] = $tax;
+            $this->taxes[(string)$rate] = 0;
         }
 
         return $tax;
@@ -203,9 +212,11 @@ class LoadTaxDemoData extends AbstractFixture implements
      */
     protected function getJurisdiction($country, $state, $regionCode, $regionName, $rate)
     {
-        $jurisdictionKey = $regionCode . $rate;
-        if (isset($this->jurisdictions[$jurisdictionKey])) {
-            $jurisdiction = $this->jurisdictions[$jurisdictionKey];
+        $code = $regionCode . $rate;
+        if (isset($this->jurisdictions[$code])) {
+            $jurisdiction = $this->manager
+                ->getRepository('OroB2BTaxBundle:TaxJurisdiction')
+                ->findOneBy(['code' => $code]);
         } else {
             $region = $this->manager
                 ->getRepository('OroAddressBundle:Region')
@@ -220,7 +231,7 @@ class LoadTaxDemoData extends AbstractFixture implements
                 ->setRegionText($regionName);
 
             $this->manager->persist($jurisdiction);
-            $this->jurisdictions[$jurisdictionKey] = $jurisdiction;
+            $this->jurisdictions[$code] = 0;
         }
 
         return $jurisdiction;
@@ -230,13 +241,15 @@ class LoadTaxDemoData extends AbstractFixture implements
      * @param string $regionCode
      * @param string $regionName
      * @param float $rate
-     * @return TaxJurisdiction
+     * @return ProductTaxCode
      */
     protected function getProductTaxCode($regionCode, $regionName, $rate)
     {
         $productCodeKey = 'P' . $regionCode . $rate;
         if (isset($this->productTaxCodes[$productCodeKey])) {
-            $productTaxCode = $this->productTaxCodes[$productCodeKey];
+            $productTaxCode = $this->manager
+                ->getRepository('OroB2BTaxBundle:ProductTaxCode')
+                ->findOneBy(['code' => $productCodeKey]);
         } else {
             $productTaxCode = new ProductTaxCode();
             $productTaxCode
@@ -244,7 +257,7 @@ class LoadTaxDemoData extends AbstractFixture implements
                 ->setDescription('Product tax for ' . $regionName . ' with rate ' . $rate . '%');
 
             $this->manager->persist($productTaxCode);
-            $this->productTaxCodes[$productCodeKey] = $productTaxCode;
+            $this->productTaxCodes[$productCodeKey] = 0;
         }
 
         return $productTaxCode;
@@ -254,13 +267,15 @@ class LoadTaxDemoData extends AbstractFixture implements
      * @param string $regionCode
      * @param string $regionName
      * @param float $rate
-     * @return TaxJurisdiction
+     * @return AccountTaxCode
      */
     protected function getAccountTaxCode($regionCode, $regionName, $rate)
     {
         $accountCodeKey = 'A' . $regionCode . $rate;
         if (isset($this->accountTaxCodes[$accountCodeKey])) {
-            $accountTaxCode = $this->accountTaxCodes[$accountCodeKey];
+            $accountTaxCode = $this->manager
+                ->getRepository('OroB2BTaxBundle:AccountTaxCode')
+                ->findOneBy(['code' => $accountCodeKey]);
         } else {
             $accountTaxCode = new AccountTaxCode();
             $accountTaxCode
@@ -268,7 +283,7 @@ class LoadTaxDemoData extends AbstractFixture implements
                 ->setDescription('Account tax for ' . $regionName . ' with rate ' . $rate . '%');
 
             $this->manager->persist($accountTaxCode);
-            $this->accountTaxCodes[$accountCodeKey] = $accountTaxCode;
+            $this->accountTaxCodes[$accountCodeKey] = 0;
         }
 
         return $accountTaxCode;
