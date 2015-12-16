@@ -114,9 +114,22 @@ define(function(require) {
         doResponse: function(e, response) {
             mediator.execute('hideLoading');
 
+            if (response.flashMessages) {
+                for (var type in response.flashMessages) {
+                    var messages = response.flashMessages[type];
+                    for (var k in messages) {
+                        messenger.notificationFlashMessage(type, messages[k]);
+                    }
+                }
+            }
+
             if (response.redirectUrl) {
                 e.stopImmediatePropagation();
                 this.doRedirect(response.redirectUrl);
+            } else if (response.refreshGrid) {
+                for (var k in response.refreshGrid) {
+                    mediator.trigger('datagrid:doRefresh:' + response.refreshGrid[k]);
+                }
             } else {
                 this.doPageReload();
             }

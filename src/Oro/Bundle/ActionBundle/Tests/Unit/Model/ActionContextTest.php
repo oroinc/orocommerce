@@ -4,6 +4,9 @@ namespace Oro\Bundle\ActionBundle\Tests\Unit\Model;
 
 use Oro\Bundle\ActionBundle\Model\ActionData;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class ActionDataTest extends \PHPUnit_Framework_TestCase
 {
     public function testOffsetExistsSetGetUnset()
@@ -123,6 +126,17 @@ class ActionDataTest extends \PHPUnit_Framework_TestCase
 
         $data->offsetSet('redirectUrl', $url);
         $this->assertEquals($url, $data->getRedirectUrl());
+    }
+
+    public function testGetRefreshGrid()
+    {
+        $data = new ActionData();
+        $this->assertNull($data->getRefreshGrid());
+
+        $name = 'test_grid_dame';
+
+        $data->offsetSet('refreshGrid', $name);
+        $this->assertEquals($name, $data->getRefreshGrid());
     }
 
     public function testGetValues()
