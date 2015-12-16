@@ -16,7 +16,7 @@ class QuickAddCopyPasteType extends AbstractType
 {
     const NAME = 'orob2b_product_quick_add_copy_paste';
     const PRODUCTS_FIELD_NAME = 'products';
-    const FORMAT_REGEX = '/[^\s]+[\t\,][^\s]+/';
+    const FORMAT_REGEX = '/^[^\s]+[\t\,]\s*?[0-9]+\.?[0-9]*/';
 
     /**
      * {@inheritdoc}
