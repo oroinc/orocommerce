@@ -34,7 +34,7 @@ order of display buttons. More options see in [Configuration](#configuration).
 
 * **ActionDefinition** - part of the Action model that contains raw data from action's configuration.
 
-* **Action Context** - container aggregated some data, that will be available on each step of Action. Some of values
+* **Action Data** - container aggregated some data, that will be available on each step of Action. Some of values
 associated with some Attribute. Those values can be entered by user directly or assigned via Functions.
 
 * **Attribute** - entity that represent one value in Action, used to render field value on a step form.
@@ -47,7 +47,7 @@ Attribute contains name and label as additional parameters.
 There are two kind of actions: Pre Functions, Init Functions and Post Functions.
 The difference between them is that Pre Functions are executed before Action button redder, Init Functions are executed
 before Action and Post Functions are executed after Action.
-Actions can be used to perform any operations with data in Action Context or other entities.
+Actions can be used to perform any operations with data in Action Data or other entities.
 
 How it works?
 -------------
@@ -86,6 +86,13 @@ actions:
             group: aсme.demo.actions.demogroup.label                # (optional) group action to drop-down on the label
             template: customTemplate.html.twig                      # (optional) custom button template
             dialog_template: customDialogTemplate.html.twig         # (optional) custom dialog template
+            dialog_title: Custom Dialog Title                       # (optional) custom dialog title
+            dialog_options:                                         # (optional) modal dialog options
+                allowMaximize: true
+                allowMinimize: true
+                dblclick: maximize
+                maximizedHeightDecreaseBy: minimize-bar
+                width: 1000
 
         attributes:                                                 # (optional) list of all existing attributes
             demo_attr:                                              # attribute name

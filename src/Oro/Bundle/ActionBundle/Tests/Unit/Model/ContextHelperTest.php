@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\ActionBundle\Tests\Unit\Model;
 
-use Oro\Bundle\ActionBundle\Model\ActionContext;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ContextHelper;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
@@ -93,19 +93,19 @@ class ContextHelperTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider getActionContextDataProvider
+     * @dataProvider getActionDataDataProvider
      *
      * @param Request|null $request
      * @param int $requestStackCalls
-     * @param ActionContext $expected
+     * @param ActionData $expected
      * @param array $context
      */
-    public function testGetActionContext($request, $requestStackCalls, ActionContext $expected, array $context = null)
+    public function testGetActionData($request, $requestStackCalls, ActionData $expected, array $context = null)
     {
         $entity = new \stdClass();
         $entity->id = 42;
 
-        $this->requestStack->expects($this->exactly($requestStackCalls))
+        $this->requestStack->expects($this->exactly($requestStackCalls * 2))
             ->method('getCurrentRequest')
             ->willReturn($request);
 
@@ -118,7 +118,7 @@ class ContextHelperTest extends \PHPUnit_Framework_TestCase
             if ($request->get('entityId') || ($expected->getEntity() && isset($expected->getEntity()->id))) {
                 $this->doctrineHelper->expects($this->once())
                     ->method('getEntityReference')
-                    ->with('stdClass', 42)
+                    ->with('stdClass', $this->logicalOr(42, $this->isType('array')))
                     ->willReturn($entity);
             } else {
                 $this->doctrineHelper->expects($this->once())
@@ -128,13 +128,16 @@ class ContextHelperTest extends \PHPUnit_Framework_TestCase
             }
         }
 
-        $this->assertEquals($expected, $this->helper->getActionContext($context));
+        $this->assertEquals($expected, $this->helper->getActionData($context));
+
+        // use local cache
+        $this->assertEquals($expected, $this->helper->getActionData($context));
     }
 
     /**
      * @return array
      */
-    public function getActionContextDataProvider()
+    public function getActionDataDataProvider()
     {
         $entity = new \stdClass();
         $entity->id = 42;
@@ -143,12 +146,12 @@ class ContextHelperTest extends \PHPUnit_Framework_TestCase
             'without request' => [
                 'request' => null,
                 'requestStackCalls' => 3,
-                'expected' => new ActionContext()
+                'expected' => new ActionData()
             ],
             'empty request' => [
                 'request' => new Request(),
                 'requestStackCalls' => 3,
-                'expected' => new ActionContext()
+                'expected' => new ActionData()
             ],
             'route1 without entity id' => [
                 'request' => new Request(
@@ -158,18 +161,64 @@ class ContextHelperTest extends \PHPUnit_Framework_TestCase
                     ]
                 ),
                 'requestStackCalls' => 3,
-                'expected' => new ActionContext(['data' => new \stdClass()])
+                'expected' => new ActionData(['data' => new \stdClass()])
             ],
             'entity' => [
                 'request' => new Request(),
                 'requestStackCalls' => 0,
-                'expected' => new ActionContext(['data' => $entity]),
+                'expected' => new ActionData(['data' => $entity]),
                 'context' => [
                     'route' => 'test_route',
                     'entityId' => '42',
                     'entityClass' => 'stdClass'
                 ]
+            ],
+            'entity (id as array)' => [
+                'request' => new Request(),
+                'requestStackCalls' => 0,
+                'expected' => new ActionData(['data' => $entity]),
+                'context' => [
+                    'route' => 'test_route',
+                    'entityId' => ['params' => ['id' => '42']],
+                    'entityClass' => 'stdClass'
+                ]
             ]
         ];
+    }
+
+    public function testGetActionDataWithCache()
+    {
+        $entity = new \stdClass();
+        $entity->id1 = 42;
+        $entity->id2 = 100;
+        $entity->id3 = 'test';
+
+        $context1 = [
+            'route' => 'test_route',
+            'entityClass' => 'stdClass',
+            'entityId' => ['params' => ['id1' => '42', 'id2' => 100, 'id3' => 'test']]
+        ];
+
+        $context2 = [
+            'entityId' => ['params' => ['id3' => 'test', 'id2' => '100', 'id1' => 42]],
+            'route' => 'test_route',
+            'extra_parameter' => new \stdClass(),
+            'entityClass' => 'stdClass'
+        ];
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('isManageableEntity')
+            ->with('stdClass')
+            ->willReturn(true);
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityReference')
+            ->willReturn($entity);
+
+        $actionData = new ActionData(['data' => $entity]);
+
+        $this->assertEquals($actionData, $this->helper->getActionData($context1));
+
+        // use local cache
+        $this->assertEquals($actionData, $this->helper->getActionData($context2));
     }
 }

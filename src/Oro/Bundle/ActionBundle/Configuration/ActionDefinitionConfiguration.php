@@ -164,6 +164,11 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
                 ->scalarNode('class')->end()
                 ->scalarNode('group')->end()
                 ->scalarNode('template')->end()
+                ->scalarNode('dialog_title')->end()
+                ->arrayNode('dialog_options')
+                    ->prototype('variable')
+                    ->end()
+                ->end()
                 ->scalarNode('dialog_template')->end()
             ->end();
 

@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Extension;
 
-use Symfony\Component\Form\FormBuilderInterface;
-
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class AbstractProductDataStorageExtensionTest extends AbstractProductDataStorageExtensionTestCase
@@ -18,9 +16,7 @@ class AbstractProductDataStorageExtensionTest extends AbstractProductDataStorage
         $this->assertRequestGetCalled();
         $this->assertStorageCalled($data);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface $builder */
-        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
-        $this->extension->buildForm($builder, ['data' => $this->entity]);
+        $this->extension->buildForm($this->getBuilderMock(true), []);
 
         $this->assertFalse($this->extension->isAddItemCalled());
     }
@@ -48,9 +44,7 @@ class AbstractProductDataStorageExtensionTest extends AbstractProductDataStorage
         $this->assertStorageCalled($data);
         $this->assertProductRepositoryCalled($product);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|FormBuilderInterface $builder */
-        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
-        $this->extension->buildForm($builder, ['data' => $this->entity]);
+        $this->extension->buildForm($this->getBuilderMock(true), []);
 
         $this->assertTrue($this->extension->isAddItemCalled());
 
