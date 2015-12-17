@@ -14,8 +14,8 @@ class BuildWebsiteCacheAction extends AbstractVisibilityRegistryAwareAction
     protected function executeAction($context)
     {
         $website = $this->getEntity($context);
+        $this->getEntityManager()->beginTransaction();
         try {
-            $this->getEntityManager()->beginTransaction();
             $this->cacheBuilder->buildCache($website);
             $this->getEntityManager()->commit();
         } catch (\Exception $e) {
