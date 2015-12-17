@@ -49,6 +49,7 @@ class LoadProductVisibilityFallbackCategoryData extends AbstractFixture implemen
         LoadProductData::PRODUCT_5,
         LoadProductData::PRODUCT_6,
         LoadProductData::PRODUCT_7,
+        LoadProductData::PRODUCT_8,
     ];
 
     /**
