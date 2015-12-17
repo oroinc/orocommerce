@@ -40,24 +40,56 @@ class BuildWebsiteCacheActionTest extends \PHPUnit_Framework_TestCase
         $this->action->setCacheBuilder($this->cacheBuilder);
         $this->action->setDispatcher($eventDispatcher);
     }
-    public function testExecute()
+
+    /**
+     * @dataProvider executeActionDataProvider
+     * @param bool $throwException
+     */
+    public function testExecute($throwException)
     {
         $entity = new Website();
         $entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $entityManager->expects($this->any())
+        $entityManager->expects($this->once())
             ->method('beginTransaction');
-        $entityManager->expects($this->any())
-            ->method('commit');
-        $this->registry->expects($this->any())
+
+        if ($throwException) {
+            $this->cacheBuilder->expects($this->once())
+                ->method('buildCache')
+                ->with($entity)
+                ->will($this->throwException(new \Exception('Error')));
+            $entityManager->expects($this->once())
+                ->method('rollback');
+            $this->setExpectedException('\Exception', 'Error');
+        } else {
+            $this->cacheBuilder->expects($this->once())
+                ->method('buildCache')
+                ->with($entity);
+            $entityManager->expects($this->once())
+                ->method('commit');
+        }
+        $this->registry->expects($this->once())
             ->method('getManagerForClass')
             ->with('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
             ->willReturn($entityManager);
-        $this->cacheBuilder->expects($this->once())
-            ->method('buildCache')
-            ->with($entity);
+
         $this->action->initialize([]);
         $this->action->execute(new ProcessData(['data' => $entity]));
+    }
+
+    /**
+     * @return array
+     */
+    public function executeActionDataProvider()
+    {
+        return [
+            [
+                'throwException' => true
+            ],
+            [
+                'throwException' => false
+            ],
+        ];
     }
 }
