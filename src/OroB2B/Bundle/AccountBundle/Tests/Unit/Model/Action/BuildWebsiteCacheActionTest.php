@@ -26,6 +26,7 @@ class BuildWebsiteCacheActionTest extends \PHPUnit_Framework_TestCase
      * @var BuildWebsiteCacheAction
      */
     protected $action;
+
     protected function setUp()
     {
         $this->registry = $this->getMock('Symfony\Bridge\Doctrine\RegistryInterface');
