@@ -13,7 +13,7 @@ use Doctrine\ORM\QueryBuilder;
  * @method string getEntityName()
  * @method QueryBuilder createQueryBuilder($alias)
  */
-trait ProductResolvedRepositoryTrait
+trait ResolvedEntityRepositoryTrait
 {
     /**
      * @param array $data
@@ -90,7 +90,10 @@ trait ProductResolvedRepositoryTrait
             ->execute();
     }
 
-
+    /**
+     * @param array $where
+     * @return bool
+     */
     public function hasEntity(array $where)
     {
         $queryBuilder = $this->createQueryBuilder('entity')

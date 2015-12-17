@@ -11,7 +11,7 @@ use Doctrine\ORM\UnitOfWork;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
-use OroB2B\Bundle\AccountBundle\Entity\Repository\ProductResolvedRepositoryTrait;
+use OroB2B\Bundle\AccountBundle\Entity\Repository\ResolvedEntityRepositoryTrait;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
@@ -80,7 +80,7 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
     }
 
     /**
-     * @param EntityRepository|ProductResolvedRepositoryTrait $repository
+     * @param EntityRepository|ResolvedEntityRepositoryTrait $repository
      * @param bool $insert
      * @param bool $delete
      * @param array $update
@@ -103,9 +103,8 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
     protected function getVisibilityFromConfig()
     {
         $visibilityFromConfig = $this->configManager->get('oro_b2b_account.product_visibility');
-        $visibility = $visibilityFromConfig === VisibilityInterface::VISIBLE ? 1 : -1;
 
-        return $visibility;
+        return $visibilityFromConfig === VisibilityInterface::VISIBLE ? 1 : -1;
     }
 
     /**

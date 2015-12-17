@@ -10,8 +10,11 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountProductVisibilityResolvedRepository;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -73,6 +76,61 @@ class AccountProductVisibilityResolvedRepositoryTest extends WebTestCase
 
         $this->entityManager->refresh($resolvedVisibility);
         $this->assertEquals(BaseProductVisibilityResolved::VISIBILITY_HIDDEN, $resolvedVisibility->getVisibility());
+    }
+
+    public function testInsertUpdateDeleteAndHasEntity()
+    {
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        $website = $this->getReference(LoadWebsiteData::WEBSITE1);
+        $account = $this->getReference(LoadAccounts::DEFAULT_ACCOUNT_NAME);
+
+        $where = ['account' => $account, 'product' => $product, 'website' => $website];
+        $this->assertFalse($this->repository->hasEntity($where));
+
+        $insert = [
+            'sourceProductVisibility' => null,
+            'visibility' => BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
+            'source' => BaseProductVisibilityResolved::SOURCE_STATIC,
+            'category' => null,
+        ];
+        $this->repository->insertEntity(array_merge($where, $insert));
+        $this->assertTrue($this->repository->hasEntity($where));
+        $this->assertEntityData(
+            $where,
+            BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
+            BaseProductVisibilityResolved::SOURCE_STATIC
+        );
+
+        $update = [
+            'visibility' => BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
+            'source' => BaseProductVisibilityResolved::SOURCE_CATEGORY,
+        ];
+        $this->repository->updateEntity($update, $where);
+        $this->assertTrue($this->repository->hasEntity($where));
+        $this->assertEntityData(
+            $where,
+            BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
+            BaseProductVisibilityResolved::SOURCE_CATEGORY
+        );
+
+        $this->repository->deleteEntity($where);
+        $this->assertFalse($this->repository->hasEntity($where));
+    }
+
+    /**
+     * @param array $where
+     * @param int $visibility
+     * @param int $source
+     */
+    protected function assertEntityData(array $where, $visibility, $source)
+    {
+        $entity = $this->repository->findOneBy($where);
+
+        $this->assertNotNull($entity);
+        $this->entityManager->refresh($entity);
+
+        $this->assertEquals($visibility, $entity->getVisibility());
+        $this->assertEquals($source, $entity->getSource());
     }
 
     /**
