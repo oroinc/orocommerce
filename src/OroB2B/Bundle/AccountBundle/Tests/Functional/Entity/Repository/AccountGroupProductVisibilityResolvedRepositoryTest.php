@@ -93,16 +93,6 @@ class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
         $this->assertEquals($resolvedValue->getVisibility(), $visibilityValue);
     }
 
-    /**
-     * @return AccountGroupProductVisibilityResolved[]
-     */
-    protected function getResolvedValues()
-    {
-        return $this->registry
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved')
-            ->findAll();
-    }
-
     public function testInsertStatic()
     {
         $this->getRepository()->clearTable();
@@ -130,6 +120,33 @@ class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
                 $visibility
             );
         }
+    }
+
+    public function testFindByPrimaryKey()
+    {
+        /** @var AccountGroupProductVisibilityResolved $actualEntity */
+        $actualEntity = $this->repository->findOneBy([]);
+        if (!$actualEntity) {
+            $this->markTestSkipped('Can\'t test method because fixture was not loaded.');
+        }
+
+        $expectedEntity = $this->repository->findByPrimaryKey(
+            $actualEntity->getAccountGroup(),
+            $actualEntity->getProduct(),
+            $actualEntity->getWebsite()
+        );
+
+        $this->assertEquals(spl_object_hash($expectedEntity), spl_object_hash($actualEntity));
+    }
+
+    /**
+     * @return AccountGroupProductVisibilityResolved[]
+     */
+    protected function getResolvedValues()
+    {
+        return $this->registry
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved')
+            ->findAll();
     }
 
     /**
@@ -185,22 +202,5 @@ class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
         return $this->getContainer()->get('doctrine')->getRepository(
             'OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved'
         );
-    }
-
-    public function testFindByPrimaryKey()
-    {
-        /** @var AccountGroupProductVisibilityResolved $actualEntity */
-        $actualEntity = $this->repository->findOneBy([]);
-        if (!$actualEntity) {
-            $this->markTestSkipped('Can\'t test method because fixture was not loaded.');
-        }
-
-        $expectedEntity = $this->repository->findByPrimaryKey(
-            $actualEntity->getAccountGroup(),
-            $actualEntity->getProduct(),
-            $actualEntity->getWebsite()
-        );
-
-        $this->assertEquals(spl_object_hash($expectedEntity), spl_object_hash($actualEntity));
     }
 }
