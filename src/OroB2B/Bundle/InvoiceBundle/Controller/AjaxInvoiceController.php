@@ -17,6 +17,7 @@ class AjaxInvoiceController extends Controller
      * @Route("/subtotal", name="orob2b_invoice_subtotal", methods={"POST"})
      * @AclAncestor("orob2b_invoice_view")
      *
+     * @param Request $request
      * @return array
      */
     public function subtotalAction(Request $request)
@@ -31,7 +32,7 @@ class AjaxInvoiceController extends Controller
             $invoice = new $invoiceClass();
         }
 
-        if (!is_null($request->get(InvoiceType::NAME))) {
+        if (null !== $request->get(InvoiceType::NAME)) {
             $form = $this->createForm(InvoiceType::NAME, $invoice);
             $form->submit($this->get('request'));
         }

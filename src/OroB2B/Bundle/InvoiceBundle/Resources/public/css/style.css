@@ -62,6 +62,7 @@
     float: left;
 }
 
+.invoice-lineitems .invoice-line-item-index,
 .invoice-line-item-price-value,
 .invoice-line-item-type-product {
     line-height: 31px;

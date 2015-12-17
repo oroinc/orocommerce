@@ -48,10 +48,11 @@
     {% set id = 'invoice-edit' %}
 
     {% set subtotals %}
-        {% include 'OroB2BOrderBundle:Order:subtotals.html.twig' with {
+        {% include 'OroB2BPricingBundle:Subtotals:subtotals.html.twig' with {
         options: {
-        url: path('orob2b_invoice_subtotal', {id: entity.id}),
-        selectors: {form: '#' ~ form.vars.id}
+            url: path('orob2b_invoice_subtotal', {id: entity.id}),
+            selectors: {form: '#' ~ form.vars.id},
+            eventName: 'invoice:changing'
         }
         } only %}
     {% endset %}

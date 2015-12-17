@@ -111,7 +111,7 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements
     /**
      * @var Price|null
      */
-    protected $price = null;
+    protected $price;
 
     /**
      * @var int
@@ -151,6 +151,7 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements
     public function setProduct(Product $product = null)
     {
         $this->product = $product;
+
         return $this;
     }
 
@@ -169,6 +170,7 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements
     public function setProductSku($productSku)
     {
         $this->productSku = $productSku;
+
         return $this;
     }
 
@@ -187,6 +189,7 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements
     public function setFreeFormProduct($freeFormProduct)
     {
         $this->freeFormProduct = $freeFormProduct;
+
         return $this;
     }
 
@@ -205,6 +208,7 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements
     public function setQuantity($quantity)
     {
         $this->quantity = $quantity;
+
         return $this;
     }
 
@@ -242,6 +246,7 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements
     public function setProductUnitCode($productUnitCode)
     {
         $this->productUnitCode = $productUnitCode;
+
         return $this;
     }
 
@@ -260,6 +265,7 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements
     public function setInvoice($invoice)
     {
         $this->invoice = $invoice;
+
         return $this;
     }
 
@@ -268,9 +274,10 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements
      */
     public function getPrice()
     {
-        if (is_null($this->price)) {
+        if (null === $this->price) {
             $this->price = Price::create($this->value, $this->currency);
         }
+
         return $this->price;
     }
 
@@ -300,7 +307,8 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements
      */
     public function setPriceType($priceType)
     {
-        $this->priceType = $priceType;
+        $this->priceType = (int) $priceType;
+
         return $this;
     }
 

@@ -4,7 +4,7 @@ define(function(require) {
     var LineItemAbstractView;
     var $ = require('jquery');
     var _ = require('underscore');
-    var SubtotalsListener = require('orob2border/js/app/listener/subtotals-listener');
+    var SubtotalsListener = require('orob2bpricing/js/app/listener/subtotals-listener');
     var BaseView = require('oroui/js/app/views/base/view');
     var ProductUnitComponent = require('orob2bproduct/js/app/components/product-unit-component');
 
@@ -113,7 +113,7 @@ define(function(require) {
          * @param {jQuery|Array} $fields
          */
         subtotalFields: function($fields) {
-            SubtotalsListener.listen($fields);
+            SubtotalsListener.listen('order:changing', $fields);
         },
 
         removeRow: function() {

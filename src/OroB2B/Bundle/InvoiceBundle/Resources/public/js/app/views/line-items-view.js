@@ -49,7 +49,33 @@ define(function(require) {
                 matchedPricesRoute: this.options.matchedPricesRoute
             }));
 
+            this.$el.on('content:changed', _.bind(this._onAddLineItem, this));
+            this.$el.on('content:remove', _.bind(this._onRemoveLineItem, this));
+
             this.initLayout();
+        },
+
+        _onAddLineItem: function () {
+            var lineItems, index;
+
+            lineItems = this.$el.find('.invoice-line-item');
+            index = +lineItems.last().prev().find('.invoice-line-item-index').text() + 1;
+            lineItems.last().find('.invoice-line-item-index').text(index);
+        },
+
+        _onRemoveLineItem: function (e) {
+            var lineItems;
+
+            lineItems = this.$el.find('.invoice-line-item');
+
+            var i = 1;
+            lineItems.each(function (index, element) {
+                if(element === e.target) {
+                    return;
+                }
+                $(element).find('.invoice-line-item-index').text(i);
+                i++
+            })
         }
     });
 

@@ -7,6 +7,7 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
     var ProductPricesComponent = require('orob2bpricing/js/app/components/product-prices-component');
     var ProductUnitComponent = require('orob2bproduct/js/app/components/product-unit-component');
+    var SubtotalsListener = require('orob2bpricing/js/app/listener/subtotals-listener');
 
     /**
      * @export orob2binvoice/js/app/views/line-item-view
@@ -46,12 +47,25 @@ define(function(require) {
                 this.fieldsByName[this.formFieldName(field)] = $(field);
             }, this));
 
+            this.initSubtotalListener();
             this.initUnitLoader();
             this.initTypeSwitcher();
             this.initPrices();
             this.initProduct();
         },
 
+        initSubtotalListener: function() {
+            this.fieldsByName.currency = this.$form
+                .find(':input[data-ftid="' + this.$form.attr('name') + '_currency"]');
+
+            SubtotalsListener.listen('invoice:changing'[
+                this.fieldsByName.product,
+                this.fieldsByName.quantity,
+                this.fieldsByName.productUnit,
+                this.fieldsByName.priceValue,
+                this.fieldsByName.priceType
+            ]);
+        },
 
         initUnitLoader: function(options) {
             var defaultOptions = {
@@ -61,7 +75,7 @@ define(function(require) {
                 unitSelector: this.options.selectors.unitSelector,
                 loadingMaskEnabled: false,
                 dropQuantityOnLoad: false,
-                defaultValues: this.options.freeFormUnits,
+                defaultValues: this.options.freeFormUnits
             };
 
             this.subview('productUnitComponent', new ProductUnitComponent(_.extend({}, defaultOptions, options || {})));

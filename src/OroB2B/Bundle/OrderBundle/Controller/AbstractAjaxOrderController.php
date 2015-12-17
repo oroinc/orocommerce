@@ -29,7 +29,7 @@ abstract class AbstractAjaxOrderController extends Controller
         }
 
         $form = $this->createForm($this->getOrderFormTypeName(), $order);
-        $form->submit($this->get('request'));
+        $form->submit($this->get('request'), false);
 
         $subtotals = $this->get('orob2b_order.provider.subtotals')->getSubtotals($order);
         $subtotals = $subtotals->map(

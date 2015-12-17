@@ -46,7 +46,7 @@ class LineItemsSubtotalProvider
     {
         $subtotalAmount = 0.0;
         $subtotal = new LineItemsSubtotal();
-        $subtotal->setLabel($this->translator->trans('Line items subtotal'));
+        $subtotal->setLabel($this->translator->trans('Line items subtotal'));//todo translate
 
         /**
          * TODO: Need to define currency exchange logic. BB-124
@@ -80,6 +80,11 @@ class LineItemsSubtotalProvider
         $subtotal->setCurrency($entity->getCurrency());
 
         return $subtotal;
+    }
+
+    public function getLineItemSubtotal()
+    {
+
     }
 
     /**

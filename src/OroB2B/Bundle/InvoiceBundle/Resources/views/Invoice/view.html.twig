@@ -58,6 +58,7 @@
                 <table class="grid table-hover table table-bordered table-condensed">
                     <thead>
                     <tr>
+                        <th><span>#</span></th>
                         <th><span>{{ 'orob2b.product.sku.label'|trans }}</span></th>
                         <th><span>{{ 'orob2b.product.entity_label'|trans }}</span></th>
                         <th><span>{{ 'orob2b.invoice.invoicelineitem.quantity.label'|trans }}</span></th>
@@ -69,6 +70,7 @@
                         {% set isFreeFormProduct = lineItem.product is empty and lineItem.freeFormProduct is not empty %}
 
                         <tr>
+                            <td>{{ loop.index }}</td>
                             <td>{{ lineItem.productSku }}</td>
                             <td>
                                 {% if isFreeFormProduct %}

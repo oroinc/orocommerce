@@ -158,10 +158,7 @@ class InvoiceLineItemType extends AbstractType
             )
             ->add(
                 'priceType',
-                PriceTypeSelectorType::NAME,
-                [
-//                    'attr' => array('style' => 'display: none'),
-                ]
+                PriceTypeSelectorType::NAME
             );
     }
 

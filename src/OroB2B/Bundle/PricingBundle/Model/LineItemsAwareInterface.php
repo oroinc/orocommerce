@@ -1,6 +1,6 @@
 <?php
-namespace OroB2B\Bundle\PricingBundle\Model;
 
+namespace OroB2B\Bundle\PricingBundle\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
