@@ -16,10 +16,12 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @dbIsolation
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class ProductVisibilityResolvedRepositoryTest extends WebTestCase
 {
@@ -321,5 +323,72 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
     {
         return $this->getContainer()
             ->get('oro_entity.orm.insert_from_select_query_executor');
+    }
+
+    public function testDeleteByProduct()
+    {
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        /** @var $product Product */
+        $category = $this->getCategoryByProduct($product);
+        $websites = $this->getWebsites();
+        $this->repository->deleteByProduct($product);
+        $this->repository->insertByProduct($product, $websites, false, $category);
+        $this->repository->deleteByProduct($product);
+        $visibilities = $this->repository->findBy(['product' => $product]);
+        $this->assertEmpty($visibilities, 'Deleting has failed');
+    }
+
+    public function testInsertByProduct()
+    {
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        /** @var $product Product */
+        $category = $this->getCategoryByProduct($product);
+        $this->repository->deleteByProduct($product);
+        $websites = $this->getWebsites();
+        $this->repository->insertByProduct($product, $websites, true, $category);
+        $visibilities = $this->repository->findBy(['product' => $product]);
+        $this->assertSame(2, count($visibilities), 'Not expected count of resolved visibilities');
+        $resolvedVisibility = $this->repository->findOneBy(
+            [
+                'product' => $product,
+                'website' => $this->getDefaultWebsite()
+            ]
+        );
+        /** @var $resolvedVisibility ProductVisibility  */
+        $this->assertNull($resolvedVisibility, 'Not expected of resolved visibilities');
+
+        $product = $this->getReference(LoadProductData::PRODUCT_4);
+        $category = $this->getCategoryByProduct($product);
+        $this->repository->deleteByProduct($product);
+
+        $websites = $this->getWebsites();
+        $this->repository->insertByProduct($product, $websites, false, $category);
+        $visibilities = $this->repository->findBy(['product' => $product]);
+        $this->assertSame(3, count($visibilities), 'Not expected count of resolved visibilities');
+    }
+
+    /**
+     * @return \OroB2B\Bundle\WebsiteBundle\Entity\Website
+     */
+    protected function getDefaultWebsite()
+    {
+        $className = $this->getContainer()->getParameter('orob2b_website.website.class');
+        $repository = $this->getContainer()->get('doctrine')
+            ->getManagerForClass($className)
+            ->getRepository('OroB2BWebsiteBundle:Website');
+
+        return $repository->getDefaultWebsite();
+    }
+
+    /**
+     * @param Product $product
+     * @return null|\OroB2B\Bundle\CatalogBundle\Entity\Category
+     */
+    protected function getCategoryByProduct(Product $product)
+    {
+        return $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroB2BCatalogBundle:Category')
+            ->getRepository('OroB2BCatalogBundle:Category')
+            ->findOneByProduct($product);
     }
 }

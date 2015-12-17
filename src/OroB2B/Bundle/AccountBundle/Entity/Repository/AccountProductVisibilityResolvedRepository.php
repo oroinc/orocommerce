@@ -4,9 +4,11 @@ namespace OroB2B\Bundle\AccountBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -56,5 +58,85 @@ class AccountProductVisibilityResolvedRepository extends EntityRepository
             ->setParameter('visibility', AccountProductVisibility::CURRENT_PRODUCT)
             ->getQuery()
             ->execute();
+    }
+
+    /**
+     * @param Product $product
+     */
+    public function deleteByProduct(Product $product)
+    {
+        $this->createQueryBuilder('productVisibility')
+            ->delete()
+            ->where('productVisibility.product = :product')
+            ->setParameter('product', $product)
+            ->getQuery()
+            ->execute()
+        ;
+    }
+
+    /**
+     * @param Product $product
+     * @param InsertFromSelectQueryExecutor $insertFromSelect
+     * @param boolean $isCategoryVisible
+     * @param Category|null $category
+     */
+    public function insertByProduct(
+        Product $product,
+        InsertFromSelectQueryExecutor $insertFromSelect,
+        $isCategoryVisible,
+        Category $category = null
+    ) {
+        $categoryVisibility = $isCategoryVisible ? AccountProductVisibilityResolved::VISIBILITY_VISIBLE :
+            AccountProductVisibilityResolved::VISIBILITY_HIDDEN;
+        $visibilityMap = [
+            AccountProductVisibility::HIDDEN => [
+                'visibility' => AccountProductVisibilityResolved::VISIBILITY_HIDDEN,
+                'source' => AccountProductVisibilityResolved::SOURCE_STATIC,
+                'category' => null,
+            ],
+            AccountProductVisibility::VISIBLE => [
+                'visibility' => AccountProductVisibilityResolved::VISIBILITY_VISIBLE,
+                'source' => AccountProductVisibilityResolved::SOURCE_STATIC,
+                'category' => null,
+            ],
+            AccountProductVisibility::CATEGORY => [
+                'visibility' => $categoryVisibility,
+                'source' => AccountProductVisibilityResolved::SOURCE_CATEGORY,
+                'category' => $category ? $category->getId() : null,
+            ],
+        ];
+
+        foreach ($visibilityMap as $visibility => $productVisibility) {
+            $qb = $this->getEntityManager()
+                ->getRepository('OroB2BAccountBundle:Visibility\AccountProductVisibility')
+                ->createQueryBuilder('productVisibility');
+            $fieldsInsert = ['product', 'website', 'account', 'visibility', 'source'];
+            $fieldsSelect = [
+                'IDENTITY(productVisibility.product)',
+                'IDENTITY(productVisibility.website)',
+                'IDENTITY(productVisibility.account)',
+                (string)$productVisibility['visibility'],
+                (string)$productVisibility['source'],
+            ];
+            if ($productVisibility['category']) {
+                $fieldsSelect[] = (string)$productVisibility['category'];
+                $fieldsInsert[] = 'category';
+            }
+            if ($productVisibility['source'] == AccountProductVisibilityResolved::SOURCE_STATIC) {
+                $fieldsSelect[] = 'productVisibility.id';
+                $fieldsInsert[] = 'sourceProductVisibility';
+            }
+            $qb->select($fieldsSelect)
+                ->where('productVisibility.product = :product')
+                ->andWhere('productVisibility.visibility = :visibility')
+                ->setParameter('product', $product)
+                ->setParameter('visibility', $visibility);
+
+            $insertFromSelect->execute(
+                $this->getEntityName(),
+                $fieldsInsert,
+                $qb
+            );
+        }
     }
 }

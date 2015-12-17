@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
@@ -21,6 +22,16 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
 
     /** @var  ConfigManager */
     protected $configManager;
+
+    /**
+     * @var string
+     */
+    protected $cacheClass;
+
+    /**
+     * @var InsertFromSelectQueryExecutor
+     */
+    protected $insertFromSelectExecutor;
 
     /**
      * @param ManagerRegistry $registry
@@ -90,5 +101,21 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
     {
         return $isVisible ? BaseProductVisibilityResolved::VISIBILITY_VISIBLE
             : BaseProductVisibilityResolved::VISIBILITY_HIDDEN;
+    }
+
+    /**
+     * @param string $cacheClass
+     */
+    public function setCacheClass($cacheClass)
+    {
+        $this->cacheClass = $cacheClass;
+    }
+
+    /**
+     * @param mixed $insertFromSelectExecutor
+     */
+    public function setInsertFromSelectExecutor(InsertFromSelectQueryExecutor $insertFromSelectExecutor)
+    {
+        $this->insertFromSelectExecutor = $insertFromSelectExecutor;
     }
 }

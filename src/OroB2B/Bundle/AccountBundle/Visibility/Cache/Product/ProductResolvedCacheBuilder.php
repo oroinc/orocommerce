@@ -22,16 +22,6 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
     const HIDDEN = 'hidden';
 
     /**
-     * @var InsertFromSelectQueryExecutor
-     */
-    protected $insertFromSelectExecutor;
-
-    /**
-     * @var string
-     */
-    protected $cacheClass;
-
-    /**
      * @param InsertFromSelectQueryExecutor $insertFromSelectExecutor
      */
     public function setInsertFromSelectExecutor(InsertFromSelectQueryExecutor $insertFromSelectExecutor)
@@ -115,7 +105,25 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
      */
     public function productCategoryChanged(Product $product)
     {
-        // TODO: Implement updateProductResolvedVisibility() method.
+        $category = $this->registry
+            ->getManagerForClass('OroB2BCatalogBundle:Category')
+            ->getRepository('OroB2BCatalogBundle:Category')
+            ->findOneByProduct($product);
+        $websites = $this->registry
+            ->getManagerForClass('OroB2BWebsiteBundle:Website')
+            ->getRepository('OroB2BWebsiteBundle:Website')
+            ->findAll();
+        $isCategoryVisible = null;
+        if ($category) {
+            $isCategoryVisible = $this->categoryVisibilityResolver->isCategoryVisible($category);
+        }
+        $this->getRepository()->deleteByProduct($product);
+        $this->getRepository()->insertByProduct(
+            $product,
+            $websites,
+            $isCategoryVisible,
+            $category
+        );
     }
 
     /**

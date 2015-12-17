@@ -8,6 +8,7 @@ use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class ProductVisibilityRepository extends EntityRepository
 {
@@ -58,5 +59,24 @@ class ProductVisibilityRepository extends EntityRepository
             ['product', 'website', 'visibility'],
             $qb
         );
+    }
+
+    /**
+     * @param Product $product
+     * @param array $websites
+     */
+    public function setToDefaultWithoutCategoryByProduct(Product $product, array $websites)
+    {
+        foreach ($websites as $website) {
+            $visibility = $this->findBy(['product' => $product, 'website' => $website]);
+            if (!$visibility) {
+                $visibility = new ProductVisibility();
+                $visibility->setProduct($product);
+                $visibility->setWebsite($website);
+                $visibility->setVisibility(ProductVisibility::CONFIG);
+                $this->getEntityManager()->persist($visibility);
+            }
+        }
+        $this->getEntityManager()->flush();
     }
 }

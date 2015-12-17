@@ -10,6 +10,7 @@ use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -134,5 +135,98 @@ class ProductVisibilityResolvedRepository extends EntityRepository
     public function findByPrimaryKey(Product $product, Website $website)
     {
         return $this->findOneBy(['website' => $website, 'product' => $product]);
+    }
+
+    /**
+     * @param Product $product
+     */
+    public function deleteByProduct(Product $product)
+    {
+        $this->createQueryBuilder('productVisibility')
+            ->delete()
+            ->where('productVisibility.product = :product')
+            ->setParameter('product', $product)
+            ->getQuery()
+            ->execute()
+        ;
+    }
+
+    /**
+     * @param Product $product
+     * @param array $websites
+     * @param $isCategoryVisible
+     * @param $category
+     */
+    public function insertByProduct(Product $product, array $websites, $isCategoryVisible, Category $category = null)
+    {
+        $visibilitiesByWebsite = $this->getRawResolvedVisibilitiesByProduct(
+            $product,
+            $websites,
+            $isCategoryVisible,
+            $category
+        );
+        $productVisibilities = $this->getEntityManager()
+            ->getRepository('OroB2BAccountBundle:Visibility\ProductVisibility')
+            ->findBy(['product' => $product]);
+        $this->deleteByProduct($product);
+        $visibilityMap = [
+            ProductVisibility::HIDDEN => BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
+            ProductVisibility::VISIBLE => BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
+        ];
+        if ($productVisibilities) {
+            foreach ($productVisibilities as $productVisibility) {
+                if (!isset($visibilitiesByWebsite[$productVisibility->getWebsite()->getId()])) {
+                    $visibilitiesByWebsite[$productVisibility->getWebsite()->getId()] =
+                        new ProductVisibilityResolved($productVisibility->getWebsite(), $product);
+                }
+                $resolvedVisibility = $visibilitiesByWebsite[$productVisibility->getWebsite()->getId()];
+
+                if ($productVisibility->getVisibility() == ProductVisibility::CONFIG) {
+                    unset($visibilitiesByWebsite[$productVisibility->getWebsite()->getId()]);
+                    continue;
+                }
+                /** @var $resolvedVisibility ProductVisibilityResolved */
+                $resolvedVisibility->setSource(BaseProductVisibilityResolved::SOURCE_STATIC);
+                $resolvedVisibility->setSourceProductVisibility($productVisibility);
+                $resolvedVisibility->setVisibility($visibilityMap[$productVisibility->getVisibility()]);
+            }
+        }
+        foreach ($visibilitiesByWebsite as $resolvedVisibility) {
+            $this->getEntityManager()->persist($resolvedVisibility);
+        }
+        $this->getEntityManager()->flush();
+    }
+
+    /**
+     * @param Product $product
+     * @param array $websites Website[]
+     * @param boolean $isCategoryVisible
+     * @param Category|null $category
+     * @return array
+     */
+    protected function getRawResolvedVisibilitiesByProduct(
+        Product $product,
+        $websites,
+        $isCategoryVisible,
+        Category $category = null
+    ) {
+        /** @var $websites Website[] */
+        $visibilitiesByWebsite = [];
+        if (!$category) {
+            return $visibilitiesByWebsite;
+        }
+        foreach ($websites as $website) {
+            $resolvedVisibility = new ProductVisibilityResolved($website, $product);
+            $resolvedVisibility->setCategory($category);
+
+            $resolvedVisibility->setVisibility(BaseProductVisibilityResolved::VISIBILITY_HIDDEN);
+            if ($isCategoryVisible) {
+                $resolvedVisibility->setVisibility(BaseProductVisibilityResolved::VISIBILITY_VISIBLE);
+            }
+            $resolvedVisibility->setSource(BaseProductVisibilityResolved::SOURCE_CATEGORY);
+            $visibilitiesByWebsite[$website->getId()] = $resolvedVisibility;
+        }
+
+        return $visibilitiesByWebsite;
     }
 }

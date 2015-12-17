@@ -56,6 +56,13 @@ definitions:
         actions_configuration:
             - @resolve_product_visibility: ~
 
+    product_create:
+        enabled: true
+        label: Product created
+        entity: OroB2B\Bundle\ProductBundle\Entity\Product
+        actions_configuration:
+            - @resolve_visibility_by_product: ~
+
     # Category visibility cache clear
 
     category_position_cache_clear:
@@ -183,3 +190,7 @@ triggers:
             event: update
         -
             event: delete
+
+    product_create:
+        -
+            event: create

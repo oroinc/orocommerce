@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product;
 
+use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupProductVisibilityResolvedRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
@@ -83,7 +84,21 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
      */
     public function productCategoryChanged(Product $product)
     {
-        // TODO: Implement updateProductResolvedVisibility() method.
+        $category = $this->registry
+            ->getManagerForClass('OroB2BCatalogBundle:Category')
+            ->getRepository('OroB2BCatalogBundle:Category')
+            ->findOneByProduct($product);
+        $isCategoryVisible = null;
+        if ($category) {
+            $isCategoryVisible = $this->categoryVisibilityResolver->isCategoryVisible($category);
+        }
+        $this->getRepository()->deleteByProduct($product);
+        $this->getRepository()->insertByProduct(
+            $product,
+            $this->insertFromSelectExecutor,
+            $isCategoryVisible,
+            $category
+        );
     }
 
     /**
@@ -92,5 +107,15 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
     public function buildCache(Website $website = null)
     {
         // TODO: Implement buildCache() method.
+    }
+
+    /**
+     * @return AccountGroupProductVisibilityResolvedRepository
+     */
+    protected function getRepository()
+    {
+        return $this->registry
+            ->getManagerForClass($this->cacheClass)
+            ->getRepository($this->cacheClass);
     }
 }
