@@ -9,6 +9,8 @@ use Oro\Bundle\UserBundle\Entity\User;
 
 class ApplicationsHelper
 {
+    const BACKEND = 'backend';
+
     /**
      * @var TokenStorageInterface
      */
@@ -28,35 +30,37 @@ class ApplicationsHelper
      */
     public function isApplicationsValid(Action $action)
     {
-        if (!$this->tokenStorage->getToken()) {
-            return false;
-        }
-
         $applications = $action->getDefinition()->getApplications();
         if (empty($applications)) {
             return true;
         }
 
-        $isBackendApplicationSet = in_array('backend', $applications, true);
-
-        if ($this->isBackend()) {
-            return $isBackendApplicationSet;
-        }
-
-        if ($isBackendApplicationSet) {
-            unset($applications[array_search('backend', $applications, true)]);
-        }
-
-        return count($applications) > 0;
+        return in_array($this->getCurrentApplication(), $applications, true);
     }
 
     /**
-     * @return bool
+     * @return string|null
      */
-    protected function isBackend()
+    public function getCurrentApplication()
     {
         $token = $this->tokenStorage->getToken();
 
-        return $token && $token->getUser() instanceof User;
+        return $token && $token->getUser() instanceof User ? self::BACKEND : null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDialogRoute()
+    {
+        return 'oro_action_widget_form';
+    }
+
+    /**
+     * @return string
+     */
+    public function getExecutionRoute()
+    {
+        return 'oro_api_action_execute';
     }
 }

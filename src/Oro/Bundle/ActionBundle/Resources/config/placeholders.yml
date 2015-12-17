@@ -12,4 +12,3 @@ placeholders:
 items:
     actions_buttons:
         template: OroActionBundle:Widget:buttons.html.twig
-        applicable: @oro_user.placeholder.filter->isUserApplicable()
