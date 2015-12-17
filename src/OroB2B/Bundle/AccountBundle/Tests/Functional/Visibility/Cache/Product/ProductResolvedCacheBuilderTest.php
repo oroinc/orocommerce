@@ -174,7 +174,7 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function getSourceRepository()
     {
@@ -195,7 +195,7 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
 
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function buildCacheDataProvider()
     {
@@ -219,9 +219,9 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
-    public function getCacheBuilder()
+    protected function getCacheBuilder()
     {
         return $this->client
             ->getContainer()

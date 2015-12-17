@@ -11,7 +11,6 @@ use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
@@ -96,6 +95,30 @@ class AccountGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTe
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function buildCacheDataProvider()
+    {
+        return [
+            'without_website' => [
+                'expectedStaticCount' => 4,
+                'expectedCategoryCount' => 1,
+                'websiteReference' => null,
+            ],
+            'with_website1' => [
+                'expectedStaticCount' => 0,
+                'expectedCategoryCount' => 1,
+                'websiteReference' => LoadWebsiteData::WEBSITE1,
+            ],
+            'with_website2' => [
+                'expectedStaticCount' => 0,
+                'expectedCategoryCount' => 0,
+                'websiteReference' => LoadWebsiteData::WEBSITE2,
+            ],
+        ];
+    }
+
+    /**
      * @param BaseProductVisibilityResolved|AccountGroupProductVisibilityResolved $visibilityResolved
      */
     protected function assertProductIdentifyEntitiesAccessory(BaseProductVisibilityResolved $visibilityResolved)
@@ -166,43 +189,15 @@ class AccountGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTe
      */
     protected function getRepository()
     {
-        $d = $this->getContainer()->get('doctrine')->getRepository(
-            'OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved'
-        );
-
         return $this->getContainer()->get('doctrine')->getRepository(
             'OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved'
         );
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public function buildCacheDataProvider()
-    {
-        return [
-            'without_website' => [
-                'expectedStaticCount' => 4,
-                'expectedCategoryCount' => 1,
-                'websiteReference' => null,
-            ],
-            'with_website1' => [
-                'expectedStaticCount' => 0,
-                'expectedCategoryCount' => 1,
-                'websiteReference' => LoadWebsiteData::WEBSITE1,
-            ],
-            'with_website2' => [
-                'expectedStaticCount' => 0,
-                'expectedCategoryCount' => 0,
-                'websiteReference' => LoadWebsiteData::WEBSITE2,
-            ],
-        ];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getCacheBuilder()
+    protected function getCacheBuilder()
     {
         return $this->client
             ->getContainer()

@@ -246,7 +246,7 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function buildCacheDataProvider()
     {
@@ -254,7 +254,7 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getCacheBuilder()
     {

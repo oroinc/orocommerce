@@ -135,7 +135,7 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
     /**
      * @return CacheBuilderInterface
      */
-    abstract public function getCacheBuilder();
+    abstract protected function getCacheBuilder();
 
     protected function clearCategoryCache()
     {
