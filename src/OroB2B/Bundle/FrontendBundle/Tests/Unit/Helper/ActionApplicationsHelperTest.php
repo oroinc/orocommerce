@@ -120,7 +120,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
     {
         return [
             'backend user' => [
-                'token' => $this->createToken(new User()),
+                'token' => $this->createToken(new User(), $this->exactly(2)),
                 'expectedResult' => 'backend',
             ],
             'frontend user' => [
@@ -150,7 +150,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
         return [
             [
                 'applications' => ['backend', 'frontend'],
-                'token' => $this->createToken($user),
+                'token' => $this->createToken($user, $this->exactly(2)),
                 'expectedResult' => true
             ],
             [
@@ -160,7 +160,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
             ],
             [
                 'applications' => ['backend'],
-                'token' => $this->createToken($user),
+                'token' => $this->createToken($user, $this->exactly(2)),
                 'expectedResult' => true
             ],
             [
@@ -170,7 +170,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
             ],
             [
                 'applications' => ['frontend'],
-                'token' => $this->createToken($user),
+                'token' => $this->createToken($user, $this->exactly(2)),
                 'expectedResult' => false
             ],
             [

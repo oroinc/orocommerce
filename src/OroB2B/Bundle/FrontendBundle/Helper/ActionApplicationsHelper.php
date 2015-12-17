@@ -15,11 +15,7 @@ class ActionApplicationsHelper extends ApplicationsHelper
      */
     public function getCurrentApplication()
     {
-        if (null !== ($app = parent::getCurrentApplication())) {
-            return $app;
-        }
-
-        return $this->isFrontend() ? self::FRONTEND : null;
+        return $this->isFrontend() ? self::FRONTEND : parent::getCurrentApplication();
     }
 
     /**
