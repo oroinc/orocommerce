@@ -136,7 +136,7 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
         $qb->update('OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved', 'agpvr')
             ->set('agpvr.visibility', $visibility)
             ->where($qb->expr()->eq('agpvr.accountGroup', ':accountGroup'))
-            ->andWhere($qb->expr()->in('agpvr.categoryId', ':categoryIds'))
+            ->andWhere($qb->expr()->in('IDENTITY(agpvr.category)', ':categoryIds'))
             ->setParameters(['accountGroup' => $accountGroup, 'categoryIds' => $categoryIds]);
 
         $qb->getQuery()->execute();

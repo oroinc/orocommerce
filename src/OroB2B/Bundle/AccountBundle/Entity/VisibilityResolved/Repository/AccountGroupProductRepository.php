@@ -72,7 +72,7 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
                 'accountGroup',
                 'visibility',
                 'source',
-                'categoryId',
+                'category',
             ],
             $queryBuilder
         );

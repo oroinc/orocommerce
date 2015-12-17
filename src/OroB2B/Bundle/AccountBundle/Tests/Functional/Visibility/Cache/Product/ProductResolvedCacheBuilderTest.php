@@ -90,6 +90,8 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
         $visibility = $this->getVisibility();
         $this->assertNotNull($visibility);
 
+        $visibility->setVisibility(ProductVisibility::CATEGORY);
+
         $entityManager = $this->getManagerForVisibility();
         $entityManager->remove($visibility);
         $entityManager->flush();
@@ -97,7 +99,7 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
         $resolvedVisibility = $this->getVisibilityResolved();
         $this->assertNotNull($resolvedVisibility);
         $this->assertEquals(
-            $resolvedVisibility->getCategoryId(),
+            $resolvedVisibility->getCategory()->getId(),
             $this->getReference(LoadCategoryData::FIRST_LEVEL)->getId()
         );
         $this->assertEquals($resolvedVisibility->getSource(), BaseProductVisibilityResolved::SOURCE_CATEGORY);

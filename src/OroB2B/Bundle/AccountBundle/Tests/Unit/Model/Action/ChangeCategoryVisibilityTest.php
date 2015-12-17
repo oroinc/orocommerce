@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Model\Action;
 
+use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
@@ -21,16 +22,33 @@ class ChangeCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
      */
     protected $action;
 
+    /**
+     * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $registry;
+
+    /**
+     * @var  CategoryCaseCacheBuilderInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $cacheBuilder;
+
     protected function setUp()
     {
         $contextAccessor = new ContextAccessor();
-        $this->action    = new ChangeCategoryVisibility($contextAccessor);
+        $this->action = new ChangeCategoryVisibility($contextAccessor);
+
+        $this->registry = $this->getMock('Symfony\Bridge\Doctrine\RegistryInterface');
+        $this->cacheBuilder = $this
+            ->getMock('OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface');
+
         /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject $dispatcher */
         $dispatcher = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcher')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->action->setDispatcher($dispatcher);
+        $this->action->setRegistry($this->registry);
+        $this->action->setCacheBuilder($this->cacheBuilder);
     }
 
     protected function tearDown()
@@ -39,15 +57,10 @@ class ChangeCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage CacheBuilder is not provided
+     * @dataProvider executeActionDataProvider
+     * @param bool $throwException
      */
-    public function testInitializeFailed()
-    {
-        $this->action->initialize([]);
-    }
-
-    public function testExecuteAction()
+    public function testExecuteAction($throwException = false)
     {
         $categoryVisibility = new CategoryVisibility();
 
@@ -64,17 +77,28 @@ class ChangeCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $em->expects($this->any())
-            ->method('transactional')
-            ->willReturnCallback(
-                function ($callback) {
-                    call_user_func($callback);
-                }
-            );
 
-        $cacheBuilder->expects($this->once())
-            ->method('resolveVisibilitySettings')
-            ->with($categoryVisibility);
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        if ($throwException) {
+            $cacheBuilder->expects($this->once())
+                ->method('resolveVisibilitySettings')
+                ->with($categoryVisibility)
+                ->will($this->throwException(new \Exception('Error')));
+
+            $em->expects($this->once())
+                ->method('rollback');
+
+            $this->setExpectedException('\Exception', 'Error');
+        } else {
+            $cacheBuilder->expects($this->once())
+                ->method('resolveVisibilitySettings')
+                ->with($categoryVisibility);
+
+            $em->expects($this->once())
+                ->method('commit');
+        }
 
         $registry->expects($this->once())
             ->method('getManagerForClass')
@@ -85,5 +109,20 @@ class ChangeCategoryVisibilityTest extends \PHPUnit_Framework_TestCase
         $this->action->setRegistry($registry);
         $this->action->initialize([]);
         $this->action->execute(new ProcessData(['data' => $categoryVisibility]));
+    }
+
+    /**
+     * @return array
+     */
+    public function executeActionDataProvider()
+    {
+        return [
+            [
+                'throwException' => true
+            ],
+            [
+                'throwException' => false
+            ],
+        ];
     }
 }

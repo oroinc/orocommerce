@@ -11,6 +11,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
@@ -55,6 +56,8 @@ class AccountGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTe
      */
     public function testChangeAccountGroupProductVisibilityToCategory()
     {
+        $this->clearCategoryCache();
+
         $visibility = $this->getVisibility();
         $visibility->setVisibility(AccountGroupProductVisibility::CATEGORY);
 
@@ -62,10 +65,17 @@ class AccountGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTe
         $entityManager->flush();
 
         $visibilityResolved = $this->getVisibilityResolved();
+
         $this->assertEquals(
             $this->getReference(LoadCategoryData::FIRST_LEVEL)->getId(),
-            $visibilityResolved->getCategoryId()
+            $visibilityResolved->getCategory()->getId()
         );
+
+        $this->assertEquals(
+            $this->getReference(LoadCategoryData::FIRST_LEVEL)->getId(),
+            $visibilityResolved->getCategory()->getId()
+        );
+
         $this->assertEquals(BaseProductVisibilityResolved::SOURCE_CATEGORY, $visibilityResolved->getSource());
         $this->assertEquals($visibility, $visibilityResolved->getSourceProductVisibility());
         $this->assertEquals(BaseProductVisibilityResolved::VISIBILITY_VISIBLE, $visibilityResolved->getVisibility());
@@ -156,6 +166,10 @@ class AccountGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTe
      */
     protected function getRepository()
     {
+        $d = $this->getContainer()->get('doctrine')->getRepository(
+            'OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved'
+        );
+
         return $this->getContainer()->get('doctrine')->getRepository(
             'OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved'
         );

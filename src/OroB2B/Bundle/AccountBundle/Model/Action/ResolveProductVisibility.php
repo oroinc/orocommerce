@@ -2,73 +2,18 @@
 
 namespace OroB2B\Bundle\AccountBundle\Model\Action;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
-use Oro\Bundle\WorkflowBundle\Model\Action\AbstractAction;
-use Oro\Bundle\WorkflowBundle\Model\ProcessData;
-
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
 
-class ResolveProductVisibility extends AbstractAction
+class ResolveProductVisibility extends AbstractVisibilityRegistryAwareAction
 {
-    /**
-     * @var CacheBuilderInterface
-     */
-    protected $cacheBuilder;
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
-     * @var bool
-     */
-    protected $resetVisibility = false;
-
-    /**
-     * Empty constructor, no extra dependencies
-     */
-    public function __construct()
-    {
-    }
-
-    /**
-     * @param ManagerRegistry $registry
-     */
-    public function setRegistry(ManagerRegistry $registry)
-    {
-        $this->registry = $registry;
-    }
-
-    /**
-     * @param CacheBuilderInterface $cacheBuilder
-     */
-    public function setCacheBuilder(CacheBuilderInterface $cacheBuilder)
-    {
-        $this->cacheBuilder = $cacheBuilder;
-    }
-
     /**
      * {@inheritdoc}
      */
     protected function executeAction($context)
     {
-        if (!$context instanceof ProcessData) {
-            throw new \LogicException('This action can be called only from process context');
-        }
-
-        $visibilityEntity = $context->getEntity();
-        if (!$visibilityEntity instanceof VisibilityInterface) {
-            throw new \LogicException('Resolvable entity must implement VisibilityInterface');
-        }
-
-        if ($this->resetVisibility) {
-            $visibilityEntity->setVisibility($visibilityEntity::getDefault($visibilityEntity));
-        }
-
+        $visibilityEntity = $this->getEntity($context);
         $this->getEntityManager()->transactional(
             function () use ($visibilityEntity) {
                 $this->cacheBuilder->resolveVisibilitySettings($visibilityEntity);
@@ -79,9 +24,15 @@ class ResolveProductVisibility extends AbstractAction
     /**
      * {@inheritdoc}
      */
-    public function initialize(array $options)
+    protected function getEntity($context)
     {
-        $this->resetVisibility = array_key_exists('reset_visibility', $options) && $options['reset_visibility'];
+        $entity = parent::getEntity($context);
+
+        if (!$entity instanceof VisibilityInterface) {
+            throw new \LogicException('Resolvable entity must implement VisibilityInterface');
+        }
+
+        return $entity;
     }
 
     /**

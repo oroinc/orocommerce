@@ -36,9 +36,10 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
     /** @var  Account */
     protected $account;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->initClient();
+
         $this->loadFixtures(
             [
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
@@ -51,8 +52,8 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
         $this->product = $this->getReference(LoadProductData::PRODUCT_1);
         $this->accountGroup = $this->getReference(LoadGroups::GROUP1);
         $this->account = $this->getReference('account.level_1');
-        $this->getContainer()->get('orob2b_account.storage.category_visibility_storage')->flush();
     }
+
 
     public function tearDown()
     {
@@ -71,7 +72,7 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
         $expectedVisibility
     ) {
         $this->assertNotNull($productVisibilityResolved);
-        $this->assertNull($productVisibilityResolved->getCategoryId());
+        $this->assertNull($productVisibilityResolved->getCategory());
         $this->assertEquals($this->product, $productVisibilityResolved->getProduct());
         $this->assertEquals(BaseProductVisibilityResolved::SOURCE_STATIC, $productVisibilityResolved->getSource());
         $this->assertEquals($productVisibility, $productVisibilityResolved->getSourceProductVisibility());
@@ -87,6 +88,7 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
         $this->assertEquals($this->website, $visibilityResolved->getWebsite());
         $this->assertEquals($this->product, $visibilityResolved->getProduct());
     }
+
 
     /**
      * @dataProvider buildCacheDataProvider
@@ -134,4 +136,9 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
      * @return CacheBuilderInterface
      */
     abstract public function getCacheBuilder();
+
+    protected function clearCategoryCache()
+    {
+        $this->getContainer()->get('orob2b_account.storage.category_visibility_storage')->flush();
+    }
 }

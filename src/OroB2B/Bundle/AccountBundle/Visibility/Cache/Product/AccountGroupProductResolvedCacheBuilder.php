@@ -57,7 +57,7 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
                 );
                 $accountGroupProductVisibilityResolved->setSourceProductVisibility($accountGroupProductVisibility);
                 $accountGroupProductVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_CATEGORY);
-                $accountGroupProductVisibilityResolved->setCategoryId($category->getId());
+                $accountGroupProductVisibilityResolved->setCategory($category);
             } else {
                 $this->resolveConfigValue($accountGroupProductVisibilityResolved, $accountGroupProductVisibility);
             }

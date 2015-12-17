@@ -96,7 +96,7 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
 
         $actual = $this->getActualArray();
 
-        $this->assertCount(18, $actual);
+        $this->assertCount(20, $actual);
         $this->assertInsertedByCategory($actual);
     }
 
@@ -106,7 +106,7 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
         $actual = $this->repository->findBy(['website' => $this->website]);
 
         $this->assertEmpty($actual);
-        $this->assertSame(6, $deleted);
+        $this->assertSame(7, $deleted);
     }
 
     /**
@@ -117,7 +117,7 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
         $this->repository->insertFromBaseTable($this->getInsertFromSelectExecutor(), $this->website);
         $actual = $this->getActualArray();
 
-        $this->assertCount(16, $actual);
+        $this->assertCount(17, $actual);
         $this->assertInsertedFromBaseTable($actual);
     }
 
@@ -139,7 +139,7 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
         );
 
         $actual = $this->getActualArray();
-        $this->assertCount(18, $actual);
+        $this->assertCount(20, $actual);
         $this->assertInsertedByCategory($actual, $this->website);
     }
 
@@ -246,7 +246,7 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
                 'IDENTITY(pvr.sourceProductVisibility) as sourceProductVisibility',
                 'pvr.visibility as visibility',
                 'pvr.source as source',
-                'pvr.categoryId as category'
+                'IDENTITY(pvr.category) as category'
             )
             ->getQuery()
             ->getResult();
