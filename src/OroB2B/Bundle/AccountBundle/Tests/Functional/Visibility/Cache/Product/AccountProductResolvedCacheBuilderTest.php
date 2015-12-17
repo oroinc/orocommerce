@@ -216,6 +216,14 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function testBuildCache($expectedStaticCount, $expectedCategoryCount, $websiteReference = null)
+    {
+        $this->markTestSkipped('Will complete after Account Cache Builder finished');
+    }
+
+    /**
      * @return null|ProductVisibility
      */
     protected function getProductVisibility()
@@ -261,9 +269,5 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
         return $this->client
             ->getContainer()
             ->get('orob2b_account.visibility.cache.product.account_product_resolved_cache_builder');
-    }
-
-    public function testBuildCache(){
-        //TODO Remove in scope BB-1549
     }
 }
