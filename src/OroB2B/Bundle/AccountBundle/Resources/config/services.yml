@@ -121,6 +121,7 @@ parameters:
     orob2b_account.model.action.change_category_position.class: OroB2B\Bundle\AccountBundle\Model\Action\ChangeCategoryPosition
     orob2b_account.model.action.resolve_product_visibility.class: OroB2B\Bundle\AccountBundle\Model\Action\ResolveProductVisibility
     orob2b_account.model.action.category_visibility_cache_clear.class: OroB2B\Bundle\AccountBundle\Model\Action\CategoryVisibilityCacheClearAction
+    orob2b_account.model.action.build_website_cache.class: OroB2B\Bundle\AccountBundle\Model\Action\BuildWebsiteCacheAction
 
     # Visibility cache
     orob2b_account.visibility.cache.product.account_group_product_resolved_cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\AccountGroupProductResolvedCacheBuilder
@@ -813,6 +814,14 @@ services:
             - [setCategoryVisibilityStorage, [@orob2b_account.storage.category_visibility_storage]]
         tags:
             - { name: oro_workflow.action, alias: category_visibility_cache_clear }
+
+    orob2b_account.model.action.build_website_cache:
+        parent: orob2b_account.model.action.abstract_visibility_registry_aware_action
+        class: %orob2b_account.model.action.build_website_cache.class%
+        calls:
+            - [setCacheBuilder, [@orob2b_account.visibility.cache.product.product_resolved_cache_builder]]
+        tags:
+            - { name: oro_workflow.action, alias: build_website_cache }
 
     orob2b_account.event_listener.category_listener:
         arguments:
