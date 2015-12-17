@@ -171,7 +171,9 @@ class AccountRepositoryTest extends WebTestCase
             'FIRST_LEVEL with HIDDEN' => [
                 'categoryName' => LoadCategoryData::FIRST_LEVEL,
                 'visibility' => AccountCategoryVisibility::HIDDEN,
-                'expectedAccounts' => []
+                'expectedAccounts' => [
+                    'account.level_1.1',
+                ]
             ],
         ];
     }
