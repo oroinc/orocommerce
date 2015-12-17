@@ -307,7 +307,7 @@ datagrid:
                 product_tax_code_code:
                     data_name: product_tax_code_code
                 tax_code:
-                    data_name: tax_rule.tax
+                    data_name: tax_code
                 tax_jurisdiction_code:
                     data_name: tax_jurisdiction_code
             default:
@@ -316,10 +316,10 @@ datagrid:
             columns:
                 description:
                     type:      string
-                    data_name: description
+                    data_name: tax_rule.description
                 account_tax_code_code:
                     type:      entity
-                    data_name: account_tax_code_code.id
+                    data_name: account_tax_code.id
                     options:
                        field_type: entity
                        field_options:
@@ -327,7 +327,7 @@ datagrid:
                            property: code
                 product_tax_code_code:
                     type:      entity
-                    data_name: product_tax_code_code.id
+                    data_name: product_tax_code.id
                     options:
                        field_type: entity
                        field_options:
@@ -335,7 +335,7 @@ datagrid:
                            property: code
                 tax_code:
                     type:      entity
-                    data_name: tax_code.id
+                    data_name: tax.id
                     options:
                        field_type: entity
                        field_options:
@@ -343,7 +343,7 @@ datagrid:
                            property: code
                 tax_jurisdiction_code:
                     type:      entity
-                    data_name: tax_jurisdiction_code.id
+                    data_name: tax_jurisdiction.id
                     options:
                        field_type: entity
                        field_options:

@@ -16,6 +16,12 @@ class LoadProductTaxCodes extends AbstractFixture implements DependentFixtureInt
     const TAX_2 = 'TAX2';
     const TAX_3 = 'TAX3';
 
+    const DESCRIPTION_1 = 'Tax description 1';
+    const DESCRIPTION_2 = 'Tax description 2';
+    const DESCRIPTION_3 = 'Tax description 3';
+
+    const REFERENCE_PREFIX = 'product_tax_code';
+
     /**
      * {@inheritdoc}
      */
@@ -32,11 +38,11 @@ class LoadProductTaxCodes extends AbstractFixture implements DependentFixtureInt
         $this->createProductTaxCode(
             $manager,
             self::TAX_1,
-            'Tax description 1',
+            self::DESCRIPTION_1,
             [LoadProductData::PRODUCT_1, LoadProductData::PRODUCT_2]
         );
-        $this->createProductTaxCode($manager, self::TAX_2, 'Tax description 2', [LoadProductData::PRODUCT_3]);
-        $this->createProductTaxCode($manager, self::TAX_3, 'Tax description 3', []);
+        $this->createProductTaxCode($manager, self::TAX_2, self::DESCRIPTION_2, [LoadProductData::PRODUCT_3]);
+        $this->createProductTaxCode($manager, self::TAX_3, self::DESCRIPTION_3, []);
 
         $manager->flush();
     }
@@ -60,7 +66,7 @@ class LoadProductTaxCodes extends AbstractFixture implements DependentFixtureInt
         }
 
         $manager->persist($productTaxCode);
-        $this->addReference('product_tax_code.' . $code, $productTaxCode);
+        $this->addReference(self::REFERENCE_PREFIX . '.' . $code, $productTaxCode);
 
         return $productTaxCode;
     }

@@ -9,13 +9,16 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 /**
  * @dbIsolation
  */
-class AccountTaxCodeControllerTest extends WebTestCase
+class TaxControllerTest extends WebTestCase
 {
-    const ACCOUNT_TAX_CODE = 'unique';
-    const ACCOUNT_TAX_CODE_UPDATED = 'uniqueUpdated';
-    const ACCOUNT_TAX_CODE_DESCRIPTION = 'description';
-    const ACCOUNT_TAX_CODE_DESCRIPTION_UPDATED = 'description updated';
-    const ACCOUNT_TAX_CODE_SAVE_MESSAGE = 'Account Tax Code has been saved';
+    const TAX_CODE = 'unique';
+    const TAX_CODE_UPDATED = 'uniqueUpdated';
+    const TAX_DESCRIPTION = 'description';
+    const TAX_DESCRIPTION_UPDATED = 'description updated';
+    const TAX_RATE = 1;
+    const TAX_RATE_UPDATED = 2;
+
+    const TAX_SAVE_MESSAGE = 'Tax has been saved';
 
     protected function setUp()
     {
@@ -24,18 +27,18 @@ class AccountTaxCodeControllerTest extends WebTestCase
 
     public function testIndex()
     {
-        $this->client->request('GET', $this->getUrl('orob2b_tax_account_tax_code_index'));
+        $this->client->request('GET', $this->getUrl('orob2b_tax_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
     }
 
     public function testCreate()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('orob2b_tax_account_tax_code_create'));
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_tax_create'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertAccountTaxCodeSave($crawler, self::ACCOUNT_TAX_CODE, self::ACCOUNT_TAX_CODE_DESCRIPTION);
+        $this->assertTaxSave($crawler, self::TAX_CODE, self::TAX_DESCRIPTION, self::TAX_RATE);
     }
 
     /**
@@ -44,8 +47,8 @@ class AccountTaxCodeControllerTest extends WebTestCase
     public function testUpdate()
     {
         $response = $this->client->requestGrid(
-            'tax-account-tax-codes-grid',
-            ['tax-account-tax-codes-grid[_filter][code][value]' => self::ACCOUNT_TAX_CODE]
+            'tax-taxes-grid',
+            ['tax-taxes-grid[_filter][code][value]' => self::TAX_CODE]
         );
 
         $result = $this->getJsonResponseContent($response, 200);
@@ -54,16 +57,12 @@ class AccountTaxCodeControllerTest extends WebTestCase
         $id = $result['id'];
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_tax_account_tax_code_update', ['id' => $result['id']])
+            $this->getUrl('orob2b_tax_update', ['id' => $result['id']])
         );
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $this->assertAccountTaxCodeSave(
-            $crawler,
-            self::ACCOUNT_TAX_CODE_UPDATED,
-            self::ACCOUNT_TAX_CODE_DESCRIPTION_UPDATED
-        );
+        $this->assertTaxSave($crawler, self::TAX_CODE_UPDATED, self::TAX_DESCRIPTION_UPDATED, self::TAX_RATE_UPDATED);
 
         return $id;
     }
@@ -76,33 +75,31 @@ class AccountTaxCodeControllerTest extends WebTestCase
     {
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('orob2b_tax_account_tax_code_view', ['id' => $id])
+            $this->getUrl('orob2b_tax_view', ['id' => $id])
         );
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains(self::ACCOUNT_TAX_CODE_UPDATED . ' - View - Account Tax Codes - Taxes', $html);
+        $this->assertContains(self::TAX_CODE_UPDATED . ' - View - Taxes - Taxes', $html);
 
-        $this->assertViewPage(
-            $html,
-            self::ACCOUNT_TAX_CODE_UPDATED,
-            self::ACCOUNT_TAX_CODE_DESCRIPTION_UPDATED
-        );
+        $this->assertViewPage($html, self::TAX_CODE_UPDATED, self::TAX_DESCRIPTION_UPDATED, self::TAX_RATE_UPDATED);
     }
 
     /**
      * @param Crawler $crawler
      * @param string  $code
      * @param string  $description
+     * @param string  $rate
      */
-    protected function assertAccountTaxCodeSave(Crawler $crawler, $code, $description)
+    protected function assertTaxSave(Crawler $crawler, $code, $description, $rate)
     {
         $form = $crawler->selectButton('Save and Close')->form(
             [
-                'orob2b_tax_account_tax_code_type[code]' => $code,
-                'orob2b_tax_account_tax_code_type[description]' => $description,
+                'orob2b_tax_type[code]' => $code,
+                'orob2b_tax_type[description]' => $description,
+                'orob2b_tax_type[rate]' => $rate,
             ]
         );
 
@@ -113,18 +110,20 @@ class AccountTaxCodeControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertContains(self::ACCOUNT_TAX_CODE_SAVE_MESSAGE, $html);
-        $this->assertViewPage($html, $code, $description);
+        $this->assertContains(self::TAX_SAVE_MESSAGE, $html);
+        $this->assertViewPage($html, $code, $description, $rate);
     }
 
     /**
      * @param string $html
      * @param string $code
      * @param string $description
+     * @param string $rate
      */
-    protected function assertViewPage($html, $code, $description)
+    protected function assertViewPage($html, $code, $description, $rate)
     {
         $this->assertContains($code, $html);
         $this->assertContains($description, $html);
+        $this->assertContains($rate . '%', $html);
     }
 }
