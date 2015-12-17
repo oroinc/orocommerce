@@ -1,4 +1,4 @@
-//Changes
+//Toolbar
 .grid-toolbar {
   margin: 0 0 1rem;
   display: flex;
@@ -12,6 +12,7 @@
     margin: 0 0 0 .3rem;
   }
 
+  //Pagination
   .pagination,
   .pagination-container {
     width: auto;
@@ -161,6 +162,7 @@
     }
   }
 
+  //Search
   .grid-toolbar__search {
 
     @media (max-width: 1290px) {
@@ -182,6 +184,7 @@
     }
   }
 
+  //Grid Toolbar tools
   .grid-toolbar__tools {
     flex-grow: 1;
     text-align: right;
@@ -219,6 +222,7 @@
     }
   }
 
+  //Mass actions
   .oro-mass-actions {
     flex-grow: 0;
     flex-basis: 13.5rem;
@@ -241,9 +245,7 @@
   }
 
   .btn-group {
-
     &.open {
-
       .dropdown-menu {
         min-width: 0;
         width: 100%;
@@ -288,6 +290,7 @@
     }
   }
 
+  //Actions panel
   .actions-panel {
     display: inline-block;
     vertical-align: middle;
@@ -337,8 +340,8 @@
     }
   }
 
+  //Columns manager
   .column-manager {
-
     .dropdown-menu {
       top: 3.1rem;
       left: auto;
@@ -370,7 +373,6 @@
     }
 
     .column-manager-filter {
-
       .column-manager-search {
         input {
           .input;
@@ -473,11 +475,12 @@
   }
 }
 
+//Filter
 .filter-box {
   border: 0;
   background: @base-sidebar-background-color-light;
   margin: 1rem 0;
-  padding: .7rem 1.1rem .2rem 14rem;
+  padding: .7rem 1.1rem .2rem 13rem;
   position: relative;
 
   .filter-list-container {
@@ -498,6 +501,48 @@
     }
   }
 
+  .filter-item {
+    &.open-filter {
+      &:before, &:after {
+        display: none;
+      }
+
+      @media (min-width: 1382px) {
+        &:nth-of-type(4) {
+          .filter-criteria {
+            &.dropdown-menu {
+              left: auto;
+              right: 0;
+            }
+          }
+        }
+      }
+
+      @media (min-width: 1148px) and (max-width: 1381px) {
+        &:nth-of-type(3n+3) {
+          .filter-criteria {
+            &.dropdown-menu {
+              left: auto;
+              right: 0;
+            }
+          }
+        }
+      }
+
+      @media (min-width: 992px) and (max-width: 1147px) {
+        &:nth-of-type(2n+2) {
+          .filter-criteria {
+            &.dropdown-menu {
+              left: auto;
+              right: 0;
+            }
+          }
+        }
+      }
+
+    }
+  }
+
   .filter-criteria-selector {
     .caret {
       position: absolute;
@@ -513,7 +558,7 @@
 
   .oro-drop {
     position: relative;
-    margin: 0 1.5rem .5rem 0;
+    margin: 0 1rem .5rem 0;
     flex-basis: 22.4rem;
 
     > .btn {
@@ -537,11 +582,376 @@
       .ellipsis;
     }
 
-    &.open {
-      .filter-criteria {
-        display: block;
+    .filter-criteria {
+      margin-top: 0;
+      min-width: 34rem !important;
+      padding: 2rem;
+
+      .btn_close {
+        color: #4597ca;
+        opacity: 1;
+        line-height: 1.8rem;
+
+        .material-icons {
+          font-size: 2rem;
+        }
+      }
+
+      .oro-oq__filter__label {
+        font-size: 1.4rem;
+      }
+
+      .dropdown-menu-calendar {
+        &.dropdown-menu {
+          background: #fff;
+          padding: 0;
+          min-width: 27rem;
+
+          .nav-tabs-oro {
+
+            > li {
+
+              &.active {
+                color: @base-font-color;
+              }
+
+              > a {
+                color: @base-font-color-lighter;
+              }
+            }
+          }
+
+          .tab-content {
+            padding: 1rem 1.5rem 1.5rem;
+          }
+
+          .ui-datevariables-div {
+            .icon-info-sign {
+              vertical-align: middle;
+              margin-left: .5rem;
+            }
+          }
+
+          .ui-datepicker {
+
+            .ui-datepicker-buttonpane {
+              margin: .5rem 0 0;
+
+              button {
+                &.ui-datepicker-current {
+                  display: inline-block;
+                  background: #252525;
+                  color: #fff;
+                  border: 0;
+                  font-size: 1.3rem;
+                  padding: .5rem 1.2rem;
+                  font-weight: 400;
+                  line-height: 1.42857143;
+                  text-align: center;
+                  white-space: nowrap;
+                  vertical-align: middle;
+                  border-radius: .4rem;
+                  text-shadow: none;
+
+                  &:active {
+                    color: #fff;
+                    box-shadow: inset 0 .3rem .5rem 0 rgba(0,0,0,.35);
+                  }
+                }
+              }
+            }
+
+            .ui-datepicker-header {
+              background: transparent;
+              border: 0;
+              display: flex;
+              align-items: center;
+              padding: .5rem .5rem 1rem .5rem;
+
+              .ui-datepicker-prev {
+                order: 1;
+                flex-basis: 2.7rem;
+                height: 2.9rem;
+                line-height: 2.9rem;
+                font-size: 0;
+                text-align: center;
+                cursor: pointer;
+                border: 0;
+
+                span {
+                  height: 0;
+                  width: 0;
+                  display: block;
+                }
+
+                &:hover {
+                  border: 0;
+                  background: #f7f7f7;
+                }
+
+                &:before {
+                  content: "";
+                  display: inline-block;
+                  vertical-align: middle;
+                  border-top: .7rem solid transparent;
+                  border-bottom: .7rem solid transparent;
+                  border-right: .7rem solid #ccc;
+                }
+              }
+
+              .ui-datepicker-next {
+                order: 3;
+                flex-basis: 2.7rem;
+                height: 2.9rem;
+                line-height: 2.9rem;
+                font-size: 0;
+                text-align: center;
+                cursor: pointer;
+                border: 0;
+
+                span {
+                  height: 0;
+                  width: 0;
+                  display: block;
+                }
+
+                &:hover {
+                  border: 0;
+                  background: #f7f7f7;
+                }
+
+                &:before {
+                  content: "";
+                  display: inline-block;
+                  vertical-align: middle;
+                  border-top: .7rem solid transparent;
+                  border-bottom: .7rem solid transparent;
+                  border-left: .7rem solid #ccc;
+                }
+              }
+
+              .ui-datepicker-title {
+                order: 2;
+                flex-grow: 1;
+                text-align: center;
+
+                select {
+                  display: inline-block;
+                  padding: .8rem .9rem;
+                  font-size: 1.4rem;
+                  line-height: 1.9rem;
+                  border: .1rem solid #ebebeb;
+                  border-radius: .5rem;
+                  background: #fff;
+                }
+              }
+            }
+
+            table.ui-datepicker-calendar {
+              width: 100%;
+              border-collapse: separate;
+              border-spacing: .5rem;
+
+              thead {
+                th {
+                  text-align: center;
+                  span {
+                    color: #ccc;
+                    font-weight: 400;
+                    vertical-align: middle;
+                    text-transform: none;
+                  }
+                }
+              }
+
+              tbody {
+                tr {
+                  td {
+                    text-align: center;
+
+                    a.ui-state-default {
+                      border: 0;
+                      display: block;
+                      text-decoration: none;
+                      line-height: 2.9rem;
+
+                      &:active, &:focus, :visited {
+                        text-decoration: none;
+                      }
+
+                      &.ui-state-active {
+                        background: #cc5c28;
+                        color: #fff;
+
+                        &.ui-state-hover {
+                          background: #cc5c28;
+                          color: #fff;
+                        }
+                      }
+
+                      &.ui-state-hover {
+                        background: #f7f7f7;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .choice-filter {
+
+        label {
+          font-size: 1.4rem;
+        }
+
+        .btn-group {
+          &.btn-block {
+            float: none;
+
+            .dropdown-toggle {
+              padding: 0;
+              background: none;
+              box-shadow: none;
+              border: 0;
+              height: auto;
+              color: @theme-red-color;
+
+              .caret {
+                border-top-color: @theme-red-color;
+                margin: 0 0 0 .5rem;
+              }
+            }
+          }
+        }
+
+        .value-field-frame {
+          width: 100%;
+          margin: 0 !important;
+
+          input[type=text] {
+            display: block;
+           .input;
+            padding: .8rem .9rem;
+            font-size: 1.4rem;
+            line-height: 1.9rem;
+            width: 100% !important;
+            height: auto;
+            margin: 0 0 1.5rem;
+
+            &:focus {
+              border-color: #4597ca;
+              outline: 0;
+              box-shadow: inset 0 .1rem .1rem rgba(0,0,0,.075), 0 0 .8rem rgba(102,175,233,.6);
+            }
+          }
+
+          .filter-widget__clear-link {
+            font-size: 1.3rem;
+            margin-left: 1rem;
+          }
+
+          .filter-update {
+            display: inline-block;
+            position: static;
+            padding: 0 2.6rem;
+            line-height: 4rem;
+            vertical-align: middle;
+            background: #252525;
+            color: #fff;
+            height: auto;
+          }
+        }
+      }
+
+      .oro-oq__filter__form__daterange_time {
+
+        .fields-row {
+          display: flex;
+          min-width: 22.5rem;
+
+          .timepicker-input {
+            padding-left: .9rem;
+            flex-basis: 9rem;
+          }
+        }
+      }
+
+      .oro-action  {
+        &.btn-group {
+          float: none;
+        }
+
+        .btn-group {
+          float: none;
+          margin: 0;
+
+          .filter-update {
+            display: inline-block;
+            position: static;
+            padding: 0 2.6rem;
+            line-height: 4rem;
+            vertical-align: middle;
+            background: #252525;
+            color: #fff;
+            height: auto;
+            float: none;
+            border-radius: .4rem !important;
+          }
+
+          .filter-widget__clear-link {
+            font-size: 1.3rem;
+            margin-left: 1rem;
+          }
+        }
+      }
+
+      .filter-separator {
+        margin: 0 1rem;
+        font-size: 1.4rem;
+        position: relative;
+        top: -5px;
+        padding: 0;
+      }
+
+      .filter-start-date,
+      .filter-end-date {
+        position: relative;
+
+        i {
+          font-family: 'FontAwesome' !important;
+          font-style: normal;
+          color: #ccc;
+          font-size: 2.1rem;
+        }
+
+        .datefilter {
+          display: block;
+        }
+
+        input[type="text"] {
+          .input;
+          padding: .8rem .9rem .8rem 3.4rem;
+          font-size: 1.4rem;
+          line-height: 1.9rem;
+          max-width: 14rem;
+          width: 100%;
+          background: transparent;
+
+          &:focus {
+            border-color: #4597ca;
+            outline: 0;
+            box-shadow: inset 0 .1rem .1rem rgba(0,0,0,.075), 0 0 .8rem rgba(102,175,233,.6);
+          }
+        }
       }
     }
+  }
+
+  .filter-select-oro {
+    height: auto;
   }
 }
 
@@ -550,8 +960,163 @@
   flex-wrap: wrap;
   align-content: flex-start;
   align-items: center;
+
+  .ui-multiselect {
+    &.select-filter-widget {
+      margin: 0;
+      padding: 0;
+      position: absolute;
+      left: 1.5rem;
+      top: 2rem;
+
+      a {
+        color: @theme-red-color;
+
+        &:hover {
+          span.caret {
+            border-top-color: @theme-red-color;
+          }
+        }
+      }
+
+      span.caret {
+        margin: 0 0 0 .5rem;
+        border-top-color: @theme-red-color;
+      }
+    }
+  }
+
+
+}
+
+.ui-multiselect-menu {
+  &.select-filter-widget {
+    padding: 2rem;
+    min-width: 32rem !important;
+
+    .ui-multiselect-header {
+      padding: 0;
+
+      > div {
+        padding: 0;
+
+        input[type="search"] {
+          .input;
+          padding: .8rem .9rem;
+          font-size: 1.4rem;
+          line-height: 1.9rem;
+          width: 100% !important;
+
+          &:focus {
+            border-color: #4597ca;
+            outline: 0;
+            box-shadow: inset 0 .1rem .1rem rgba(0,0,0,.075), 0 0 .8rem rgba(102,175,233,.6);
+          }
+        }
+      }
+    }
+
+    .ui-multiselect-checkboxes  {
+      margin: 1rem 0 0;
+
+      input[type="checkbox"] {
+        margin: 0 .6rem .5rem 0;
+      }
+
+      input[type="radio"] {
+        position: static !important;
+        text-indent: 0;
+        margin: 0 .5rem .2rem 0;
+        vertical-align: middle;
+      }
+
+      li {
+        display: inline-block;
+        width: 45%;
+
+        label {
+          padding: .3rem 0;
+          white-space: nowrap;
+          cursor: pointer;
+
+          span {
+            font-weight: 400;
+          }
+
+          &.ui-state-hover {
+            background: transparent;
+          }
+        }
+      }
+    }
+
+    &.ui-multiselect-single {
+      .ui-multiselect-checkboxes  {
+        li {
+          display: block;
+          width: 100%;
+
+          label {
+            padding: .3rem 0;
+            white-space: nowrap;
+            cursor: pointer;
+
+            &.ui-state-hover {
+              background: transparent;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.ui-multiselect-menu {
+  &.select-filter-widget {
+    margin: 0;
+  }
 }
 
 .other-scroll-container {
   margin: 0;
+}
+
+.ui-timepicker-wrapper {
+  overflow-y: auto;
+  height: 15rem;
+  width: 6.5em;
+  background: #fff;
+  border: .1rem solid #ddd;
+  box-shadow: 0 .5rem 1rem rgba(0,0,0,.2);
+  outline: none;
+  z-index: 10001;
+  margin: 0;
+  border-radius: .4rem;
+}
+
+.ui-timepicker-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    padding: .3rem 0 .3rem .5rem;
+    cursor: pointer;
+    white-space: nowrap;
+    color: #000;
+    list-style: none;
+    margin: 0;
+
+    &:hover {
+      background: #1980EC;
+      color: #fff;
+    }
+
+    &.ui-timepicker-selected {
+      &:hover {
+        background: #1980EC;
+        color: #fff;
+      }
+    }
+  }
 }
