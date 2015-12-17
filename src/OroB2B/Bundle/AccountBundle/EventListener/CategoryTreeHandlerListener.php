@@ -6,21 +6,23 @@ use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
 use OroB2B\Bundle\CatalogBundle\Event\CategoryTreeCreateAfterEvent;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\AccountBundle\Visibility\Storage\CategoryVisibilityStorage;
 
 class CategoryTreeHandlerListener
 {
-    /** @var CategoryVisibilityStorage */
-    protected $categoryVisibilityStorage;
+    /**
+     * @var CategoryVisibilityResolverInterface
+     */
+    protected $categoryVisibilityResolver;
 
     /**
-     * @param CategoryVisibilityStorage $categoryVisibilityStorage
+     * @param CategoryVisibilityResolverInterface $categoryVisibilityResolver
      */
-    public function __construct(CategoryVisibilityStorage $categoryVisibilityStorage)
+    public function __construct(CategoryVisibilityResolverInterface $categoryVisibilityResolver)
     {
-        $this->categoryVisibilityStorage = $categoryVisibilityStorage;
+        $this->categoryVisibilityResolver = $categoryVisibilityResolver;
     }
 
     /**
@@ -42,17 +44,12 @@ class CategoryTreeHandlerListener
      * @param Account|null $account
      * @return array
      */
-    protected function filterCategories(array $categories, $account)
+    protected function filterCategories(array $categories, Account $account = null)
     {
-        $visibilityData = $this->categoryVisibilityStorage->getData($account);
-
-        $isVisible = $visibilityData->isVisible();
-        $ids = $visibilityData->getIds();
         // copy categories array to another variable to prevent loop break on removed elements
         $filteredCategories = $categories;
         foreach ($categories as &$category) {
-            $inIds = in_array($category->getId(), $ids, true);
-            if (($isVisible && !$inIds) || (!$isVisible && $inIds)) {
+            if (!$this->categoryVisibilityResolver->isCategoryVisibleForAccount($category, $account)) {
                 $this->removeTreeNode($filteredCategories, $category);
             }
             $category->getChildCategories()->clear();

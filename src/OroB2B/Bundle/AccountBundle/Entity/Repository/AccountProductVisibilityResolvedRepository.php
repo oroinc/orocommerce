@@ -65,7 +65,7 @@ class AccountProductVisibilityResolvedRepository extends EntityRepository
                 'account',
                 'visibility',
                 'source',
-                'categoryId',
+                'category',
             ],
             $queryBuilder
         );

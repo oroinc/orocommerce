@@ -220,7 +220,7 @@ actions:
 Attributes Configuration
 ========================
 
-Action define configuration of attributes. Action can manipulate it's own data (Action Context) that is mapped by
+Action define configuration of attributes. Action can manipulate it's own data (Action Data) that is mapped by
 Attributes. Each attribute must to have a type and may have options.
 
 Single attribute can be described with next configuration:
@@ -325,7 +325,7 @@ Pre Conditions and Conditions Configuration
 * **conditions**
     Configuration of Conditions that must satisfy to allow action.
 
-It declares a tree structure of conditions that are applied on the Action Context to check if the Action could be
+It declares a tree structure of conditions that are applied on the Action Data to check if the Action could be
 performed. Single condition configuration contains alias - a unique name of condition - and options.
 
 Optionally each condition can have a constraint message. All messages of not passed conditions will be shown to user
@@ -337,10 +337,10 @@ whether action should be allowed to show, and actual conditions used to check wh
 Alias of condition starts from "@" symbol and must refer to registered condition. For example "@or" refers to logical
 OR condition.
 
-Options can refer to values of main entity in Action Context using "$" prefix. For example "$some_value" refers to value
+Options can refer to values of main entity in Action Data using "$" prefix. For example "$some_value" refers to value
 of "callsome_value" attribute of entity that is processed in condition.
 
-Also it is possible to refer to any property of Action Context using "$." prefix. For example to refer date attribute
+Also it is possible to refer to any property of Action Data using "$." prefix. For example to refer date attribute
 with date can be used string "$.created".
 
 Example
@@ -361,9 +361,9 @@ Pre Functions, Init Functions and Post Functions Configuration
 
 * **prefunctions**
     Configuration of Pre Functions that may be performed before pre conditions, conditions, init functions and post
-    functions. It can be used to prepare some data in Action Context that will be used in pre conditions validation.
+    functions. It can be used to prepare some data in Action Data that will be used in pre conditions validation.
 * **initfunctions**
-    Configuration of Init Functions that may be performed on Action Context before conditions and post functions.
+    Configuration of Init Functions that may be performed on Action Data before conditions and post functions.
     One of possible init actions usage scenario is to fill attributes with default values, which will be used in action
     form if it exist.
 * **postfunctions**
@@ -371,7 +371,7 @@ Pre Functions, Init Functions and Post Functions Configuration
     step that must contain action logic. It will be performed only after conditions will be qualified.
 
 Similarly to Conditions - alias of Function starts from "@" symbol and must refer to registered Functions. For example
-"@assign_value" refers to Function which set specified value to attribute in Action Context.
+"@assign_value" refers to Function which set specified value to attribute in Action Data.
 
 Example
 -------

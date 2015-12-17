@@ -4,13 +4,16 @@ namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product;
 
 use Doctrine\ORM\EntityManagerInterface;
 
+use Doctrine\ORM\EntityManager;
+
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountProductVisibilityResolvedRepository;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -52,18 +55,15 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
                 );
                 $accountProductVisibilityResolved->setSourceProductVisibility($accountProductVisibility);
                 $accountProductVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_CATEGORY);
-                $accountProductVisibilityResolved->setCategoryId($category->getId());
+                $accountProductVisibilityResolved->setCategory($category);
             } else {
                 $this->resolveConfigValue($accountProductVisibilityResolved, $accountProductVisibility);
             }
         } elseif ($selectedVisibility === AccountProductVisibility::CURRENT_PRODUCT) {
-            $productVisibilityResolved = $this->registry
-                ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
-                ->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
-                ->findByPrimaryKey($product, $website);
+            $productVisibilityResolved = $this->getProductVisibilityResolved($product, $website);
             if ($productVisibilityResolved) {
                 $accountProductVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_STATIC);
-                $accountProductVisibilityResolved->setCategoryId(null);
+                $accountProductVisibilityResolved->setCategory(null);
                 $accountProductVisibilityResolved->setVisibility($productVisibilityResolved->getVisibility());
                 $accountProductVisibilityResolved->setSourceProductVisibility($accountProductVisibility);
             } else {
@@ -183,5 +183,34 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
         }
 
         return $categoriesGrouped;
+    }
+
+    /**
+     * @param Product $product
+     * @param Website $website
+     * @return ProductVisibilityResolved|null
+     */
+    protected function getProductVisibilityResolved(Product $product, Website $website)
+    {
+        /** @var EntityManager $em */
+        $em = $resolvedVisibility = $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
+        $resolvedVisibility = $em->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
+            ->findByPrimaryKey($product, $website);
+
+        // entity might be inserted, but not saved yet
+        if (!$resolvedVisibility) {
+            foreach ($em->getUnitOfWork()->getScheduledEntityInsertions() as $entity) {
+                if ($entity instanceof ProductVisibilityResolved
+                    && $entity->getProduct() && $entity->getWebsite()
+                    && $entity->getProduct()->getId() === $product->getId()
+                    && $entity->getWebsite()->getId() === $website->getId()
+                ) {
+                    return $entity;
+                }
+            }
+        }
+
+        return $resolvedVisibility;
     }
 }

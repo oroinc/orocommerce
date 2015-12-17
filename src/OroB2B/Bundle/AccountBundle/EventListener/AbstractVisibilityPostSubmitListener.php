@@ -106,13 +106,8 @@ abstract class AbstractVisibilityPostSubmitListener extends VisibilityAbstractLi
         VisibilityInterface $visibilityEntity,
         $visibility
     ) {
-        $em = $this->getEntityManager($targetEntity);
-        if ($visibility !== $visibilityEntity->getDefault($targetEntity)) {
-            $visibilityEntity->setVisibility($visibility);
-            $em->persist($visibilityEntity);
-        } elseif ($visibilityEntity->getVisibility()) {
-            $em->remove($visibilityEntity);
-        }
+        $visibilityEntity->setVisibility($visibility);
+        $this->getEntityManager($targetEntity)->persist($visibilityEntity);
     }
 
     /**

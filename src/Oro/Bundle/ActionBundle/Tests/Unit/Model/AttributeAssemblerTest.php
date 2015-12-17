@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ActionBundle\Tests\Unit\Model;
 
-use Oro\Bundle\ActionBundle\Model\ActionContext;
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\AttributeAssembler;
 
 use Oro\Bundle\WorkflowBundle\Model\Attribute;
@@ -10,8 +10,8 @@ use Oro\Bundle\WorkflowBundle\Model\AttributeGuesser;
 
 class AttributeAssemblerTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var \PHPUnit_Framework_MockObject_MockObject|ActionContext */
-    protected $actionContext;
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ActionData */
+    protected $actionData;
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|AttributeGuesser */
     protected $attributeGuesser;
@@ -21,10 +21,10 @@ class AttributeAssemblerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->actionContext = $this->getMockBuilder('Oro\Bundle\ActionBundle\Model\ActionContext')
+        $this->actionData = $this->getMockBuilder('Oro\Bundle\ActionBundle\Model\ActionData')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->actionContext->expects($this->any())
+        $this->actionData->expects($this->any())
             ->method('getEntity')
             ->willReturn(new \stdClass());
 
@@ -48,7 +48,7 @@ class AttributeAssemblerTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException($exception, $message);
 
-        $this->assembler->assemble($this->actionContext, $configuration);
+        $this->assembler->assemble($this->actionData, $configuration);
     }
 
     /**
@@ -185,7 +185,7 @@ class AttributeAssemblerTest extends \PHPUnit_Framework_TestCase
                 ->willReturn($guessedParameters);
         }
 
-        $attributes = $this->assembler->assemble($this->actionContext, $configuration);
+        $attributes = $this->assembler->assemble($this->actionData, $configuration);
 
         $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $attributes);
         $this->assertCount(array_key_exists('entity', $configuration) ? 1 : 2, $attributes);

@@ -63,7 +63,7 @@ class VisibilityChangeAccountSubtreeCacheBuilder extends AbstractSubtreeCacheBui
         $qb->update('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved', 'apvr')
             ->set('apvr.visibility', $visibility)
             ->where($qb->expr()->eq('apvr.account', ':account'))
-            ->andWhere($qb->expr()->in('apvr.categoryId', ':categoryIds'))
+            ->andWhere($qb->expr()->in('IDENTITY(apvr.category)', ':categoryIds'))
             ->setParameters(['account' => $account, 'categoryIds' => $categoryIds]);
 
         $qb->getQuery()->execute();

@@ -7,7 +7,6 @@ use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class AccountRepository extends EntityRepository
@@ -44,13 +43,17 @@ class AccountRepository extends EntityRepository
     /**
      * @param Category $category
      * @param $visibility
-     * @return Account[]
+     * @param array $restrictedAccountIds
+     * @return array
      */
-    public function getCategoryAccountsByVisibility(Category $category, $visibility)
-    {
+    public function getCategoryAccountIdsByVisibility(
+        Category $category,
+        $visibility,
+        array $restrictedAccountIds = null
+    ) {
         $qb = $this->createQueryBuilder('account');
 
-        $qb->select('account')
+        $qb->select('account.id')
             ->join(
                 'OroB2BAccountBundle:Visibility\AccountCategoryVisibility',
                 'accountCategoryVisibility',
@@ -66,6 +69,12 @@ class AccountRepository extends EntityRepository
                 ]
             );
 
-        return $qb->getQuery()->getResult();
+        if ($restrictedAccountIds !== null) {
+            $qb->andWhere($qb->expr()->in('account.id', ':restrictedAccountIds'))
+                ->setParameter('restrictedAccountIds', $restrictedAccountIds);
+        }
+
+        // Return only account ids
+        return array_map('current', $qb->getQuery()->getScalarResult());
     }
 }

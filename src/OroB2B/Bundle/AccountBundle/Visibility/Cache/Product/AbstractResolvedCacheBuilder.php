@@ -5,11 +5,12 @@ namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityResolver;
+use OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolver;
+use OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 
 abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderInterface
@@ -17,7 +18,7 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
     /** @var  ManagerRegistry */
     protected $registry;
 
-    /** @var  CategoryVisibilityResolver */
+    /** @var  CategoryVisibilityResolverInterface */
     protected $categoryVisibilityResolver;
 
     /** @var  ConfigManager */
@@ -56,7 +57,7 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
     ) {
         $productVisibilityResolved->setSourceProductVisibility($productVisibility);
         $productVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_STATIC);
-        $productVisibilityResolved->setCategoryId(null);
+        $productVisibilityResolved->setCategory(null);
         if ($selectedVisibility === VisibilityInterface::VISIBLE) {
             $productVisibilityResolved->setVisibility(BaseProductVisibilityResolved::VISIBILITY_VISIBLE);
         } elseif ($selectedVisibility === VisibilityInterface::HIDDEN) {
@@ -74,7 +75,7 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
     ) {
         $productVisibilityResolved->setSourceProductVisibility($productVisibility);
         $productVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_STATIC);
-        $productVisibilityResolved->setCategoryId(null);
+        $productVisibilityResolved->setCategory(null);
         $productVisibilityResolved->setVisibility($this->getVisibilityFromConfig());
     }
 
