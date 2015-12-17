@@ -11,6 +11,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AbstractVisibilityRepository;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -120,7 +121,7 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
     abstract protected function getSourceRepository();
 
     /**
-     * @return EntityRepository
+     * @return AbstractVisibilityRepository
      */
     abstract protected function getRepository();
 

@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository;
 
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
@@ -20,7 +19,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  *  - website
  *  - product
  */
-class AccountGroupProductRepository extends EntityRepository
+class AccountGroupProductRepository extends AbstractVisibilityRepository
 {
     /**
      * @param InsertFromSelectQueryExecutor $insertFromSelect
@@ -119,24 +118,6 @@ class AccountGroupProductRepository extends EntityRepository
             ],
             $queryBuilder
         );
-    }
-
-    /**
-     * @param Website $website
-     * @return int
-     */
-    public function clearTable(Website $website = null)
-    {
-        $qb = $this->createQueryBuilder('agpvr')
-            ->delete();
-
-        if ($website) {
-            $qb->andWhere('agpvr.website = :website')
-                ->setParameter('website', $website);
-        }
-
-        return $qb->getQuery()
-            ->execute();
     }
 
     /**
