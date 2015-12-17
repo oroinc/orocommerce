@@ -28,7 +28,6 @@ abstract class CacheBuilderTestCase extends WebTestCase
         ]);
 
         $this->cacheBuilder = $this->getContainer()->get($this->getCacheBuilderContainerId());
-
     }
 
     protected function flushCategoryVisibilityCache()
@@ -134,6 +133,6 @@ abstract class CacheBuilderTestCase extends WebTestCase
                 $alias . '.visibility',
                 BaseProductVisibilityResolved::VISIBILITY_HIDDEN
             ))
-            ->orderBy($alias . '.categoryId');
+            ->orderBy($alias . '.category');
     }
 }

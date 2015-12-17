@@ -7,6 +7,8 @@ definitions:
         actions_configuration:
             - @change_category_position: ~
 
+    # Category visibility update
+
     change_category_visibility:
         label: 'Changed Category Visibility For All'
         enabled: true
@@ -31,20 +33,14 @@ definitions:
         actions_configuration:
             - @change_category_visibility: ~
 
+    # Product visibility update
+
     product_visibility_change:
         enabled: true
         label: 'Product visibility change'
         entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility
         actions_configuration:
             - @resolve_product_visibility: ~
-
-    product_visibility_remove:
-        enabled: true
-        label: 'Product visibility change'
-        entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility
-        actions_configuration:
-            - @resolve_product_visibility:
-                reset_visibility: true  # manually set "category" fallback
 
     account_group_product_visibility_change:
         enabled: true
@@ -137,8 +133,6 @@ triggers:
             event: create
         -
             event: update
-
-    product_visibility_remove:
         -
             event: delete
 

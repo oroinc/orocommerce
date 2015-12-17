@@ -33,9 +33,10 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
     /** @var  Account */
     protected $account;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->initClient();
+        $this->getContainer()->get('doctrine')->getManager()->clear();
         $this->loadFixtures([
             'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
             'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
@@ -50,14 +51,6 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
     }
 
     /**
-     * @inheritDoc
-     */
-    protected function getAdditionalFixtures()
-    {
-        return [];
-    }
-
-    /**
      * @param BaseProductVisibilityResolved $productVisibilityResolved
      * @param VisibilityInterface $productVisibility
      * @param integer $expectedVisibility
@@ -68,7 +61,7 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
         $expectedVisibility
     ) {
         $this->assertNotNull($productVisibilityResolved);
-        $this->assertNull($productVisibilityResolved->getCategoryId());
+        $this->assertNull($productVisibilityResolved->getCategory());
         $this->assertEquals($this->product, $productVisibilityResolved->getProduct());
         $this->assertEquals(BaseProductVisibilityResolved::SOURCE_STATIC, $productVisibilityResolved->getSource());
         $this->assertEquals($productVisibility, $productVisibilityResolved->getSourceProductVisibility());
@@ -83,5 +76,10 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
     {
         $this->assertEquals($this->website, $visibilityResolved->getWebsite());
         $this->assertEquals($this->product, $visibilityResolved->getProduct());
+    }
+
+    protected function clearCategoryCache()
+    {
+        $this->getContainer()->get('orob2b_account.storage.category_visibility_storage')->flush();
     }
 }
