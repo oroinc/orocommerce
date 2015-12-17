@@ -13,7 +13,6 @@ class AccountTaxCodeRepository extends EntityRepository
      * @param Account $account
      *
      * @return AccountTaxCode|null
-     * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function findOneByAccount(Account $account)
     {
@@ -24,6 +23,8 @@ class AccountTaxCodeRepository extends EntityRepository
         return $this->createQueryBuilder('accountTaxCode')
             ->where(':account MEMBER OF accountTaxCode.accounts')
             ->setParameter('account', $account)
-            ->getQuery()->getOneOrNullResult();
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
     }
 }

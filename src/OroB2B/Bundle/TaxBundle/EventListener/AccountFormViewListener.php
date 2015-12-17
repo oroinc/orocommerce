@@ -1,0 +1,45 @@
+<?php
+
+namespace OroB2B\Bundle\TaxBundle\EventListener;
+
+use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+
+use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository;
+
+class AccountFormViewListener extends AbstractFormViewListener
+{
+    /**
+     * {@inheritdoc}
+     */
+    public function onView(BeforeListRenderEvent $event)
+    {
+        /** @var Account $account */
+        $account = $this->getEntityFromRequest();
+        if (!$account) {
+            return;
+        }
+
+        /** @var AccountTaxCodeRepository $repository */
+        $repository = $this->doctrineHelper->getEntityRepository($this->taxCodeClass);
+        $entity = $repository->findOneByAccount($account);
+
+        $template = $event->getEnvironment()->render(
+            'OroB2BTaxBundle:Account:tax_code_view.html.twig',
+            ['entity' => $entity]
+        );
+        $this->addTaxCodeBlock($event->getScrollData(), $template, 'orob2b.tax.account.section.taxes');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function onEdit(BeforeListRenderEvent $event)
+    {
+        $template = $event->getEnvironment()->render(
+            'OroB2BTaxBundle:Account:tax_code_update.html.twig',
+            ['form' => $event->getFormView()]
+        );
+        $this->addTaxCodeBlock($event->getScrollData(), $template, 'orob2b.tax.account.section.taxes');
+    }
+}

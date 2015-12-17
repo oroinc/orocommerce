@@ -24,6 +24,7 @@ datagrid:
                     type:      string
                     data_name: tax_code.description
         properties:
+            id: ~
             view_link:
                 type:   url
                 params: [ id ]
@@ -134,8 +135,6 @@ datagrid:
                 description:
                     type:      string
                     data_name: tax_code.description
-        properties:
-            id: ~
 
     products-tax-code-select-grid:
         extends: tax-base-tax-codes-select-grid
@@ -230,7 +229,6 @@ datagrid:
     tax-taxes-grid:
         extends: tax-taxes-grid-base
         properties:
-            id: ~
             view_link:
                 type:  url
                 route: orob2b_tax_view
@@ -299,7 +297,7 @@ datagrid:
             tax_code:
                 label: orob2b.tax.taxrule.tax.label
             tax_jurisdiction_code:
-                label: orob2b.tax.taxrule.taxjurisdiction.label
+                label: orob2b.tax.taxrule.tax_jurisdiction.label
         sorters:
             columns:
                 description:
@@ -426,7 +424,7 @@ datagrid:
                 description:
                     type:      string
                     data_name: jurisdiction.description
-
+        properties:
             view_link:
                 type:   url
                 route: orob2b_tax_jurisdiction_view
