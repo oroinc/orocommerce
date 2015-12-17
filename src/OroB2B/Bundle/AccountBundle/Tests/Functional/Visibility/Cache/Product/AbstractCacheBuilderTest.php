@@ -3,8 +3,8 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-
 use Doctrine\ORM\EntityRepository;
+
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
@@ -99,7 +99,6 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
      */
     public function testBuildCache($expectedStaticCount, $expectedCategoryCount, $websiteReference = null)
     {
-        $this->markTestSkipped('Will complete after Account Cache Builder finished');
         /** @var Website|null $website */
         $website = $websiteReference ? $this->getReference($websiteReference) : null;
         $this->getRepository()->clearTable();
