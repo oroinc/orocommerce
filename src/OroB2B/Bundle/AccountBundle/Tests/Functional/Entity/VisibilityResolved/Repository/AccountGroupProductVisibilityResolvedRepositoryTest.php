@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Repository;
+namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\VisibilityResolved\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityRepository;
@@ -13,9 +13,11 @@ use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountGrou
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
+use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -62,20 +64,24 @@ class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider insertByCategoryDataProvider
+     *
+     * @param string $websiteReference
      * @param string $accountGroupReference
      * @param string $visibility
      * @param array $expectedData
      */
-    public function testInsertByCategory($accountGroupReference, $visibility, array $expectedData)
+    public function testInsertByCategory($websiteReference, $accountGroupReference, $visibility, array $expectedData)
     {
         /** @var AccountGroup $group */
         $group = $this->getReference($accountGroupReference);
         $this->getRepository()->clearTable();
+        $website = $websiteReference ? $this->getReference($websiteReference) : null;
         $this->getRepository()->insertByCategory(
             $this->getInsertFromSelectExecutor(),
             $visibility,
             $this->registry->getRepository('OroB2BCatalogBundle:Category')->findAll(),
-            $group->getId()
+            $group->getId(),
+            $website
         );
         $resolvedEntities = $this->getResolvedValues();
         $this->assertCount(count($expectedData), $resolvedEntities);
@@ -96,20 +102,42 @@ class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
     public function insertByCategoryDataProvider()
     {
         return [
-            [
-                'accountGroupReference' => 'account_group.group1',
+            'withoutWebsite' => [
+                'websiteReference' => null,
+                'accountGroupReference' => LoadGroups::GROUP1,
                 'visibility' => BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
                 'expectedData' => [
                     [
-                        'product' => 'product.7',
-                        'website' => 'US',
+                        'product' => LoadProductData::PRODUCT_7,
+                        'website' => LoadWebsiteData::WEBSITE1,
                     ],
                     [
-                        'product' => 'product.8',
-                        'website' => 'US',
+                        'product' => LoadProductData::PRODUCT_8,
+                        'website' => LoadWebsiteData::WEBSITE1,
                     ],
                 ],
-            ]
+            ],
+            'withWebsite1' => [
+                'websiteReference' => LoadWebsiteData::WEBSITE1,
+                'accountGroupReference' => LoadGroups::GROUP1,
+                'visibility' => BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
+                'expectedData' => [
+                    [
+                        'product' => LoadProductData::PRODUCT_7,
+                        'website' => LoadWebsiteData::WEBSITE1,
+                    ],
+                    [
+                        'product' => LoadProductData::PRODUCT_8,
+                        'website' => LoadWebsiteData::WEBSITE1,
+                    ],
+                ],
+            ],
+            'withWebsite2' => [
+                'websiteReference' => LoadWebsiteData::WEBSITE2,
+                'accountGroupReference' => LoadGroups::GROUP1,
+                'visibility' => BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
+                'expectedData' => [],
+            ],
         ];
     }
 

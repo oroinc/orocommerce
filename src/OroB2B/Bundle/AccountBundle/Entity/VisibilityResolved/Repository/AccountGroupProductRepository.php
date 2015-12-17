@@ -26,14 +26,14 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
      * @param integer $cacheVisibility
      * @param integer[] $categories
      * @param integer $accountGroupId
-     * @param Website|null $website
+     * @param integer|null $websiteId
      */
     public function insertByCategory(
         InsertFromSelectQueryExecutor $insertFromSelect,
         $cacheVisibility,
         $categories,
         $accountGroupId,
-        Website $website = null
+        $websiteId = null
     ) {
         $queryBuilder = $this->getEntityManager()
             ->getRepository('OroB2BCatalogBundle:Category')
@@ -60,9 +60,9 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
             ->setParameter('accGroupId', $accountGroupId)
             ->setParameter('category', AccountGroupProductVisibility::CATEGORY);
 
-        if ($website) {
-            $queryBuilder->andWhere('agpv.website = :website')
-                ->setParameter('website', $website);
+        if ($websiteId) {
+            $queryBuilder->andWhere('IDENTITY(agpv.website) = :website')
+                ->setParameter('website', $websiteId);
         }
         $insertFromSelect->execute(
             $this->getClassName(),
@@ -80,9 +80,9 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
 
     /**
      * @param InsertFromSelectQueryExecutor $insertFromSelect
-     * @param Website|null $website
+     * @param integer|null $websiteId
      */
-    public function insertStatic(InsertFromSelectQueryExecutor $insertFromSelect, Website $website = null)
+    public function insertStatic(InsertFromSelectQueryExecutor $insertFromSelect, $websiteId = null)
     {
         $queryBuilder = $this->getEntityManager()
             ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
@@ -102,9 +102,9 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
             ->setParameter('cacheVisible', BaseProductVisibilityResolved::VISIBILITY_VISIBLE)
             ->setParameter('cacheHidden', BaseProductVisibilityResolved::VISIBILITY_HIDDEN);
 
-        if ($website) {
+        if ($websiteId) {
             $queryBuilder->andWhere('agpv.website = :website')
-                ->setParameter('website', $website);
+                ->setParameter('website', $websiteId);
         }
 
         $insertFromSelect->execute(
