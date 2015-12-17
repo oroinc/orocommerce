@@ -1,8 +1,7 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity\Repository;
+namespace OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository;
 
-use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
@@ -20,19 +19,21 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  *  - website
  *  - product
  */
-class AccountProductVisibilityResolvedRepository extends EntityRepository
+class AccountProductRepository extends AbstractVisibilityRepository
 {
     /**
      * @param InsertFromSelectQueryExecutor $insertFromSelect
      * @param integer $cacheVisibility
      * @param integer[] $categories
      * @param integer $accountId
+     * @param Website|null $website
      */
     public function insertByCategory(
         InsertFromSelectQueryExecutor $insertFromSelect,
         $cacheVisibility,
         $categories,
-        $accountId
+        $accountId,
+        Website $website = null
     ) {
         $queryBuilder = $this->getEntityManager()
             ->getRepository('OroB2BCatalogBundle:Category')
@@ -57,6 +58,10 @@ class AccountProductVisibilityResolvedRepository extends EntityRepository
             ->setParameter('accountId', $accountId)
             ->setParameter('category', AccountProductVisibility::CATEGORY);
 
+        if ($website) {
+            $queryBuilder->andWhere('apv.website = :website')
+                ->setParameter('website', $website);
+        }
         $insertFromSelect->execute(
             $this->getClassName(),
             [
@@ -74,9 +79,11 @@ class AccountProductVisibilityResolvedRepository extends EntityRepository
 
     /**
      * @param InsertFromSelectQueryExecutor $insertFromSelect
+     * @param Website|null $website
      */
     public function insertStatic(
-        InsertFromSelectQueryExecutor $insertFromSelect
+        InsertFromSelectQueryExecutor $insertFromSelect,
+        Website $website = null
     ) {
         $queryBuilder = $this->getEntityManager()
             ->getRepository('OroB2BAccountBundle:Visibility\AccountProductVisibility')
@@ -96,6 +103,10 @@ class AccountProductVisibilityResolvedRepository extends EntityRepository
             ->setParameter('cacheVisible', BaseProductVisibilityResolved::VISIBILITY_VISIBLE)
             ->setParameter('cacheHidden', BaseProductVisibilityResolved::VISIBILITY_HIDDEN);
 
+        if ($website) {
+            $queryBuilder->andWhere('apv.website = :website')
+                ->setParameter('website', $website);
+        }
         $insertFromSelect->execute(
             $this->getClassName(),
             [
@@ -112,10 +123,12 @@ class AccountProductVisibilityResolvedRepository extends EntityRepository
     /**
      * @param InsertFromSelectQueryExecutor $insertFromSelect
      * @param integer $configValue
+     * @param Website|null $website
      */
     public function insertForCurrentProductFallback(
         InsertFromSelectQueryExecutor $insertFromSelect,
-        $configValue
+        $configValue,
+        Website $website = null
     ) {
         $queryBuilder = $this->getEntityManager()
             ->getRepository('OroB2BAccountBundle:Visibility\AccountProductVisibility')
@@ -139,6 +152,10 @@ class AccountProductVisibilityResolvedRepository extends EntityRepository
             ->setParameter('current_product', AccountProductVisibility::CURRENT_PRODUCT)
             ->setParameter('config_value', $configValue);
 
+        if ($website) {
+            $queryBuilder->andWhere('apv.website = :website')
+                ->setParameter('website', $website);
+        }
         $insertFromSelect->execute(
             $this->getClassName(),
             [
@@ -153,23 +170,16 @@ class AccountProductVisibilityResolvedRepository extends EntityRepository
     }
 
     /**
-     * @return int
-     */
-    public function clearTable()
-    {
-        return $this->createQueryBuilder('apvr')
-            ->delete()
-            ->getQuery()
-            ->execute();
-    }
-    /**
      * @param Account $account
      * @param Product $product
      * @param Website $website
      * @return null|AccountProductVisibilityResolved
      */
-    public function findByPrimaryKey(Account $account, Product $product, Website $website)
-    {
+    public function findByPrimaryKey(
+        Account $account,
+        Product $product,
+        Website $website
+    ) {
         return $this->findOneBy(['account' => $account, 'website' => $website, 'product' => $product]);
     }
 
@@ -180,8 +190,11 @@ class AccountProductVisibilityResolvedRepository extends EntityRepository
      * @param Product $product
      * @param int $visibility
      */
-    public function updateCurrentProductRelatedEntities(Website $website, Product $product, $visibility)
-    {
+    public function updateCurrentProductRelatedEntities(
+        Website $website,
+        Product $product,
+        $visibility
+    ) {
         $affectedEntitiesDql = $this->getEntityManager()->createQueryBuilder()
             ->select('apv.id')
             ->from('OroB2BAccountBundle:Visibility\AccountProductVisibility', 'apv')

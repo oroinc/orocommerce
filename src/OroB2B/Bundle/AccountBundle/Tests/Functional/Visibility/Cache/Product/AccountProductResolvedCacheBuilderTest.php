@@ -5,12 +5,13 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountProductVisibilityResolvedRepository;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountProductRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -250,7 +251,23 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
      */
     public function buildCacheDataProvider()
     {
-        return [[1, 2, null]];
+        return [
+            'without_website' => [
+                'expectedStaticCount' => 4,
+                'expectedCategoryCount' => 1,
+                'websiteReference' => null,
+            ],
+            'with_website1' => [
+                'expectedStaticCount' => 1,
+                'expectedCategoryCount' => 1,
+                'websiteReference' => LoadWebsiteData::WEBSITE1,
+            ],
+            'with_website2' => [
+                'expectedStaticCount' => 0,
+                'expectedCategoryCount' => 0,
+                'websiteReference' => LoadWebsiteData::WEBSITE2,
+            ],
+        ];
     }
 
     /**
@@ -261,9 +278,5 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
         return $this->client
             ->getContainer()
             ->get('orob2b_account.visibility.cache.product.account_product_resolved_cache_builder');
-    }
-
-    public function testBuildCache(){
-        //TODO Remove in scope BB-1549
     }
 }

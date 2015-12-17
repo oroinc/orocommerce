@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityManager;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountProductVisibilityResolvedRepository;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountProductRepository;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 
@@ -105,7 +105,7 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
     {
         $this->getManager()->beginTransaction();
         try {
-            $this->getRepository()->clearTable();
+            $this->getRepository()->clearTable($website);
 
             $categoriesGrouped = $this->getCategories();
             foreach ($categoriesGrouped as $accountId => $categoriesGroupedByAccount) {
@@ -113,19 +113,22 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
                     $this->insertFromSelectQueryExecutor,
                     BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
                     $categoriesGroupedByAccount[VisibilityInterface::VISIBLE],
-                    $accountId
+                    $accountId,
+                    $website
                 );
                 $this->getRepository()->insertByCategory(
                     $this->insertFromSelectQueryExecutor,
                     BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
                     $categoriesGroupedByAccount[VisibilityInterface::HIDDEN],
-                    $accountId
+                    $accountId,
+                    $website
                 );
             }
-            $this->getRepository()->insertStatic($this->insertFromSelectQueryExecutor);
+            $this->getRepository()->insertStatic($this->insertFromSelectQueryExecutor, $website);
             $this->getRepository()->insertForCurrentProductFallback(
                 $this->insertFromSelectQueryExecutor,
-                $this->getVisibilityFromConfig()
+                $this->getVisibilityFromConfig(),
+                $website
             );
 
             $this->getManager()->commit();
@@ -136,7 +139,7 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
     }
 
     /**
-     * @return AccountProductVisibilityResolvedRepository
+     * @return AccountProductRepository
      */
     protected function getRepository()
     {

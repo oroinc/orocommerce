@@ -5,8 +5,7 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Repository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountProductVisibilityRepository;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository\AccountProductVisibilityRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 
 /**

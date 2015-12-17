@@ -89,7 +89,6 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
         $this->assertEquals($this->product, $visibilityResolved->getProduct());
     }
 
-
     /**
      * @dataProvider buildCacheDataProvider
      *

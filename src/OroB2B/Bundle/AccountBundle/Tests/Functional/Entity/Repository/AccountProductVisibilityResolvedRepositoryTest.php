@@ -4,20 +4,17 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityRepository;
-
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Doctrine\ORM\EntityManager;
 
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountProductVisibilityResolvedRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
-use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountProductRepository;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -34,7 +31,7 @@ class AccountProductVisibilityResolvedRepositoryTest extends WebTestCase
     protected $entityManager;
 
     /**
-     * @var AccountProductVisibilityResolvedRepository
+     * @var AccountProductRepository
      */
     protected $repository;
 
@@ -256,7 +253,7 @@ class AccountProductVisibilityResolvedRepositoryTest extends WebTestCase
     }
 
     /**
-     * @return AccountProductVisibilityResolvedRepository
+     * @return AccountProductRepository
      */
     protected function getRepository()
     {
