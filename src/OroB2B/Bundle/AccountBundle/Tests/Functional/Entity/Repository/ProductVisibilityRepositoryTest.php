@@ -39,7 +39,7 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
         /** @var Category $category */
         $category = $this->getReference($categoryName);
 
-        // updateToConfigProductVisibility called in CategoryListener when removed category
+        // setToDefaultWithoutCategory called in CategoryListener when removed category
         $this->deleteCategory($category);
 
         $actual = $this->getProductsByVisibilities();

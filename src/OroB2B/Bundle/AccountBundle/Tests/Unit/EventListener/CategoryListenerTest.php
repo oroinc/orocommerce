@@ -65,7 +65,7 @@ class CategoryListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $productVisibilityRepository->expects($this->once())
-            ->method('updateToConfigProductVisibility');
+            ->method('setToDefaultWithoutCategory');
 
         $productVisibilityEm = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
@@ -84,7 +84,7 @@ class CategoryListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $accountGroupProductVisibilityRepository->expects($this->once())
-            ->method('setToDefaultValueProductAccountGroupProductVisibilityForProductsWithoutCategory');
+            ->method('setToDefaultWithoutCategory');
 
         $accountGroupProductVisibilityEm = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
@@ -101,7 +101,7 @@ class CategoryListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $accountProductVisibilityRepository->expects($this->once())
-            ->method('setToDefaultValueAccountProductVisibilityForProductsWithoutCategory');
+            ->method('setToDefaultWithoutCategory');
 
         $accountProductVisibilityEm = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
