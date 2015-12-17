@@ -20,7 +20,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  *  - website
  *  - product
  */
-class AccountGroupProductVisibilityResolvedRepository extends EntityRepository
+class AccountGroupProductRepository extends EntityRepository
 {
     /**
      * @param InsertFromSelectQueryExecutor $insertFromSelect

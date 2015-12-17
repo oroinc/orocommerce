@@ -9,7 +9,7 @@ use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupProductVisibilityResolvedRepository;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountGroupProductRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
@@ -24,7 +24,7 @@ class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
     /** @var  Registry */
     protected $registry;
 
-    /** @var AccountGroupProductVisibilityResolvedRepository */
+    /** @var AccountGroupProductRepository */
     protected $repository;
 
     protected function setUp()
@@ -172,7 +172,7 @@ class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
     }
 
     /**
-     * @return AccountGroupProductVisibilityResolvedRepository
+     * @return AccountGroupProductRepository
      */
     protected
     function getRepository()
