@@ -33,7 +33,7 @@ class ProductVisibilityResolvedRepository extends EntityRepository
         array $categoryIds,
         Website $website = null
     ) {
-        if (!$categories) {
+        if (!$categoryIds) {
             return;
         }
 
