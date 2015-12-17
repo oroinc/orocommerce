@@ -26,6 +26,8 @@ class LoadTaxDemoData extends AbstractFixture implements
     ContainerAwareInterface,
     DependentFixtureInterface
 {
+    const BATCH_SIZE = 1000;
+
     /**
      * @var ContainerInterface
      */
@@ -39,27 +41,22 @@ class LoadTaxDemoData extends AbstractFixture implements
     /**
      * @var array
      */
-    protected $zipCodes = [];
+    protected $rates = [];
 
     /**
      * @var array
      */
-    protected $taxes = [];
+    protected $regionRates = [];
 
     /**
      * @var array
      */
-    protected $jurisdictions = [];
+    protected $codes = [];
 
     /**
      * @var array
      */
-    protected $productTaxCodes = [];
-
-    /**
-     * @var array
-     */
-    protected $accountTaxCodes = [];
+    protected $rows = [];
 
     /**
      * {@inheritdoc}
@@ -101,192 +98,199 @@ class LoadTaxDemoData extends AbstractFixture implements
                 if (count($headers) != count(array_values($data))) {
                     continue;
                 }
-                $row = array_combine($headers, array_values($data));
+                $fileRow = array_combine($headers, array_values($data));
 
-                $state = $row['State'];
-                $zip = $row['ZipCode'];
-                $regionName = $row['TaxRegionName'];
-                $regionCode = $row['TaxRegionCode'];
-                $rate = 100 * $row['CombinedRate'];
-
-                $zipCode = $this->getZipCode($zip);
-                
-                $tax = $this->getTax($rate);
-                
-                $jurisdiction = $this->getJurisdiction($country, $state, $regionCode, $regionName, $rate);
-                $jurisdiction->addZipCode($zipCode);
-
-                $productTaxCode = $this->getProductTaxCode($regionCode, $regionName, $rate);
-                
-                $accountTaxCode = $this->getAccountTaxCode($regionCode, $regionName, $rate);
-
-                $rule = new TaxRule();
-                $rule->setDescription('Rule tax for ' . $regionName . ' with rate ' . $rate . '%')
-                    ->setProductTaxCode($productTaxCode)
-                    ->setAccountTaxCode($accountTaxCode)
-                    ->setTaxJurisdiction($jurisdiction)
-                    ->setTax($tax);
-
-                $manager->persist($rule);
-                $manager->flush();
+                $row = [
+                    'state' => $fileRow['State'],
+                    'zip' => $fileRow['ZipCode'],
+                    'regionName' => $fileRow['TaxRegionName'],
+                    'regionCode' => $fileRow['TaxRegionCode'],
+                    'rate' => 100 * $fileRow['CombinedRate']
+                ];
+                $this->rows[] = $row;
+                $this->indexRow($row);
             }
-
             fclose($handler);
         }
 
+        $codes = array_keys($this->regionRates);
+        $this->clearIndex();
 
-        $codes = array_keys($this->productTaxCodes);
+        $counter = 0;
+        foreach ($this->rows as $key => &$row) {
+            list($jurisdiction, $productTaxCode, $accountTaxCode) = $this->getJurisdictionAndCodes($row, $country);
+
+            $rule = new TaxRule();
+            $rule->setDescription('Rule tax for ' . $row['regionName'] . ' with rate ' . $row['rate'] . '%')
+                ->setProductTaxCode($productTaxCode)
+                ->setAccountTaxCode($accountTaxCode)
+                ->setTaxJurisdiction($jurisdiction)
+                ->setTax($this->getTax($row));
+
+            $manager->persist($rule);
+            if (++$counter == self::BATCH_SIZE) {
+                $manager->flush();
+                $counter = 0;
+            }
+        }
+        $manager->flush();
+        $manager->clear();
+
         $products = $this->getProducts($manager);
         foreach ($products as $product) {
             $code = $codes[rand(0, count($codes) - 1)];
             /* @var ProductTaxCode $productTaxCode */
             $productTaxCode = $this->manager
                 ->getRepository('OroB2BTaxBundle:ProductTaxCode')
-                ->findOneBy(['code' => $code]);
+                ->findOneBy(['code' => 'P' . $code]);
 
             $productTaxCode->addProduct($product);
         }
 
-        $codes = array_keys($this->accountTaxCodes);
         $accounts = $this->getAccounts($manager);
         foreach ($accounts as $account) {
             $code = $codes[rand(0, count($codes) - 1)];
             /* @var AccountTaxCode $accountTaxCode */
             $accountTaxCode = $this->manager
                 ->getRepository('OroB2BTaxBundle:AccountTaxCode')
-                ->findOneBy(['code' => $code]);
+                ->findOneBy(['code' => 'A' . $code]);
             $accountTaxCode->addAccount($account);
         }
 
         $manager->flush();
     }
 
-
     /**
-     * @param string $zip
+     * @param array $row
      * @return ZipCode
      */
-    protected function getZipCode($zip)
+    protected function indexRow($row)
     {
-        if (isset($this->zipCodes[$zip])) {
-            $zipCode = $this->manager->getRepository('OroB2BTaxBundle:ZipCode')->findOneBy(['zipCode' => $zip]);
+        $key = (string)$row['rate'];
+        if (isset($this->rates[$key])) {
+            $this->rates[$key]['reuses']++;
         } else {
-            $zipCode = new ZipCode();
-            $zipCode->setZipCode($zip);
-
-            $this->manager->persist($zipCode);
-            $this->zipCodes[$zip] = 0;
+            $this->rates[$key] = ['reuses' => 0];
         }
+
+        $key = $row['regionCode'] . $row['rate'];
+        if (isset($this->regionRates[$key])) {
+            $this->regionRates[$key]['reuses']++;
+        } else {
+            $this->regionRates[$key] = ['reuses' => 0];
+        }
+    }
+
+    protected function clearIndex()
+    {
+        foreach ($this->rates as $key => $value) {
+            if ($value['reuses'] == 0) {
+                unset($this->rates[$key]);
+            }
+        }
+        foreach ($this->regionRates as $key => $value) {
+            if ($value['reuses'] == 0) {
+                unset($this->regionRates[$key]);
+            }
+        }
+    }
+
+    /**
+     * @param array $row
+     * @return ZipCode
+     */
+    protected function getZipCode($row)
+    {
+        $zipCode = new ZipCode();
+        $zipCode->setZipCode($row['zip']);
+
+        $this->manager->persist($zipCode);
 
         return $zipCode;
     }
 
     /**
-     * @param float $rate
+     * @param array $row
      * @return Tax
      */
-    protected function getTax($rate)
+    protected function getTax($row)
     {
-        if (isset($this->taxes[(string)$rate])) {
-            $tax = $this->manager->getRepository('OroB2BTaxBundle:Tax')->findOneBy(['rate' => $rate]);
+        $key = (string)$row['rate'];
+        if (isset($this->rates[$key]) && isset($this->rates[$key]['value'])) {
+            $tax = $this->rates[$key]['value'];
+
+            if (--$this->rates[$key]['reuses'] == 0) {
+                unset($this->rates[$key]);
+            }
         } else {
             $tax = new Tax();
             $tax
-                ->setCode('TAX' . $rate)
-                ->setRate($rate);
+                ->setCode('TAX' . $key)
+                ->setRate($row['rate']);
 
             $this->manager->persist($tax);
-            $this->taxes[(string)$rate] = 0;
+
+            if (isset($this->rates[$key])) {
+                $this->rates[$key]['value'] = $tax;
+            }
         }
 
         return $tax;
     }
 
     /**
+     * @param array $row
      * @param Country $country
-     * @param string $state
-     * @param string $regionCode
-     * @param string $regionName
-     * @param float $rate
-     * @return TaxJurisdiction
+     * @return array
      */
-    protected function getJurisdiction($country, $state, $regionCode, $regionName, $rate)
+    protected function getJurisdictionAndCodes($row, $country)
     {
-        $code = $regionCode . $rate;
-        if (isset($this->jurisdictions[$code])) {
-            $jurisdiction = $this->manager
-                ->getRepository('OroB2BTaxBundle:TaxJurisdiction')
-                ->findOneBy(['code' => $code]);
+        $key = $row['regionCode'] . $row['rate'];
+        if (isset($this->regionRates[$key]) && isset($this->regionRates[$key]['value'])) {
+            $value = $this->regionRates[$key]['value'];
+            /** @var TaxJurisdiction $jurisdiction */
+            $jurisdiction = $value[0];
+            $jurisdiction->addZipCode($this->getZipCode($row));
+
+            if (--$this->regionRates[$key]['reuses'] == 0) {
+                unset($this->regionRates[$key]);
+            }
         } else {
+            $regionName = $row['regionName'];
+            $rate = $row['rate'];
             $region = $this->manager
                 ->getRepository('OroAddressBundle:Region')
-                ->findOneBy(['combinedCode' => $country->getIso2Code() . '-' . $state]);
+                ->findOneBy(['combinedCode' => $country->getIso2Code() . '-' . $row['state']]);
 
             $jurisdiction = new TaxJurisdiction();
             $jurisdiction
-                ->setCode($regionCode . $rate)
+                ->setCode($key)
                 ->setDescription('Tax jurisdiction for ' . $regionName . ' with rate ' . $rate . '%')
                 ->setCountry($country)
                 ->setRegion($region)
-                ->setRegionText($regionName);
-
+                ->setRegionText($regionName)
+                ->addZipCode($this->getZipCode($row));
             $this->manager->persist($jurisdiction);
-            $this->jurisdictions[$code] = 0;
-        }
 
-        return $jurisdiction;
-    }
-
-    /**
-     * @param string $regionCode
-     * @param string $regionName
-     * @param float $rate
-     * @return ProductTaxCode
-     */
-    protected function getProductTaxCode($regionCode, $regionName, $rate)
-    {
-        $productCodeKey = 'P' . $regionCode . $rate;
-        if (isset($this->productTaxCodes[$productCodeKey])) {
-            $productTaxCode = $this->manager
-                ->getRepository('OroB2BTaxBundle:ProductTaxCode')
-                ->findOneBy(['code' => $productCodeKey]);
-        } else {
             $productTaxCode = new ProductTaxCode();
             $productTaxCode
-                ->setCode($productCodeKey)
+                ->setCode('P' . $key)
                 ->setDescription('Product tax for ' . $regionName . ' with rate ' . $rate . '%');
-
             $this->manager->persist($productTaxCode);
-            $this->productTaxCodes[$productCodeKey] = 0;
-        }
 
-        return $productTaxCode;
-    }
-
-    /**
-     * @param string $regionCode
-     * @param string $regionName
-     * @param float $rate
-     * @return AccountTaxCode
-     */
-    protected function getAccountTaxCode($regionCode, $regionName, $rate)
-    {
-        $accountCodeKey = 'A' . $regionCode . $rate;
-        if (isset($this->accountTaxCodes[$accountCodeKey])) {
-            $accountTaxCode = $this->manager
-                ->getRepository('OroB2BTaxBundle:AccountTaxCode')
-                ->findOneBy(['code' => $accountCodeKey]);
-        } else {
             $accountTaxCode = new AccountTaxCode();
             $accountTaxCode
-                ->setCode($accountCodeKey)
+                ->setCode('A' . $key)
                 ->setDescription('Account tax for ' . $regionName . ' with rate ' . $rate . '%');
-
             $this->manager->persist($accountTaxCode);
-            $this->accountTaxCodes[$accountCodeKey] = 0;
+
+            $value = [$jurisdiction, $productTaxCode, $accountTaxCode];
+            if (isset($this->regionRates[$key])) {
+                $this->regionRates[$key]['value'] = $value;
+            }
         }
 
-        return $accountTaxCode;
+        return $value;
     }
 
     /**
