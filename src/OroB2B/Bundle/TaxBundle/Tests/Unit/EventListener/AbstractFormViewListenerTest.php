@@ -5,8 +5,10 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Unit\EventListener;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+use Oro\Bundle\UIBundle\View\ScrollData;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
+
 use OroB2B\Bundle\TaxBundle\EventListener\AbstractFormViewListener;
 
 abstract class AbstractFormViewListenerTest extends FormViewListenerTestCase
@@ -101,5 +103,19 @@ abstract class AbstractFormViewListenerTest extends FormViewListenerTestCase
         $this->request->expects($this->never())->method($this->anything());
 
         $this->getListener()->onView($event);
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|ScrollData
+     */
+    protected function getScrollData()
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ScrollData $scrollData */
+        $scrollData = $this->getMock('Oro\Bundle\UIBundle\View\ScrollData');
+
+        $scrollData->expects($this->once())
+            ->method('addSubBlockData');
+
+        return $scrollData;
     }
 }
