@@ -23,9 +23,11 @@ abstract class CacheBuilderTestCase extends WebTestCase
 
         $this->flushCategoryVisibilityCache();
 
-        $this->loadFixtures([
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityFallbackCategoryData'
-        ]);
+        $this->loadFixtures(
+            [
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityFallbackCategoryData',
+            ]
+        );
 
         $this->cacheBuilder = $this->getContainer()->get($this->getCacheBuilderContainerId());
     }
@@ -45,11 +47,16 @@ abstract class CacheBuilderTestCase extends WebTestCase
      */
     protected function assertProductVisibilityResolvedCorrect(array $expectedData)
     {
-        $this->assertEquals($expectedData, [
-            'hiddenProducts' => $this->getHiddenProducts(),
-            'hiddenProductsByAccountGroups' => $this->getHiddenProductsByAccountGroups(),
-            'hiddenProductsByAccounts' => $this->getHiddenProductsByAccounts(),
-        ]);
+        ksort($expectedData['hiddenProductsByAccountGroups']);
+        ksort($expectedData['hiddenProductsByAccounts']);
+        $this->assertEquals(
+            $expectedData,
+            [
+                'hiddenProducts' => $this->getHiddenProducts(),
+                'hiddenProductsByAccountGroups' => $this->getHiddenProductsByAccountGroups(),
+                'hiddenProductsByAccounts' => $this->getHiddenProductsByAccounts(),
+            ]
+        );
     }
 
     /**
@@ -66,9 +73,12 @@ abstract class CacheBuilderTestCase extends WebTestCase
         $results = $queryBuilder->getQuery()
             ->getScalarResult();
 
-        return array_map(function ($row) {
-            return $row['sku'];
-        }, $results);
+        return array_map(
+            function ($row) {
+                return $row['sku'];
+            },
+            $results
+        );
     }
 
     /**
@@ -87,13 +97,21 @@ abstract class CacheBuilderTestCase extends WebTestCase
         $results = $queryBuilder->getQuery()
             ->getScalarResult();
 
-        return array_reduce($results, function ($results, $row) {
-            if (!isset($results[$row['account_group_name']])) {
-                $results[$row['account_group_name']] = [];
-            }
-            $results[$row['account_group_name']][] = $row['sku'];
-            return $results;
-        }, []);
+        $res = array_reduce(
+            $results,
+            function ($results, $row) {
+                if (!isset($results[$row['account_group_name']])) {
+                    $results[$row['account_group_name']] = [];
+                }
+                $results[$row['account_group_name']][] = $row['sku'];
+
+                return $results;
+            },
+            []
+        );
+        ksort($res);
+
+        return $res;
     }
 
     /**
@@ -112,13 +130,21 @@ abstract class CacheBuilderTestCase extends WebTestCase
         $results = $queryBuilder->getQuery()
             ->getScalarResult();
 
-        return array_reduce($results, function ($results, $row) {
-            if (!isset($results[$row['account_name']])) {
-                $results[$row['account_name']] = [];
-            }
-            $results[$row['account_name']][] = $row['sku'];
-            return $results;
-        }, []);
+        $res = array_reduce(
+            $results,
+            function ($results, $row) {
+                if (!isset($results[$row['account_name']])) {
+                    $results[$row['account_name']] = [];
+                }
+                $results[$row['account_name']][] = $row['sku'];
+
+                return $results;
+            },
+            []
+        );
+        ksort($res);
+
+        return $res;
     }
 
     /**
@@ -129,10 +155,12 @@ abstract class CacheBuilderTestCase extends WebTestCase
     {
         $queryBuilder->addSelect('product.sku')
             ->join($alias . '.product', 'product')
-            ->andWhere($queryBuilder->expr()->eq(
-                $alias . '.visibility',
-                BaseProductVisibilityResolved::VISIBILITY_HIDDEN
-            ))
+            ->andWhere(
+                $queryBuilder->expr()->eq(
+                    $alias . '.visibility',
+                    BaseProductVisibilityResolved::VISIBILITY_HIDDEN
+                )
+            )
             ->orderBy($alias . '.category');
     }
 }
