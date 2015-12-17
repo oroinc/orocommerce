@@ -119,10 +119,11 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
         }
         $this->getRepository()->deleteByProduct($product);
         $this->getRepository()->insertByProduct(
+            $this->insertFromSelectExecutor,
             $product,
             $websites,
-            $isCategoryVisible,
-            $category
+            $category,
+            $isCategoryVisible
         );
     }
 
