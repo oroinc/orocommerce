@@ -25,6 +25,14 @@ class ActionApplicationsHelper extends ApplicationsHelper
     /**
      * @return string
      */
+    public function getWidgetRoute()
+    {
+        return $this->isFrontend() ? 'orob2b_frontend_action_widget_buttons' : parent::getWidgetRoute();
+    }
+
+    /**
+     * @return string
+     */
     public function getDialogRoute()
     {
         return $this->isFrontend() ? 'orob2b_frontend_action_widget_form' : parent::getDialogRoute();

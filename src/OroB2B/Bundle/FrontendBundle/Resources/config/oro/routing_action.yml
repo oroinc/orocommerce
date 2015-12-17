@@ -1,13 +1,19 @@
 orob2b_frontend_action_widget_form:
-    path: /form/{actionName}
+    path: /actionwidget/form/{actionName}
     defaults: { _controller: OroActionBundle:Widget:form }
+    options:
+        frontend: true
+
+orob2b_frontend_action_widget_buttons:
+    path: /actionwidget/buttons
+    defaults: { _controller: OroActionBundle:Widget:buttons }
     options:
         frontend: true
 
 orob2b_frontend_action_api:
     resource: "@OroB2BFrontendBundle/Controller/Api/Rest/FrontendActionController.php"
     type: rest
-    prefix: api/rest/{version}/
+    prefix: api/rest/{version}/oroaction/
     requirements:
         version:  latest|v1
         _format:  json

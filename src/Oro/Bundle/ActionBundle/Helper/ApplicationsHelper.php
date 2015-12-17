@@ -51,6 +51,14 @@ class ApplicationsHelper
     /**
      * @return string
      */
+    public function getWidgetRoute()
+    {
+        return 'oro_action_widget_buttons';
+    }
+
+    /**
+     * @return string
+     */
     public function getDialogRoute()
     {
         return 'oro_action_widget_form';

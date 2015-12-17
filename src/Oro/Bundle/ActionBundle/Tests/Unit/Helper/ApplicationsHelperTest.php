@@ -32,6 +32,21 @@ class ApplicationsHelperTest extends \PHPUnit_Framework_TestCase
         unset($this->helper, $this->tokenStorage);
     }
 
+    public function testGetWidgetRoute()
+    {
+        $this->assertEquals('oro_action_widget_buttons', $this->helper->getWidgetRoute());
+    }
+
+    public function testGetDialogRoute()
+    {
+        $this->assertEquals('oro_action_widget_form', $this->helper->getDialogRoute());
+    }
+
+    public function testGetExecutionRoute()
+    {
+        $this->assertEquals('oro_api_action_execute', $this->helper->getExecutionRoute());
+    }
+
     /**
      * @dataProvider isApplicationsValidDataProvider
      *
@@ -41,11 +56,26 @@ class ApplicationsHelperTest extends \PHPUnit_Framework_TestCase
      */
     public function testIsApplicationsValid(array $applications, $token, $expectedResult)
     {
-        $this->tokenStorage->expects($this->atLeastOnce())
+        $this->tokenStorage->expects($this->any())
             ->method('getToken')
             ->willReturn($token);
 
         $this->assertEquals($expectedResult, $this->helper->isApplicationsValid($this->createAction($applications)));
+    }
+
+    /**
+     * @dataProvider getCurrentApplicationProvider
+     *
+     * @param TokenInterface|null $token
+     * @param string $expectedResult
+     */
+    public function testGetCurrentApplication($token, $expectedResult)
+    {
+        $this->tokenStorage->expects($this->any())
+            ->method('getToken')
+            ->willReturn($token);
+
+        $this->assertSame($expectedResult, $this->helper->getCurrentApplication());
     }
 
     /**
@@ -58,11 +88,6 @@ class ApplicationsHelperTest extends \PHPUnit_Framework_TestCase
 
         return [
             [
-                'applications' => ['backend', 'frontend'],
-                'token' => $this->createToken($user),
-                'expectedResult' => true
-            ],
-            [
                 'applications' => ['backend'],
                 'token' => $this->createToken($user),
                 'expectedResult' => true
@@ -73,16 +98,6 @@ class ApplicationsHelperTest extends \PHPUnit_Framework_TestCase
                 'expectedResult' => false
             ],
             [
-                'applications' => [],
-                'token' => $this->createToken($user),
-                'expectedResult' => true
-            ],
-            [
-                'applications' => ['backend', 'frontend'],
-                'token' => $this->createToken($otherUser),
-                'expectedResult' => true
-            ],
-            [
                 'applications' => ['backend'],
                 'token' => $this->createToken($otherUser),
                 'expectedResult' => false
@@ -90,16 +105,6 @@ class ApplicationsHelperTest extends \PHPUnit_Framework_TestCase
             [
                 'applications' => ['frontend'],
                 'token' => $this->createToken($otherUser),
-                'expectedResult' => true
-            ],
-            [
-                'applications' => [],
-                'token' => $this->createToken($otherUser),
-                'expectedResult' => true
-            ],
-            [
-                'applications' => ['backend', 'frontend'],
-                'token' => null,
                 'expectedResult' => false
             ],
             [
@@ -108,14 +113,30 @@ class ApplicationsHelperTest extends \PHPUnit_Framework_TestCase
                 'expectedResult' => false
             ],
             [
-                'applications' => ['frontend'],
-                'token' => null,
-                'expectedResult' => false
-            ],
-            [
                 'applications' => [],
                 'token' => null,
-                'expectedResult' => false
+                'expectedResult' => true
+            ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getCurrentApplicationProvider()
+    {
+        return [
+            'supported user' => [
+                'token' => $this->createToken(new User()),
+                'expectedResult' => 'backend',
+            ],
+            'not supported user' => [
+                'token' => $this->createToken('anon.'),
+                'expectedResult' => null,
+            ],
+            'empty token' => [
+                'token' => null,
+                'expectedResult' => null,
             ],
         ];
     }
@@ -142,13 +163,14 @@ class ApplicationsHelperTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param UserInterface|string $user
+     * @param \PHPUnit_Framework_MockObject_Matcher_Invocation $expects
      * @return TokenInterface
      */
-    protected function createToken($user)
+    protected function createToken($user, \PHPUnit_Framework_MockObject_Matcher_Invocation $expects = null)
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $token */
         $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
-        $token->expects($this->once())
+        $token->expects($expects ?: $this->once())
             ->method('getUser')
             ->willReturn($user);
 
