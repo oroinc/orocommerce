@@ -103,7 +103,7 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
             ->setParameter('cacheHidden', BaseProductVisibilityResolved::VISIBILITY_HIDDEN);
 
         if ($websiteId) {
-            $queryBuilder->andWhere('agpv.website = :website')
+            $queryBuilder->andWhere('IDENTITY(agpv.website) = :website')
                 ->setParameter('website', $websiteId);
         }
 
