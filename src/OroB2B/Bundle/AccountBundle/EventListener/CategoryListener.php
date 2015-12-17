@@ -39,30 +39,30 @@ class CategoryListener
         /** @var Category $category */
         $category = $args->getEntity();
         if ($category instanceof Category) {
-            $this->updateToConfigProductVisibility();
-            $this->setToDefaultValueProductAccountGroupProductVisibilityForProductsWithoutCategory();
-            $this->setToDefaultValueAccountProductVisibilityForProductsWithoutCategory();
+            $this->setToDefaultProductVisibilityWithoutCategory();
+            $this->setToDefaultAccountGroupProductVisibilityWithoutCategory();
+            $this->setToDefaultAccountProductVisibilityWithoutCategory();
         }
     }
 
-    protected function updateToConfigProductVisibility()
+    protected function setToDefaultProductVisibilityWithoutCategory()
     {
         $this->registry->getManagerForClass('OroB2BAccountBundle:Visibility\ProductVisibility')
             ->getRepository('OroB2BAccountBundle:Visibility\ProductVisibility')
-            ->updateToConfigProductVisibility($this->insertFromSelectQueryExecutor);
+            ->setToDefaultWithoutCategory($this->insertFromSelectQueryExecutor);
     }
 
-    protected function setToDefaultValueProductAccountGroupProductVisibilityForProductsWithoutCategory()
+    protected function setToDefaultAccountGroupProductVisibilityWithoutCategory()
     {
         $this->registry->getManagerForClass('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
             ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
-            ->setToDefaultValueProductAccountGroupProductVisibilityForProductsWithoutCategory();
+            ->setToDefaultWithoutCategory();
     }
 
-    protected function setToDefaultValueAccountProductVisibilityForProductsWithoutCategory()
+    protected function setToDefaultAccountProductVisibilityWithoutCategory()
     {
         $this->registry->getManagerForClass('OroB2BAccountBundle:Visibility\AccountProductVisibility')
             ->getRepository('OroB2BAccountBundle:Visibility\AccountProductVisibility')
-            ->setToDefaultValueAccountProductVisibilityForProductsWithoutCategory();
+            ->setToDefaultWithoutCategory();
     }
 }

@@ -16,7 +16,7 @@ class ProductVisibilityRepository extends EntityRepository
      *
      * @param InsertFromSelectQueryExecutor $executor
      */
-    public function updateToConfigProductVisibility(InsertFromSelectQueryExecutor $executor)
+    public function setToDefaultWithoutCategory(InsertFromSelectQueryExecutor $executor)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 

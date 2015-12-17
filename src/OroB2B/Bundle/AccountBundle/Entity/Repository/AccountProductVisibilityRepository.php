@@ -14,13 +14,13 @@ class AccountProductVisibilityRepository extends EntityRepository
     /**
      * Delete from AccountProductVisibility visibilities with fallback to 'category' when category is absent
      */
-    public function setToDefaultValueAccountProductVisibilityForProductsWithoutCategory()
+    public function setToDefaultWithoutCategory()
     {
         $qb = $this->createQueryBuilder('accountProductVisibility');
         $qb->delete()
             ->where($qb->expr()->in('accountProductVisibility.id', ':accountProductVisibilityIds'));
 
-        while ($accountProductVisibilityIds = $this->getAccountProductVisibilityForDelete()) {
+        while ($accountProductVisibilityIds = $this->getVisibilityIdsForDelete()) {
             $qb->getQuery()->execute(['accountProductVisibilityIds' => $accountProductVisibilityIds]);
         }
     }
@@ -28,7 +28,7 @@ class AccountProductVisibilityRepository extends EntityRepository
     /**
      * @return int[]
      */
-    protected function getAccountProductVisibilityForDelete()
+    protected function getVisibilityIdsForDelete()
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
