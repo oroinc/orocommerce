@@ -284,107 +284,107 @@ class WidgetControllerTest extends WebTestCase
                 'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
                 'expected' => $label
             ],
-//            'existing entity wrong conditions' => [
-//                'config' => array_merge_recursive(
-//                    $config,
-//                    [
-//                        'oro_action_test_action' => [
-//                            'entities' => ['Oro\Bundle\TestFrameworkBundle\Entity\TestActivity'],
-//                            'preconditions' => ['@equal' => ['$message', 'test message wrong']],
-//                        ],
-//                    ]
-//                ),
-//                'route' => 'oro_action_test_route',
-//                'entityId' => true,
-//                'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
-//                'expected' => false
-//            ],
-//            'existing entity short syntax' => [
-//                'config' => array_merge_recursive(
-//                    $config,
-//                    ['oro_action_test_action' => ['entities' => ['OroTestFrameworkBundle:TestActivity']]]
-//                ),
-//                'route' => 'oro_action_test_route',
-//                'entityId' => true,
-//                'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
-//                'expected' => $label
-//            ],
-//            'existing entity with root namespace' => [
-//                'config' => array_merge_recursive(
-//                    $config,
-//                    [
-//                        'oro_action_test_action' => [
-//                            'entities' => ['\Oro\Bundle\TestFrameworkBundle\Entity\TestActivity']
-//                        ]
-//                    ]
-//                ),
-//                'route' => 'oro_action_test_route',
-//                'entityId' => true,
-//                'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
-//                'expected' => $label
-//            ],
-//            'unknown entity' => [
-//                'config' => array_merge_recursive(
-//                    $config,
-//                    ['oro_action_test_action' => ['entities' => ['Oro\Bundle\TestFrameworkBundle\Enti\UnknownEntity']]]
-//                ),
-//                'route' => 'oro_action_test_route',
-//                'entityId' => true,
-//                'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
-//                'expected' => false
-//            ],
-//            'unknown entity short syntax' => [
-//                'config' => array_merge_recursive(
-//                    $config,
-//                    ['oro_action_test_action' => ['entities' => ['OroTestFrameworkBundle:UnknownEntity']]]
-//                ),
-//                'route' => 'oro_action_test_route',
-//                'entityId' => true,
-//                'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
-//                'expected' => false
-//            ],
-//            'existing route' => [
-//                'config' => array_merge_recursive(
-//                    $config,
-//                    ['oro_action_test_action' => ['routes' => ['oro_action_test_route']]]
-//                ),
-//                'route' => 'oro_action_test_route',
-//                'entityId' => true,
-//                'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
-//                'expected' => $label
-//            ],
-//            'unknown route' => [
-//                'config' => array_merge_recursive(
-//                    $config,
-//                    ['oro_action_test_action' => ['routes' => ['oro_action_unknown_route']]]
-//                ),
-//                'route' => 'oro_action_test_route',
-//                'entityId' => true,
-//                'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
-//                'expected' => false
-//            ],
-//            'empty context' => [
-//                'config' => $config,
-//                'route' => 'oro_action_test_route',
-//                'entityId' => true,
-//                'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
-//                'expected' => false
-//            ],
-//            'existing route and entity' => [
-//                'config' => array_merge_recursive(
-//                    $config,
-//                    ['oro_action_test_action' =>
-//                        [
-//                            'entities' => ['Oro\Bundle\TestFrameworkBundle\Entity\TestActivity'],
-//                            'routes' => ['oro_action_test_route']
-//                        ]
-//                    ]
-//                ),
-//                'route' => 'oro_action_test_route',
-//                'entityId' => null,
-//                'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
-//                'expected' => $label
-//            ]
+            'existing entity wrong conditions' => [
+                'config' => array_merge_recursive(
+                    $config,
+                    [
+                        'oro_action_test_action' => [
+                            'entities' => ['Oro\Bundle\TestFrameworkBundle\Entity\TestActivity'],
+                            'preconditions' => ['@equal' => ['$message', 'test message wrong']],
+                        ],
+                    ]
+                ),
+                'route' => 'oro_action_test_route',
+                'entityId' => true,
+                'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
+                'expected' => false
+            ],
+            'existing entity short syntax' => [
+                'config' => array_merge_recursive(
+                    $config,
+                    ['oro_action_test_action' => ['entities' => ['OroTestFrameworkBundle:TestActivity']]]
+                ),
+                'route' => 'oro_action_test_route',
+                'entityId' => true,
+                'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
+                'expected' => $label
+            ],
+            'existing entity with root namespace' => [
+                'config' => array_merge_recursive(
+                    $config,
+                    [
+                        'oro_action_test_action' => [
+                            'entities' => ['\Oro\Bundle\TestFrameworkBundle\Entity\TestActivity']
+                        ]
+                    ]
+                ),
+                'route' => 'oro_action_test_route',
+                'entityId' => true,
+                'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
+                'expected' => $label
+            ],
+            'unknown entity' => [
+                'config' => array_merge_recursive(
+                    $config,
+                    ['oro_action_test_action' => ['entities' => ['Oro\Bundle\TestFrameworkBundle\Enti\UnknownEntity']]]
+                ),
+                'route' => 'oro_action_test_route',
+                'entityId' => true,
+                'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
+                'expected' => false
+            ],
+            'unknown entity short syntax' => [
+                'config' => array_merge_recursive(
+                    $config,
+                    ['oro_action_test_action' => ['entities' => ['OroTestFrameworkBundle:UnknownEntity']]]
+                ),
+                'route' => 'oro_action_test_route',
+                'entityId' => true,
+                'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
+                'expected' => false
+            ],
+            'existing route' => [
+                'config' => array_merge_recursive(
+                    $config,
+                    ['oro_action_test_action' => ['routes' => ['oro_action_test_route']]]
+                ),
+                'route' => 'oro_action_test_route',
+                'entityId' => true,
+                'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
+                'expected' => $label
+            ],
+            'unknown route' => [
+                'config' => array_merge_recursive(
+                    $config,
+                    ['oro_action_test_action' => ['routes' => ['oro_action_unknown_route']]]
+                ),
+                'route' => 'oro_action_test_route',
+                'entityId' => true,
+                'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
+                'expected' => false
+            ],
+            'empty context' => [
+                'config' => $config,
+                'route' => 'oro_action_test_route',
+                'entityId' => true,
+                'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
+                'expected' => false
+            ],
+            'existing route and entity' => [
+                'config' => array_merge_recursive(
+                    $config,
+                    ['oro_action_test_action' =>
+                        [
+                            'entities' => ['Oro\Bundle\TestFrameworkBundle\Entity\TestActivity'],
+                            'routes' => ['oro_action_test_route']
+                        ]
+                    ]
+                ),
+                'route' => 'oro_action_test_route',
+                'entityId' => null,
+                'entityClass' => 'Oro\Bundle\TestFrameworkBundle\Entity\TestActivity',
+                'expected' => $label
+            ]
         ];
     }
 
