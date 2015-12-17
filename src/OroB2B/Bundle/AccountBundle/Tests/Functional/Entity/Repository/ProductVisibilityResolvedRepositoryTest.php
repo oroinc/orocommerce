@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
@@ -26,6 +27,13 @@ use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
  */
 class ProductVisibilityResolvedRepositoryTest extends WebTestCase
 {
+    use ResolvedEntityRepositoryTestTrait;
+
+    /**
+     * @var EntityManager
+     */
+    protected $entityManager;
+
     /**
      * @var ProductVisibilityResolvedRepository
      */
@@ -39,9 +47,10 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
-        $this->website = $this->getWebsites()[0];
 
-        $this->repository = $this->getResolvedVisibilityManager()
+        $this->website = $this->getWebsites()[0];
+        $this->entityManager = $this->getResolvedVisibilityManager();
+        $this->repository = $this->entityManager
             ->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
 
         $this->loadFixtures(['OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData']);
@@ -154,53 +163,21 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
         $where = ['product' => $product, 'website' => $website];
         $this->assertTrue($this->repository->hasEntity($where));
 
-        $this->repository->deleteEntity($where);
-        $this->assertFalse($this->repository->hasEntity($where));
-
-        $insert = [
-            'sourceProductVisibility' => null,
-            'visibility' => BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
-            'source' => BaseProductVisibilityResolved::SOURCE_STATIC,
-            'category' => null,
-        ];
-        $this->repository->insertEntity(array_merge($where, $insert));
-        $this->assertTrue($this->repository->hasEntity($where));
-        $this->assertEntityData(
+        $this->assertDelete($this->repository, $where);
+        $this->assertInsert(
+            $this->entityManager,
+            $this->repository,
             $where,
             BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
             BaseProductVisibilityResolved::SOURCE_STATIC
         );
-
-        $update = [
-            'visibility' => BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
-            'source' => BaseProductVisibilityResolved::SOURCE_CATEGORY,
-        ];
-        $this->repository->updateEntity($update, $where);
-        $this->assertTrue($this->repository->hasEntity($where));
-        $this->assertEntityData(
+        $this->assertUpdate(
+            $this->entityManager,
+            $this->repository,
             $where,
             BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
             BaseProductVisibilityResolved::SOURCE_CATEGORY
         );
-    }
-
-    /**
-     * @param array $where
-     * @param int $visibility
-     * @param int $source
-     */
-    protected function assertEntityData(array $where, $visibility, $source)
-    {
-        $entityManager = $this->getResolvedVisibilityManager();
-        /** @var ProductVisibilityResolved $entity */
-        $entity = $entityManager->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
-            ->findOneBy($where);
-
-        $this->assertNotNull($entity);
-        $entityManager->refresh($entity);
-
-        $this->assertEquals($visibility, $entity->getVisibility());
-        $this->assertEquals($source, $entity->getSource());
     }
 
     /**

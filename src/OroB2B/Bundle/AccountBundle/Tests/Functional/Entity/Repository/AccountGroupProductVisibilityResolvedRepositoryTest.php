@@ -18,6 +18,8 @@ use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
  */
 class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
 {
+    use ResolvedEntityRepositoryTestTrait;
+
     /**
      * @var EntityManager
      */
@@ -64,49 +66,20 @@ class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
         $where = ['accountGroup' => $accountGroup, 'product' => $product, 'website' => $website];
         $this->assertFalse($this->repository->hasEntity($where));
 
-        $insert = [
-            'sourceProductVisibility' => null,
-            'visibility' => BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
-            'source' => BaseProductVisibilityResolved::SOURCE_STATIC,
-            'category' => null,
-        ];
-        $this->repository->insertEntity(array_merge($where, $insert));
-        $this->assertTrue($this->repository->hasEntity($where));
-        $this->assertEntityData(
+        $this->assertInsert(
+            $this->entityManager,
+            $this->repository,
             $where,
             BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
             BaseProductVisibilityResolved::SOURCE_STATIC
         );
-
-        $update = [
-            'visibility' => BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
-            'source' => BaseProductVisibilityResolved::SOURCE_CATEGORY,
-        ];
-        $this->repository->updateEntity($update, $where);
-        $this->assertTrue($this->repository->hasEntity($where));
-        $this->assertEntityData(
+        $this->assertUpdate(
+            $this->entityManager,
+            $this->repository,
             $where,
             BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
             BaseProductVisibilityResolved::SOURCE_CATEGORY
         );
-
-        $this->repository->deleteEntity($where);
-        $this->assertFalse($this->repository->hasEntity($where));
-    }
-
-    /**
-     * @param array $where
-     * @param int $visibility
-     * @param int $source
-     */
-    protected function assertEntityData(array $where, $visibility, $source)
-    {
-        $entity = $this->repository->findOneBy($where);
-
-        $this->assertNotNull($entity);
-        $this->entityManager->refresh($entity);
-
-        $this->assertEquals($visibility, $entity->getVisibility());
-        $this->assertEquals($source, $entity->getSource());
+        $this->assertDelete($this->repository, $where);
     }
 }
