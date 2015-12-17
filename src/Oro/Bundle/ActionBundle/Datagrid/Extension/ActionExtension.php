@@ -6,8 +6,6 @@ use Oro\Bundle\ActionBundle\Model\Action;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 use Oro\Bundle\ActionBundle\Model\ContextHelper;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
-use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
-use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
 
@@ -21,6 +19,12 @@ class ActionExtension extends AbstractExtension
 
     /** @var array */
     protected $actionConfiguration = [];
+
+    /** @var array */
+    protected $datagridContext = [];
+
+    /** @var Action[] */
+    protected $actions = [];
 
     /**
      * @param ActionManager $actionManager
@@ -39,47 +43,16 @@ class ActionExtension extends AbstractExtension
      */
     public function isApplicable(DatagridConfiguration $config)
     {
-        $context = $this->getContext($config);
-        $actions = $this->actionManager->getActions($context);
-        if (0 === count($actions)) {
+        $this->datagridContext = $this->getDatagridContext($config);
+        $this->actions = $this->actionManager->getActions($this->datagridContext, false);
+        if (0 === count($this->actions)) {
             return false;
         }
-        $this->processActionsConfig($config, $actions, $context);
-
+        $this->processActionsConfig($config);
         $this->actionConfiguration = $config->offsetGetOr('action_configuration', []);
         $config->offsetSet('action_configuration', [$this, 'getActionsPermissions']);
 
         return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function visitResult(DatagridConfiguration $config, ResultsObject $result)
-    {
-        $context = $this->getContext($config);
-        $actions = $this->actionManager->getActions($context);
-        if (0 === count($actions)) {
-            return;
-        }
-        /** @var ResultRecord[] $rows */
-        $rows = $result->offsetGetByPath('[data]');
-        $rows = is_array($rows) ? $rows : [];
-        foreach ($rows as &$record) {
-            $context = [
-                'entityId' => $record->getValue('id'),
-                'entityClass' => $context['entityClass'],
-            ];
-            $actionData = $this->contextHelper->getActionData($context);
-            $actionsList = [];
-            foreach ($actions as $action) {
-                $actionsList[$action->getName()] = $action->isAllowed($actionData);
-            }
-            $record->addData(['actions' => $actionsList]);
-        }
-        unset($record);
-
-        $result->offsetSet('data', $rows);
     }
 
     /**
@@ -96,22 +69,28 @@ class ActionExtension extends AbstractExtension
 
             $actionsOld = is_array($actionsOld) ? $actionsOld : [];
         };
-        $actionsNew = $record->getValue('actions');
-        $actionsNew = is_array($actionsNew) ? $actionsNew : [];
+
+        $context = [
+            'entityId' => $record->getValue('id'),
+            'entityClass' => $this->datagridContext['entityClass'],
+        ];
+        $actionData = $this->contextHelper->getActionData($context);
+        $actionsNew = [];
+        foreach ($this->actions as $action) {
+            $actionsNew[$action->getName()] = $action->isAllowed($actionData);
+        }
 
         return array_merge($actionsOld, $actionsNew);
     }
 
     /**
      * @param DatagridConfiguration $config
-     * @param Action[] $actions
-     * @param array $context
      */
-    protected function processActionsConfig(DatagridConfiguration $config, array $actions, array $context)
+    protected function processActionsConfig(DatagridConfiguration $config)
     {
         $actionsConfig = $config->offsetGetOr('actions', []);
 
-        foreach ($actions as $action) {
+        foreach ($this->actions as $action) {
             $frontendOptions = $action->getDefinition()->getFrontendOptions();
             $actionsConfig[$action->getName()] = [
                 'type' => 'action-widget',
@@ -123,8 +102,8 @@ class ActionExtension extends AbstractExtension
                     : 'edit',
                 'options' => [
                     'actionName' => $action->getName(),
-                    'entityClass' => $context['entityClass'],
-                    'datagrid' => $context['datagrid'],
+                    'entityClass' => $this->datagridContext['entityClass'],
+                    'datagrid' => $this->datagridContext['datagrid'],
                     'datagridConfirm' =>  !empty($frontendOptions['datagrid_confirm'])
                         ? $frontendOptions['datagrid_confirm']
                         : '',
@@ -147,11 +126,13 @@ class ActionExtension extends AbstractExtension
      *
      * @return array
      */
-    protected function getContext(DatagridConfiguration $config)
+    protected function getDatagridContext(DatagridConfiguration $config)
     {
+        $entityClass = $config->offsetGetByPath('[extended_entity_name]');
+
         return [
-            'entityClass' => $config->offsetGetByPath('[extended_entity_name]'),
-            'datagrid' => $config->offsetGetByPath('[name]')
+            'entityClass' => $entityClass ? : $config->offsetGetByPath('[entity_name]'),
+            'datagrid' => $config->offsetGetByPath('[name]'),
         ];
     }
 }

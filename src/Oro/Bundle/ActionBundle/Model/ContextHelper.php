@@ -75,7 +75,7 @@ class ContextHelper
                 );
             }
 
-            $this->actionDatas[$hash] = new ActionData($entity ? ['data' => $entity] : []);
+            $this->actionDatas[$hash] = new ActionData(['data' => $entity]);
         }
 
         return $this->actionDatas[$hash];

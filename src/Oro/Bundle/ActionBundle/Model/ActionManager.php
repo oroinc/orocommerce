@@ -127,13 +127,26 @@ class ActionManager
 
     /**
      * @param array|null $context
+     * @param bool $onlyAvailable
      * @return Action[]
      */
-    public function getActions(array $context = null)
+    public function getActions(array $context = null, $onlyAvailable = true)
     {
         $this->loadActions();
 
-        return $this->findActions($this->contextHelper->getContext($context));
+        $actions = $this->findActions($this->contextHelper->getContext($context));
+        $actionData = $this->contextHelper->getActionData($context);
+        if ($onlyAvailable) {
+            $actions = array_filter($actions, function (Action $action) use ($actionData) {
+                return $action->isAvailable($actionData);
+            });
+        }
+
+        uasort($actions, function (Action $action1, Action $action2) {
+            return $action1->getDefinition()->getOrder() - $action2->getDefinition()->getOrder();
+        });
+
+        return $actions;
     }
 
     /**
@@ -193,7 +206,7 @@ class ActionManager
         if ($context[ContextHelper::DATAGRID_PARAM] &&
             array_key_exists($context[ContextHelper::DATAGRID_PARAM], $this->datagrids)
         ) {
-            $actions = $this->datagrids[$context[ContextHelper::DATAGRID_PARAM]];
+            $actions = $actions = array_merge($actions, $this->datagrids[$context[ContextHelper::DATAGRID_PARAM]]);
         }
 
         if ($context[ContextHelper::ENTITY_CLASS_PARAM] &&
@@ -202,15 +215,6 @@ class ActionManager
         ) {
             $actions = array_merge($actions, $this->entities[$context[ContextHelper::ENTITY_CLASS_PARAM]]);
         }
-
-        $actionData = $this->contextHelper->getActionData($context);
-        $actions = array_filter($actions, function (Action $action) use ($actionData) {
-            return $action->isAvailable($actionData);
-        });
-
-        uasort($actions, function (Action $action1, Action $action2) {
-            return $action1->getDefinition()->getOrder() - $action2->getDefinition()->getOrder();
-        });
 
         return $actions;
     }

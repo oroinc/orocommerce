@@ -9,7 +9,6 @@ use Oro\Bundle\ActionBundle\Model\ActionDefinition;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 use Oro\Bundle\ActionBundle\Model\ContextHelper;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
-use Oro\Bundle\DataGridBundle\Datagrid\Common\ResultsObject;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 
 class ActionExtensionTest extends \PHPUnit_Framework_TestCase
@@ -70,38 +69,18 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param ResultRecord[] $records
-     * @param Action[] $actions
-     * @param int $expectedActionsCnt
-     *
-     * @dataProvider visitResultProvider
-     */
-    public function testVisitResult(array $records, array $actions, $expectedActionsCnt)
-    {
-        $result = ResultsObject::create(['data' => $records]);
-
-        $this->manager->expects($this->any())
-            ->method('getActions')
-            ->willReturn($actions);
-        $config = DatagridConfiguration::create([]);
-
-
-        $this->extension->visitResult($config, $result);
-        /** @var ResultRecord[] $rows */
-        $rows = $result->offsetGetByPath('[data]', []);
-        foreach ($rows as $record) {
-            $this->assertEquals($expectedActionsCnt, count($record->getValue('actions')));
-        }
-    }
-
-    /**
      * @param ResultRecord $record
+     * @param $actions
      * @param array $expectedActions
      *
      * @dataProvider getActionsPermissionsProvider
      */
-    public function testGetActionsPermissions(ResultRecord $record, array $expectedActions)
+    public function testGetActionsPermissions(ResultRecord $record, $actions, array $expectedActions)
     {
+        $this->manager->expects($this->any())
+            ->method('getActions')
+            ->willReturn($actions);
+        $this->extension->isApplicable(DatagridConfiguration::create(['name' => 'datagrid_name']));
         $this->assertEquals($expectedActions, $this->extension->getActionsPermissions($record));
     }
 
@@ -131,65 +110,32 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function visitResultProvider()
+    public function getActionsPermissionsProvider()
     {
-        $record1 = new ResultRecord(['id' => 1]);
-        $record2 = new ResultRecord(['id' => 2]);
         $actionAllowed1 = $this->createAction('action1', true);
         $actionAllowed2 = $this->createAction('action2', true);
         $actionNotAllowed = $this->createAction('action3', false);
 
-        return [
-            'no records' => [
-                'records' => [],
-                'actions' => [$actionAllowed1],
-                'expectedActionsCnt' => 0,
-            ],
-            'no actions' => [
-                'records' => [$record1],
-                'actions' => [],
-                'expectedActionsCnt' => 0,
-            ],
-            '2 allowed actions' => [
-                'records' => [$record1, $record2],
-                'actions' => [$actionAllowed1, $actionAllowed2],
-                'expectedActionsCnt' => 2
-            ],
-            '1 allowed action' => [
-                'records' => [],
-                'actions' => [$actionAllowed1, $actionNotAllowed],
-                'expectedActionsCnt' => 1
-            ]
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function getActionsPermissionsProvider()
-    {
-        $actions1 = [];
-        $actions2 = ['action1'];
-        $actions3 = ['action1', 'action2'];
-
-        $record1 = new ResultRecord(['id' => 1, 'actions' => $actions1]);
-        $record2 = new ResultRecord(['id' => 1, 'actions' => $actions2]);
-        $record3 = new ResultRecord(['id' => 1, 'actions' => $actions3]);
+        $record1 = new ResultRecord(['id' => 1]);
+        $record2 = new ResultRecord(['id' => 2]);
+        $record3 = new ResultRecord(['id' => 3]);
 
         return [
             'no actions' => [
                 'record' => $record1,
-                'expectedActions' => $actions1,
+                'actions' => [],
+                'expectedActions' => [],
             ],
-            '1 action' => [
+            '2 allowed actions' => [
                 'record' => $record2,
-                'expectedActions' => $actions2,
+                'actions' => [$actionAllowed1, $actionAllowed2],
+                'expectedActions' => ['action1' => true, 'action2' => true],
             ],
-            '2 actions' => [
+            '1 allowed action' => [
                 'record' => $record3,
-                'expectedActions' => $actions3,
+                'actions' => [$actionAllowed1, $actionNotAllowed],
+                'expectedActions' => ['action1' => true, 'action3' => false],
             ],
-
         ];
     }
 
