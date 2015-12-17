@@ -101,10 +101,12 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                     'hiddenProducts' => [
                         'product.4',
                         'product.7',
+                        'product.8',
                     ],
                     'hiddenProductsByAccountGroups' => [
                         'account_group.group2' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account_group.group3' => [
                             'product.3',
@@ -119,18 +121,22 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                             'product.6',
                             'product.4',
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.2' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.2.1' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.3.1' => [
                             'product.3',
                             'product.6',
                             'product.4',
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.3.1.1' => [
                             'product.2',
@@ -153,10 +159,12 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                     'hiddenProducts' => [
                         'product.4',
                         'product.7',
+                        'product.8',
                     ],
                     'hiddenProductsByAccountGroups' => [
                         'account_group.group2' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account_group.group3' => [
                             'product.3',
@@ -171,18 +179,22 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                             'product.6',
                             'product.4',
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.2' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.2.1' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.3.1' => [
                             'product.3',
                             'product.6',
                             'product.4',
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.3.1.1' => [
                             'product.2',
@@ -208,6 +220,7 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                         'product.5',
                         'product.4',
                         'product.7',
+                        'product.8',
                     ],
                     'hiddenProductsByAccountGroups' => [
                         'account_group.group2' => [
@@ -215,6 +228,7 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                             'product.2',
                             'product.5',
                             'product.7',
+                            'product.8',
                         ],
                         'account_group.group3' => [
                             'product.2',
@@ -231,9 +245,11 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                             'product.5',
                             'product.4',
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.2' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.2.1' => [
                             'product.1',
@@ -242,6 +258,7 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                             'product.6',
                             'product.5',
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.2.1.1' => [
                             'product.1',
@@ -249,6 +266,7 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                             'product.5',
                             'product.4',
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.3.1' => [
                             'product.2',
@@ -256,6 +274,7 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                             'product.6',
                             'product.4',
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.3.1.1' => [
                             'product.1',
@@ -284,10 +303,12 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                     'hiddenProducts' => [
                         'product.4',
                         'product.7',
+                        'product.8',
                     ],
                     'hiddenProductsByAccountGroups' => [
                         'account_group.group2' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account_group.group3' => [
                             'product.1',
@@ -296,6 +317,7 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                             'product.5',
                             'product.4',
                             'product.7',
+                            'product.8',
                         ],
                     ],
                     'hiddenProductsByAccounts' => [
@@ -306,12 +328,15 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                             'product.6',
                             'product.4',
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.2' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.2.1' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.3.1' => [
                             'product.1',
@@ -320,16 +345,77 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                             'product.5',
                             'product.4',
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.3.1.1' => [
                             'product.2',
                             'product.3',
                             'product.6',
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.4' => [
                             'product.3',
                             'product.4',
+                        ],
+                    ],
+                ]
+            ],
+            'change visibility account group to parent category' => [
+                'categoryReference' => 'category_1',
+                'visibility' => [
+                    'type' => 'accountGroup',
+                    'accountGroup' => 'account_group.group2',
+                    'visibility' => AccountGroupCategoryVisibility::PARENT_CATEGORY,
+                ],
+                'expectedData' => [
+                    'hiddenProducts' => [
+                        'product.4',
+                        'product.7',
+                        'product.8',
+                    ],
+                    'hiddenProductsByAccountGroups' => [
+                        'account_group.group2' => [
+                            'product.7',
+                            'product.8',
+                        ],
+                        'account_group.group3' => [
+                            'product.3',
+                            'product.6',
+                        ],
+                    ],
+                    'hiddenProductsByAccounts' => [
+                        'account.level_1.1' => [
+                            'product.1',
+                            'product.2',
+                            'product.3',
+                            'product.6',
+                            'product.4',
+                            'product.7',
+                            'product.8',
+                        ],
+                        'account.level_1.2' => [
+                            'product.7',
+                            'product.8',
+                        ],
+                        'account.level_1.2.1' => [
+                            'product.7',
+                            'product.8',
+                        ],
+                        'account.level_1.3.1' => [
+                            'product.3',
+                            'product.6',
+                            'product.4',
+                            'product.7',
+                            'product.8',
+                        ],
+                        'account.level_1.3.1.1' => [
+                            'product.2',
+                            'product.3',
+                            'product.6',
+                        ],
+                        'account.level_1.4' => [
+                            'product.3',
                         ],
                     ],
                 ]
@@ -345,10 +431,12 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                     'hiddenProducts' => [
                         'product.4',
                         'product.7',
+                        'product.8',
                     ],
                     'hiddenProductsByAccountGroups' => [
                         'account_group.group2' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account_group.group3' => [
                             'product.3',
@@ -363,18 +451,22 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                             'product.6',
                             'product.4',
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.2' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.2.1' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.3.1' => [
                             'product.3',
                             'product.6',
                             'product.4',
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.3.1.1' => [
                             'product.2',
@@ -398,10 +490,12 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                     'hiddenProducts' => [
                         'product.4',
                         'product.7',
+                        'product.8',
                     ],
                     'hiddenProductsByAccountGroups' => [
                         'account_group.group2' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account_group.group3' => [
                             'product.3',
@@ -416,18 +510,81 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                             'product.6',
                             'product.4',
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.2' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.2.1' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.3.1' => [
                             'product.3',
                             'product.6',
                             'product.4',
                             'product.7',
+                            'product.8',
+                        ],
+                        'account.level_1.3.1.1' => [
+                            'product.2',
+                            'product.3',
+                            'product.6',
+                        ],
+                        'account.level_1.4' => [
+                            'product.3',
+                        ],
+                    ],
+                ]
+            ],
+            'change visibility account to parent category' => [
+                'categoryReference' => 'category_1',
+                'visibility' => [
+                    'type' => 'account',
+                    'account' => 'account.level_1.2.1.1',
+                    'visibility' => AccountCategoryVisibility::PARENT_CATEGORY,
+                ],
+                'expectedData' => [
+                    'hiddenProducts' => [
+                        'product.4',
+                        'product.7',
+                        'product.8',
+                    ],
+                    'hiddenProductsByAccountGroups' => [
+                        'account_group.group2' => [
+                            'product.7',
+                            'product.8',
+                        ],
+                        'account_group.group3' => [
+                            'product.3',
+                            'product.6',
+                        ],
+                    ],
+                    'hiddenProductsByAccounts' => [
+                        'account.level_1.1' => [
+                            'product.1',
+                            'product.2',
+                            'product.3',
+                            'product.6',
+                            'product.4',
+                            'product.7',
+                            'product.8',
+                        ],
+                        'account.level_1.2' => [
+                            'product.7',
+                            'product.8',
+                        ],
+                        'account.level_1.2.1' => [
+                            'product.7',
+                            'product.8',
+                        ],
+                        'account.level_1.3.1' => [
+                            'product.3',
+                            'product.6',
+                            'product.4',
+                            'product.7',
+                            'product.8',
                         ],
                         'account.level_1.3.1.1' => [
                             'product.2',
@@ -451,10 +608,12 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                     'hiddenProducts' => [
                         'product.4',
                         'product.7',
+                        'product.8',
                     ],
                     'hiddenProductsByAccountGroups' => [
                         'account_group.group2' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account_group.group3' => [
                             'product.3',
@@ -469,24 +628,29 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                             'product.6',
                             'product.4',
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.2' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.2.1' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.2.1.1' => [
                             'product.1',
                             'product.5',
                             'product.4',
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.3.1' => [
                             'product.3',
                             'product.6',
                             'product.4',
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.3.1.1' => [
                             'product.2',
@@ -510,10 +674,12 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                     'hiddenProducts' => [
                         'product.4',
                         'product.7',
+                        'product.8',
                     ],
                     'hiddenProductsByAccountGroups' => [
                         'account_group.group2' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account_group.group3' => [
                             'product.3',
@@ -526,18 +692,22 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                             'product.2',
                             'product.4',
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.2' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.2.1' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.3.1' => [
                             'product.3',
                             'product.6',
                             'product.4',
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.3.1.1' => [
                             'product.2',
@@ -561,10 +731,12 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                     'hiddenProducts' => [
                         'product.4',
                         'product.7',
+                        'product.8',
                     ],
                     'hiddenProductsByAccountGroups' => [
                         'account_group.group2' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account_group.group3' => [
                             'product.3',
@@ -579,22 +751,27 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                             'product.6',
                             'product.4',
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.2' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.2.1' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.2.1.1' => [
                             'product.4',
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.3.1' => [
                             'product.3',
                             'product.6',
                             'product.4',
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.3.1.1' => [
                             'product.2',
@@ -618,10 +795,12 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                     'hiddenProducts' => [
                         'product.4',
                         'product.7',
+                        'product.8',
                     ],
                     'hiddenProductsByAccountGroups' => [
                         'account_group.group2' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account_group.group3' => [
                             'product.3',
@@ -636,17 +815,21 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                             'product.6',
                             'product.4',
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.2' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.2.1' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.3.1' => [
                             'product.3',
                             'product.6',
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.3.1.1' => [
                             'product.2',

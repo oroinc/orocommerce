@@ -61,10 +61,12 @@ class CategoryPositionChangeTest extends CategoryCacheTestCase
                         'product.2',
                         'product.4',
                         'product.7',
+                        'product.8',
                     ],
                     'hiddenProductsByAccountGroups' => [
                         'account_group.group2' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account_group.group3' => [
                             'product.2',
@@ -80,12 +82,15 @@ class CategoryPositionChangeTest extends CategoryCacheTestCase
                             'product.6',
                             'product.4',
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.2' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.2.1' => [
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.3.1' => [
                             'product.2',
@@ -93,6 +98,7 @@ class CategoryPositionChangeTest extends CategoryCacheTestCase
                             'product.6',
                             'product.4',
                             'product.7',
+                            'product.8',
                         ],
                         'account.level_1.3.1.1' => [
                             'product.2',

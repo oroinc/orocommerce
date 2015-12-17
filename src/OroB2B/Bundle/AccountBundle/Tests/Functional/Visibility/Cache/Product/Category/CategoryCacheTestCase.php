@@ -72,7 +72,8 @@ abstract class CategoryCacheTestCase extends WebTestCase
             ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupProductVisibilityResolved');
         $queryBuilder = $repository->createQueryBuilder('agpvr')
             ->select('accountGroup.name as account_group_name')
-            ->join('agpvr.accountGroup', 'accountGroup');
+            ->join('agpvr.accountGroup', 'accountGroup')
+            ->orderBy('accountGroup.name');
         $this->selectHiddenProductSku($queryBuilder, 'agpvr');
         $results = $queryBuilder->getQuery()
             ->getScalarResult();
@@ -97,7 +98,8 @@ abstract class CategoryCacheTestCase extends WebTestCase
             ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved');
         $queryBuilder = $repository->createQueryBuilder('apvr')
             ->select('account.name as account_name')
-            ->join('apvr.account', 'account');
+            ->join('apvr.account', 'account')
+            ->orderBy('account.name');
         $this->selectHiddenProductSku($queryBuilder, 'apvr');
         $results = $queryBuilder->getQuery()
             ->getScalarResult();
@@ -123,6 +125,7 @@ abstract class CategoryCacheTestCase extends WebTestCase
                 $alias . '.visibility',
                 BaseProductVisibilityResolved::VISIBILITY_HIDDEN
             ))
-            ->orderBy($alias . '.category');
+            ->addOrderBy($alias . '.category')
+            ->addOrderBy('product.sku');
     }
 }
