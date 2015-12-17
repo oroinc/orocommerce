@@ -35,7 +35,7 @@ class ActionExtension extends \Twig_Extension
         ApplicationsHelper $appsHelper,
         DoctrineHelper $doctrineHelper,
         RequestStack $requestStack
-    ){
+    ) {
         $this->manager = $manager;
         $this->appsHelper = $appsHelper;
         $this->doctrineHelper = $doctrineHelper;

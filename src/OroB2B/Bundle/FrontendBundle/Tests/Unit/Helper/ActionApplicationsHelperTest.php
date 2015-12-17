@@ -32,7 +32,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
      *
      * @dataProvider applicationRoutesProvider
      */
-    public function testGetWidgetRoute(TokenInterface $token = null, array $expectedRoutes= [])
+    public function testGetWidgetRoute(TokenInterface $token = null, array $expectedRoutes = [])
     {
         $this->tokenStorage->expects($this->any())
             ->method('getToken')
@@ -48,7 +48,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
      *
      * @dataProvider applicationRoutesProvider
      */
-    public function testGetDialogRoute(TokenInterface $token = null, array $expectedRoutes= [])
+    public function testGetDialogRoute(TokenInterface $token = null, array $expectedRoutes = [])
     {
         $this->tokenStorage->expects($this->any())
             ->method('getToken')
@@ -63,7 +63,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
      *
      * @dataProvider applicationRoutesProvider
      */
-    public function testGetExecutionRoute(TokenInterface $token = null, array $expectedRoutes= [])
+    public function testGetExecutionRoute(TokenInterface $token = null, array $expectedRoutes = [])
     {
         $this->tokenStorage->expects($this->any())
             ->method('getToken')
