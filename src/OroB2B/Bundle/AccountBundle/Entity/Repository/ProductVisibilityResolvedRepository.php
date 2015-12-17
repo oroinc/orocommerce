@@ -33,6 +33,10 @@ class ProductVisibilityResolvedRepository extends EntityRepository
         array $categoryIds,
         Website $website = null
     ) {
+        if (!$categories) {
+            return;
+        }
+
         $qb = $this->getVisibilitiesByCategoryQb($visibility, $categoryIds, $website);
 
         $executor->execute(
