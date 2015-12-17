@@ -109,19 +109,21 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
             ->getManagerForClass('OroB2BCatalogBundle:Category')
             ->getRepository('OroB2BCatalogBundle:Category')
             ->findOneByProduct($product);
-        $websites = $this->registry
-            ->getManagerForClass('OroB2BWebsiteBundle:Website')
-            ->getRepository('OroB2BWebsiteBundle:Website')
-            ->findAll();
+
         $isCategoryVisible = null;
         if ($category) {
             $isCategoryVisible = $this->categoryVisibilityResolver->isCategoryVisible($category);
+        } else {
+            $this->registry->getManagerForClass('OroB2BAccountBundle:Visibility\ProductVisibility')
+                ->getRepository('OroB2BAccountBundle:Visibility\ProductVisibility')
+                ->setToDefaultWithoutCategoryByProduct($this->insertFromSelectExecutor, $product);
         }
-        $this->getRepository()->deleteByProduct($product);
-        $this->getRepository()->insertByProduct(
+
+        $repository = $this->getRepository();
+        $repository->deleteByProduct($product);
+        $repository->insertByProduct(
             $this->insertFromSelectExecutor,
             $product,
-            $websites,
             $category,
             $isCategoryVisible
         );

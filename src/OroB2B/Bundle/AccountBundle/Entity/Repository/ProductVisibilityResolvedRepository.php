@@ -25,15 +25,15 @@ class ProductVisibilityResolvedRepository extends EntityRepository
      * @param InsertFromSelectQueryExecutor $executor
      * @param int $visibility
      * @param Website $website
-     * @param array $categories
+     * @param array $categoryIds
      */
     public function insertByCategory(
         InsertFromSelectQueryExecutor $executor,
         $visibility,
-        array $categories,
+        array $categoryIds,
         Website $website = null
     ) {
-        $qb = $this->getVisibilitiesByCategoryQb($visibility, $categories, $website);
+        $qb = $this->getVisibilitiesByCategoryQb($visibility, $categoryIds, $website);
 
         $executor->execute(
             $this->getClassName(),
@@ -127,37 +127,31 @@ class ProductVisibilityResolvedRepository extends EntityRepository
             ->where('productVisibility.product = :product')
             ->setParameter('product', $product)
             ->getQuery()
-            ->execute()
-        ;
+            ->execute();
     }
 
     /**
      * @param InsertFromSelectQueryExecutor $executor
      * @param Product $product
-     * @param array $websites
      * @param Category $category
      * @param boolean|null $isCategoryVisible
      */
     public function insertByProduct(
         InsertFromSelectQueryExecutor $executor,
         Product $product,
-        array $websites,
         Category $category = null,
         $isCategoryVisible = null
     ) {
-        foreach ($websites as $website) {
-            $this->insertFromBaseTable($executor, $website, $product);
-        }
-        $visibility = BaseProductVisibilityResolved::VISIBILITY_HIDDEN;
-        if ($isCategoryVisible) {
-            $visibility = BaseProductVisibilityResolved::VISIBILITY_VISIBLE;
-        }
+        $this->insertFromBaseTable($executor, null, $product);
+
         if ($category) {
+            $visibility = $isCategoryVisible
+                ? BaseProductVisibilityResolved::VISIBILITY_VISIBLE
+                : BaseProductVisibilityResolved::VISIBILITY_HIDDEN;
+
             $qb = $this->getVisibilitiesByCategoryQb($visibility, [$category->getId()]);
 
-            $qb->andWhere($qb->expr()->in('website.id', ':websites'))
-                ->andWhere('product = :product')
-                ->setParameter('websites', $websites)
+            $qb->andWhere('product = :product')
                 ->setParameter('product', $product);
 
             $executor->execute(
@@ -166,16 +160,15 @@ class ProductVisibilityResolvedRepository extends EntityRepository
                 $qb
             );
         }
-
     }
 
     /**
-     * @param $visibility
-     * @param array $categories
+     * @param int $visibility
+     * @param array $categoryIds
      * @param Website|null $website
      * @return \Doctrine\ORM\QueryBuilder
      */
-    protected function getVisibilitiesByCategoryQb($visibility, array $categories, Website $website = null)
+    protected function getVisibilitiesByCategoryQb($visibility, array $categoryIds, Website $website = null)
     {
         $qb = $this->getEntityManager()
             ->getRepository('OroB2BCatalogBundle:Category')
@@ -205,7 +198,7 @@ class ProductVisibilityResolvedRepository extends EntityRepository
             )
             ->where('pv.id is null')
             ->andWhere('category.id in (:ids)')
-            ->setParameter('ids', $categories);
+            ->setParameter('ids', $categoryIds);
 
         return $qb;
     }

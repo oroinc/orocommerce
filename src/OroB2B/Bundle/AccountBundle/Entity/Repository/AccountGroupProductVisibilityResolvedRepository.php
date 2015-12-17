@@ -42,8 +42,7 @@ class AccountGroupProductVisibilityResolvedRepository extends EntityRepository
             ->where('resolvedVisibility.product = :product')
             ->setParameter('product', $product)
             ->getQuery()
-            ->execute()
-        ;
+            ->execute();
     }
 
     /**
@@ -58,8 +57,6 @@ class AccountGroupProductVisibilityResolvedRepository extends EntityRepository
         $isCategoryVisible,
         Category $category = null
     ) {
-        $categoryVisibility = $isCategoryVisible ? AccountGroupProductVisibilityResolved::VISIBILITY_VISIBLE :
-            AccountGroupProductVisibilityResolved::VISIBILITY_HIDDEN;
         $visibilityMap = [
             AccountGroupProductVisibility::HIDDEN => [
                 'visibility' => AccountGroupProductVisibilityResolved::VISIBILITY_HIDDEN,
@@ -71,17 +68,23 @@ class AccountGroupProductVisibilityResolvedRepository extends EntityRepository
                 'source' => AccountGroupProductVisibilityResolved::SOURCE_STATIC,
                 'category' => null,
             ],
-            AccountGroupProductVisibility::CATEGORY => [
+        ];
+        if ($category) {
+            $categoryVisibility = $isCategoryVisible ? AccountGroupProductVisibilityResolved::VISIBILITY_VISIBLE :
+                AccountGroupProductVisibilityResolved::VISIBILITY_HIDDEN;
+            $visibilityMap[AccountGroupProductVisibility::CATEGORY] = [
                 'visibility' => $categoryVisibility,
                 'source' => AccountGroupProductVisibilityResolved::SOURCE_CATEGORY,
-                'category' => $category ? $category->getId() : null,
-            ],
-        ];
+                'category' => $category->getId()
+            ];
+        }
+
         foreach ($visibilityMap as $visibility => $productVisibility) {
             $qb = $this->getEntityManager()
                 ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
                 ->createQueryBuilder('productVisibility');
             $qb->select([
+                'productVisibility.id',
                 'IDENTITY(productVisibility.product)',
                 'IDENTITY(productVisibility.website)',
                 'IDENTITY(productVisibility.accountGroup)',
@@ -93,15 +96,12 @@ class AccountGroupProductVisibilityResolvedRepository extends EntityRepository
                 ->setParameter('product', $product)
                 ->setParameter('visibility', $visibility);
 
-            $fields = ['product', 'website', 'accountGroup', 'visibility', 'source'];
+            $fields = ['sourceProductVisibility', 'product', 'website', 'accountGroup', 'visibility', 'source'];
             if ($productVisibility['category']) {
                 $qb->addSelect((string)$productVisibility['category']);
                 $fields[] = 'category';
             }
-            if ($productVisibility['source'] == AccountGroupProductVisibilityResolved::SOURCE_STATIC) {
-                $qb->addSelect('productVisibility.id');
-                $fields[] = 'sourceProductVisibility';
-            }
+
             $insertFromSelect->execute(
                 $this->getEntityName(),
                 $fields,

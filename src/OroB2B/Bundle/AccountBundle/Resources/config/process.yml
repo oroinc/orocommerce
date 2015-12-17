@@ -58,7 +58,7 @@ definitions:
 
     product_create:
         enabled: true
-        label: Product created
+        label: 'Product create'
         entity: OroB2B\Bundle\ProductBundle\Entity\Product
         actions_configuration:
             - @resolve_visibility_by_product: ~
@@ -104,6 +104,18 @@ definitions:
         entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility
         actions_configuration:
             - @category_visibility_cache_clear: ~
+
+    category_create:
+        enabled: true
+        label: 'Category create'
+        entity: OroB2B\Bundle\CatalogBundle\Entity\Category
+        actions_configuration:
+            - @foreach: # for all products in new category
+                array: $products
+                value: $.product
+                actions:
+                    - @resolve_visibility_by_product:
+                        entity: $.product
 
 triggers:
     change_category_position:
@@ -192,5 +204,9 @@ triggers:
             event: delete
 
     product_create:
+        -
+            event: create
+
+    category_create:
         -
             event: create

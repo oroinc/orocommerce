@@ -20,12 +20,15 @@ class ResolveVisibilityByProduct extends AbstractVisibilityRegistryAwareAction
     protected function executeAction($context)
     {
         $product = $this->getEntity($context);
+
+        $entityManager = $this->getEntityManager();
+        $entityManager->beginTransaction();
         try {
-            $this->getEntityManager()->beginTransaction();
             $this->cacheBuilder->productCategoryChanged($product);
-            $this->getEntityManager()->commit();
+            $entityManager->commit();
         } catch (\Exception $e) {
-            $this->getEntityManager()->rollback();
+            $entityManager->rollback();
+            throw $e;
         }
     }
 

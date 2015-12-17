@@ -62,21 +62,31 @@ class ProductVisibilityRepository extends EntityRepository
     }
 
     /**
-     * @param Product $product
-     * @param array $websites
+     * @param InsertFromSelectQueryExecutor $executor
+     * @param Product|null $product
      */
-    public function setToDefaultWithoutCategoryByProduct(Product $product, array $websites)
+    public function setToDefaultWithoutCategoryByProduct(InsertFromSelectQueryExecutor $executor, Product $product)
     {
-        foreach ($websites as $website) {
-            $visibility = $this->findBy(['product' => $product, 'website' => $website]);
-            if (!$visibility) {
-                $visibility = new ProductVisibility();
-                $visibility->setProduct($product);
-                $visibility->setWebsite($website);
-                $visibility->setVisibility(ProductVisibility::CONFIG);
-                $this->getEntityManager()->persist($visibility);
-            }
-        }
-        $this->getEntityManager()->flush();
+        // drop all old data
+        $this->createQueryBuilder('entity')
+            ->delete($this->getEntityName(), 'entity')
+            ->andWhere('entity.product = :product')
+            ->setParameter('product', $product)
+            ->getQuery()
+            ->execute();
+
+        // insert new data
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select(['product.id', 'website.id', (string)$qb->expr()->literal(ProductVisibility::CONFIG)])
+            ->from('OroB2BProductBundle:Product', 'product')
+            ->innerJoin('OroB2BWebsiteBundle:Website', 'website', Join::WITH, '1 = 1')
+            ->andWhere('product.id = :productId')
+            ->setParameter('productId', $product);
+
+        $executor->execute(
+            'OroB2BAccountBundle:Visibility\ProductVisibility',
+            ['product', 'website', 'visibility'],
+            $qb
+        );
     }
 }

@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\AccountBundle\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
@@ -70,8 +71,7 @@ class AccountProductVisibilityResolvedRepository extends EntityRepository
             ->where('productVisibility.product = :product')
             ->setParameter('product', $product)
             ->getQuery()
-            ->execute()
-        ;
+            ->execute();
     }
 
     /**
@@ -86,8 +86,6 @@ class AccountProductVisibilityResolvedRepository extends EntityRepository
         $isCategoryVisible,
         Category $category = null
     ) {
-        $categoryVisibility = $isCategoryVisible ? AccountProductVisibilityResolved::VISIBILITY_VISIBLE :
-            AccountProductVisibilityResolved::VISIBILITY_HIDDEN;
         $visibilityMap = [
             AccountProductVisibility::HIDDEN => [
                 'visibility' => AccountProductVisibilityResolved::VISIBILITY_HIDDEN,
@@ -99,19 +97,26 @@ class AccountProductVisibilityResolvedRepository extends EntityRepository
                 'source' => AccountProductVisibilityResolved::SOURCE_STATIC,
                 'category' => null,
             ],
-            AccountProductVisibility::CATEGORY => [
+        ];
+        if ($category) {
+            $categoryVisibility = $isCategoryVisible ? AccountProductVisibilityResolved::VISIBILITY_VISIBLE :
+                AccountProductVisibilityResolved::VISIBILITY_HIDDEN;
+            $visibilityMap[AccountProductVisibility::CATEGORY] = [
                 'visibility' => $categoryVisibility,
                 'source' => AccountProductVisibilityResolved::SOURCE_CATEGORY,
-                'category' => $category ? $category->getId() : null,
-            ],
-        ];
+                'category' => $category->getId(),
+            ];
+        }
+
+        // TODO add processing of fallback to current_product
 
         foreach ($visibilityMap as $visibility => $productVisibility) {
             $qb = $this->getEntityManager()
                 ->getRepository('OroB2BAccountBundle:Visibility\AccountProductVisibility')
                 ->createQueryBuilder('productVisibility');
-            $fieldsInsert = ['product', 'website', 'account', 'visibility', 'source'];
+            $fieldsInsert = ['sourceProductVisibility', 'product', 'website', 'account', 'visibility', 'source'];
             $fieldsSelect = [
+                'productVisibility.id',
                 'IDENTITY(productVisibility.product)',
                 'IDENTITY(productVisibility.website)',
                 'IDENTITY(productVisibility.account)',
@@ -121,10 +126,6 @@ class AccountProductVisibilityResolvedRepository extends EntityRepository
             if ($productVisibility['category']) {
                 $fieldsSelect[] = (string)$productVisibility['category'];
                 $fieldsInsert[] = 'category';
-            }
-            if ($productVisibility['source'] == AccountProductVisibilityResolved::SOURCE_STATIC) {
-                $fieldsSelect[] = 'productVisibility.id';
-                $fieldsInsert[] = 'sourceProductVisibility';
             }
             $qb->select($fieldsSelect)
                 ->where('productVisibility.product = :product')

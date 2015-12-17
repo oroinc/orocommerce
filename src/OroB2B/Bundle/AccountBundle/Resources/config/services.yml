@@ -60,7 +60,6 @@ parameters:
     orob2b_account.event_listener.category_visibility.form_handler.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryVisibilityPostSubmitListener
     orob2b_account.event_listener.product_visibility.form_handler.class: OroB2B\Bundle\AccountBundle\EventListener\ProductVisibilityPostSubmitListener
     orob2b_account.event_listener.default_visibility.class: OroB2B\Bundle\AccountBundle\EventListener\DefaultVisibilityListener
-    orob2b_account.event_listener.product_visibility_listener.class: OroB2B\Bundle\AccountBundle\EventListener\ProductVisibilityListener
 
     orob2b_account.visibility.listener.abstract.class: OroB2B\Bundle\AccountBundle\EventListener\VisibilityAbstractListener
 
@@ -835,16 +834,9 @@ services:
         arguments:
             - @doctrine
             - @oro_entity.orm.insert_from_select_query_executor
+            - @orob2b_account.visibility.cache.product.cache_builder
         class: %orob2b_account.event_listener.category_listener.class%
         tags:
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: postFlush }
             - { name: doctrine.event_listener, event: postRemove }
-
-    orob2b_account.event_listener.product_visibility_listener:
-        class: %orob2b_account.event_listener.product_visibility_listener.class%
-        calls:
-            - [setCacheBuilder, [@orob2b_account.visibility.cache.product.cache_builder]]
-            - [setRegistry, [@doctrine]]
-            - [setProductVisibilityClass, [%orob2b_account.entity.product_visibility.class%]]
-        tags:
-            - {name: kernel.event_listener, event: 'oro.form.update_handler.after_entity_flush', method: onProductCategoryChange }
-
