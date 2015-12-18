@@ -63,6 +63,11 @@ class AccountProductVisibility implements VisibilityInterface, AccountAwareInter
      */
     protected $visibility;
 
+    public function __clone()
+    {
+        $this->id = null;
+    }
+
     /**
      * @return int
      */
