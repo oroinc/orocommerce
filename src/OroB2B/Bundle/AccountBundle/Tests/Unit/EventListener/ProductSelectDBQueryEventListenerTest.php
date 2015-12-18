@@ -15,11 +15,6 @@ use OroB2B\Bundle\ProductBundle\Event\ProductSelectDBQueryEvent;
 class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $requestStack;
-
-    /**
      * @var FrontendHelper|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $frontendHelper;
@@ -39,14 +34,12 @@ class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
         $this->frontendHelper = $this->getMockBuilder('OroB2B\Bundle\FrontendBundle\Request\FrontendHelper')
             ->disableOriginalConstructor()->getMock();
         $this->modifier = $this
             ->getMockBuilder('OroB2B\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier')
             ->disableOriginalConstructor()->getMock();
         $this->listener = new ProductSelectDBQueryEventListener(
-            $this->requestStack,
             $this->frontendHelper,
             $this->modifier
         );
@@ -93,16 +86,8 @@ class ProductSelectDBQueryEventListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected function setupRequest($frontend = true)
     {
-        /** @var Request $request */
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
-
-        $this->requestStack->expects($this->once())
-            ->method('getCurrentRequest')
-            ->willReturn($request);
-
         $this->frontendHelper->expects($this->once())
             ->method('isFrontendRequest')
-            ->with($request)
             ->willReturn($frontend);
     }
 

@@ -765,7 +765,6 @@ services:
     orob2b_account.event_listener.product_select_db_query:
         class: %orob2b_account.event_listener.product_select_db_query.class%
         arguments:
-            - @request_stack
             - @orob2b_frontend.request.frontend_helper
             - @orob2b_account.model.product_visibility_query_builder_modifier
         tags:
