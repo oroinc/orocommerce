@@ -1,11 +1,11 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
+namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\EventListener;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 
 use OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
-use OroB2B\Bundle\AccountBundle\EventListener\ProductVisibilityPostSubmitListener;
+use OroB2B\Bundle\AccountBundle\Form\EventListener\ProductVisibilityPostSubmitListener;
 
 use Symfony\Component\Form\FormInterface;
 

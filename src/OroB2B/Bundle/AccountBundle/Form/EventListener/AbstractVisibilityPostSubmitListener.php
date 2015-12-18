@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\EventListener;
+namespace OroB2B\Bundle\AccountBundle\Form\EventListener;
 
 use Symfony\Component\Form\FormInterface;
 

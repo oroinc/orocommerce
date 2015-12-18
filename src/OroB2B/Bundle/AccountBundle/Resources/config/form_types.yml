@@ -216,7 +216,7 @@ services:
 
     orob2b_account.form.listener.category.post_set_data:
         class: %orob2b_account.form.listener.visibility.post_set_data.class%
-        parent: orob2b_account.visibility.listener.abstract
+        parent: orob2b_account.event_listener.abstract_visibility.form_handler
 
     orob2b_account.form.extension.category_type:
         class: %orob2b_account.form.extension.category_type.class%

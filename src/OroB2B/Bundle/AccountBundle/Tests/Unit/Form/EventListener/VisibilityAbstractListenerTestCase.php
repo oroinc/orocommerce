@@ -1,8 +1,8 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
+namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\EventListener;
 
-use OroB2B\Bundle\AccountBundle\EventListener\VisibilityAbstractListener;
+use OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityAbstractListener;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\Form\FormInterface;
 
