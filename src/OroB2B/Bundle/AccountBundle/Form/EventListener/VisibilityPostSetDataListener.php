@@ -5,12 +5,11 @@ namespace OroB2B\Bundle\AccountBundle\Form\EventListener;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 
-use OroB2B\Bundle\AccountBundle\EventListener\VisibilityAbstractListener;
 use OroB2B\Bundle\AccountBundle\Entity\AccountAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroupAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 
-class VisibilityPostSetDataListener extends VisibilityAbstractListener
+class VisibilityPostSetDataListener extends AbstractVisibilityListener
 {
     /**
      * @param FormEvent $event

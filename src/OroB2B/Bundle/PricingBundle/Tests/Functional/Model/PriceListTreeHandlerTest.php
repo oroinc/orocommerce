@@ -71,9 +71,9 @@ class PriceListTreeHandlerTest extends WebTestCase
             'get PriceList from parent' => ['account.level_1.2.1', 'price_list_2'],
             'get PriceList from parents parent' => ['account.level_1.2.1.1', 'price_list_2'],
             'get PriceList from group' => ['account.level_1.3', 'price_list_1'],
-            'get PriceList from parent group' => ['account.level_1.3.1', 'price_list_1'],
-            'get PriceList from parents parent group' => ['account.level_1.3.1.1', 'price_list_1'],
-            'get PriceList from website' => ['account.level_1.4', 'price_list_1'],
+            'get PriceList from parent group' => ['account.level_1.4.1', 'price_list_5'],
+            'get PriceList from parents parent group' => ['account.level_1.4.1', 'price_list_5'],
+            'get PriceList from website' => ['account.level_1_1', 'price_list_1'],
         ];
     }
 

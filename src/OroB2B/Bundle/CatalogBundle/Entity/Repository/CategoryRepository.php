@@ -3,6 +3,8 @@
 namespace OroB2B\Bundle\CatalogBundle\Entity\Repository;
 
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
+
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
@@ -25,6 +27,25 @@ class CategoryRepository extends NestedTreeRepository
             ->setMaxResults(1)
             ->getQuery()
             ->getSingleResult();
+    }
+
+    /**
+     * @param object|null $node
+     * @param bool $direct
+     * @param string|null $sortByField
+     * @param string $direction
+     * @param bool $includeNode
+     * @return QueryBuilder
+     */
+    public function getChildrenQueryBuilderPartial(
+        $node = null,
+        $direct = false,
+        $sortByField = null,
+        $direction = 'ASC',
+        $includeNode = false
+    ) {
+        return $this->getChildrenQueryBuilder($node, $direct, $sortByField, $direction, $includeNode)
+            ->select('partial node.{id, parentCategory, left, level, right, root}');
     }
 
     /**
@@ -118,5 +139,16 @@ class CategoryRepository extends NestedTreeRepository
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    /**
+     * @param Category $category
+     * @return Category[]
+     */
+    public function getAllChildCategories(Category $category)
+    {
+         return $this->getChildrenQueryBuilderPartial($category)
+            ->getQuery()
+            ->getResult();
     }
 }
