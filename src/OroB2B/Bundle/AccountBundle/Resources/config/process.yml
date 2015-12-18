@@ -67,10 +67,10 @@ definitions:
             - @category_visibility_cache_clear: ~
 
     account_group_changed_cache_clear:
-        label: 'Clear Cache On Changing Category Position In Tree'
+        label: 'Clear Cache On Changing Account Group of Account'
         enabled: true
         order: 10
-        entity: OroB2B\Bundle\CatalogBundle\Entity\Category
+        entity: OroB2B\Bundle\AccountBundle\Entity\Account
         actions_configuration:
             - @category_visibility_cache_clear: ~
 
