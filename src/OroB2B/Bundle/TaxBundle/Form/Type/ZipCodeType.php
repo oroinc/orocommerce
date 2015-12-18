@@ -34,11 +34,9 @@ class ZipCodeType extends AbstractType
         $builder
             ->add('zipRangeStart', 'text', [
                 'required' => true,
-                'label' => '',
             ])
             ->add('zipRangeEnd', 'text', [
                 'required' => false,
-                'label' => '',
             ]);
     }
 
