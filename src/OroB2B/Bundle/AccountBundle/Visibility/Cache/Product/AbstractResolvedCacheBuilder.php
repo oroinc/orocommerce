@@ -41,18 +41,15 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
      * @param ManagerRegistry $registry
      * @param CategoryVisibilityResolver $categoryVisibilityResolver
      * @param ConfigManager $configManager
-     * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
      */
     public function __construct(
         ManagerRegistry $registry,
         CategoryVisibilityResolver $categoryVisibilityResolver,
-        ConfigManager $configManager,
-        InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
+        ConfigManager $configManager
     ) {
         $this->registry = $registry;
         $this->categoryVisibilityResolver = $categoryVisibilityResolver;
         $this->configManager = $configManager;
-        $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
     }
 
     /**

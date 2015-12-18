@@ -330,10 +330,9 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         /** @var $product Product */
         $category = $this->getCategoryByProduct($product);
-        $websites = $this->getWebsites();
         $this->repository->deleteByProduct($product);
 
-        $this->repository->insertByProduct($this->getInsertFromSelectExecutor(), $product, $websites, $category, false);
+        $this->repository->insertByProduct($this->getInsertFromSelectExecutor(), $product, $category, false);
         $this->repository->deleteByProduct($product);
         $visibilities = $this->repository->findBy(['product' => $product]);
         $this->assertEmpty($visibilities, 'Deleting has failed');
@@ -345,8 +344,7 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
         /** @var $product Product */
         $category = $this->getCategoryByProduct($product);
         $this->repository->deleteByProduct($product);
-        $websites = $this->getWebsites();
-        $this->repository->insertByProduct($this->getInsertFromSelectExecutor(), $product, $websites, $category, true);
+        $this->repository->insertByProduct($this->getInsertFromSelectExecutor(), $product, $category, true);
         $visibilities = $this->repository->findBy(['product' => $product]);
         $this->assertSame(2, count($visibilities), 'Not expected count of resolved visibilities');
         $resolvedVisibility = $this->repository->findOneBy(
@@ -361,9 +359,7 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
         $product = $this->getReference(LoadProductData::PRODUCT_4);
         $category = $this->getCategoryByProduct($product);
         $this->repository->deleteByProduct($product);
-
-        $websites = $this->getWebsites();
-        $this->repository->insertByProduct($this->getInsertFromSelectExecutor(), $product, $websites, $category, false);
+        $this->repository->insertByProduct($this->getInsertFromSelectExecutor(), $product, $category, false);
         $visibilities = $this->repository->findBy(['product' => $product]);
         $this->assertSame(3, count($visibilities), 'Not expected count of resolved visibilities');
     }
