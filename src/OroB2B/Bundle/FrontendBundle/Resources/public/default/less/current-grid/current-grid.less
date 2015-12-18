@@ -483,6 +483,11 @@
   padding: .7rem 1.1rem .2rem 13rem;
   position: relative;
 
+  &.filter-box_mobile {
+    padding: 0;
+    background: transparent;
+  }
+
   .filter-list-container {
     position: absolute !important;
     top: 1.4rem;
@@ -587,6 +592,15 @@
       min-width: 34rem !important;
       padding: 2rem;
 
+      &.dropdown-menu {
+        @media (max-width: 991px) {
+          min-width: 0 !important;
+          width: calc(~'100% + 6.6rem'); // 6.6rem = negative left param + right gap because of fixed width of .filter-box .oro-drop element
+          left: -2rem;
+          margin: 0 !important;
+        }
+      }
+
       .btn_close {
         color: #4597ca;
         opacity: 1;
@@ -607,6 +621,10 @@
           padding: 0;
           min-width: 27rem;
 
+          @media (max-width: 991px) {
+            min-width: 26rem;
+          }
+
           .nav-tabs-oro {
 
             > li {
@@ -622,7 +640,7 @@
           }
 
           .tab-content {
-            padding: 1rem 1.5rem 1.5rem;
+            padding: 1rem .8rem 1.5rem;
           }
 
           .ui-datevariables-div {
@@ -866,6 +884,12 @@
         }
       }
 
+      .oro-oq__filter__form__daterange {
+        @media (max-width: 991px) {
+          display: block;
+        }
+      }
+
       .oro-oq__filter__form__daterange_time {
 
         .fields-row {
@@ -920,6 +944,10 @@
       .filter-end-date {
         position: relative;
 
+        @media (max-width: 991px) {
+          display: block;
+        }
+
         i {
           font-family: 'FontAwesome' !important;
           font-style: normal;
@@ -968,6 +996,10 @@
   align-content: flex-start;
   align-items: center;
 
+  @media (max-width: 991px) {
+    margin: 1rem 0 0;
+  }
+
   .ui-multiselect {
     &.select-filter-widget {
       margin: 0;
@@ -976,13 +1008,24 @@
       left: 1.5rem;
       top: 2rem;
 
+      @media (max-width: 991px) {
+        position: static;
+        width: 100% !important;
+        margin: 0 0 1.5rem;
+      }
+
       a {
+        font-weight: 400;
         color: @theme-red-color;
 
         &:hover {
           span.caret {
             border-top-color: @theme-red-color;
           }
+        }
+
+        &:active, &:visited, &:focus {
+          color: @theme-red-color;
         }
       }
 
@@ -1001,11 +1044,19 @@
     padding: 2rem 2rem 1rem 2rem;
     min-width: 32rem !important;
 
+    @media (max-width: 991px) {
+      width: calc(~'100% - 3rem') !important;
+      min-width: 0 !important;
+      left: 1.5rem !important;
+    }
+
     .ui-multiselect-header {
       padding: 0;
 
       > div {
-        padding: 0;
+        padding: 1rem;
+        margin: -2rem -2rem 0;
+        border-bottom: .1rem solid #ebebeb;
 
         input[type="search"] {
           .input;
@@ -1040,6 +1091,10 @@
       li {
         display: inline-block;
         width: 45%;
+
+        @media (max-width: 991px) {
+          width: 100%;
+        }
 
         label {
           padding: .3rem 0;
