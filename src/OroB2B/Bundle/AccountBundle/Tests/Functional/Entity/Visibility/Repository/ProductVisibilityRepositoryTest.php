@@ -75,7 +75,6 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
                         'website' => 'Default',
                         'visibility' => ProductVisibility::VISIBLE
                     ],
-
                     [
                         'product' => 'product.4',
                         'website' => 'Default',
