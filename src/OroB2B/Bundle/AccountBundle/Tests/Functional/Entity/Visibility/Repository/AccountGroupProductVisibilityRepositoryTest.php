@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Repository;
+namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Visibility\Repository;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 

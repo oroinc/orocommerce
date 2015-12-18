@@ -110,6 +110,30 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function buildCacheDataProvider()
+    {
+        return [
+            'without_website' => [
+                'expectedStaticCount' => 4,
+                'expectedCategoryCount' => 16,
+                'websiteReference' => null,
+            ],
+            'with_website1' => [
+                'expectedStaticCount' => 0,
+                'expectedCategoryCount' => 5,
+                'websiteReference' => LoadWebsiteData::WEBSITE1,
+            ],
+            'with_website2' => [
+                'expectedStaticCount' => 0,
+                'expectedCategoryCount' => 8,
+                'websiteReference' => LoadWebsiteData::WEBSITE2,
+            ],
+        ];
+    }
+
+    /**
      * @param int $visibility
      */
     protected function assertAccountVisibilityResolved($visibility)
@@ -191,31 +215,6 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
         return $this->getContainer()->get('doctrine')->getRepository(
             'OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved'
         );
-    }
-
-
-    /**
-     * {@inheritdoc}
-     */
-    public function buildCacheDataProvider()
-    {
-        return [
-            'without_website' => [
-                'expectedStaticCount' => 4,
-                'expectedCategoryCount' => 16,
-                'websiteReference' => null,
-            ],
-            'with_website1' => [
-                'expectedStaticCount' => 0,
-                'expectedCategoryCount' => 5,
-                'websiteReference' => LoadWebsiteData::WEBSITE1,
-            ],
-            'with_website2' => [
-                'expectedStaticCount' => 0,
-                'expectedCategoryCount' => 8,
-                'websiteReference' => LoadWebsiteData::WEBSITE2,
-            ],
-        ];
     }
 
     /**

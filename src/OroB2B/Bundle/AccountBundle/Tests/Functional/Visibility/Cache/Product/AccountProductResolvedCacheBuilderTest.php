@@ -217,6 +217,14 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function testBuildCache($expectedStaticCount, $expectedCategoryCount, $websiteReference = null)
+    {
+        $this->markTestSkipped('Will complete after Account Cache Builder finished');
+    }
+
+    /**
      * @return null|ProductVisibility
      */
     protected function getProductVisibility()
