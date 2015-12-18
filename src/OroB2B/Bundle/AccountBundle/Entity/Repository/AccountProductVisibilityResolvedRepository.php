@@ -31,33 +31,4 @@ class AccountProductVisibilityResolvedRepository extends EntityRepository
     {
         return $this->findOneBy(['account' => $account, 'website' => $website, 'product' => $product]);
     }
-
-    /**
-     * Set specified visibility to all resolved entities with fallback to current product
-     *
-     * @param Website $website
-     * @param Product $product
-     * @param int $visibility
-     */
-    public function updateCurrentProductRelatedEntities(Website $website, Product $product, $visibility)
-    {
-        $affectedEntitiesDql = $this->getEntityManager()->createQueryBuilder()
-            ->select('apv.id')
-            ->from('OroB2BAccountBundle:Visibility\AccountProductVisibility', 'apv')
-            ->andWhere('apv.website = :website')
-            ->andWhere('apv.product = :product')
-            ->andWhere('apv.visibility = :visibility')
-            ->getQuery()
-            ->getDQL();
-
-        $this->createQueryBuilder('apvr')
-            ->update('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved', 'apvr')
-            ->set('apvr.visibility', $visibility)
-            ->where('IDENTITY(apvr.sourceProductVisibility) IN (' . $affectedEntitiesDql . ')')
-            ->setParameter('website', $website)
-            ->setParameter('product', $product)
-            ->setParameter('visibility', AccountProductVisibility::CURRENT_PRODUCT)
-            ->getQuery()
-            ->execute();
-    }
 }

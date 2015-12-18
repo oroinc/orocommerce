@@ -62,25 +62,6 @@ class AccountProductVisibilityResolvedRepositoryTest extends WebTestCase
         $this->assertEquals(spl_object_hash($expectedEntity), spl_object_hash($actualEntity));
     }
 
-    public function testUpdateCurrentProductRelatedEntities()
-    {
-        $website = $this->getDefaultWebsite();
-        /** @var Product $product */
-        $product = $this->getReference('product.5');
-        /** @var Account $account */
-        $account = $this->getReference('account.level_1');
-
-        $resolvedVisibility = $this->repository->findByPrimaryKey($account, $product, $website);
-        $this->assertNotNull($resolvedVisibility);
-        $this->assertEquals(BaseProductVisibilityResolved::VISIBILITY_VISIBLE, $resolvedVisibility->getVisibility());
-
-        $this->repository
-            ->updateCurrentProductRelatedEntities($website, $product, BaseProductVisibilityResolved::VISIBILITY_HIDDEN);
-
-        $this->entityManager->refresh($resolvedVisibility);
-        $this->assertEquals(BaseProductVisibilityResolved::VISIBILITY_HIDDEN, $resolvedVisibility->getVisibility());
-    }
-
     public function testInsertUpdateDeleteAndHasEntity()
     {
         $product = $this->getReference(LoadProductData::PRODUCT_1);
