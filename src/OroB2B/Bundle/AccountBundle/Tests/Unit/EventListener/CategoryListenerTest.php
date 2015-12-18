@@ -77,7 +77,9 @@ class CategoryListenerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($productVisibilityRepository));
 
         $accountGroupProductVisibilityRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupProductVisibilityRepository')
+            ->getMockBuilder(
+                'OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository\AccountGroupProductVisibilityRepository'
+            )
             ->disableOriginalConstructor()
             ->getMock();
 
