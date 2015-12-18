@@ -86,7 +86,10 @@ class DefaultVisibilityListenerTest extends WebTestCase
 
         // persisted with custom visibility
         /** @var VisibilityInterface $entity */
-        $entity = $this->getEntity($entityClass, $properties);
+        $entity = $this->findOneBy($entityClass, $properties);
+        if (!$entity) {
+            $entity = $this->getEntity($entityClass, $properties);
+        }
         $entity->setVisibility(VisibilityInterface::VISIBLE);
         $entityManager->persist($entity);
         $entityManager->flush();
@@ -189,9 +192,10 @@ class DefaultVisibilityListenerTest extends WebTestCase
      */
     protected function assertEntitiesSame($expected, $actual)
     {
+        $propertyAccessor = $this->getPropertyAccessor();
         $this->assertEquals(
-            $this->propertyAccessor->getValue($expected, 'id'),
-            $this->propertyAccessor->getValue($actual, 'id')
+            $propertyAccessor->getValue($expected, 'id'),
+            $propertyAccessor->getValue($actual, 'id')
         );
     }
 }
