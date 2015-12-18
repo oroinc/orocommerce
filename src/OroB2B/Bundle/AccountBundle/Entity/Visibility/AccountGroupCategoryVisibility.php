@@ -14,7 +14,15 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
  * @ORM\Entity(
  *   repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository\AccountGroupCategoryVisibilityRepository"
  * )
- * @ORM\Table(name="orob2b_acc_grp_ctgr_visibility")
+ * @ORM\Table(
+ *      name="orob2b_acc_grp_ctgr_visibility",
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(
+ *              name="orob2b_acc_grp_ctgr_vis_uidx",
+ *              columns={"category_id", "account_group_id"}
+ *          )
+ *      }
+ * )
  * @Config
  */
 class AccountGroupCategoryVisibility implements VisibilityInterface, AccountGroupAwareInterface
