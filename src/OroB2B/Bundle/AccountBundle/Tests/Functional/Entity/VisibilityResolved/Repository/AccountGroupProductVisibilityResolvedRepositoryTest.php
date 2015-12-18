@@ -55,11 +55,11 @@ class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
 
     public function testClearTable()
     {
-        $this->assertCount(6, $this->getRepository()->findAll());
+        $this->assertCount(8, $this->getRepository()->findAll());
         $deletedCount = $this->getRepository()->clearTable();
 
         $this->assertCount(0, $this->getRepository()->findAll());
-        $this->assertEquals(6, $deletedCount);
+        $this->assertEquals(8, $deletedCount);
     }
 
     /**
@@ -146,7 +146,7 @@ class AccountGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
         $this->getRepository()->clearTable();
         $this->getRepository()->insertStatic($this->getInsertFromSelectExecutor());
         $resolved = $this->getResolvedValues();
-        $this->assertCount(4, $resolved);
+        $this->assertCount(6, $resolved);
         $visibilities = $this->registry
             ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility')
             ->findAll();

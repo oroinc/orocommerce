@@ -101,7 +101,7 @@ class AccountGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTe
     {
         return [
             'without_website' => [
-                'expectedStaticCount' => 4,
+                'expectedStaticCount' => 6,
                 'expectedCategoryCount' => 2,
                 'websiteReference' => null,
             ],
