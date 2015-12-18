@@ -126,10 +126,6 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
                 );
             }
             $this->getRepository()->insertStatic($this->insertFromSelectQueryExecutor, $websiteId);
-            $this->getRepository()->insertForCurrentProductFallback(
-                $this->insertFromSelectQueryExecutor,
-                $website
-            );
 
             $this->getManager()->commit();
         } catch (\Exception $exception) {

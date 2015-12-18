@@ -76,73 +76,42 @@ class AccountProductRepository extends AbstractVisibilityRepository
      */
     public function insertStatic(InsertFromSelectQueryExecutor $insertFromSelect, $websiteId = null)
     {
+        $visibility = <<<VISIBILITY
+CASE WHEN apv.visibility = :visible
+    THEN :cacheVisible
+ELSE
+    CASE WHEN apv.visibility = :currentProduct
+        THEN :cacheFallbackAll
+    ELSE :cacheHidden
+    END
+END
+VISIBILITY;
         $queryBuilder = $this->getEntityManager()
             ->getRepository('OroB2BAccountBundle:Visibility\AccountProductVisibility')
-            ->createQueryBuilder('apv')
+            ->createQueryBuilder('apv');
+        $queryBuilder
             ->select(
-                [
-                    'IDENTITY(apv.website)',
-                    'IDENTITY(apv.product)',
-                    'IDENTITY(apv.account)',
-                    'CASE WHEN apv.visibility = :visible THEN :cacheVisible ELSE :cacheHidden END',
-                    (string)BaseProductVisibilityResolved::SOURCE_STATIC,
-                ]
+                'IDENTITY(apv.website)',
+                'IDENTITY(apv.product)',
+                'IDENTITY(apv.account)',
+                $visibility,
+                (string)BaseProductVisibilityResolved::SOURCE_STATIC
             )
-            ->where('apv.visibility = :visible OR apv.visibility = :hidden')
+            ->where($queryBuilder->expr()->orX(
+                $queryBuilder->expr()->eq('apv.visibility', ':visible'),
+                $queryBuilder->expr()->eq('apv.visibility', ':hidden'),
+                $queryBuilder->expr()->eq('apv.visibility', ':currentProduct')
+            ))
             ->setParameter('visible', AccountProductVisibility::VISIBLE)
             ->setParameter('hidden', AccountProductVisibility::HIDDEN)
+            ->setParameter('currentProduct', AccountProductVisibility::CURRENT_PRODUCT)
             ->setParameter('cacheVisible', BaseProductVisibilityResolved::VISIBILITY_VISIBLE)
-            ->setParameter('cacheHidden', BaseProductVisibilityResolved::VISIBILITY_HIDDEN);
+            ->setParameter('cacheHidden', BaseProductVisibilityResolved::VISIBILITY_HIDDEN)
+            ->setParameter('cacheFallbackAll', AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL);
 
         if ($websiteId) {
             $queryBuilder->andWhere('IDENTITY(apv.website) = :website')
                 ->setParameter('website', $websiteId);
-        }
-        $insertFromSelect->execute(
-            $this->getClassName(),
-            [
-                'website',
-                'product',
-                'account',
-                'visibility',
-                'source',
-            ],
-            $queryBuilder
-        );
-    }
-
-    /**
-     * @param InsertFromSelectQueryExecutor $insertFromSelect
-     * @param Website|null $website
-     */
-    public function insertForCurrentProductFallback(
-        InsertFromSelectQueryExecutor $insertFromSelect,
-        Website $website = null
-    ) {
-        $queryBuilder = $this->getEntityManager()
-            ->getRepository('OroB2BAccountBundle:Visibility\AccountProductVisibility')
-            ->createQueryBuilder('apv')
-            ->select(
-                [
-                    'IDENTITY(apv.website)',
-                    'IDENTITY(apv.product)',
-                    'IDENTITY(apv.account)',
-                    (string)AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL,
-                    (string)BaseProductVisibilityResolved::SOURCE_STATIC,
-                ]
-            )
-            ->leftJoin(
-                'OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved',
-                'pvr',
-                Join::WITH,
-                'pvr.product = apv.product AND pvr.website = apv.website'
-            )
-            ->where('apv.visibility = :current_product')
-            ->setParameter('current_product', AccountProductVisibility::CURRENT_PRODUCT);
-
-        if ($website) {
-            $queryBuilder->andWhere('apv.website = :website')
-                ->setParameter('website', $website);
         }
         $insertFromSelect->execute(
             $this->getClassName(),

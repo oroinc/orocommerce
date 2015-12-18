@@ -40,11 +40,9 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
     {
         $this->initClient();
 
-        $this->loadFixtures(
-            [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
-            ]
-        );
+        $this->loadFixtures([
+            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
+        ]);
 
         $this->getContainer()->get('orob2b_account.storage.category_visibility_storage')->flush();
         $this->registry = $this->client->getContainer()->get('doctrine');
@@ -98,8 +96,7 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
      */
     public function testBuildCache($expectedStaticCount, $expectedCategoryCount, $websiteReference = null)
     {
-        /** @var Website|null $website */
-        $website = $websiteReference ? $this->getReference($websiteReference) : null;
+        $website = $this->getWebsite($websiteReference);
         $this->getRepository()->clearTable();
         $this->getCacheBuilder()->buildCache($website);
 
@@ -138,5 +135,19 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
     protected function clearCategoryCache()
     {
         $this->getContainer()->get('orob2b_account.storage.category_visibility_storage')->flush();
+    }
+
+    /**
+     * @param string $websiteReference
+     * @return Website
+     */
+    protected function getWebsite($websiteReference)
+    {
+        if ($websiteReference === 'default') {
+            return $this->registry->getManagerForClass('OroB2BWebsiteBundle:Website')
+                ->getRepository('OroB2BWebsiteBundle:Website')
+                ->getDefaultWebsite();
+        }
+        return $websiteReference ? $this->getReference($websiteReference) : null;
     }
 }

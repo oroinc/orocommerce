@@ -62,12 +62,10 @@ class AccountRepository extends EntityRepository
             )
             ->where($qb->expr()->eq('accountCategoryVisibility.category', ':category'))
             ->andWhere($qb->expr()->eq('accountCategoryVisibility.visibility', ':visibility'))
-            ->setParameters(
-                [
-                    'category' => $category,
-                    'visibility' => $visibility,
-                ]
-            );
+            ->setParameters([
+                'category' => $category,
+                'visibility' => $visibility,
+            ]);
 
         if ($restrictedAccountIds !== null) {
             $qb->andWhere($qb->expr()->in('account.id', ':restrictedAccountIds'))

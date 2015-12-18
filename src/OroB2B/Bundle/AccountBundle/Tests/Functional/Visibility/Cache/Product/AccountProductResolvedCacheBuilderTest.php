@@ -155,6 +155,35 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function buildCacheDataProvider()
+    {
+        return [
+            'without_website' => [
+                'expectedStaticCount' => 5,
+                'expectedCategoryCount' => 1,
+                'websiteReference' => null,
+            ],
+            'with_default_website' => [
+                'expectedStaticCount' => 4,
+                'expectedCategoryCount' => 0,
+                'websiteReference' => 'default',
+            ],
+            'with_website1' => [
+                'expectedStaticCount' => 1,
+                'expectedCategoryCount' => 1,
+                'websiteReference' => LoadWebsiteData::WEBSITE1,
+            ],
+            'with_website2' => [
+                'expectedStaticCount' => 0,
+                'expectedCategoryCount' => 0,
+                'websiteReference' => LoadWebsiteData::WEBSITE2,
+            ],
+        ];
+    }
+
+    /**
      * @param BaseProductVisibilityResolved|AccountProductVisibilityResolved $visibilityResolved
      */
     protected function assertProductIdentifyEntitiesAccessory(BaseProductVisibilityResolved $visibilityResolved)
@@ -249,32 +278,7 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     /**
      * {@inheritdoc}
      */
-
-    public function buildCacheDataProvider()
-    {
-        return [
-            'without_website' => [
-                'expectedStaticCount' => 5,
-                'expectedCategoryCount' => 1,
-                'websiteReference' => null,
-            ],
-            'with_website1' => [
-                'expectedStaticCount' => 1,
-                'expectedCategoryCount' => 1,
-                'websiteReference' => LoadWebsiteData::WEBSITE1,
-            ],
-            'with_website2' => [
-                'expectedStaticCount' => 0,
-                'expectedCategoryCount' => 0,
-                'websiteReference' => LoadWebsiteData::WEBSITE2,
-            ],
-        ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCacheBuilder()
+    protected function getCacheBuilder()
     {
         return $this->client
             ->getContainer()

@@ -157,29 +157,6 @@ class AccountProductVisibilityResolvedRepositoryTest extends VisibilityResolvedR
         );
     }
 
-    public function testInsertForCurrentProductFallback()
-    {
-        /** @var AccountProductVisibility $accountProductVisibility */
-        $accountProductVisibility = $this->getReference('product.5.visibility.account.level_1');
-        $this->getRepository()->clearTable();
-        $this->getRepository()->insertForCurrentProductFallback(
-            $this->getInsertFromSelectExecutor()
-        );
-        $resolvedVisibility = $this->getResolvedVisibility(
-            $this->getRepository()->findAll(),
-            $accountProductVisibility->getProduct(),
-            $accountProductVisibility->getAccount(),
-            $accountProductVisibility->getWebsite()
-        );
-        $this->assertEquals(
-            $resolvedVisibility->getVisibility(),
-            AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL
-        );
-    }
-
-    /**
-     * @depends testInsertForCurrentProductFallback
-     */
     public function testUpdateCurrentProductRelatedEntities()
     {
         $website = $this->getDefaultWebsite();
