@@ -154,6 +154,25 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     }
 
     /**
+     * @dataProvider buildCacheDataProvider
+     * @param $expectedStaticCount
+     * @param $expectedCategoryCount
+     * @param null $websiteReference
+     */
+    public function testBuildCache($expectedStaticCount, $expectedCategoryCount, $websiteReference = null)
+    {
+        $this->markTestSkipped('Will complete after Account Cache Builder finished');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildCacheDataProvider()
+    {
+        return [[1, 2, null]];
+    }
+
+    /**
      * @param BaseProductVisibilityResolved|AccountProductVisibilityResolved $visibilityResolved
      */
     protected function assertProductIdentifyEntitiesAccessory(BaseProductVisibilityResolved $visibilityResolved)
@@ -216,14 +235,6 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function testBuildCache($expectedStaticCount, $expectedCategoryCount, $websiteReference = null)
-    {
-        $this->markTestSkipped('Will complete after Account Cache Builder finished');
-    }
-
-    /**
      * @return null|ProductVisibility
      */
     protected function getProductVisibility()
@@ -256,15 +267,7 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     /**
      * {@inheritdoc}
      */
-    public function buildCacheDataProvider()
-    {
-        return [[1, 2, null]];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCacheBuilder()
+    protected function getCacheBuilder()
     {
         return $this->client
             ->getContainer()
