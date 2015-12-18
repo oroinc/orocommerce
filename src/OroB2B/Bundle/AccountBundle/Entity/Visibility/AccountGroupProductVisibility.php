@@ -64,6 +64,11 @@ class AccountGroupProductVisibility implements VisibilityInterface, AccountGroup
      */
     protected $visibility;
 
+    public function __clone()
+    {
+        $this->id = null;
+    }
+
     /**
      * @return int
      */

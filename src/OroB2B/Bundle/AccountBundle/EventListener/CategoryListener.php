@@ -4,10 +4,14 @@ namespace OroB2B\Bundle\AccountBundle\EventListener;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\OnFlushEventArgs;
+use Doctrine\ORM\PersistentCollection;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class CategoryListener
 {
@@ -22,13 +26,64 @@ class CategoryListener
     protected $insertFromSelectQueryExecutor;
 
     /**
+     * @var ProductCaseCacheBuilderInterface
+     */
+    protected $cacheBuilder;
+
+    /**
+     * @var array
+     */
+    protected $productIdsToUpdate = [];
+
+    /**
      * @param Registry $registry
      * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
+     * @param ProductCaseCacheBuilderInterface $cacheBuilder
      */
-    public function __construct(Registry $registry, InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor)
-    {
+    public function __construct(
+        Registry $registry,
+        InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor,
+        ProductCaseCacheBuilderInterface $cacheBuilder
+    ) {
         $this->registry = $registry;
         $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
+        $this->cacheBuilder = $cacheBuilder;
+    }
+
+    /**
+     * @param OnFlushEventArgs $event
+     */
+    public function onFlush(OnFlushEventArgs $event)
+    {
+        $unitOfWork = $event->getEntityManager()->getUnitOfWork();
+        $collections = $unitOfWork->getScheduledCollectionUpdates();
+        foreach ($collections as $collection) {
+            if ($collection instanceof PersistentCollection && $collection->getOwner() instanceof Category
+                && $collection->getMapping()['fieldName'] === 'products'
+                && $collection->isDirty() && $collection->isInitialized()
+            ) {
+                /** @var Product $product */
+                foreach (array_merge($collection->getInsertDiff(), $collection->getDeleteDiff()) as $product) {
+                    $productId = $product->getId();
+                    if (!in_array($productId, $this->productIdsToUpdate)) {
+                        $this->productIdsToUpdate[] = $productId;
+                    }
+                }
+            }
+        }
+    }
+
+    public function postFlush()
+    {
+        $repository = $this->registry->getManagerForClass('OroB2BProductBundle:Product')
+            ->getRepository('OroB2BProductBundle:Product');
+
+        while ($productId = array_shift($this->productIdsToUpdate)) {
+            $product = $repository->find($productId);
+            if ($product) {
+                $this->cacheBuilder->productCategoryChanged($product);
+            }
+        }
     }
 
     /**

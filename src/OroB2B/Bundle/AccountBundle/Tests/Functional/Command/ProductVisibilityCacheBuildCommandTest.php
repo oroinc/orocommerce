@@ -101,7 +101,7 @@ class ProductVisibilityCacheBuildCommandTest extends WebTestCase
                 ]
             ],
             'withWrongIdParam' => [
-                'params' => ['--website_id=2'],
+                'params' => ['--website_id=0'],
                 'expectedMessages' =>
                 [
                     'Website id is not valid',

@@ -52,6 +52,11 @@ class ProductVisibility implements VisibilityInterface, WebsiteAwareInterface
      */
     protected $visibility;
 
+    public function __clone()
+    {
+        $this->id = null;
+    }
+
     /**
      * @return int
      */
