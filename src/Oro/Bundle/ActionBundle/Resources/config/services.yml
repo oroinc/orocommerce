@@ -97,6 +97,7 @@ services:
         arguments:
             - @oro_action.manager
             - @oro_action.helper.context
+            - @oro_action.helper.applications
         tags:
             - { name: oro_datagrid.extension }
         lazy: true

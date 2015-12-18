@@ -7,6 +7,7 @@ use Oro\Bundle\ActionBundle\Model\Action;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionDefinition;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
+use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
 use Oro\Bundle\ActionBundle\Helper\ContextHelper;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
@@ -33,13 +34,18 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ApplicationsHelper $applicationHelper */
+        $applicationHelper = $this->getMockBuilder('Oro\Bundle\ActionBundle\Helper\ApplicationsHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $actionData = new ActionData(['data' => ['param']]);
 
         $contextHelper->expects($this->any())
             ->method('getActionData')
             ->willReturn($actionData);
 
-        $this->extension = new ActionExtension($this->manager, $contextHelper);
+        $this->extension = new ActionExtension($this->manager, $contextHelper, $applicationHelper);
     }
 
     /**

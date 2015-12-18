@@ -24,7 +24,9 @@ define(function(require) {
     ActionWidgetAction = ModelAction.extend({
         options: {
             datagridConfirm: null,
-            dialogUrl: null,
+            showDialog: null,
+            executionRoute: null,
+            dialogRoute: null,
             dialogOptions: {
                 title: 'Action',
                 allowMaximize: false,
@@ -127,7 +129,7 @@ define(function(require) {
                 'datagrid': this.options.datagrid
             };
             if (this.options.showDialog) {
-                var dialogUrl = routing.generate('oro_action_widget_form', routeParams);
+                var dialogUrl = routing.generate(this.options.dialogRoute, routeParams);
                 var widget = new DialogWidget(this._getDialogOptions(dialogUrl));
 
                 Backbone.listenTo(widget, 'formSave', _.bind(function(response) {
@@ -138,7 +140,7 @@ define(function(require) {
                 widget.render();
             } else {
                 mediator.execute('showLoading');
-                var url = routing.generate('oro_api_action_execute', routeParams);
+                var url = routing.generate(this.options.executionRoute, routeParams);
                 $.getJSON(url)
                     .done(_.bind(function(response) {
                         this.doResponse(response);

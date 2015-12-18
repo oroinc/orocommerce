@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ActionBundle\Datagrid\Extension;
 
+use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
 use Oro\Bundle\ActionBundle\Model\Action;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 use Oro\Bundle\ActionBundle\Helper\ContextHelper;
@@ -17,6 +18,9 @@ class ActionExtension extends AbstractExtension
     /** @var ContextHelper */
     protected $contextHelper;
 
+    /** @var ApplicationsHelper */
+    protected $applicationHelper;
+
     /** @var array */
     protected $actionConfiguration = [];
 
@@ -29,13 +33,16 @@ class ActionExtension extends AbstractExtension
     /**
      * @param ActionManager $actionManager
      * @param ContextHelper $contextHelper
+     * @param ApplicationsHelper $applicationHelper
      */
     public function __construct(
         ActionManager $actionManager,
-        ContextHelper $contextHelper
+        ContextHelper $contextHelper,
+        ApplicationsHelper $applicationHelper
     ) {
         $this->actionManager = $actionManager;
         $this->contextHelper = $contextHelper;
+        $this->applicationsHelper = $applicationHelper;
     }
 
     /**
@@ -108,6 +115,8 @@ class ActionExtension extends AbstractExtension
                         ? $frontendOptions['datagrid_confirm']
                         : '',
                     'showDialog' => $action->hasForm(),
+                    'executionRoute' => $this->applicationsHelper->getExecutionRoute(),
+                    'dialogRoute' => $this->applicationsHelper->getDialogRoute(),
                     'dialogOptions' => [
                         'title' => $action->getDefinition()->getLabel(),
                         'dialogOptions' => !empty($frontendOptions['dialog_options'])
