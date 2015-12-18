@@ -3,12 +3,13 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product;
 
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 
+use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountProductVisibilityResolvedRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
 /**
@@ -52,13 +53,6 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
      */
     public function testChangeAccountProductVisibilityToCategory()
     {
-        $this->clearCategoryCache();
-
-        /** @var Category $category */
-        $category = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
-        $category->addProduct($this->product);
-        $this->registry->getManagerForClass('OroB2BCatalogBundle:Category')->flush();
-
         $visibility = $this->getVisibility();
         $visibility->setVisibility(AccountProductVisibility::CATEGORY);
 
@@ -68,7 +62,10 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
         $visibilityResolved = $this->getVisibilityResolved();
         $this->assertEquals($visibility, $visibilityResolved->getSourceProductVisibility());
         $this->assertEquals(BaseProductVisibilityResolved::SOURCE_CATEGORY, $visibilityResolved->getSource());
-        $this->assertEquals($category->getId(), $visibilityResolved->getCategory()->getId());
+        $this->assertEquals(
+            $this->getReference(LoadCategoryData::FIRST_LEVEL)->getId(),
+            $visibilityResolved->getCategory()->getId()
+        );
         $this->assertEquals(BaseProductVisibilityResolved::VISIBILITY_VISIBLE, $visibilityResolved->getVisibility());
         $this->assertProductIdentifyEntitiesAccessory($visibilityResolved);
     }
@@ -157,6 +154,25 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     }
 
     /**
+     * @dataProvider buildCacheDataProvider
+     * @param $expectedStaticCount
+     * @param $expectedCategoryCount
+     * @param null $websiteReference
+     */
+    public function testBuildCache($expectedStaticCount, $expectedCategoryCount, $websiteReference = null)
+    {
+        $this->markTestSkipped('Will complete after Account Cache Builder finished');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildCacheDataProvider()
+    {
+        return [[1, 2, null]];
+    }
+
+    /**
      * @param BaseProductVisibilityResolved|AccountProductVisibilityResolved $visibilityResolved
      */
     protected function assertProductIdentifyEntitiesAccessory(BaseProductVisibilityResolved $visibilityResolved)
@@ -226,5 +242,35 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
         return $this->getManagerForProductVisibility()
             ->getRepository('OroB2BAccountBundle:Visibility\ProductVisibility')
             ->findOneBy(['website' => $this->website, 'product' => $this->product]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getSourceRepository()
+    {
+        return $this->getContainer()->get('doctrine')->getRepository(
+            'OroB2BAccountBundle:Visibility\AccountProductVisibility'
+        );
+    }
+
+    /**
+     * @return AccountProductVisibilityResolvedRepository|EntityRepository
+     */
+    protected function getRepository()
+    {
+        return $this->getContainer()->get('doctrine')->getRepository(
+            'OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved'
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getCacheBuilder()
+    {
+        return $this->client
+            ->getContainer()
+            ->get('orob2b_account.visibility.cache.product.account_product_resolved_cache_builder');
     }
 }

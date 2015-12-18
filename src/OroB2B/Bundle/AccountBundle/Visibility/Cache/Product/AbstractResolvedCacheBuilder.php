@@ -5,9 +5,11 @@ namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolver;
 use OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 
@@ -22,19 +24,25 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
     /** @var  ConfigManager */
     protected $configManager;
 
+    /** @var  InsertFromSelectQueryExecutor */
+    protected $insertFromSelectQueryExecutor;
+
     /**
      * @param ManagerRegistry $registry
-     * @param CategoryVisibilityResolverInterface $categoryVisibilityResolver
+     * @param CategoryVisibilityResolver $categoryVisibilityResolver
      * @param ConfigManager $configManager
+     * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
      */
     public function __construct(
         ManagerRegistry $registry,
-        CategoryVisibilityResolverInterface $categoryVisibilityResolver,
-        ConfigManager $configManager
+        CategoryVisibilityResolver $categoryVisibilityResolver,
+        ConfigManager $configManager,
+        InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
     ) {
         $this->registry = $registry;
         $this->categoryVisibilityResolver = $categoryVisibilityResolver;
         $this->configManager = $configManager;
+        $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
     }
 
     /**
