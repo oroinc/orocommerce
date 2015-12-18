@@ -249,6 +249,7 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     /**
      * {@inheritdoc}
      */
+
     public function buildCacheDataProvider()
     {
         return [
