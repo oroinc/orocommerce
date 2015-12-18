@@ -7,7 +7,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilder;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\CacheBuilder;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class ProductVisibilityCacheBuildCommand extends ContainerAwareCommand
@@ -36,10 +36,11 @@ class ProductVisibilityCacheBuildCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         /** @var CacheBuilder $cacheBuilder */
-        $cacheBuilder = $this->getContainer()->get('orob2b_account.visibility.cache.cache_builder');
+        $cacheBuilder = $this->getContainer()->get('orob2b_account.visibility.cache.product.cache_builder');
+
         /** @var Website|null $website */
         $website = null;
-        $forWebsiteStr = ' for all websites';
+        $forWebsiteStr = 'for all websites';
         if ($input->getOption('website_id')) {
             $website = $this->getContainer()
                 ->get('doctrine')
@@ -51,11 +52,12 @@ class ProductVisibilityCacheBuildCommand extends ContainerAwareCommand
 
                 return;
             }
-            $forWebsiteStr = sprintf(' for website "%s"', $website->getName());
+            $forWebsiteStr = sprintf('for website "%s"', $website->getName());
         }
         $output->writeln(
-            sprintf('<info>Start the process of building the cache%s</info>', $forWebsiteStr)
+            sprintf('<info>Start the process of building the cache %s</info>', $forWebsiteStr)
         );
+
         $cacheBuilder->buildCache($website);
         $output->writeln('<info>The cache is updated successfully</info>');
     }
