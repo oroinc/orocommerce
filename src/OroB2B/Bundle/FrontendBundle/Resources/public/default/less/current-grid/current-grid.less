@@ -1139,10 +1139,6 @@
   }
 }
 
-.other-scroll-container {
-  margin: 0;
-}
-
 .ui-timepicker-wrapper {
   overflow-y: auto;
   height: 15rem;
@@ -1178,6 +1174,40 @@
       &:hover {
         background: #1980EC;
         color: #fff;
+      }
+    }
+  }
+}
+
+//Table
+.oro-datagrid {
+  .other-scroll-container {
+    border-radius: 0;
+    margin: 0;
+    border: 0;
+
+    .container-fluid {
+      padding: 0;
+    }
+  }
+
+  .grid-container {
+
+    .table-bordered {
+      th, td {
+        border-left: 0;
+        border-right: 0;
+      }
+    }
+
+    .grid {
+
+      thead {
+        tr {
+          th {
+            border-radius: 0;
+          }
+        }
       }
     }
   }
