@@ -7,7 +7,7 @@ use Oro\Bundle\ActionBundle\Model\Action;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionDefinition;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
-use Oro\Bundle\ActionBundle\Model\ContextHelper;
+use Oro\Bundle\ActionBundle\Helper\ContextHelper;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 
@@ -29,7 +29,7 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|ContextHelper $contextHelper */
-        $contextHelper = $this->getMockBuilder('Oro\Bundle\ActionBundle\Model\ContextHelper')
+        $contextHelper = $this->getMockBuilder('Oro\Bundle\ActionBundle\Helper\ContextHelper')
             ->disableOriginalConstructor()
             ->getMock();
 
