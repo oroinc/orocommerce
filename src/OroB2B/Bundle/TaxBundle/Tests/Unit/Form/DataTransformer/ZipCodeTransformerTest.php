@@ -28,15 +28,12 @@ class ZipCodeTransformerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider testTransformProvider
-     * @param ZipCode[]|Collection $zipCodes
+     * @param ZipCode $zipCode
      * @param string $expected
      */
-    public function testTransform($zipCodes, $expected)
+    public function testTransform($zipCode, $expected)
     {
-        if (!$zipCodes instanceof Collection) {
-            $zipCodes = new ArrayCollection($zipCodes);
-        }
-        $this->assertEquals($expected, $this->transformer->transform($zipCodes));
+        $this->assertEquals($expected, $this->transformer->transform($zipCode));
     }
 
     /**
@@ -45,49 +42,29 @@ class ZipCodeTransformerTest extends \PHPUnit_Framework_TestCase
     public function testTransformProvider()
     {
         return [
+            'nullable value' => [
+                'value' => null,
+                'expectedCode' => null,
+            ],
             'single value zip codes' => [
-                'zipCodes' => [
-                    ZipCodeTestHelper::getSingleValueZipCode('01000'),
-                    ZipCodeTestHelper::getSingleValueZipCode('01200'),
-                    ZipCodeTestHelper::getSingleValueZipCode('01050'),
-                ],
-                'expected' => '01000,01200,01050',
+                'zipCode' => ZipCodeTestHelper::getSingleValueZipCode('01000'),
+                'expected' => ZipCodeTestHelper::getRangeZipCode('01000', null),
             ],
             'range zip codes' => [
-                'zipCodes' => [
-                    ZipCodeTestHelper::getRangeZipCode('01000', '02000'),
-                    ZipCodeTestHelper::getRangeZipCode('01400', '02000'),
-                    ZipCodeTestHelper::getRangeZipCode('05000', '06000'),
-                ],
-                'expected' => '01000-02000,01400-02000,05000-06000',
-            ],
-            'mixed zip codes' => [
-                'zipCodes' => [
-                    ZipCodeTestHelper::getSingleValueZipCode('11000'),
-                    ZipCodeTestHelper::getRangeZipCode('01000', '02000'),
-                    ZipCodeTestHelper::getSingleValueZipCode('21000'),
-                    ZipCodeTestHelper::getRangeZipCode('01400', '02000'),
-                    ZipCodeTestHelper::getRangeZipCode('05000', '06000'),
-                    ZipCodeTestHelper::getSingleValueZipCode('31000'),
-                ],
-                'expected' => '11000,01000-02000,21000,01400-02000,05000-06000,31000',
+                'zipCode' => ZipCodeTestHelper::getRangeZipCode('01000', '02000'),
+                'expected' => ZipCodeTestHelper::getRangeZipCode('01000', '02000'),
             ],
         ];
     }
 
     /**
      * @dataProvider testReverseTransformProvider
-     *
-     * @param string $value
-     * @param Collection|ZipCode[] $expectedCodes
+     * @param ZipCode $value
+     * @param ZipCode $expected
      */
-    public function testReverseTransform($value, $expectedCodes)
+    public function testReverseTransform($value, $expected)
     {
-        if (!$expectedCodes instanceof Collection) {
-            $expectedCodes = new ArrayCollection($expectedCodes);
-        }
-
-        $this->assertEquals($expectedCodes, $this->transformer->reverseTransform($value));
+        $this->assertEquals($expected, $this->transformer->reverseTransform($value));
 
     }
 
@@ -97,47 +74,25 @@ class ZipCodeTransformerTest extends \PHPUnit_Framework_TestCase
     public function testReverseTransformProvider()
     {
         return [
-            'success way' => [
-                'value' => '0100-0200,0500,34600,123',
-                'expectedCodes' => [
-                    ZipCodeTestHelper::getRangeZipCode('0100', '0200'),
-                    ZipCodeTestHelper::getSingleValueZipCode('0500'),
-                    ZipCodeTestHelper::getSingleValueZipCode('34600'),
-                    ZipCodeTestHelper::getSingleValueZipCode('123'),
-                ],
-            ],
-            'empty value' => [
+            'nullable value' => [
                 'value' => null,
-                'expectedCodes' => [],
+                'expectedCode' => null,
             ],
-            'success way (with spaces)' => [
-                'value' => '0100-0200 , 0500 , 34600 , 123',
-                'expectedCodes' => [
-                    ZipCodeTestHelper::getRangeZipCode('0100', '0200'),
-                    ZipCodeTestHelper::getSingleValueZipCode('0500'),
-                    ZipCodeTestHelper::getSingleValueZipCode('34600'),
-                    ZipCodeTestHelper::getSingleValueZipCode('123'),
-                ],
+            'same values in range' => [
+                'value' => ZipCodeTestHelper::getRangeZipCode('123', '123'),
+                'expectedCode' => ZipCodeTestHelper::getSingleValueZipCode('123'),
             ],
-            'half filled range' => [
-                'value' => '0100-',
-                'expectedCodes' => [
-                    ZipCodeTestHelper::getRangeZipCode('0100', null),
-                ],
+            'different values in range' => [
+                'value' => ZipCodeTestHelper::getRangeZipCode('123', '234'),
+                'expectedCode' => ZipCodeTestHelper::getRangeZipCode('123', '234'),
             ],
-            'skip empty values' => [
-                'value' => ',,05710,,',
-                'expectedCodes' => [
-                    ZipCodeTestHelper::getSingleValueZipCode('05710'),
-                ],
+            'only first value in range' => [
+                'value' => ZipCodeTestHelper::getRangeZipCode('123', null),
+                'expectedCode' => ZipCodeTestHelper::getSingleValueZipCode('123'),
             ],
-            'remove duplicate values' => [
-                'value' => '05710,08123,05710,08123,33470-33500,33470-33500',
-                'expectedCodes' => [
-                    ZipCodeTestHelper::getSingleValueZipCode('05710'),
-                    ZipCodeTestHelper::getSingleValueZipCode('08123'),
-                    ZipCodeTestHelper::getRangeZipCode('33470', '33500'),
-                ],
+            'only second value in range' => [
+                'value' => ZipCodeTestHelper::getRangeZipCode(null, '234'),
+                'expectedCode' => ZipCodeTestHelper::getSingleValueZipCode('234'),
             ],
         ];
     }
