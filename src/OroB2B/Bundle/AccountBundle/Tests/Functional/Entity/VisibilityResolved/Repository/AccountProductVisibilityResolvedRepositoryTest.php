@@ -98,4 +98,34 @@ class AccountProductVisibilityResolvedRepositoryTest extends WebTestCase
             ->getManagerForClass('OroB2BWebsiteBundle:Website')
             ->getRepository('OroB2BWebsiteBundle:Website')->findOneBy(['name' => 'Default']);
     }
+
+    public function testDeleteByProduct()
+    {
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        /** @var $product Product */
+        $visibilities = $this->repository->findBy(['product' => $product]);
+        $this->assertNotEmpty($visibilities);
+        $this->repository->deleteByProduct($product);
+        $visibilities = $this->repository->findBy(['product' => $product]);
+        $this->assertEmpty($visibilities, 'Deleting has failed');
+    }
+
+    public function testInsertByProduct()
+    {
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        /** @var $product Product */
+        $this->repository->deleteByProduct($product);
+        $this->repository->insertByProduct($product, $this->getInsertFromSelectExecutor(), false, null);
+        $visibilities = $this->repository->findBy(['product' => $product]);
+        $this->assertSame(1, count($visibilities));
+    }
+
+    /**
+     * @return \Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor
+     */
+    protected function getInsertFromSelectExecutor()
+    {
+        return $this->getContainer()
+            ->get('oro_entity.orm.insert_from_select_query_executor');
+    }
 }

@@ -44,9 +44,10 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         );
 
         $this->loadFixtures([
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
             'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
+            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
+            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
+            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
         ]);
 
         $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
@@ -106,8 +107,6 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product.1',
                     'product.5',
                     'product.6',
-                    'product.7',
-                    'product.8',
                 ]
             ],
             'config hidden' => [
@@ -116,6 +115,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                 'expectedData' => [
                     'product.1',
                     'product.5',
+                    'product.6',
                 ]
             ],
             'anonymous config visible' => [
@@ -127,8 +127,6 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product.3',
                     'product.5',
                     'product.6',
-                    'product.7',
-                    'product.8',
                 ]
             ],
             'anonymous config hidden' => [
@@ -138,6 +136,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product.2',
                     'product.3',
                     'product.5',
+                    'product.6',
                 ]
             ],
             'group config visible' => [
@@ -147,8 +146,6 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product.1',
                     'product.3',
                     'product.6',
-                    'product.7',
-                    'product.8',
                 ]
             ],
             'account without group and config visible' => [
@@ -161,8 +158,6 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product.4',
                     'product.5',
                     'product.6',
-                    'product.7',
-                    'product.8',
                 ]
             ],
         ];
