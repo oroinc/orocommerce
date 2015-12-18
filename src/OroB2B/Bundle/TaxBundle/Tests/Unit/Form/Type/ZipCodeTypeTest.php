@@ -4,14 +4,13 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
 use OroB2B\Bundle\TaxBundle\Form\Type\ZipCodeType;
 use OroB2B\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
 
 class ZipCodeTypeTest extends FormIntegrationTestCase
 {
     const DATA_CLASS = 'OroB2B\Bundle\TaxBundle\Entity\ZipCode';
+
     /**
      * @var ZipCodeType
      */
