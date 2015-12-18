@@ -190,7 +190,7 @@ class ProductVisibilityControllerTest extends WebTestCase
      */
     public function testDeleteVisibilityOnSetDefault()
     {
-        $this->assertCountVisibilities(4);
+        $this->assertCountVisibilities(2, $this->product);
 
         $this->visibilityToAllDefaultWebsite = ProductVisibility::getDefault($this->product);
         $this->visibilityToAccountDefaultWebsite = json_encode(
@@ -204,19 +204,20 @@ class ProductVisibilityControllerTest extends WebTestCase
             ]
         );
         $this->submitForm();
-        $this->assertCountVisibilities(3);
+        $this->assertCountVisibilities(1, $this->product);
     }
 
     /**
      * @param integer $count
+     * @param Product $product
      */
-    protected function assertCountVisibilities($count)
+    protected function assertCountVisibilities($count, Product $product)
     {
         /** @var EntityManager $em */
         $em = $this->client->getContainer()->get('doctrine')->getManager();
 
         foreach ($this->visibilityClassNames as $className) {
-            $this->assertCount($count, $em->getRepository($className)->findAll());
+            $this->assertCount($count, $em->getRepository($className)->findBy(['product' => $product]));
         }
     }
 

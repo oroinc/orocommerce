@@ -40,8 +40,8 @@ class OroB2BAccountBundle implements Migration
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('product_id', 'integer', []);
         $table->addColumn('source_product_visibility', 'integer', ['notnull' => false]);
-        $table->addColumn('visibility', 'integer', ['notnull' => false]);
-        $table->addColumn('source', 'integer', ['notnull' => false]);
+        $table->addColumn('visibility', 'smallint', ['notnull' => false]);
+        $table->addColumn('source', 'smallint', ['notnull' => false]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['website_id', 'product_id']);
     }
@@ -58,8 +58,8 @@ class OroB2BAccountBundle implements Migration
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('product_id', 'integer', []);
         $table->addColumn('source_product_visibility', 'integer', ['notnull' => false]);
-        $table->addColumn('visibility', 'integer', ['notnull' => false]);
-        $table->addColumn('source', 'integer', ['notnull' => false]);
+        $table->addColumn('visibility', 'smallint', ['notnull' => false]);
+        $table->addColumn('source', 'smallint', ['notnull' => false]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['account_group_id', 'website_id', 'product_id']);
     }
@@ -76,8 +76,8 @@ class OroB2BAccountBundle implements Migration
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('product_id', 'integer', []);
         $table->addColumn('source_product_visibility', 'integer', ['notnull' => false]);
-        $table->addColumn('visibility', 'integer', ['notnull' => false]);
-        $table->addColumn('source', 'integer', ['notnull' => false]);
+        $table->addColumn('visibility', 'smallint', ['notnull' => false]);
+        $table->addColumn('source', 'smallint', ['notnull' => false]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['account_id', 'website_id', 'product_id']);
     }

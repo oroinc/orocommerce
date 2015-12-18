@@ -41,7 +41,7 @@ class ProductVisibilityCacheBuildCommand extends ContainerAwareCommand
         /** @var Website|null $website */
         $website = null;
         $forWebsiteStr = 'for all websites';
-        if ($input->getOption('website_id')) {
+        if (null !== $input->getOption('website_id')) {
             $website = $this->getContainer()
                 ->get('doctrine')
                 ->getManagerForClass('OroB2BWebsiteBundle:Website')

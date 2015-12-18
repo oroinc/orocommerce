@@ -4,9 +4,9 @@ namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product;
 
 use Doctrine\ORM\EntityManagerInterface;
 
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountGroupProductRepository;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
@@ -87,7 +87,21 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
      */
     public function productCategoryChanged(Product $product)
     {
-        // TODO: Implement updateProductResolvedVisibility() method.
+        $category = $this->registry
+            ->getManagerForClass('OroB2BCatalogBundle:Category')
+            ->getRepository('OroB2BCatalogBundle:Category')
+            ->findOneByProduct($product);
+        $isCategoryVisible = null;
+        if ($category) {
+            $isCategoryVisible = $this->categoryVisibilityResolver->isCategoryVisible($category);
+        }
+        $this->getRepository()->deleteByProduct($product);
+        $this->getRepository()->insertByProduct(
+            $product,
+            $this->insertFromSelectQueryExecutor,
+            $isCategoryVisible,
+            $category
+        );
     }
 
     /**

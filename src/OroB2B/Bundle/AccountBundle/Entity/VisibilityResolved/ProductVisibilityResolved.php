@@ -16,7 +16,7 @@ class ProductVisibilityResolved extends BaseProductVisibilityResolved
      * @var ProductVisibility
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility")
-     * @ORM\JoinColumn(name="source_product_visibility", referencedColumnName="id", onDelete="SET NULL", nullable=true)
+     * @ORM\JoinColumn(name="source_product_visibility", referencedColumnName="id", onDelete="CASCADE", nullable=true)
      */
     protected $sourceProductVisibility;
 

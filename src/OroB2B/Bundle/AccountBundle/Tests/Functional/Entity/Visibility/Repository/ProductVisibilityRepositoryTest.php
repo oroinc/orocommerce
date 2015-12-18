@@ -25,6 +25,7 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
         $this->loadFixtures(
             [
                 'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
             ]
         );
     }
@@ -38,7 +39,6 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
     {
         /** @var Category $category */
         $category = $this->getReference($categoryName);
-
         // setToDefaultWithoutCategory called in CategoryListener when removed category
         $this->deleteCategory($category);
 
@@ -60,16 +60,41 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
                 'categoryName' => LoadCategoryData::FOURTH_LEVEL2,
                 'expected' => [
                     [
-                        'product' => 'product.7',
+                        'product' => 'product.1',
                         'website' => 'Default',
                         'visibility' => ProductVisibility::CONFIG
                     ],
 
                     [
+                        'product' => 'product.2',
+                        'website' => 'Default',
+                        'visibility' => ProductVisibility::VISIBLE
+                    ],
+                    [
+                        'product' => 'product.3',
+                        'website' => 'Default',
+                        'visibility' => ProductVisibility::VISIBLE
+                    ],
+                    [
+                        'product' => 'product.4',
+                        'website' => 'Default',
+                        'visibility' => ProductVisibility::HIDDEN
+                    ],
+                    [
+                        'product' => 'product.5',
+                        'website' => 'Default',
+                        'visibility' => ProductVisibility::VISIBLE
+                    ],
+                    [
+                        'product' => 'product.7',
+                        'website' => 'Default',
+                        'visibility' => ProductVisibility::CONFIG
+                    ],
+                    [
                         'product' => 'product.8',
                         'website' => 'Default',
                         'visibility' => ProductVisibility::CONFIG
-                    ]
+                    ],
                 ]
             ],
         ];
@@ -80,6 +105,7 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
      */
     protected function getProductsByVisibilities()
     {
+        $website = $this->getDefaultWebsite();
         return array_map(
             function (ProductVisibility $visibility) {
                 return [
@@ -88,7 +114,18 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
                     'visibility' => $visibility->getVisibility()
                 ];
             },
-            $this->repository->findAll()
+            $this->repository->findBy(['website' => $website])
         );
+    }
+
+    /**
+     * @return \OroB2B\Bundle\WebsiteBundle\Entity\Website
+     */
+    protected function getDefaultWebsite()
+    {
+        return $this->getContainer()
+            ->get('doctrine')
+            ->getRepository('OroB2BWebsiteBundle:Website')
+            ->getDefaultWebsite();
     }
 }
