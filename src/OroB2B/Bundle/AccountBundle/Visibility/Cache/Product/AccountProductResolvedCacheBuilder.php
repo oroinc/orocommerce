@@ -164,7 +164,7 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
             ->getRepository('OroB2BAccountBundle:Visibility\AccountProductVisibility');
 
         $categories = $repo->getCategoriesByAccountProductVisibility();
-        $accounts = $repo->getAccountsWithCategoryVisibiliy();
+        $accounts = $repo->getAccountsWithCategoryVisibility();
 
         $categoriesGrouped = [];
         foreach ($accounts as $account) {

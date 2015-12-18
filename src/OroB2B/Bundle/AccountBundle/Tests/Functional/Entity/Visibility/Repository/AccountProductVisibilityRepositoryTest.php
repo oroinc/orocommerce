@@ -49,9 +49,9 @@ class AccountProductVisibilityRepositoryTest extends AbstractProductVisibilityRe
         $this->assertEquals($this->getReference('category_1_5_6_7'), $categories[0]);
     }
 
-    public function testGetAccountsWithCategoryVisibiliy()
+    public function testGetAccountsWithCategoryVisibility()
     {
-        $this->assertCount(1, $this->repository->getAccountsWithCategoryVisibiliy());
+        $this->assertCount(1, $this->repository->getAccountsWithCategoryVisibility());
     }
 
     /**
