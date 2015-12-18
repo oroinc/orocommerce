@@ -23,6 +23,7 @@ define(function(require) {
      */
     ActionWidgetAction = ModelAction.extend({
         options: {
+            datagrid: null,
             datagridConfirm: null,
             showDialog: null,
             executionRoute: null,
@@ -99,8 +100,21 @@ define(function(require) {
         doResponse: function(response) {
             mediator.execute('hideLoading');
 
+            if (response.flashMessages) {
+                for (var type in response.flashMessages) {
+                    var messages = response.flashMessages[type];
+                    for (var k in messages) {
+                        messenger.notificationFlashMessage(type, messages[k]);
+                    }
+                }
+            }
+
             if (response.redirectUrl) {
                 this.doRedirect(response.redirectUrl);
+            } else if (response.refreshGrid) {
+                for (var k in response.refreshGrid) {
+                    mediator.trigger('datagrid:doRefresh:' + response.refreshGrid[k]);
+                }
             } else {
                 this.doPageReload();
             }
