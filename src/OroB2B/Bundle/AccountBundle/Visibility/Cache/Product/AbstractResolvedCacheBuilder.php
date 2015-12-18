@@ -112,7 +112,7 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
     {
         $visibilityFromConfig = $this->configManager->get('oro_b2b_account.product_visibility');
 
-        return $visibilityFromConfig === VisibilityInterface::VISIBLE ? 1 : -1;
+        return $this->convertVisibility($visibilityFromConfig === VisibilityInterface::VISIBLE);
     }
 
     /**
