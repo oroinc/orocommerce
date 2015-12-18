@@ -42,7 +42,7 @@ class AccountProductVisibilityRepository extends EntityRepository
     /**
      * @return Account[]
      */
-    public function getAccountsForCategoryType()
+    public function getAccountsWithCategoryVisibiliy()
     {
         return $this->getEntityManager()
             ->getRepository('OroB2BAccountBundle:Account')
