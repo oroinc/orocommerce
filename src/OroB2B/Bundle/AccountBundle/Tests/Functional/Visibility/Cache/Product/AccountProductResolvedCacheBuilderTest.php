@@ -5,12 +5,13 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountProductVisibilityResolvedRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountProductRepository;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -160,22 +161,32 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     }
 
     /**
-     * @dataProvider buildCacheDataProvider
-     * @param $expectedStaticCount
-     * @param $expectedCategoryCount
-     * @param null $websiteReference
-     */
-    public function testBuildCache($expectedStaticCount, $expectedCategoryCount, $websiteReference = null)
-    {
-        $this->markTestSkipped('Will complete after Account Cache Builder finished');
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function buildCacheDataProvider()
     {
-        return [[1, 2, null]];
+        return [
+            'without_website' => [
+                'expectedStaticCount' => 5,
+                'expectedCategoryCount' => 1,
+                'websiteReference' => null,
+            ],
+            'with_default_website' => [
+                'expectedStaticCount' => 4,
+                'expectedCategoryCount' => 0,
+                'websiteReference' => 'default',
+            ],
+            'with_website1' => [
+                'expectedStaticCount' => 1,
+                'expectedCategoryCount' => 1,
+                'websiteReference' => LoadWebsiteData::WEBSITE1,
+            ],
+            'with_website2' => [
+                'expectedStaticCount' => 0,
+                'expectedCategoryCount' => 0,
+                'websiteReference' => LoadWebsiteData::WEBSITE2,
+            ],
+        ];
     }
 
     /**
@@ -261,7 +272,7 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     }
 
     /**
-     * @return AccountProductVisibilityResolvedRepository|EntityRepository
+     * @return AccountProductRepository|EntityRepository
      */
     protected function getRepository()
     {

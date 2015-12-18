@@ -1,16 +1,16 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity\Repository;
+namespace OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\BasicOperationRepositoryTrait;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -20,7 +20,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  *  - website
  *  - product
  */
-class AccountProductVisibilityResolvedRepository extends EntityRepository
+class AccountProductRepository extends AbstractVisibilityRepository
 {
     use BasicOperationRepositoryTrait;
 
@@ -116,5 +116,114 @@ class AccountProductVisibilityResolvedRepository extends EntityRepository
                 $qb
             );
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function insertByCategory(
+        InsertFromSelectQueryExecutor $insertFromSelect,
+        $cacheVisibility,
+        $categories,
+        $accountId,
+        $websiteId = null
+    ) {
+        $queryBuilder = $this->getEntityManager()
+            ->getRepository('OroB2BCatalogBundle:Category')
+            ->createQueryBuilder('category')
+            ->select(
+                'apv.id',
+                'IDENTITY(apv.website)',
+                'product.id',
+                (string)$accountId,
+                (string)$cacheVisibility,
+                (string)BaseProductVisibilityResolved::SOURCE_CATEGORY,
+                'category.id'
+            )
+            ->innerJoin('category.products', 'product')
+            ->innerJoin(
+                'OroB2BAccountBundle:Visibility\AccountProductVisibility',
+                'apv',
+                Join::WITH,
+                'apv.product = product AND apv.visibility = :category AND IDENTITY(apv.account) = :accountId'
+            )
+            ->where('category.id in (:ids)')
+            ->setParameter('ids', $categories)
+            ->setParameter('accountId', $accountId)
+            ->setParameter('category', AccountProductVisibility::CATEGORY);
+        if ($websiteId) {
+            $queryBuilder->andWhere('IDENTITY(apv.website) = :website')
+                ->setParameter('website', $websiteId);
+        }
+        $insertFromSelect->execute(
+            $this->getClassName(),
+            [
+                'sourceProductVisibility',
+                'website',
+                'product',
+                'account',
+                'visibility',
+                'source',
+                'category',
+            ],
+            $queryBuilder
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function insertStatic(InsertFromSelectQueryExecutor $insertFromSelect, $websiteId = null)
+    {
+        $visibility = <<<VISIBILITY
+CASE WHEN apv.visibility = :visible
+    THEN :cacheVisible
+ELSE
+    CASE WHEN apv.visibility = :currentProduct
+        THEN :cacheFallbackAll
+    ELSE :cacheHidden
+    END
+END
+VISIBILITY;
+        $queryBuilder = $this->getEntityManager()
+            ->getRepository('OroB2BAccountBundle:Visibility\AccountProductVisibility')
+            ->createQueryBuilder('apv');
+        $queryBuilder
+            ->select(
+                'apv.id',
+                'IDENTITY(apv.website)',
+                'IDENTITY(apv.product)',
+                'IDENTITY(apv.account)',
+                $visibility,
+                (string)BaseProductVisibilityResolved::SOURCE_STATIC
+            )
+            ->where($queryBuilder->expr()->orX(
+                $queryBuilder->expr()->eq('apv.visibility', ':visible'),
+                $queryBuilder->expr()->eq('apv.visibility', ':hidden'),
+                $queryBuilder->expr()->eq('apv.visibility', ':currentProduct')
+            ))
+            ->setParameter('visible', AccountProductVisibility::VISIBLE)
+            ->setParameter('hidden', AccountProductVisibility::HIDDEN)
+            ->setParameter('currentProduct', AccountProductVisibility::CURRENT_PRODUCT)
+            ->setParameter('cacheVisible', BaseProductVisibilityResolved::VISIBILITY_VISIBLE)
+            ->setParameter('cacheHidden', BaseProductVisibilityResolved::VISIBILITY_HIDDEN)
+            ->setParameter('cacheFallbackAll', AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL);
+
+        if ($websiteId) {
+            $queryBuilder->andWhere('IDENTITY(apv.website) = :website')
+                ->setParameter('website', $websiteId);
+        }
+        $insertFromSelect->execute(
+            $this->getClassName(),
+            [
+                'sourceProductVisibility',
+                'website',
+                'product',
+                'account',
+                'visibility',
+                'source',
+            ],
+            $queryBuilder
+        );
     }
 }

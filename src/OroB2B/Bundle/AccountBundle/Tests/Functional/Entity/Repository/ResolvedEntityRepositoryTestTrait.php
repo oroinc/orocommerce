@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Repository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
-use OroB2B\Bundle\AccountBundle\Entity\Repository\ResolvedEntityRepositoryTrait;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\BasicOperationRepositoryTrait;
 
 /**
  * @method assertTrue($actual)
@@ -17,7 +17,7 @@ trait ResolvedEntityRepositoryTestTrait
 {
     /**
      * @param EntityManager $manager
-     * @param EntityRepository|ResolvedEntityRepositoryTrait $repository
+     * @param EntityRepository|BasicOperationRepositoryTrait $repository
      * @param array $where
      * @param int $visibility
      * @param int $source
@@ -42,7 +42,7 @@ trait ResolvedEntityRepositoryTestTrait
 
     /**
      * @param EntityManager $manager
-     * @param EntityRepository|ResolvedEntityRepositoryTrait $repository
+     * @param EntityRepository|BasicOperationRepositoryTrait $repository
      * @param array $where
      * @param int $visibility
      * @param int $source
@@ -61,7 +61,7 @@ trait ResolvedEntityRepositoryTestTrait
     }
 
     /**
-     * @param EntityRepository|ResolvedEntityRepositoryTrait $repository
+     * @param EntityRepository|BasicOperationRepositoryTrait $repository
      * @param array $where
      */
     protected function assertDelete(EntityRepository $repository, array $where)

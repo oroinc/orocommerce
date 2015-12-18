@@ -25,11 +25,7 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
     use BasicOperationRepositoryTrait;
 
     /**
-     * @param InsertFromSelectQueryExecutor $insertFromSelect
-     * @param integer $cacheVisibility
-     * @param integer[] $categories
-     * @param integer $accountGroupId
-     * @param integer|null $websiteId
+     * {@inheritdoc}
      */
     public function insertByCategory(
         InsertFromSelectQueryExecutor $insertFromSelect,
@@ -42,6 +38,7 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
             ->getRepository('OroB2BCatalogBundle:Category')
             ->createQueryBuilder('category')
             ->select(
+                'agpv.id',
                 'IDENTITY(agpv.website)',
                 'product.id',
                 (string)$accountGroupId,
@@ -70,6 +67,7 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
         $insertFromSelect->execute(
             $this->getClassName(),
             [
+                'sourceProductVisibility',
                 'website',
                 'product',
                 'accountGroup',
@@ -82,8 +80,7 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
     }
 
     /**
-     * @param InsertFromSelectQueryExecutor $insertFromSelect
-     * @param integer|null $websiteId
+     * {@inheritdoc}
      */
     public function insertStatic(InsertFromSelectQueryExecutor $insertFromSelect, $websiteId = null)
     {
@@ -92,6 +89,7 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
             ->createQueryBuilder('agpv')
             ->select(
                 [
+                    'agpv.id',
                     'IDENTITY(agpv.website)',
                     'IDENTITY(agpv.product)',
                     'IDENTITY(agpv.accountGroup)',
@@ -113,6 +111,7 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
         $insertFromSelect->execute(
             $this->getClassName(),
             [
+                'sourceProductVisibility',
                 'website',
                 'product',
                 'accountGroup',
