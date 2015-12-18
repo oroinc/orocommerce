@@ -2,92 +2,71 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\VisibilityResolved\Repository;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\EntityManager;
-
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountProductRepository;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
  */
-class AccountProductVisibilityResolvedRepositoryTest extends WebTestCase
+class AccountProductVisibilityResolvedRepositoryTest extends VisibilityResolvedRepositoryTestCase
 {
-    /** @var  Registry */
-    protected $registry;
     /**
-     * @var EntityManager
+     * {@inheritdoc}
      */
-    protected $entityManager;
+    public function insertByCategoryDataProvider()
+    {
+        return [
+            'withoutWebsite' => [
+                'websiteReference' => null,
+                'accountReference' => 'account.level_1',
+                'visibility' => BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
+                'expectedData' => [
+                    [
+                        'product' => LoadProductData::PRODUCT_8,
+                        'website' => LoadWebsiteData::WEBSITE1,
+                    ],
+                ],
+            ],
+            'withWebsite1' => [
+                'websiteReference' => LoadWebsiteData::WEBSITE1,
+                'accountReference' => 'account.level_1',
+                'visibility' => BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
+                'expectedData' => [
+                    [
+                        'product' => LoadProductData::PRODUCT_8,
+                        'website' => LoadWebsiteData::WEBSITE1,
+                    ],
+                ],
+            ],
+            'withWebsite2' => [
+                'websiteReference' => LoadWebsiteData::WEBSITE2,
+                'accountReference' => 'account.level_1',
+                'visibility' => BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
+                'expectedData' => [],
+            ],
+        ];
+    }
+
+    public function clearTableDataProvider()
+    {
+        return ['expected_rows' => [1]];
+    }
 
     /**
-     * @var AccountProductRepository
+     * @inheritDoc
      */
-    protected $repository;
-
-    protected function setUp()
+    public function insertStaticDataProvider()
     {
-        $this->initClient();
-        $this->registry = $this->getContainer()->get('doctrine');
-        $this->entityManager = $this->registry->getManager();
-        $this->repository = $this->getContainer()->get('doctrine')
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved');
-        $this->loadFixtures(
-            [
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
-            ]
-        );
-    }
-
-    protected function tearDown()
-    {
-        $this->registry->getManager()->clear();
-        parent::tearDown();
-    }
-
-    public function testClearTable()
-    {
-        $this->assertCount(4, $this->getRepository()->findAll());
-        $deletedCount = $this->getRepository()->clearTable();
-
-        $this->assertCount(0, $this->getRepository()->findAll());
-        $this->assertEquals(4, $deletedCount);
-    }
-
-    public function testInsertByCategory()
-    {
-        $accountProductVisibility = $this->registry
-            ->getRepository('OroB2BAccountBundle:Visibility\AccountProductVisibility')
-            ->findOneBy(['visibility' => AccountProductVisibility::CATEGORY]);
-        $this->getRepository()->clearTable();
-        $visibilityValue = BaseProductVisibilityResolved::VISIBILITY_HIDDEN;
-        $this->getRepository()->insertByCategory(
-            $this->getInsertFromSelectExecutor(),
-            $visibilityValue,
-            $this->registry->getRepository('OroB2BCatalogBundle:Category')->findAll(),
-            $accountProductVisibility->getAccount()->getId()
-        );
-        $resolved = $this->getResolvedValues();
-        $this->assertCount(1, $resolved);
-        $resolvedValue = $resolved[0];
-        $this->assertEquals($resolvedValue->getAccount(), $accountProductVisibility->getAccount());
-        $this->assertEquals(
-            $resolvedValue->getCategory()->getId(),
-            $this->getReference('category_1_5_6_7')->getId()
-        );
-        $this->assertEquals($resolvedValue->getWebsite(), $accountProductVisibility->getWebsite());
-        $this->assertEquals($resolvedValue->getProduct(), $accountProductVisibility->getProduct());
-        $this->assertEquals($resolvedValue->getVisibility(), $visibilityValue);
+        return ['expected_rows' => [3]];
     }
 
     /**
@@ -100,146 +79,49 @@ class AccountProductVisibilityResolvedRepositoryTest extends WebTestCase
             ->findAll();
     }
 
-    public function testInsertStatic()
-    {
-        $this->getRepository()->clearTable();
-        $this->getRepository()->insertStatic($this->getInsertFromSelectExecutor());
-        $resolved = $this->getResolvedValues();
-        $this->assertCount(2, $resolved);
-        foreach ($resolved as $resolvedValue) {
-            $source = $this->registry
-                ->getRepository('OroB2BAccountBundle:Visibility\AccountProductVisibility')
-                ->findOneBy(
-                    [
-                        'product' => $resolvedValue->getProduct(),
-                        'account' => $resolvedValue->getAccount(),
-                        'website' => $resolvedValue->getWebsite(),
-                    ]
-                );
-            $this->assertNotNull($source);
-            if ($resolvedValue->getVisibility() == BaseProductVisibilityResolved::VISIBILITY_HIDDEN) {
-                $visibility = AccountProductVisibility::HIDDEN;
-            } else {
-                $visibility = AccountProductVisibility::VISIBLE;
+    /**
+     * @param AccountProductVisibilityResolved[] $visibilities
+     * @param Product $product
+     * @param Account $account
+     * @param Website $website
+     *
+     * @return AccountProductVisibilityResolved|null
+     */
+    protected function getResolvedVisibility(
+        $visibilities,
+        Product $product,
+        $account,
+        Website $website
+    ) {
+        foreach ($visibilities as $visibility) {
+            if ($visibility->getProduct()->getId() == $product->getId()
+                && $visibility->getAccount()->getId() == $account->getId()
+                && $visibility->getWebsite()->getId() == $website->getId()
+            ) {
+                return $visibility;
             }
-            $this->assertEquals(
-                $source->getVisibility(),
-                $visibility
-            );
         }
-    }
 
-    public function testInsertForCurrentProductFallback()
-    {
-        /** @var AccountProductVisibility $accountProductVisibility */
-        $accountProductVisibility = $this->getSourceRepository()
-            ->findOneBy(['visibility' => AccountProductVisibility::CURRENT_PRODUCT]);
-
-        $productVisibilityResolved = $this->getProductVisibilityResolved($accountProductVisibility);
-        $this->assertEquals(
-            $productVisibilityResolved->getVisibility(),
-            BaseProductVisibilityResolved::VISIBILITY_VISIBLE
-        );
-        $this->getRepository()->insertForCurrentProductFallback(
-            $this->getInsertFromSelectExecutor(),
-            BaseProductVisibilityResolved::VISIBILITY_HIDDEN
-        );
-
-        // Ignore Config value, take from productVisibilityResolved VISIBLE value
-        $this->assertEquals(
-            $this->getResolvedVisibilityBySource($accountProductVisibility),
-            BaseProductVisibilityResolved::VISIBILITY_VISIBLE
-        );
-        $productVisibilityResolved->setVisibility(BaseProductVisibilityResolved::VISIBILITY_HIDDEN);
-
-        $this->getRepository()->clearTable();
-        $this->registry->getManager()->flush();
-        $this->registry->getManager()->clear();
-
-
-        $this->getRepository()->insertForCurrentProductFallback(
-            $this->getInsertFromSelectExecutor(),
-            BaseProductVisibilityResolved::VISIBILITY_VISIBLE
-        );
-
-        // Ignore Config value, take from productVisibilityResolved HIDDEN value
-        $this->assertEquals(
-            $this->getResolvedVisibilityBySource($accountProductVisibility),
-            BaseProductVisibilityResolved::VISIBILITY_HIDDEN
-        );
-
-        $this->registry->getManager()->remove($this->getProductVisibilityResolved($accountProductVisibility));
-        $this->registry->getManager()->flush();
-        $this->registry->getManager()->clear();
-        $this->getRepository()->clearTable();
-
-        $this->getRepository()->insertForCurrentProductFallback(
-            $this->getInsertFromSelectExecutor(),
-            BaseProductVisibilityResolved::VISIBILITY_VISIBLE
-        );
-
-        // Take VISIBLE value from Config, because productVisibilityResolved for this product and website is absent
-        $this->assertEquals(
-            $this->getResolvedVisibilityBySource($accountProductVisibility),
-            BaseProductVisibilityResolved::VISIBILITY_VISIBLE
-        );
-
-        $this->getRepository()->clearTable();
-
-
-        $this->getRepository()->insertForCurrentProductFallback(
-            $this->getInsertFromSelectExecutor(),
-            BaseProductVisibilityResolved::VISIBILITY_HIDDEN
-        );
-
-        // Take HIDDEN value from Config, because productVisibilityResolved for this product and website is absent
-        $this->assertEquals(
-            $this->getResolvedVisibilityBySource($accountProductVisibility),
-            BaseProductVisibilityResolved::VISIBILITY_VISIBLE
-        );
+        return null;
     }
 
     /**
-     * @param AccountProductVisibility $accountProductVisibility
-     * @return null|integer
+     * @param null|AccountProductVisibility[] $sourceVisibilities
+     * @param AccountProductVisibilityResolved $resolveVisibility
+     * @return null|AccountProductVisibility
      */
-    protected function getResolvedVisibilityBySource(AccountProductVisibility $accountProductVisibility)
+    protected function getSourceVisibilityByResolved($sourceVisibilities, $resolveVisibility)
     {
-        /** @var AccountProductVisibilityResolved $visibility */
-        $visibility = $this->getRepository()->findOneBy(
-            [
-                'product' => $accountProductVisibility->getProduct(),
-                'account' => $accountProductVisibility->getAccount(),
-                'website' => $accountProductVisibility->getWebsite(),
-            ]
-        );
+        foreach ($sourceVisibilities as $visibility) {
+            if ($resolveVisibility->getProduct()->getId() == $visibility->getProduct()->getId()
+                && $resolveVisibility->getAccount()->getId() == $visibility->getAccount()->getId()
+                && $resolveVisibility->getWebsite()->getId() == $visibility->getWebsite()->getId()
+            ) {
+                return $visibility;
+            }
+        }
 
-        return $visibility ? $visibility->getVisibility() : null;
-    }
-
-    /**
-     * @param AccountProductVisibility $accountProductVisibility
-     * @return ProductVisibilityResolved
-     */
-    public function getProductVisibilityResolved(AccountProductVisibility $accountProductVisibility)
-    {
-        return $this->registry
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
-            ->findOneBy(
-                [
-                    'product' => $accountProductVisibility->getProduct(),
-                    'website' => $accountProductVisibility->getWebsite(),
-                ]
-            );
-    }
-
-    /**
-     * @return InsertFromSelectQueryExecutor
-     */
-    protected function getInsertFromSelectExecutor()
-    {
-        return $this->getContainer()
-            ->get('oro_entity.orm.insert_from_select_query_executor');
+        return null;
     }
 
     /**
@@ -262,23 +144,42 @@ class AccountProductVisibilityResolvedRepositoryTest extends WebTestCase
         );
     }
 
-    public function testFindByPrimaryKey()
+    /**
+     * @param AccountProductVisibilityResolved $visibilityResolved
+     * @return AccountProductVisibilityResolved|null
+     */
+    public function findByPrimaryKey($visibilityResolved)
     {
-        /** @var AccountProductVisibilityResolved $actualEntity */
-        $actualEntity = $this->repository->findOneBy([]);
-        if (!$actualEntity) {
-            $this->markTestSkipped('Can\'t test method because fixture was not loaded.');
-        }
-
-        $expectedEntity = $this->repository->findByPrimaryKey(
-            $actualEntity->getAccount(),
-            $actualEntity->getProduct(),
-            $actualEntity->getWebsite()
+        return $this->getRepository()->findByPrimaryKey(
+            $visibilityResolved->getAccount(),
+            $visibilityResolved->getProduct(),
+            $visibilityResolved->getWebsite()
         );
-
-        $this->assertEquals(spl_object_hash($expectedEntity), spl_object_hash($actualEntity));
     }
 
+    public function testInsertForCurrentProductFallback()
+    {
+        /** @var AccountProductVisibility $accountProductVisibility */
+        $accountProductVisibility = $this->getReference('product.5.visibility.account.level_1');
+        $this->getRepository()->clearTable();
+        $this->getRepository()->insertForCurrentProductFallback(
+            $this->getInsertFromSelectExecutor()
+        );
+        $resolvedVisibility = $this->getResolvedVisibility(
+            $this->getRepository()->findAll(),
+            $accountProductVisibility->getProduct(),
+            $accountProductVisibility->getAccount(),
+            $accountProductVisibility->getWebsite()
+        );
+        $this->assertEquals(
+            $resolvedVisibility->getVisibility(),
+            AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL
+        );
+    }
+
+    /**
+     * @depends testInsertForCurrentProductFallback
+     */
     public function testUpdateCurrentProductRelatedEntities()
     {
         $website = $this->getDefaultWebsite();
@@ -287,15 +188,21 @@ class AccountProductVisibilityResolvedRepositoryTest extends WebTestCase
         /** @var Account $account */
         $account = $this->getReference('account.level_1');
 
-        $resolvedVisibility = $this->repository->findByPrimaryKey($account, $product, $website);
+        $resolvedVisibility = $this->getRepository()->findByPrimaryKey($account, $product, $website);
         $this->assertNotNull($resolvedVisibility);
-        $this->assertEquals(BaseProductVisibilityResolved::VISIBILITY_HIDDEN, $resolvedVisibility->getVisibility());
+        $this->assertEquals(
+            AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL,
+            $resolvedVisibility->getVisibility()
+        );
 
-        $this->repository
+        $this->getRepository()
             ->updateCurrentProductRelatedEntities($website, $product, BaseProductVisibilityResolved::VISIBILITY_HIDDEN);
 
         $this->entityManager->refresh($resolvedVisibility);
-        $this->assertEquals(BaseProductVisibilityResolved::VISIBILITY_HIDDEN, $resolvedVisibility->getVisibility());
+        $this->assertEquals(
+            AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL,
+            $resolvedVisibility->getVisibility()
+        );
     }
 
     /**

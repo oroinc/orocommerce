@@ -106,6 +106,7 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
         $this->getManager()->beginTransaction();
         try {
             $this->getRepository()->clearTable($website);
+            $websiteId = $website ? $website->getId() : null;
 
             $categoriesGrouped = $this->getCategories();
             foreach ($categoriesGrouped as $accountId => $categoriesGroupedByAccount) {
@@ -114,20 +115,19 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
                     BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
                     $categoriesGroupedByAccount[VisibilityInterface::VISIBLE],
                     $accountId,
-                    $website
+                    $websiteId
                 );
                 $this->getRepository()->insertByCategory(
                     $this->insertFromSelectQueryExecutor,
                     BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
                     $categoriesGroupedByAccount[VisibilityInterface::HIDDEN],
                     $accountId,
-                    $website
+                    $websiteId
                 );
             }
-            $this->getRepository()->insertStatic($this->insertFromSelectQueryExecutor, $website);
+            $this->getRepository()->insertStatic($this->insertFromSelectQueryExecutor, $websiteId);
             $this->getRepository()->insertForCurrentProductFallback(
                 $this->insertFromSelectQueryExecutor,
-                $this->getVisibilityFromConfig(),
                 $website
             );
 

@@ -5,11 +5,11 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountProductRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountProductRepository;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
@@ -217,14 +217,6 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function testBuildCache($expectedStaticCount, $expectedCategoryCount, $websiteReference = null)
-    {
-        $this->markTestSkipped('Will complete after Account Cache Builder finished');
-    }
-
-    /**
      * @return null|ProductVisibility
      */
     protected function getProductVisibility()
@@ -245,7 +237,7 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     }
 
     /**
-     * @return AccountProductVisibilityResolvedRepository|EntityRepository
+     * @return AccountProductRepository|EntityRepository
      */
     protected function getRepository()
     {
@@ -261,7 +253,7 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     {
         return [
             'without_website' => [
-                'expectedStaticCount' => 4,
+                'expectedStaticCount' => 5,
                 'expectedCategoryCount' => 1,
                 'websiteReference' => null,
             ],

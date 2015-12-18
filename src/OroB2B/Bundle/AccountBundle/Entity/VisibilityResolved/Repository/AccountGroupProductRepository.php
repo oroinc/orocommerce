@@ -22,11 +22,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 class AccountGroupProductRepository extends AbstractVisibilityRepository
 {
     /**
-     * @param InsertFromSelectQueryExecutor $insertFromSelect
-     * @param integer $cacheVisibility
-     * @param integer[] $categories
-     * @param integer $accountGroupId
-     * @param integer|null $websiteId
+     * {@inheritdoc}
      */
     public function insertByCategory(
         InsertFromSelectQueryExecutor $insertFromSelect,
@@ -79,8 +75,7 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
     }
 
     /**
-     * @param InsertFromSelectQueryExecutor $insertFromSelect
-     * @param integer|null $websiteId
+     * {@inheritdoc}
      */
     public function insertStatic(InsertFromSelectQueryExecutor $insertFromSelect, $websiteId = null)
     {
