@@ -9,7 +9,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroupAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 
-class VisibilityPostSetDataListener extends VisibilityAbstractListener
+class VisibilityPostSetDataListener extends AbstractVisibilityListener
 {
     /**
      * @param FormEvent $event

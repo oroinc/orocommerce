@@ -14,7 +14,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountGroupAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
 
-abstract class AbstractVisibilityPostSubmitListener extends VisibilityAbstractListener
+abstract class AbstractPostSubmitVisibilityListener extends AbstractVisibilityListener
 {
     /** @var string */
     protected $visibilityField = EntityVisibilityType::VISIBILITY;

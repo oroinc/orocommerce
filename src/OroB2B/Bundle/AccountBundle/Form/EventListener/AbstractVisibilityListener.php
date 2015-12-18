@@ -14,7 +14,7 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroupAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 
-abstract class VisibilityAbstractListener
+abstract class AbstractVisibilityListener
 {
     /** @var ManagerRegistry */
     protected $registry;

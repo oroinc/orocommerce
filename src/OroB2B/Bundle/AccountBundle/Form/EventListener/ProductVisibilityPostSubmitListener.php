@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\AccountBundle\Form\EventListener;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 
-class ProductVisibilityPostSubmitListener extends AbstractVisibilityPostSubmitListener
+class ProductVisibilityPostSubmitListener extends AbstractPostSubmitVisibilityListener
 {
     /**
      * @param AfterFormProcessEvent $event

@@ -20,7 +20,7 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class CategoryVisibilityPostSubmitListenerTest extends VisibilityAbstractListenerTestCase
+class CategoryPostSubmitVisibilityListenerTest extends AbstractVisibilityListenerTestCase
 {
     const CATEGORY_ID = 123;
 

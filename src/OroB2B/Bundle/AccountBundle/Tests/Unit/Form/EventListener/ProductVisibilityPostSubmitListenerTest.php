@@ -12,7 +12,7 @@ use Symfony\Component\Form\FormInterface;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class ProductVisibilityPostSubmitListenerTest extends VisibilityAbstractListenerTestCase
+class ProductPostSubmitVisibilityListenerTest extends AbstractVisibilityListenerTestCase
 {
     const PRODUCT_ID = 42;
 

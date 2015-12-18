@@ -13,7 +13,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityPostSetDataListener;
 
-class VisibilityPostSetDataListenerTest extends VisibilityAbstractListenerTestCase
+class PostSetDataVisibilityListenerTest extends AbstractVisibilityListenerTestCase
 {
     /** @var VisibilityPostSetDataListener */
     protected $listener;

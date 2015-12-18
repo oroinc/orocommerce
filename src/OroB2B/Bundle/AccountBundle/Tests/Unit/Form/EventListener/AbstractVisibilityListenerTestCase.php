@@ -2,15 +2,16 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\EventListener;
 
-use OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityAbstractListener;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\Form\FormInterface;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityRepository;
 
-abstract class VisibilityAbstractListenerTestCase extends \PHPUnit_Framework_TestCase
+use OroB2B\Bundle\AccountBundle\Form\EventListener\AbstractVisibilityListener;
+use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+
+abstract class AbstractVisibilityListenerTestCase extends \PHPUnit_Framework_TestCase
 {
     const CATEGORY_VISIBILITY_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility';
     const ACCOUNT_CATEGORY_VISIBILITY_CLASS = 'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility';
@@ -20,7 +21,7 @@ abstract class VisibilityAbstractListenerTestCase extends \PHPUnit_Framework_Tes
     /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
     protected $registry;
 
-    /** @var VisibilityAbstractListener */
+    /** @var AbstractVisibilityListener */
     protected $listener;
 
     /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject */
@@ -91,7 +92,7 @@ abstract class VisibilityAbstractListenerTestCase extends \PHPUnit_Framework_Tes
         $this->form->expects($this->any())->method('getConfig')->willReturn($formConfig);
     }
 
-    /** @return VisibilityAbstractListener */
+    /** @return AbstractVisibilityListener */
     abstract public function getListener();
 
     /**

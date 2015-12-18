@@ -22,7 +22,12 @@ parameters:
     orob2b_account.form.handler.update_account_user_role.class: OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateHandler
     orob2b_account.form.handler.update_account_user_role_frontend.class: OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserRoleUpdateFrontendHandler
 
-    orob2b_account.form.listener.visibility.post_set_data.class: OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityPostSetDataListener
+    orob2b_account.form.event_listener.visibility_post_set_data.class: OroB2B\Bundle\AccountBundle\Form\EventListener\VisibilityPostSetDataListener
+    orob2b_account.form.event_listener.form_view.class: OroB2B\Bundle\AccountBundle\Form\EventListener\FormViewListener
+    orob2b_account.form.event_listener.abstract_visibility.class: OroB2B\Bundle\AccountBundle\Form\EventListener\AbstractVisibilityListener
+    orob2b_account.form.event_listener.abstract_visibility_post_submit.class: OroB2B\Bundle\AccountBundle\Form\EventListener\AbstractPostSubmitVisibilityListener
+    orob2b_account.form.event_listener.category_visibility_post_submit.class: OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryVisibilityPostSubmitListener
+    orob2b_account.form.event_listener.product_visibility_post_submit.class: OroB2B\Bundle\AccountBundle\Form\EventListener\ProductVisibilityPostSubmitListener
 
     orob2b_account.form.type.account_user_typed_address.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountUserTypedAddressType
     orob2b_account.form.type.typed_address.class: OroB2B\Bundle\AccountBundle\Form\Type\AccountTypedAddressType
@@ -214,9 +219,19 @@ services:
         tags:
             - { name: form.type_extension, alias: oro_acl_access_level_selector }
 
-    orob2b_account.form.listener.category.post_set_data:
-        class: %orob2b_account.form.listener.visibility.post_set_data.class%
-        parent: orob2b_account.event_listener.abstract_visibility.form_handler
+    orob2b_account.form.event_listener.category.post_set_data:
+        class: %orob2b_account.form.event_listener.visibility_post_set_data.class%
+        parent: orob2b_account.form.event_listener.abstract_visibility
+
+    orob2b_account.form.event_listener.abstract_visibility:
+        class: %orob2b_account.form.event_listener.abstract_visibility.class%
+        abstract: true
+        arguments:
+            - @doctrine
+
+    orob2b_account.form.event_listener.abstract_visibility_post_submit:
+        class: %orob2b_account.form.event_listener.abstract_visibility_post_submit.class%
+        parent: orob2b_account.form.event_listener.abstract_visibility
 
     orob2b_account.form.extension.category_type:
         class: %orob2b_account.form.extension.category_type.class%
@@ -261,7 +276,7 @@ services:
     orob2b_account.form.type.entity_visibility_type:
         class: %orob2b_account.form.type.entity_visibility_type.class%
         arguments:
-            - @orob2b_account.form.listener.category.post_set_data
+            - @orob2b_account.form.event_listener.category.post_set_data
             - @orob2b_account.provider.visibility_choices
         tags:
             - { name: form.type, alias: orob2b_account_entity_visibility_type }
