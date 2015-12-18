@@ -10,7 +10,15 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 /**
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository\CategoryVisibilityRepository")
- * @ORM\Table(name="orob2b_category_visibility")
+ * @ORM\Table(
+ *      name="orob2b_category_visibility",
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(
+ *              name="orob2b_ctgr_vis_uidx",
+ *              columns={"category_id"}
+ *          )
+ *      }
+ * )
  * @Config
  */
 class CategoryVisibility implements VisibilityInterface

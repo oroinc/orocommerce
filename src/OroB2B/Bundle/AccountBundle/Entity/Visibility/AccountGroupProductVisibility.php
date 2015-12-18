@@ -16,7 +16,15 @@ use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  * @ORM\Entity(
  * repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository\AccountGroupProductVisibilityRepository"
  * )
- * @ORM\Table(name="orob2b_acc_grp_prod_visibility")
+ * @ORM\Table(
+ *      name="orob2b_acc_grp_prod_visibility",
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(
+ *              name="orob2b_acc_grp_prod_vis_uidx",
+ *              columns={"website_id", "product_id", "account_group_id"}
+ *          )
+ *      }
+ * )
  * @Config
  */
 class AccountGroupProductVisibility implements VisibilityInterface, AccountGroupAwareInterface, WebsiteAwareInterface

@@ -44,14 +44,14 @@ abstract class BaseProductVisibilityResolved
     /**
      * @var int
      *
-     * @ORM\Column(name="visibility", type="integer", nullable=true)
+     * @ORM\Column(name="visibility", type="smallint", nullable=true)
      */
     protected $visibility;
 
     /**
      * @var int
      *
-     * @ORM\Column(name="source", type="integer", nullable=true)
+     * @ORM\Column(name="source", type="smallint", nullable=true)
      */
     protected $source;
 
