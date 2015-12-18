@@ -1,10 +1,10 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\EventListener;
+namespace OroB2B\Bundle\AccountBundle\Form\EventListener;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 
-class CategoryVisibilityPostSubmitListener extends AbstractVisibilityPostSubmitListener
+class CategoryVisibilityPostSubmitListener extends AbstractPostSubmitVisibilityListener
 {
     /**
      * @param AfterFormProcessEvent $event

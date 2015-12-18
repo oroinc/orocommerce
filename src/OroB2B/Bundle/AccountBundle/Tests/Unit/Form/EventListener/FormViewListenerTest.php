@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
+namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\EventListener;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -10,7 +10,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 
-use OroB2B\Bundle\AccountBundle\EventListener\FormViewListener;
+use OroB2B\Bundle\AccountBundle\Form\EventListener\FormViewListener;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class FormViewListenerTest extends \PHPUnit_Framework_TestCase
