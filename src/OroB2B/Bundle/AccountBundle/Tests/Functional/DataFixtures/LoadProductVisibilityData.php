@@ -51,12 +51,20 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
      */
     public function load(ObjectManager $manager)
     {
+        // set default fallback to categories
+        $configVisibilities = $manager->getRepository('OroB2BAccountBundle:Visibility\ProductVisibility')
+            ->findBy(['visibility' => ProductVisibility::CONFIG]);
+        foreach ($configVisibilities as $visibilityEntity) {
+            $visibilityEntity->setVisibility(ProductVisibility::CATEGORY);
+        }
+        $manager->flush();
+
+        // load visibilities
         foreach ($this->getProductVisibilities() as $productReference => $productVisibilityData) {
             /** @var Product $product */
             $product = $this->getReference($productReference);
             $this->createProductVisibilities($manager, $product, $productVisibilityData);
         }
-
         $manager->flush();
     }
 
