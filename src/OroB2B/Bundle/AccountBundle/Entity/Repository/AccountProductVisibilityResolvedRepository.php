@@ -97,6 +97,11 @@ class AccountProductVisibilityResolvedRepository extends EntityRepository
                 'source' => AccountProductVisibilityResolved::SOURCE_STATIC,
                 'category' => null,
             ],
+            AccountProductVisibility::CURRENT_PRODUCT => [
+                'visibility' => AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL,
+                'source' => AccountProductVisibilityResolved::SOURCE_STATIC,
+                'category' => null,
+            ],
         ];
         if ($category) {
             $categoryVisibility = $isCategoryVisible ? AccountProductVisibilityResolved::VISIBILITY_VISIBLE :
@@ -107,8 +112,6 @@ class AccountProductVisibilityResolvedRepository extends EntityRepository
                 'category' => $category->getId(),
             ];
         }
-
-        // TODO add processing of fallback to current_product
 
         foreach ($visibilityMap as $visibility => $productVisibility) {
             $qb = $this->getEntityManager()
