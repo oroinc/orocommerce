@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -10,7 +11,9 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AbstractVisibilityRepository;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -36,18 +39,26 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
-        $this->getContainer()->get('doctrine')->getManager()->clear();
-        $this->loadFixtures([
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
-            'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
-            'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-        ]);
+
+        $this->loadFixtures(
+            [
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
+            ]
+        );
+
+        $this->getContainer()->get('orob2b_account.storage.category_visibility_storage')->flush();
         $this->registry = $this->client->getContainer()->get('doctrine');
         $this->website = $this->getReference(LoadWebsiteData::WEBSITE1);
         $this->product = $this->getReference(LoadProductData::PRODUCT_1);
         $this->accountGroup = $this->getReference(LoadGroups::GROUP1);
         $this->account = $this->getReference('account.level_1');
+    }
+
+
+    public function tearDown()
+    {
+        $this->getContainer()->get('doctrine')->getManager()->clear();
+        parent::tearDown();
     }
 
     /**
@@ -77,6 +88,53 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
         $this->assertEquals($this->website, $visibilityResolved->getWebsite());
         $this->assertEquals($this->product, $visibilityResolved->getProduct());
     }
+
+
+    /**
+     * @dataProvider buildCacheDataProvider
+     *
+     * @param $expectedStaticCount
+     * @param $expectedCategoryCount
+     * @param string|null $websiteReference
+     */
+    public function testBuildCache($expectedStaticCount, $expectedCategoryCount, $websiteReference = null)
+    {
+        /** @var Website|null $website */
+        $website = $websiteReference ? $this->getReference($websiteReference) : null;
+        $this->getRepository()->clearTable();
+        $this->getCacheBuilder()->buildCache($website);
+
+        $this->assertCount($expectedStaticCount + $expectedCategoryCount, $this->getRepository()->findAll());
+
+        $this->assertCount(
+            $expectedStaticCount,
+            $this->getRepository()->findBy(['source' => BaseProductVisibilityResolved::SOURCE_STATIC])
+        );
+        $this->assertCount(
+            $expectedCategoryCount,
+            $this->getRepository()->findBy(['source' => BaseProductVisibilityResolved::SOURCE_CATEGORY])
+        );
+    }
+
+    /**
+     * @return EntityRepository
+     */
+    abstract protected function getSourceRepository();
+
+    /**
+     * @return AbstractVisibilityRepository
+     */
+    abstract protected function getRepository();
+
+    /**
+     * @return array
+     */
+    abstract public function buildCacheDataProvider();
+
+    /**
+     * @return CacheBuilderInterface
+     */
+    abstract protected function getCacheBuilder();
 
     protected function clearCategoryCache()
     {

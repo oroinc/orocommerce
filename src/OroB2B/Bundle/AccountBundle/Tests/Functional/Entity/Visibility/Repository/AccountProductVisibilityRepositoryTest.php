@@ -1,14 +1,14 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Repository;
+namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Visibility\Repository;
 
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
 /**
  * @dbIsolation
  */
-class AccountGroupProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositoryTestCase
+class AccountProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositoryTestCase
 {
     /**
      * {@inheritdoc}
@@ -19,7 +19,7 @@ class AccountGroupProductVisibilityRepositoryTest extends AbstractProductVisibil
 
         $this->repository = $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupProductVisibility');
+            ->getRepository('OroB2BAccountBundle:Visibility\AccountProductVisibility');
 
         $this->loadFixtures(
             [
@@ -30,7 +30,7 @@ class AccountGroupProductVisibilityRepositoryTest extends AbstractProductVisibil
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function setToDefaultWithoutCategoryDataProvider()
     {

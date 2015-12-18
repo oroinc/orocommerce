@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Repository;
+namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Visibility\Repository;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
