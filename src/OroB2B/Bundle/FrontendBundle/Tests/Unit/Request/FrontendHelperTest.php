@@ -35,7 +35,7 @@ class FrontendHelperTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
-     * @expectedExceptionMessage Request is not define
+     * @expectedExceptionMessage Request is not defined
      */
     public function testException()
     {
