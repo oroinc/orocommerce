@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Entity\Repository;
+namespace OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository;
 
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
@@ -13,7 +13,7 @@ use Doctrine\ORM\QueryBuilder;
  * @method string getEntityName()
  * @method QueryBuilder createQueryBuilder($alias)
  */
-trait ResolvedEntityRepositoryTrait
+trait BasicOperationRepositoryTrait
 {
     /**
      * @param array $data

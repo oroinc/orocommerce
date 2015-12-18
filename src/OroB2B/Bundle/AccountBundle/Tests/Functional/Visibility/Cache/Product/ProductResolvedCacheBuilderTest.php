@@ -27,22 +27,13 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
         $visibility->setProduct($this->product);
         $visibility->setVisibility(ProductVisibility::HIDDEN);
 
-        // account visibility entity with fallback to main product visibility entity
-        $accountVisibility = new AccountProductVisibility();
-        $accountVisibility->setWebsite($this->website);
-        $accountVisibility->setProduct($this->product);
-        $accountVisibility->setAccount($this->account);
-        $accountVisibility->setVisibility(AccountProductVisibility::CURRENT_PRODUCT);
-
         $entityManager = $this->getManagerForVisibility();
         $entityManager->persist($visibility);
-        $entityManager->persist($accountVisibility);
         $entityManager->flush();
 
         $resolvedVisibility = $this->getVisibilityResolved();
         $this->assertNotNull($resolvedVisibility);
         $this->assertStatic($resolvedVisibility, $visibility, BaseProductVisibilityResolved::VISIBILITY_HIDDEN);
-        $this->assertAccountVisibilityResolved(BaseProductVisibilityResolved::VISIBILITY_HIDDEN);
     }
 
     /**
@@ -61,7 +52,6 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
         $resolvedVisibility = $this->getVisibilityResolved();
         $this->assertNotNull($resolvedVisibility);
         $this->assertStatic($resolvedVisibility, $visibility, BaseProductVisibilityResolved::VISIBILITY_VISIBLE);
-        $this->assertAccountVisibilityResolved(BaseProductVisibilityResolved::VISIBILITY_VISIBLE);
     }
 
     /**
@@ -79,7 +69,6 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
         $entityManager->flush();
 
         $this->assertNull($this->getVisibilityResolved());
-        $this->assertAccountVisibilityResolved(BaseProductVisibilityResolved::VISIBILITY_VISIBLE);
     }
 
     /**
@@ -106,7 +95,6 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
         $this->assertNull($resolvedVisibility->getSourceProductVisibility());
         $this->assertEquals($resolvedVisibility->getVisibility(), BaseProductVisibilityResolved::VISIBILITY_VISIBLE);
         $this->assertProductIdentifyEntitiesAccessory($resolvedVisibility);
-        $this->assertAccountVisibilityResolved(BaseProductVisibilityResolved::VISIBILITY_VISIBLE);
     }
 
     /**
@@ -131,16 +119,6 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
                 'websiteReference' => LoadWebsiteData::WEBSITE2,
             ],
         ];
-    }
-
-    /**
-     * @param int $visibility
-     */
-    protected function assertAccountVisibilityResolved($visibility)
-    {
-        $accountVisibilityResolved = $this->getAccountVisibilityResolved();
-        $this->assertNotNull($accountVisibilityResolved);
-        $this->assertEquals($visibility, $accountVisibilityResolved->getVisibility());
     }
 
     /**
@@ -178,24 +156,6 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
         $entity = $entityManager
             ->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
             ->findByPrimaryKey($this->product, $this->website);
-
-        if ($entity) {
-            $entityManager->refresh($entity);
-        }
-
-        return $entity;
-    }
-
-    /**
-     * @return AccountProductVisibilityResolved|null
-     */
-    protected function getAccountVisibilityResolved()
-    {
-        $entityManager = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved');
-        $entity = $entityManager
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved')
-            ->findByPrimaryKey($this->account, $this->product, $this->website);
 
         if ($entity) {
             $entityManager->refresh($entity);

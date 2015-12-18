@@ -58,7 +58,10 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
                     'category' => $category
                 ];
             } else {
-                $update = $this->resolveConfigValue($visibilitySettings);
+                // default fallback
+                if ($hasAccountGroupProductVisibilityResolved) {
+                    $delete = true;
+                }
             }
         } elseif ($selectedVisibility === AccountGroupProductVisibility::CURRENT_PRODUCT) {
             if ($hasAccountGroupProductVisibilityResolved) {

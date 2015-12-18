@@ -6,7 +6,6 @@ use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -53,20 +52,18 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
                     'category' => $category
                 ];
             } else {
-                $update = $this->resolveConfigValue($visibilitySettings);
+                // default fallback
+                if ($hasAccountProductVisibilityResolved) {
+                    $delete = true;
+                }
             }
         } elseif ($selectedVisibility === AccountProductVisibility::CURRENT_PRODUCT) {
-            $productVisibilityResolved = $this->getProductVisibilityResolved($product, $website);
-            if ($productVisibilityResolved) {
-                $update = [
-                    'sourceProductVisibility' => $visibilitySettings,
-                    'visibility' => $productVisibilityResolved->getVisibility(),
-                    'source' => BaseProductVisibilityResolved::SOURCE_STATIC,
-                    'category' => null,
-                ];
-            } else {
-                $update = $this->resolveConfigValue($visibilitySettings);
-            }
+            $update = [
+                'sourceProductVisibility' => $visibilitySettings,
+                'visibility' => AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL,
+                'source' => BaseProductVisibilityResolved::SOURCE_STATIC,
+                'category' => null,
+            ];
         } elseif ($selectedVisibility === AccountProductVisibility::ACCOUNT_GROUP) {
             if ($hasAccountProductVisibilityResolved) {
                 $delete = true;
@@ -100,18 +97,5 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
     public function buildCache(Website $website = null)
     {
         // TODO: Implement buildCache() method.
-    }
-
-    /**
-     * @param Product $product
-     * @param Website $website
-     * @return ProductVisibilityResolved|null
-     */
-    protected function getProductVisibilityResolved(Product $product, Website $website)
-    {
-        return $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
-            ->findByPrimaryKey($product, $website);
     }
 }

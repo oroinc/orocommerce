@@ -94,16 +94,6 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
         }
 
         $this->executeDbQuery($er, $insert, $delete, $update, $where);
-
-        // set calculated visibility to account resolved values
-        if ($selectedVisibility !== ProductVisibility::CONFIG) {
-            $visibility = $update['visibility'];
-        } else {
-            $visibility = $this->getVisibilityFromConfig();
-        }
-        $this->registry->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved')
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved')
-            ->updateCurrentProductRelatedEntities($website, $product, $visibility);
     }
 
     /**
