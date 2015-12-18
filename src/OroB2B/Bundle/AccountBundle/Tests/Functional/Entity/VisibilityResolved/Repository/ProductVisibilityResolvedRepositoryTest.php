@@ -13,6 +13,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Repository\ProductVisibilityResolvedRepos
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
+use OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Repository\ResolvedEntityRepositoryTestTrait;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -27,7 +28,7 @@ use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
  */
 class ProductVisibilityResolvedRepositoryTest extends WebTestCase
 {
-    use ResolvedEntityRepositoryTestTrait;
+    use ResolvedEntityRepositoryTestTrait ;
 
     /**
      * @var EntityManager
