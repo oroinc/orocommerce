@@ -58,7 +58,7 @@ class AccountProductVisibilityResolvedRepositoryTest extends VisibilityResolvedR
 
     public function clearTableDataProvider()
     {
-        return ['expected_rows' => [1]];
+        return ['expected_rows' => [5]];
     }
 
     /**
@@ -66,7 +66,7 @@ class AccountProductVisibilityResolvedRepositoryTest extends VisibilityResolvedR
      */
     public function insertStaticDataProvider()
     {
-        return ['expected_rows' => [3]];
+        return ['expected_rows' => [4]];
     }
 
     /**
@@ -168,7 +168,7 @@ class AccountProductVisibilityResolvedRepositoryTest extends VisibilityResolvedR
         $resolvedVisibility = $this->getRepository()->findByPrimaryKey($account, $product, $website);
         $this->assertNotNull($resolvedVisibility);
         $this->assertEquals(
-            AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL,
+            AccountProductVisibilityResolved::VISIBILITY_VISIBLE,
             $resolvedVisibility->getVisibility()
         );
 
@@ -177,7 +177,7 @@ class AccountProductVisibilityResolvedRepositoryTest extends VisibilityResolvedR
 
         $this->entityManager->refresh($resolvedVisibility);
         $this->assertEquals(
-            AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL,
+            AccountProductVisibilityResolved::VISIBILITY_HIDDEN,
             $resolvedVisibility->getVisibility()
         );
     }

@@ -8,7 +8,9 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AbstractVisibilityRepository;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
@@ -108,6 +110,8 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
             $this->assertNotNull($source);
             if ($resolvedValue->getVisibility() == BaseProductVisibilityResolved::VISIBILITY_HIDDEN) {
                 $visibility = VisibilityInterface::HIDDEN;
+            } elseif ($resolvedValue->getVisibility() == AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL) {
+                $visibility = AccountProductVisibility::CURRENT_PRODUCT;
             } else {
                 $visibility = VisibilityInterface::VISIBLE;
             }
