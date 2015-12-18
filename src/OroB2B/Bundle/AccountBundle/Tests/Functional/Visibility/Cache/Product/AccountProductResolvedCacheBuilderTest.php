@@ -117,7 +117,10 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
         $this->assertEquals($visibility, $visibilityResolved->getSourceProductVisibility());
         $this->assertNull($visibilityResolved->getCategory());
         $this->assertEquals(BaseProductVisibilityResolved::SOURCE_STATIC, $visibilityResolved->getSource());
-        $this->assertEquals(BaseProductVisibilityResolved::VISIBILITY_HIDDEN, $visibilityResolved->getVisibility());
+        $this->assertEquals(
+            AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL,
+            $visibilityResolved->getVisibility()
+        );
         $this->assertProductIdentifyEntitiesAccessory($visibilityResolved);
     }
 
@@ -150,7 +153,10 @@ class AccountProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
         $this->assertEquals($visibility, $visibilityResolved->getSourceProductVisibility());
         $this->assertNull($visibilityResolved->getCategory());
         $this->assertEquals(BaseProductVisibilityResolved::SOURCE_STATIC, $visibilityResolved->getSource());
-        $this->assertEquals(BaseProductVisibilityResolved::VISIBILITY_VISIBLE, $visibilityResolved->getVisibility());
+        $this->assertEquals(
+            AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL,
+            $visibilityResolved->getVisibility()
+        );
         $this->assertProductIdentifyEntitiesAccessory($visibilityResolved);
     }
 

@@ -72,10 +72,9 @@ class DefaultVisibilityListenerTest extends WebTestCase
     /**
      * @param string $entityClass
      * @param array $parameters
-     * @param string|null $entityClassToClear
      * @dataProvider onFlushDataProvider
      */
-    public function testOnFlushVisibility($entityClass, array $parameters, $entityClassToClear = null)
+    public function testOnFlushVisibility($entityClass, array $parameters)
     {
         $entityManager = $this->getManager($entityClass);
 
@@ -86,32 +85,26 @@ class DefaultVisibilityListenerTest extends WebTestCase
 
         // persisted with custom visibility
         /** @var VisibilityInterface $entity */
-        $entity = $this->getEntity($entityClass, $properties);
+        $entity = $this->findOneBy($entityClass, $properties);
+        if (!$entity) {
+            $entity = $this->getEntity($entityClass, $properties);
+        }
         $entity->setVisibility(VisibilityInterface::VISIBLE);
         $entityManager->persist($entity);
         $entityManager->flush();
         $this->assertEntitiesSame($entity, $this->findOneBy($entityClass, $properties));
         $this->assertEquals(VisibilityInterface::VISIBLE, $entity->getVisibility());
-        if ($entityClassToClear) {
-            $entityManager->clear($entityClassToClear);
-        }
 
         // updated with custom visibility
         $entity->setVisibility(VisibilityInterface::HIDDEN);
         $entityManager->flush();
         $this->assertEntitiesSame($entity, $this->findOneBy($entityClass, $properties));
         $this->assertEquals(VisibilityInterface::HIDDEN, $entity->getVisibility());
-        if ($entityClassToClear) {
-            $entityManager->clear($entityClassToClear);
-        }
 
         // updated with default visibility
         $entity->setVisibility($entity::getDefault($entity->getTargetEntity()));
         $entityManager->flush();
         $this->assertNull($this->findOneBy($entityClass, $properties));
-        if ($entityClassToClear) {
-            $entityManager->clear($entityClassToClear);
-        }
 
         // persisted with default visibility
         $entity = $this->getEntity($entityClass, $properties);
@@ -119,9 +112,6 @@ class DefaultVisibilityListenerTest extends WebTestCase
         $entityManager->persist($entity);
         $entityManager->flush();
         $this->assertNull($this->findOneBy($entityClass, $properties));
-        if ($entityClassToClear) {
-            $entityManager->clear($entityClassToClear);
-        }
     }
 
     /**
@@ -145,21 +135,14 @@ class DefaultVisibilityListenerTest extends WebTestCase
             'product visibility' => [
                 'entityClass' => 'OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility',
                 'parameters' => ['website', 'product'],
-                'entityClassToClear' =>
-                    'OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved',
             ],
             'account product visibility' => [
                 'entityClass' => 'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility',
                 'parameters' => ['website', 'product', 'account'],
-                'entityClassToClear' =>
-                    'OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved',
-
             ],
             'account group product visibility' => [
                 'entityClass' => 'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility',
                 'parameters' => ['website', 'product', 'accountGroup'],
-                'entityClassToClear' =>
-                    'OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved',
             ],
         ];
     }
@@ -189,9 +172,10 @@ class DefaultVisibilityListenerTest extends WebTestCase
      */
     protected function assertEntitiesSame($expected, $actual)
     {
+        $propertyAccessor = $this->getPropertyAccessor();
         $this->assertEquals(
-            $this->propertyAccessor->getValue($expected, 'id'),
-            $this->propertyAccessor->getValue($actual, 'id')
+            $propertyAccessor->getValue($expected, 'id'),
+            $propertyAccessor->getValue($actual, 'id')
         );
     }
 }

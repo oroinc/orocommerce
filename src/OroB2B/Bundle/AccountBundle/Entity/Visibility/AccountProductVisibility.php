@@ -16,7 +16,15 @@ use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  * @ORM\Entity(
  *      repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository\AccountProductVisibilityRepository"
  * )
- * @ORM\Table(name="orob2b_acc_product_visibility")
+ * @ORM\Table(
+ *      name="orob2b_acc_product_visibility",
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(
+ *              name="orob2b_acc_prod_vis_uidx",
+ *              columns={"website_id", "product_id", "account_id"}
+ *          )
+ *      }
+ * )
  * @Config
  */
 class AccountProductVisibility implements VisibilityInterface, AccountAwareInterface, WebsiteAwareInterface
@@ -64,6 +72,11 @@ class AccountProductVisibility implements VisibilityInterface, AccountAwareInter
      * @ORM\Column(name="visibility", type="string", length=255, nullable=true)
      */
     protected $visibility;
+
+    public function __clone()
+    {
+        $this->id = null;
+    }
 
     /**
      * @return int

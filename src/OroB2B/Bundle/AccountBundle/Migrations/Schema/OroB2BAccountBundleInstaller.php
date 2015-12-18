@@ -635,8 +635,8 @@ class OroB2BAccountBundleInstaller implements
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('product_id', 'integer', []);
         $table->addColumn('source_product_visibility', 'integer', ['notnull' => false]);
-        $table->addColumn('visibility', 'integer', ['notnull' => false]);
-        $table->addColumn('source', 'integer', ['notnull' => false]);
+        $table->addColumn('visibility', 'smallint', ['notnull' => false]);
+        $table->addColumn('source', 'smallint', ['notnull' => false]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['website_id', 'product_id']);
     }
@@ -653,8 +653,8 @@ class OroB2BAccountBundleInstaller implements
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('product_id', 'integer', []);
         $table->addColumn('source_product_visibility', 'integer', ['notnull' => false]);
-        $table->addColumn('visibility', 'integer', ['notnull' => false]);
-        $table->addColumn('source', 'integer', ['notnull' => false]);
+        $table->addColumn('visibility', 'smallint', ['notnull' => false]);
+        $table->addColumn('source', 'smallint', ['notnull' => false]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['account_group_id', 'website_id', 'product_id']);
     }
@@ -671,8 +671,8 @@ class OroB2BAccountBundleInstaller implements
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('product_id', 'integer', []);
         $table->addColumn('source_product_visibility', 'integer', ['notnull' => false]);
-        $table->addColumn('visibility', 'integer', ['notnull' => false]);
-        $table->addColumn('source', 'integer', ['notnull' => false]);
+        $table->addColumn('visibility', 'smallint', ['notnull' => false]);
+        $table->addColumn('source', 'smallint', ['notnull' => false]);
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['account_id', 'website_id', 'product_id']);
     }
@@ -1163,6 +1163,7 @@ class OroB2BAccountBundleInstaller implements
         $table->addColumn('category_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
         $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['category_id'], 'orob2b_ctgr_vis_uidx');
     }
 
     /**
@@ -1178,6 +1179,7 @@ class OroB2BAccountBundleInstaller implements
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
         $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['category_id', 'account_id'], 'orob2b_acc_ctgr_vis_uidx');
     }
 
     /**
@@ -1193,6 +1195,7 @@ class OroB2BAccountBundleInstaller implements
         $table->addColumn('account_group_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
         $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['category_id', 'account_group_id'], 'orob2b_acc_grp_ctgr_vis_uidx');
     }
 
     /**
@@ -1208,6 +1211,7 @@ class OroB2BAccountBundleInstaller implements
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
         $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['website_id', 'product_id'], 'orob2b_prod_vis_uidx');
     }
 
     /**
@@ -1224,6 +1228,7 @@ class OroB2BAccountBundleInstaller implements
         $table->addColumn('account_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
         $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['website_id', 'product_id', 'account_id'], 'orob2b_acc_prod_vis_uidx');
     }
 
     /**
@@ -1240,6 +1245,7 @@ class OroB2BAccountBundleInstaller implements
         $table->addColumn('account_group_id', 'integer', ['notnull' => false]);
         $table->addColumn('visibility', 'string', ['length' => 255, 'notnull' => false]);
         $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['website_id', 'product_id', 'account_group_id'], 'orob2b_acc_grp_prod_vis_uidx');
     }
 
     /**

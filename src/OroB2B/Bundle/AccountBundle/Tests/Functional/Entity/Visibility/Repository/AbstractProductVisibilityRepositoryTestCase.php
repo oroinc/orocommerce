@@ -48,7 +48,7 @@ abstract class AbstractProductVisibilityRepositoryTestCase extends WebTestCase
     {
         return array_map(
             function (VisibilityInterface $visibility) {
-                return $visibility->getProduct()->getSku();
+                return $visibility->getTargetEntity()->getSku();
             },
             $this->repository->findAll()
         );

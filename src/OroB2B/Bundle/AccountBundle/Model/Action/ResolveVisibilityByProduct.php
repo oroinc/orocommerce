@@ -4,24 +4,30 @@ namespace OroB2B\Bundle\AccountBundle\Model\Action;
 
 use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
+use OroB2B\Bundle\ProductBundle\Entity\Product;
 
-class ResolveProductVisibility extends AbstractVisibilityRegistryAwareAction
+class ResolveVisibilityByProduct extends AbstractVisibilityRegistryAwareAction
 {
+    /**
+     * @var ProductCaseCacheBuilderInterface
+     */
+    protected $cacheBuilder;
+
     /**
      * {@inheritdoc}
      */
     protected function executeAction($context)
     {
-        $visibilityEntity = $this->getEntity($context);
+        $product = $this->getEntity($context);
 
-        $em = $this->getEntityManager();
-        $em->beginTransaction();
+        $entityManager = $this->getEntityManager();
+        $entityManager->beginTransaction();
         try {
-            $this->cacheBuilder->resolveVisibilitySettings($visibilityEntity);
-            $em->commit();
+            $this->cacheBuilder->productCategoryChanged($product);
+            $entityManager->commit();
         } catch (\Exception $e) {
-            $em->rollback();
+            $entityManager->rollback();
             throw $e;
         }
     }
@@ -33,8 +39,8 @@ class ResolveProductVisibility extends AbstractVisibilityRegistryAwareAction
     {
         $entity = parent::getEntity($context);
 
-        if (!$entity instanceof VisibilityInterface) {
-            throw new \LogicException('Resolvable entity must implement VisibilityInterface');
+        if (!$entity instanceof Product) {
+            throw new \LogicException('Resolvable entity must instance of Product');
         }
 
         return $entity;

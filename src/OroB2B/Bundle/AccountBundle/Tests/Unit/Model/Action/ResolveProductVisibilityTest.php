@@ -5,14 +5,14 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Model\Action;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
+use Doctrine\ORM\EntityManager;
+
 use Oro\Bundle\WorkflowBundle\Model\ContextAccessor;
 use Oro\Bundle\WorkflowBundle\Model\ProcessData;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Model\Action\ResolveProductVisibility;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
-use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class ResolveProductVisibilityTest extends \PHPUnit_Framework_TestCase
 {
@@ -45,25 +45,45 @@ class ResolveProductVisibilityTest extends \PHPUnit_Framework_TestCase
         $this->action->setDispatcher($eventDispatcher);
     }
 
-    public function testExecute()
+    /**
+     * @param bool $throwException
+     * @dataProvider executeActionDataProvider
+     */
+    public function testExecute($throwException = false)
     {
         $entity = new ProductVisibility();
 
-        $entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+        /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject $em */
+        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $entityManager->expects($this->any())
-            ->method('transactional')
-            ->willReturnCallback(
-                function ($callback) {
-                    call_user_func($callback);
-                }
-            );
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        if ($throwException) {
+            $this->cacheBuilder->expects($this->once())
+                ->method('resolveVisibilitySettings')
+                ->with($entity)
+                ->will($this->throwException(new \Exception('Error')));
+
+            $em->expects($this->once())
+                ->method('rollback');
+
+            $this->setExpectedException('\Exception', 'Error');
+        } else {
+            $this->cacheBuilder->expects($this->once())
+                ->method('resolveVisibilitySettings')
+                ->with($entity);
+
+            $em->expects($this->once())
+                ->method('commit');
+        }
 
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
             ->with('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
-            ->willReturn($entityManager);
+            ->willReturn($em);
 
         $this->cacheBuilder->expects($this->once())
             ->method('resolveVisibilitySettings')
@@ -71,5 +91,20 @@ class ResolveProductVisibilityTest extends \PHPUnit_Framework_TestCase
 
         $this->action->initialize([]);
         $this->action->execute(new ProcessData(['data' => $entity]));
+    }
+
+    /**
+     * @return array
+     */
+    public function executeActionDataProvider()
+    {
+        return [
+            [
+                'throwException' => true
+            ],
+            [
+                'throwException' => false
+            ],
+        ];
     }
 }

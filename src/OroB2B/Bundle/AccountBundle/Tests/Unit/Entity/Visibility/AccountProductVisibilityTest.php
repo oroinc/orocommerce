@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Entity\Visibility;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
+use Oro\Component\Testing\Unit\EntityTrait;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
@@ -12,6 +13,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 class AccountProductVisibilityTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
+    use EntityTrait;
 
     /**
      * Test setters getters
@@ -39,5 +41,16 @@ class AccountProductVisibilityTest extends \PHPUnit_Framework_TestCase
 
         $this->assertInternalType('array', $entity->getVisibilityList($product));
         $this->assertNotEmpty($entity->getVisibilityList($product));
+    }
+
+    public function testClone()
+    {
+        /** @var AccountProductVisibility $entity */
+        $entity = $this->getEntity(
+            'OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility',
+            ['id' => 1]
+        );
+        $clonedEntity = clone $entity;
+        $this->assertNull($clonedEntity->getId());
     }
 }
