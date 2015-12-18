@@ -4,7 +4,7 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Visibility\Reposit
 
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 abstract class AbstractProductVisibilityRepositoryTestCase extends WebTestCase
@@ -47,8 +47,8 @@ abstract class AbstractProductVisibilityRepositoryTestCase extends WebTestCase
     protected function getProductsByVisibilities()
     {
         return array_map(
-            function (ProductVisibility $visibility) {
-                return $visibility->getProduct()->getSku();
+            function (VisibilityInterface $visibility) {
+                return $visibility->getTargetEntity()->getSku();
             },
             $this->repository->findAll()
         );
