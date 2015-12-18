@@ -13,6 +13,7 @@ use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResol
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\BasicOperationRepositoryTrait;
 
 /**
  * Composite primary key fields order:
@@ -21,6 +22,8 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  */
 class ProductVisibilityResolvedRepository extends EntityRepository
 {
+    use BasicOperationRepositoryTrait;
+
     /**
      * @param InsertFromSelectQueryExecutor $executor
      * @param int $visibility

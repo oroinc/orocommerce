@@ -4,9 +4,15 @@ namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Doctrine\Common\Util\ClassUtils;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\UnitOfWork;
+
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
+use OroB2B\Bundle\AccountBundle\Entity\Repository\ResolvedEntityRepositoryTrait;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolver;
@@ -15,81 +21,88 @@ use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterfac
 
 abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderInterface
 {
-    /**
-     * @var ManagerRegistry
-     */
+    /** @var  ManagerRegistry */
     protected $registry;
 
-    /**
-     * @var CategoryVisibilityResolverInterface
-     */
+    /** @var  CategoryVisibilityResolverInterface */
     protected $categoryVisibilityResolver;
 
-    /**
-     * @var ConfigManager
-     */
+    /** @var  ConfigManager */
     protected $configManager;
 
-    /**
-     * @var InsertFromSelectQueryExecutor
-     */
-    protected $insertFromSelectExecutor;
-
-    /**
-     * @var string
-     */
-    protected $cacheClass;
+    /** @var  InsertFromSelectQueryExecutor */
+    protected $insertFromSelectQueryExecutor;
 
     /**
      * @param ManagerRegistry $registry
      * @param CategoryVisibilityResolver $categoryVisibilityResolver
      * @param ConfigManager $configManager
-     * @param InsertFromSelectQueryExecutor $insertFromSelectExecutor
+     * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
      */
     public function __construct(
         ManagerRegistry $registry,
         CategoryVisibilityResolver $categoryVisibilityResolver,
         ConfigManager $configManager,
-        InsertFromSelectQueryExecutor $insertFromSelectExecutor
+        InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
     ) {
         $this->registry = $registry;
         $this->categoryVisibilityResolver = $categoryVisibilityResolver;
         $this->configManager = $configManager;
-        $this->insertFromSelectExecutor = $insertFromSelectExecutor;
+        $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
     }
 
     /**
-     * @param BaseProductVisibilityResolved $productVisibilityResolved
-     * @param VisibilityInterface $productVisibility
      * @param string $selectedVisibility
+     * @param VisibilityInterface $productVisibility|null
+     * @return array
      */
-    protected function resolveStaticValues(
-        BaseProductVisibilityResolved $productVisibilityResolved,
-        VisibilityInterface $productVisibility,
-        $selectedVisibility
-    ) {
-        $productVisibilityResolved->setSourceProductVisibility($productVisibility);
-        $productVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_STATIC);
-        $productVisibilityResolved->setCategory(null);
+    protected function resolveStaticValues($selectedVisibility, VisibilityInterface $productVisibility = null)
+    {
+        $updateData = [
+            'sourceProductVisibility' => $productVisibility,
+            'source' => BaseProductVisibilityResolved::SOURCE_STATIC,
+            'category' => null,
+        ];
+
         if ($selectedVisibility === VisibilityInterface::VISIBLE) {
-            $productVisibilityResolved->setVisibility(BaseProductVisibilityResolved::VISIBILITY_VISIBLE);
+            $updateData['visibility'] = BaseProductVisibilityResolved::VISIBILITY_VISIBLE;
         } elseif ($selectedVisibility === VisibilityInterface::HIDDEN) {
-            $productVisibilityResolved->setVisibility(BaseProductVisibilityResolved::VISIBILITY_HIDDEN);
+            $updateData['visibility'] = BaseProductVisibilityResolved::VISIBILITY_HIDDEN;
         }
+
+        return $updateData;
     }
 
     /**
-     * @param BaseProductVisibilityResolved $productVisibilityResolved
      * @param VisibilityInterface|null $productVisibility
+     * @return array
      */
-    protected function resolveConfigValue(
-        BaseProductVisibilityResolved $productVisibilityResolved,
-        VisibilityInterface $productVisibility = null
-    ) {
-        $productVisibilityResolved->setSourceProductVisibility($productVisibility);
-        $productVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_STATIC);
-        $productVisibilityResolved->setCategory(null);
-        $productVisibilityResolved->setVisibility($this->getVisibilityFromConfig());
+    protected function resolveConfigValue(VisibilityInterface $productVisibility = null)
+    {
+        return [
+            'sourceProductVisibility' => $productVisibility,
+            'visibility' => $this->getVisibilityFromConfig(),
+            'source' => BaseProductVisibilityResolved::SOURCE_STATIC,
+            'category' => null,
+        ];
+    }
+
+    /**
+     * @param EntityRepository|ResolvedEntityRepositoryTrait $repository
+     * @param bool $insert
+     * @param bool $delete
+     * @param array $update
+     * @param array $where
+     */
+    protected function executeDbQuery(EntityRepository $repository, $insert, $delete, array $update, array $where)
+    {
+        if ($insert) {
+            $repository->insertEntity(array_merge($update, $where));
+        } elseif ($delete) {
+            $repository->deleteEntity($where);
+        } elseif ($update) {
+            $repository->updateEntity($update, $where);
+        }
     }
 
     /**
@@ -98,9 +111,8 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
     protected function getVisibilityFromConfig()
     {
         $visibilityFromConfig = $this->configManager->get('oro_b2b_account.product_visibility');
-        $visibility = $visibilityFromConfig === VisibilityInterface::VISIBLE ? 1 : -1;
 
-        return $visibility;
+        return $this->convertVisibility($visibilityFromConfig === VisibilityInterface::VISIBLE);
     }
 
     /**
@@ -114,10 +126,26 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
     }
 
     /**
-     * @param string $cacheClass
+     * @param object $entity
+     * @return object|null
      */
-    public function setCacheClass($cacheClass)
+    protected function refreshEntity($entity)
     {
-        $this->cacheClass = $cacheClass;
+        $entityClass = ClassUtils::getClass($entity);
+        /** @var EntityManager $entityManager */
+        $entityManager = $this->registry->getManagerForClass($entityClass);
+
+        if ($entityManager->getUnitOfWork()->getEntityState($entity) !== UnitOfWork::STATE_MANAGED) {
+            $identifier = $entityManager->getClassMetadata($entityClass)->getIdentifierValues($entity);
+            if ($identifier) {
+                $entity = $entityManager->getRepository($entityClass)->find($identifier);
+            } else {
+                $entity = null;
+            }
+        } else {
+            $entityManager->refresh($entity);
+        }
+
+        return $entity;
     }
 }

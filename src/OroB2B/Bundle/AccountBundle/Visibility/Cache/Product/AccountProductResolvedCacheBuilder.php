@@ -2,40 +2,39 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product;
 
-use Doctrine\ORM\EntityManager;
-
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountProductVisibilityResolvedRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
 {
     /**
-     * @param VisibilityInterface|AccountProductVisibility $accountProductVisibility
+     * @param VisibilityInterface|AccountProductVisibility $visibilitySettings
      */
-    public function resolveVisibilitySettings(VisibilityInterface $accountProductVisibility)
+    public function resolveVisibilitySettings(VisibilityInterface $visibilitySettings)
     {
-        $product = $accountProductVisibility->getProduct();
-        $website = $accountProductVisibility->getWebsite();
-        $account = $accountProductVisibility->getAccount();
+        $product = $visibilitySettings->getProduct();
+        $website = $visibilitySettings->getWebsite();
+        $account = $visibilitySettings->getAccount();
 
-        $selectedVisibility = $accountProductVisibility->getVisibility();
+        $selectedVisibility = $visibilitySettings->getVisibility();
+        $visibilitySettings = $this->refreshEntity($visibilitySettings);
 
-        $em = $this->registry->getManagerForClass(
-            'OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved'
-        );
-        $accountProductVisibilityResolved = $em
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved')
-            ->findByPrimaryKey($account, $product, $website);
+        $insert = false;
+        $delete = false;
+        $update = [];
+        $where = ['account' => $account, 'website' => $website, 'product' => $product];
 
-        if (!$accountProductVisibilityResolved && $selectedVisibility !== AccountProductVisibility::ACCOUNT_GROUP) {
-            $accountProductVisibilityResolved = new AccountProductVisibilityResolved($website, $product, $account);
-            $em->persist($accountProductVisibilityResolved);
+        $em = $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved');
+        $er = $em->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved');
+        $hasAccountProductVisibilityResolved = $er->hasEntity($where);
+
+        if (!$hasAccountProductVisibilityResolved && $selectedVisibility !== AccountProductVisibility::ACCOUNT_GROUP) {
+            $insert = true;
         }
 
         if ($selectedVisibility === AccountProductVisibility::CATEGORY) {
@@ -44,38 +43,36 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
                 ->getRepository('OroB2BCatalogBundle:Category')
                 ->findOneByProduct($product);
             if ($category) {
-                $accountProductVisibilityResolved->setVisibility(
-                    $this->convertVisibility(
+                $update = [
+                    'sourceProductVisibility' => $visibilitySettings,
+                    'visibility' => $this->convertVisibility(
                         $this->categoryVisibilityResolver->isCategoryVisibleForAccount($category, $account)
-                    )
-                );
-                $accountProductVisibilityResolved->setSourceProductVisibility($accountProductVisibility);
-                $accountProductVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_CATEGORY);
-                $accountProductVisibilityResolved->setCategory($category);
+                    ),
+                    'source' => BaseProductVisibilityResolved::SOURCE_CATEGORY,
+                    'category' => $category
+                ];
             } else {
-                $this->resolveConfigValue($accountProductVisibilityResolved, $accountProductVisibility);
+                // default fallback
+                if ($hasAccountProductVisibilityResolved) {
+                    $delete = true;
+                }
             }
         } elseif ($selectedVisibility === AccountProductVisibility::CURRENT_PRODUCT) {
-            $productVisibilityResolved = $this->getProductVisibilityResolved($product, $website);
-            if ($productVisibilityResolved) {
-                $accountProductVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_STATIC);
-                $accountProductVisibilityResolved->setCategory(null);
-                $accountProductVisibilityResolved->setVisibility($productVisibilityResolved->getVisibility());
-                $accountProductVisibilityResolved->setSourceProductVisibility($accountProductVisibility);
-            } else {
-                $this->resolveConfigValue($accountProductVisibilityResolved, $accountProductVisibility);
-            }
+            $update = [
+                'sourceProductVisibility' => $visibilitySettings,
+                'visibility' => AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL,
+                'source' => BaseProductVisibilityResolved::SOURCE_STATIC,
+                'category' => null,
+            ];
         } elseif ($selectedVisibility === AccountProductVisibility::ACCOUNT_GROUP) {
-            if ($accountProductVisibilityResolved) {
-                $em->remove($accountProductVisibilityResolved);
+            if ($hasAccountProductVisibilityResolved) {
+                $delete = true;
             }
         } else {
-            $this->resolveStaticValues(
-                $accountProductVisibilityResolved,
-                $accountProductVisibility,
-                $selectedVisibility
-            );
+            $update = $this->resolveStaticValues($selectedVisibility, $visibilitySettings);
         }
+
+        $this->executeDbQuery($er, $insert, $delete, $update, $where);
     }
 
     /**
@@ -109,43 +106,6 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function buildCache(Website $website = null)
-    {
-        // TODO: Implement buildCache() method.
-    }
-
-    /**
-     * @param Product $product
-     * @param Website $website
-     * @return ProductVisibilityResolved|null
-     */
-    protected function getProductVisibilityResolved(Product $product, Website $website)
-    {
-        /** @var EntityManager $em */
-        $em = $resolvedVisibility = $this->registry
-            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
-        $resolvedVisibility = $em->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
-            ->findByPrimaryKey($product, $website);
-
-        // entity might be inserted, but not saved yet
-        if (!$resolvedVisibility) {
-            foreach ($em->getUnitOfWork()->getScheduledEntityInsertions() as $entity) {
-                if ($entity instanceof ProductVisibilityResolved
-                    && $entity->getProduct() && $entity->getWebsite()
-                    && $entity->getProduct()->getId() === $product->getId()
-                    && $entity->getWebsite()->getId() === $website->getId()
-                ) {
-                    return $entity;
-                }
-            }
-        }
-
-        return $resolvedVisibility;
-    }
-
-    /**
      * @return AccountProductVisibilityResolvedRepository
      */
     protected function getRepository()
@@ -153,5 +113,13 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
         return $this->registry
             ->getManagerForClass($this->cacheClass)
             ->getRepository($this->cacheClass);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildCache(Website $website = null)
+    {
+        // TODO: Implement buildCache() method.
     }
 }

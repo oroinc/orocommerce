@@ -14,11 +14,16 @@ class ResolveProductVisibility extends AbstractVisibilityRegistryAwareAction
     protected function executeAction($context)
     {
         $visibilityEntity = $this->getEntity($context);
-        $this->getEntityManager()->transactional(
-            function () use ($visibilityEntity) {
-                $this->cacheBuilder->resolveVisibilitySettings($visibilityEntity);
-            }
-        );
+
+        $em = $this->getEntityManager();
+        $em->beginTransaction();
+        try {
+            $this->cacheBuilder->resolveVisibilitySettings($visibilityEntity);
+            $em->commit();
+        } catch (\Exception $e) {
+            $em->rollback();
+            throw $e;
+        }
     }
 
     /**

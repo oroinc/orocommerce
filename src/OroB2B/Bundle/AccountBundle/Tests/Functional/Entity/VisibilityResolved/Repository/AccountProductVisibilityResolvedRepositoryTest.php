@@ -10,15 +10,20 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountProductVisibilityResolvedRepository;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
+use OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Repository\ResolvedEntityRepositoryTestTrait;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
  */
 class AccountProductVisibilityResolvedRepositoryTest extends WebTestCase
 {
+    use ResolvedEntityRepositoryTestTrait;
+
     /**
      * @var EntityManager
      */
@@ -57,23 +62,30 @@ class AccountProductVisibilityResolvedRepositoryTest extends WebTestCase
         $this->assertEquals(spl_object_hash($expectedEntity), spl_object_hash($actualEntity));
     }
 
-    public function testUpdateCurrentProductRelatedEntities()
+    public function testInsertUpdateDeleteAndHasEntity()
     {
-        $website = $this->getDefaultWebsite();
-        /** @var Product $product */
-        $product = $this->getReference('product.5');
-        /** @var Account $account */
-        $account = $this->getReference('account.level_1');
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        $website = $this->getReference(LoadWebsiteData::WEBSITE1);
+        $account = $this->getReference(LoadAccounts::DEFAULT_ACCOUNT_NAME);
 
-        $resolvedVisibility = $this->repository->findByPrimaryKey($account, $product, $website);
-        $this->assertNotNull($resolvedVisibility);
-        $this->assertEquals(BaseProductVisibilityResolved::VISIBILITY_VISIBLE, $resolvedVisibility->getVisibility());
+        $where = ['account' => $account, 'product' => $product, 'website' => $website];
+        $this->assertFalse($this->repository->hasEntity($where));
 
-        $this->repository
-            ->updateCurrentProductRelatedEntities($website, $product, BaseProductVisibilityResolved::VISIBILITY_HIDDEN);
-
-        $this->entityManager->refresh($resolvedVisibility);
-        $this->assertEquals(BaseProductVisibilityResolved::VISIBILITY_HIDDEN, $resolvedVisibility->getVisibility());
+        $this->assertInsert(
+            $this->entityManager,
+            $this->repository,
+            $where,
+            BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
+            BaseProductVisibilityResolved::SOURCE_CATEGORY
+        );
+        $this->assertUpdate(
+            $this->entityManager,
+            $this->repository,
+            $where,
+            BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
+            BaseProductVisibilityResolved::SOURCE_STATIC
+        );
+        $this->assertDelete($this->repository, $where);
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\VisibilityResolved\Repository;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
@@ -12,12 +13,14 @@ use OroB2B\Bundle\AccountBundle\Entity\Repository\ProductVisibilityResolvedRepos
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
+use OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Repository\ResolvedEntityRepositoryTestTrait;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
+use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -25,6 +28,13 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  */
 class ProductVisibilityResolvedRepositoryTest extends WebTestCase
 {
+    use ResolvedEntityRepositoryTestTrait ;
+
+    /**
+     * @var EntityManager
+     */
+    protected $entityManager;
+
     /**
      * @var ProductVisibilityResolvedRepository
      */
@@ -38,9 +48,10 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient();
-        $this->website = $this->getWebsites()[0];
 
-        $this->repository = $this->getResolvedVisibilityManager()
+        $this->website = $this->getWebsites()[0];
+        $this->entityManager = $this->getResolvedVisibilityManager();
+        $this->repository = $this->entityManager
             ->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
 
         $this->loadFixtures(['OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData']);
@@ -143,6 +154,31 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
         $actual = $this->getActualArray();
         $this->assertCount(20, $actual);
         $this->assertInsertedByCategory($actual, $this->website);
+    }
+
+    public function testInsertUpdateDeleteAndHasEntity()
+    {
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        $website = $this->getReference(LoadWebsiteData::WEBSITE1);
+
+        $where = ['product' => $product, 'website' => $website];
+        $this->assertTrue($this->repository->hasEntity($where));
+
+        $this->assertDelete($this->repository, $where);
+        $this->assertInsert(
+            $this->entityManager,
+            $this->repository,
+            $where,
+            BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
+            BaseProductVisibilityResolved::SOURCE_STATIC
+        );
+        $this->assertUpdate(
+            $this->entityManager,
+            $this->repository,
+            $where,
+            BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
+            BaseProductVisibilityResolved::SOURCE_CATEGORY
+        );
     }
 
     /**
