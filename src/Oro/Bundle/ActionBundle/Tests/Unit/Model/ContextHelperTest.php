@@ -150,12 +150,12 @@ class ContextHelperTest extends \PHPUnit_Framework_TestCase
             'without request' => [
                 'request' => null,
                 'requestStackCalls' => 4,
-                'expected' => new ActionData()
+                'expected' => new ActionData(['data' => null])
             ],
             'empty request' => [
                 'request' => new Request(),
                 'requestStackCalls' => 4,
-                'expected' => new ActionData()
+                'expected' => new ActionData(['data' => null])
             ],
             'route1 without entity id' => [
                 'request' => new Request(
