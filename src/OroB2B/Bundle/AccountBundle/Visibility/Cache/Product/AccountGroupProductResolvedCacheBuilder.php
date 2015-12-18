@@ -116,21 +116,21 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
             $categoriesGrouped = $this->getCategories();
             foreach ($categoriesGrouped as $accountGroupId => $categoriesGroupedByAccountGroup) {
                 $this->getRepository()->insertByCategory(
-                    $this->insertFromSelectQueryExecutor,
+                    $this->insertFromSelectExecutor,
                     BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
                     $categoriesGroupedByAccountGroup[VisibilityInterface::VISIBLE],
                     $accountGroupId,
                     $websiteId
                 );
                 $this->getRepository()->insertByCategory(
-                    $this->insertFromSelectQueryExecutor,
+                    $this->insertFromSelectExecutor,
                     BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
                     $categoriesGroupedByAccountGroup[VisibilityInterface::HIDDEN],
                     $accountGroupId,
                     $websiteId
                 );
             }
-            $this->getRepository()->insertStatic($this->insertFromSelectQueryExecutor, $websiteId);
+            $this->getRepository()->insertStatic($this->insertFromSelectExecutor, $websiteId);
             $this->getManager()->commit();
         } catch (\Exception $exception) {
             $this->getManager()->rollback();

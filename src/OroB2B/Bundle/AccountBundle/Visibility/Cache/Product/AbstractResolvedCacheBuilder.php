@@ -15,22 +15,20 @@ use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterfac
 
 abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderInterface
 {
-    /** @var  ManagerRegistry */
+    /**
+     * @var ManagerRegistry
+     */
     protected $registry;
 
-    /** @var  CategoryVisibilityResolverInterface */
+    /**
+     * @var CategoryVisibilityResolverInterface
+     */
     protected $categoryVisibilityResolver;
 
-    /** @var  ConfigManager */
-    protected $configManager;
-
-    /** @var  InsertFromSelectQueryExecutor */
-    protected $insertFromSelectQueryExecutor;
-
     /**
-     * @var string
+     * @var ConfigManager
      */
-    protected $cacheClass;
+    protected $configManager;
 
     /**
      * @var InsertFromSelectQueryExecutor
@@ -38,21 +36,26 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
     protected $insertFromSelectExecutor;
 
     /**
+     * @var string
+     */
+    protected $cacheClass;
+
+    /**
      * @param ManagerRegistry $registry
      * @param CategoryVisibilityResolver $categoryVisibilityResolver
      * @param ConfigManager $configManager
-     * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
+     * @param InsertFromSelectQueryExecutor $insertFromSelectExecutor
      */
     public function __construct(
         ManagerRegistry $registry,
         CategoryVisibilityResolver $categoryVisibilityResolver,
         ConfigManager $configManager,
-        InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
+        InsertFromSelectQueryExecutor $insertFromSelectExecutor
     ) {
         $this->registry = $registry;
         $this->categoryVisibilityResolver = $categoryVisibilityResolver;
         $this->configManager = $configManager;
-        $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
+        $this->insertFromSelectExecutor = $insertFromSelectExecutor;
     }
 
     /**
@@ -116,13 +119,5 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
     public function setCacheClass($cacheClass)
     {
         $this->cacheClass = $cacheClass;
-    }
-
-    /**
-     * @param mixed $insertFromSelectExecutor
-     */
-    public function setInsertFromSelectExecutor(InsertFromSelectQueryExecutor $insertFromSelectExecutor)
-    {
-        $this->insertFromSelectExecutor = $insertFromSelectExecutor;
     }
 }
