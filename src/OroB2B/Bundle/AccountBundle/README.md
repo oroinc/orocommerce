@@ -16,8 +16,8 @@ Bundle responsibilities:
 - Activate and deactivate Account Users.
 - Send welcome email.
 - Password edit and automatic password generation for new Account User.
-- Processing of Category visibility
-- [Processing of Product visibility](./Resources/doc/product-visibility.md)
+- Category visibility
+- [Product visibility](./Resources/doc/product-visibility.md)
 
 Expected dependencies:
 ----------------------
