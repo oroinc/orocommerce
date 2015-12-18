@@ -7,6 +7,7 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\CacheBuilder;
 use OroB2B\Bundle\AccountBundle\EventListener\CategoryListener;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
@@ -20,6 +21,9 @@ class CategoryListenerTest extends \PHPUnit_Framework_TestCase
 
     /** @var InsertFromSelectQueryExecutor|\PHPUnit_Framework_MockObject_MockObject */
     protected $insertFromSelectQueryExecutor;
+
+    /** @var CacheBuilder */
+    protected $cacheBuilder;
 
     /**
      * {@inheritdoc}
@@ -35,7 +39,16 @@ class CategoryListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new CategoryListener($this->registry, $this->insertFromSelectQueryExecutor);
+        $this->cacheBuilder = $this
+            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\CacheBuilder')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->listener = new CategoryListener(
+            $this->registry,
+            $this->insertFromSelectQueryExecutor,
+            $this->cacheBuilder
+        );
     }
 
     /**
