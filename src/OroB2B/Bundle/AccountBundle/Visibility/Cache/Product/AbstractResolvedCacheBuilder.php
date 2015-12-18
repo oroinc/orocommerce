@@ -12,26 +12,39 @@ use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 
-use OroB2B\Bundle\AccountBundle\Entity\Repository\ResolvedEntityRepositoryTrait;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\BasicOperationRepositoryTrait;
 use OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolver;
 use OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 
 abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderInterface
 {
-    /** @var  ManagerRegistry */
+    /**
+     * @var ManagerRegistry
+     */
     protected $registry;
 
-    /** @var  CategoryVisibilityResolverInterface */
+    /**
+     * @var CategoryVisibilityResolverInterface
+     */
     protected $categoryVisibilityResolver;
 
-    /** @var  ConfigManager */
+    /**
+     * @var ConfigManager
+     */
     protected $configManager;
 
-    /** @var  InsertFromSelectQueryExecutor */
+    /**
+     * @var InsertFromSelectQueryExecutor
+     */
     protected $insertFromSelectQueryExecutor;
+
+    /**
+     * @var string
+     */
+    protected $cacheClass;
 
     /**
      * @param ManagerRegistry $registry
@@ -49,6 +62,14 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
         $this->categoryVisibilityResolver = $categoryVisibilityResolver;
         $this->configManager = $configManager;
         $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
+    }
+
+    /**
+     * @param string $cacheClass
+     */
+    public function setCacheClass($cacheClass)
+    {
+        $this->cacheClass = $cacheClass;
     }
 
     /**
@@ -88,7 +109,7 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
     }
 
     /**
-     * @param EntityRepository|ResolvedEntityRepositoryTrait $repository
+     * @param EntityRepository|BasicOperationRepositoryTrait $repository
      * @param bool $insert
      * @param bool $delete
      * @param array $update

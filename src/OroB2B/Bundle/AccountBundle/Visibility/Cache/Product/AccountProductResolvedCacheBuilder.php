@@ -2,6 +2,7 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product;
 
+use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountProductVisibilityResolvedRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
@@ -99,7 +100,7 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
         $this->getRepository()->deleteByProduct($product);
         $this->getRepository()->insertByProduct(
             $product,
-            $this->insertFromSelectExecutor,
+            $this->insertFromSelectQueryExecutor,
             $isCategoryVisible,
             $category
         );

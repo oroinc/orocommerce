@@ -5,8 +5,6 @@ namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
@@ -18,22 +16,6 @@ use OroB2B\Bundle\AccountBundle\Entity\Repository\ProductVisibilityResolvedRepos
 
 class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
 {
-    /**
-     * @param InsertFromSelectQueryExecutor $insertFromSelectExecutor
-     */
-    public function setInsertFromSelectExecutor(InsertFromSelectQueryExecutor $insertFromSelectExecutor)
-    {
-        $this->insertFromSelectExecutor = $insertFromSelectExecutor;
-    }
-
-    /**
-     * @param string $cacheClass
-     */
-    public function setCacheClass($cacheClass)
-    {
-        $this->cacheClass = $cacheClass;
-    }
-
     /**
      * @param VisibilityInterface|ProductVisibility $visibilitySettings
      */
@@ -110,13 +92,13 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
         } else {
             $this->registry->getManagerForClass('OroB2BAccountBundle:Visibility\ProductVisibility')
                 ->getRepository('OroB2BAccountBundle:Visibility\ProductVisibility')
-                ->setToDefaultWithoutCategoryByProduct($this->insertFromSelectExecutor, $product);
+                ->setToDefaultWithoutCategoryByProduct($this->insertFromSelectQueryExecutor, $product);
         }
 
         $repository = $this->getRepository();
         $repository->deleteByProduct($product);
         $repository->insertByProduct(
-            $this->insertFromSelectExecutor,
+            $this->insertFromSelectQueryExecutor,
             $product,
             $category,
             $isCategoryVisible
@@ -134,15 +116,15 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
         $manager->beginTransaction();
         try {
             $repository->clearTable($website);
-            $repository->insertFromBaseTable($this->insertFromSelectExecutor, $website);
+            $repository->insertFromBaseTable($this->insertFromSelectQueryExecutor, $website);
             $repository->insertByCategory(
-                $this->insertFromSelectExecutor,
+                $this->insertFromSelectQueryExecutor,
                 BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
                 $this->categoryVisibilityResolver->getVisibleCategoryIds(),
                 $website
             );
             $repository->insertByCategory(
-                $this->insertFromSelectExecutor,
+                $this->insertFromSelectQueryExecutor,
                 BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
                 $this->categoryVisibilityResolver->getHiddenCategoryIds(),
                 $website
