@@ -14,7 +14,7 @@ category_1:
             visibility: parent_category
             reference: category_1.visibility.account.level_1
         account.level_1.1:
-            visibility: category
+            visibility: hidden
             reference: category_1.visibility.account.level_1.1
         account.level_1.2:
             visibility: parent_category

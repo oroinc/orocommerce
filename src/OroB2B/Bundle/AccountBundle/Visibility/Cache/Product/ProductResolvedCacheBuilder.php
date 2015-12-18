@@ -18,9 +18,6 @@ use OroB2B\Bundle\AccountBundle\Entity\Repository\ProductVisibilityResolvedRepos
 
 class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
 {
-    const VISIBLE = 'visible';
-    const HIDDEN = 'hidden';
-
     /**
      * @var InsertFromSelectQueryExecutor
      */
@@ -137,17 +134,16 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
         try {
             $repository->clearTable($website);
             $repository->insertFromBaseTable($this->insertFromSelectExecutor, $website);
-            $categoriesGrouped = $this->getCategories();
             $repository->insertByCategory(
                 $this->insertFromSelectExecutor,
                 BaseProductVisibilityResolved::VISIBILITY_VISIBLE,
-                $categoriesGrouped[self::VISIBLE],
+                $this->categoryVisibilityResolver->getVisibleCategoryIds(),
                 $website
             );
             $repository->insertByCategory(
                 $this->insertFromSelectExecutor,
                 BaseProductVisibilityResolved::VISIBILITY_HIDDEN,
-                $categoriesGrouped[self::HIDDEN],
+                $this->categoryVisibilityResolver->getHiddenCategoryIds(),
                 $website
             );
             $manager->commit();
@@ -155,23 +151,6 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
             $manager->rollback();
             throw $exception;
         }
-    }
-
-    /**
-     * @return array
-     */
-    protected function getCategories()
-    {
-        // TODO: Fix after new interface for CategoryVisibilityResolver introduced in scope of BB-1647
-        /** @var Category[] $categories */
-        $categories = $this->registry->getManagerForClass('OroB2BCatalogBundle:Category')
-            ->getRepository('OroB2BCatalogBundle:Category')
-            ->createQueryBuilder('category')
-            ->select('category.id')
-            ->getQuery()
-            ->getScalarResult();
-
-        return [self::VISIBLE => array_map('current', $categories), self::HIDDEN => []];
     }
 
     /**

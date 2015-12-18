@@ -20,6 +20,9 @@ product.2:
         account_group.group1:
             visibility: visible
             reference: product.2.visibility.account_group.group1
+        account_group.group2:
+            visibility: hidden
+            reference: product.2.visibility.account_group.group2
     accounts:
         account.level_1:
             visibility: hidden
@@ -40,7 +43,10 @@ product.4:
         visibility: hidden
         reference: product.4.visibility.all
     groups: {}
-    accounts: {}
+    accounts:
+        account.orphan:
+            visibility: visible
+            reference: product.6.visibility.account.orphan
 product.5:
     website: Default
     all:
@@ -50,6 +56,9 @@ product.5:
         account_group.group1:
             visibility: hidden
             reference: product.5.visibility.account_group.group1
+        account_group.group2:
+            visibility: hidden
+            reference: product.5.visibility.account_group.group2
     accounts:
         account.level_1:
             visibility: current_product
@@ -66,7 +75,10 @@ product.7:
     all:
         visibility: config
         reference: product.7.visibility.all
-    groups: {}
+    groups:
+        account_group.group1:
+            visibility: category
+            reference: product.7.visibility.account_group.group1
     accounts: {}
 product.8:
     website: US

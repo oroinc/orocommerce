@@ -34,6 +34,10 @@ class ProductVisibilityResolvedRepository extends EntityRepository
         array $categories,
         Website $website = null
     ) {
+        if (!$categories) {
+            return;
+        }
+
         $qb = $this->getEntityManager()
             ->getRepository('OroB2BCatalogBundle:Category')
             ->createQueryBuilder('category');
