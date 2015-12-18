@@ -10,6 +10,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -21,6 +22,102 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  */
 class AccountProductRepository extends AbstractVisibilityRepository
 {
+    use BasicOperationRepositoryTrait;
+
+    /**
+     * @param Account $account
+     * @param Product $product
+     * @param Website $website
+     * @return null|AccountProductVisibilityResolved
+     */
+    public function findByPrimaryKey(Account $account, Product $product, Website $website)
+    {
+        return $this->findOneBy(['account' => $account, 'website' => $website, 'product' => $product]);
+    }
+
+    /**
+     * @param Product $product
+     */
+    public function deleteByProduct(Product $product)
+    {
+        $this->createQueryBuilder('productVisibility')
+            ->delete()
+            ->where('productVisibility.product = :product')
+            ->setParameter('product', $product)
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     * @param Product $product
+     * @param InsertFromSelectQueryExecutor $insertFromSelect
+     * @param boolean $isCategoryVisible
+     * @param Category|null $category
+     */
+    public function insertByProduct(
+        Product $product,
+        InsertFromSelectQueryExecutor $insertFromSelect,
+        $isCategoryVisible,
+        Category $category = null
+    ) {
+        $visibilityMap = [
+            AccountProductVisibility::HIDDEN => [
+                'visibility' => AccountProductVisibilityResolved::VISIBILITY_HIDDEN,
+                'source' => AccountProductVisibilityResolved::SOURCE_STATIC,
+                'category' => null,
+            ],
+            AccountProductVisibility::VISIBLE => [
+                'visibility' => AccountProductVisibilityResolved::VISIBILITY_VISIBLE,
+                'source' => AccountProductVisibilityResolved::SOURCE_STATIC,
+                'category' => null,
+            ],
+            AccountProductVisibility::CURRENT_PRODUCT => [
+                'visibility' => AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL,
+                'source' => AccountProductVisibilityResolved::SOURCE_STATIC,
+                'category' => null,
+            ],
+        ];
+        if ($category) {
+            $categoryVisibility = $isCategoryVisible ? AccountProductVisibilityResolved::VISIBILITY_VISIBLE :
+                AccountProductVisibilityResolved::VISIBILITY_HIDDEN;
+            $visibilityMap[AccountProductVisibility::CATEGORY] = [
+                'visibility' => $categoryVisibility,
+                'source' => AccountProductVisibilityResolved::SOURCE_CATEGORY,
+                'category' => $category->getId(),
+            ];
+        }
+
+        foreach ($visibilityMap as $visibility => $productVisibility) {
+            $qb = $this->getEntityManager()
+                ->getRepository('OroB2BAccountBundle:Visibility\AccountProductVisibility')
+                ->createQueryBuilder('productVisibility');
+            $fieldsInsert = ['sourceProductVisibility', 'product', 'website', 'account', 'visibility', 'source'];
+            $fieldsSelect = [
+                'productVisibility.id',
+                'IDENTITY(productVisibility.product)',
+                'IDENTITY(productVisibility.website)',
+                'IDENTITY(productVisibility.account)',
+                (string)$productVisibility['visibility'],
+                (string)$productVisibility['source'],
+            ];
+            if ($productVisibility['category']) {
+                $fieldsSelect[] = (string)$productVisibility['category'];
+                $fieldsInsert[] = 'category';
+            }
+            $qb->select($fieldsSelect)
+                ->where('productVisibility.product = :product')
+                ->andWhere('productVisibility.visibility = :visibility')
+                ->setParameter('product', $product)
+                ->setParameter('visibility', $visibility);
+
+            $insertFromSelect->execute(
+                $this->getEntityName(),
+                $fieldsInsert,
+                $qb
+            );
+        }
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -124,51 +221,5 @@ VISIBILITY;
             ],
             $queryBuilder
         );
-    }
-
-    /**
-     * @param Account $account
-     * @param Product $product
-     * @param Website $website
-     * @return null|AccountProductVisibilityResolved
-     */
-    public function findByPrimaryKey(
-        Account $account,
-        Product $product,
-        Website $website
-    ) {
-        return $this->findOneBy(['account' => $account, 'website' => $website, 'product' => $product]);
-    }
-
-    /**
-     * Set specified visibility to all resolved entities with fallback to current product
-     *
-     * @param Website $website
-     * @param Product $product
-     * @param int $visibility
-     */
-    public function updateCurrentProductRelatedEntities(
-        Website $website,
-        Product $product,
-        $visibility
-    ) {
-        $affectedEntitiesDql = $this->getEntityManager()->createQueryBuilder()
-            ->select('apv.id')
-            ->from('OroB2BAccountBundle:Visibility\AccountProductVisibility', 'apv')
-            ->andWhere('apv.website = :website')
-            ->andWhere('apv.product = :product')
-            ->andWhere('apv.visibility = :visibility')
-            ->getQuery()
-            ->getDQL();
-
-        $this->createQueryBuilder('apvr')
-            ->update('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved', 'apvr')
-            ->set('apvr.visibility', $visibility)
-            ->where('IDENTITY(apvr.sourceProductVisibility) IN (' . $affectedEntitiesDql . ')')
-            ->setParameter('website', $website)
-            ->setParameter('product', $product)
-            ->setParameter('visibility', AccountProductVisibility::CURRENT_PRODUCT)
-            ->getQuery()
-            ->execute();
     }
 }

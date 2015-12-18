@@ -6,11 +6,11 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use OroB2B\Bundle\AccountBundle\Command\ProductVisibilityCacheBuildCommand;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountGroupProductRepository;
-use OroB2B\Bundle\AccountBundle\Entity\Repository\AccountProductVisibilityResolvedRepository;
-use OroB2B\Bundle\AccountBundle\Entity\Repository\ProductVisibilityResolvedRepository;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountProductRepository;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\ProductRepository;
 
 /**
  * @dbIsolation
@@ -84,7 +84,7 @@ class ProductVisibilityCacheBuildCommandTest extends WebTestCase
                 'expectedCounts' => [
                     'productVisibility' => 20,
                     'accountGroupProductVisibility' => 8,
-                    'accountProductVisibility' => 0,
+                    'accountProductVisibility' => 5,
                 ]
             ],
             'withExitsIdParam' => [
@@ -97,7 +97,7 @@ class ProductVisibilityCacheBuildCommandTest extends WebTestCase
                 'expectedCounts' => [
                     'productVisibility' => 7,
                     'accountGroupProductVisibility' => 6,
-                    'accountProductVisibility' => 0,
+                    'accountProductVisibility' => 4,
                 ]
             ],
             'withWrongIdParam' => [
@@ -140,7 +140,7 @@ class ProductVisibilityCacheBuildCommandTest extends WebTestCase
     }
 
     /**
-     * @return ProductVisibilityResolvedRepository
+     * @return ProductRepository
      */
     protected function getProductVisibilityResolvedRepository()
     {
@@ -160,7 +160,7 @@ class ProductVisibilityCacheBuildCommandTest extends WebTestCase
     }
 
     /**
-     * @return AccountProductVisibilityResolvedRepository
+     * @return AccountProductRepository
      */
     protected function getAccountProductVisibilityResolvedRepository()
     {

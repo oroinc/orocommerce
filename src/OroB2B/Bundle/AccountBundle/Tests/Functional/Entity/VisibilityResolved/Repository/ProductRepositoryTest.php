@@ -9,7 +9,7 @@ use Doctrine\ORM\Query;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\AccountBundle\Entity\Repository\ProductVisibilityResolvedRepository;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\ProductRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
@@ -17,7 +17,7 @@ use OroB2B\Bundle\AccountBundle\Tests\Functional\Entity\Repository\ResolvedEntit
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
-use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use OroB2B\Bundle\ProductBundle\Entity\Repository\ProductRepository as ProductEntityRepository;
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
@@ -26,7 +26,7 @@ use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
  * @dbIsolation
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class ProductVisibilityResolvedRepositoryTest extends WebTestCase
+class ProductRepositoryTest extends WebTestCase
 {
     use ResolvedEntityRepositoryTestTrait ;
 
@@ -36,7 +36,7 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
     protected $entityManager;
 
     /**
-     * @var ProductVisibilityResolvedRepository
+     * @var ProductRepository
      */
     protected $repository;
 
@@ -261,7 +261,7 @@ class ProductVisibilityResolvedRepositoryTest extends WebTestCase
     }
 
     /**
-     * @return ProductRepository
+     * @return ProductEntityRepository
      */
     protected function getProductRepository()
     {

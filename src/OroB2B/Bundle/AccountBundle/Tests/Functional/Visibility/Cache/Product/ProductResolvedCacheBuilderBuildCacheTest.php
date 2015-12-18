@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\AccountBundle\Entity\Repository\ProductVisibilityResolvedRepository;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\ProductRepository;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\ProductResolvedCacheBuilder;
@@ -122,7 +122,7 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
     }
 
     /**
-     * @return ProductVisibilityResolvedRepository
+     * @return ProductRepository
      */
     protected function getRepository()
     {

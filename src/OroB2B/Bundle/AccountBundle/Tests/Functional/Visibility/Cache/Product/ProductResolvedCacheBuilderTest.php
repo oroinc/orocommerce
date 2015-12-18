@@ -4,11 +4,8 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Visibility\Cache\Product;
 
 use Doctrine\ORM\EntityManager;
 
-use Doctrine\ORM\EntityRepository;
-use OroB2B\Bundle\AccountBundle\Entity\Repository\ProductVisibilityResolvedRepository;
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\ProductRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
-use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
@@ -175,7 +172,7 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     }
 
     /**
-     * @return ProductVisibilityResolvedRepository|EntityRepository
+     * @return ProductRepository
      */
     protected function getRepository()
     {

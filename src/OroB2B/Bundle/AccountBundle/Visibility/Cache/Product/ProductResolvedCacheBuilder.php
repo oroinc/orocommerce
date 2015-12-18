@@ -12,7 +12,7 @@ use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-use OroB2B\Bundle\AccountBundle\Entity\Repository\ProductVisibilityResolvedRepository;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\ProductRepository;
 
 class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
 {
@@ -137,7 +137,7 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
     }
 
     /**
-     * @return ProductVisibilityResolvedRepository
+     * @return ProductRepository
      */
     protected function getRepository()
     {
