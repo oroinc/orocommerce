@@ -2,44 +2,41 @@
 
 namespace OroB2B\Bundle\AccountBundle\Model\Action;
 
-use Oro\Bundle\WorkflowBundle\Model\Action\AbstractAction;
+use Doctrine\ORM\EntityManager;
 
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\CacheBuilder;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 
-class ChangeCategoryVisibility extends AbstractAction
+class ChangeCategoryVisibility extends AbstractVisibilityRegistryAwareAction
 {
-    /**
-     * @var CacheBuilder
-     */
-    protected $cacheBuilder;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function initialize(array $options)
-    {
-        if (!$this->cacheBuilder) {
-            throw new \InvalidArgumentException('CacheBuilder is not provided');
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param CacheBuilder $cacheBuilder
-     */
-    public function setCacheBuilder(CacheBuilder $cacheBuilder)
-    {
-        $this->cacheBuilder = $cacheBuilder;
-    }
-
     /**
      * {@inheritdoc}
      */
     protected function executeAction($context)
     {
-        $categoryVisibility = $context->getEntity();
+        $categoryVisibility = $this->getEntity($context);
+        /** @var EntityManager $em */
+        $em = $this->registry->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
+        $em->beginTransaction();
+        try {
+            $this->cacheBuilder->resolveVisibilitySettings($categoryVisibility);
+            $em->commit();
+        } catch (\Exception $e) {
+            $em->rollback();
+            throw $e;
+        }
+    }
 
-        $this->cacheBuilder->resolveVisibilitySettings($categoryVisibility);
+    /**
+     * {@inheritdoc}
+     */
+    protected function getEntity($context)
+    {
+        $entity = parent::getEntity($context);
+
+        if (!$entity instanceof VisibilityInterface) {
+            throw new \LogicException('Resolvable entity must implement VisibilityInterface');
+        }
+
+        return $entity;
     }
 }

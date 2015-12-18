@@ -2,11 +2,12 @@
 
 namespace OroB2B\Bundle\AccountBundle\Model\Action;
 
-use Oro\Bundle\WorkflowBundle\Model\Action\AbstractAction;
+use Doctrine\ORM\EntityManager;
 
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\CategoryCaseCacheBuilderInterface;
 
-class ChangeCategoryPosition extends AbstractAction
+class ChangeCategoryPosition extends AbstractVisibilityRegistryAwareAction
 {
     /**
      * @var CategoryCaseCacheBuilderInterface
@@ -18,19 +19,13 @@ class ChangeCategoryPosition extends AbstractAction
      */
     public function initialize(array $options)
     {
-        if (!$this->cacheBuilder) {
-            throw new \InvalidArgumentException('CacheBuilder for category position change is not provided');
+        parent::initialize($options);
+
+        if (!$this->cacheBuilder instanceof CategoryCaseCacheBuilderInterface) {
+            throw new \InvalidArgumentException('Cache builder must impelement CategoryCaseCacheBuilderInterface');
         }
 
         return $this;
-    }
-
-    /**
-     * @param CategoryCaseCacheBuilderInterface $cacheBuilder
-     */
-    public function setCacheBuilder(CategoryCaseCacheBuilderInterface $cacheBuilder)
-    {
-        $this->cacheBuilder = $cacheBuilder;
     }
 
     /**
@@ -38,8 +33,31 @@ class ChangeCategoryPosition extends AbstractAction
      */
     protected function executeAction($context)
     {
-        $category = $context->getEntity();
+        $category = $this->getEntity($context);
 
-        $this->cacheBuilder->categoryPositionChanged($category);
+        /** @var EntityManager $em */
+        $em = $this->registry->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
+        $em->beginTransaction();
+        try {
+            $this->cacheBuilder->categoryPositionChanged($category);
+            $em->commit();
+        } catch (\Exception $e) {
+            $em->rollback();
+            throw $e;
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getEntity($context)
+    {
+        $entity = parent::getEntity($context);
+
+        if (!$entity instanceof Category) {
+            throw new \LogicException('Action can be applied only to Category entity');
+        }
+
+        return $entity;
     }
 }

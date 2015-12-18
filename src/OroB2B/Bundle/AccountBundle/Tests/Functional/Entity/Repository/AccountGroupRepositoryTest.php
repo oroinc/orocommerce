@@ -32,56 +32,70 @@ class AccountGroupRepositoryTest extends WebTestCase
             [
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
                 'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountCategoryVisibilities',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountGroupCategoryVisibilities',
+                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData',
             ]
         );
     }
 
     /**
-     * @dataProvider getCategoryAccountGroupsByVisibilityDataProvider
+     * @dataProvider getCategoryAccountGroupIdsByVisibilityDataProvider
      * @param string $categoryName
      * @param string $visibility
      * @param array $expectedAccountGroups
+     * @param array $restricted
      */
-    public function testGetCategoryAccountGroupsByVisibility(
+    public function testGetCategoryAccountGroupIdsByVisibility(
         $categoryName,
         $visibility,
-        array $expectedAccountGroups
+        array $expectedAccountGroups,
+        array $restricted = null
     ) {
         /** @var Category $category */
         $category = $this->getReference($categoryName);
 
-        $accountGroups = $this->repository->getCategoryAccountGroupsByVisibility($category, $visibility);
-
-        $accountGroups = array_map(
-            function (AccountGroup $accountGroup) {
-                return $accountGroup->getName();
-            },
-            $accountGroups
+        $accountGroupIds = $this->repository->getCategoryAccountGroupIdsByVisibility(
+            $category,
+            $visibility,
+            $restricted
         );
 
-        $this->assertEquals($expectedAccountGroups, $accountGroups);
+        $expectedAccountGroupIds = [];
+        foreach ($expectedAccountGroups as $expectedAccountGroupName) {
+            $accountGroup = $this->getReference($expectedAccountGroupName);
+            $expectedAccountGroupIds[] = $accountGroup->getId();
+        }
+
+        sort($expectedAccountGroupIds);
+        sort($accountGroupIds);
+
+        $this->assertEquals($expectedAccountGroupIds, $accountGroupIds);
     }
 
     /**
      * @return array
      */
-    public function getCategoryAccountGroupsByVisibilityDataProvider()
+    public function getCategoryAccountGroupIdsByVisibilityDataProvider()
     {
         return [
-            'FIRST_LEVEL with VISIBLE' => [
+            'FIRST_LEVEL with HIDDEN' => [
                 'categoryName' => LoadCategoryData::FIRST_LEVEL,
-                'visibility' => AccountGroupCategoryVisibility::VISIBLE,
+                'visibility' => AccountGroupCategoryVisibility::HIDDEN,
                 'expectedAccountGroups' => [
                     'account_group.group1'
                 ]
             ],
-            'SECOND_LEVEL1 with HIDDEN' => [
-                'categoryName' => LoadCategoryData::SECOND_LEVEL1,
-                'visibility' => AccountGroupCategoryVisibility::HIDDEN,
+            'FIRST_LEVEL with VISIBLE restricted' => [
+                'categoryName' => LoadCategoryData::FIRST_LEVEL,
+                'visibility' => AccountGroupCategoryVisibility::VISIBLE,
+                'expectedAccountGroups' => [],
+                'restricted' => []
+            ],
+            'FOURTH_LEVEL1 with PARENT_CATEGORY' => [
+                'categoryName' => LoadCategoryData::FOURTH_LEVEL1,
+                'visibility' => AccountGroupCategoryVisibility::PARENT_CATEGORY,
                 'expectedAccountGroups' => [
-                    'account_group.group1'
+                    'account_group.group1',
+                    'account_group.group3',
                 ]
             ],
         ];

@@ -12,26 +12,29 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
 {
     /**
-     * @param VisibilityInterface|AccountProductVisibility $accountProductVisibility
+     * @param VisibilityInterface|AccountProductVisibility $visibilitySettings
      */
-    public function resolveVisibilitySettings(VisibilityInterface $accountProductVisibility)
+    public function resolveVisibilitySettings(VisibilityInterface $visibilitySettings)
     {
-        $product = $accountProductVisibility->getProduct();
-        $website = $accountProductVisibility->getWebsite();
-        $account = $accountProductVisibility->getAccount();
+        $product = $visibilitySettings->getProduct();
+        $website = $visibilitySettings->getWebsite();
+        $account = $visibilitySettings->getAccount();
 
-        $selectedVisibility = $accountProductVisibility->getVisibility();
+        $selectedVisibility = $visibilitySettings->getVisibility();
+        $visibilitySettings = $this->refreshEntity($visibilitySettings);
 
-        $em = $this->registry->getManagerForClass(
-            'OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved'
-        );
-        $accountProductVisibilityResolved = $em
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved')
-            ->findByPrimaryKey($account, $product, $website);
+        $insert = false;
+        $delete = false;
+        $update = [];
+        $where = ['account' => $account, 'website' => $website, 'product' => $product];
 
-        if (!$accountProductVisibilityResolved && $selectedVisibility !== AccountProductVisibility::ACCOUNT_GROUP) {
-            $accountProductVisibilityResolved = new AccountProductVisibilityResolved($website, $product, $account);
-            $em->persist($accountProductVisibilityResolved);
+        $em = $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved');
+        $er = $em->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved');
+        $hasAccountProductVisibilityResolved = $er->hasEntity($where);
+
+        if (!$hasAccountProductVisibilityResolved && $selectedVisibility !== AccountProductVisibility::ACCOUNT_GROUP) {
+            $insert = true;
         }
 
         if ($selectedVisibility === AccountProductVisibility::CATEGORY) {
@@ -40,41 +43,36 @@ class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
                 ->getRepository('OroB2BCatalogBundle:Category')
                 ->findOneByProduct($product);
             if ($category) {
-                $accountProductVisibilityResolved->setVisibility(
-                    $this->convertVisibility(
+                $update = [
+                    'sourceProductVisibility' => $visibilitySettings,
+                    'visibility' => $this->convertVisibility(
                         $this->categoryVisibilityResolver->isCategoryVisibleForAccount($category, $account)
-                    )
-                );
-                $accountProductVisibilityResolved->setSourceProductVisibility($accountProductVisibility);
-                $accountProductVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_CATEGORY);
-                $accountProductVisibilityResolved->setCategoryId($category->getId());
+                    ),
+                    'source' => BaseProductVisibilityResolved::SOURCE_CATEGORY,
+                    'category' => $category
+                ];
             } else {
-                $this->resolveConfigValue($accountProductVisibilityResolved, $accountProductVisibility);
+                // default fallback
+                if ($hasAccountProductVisibilityResolved) {
+                    $delete = true;
+                }
             }
         } elseif ($selectedVisibility === AccountProductVisibility::CURRENT_PRODUCT) {
-            $productVisibilityResolved = $this->registry
-                ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
-                ->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
-                ->findByPrimaryKey($product, $website);
-            if ($productVisibilityResolved) {
-                $accountProductVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_STATIC);
-                $accountProductVisibilityResolved->setCategoryId(null);
-                $accountProductVisibilityResolved->setVisibility($productVisibilityResolved->getVisibility());
-                $accountProductVisibilityResolved->setSourceProductVisibility($accountProductVisibility);
-            } else {
-                $this->resolveConfigValue($accountProductVisibilityResolved, $accountProductVisibility);
-            }
+            $update = [
+                'sourceProductVisibility' => $visibilitySettings,
+                'visibility' => AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL,
+                'source' => BaseProductVisibilityResolved::SOURCE_STATIC,
+                'category' => null,
+            ];
         } elseif ($selectedVisibility === AccountProductVisibility::ACCOUNT_GROUP) {
-            if ($accountProductVisibilityResolved) {
-                $em->remove($accountProductVisibilityResolved);
+            if ($hasAccountProductVisibilityResolved) {
+                $delete = true;
             }
         } else {
-            $this->resolveStaticValues(
-                $accountProductVisibilityResolved,
-                $accountProductVisibility,
-                $selectedVisibility
-            );
+            $update = $this->resolveStaticValues($selectedVisibility, $visibilitySettings);
         }
+
+        $this->executeDbQuery($er, $insert, $delete, $update, $where);
     }
 
     /**

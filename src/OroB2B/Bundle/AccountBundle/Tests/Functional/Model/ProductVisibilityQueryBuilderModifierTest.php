@@ -38,18 +38,14 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
      */
     protected function setUp()
     {
-        $this->markTestSkipped('Must be fixed in scope of BB-1550');
-
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(AccountLoadAccountUserData::EMAIL, AccountLoadAccountUserData::PASSWORD)
         );
 
         $this->loadFixtures([
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
             'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
-            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityResolvedData',
+            'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData',
             'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
         ]);
 
@@ -78,7 +74,6 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         if ($user) {
             $user = $this->getReference($user);
         }
-
         $this->setupTokenStorage($user);
 
         $queryBuilder = $this->getProductRepository()->createQueryBuilder('p')
@@ -112,6 +107,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product.5',
                     'product.6',
                     'product.7',
+                    'product.8',
                 ]
             ],
             'config hidden' => [
@@ -132,6 +128,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product.5',
                     'product.6',
                     'product.7',
+                    'product.8',
                 ]
             ],
             'anonymous config hidden' => [
@@ -141,6 +138,31 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product.2',
                     'product.3',
                     'product.5',
+                ]
+            ],
+            'group config visible' => [
+                'configValue' => ProductVisibility::VISIBLE,
+                'user' => AccountLoadAccountUserData::GROUP2_EMAIL,
+                'expectedData' => [
+                    'product.1',
+                    'product.3',
+                    'product.6',
+                    'product.7',
+                    'product.8',
+                ]
+            ],
+            'account without group and config visible' => [
+                'configValue' => ProductVisibility::VISIBLE,
+                'user' => AccountLoadAccountUserData::ORPHAN_EMAIL,
+                'expectedData' => [
+                    'product.1',
+                    'product.2',
+                    'product.3',
+                    'product.4',
+                    'product.5',
+                    'product.6',
+                    'product.7',
+                    'product.8',
                 ]
             ],
         ];

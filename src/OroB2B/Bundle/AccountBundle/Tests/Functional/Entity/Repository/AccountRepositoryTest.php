@@ -123,32 +123,36 @@ class AccountRepositoryTest extends WebTestCase
     }
 
     /**
-     * @dataProvider getCategoryAccountsByVisibilityDataProvider
+     * @dataProvider getCategoryAccountIdsByVisibilityDataProvider
      * @param string $categoryName
      * @param string $visibility
      * @param array $expectedAccounts
+     * @param array $restricted
      */
-    public function testGetCategoryAccountsByVisibility($categoryName, $visibility, array $expectedAccounts)
-    {
+    public function testGetCategoryAccountIdsByVisibility(
+        $categoryName,
+        $visibility,
+        array $expectedAccounts,
+        array $restricted = null
+    ) {
         /** @var Category $category */
         $category = $this->getReference($categoryName);
 
-        $accounts = $this->repository->getCategoryAccountsByVisibility($category, $visibility);
+        $accountIds = $this->repository->getCategoryAccountIdsByVisibility($category, $visibility, $restricted);
 
-        $accounts = array_map(
-            function (Account $account) {
-                return $account->getName();
-            },
-            $accounts
-        );
+        $expectedAccountIds = [];
+        foreach ($expectedAccounts as $expectedAccountName) {
+            $accountGroup = $this->getReference($expectedAccountName);
+            $expectedAccountIds[] = $accountGroup->getId();
+        }
 
-        $this->assertEquals($expectedAccounts, $accounts);
+        $this->assertEquals($expectedAccountIds, $accountIds);
     }
 
     /**
      * @return array
      */
-    public function getCategoryAccountsByVisibilityDataProvider()
+    public function getCategoryAccountIdsByVisibilityDataProvider()
     {
         return [
             'FIRST_LEVEL with VISIBLE' => [
@@ -158,10 +162,18 @@ class AccountRepositoryTest extends WebTestCase
                     'account.level_1.4',
                 ]
             ],
+            'FIRST_LEVEL with VISIBLE restricted' => [
+                'categoryName' => LoadCategoryData::FIRST_LEVEL,
+                'visibility' => AccountCategoryVisibility::VISIBLE,
+                'expectedAccounts' => [],
+                'restricted' => []
+            ],
             'FIRST_LEVEL with HIDDEN' => [
                 'categoryName' => LoadCategoryData::FIRST_LEVEL,
                 'visibility' => AccountCategoryVisibility::HIDDEN,
-                'expectedAccounts' => []
+                'expectedAccounts' => [
+                    'account.level_1.1',
+                ]
             ],
         ];
     }
