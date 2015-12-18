@@ -45,23 +45,27 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
     }
 
     /**
-     * @param VisibilityInterface|ProductVisibility $productVisibility
+     * @param VisibilityInterface|ProductVisibility $visibilitySettings
      */
-    public function resolveVisibilitySettings(VisibilityInterface $productVisibility)
+    public function resolveVisibilitySettings(VisibilityInterface $visibilitySettings)
     {
-        $product = $productVisibility->getProduct();
-        $website = $productVisibility->getWebsite();
+        $product = $visibilitySettings->getProduct();
+        $website = $visibilitySettings->getWebsite();
 
-        $selectedVisibility = $productVisibility->getVisibility();
+        $selectedVisibility = $visibilitySettings->getVisibility();
+        $visibilitySettings = $this->refreshEntity($visibilitySettings);
+
+        $insert = false;
+        $delete = false;
+        $update = [];
+        $where = ['website' => $website, 'product' => $product];
 
         $em = $this->registry->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
-        $productVisibilityResolved = $em
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved')
-            ->findByPrimaryKey($product, $website);
+        $er = $em->getRepository('OroB2BAccountBundle:VisibilityResolved\ProductVisibilityResolved');
+        $hasProductVisibilityResolved = $er->hasEntity($where);
 
-        if (!$productVisibilityResolved && $selectedVisibility !== ProductVisibility::CONFIG) {
-            $productVisibilityResolved = new ProductVisibilityResolved($website, $product);
-            $em->persist($productVisibilityResolved);
+        if (!$hasProductVisibilityResolved && $selectedVisibility !== ProductVisibility::CONFIG) {
+            $insert = true;
         }
 
         if ($selectedVisibility === ProductVisibility::CATEGORY) {
@@ -69,34 +73,27 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
                 ->getManagerForClass('OroB2BCatalogBundle:Category')
                 ->getRepository('OroB2BCatalogBundle:Category')
                 ->findOneByProduct($product);
-
             if ($category) {
-                $productVisibilityResolved->setSourceProductVisibility(null);
-                $productVisibilityResolved->setVisibility(
-                    $this->convertVisibility($this->categoryVisibilityResolver->isCategoryVisible($category))
-                );
-                $productVisibilityResolved->setSource(BaseProductVisibilityResolved::SOURCE_CATEGORY);
-                $productVisibilityResolved->setCategory($category);
+                $update = [
+                    'sourceProductVisibility' => null,
+                    'visibility' => $this->convertVisibility(
+                        $this->categoryVisibilityResolver->isCategoryVisible($category)
+                    ),
+                    'source' => BaseProductVisibilityResolved::SOURCE_CATEGORY,
+                    'category' => $category
+                ];
             } else {
-                $this->resolveConfigValue($productVisibilityResolved);
+                $update = $this->resolveConfigValue($visibilitySettings);
             }
         } elseif ($selectedVisibility === ProductVisibility::CONFIG) {
-            if ($productVisibilityResolved) {
-                $em->remove($productVisibilityResolved);
+            if ($hasProductVisibilityResolved) {
+                $delete = true;
             }
         } else {
-            $this->resolveStaticValues($productVisibilityResolved, $productVisibility, $selectedVisibility);
+            $update = $this->resolveStaticValues($selectedVisibility, $visibilitySettings);
         }
 
-        // set calculated visibility to account resolved values
-        if ($productVisibilityResolved && $selectedVisibility !== ProductVisibility::CONFIG) {
-            $visibility = $productVisibilityResolved->getVisibility();
-        } else {
-            $visibility = $this->getVisibilityFromConfig();
-        }
-        $this->registry->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved')
-            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountProductVisibilityResolved')
-            ->updateCurrentProductRelatedEntities($website, $product, $visibility);
+        $this->executeDbQuery($er, $insert, $delete, $update, $where);
     }
 
     /**

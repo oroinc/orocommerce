@@ -10,6 +10,7 @@ use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\BasicOperationRepositoryTrait;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
@@ -20,6 +21,8 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  */
 class ProductVisibilityResolvedRepository extends EntityRepository
 {
+    use BasicOperationRepositoryTrait;
+
     /**
      * @param InsertFromSelectQueryExecutor $executor
      * @param int $visibility

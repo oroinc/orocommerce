@@ -21,6 +21,8 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
  */
 class AccountGroupProductRepository extends AbstractVisibilityRepository
 {
+    use BasicOperationRepositoryTrait;
+
     /**
      * @param InsertFromSelectQueryExecutor $insertFromSelect
      * @param integer $cacheVisibility
