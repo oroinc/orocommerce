@@ -1,6 +1,6 @@
 definitions:
     change_category_position:
-        label: 'Changed Category Position In Tree'
+        label: 'Update product visibility after category position in tree changed'
         enabled: true
         order: 20
         entity: OroB2B\Bundle\CatalogBundle\Entity\Category
@@ -10,7 +10,7 @@ definitions:
     # Category visibility update
 
     change_category_visibility:
-        label: 'Changed Category Visibility For All'
+        label: 'Update product visibility after category visibility for all changed'
         enabled: true
         order: 21
         entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility
@@ -18,7 +18,7 @@ definitions:
             - @change_category_visibility: ~
 
     change_account_group_category_visibility:
-        label: 'Changed Category Visibility For Account Group'
+        label: 'Update product visibility after category visibility for account group changed'
         enabled: true
         order: 22
         entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility
@@ -26,7 +26,7 @@ definitions:
             - @change_category_visibility: ~
 
     change_account_category_visibility:
-        label: 'Changed Category visibility For Account'
+        label: 'Update product visibility after category visibility for account changed'
         enabled: true
         order: 23
         entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility
@@ -37,7 +37,7 @@ definitions:
 
     product_visibility_change:
         enabled: true
-        label: 'Product visibility change'
+        label: 'Update product visibility after product visibility changed'
         order: 1
         entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility
         actions_configuration:
@@ -45,7 +45,7 @@ definitions:
 
     account_group_product_visibility_change:
         enabled: true
-        label: 'Account group product visibility change'
+        label: 'Update product visibility after account group product visibility changed'
         order: 2
         entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility
         actions_configuration:
@@ -53,15 +53,15 @@ definitions:
 
     account_product_visibility_change:
         enabled: true
-        label: 'Account product visibility change'
+        label: 'Update product visibility after account product visibility changed'
         order: 3
         entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility
         actions_configuration:
             - @resolve_product_visibility: ~
 
-    product_create:
+    product_visibility_product_create:
         enabled: true
-        label: 'Product create'
+        label: 'Update product visibility after product created'
         entity: OroB2B\Bundle\ProductBundle\Entity\Product
         actions_configuration:
             - @resolve_visibility_by_product: ~
@@ -69,7 +69,7 @@ definitions:
     # Category visibility cache clear
 
     category_position_cache_clear:
-        label: 'Clear Cache On Changing Category Position In Tree'
+        label: 'Clear category visibility cache on changing category position in tree'
         enabled: true
         order: 10
         entity: OroB2B\Bundle\CatalogBundle\Entity\Category
@@ -77,7 +77,7 @@ definitions:
             - @category_visibility_cache_clear: ~
 
     account_group_changed_cache_clear:
-        label: 'Clear Cache On Changing Account Group of Account'
+        label: 'Clear category visibility cache on changing account group of account'
         enabled: true
         order: 10
         entity: OroB2B\Bundle\AccountBundle\Entity\Account
@@ -85,7 +85,7 @@ definitions:
             - @category_visibility_cache_clear: ~
 
     category_visibility_cache_clear:
-        label: 'Clear Cache On Changing Category Visibility For All'
+        label: 'Clear category visibility cache on changing category visibility for all'
         enabled: true
         order: 11
         entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility
@@ -93,7 +93,7 @@ definitions:
             - @category_visibility_cache_clear: ~
 
     account_group_category_visibility_cache_clear:
-        label: 'Clear Cache On Changing Category Visibility For Account Group'
+        label: 'Clear category visibility cache on changing category visibility for account group'
         enabled: true
         order: 12
         entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility
@@ -101,16 +101,16 @@ definitions:
             - @category_visibility_cache_clear: ~
 
     account_category_visibility_cache_clear:
-        label: 'Clear Cache On Changing Category Visibility For Account'
+        label: 'Clear category visibility cache on changing category visibility for account'
         enabled: true
         order: 13
         entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility
         actions_configuration:
             - @category_visibility_cache_clear: ~
 
-    category_create:
+    product_visibility_category_create:
         enabled: true
-        label: 'Category create'
+        label: 'Update product visibility after category created'
         entity: OroB2B\Bundle\CatalogBundle\Entity\Category
         actions_configuration:
             - @foreach: # for all products in new category
@@ -122,7 +122,7 @@ definitions:
 
     product_visibility_website_added:
         enabled: true
-        label: 'Update product visibility by adding Website'
+        label: 'Update product visibility after website added'
         entity: OroB2B\Bundle\WebsiteBundle\Entity\Website
         actions_configuration:
             - @build_website_cache: ~
@@ -213,11 +213,11 @@ triggers:
         -
             event: delete
 
-    product_create:
+    product_visibility_product_create:
         -
             event: create
 
-    category_create:
+    product_visibility_category_create:
         -
             event: create
 
