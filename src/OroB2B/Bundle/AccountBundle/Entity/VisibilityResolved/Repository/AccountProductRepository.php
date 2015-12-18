@@ -132,6 +132,7 @@ class AccountProductRepository extends AbstractVisibilityRepository
             ->getRepository('OroB2BCatalogBundle:Category')
             ->createQueryBuilder('category')
             ->select(
+                'apv.id',
                 'IDENTITY(apv.website)',
                 'product.id',
                 (string)$accountId,
@@ -157,6 +158,7 @@ class AccountProductRepository extends AbstractVisibilityRepository
         $insertFromSelect->execute(
             $this->getClassName(),
             [
+                'sourceProductVisibility',
                 'website',
                 'product',
                 'account',
@@ -188,6 +190,7 @@ VISIBILITY;
             ->createQueryBuilder('apv');
         $queryBuilder
             ->select(
+                'apv.id',
                 'IDENTITY(apv.website)',
                 'IDENTITY(apv.product)',
                 'IDENTITY(apv.account)',
@@ -213,6 +216,7 @@ VISIBILITY;
         $insertFromSelect->execute(
             $this->getClassName(),
             [
+                'sourceProductVisibility',
                 'website',
                 'product',
                 'account',

@@ -111,8 +111,9 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
     {
         $this->getManager()->beginTransaction();
         try {
-            $websiteId = $website ? $website->getId() : null;
             $this->getRepository()->clearTable($website);
+            $websiteId = $website ? $website->getId() : null;
+
             $categoriesGrouped = $this->getCategories();
             foreach ($categoriesGrouped as $accountGroupId => $categoriesGroupedByAccountGroup) {
                 $this->getRepository()->insertByCategory(
