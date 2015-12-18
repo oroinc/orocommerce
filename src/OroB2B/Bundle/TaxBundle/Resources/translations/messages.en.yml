@@ -6,6 +6,7 @@ orob2b.tax:
     id.label: 'id'
     rate.label: 'Rate'
     form.choose: 'Choose a tax'
+    taxcode.form.extension.label: 'Tax Code'
 
     producttaxcode:
         entity_label: 'Product Tax Code'

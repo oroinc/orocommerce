@@ -1,12 +1,12 @@
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 
-{% if entity %}
-    {% set isGranted = resource_granted('VIEW', entity) %}
-    {% set taxCode %}
+{% set taxCode %}
+    {% if entity %}
+        {% set isGranted = resource_granted('VIEW', entity) %}
         {% if isGranted %}<a href="{{ path('orob2b_tax_product_tax_code_view', {'id': entity.id}) }}">{% endif %}
         {{ entity.code }}
         {% if isGranted %}</a>{% endif %}
-    {% endset %}
+    {% endif %}
+{% endset %}
 
-    {{ UI.renderHtmlProperty('orob2b.tax.producttaxcode.entity_label'|trans, taxCode) }}
-{% endif %}
+{{ UI.renderHtmlProperty('orob2b.tax.taxcode.form.extension.label'|trans, taxCode) }}

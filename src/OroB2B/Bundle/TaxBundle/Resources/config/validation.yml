@@ -20,13 +20,12 @@ OroB2B\Bundle\TaxBundle\Entity\Tax:
                 max: 255
             - OroB2B\Bundle\ValidationBundle\Validator\Constraints\Alphanumeric: ~
         rate:
+            - NotBlank: ~
             - Range:
                 min: 0
 
 OroB2B\Bundle\TaxBundle\Entity\TaxRule:
     properties:
-        description:
-            - NotBlank: ~
         tax:
             - NotBlank: ~
         productTaxCode:
