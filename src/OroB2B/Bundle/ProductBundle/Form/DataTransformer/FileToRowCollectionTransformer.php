@@ -24,16 +24,20 @@ class FileToRowCollectionTransformer implements DataTransformerInterface
     }
 
     /**
-     * @param UploadedFile $file
-     * @return QuickAddRowCollection
+     * @param UploadedFile|null $file
+     * @return QuickAddRowCollection|null
      */
     public function reverseTransform($file)
     {
-        $reader = $this->createReaderForFile($file);
-        $reader->open($file->getRealPath());
+        if (null === $file) {
+            return null;
+        }
 
         $lineNumber = 0;
         $collection = new QuickAddRowCollection();
+
+        $reader = $this->createReaderForFile($file);
+        $reader->open($file->getRealPath());
 
         foreach ($reader->getSheetIterator() as $sheet) {
             foreach ($sheet->getRowIterator() as $row) {

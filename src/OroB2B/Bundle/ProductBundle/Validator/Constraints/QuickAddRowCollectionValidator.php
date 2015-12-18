@@ -28,13 +28,17 @@ class QuickAddRowCollectionValidator extends ConstraintValidator
     }
 
     /**
-     * @param QuickAddRowCollectionModel|QuickAddRow[] $value
+     * @param QuickAddRowCollectionModel|QuickAddRow[]|null $value
      * @param QuickAddRowCollection|Constraint $constraint
      *
      * {@inheritdoc}
      */
     public function validate($value, Constraint $constraint)
     {
+        if (!$value) {
+            return;
+        }
+
         foreach ($value as $quickAddRow) {
             if (!$quickAddRow->isComplete()) {
                 continue;

@@ -67,13 +67,101 @@ class QuickAddControllerTest extends WebTestCase
 
         $this->assertContains(htmlentities('Copy & Paste'), $crawler->html());
 
-        $form = $form = $crawler->selectButton('Continue')->form();
+        $form = $crawler->selectButton('Continue')->form();
         $form['orob2b_product_quick_add_copy_paste[collection]'] = implode(PHP_EOL, $example);
 
         $crawler = $this->client->submit($form);
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertEquals($expectedValidationResult, $this->parseValidationResult($crawler));
+    }
+
+    /**
+     * @param string $file
+     * @param array $expectedValidationResult
+     * @param null|string $formErrorMessage
+     *
+     * @dataProvider importFromFileProvider
+     */
+    public function testImportFromFileAction($file, $expectedValidationResult, $formErrorMessage = null)
+    {
+        $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_frontend_quick_add_import'));
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+
+        $form = $crawler->selectButton('Upload')->form();
+
+        if (file_exists($file)) {
+            $form['orob2b_product_quick_add_import_from_file[products]']->upload($file);
+        }
+
+        $crawler = $this->client->submit($form);
+
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+
+        if ($formErrorMessage) {
+            $this->assertContains(htmlentities($formErrorMessage), $crawler->html());
+        } else {
+            $this->assertEquals($expectedValidationResult, $this->parseValidationResult($crawler));
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function importFromFileProvider()
+    {
+        $dir = __DIR__ . '/files/';
+        $correctCSV = $dir . 'quick-order.csv';
+        $correctXLSX = $dir . 'quick-order.xlsx';
+        $correctODS = $dir . 'quick-order.ods';
+        $invalidEXE = $dir . 'quick-order.exe';
+        $emptyCSV = $dir . 'quick-order-empty.csv';
+
+        $expectedValidationResult = [
+            self::VALIDATION_TOTAL_ROWS => 6,
+            self::VALIDATION_VALID_ROWS => 3,
+            self::VALIDATION_ERROR_ROWS => 3,
+            self::VALIDATION_ERRORS => [
+                sprintf(self::VALIDATION_ERROR_NOT_FOUND, 'SKU1'),
+                sprintf(self::VALIDATION_ERROR_MALFORMED, 5),
+                sprintf(self::VALIDATION_ERROR_MALFORMED, 6)
+            ]
+        ];
+
+        $expectedValidationEmptyResult = [
+            self::VALIDATION_TOTAL_ROWS => 0,
+            self::VALIDATION_VALID_ROWS => 0,
+            self::VALIDATION_ERROR_ROWS => 0
+        ];
+
+        return [
+            'valid CSV' => [
+                'file' => $correctCSV,
+                'expectedValidationResult' => $expectedValidationResult
+            ],
+            'valid XLSX' => [
+                'file' => $correctXLSX,
+                'expectedValidationResult' => $expectedValidationResult
+            ],
+            'valid ODS' => [
+                'file' => $correctODS,
+                'expectedValidationResult' => $expectedValidationResult
+            ],
+            'empty CSV' => [
+                'file' => $emptyCSV,
+                'expectedValidationResult' => $expectedValidationEmptyResult
+            ],
+            'invalid EXE' => [
+                'file' => $invalidEXE,
+                'expectedValidationResult' => null,
+                'formErrorMessage' => 'This value is not valid'
+            ],
+            'without file' => [
+                'file' => null,
+                'expectedValidationResult' => null,
+                'formErrorMessage' => 'This value should not be blank'
+            ]
+        ];
     }
 
     /**

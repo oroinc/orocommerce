@@ -12,7 +12,7 @@
     {% endif %}
 
     <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ app.request.uri }}" {{ form_enctype(form) }}
-          method="{{ form.vars.method }}" data-collect="true" class="form-dialog">
+          method="{{ form.vars.method }}" data-collect="true" class="form-dialog" novalidate="novalidate">
         <fieldset class="form-horizontal">
 
             <div class="row-oro" >
@@ -37,15 +37,9 @@
                 </ol>
 
                 <div class="widget-actions">
-                    <span class="action-wrapper">
                     <button type="reset" class="btn">Cancel</button>
-                        </span>
-                        <span class="action-wrapper">
-                    <a type="submit"
-                            class="btn btn-primary">Upload</a>
-                            </span>
+                    <button type="submit" class="btn btn-primary">Upload</button>
                 </div>
-
             </div>
 
         </fieldset>

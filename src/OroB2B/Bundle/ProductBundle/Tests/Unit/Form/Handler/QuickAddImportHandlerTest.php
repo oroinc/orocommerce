@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Tests\Unit\Form\Handler;
 
-use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,13 +13,18 @@ use OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry;
 use OroB2B\Bundle\ProductBundle\Form\Handler\QuickAddImportHandler;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddOrderType;
 use OroB2B\Bundle\ProductBundle\Form\Type\QuickAddType;
+use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class QuickAddImportHandlerTest extends \PHPUnit_Framework_TestCase
 {
     const QUICK_ADD_URL = 'http://quick-add.com';
     const COMPONENT_NAME = 'component';
     const SHOPPING_LIST_ID = 1;
-    const PRODUCTS = ['products'];
+
+    /**
+     * @var array
+     */
+    static protected $products = ['products'];
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
@@ -76,7 +80,7 @@ class QuickAddImportHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(self::COMPONENT_NAME)
             ->willReturn(null);
 
-        $response = $this->handler->process($this->prepareRequest(['products'], self::COMPONENT_NAME));
+        $response = $this->handler->process($this->prepareRequest(self::$products, self::COMPONENT_NAME));
 
         $this->assertInstanceOf('Symfony\Component\HttpFoundation\RedirectResponse', $response);
         $this->assertEquals(self::QUICK_ADD_URL, $response->getTargetUrl());
@@ -86,7 +90,7 @@ class QuickAddImportHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $response = new RedirectResponse(self::QUICK_ADD_URL);
         $request = $this->prepareRequest(
-            self::PRODUCTS,
+            self::$products,
             self::COMPONENT_NAME,
             self::SHOPPING_LIST_ID
         );
@@ -109,7 +113,7 @@ class QuickAddImportHandlerTest extends \PHPUnit_Framework_TestCase
     {
         $response = new RedirectResponse(self::QUICK_ADD_URL);
         $request = $this->prepareRequest(
-            self::PRODUCTS,
+            self::$products,
             self::COMPONENT_NAME,
             self::SHOPPING_LIST_ID
         );
@@ -185,7 +189,7 @@ class QuickAddImportHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('process')
             ->with(
                 [
-                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => self::PRODUCTS,
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => self::$products,
                     ProductDataStorage::ADDITIONAL_DATA_KEY => [
                         ProductDataStorage::SHOPPING_LIST_ID_KEY => self::SHOPPING_LIST_ID
                     ]
