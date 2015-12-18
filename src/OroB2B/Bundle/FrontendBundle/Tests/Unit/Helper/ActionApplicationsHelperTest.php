@@ -27,7 +27,6 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
 
     /**
      * @param TokenInterface|null $token
-     * @param TokenInterface $token
      * @param array $expectedRoutes
      *
      * @dataProvider applicationRoutesProvider
@@ -43,7 +42,6 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
 
     /**
      * @param TokenInterface|null $token
-     * @param TokenInterface $token
      * @param array $expectedRoutes
      *
      * @dataProvider applicationRoutesProvider
