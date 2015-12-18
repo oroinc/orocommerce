@@ -67,6 +67,6 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
      */
     public function buildCache(Website $website = null)
     {
-        // TODO: Implement buildCache() method.
+        // TODO: Implement in scope of BB-1650
     }
 }
