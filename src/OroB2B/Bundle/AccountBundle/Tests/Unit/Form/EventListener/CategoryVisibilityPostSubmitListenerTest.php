@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\AccountBundle\Tests\Unit\EventListener;
+namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Form\EventListener;
 
 use Symfony\Component\Form\FormInterface;
 
@@ -9,7 +9,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 
 use OroB2B\Bundle\AccountBundle\Form\Type\EntityVisibilityType;
-use OroB2B\Bundle\AccountBundle\EventListener\CategoryVisibilityPostSubmitListener;
+use OroB2B\Bundle\AccountBundle\Form\EventListener\CategoryVisibilityPostSubmitListener;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
@@ -20,7 +20,7 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class CategoryVisibilityPostSubmitListenerTest extends VisibilityAbstractListenerTestCase
+class CategoryPostSubmitVisibilityListenerTest extends AbstractVisibilityListenerTestCase
 {
     const CATEGORY_ID = 123;
 
