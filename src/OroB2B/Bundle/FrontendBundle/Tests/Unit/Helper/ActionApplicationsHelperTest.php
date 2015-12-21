@@ -27,7 +27,6 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
 
     /**
      * @param TokenInterface|null $token
-     * @param TokenInterface $token
      * @param array $expectedRoutes
      *
      * @dataProvider applicationRoutesProvider
@@ -43,7 +42,6 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
 
     /**
      * @param TokenInterface|null $token
-     * @param TokenInterface $token
      * @param array $expectedRoutes
      *
      * @dataProvider applicationRoutesProvider
@@ -83,7 +81,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
                 'routes' => [
                     'widget' => 'oro_action_widget_buttons',
                     'dialog' => 'oro_action_widget_form',
-                    'execution' => 'oro_api_action_execute',
+                    'execution' => 'oro_api_action_execute_actions',
                 ],
             ],
             'frontend user' => [
@@ -91,7 +89,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
                 'routes' => [
                     'widget' => 'orob2b_frontend_action_widget_buttons',
                     'dialog' => 'orob2b_frontend_action_widget_form',
-                    'execution' => 'orob2b_api_frontend_action_execute',
+                    'execution' => 'orob2b_api_frontend_action_execute_actions',
                 ],
             ],
             'not supported user' => [
@@ -99,7 +97,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
                 'routes' => [
                     'widget' => 'oro_action_widget_buttons',
                     'dialog' => 'oro_action_widget_form',
-                    'execution' => 'oro_api_action_execute',
+                    'execution' => 'oro_api_action_execute_actions',
                 ],
             ],
             'empty token' => [
@@ -107,7 +105,7 @@ class ActionApplicationsHelperTest extends ApplicationsHelperTest
                 'routes' => [
                     'widget' => 'oro_action_widget_buttons',
                     'dialog' => 'oro_action_widget_form',
-                    'execution' => 'oro_api_action_execute',
+                    'execution' => 'oro_api_action_execute_actions',
                 ],
             ],
         ];
