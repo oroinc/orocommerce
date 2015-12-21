@@ -91,52 +91,6 @@ class RequestController extends Controller
     }
 
     /**
-     * @Route("/change_status/{id}", name="orob2b_rfp_request_change_status", requirements={"id"="\d+"})
-     * @Template
-     * @Acl(
-     *      id="orob2b_rfp_request_update",
-     *      type="entity",
-     *      class="OroB2BRFPBundle:Request",
-     *      permission="EDIT"
-     * )
-     *
-     * @param RFPRequest $rfpRequest
-     * @param Request $request
-     * @throws NotFoundHttpException
-     * @return array
-     */
-    public function changeStatusAction(RFPRequest $rfpRequest, Request $request)
-    {
-        if (!$request->get('_widgetContainer')) {
-            throw $this->createNotFoundException();
-        }
-
-        $form = $this->createForm(RequestChangeStatusType::NAME, ['status' => $rfpRequest->getStatus()]);
-        $handler = new RequestChangeStatusHandler(
-            $form,
-            $request,
-            $this->getDoctrine()->getManagerForClass(
-                $this->container->getParameter('orob2b_rfp.entity.request.class')
-            ),
-            $this->container->get('templating')
-        );
-
-        $formAction = $this->get('router')->generate(
-            'orob2b_rfp_request_change_status',
-            [
-                'id' => $rfpRequest->getId(),
-            ]
-        );
-
-        return [
-            'entity' => $rfpRequest,
-            'saved' => $handler->process($rfpRequest),
-            'form' => $form->createView(),
-            'formAction' => $formAction,
-        ];
-    }
-
-    /**
      * @param RFPRequest $rfpRequest
      * @return array|RedirectResponse
      */

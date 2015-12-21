@@ -16,10 +16,12 @@ use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 use OroB2B\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
 use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData as TestFixturesLoadWebsiteData;
@@ -159,14 +161,23 @@ class ProductVisibilityControllerTest extends WebTestCase
      */
     public function testDuplicateProduct()
     {
+        $this->initClient([], $this->generateWsseAuthHeader());
+
         $this->client->followRedirects(true);
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_product_duplicate', ['id' => $this->product->getId()])
+            $this->getUrl(
+                'oro_api_action_execute',
+                [
+                    'actionName' => 'orob2b_product_duplicate_action',
+                    'route' => 'orob2b_product_view',
+                    'entityId' => $this->product->getId(),
+                    'entityClass' => 'OroB2B\Bundle\ProductBundle\Entity\Product'
+                ]
+            )
         );
-
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertEquals(200, $result->getStatusCode());
         /** @var EntityManager $em */
         $em = $this->client->getContainer()->get('doctrine')->getManager();
         $duplicatedProduct = $em->getRepository('OroB2BProductBundle:Product')
