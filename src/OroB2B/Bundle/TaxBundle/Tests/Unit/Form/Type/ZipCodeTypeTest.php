@@ -4,13 +4,13 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
-use Doctrine\Common\Collections\ArrayCollection;
-
 use OroB2B\Bundle\TaxBundle\Form\Type\ZipCodeType;
 use OroB2B\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
 
 class ZipCodeTypeTest extends FormIntegrationTestCase
 {
+    const DATA_CLASS = 'OroB2B\Bundle\TaxBundle\Entity\ZipCode';
+
     /**
      * @var ZipCodeType
      */
@@ -24,6 +24,7 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
         parent::setUp();
 
         $this->formType = new ZipCodeType();
+        $this->formType->setDataClass(self::DATA_CLASS);
     }
 
     /**
@@ -66,14 +67,34 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
      */
     public function submitDataProvider()
     {
-        $expected = [
-            ZipCodeTestHelper::getRangeZipCode('00001', '00010')
-        ];
-
         return [
-            'datatransformer works' => [
-                'submittedData' => '00001-00010',
-                'expectedData' => new ArrayCollection($expected),
+            'different range' => [
+                'submittedData' => [
+                    'zipRangeStart' => '123',
+                    'zipRangeEnd' => '234',
+                ],
+                'expectedData' => ZipCodeTestHelper::getRangeZipCode('123', '234'),
+            ],
+            'same range' => [
+                'submittedData' => [
+                    'zipRangeStart' => '123',
+                    'zipRangeEnd' => '123',
+                ],
+                'expectedData' => ZipCodeTestHelper::getSingleValueZipCode('123'),
+            ],
+            'start range only' => [
+                'submittedData' => [
+                    'zipRangeStart' => '123',
+                    'zipRangeEnd' => null,
+                ],
+                'expectedData' => ZipCodeTestHelper::getSingleValueZipCode('123'),
+            ],
+            'end range only' => [
+                'submittedData' => [
+                    'zipRangeStart' => null,
+                    'zipRangeEnd' => '123',
+                ],
+                'expectedData' => ZipCodeTestHelper::getSingleValueZipCode('123'),
             ],
         ];
     }

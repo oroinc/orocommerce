@@ -25,19 +25,10 @@ class ZipCodeFieldsValidatorTest extends \PHPUnit_Framework_TestCase
      */
     protected $constraint;
 
-    /**
-     * @var string
-     */
-    protected $expectedPropertyPath = 'property_path.zipCodes';
-
     public function setUp()
     {
         $this->constraint = new ZipCodeFields();
         $this->context = $this->getMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
-        $this->context
-            ->expects($this->once())
-            ->method('getPropertyPath')
-            ->willReturn('property_path');
 
         $this->validator = new ZipCodeFieldsValidator();
         $this->validator->initialize($this->context);
@@ -52,7 +43,7 @@ class ZipCodeFieldsValidatorTest extends \PHPUnit_Framework_TestCase
     {
         $this->context->expects($this->once())
             ->method('addViolationAt')
-            ->with($this->expectedPropertyPath, $this->constraint->onlyOneTypeMessage);
+            ->with('zipCode', $this->constraint->onlyOneTypeMessage);
 
         $zipCode = ZipCodeTestHelper::getSingleValueZipCode('0100')
             ->setZipRangeStart('0500')
@@ -61,13 +52,24 @@ class ZipCodeFieldsValidatorTest extends \PHPUnit_Framework_TestCase
         $this->validator->validate($zipCode, $this->constraint);
     }
 
-    public function testValidateWithOnlyOneFieldOfRange()
+    public function testValidateWithRangeStartOnlyField()
     {
         $this->context->expects($this->once())
             ->method('addViolationAt')
-            ->with($this->expectedPropertyPath, $this->constraint->rangeBothFieldMessage);
+            ->with('zipRangeEnd', $this->constraint->rangeShouldHaveBothFieldMessage);
 
         $zipCode = ZipCodeTestHelper::getRangeZipCode('0100', null);
+
+        $this->validator->validate($zipCode, $this->constraint);
+    }
+
+    public function testValidateWithRangeEndOnlyField()
+    {
+        $this->context->expects($this->once())
+            ->method('addViolationAt')
+            ->with('zipRangeStart', $this->constraint->rangeShouldHaveBothFieldMessage);
+
+        $zipCode = ZipCodeTestHelper::getRangeZipCode(null, '0100');
 
         $this->validator->validate($zipCode, $this->constraint);
     }
