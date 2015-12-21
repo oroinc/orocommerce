@@ -59,6 +59,35 @@ class ShoppingListFrontendActionsTest extends WebTestCase
         }
     }
 
+    public function testCreateRequest()
+    {
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
+        $this->assertFalse($shoppingList->getLineItems()->isEmpty());
+
+        $this->executeAction($shoppingList, 'orob2b_shoppinglist_frontend_action_request_quote');
+
+        $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
+
+        $data = json_decode($this->client->getResponse()->getContent(), true);
+
+        $this->assertArrayHasKey('redirectUrl', $data);
+
+        $this->assertStringStartsWith(
+            $this->getUrl('orob2b_rfp_frontend_request_create', [ProductDataStorage::STORAGE_KEY => 1]),
+            $data['redirectUrl']
+        );
+
+        $crawler = $this->client->request('GET', $data['redirectUrl']);
+
+        $lineItems = $crawler->filter('[data-ftid=orob2b_rfp_frontend_request_requestProducts]');
+        $this->assertNotEmpty($lineItems);
+        $content = $lineItems->html();
+        foreach ($shoppingList->getLineItems() as $lineItem) {
+            $this->assertContains($lineItem->getProduct()->getSku(), $content);
+        }
+    }
+
     /**
      * @param ShoppingList $shoppingList
      * @param string $actionName
