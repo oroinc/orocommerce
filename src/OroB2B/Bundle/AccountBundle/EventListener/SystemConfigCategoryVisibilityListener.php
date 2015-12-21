@@ -33,7 +33,7 @@ class SystemConfigCategoryVisibilityListener
         $settingsKey = $this->getSettingsKey();
         $settings = $event->getSettings();
         if (is_array($settings) && array_key_exists($settingsKey, $settings)) {
-            $this->categoryVisibilityStorage->clearData();
+            $this->categoryVisibilityStorage->flush();
         }
     }
 

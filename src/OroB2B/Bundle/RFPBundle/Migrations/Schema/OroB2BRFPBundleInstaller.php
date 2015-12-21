@@ -93,7 +93,7 @@ class OroB2BRFPBundleInstaller implements
         $table->addColumn('email', 'string', ['length' => 255]);
         $table->addColumn('phone', 'string', ['length' => 255]);
         $table->addColumn('company', 'string', ['length' => 255]);
-        $table->addColumn('role', 'string', ['length' => 255]);
+        $table->addColumn('role', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('note', 'text', []);
         $table->addColumn('po_number', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('ship_until', 'date', ['notnull' => false]);

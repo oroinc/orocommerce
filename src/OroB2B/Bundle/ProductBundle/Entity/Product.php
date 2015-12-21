@@ -700,7 +700,7 @@ class Product extends ExtendProduct implements OrganizationAwareInterface
             return null === $description->getLocale();
         });
 
-        if ($descriptions->count() !== 1) {
+        if ($descriptions->count() > 1) {
             throw new \LogicException('There must be only one default description');
         }
 
