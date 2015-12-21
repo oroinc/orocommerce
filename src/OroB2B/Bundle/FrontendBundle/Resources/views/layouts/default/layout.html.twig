@@ -15,7 +15,12 @@
     <script>
         require({
             config: {
-                'oro/datagrid/cell/action-cell': {showCloseButton: true}
+                'oro/datagrid/cell/action-cell': {showCloseButton: true},
+                'oro/filter/abstract-filter': {
+                    placeholder: null,
+                    labelPrefix: '{{ 'orob2b_frontend.filter.by'|trans  }} '
+                },
+                'orofilter/js/filter-hint': {inline: false}
             }
         });
     </script>
