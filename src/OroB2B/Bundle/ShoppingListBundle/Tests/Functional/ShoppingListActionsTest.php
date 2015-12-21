@@ -65,7 +65,7 @@ class ShoppingListActionsTest extends WebTestCase
         $this->client->request(
             'GET',
             $this->getUrl(
-                'oro_api_action_execute',
+                'oro_api_action_execute_actions',
                 [
                     'actionName' => $actionName,
                     'route' => 'orob2b_shopping_list_view',
