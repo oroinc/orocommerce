@@ -13,6 +13,9 @@ orob2b:
         current.label: Current
         default.label: Default
 
+        btn:
+            create_order: 'Create Order'
+
         create_new_form:
             input_label: Shopping List Label
             comment: Selected products will be added to this new shopping list.
@@ -89,3 +92,4 @@ orob2b:
         shoppinglist:
             btn:
                 request_quote_create_rfp: 'Request a Quote'
+                create_order: 'Create Order'

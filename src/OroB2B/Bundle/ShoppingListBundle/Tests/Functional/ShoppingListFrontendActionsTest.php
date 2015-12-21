@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
+namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional;
 
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
 use Oro\Component\Testing\WebTestCase;
@@ -12,7 +12,7 @@ use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingL
 /**
  * @dbIsolation
  */
-class OrderControllerTest extends WebTestCase
+class ShoppingListFrontendActionsTest extends WebTestCase
 {
     protected function setUp()
     {
@@ -38,24 +38,44 @@ class OrderControllerTest extends WebTestCase
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
         $this->assertFalse($shoppingList->getLineItems()->isEmpty());
 
-        $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_shopping_list_frontend_create_order', ['id' => $shoppingList->getId()])
-        );
+        $this->executeAction($shoppingList, 'orob2b_shoppinglist_frontend_action_createorder');
 
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 302);
+        $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        $crawler = $this->client->followRedirect();
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $data = json_decode($this->client->getResponse()->getContent(), true);
+
+        $this->assertArrayHasKey('redirectUrl', $data);
+
         $this->assertStringStartsWith(
-            $this->getUrl('orob2b_order_frontend_create'),
-            $this->client->getRequest()->getRequestUri()
+            $this->getUrl('orob2b_order_frontend_create', [ProductDataStorage::STORAGE_KEY => 1]),
+            $data['redirectUrl']
         );
-        $this->assertEquals(true, $this->client->getRequest()->get(ProductDataStorage::STORAGE_KEY));
+
+        $crawler = $this->client->request('GET', $data['redirectUrl']);
 
         $content = $crawler->filter('[data-ftid=orob2b_order_frontend_type_lineItems]')->html();
         foreach ($shoppingList->getLineItems() as $lineItem) {
             $this->assertContains($lineItem->getProduct()->getSku(), $content);
         }
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @param string $actionName
+     */
+    protected function executeAction(ShoppingList $shoppingList, $actionName)
+    {
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                'orob2b_api_frontend_action_execute',
+                [
+                    'actionName' => $actionName,
+                    'route' => 'orob2b_shopping_list_frontend_view',
+                    'entityId' => $shoppingList->getId(),
+                    'entityClass' => 'OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList'
+                ]
+            )
+        );
     }
 }
