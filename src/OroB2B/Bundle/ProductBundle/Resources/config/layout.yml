@@ -1,0 +1,8 @@
+services:
+    orob2b_product.data_provider.product:
+        parent: oro_layout.data_provider.abstract
+        calls:
+            - [setEntityFQCN, [%orob2b_product.product.class%]]
+            - [setContextIdAlias, ["productId"]]
+        tags:
+            - { name: layout.data_provider, alias: product }
