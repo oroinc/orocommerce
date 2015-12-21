@@ -24,7 +24,6 @@ use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 use OroB2B\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
 use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData as TestFixturesLoadWebsiteData;
 
-
 /**
  * @dbIsolation
  */
@@ -169,7 +168,7 @@ class ProductVisibilityControllerTest extends WebTestCase
             )
         );
         $result = $this->client->getResponse();
-        $this->assertEquals(200,$result->getStatusCode());
+        $this->assertEquals(200, $result->getStatusCode());
         /** @var EntityManager $em */
         $em = $this->client->getContainer()->get('doctrine')->getManager();
         $duplicatedProduct = $em->getRepository('OroB2BProductBundle:Product')
