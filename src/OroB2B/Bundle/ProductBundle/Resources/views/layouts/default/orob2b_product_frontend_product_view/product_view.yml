@@ -6,6 +6,12 @@ layout:
             items:
                 product_view_page:
                     blockType: container
+                product:
+                    blockType: block
+                product_tabs:
+                    blockType: block
             tree:
                 content:
                     product_view_page:
+                        product: ~
+                        product_tabs: ~
