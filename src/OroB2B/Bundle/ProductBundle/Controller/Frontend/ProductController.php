@@ -49,7 +49,7 @@ class ProductController extends Controller
      * View list of products
      *
      * @Route("/view/{id}", name="orob2b_product_frontend_product_view", requirements={"id"="\d+"})
-     * @Template("OroB2BProductBundle:Product\Frontend:view.html.twig")
+     * @Layout(vars={"productId"})
      * @Acl(
      *      id="orob2b_product_frontend_view",
      *      type="entity",
@@ -58,14 +58,14 @@ class ProductController extends Controller
      *      group_name="commerce"
      * )
      *
-     * @param Product $product
+     * @param integer $id
      *
      * @return array
      */
-    public function viewAction(Product $product)
+    public function viewAction($id)
     {
         return [
-            'entity' => $product
+            'productId' => $id
         ];
     }
 
