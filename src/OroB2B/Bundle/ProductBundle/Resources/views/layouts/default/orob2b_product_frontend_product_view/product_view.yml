@@ -1,0 +1,11 @@
+layout:
+    actions:
+        - @setBlockTheme:
+            themes: 'OroB2BProductBundle:layouts:default/orob2b_product_frontend_product_view/layout.html.twig'
+        - @addTree:
+            items:
+                product_view_page:
+                    blockType: container
+            tree:
+                content:
+                    product_view_page:
