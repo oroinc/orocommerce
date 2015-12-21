@@ -1,5 +1,7 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
 
+{% form_theme form with ['OroB2BTaxBundle:Form:fields.html.twig'] %}
+
 {% set formAction = entity.id ? path('orob2b_tax_jurisdiction_update', {id: entity.id}) : path('orob2b_tax_jurisdiction_create') %}
 
 {% oro_title_set({params : {"%code%": entity.code|default('N/A'|trans), '%entityName%': 'orob2b.tax.taxjurisdiction.entity_label'|trans} }) %}

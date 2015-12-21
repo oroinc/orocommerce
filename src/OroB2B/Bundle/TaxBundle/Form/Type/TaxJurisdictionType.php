@@ -67,9 +67,10 @@ class TaxJurisdictionType extends AbstractType
                 'random_id' => true,
                 'label' => 'orob2b.tax.taxjurisdiction.region_text.label'
             ])
-            ->add('zipCodes', ZipCodeType::NAME, [
+            ->add('zipCodes', ZipCodeCollectionType::NAME, [
                 'required' => false,
-                'label' => 'orob2b.tax.taxjurisdiction.zip_codes.label'
+                'label' => 'orob2b.tax.taxjurisdiction.zip_codes.label',
+                'tooltip'  => 'orob2b.tax.form.tooltip.zip_codes'
             ]);
     }
 

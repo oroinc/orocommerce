@@ -5,8 +5,11 @@ orob2b.tax:
     entity_plural_label: 'Taxes'
     id.label: 'id'
     rate.label: 'Rate'
-    form.choose: 'Choose a tax'
     taxcode.form.extension.label: 'Tax Code'
+
+    form:
+        choose: 'Choose a tax'
+        tooltip.zip_codes: 'If you want to type only one zip code, you can fill any field in the row'
 
     producttaxcode:
         entity_label: 'Product Tax Code'
@@ -49,6 +52,14 @@ orob2b.tax:
         region_text.label: 'State'
         form.choose: 'Choose Tax Jurisdiction'
         zip_codes.label: 'Zip Codes'
+
+    zipcode:
+        entity_label: 'Zip Code'
+        entity_plural_label: 'Zip Codes'
+        id.label: 'ID'
+        zip_code.label: 'Zip Code'
+        zip_range_start.label: 'Range start'
+        zip_range_end.label: 'Range end'
 
     menu:
         taxes_tab.label: 'Taxes'

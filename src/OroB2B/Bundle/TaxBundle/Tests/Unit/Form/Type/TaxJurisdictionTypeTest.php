@@ -18,7 +18,12 @@ use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\FormBundle\Form\Extension\RandomIdExtension;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+use Oro\Bundle\TranslationBundle\Translation\Translator;
 
+use OroB2B\Bundle\TaxBundle\Form\Type\ZipCodeCollectionType;
 use OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction;
 use OroB2B\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
 use OroB2B\Bundle\TaxBundle\Form\Type\ZipCodeType;
@@ -28,6 +33,7 @@ use OroB2B\Bundle\TaxBundle\Tests\Unit\Stub\AddressCountryAndRegionSubscriberStu
 class TaxJurisdictionTypeTest extends FormIntegrationTestCase
 {
     const DATA_CLASS = 'OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction';
+    const ZIP_CODE_DATA_CLASS = 'OroB2B\Bundle\TaxBundle\Entity\ZipCode';
 
     /**
      * @var TaxJurisdictionType
@@ -123,12 +129,12 @@ class TaxJurisdictionTypeTest extends FormIntegrationTestCase
     public function submitDataProvider()
     {
         $taxJurisdiction = new TaxJurisdiction();
-        $zipCodes = new ArrayCollection(
-            [
-                ZipCodeTestHelper::getSingleValueZipCode('07035')->setTaxJurisdiction($taxJurisdiction),
-                ZipCodeTestHelper::getRangeZipCode('08099', '08150')->setTaxJurisdiction($taxJurisdiction),
-            ]
-        );
+        $zipCodes = [
+            ZipCodeTestHelper::getRangeZipCode('12', '15')->setTaxJurisdiction($taxJurisdiction),
+            ZipCodeTestHelper::getSingleValueZipCode('123')->setTaxJurisdiction($taxJurisdiction),
+            ZipCodeTestHelper::getSingleValueZipCode('567')->setTaxJurisdiction($taxJurisdiction),
+            ZipCodeTestHelper::getSingleValueZipCode('89')->setTaxJurisdiction($taxJurisdiction),
+        ];
 
         return [
             'valid tax jurisdiction' => [
@@ -140,14 +146,31 @@ class TaxJurisdictionTypeTest extends FormIntegrationTestCase
                     'description' => 'description',
                     'country' => 'US',
                     'region' => 'US-AL',
-                    'zipCodes' => '07035,08099-08150',
+                    'zipCodes' => [
+                        [
+                            'zipRangeStart' => '12',
+                            'zipRangeEnd' => '15',
+                        ],
+                        [
+                            'zipRangeStart' => '123',
+                            'zipRangeEnd' => '123',
+                        ],
+                        [
+                            'zipRangeStart' => '567',
+                            'zipRangeEnd' => null,
+                        ],
+                        [
+                            'zipRangeStart' => null,
+                            'zipRangeEnd' => '89',
+                        ],
+                    ],
                 ],
                 'expectedData' => [
                     'code' => 'code',
                     'description' => 'description',
                     'country' => $this->country,
                     'region_text' => $this->region,
-                    'zipCodes' => $zipCodes,
+                    'zipCodes' => new ArrayCollection($zipCodes),
                 ],
             ],
         ];
@@ -199,6 +222,18 @@ class TaxJurisdictionTypeTest extends FormIntegrationTestCase
             )
         );
 
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigProvider $configProvider */
+        $configProvider = $this->getMockBuilder('Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Translator $translator */
+        $translator = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Translation\Translator')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $zipCodeType = new ZipCodeType();
+        $zipCodeType->setDataClass(self::ZIP_CODE_DATA_CLASS);
+
         return [
             new PreloadedExtension(
                 [
@@ -207,10 +242,13 @@ class TaxJurisdictionTypeTest extends FormIntegrationTestCase
                     'genemu_jqueryselect2_translatable_entity' => new Select2Type('translatable_entity'),
                     'genemu_jqueryselect2_choice' => new Select2Type('choice'),
                     'translatable_entity' => $translatableEntity,
-                    ZipCodeType::NAME => new ZipCodeType(),
+                    ZipCodeCollectionType::NAME => new ZipCodeCollectionType(),
+                    ZipCodeType::NAME => $zipCodeType,
+                    CollectionType::NAME => new CollectionType(),
                 ],
                 [
                     'hidden' => [new RandomIdExtension()],
+                    'form' => [new TooltipFormExtension($configProvider, $translator)],
                 ]
             ),
         ];
