@@ -40,3 +40,24 @@ actions:
                 parameters:
                     route: orob2b_order_frontend_create
                     route_parameters: {'storage': true}
+
+    orob2b_shoppinglist_add_to_shoppinglist_action:
+        label: orob2b.shoppinglist.product.add_to_shopping_list.label
+        applications: [frontend]
+        routes:
+            - orob2b_product_frontend_quick_add
+        acl_resource: orob2b_shopping_list_line_item_frontend_add
+        order: 30
+        frontend_options:
+            template: OroB2BShoppingListBundle:Action:quickAdd.html.twig
+        prefunctions:
+            - @call_service_method:
+                service: orob2b_shopping_list.processor.quick_add
+                method: isAllowed
+                attribute: $.isAllowed
+            - @call_service_method:
+                service: orob2b_shopping_list.helper.shopping_list_line_item
+                method: getShoppingLists
+                attribute: $.params
+        preconditions:
+            @equal: [true, $.isAllowed]

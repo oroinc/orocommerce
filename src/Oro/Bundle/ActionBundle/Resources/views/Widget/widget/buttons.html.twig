@@ -19,6 +19,7 @@
                     {% include template with {
                         'params': params|merge({'class': params.class|default('') ~ ' action-button'}),
                         'context': context,
+                        'actionData': actionData,
                         'onlyLink': true
                     } %}
                 </li>
@@ -29,7 +30,8 @@
             {% set button %}
                 {% include template with {
                     'params': params|merge({'class': params.class|default('back icons-holder-text') ~ ' btn action-button'}),
-                    'context': context
+                    'context': context,
+                    'actionData': actionData
                 } %}
             {% endset %}
 
@@ -37,7 +39,7 @@
         {% endif %}
     {% endfor %}
 
-    <div class="widget-content">
+    <div class="widget-content btn-group">
         <div data-page-component-module="oroaction/js/app/components/buttons-component">
             {% if buttons|length %}
                 {{ buttons|join()|raw }}
