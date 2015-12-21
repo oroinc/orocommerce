@@ -85,7 +85,6 @@ class LineItemHandler
 
             $this->form->submit($this->request);
             if ($this->form->isValid()) {
-
                 $this->processValidForm($lineItem);
 
                 $manager->commit();
