@@ -73,7 +73,6 @@ class QuickAddControllerTest extends WebTestCase
 
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_frontend_quick_add'));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-
         $this->assertContains(htmlentities('Copy & Paste'), $crawler->html());
 
         $form = $crawler->selectButton('Continue')->form();
@@ -115,6 +114,11 @@ class QuickAddControllerTest extends WebTestCase
      */
     public function testImportFromFileAction($file, $expectedValidationResult, $formErrorMessage = null)
     {
+        $this->client->request('GET', $this->getUrl('orob2b_product_frontend_quick_add'));
+        $response = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($response, 200);
+        $this->assertContains('Import From File', $response->getContent());
+
         $crawler = $this->client->request('GET', $this->getUrl('orob2b_product_frontend_quick_add_import'));
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
