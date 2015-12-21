@@ -1124,7 +1124,7 @@
   left: 1rem;
 }
   
-.product__select {
+.product__select, .filter-select-oro-wrapper {
 
   &.product__select_choose {
     max-width: 36rem;
@@ -1145,6 +1145,10 @@
       box-shadow: inset 0 .1rem .1rem rgba(0,0,0,.075), 0 0 .8rem rgba(102,175,233,.6);
     }
   }
+}
+
+.filter-select-oro-wrapper select {
+  width: auto !important;
 }
 
 .product__item-container {
@@ -3872,7 +3876,7 @@
   padding: 0 1rem;
 }
 
-.oro-oq__filter__form__daterange {
+.filter-date-range {
   display: flex;
   align-items: center;
 
