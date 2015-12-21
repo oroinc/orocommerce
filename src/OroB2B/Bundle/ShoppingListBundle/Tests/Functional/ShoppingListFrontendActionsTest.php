@@ -97,7 +97,7 @@ class ShoppingListFrontendActionsTest extends WebTestCase
         $this->client->request(
             'GET',
             $this->getUrl(
-                'orob2b_api_frontend_action_execute',
+                'orob2b_api_frontend_action_execute_actions',
                 [
                     'actionName' => $actionName,
                     'route' => 'orob2b_shopping_list_frontend_view',
