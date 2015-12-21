@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
 use Oro\Bundle\ActionBundle\Helper\ContextHelper;
 use Oro\Bundle\ActionBundle\Model\ActionData;
+use Oro\Bundle\ActionBundle\Model\ActionFormManager;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 
 class WidgetController extends Controller
@@ -51,7 +52,7 @@ class WidgetController extends Controller
 
         try {
             /** @var Form $form */
-            $form = $this->get('oro_action.form_manager')->getActionForm($actionName, $data);
+            $form = $this->getActionFormManager()->getActionForm($actionName, $data);
             $form->handleRequest($request);
 
             if ($form->isValid()) {
@@ -71,6 +72,14 @@ class WidgetController extends Controller
         $params['errors'] = $errors;
 
         return $this->render($this->getActionManager()->getDialogTemplate($actionName), $params);
+    }
+
+    /**
+     * @return ActionFormManager
+     */
+    protected function getActionFormManager()
+    {
+        return $this->get('oro_action.form_manager');
     }
 
     /**

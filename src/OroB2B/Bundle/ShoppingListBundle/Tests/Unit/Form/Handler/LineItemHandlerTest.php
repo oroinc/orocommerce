@@ -94,12 +94,12 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass');
 
         $handler = new LineItemHandler(
-            $this->form,
             $this->request,
             $this->registry,
             $this->shoppingListManager,
             $this->roundingService
         );
+        $handler->setForm($this->form);
         $this->assertFalse($handler->process($this->lineItem));
     }
 
@@ -129,12 +129,12 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue(false));
 
         $handler = new LineItemHandler(
-            $this->form,
             $this->request,
             $this->registry,
             $this->shoppingListManager,
             $this->roundingService
         );
+        $handler->setForm($this->form);
         $this->assertFalse($handler->process($this->lineItem));
     }
 
@@ -165,12 +165,12 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($newNotes));
 
         $handler = new LineItemHandler(
-            $this->form,
             $this->request,
             $this->registry,
             $this->shoppingListManager,
             $this->roundingService
         );
+        $handler->setForm($this->form);
         $this->assertTrue($handler->process($this->lineItem));
         $this->assertEquals(['savedId' => 123], $handler->updateSavedId([]));
     }
@@ -217,12 +217,12 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($newShoppingList);
 
         $handler = new LineItemHandler(
-            $this->form,
             $this->request,
             $this->registry,
             $this->shoppingListManager,
             $this->roundingService
         );
+        $handler->setForm($this->form);
         $this->assertShoppingListId('', $this->request);
         $this->assertTrue($handler->process($this->lineItem));
         $this->assertShoppingListId($newShoppingListId, $this->request);
@@ -266,18 +266,18 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(self::LINE_ITEM_SHORTCUT)
             ->will($this->returnValue($repository));
 
-        $this->registry->expects($this->once())
+        $this->registry->expects($this->exactly(2))
             ->method('getManagerForClass')
             ->with(self::LINE_ITEM_SHORTCUT)
             ->will($this->returnValue($manager));
 
         $handler = new LineItemHandler(
-            $this->form,
             $this->request,
             $this->registry,
             $this->shoppingListManager,
             $this->roundingService
         );
+        $handler->setForm($this->form);
         $this->assertTrue($handler->process($this->lineItem));
         $this->assertEquals([], $handler->updateSavedId([]));
     }
@@ -313,7 +313,7 @@ class LineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(self::LINE_ITEM_SHORTCUT)
             ->will($this->returnValue($repository));
 
-        $this->registry->expects($this->once())
+        $this->registry->expects($this->exactly(2))
             ->method('getManagerForClass')
             ->with(self::LINE_ITEM_SHORTCUT)
             ->will($this->returnValue($manager));

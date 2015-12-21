@@ -1,0 +1,79 @@
+actions:
+    orob2b_shoppinglist_addlineitem:
+        label: orob2b.shoppinglist.lineitem.add_line_item
+        routes:
+            - orob2b_shopping_list_view
+        acl_resource: [CREATE, entity:OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
+        frontend_options:
+            icon: icon-plus
+            dialog_template: OroB2BShoppingListBundle:Action:lineItem.html.twig
+            dialog_title: orob2b.shoppinglist.lineitem.add_line_item
+            dialog_options:
+                modal: false
+                stateEnabled: false
+                incrementalPosition: false
+                allowMaximize: true
+                allowMinimize: true
+                dblclick: maximize
+                maximizedHeightDecreaseBy: minimize-bar
+                width: 460
+        attributes:
+            lineItem:
+                label: lineItem
+                type: entity
+                options:
+                    class: OroB2B\Bundle\ShoppingListBundle\Entity\LineItem
+        form_options:
+            attribute_fields:
+                lineItem:
+                    form_type: orob2b_shopping_list_line_item
+            attribute_default_values:
+                lineItem:
+                    $.lineItem
+        initfunctions:
+            - @create_object:
+                class: OroB2B\Bundle\ShoppingListBundle\Entity\LineItem
+                attribute: $.lineItem
+            - @assign_value: [$.lineItem.shoppingList, $.data]
+            - @assign_value: [$.lineItem.accountUser, $.data.accountUser]
+            - @assign_value: [$.lineItem.organization, $.data.organization]
+        postfunctions:
+            - @call_service_method:
+                service: orob2b_shopping_list.handler.form.line_item
+                method: processValidForm
+                method_parameters: [$.lineItem]
+            - @refresh_grid: shopping-list-line-items-grid
+            - @flash_message:
+                message: orob2b.shoppinglist.lineitem.flash.added
+                type: 'success'
+
+    orob2b_shoppinglist_updatelineitem:
+        label: orob2b.shoppinglist.lineitem.edit_line_item
+        acl_resource: [EDIT, entity:OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
+        frontend_options:
+            icon: icon-edit
+            dialog_template: OroB2BShoppingListBundle:Action:lineItem.html.twig
+            dialog_title: orob2b.shoppinglist.lineitem.add_line_item
+            dialog_options:
+                modal: true
+                width: 460
+        attributes:
+            lineItem:
+                label: lineItem
+                type: entity
+                options:
+                    class: OroB2B\Bundle\ShoppingListBundle\Entity\LineItem
+        form_options:
+            attribute_fields:
+                lineItem:
+                    form_type: orob2b_shopping_list_line_item
+            attribute_default_values:
+                lineItem:
+                    $.lineItem
+        initfunctions:
+            - @assign_value: [$.lineItem, $.data]
+        postfunctions:
+            - @refresh_grid: shopping-list-line-items-grid
+            - @flash_message:
+                message: orob2b.shoppinglist.lineitem.flash.updated
+                type: 'success'

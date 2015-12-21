@@ -64,6 +64,7 @@ orob2b:
             organization.label: Organization
             account_user.label: Account User
             add_line_item: Add Line Item
+            edit_line_item: Edit Line Item
             create_new_shopping_list: Create New Shopping List
             new_shopping_list_label: Shopping List Label
             grid:
@@ -72,6 +73,8 @@ orob2b:
                         product: View Product
             flash:
                 success: Line item has been added
+                added: Line item has been added
+                updated: Line item has been updated
             controller:
                 saved.message: Line Item Saved Successfully
 
