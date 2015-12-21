@@ -38,11 +38,20 @@ class QuickAddControllerTest extends WebTestCase
         );
 
         $this->loadFixtures([
-            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData'
+            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
+            'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions'
         ]);
     }
 
-    public function testCopyPasteAction()
+    /**
+     * @param string $processorName
+     * @param string $routerName
+     * @param array $routerParams
+     * @param string $expectedMessage
+     *
+     * @dataProvider validationResultProvider
+     */
+    public function testCopyPasteAction($processorName, $routerName, $routerParams, $expectedMessage)
     {
         $example = [
             LoadProductData::PRODUCT_1 . ", 1",
@@ -74,6 +83,27 @@ class QuickAddControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertEquals($expectedValidationResult, $this->parseValidationResult($crawler));
+
+        //test result form actions (create rfp, create order, add to shopping list)
+        $resultForm = $crawler->selectButton('Cancel')->form();
+        $resultForm['orob2b_product_quick_add_order[component]'] = $processorName;
+        $this->client->submit($resultForm);
+        $response = $this->client->getResponse();
+        $targetUrl = $this->parseTargetUrl($response->getContent());
+
+        $this->assertHtmlResponseStatusCodeEquals($response, 200);
+
+        $expectedTargetUrl = $this->getUrl($routerName, $routerParams);
+        $this->assertEquals($expectedTargetUrl, $targetUrl);
+
+        $this->client->request('GET', $targetUrl);
+        $response = $this->client->getResponse();
+
+        $this->assertHtmlResponseStatusCodeEquals($response, 200);
+
+        if ($expectedMessage) {
+            $this->assertContains($expectedMessage, $this->client->getResponse()->getContent());
+        }
     }
 
     /**
@@ -103,6 +133,33 @@ class QuickAddControllerTest extends WebTestCase
         } else {
             $this->assertEquals($expectedValidationResult, $this->parseValidationResult($crawler));
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function validationResultProvider()
+    {
+        return [
+            'rfp create' => [
+                'processorName' => 'orob2b_rfp_quick_add_processor',
+                'routerName' => 'orob2b_rfp_frontend_request_create',
+                'routerParams' => ['storage' => 1],
+                'expectedMessage' => null
+            ],
+            'create order' => [
+                'processorName' => 'orob2b_order_quick_add_processor',
+                'routerName' => 'orob2b_order_frontend_create',
+                'routerParams' => ['storage' => 1],
+                'expectedMessage' => null
+            ],
+            'add to shopping list' => [
+                'processorName' => 'orob2b_shopping_list_quick_add_processor',
+                'routerName' => 'orob2b_product_frontend_quick_add',
+                'routerParams' => [],
+                'expectedMessage' => '3 products were added'
+            ],
+        ];
     }
 
     /**
@@ -185,5 +242,18 @@ class QuickAddControllerTest extends WebTestCase
         );
 
         return $result;
+    }
+
+    /**
+     * @param string $content
+     * @return string
+     */
+    private function parseTargetUrl($content)
+    {
+        $pattern = '/targetUrl = "(.+)"/';
+        $this->assertRegExp($pattern, $content);
+        preg_match($pattern, $content, $matches);
+
+        return stripslashes($matches[1]);
     }
 }
