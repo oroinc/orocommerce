@@ -18,9 +18,12 @@ use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingL
  */
 class ActionLineItemTest extends WebTestCase
 {
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient();
 
         $this->loadFixtures(
             [

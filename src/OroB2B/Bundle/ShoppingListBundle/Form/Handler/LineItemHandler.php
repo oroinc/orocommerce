@@ -99,6 +99,9 @@ class LineItemHandler
         return false;
     }
 
+    /**
+     * @param LineItem $lineItem
+     */
     public function processValidForm(LineItem $lineItem)
     {
         /** @var EntityManagerInterface $manager */
