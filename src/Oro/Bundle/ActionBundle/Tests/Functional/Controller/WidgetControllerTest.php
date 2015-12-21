@@ -25,7 +25,7 @@ class WidgetControllerTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient();
+        $this->initClient([], $this->generateBasicAuthHeader());
 
         $this->cacheProvider = $this->getContainer()->get('oro_action.cache.provider');
         $this->loadFixtures([

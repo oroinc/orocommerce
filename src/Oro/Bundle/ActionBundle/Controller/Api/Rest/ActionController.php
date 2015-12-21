@@ -18,6 +18,7 @@ use Oro\Bundle\ActionBundle\Exception\ForbiddenActionException;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 /**
+ * @Rest\RouteResource("actions")
  * @Rest\NamePrefix("oro_api_action_")
  */
 class ActionController extends FOSRestController

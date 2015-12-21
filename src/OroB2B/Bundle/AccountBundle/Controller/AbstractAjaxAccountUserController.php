@@ -13,60 +13,6 @@ abstract class AbstractAjaxAccountUserController extends Controller
      * @param AccountUser $accountUser
      * @return JsonResponse
      */
-    public function confirmAction(AccountUser $accountUser)
-    {
-        $userManager = $this->get('orob2b_account_user.manager');
-
-        try {
-            $userManager->confirmRegistration($accountUser);
-            $userManager->updateUser($accountUser);
-
-            $response = [
-                'successful' => true,
-                'message' => $this->get('translator')->trans('orob2b.account.controller.accountuser.confirmed.message')
-            ];
-        } catch (\Exception $e) {
-            $this->get('logger')->error(
-                sprintf(
-                    'Confirm account user failed: %s: %s',
-                    $e->getCode(),
-                    $e->getMessage()
-                )
-            );
-            $response = ['successful' => false];
-        }
-
-        return new JsonResponse($response);
-    }
-
-    /**
-     * Send confirmation email
-     *
-     * @param AccountUser $accountUser
-     * @return JsonResponse
-     */
-    public function sendConfirmationAction(AccountUser $accountUser)
-    {
-        $userManager = $this->get('orob2b_account_user.manager');
-
-        $result = ['successful' => true];
-        try {
-            $userManager->sendConfirmationEmail($accountUser);
-            $result['message'] = $this->get('translator')
-                ->trans('orob2b.account.controller.accountuser.confirmation_sent.message');
-        } catch (\Exception $e) {
-            $result['successful'] = false;
-            $result['message'] = $e->getMessage();
-        }
-
-        return new JsonResponse($result);
-    }
-
-    /**
-     *
-     * @param AccountUser $accountUser
-     * @return JsonResponse
-     */
     public function enableAction(AccountUser $accountUser)
     {
         $enableMessage = $this->get('translator')->trans('orob2b.account.controller.accountuser.enabled.message');
@@ -87,7 +33,6 @@ abstract class AbstractAjaxAccountUserController extends Controller
     }
 
     /**
-     *
      * @param AccountUser $accountUser
      * @return JsonResponse
      */
