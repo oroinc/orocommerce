@@ -23,7 +23,6 @@ class ProductFormViewListenerTest extends AbstractFormViewListenerTest
     public function getListener()
     {
         return new ProductFormViewListener(
-            $this->translator,
             $this->doctrineHelper,
             $this->requestStack,
             'OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode',

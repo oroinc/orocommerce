@@ -23,7 +23,6 @@ class AccountFormViewListenerTest extends AbstractFormViewListenerTest
     public function getListener()
     {
         return new AccountFormViewListener(
-            $this->translator,
             $this->doctrineHelper,
             $this->requestStack,
             'OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode',

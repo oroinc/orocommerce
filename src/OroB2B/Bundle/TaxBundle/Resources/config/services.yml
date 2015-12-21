@@ -52,7 +52,6 @@ services:
     orob2b_tax.event_listener.abstract_form_view:
         abstract: true
         arguments:
-            - @translator
             - @oro_entity.doctrine_helper
             - @request_stack
 
