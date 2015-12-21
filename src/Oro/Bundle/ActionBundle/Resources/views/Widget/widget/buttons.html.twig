@@ -7,7 +7,7 @@
         {% set dialogUrl = action.hasForm() ? path(dialogRoute|default('oro_action_widget_form'), {actionName: action.name}|merge(context)) : null %}
         {% set params = action.definition.frontendOptions|merge({
             'label': action.definition.label|trans,
-            'path': path(executionRoute|default('oro_api_action_execute'), {actionName: action.name}|merge(context)),
+            'path': path(executionRoute|default('oro_api_action_execute_actions'), {actionName: action.name}|merge(context)),
             'dialogUrl': dialogUrl
         }) %}
 

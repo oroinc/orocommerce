@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
 
+use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
 use Oro\Bundle\ActionBundle\Helper\ContextHelper;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
@@ -23,16 +24,15 @@ class WidgetController extends Controller
      * @Route("/buttons", name="oro_action_widget_buttons")
      * @Template()
      *
-     * @param Request $request
      * @return array
      */
-    public function buttonsAction(Request $request)
+    public function buttonsAction()
     {
         return [
             'actions' => $this->getActionManager()->getActions(),
             'context' => $this->getContextHelper()->getContext(),
-            'dialogRoute' => $request->get('dialogRoute'),
-            'executionRoute' => $request->get('executionRoute')
+            'dialogRoute' => $this->getApplicationsHelper()->getDialogRoute(),
+            'executionRoute' => $this->getApplicationsHelper()->getExecutionRoute(),
         ];
     }
 
@@ -87,6 +87,14 @@ class WidgetController extends Controller
     protected function getContextHelper()
     {
         return $this->get('oro_action.helper.context');
+    }
+
+    /**
+     * @return ApplicationsHelper
+     */
+    protected function getApplicationsHelper()
+    {
+        return $this->get('oro_action.helper.applications');
     }
 
     /**

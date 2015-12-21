@@ -3,7 +3,7 @@
 {% if has_actions(params) %}
     {{ oro_widget_render({
         'widgetType': 'buttons',
-        'url': path('oro_action_widget_buttons', params),
+        'url': path(oro_action_widget_route(), params),
         'alias': 'actions_buttons'
     }) }}
 {% endif %}
