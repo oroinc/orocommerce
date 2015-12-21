@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\TaxBundle\Migrations\Data\Demo\ORM;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
+use Doctrine\ORM\EntityManager;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -22,7 +23,8 @@ class LoadTaxDemoData extends AbstractFixture implements
     ContainerAwareInterface,
     DependentFixtureInterface
 {
-    const BATCH_SIZE = 100;
+    const BATCH_SIZE = 2000;
+    const DEFAULT_COUNTRY = 'US';
 
     /**
      * @var ContainerInterface
@@ -30,51 +32,44 @@ class LoadTaxDemoData extends AbstractFixture implements
     protected $container;
 
     /**
-     * @var ObjectManager
-     */
-    protected $manager;
-
-    /**
      * @var Connection
      */
-    protected $sqlConnection;
+    protected $connection;
 
     /**
-     * @var array
+     * @var string[]
      */
     protected $taxes = [];
-    /**
-     * @var array
-     */
-    protected $zipCodes = [];
-    /**
-     * @var array
-     */
-    protected $productTaxCodes = [];
-    /**
-     * @var array
-     */
-    protected $accountTaxCodes = [];
 
     /**
-     * @var array
+     * @var string[]
      */
     protected $jurisdictions = [];
 
     /**
-     * @var array
+     * @var string[]
      */
-    protected $codes = [];
+    protected $productTaxCodes = [];
 
     /**
-     * @var array
+     * @var string[]
      */
-    protected $rules = [];
+    protected $accountTaxCodes = [];
 
     /**
-     * @var array
+     * @var string
      */
-    protected $rows = [];
+    protected $currentTime;
+
+    /**
+     * @var string[][]
+     */
+    protected $scheduledZipCodes = [];
+
+    /**
+     * @var string[][]
+     */
+    protected $scheduledTaxRules = [];
 
     /**
      * {@inheritdoc}
@@ -97,41 +92,44 @@ class LoadTaxDemoData extends AbstractFixture implements
 
     /**
      * {@inheritdoc}
+     * @param EntityManager $manager
      */
     public function load(ObjectManager $manager)
     {
-        $this->manager = $manager;
-        $this->sqlConnection = $this->container->get('doctrine.orm.entity_manager')->getConnection();
+        $this->connection = $manager->getConnection();
+        $this->connection->getConfiguration()->setSQLLogger(null);
+        $this->connection->setAutoCommit(false);
+
         $this->readFiles('@OroB2BTaxBundle/Migrations/Data/Demo/ORM/tax_rates_data');
+        $this->handleScheduledZipCodes();
+        $this->handleScheduledTaxRules();
 
-        $this->setTaxes();
-        $this->setJurisdictionsAndCodes();
-        $this->setZipCodes();
-        $this->setRules();
+        $this->connection->commit();
 
-        $codes = array_keys($this->jurisdictions);
-
+        // Add tax codes to products
         $products = $this->getProducts($manager);
         foreach ($products as $product) {
-            $code = $codes[rand(0, count($codes) - 1)];
+            $id = $this->productTaxCodes[array_rand($this->productTaxCodes)];
             /* @var ProductTaxCode $productTaxCode */
-            $productTaxCode = $this->manager
-                ->getRepository('OroB2BTaxBundle:ProductTaxCode')
-                ->findOneBy(['code' => $code]);
+            $productTaxCode = $manager
+                ->getReference('OroB2BTaxBundle:ProductTaxCode', $id);
 
             $productTaxCode->addProduct($product);
         }
 
+        // Add tax codes to accounts
         $accounts = $this->getAccounts($manager);
         foreach ($accounts as $account) {
-            $code = $codes[rand(0, count($codes) - 1)];
+            $id = $this->accountTaxCodes[array_rand($this->accountTaxCodes)];
             /* @var AccountTaxCode $accountTaxCode */
-            $accountTaxCode = $this->manager
-                ->getRepository('OroB2BTaxBundle:AccountTaxCode')
-                ->findOneBy(['code' => $code]);
+            $accountTaxCode = $manager
+                ->getReference('OroB2BTaxBundle:AccountTaxCode', $id);
+
             $accountTaxCode->addAccount($account);
         }
+
         $manager->flush();
+        $manager->clear();
     }
 
     /**
@@ -145,7 +143,6 @@ class LoadTaxDemoData extends AbstractFixture implements
             $dirPath = current($dirPath);
         }
 
-        $counter = 0;
         foreach (glob($dirPath . '/*.csv') as $filePath) {
             $handler = fopen($filePath, 'r');
             $headers = fgetcsv($handler, 1000, ',');
@@ -154,252 +151,11 @@ class LoadTaxDemoData extends AbstractFixture implements
                     continue;
                 }
                 $fileRow = array_combine($headers, array_values($data));
-                $this->indexRow($fileRow, $counter++);
+                $this->handle($fileRow);
             }
             fclose($handler);
         }
     }
-
-    /**
-     * @param array $fileRow
-     * @param integer $counter
-     */
-    protected function indexRow($fileRow, $counter)
-    {
-        $row = [
-            'state' => $fileRow['State'],
-            'zip' => $fileRow['ZipCode'],
-            'regionName' => $fileRow['TaxRegionName'],
-            'regionCode' => $fileRow['TaxRegionCode'],
-            'rate' => 100 * $fileRow['CombinedRate']
-        ];
-        $this->rows[$counter] = $row;
-
-        $key = (string)$row['rate'];
-        if (!isset($this->taxes[$key])) {
-            $this->taxes[$key] = $counter;
-        }
-
-        $key = $row['zip'];
-        if (!isset($this->zipCodes[$key])) {
-            $this->zipCodes[$key] = $counter;
-        }
-
-        $key = $row['regionCode'] . $row['rate'];
-        if (!isset($this->jurisdictions[$key])) {
-            $this->jurisdictions[$key] = $counter;
-            $this->productTaxCodes[$key] = $counter;
-            $this->accountTaxCodes[$key] = $counter;
-            $this->rules[$key] = $counter;
-        }
-    }
-
-    protected function setTaxes()
-    {
-        $tableName = 'orob2b_tax';
-        $tableFields = $this->implode(
-            [
-                'code',
-                'description',
-                'rate',
-                'created_at',
-                'updated_at'
-            ]
-        );
-        $counter = 0;
-        $batch = [];
-        foreach ($this->taxes as $key => $value) {
-            $batch[] = $this->implode(
-                [
-                    '"TAX' . $key . '"',
-                    '"Tax with rate ' . $key . '%"',
-                    $key,
-                    'NOW()',
-                    'NOW()'
-                ]
-            );
-
-            if (++$counter == self::BATCH_SIZE) {
-                $this->sqlInsert($tableName, $tableFields, $batch);
-                $batch = [];
-                $counter = 0;
-            }
-        }
-        $this->sqlInsert($tableName, $tableFields, $batch);
-
-        $items = $this->sqlSelect($tableName, ['rate']);
-        foreach ($items as $item) {
-            $this->taxes[$item['rate']] = $item['id'];
-        }
-    }
-
-    protected function setJurisdictionsAndCodes()
-    {
-        $tableName = 'orob2b_tax_jurisdiction';
-        $tableFields = $this->implode(
-            [
-                'country_code',
-                'region_code',
-                'code',
-                'description',
-                'region_text',
-                'created_at',
-                'updated_at'
-            ]
-        );
-        $batch = [];
-
-        $productCodeTableName = 'orob2b_tax_product_tax_code';
-        $accountCodeTableName = 'orob2b_tax_account_tax_code';
-        $productCodeBatch = [];
-        $accountCodeBatch = [];
-        $taxCodeTableFields = $this->implode(
-            [
-                'code',
-                'description',
-                'created_at',
-                'updated_at'
-            ]
-        );
-
-        $counter = 0;
-        foreach ($this->jurisdictions as $key => $value) {
-            $row = $this->rows[$value];
-            $batch[] = $this->implode(
-                [
-                    '"US"',
-                    '"US-' . $row['state'] . '"',
-                    '"' . $key . '"',
-                    '"Tax jurisdiction for ' . $row['regionName'] . ' with rate ' . $row['rate'] . '%"',
-                    '"' . $row['regionName'] . '"',
-                    'NOW()',
-                    'NOW()'
-                ]
-            );
-            $productCodeBatch[] = $this->implode(
-                [
-                    '"' . $key . '"',
-                    '"Product tax for ' . $row['regionName'] . ' with rate ' . $row['rate'] . '%"',
-                    'NOW()',
-                    'NOW()'
-                ]
-            );
-            $accountCodeBatch[] = $this->implode(
-                [
-                    '"' . $key . '"',
-                    '"Account tax for ' . $row['regionName'] . ' with rate ' . $row['rate'] . '%"',
-                    'NOW()',
-                    'NOW()'
-                ]
-            );
-
-            if (++$counter == self::BATCH_SIZE) {
-                $this->sqlInsert($tableName, $tableFields, $batch);
-                $batch = [];
-                $this->sqlInsert($productCodeTableName, $taxCodeTableFields, $productCodeBatch);
-                $productCodeBatch = [];
-                $this->sqlInsert($accountCodeTableName, $taxCodeTableFields, $accountCodeBatch);
-                $accountCodeBatch = [];
-                $counter = 0;
-            }
-        }
-        $this->sqlInsert($tableName, $tableFields, $batch);
-        $this->sqlInsert($productCodeTableName, $taxCodeTableFields, $productCodeBatch);
-        $this->sqlInsert($accountCodeTableName, $taxCodeTableFields, $accountCodeBatch);
-
-        $items = $this->sqlSelect($tableName, ['code']);
-        foreach ($items as $item) {
-            $this->jurisdictions[$item['code']] = $item['id'];
-        }
-
-        $items = $this->sqlSelect($productCodeTableName, ['code']);
-        foreach ($items as $item) {
-            $this->productTaxCodes[$item['code']] = $item['id'];
-        }
-
-        $items = $this->sqlSelect($accountCodeTableName, ['code']);
-        foreach ($items as $item) {
-            $this->accountTaxCodes[$item['code']] = $item['id'];
-        }
-    }
-
-    protected function setZipCodes()
-    {
-        $tableName = 'orob2b_tax_zip_code';
-        $tableFields = $this->implode(
-            [
-                'zip_code',
-                'tax_jurisdiction_id',
-                'created_at',
-                'updated_at'
-            ]
-        );
-        $counter = 0;
-        $batch = [];
-        foreach ($this->zipCodes as $key => $value) {
-            $row = $this->rows[$value];
-            $batch[] = $this->implode(
-                [
-                    '"' . $key . '"',
-                    $this->jurisdictions[$row['regionCode'] . $row['rate']],
-                    'NOW()',
-                    'NOW()'
-                ]
-            );
-
-            if (++$counter == self::BATCH_SIZE) {
-                $this->sqlInsert($tableName, $tableFields, $batch);
-                $batch = [];
-                $counter = 0;
-            }
-        }
-        $this->sqlInsert($tableName, $tableFields, $batch);
-
-        $items = $this->sqlSelect($tableName, ['zip_code']);
-        foreach ($items as $item) {
-            $this->zipCodes[$item['zip_code']] = $item['id'];
-        }
-    }
-
-    protected function setRules()
-    {
-        $tableName = 'orob2b_tax_rule';
-        $tableFields = $this->implode(
-            [
-                'product_tax_code_id',
-                'account_tax_code_id',
-                'tax_id',
-                'tax_jurisdiction_id',
-                'description',
-                'created_at',
-                'updated_at'
-            ]
-        );
-        $counter = 0;
-        $batch = [];
-        foreach ($this->rules as $key => $value) {
-            $row = $this->rows[$value];
-            $batch[] = $this->implode(
-                [
-                    $this->productTaxCodes[$key],
-                    $this->accountTaxCodes[$key],
-                    $this->taxes[$row['rate']],
-                    $this->jurisdictions[$key],
-                    '"Tax rule for ' . $row['regionName'] . ' with rate ' . $row['rate'] . '%"',
-                    'NOW()',
-                    'NOW()'
-                ]
-            );
-
-            if (++$counter == self::BATCH_SIZE) {
-                $this->sqlInsert($tableName, $tableFields, $batch);
-                $batch = [];
-                $counter = 0;
-            }
-        }
-        $this->sqlInsert($tableName, $tableFields, $batch);
-    }
-
 
     /**
      * @param ObjectManager $manager
@@ -432,37 +188,255 @@ class LoadTaxDemoData extends AbstractFixture implements
     }
 
     /**
-     * @param array $data
+     * @param array $row
+     */
+    protected function handle($row)
+    {
+        $taxId = $this->createTax($row['TaxRegionCode'], $row['CombinedRate']);
+        $jurisdictionId = $this->createTaxJurisdiction($row);
+        $this->scheduleAddZipCode($jurisdictionId, $row['ZipCode']);
+        $this->scheduleTaxRule($row, $taxId, $jurisdictionId);
+    }
+
+    /**
+     * @param string $code
+     * @param string $rate
      * @return string
      */
-    protected function implode($data)
+    protected function createTax($code, $rate)
     {
-        return '(' . implode(',', $data) . ')';
+        if (!array_key_exists($code, $this->taxes)) {
+            $this->connection->insert('orob2b_tax', [
+                'code' => $code,
+                'description' => sprintf('Tax with rate %f', $rate),
+                'rate' => $rate,
+                'created_at' => $this->getCurrentTime(),
+                'updated_at' => $this->getCurrentTime(),
+            ]);
+
+            $this->taxes[$code] = $this->connection->lastInsertId();
+        }
+
+        return $this->taxes[$code];
     }
 
     /**
-     * @param string $tableName
-     * @param string $tableFields
-     * @param array $batch
-     * @throws \Doctrine\DBAL\DBALException
+     * @param $row
+     * @return string
      */
-    protected function sqlInsert($tableName, $tableFields, $batch)
+    protected function createTaxJurisdiction($row)
     {
-        $query = 'INSERT INTO ' . $tableName . ' ' . $tableFields . ' VALUES ' . implode(',', $batch);
-        $this->sqlConnection->exec($query);
+        $code = $row['TaxRegionCode'];
+        if (!array_key_exists($code, $this->jurisdictions)) {
+            $this->connection->insert('orob2b_tax_jurisdiction', [
+                    'code' => $code,
+                    'description' => '',
+                    'country_code' => self::DEFAULT_COUNTRY,
+                    'region_code' => sprintf('%s-%s', self::DEFAULT_COUNTRY, $row['State']),
+                    'created_at' => $this->getCurrentTime(),
+                    'updated_at' => $this->getCurrentTime(),
+            ]);
+
+            $this->jurisdictions[$code] = $this->connection->lastInsertId();
+        }
+
+        return $this->jurisdictions[$code];
     }
 
     /**
-     * @param string $tableName
-     * @param array $fields
-     * @return array
+     * @param $jurisdictionId
+     * @param $zipCode
+     */
+    protected function scheduleAddZipCode($jurisdictionId, $zipCode)
+    {
+        $this->scheduledZipCodes[$jurisdictionId][] = $zipCode;
+    }
+
+    protected function handleScheduledZipCodes()
+    {
+        $data = [];
+        $time = $this->getCurrentTime();
+
+        foreach ($this->scheduledZipCodes as $jurisdictionId => $zipCodes) {
+            foreach ($zipCodes as $zipCode) {
+                $data[] = [
+                    $jurisdictionId,
+                    $zipCode,
+                    $time,
+                    $time,
+                ];
+            }
+
+            if (count($data) > self::BATCH_SIZE) {
+                $this->insertZipCodes($data);
+                $data = [];
+            }
+        }
+
+        $this->insertZipCodes($data);
+        $this->scheduledZipCodes = [];
+    }
+
+    /**
+     * @param array $data
+     * @return int
+     */
+    protected function insertZipCodes($data)
+    {
+        return $this->batchInsert('orob2b_tax_zip_code', [
+            'tax_jurisdiction_id',
+            'zip_code',
+            'created_at',
+            'updated_at'
+        ], $data);
+    }
+
+    /**
+     * @param array $row
+     * @param string $taxId
+     * @param string $jurisdictionId
+     * @return string
+     */
+    protected function scheduleTaxRule($row, $taxId, $jurisdictionId)
+    {
+        $regionCode = $row['TaxRegionCode'];
+        $normalizedRate = $row['CombinedRate'] * 100;
+
+        $productTaxCodeId = $this->createProductTaxCode($regionCode, $normalizedRate);
+        $accountTaxCodeId = $this->createAccountTaxCode($regionCode, $normalizedRate);
+
+        $this->scheduledTaxRules[] = [
+            'product_tax_code_id' => $productTaxCodeId,
+            'account_tax_code_id' => $accountTaxCodeId,
+            'tax_id' => $taxId,
+            'tax_jurisdiction_id' => $jurisdictionId,
+            'description' => sprintf('Tax rule for %s with rate %f%%', $regionCode, $normalizedRate),
+            'created_at' => $this->getCurrentTime(),
+            'updated_at' => $this->getCurrentTime(),
+        ];
+    }
+
+    protected function handleScheduledTaxRules()
+    {
+        $data = [];
+        foreach ($this->scheduledTaxRules as $scheduledTaxRule) {
+            $data[] = array_values($scheduledTaxRule);
+
+            if (count($data) > self::BATCH_SIZE) {
+                $this->insertTaxRules($data);
+                $data = [];
+            }
+        }
+
+        $this->insertTaxRules($data);
+        $this->scheduledTaxRules = [];
+    }
+
+    /**
+     * @param array $data
+     * @return int
+     */
+    protected function insertTaxRules($data)
+    {
+        return $this->batchInsert('orob2b_tax_rule', [
+            'product_tax_code_id',
+            'account_tax_code_id',
+            'tax_id',
+            'tax_jurisdiction_id',
+            'description',
+            'created_at',
+            'updated_at'
+        ], $data);
+    }
+
+    /**
+     * @param string $regionCode
+     * @param float $taxRate
+     * @return string
+     */
+    protected function createProductTaxCode($regionCode, $taxRate)
+    {
+        $key = $regionCode;
+        if (!array_key_exists($key, $this->productTaxCodes)) {
+            $this->connection->insert('orob2b_tax_product_tax_code', [
+                'code' => sprintf('%s%s', $regionCode, $taxRate),
+                'description' => sprintf('Product tax code for %s with rate %f%%', $regionCode, $taxRate),
+                'created_at' => $this->getCurrentTime(),
+                'updated_at' => $this->getCurrentTime()
+            ]);
+
+            $this->productTaxCodes[$key] = $this->connection->lastInsertId();
+        }
+
+        return $this->productTaxCodes[$key];
+    }
+
+    /**
+     * @param string $regionCode
+     * @param float $taxRate
+     * @return string
+     */
+    protected function createAccountTaxCode($regionCode, $taxRate)
+    {
+        $key = $regionCode;
+        if (!array_key_exists($key, $this->accountTaxCodes)) {
+            $this->connection->insert('orob2b_tax_account_tax_code', [
+                'code' => sprintf('%s%s', $regionCode, $taxRate),
+                'description' => sprintf('Account tax code for %s with rate %f%%', $regionCode, $taxRate),
+                'created_at' => $this->getCurrentTime(),
+                'updated_at' => $this->getCurrentTime()
+            ]);
+
+            $this->accountTaxCodes[$key] = $this->connection->lastInsertId();
+        }
+
+        return $this->accountTaxCodes[$key];
+    }
+
+    /**
+     * @return string
+     */
+    protected function getCurrentTime()
+    {
+        if (null === $this->currentTime) {
+            $this->currentTime = date("Y-m-d H:i:s");
+        }
+
+        return $this->currentTime;
+    }
+
+    /**
+     * This method is modified version of DBAL\Connection::insert() for batch inserts
+     *
+     * @param string $tableExpression The expression of the table to insert data into, quoted or unquoted.
+     * @param array $columns Array of affected columns
+     * @param array $data An associative array containing column-value pairs.
+     * @return int The number of affected rows.
      * @throws \Doctrine\DBAL\DBALException
      */
-    protected function sqlSelect($tableName, $fields)
+    protected function batchInsert($tableExpression, $columns, $data)
     {
-        $stmt = $this->sqlConnection
-            ->prepare('SELECT id,' . implode(',', $fields) . ' FROM ' . $tableName);
-        $stmt->execute();
-        return $stmt->fetchAll();
+        if (empty($data)) {
+            return 0;
+        }
+
+        $placeholders = [];
+        $params = [];
+
+        foreach ($data as $record) {
+            $placeholders[] = implode(', ', array_fill(0, count($record), '?'));
+            foreach ($record as $value) {
+                $params[] = $value;
+            }
+        }
+
+        $query = sprintf(
+            'INSERT INTO %s (%s) VALUES (%s)',
+            $tableExpression,
+            implode(', ', $columns),
+            implode('), (', $placeholders)
+        );
+
+        return $this->connection->executeUpdate($query, $params);
     }
 }
