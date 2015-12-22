@@ -20,9 +20,6 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|ActionManager */
     protected $manager;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp()
     {
         $this->manager = $this->getMockBuilder('Oro\Bundle\ActionBundle\Model\ActionManager')
@@ -48,26 +45,28 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
         $this->extension = new ActionExtension($this->manager, $contextHelper, $applicationHelper);
     }
 
+    protected function tearDown()
+    {
+        unset($this->extension, $this->manager);
+    }
+
     /**
      * @param array $configData
      * @param Action[] $actions
      * @param bool $expected
      *
-     * @internal param array $input
      * @dataProvider isApplicableProvider
      */
     public function testIsApplicable(array $configData, array $actions, $expected)
     {
-        $this->manager->expects($this->any())
+        $this->manager->expects($this->once())
             ->method('getActions')
             ->willReturn($actions);
+
         $config = DatagridConfiguration::create($configData);
-        $this->assertEquals(
-            $expected,
-            $this->extension->isApplicable(
-                $config
-            )
-        );
+
+        $this->assertEquals($expected, $this->extension->isApplicable($config));
+
         if ($expected) {
             $this->assertNotEmpty($config->offsetGetOr('actions'));
             $this->assertNotEmpty($config->offsetGetOr('action_configuration'));
@@ -86,7 +85,9 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
         $this->manager->expects($this->any())
             ->method('getActions')
             ->willReturn($actions);
+
         $this->extension->isApplicable(DatagridConfiguration::create(['name' => 'datagrid_name']));
+
         $this->assertEquals($expectedActions, $this->extension->getActionsPermissions($record));
     }
 
@@ -122,23 +123,19 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
         $actionAllowed2 = $this->createAction('action2', true);
         $actionNotAllowed = $this->createAction('action3', false);
 
-        $record1 = new ResultRecord(['id' => 1]);
-        $record2 = new ResultRecord(['id' => 2]);
-        $record3 = new ResultRecord(['id' => 3]);
-
         return [
             'no actions' => [
-                'record' => $record1,
+                'record' => new ResultRecord(['id' => 1]),
                 'actions' => [],
                 'expectedActions' => [],
             ],
             '2 allowed actions' => [
-                'record' => $record2,
+                'record' => new ResultRecord(['id' => 2]),
                 'actions' => [$actionAllowed1, $actionAllowed2],
                 'expectedActions' => ['action1' => true, 'action2' => true],
             ],
             '1 allowed action' => [
-                'record' => $record3,
+                'record' => new ResultRecord(['id' => 3]),
                 'actions' => [$actionAllowed1, $actionNotAllowed],
                 'expectedActions' => ['action1' => true, 'action3' => false],
             ],
@@ -155,6 +152,7 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ActionDefinition $definition */
         $definition = $this->getMock('Oro\Bundle\ActionBundle\Model\ActionDefinition');
+
         /** @var \PHPUnit_Framework_MockObject_MockObject|Action $action */
         $action = $this->getMockBuilder('Oro\Bundle\ActionBundle\Model\Action')
             ->disableOriginalConstructor()
@@ -166,7 +164,8 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('getName')
             ->willReturn($name);
         $action->expects($this->any())
-            ->method('isAllowed')->withAnyParameters()
+            ->method('isAllowed')
+            ->withAnyParameters()
             ->willReturn($isAllowed);
 
         return $action;

@@ -15,13 +15,15 @@ class ActionWidgetActionTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface */
     protected $translator;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp()
     {
         $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
         $this->action = new ActionWidgetAction($this->translator);
+    }
+
+    protected function tearDown()
+    {
+        unset($this->action, $this->translator);
     }
 
     /**
@@ -34,9 +36,7 @@ class ActionWidgetActionTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetOptions(array $config, $link, $title, $translatedTitle)
     {
-
-        $actionConfiguration = ActionConfiguration::create($config);
-        $this->action->setOptions($actionConfiguration);
+        $this->action->setOptions(ActionConfiguration::create($config));
 
         if ($translatedTitle) {
             $this->translator->expects($this->any())
@@ -45,16 +45,14 @@ class ActionWidgetActionTest extends \PHPUnit_Framework_TestCase
                 ->will($this->returnValue($translatedTitle));
         }
 
-        /** @var array $options */
+        /** @var \ArrayAccess $options */
         $options = $this->action->getOptions();
 
-
         $this->assertInstanceOf('Oro\Bundle\DataGridBundle\Extension\Action\ActionConfiguration', $options);
-
         $this->assertCount(count($config) + 1, $options);
-
         $this->assertArrayHasKey('link', $options);
         $this->assertEquals($link, $options['link']);
+
         if (array_key_exists('dialogOptions', $options['options'])) {
             $this->assertArrayHasKey('title', $options['options']['dialogOptions']);
             $this->assertEquals($translatedTitle, $options['options']['dialogOptions']['title']);

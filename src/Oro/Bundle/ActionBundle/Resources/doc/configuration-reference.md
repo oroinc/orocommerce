@@ -202,7 +202,8 @@ Frontend Options configuration has next options:
     *maximizedHeightDecreaseBy*, *width*, etc.
 * **datagrid_confirm**
     *string*
-    You can show confirmation message before action in datagrid start execution.
+    You can show confirmation message before action in datagrid start execution. Translate constant should be available 
+    for JS - placed in jsmessages.*.yml
 
 Example
 -------
@@ -215,7 +216,7 @@ actions:
             class: btn
             group: aсme.demo.actions.demogroup.label
             template: OroActionBundle:Action:button.html.twig
-            datagrid_confirm: Are you sure you want to perform this Action?
+            datagrid_confirm: aсme.demo.actions.action_perform_confirm
             dialog_template: OroActionBundle:Widget:widget/form.html.twig
             dialog_title: aсme.demo.actions.dialog.title
             dialog_options:

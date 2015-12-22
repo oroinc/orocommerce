@@ -114,7 +114,7 @@ class ContextHelperTest extends \PHPUnit_Framework_TestCase
             ->willReturn($request);
 
         if ($expected->getEntity()) {
-            $this->doctrineHelper->expects($this->any())
+            $this->doctrineHelper->expects($this->once())
                 ->method('isManageableEntity')
                 ->with('stdClass')
                 ->willReturn(true);
