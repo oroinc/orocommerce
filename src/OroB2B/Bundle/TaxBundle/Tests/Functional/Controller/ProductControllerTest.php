@@ -2,13 +2,12 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Functional\Controller;
 
-use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
 
 /**
  * @dbIsolation

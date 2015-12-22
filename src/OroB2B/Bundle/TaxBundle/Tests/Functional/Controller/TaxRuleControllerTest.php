@@ -52,21 +52,50 @@ class TaxRulesControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $accountTaxCode = $this->getReference(LoadAccountTaxCodes::REFERENCE_PREFIX . '.' . LoadAccountTaxCodes::TAX_1);
-        $productTaxCode = $this->getReference(LoadProductTaxCodes::REFERENCE_PREFIX . '.' . LoadProductTaxCodes::TAX_1);
-        $tax = $this->getReference(LoadTaxes::REFERENCE_PREFIX . '.' . LoadTaxes::TAX_1);
-        $taxJurisdiction = $this->getReference(
-            LoadTaxJurisdictions::REFERENCE_PREFIX . '.' . LoadTaxJurisdictions::TAX_1
-        );
-
         $this->assertTaxRuleSave(
             $crawler,
-            $accountTaxCode,
-            $productTaxCode,
-            $tax,
-            $taxJurisdiction,
+            $this->getAccountTaxCode(LoadAccountTaxCodes::TAX_1),
+            $this->getProductTaxCode(LoadProductTaxCodes::TAX_1),
+            $this->getTax(LoadTaxes::TAX_1),
+            $this->getTaxJurisdiction(LoadTaxJurisdictions::TAX_1),
             self::TAX_DESCRIPTION
         );
+    }
+
+    /**
+     * @param string $reference
+     * @return AccountTaxCode
+     */
+    protected function getAccountTaxCode($reference)
+    {
+        return $this->getReference(LoadAccountTaxCodes::REFERENCE_PREFIX . '.' . $reference);
+    }
+
+    /**
+     * @param string $reference
+     * @return ProductTaxCode
+     */
+    protected function getProductTaxCode($reference)
+    {
+        return $this->getReference(LoadProductTaxCodes::REFERENCE_PREFIX . '.' . $reference);
+    }
+
+    /**
+     * @param string $reference
+     * @return Tax
+     */
+    protected function getTax($reference)
+    {
+        return $this->getReference(LoadTaxes::REFERENCE_PREFIX . '.' . $reference);
+    }
+
+    /**
+     * @param string $reference
+     * @return TaxJurisdiction
+     */
+    protected function getTaxJurisdiction($reference)
+    {
+        return $this->getReference(LoadTaxJurisdictions::REFERENCE_PREFIX . '.' . $reference);
     }
 
     /**
@@ -90,19 +119,12 @@ class TaxRulesControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $accountTaxCode = $this->getReference(LoadAccountTaxCodes::REFERENCE_PREFIX . '.' . LoadAccountTaxCodes::TAX_2);
-        $productTaxCode = $this->getReference(LoadProductTaxCodes::REFERENCE_PREFIX . '.' . LoadProductTaxCodes::TAX_2);
-        $tax = $this->getReference(LoadTaxes::REFERENCE_PREFIX . '.' . LoadTaxes::TAX_2);
-        $taxJurisdiction = $this->getReference(
-            LoadTaxJurisdictions::REFERENCE_PREFIX . '.' . LoadTaxJurisdictions::TAX_2
-        );
-
         $this->assertTaxRuleSave(
             $crawler,
-            $accountTaxCode,
-            $productTaxCode,
-            $tax,
-            $taxJurisdiction,
+            $this->getAccountTaxCode(LoadAccountTaxCodes::TAX_2),
+            $this->getProductTaxCode(LoadProductTaxCodes::TAX_2),
+            $this->getTax(LoadTaxes::TAX_2),
+            $this->getTaxJurisdiction(LoadTaxJurisdictions::TAX_2),
             self::TAX_DESCRIPTION_UPDATED
         );
 
@@ -126,19 +148,12 @@ class TaxRulesControllerTest extends WebTestCase
 
         $this->assertContains($id . ' - View - Tax Rules - Taxes', $html);
 
-        $accountTaxCode = $this->getReference(LoadAccountTaxCodes::REFERENCE_PREFIX . '.' . LoadAccountTaxCodes::TAX_2);
-        $productTaxCode = $this->getReference(LoadProductTaxCodes::REFERENCE_PREFIX . '.' . LoadProductTaxCodes::TAX_2);
-        $tax = $this->getReference(LoadTaxes::REFERENCE_PREFIX . '.' . LoadTaxes::TAX_2);
-        $taxJurisdiction = $this->getReference(
-            LoadTaxJurisdictions::REFERENCE_PREFIX . '.' . LoadTaxJurisdictions::TAX_2
-        );
-
         $this->assertViewPage(
             $html,
-            $accountTaxCode,
-            $productTaxCode,
-            $tax,
-            $taxJurisdiction,
+            $this->getAccountTaxCode(LoadAccountTaxCodes::TAX_2),
+            $this->getProductTaxCode(LoadProductTaxCodes::TAX_2),
+            $this->getTax(LoadTaxes::TAX_2),
+            $this->getTaxJurisdiction(LoadTaxJurisdictions::TAX_2),
             self::TAX_DESCRIPTION_UPDATED
         );
     }

@@ -27,7 +27,6 @@ class AccountControllerTest extends WebTestCase
         $this->loadFixtures(
             [
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
-                'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadInternalRating',
                 'OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes'
             ]
@@ -54,9 +53,8 @@ class AccountControllerTest extends WebTestCase
 
     /**
      * @depends testCreate
-     * @param int $id
      */
-    public function testView($id)
+    public function testView()
     {
         $response = $this->client->requestGrid(
             'account-accounts-grid',
