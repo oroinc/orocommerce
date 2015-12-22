@@ -53,7 +53,7 @@ class ProductActionsTest extends WebTestCase
         $this->client->request(
             'GET',
             $this->getUrl(
-                'oro_api_action_execute',
+                'oro_api_action_execute_actions',
                 [
                     'actionName' => $actionName,
                     'route' => 'orob2b_product_view',
