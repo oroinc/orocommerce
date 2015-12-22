@@ -168,7 +168,7 @@ class ProductVisibilityControllerTest extends WebTestCase
             )
         );
         $result = $this->client->getResponse();
-        $this->assertEquals(200, $result->getStatusCode());
+        $this->assertJsonResponseStatusCodeEquals($result, 200);
         /** @var EntityManager $em */
         $em = $this->client->getContainer()->get('doctrine')->getManager();
         $duplicatedProduct = $em->getRepository('OroB2BProductBundle:Product')
