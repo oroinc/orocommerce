@@ -12,8 +12,6 @@ use Oro\Bundle\UIBundle\View\ScrollData;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
-use OroB2B\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
 class FormViewListener
@@ -29,11 +27,6 @@ class FormViewListener
     protected $doctrineHelper;
 
     /**
-     * @var FrontendPriceListRequestHandler
-     */
-    protected $frontendPriceListRequestHandler;
-
-    /**
      * @var RequestStack
      */
     protected $requestStack;
@@ -42,18 +35,15 @@ class FormViewListener
      * @param RequestStack $requestStack
      * @param TranslatorInterface $translator
      * @param DoctrineHelper $doctrineHelper
-     * @param FrontendPriceListRequestHandler $frontendPriceListRequestHandler
      */
     public function __construct(
         RequestStack $requestStack,
         TranslatorInterface $translator,
-        DoctrineHelper $doctrineHelper,
-        FrontendPriceListRequestHandler $frontendPriceListRequestHandler
+        DoctrineHelper $doctrineHelper
     ) {
         $this->requestStack = $requestStack;
         $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
-        $this->frontendPriceListRequestHandler = $frontendPriceListRequestHandler;
     }
 
     /**
