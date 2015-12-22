@@ -19,7 +19,13 @@ class TaxJurisdictionControllerTest extends WebTestCase
     const COUNTRY_FULL = 'Zimbabwe';
     const STATE = 'ZW-MA';
     const STATE_FULL = 'Manicaland';
-    const ZIP_CODES = '11111, 00001-000003';
+
+    /** @var array */
+    protected static $zipCodes = [
+        ['zipRangeStart' => '11111', 'zipRangeEnd' => null],
+        ['zipRangeStart' => '00001', 'zipRangeEnd' => '000003'],
+        ['zipRangeStart' => null, 'zipRangeEnd' => '22222'],
+    ];
 
     const CODE_UPDATED = 'codeUpdated';
     const DESCRIPTION_UPDATED = 'description updated';
@@ -27,7 +33,13 @@ class TaxJurisdictionControllerTest extends WebTestCase
     const COUNTRY_FULL_UPDATED = 'Honduras';
     const STATE_UPDATED = 'HN-CH';
     const STATE_FULL_UPDATED = 'Choluteca';
-    const ZIP_CODES_UPDATED = '11111, 00001-000005';
+
+    /** @var array */
+    protected static $zipCodesUpdated = [
+        ['zipRangeStart' => '11111', 'zipRangeEnd' => null],
+        ['zipRangeStart' => '00001', 'zipRangeEnd' => '000005'],
+        ['zipRangeStart' => null, 'zipRangeEnd' => '22222'],
+    ];
 
     const SAVE_MESSAGE = 'Tax Jurisdiction has been saved';
 
@@ -57,7 +69,7 @@ class TaxJurisdictionControllerTest extends WebTestCase
             self::COUNTRY_FULL,
             self::STATE,
             self::STATE_FULL,
-            self::ZIP_CODES
+            self::$zipCodes
         );
     }
 
@@ -90,7 +102,7 @@ class TaxJurisdictionControllerTest extends WebTestCase
             self::COUNTRY_FULL_UPDATED,
             self::STATE_UPDATED,
             self::STATE_FULL_UPDATED,
-            self::ZIP_CODES_UPDATED
+            self::$zipCodesUpdated
         );
 
         return $id;
@@ -130,7 +142,7 @@ class TaxJurisdictionControllerTest extends WebTestCase
      * @param string  $countryFull
      * @param string  $state
      * @param string  $stateFull
-     * @param string  $zipCodes
+     * @param array   $zipCodes
      */
     protected function assertTaxJurisdictionSave(
         Crawler $crawler,
@@ -140,21 +152,27 @@ class TaxJurisdictionControllerTest extends WebTestCase
         $countryFull,
         $state,
         $stateFull,
-        $zipCodes
+        array $zipCodes
     ) {
+        $token = $this->getContainer()->get('security.csrf.token_manager')
+            ->getToken('orob2b_tax_jurisdiction_type')->getValue();
+
         $formData = [
-            'orob2b_tax_jurisdiction_type[code]' => $code,
-            'orob2b_tax_jurisdiction_type[description]' => $description,
-            'orob2b_tax_jurisdiction_type[zipCodes]' => $zipCodes
+            'input_action' => '',
+            'orob2b_tax_jurisdiction_type' => [
+                'code' => $code,
+                'description' => $description,
+                'zipCodes' => $zipCodes,
+                '_token' => $token,
+            ],
         ];
 
         $form = $crawler->selectButton('Save and Close')->form();
 
         $formData = $this->setCountryAndState($form, $formData, $country, $countryFull, $state, $stateFull);
 
-        $form->setValues($formData);
         $this->client->followRedirects(true);
-        $crawler = $this->client->submit($form);
+        $crawler = $this->client->request($form->getMethod(), $form->getUri(), $formData);
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -185,7 +203,7 @@ class TaxJurisdictionControllerTest extends WebTestCase
         );
         $field = new ChoiceFormField($doc->getElementsByTagName('select')->item(0));
         $form->set($field);
-        $formData['orob2b_tax_jurisdiction_type[country]'] = $country;
+        $formData['orob2b_tax_jurisdiction_type']['country'] = $country;
 
         $doc->loadHTML(
             '<select name="orob2b_tax_jurisdiction_type[region]" ' .
@@ -196,7 +214,7 @@ class TaxJurisdictionControllerTest extends WebTestCase
         );
         $field = new ChoiceFormField($doc->getElementsByTagName('select')->item(0));
         $form->set($field);
-        $formData['orob2b_tax_jurisdiction_type[region]'] = $state;
+        $formData['orob2b_tax_jurisdiction_type']['region'] = $state;
 
         return $formData;
     }
