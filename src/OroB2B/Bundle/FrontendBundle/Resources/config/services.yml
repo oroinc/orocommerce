@@ -1,4 +1,5 @@
 parameters:
+    oro_action.helper.applications.class: OroB2B\Bundle\FrontendBundle\Helper\ActionApplicationsHelper
     orob2b_frontend.activity_list.placeholder.filter.class: OroB2B\Bundle\FrontendBundle\Placeholder\ActivityListPlaceholderFilter
     orob2b_frontend.listener.frontend_route_collection.class: OroB2B\Bundle\FrontendBundle\EventListener\FrontendRouteCollectionListener
     orob2b_frontend.listener.route_collection.class: OroB2B\Bundle\FrontendBundle\EventListener\RouteCollectionListener
@@ -79,6 +80,7 @@ services:
         class: %orob2b_frontend.request.frontend_helper.class%
         arguments:
             - %web_backend_prefix%
+            - @request_stack
 
     orob2b_frontend.activity_list.placeholder.filter:
         class: %orob2b_frontend.activity_list.placeholder.filter.class%

@@ -10,7 +10,7 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\ActionBundle\Model\Action;
-use Oro\Bundle\ActionBundle\Model\ActionContext;
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 use Oro\Bundle\ActionBundle\Form\EventListener\RequiredAttributesListener;
 use Oro\Bundle\WorkflowBundle\Model\Attribute;
@@ -70,7 +70,7 @@ class ActionType extends AbstractType
 
         $resolver->setDefaults(
             [
-                'data_class' => 'Oro\Bundle\ActionBundle\Model\ActionContext',
+                'data_class' => 'Oro\Bundle\ActionBundle\Model\ActionData',
                 'attribute_fields' => [],
                 'attribute_default_values' => []
             ]
@@ -91,6 +91,7 @@ class ActionType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $this->executeInitFunctions($builder, $options);
         $this->addEventListeners($builder, $options);
         $this->addAttributes($builder, $options);
     }
@@ -99,30 +100,31 @@ class ActionType extends AbstractType
      * @param FormBuilderInterface $builder
      * @param array $options
      */
+    protected function executeInitFunctions(FormBuilderInterface $builder, array $options)
+    {
+        /** @var ActionData $data */
+        $data = $builder->getData();
+
+        /** @var Action $action */
+        $action = $options['action'];
+        $action->init($data);
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array $options
+     */
     protected function addEventListeners(FormBuilderInterface $builder, array $options)
     {
-        $builder->addEventListener(
-            FormEvents::PRE_SET_DATA,
-            function (FormEvent $event) use ($options) {
-                /** @var Action $action */
-                $action = $options['action'];
-
-                /** @var ActionContext $context */
-                $context = $event->getData();
-
-                $action->init($context);
-            }
-        );
-
         if (!empty($options['attribute_default_values'])) {
             $builder->addEventListener(
                 FormEvents::PRE_SET_DATA,
                 function (FormEvent $event) use ($options) {
-                    /** @var ActionContext $context */
-                    $context = $event->getData();
+                    /** @var ActionData $data */
+                    $data = $event->getData();
 
                     foreach ($options['attribute_default_values'] as $attributeName => $value) {
-                        $context->$attributeName = $this->contextAccessor->getValue($context, $value);
+                        $data->$attributeName = $this->contextAccessor->getValue($data, $value);
                     }
                 }
             );
@@ -145,11 +147,11 @@ class ActionType extends AbstractType
         /** @var Action $action */
         $action = $options['action'];
 
-        /** @var ActionContext $actionContext */
-        $actionContext = $builder->getData();
+        /** @var ActionData $actionData */
+        $actionData = $builder->getData();
 
         foreach ($options['attribute_fields'] as $attributeName => $attributeOptions) {
-            $attribute = $action->getAttributeManager($actionContext)->getAttribute($attributeName);
+            $attribute = $action->getAttributeManager($actionData)->getAttribute($attributeName);
             if (!$attribute) {
                 throw new InvalidConfigurationException(
                     sprintf(
@@ -162,6 +164,10 @@ class ActionType extends AbstractType
 
             if (null === $attributeOptions) {
                 $attributeOptions = [];
+            }
+
+            if (isset($actionData->$attributeName)) {
+                $attributeOptions['options']['data'] = $actionData->$attributeName;
             }
 
             $attributeOptions = $this->prepareAttributeOptions($attribute, $attributeOptions, $options);

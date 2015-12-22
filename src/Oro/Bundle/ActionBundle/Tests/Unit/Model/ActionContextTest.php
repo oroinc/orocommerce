@@ -2,13 +2,16 @@
 
 namespace Oro\Bundle\ActionBundle\Tests\Unit\Model;
 
-use Oro\Bundle\ActionBundle\Model\ActionContext;
+use Oro\Bundle\ActionBundle\Model\ActionData;
 
-class ActionContextTest extends \PHPUnit_Framework_TestCase
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
+class ActionDataTest extends \PHPUnit_Framework_TestCase
 {
     public function testOffsetExistsSetGetUnset()
     {
-        $data = new ActionContext();
+        $data = new ActionData();
         $name = 'foo';
         $value = 'bar';
 
@@ -26,7 +29,7 @@ class ActionContextTest extends \PHPUnit_Framework_TestCase
 
     public function testIssetGetSetUnset()
     {
-        $data = new ActionContext();
+        $data = new ActionData();
 
         $this->assertFalse(isset($data->foo));
         $this->assertNull($data->foo);
@@ -42,7 +45,7 @@ class ActionContextTest extends \PHPUnit_Framework_TestCase
 
     public function testGetEntity()
     {
-        $data = new ActionContext();
+        $data = new ActionData();
         $this->assertNull($data->getEntity());
 
         $data['data'] = new \stdClass();
@@ -52,7 +55,7 @@ class ActionContextTest extends \PHPUnit_Framework_TestCase
     public function testGetIterator()
     {
         $array = ['foo' => 'bar', 'bar' => 'foo'];
-        $data = new ActionContext($array);
+        $data = new ActionData($array);
         $result = [];
 
         foreach ($data as $key => $value) {
@@ -64,7 +67,7 @@ class ActionContextTest extends \PHPUnit_Framework_TestCase
 
     public function testCount()
     {
-        $data = new ActionContext();
+        $data = new ActionData();
         $this->assertEquals(0, count($data));
 
         $data['foo'] = 'bar';
@@ -82,7 +85,7 @@ class ActionContextTest extends \PHPUnit_Framework_TestCase
 
     public function testIsModified()
     {
-        $data1 = new ActionContext(['foo' => 'bar']);
+        $data1 = new ActionData(['foo' => 'bar']);
         $this->assertFalse($data1->isModified());
 
         $data1['foo'] = 'bar';
@@ -99,7 +102,7 @@ class ActionContextTest extends \PHPUnit_Framework_TestCase
 
     public function testIsEmpty()
     {
-        $data = new ActionContext();
+        $data = new ActionData();
         $this->assertTrue($data->isEmpty());
 
         $data->offsetSet('foo', 'bar');
@@ -110,13 +113,13 @@ class ActionContextTest extends \PHPUnit_Framework_TestCase
     {
         $array = ['foo' => 'bar', 'bar' => 'foo'];
 
-        $data = new ActionContext($array);
+        $data = new ActionData($array);
         $this->assertEquals($array, $data->toArray());
     }
 
     public function testGetRedirectUrl()
     {
-        $data = new ActionContext();
+        $data = new ActionData();
         $this->assertNull($data->getRedirectUrl());
 
         $url = 'my/test/url';
@@ -125,12 +128,23 @@ class ActionContextTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($url, $data->getRedirectUrl());
     }
 
+    public function testGetRefreshGrid()
+    {
+        $data = new ActionData();
+        $this->assertNull($data->getRefreshGrid());
+
+        $name = 'test_grid_dame';
+
+        $data->offsetSet('refreshGrid', $name);
+        $this->assertEquals($name, $data->getRefreshGrid());
+    }
+
     public function testGetValues()
     {
         $date = new \DateTime();
         $array = ['foo' => 'bar', 'bar' => 'foo', 'baz' => $date, 'tango' => null];
 
-        $data = new ActionContext($array);
+        $data = new ActionData($array);
         $this->assertEquals($array, $data->getValues());
 
         $this->assertEquals(

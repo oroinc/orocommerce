@@ -8,6 +8,7 @@ use Oro\Bundle\ActivityListBundle\Entity\Manager\ActivityListManager;
 
 use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
+use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestStatusData;
 
 /**
  * @dbIsolation
@@ -119,18 +120,25 @@ class RequestControllerTest extends WebTestCase
      */
     public function testChangeStatus($id)
     {
-        /** @var \OroB2B\Bundle\RFPBundle\Entity\RequestStatus $status */
-        $status = $this->getContainer()->get('doctrine')->getRepository('OroB2BRFPBundle:RequestStatus')->findOneBy(
-            ['deleted' => false],
-            ['id' => 'DESC']
-        );
-
-        $this->assertNotNull($status);
-
         /** @var \OroB2B\Bundle\RFPBundle\Entity\Request $entity */
         $entity = $this->getContainer()->get('doctrine')->getRepository('OroB2BRFPBundle:Request')->find($id);
 
-        $this->assertNotEquals($status->getId(), $entity->getStatus()->getId());
+        $statuses = array_filter(
+            [
+                LoadRequestStatusData::NAME_IN_PROGRESS,
+                LoadRequestStatusData::NAME_NOT_DELETED,
+            ],
+            function ($status) use ($entity) {
+                return $status !== $entity->getStatus()->getName();
+            }
+        );
+
+        /** @var \OroB2B\Bundle\RFPBundle\Entity\RequestStatus $status */
+        $status = $this->getReference(LoadRequestStatusData::PREFIX . $statuses[array_rand($statuses)]);
+
+        $this->assertNotNull($status);
+
+        $this->assertNotEquals($status->getName(), $entity->getStatus()->getName());
         $this->assertCount(0, $this->getNotesForRequest($entity));
 
         $crawler = $this->client->request(
@@ -252,7 +260,7 @@ class RequestControllerTest extends WebTestCase
      */
     private function getFormatDate($format)
     {
-        $dateObj = new \DateTime();
+        $dateObj = new \DateTime('now', new \DateTimeZone('UTC'));
         $date = $dateObj->format($format);
 
         return $date;
