@@ -62,23 +62,12 @@ actions:
                     route: orob2b_rfp_frontend_request_create
                     route_parameters: {'storage': true}
 
-    orob2b_shoppinglist_addlineitem:
-        label: orob2b.shoppinglist.lineitem.add_line_item
-        routes:
-            - orob2b_shopping_list_view
-        acl_resource: [CREATE, entity:OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
+    orob2b_shoppinglist_lineitem_base:
+        label: ' '
         frontend_options:
-            icon: icon-plus
             dialog_template: OroB2BShoppingListBundle:Action:lineItem.html.twig
             dialog_title: orob2b.shoppinglist.lineitem.add_line_item
             dialog_options:
-                modal: false
-                stateEnabled: false
-                incrementalPosition: false
-                allowMaximize: true
-                allowMinimize: true
-                dblclick: maximize
-                maximizedHeightDecreaseBy: minimize-bar
                 width: 460
         attributes:
             lineItem:
@@ -93,6 +82,23 @@ actions:
             attribute_default_values:
                 lineItem:
                     $.lineItem
+
+    orob2b_shoppinglist_addlineitem:
+        extends: orob2b_shoppinglist_lineitem_base
+        label: orob2b.shoppinglist.lineitem.add_line_item
+        routes:
+            - orob2b_shopping_list_view
+        acl_resource: [CREATE, entity:OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
+        frontend_options:
+            icon: icon-plus
+            dialog_options:
+                modal: false
+                stateEnabled: false
+                incrementalPosition: false
+                allowMaximize: true
+                allowMinimize: true
+                dblclick: maximize
+                maximizedHeightDecreaseBy: minimize-bar
         initfunctions:
             - @create_object:
                 class: OroB2B\Bundle\ShoppingListBundle\Entity\LineItem
@@ -102,41 +108,40 @@ actions:
             - @assign_value: [$.lineItem.organization, $.data.organization]
         postfunctions:
             - @call_service_method:
-                service: orob2b_shopping_list.handler.form.line_item
-                method: processValidForm
-                method_parameters: [$.lineItem]
+                service: orob2b_shopping_list.shopping_list.manager
+                method: addLineItem
+                method_parameters: [$.lineItem, $.data, true, true]
             - @refresh_grid: shopping-list-line-items-grid
             - @flash_message:
                 message: orob2b.shoppinglist.lineitem.flash.added
                 type: 'success'
 
-    orob2b_shoppinglist_updatelineitem:
+    orob2b_shoppinglist_updatelineitem_base:
+        extends: orob2b_shoppinglist_lineitem_base
         label: orob2b.shoppinglist.lineitem.edit_line_item
-        acl_resource: [EDIT, entity:OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
         frontend_options:
             icon: icon-edit
-            dialog_template: OroB2BShoppingListBundle:Action:lineItem.html.twig
-            dialog_title: orob2b.shoppinglist.lineitem.add_line_item
             dialog_options:
                 modal: true
-                width: 460
-        attributes:
-            lineItem:
-                label: lineItem
-                type: entity
-                options:
-                    class: OroB2B\Bundle\ShoppingListBundle\Entity\LineItem
-        form_options:
-            attribute_fields:
-                lineItem:
-                    form_type: orob2b_shopping_list_line_item
-            attribute_default_values:
-                lineItem:
-                    $.lineItem
         initfunctions:
             - @assign_value: [$.lineItem, $.data]
         postfunctions:
-            - @refresh_grid: shopping-list-line-items-grid
             - @flash_message:
                 message: orob2b.shoppinglist.lineitem.flash.updated
                 type: 'success'
+
+    orob2b_shoppinglist_updatelineitem:
+        extends: orob2b_shoppinglist_updatelineitem_base
+        acl_resource: [EDIT, entity:OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
+        datagrids:
+            - shopping-list-line-items-grid
+        postfunctions:
+            - @refresh_grid: shopping-list-line-items-grid
+
+    orob2b_shoppinglist_frontend_updatelineitem:
+        extends: orob2b_shoppinglist_updatelineitem_base
+        acl_resource: [EDIT, entity:commerce@OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
+        datagrids:
+            - frontend-shopping-list-line-items-grid
+        postfunctions:
+            - @refresh_grid: frontend-shopping-list-line-items-grid

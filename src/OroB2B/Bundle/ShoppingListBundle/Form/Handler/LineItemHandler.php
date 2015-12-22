@@ -34,31 +34,24 @@ class LineItemHandler
     protected $roundingService;
 
     /**
+     * @param FormInterface $form
      * @param Request $request
      * @param Registry $registry
      * @param ShoppingListManager $shoppingListManager
      * @param QuantityRoundingService $roundingService
      */
     public function __construct(
+        FormInterface $form,
         Request $request,
         Registry $registry,
         ShoppingListManager $shoppingListManager,
         QuantityRoundingService $roundingService
     ) {
+        $this->form = $form;
         $this->request = $request;
         $this->registry = $registry;
         $this->shoppingListManager = $shoppingListManager;
         $this->roundingService = $roundingService;
-    }
-
-    /**
-     * @param FormInterface $form
-     */
-    public function setForm(FormInterface $form)
-    {
-        $this->form = $form;
-
-        return $this;
     }
 
     /**
@@ -81,11 +74,33 @@ class LineItemHandler
                 $shoppingList = $this->shoppingListManager->createCurrent($formData['shoppingListLabel']);
                 $formData['shoppingList'] = $shoppingList->getId();
                 $this->request->request->set($formName, $formData);
+            } else {
+                $shoppingList = $lineItem->getShoppingList();
             }
+
 
             $this->form->submit($this->request);
             if ($this->form->isValid()) {
-                $this->processValidForm($lineItem);
+
+                /** @var LineItemRepository $lineItemRepository */
+                $lineItemRepository = $manager->getRepository('OroB2BShoppingListBundle:LineItem');
+                $existingLineItem = $lineItemRepository->findDuplicate($lineItem);
+
+                if ($existingLineItem) {
+                    $this->updateExistingLineItem($lineItem, $existingLineItem);
+                } else {
+                    $lineItem->setQuantity(
+                        $this->roundingService->roundQuantity(
+                            $lineItem->getQuantity(),
+                            $lineItem->getProductUnit(),
+                            $lineItem->getProduct()
+                        )
+                    );
+
+                    $manager->persist($lineItem);
+                }
+
+                $manager->flush();
 
                 $manager->commit();
 
@@ -96,35 +111,6 @@ class LineItemHandler
         }
 
         return false;
-    }
-
-    /**
-     * @param LineItem $lineItem
-     */
-    public function processValidForm(LineItem $lineItem)
-    {
-        /** @var EntityManagerInterface $manager */
-        $manager = $this->registry->getManagerForClass('OroB2BShoppingListBundle:LineItem');
-
-        /** @var LineItemRepository $lineItemRepository */
-        $lineItemRepository = $manager->getRepository('OroB2BShoppingListBundle:LineItem');
-        $existingLineItem = $lineItemRepository->findDuplicate($lineItem);
-
-        if ($existingLineItem) {
-            $this->updateExistingLineItem($lineItem, $existingLineItem);
-        } else {
-            $lineItem->setQuantity(
-                $this->roundingService->roundQuantity(
-                    $lineItem->getQuantity(),
-                    $lineItem->getProductUnit(),
-                    $lineItem->getProduct()
-                )
-            );
-
-            $manager->persist($lineItem);
-        }
-
-        $manager->flush();
     }
 
     /**

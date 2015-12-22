@@ -61,12 +61,12 @@ class AjaxLineItemController extends Controller
         $form = $this->createForm(FrontendLineItemWidgetType::NAME, $lineItem);
 
         $handler = new LineItemHandler(
+            $form,
             $request,
             $this->getDoctrine(),
             $this->get('orob2b_shopping_list.shopping_list.manager'),
             $this->get('orob2b_product.service.quantity_rounding')
         );
-        $handler->setForm($form);
 
         $result = $this->get('oro_form.model.update_handler')
             ->handleUpdate($lineItem, $form, [], [], null, $handler);
@@ -111,12 +111,12 @@ class AjaxLineItemController extends Controller
         $form = $this->createForm(FrontendLineItemType::NAME, $lineItem);
 
         $handler = new LineItemHandler(
+            $form,
             $request,
             $this->getDoctrine(),
             $shoppingListManager,
             $this->get('orob2b_product.service.quantity_rounding')
         );
-        $handler->setForm($form);
 
         $isFormHandled = $handler->process($lineItem);
 
@@ -131,30 +131,6 @@ class AjaxLineItemController extends Controller
         $message = sprintf("%s (<a href='%s'>%s</a>).", $message, $link, $linkTitle);
 
         return new JsonResponse(['successful' => true, 'message' => $message]);
-    }
-
-    /**
-     * Edit product form
-     *
-     * @Route("/update/{id}", name="orob2b_shopping_list_line_item_frontend_update_widget", requirements={"id"="\d+"})
-     * @Template("OroB2BShoppingListBundle:LineItem:widget/update.html.twig")
-     * @Acl(
-     *      id="orob2b_shopping_list_line_item_frontend_update",
-     *      type="entity",
-     *      class="OroB2BShoppingListBundle:LineItem",
-     *      permission="EDIT",
-     *      group_name="commerce"
-     * )
-     *
-     * @param LineItem $lineItem
-     *
-     * @return array|RedirectResponse
-     */
-    public function updateAction(LineItem $lineItem)
-    {
-        $form = $this->createForm(LineItemType::NAME, $lineItem);
-
-        return $this->get('oro_form.model.update_handler')->handleUpdate($lineItem, $form, null, null, null);
     }
 
     /**

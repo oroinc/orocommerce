@@ -1,13 +1,7 @@
 {% extends 'OroActionBundle:Widget:widget/form.html.twig' %}
 
 {% block form %}
-    {% set pageComponentOptions = {
-        '_wid': app.request.get('_wid'),
-    } %}
-    <div class="widget-content"
-         data-page-component-module="orob2bfrontend/js/app/components/widget-form-component"
-         data-page-component-options="{{ pageComponentOptions|merge({message: 'orob2b.shoppinglist.line_item_save.flash.success'})|json_encode }}"
-    >
+    <div class="widget-content">
         <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ app.request.uri }}" {{ form_enctype(form) }}
               method="{{ form.vars.method }}" data-collect="true" class="form-dialog"
               data-page-component-module="orob2bproduct/js/app/components/product-unit-component">
