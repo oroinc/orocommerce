@@ -189,6 +189,6 @@ class AjaxLineItemController extends Controller
      */
     public function productsAddBtnWidgetAction()
     {
-        return $this->get('orob2b_shopping_list.shopping_list.manager')->getShoppingLists($this->getUser());;
+        return $this->get('orob2b_shopping_list.shopping_list.manager')->getShoppingLists();
     }
 }
