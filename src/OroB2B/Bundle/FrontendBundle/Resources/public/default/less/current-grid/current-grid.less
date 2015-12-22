@@ -2,10 +2,15 @@
 .grid-toolbar {
   margin: 0 0 1rem;
   display: flex;
+  justify-content: center;
   padding: 0;
 
   @media (max-width: 1300px) {
     flex-wrap: wrap;
+  }
+
+  @media (max-width: 991px) {
+    justify-content: space-between;
   }
 
   .caret {
@@ -17,9 +22,9 @@
     width: auto;
     margin: 0;
     padding: 0;
-    flex-grow: 1;
     text-align: center;
     order: 2;
+    flex-grow: 1;
 
     @media (max-width: 1290px) {
       text-align: left;
@@ -150,6 +155,10 @@
     vertical-align: middle;
     margin: 0 0 0 .9rem;
 
+    &:empty {
+      display: none;
+    }
+
     + label.dib {
       margin-left: .9rem;
     }
@@ -170,7 +179,7 @@
 
     @media (max-width: 991px) {
       order: 1;
-      flex-basis: calc(~'100% - 13rem - 13.5rem');
+      flex-basis: 100%;
 
       .account-oq__filter__search__input {
         min-width: 0;
@@ -183,7 +192,6 @@
   }
 
   .grid-toolbar__tools {
-    flex-grow: 1;
     text-align: right;
     order: 3;
 
@@ -220,10 +228,11 @@
   }
 
   .oro-mass-actions {
-    flex-grow: 0;
-    flex-basis: 13.5rem;
-    margin-left: .5rem;
     order: 5;
+
+    .mass-actions-panel {
+      max-width: 13.5rem;
+    }
 
     @media (max-width: 991px) {
       order: 3;
@@ -234,9 +243,10 @@
       }
     }
 
-    @media (max-width: 420px) {
-      flex-basis: calc(~'100% - 12.5rem');
+    @media (max-width: 991px) {
+      flex-basis: calc(~'100% - 13.8rem');
       margin: 0 0 1rem 0;
+      text-align: right;
     }
   }
 
@@ -297,9 +307,6 @@
 
     @media (max-width: 991px) {
       order: 2;
-    }
-
-    @media (max-width: 420px) {
       margin: 0 .5rem 1rem 0;
     }
 
@@ -331,7 +338,7 @@
         }
       }
 
-      @media (max-width: 420px) {
+      @media (max-width: 991px) {
         margin: 0 .5rem 0 0;
       }
     }
