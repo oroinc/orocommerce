@@ -9,7 +9,6 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Component\Testing\WebTestCase;
 
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
