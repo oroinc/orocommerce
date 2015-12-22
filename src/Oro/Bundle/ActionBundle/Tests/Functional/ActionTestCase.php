@@ -1,11 +1,13 @@
 <?php
 
-namespace Oro\Bundle\ActionBundle\Test;
+namespace Oro\Bundle\ActionBundle\Tests\Functional;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
-trait ActionTestTrait
+use Oro\Component\Testing\WebTestCase;
+
+abstract class ActionTestCase extends WebTestCase
 {
     /**
      * @return string

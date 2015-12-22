@@ -2,20 +2,20 @@
 
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional;
 
-use Oro\Bundle\ActionBundle\Test\ActionTestTrait;
-use Oro\Component\Testing\WebTestCase;
+use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
 
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
 /**
  * @dbIsolation
  */
-class ShoppingListActionsTest extends WebTestCase
+class ShoppingListActionsTest extends ActionTestCase
 {
-    use ActionTestTrait;
-
     protected function setUp()
     {
         $this->initClient([], $this->generateWsseAuthHeader());

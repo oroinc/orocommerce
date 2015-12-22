@@ -1,15 +1,13 @@
 <?php
 
-namespace OroB2B\Bundle\FrontendBundle\Test;
+namespace OroB2B\Bundle\FrontendBundle\Tests\Functional;
 
-use Oro\Bundle\ActionBundle\Test\ActionTestTrait;
+use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
 
-trait FrontendActionTestTrait
+abstract class FrontendActionTestCase extends ActionTestCase
 {
-    use ActionTestTrait;
-
     /**
-     * @return string
+     * {@inheritdoc}
      */
     protected function getActionExecutionRoute()
     {
@@ -17,7 +15,7 @@ trait FrontendActionTestTrait
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     protected function getActionDialogRoute()
     {

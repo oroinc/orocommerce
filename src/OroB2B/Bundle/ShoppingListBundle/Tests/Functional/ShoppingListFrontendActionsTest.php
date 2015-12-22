@@ -3,20 +3,19 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Tests\Functional;
 
 use Oro\Component\Testing\Fixtures\LoadAccountUserData;
-use Oro\Component\Testing\WebTestCase;
 
-use OroB2B\Bundle\FrontendBundle\Test\FrontendActionTestTrait;
+use OroB2B\Bundle\FrontendBundle\Tests\Functional\FrontendActionTestCase;
+use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage;
+use OroB2B\Bundle\ShoppingListBundle\Entity\LineItem;
 use OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use OroB2B\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
 /**
  * @dbIsolation
  */
-class ShoppingListFrontendActionsTest extends WebTestCase
+class ShoppingListFrontendActionsTest extends FrontendActionTestCase
 {
-    use FrontendActionTestTrait;
-
     protected function setUp()
     {
         $this->initClient(
