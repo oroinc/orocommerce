@@ -178,7 +178,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'dialog_options' => ['width' => 400],
                         'page_component_module' => 'testbundle/app/component',
                         'page_component_options' => [
-                            'papam' => 'value'
+                            'param' => 'value'
                         ],
                         'data' => [
                             'attribute' => 'attrValue'
