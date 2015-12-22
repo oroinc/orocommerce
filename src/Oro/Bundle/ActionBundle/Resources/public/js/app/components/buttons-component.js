@@ -112,13 +112,19 @@ define(function(require) {
          * @param {Object} response
          */
         doResponse: function(e, response) {
+            var i;
             mediator.execute('hideLoading');
 
             if (response.flashMessages) {
                 for (var type in response.flashMessages) {
+                    if (!response.flashMessages.hasOwnProperty(type)) {
+                        continue;
+                    }
                     var messages = response.flashMessages[type];
-                    for (var k in messages) {
-                        messenger.notificationFlashMessage(type, messages[k]);
+                    for (i in messages) {
+                        if (messages.hasOwnProperty(i)) {
+                            messenger.notificationFlashMessage(type, messages[i]);
+                        }
                     }
                 }
             }
@@ -127,8 +133,10 @@ define(function(require) {
                 e.stopImmediatePropagation();
                 this.doRedirect(response.redirectUrl);
             } else if (response.refreshGrid) {
-                for (var k in response.refreshGrid) {
-                    mediator.trigger('datagrid:doRefresh:' + response.refreshGrid[k]);
+                for (i in response.refreshGrid) {
+                    if (response.refreshGrid.hasOwnProperty(i)) {
+                        mediator.trigger('datagrid:doRefresh:' + response.refreshGrid[i]);
+                    }
                 }
             } else {
                 this.doPageReload();

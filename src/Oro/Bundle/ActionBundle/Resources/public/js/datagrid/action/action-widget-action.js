@@ -50,6 +50,8 @@ define(function(require) {
         confirmModalConstructor: DeleteConfirmation,
 
         /**
+         * @param {String} dialogUrl
+         *
          * @return {Object}
          */
         _getDialogOptions: function(dialogUrl) {
@@ -75,11 +77,23 @@ define(function(require) {
                         additionalOptions.dialogOptions
                     );
                 }
-
                 dialogOptions = _.extend(dialogOptions, additionalOptions);
             }
 
             return dialogOptions;
+        },
+
+        /**
+         * @return {Object}
+         */
+        _getRouteParams: function() {
+            var entityId = this.model[this.model.idAttribute];
+            return {
+                'actionName': this.options.actionName,
+                'entityId': entityId,
+                'entityClass': this.options.entityClass,
+                'datagrid': this.options.datagrid
+            };
         },
 
         /**
@@ -98,13 +112,18 @@ define(function(require) {
          * @param {Object} response
          */
         doResponse: function(response) {
+            var i;
             mediator.execute('hideLoading');
-
             if (response.flashMessages) {
                 for (var type in response.flashMessages) {
+                    if (!response.flashMessages.hasOwnProperty(type)) {
+                        continue;
+                    }
                     var messages = response.flashMessages[type];
-                    for (var k in messages) {
-                        messenger.notificationFlashMessage(type, messages[k]);
+                    for (i in messages) {
+                        if (messages.hasOwnProperty(i)) {
+                            messenger.notificationFlashMessage(type, messages[i]);
+                        }
                     }
                 }
             }
@@ -112,8 +131,10 @@ define(function(require) {
             if (response.redirectUrl) {
                 this.doRedirect(response.redirectUrl);
             } else if (response.refreshGrid) {
-                for (var k in response.refreshGrid) {
-                    mediator.trigger('datagrid:doRefresh:' + response.refreshGrid[k]);
+                for (i in response.refreshGrid) {
+                    if (response.refreshGrid.hasOwnProperty(i)) {
+                        mediator.trigger('datagrid:doRefresh:' + response.refreshGrid[i]);
+                    }
                 }
             } else {
                 this.doPageReload();
@@ -135,13 +156,7 @@ define(function(require) {
          * @inheritDoc
          */
         doRun: function() {
-            var entityId = this.model[this.model.idAttribute];
-            var routeParams = {
-                'actionName': this.options.actionName,
-                'entityId': entityId,
-                'entityClass': this.options.entityClass,
-                'datagrid': this.options.datagrid
-            };
+            var routeParams = this._getRouteParams();
             if (this.options.showDialog) {
                 var dialogUrl = routing.generate(this.options.dialogRoute, routeParams);
                 var widget = new DialogWidget(this._getDialogOptions(dialogUrl));
