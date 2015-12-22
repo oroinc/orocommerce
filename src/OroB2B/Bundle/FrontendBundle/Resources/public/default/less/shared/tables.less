@@ -1,6 +1,6 @@
 //Matrix widget table
 .matrix-widget__table,
-.cart-table {
+.oro-grid-table {
   width: 100%;
 
   &.matrix-widget__table_condensed {
@@ -271,7 +271,7 @@
   }
 }
 
-.cart-table {
+.oro-grid-table {
 
   thead {
     tr {
@@ -281,7 +281,7 @@
     }
   }
 
-  &.cart-table__has-sorting {
+  &.oro-grid-table__has-sorting {
     thead {
       tr {
         th {
@@ -291,7 +291,7 @@
     }
   }
 
-  &.cart-table__recent-orders {
+  &.oro-grid-table__recent-orders {
     margin-top: 1.5rem;
 
     tbody {
@@ -299,7 +299,7 @@
         td {
           padding: 1.5rem 1.2rem;
 
-          &.account-recent__item__controls {
+          &.oro-grid-table__item__controls {
             padding: 0;
           }
         }
@@ -307,7 +307,7 @@
     }
   }
 
-  &.cart-table__orders {
+  &.oro-grid-table__orders {
     margin-top: 1rem;
 
     thead {
@@ -339,7 +339,7 @@
             
           }
 
-          &.account-recent__item__controls {
+          &.oro-grid-table__item__controls {
             padding: 0;
           }
 
@@ -349,9 +349,25 @@
         }
       }
     }
+
+    &.oro-grid-table__orders_order-details {
+      > tbody {
+        > tr {
+          > td {
+            &:first-child {
+              padding-left: 0;
+            }
+
+            &:last-child {
+              padding-right: 0;
+            }
+          }
+        }
+      }
+    }
   }
 
-  &.cart-table__verticalp-enlarged {
+  &.oro-grid-table__verticalp-enlarged {
     tbody {
       td {
         padding: 1.5rem .6rem;
@@ -367,23 +383,23 @@
     }
   }
 
-  &.cart-table_b-bordered {
+  &.oro-grid-table_b-bordered {
     border-bottom: .1rem solid @base-border-color;
   }
 }
 
-.cart-table__sort-header {
+.oro-grid-table__sort-header {
   position: relative;
   cursor: pointer;
 
-  .cart-table__sort-btn {
+  .oro-grid-table__sort-btn {
     display: none;
   }
 
   &.sorted_asc {
     padding-right: 1.5rem;
 
-    .cart-table__sort-btn {
+    .oro-grid-table__sort-btn {
       display: block;
 
       @media (max-width: 767px) {
@@ -399,7 +415,7 @@
   &.sorted_desc {
     padding-right: 1.5rem;
 
-    .cart-table__sort-btn {
+    .oro-grid-table__sort-btn {
       display: block;
 
       @media (max-width: 767px) {
@@ -413,7 +429,7 @@
   }
 }
 
-.cart-table__sort-btn {
+.oro-grid-table__sort-btn {
   position: absolute;
   vertical-align: middle;
   right: 0;
