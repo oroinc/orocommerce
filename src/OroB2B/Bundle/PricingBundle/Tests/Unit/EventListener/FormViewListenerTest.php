@@ -25,24 +25,9 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
  */
 class FormViewListenerTest extends FormViewListenerTestCase
 {
-    /**
-     * @var FrontendPriceListRequestHandler|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $frontendPriceListRequestHandler;
-
-    protected function setUp()
-    {
-        parent::setUp();
-
-        $this->frontendPriceListRequestHandler = $this
-            ->getMockBuilder('OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler')
-            ->disableOriginalConstructor()
-            ->getMock();
-    }
-
     protected function tearDown()
     {
-        unset($this->doctrineHelper, $this->translator, $this->frontendPriceListRequestHandler);
+        unset($this->doctrineHelper, $this->translator);
     }
 
     public function testOnViewNoRequest()
@@ -410,8 +395,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
         return new FormViewListener(
             $requestStack,
             $this->translator,
-            $this->doctrineHelper,
-            $this->frontendPriceListRequestHandler
+            $this->doctrineHelper
         );
     }
 
