@@ -46,7 +46,7 @@ actions:
         applications: [frontend]
         routes:
             - orob2b_product_frontend_quick_add
-        acl_resource: [CREATE, entity:commerce@OroB2BShoppingListBundle:LineItem]
+        acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
         order: 30
         frontend_options:
             template: OroB2BShoppingListBundle:Action:quickAdd.html.twig
