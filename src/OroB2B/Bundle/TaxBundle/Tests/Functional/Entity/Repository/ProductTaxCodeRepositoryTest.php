@@ -33,7 +33,7 @@ class ProductTaxCodeRepositoryTest extends WebTestCase
         $expectedTaxCode = $this->getRepository()->findOneByProduct($product1);
 
         /** @var ProductTaxCode $taxCode1 */
-        $taxCode1 = $this->getReference('product_tax_code.' . TaxFixture::TAX_1);
+        $taxCode1 = $this->getReference(TaxFixture::REFERENCE_PREFIX . '.' . TaxFixture::TAX_1);
         $this->assertEquals($expectedTaxCode->getId(), $taxCode1->getId());
     }
 

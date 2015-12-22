@@ -29,7 +29,7 @@ class AccountTaxCodeRepositoryTest extends WebTestCase
         $expectedTaxCode = $this->getRepository()->findOneByAccount($account1);
 
         /** @var AccountTaxCode $taxCode1 */
-        $taxCode1 = $this->getReference('account_tax_code.' . TaxFixture::TAX_1);
+        $taxCode1 = $this->getReference(TaxFixture::REFERENCE_PREFIX . '.' . TaxFixture::TAX_1);
         $this->assertEquals($expectedTaxCode->getId(), $taxCode1->getId());
     }
 

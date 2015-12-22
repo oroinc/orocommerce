@@ -15,6 +15,11 @@ class LoadAccountTaxCodes extends AbstractFixture implements DependentFixtureInt
     const TAX_1 = 'TAX1';
     const TAX_2 = 'TAX2';
 
+    const DESCRIPTION_1 = 'Tax description 1';
+    const DESCRIPTION_2 = 'Tax description 2';
+
+    const REFERENCE_PREFIX = 'account_tax_code';
+
     /**
      * {@inheritdoc}
      */
@@ -28,8 +33,8 @@ class LoadAccountTaxCodes extends AbstractFixture implements DependentFixtureInt
      */
     public function load(ObjectManager $manager)
     {
-        $this->createAccountTaxCode($manager, self::TAX_1, 'Tax description 1', [LoadAccounts::DEFAULT_ACCOUNT_NAME]);
-        $this->createAccountTaxCode($manager, self::TAX_2, 'Tax description 2', []);
+        $this->createAccountTaxCode($manager, self::TAX_1, self::DESCRIPTION_1, [LoadAccounts::DEFAULT_ACCOUNT_NAME]);
+        $this->createAccountTaxCode($manager, self::TAX_2, self::DESCRIPTION_2, []);
 
         $manager->flush();
     }
@@ -53,7 +58,7 @@ class LoadAccountTaxCodes extends AbstractFixture implements DependentFixtureInt
         }
 
         $manager->persist($accountTaxCode);
-        $this->addReference('account_tax_code.' . $code, $accountTaxCode);
+        $this->addReference(self::REFERENCE_PREFIX . '.' . $code, $accountTaxCode);
 
         return $accountTaxCode;
     }
