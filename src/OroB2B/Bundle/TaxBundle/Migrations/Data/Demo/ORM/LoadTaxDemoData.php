@@ -18,6 +18,9 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
 use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class LoadTaxDemoData extends AbstractFixture implements
     FixtureInterface,
     ContainerAwareInterface,
