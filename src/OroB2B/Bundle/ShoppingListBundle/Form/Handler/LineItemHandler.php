@@ -74,14 +74,10 @@ class LineItemHandler
                 $shoppingList = $this->shoppingListManager->createCurrent($formData['shoppingListLabel']);
                 $formData['shoppingList'] = $shoppingList->getId();
                 $this->request->request->set($formName, $formData);
-            } else {
-                $shoppingList = $lineItem->getShoppingList();
             }
-
 
             $this->form->submit($this->request);
             if ($this->form->isValid()) {
-
                 /** @var LineItemRepository $lineItemRepository */
                 $lineItemRepository = $manager->getRepository('OroB2BShoppingListBundle:LineItem');
                 $existingLineItem = $lineItemRepository->findDuplicate($lineItem);
@@ -101,7 +97,6 @@ class LineItemHandler
                 }
 
                 $manager->flush();
-
                 $manager->commit();
 
                 return true;

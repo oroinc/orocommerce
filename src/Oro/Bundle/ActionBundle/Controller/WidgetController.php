@@ -16,7 +16,6 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
 use Oro\Bundle\ActionBundle\Helper\ContextHelper;
 use Oro\Bundle\ActionBundle\Model\ActionData;
-use Oro\Bundle\ActionBundle\Model\ActionFormManager;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 
 class WidgetController extends Controller
