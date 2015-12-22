@@ -3,10 +3,10 @@
 namespace OroB2B\Bundle\PricingBundle\Tests\Unit\Layout\Extension\Provider;
 
 use Oro\Component\Layout\LayoutContext;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
-use Oro\Component\Testing\Unit\EntityTrait;
 use OroB2B\Bundle\PricingBundle\Model\FrontendPriceListRequestHandler;
 use OroB2B\Bundle\PricingBundle\Layout\Extension\Provider\FrontendProductPricesDataProvicer;
 
