@@ -64,7 +64,7 @@ class AccountTaxExtensionTest extends AbstractTaxExtensionText
                 [
                     'required' => false,
                     'mapped' => false,
-                    'label' => 'orob2b.tax.accounttaxcode.entity_label',
+                    'label' => 'orob2b.tax.taxcode.form.extension.label',
                     'create_form_route' => null,
                 ]
             );

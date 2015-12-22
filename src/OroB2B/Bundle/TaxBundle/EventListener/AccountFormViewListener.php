@@ -28,7 +28,7 @@ class AccountFormViewListener extends AbstractFormViewListener
             'OroB2BTaxBundle:Account:tax_code_view.html.twig',
             ['entity' => $entity]
         );
-        $this->addTaxCodeBlock($event->getScrollData(), $template, 'orob2b.tax.account.section.taxes');
+        $event->getScrollData()->addSubBlockData(0, 0, $template);
     }
 
     /**
@@ -40,6 +40,6 @@ class AccountFormViewListener extends AbstractFormViewListener
             'OroB2BTaxBundle:Account:tax_code_update.html.twig',
             ['form' => $event->getFormView()]
         );
-        $this->addTaxCodeBlock($event->getScrollData(), $template, 'orob2b.tax.account.section.taxes');
+        $event->getScrollData()->addSubBlockData(0, 0, $template);
     }
 }

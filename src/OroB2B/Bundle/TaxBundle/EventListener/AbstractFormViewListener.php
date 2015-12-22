@@ -4,15 +4,11 @@ namespace OroB2B\Bundle\TaxBundle\EventListener;
 
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\UIBundle\View\ScrollData;
 
 abstract class AbstractFormViewListener
 {
-    /**  @var TranslatorInterface */
-    protected $translator;
 
     /** @var DoctrineHelper */
     protected $doctrineHelper;
@@ -27,37 +23,21 @@ abstract class AbstractFormViewListener
     protected $entityClass;
 
     /**
-     * @param TranslatorInterface $translator
      * @param DoctrineHelper $doctrineHelper
      * @param RequestStack $requestStack
      * @param string $taxCodeClass
      * @param string $entityClass
      */
     public function __construct(
-        TranslatorInterface $translator,
         DoctrineHelper $doctrineHelper,
         RequestStack $requestStack,
         $taxCodeClass,
         $entityClass
     ) {
-        $this->translator = $translator;
         $this->doctrineHelper = $doctrineHelper;
         $this->requestStack = $requestStack;
         $this->taxCodeClass = $taxCodeClass;
         $this->entityClass = $entityClass;
-    }
-
-    /**
-     * @param ScrollData $scrollData
-     * @param string $html
-     * @param string $title
-     */
-    protected function addTaxCodeBlock(ScrollData $scrollData, $html, $title)
-    {
-        $blockLabel = $this->translator->trans($title);
-        $blockId = $scrollData->addBlock($blockLabel);
-        $subBlockId = $scrollData->addSubBlock($blockId);
-        $scrollData->addSubBlockData($blockId, $subBlockId, $html);
     }
 
     /**

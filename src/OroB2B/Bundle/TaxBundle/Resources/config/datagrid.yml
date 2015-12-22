@@ -25,6 +25,10 @@ datagrid:
                     data_name: tax_code.description
         properties:
             id: ~
+
+    tax-base-grid-tax-codes-grid:
+        extends: tax-base-tax-codes-grid
+        properties:
             view_link:
                 type:   url
                 params: [ id ]
@@ -53,7 +57,7 @@ datagrid:
                 icon:          trash
 
     tax-product-tax-codes-grid:
-        extends: tax-base-tax-codes-grid
+        extends: tax-base-grid-tax-codes-grid
         options:
             entityHint: product tax code
         source:
@@ -82,7 +86,7 @@ datagrid:
                 acl_resource:  orob2b_tax_product_tax_code_delete
 
     tax-account-tax-codes-grid:
-        extends: tax-base-tax-codes-grid
+        extends: tax-base-grid-tax-codes-grid
         options:
             entityHint: account tax code
         source:
@@ -110,34 +114,8 @@ datagrid:
             delete:
                 acl_resource:  orob2b_tax_account_tax_code_delete
 
-    tax-base-tax-codes-select-grid:
-        extends: tax-base-tax-codes-grid
-        source:
-            type: orm
-            query:
-                select:
-                    - tax_code.id
-                    - tax_code.code
-                    - tax_code.description
-        sorters:
-            columns:
-                code:
-                    data_name: tax_code.code
-                description:
-                    data_name: tax_code.description
-            default:
-                id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
-        filters:
-            columns:
-                code:
-                    type:      string
-                    data_name: tax_code.code
-                description:
-                    type:      string
-                    data_name: tax_code.description
-
     products-tax-code-select-grid:
-        extends: tax-base-tax-codes-select-grid
+        extends: tax-base-tax-codes-grid
         options:
             entityHint: product tax code
         source:
@@ -147,19 +125,12 @@ datagrid:
                     - { table: %orob2b_tax.entity.product_tax_code.class%, alias: tax_code }
         columns:
             code:
-                label: orob2b.tax.producttaxcode.code.label
+                label: orob2b.tax.accounttaxcode.code.label
             description:
-                label: orob2b.tax.producttaxcode.description.label
-        properties:
-            view_link:
-                route: orob2b_tax_product_tax_code_view
-            update_link:
-                route:  orob2b_tax_product_tax_code_update
-            delete_link:
-                route:  orob2b_api_tax_delete_producttaxcode
+                label: orob2b.tax.accounttaxcode.description.label
 
     accounts-tax-code-select-grid:
-        extends: tax-base-tax-codes-select-grid
+        extends: tax-base-tax-codes-grid
         options:
             entityHint: account tax code
         source:
@@ -172,13 +143,6 @@ datagrid:
                 label: orob2b.tax.accounttaxcode.code.label
             description:
                 label: orob2b.tax.accounttaxcode.description.label
-        properties:
-            view_link:
-                route: orob2b_tax_account_tax_code_view
-            update_link:
-                route:  orob2b_tax_account_tax_code_update
-            delete_link:
-                route:  orob2b_api_tax_delete_accounttaxcode
 
     tax-taxes-grid-base:
         options:
@@ -288,16 +252,16 @@ datagrid:
                         - { join: tax_rule.tax, alias: tax }
                         - { join: tax_rule.taxJurisdiction, alias: tax_jutisdiction }
         columns:
-            description:
-                label: orob2b.tax.taxrule.description.label
             account_tax_code_code:
                 label: orob2b.tax.taxrule.account_tax_code.label
             product_tax_code_code:
                 label: orob2b.tax.taxrule.product_tax_code.label
-            tax_code:
-                label: orob2b.tax.taxrule.tax.label
             tax_jurisdiction_code:
                 label: orob2b.tax.taxrule.tax_jurisdiction.label
+            tax_code:
+                label: orob2b.tax.taxrule.tax.label
+            description:
+                label: orob2b.tax.taxrule.description.label
         sorters:
             columns:
                 description:

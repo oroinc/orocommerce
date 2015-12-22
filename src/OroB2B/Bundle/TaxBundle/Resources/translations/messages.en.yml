@@ -5,6 +5,8 @@ orob2b.tax:
     entity_plural_label: 'Taxes'
     id.label: 'id'
     rate.label: 'Rate'
+    taxcode.form.extension.label: 'Tax Code'
+
     form:
         choose: 'Choose a tax'
         tooltip.zip_codes: 'If you want to type only one zip code, you can fill any field in the row'
@@ -74,15 +76,5 @@ orob2b.tax:
             saved.message: 'Tax has been saved'
         taxrule:
             saved.message: 'Tax Rule has been saved'
-        tax_jurisdiction:
-            saved.message: 'Tax Jurisdiction has been saved'
-
-    product:
-        section:
-            taxes: 'Taxes'
-
-    account:
-        section:
-            taxes: 'Taxes'
         tax_jurisdiction:
             saved.message: 'Tax Jurisdiction has been saved'

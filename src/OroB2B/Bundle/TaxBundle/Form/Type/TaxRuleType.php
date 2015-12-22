@@ -31,7 +31,7 @@ class TaxRuleType extends AbstractType
         $builder
             ->add('description', 'textarea', [
                 'label' => 'orob2b.tax.taxrule.description.label',
-                'required' => true
+                'required' => false
             ])
             ->add('accountTaxCode', AccountTaxCodeAutocompleteType::NAME, [
                 'label' => 'orob2b.tax.taxrule.account_tax_code.label',
