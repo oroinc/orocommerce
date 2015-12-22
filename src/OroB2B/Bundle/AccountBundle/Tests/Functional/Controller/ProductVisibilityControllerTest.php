@@ -20,7 +20,6 @@ use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 use OroB2B\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
 use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData as TestFixturesLoadWebsiteData;
@@ -166,7 +165,7 @@ class ProductVisibilityControllerTest extends WebTestCase
         $this->client->request(
             'GET',
             $this->getUrl(
-                'oro_api_action_execute',
+                'oro_api_action_execute_actions',
                 [
                     'actionName' => 'orob2b_product_duplicate_action',
                     'route' => 'orob2b_product_view',
