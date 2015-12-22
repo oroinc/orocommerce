@@ -80,6 +80,7 @@ services:
         class: %orob2b_frontend.request.frontend_helper.class%
         arguments:
             - %web_backend_prefix%
+            - @request_stack
 
     orob2b_frontend.activity_list.placeholder.filter:
         class: %orob2b_frontend.activity_list.placeholder.filter.class%

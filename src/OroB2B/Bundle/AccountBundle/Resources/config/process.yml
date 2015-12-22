@@ -1,0 +1,226 @@
+definitions:
+    change_category_position:
+        label: 'Update product visibility after category position in tree changed'
+        enabled: true
+        order: 20
+        entity: OroB2B\Bundle\CatalogBundle\Entity\Category
+        actions_configuration:
+            - @change_category_position: ~
+
+    # Category visibility update
+
+    change_category_visibility:
+        label: 'Update product visibility after category visibility for all changed'
+        enabled: true
+        order: 21
+        entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility
+        actions_configuration:
+            - @change_category_visibility: ~
+
+    change_account_group_category_visibility:
+        label: 'Update product visibility after category visibility for account group changed'
+        enabled: true
+        order: 22
+        entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility
+        actions_configuration:
+            - @change_category_visibility: ~
+
+    change_account_category_visibility:
+        label: 'Update product visibility after category visibility for account changed'
+        enabled: true
+        order: 23
+        entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility
+        actions_configuration:
+            - @change_category_visibility: ~
+
+    # Product visibility update
+
+    product_visibility_change:
+        enabled: true
+        label: 'Update product visibility after product visibility changed'
+        order: 1
+        entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility
+        actions_configuration:
+            - @resolve_product_visibility: ~
+
+    account_group_product_visibility_change:
+        enabled: true
+        label: 'Update product visibility after account group product visibility changed'
+        order: 2
+        entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility
+        actions_configuration:
+            - @resolve_product_visibility: ~
+
+    account_product_visibility_change:
+        enabled: true
+        label: 'Update product visibility after account product visibility changed'
+        order: 3
+        entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility
+        actions_configuration:
+            - @resolve_product_visibility: ~
+
+    product_visibility_product_create:
+        enabled: true
+        label: 'Update product visibility after product created'
+        entity: OroB2B\Bundle\ProductBundle\Entity\Product
+        actions_configuration:
+            - @resolve_visibility_by_product: ~
+
+    # Category visibility cache clear
+
+    category_position_cache_clear:
+        label: 'Clear category visibility cache on changing category position in tree'
+        enabled: true
+        order: 10
+        entity: OroB2B\Bundle\CatalogBundle\Entity\Category
+        actions_configuration:
+            - @category_visibility_cache_clear: ~
+
+    account_group_changed_cache_clear:
+        label: 'Clear category visibility cache on changing account group of account'
+        enabled: true
+        order: 10
+        entity: OroB2B\Bundle\AccountBundle\Entity\Account
+        actions_configuration:
+            - @category_visibility_cache_clear: ~
+
+    category_visibility_cache_clear:
+        label: 'Clear category visibility cache on changing category visibility for all'
+        enabled: true
+        order: 11
+        entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility
+        actions_configuration:
+            - @category_visibility_cache_clear: ~
+
+    account_group_category_visibility_cache_clear:
+        label: 'Clear category visibility cache on changing category visibility for account group'
+        enabled: true
+        order: 12
+        entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility
+        actions_configuration:
+            - @category_visibility_cache_clear: ~
+
+    account_category_visibility_cache_clear:
+        label: 'Clear category visibility cache on changing category visibility for account'
+        enabled: true
+        order: 13
+        entity: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility
+        actions_configuration:
+            - @category_visibility_cache_clear: ~
+
+    product_visibility_category_create:
+        enabled: true
+        label: 'Update product visibility after category created'
+        entity: OroB2B\Bundle\CatalogBundle\Entity\Category
+        actions_configuration:
+            - @foreach: # for all products in new category
+                array: $products
+                value: $.product
+                actions:
+                    - @resolve_visibility_by_product:
+                        entity: $.product
+
+    product_visibility_website_added:
+        enabled: true
+        label: 'Update product visibility after website added'
+        entity: OroB2B\Bundle\WebsiteBundle\Entity\Website
+        actions_configuration:
+            - @build_website_cache: ~
+
+triggers:
+    change_category_position:
+        -
+            event: update
+            field: parentCategory
+
+    change_category_visibility:
+        -
+            event: create
+        -
+            event: update
+        -
+            event: delete
+
+    change_account_group_category_visibility:
+        -
+            event: create
+        -
+            event: update
+        -
+            event: delete
+
+    change_account_category_visibility:
+        -
+            event: create
+        -
+            event: update
+        -
+            event: delete
+
+    product_visibility_change:
+        -
+            event: create
+        -
+            event: update
+        -
+            event: delete
+
+    account_group_product_visibility_change:
+        -
+            event: create
+        -
+            event: update
+
+    account_product_visibility_change:
+        -
+            event: create
+        -
+            event: update
+
+    category_position_cache_clear:
+        -
+            event: update
+            field: parentCategory
+        -
+            event: delete
+
+    account_group_changed_cache_clear:
+        -
+            event: update
+            field: group
+
+    category_visibility_cache_clear:
+        -
+            event: create
+        -
+            event: update
+        -
+            event: delete
+
+    account_group_category_visibility_cache_clear:
+        -
+            event: create
+        -
+            event: update
+        -
+            event: delete
+
+    account_category_visibility_cache_clear:
+        -
+            event: create
+        -
+            event: update
+        -
+            event: delete
+
+    product_visibility_product_create:
+        -
+            event: create
+
+    product_visibility_category_create:
+        -
+            event: create
+
+    product_visibility_website_added:
+        -
+            event: create

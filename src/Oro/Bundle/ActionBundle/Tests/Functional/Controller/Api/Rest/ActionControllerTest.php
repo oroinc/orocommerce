@@ -73,7 +73,7 @@ class ActionControllerTest extends WebTestCase
         $this->client->request(
             'GET',
             $this->getUrl(
-                'oro_api_action_execute',
+                'oro_api_action_execute_actions',
                 [
                     'actionName' => 'oro_action_test_action',
                     'route' => $route,

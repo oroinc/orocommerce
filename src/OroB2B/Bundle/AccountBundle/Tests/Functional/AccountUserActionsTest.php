@@ -48,7 +48,7 @@ class AccountUserActionsTest extends AbstractAccountUserActionsTest
         $this->client->request(
             'GET',
             $this->getUrl(
-                'oro_api_action_execute',
+                'oro_api_action_execute_actions',
                 [
                     'actionName' => $actionName,
                     'route' => 'orob2b_account_account_user_view',
