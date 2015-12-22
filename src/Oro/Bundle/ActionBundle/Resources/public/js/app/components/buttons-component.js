@@ -115,21 +115,20 @@ define(function(require) {
             mediator.execute('hideLoading');
 
             if (response.flashMessages) {
-                for (var type in response.flashMessages) {
-                    var messages = response.flashMessages[type];
-                    for (var k in messages) {
-                        messenger.notificationFlashMessage(type, messages[k]);
-                    }
-                }
+                _.each(response.flashMessages, function(messages, type) {
+                    _.each(messages, function(message) {
+                        messenger.notificationFlashMessage(type, message);
+                    });
+                });
             }
 
             if (response.redirectUrl) {
                 e.stopImmediatePropagation();
                 this.doRedirect(response.redirectUrl);
             } else if (response.refreshGrid) {
-                for (var k in response.refreshGrid) {
-                    mediator.trigger('datagrid:doRefresh:' + response.refreshGrid[k]);
-                }
+                _.each(response.refreshGrid, function(gridname) {
+                    mediator.trigger('datagrid:doRefresh:' + gridname);
+                });
             } else {
                 this.doPageReload();
             }

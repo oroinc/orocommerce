@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Repository\AccountGroupRepository")
  * @ORM\Table(
  *      name="orob2b_account_group",
  *      indexes={

@@ -52,6 +52,7 @@ class ActionControllerTest extends WebTestCase
      *
      * @param array $config
      * @param string $route
+     * @param string $datagrid
      * @param bool $entityId
      * @param string $entityClass
      * @param int $statusCode
@@ -73,7 +74,7 @@ class ActionControllerTest extends WebTestCase
         $this->client->request(
             'GET',
             $this->getUrl(
-                'oro_api_action_execute',
+                'oro_api_action_execute_actions',
                 [
                     'actionName' => 'oro_action_test_action',
                     'route' => $route,

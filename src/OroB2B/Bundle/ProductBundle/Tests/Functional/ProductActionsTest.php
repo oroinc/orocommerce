@@ -32,12 +32,14 @@ class ProductActionsTest extends WebTestCase
         $this->executeAction($product, 'orob2b_product_duplicate_action');
 
         $result = $this->client->getResponse();
-        $this->assertEquals(200, $result->getStatusCode());
+        $this->assertJsonResponseStatusCodeEquals($result, 200);
+
         $content = $result->getContent();
         $this->assertContains('redirectUrl', $content);
 
         $resultData = json_decode($content, true);
         $this->assertArrayHasKey('redirectUrl', $resultData);
+
         $flashMessages = self::getContainer()->get('session')->getFlashBag()->all();
         $this->assertEquals(['success' => [0 => 'Product has been duplicated']], $flashMessages);
     }

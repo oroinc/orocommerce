@@ -21,6 +21,31 @@ class LoadAccountUserData extends AbstractFixture implements DependentFixtureInt
     const LAST_NAME = 'Brzeczyszczykiewicz';
     const EMAIL = 'grzegorz.brzeczyszczykiewicz@example.com';
     const PASSWORD = 'test';
+    
+    const LEVEL_1_FIRST_NAME = 'First';
+    const LEVEL_1_LAST_NAME = 'Last';
+    const LEVEL_1_EMAIL = 'other.user@test.com';
+    const LEVEL_1_PASSWORD = 'pass';
+
+    const LEVEL_1_1_FIRST_NAME = 'FirstName';
+    const LEVEL_1_1_LAST_NAME = 'LastName';
+    const LEVEL_1_1_EMAIL = 'second_account.user@test.com';
+    const LEVEL_1_1_PASSWORD = 'pass';
+
+    const ANONYMOUS_FIRST_NAME = 'FirstAccountUser';
+    const ANONYMOUS_LAST_NAME = 'LastAccountUser';
+    const ANONYMOUS_EMAIL = 'account.user2@test.com';
+    const ANONYMOUS_PASSWORD = 'pass';
+
+    const ORPHAN_FIRST_NAME = 'FirstOrphan';
+    const ORPHAN_LAST_NAME = 'LastOrphan';
+    const ORPHAN_EMAIL = 'orphan.user@test.com';
+    const ORPHAN_PASSWORD = 'pass';
+
+    const GROUP2_FIRST_NAME = 'FirstAccountUserGroup2';
+    const GROUP2_LAST_NAME = 'LastAccountUserGroup2';
+    const GROUP2_EMAIL = 'account.level_1.2@test.com';
+    const GROUP2_PASSWORD = 'pass';
 
     /** @var ContainerInterface */
     protected $container;
@@ -38,27 +63,27 @@ class LoadAccountUserData extends AbstractFixture implements DependentFixtureInt
             'account' => 'account.level_1'
         ],
         [
-            'first_name' => 'First',
-            'last_name' => 'Last',
-            'email' => 'other.user@test.com',
+            'first_name' => self::LEVEL_1_FIRST_NAME,
+            'last_name' => self::LEVEL_1_LAST_NAME,
+            'email' => self::LEVEL_1_EMAIL,
             'enabled' => true,
-            'password' => 'pass',
+            'password' => self::LEVEL_1_PASSWORD,
             'account' => 'account.level_1'
         ],
         [
-            'first_name' => 'FirstName',
-            'last_name' => 'LastName',
-            'email' => 'second_account.user@test.com',
+            'first_name' => self::LEVEL_1_1_FIRST_NAME,
+            'last_name' => self::LEVEL_1_1_LAST_NAME,
+            'email' => self::LEVEL_1_1_EMAIL,
             'enabled' => true,
-            'password' => 'pass',
+            'password' => self::LEVEL_1_1_PASSWORD,
             'account' => 'account.level_1.1'
         ],
         [
-            'first_name' => 'FirstOrphan',
-            'last_name' => 'LastOrphan',
-            'email' => 'orphan.user@test.com',
+            'first_name' => self::ORPHAN_FIRST_NAME,
+            'last_name' => self::ORPHAN_LAST_NAME,
+            'email' => self::ORPHAN_EMAIL,
             'enabled' => true,
-            'password' => 'pass',
+            'password' => self::ORPHAN_PASSWORD,
             'account' => 'account.orphan'
         ],
         [
@@ -67,6 +92,14 @@ class LoadAccountUserData extends AbstractFixture implements DependentFixtureInt
             'email' => 'account.user2@test.com',
             'enabled' => true,
             'password' => 'pass'
+        ],
+        [
+            'first_name' => self::GROUP2_FIRST_NAME,
+            'last_name' => self::GROUP2_LAST_NAME,
+            'email' => self::GROUP2_EMAIL,
+            'password' => self::GROUP2_PASSWORD,
+            'enabled' => true,
+            'account' => 'account.level_1.2'
         ],
     ];
 

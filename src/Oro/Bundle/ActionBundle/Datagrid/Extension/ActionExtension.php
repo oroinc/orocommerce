@@ -27,7 +27,7 @@ class ActionExtension extends AbstractExtension
     /** @var array */
     protected $datagridContext = [];
 
-    /** @var Action[] */
+    /** @var array|Action[] */
     protected $actions = [];
 
     /**
@@ -73,7 +73,6 @@ class ActionExtension extends AbstractExtension
         // process own permissions of the datagrid
         if ($this->actionConfiguration && is_callable($this->actionConfiguration)) {
             $actionsOld = call_user_func($this->actionConfiguration, $record);
-
             $actionsOld = is_array($actionsOld) ? $actionsOld : [];
         };
 

@@ -9,6 +9,8 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Component\Testing\WebTestCase;
 
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
@@ -83,6 +85,7 @@ class ProductVisibilityControllerTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures(
             [
+                'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
                 'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
                 'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
@@ -107,6 +110,12 @@ class ProductVisibilityControllerTest extends WebTestCase
         $this->visibilityToAccountGroupNotDefaultWebsite = json_encode(
             [$this->group->getId() => [self::VISIBILITY_KEY => self::HIDDEN]]
         );
+    }
+
+    public function tearDown()
+    {
+        $this->client->getContainer()->get('doctrine')->getManager()->clear();
+        parent::tearDown();
     }
 
     public function testUpdate()
@@ -168,7 +177,7 @@ class ProductVisibilityControllerTest extends WebTestCase
             )
         );
         $result = $this->client->getResponse();
-        $this->assertEquals(200, $result->getStatusCode());
+        $this->assertJsonResponseStatusCodeEquals($result, 200);
         /** @var EntityManager $em */
         $em = $this->client->getContainer()->get('doctrine')->getManager();
         $duplicatedProduct = $em->getRepository('OroB2BProductBundle:Product')
@@ -192,7 +201,7 @@ class ProductVisibilityControllerTest extends WebTestCase
      */
     public function testDeleteVisibilityOnSetDefault()
     {
-        $this->assertCountVisibilities(4);
+        $this->assertCountVisibilities(2, $this->product);
 
         $this->visibilityToAllDefaultWebsite = ProductVisibility::getDefault($this->product);
         $this->visibilityToAccountDefaultWebsite = json_encode(
@@ -205,22 +214,21 @@ class ProductVisibilityControllerTest extends WebTestCase
                 ],
             ]
         );
-
         $this->submitForm();
-
-        $this->assertCountVisibilities(3);
+        $this->assertCountVisibilities(1, $this->product);
     }
 
     /**
      * @param integer $count
+     * @param Product $product
      */
-    protected function assertCountVisibilities($count)
+    protected function assertCountVisibilities($count, Product $product)
     {
         /** @var EntityManager $em */
         $em = $this->client->getContainer()->get('doctrine')->getManager();
 
         foreach ($this->visibilityClassNames as $className) {
-            $this->assertCount($count, $em->getRepository($className)->findAll());
+            $this->assertCount($count, $em->getRepository($className)->findBy(['product' => $product]));
         }
     }
 

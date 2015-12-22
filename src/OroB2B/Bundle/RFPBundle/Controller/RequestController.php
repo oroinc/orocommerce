@@ -5,8 +5,6 @@ namespace OroB2B\Bundle\RFPBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -16,8 +14,6 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
 use OroB2B\Bundle\RFPBundle\Entity\Request as RFPRequest;
-use OroB2B\Bundle\RFPBundle\Form\Handler\RequestChangeStatusHandler;
-use OroB2B\Bundle\RFPBundle\Form\Type\RequestChangeStatusType;
 use OroB2B\Bundle\RFPBundle\Form\Type\RequestType;
 
 class RequestController extends Controller

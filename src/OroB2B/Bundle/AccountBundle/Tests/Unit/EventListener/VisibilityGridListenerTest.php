@@ -9,8 +9,6 @@ use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
@@ -19,7 +17,6 @@ use Oro\Bundle\DataGridBundle\Event\OrmResultBefore;
 use Oro\Component\TestUtils\ORM\Mocks\EntityManagerMock;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\EventListener\VisibilityGridListener;
 use OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider;
@@ -54,7 +51,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
     protected $registry;
 
     /**
-     * @var VisibilityChoicesProvider
+     * @var \PHPUnit_Framework_MockObject_MockObject|VisibilityChoicesProvider
      */
     protected $visibilityChoicesProvider;
 
@@ -68,14 +65,27 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected $listener;
 
+    /**
+     * @var array
+     */
+    protected $choices = [
+        'hidden' => 'Hidden',
+        'visible' => 'Visible',
+    ];
+
     protected function setUp()
     {
         $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface $translator */
-        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->visibilityChoicesProvider = $this
+            ->getMockBuilder('OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider')
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->visibilityChoicesProvider = new VisibilityChoicesProvider($translator);
+        $this->visibilityChoicesProvider->expects($this->any())
+            ->method('getFormattedChoices')
+            ->willReturn($this->choices);
+
         $this->categoryClass = 'OroB2B\Bundle\CatalogBundle\Entity\Category';
 
         $this->listener = new VisibilityGridListener($this->registry, $this->visibilityChoicesProvider);
@@ -158,11 +168,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
                     );
 
                     $this->assertArrayHasKey('choices', $config);
-                    if ($category && !$category->getParentCategory()) {
-                        $this->assertArrayNotHasKey(CategoryVisibility::PARENT_CATEGORY, $config['choices']);
-                    } else {
-                        $this->assertArrayHasKey(CategoryVisibility::PARENT_CATEGORY, $config['choices']);
-                    }
+                    $this->assertEquals($config['choices'], $this->choices);
                 }
             );
         $config->expects($this->once())->method('getName')->willReturn(self::ACCOUNT_CATEGORY_VISIBILITY_GRID);
