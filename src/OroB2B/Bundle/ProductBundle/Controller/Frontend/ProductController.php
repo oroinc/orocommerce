@@ -58,14 +58,14 @@ class ProductController extends Controller
      *      group_name="commerce"
      * )
      *
-     * @param integer $id
+     * @param Product $product
      *
      * @return array
      */
-    public function viewAction($id)
+    public function viewAction(Product $product)
     {
         return [
-            'productId' => $id
+            'productId' => $product->getId()
         ];
     }
 

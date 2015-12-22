@@ -140,37 +140,6 @@ class FormViewListener
     /**
      * @param BeforeListRenderEvent $event
      */
-    public function onFrontendProductView(BeforeListRenderEvent $event)
-    {
-        $request = $this->requestStack->getCurrentRequest();
-        if (!$request) {
-            return;
-        }
-
-        $productId = (int)$request->get('id');
-
-        /** @var Product $product */
-        $product = $this->doctrineHelper->getEntityReference('OroB2BProductBundle:Product', $productId);
-        $priceList = $this->frontendPriceListRequestHandler->getPriceList();
-
-        /** @var ProductPriceRepository $priceRepository */
-        $priceRepository = $this->doctrineHelper->getEntityRepository('OroB2BPricingBundle:ProductPrice');
-
-        $prices = $priceRepository->findByPriceListIdAndProductIds($priceList->getId(), [$product->getId()]);
-
-        $template = $event->getEnvironment()->render(
-            'OroB2BPricingBundle:Frontend/Product:productPrice.html.twig',
-            ['prices' => $prices]
-        );
-
-        $scrollData = $event->getScrollData();
-        $subBlockId = $scrollData->addSubBlock(0);
-        $scrollData->addSubBlockData(0, $subBlockId, $template);
-    }
-
-    /**
-     * @param BeforeListRenderEvent $event
-     */
     public function onProductEdit(BeforeListRenderEvent $event)
     {
         $template = $event->getEnvironment()->render(

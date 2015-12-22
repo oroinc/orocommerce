@@ -6,15 +6,73 @@ layout:
             items:
                 product_view_page:
                     blockType: container
-                product:
+                product_container:
+                    blockType: container
+                    options:
+                        vars:
+                            product: {@value: $data.product}
+                product_title_mobile:
+                    blockType: text
+                    options:
+                        text: {@value: $data.product.defaultName}
+                product_image:
                     blockType: block
                     options:
                         vars:
                             product: {@value: $data.product}
+                product_description_container:
+                    blockType: container
+                product_title_container:
+                    blockType: container
+                product_title:
+                    blockType: text
+                    options:
+                        text: {@value: $data.product.defaultName}
+                product_rating:
+                    blockType: block
+                product_specification_container:
+                    blockType: container
+                product_specification:
+                    blockType: block
+                    options:
+                        vars:
+                            product: {@value: $data.product}
+                product_variants:
+                    blockType: block
+                order_with_matrix:
+                    blockType: block
+                quick_order_form:
+                    blockType: block
+                product_description_content:
+                    blockType: container
+                product_description:
+                    blockType: text
+                    options:
+                        text: {@value: $data.product.defaultDescription}
+                        escape: false
+                attachments:
+                    blockType: block
+                share:
+                    blockType: block
                 product_tabs:
                     blockType: block
             tree:
                 content:
                     product_view_page:
-                        product: ~
+                        product_container:
+                            product_title_mobile: ~
+                            product_image: ~
+                            product_description_container:
+                                product_title_container:
+                                    product_title: ~
+                                    product_rating: ~
+                                product_specification_container:
+                                    product_specification: ~
+                                    product_variants: ~
+                                    order_with_matrix: ~
+                                    quick_order_form: ~
+                                product_description_content:
+                                    product_description: ~
+                                    attachments: ~
+                                    share: ~
                         product_tabs: ~

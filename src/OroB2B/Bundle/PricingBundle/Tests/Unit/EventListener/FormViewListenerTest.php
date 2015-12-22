@@ -57,7 +57,6 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $listener->onAccountView($event);
         $listener->onAccountGroupView($event);
         $listener->onProductView($event);
-        $listener->onFrontendProductView($event);
     }
 
     /**
