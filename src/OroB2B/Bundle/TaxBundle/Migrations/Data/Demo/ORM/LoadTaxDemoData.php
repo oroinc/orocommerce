@@ -195,10 +195,8 @@ class LoadTaxDemoData extends AbstractFixture implements
      */
     protected function handle($row)
     {
-        $taxId = $this->createTax($row['TaxRegionCode'], $row['CombinedRate']);
         $jurisdictionId = $this->createTaxJurisdiction($row);
         $this->scheduleAddZipCode($jurisdictionId, $row['ZipCode']);
-        $this->scheduleTaxRule($row, $taxId, $jurisdictionId);
     }
 
     /**
@@ -241,6 +239,9 @@ class LoadTaxDemoData extends AbstractFixture implements
             ]);
 
             $this->jurisdictions[$code] = $this->connection->lastInsertId('orob2b_tax_jurisdiction_id_seq');
+
+            $taxId = $this->createTax($row['TaxRegionCode'], $row['CombinedRate']);
+            $this->scheduleTaxRule($row, $taxId, $this->jurisdictions[$code]);
         }
 
         return $this->jurisdictions[$code];
