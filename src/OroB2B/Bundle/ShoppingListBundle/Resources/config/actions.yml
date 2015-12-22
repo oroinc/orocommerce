@@ -56,7 +56,7 @@ actions:
                 method: isAllowed
                 attribute: $.isAllowed
             - @call_service_method:
-                service: orob2b_shopping_list.helper.shopping_list_line_item
+                service: orob2b_shopping_list.shopping_list.manager
                 method: getShoppingLists
                 attribute: $.params
         preconditions:
