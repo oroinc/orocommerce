@@ -217,7 +217,7 @@ class LoadTaxDemoData extends AbstractFixture implements
                 'updated_at' => $this->getCurrentTime(),
             ]);
 
-            $this->taxes[$code] = $this->connection->lastInsertId();
+            $this->taxes[$code] = $this->connection->lastInsertId('orob2b_tax_id_seq');
         }
 
         return $this->taxes[$code];
@@ -240,7 +240,7 @@ class LoadTaxDemoData extends AbstractFixture implements
                     'updated_at' => $this->getCurrentTime(),
             ]);
 
-            $this->jurisdictions[$code] = $this->connection->lastInsertId();
+            $this->jurisdictions[$code] = $this->connection->lastInsertId('orob2b_tax_jurisdiction_id_seq');
         }
 
         return $this->jurisdictions[$code];
@@ -368,7 +368,7 @@ class LoadTaxDemoData extends AbstractFixture implements
                 'updated_at' => $this->getCurrentTime()
             ]);
 
-            $this->productTaxCodes[$key] = $this->connection->lastInsertId();
+            $this->productTaxCodes[$key] = $this->connection->lastInsertId('orob2b_tax_product_tax_code_id_seq');
         }
 
         return $this->productTaxCodes[$key];
@@ -390,7 +390,7 @@ class LoadTaxDemoData extends AbstractFixture implements
                 'updated_at' => $this->getCurrentTime()
             ]);
 
-            $this->accountTaxCodes[$key] = $this->connection->lastInsertId();
+            $this->accountTaxCodes[$key] = $this->connection->lastInsertId('orob2b_tax_account_tax_code_id_seq');
         }
 
         return $this->accountTaxCodes[$key];
@@ -409,7 +409,7 @@ class LoadTaxDemoData extends AbstractFixture implements
     }
 
     /**
-     * This method is modified version of DBAL\Connection::insert() for batch inserts
+     * This method is modified version of @see \Doctrine\DBAL\Connection::insert for batch inserts
      *
      * @param string $tableExpression The expression of the table to insert data into, quoted or unquoted.
      * @param array $columns Array of affected columns
