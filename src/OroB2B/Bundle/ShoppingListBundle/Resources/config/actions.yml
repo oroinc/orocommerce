@@ -79,6 +79,8 @@ actions:
             attribute_fields:
                 lineItem:
                     form_type: orob2b_shopping_list_line_item
+                    options:
+                        required: true
             attribute_default_values:
                 lineItem:
                     $.lineItem

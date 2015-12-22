@@ -151,10 +151,14 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
             ->setNotes('Notes');
 
         $this->manager->addLineItem($lineItem, $shoppingList);
+
         $lineItemDuplicate = clone $lineItem;
         $lineItemDuplicate->setNotes('Duplicated Notes');
+
         $this->manager->addLineItem($lineItemDuplicate, $shoppingList, true, true);
+
         $this->assertEquals(1, $shoppingList->getLineItems()->count());
+
         /** @var LineItem $resultingItem */
         $resultingItem = array_shift($this->lineItems);
         $this->assertSame('Notes Duplicated Notes', $resultingItem->getNotes());
