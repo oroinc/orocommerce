@@ -99,6 +99,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                             'dialog_template' => 'template',
                             'dialog_title' => 'dialog title',
                             'dialog_options' => ['width' => 400],
+                            'datagrid_confirm' => 'Confirmation message'
                         ],
                         'form_options' => [
                             'attribute_fields' => [
@@ -170,6 +171,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'dialog_template' => 'template',
                         'dialog_title' => 'dialog title',
                         'dialog_options' => ['width' => 400],
+                        'datagrid_confirm' => 'Confirmation message'
                     ],
                     'form_options' => [
                         'attribute_fields' => [

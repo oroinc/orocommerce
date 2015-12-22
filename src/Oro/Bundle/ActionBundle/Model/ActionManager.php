@@ -14,50 +14,35 @@ class ActionManager
 {
     const DEFAULT_DIALOG_TEMPLATE = 'OroActionBundle:Widget:widget/form.html.twig';
 
-    /**
-     * @var DoctrineHelper
-     */
+    /** @var DoctrineHelper */
     protected $doctrineHelper;
 
-    /**
-     * @var ContextHelper
-     */
+    /** @var ContextHelper */
     protected $contextHelper;
 
-    /**
-     * @var ActionConfigurationProvider
-     */
+    /** @var ActionConfigurationProvider */
     protected $configurationProvider;
 
-    /**
-     * @var ActionAssembler
-     */
+    /** @var ActionAssembler */
     protected $assembler;
 
-    /**
-     * @var ApplicationsHelper
-     */
+    /** @var ApplicationsHelper */
     protected $applicationsHelper;
 
-    /**
-     * @var array
-     */
-    private $routes;
+    /** @var array */
+    private $routes = [];
 
-    /**
-     * @var array
-     */
-    private $entities;
+    /** @var array] */
+    private $entities = [];
 
-    /**
-     * @var array
-     */
-    private $datagrids;
+    /** @var array */
+    private $datagrids = [];
 
-    /**
-     * @var Action[]
-     */
-    private $actions;
+    /** @var array|Action[] */
+    private $actions = [];
+
+    /** @var bool */
+    private $initialized = false;
 
     /**
      * @param DoctrineHelper $doctrineHelper
@@ -230,18 +215,9 @@ class ActionManager
 
     protected function loadActions()
     {
-        if ($this->entities !== null ||
-            $this->routes !== null ||
-            $this->datagrids !== null ||
-            $this->actions !== null
-        ) {
+        if ($this->initialized) {
             return;
         }
-
-        $this->routes = [];
-        $this->entities = [];
-        $this->datagrids = [];
-        $this->actions = [];
 
         $configuration = $this->configurationProvider->getActionConfiguration();
         $actions = $this->assembler->assemble($configuration);
@@ -260,6 +236,8 @@ class ActionManager
             $this->mapActionDatagrids($action);
             $this->actions[$action->getName()] = $action;
         }
+
+        $this->initialized = true;
     }
 
     /**

@@ -112,32 +112,23 @@ define(function(require) {
          * @param {Object} response
          */
         doResponse: function(e, response) {
-            var i;
             mediator.execute('hideLoading');
 
             if (response.flashMessages) {
-                for (var type in response.flashMessages) {
-                    if (!response.flashMessages.hasOwnProperty(type)) {
-                        continue;
-                    }
-                    var messages = response.flashMessages[type];
-                    for (i in messages) {
-                        if (messages.hasOwnProperty(i)) {
-                            messenger.notificationFlashMessage(type, messages[i]);
-                        }
-                    }
-                }
+                _.each(response.flashMessages, function(messages, type) {
+                    _.each(messages, function(message) {
+                        messenger.notificationFlashMessage(type, message);
+                    });
+                });
             }
 
             if (response.redirectUrl) {
                 e.stopImmediatePropagation();
                 this.doRedirect(response.redirectUrl);
             } else if (response.refreshGrid) {
-                for (i in response.refreshGrid) {
-                    if (response.refreshGrid.hasOwnProperty(i)) {
-                        mediator.trigger('datagrid:doRefresh:' + response.refreshGrid[i]);
-                    }
-                }
+                _.each(response.refreshGrid, function(gridname) {
+                    mediator.trigger('datagrid:doRefresh:' + gridname);
+                });
             } else {
                 this.doPageReload();
             }

@@ -52,6 +52,7 @@ class ActionControllerTest extends WebTestCase
      *
      * @param array $config
      * @param string $route
+     * @param string $datagrid
      * @param bool $entityId
      * @param string $entityClass
      * @param int $statusCode
