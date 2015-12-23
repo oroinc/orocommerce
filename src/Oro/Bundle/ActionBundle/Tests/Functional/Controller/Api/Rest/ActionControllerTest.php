@@ -100,7 +100,7 @@ class ActionControllerTest extends WebTestCase
                 'frontend_options' => [],
                 'entities' => [],
                 'routes' => [],
-                'postfunctions' => [['@assign_value' => ['$message', 'new test message']]],
+                'functions' => [['@assign_value' => ['$message', 'new test message']]],
             ]
         ];
 

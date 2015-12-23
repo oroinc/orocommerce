@@ -1,16 +1,14 @@
 actions:
     orob2b_shoppinglist_action_createorder:
         label: orob2b.shoppinglist.btn.create_order
-        enabled: true
-        applications:
-            - backend
+        applications: [backend]
         routes:
             - orob2b_shopping_list_view
         acl_resource: orob2b_order_create
         order: 10
         frontend_options:
             icon: icon-briefcase
-        postfunctions:
+        functions:
             - @call_service_method:
                 service: orob2b_shopping_list.service.product_data_storage
                 method: saveToStorage
@@ -22,16 +20,14 @@ actions:
 
     orob2b_shoppinglist_frontend_action_createorder:
         label: orob2b.frontend.shoppinglist.btn.create_order
-        enabled: true
-        applications:
-            - frontend
+        applications: [frontend]
         routes:
             - orob2b_shopping_list_frontend_view
         acl_resource: orob2b_order_frontend_create
         order: 10
         frontend_options:
             icon: icon-briefcase
-        postfunctions:
+        functions:
             - @call_service_method:
                 service: orob2b_shopping_list.service.product_data_storage
                 method: saveToStorage
@@ -64,16 +60,14 @@ actions:
 
     orob2b_shoppinglist_frontend_action_request_quote:
         label: orob2b.frontend.shoppinglist.btn.request_quote_create_rfp
-        enabled: true
-        applications:
-            - frontend
+        applications: [frontend]
         routes:
             - orob2b_shopping_list_frontend_view
         acl_resource: orob2b_rfp_frontend_request_create
         order: 20
         frontend_options:
             icon: icon-briefcase
-        postfunctions:
+        functions:
             - @call_service_method:
                 service: orob2b_shopping_list.service.product_data_storage
                 method: saveToStorage

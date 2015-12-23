@@ -17,7 +17,7 @@ Table of Contents
    - [Example](#example-3)
  - [Pre Conditions and Conditions Configuration](#pre-conditions-and-conditions-configuration)
    - [Example](#example-4)
- - [Pre Functions, Init Functions and Post Functions Configuration](#pre-functions-init-functions-and-post-functions-configuration)
+ - [Pre Functions, Form Init Functions and Functions Configuration](#pre-functions-form-init-functions-and-functions-configuration)
    - [Example](#example-5)
 
 Overview
@@ -124,12 +124,12 @@ Single action configuration has next properties:
     Contains configuration for Attributes
 * **form_options**
     Contains configuration for Transitions
-* **initfunctions**
-    Contains configuration for Init Functions
+* **form_init**
+    Contains configuration for Form Init Functions
 * **conditions**
     Contains configuration for Conditions
-* **postfunctions**
-    Contains configuration for Post Functions
+* **functions**
+    Contains configuration for Functions
 
 Example
 -------
@@ -155,11 +155,11 @@ actions:                                             # root elements
                                                      # ...
         form_options:                                # configuration for Form Options
                                                      # ...
-        initfunctions:                               # configuration for Init Functions
+        form_init:                                   # configuration for Form Init Functions
                                                      # ...
         conditions:                                  # configuration for Conditions
                                                      # ...
-        postfunctions:                               # configuration for Post Functions
+        functions:                                   # configuration for Functions
                                                      # ...
 ```
 
@@ -371,19 +371,19 @@ actions:
             @not_empty: [$group]
 ```
 
-Pre Functions, Init Functions and Post Functions Configuration
+Pre Functions, Form Init Functions and Functions Configuration
 ==============================================================
 
 * **prefunctions**
-    Configuration of Pre Functions that may be performed before pre conditions, conditions, init functions and post
+    Configuration of Pre Functions that may be performed before pre conditions, conditions, form init functions and post
     functions. It can be used to prepare some data in Action Data that will be used in pre conditions validation.
-* **initfunctions**
-    Configuration of Init Functions that may be performed on Action Data before conditions and post functions.
+* **form_init**
+    Configuration of Form Init Functions that may be performed on Action Data before conditions and functions.
     One of possible init actions usage scenario is to fill attributes with default values, which will be used in action
     form if it exist.
-* **postfunctions**
-    Configuration of Post Functions that must be performed after all previous steps are performed. This is main action
-    step that must contain action logic. It will be performed only after conditions will be qualified.
+* **functions**
+    Configuration of Functions that must be performed after all previous steps are performed. This is main action step
+    that must contain action logic. It will be performed only after conditions will be qualified.
 
 Similarly to Conditions - alias of Function starts from "@" symbol and must refer to registered Functions. For example
 "@assign_value" refers to Function which set specified value to attribute in Action Data.
@@ -397,9 +397,9 @@ actions:
         # ...
         prefunctions:
             - @assign_value: [$name, 'User Name']
-        initfunctions:
+        form_init:
             - @assign_value: [$group, 'Group Name']
-        postfunctions:
+        functions:
             - @create_entity:
                 class: Acme\Bundle\DemoBundle\Entity\User
                 attribute: $user
