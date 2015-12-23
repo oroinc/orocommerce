@@ -2,24 +2,27 @@
 
 namespace OroB2B\Bundle\AccountBundle\Visibility\Resolver;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
+
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\AccountBundle\Visibility\Storage\CategoryVisibilityStorage;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
 {
     /**
-     * @var CategoryVisibilityStorage
+     * @var Registry
      */
-    protected $storage;
+    protected $registry;
 
     /**
-     * @param CategoryVisibilityStorage $storage
+     * @param Registry $registry
      */
-    public function __construct(CategoryVisibilityStorage $storage)
+    public function __construct(Registry $registry)
     {
-        $this->storage = $storage;
+        $this->registry = $registry;
     }
 
     /**
@@ -27,7 +30,10 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
      */
     public function isCategoryVisible(Category $category)
     {
-        return $this->storage->getCategoryVisibilityData()->isCategoryVisible($category->getId());
+        return $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->isCategoryVisible($category);
     }
 
     /**
@@ -35,7 +41,10 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
      */
     public function getVisibleCategoryIds()
     {
-        return $this->storage->getCategoryVisibilityData()->getVisibleCategoryIds();
+        return $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getCategoryIdsByVisibility(BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE);
     }
 
     /**
@@ -43,7 +52,10 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
      */
     public function getHiddenCategoryIds()
     {
-        return $this->storage->getCategoryVisibilityData()->getHiddenCategoryIds();
+        return $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getCategoryIdsByVisibility(BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN);
     }
 
     /**
@@ -53,8 +65,10 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
      */
     public function isCategoryVisibleForAccountGroup(Category $category, AccountGroup $accountGroup)
     {
-        return $this->storage->getCategoryVisibilityDataForAccountGroup($accountGroup)
-            ->isCategoryVisible($category->getId());
+        return $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->isCategoryVisible($category, $accountGroup);
     }
 
     /**
@@ -63,7 +77,10 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
      */
     public function getVisibleCategoryIdsForAccountGroup(AccountGroup $accountGroup)
     {
-        return $this->storage->getCategoryVisibilityDataForAccountGroup($accountGroup)->getVisibleCategoryIds();
+        return $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->getCategoryIdsByVisibility(BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE, $accountGroup);
     }
 
     /**
@@ -72,7 +89,10 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
      */
     public function getHiddenCategoryIdsForAccountGroup(AccountGroup $accountGroup)
     {
-        return $this->storage->getCategoryVisibilityDataForAccountGroup($accountGroup)->getHiddenCategoryIds();
+        return $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->getCategoryIdsByVisibility(BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN, $accountGroup);
     }
 
     /**
@@ -82,7 +102,10 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
      */
     public function isCategoryVisibleForAccount(Category $category, Account $account = null)
     {
-        return $this->storage->getCategoryVisibilityDataForAccount($account)->isCategoryVisible($category->getId());
+        return $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->isCategoryVisible($category, $account);
     }
 
     /**
@@ -91,7 +114,10 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
      */
     public function getVisibleCategoryIdsForAccount(Account $account)
     {
-        return $this->storage->getCategoryVisibilityDataForAccount($account)->getVisibleCategoryIds();
+        return $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->getCategoryIdsByVisibility(BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE, $account);
     }
 
     /**
@@ -100,6 +126,9 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
      */
     public function getHiddenCategoryIdsForAccount(Account $account)
     {
-        return $this->storage->getCategoryVisibilityDataForAccount($account)->getHiddenCategoryIds();
+        return $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->getCategoryIdsByVisibility(BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN, $account);
     }
 }

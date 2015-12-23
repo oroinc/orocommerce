@@ -1,0 +1,56 @@
+category_1:
+    all:
+        visibility: true
+    groups:
+        account_group.group1:
+            visibility: true
+        account_group.group3:
+            visibility: true
+    accounts:
+        account.level_1:
+            visibility: true
+        account.level_1.1:
+            visibility: true
+        account.level_1.2:
+            visibility: true
+        account.level_1.2.1:
+            visibility: true
+        account.level_1.3.1.1:
+category_1_2:
+    all:
+        visibility: false
+    groups:
+        account_group.group1:
+            visibility: false
+        account_group.group3:
+            visibility: false
+    accounts:
+        account.level_1:
+            visibility: false
+        account.level_1.1:
+            visibility: false
+        account.level_1.2:
+            visibility: false
+        account.level_1.2.1:
+            visibility: false
+        account.level_1.3.1.1:
+            visibility: false
+category_1_2_3:
+    all:
+        visibility: true
+    groups:
+        account_group.group1:
+            visibility: true
+        account_group.group3:
+            visibility: false
+    accounts:
+        account.level_1:
+            visibility: true
+        account.level_1.1:
+            visibility: false
+        account.level_1.2:
+            visibility: true
+        account.level_1.2.1:
+            visibility: false
+        account.level_1.3.1.1:
+            visibility: true
