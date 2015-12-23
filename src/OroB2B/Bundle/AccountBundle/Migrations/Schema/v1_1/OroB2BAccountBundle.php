@@ -52,10 +52,31 @@ class OroB2BAccountBundle implements Migration
         $this->addOroB2BAccountProductVisibilityForeignKeys($schema);
         $this->addOroB2BAccountGroupProductVisibilityForeignKeys($schema);
 
+        $this->updateAuditAndRoleTables($schema);
+
         //Update Account User Role Table
         $table = $schema->getTable(OroB2BAccountBundleInstaller::ORO_B2B_ACCOUNT_USER_ROLE_TABLE_NAME);
         $table->getColumn('role')->setType(Type::getType(Type::STRING))->setOptions(['length' => 255]);
         $table->getColumn('label')->setType(Type::getType(Type::STRING))->setOptions(['length' => 255]);
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function updateAuditAndRoleTables(Schema $schema)
+    {
+        $schema->dropTable('orob2b_audit_field');
+        $schema->dropTable('orob2b_audit');
+
+        $auditTable = $schema->getTable('oro_audit');
+        $auditTable->addColumn('account_user_id', 'integer', ['notnull' => false]);
+        $auditTable
+            ->addForeignKeyConstraint(
+                $schema->getTable('orob2b_account_user'),
+                ['account_user_id'],
+                ['id'],
+                ['onDelete' => 'CASCADE', 'onUpdate' => null]
+            );
     }
 
     /**
