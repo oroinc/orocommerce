@@ -11,6 +11,7 @@ define(function(require) {
     var mediator = require('oroui/js/mediator');
     var messenger = require('oroui/js/messenger');
     var DialogWidget = require('oro/dialog-widget');
+    var DeleteConfirmation = require('oroui/js/delete-confirmation');
 
     ButtonsComponent = BaseComponent.extend({
         /**
@@ -22,6 +23,19 @@ define(function(require) {
          * @property {jQuery.Element}
          */
         $container: {},
+
+        messages: {
+            confirm_title: 'oro.action.confirm_title',
+            confirm_content: 'Are you sure you want to perform this action?',
+            confirm_ok: 'Yes',
+            confirm_cancel: 'Cancel'
+        },
+
+        /** @param {Object} */
+        confirmModal: null,
+
+        /** @property {Function} */
+        confirmModalConstructor: DeleteConfirmation,
 
         /**
          * @inheritDoc
@@ -39,8 +53,55 @@ define(function(require) {
          */
         onClick: function(e) {
             e.preventDefault();
-
             var $element = $(e.currentTarget);
+            if ($element.data('confirmation')) {
+                this.messages.confirm_content = $element.data('confirmation');
+                this.getConfirmDialog(_.bind(this.doExecute, this, e, $element)).open();
+            } else {
+                this.doExecute(e, $element);
+            }
+        },
+
+        /**
+         * @param {jQuery.Element} $element
+         * @return {Object}
+         * @private
+         */
+        _getDialogOptions: function($element) {
+            var dialogOptions = {
+                title: 'action',
+                url: $element.data('dialog-url'),
+                stateEnabled: false,
+                incrementalPosition: false,
+                loadingMaskEnabled: true,
+                dialogOptions: {
+                    modal: true,
+                    resizable: true,
+                    width: 475,
+                    autoResize: true
+                }
+            };
+
+            var additionalOptions = $element.data('dialog-options');
+            if (additionalOptions) {
+                if (additionalOptions.dialogOptions !== undefined) {
+                    additionalOptions.dialogOptions = _.extend(
+                        dialogOptions.dialogOptions,
+                        additionalOptions.dialogOptions
+                    );
+                }
+
+                dialogOptions = _.extend(dialogOptions, additionalOptions);
+            }
+
+            return dialogOptions;
+        },
+
+        /**
+         * @param {jQuery.Event} e
+         * @param {jQuery.Element} $element
+         */
+        doExecute: function(e, $element) {
             if ($element.data('dialog-url')) {
                 var widget = new DialogWidget(this._getDialogOptions($element));
 
@@ -71,40 +132,6 @@ define(function(require) {
                         messenger.notificationFlashMessage('error', message);
                     });
             }
-        },
-
-        /**
-         * @param {jQuery.Element} $element
-         * @return {Object}
-         */
-        _getDialogOptions: function($element) {
-            var dialogOptions = {
-                title: 'action',
-                url: $element.data('dialog-url'),
-                stateEnabled: false,
-                incrementalPosition: false,
-                loadingMaskEnabled: true,
-                dialogOptions: {
-                    modal: true,
-                    resizable: true,
-                    width: 475,
-                    autoResize: true
-                }
-            };
-
-            var additionalOptions = $element.data('dialog-options');
-            if (additionalOptions) {
-                if (additionalOptions.dialogOptions !== undefined) {
-                    additionalOptions.dialogOptions = _.extend(
-                        dialogOptions.dialogOptions,
-                        additionalOptions.dialogOptions
-                    );
-                }
-
-                dialogOptions = _.extend(dialogOptions, additionalOptions);
-            }
-
-            return dialogOptions;
         },
 
         /**
@@ -145,12 +172,34 @@ define(function(require) {
             mediator.execute('refreshPage');
         },
 
+        /**
+         * Get view for confirm modal
+         *
+         * @return {oroui.Modal}
+         */
+        getConfirmDialog: function(callback) {
+            if (!this.confirmModal) {
+                this.confirmModal = (new this.confirmModalConstructor({
+                    title: __(this.messages.confirm_title),
+                    content: __(this.messages.confirm_content),
+                    okText: __(this.messages.confirm_ok),
+                    cancelText: __(this.messages.confirm_cancel)
+                }));
+                this.listenTo(this.confirmModal, 'ok', callback);
+            } else {
+                this.confirmModal.setContent(__(this.messages.confirm_content));
+            }
+
+            return this.confirmModal;
+        },
+
         dispose: function() {
             if (this.disposed) {
                 return;
             }
 
             this.$container.off();
+            delete this.confirmModal;
 
             ButtonsComponent.__super__.dispose.call(this);
         }

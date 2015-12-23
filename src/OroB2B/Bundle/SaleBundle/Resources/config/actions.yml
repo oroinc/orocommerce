@@ -12,7 +12,7 @@ actions:
         order: 10
         frontend_options:
             icon: icon-time
-            datagrid_confirm: orob2b.sale.quote.actions.quote_expire_confirm
+            confirmation: orob2b.sale.quote.actions.quote_expire_confirm
         preconditions:
             @equal: [$expired, false]
         postfunctions:

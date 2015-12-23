@@ -1,4 +1,3 @@
 oro:
     action:
-        datagrid:
-            confirm_title: Action Confirmation
+        confirm_title: Action Confirmation

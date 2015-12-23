@@ -24,7 +24,7 @@ define(function(require) {
     ActionWidgetAction = ModelAction.extend({
         options: {
             datagrid: null,
-            datagridConfirm: null,
+            confirmation: null,
             showDialog: null,
             executionRoute: null,
             dialogRoute: null,
@@ -40,7 +40,7 @@ define(function(require) {
         },
 
         defaultMessages: {
-            confirm_title: __('oro.action.datagrid.confirm_title'),
+            confirm_title: 'oro.action.confirm_title',
             confirm_content: 'Are you sure you want to perform this action?',
             confirm_ok: 'Yes',
             confirm_cancel: 'Cancel'
@@ -88,6 +88,7 @@ define(function(require) {
          */
         _getRouteParams: function() {
             var entityId = this.model[this.model.idAttribute];
+
             return {
                 'actionName': this.options.actionName,
                 'entityId': entityId,
@@ -100,8 +101,8 @@ define(function(require) {
          * @inheritdoc
          */
         run: function() {
-            if (this.options.datagridConfirm) {
-                this.messages.confirm_content = this.options.datagridConfirm;
+            if (this.options.confirmation) {
+                this.messages.confirm_content = this.options.confirmation;
                 this.getConfirmDialog(_.bind(this.doRun, this)).open();
             } else {
                 this.doRun();
