@@ -5,36 +5,23 @@ namespace OroB2B\Bundle\TaxBundle\Form\Type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use OroB2B\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 
 class TaxProviderType extends AbstractType
 {
     const NAME = 'orob2b_tax_provider_type';
 
     /**
-     * @var ManagerRegistry
+     * @var TaxProviderRegistry
      */
     protected $registry;
 
     /**
-     * @var string
+     * @param TaxProviderRegistry $registry
      */
-    protected $taxProviderClass;
-
-    /**
-     * @param ManagerRegistry $registry
-     */
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(TaxProviderRegistry $registry)
     {
         $this->registry = $registry;
-    }
-
-    /**
-     * @param string $taxProviderClass
-     */
-    public function setTaxProviderClass($taxProviderClass)
-    {
-        $this->taxProviderClass = $taxProviderClass;
     }
 
     /**
@@ -42,7 +29,13 @@ class TaxProviderType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
+        $choicesRaw = $this->registry->getProviders();
+
         $choices = [];
+
+        foreach ($choicesRaw as $choiceRaw) {
+            $choices[$choiceRaw->getName()] = $choiceRaw->getName();
+        }
 
         $resolver->setDefaults(
             [

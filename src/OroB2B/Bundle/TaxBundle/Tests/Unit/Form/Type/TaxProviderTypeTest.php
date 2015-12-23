@@ -2,15 +2,15 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use OroB2B\Bundle\TaxBundle\Form\Type\TaxProviderType;
+use OroB2B\Bundle\TaxBundle\Provider\TaxProviderInterface;
+use OroB2B\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 
 class TaxProviderTypeTest extends \PHPUnit_Framework_TestCase
 {
-    const TAX_PROVIDER_CLASS = 'OroB2B\Bundle\TaxBundle\Entity\TaxProvider';
+    const TAX_PROVIDER_CLASS = 'OroB2B\Bundle\TaxBundle\Provider\TaxProviderInterface';
 
     /**
      * @var TaxProviderType
@@ -18,7 +18,7 @@ class TaxProviderTypeTest extends \PHPUnit_Framework_TestCase
     protected $formType;
 
     /**
-     * @var \OroB2B\Bundle\TaxBundle\Entity\TaxProvider[]
+     * @var TaxProviderInterface[]
      */
     protected $choices;
 
@@ -32,13 +32,16 @@ class TaxProviderTypeTest extends \PHPUnit_Framework_TestCase
             $this->getMock(self::TAX_PROVIDER_CLASS),
         ];
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry $registry */
-        $registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
+        /** @var \PHPUnit_Framework_MockObject_MockObject|TaxProviderRegistry $registry */
+        $registry = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Provider\TaxProviderRegistry')
             ->disableOriginalConstructor()
             ->getMock();
 
+        $registry->expects($this->any())
+            ->method('getProviders')
+            ->willReturn($this->choices);
+
         $this->formType = new TaxProviderType($registry);
-        $this->formType->setTaxProviderClass(self::TAX_PROVIDER_CLASS);
     }
 
     /**

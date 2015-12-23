@@ -15,8 +15,7 @@ parameters:
     orob2b_tax.form.extension.product_tax.class: OroB2B\Bundle\TaxBundle\Form\Extension\ProductTaxExtension
     orob2b_tax.form.extension.account_tax.class: OroB2B\Bundle\TaxBundle\Form\Extension\AccountTaxExtension
 
-    orob2b_tax.form.type.tax_provider.class: OroB2B\Bundle\TaxBundle\Form\Type\TaxProviderType
-    orob2b_tax.entity.tax_provider.class: OroB2B\Bundle\TaxBundle\Entity\Tax
+    orob2b_tax.form.type.tax_provider_type.class: OroB2B\Bundle\TaxBundle\Form\Type\TaxProviderType
 
 services:
     orob2b_tax.form.type.product_tax_code:
@@ -105,11 +104,9 @@ services:
         tags:
             - { name: form.type, alias: orob2b_tax_zip_code_type }
 
-    orob2b_tax.form.type.tax_provider:
-        class: %orob2b_tax.form.type.tax_provider.class%
+    orob2b_tax.form.type.tax_provider_type:
+        class: %orob2b_tax.form.type.tax_provider_type.class%
         arguments:
-            - @doctrine
-        calls:
-            - [setTaxProviderClass, [%orob2b_tax.entity.tax_provider.class%]]
+            - @orob2b_tax.provider.tax_provider_registry
         tags:
             - { name: form.type, alias: orob2b_tax_provider_type }
