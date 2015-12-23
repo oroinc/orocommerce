@@ -141,6 +141,14 @@ class QuoteProduct implements ProductHolderInterface
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->productSku;
+    }
+
+    /**
      * @ORM\PrePersist
      * @ORM\PreUpdate
      */

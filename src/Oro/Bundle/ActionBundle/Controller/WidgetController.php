@@ -31,6 +31,7 @@ class WidgetController extends Controller
         return [
             'actions' => $this->getActionManager()->getActions(),
             'context' => $this->getContextHelper()->getContext(),
+            'actionData' => $this->getContextHelper()->getActionData(),
             'dialogRoute' => $this->getApplicationsHelper()->getDialogRoute(),
             'executionRoute' => $this->getApplicationsHelper()->getExecutionRoute(),
         ];

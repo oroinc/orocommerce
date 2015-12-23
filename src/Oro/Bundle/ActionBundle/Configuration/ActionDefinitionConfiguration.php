@@ -175,6 +175,15 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->scalarNode('dialog_template')->end()
+                ->scalarNode('page_component_module')->end()
+                ->arrayNode('page_component_options')
+                    ->prototype('variable')
+                    ->end()
+                ->end()
+                ->arrayNode('data')
+                    ->prototype('variable')
+                    ->end()
+                ->end()
             ->end();
 
         return $node;
