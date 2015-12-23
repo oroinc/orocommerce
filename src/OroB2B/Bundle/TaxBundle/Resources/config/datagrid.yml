@@ -114,6 +114,35 @@ datagrid:
             delete:
                 acl_resource:  orob2b_tax_account_tax_code_delete
 
+    tax-account-group-tax-codes-grid:
+        extends: tax-base-grid-tax-codes-grid
+        options:
+            entityHint: account group tax code
+        source:
+            acl_resource: orob2b_tax_account_group_tax_code_view
+            query:
+                from:
+                    - { table: %orob2b_tax.entity.account_group_tax_code.class%, alias: tax_code }
+        columns:
+            code:
+                label: orob2b.tax.accountgrouptaxcode.code.label
+            description:
+                label: orob2b.tax.accountgrouptaxcode.description.label
+        properties:
+            view_link:
+                route: orob2b_tax_account_group_tax_code_view
+            update_link:
+                route:  orob2b_tax_account_group_tax_code_update
+            delete_link:
+                route:  orob2b_api_tax_delete_accountgrouptaxcode
+        actions:
+            view:
+                acl_resource:  orob2b_tax_account_group_tax_code_view
+            update:
+                acl_resource:  orob2b_tax_account_group_tax_code_update
+            delete:
+                acl_resource:  orob2b_tax_account_group_tax_code_delete
+
     products-tax-code-select-grid:
         extends: tax-base-tax-codes-grid
         options:

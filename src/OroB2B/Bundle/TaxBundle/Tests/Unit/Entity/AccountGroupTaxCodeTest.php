@@ -4,10 +4,10 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\TaxBundle\Entity\AccountGroupTaxCode;
 
-class AccountTaxCodeTest extends \PHPUnit_Framework_TestCase
+class AccountGroupTaxCodeTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
 
@@ -21,22 +21,22 @@ class AccountTaxCodeTest extends \PHPUnit_Framework_TestCase
             ['updatedAt', new \DateTime()],
         ];
 
-        $this->assertPropertyAccessors($this->createAccountTaxCode(), $properties);
+        $this->assertPropertyAccessors($this->createAccountGroupTaxCode(), $properties);
     }
 
     /**
-     * Test AccountTaxCode relations
+     * Test AccountGroupTaxCode relations
      */
     public function testRelations()
     {
-        $this->assertPropertyCollections($this->createAccountTaxCode(), [
-            ['accounts', new Account()],
+        $this->assertPropertyCollections($this->createAccountGroupTaxCode(), [
+            ['accountGroups', new AccountGroup()],
         ]);
     }
 
     public function testToString()
     {
-        $entity = new AccountTaxCode();
+        $entity = new AccountGroupTaxCode();
         $this->assertEmpty((string)$entity);
         $entity->setCode('test');
         $this->assertEquals('test', (string)$entity);
@@ -44,24 +44,24 @@ class AccountTaxCodeTest extends \PHPUnit_Framework_TestCase
 
     public function testPreUpdate()
     {
-        $accountTaxCode = $this->createAccountTaxCode();
-        $accountTaxCode->preUpdate();
-        $this->assertInstanceOf('\DateTime', $accountTaxCode->getUpdatedAt());
+        $accountGroupTaxCode = $this->createAccountGroupTaxCode();
+        $accountGroupTaxCode->preUpdate();
+        $this->assertInstanceOf('\DateTime', $accountGroupTaxCode->getUpdatedAt());
     }
 
     public function testPrePersist()
     {
-        $accountTaxCode = $this->createAccountTaxCode();
+        $accountTaxCode = $this->createAccountGroupTaxCode();
         $accountTaxCode->prePersist();
         $this->assertInstanceOf('\DateTime', $accountTaxCode->getUpdatedAt());
         $this->assertInstanceOf('\DateTime', $accountTaxCode->getCreatedAt());
     }
 
     /**
-     * @return AccountTaxCode
+     * @return AccountGroupTaxCode
      */
-    private function createAccountTaxCode()
+    private function createAccountGroupTaxCode()
     {
-        return new AccountTaxCode();
+        return new AccountGroupTaxCode();
     }
 }

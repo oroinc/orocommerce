@@ -34,6 +34,8 @@ class OroB2BTaxBundleInstaller implements Installation
         $this->createOroB2BTaxRuleTable($schema);
         $this->createOroB2BTaxJurisdictionTable($schema);
         $this->createOrob2BTaxZipCodeTable($schema);
+        $this->createOroB2BTaxAccountGroupTaxCodeTable($schema);
+        $this->createOroB2BTaxAccGrpTcAccGrpTable($schema);
 
         /** Foreign keys generation **/
         $this->addOrob2BTaxAccTaxCodeAccForeignKeys($schema);
@@ -41,6 +43,7 @@ class OroB2BTaxBundleInstaller implements Installation
         $this->addOroB2BTaxRuleForeignKeys($schema);
         $this->addOroB2BTaxJurisdictionForeignKeys($schema);
         $this->addOrob2BTaxZipCodeForeignKeys($schema);
+        $this->addOroB2BTaxAccGrpTcAccGrpForeignKeys($schema);
     }
 
     /**
@@ -72,6 +75,37 @@ class OroB2BTaxBundleInstaller implements Installation
         $table->addColumn('updated_at', 'datetime', []);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['code'], 'UNIQ_E98BB26B77153098');
+    }
+
+    /**
+     * Create orob2b_tax_acc_group_tax_code table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BTaxAccountGroupTaxCodeTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_tax_acc_group_tax_code');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('code', 'string', ['length' => 255]);
+        $table->addColumn('description', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['code'], 'UNIQ_4b0f08eb77153098');
+    }
+
+    /**
+     * Create orob2b_tax_acc_grp_tc_acc_grp table
+     *
+     * @param Schema $schema
+     */
+    protected function createOroB2BTaxAccGrpTcAccGrpTable(Schema $schema)
+    {
+        $table = $schema->createTable('orob2b_tax_acc_grp_tc_acc_grp');
+        $table->addColumn('account_group_tax_code_id', 'integer', []);
+        $table->addColumn('account_group_id', 'integer', []);
+        $table->setPrimaryKey(['account_group_tax_code_id', 'account_group_id']);
+        $table->addUniqueIndex(['account_group_id'], 'UNIQ_d3457b7869a3bf1');
     }
 
     /**
@@ -294,6 +328,28 @@ class OroB2BTaxBundleInstaller implements Installation
             ['tax_jurisdiction_id'],
             ['id'],
             ['onDelete' => null, 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add orob2b_tax_acc_grp_tc_acc_grp foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOroB2BTaxAccGrpTcAccGrpForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('orob2b_tax_acc_grp_tc_acc_grp');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account_group'),
+            ['account_group_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('orob2b_tax_acc_group_tax_code'),
+            ['account_group_tax_code_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
 }
