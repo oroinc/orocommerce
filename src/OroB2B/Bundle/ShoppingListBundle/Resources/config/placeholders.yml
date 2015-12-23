@@ -9,17 +9,8 @@ placeholders:
         items:
             shopping_list_quick_add: ~
 
-    orob2b_product_quick_add_import_buttons:
-        items:
-            shopping_list_quick_add_import: ~
-
 items:
     add-products-btn:
         template: OroB2BShoppingListBundle:ShoppingList:Frontend/addProductsBtnWidget.html.twig
         applicable: @orob2b_shopping_list.placeholder.filter->userCanCreateLineItem()
 
-    shopping_list_quick_add_import:
-        action: OroB2BShoppingListBundle:Frontend/AjaxLineItem:getQuickAddBtn
-        applicable: @orob2b_shopping_list.processor.quick_add->isAllowed()
-        data:
-            quickAddComponentPrefix: 'quick-add-import'

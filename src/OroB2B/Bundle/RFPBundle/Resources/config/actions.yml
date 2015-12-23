@@ -82,6 +82,8 @@ actions:
             - frontend
         routes:
             - orob2b_product_frontend_quick_add
+            - orob2b_product_frontend_quick_add_copy_paste
+            - orob2b_product_frontend_quick_add_import
         acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\RFPBundle\Entity\Request]
         order: 10
         frontend_options:
