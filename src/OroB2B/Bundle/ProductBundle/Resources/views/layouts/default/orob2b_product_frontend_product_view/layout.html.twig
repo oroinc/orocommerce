@@ -42,7 +42,10 @@
 {% endblock %}
 
 {% block _product_title_container_widget %}
-    <div class="product__title-container">
+    {% set attr = attr|merge({
+    class: attr.class|default('') ~ " product__title-container"
+    }) %}
+    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}

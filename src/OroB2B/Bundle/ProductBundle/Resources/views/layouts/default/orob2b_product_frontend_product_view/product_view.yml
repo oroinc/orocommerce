@@ -8,9 +8,6 @@ layout:
                     blockType: container
                 product_container:
                     blockType: container
-                    options:
-                        vars:
-                            product: {@value: $data.product}
                 product_title_mobile:
                     blockType: text
                     options:
