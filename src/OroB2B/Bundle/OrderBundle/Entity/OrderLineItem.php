@@ -150,6 +150,14 @@ class OrderLineItem extends ExtendOrderLineItem implements ProductUnitHolderInte
     protected $requirePriceRecalculation = false;
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->productSku;
+    }
+
+    /**
      * Get id
      *
      * @return integer

@@ -77,6 +77,8 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                     'attributes' => [],
                     'frontend_options' => [
                         'dialog_options' => [],
+                        'page_component_options' => [],
+                        'data' => []
                     ],
                 ],
             ],
@@ -97,6 +99,13 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                             'dialog_template' => 'template',
                             'dialog_title' => 'dialog title',
                             'dialog_options' => ['width' => 400],
+                            'page_component_module' => 'testbundle/app/component',
+                            'page_component_options' => [
+                                'param' => 'value'
+                            ],
+                            'data' => [
+                                'attribute' => 'attrValue'
+                            ]
                         ],
                         'form_options' => [
                             'attribute_fields' => [
@@ -167,6 +176,13 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'dialog_template' => 'template',
                         'dialog_title' => 'dialog title',
                         'dialog_options' => ['width' => 400],
+                        'page_component_module' => 'testbundle/app/component',
+                        'page_component_options' => [
+                            'param' => 'value'
+                        ],
+                        'data' => [
+                            'attribute' => 'attrValue'
+                        ]
                     ],
                     'form_options' => [
                         'attribute_fields' => [
