@@ -17,11 +17,16 @@ class TaxProviderRegistryTest extends \PHPUnit_Framework_TestCase
         $this->registry = new TaxProviderRegistry();
     }
 
+    public function tearDown()
+    {
+        unset($this->registry);
+    }
+
     public function testAddProvider()
     {
-        $provider = $this->getProviderMock();
         $providerName = 'TestProvider';
-        $this->registry->addProvider($providerName, $provider);
+        $provider = $this->getProviderMock($providerName);
+        $this->registry->addProvider($provider);
         $this->assertCount(1, $this->registry->getProviders());
         $this->assertSame($provider, current($this->registry->getProviders()));
     }
@@ -33,15 +38,15 @@ class TaxProviderRegistryTest extends \PHPUnit_Framework_TestCase
     public function testAddTwoProvidersWithSameName()
     {
         $providerName = 'TestProvider';
-        $this->registry->addProvider($providerName, $this->getProviderMock());
-        $this->registry->addProvider($providerName, $this->getProviderMock());
+        $this->registry->addProvider($this->getProviderMock($providerName));
+        $this->registry->addProvider($this->getProviderMock($providerName));
     }
 
     public function testGetProvider()
     {
         $providerName = 'TestProvider';
-        $expectedProvider = $this->getProviderMock();
-        $this->registry->addProvider($providerName, $expectedProvider);
+        $expectedProvider = $this->getProviderMock($providerName);
+        $this->registry->addProvider($expectedProvider);
         $actualProvider = $this->registry->getProvider($providerName);
 
         $this->assertSame($expectedProvider, $actualProvider);
@@ -57,10 +62,16 @@ class TaxProviderRegistryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param string $name
      * @return TaxProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function getProviderMock()
+    protected function getProviderMock($name)
     {
-        return $this->getMock('OroB2B\Bundle\TaxBundle\Provider\TaxProviderInterface');
+        $mock = $this->getMock('OroB2B\Bundle\TaxBundle\Provider\TaxProviderInterface');
+        $mock->expects($this->any())
+            ->method('getName')
+            ->willReturn($name);
+
+        return $mock;
     }
 }

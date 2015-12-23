@@ -17,4 +17,11 @@ interface TaxProviderInterface
      * @return string
      */
     public function getName();
+
+    /**
+     * Return label key
+     *
+     * @return string
+     */
+    public function getLabel();
 }
