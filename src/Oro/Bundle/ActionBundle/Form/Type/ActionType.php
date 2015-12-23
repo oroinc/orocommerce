@@ -213,7 +213,7 @@ class ActionType extends AbstractType
         array_walk_recursive(
             $attributeOptions,
             function (&$leaf) use ($options) {
-                $leaf = $this->contextAccessor->getValue($options['action'], $leaf);
+                $leaf = $this->contextAccessor->getValue($options['data'], $leaf);
             }
         );
 
