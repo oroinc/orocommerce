@@ -9,10 +9,10 @@ use Oro\Bundle\WorkflowBundle\Model\ContextAccessor;
 use Oro\Bundle\WorkflowBundle\Model\ProcessData;
 
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
-use OroB2B\Bundle\AccountBundle\Model\Action\ResolveVisibilityByProduct;
+use OroB2B\Bundle\AccountBundle\Model\Action\ChangeProductCategory;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
-class ResolveVisibilityByProductTest extends \PHPUnit_Framework_TestCase
+class ChangeProductCategoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var RegistryInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -25,7 +25,7 @@ class ResolveVisibilityByProductTest extends \PHPUnit_Framework_TestCase
     protected $cacheBuilder;
 
     /**
-     * @var ResolveVisibilityByProduct
+     * @var ChangeProductCategory
      */
     protected $action;
 
@@ -39,7 +39,7 @@ class ResolveVisibilityByProductTest extends \PHPUnit_Framework_TestCase
         $eventDispatcher = $this->getMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
         $contextAccessor = new ContextAccessor();
-        $this->action = new ResolveVisibilityByProduct($contextAccessor);
+        $this->action = new ChangeProductCategory($contextAccessor);
         $this->action->setRegistry($this->registry);
         $this->action->setCacheBuilder($this->cacheBuilder);
         $this->action->setDispatcher($eventDispatcher);

@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityManager;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 
-class ResolveVisibilityByProduct extends AbstractVisibilityRegistryAwareAction
+class ChangeProductCategory extends AbstractVisibilityRegistryAwareAction
 {
     /**
      * @var ProductCaseCacheBuilderInterface
