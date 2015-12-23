@@ -12,5 +12,6 @@ orob2b_frontend:
         groups:
             frontend.title: 'Frontend'
             theme_settings.title: 'Theme Settings'
+            commerce.title: 'Commerce'
         fields:
             frontend_theme.label: 'Theme'

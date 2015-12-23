@@ -13,7 +13,7 @@ oro_system_configuration:
 
     tree:
         system_configuration:
-            platform:
+            commerce:
                 children:
                     catalog:
                         children:

@@ -21,9 +21,9 @@ oro_system_configuration:
 
     tree:
         system_configuration:
-            platform:
+            commerce:
                 children:
-                    general_setup:
+                    catalog:
                         children:
                             currency:
                                 priority: 230

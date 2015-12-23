@@ -34,7 +34,7 @@ oro_system_configuration:
 
     tree:
         system_configuration:
-            platform:
+            commerce:
                 children:
                     frontend_application:
                         children:
