@@ -39,7 +39,8 @@ class TaxProviderType extends AbstractType
 
         $resolver->setDefaults(
             [
-                'choices'  => $choices
+                'choices'  => $choices,
+                'required' => false
             ]
         );
     }
