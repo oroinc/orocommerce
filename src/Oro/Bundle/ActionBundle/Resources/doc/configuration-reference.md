@@ -184,11 +184,20 @@ Frontend Options configuration has next options:
 * **group**
     *string*
     Name of action button menu. Action button will be part of dropdown buttons menu with label (specified group).
-    All actions with same group will be shown in one dropdown burrons menu.
+    All actions with same group will be shown in one dropdown button html menu.
 * **template**
     *string*
     This option provide possibility to override button template.
     Should be extended from `OroActionBundle:Action:button.html.twig`
+* **data**
+    *array*
+    This option provide possibility to add data-attributes to the button tag.
+* **page_component_module**
+    *string*
+    Name of js-component module for the action-button (attribute *data-page-component-module*).
+* **page_component_options**
+    *array*
+    List of options of js-component module for the action-button (attribute *data-page-component-options*).
 * **dialog_template**
     *string*
     You can set custom action dialog template.
@@ -200,9 +209,9 @@ Frontend Options configuration has next options:
     *array*
     Parameters related to widget component. Can be specified next options: *allowMaximize*, *allowMinimize*, *dblclick*,
     *maximizedHeightDecreaseBy*, *width*, etc.
-* **datagrid_confirm**
+* **confirmation**
     *string*
-    You can show confirmation message before action in datagrid start execution. Translate constant should be available 
+    You can show confirmation message before start action`s execution. Translate constant should be available
     for JS - placed in jsmessages.*.yml
 
 Example
@@ -216,7 +225,13 @@ actions:
             class: btn
             group: aсme.demo.actions.demogroup.label
             template: OroActionBundle:Action:button.html.twig
-            datagrid_confirm: aсme.demo.actions.action_perform_confirm
+            data:
+                param: value
+            page_component_module: acmedemo/js/app/components/demo-component
+            page_component_options:
+                component_name: '[name$="[component]"]'
+                component_additional: '[name$="[additional]"]'
+            confirmation: aсme.demo.actions.action_perform_confirm
             dialog_template: OroActionBundle:Widget:widget/form.html.twig
             dialog_title: aсme.demo.actions.dialog.title
             dialog_options:
