@@ -23,9 +23,6 @@ class AccountCategoryVisibilityResolvedTest extends \PHPUnit_Framework_TestCase
     /** @var Category */
     protected $category;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp()
     {
         $this->category = new Category();

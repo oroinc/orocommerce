@@ -13,11 +13,8 @@ use OroB2B\Bundle\CatalogBundle\Entity\Category;
  *
  * @ORM\MappedSuperclass
  */
-abstract class BaseCategoryVisibilityResolved
+abstract class BaseCategoryVisibilityResolved extends BaseVisibilityResolved
 {
-    const VISIBILITY_HIDDEN = -1;
-    const VISIBILITY_VISIBLE = 1;
-
     const SOURCE_STATIC = 1;
     const SOURCE_PARENT_CATEGORY = 2;
 
@@ -29,20 +26,6 @@ abstract class BaseCategoryVisibilityResolved
      * @ORM\JoinColumn(name="category_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $category;
-
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="visibility", type="smallint", nullable=true)
-     */
-    protected $visibility;
-
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="source", type="smallint", nullable=true)
-     */
-    protected $source;
 
     /**
      * @param Category $category
@@ -58,43 +41,5 @@ abstract class BaseCategoryVisibilityResolved
     public function getCategory()
     {
         return $this->category;
-    }
-
-    /**
-     * @param $visibility
-     * @return $this
-     */
-    public function setVisibility($visibility)
-    {
-        $this->visibility = $visibility;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getVisibility()
-    {
-        return $this->visibility;
-    }
-
-    /**
-     * @return int
-     */
-    public function getSource()
-    {
-        return $this->source;
-    }
-
-    /**
-     * @param int $source
-     * @return $this
-     */
-    public function setSource($source)
-    {
-        $this->source = $source;
-
-        return $this;
     }
 }
