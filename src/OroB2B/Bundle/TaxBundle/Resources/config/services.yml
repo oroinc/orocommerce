@@ -15,6 +15,7 @@ parameters:
     orob2b_tax.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
 
     orob2b_tax.provider.tax_provider_registry.class: OroB2B\Bundle\TaxBundle\Provider\TaxProviderRegistry
+    orob2b_tax.provider.built_in_tax_provider.class: OroB2B\Bundle\TaxBundle\Provider\BuiltInTaxProvider
 
 services:
     orob2b_tax.manager.product_tax_code.api:
@@ -120,4 +121,9 @@ services:
             - { name: validator.constraint_validator, alias: orob2b_tax_zip_code_fields }
 
     orob2b_tax.provider.tax_provider_registry:
-      class: %orob2b_tax.provider.tax_provider_registry.class%
+        class: %orob2b_tax.provider.tax_provider_registry.class%
+
+    orob2b_tax.provider.built_in_tax_provider:
+        class: %orob2b_tax.provider.built_in_tax_provider.class%
+        tags:
+            - { name: orob2b_tax.tax_provider }
