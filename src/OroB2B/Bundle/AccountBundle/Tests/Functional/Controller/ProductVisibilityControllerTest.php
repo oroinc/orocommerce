@@ -220,9 +220,11 @@ class ProductVisibilityControllerTest extends WebTestCase
             $actualCount = (int)$em->getRepository($className)
                 ->createQueryBuilder('entity')
                 ->select('COUNT(entity.id)')
+                ->where('entity.product = :product')
+                ->setParameter('product', $product)
                 ->getQuery()
                 ->getSingleScalarResult();
-            $this->assertCount($count, $actualCount);
+            $this->assertEquals($count, $actualCount);
         }
     }
 
