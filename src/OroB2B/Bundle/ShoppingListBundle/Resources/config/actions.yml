@@ -41,6 +41,27 @@ actions:
                     route: orob2b_order_frontend_create
                     route_parameters: {'storage': true}
 
+    orob2b_shoppinglist_frontend_quick_add_to_shoppinglist:
+        label: orob2b.shoppinglist.product.add_to_shopping_list.label
+        applications: [frontend]
+        routes:
+            - orob2b_product_frontend_quick_add
+        acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
+        order: 30
+        frontend_options:
+            template: OroB2BShoppingListBundle:Action:quickAdd.html.twig
+        prefunctions:
+            - @call_service_method:
+                service: orob2b_shopping_list.processor.quick_add
+                method: isAllowed
+                attribute: $.isAllowed
+            - @call_service_method:
+                service: orob2b_shopping_list.shopping_list.manager
+                method: getShoppingLists
+                attribute: $.params
+        preconditions:
+            @equal: [true, $.isAllowed]
+
     orob2b_shoppinglist_frontend_action_request_quote:
         label: orob2b.frontend.shoppinglist.btn.request_quote_create_rfp
         enabled: true
