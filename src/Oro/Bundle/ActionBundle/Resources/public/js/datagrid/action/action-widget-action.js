@@ -41,7 +41,7 @@ define(function(require) {
 
         defaultMessages: {
             confirm_title: 'oro.action.confirm_title',
-            confirm_content: 'Are you sure you want to perform this action?',
+            confirm_content: 'oro.action.confirm_content',
             confirm_ok: 'Yes',
             confirm_cancel: 'Cancel'
         },

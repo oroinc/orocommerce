@@ -211,7 +211,7 @@ Frontend Options configuration has next options:
     *maximizedHeightDecreaseBy*, *width*, etc.
 * **confirmation**
     *string*
-    You can show confirmation message before action starts execution. Translate constant should be available 
+    You can show confirmation message before start action`s execution. Translate constant should be available
     for JS - placed in jsmessages.*.yml
 
 Example
