@@ -12,17 +12,16 @@ class TaxProviderRegistry
     /**
      * Add provider to the registry
      *
-     * @param string $name Name of provider
      * @param TaxProviderInterface $provider
      */
-    public function addProvider($name, TaxProviderInterface $provider)
+    public function addProvider(TaxProviderInterface $provider)
     {
-        if (array_key_exists($name, $this->providers)) {
+        if (array_key_exists($provider->getName(), $this->providers)) {
             throw new \LogicException(
-                sprintf('Tax provider with name "%s" already registered', $name)
+                sprintf('Tax provider with name "%s" already registered', $provider->getName())
             );
         }
-        $this->providers[$name] = $provider;
+        $this->providers[$provider->getName()] = $provider;
     }
 
     /**
