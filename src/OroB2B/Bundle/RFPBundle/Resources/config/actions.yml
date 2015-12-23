@@ -75,14 +75,14 @@ actions:
                     route: orob2b_sale_quote_create
                     route_parameters: {'storage': true}
 
-    orob2b_rfp_request_a_quote_action:
+    orob2b_rfp_frontend_request_a_quote_action:
         label: orob2b.rfp.btn.add_to_rfp
         enabled: true
         applications:
             - frontend
         routes:
             - orob2b_product_frontend_quick_add
-        acl_resource: orob2b_rfp_frontend_request_create
+        acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\RFPBundle\Entity\Request]
         order: 10
         frontend_options:
             icon: icon-file-text
