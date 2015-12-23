@@ -2,10 +2,15 @@
 .grid-toolbar {
   margin: 0 0 1rem;
   display: flex;
+  justify-content: center;
   padding: 0;
 
   @media (max-width: 1300px) {
     flex-wrap: wrap;
+  }
+
+  @media (max-width: 991px) {
+    justify-content: space-between;
   }
 
   .caret {
@@ -18,9 +23,9 @@
     width: auto;
     margin: 0;
     padding: 0;
-    flex-grow: 1;
     text-align: center;
     order: 2;
+    flex-grow: 1;
 
     @media (max-width: 1290px) {
       text-align: left;
@@ -151,6 +156,10 @@
     vertical-align: middle;
     margin: 0 0 0 .9rem;
 
+    &:empty {
+      display: none;
+    }
+
     + label.dib {
       margin-left: .9rem;
     }
@@ -172,7 +181,7 @@
 
     @media (max-width: 991px) {
       order: 1;
-      flex-basis: calc(~'100% - 13rem - 13.5rem');
+      flex-basis: 100%;
 
       .account-oq__filter__search__input {
         min-width: 0;
@@ -186,7 +195,6 @@
 
   //Grid Toolbar tools
   .grid-toolbar__tools {
-    flex-grow: 1;
     text-align: right;
     order: 3;
 
@@ -224,10 +232,11 @@
 
   //Mass actions
   .oro-mass-actions {
-    flex-grow: 0;
-    flex-basis: 13.5rem;
-    margin-left: .5rem;
     order: 5;
+
+    .mass-actions-panel {
+      max-width: 13.5rem;
+    }
 
     @media (max-width: 991px) {
       order: 3;
@@ -238,9 +247,10 @@
       }
     }
 
-    @media (max-width: 420px) {
-      flex-basis: calc(~'100% - 12.5rem');
+    @media (max-width: 991px) {
+      flex-basis: calc(~'100% - 13.8rem');
       margin: 0 0 1rem 0;
+      text-align: right;
     }
   }
 
@@ -300,9 +310,6 @@
 
     @media (max-width: 991px) {
       order: 2;
-    }
-
-    @media (max-width: 420px) {
       margin: 0 .5rem 1rem 0;
     }
 
@@ -334,7 +341,7 @@
         }
       }
 
-      @media (max-width: 420px) {
+      @media (max-width: 991px) {
         margin: 0 .5rem 0 0;
       }
     }
@@ -480,12 +487,19 @@
   border: 0;
   background: @base-sidebar-background-color-light;
   margin: 1rem 0;
-  padding: .7rem 1.1rem .2rem 13rem;
+  padding: .7rem 1.1rem 0 13rem;
   position: relative;
 
   &.filter-box_mobile {
     padding: 0;
     background: transparent;
+  }
+
+  .filter-list {
+
+    @media (max-width: 991px) {
+      float: none;
+    }
   }
 
   .filter-list-container {
@@ -571,7 +585,7 @@
       width: 100%;
       height: 3.7rem;
       position: relative;
-      padding: .6rem 1.4rem .5rem;
+      padding: .6rem 2rem .5rem 1.4rem;
       box-shadow: none;
       background: #fff;
       border-radius: .5rem;
@@ -598,6 +612,20 @@
           width: calc(~'100% + 6.6rem'); // 6.6rem = negative left param + right gap because of fixed width of .filter-box .oro-drop element
           left: -2rem;
           margin: 0 !important;
+        }
+      }
+
+      > div {
+        .horizontal {
+          + div {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            @media (max-width: 991px) {
+              display: block;
+            }
+          }
         }
       }
 
@@ -884,25 +912,6 @@
         }
       }
 
-      .oro-oq__filter__form__daterange {
-        @media (max-width: 991px) {
-          display: block;
-        }
-      }
-
-      .oro-oq__filter__form__daterange_time {
-
-        .fields-row {
-          display: flex;
-          min-width: 22.5rem;
-
-          .timepicker-input {
-            padding-left: .9rem;
-            flex-basis: 9rem;
-          }
-        }
-      }
-
       .oro-action  {
         &.btn-group {
           float: none;
@@ -955,13 +964,28 @@
           font-size: 2.1rem;
         }
 
+        .fields-row {
+          display: flex;
+          min-width: 22.5rem;
+          align-items: center;
+
+          .timepicker-input {
+            padding-left: .9rem;
+            flex-basis: 9rem;
+
+            @media (max-width: 991px) {
+              flex-basis: 10.5rem;
+            }
+          }
+        }
+
         .datefilter {
           display: block;
         }
 
         input[type="text"] {
           .input;
-          padding: .8rem .9rem .8rem 3.4rem;
+          padding: .8rem .9rem .8rem;
           font-size: 1.4rem;
           line-height: 1.9rem;
           max-width: 14rem;
@@ -986,18 +1010,82 @@
   }
 
   .filter-select-oro {
+    display: block;
+    width: 100% !important;
+    border: .1rem solid #ebebeb;
+    border-radius: .5rem;
+    background: #fff;
     height: auto;
+    padding: .8rem .9rem;
+    font-size: 1.4rem;
+    line-height: 1.9rem;
+
+    &:focus {
+      border-color: #4597ca;
+      outline: 0;
+      box-shadow: inset 0 .1rem .1rem rgba(0,0,0,.075), 0 0 .8rem rgba(102,175,233,.6);
+    }
   }
 }
 
 .filter-container {
-  display: flex;
-  flex-wrap: wrap;
-  align-content: flex-start;
-  align-items: center;
 
-  @media (max-width: 991px) {
-    margin: 1rem 0 0;
+  .filter-items {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+
+    @media (max-width: 991px) {
+      margin: 1rem 0 0;
+    }
+  }
+
+  .filter-items-hint {
+    background: #ebebeb;
+    position: relative;
+    padding-left: 13rem;
+    margin: 0 -1rem 0 -13rem;
+    font-size: 0;
+    line-height: 2rem;
+
+    > span {
+      display: inline-block;
+      vertical-align: middle;
+      margin: .25rem .5rem .25rem 0;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      position: relative;
+      font-size: 1.3rem;
+      line-height: 1.4rem;
+      color: #fff;
+      padding: .3rem .7rem .2rem 1rem;
+      border-radius: .2rem;
+      background: #b7b7b7;
+      cursor: pointer;
+
+      strong {
+        font-weight: 400;
+        margin-right: .5rem;
+      }
+
+      .reset-filter {
+        display: inline-block;
+        width: 1.2rem;
+        cursor: pointer;
+        color: #fff;
+
+        i {
+          vertical-align: middle;
+
+          &:before {
+            font-size: 1.3rem;
+            color: #fff;
+          }
+        }
+      }
+    }
   }
 
   .ui-multiselect {
@@ -1011,7 +1099,7 @@
       @media (max-width: 991px) {
         position: static;
         width: 100% !important;
-        margin: 0 0 1.5rem;
+        margin: 0;
       }
 
       a {
@@ -1139,6 +1227,10 @@
   }
 }
 
+.other-scroll-container {
+  margin: 0;
+}
+
 .ui-timepicker-wrapper {
   overflow-y: auto;
   height: 15rem;
@@ -1179,6 +1271,10 @@
   }
 }
 
+.more-bar-holder {
+  position: relative;
+}
+
 //Table
 .oro-datagrid {
   .other-scroll-container {
@@ -1212,3 +1308,5 @@
     }
   }
 }
+
+
