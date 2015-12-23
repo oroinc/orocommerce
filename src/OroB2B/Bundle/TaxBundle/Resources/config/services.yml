@@ -12,10 +12,9 @@ parameters:
     orob2b_tax.event_listener.account_form_view.class: OroB2B\Bundle\TaxBundle\EventListener\AccountFormViewListener
     orob2b_tax.event_listener.product_form_view.class: OroB2B\Bundle\TaxBundle\EventListener\ProductFormViewListener
 
-    orob2b_tax.product_tax_code.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
-    orob2b_tax.account_tax_code.manager.api.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
-
     orob2b_tax.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
+
+    orob2b_tax.provider.tax_provider_registry.class: OroB2B\Bundle\TaxBundle\Provider\TaxProviderRegistry
 
 services:
     orob2b_tax.manager.product_tax_code.api:
@@ -119,3 +118,6 @@ services:
         class: %orob2b_tax.validator.zip_code_fields.class%
         tags:
             - { name: validator.constraint_validator, alias: orob2b_tax_zip_code_fields }
+
+    orob2b_tax.provider.tax_provider_registry:
+      class: %orob2b_tax.provider.tax_provider_registry.class%
