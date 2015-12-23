@@ -78,3 +78,9 @@ orob2b.tax:
             saved.message: 'Tax Rule has been saved'
         tax_jurisdiction:
             saved.message: 'Tax Jurisdiction has been saved'
+
+    system_configuration:
+        taxation_title: 'Taxation'
+        tax_calculation_title: 'Tax Calculation'
+        tax_provider_title: 'Tax Provider'
+        tax_provider_label: 'Provider'
