@@ -11,6 +11,7 @@ parameters:
     orob2b_tax.validator.zip_code_fields.class: OroB2B\Bundle\TaxBundle\Validator\Constraints\ZipCodeFieldsValidator
 
     orob2b_tax.event_listener.account_form_view.class: OroB2B\Bundle\TaxBundle\EventListener\AccountFormViewListener
+    orob2b_tax.event_listener.account_group_form_view.class: OroB2B\Bundle\TaxBundle\EventListener\AccountGroupFormViewListener
     orob2b_tax.event_listener.product_form_view.class: OroB2B\Bundle\TaxBundle\EventListener\ProductFormViewListener
 
     orob2b_tax.manager.api.attribute.class: Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager
@@ -55,6 +56,15 @@ services:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_account_tax_code }
         lazy: true
 
+    orob2b_tax.form.autocomplete.account_group_tax_code.search_handler:
+        parent: oro_form.autocomplete.search_handler
+        arguments:
+            - %orob2b_tax.entity.account_group_tax_code.class%
+            - ["code"]
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: orob2b_account_group_tax_code }
+        lazy: true
+
     orob2b_tax.event_listener.abstract_form_view:
         abstract: true
         arguments:
@@ -70,6 +80,16 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onView }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-edit, method: onEdit }
+
+    orob2b_tax.event_listener.account_group_form_view:
+            class: %orob2b_tax.event_listener.account_group_form_view.class%
+            parent: orob2b_tax.event_listener.abstract_form_view
+            arguments:
+                - %orob2b_tax.entity.account_group_tax_code.class%
+                - %orob2b_account.entity.account_group.class%
+            tags:
+                - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-view, method: onView }
+                - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-edit, method: onEdit }
 
     orob2b_tax.event_listener.product_form_view:
         class: %orob2b_tax.event_listener.product_form_view.class%
