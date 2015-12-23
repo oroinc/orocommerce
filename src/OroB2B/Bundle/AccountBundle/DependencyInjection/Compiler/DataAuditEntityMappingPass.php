@@ -33,7 +33,7 @@ class DataAuditEntityMappingPass implements CompilerPassInterface
             'addAuditEntryFieldClass',
             [
                 $accountUserClass,
-                $container->getParameter('orob2b_account.entity.audit_field.class'),
+                $container->getParameter('oro_dataaudit.loggable.entity_field.class'),
             ]
         );
     }
