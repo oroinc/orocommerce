@@ -9,7 +9,7 @@ class ZipCodeRangeHelperTest extends \PHPUnit_Framework_TestCase
     const JURISDICTION_ID = 1;
     const TIME = 'time';
 
-    /** @var  ZipCodeRangeHelper */
+    /** @var ZipCodeRangeHelper */
     protected $helper;
 
     protected function setUp()

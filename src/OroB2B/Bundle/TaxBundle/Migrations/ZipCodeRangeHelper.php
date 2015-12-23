@@ -21,9 +21,10 @@ class ZipCodeRangeHelper
             $range = $this->isRange($zipCodes, $index);
             if ($this->isSingle($range, $zipRangeStart, $zipRangeEnd)) {
                 $data[] = [$jurisdictionId, $zipCode, null, null, $time, $time];
-
                 continue;
-            } elseif ($this->isRangeLast($range, $zipRangeStart, $zipRangeEnd)) {
+            }
+
+            if ($this->isRangeLast($range, $zipRangeStart, $zipRangeEnd)) {
                 $zipRangeEnd = $zipCode;
             }
 
