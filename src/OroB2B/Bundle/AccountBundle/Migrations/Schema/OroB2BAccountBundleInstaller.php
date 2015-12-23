@@ -137,8 +137,7 @@ class OroB2BAccountBundleInstaller implements
         $this->createOroB2BAccountGroupTable($schema);
         $this->createOroB2BAccountAddressTable($schema);
         $this->createOroB2BAccountAdrAdrTypeTable($schema);
-        $this->createOroB2BAuditFieldTable($schema);
-        $this->createOroB2BAuditTable($schema);
+        $this->updateOroAuditTable($schema);
         $this->createOroB2BAccountUserAddressTable($schema);
         $this->createOroB2BAccUsrAdrToAdrTypeTable($schema);
         $this->createOroB2BNavigationHistoryTable($schema);
@@ -169,8 +168,6 @@ class OroB2BAccountBundleInstaller implements
         $this->addOroB2BAccountForeignKeys($schema);
         $this->addOroB2BAccountAddressForeignKeys($schema);
         $this->addOroB2BAccountAdrAdrTypeForeignKeys($schema);
-        $this->addOroB2BAuditFieldForeignKeys($schema);
-        $this->addOroB2BAuditForeignKeys($schema);
         $this->addOroB2BAccountUserAddressForeignKeys($schema);
         $this->addOroB2BAccUsrAdrToAdrTypeForeignKeys($schema);
         $this->addOroB2BNavigationHistoryForeignKeys($schema);
@@ -304,7 +301,10 @@ class OroB2BAccountBundleInstaller implements
             $schema,
             static::ORO_B2B_ACCOUNT_TABLE_NAME,
             'internal_rating',
-            Account::INTERNAL_RATING_CODE
+            Account::INTERNAL_RATING_CODE,
+            false,
+            false,
+            ['dataaudit' => ['auditable' => true]]
         );
     }
 
@@ -343,72 +343,21 @@ class OroB2BAccountBundleInstaller implements
     }
 
     /**
-     * Create orob2b_audit_field table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroB2BAuditFieldTable(Schema $schema)
-    {
-        $table = $schema->createTable('orob2b_audit_field');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('audit_id', 'integer', []);
-        $table->addColumn('field', 'string', ['length' => 255]);
-        $table->addColumn('data_type', 'string', ['length' => 255]);
-        $table->addColumn('old_integer', 'bigint', ['notnull' => false]);
-        $table->addColumn('old_float', 'float', ['notnull' => false]);
-        $table->addColumn('old_boolean', 'boolean', ['notnull' => false]);
-        $table->addColumn('old_text', 'text', ['notnull' => false]);
-        $table->addColumn('old_date', 'date', ['notnull' => false, 'comment' => '(DC2Type:date)']);
-        $table->addColumn('old_time', 'time', ['notnull' => false, 'comment' => '(DC2Type:time)']);
-        $table->addColumn('old_datetime', 'datetime', ['notnull' => false, 'comment' => '(DC2Type:datetime)']);
-        $table->addColumn('new_integer', 'bigint', ['notnull' => false]);
-        $table->addColumn('new_float', 'float', ['notnull' => false]);
-        $table->addColumn('new_boolean', 'boolean', ['notnull' => false]);
-        $table->addColumn('new_text', 'text', ['notnull' => false]);
-        $table->addColumn('new_date', 'date', ['notnull' => false, 'comment' => '(DC2Type:date)']);
-        $table->addColumn('new_time', 'time', ['notnull' => false, 'comment' => '(DC2Type:time)']);
-        $table->addColumn('new_datetime', 'datetime', ['notnull' => false, 'comment' => '(DC2Type:datetime)']);
-        $table->addColumn('visible', 'boolean', ['default' => '1']);
-        $table->addColumn('old_datetimetz', 'datetimetz', ['notnull' => false]);
-        $table->addColumn('old_object', 'object', ['notnull' => false, 'comment' => '(DC2Type:object)']);
-        $table->addColumn('old_array', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
-        $table->addColumn(
-            'old_simplearray',
-            'simple_array',
-            ['notnull' => false, 'comment' => '(DC2Type:simple_array)']
-        );
-        $table->addColumn('old_jsonarray', 'json_array', ['notnull' => false]);
-        $table->addColumn('new_datetimetz', 'datetimetz', ['notnull' => false]);
-        $table->addColumn('new_object', 'object', ['notnull' => false, 'comment' => '(DC2Type:object)']);
-        $table->addColumn('new_array', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
-        $table->addColumn(
-            'new_simplearray',
-            'simple_array',
-            ['notnull' => false, 'comment' => '(DC2Type:simple_array)']
-        );
-        $table->addColumn('new_jsonarray', 'json_array', ['notnull' => false]);
-        $table->setPrimaryKey(['id']);
-    }
-
-    /**
      * Create orob2b_audit table
      *
      * @param Schema $schema
      */
-    protected function createOroB2BAuditTable(Schema $schema)
+    protected function updateOroAuditTable(Schema $schema)
     {
-        $table = $schema->createTable('orob2b_audit');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
-        $table->addColumn('account_user_id', 'integer', []);
-        $table->addColumn('object_name', 'string', ['length' => 255]);
-        $table->addColumn('action', 'string', ['length' => 8]);
-        $table->addColumn('logged_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addColumn('object_id', 'integer', ['notnull' => false]);
-        $table->addColumn('object_class', 'string', ['length' => 255]);
-        $table->addColumn('version', 'integer', []);
-        $table->addIndex(['logged_at'], 'idx_orob2b_audit_logged_at', []);
-        $table->setPrimaryKey(['id']);
+        $auditTable = $schema->getTable('oro_audit');
+        $auditTable->addColumn('account_user_id', 'integer', ['notnull' => false]);
+
+        $auditTable->addForeignKeyConstraint(
+            $schema->getTable('orob2b_account_user'),
+            ['account_user_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
     }
 
     /**
@@ -868,22 +817,6 @@ class OroB2BAccountBundleInstaller implements
     }
 
     /**
-     * Add orob2b_audit_field foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOroB2BAuditFieldForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('orob2b_audit_field');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_audit'),
-            ['audit_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
-    }
-
-    /**
      * Add orob2b_account_adr_adr_type foreign keys.
      *
      * @param Schema $schema
@@ -902,28 +835,6 @@ class OroB2BAccountBundleInstaller implements
             ['account_address_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-    }
-
-    /**
-     * Add orob2b_audit foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOroB2BAuditForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('orob2b_audit');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_organization'),
-            ['organization_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'SET NULL']
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('orob2b_account_user'),
-            ['account_user_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
 
