@@ -44,6 +44,9 @@ use OroB2B\Bundle\SaleBundle\Model\ExtendQuote;
  *          "security"={
  *              "type"="ACL",
  *              "group_name"="commerce"
+ *          },
+ *          "dataaudit"={
+ *              "auditable"=true
  *          }
  *      }
  * )
