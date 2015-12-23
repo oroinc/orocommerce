@@ -78,7 +78,7 @@ class LoadTaxDemoData extends AbstractFixture implements
     /**
      * @var ZipCodeRangeHelper
      */
-    protected $helper = [];
+    protected $helper;
 
     /** {@inheritdoc} */
     public function __construct()
