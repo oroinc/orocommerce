@@ -2,76 +2,74 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\TaxBundle\Form\Type\TaxProviderType;
-use OroB2B\Bundle\TaxBundle\Provider\TaxProviderInterface;
 use OroB2B\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 
 class TaxProviderTypeTest extends \PHPUnit_Framework_TestCase
 {
-    const TAX_PROVIDER_CLASS = 'OroB2B\Bundle\TaxBundle\Provider\TaxProviderInterface';
-
     /**
      * @var TaxProviderType
      */
     protected $formType;
 
     /**
-     * @var TaxProviderInterface[]
+     * @var \PHPUnit_Framework_MockObject_MockObject|TaxProviderRegistry
      */
-    protected $choices;
+    protected $registry;
 
     /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->choices = [
-            $this->getMock(self::TAX_PROVIDER_CLASS),
-            $this->getMock(self::TAX_PROVIDER_CLASS),
+        $this->registry = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Provider\TaxProviderRegistry')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->formType = new TaxProviderType($this->registry);
+    }
+
+    /**
+     * @param string $name
+     * @param string $label
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getProviderMock($name, $label)
+    {
+        $mock = $this->getMock('OroB2B\Bundle\TaxBundle\Provider\TaxProviderInterface');
+        $mock->expects($this->once())->method('getName')->willReturn($name);
+        $mock->expects($this->once())->method('getLabel')->willReturn($label);
+
+        return $mock;
+    }
+
+    public function testConfigureOptions()
+    {
+        $choices = [
+            $this->getProviderMock('name1', 'label1'),
+            $this->getProviderMock('name2', 'label2'),
         ];
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TaxProviderRegistry $registry */
-        $registry = $this->getMockBuilder('OroB2B\Bundle\TaxBundle\Provider\TaxProviderRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $registry->expects($this->any())
+        $this->registry->expects($this->once())
             ->method('getProviders')
-            ->willReturn($this->choices);
+            ->willReturn($choices);
 
-        $this->formType = new TaxProviderType($registry);
+        $resolver = new OptionsResolver();
+
+        $this->formType->configureOptions($resolver);
+
+        $options = $resolver->resolve([]);
+        $this->assertArrayHasKey('choices', $options);
+        $this->assertEquals(['name1' => 'label1', 'name2' => 'label2'], $options['choices']);
     }
 
-    /**
-     * Test setDefaultOptions
-     */
-    public function testSetDefaultOptions()
-    {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolverInterface $resolver */
-        $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolverInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $resolver->expects($this->once())
-            ->method('setDefaults')
-            ->withAnyParameters();
-
-        $this->formType->setDefaultOptions($resolver);
-    }
-
-    /**
-     * Test getName
-     */
     public function testGetName()
     {
         $this->assertEquals(TaxProviderType::NAME, $this->formType->getName());
     }
 
-    /**
-     * Test getParent
-     */
     public function testGetParent()
     {
         $this->assertEquals('choice', $this->formType->getParent());

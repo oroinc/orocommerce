@@ -126,4 +126,4 @@ services:
     orob2b_tax.provider.built_in_tax_provider:
         class: %orob2b_tax.provider.built_in_tax_provider.class%
         tags:
-            - { name: orob2b_tax.tax_provider }
+            - { name: orob2b_tax.tax_provider, priority: 255 }

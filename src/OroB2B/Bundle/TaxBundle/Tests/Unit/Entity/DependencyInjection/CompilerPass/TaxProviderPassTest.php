@@ -89,12 +89,10 @@ class TaxProviderPassTest extends \PHPUnit_Framework_TestCase
             ->willReturn($registryServiceDefinition);
 
         $taggedServices = [
-            'service.name.1' => [
-                [
-                    'priority' => 1
-                ]
-            ],
-            'service.name.2' => [[]]
+            'service.name.1' => [['priority' => 1]],
+            'service.name.2' => [[]],
+            'service.name.3' => [['priority' => -255]],
+            'service.name.4' => [['priority' => 255]],
         ];
 
         $this->containerBuilder
@@ -103,14 +101,14 @@ class TaxProviderPassTest extends \PHPUnit_Framework_TestCase
             ->willReturn($taggedServices);
 
         $registryServiceDefinition
-            ->expects($this->at(0))
+            ->expects($this->exactly(4))
             ->method('addMethodCall')
-            ->with('addProvider', [new Reference('service.name.2')]);
-
-        $registryServiceDefinition
-            ->expects($this->at(1))
-            ->method('addMethodCall')
-            ->with('addProvider', [new Reference('service.name.1')]);
+            ->withConsecutive(
+                ['addProvider', [new Reference('service.name.4')]],
+                ['addProvider', [new Reference('service.name.1')]],
+                ['addProvider', [new Reference('service.name.2')]],
+                ['addProvider', [new Reference('service.name.3')]]
+            );
 
         $this->compilerPass->process($this->containerBuilder);
     }

@@ -86,3 +86,6 @@ orob2b.tax:
         tax_provider_label: 'Provider'
         tax_enable_title: 'Enable Taxation'
         tax_enable_label: 'Enable'
+
+    providers:
+        built_in.label: Built-In Table Rates

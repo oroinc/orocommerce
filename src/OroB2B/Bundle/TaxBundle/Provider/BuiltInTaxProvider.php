@@ -4,8 +4,8 @@ namespace OroB2B\Bundle\TaxBundle\Provider;
 
 class BuiltInTaxProvider implements TaxProviderInterface
 {
-    const NAME = 'orob2b_tax.provider.built-in';
-    const LABEL = 'Built-In Provider';
+    const NAME = 'built_in';
+    const LABEL = 'orob2b.tax.providers.built_in.label';
 
     /**
      * {@inheritdoc}

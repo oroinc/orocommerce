@@ -3,7 +3,7 @@
 namespace OroB2B\Bundle\TaxBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use OroB2B\Bundle\TaxBundle\Provider\TaxProviderRegistry;
 
@@ -27,14 +27,14 @@ class TaxProviderType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $choicesRaw = $this->registry->getProviders();
 
         $choices = [];
 
         foreach ($choicesRaw as $choiceRaw) {
-            $choices[$choiceRaw->getName()] = $choiceRaw->getName();
+            $choices[$choiceRaw->getName()] = $choiceRaw->getLabel();
         }
 
         $resolver->setDefaults(
