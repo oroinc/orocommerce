@@ -37,9 +37,16 @@ class LoadTaxRules extends AbstractFixture implements DependentFixtureInterface
      */
     public function load(ObjectManager $manager)
     {
+        /** @var AccountTaxCode $accountTaxCode */
         $accountTaxCode = $this->getReference(LoadAccountTaxCodes::REFERENCE_PREFIX . '.' . LoadAccountTaxCodes::TAX_1);
+
+        /** @var productTaxCode $productTaxCode */
         $productTaxCode = $this->getReference(LoadProductTaxCodes::REFERENCE_PREFIX . '.' . LoadProductTaxCodes::TAX_1);
+
+        /** @var Tax $tax */
         $tax = $this->getReference(LoadTaxes::REFERENCE_PREFIX . '.' . LoadTaxes::TAX_1);
+
+        /** @var TaxJurisdiction $taxJurisdiction */
         $taxJurisdiction = $this->getReference(
             LoadTaxJurisdictions::REFERENCE_PREFIX . '.' . LoadTaxJurisdictions::TAX_1
         );
