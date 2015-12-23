@@ -1,6 +1,6 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
+namespace OroB2B\Bundle\RFPBundle\Tests\Functional;
 
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -13,7 +13,7 @@ use OroB2B\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProc
 /**
  * @dbIsolation
  */
-class QuickAddTest extends WebTestCase
+class RFPFrontendActionsTest extends WebTestCase
 {
     /**
      * {@inheritdoc}

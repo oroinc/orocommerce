@@ -14,6 +14,13 @@
                 title="{{ linkTitle }}"
                 data-dialog-url="{{ params.dialogUrl }}"
                 data-dialog-options="{{ dialogOptions|json_encode }}"
+                {% if params.page_component_module is defined %}data-page-component-module={{ params.page_component_module }}{% endif %}
+                {% if params.page_component_options is defined %}data-page-component-options={{ params.page_component_options|json_encode }}{% endif %}
+                {% if params.data is defined %}
+                    {% for dataName,dataValue in params.data %}
+                        data-{{ dataName }}="{{ dataValue|e('html_attr')|raw }}" {{ dataName }}
+                    {% endfor %}
+                {% endif %}
             >
                 <i class="{{ params.icon|default('') }} {{ params.iCss|default('') }} hide-text">{{ linkLabel }}</i>
                 {{ linkLabel|trim }}
