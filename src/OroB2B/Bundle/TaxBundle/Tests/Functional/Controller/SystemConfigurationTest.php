@@ -31,7 +31,7 @@ class SystemConfigurationTest extends WebTestCase
         parent::tearDown();
     }
 
-    public function test()
+    public function testConfig()
     {
         $this->assertEmpty($this->configManager->get('orob2b_tax.tax_enable'));
         $this->assertEmpty($this->configManager->get('orob2b_tax.tax_provider'));
@@ -71,5 +71,15 @@ class SystemConfigurationTest extends WebTestCase
         $this->configManager->reload();
         $this->assertTrue($this->configManager->get('orob2b_tax.tax_enable'));
         $this->assertEquals(BuiltInTaxProvider::NAME, $this->configManager->get('orob2b_tax.tax_provider'));
+    }
+
+    public function testBuildInProvider()
+    {
+        $providers = $this->getContainer()->get('orob2b_tax.provider.tax_provider_registry')->getProviders();
+
+        $provider = reset($providers);
+
+        $this->assertNotNull($provider);
+        $this->assertInstanceOf('OroB2B\Bundle\TaxBundle\Provider\BuiltInTaxProvider', $provider);
     }
 }
