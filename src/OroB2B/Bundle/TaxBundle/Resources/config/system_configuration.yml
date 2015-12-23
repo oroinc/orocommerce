@@ -1,0 +1,41 @@
+oro_system_configuration:
+    groups:
+        taxation:
+            title: orob2b.tax.system_configuration.taxation_title
+        tax_calculation:
+            title: orob2b.tax.system_configuration.tax_calculation_title
+            icon: icon-money
+        tax_enable:
+            title: orob2b.tax.system_configuration.tax_enable_title
+        tax_provider:
+            title: orob2b.tax.system_configuration.tax_provider_title
+
+    fields:
+        oro_b2b_tax.tax_enable:
+            ui_only: true
+            data_type: boolean
+            type: oro_config_checkbox
+            options:
+                label: orob2b.tax.system_configuration.tax_enable_label
+
+        oro_b2b_tax.tax_provider:
+            ui_only: true
+            data_type: string
+            type: orob2b_tax_provider_type
+            options:
+                label: orob2b.tax.system_configuration.tax_provider_label
+
+    tree:
+        system_configuration:
+            platform:
+                children:
+                    taxation:
+                        children:
+                            tax_calculation:
+                                children:
+                                    tax_enable:
+                                        children:
+                                            - oro_b2b_tax.tax_enable
+                                    tax_provider:
+                                        children:
+                                            - oro_b2b_tax.tax_provider

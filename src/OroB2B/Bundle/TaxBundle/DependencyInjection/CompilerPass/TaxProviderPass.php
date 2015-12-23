@@ -33,7 +33,7 @@ class TaxProviderPass implements CompilerPassInterface
             $providers[$priority][] = $id;
         }
 
-        ksort($providers);
+        krsort($providers);
         $providers = call_user_func_array('array_merge', $providers);
 
         foreach ($providers as $provider) {

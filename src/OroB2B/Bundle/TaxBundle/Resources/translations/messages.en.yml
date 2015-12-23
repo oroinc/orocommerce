@@ -78,3 +78,14 @@ orob2b.tax:
             saved.message: 'Tax Rule has been saved'
         tax_jurisdiction:
             saved.message: 'Tax Jurisdiction has been saved'
+
+    system_configuration:
+        taxation_title: 'Taxation'
+        tax_calculation_title: 'Tax Calculation'
+        tax_provider_title: 'Tax Provider'
+        tax_provider_label: 'Provider'
+        tax_enable_title: 'Enable Taxation'
+        tax_enable_label: 'Enable'
+
+    providers:
+        built_in.label: Built-In Table Rates

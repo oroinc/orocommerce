@@ -23,12 +23,12 @@ class BuiltInTaxProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetName()
     {
-        $this->assertEquals('orob2b_tax.provider.built-in', $this->provider->getName());
+        $this->assertEquals('built_in', $this->provider->getName());
     }
 
     public function testGetLabel()
     {
-        $this->assertEquals('Built-In Provider', $this->provider->getLabel());
+        $this->assertEquals('orob2b.tax.providers.built_in.label', $this->provider->getLabel());
     }
 
     public function testIsApplicable()
