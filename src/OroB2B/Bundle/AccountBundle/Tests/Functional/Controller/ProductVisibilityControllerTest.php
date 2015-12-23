@@ -217,7 +217,12 @@ class ProductVisibilityControllerTest extends WebTestCase
         $em = $this->client->getContainer()->get('doctrine')->getManager();
 
         foreach ($this->visibilityClassNames as $className) {
-            $this->assertCount($count, $em->getRepository($className)->findBy(['product' => $product]));
+            $actualCount = (int)$em->getRepository($className)
+                ->createQueryBuilder('entity')
+                ->select('COUNT(entity.id)')
+                ->getQuery()
+                ->getSingleScalarResult();
+            $this->assertCount($count, $actualCount);
         }
     }
 
