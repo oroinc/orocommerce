@@ -7,7 +7,7 @@ use Symfony\Component\PropertyAccess\PropertyPath;
 use Oro\Bundle\ActionBundle\Form\EventListener\RequiredAttributesListener;
 use Oro\Bundle\ActionBundle\Form\Type\ActionType;
 use Oro\Bundle\ActionBundle\Model\Action;
-use Oro\Bundle\ActionBundle\Model\ActionContext;
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 use Oro\Bundle\WorkflowBundle\Model\Attribute;
 use Oro\Bundle\WorkflowBundle\Model\AttributeManager;
@@ -53,17 +53,17 @@ class ActionTypeTest extends FormIntegrationTestCase
      * @param mixed $defaultData
      * @param array $inputOptions
      * @param array $submittedData
-     * @param ActionContext $expectedData
+     * @param ActionData $expectedData
      * @param array $expectedChildrenOptions
-     * @param ActionContext $expectedDefaultData
+     * @param ActionData $expectedDefaultData
      */
     public function testSubmit(
         $defaultData,
         array $inputOptions,
         array $submittedData,
-        ActionContext $expectedData,
+        ActionData $expectedData,
         array $expectedChildrenOptions = [],
-        ActionContext $expectedDefaultData = null
+        ActionData $expectedDefaultData = null
     ) {
         $form = $this->factory->create($this->formType, $defaultData, $inputOptions);
 
@@ -94,7 +94,7 @@ class ActionTypeTest extends FormIntegrationTestCase
     {
         return [
             'existing data' => [
-                'defaultData' => $this->createActionContext(['field1' => 'data1', 'field2' => 'data2']),
+                'defaultData' => $this->createActionData(['field1' => 'data1', 'field2' => 'data2']),
                 'inputOptions' => [
                     'action' => $this->createAction(),
                     'attribute_fields' => [
@@ -110,7 +110,7 @@ class ActionTypeTest extends FormIntegrationTestCase
                     ],
                 ],
                 'submittedData' => ['field1' => 'data1', 'field2' => 'data2'],
-                'expectedData' => $this->createActionContext(['field1' => 'data1', 'field2' => 'data2']),
+                'expectedData' => $this->createActionData(['field1' => 'data1', 'field2' => 'data2']),
                 'expectedChildrenOptions' => [
                     'field1'  => [
                         'required' => true,
@@ -123,7 +123,7 @@ class ActionTypeTest extends FormIntegrationTestCase
                 ]
             ],
             'new data' => [
-                'defaultData' => $this->createActionContext(),
+                'defaultData' => $this->createActionData(),
                 'inputOptions' => [
                     'action' => $this->createAction(),
                     'attribute_fields' => [
@@ -136,7 +136,7 @@ class ActionTypeTest extends FormIntegrationTestCase
                     ],
                 ],
                 'submittedData' => ['field1' => 'data1', 'field2' => 'data2'],
-                'expectedData' => $this->createActionContext(['field1' => 'data1', 'field2' => 'data2'], true),
+                'expectedData' => $this->createActionData(['field1' => 'data1', 'field2' => 'data2'], true),
                 'expectedChildrenOptions' => [
                     'field1'  => [
                         'required' => false,
@@ -149,7 +149,7 @@ class ActionTypeTest extends FormIntegrationTestCase
                 ]
             ],
             'with default values' => [
-                'defaultData' => $this->createActionContext(
+                'defaultData' => $this->createActionData(
                     [
                         'default_field1' => 'default_field1_value',
                         'default_field2' => 'default_field2_value'
@@ -171,7 +171,7 @@ class ActionTypeTest extends FormIntegrationTestCase
                     ]
                 ],
                 'submittedData' => [],
-                'expectedData' => $this->createActionContext(
+                'expectedData' => $this->createActionData(
                     [
                         'field1' => null,
                         'field2' => null,
@@ -190,7 +190,7 @@ class ActionTypeTest extends FormIntegrationTestCase
                         'label' => 'Field2 Label'
                     ]
                 ],
-                'expectedDefaultData' => $this->createActionContext(
+                'expectedDefaultData' => $this->createActionData(
                     [
                         'field1' => 'default_field1_value',
                         'field2' => 'default_field2_value'
@@ -207,13 +207,13 @@ class ActionTypeTest extends FormIntegrationTestCase
      * @param array $options
      * @param string $exception
      * @param string $message
-     * @param ActionContext $context
+     * @param ActionData $data
      */
-    public function testException(array $options, $exception, $message, ActionContext $context = null)
+    public function testException(array $options, $exception, $message, ActionData $data = null)
     {
         $this->setExpectedException($exception, $message);
 
-        $this->factory->create($this->formType, $context, $options);
+        $this->factory->create($this->formType, $data, $options);
     }
 
     /**
@@ -246,7 +246,7 @@ class ActionTypeTest extends FormIntegrationTestCase
                 ],
                 'exception' => 'Symfony\Component\Form\Exception\InvalidConfigurationException',
                 'message' => 'Invalid reference to unknown attribute "field" of action "test_action".',
-                'context' => $this->createActionContext()
+                'context' => $this->createActionData()
             ],
             [
                 'options' => [
@@ -257,7 +257,7 @@ class ActionTypeTest extends FormIntegrationTestCase
                 ],
                 'exception' => 'Symfony\Component\Form\Exception\InvalidConfigurationException',
                 'message' => 'Parameter "form_type" must be defined for attribute "field" in action "test_action".',
-                'context' => $this->createActionContext()
+                'context' => $this->createActionData()
             ]
         ];
     }
@@ -265,18 +265,18 @@ class ActionTypeTest extends FormIntegrationTestCase
     /**
      * @param array $data
      * @param bool $modified
-     * @return ActionContext
+     * @return ActionData
      */
-    protected function createActionContext(array $data = [], $modified = false)
+    protected function createActionData(array $data = [], $modified = false)
     {
-        $context = new ActionContext($data);
+        $actionData = new ActionData($data);
 
         if ($modified) {
-            $context->modifiedData = null;
-            unset($context->modifiedData);
+            $actionData->modifiedData = null;
+            unset($actionData->modifiedData);
         }
 
-        return $context;
+        return $actionData;
     }
 
     /**
@@ -313,7 +313,7 @@ class ActionTypeTest extends FormIntegrationTestCase
             ->getMock();
         $action->expects($this->any())
             ->method('getAttributeManager')
-            ->with($this->isInstanceOf('Oro\Bundle\ActionBundle\Model\ActionContext'))
+            ->with($this->isInstanceOf('Oro\Bundle\ActionBundle\Model\ActionData'))
             ->willReturn($attributeManager);
         $action->expects($this->any())
             ->method('getName')

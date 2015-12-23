@@ -8,7 +8,6 @@ parameters:
     orob2b_account.entity.account_user_address.class: OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress
     orob2b_account.entity.account_user_role.class: OroB2B\Bundle\AccountBundle\Entity\AccountUserRole
     orob2b_account.entity.audit.class: OroB2B\Bundle\AccountBundle\Entity\Audit
-    orob2b_account.entity.audit_field.class: OroB2B\Bundle\AccountBundle\Entity\AuditField
     orob2b_account.entity.navigation_item.class: OroB2B\Bundle\AccountBundle\Entity\NavigationItem
     orob2b_account.entity.navigation_history_item.class: OroB2B\Bundle\AccountBundle\Entity\NavigationHistoryItem
     orob2b_account.entity.pinbar_tab.class: OroB2B\Bundle\AccountBundle\Entity\PinbarTab
@@ -21,6 +20,9 @@ parameters:
     orob2b_account.entity.product_visibility.class: OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility
     orob2b_account.entity.account_product_visibility.class: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility
     orob2b_account.entity.account_group_product_visibility.class: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility
+    orob2b_account.entity.account_product_visibility_resolved.class: OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved
+    orob2b_account.entity.account_group_product_visibility_resolved.class: OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved
+    orob2b_account.entity.product_visibility_resolved.class: OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResolved
 
     orob2b_account.account_tree_handler.class: OroB2B\Bundle\AccountBundle\JsTree\AccountTreeHandler
     orob2b_account.account_delete_handler.class: OroB2B\Bundle\AccountBundle\Handler\UserDeleteHandler
@@ -47,21 +49,18 @@ parameters:
     orob2b_account.account_user.password_reset.handler.class: OroB2B\Bundle\AccountBundle\Form\Handler\AccountUserPasswordResetHandler
 
     #Listeners
+    orob2b_account.event_listener.category_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryListener
     orob2b_account.event_listener.login.class: OroB2B\Bundle\AccountBundle\EventListener\LoginListener
     orob2b_account.event_listener.ormdatasource_acl.class: OroB2B\Bundle\AccountBundle\EventListener\OrmDatasourceAclListener
     orob2b_account.event_listener.system_config.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigListener
-    orob2b_account.event_listener.form_view.class: OroB2B\Bundle\AccountBundle\EventListener\FormViewListener
     orob2b_account.event_listener.visibility_grid_listener.class: OroB2B\Bundle\AccountBundle\EventListener\VisibilityGridListener
-    orob2b_account.event_listener.abstract_visibility_post_submit.form_handler.class: OroB2B\Bundle\AccountBundle\EventListener\AbstractVisibilityPostSubmitListener
-    orob2b_account.event_listener.category_visibility.form_handler.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryVisibilityPostSubmitListener
-    orob2b_account.event_listener.product_visibility.form_handler.class: OroB2B\Bundle\AccountBundle\EventListener\ProductVisibilityPostSubmitListener
-
-    orob2b_account.visibility.listener.abstract.class: OroB2B\Bundle\AccountBundle\EventListener\VisibilityAbstractListener
+    orob2b_account.event_listener.default_visibility.class: OroB2B\Bundle\AccountBundle\EventListener\DefaultVisibilityListener
 
     orob2b_account.event_listener.system_config.category_visibility.class: OroB2B\Bundle\AccountBundle\EventListener\SystemConfigCategoryVisibilityListener
-    orob2b_account.event_listener.category_visibility_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryVisibilityListener
     orob2b_account.event_listener.category_tree_handler_listener.class: OroB2B\Bundle\AccountBundle\EventListener\CategoryTreeHandlerListener
     orob2b_account.event_listener.product_duplicate_listener.class: OroB2B\Bundle\AccountBundle\EventListener\ProductDuplicateListener
+
+    orob2b_account.event_listener.product_select_db_query.class: OroB2B\Bundle\AccountBundle\EventListener\ProductSelectDBQueryEventListener
 
     # Datagrid Listeners
     orob2b_account.event_listener.datagrid.account_user.class: OroB2B\Bundle\AccountBundle\EventListener\Datagrid\AccountUserDatagridListener
@@ -80,6 +79,7 @@ parameters:
     #Voters
     orob2b_account.acl.voter.account_user_role.class: OroB2B\Bundle\AccountBundle\Acl\Voter\AccountUserRoleVoter
     orob2b_account.acl.voter.account.class: OroB2B\Bundle\AccountBundle\Acl\Voter\AccountVoter
+    orob2b_account.acl.voter.product_visibility.class: OroB2B\Bundle\AccountBundle\Acl\Voter\ProductVisibilityVoter
 
     orob2b_account.item.builder.pinbar.class: Oro\Bundle\NavigationBundle\Entity\Builder\PinbarTabBuilder
     orob2b_account.item.builder.favorite.class: Oro\Bundle\NavigationBundle\Entity\Builder\NavigationItemBuilder
@@ -96,11 +96,49 @@ parameters:
 
     orob2b_account.provider.visibility_choices.class: OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider
 
+    orob2b_account.audit.discriminator_map_listener.class: OroB2B\Bundle\AccountBundle\Audit\DiscriminatorMapListener
+
     orob2b_account.helper.account_user_role_privileges.class: OroB2B\Bundle\AccountBundle\Helper\AccountUserRolePrivilegesHelper
 
     orob2b_account.storage.category_visibility_storage.class: OroB2B\Bundle\AccountBundle\Visibility\Storage\CategoryVisibilityStorage
 
-    orob2b_account.calculator.category_visibility_calculator: OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityCalculator
+    orob2b_account.calculator.category_visibility_calculator.class: OroB2B\Bundle\AccountBundle\Visibility\Calculator\CategoryVisibilityCalculator
+
+    # Visibility resolver
+    orob2b_account.visibility.resolver.category_visibility_resolver.class: OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolver
+
+    # Model
+    orob2b_account.model.product_visibility_query_builder_modifier.class: OroB2B\Bundle\AccountBundle\Model\ProductVisibilityQueryBuilderModifier
+
+    # Actions
+    orob2b_account.model.action.abstract_entity_aware_action.class: OroB2B\Bundle\AccountBundle\Model\Action\AbstractEntityAwareAction
+    orob2b_account.model.action.abstract_visibility_action.class: OroB2B\Bundle\AccountBundle\Model\Action\AbstractVisibilityAction
+    orob2b_account.model.action.abstract_visibility_registry_aware_action.class: OroB2B\Bundle\AccountBundle\Model\Action\AbstractVisibilityRegistryAwareAction
+    orob2b_account.model.action.change_category_visibility.class: OroB2B\Bundle\AccountBundle\Model\Action\ChangeCategoryVisibility
+    orob2b_account.model.action.change_category_position.class: OroB2B\Bundle\AccountBundle\Model\Action\ChangeCategoryPosition
+    orob2b_account.model.action.resolve_product_visibility.class: OroB2B\Bundle\AccountBundle\Model\Action\ResolveProductVisibility
+    orob2b_account.model.action.category_visibility_cache_clear.class: OroB2B\Bundle\AccountBundle\Model\Action\CategoryVisibilityCacheClearAction
+    orob2b_account.model.action.resolve_visibility_by_product.class: OroB2B\Bundle\AccountBundle\Model\Action\ResolveVisibilityByProduct
+    orob2b_account.model.action.build_website_cache.class: OroB2B\Bundle\AccountBundle\Model\Action\BuildWebsiteCacheAction
+
+    # Visibility cache
+    orob2b_account.visibility.cache.product.account_group_product_resolved_cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\AccountGroupProductResolvedCacheBuilder
+    orob2b_account.visibility.cache.product.account_product_resolved_cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\AccountProductResolvedCacheBuilder
+    orob2b_account.visibility.cache.product.product_resolved_cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\ProductResolvedCacheBuilder
+
+    orob2b_account.visibility.cache.product.category.abstract_resolved_cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\AbstractResolvedCacheBuilder
+    orob2b_account.visibility.cache.product.category.account_group_product_resolved_cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\AccountGroupProductResolvedCacheBuilder
+    orob2b_account.visibility.cache.product.category.account_product_resolved_cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\AccountProductResolvedCacheBuilder
+    orob2b_account.visibility.cache.product.category.product_resolved_cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\ProductResolvedCacheBuilder
+
+    orob2b_account.visibility.cache.product.category.subtree.category_subtree_cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\AbstractSubtreeCacheBuilder
+    orob2b_account.visibility.cache.product.category.subtree.position_change_category_subtree_cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\PositionChangeCategorySubtreeCacheBuilder
+    orob2b_account.visibility.cache.product.category.subtree.visibility_change_category_subtree_cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeCategorySubtreeCacheBuilder
+    orob2b_account.visibility.cache.product.category.subtree.visibility_change_account_subtree_cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeAccountSubtreeCacheBuilder
+    orob2b_account.visibility.cache.product.category.subtree.visibility_change_group_subtree_cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeGroupSubtreeCacheBuilder
+
+    orob2b_account.visibility.cache.product.cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\CacheBuilder
+    orob2b_account.visibility.cache.product.category.cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\CacheBuilder
 
 services:
     orob2b_account.security.account_user_provider:
@@ -117,6 +155,16 @@ services:
             - @oro_entity.doctrine_helper
         calls:
             - [setContainer, [@service_container]]
+        tags:
+            - { name: security.voter }
+
+    orob2b_product_viisbility.acl.voter.account:
+        class: %orob2b_account.acl.voter.product_visibility.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+        calls:
+            - [setClassName, [%orob2b_product.product.class%]]
+            - [setModifier, [@orob2b_account.model.product_visibility_query_builder_modifier]]
         tags:
             - { name: security.voter }
 
@@ -286,7 +334,7 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.websites-grid, method: onBuildBeforeWebsites }
 
     orob2b_account.event_listener.form_view:
-        class: %orob2b_account.event_listener.form_view.class%
+        class: %orob2b_account.form.event_listener.form_view.class%
         arguments:
             - @translator
             - @oro_entity.doctrine_helper
@@ -527,25 +575,20 @@ services:
             - [ setVisibilityAccountClassName, [ %orob2b_account.entity.account_product_visibility.class% ] ]
             - [ setFieldName, ['product'] ]
 
-    orob2b_account.visibility.listener.abstract:
-        class: %orob2b_account.visibility.listener.abstract.class%
-        abstract: true
-        arguments:
-            - @doctrine
+    orob2b_account.event_listener.default_visibility:
+        class: %orob2b_account.event_listener.default_visibility.class%
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
 
-    orob2b_account.event_listener.abstract_visibility_post_submit.form_handler:
-        class: %orob2b_account.event_listener.abstract_visibility_post_submit.form_handler.class%
-        parent: orob2b_account.visibility.listener.abstract
-
-    orob2b_account.event_listener.category_visibility.form_handler:
-        class: %orob2b_account.event_listener.category_visibility.form_handler.class%
-        parent: orob2b_account.event_listener.abstract_visibility_post_submit.form_handler
+    orob2b_account.form.event_listener.category_visibility_post_submit:
+        class: %orob2b_account.form.event_listener.category_visibility_post_submit.class%
+        parent: orob2b_account.form.event_listener.abstract_visibility_post_submit
         tags:
             - { name: kernel.event_listener, event: orob2b_catalog.category.edit, method: onPostSubmit }
 
-    orob2b_account.event_listener.product_visibility.form_handler:
-        class: %orob2b_account.event_listener.product_visibility.form_handler.class%
-        parent: orob2b_account.event_listener.abstract_visibility_post_submit.form_handler
+    orob2b_account.form.event_listener.product_visibility_post_submit:
+        class: %orob2b_account.form.event_listener.product_visibility_post_submit.class%
+        parent: orob2b_account.form.event_listener.abstract_visibility_post_submit
         tags:
             - { name: kernel.event_listener, event: orob2b_product.product.edit, method: onPostSubmit }
 
@@ -561,7 +604,16 @@ services:
 
     orob2b_account.provider.visibility_choices:
         class: %orob2b_account.provider.visibility_choices.class%
-        arguments: [ @translator ]
+        arguments:
+            - @translator
+            - @doctrine
+
+    orob2b_account.audit.discriminator_map_listener:
+        class: %orob2b_account.audit.discriminator_map_listener.class%
+        calls:
+            - [ addClass, [ orob2b_audit, %orob2b_account.entity.audit.class% ] ]
+        tags:
+            - { name: doctrine.event_listener, event: loadClassMetadata }
 
     orob2b_account.helper.account_user_role_privileges:
         class: %orob2b_account.helper.account_user_role_privileges.class%
@@ -580,11 +632,17 @@ services:
             - [ setNamespace, [ "orob2b_account.storage.category_visibility_storage.cache" ] ]
 
     orob2b_account.calculator.category_visibility_calculator:
-        class: %orob2b_account.calculator.category_visibility_calculator%
+        class: %orob2b_account.calculator.category_visibility_calculator.class%
         arguments:
             - @doctrine
+            - @oro_config.global
         calls:
-            - [setContainer, [@service_container]]
+            - [setVisibilityConfigurationPath, ['oro_b2b_account.category_visibility']]
+
+    orob2b_account.visibility.resolver.category_visibility_resolver:
+        class: %orob2b_account.visibility.resolver.category_visibility_resolver.class%
+        arguments:
+            - @orob2b_account.storage.category_visibility_storage
 
     orob2b_account.storage.category_visibility_storage:
         class: %orob2b_account.storage.category_visibility_storage.class%
@@ -592,22 +650,199 @@ services:
             - @orob2b_account.storage.category_visibility_storage.cache
             - @orob2b_account.calculator.category_visibility_calculator
 
-    orob2b_account.event_listener.category_visibility_listener:
-        class: %orob2b_account.event_listener.category_visibility_listener.class%
-        arguments:
-            - @orob2b_account.storage.category_visibility_storage
-        tags:
-            - { name: doctrine.event_listener, event: postPersist }
-            - { name: doctrine.event_listener, event: postUpdate }
-            - { name: doctrine.event_listener, event: postRemove }
-            - { name: doctrine.event_listener, event: onFlush }
-            - { name: doctrine.event_listener, event: postFlush }
-            - { name: doctrine.event_listener, event: onClear }
-
     orob2b_account.event_listener.category_tree_handler_listener:
         class: %orob2b_account.event_listener.category_tree_handler_listener.class%
         arguments:
-            - @orob2b_account.storage.category_visibility_storage
+            - @orob2b_account.visibility.resolver.category_visibility_resolver
         tags:
             - {name: kernel.event_listener, event: orob2b_catalog.category.tree.create_after, method: onCreateAfter }
 
+    orob2b_account.event_listener.frontend_dataaudit_history_grid_listener:
+        class:  %oro_dataaudit.event_listener.dataaudit_history_grid_listener.class%
+        arguments:
+            - [objectClass, objectId]
+        tags:
+          - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-audit-history-grid, method: onBuildAfter }
+
+    orob2b_account.model.product_visibility_query_builder_modifier:
+        class: %orob2b_account.model.product_visibility_query_builder_modifier.class%
+        arguments:
+            - @oro_config.global
+            - @security.token_storage
+            - @orob2b_website.manager
+        calls:
+            - [setVisibilitySystemConfigurationPath, ['oro_b2b_account.product_visibility']]
+
+    orob2b_account.visibility.cache.product.cache_builder.abstract:
+        abstract: true
+        arguments:
+            - @doctrine
+            - @orob2b_account.visibility.resolver.category_visibility_resolver
+            - @oro_config.global
+            - @oro_entity.orm.insert_from_select_query_executor
+
+    orob2b_account.visibility.cache.product.account_group_product_resolved_cache_builder:
+        class: %orob2b_account.visibility.cache.product.account_group_product_resolved_cache_builder.class%
+        parent: orob2b_account.visibility.cache.product.cache_builder.abstract
+        calls:
+            - [setCacheClass, [%orob2b_account.entity.account_group_product_visibility_resolved.class%]]
+
+    orob2b_account.visibility.cache.product.account_product_resolved_cache_builder:
+        class: %orob2b_account.visibility.cache.product.account_product_resolved_cache_builder.class%
+        parent: orob2b_account.visibility.cache.product.cache_builder.abstract
+        calls:
+            - [setCacheClass, [%orob2b_account.entity.account_product_visibility_resolved.class%]]
+
+    orob2b_account.visibility.cache.product.product_resolved_cache_builder:
+        class: %orob2b_account.visibility.cache.product.product_resolved_cache_builder.class%
+        parent: orob2b_account.visibility.cache.product.cache_builder.abstract
+        calls:
+            - [setCacheClass, [%orob2b_account.entity.product_visibility_resolved.class%]]
+
+    orob2b_account.visibility.cache.product.cache_builder:
+        class: %orob2b_account.visibility.cache.product.cache_builder.class%
+        calls:
+            - [addBuilder, [@orob2b_account.visibility.cache.product.product_resolved_cache_builder]]
+            - [addBuilder, [@orob2b_account.visibility.cache.product.account_group_product_resolved_cache_builder]]
+            - [addBuilder, [@orob2b_account.visibility.cache.product.account_product_resolved_cache_builder]]
+
+    orob2b_account.visibility.cache.product.category.abstract_resolved_cache_builder:
+        class: %orob2b_account.visibility.cache.product.category.abstract_resolved_cache_builder.class%
+        abstract: true
+        arguments:
+            - @doctrine
+            - @orob2b_account.visibility.resolver.category_visibility_resolver
+
+    orob2b_account.visibility.cache.product.category.account_group_product_resolved_cache_builder:
+        class: %orob2b_account.visibility.cache.product.category.account_group_product_resolved_cache_builder.class%
+        parent: orob2b_account.visibility.cache.product.category.abstract_resolved_cache_builder
+        calls:
+            - [setVisibilityChangeAccountSubtreeCacheBuilder, [@orob2b_account.visibility.cache.product.category.subtree.visibility_change_group_subtree_cache_builder]]
+
+    orob2b_account.visibility.cache.product.category.account_product_resolved_cache_builder:
+        class: %orob2b_account.visibility.cache.product.category.account_product_resolved_cache_builder.class%
+        parent: orob2b_account.visibility.cache.product.category.abstract_resolved_cache_builder
+        calls:
+            - [setVisibilityChangeAccountSubtreeCacheBuilder, [@orob2b_account.visibility.cache.product.category.subtree.visibility_change_account_subtree_cache_builder]]
+
+    orob2b_account.visibility.cache.product.category.product_resolved_cache_builder:
+        class: %orob2b_account.visibility.cache.product.category.product_resolved_cache_builder.class%
+        parent: orob2b_account.visibility.cache.product.category.abstract_resolved_cache_builder
+        calls:
+            - [setVisibilityChangeCategorySubtreeCacheBuilder, [@orob2b_account.visibility.cache.product.category.subtree.visibility_change_category_subtree_cache_builder]]
+            - [setPositionChangeCategorySubtreeCacheBuilder, [@orob2b_account.visibility.cache.product.category.subtree.position_change_category_subtree_cache_builder]]
+
+    orob2b_account.visibility.cache.product.category.cache_builder:
+        class: %orob2b_account.visibility.cache.product.category.cache_builder.class%
+        calls:
+            - [addBuilder, [@orob2b_account.visibility.cache.product.category.product_resolved_cache_builder]]
+            - [addBuilder, [@orob2b_account.visibility.cache.product.category.account_group_product_resolved_cache_builder]]
+            - [addBuilder, [@orob2b_account.visibility.cache.product.category.account_product_resolved_cache_builder]]
+
+    orob2b_account.visibility.cache.product.category.subtree.category_subtree_cache_builder:
+        class: %orob2b_account.visibility.cache.product.category.subtree.category_subtree_cache_builder.class%
+        arguments:
+            - @doctrine
+            - @orob2b_account.visibility.resolver.category_visibility_resolver
+
+    orob2b_account.visibility.cache.product.category.subtree.visibility_change_category_subtree_cache_builder:
+        class: %orob2b_account.visibility.cache.product.category.subtree.visibility_change_category_subtree_cache_builder.class%
+        parent: orob2b_account.visibility.cache.product.category.subtree.category_subtree_cache_builder
+
+    orob2b_account.visibility.cache.product.category.subtree.position_change_category_subtree_cache_builder:
+        class: %orob2b_account.visibility.cache.product.category.subtree.position_change_category_subtree_cache_builder.class%
+        parent: orob2b_account.visibility.cache.product.category.subtree.category_subtree_cache_builder
+
+    orob2b_account.visibility.cache.product.category.subtree.visibility_change_account_subtree_cache_builder:
+        class: %orob2b_account.visibility.cache.product.category.subtree.visibility_change_account_subtree_cache_builder.class%
+        parent: orob2b_account.visibility.cache.product.category.subtree.category_subtree_cache_builder
+
+    orob2b_account.visibility.cache.product.category.subtree.visibility_change_group_subtree_cache_builder:
+        class: %orob2b_account.visibility.cache.product.category.subtree.visibility_change_group_subtree_cache_builder.class%
+        parent: orob2b_account.visibility.cache.product.category.subtree.category_subtree_cache_builder
+
+    orob2b_account.event_listener.product_select_db_query:
+        class: %orob2b_account.event_listener.product_select_db_query.class%
+        arguments:
+            - @orob2b_frontend.request.frontend_helper
+            - @orob2b_account.model.product_visibility_query_builder_modifier
+        tags:
+            - { name: kernel.event_listener, event: orob2b_product.product_select.db.query, method: onDBQuery }
+
+    # Actions
+    orob2b_account.model.action.abstract_entity_aware_action:
+        class: %orob2b_account.model.action.abstract_entity_aware_action.class%
+        abstract: true
+        arguments:
+            - @oro_workflow.context_accessor
+
+    orob2b_account.model.action.abstract_visibility_action:
+        parent: orob2b_account.model.action.abstract_entity_aware_action
+        class: %orob2b_account.model.action.abstract_visibility_action.class%
+        abstract: true
+
+    orob2b_account.model.action.abstract_visibility_registry_aware_action:
+        parent: orob2b_account.model.action.abstract_visibility_action
+        class: %orob2b_account.model.action.abstract_visibility_registry_aware_action.class%
+        abstract: true
+        calls:
+            - [setRegistry, [@doctrine]]
+
+    orob2b_account.model.action.change_category_visibility:
+        class: %orob2b_account.model.action.change_category_visibility.class%
+        parent: orob2b_account.model.action.abstract_visibility_registry_aware_action
+        calls:
+            - [setCacheBuilder, [@orob2b_account.visibility.cache.product.category.cache_builder]]
+        tags:
+            - { name: oro_workflow.action, alias: change_category_visibility }
+
+    orob2b_account.model.action.change_category_position:
+        class: %orob2b_account.model.action.change_category_position.class%
+        parent: orob2b_account.model.action.abstract_visibility_registry_aware_action
+        calls:
+            - [setCacheBuilder, [@orob2b_account.visibility.cache.product.category.product_resolved_cache_builder]]
+        tags:
+            - { name: oro_workflow.action, alias: change_category_position }
+
+    orob2b_account.model.action.resolve_product_visibility:
+        parent: orob2b_account.model.action.abstract_visibility_registry_aware_action
+        class: %orob2b_account.model.action.resolve_product_visibility.class%
+        calls:
+            - [setCacheBuilder, [@orob2b_account.visibility.cache.product.cache_builder]]
+        tags:
+            - { name: oro_workflow.action, alias: resolve_product_visibility }
+
+    orob2b_account.model.action.resolve_visibility_by_product:
+        parent: orob2b_account.model.action.abstract_visibility_registry_aware_action
+        class: %orob2b_account.model.action.resolve_visibility_by_product.class%
+        calls:
+            - [setCacheBuilder, [@orob2b_account.visibility.cache.product.cache_builder]]
+        tags:
+            - { name: oro_workflow.action, alias: resolve_visibility_by_product }
+
+    orob2b_account.model.action.build_website_cache:
+        parent: orob2b_account.model.action.abstract_visibility_registry_aware_action
+        class: %orob2b_account.model.action.build_website_cache.class%
+        calls:
+            - [setCacheBuilder, [@orob2b_account.visibility.cache.product.product_resolved_cache_builder]]
+        tags:
+            - { name: oro_workflow.action, alias: build_website_cache }
+
+    orob2b_account.model.action.category_visibility_cache_clear:
+        parent: orob2b_account.model.action.abstract_entity_aware_action
+        class: %orob2b_account.model.action.category_visibility_cache_clear.class%
+        calls:
+            - [setCategoryVisibilityStorage, [@orob2b_account.storage.category_visibility_storage]]
+        tags:
+            - { name: oro_workflow.action, alias: category_visibility_cache_clear }
+
+    orob2b_account.event_listener.category_listener:
+        arguments:
+            - @doctrine
+            - @oro_entity.orm.insert_from_select_query_executor
+            - @orob2b_account.visibility.cache.product.cache_builder
+        class: %orob2b_account.event_listener.category_listener.class%
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: postFlush }
+            - { name: doctrine.event_listener, event: postRemove }

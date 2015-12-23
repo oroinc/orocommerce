@@ -37,6 +37,9 @@ use OroB2B\Bundle\RFPBundle\Model\ExtendRequest;
  *              "frontend_owner_column_name"="account_user_id",
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id"
+ *          },
+ *          "dataaudit"={
+ *              "auditable"=true
  *          }
  *      }
  * )
@@ -127,7 +130,7 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="role", type="string", length=255)
+     * @ORM\Column(name="role", type="string", length=255, nullable=true)
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -141,7 +144,7 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="body", type="text")
+     * @ORM\Column(name="note", type="text")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -150,7 +153,7 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
      *      }
      * )
      */
-    protected $body;
+    protected $note;
 
     /**
      * @var RequestStatus
@@ -241,6 +244,13 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountUser")
      * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $accountUser;
 
@@ -249,6 +259,13 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
      *
      * @ORM\ManyToOne(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account"),
      * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      **/
     protected $account;
 
@@ -257,6 +274,13 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
      * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $organization;
 
@@ -520,26 +544,26 @@ class Request extends ExtendRequest implements AccountOwnerAwareInterface
     }
 
     /**
-     * Set body
+     * Set note
      *
-     * @param string $body
+     * @param string $note
      * @return Request
      */
-    public function setBody($body)
+    public function setNote($note)
     {
-        $this->body = $body;
+        $this->note = $note;
 
         return $this;
     }
 
     /**
-     * Get body
+     * Get note
      *
      * @return string
      */
-    public function getBody()
+    public function getNote()
     {
-        return $this->body;
+        return $this->note;
     }
 
     /**

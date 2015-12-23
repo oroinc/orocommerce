@@ -24,10 +24,6 @@ use OroB2B\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType;
 use OroB2B\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemType;
 
-/**
- * Class AjaxLineItemController
- * @package OroB2B\Bundle\ShoppingListBundle\Controller\Frontend
- */
 class AjaxLineItemController extends Controller
 {
     /**
@@ -189,39 +185,10 @@ class AjaxLineItemController extends Controller
      * @AclAncestor("orob2b_shopping_list_line_item_frontend_add")
      * @Template("OroB2BShoppingListBundle:ShoppingList/Frontend/widget:addProductsBtn.html.twig")
      *
-     * @return array
+     * @return Response
      */
     public function productsAddBtnWidgetAction()
     {
-        return $this->getTemplateParameters();
-    }
-
-    /**
-     * @return Response
-     * @param string $data
-     * @Template("OroB2BShoppingListBundle:ShoppingList/Frontend:quickAdd.html.twig")
-     */
-    public function getQuickAddBtnAction($data)
-    {
-        return $this->getTemplateParameters($data);
-    }
-
-    /**
-     * @param string $pageComponentOptions
-     * @return array
-     */
-    protected function getTemplateParameters($pageComponentOptions = null)
-    {
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->getUser();
-        $repository = $this->getDoctrine()->getRepository('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList');
-        $shoppingLists = $repository->findAllExceptCurrentForAccountUser($accountUser);
-        $currentShoppingList = $repository->findCurrentForAccountUser($accountUser);
-
-        return [
-            'shoppingLists' => $shoppingLists,
-            'currentShoppingList' => $currentShoppingList,
-            'pageComponentOptions' => $pageComponentOptions
-        ];
+        return $this->get('orob2b_shopping_list.shopping_list.manager')->getShoppingLists();
     }
 }

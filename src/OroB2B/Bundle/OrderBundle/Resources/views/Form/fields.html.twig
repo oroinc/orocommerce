@@ -63,10 +63,13 @@
                     <tr>
                         <th class="order-line-item-sku"><span>{{ 'orob2b.product.sku.label'|trans }}</span></th>
                         <th class="order-line-item-type"><span>{{ 'orob2b.product.entity_label'|trans }}</span></th>
-                        <th class="order-line-item-quantity"><span>{{ 'orob2b.order.orderlineitem.quantity.label'|trans }}</span></th>
-                        <th class="order-line-item-price"><span>{{ 'orob2b.order.orderlineitem.price.label'|trans }}</span></th>
-                        <th class="order-line-item-ship_by"><span>{{ 'orob2b.order.orderlineitem.ship_by.label'|trans }}</span></th>
-                        <th class="order-line-item-comment"><span>{{ 'orob2b.order.orderlineitem.comment.label'|trans }}</span></th>
+                        {% if form.vars.prototype.vars.sections is defined and form.vars.prototype.vars.sections|length %}
+                            {% for sectionName in form.vars.prototype.vars.sections|keys %}
+                                <th class="{{ 'order-line-item-%s'|format(sectionName) }}">
+                                    <span>{{ 'orob2b.order.orderlineitem.%s.label'|format(sectionName)|trans }}</span>
+                                </th>
+                            {% endfor %}
+                        {% endif %}
                         {% if form.vars.allow_delete %}
                             <th class="order-line-item-actions"></th>
                         {% endif %}
@@ -116,32 +119,35 @@
         {{ form_errors(form.product) }}
         {{ form_errors(form.freeFormProduct) }}
     </td>
-    <td class="order-line-item-quantity">
-        <div class="fields-row">
-            {{ form_widget(form.quantity) }}
-            {{ form_widget(form.productUnit) }}
-        </div>
-        {{ form_errors(form.quantity) }}
-        {{ form_errors(form.productUnit) }}
-    </td>
-    <td class="order-line-item-price">
-        <div class="fields-row">
-            {{ form_widget(form.price) }}
-            {{ form_widget(form.priceType) }}
-        </div>
-        {{ form_errors(form.price) }}
-        {{ form_errors(form.priceType) }}
-    </td>
-    <td class="order-line-item-ship_by">
-        {{ form_widget(form.shipBy) }}
-        {{ form_errors(form.shipBy) }}
-    </td>
-    <td class="order-line-item-comment">
-        <div data-page-component-module="orob2border/js/app/components/notes-component" style="display: none;">
-            {{ form_widget(form.comment) }}
-        </div>
-    </td>
+
+    {{ _self.render_form_sections(form.vars.sections, form) }}
 {% endblock %}
+
+{% macro render_form_sections(sections, form, overrides) %}
+    {% if sections is defined and not sections.isEmpty %}
+        {% for sectionName, sections in form.vars.sections %}
+            <td class="{{ 'order-line-item-%s'|format(sectionName) }}">
+                {% if overrides[sectionName] is defined %}
+                    {{ overrides[sectionName] }}
+                {% elseif sections.data is defined and sections.data is iterable %}
+                    <div class="fields-row">
+                        {% for subSectionName, subSection in sections.data %}
+                            <div
+                                {% if subSection.page_component is defined %} data-page-component-module="{{ subSection.page_component }}"
+                                    {% if subSection.page_component_options is defined %} data-page-component-options="{{ subSection.page_component_options }}"{% endif %}
+                                {% endif %}>
+                                {{ form_widget(form[subSectionName]) }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% for subSectionName, subSection in sections.data %}
+                        {{ form_errors(form[subSectionName]) }}
+                    {% endfor %}
+                {% endif %}
+            </td>
+        {% endfor %}
+    {% endif %}
+{% endmacro %}
 
 {% block orob2b_order_line_item_frontend_widget %}
     {% set isFreeFormProduct = form.vars.value is not empty and form.vars.value.product is empty and form.vars.value.freeFormProduct is not empty %}
@@ -163,15 +169,8 @@
             {% endif %}
         </div>
     </td>
-    <td class="order-line-item-quantity">
-        <div class="fields-row">
-            {{ form_widget(form.quantity) }}
-            {{ form_widget(form.productUnit) }}
-        </div>
-        {{ form_errors(form.quantity) }}
-        {{ form_errors(form.productUnit) }}
-    </td>
-    <td class="order-line-item-price">
+
+    {% set priceSection %}
         {% if form.vars.value.price is defined and form.vars.value.price is not null %}
             {% set priceValue = form.vars.value.price.value %}
             {% set price = form.vars.value.price %}
@@ -181,14 +180,7 @@
         <div class="order-line-item-price-value" data-price="{{ priceValue }}">
             {% if price is defined %}{{ price|oro_format_price }}{% endif %}
         </div>
-    </td>
-    <td class="order-line-item-ship_by">
-        {{ form_widget(form.shipBy) }}
-        {{ form_errors(form.shipBy) }}
-    </td>
-    <td class="order-line-item-comment">
-        <div data-page-component-module="orob2border/js/app/components/notes-component" style="display:none;">
-            {{ form_widget(form.comment) }}
-        </div>
-    </td>
+    {% endset %}
+
+    {{ _self.render_form_sections(form.vars.sections, form, { price: priceSection }) }}
 {% endblock %}

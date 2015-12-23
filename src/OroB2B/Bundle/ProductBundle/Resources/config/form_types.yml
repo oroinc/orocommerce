@@ -92,7 +92,7 @@ services:
         abstract: true
         arguments:
             - @request_stack
-            - @orob2b_product.service.product_data_storage
+            - @orob2b_product.storage.product_data_storage
             - @oro_entity.doctrine_helper
             - %orob2b_product.product.class%
 

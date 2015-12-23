@@ -40,38 +40,36 @@ class LoadAccounts extends AbstractFixture implements DependentFixtureInterface
      *         account.level_1.3.1
      *             account.level_1.3.1.1
      *     account.level_1.4
+     *         account.level_1.4.1
+     *             account.level_1.4.1.1
      * account.level_1_1
      */
     public function load(ObjectManager $manager)
     {
         $owner = $this->getFirstUser($manager);
+
         $this->createAccount($manager, self::DEFAULT_ACCOUNT_NAME, $owner);
-        $levelOne = $this->createAccount(
-            $manager,
-            'account.level_1',
-            $owner,
-            null,
-            $this->getAccountGroup('account_group.group1')
-        );
+
+        $group1 = $this->getAccountGroup('account_group.group1');
+        $group2 = $this->getAccountGroup('account_group.group2');
+        $group3 = $this->getAccountGroup('account_group.group3');
+
+        $levelOne = $this->createAccount($manager, 'account.level_1', $owner, null, $group1);
 
         $levelTwoFirst = $this->createAccount($manager, 'account.level_1.1', $owner, $levelOne);
         $this->createAccount($manager, 'account.level_1.1.1', $owner, $levelTwoFirst);
 
-        $levelTwoSecond = $this->createAccount($manager, 'account.level_1.2', $owner, $levelOne);
-        $levelTreeFirst = $this->createAccount($manager, 'account.level_1.2.1', $owner, $levelTwoSecond);
-        $this->createAccount($manager, 'account.level_1.2.1.1', $owner, $levelTreeFirst);
+        $levelTwoSecond = $this->createAccount($manager, 'account.level_1.2', $owner, $levelOne, $group2);
+        $levelTreeFirst = $this->createAccount($manager, 'account.level_1.2.1', $owner, $levelTwoSecond, $group2);
+        $this->createAccount($manager, 'account.level_1.2.1.1', $owner, $levelTreeFirst, $group2);
 
-        $levelTwoThird = $this->createAccount(
-            $manager,
-            'account.level_1.3',
-            $owner,
-            $levelOne,
-            $this->getAccountGroup('account_group.group1')
-        );
-        $levelTreeFirst = $this->createAccount($manager, 'account.level_1.3.1', $owner, $levelTwoThird);
-        $this->createAccount($manager, 'account.level_1.3.1.1', $owner, $levelTreeFirst);
+        $levelTwoThird = $this->createAccount($manager, 'account.level_1.3', $owner, $levelOne, $group1);
+        $levelTreeFirst = $this->createAccount($manager, 'account.level_1.3.1', $owner, $levelTwoThird, $group3);
+        $this->createAccount($manager, 'account.level_1.3.1.1', $owner, $levelTreeFirst, $group3);
 
-        $this->createAccount($manager, 'account.level_1.4', $owner, $levelOne);
+        $levelTwoFourth = $this->createAccount($manager, 'account.level_1.4', $owner, $levelOne, $group3);
+        $levelTreeFourth = $this->createAccount($manager, 'account.level_1.4.1', $owner, $levelTwoFourth);
+        $this->createAccount($manager, 'account.level_1.4.1.1', $owner, $levelTreeFourth);
 
         $this->createAccount($manager, 'account.level_1_1', $owner);
 
@@ -105,10 +103,7 @@ class LoadAccounts extends AbstractFixture implements DependentFixtureInterface
         $account = new Account();
         $account->setName($name);
         $account->setOwner($owner);
-        $organization = $manager
-            ->getRepository('OroOrganizationBundle:Organization')
-            ->getFirst();
-        $account->setOrganization($organization);
+        $account->setOrganization($owner->getOrganization());
         if ($parent) {
             $account->setParent($parent);
         }

@@ -4,6 +4,10 @@ namespace OroB2B\Bundle\AccountBundle\Provider;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
+use Doctrine\Bundle\DoctrineBundle\Registry;
+
+use OroB2B\Bundle\ProductBundle\Entity\Product;
+
 class VisibilityChoicesProvider
 {
     /**
@@ -12,11 +16,18 @@ class VisibilityChoicesProvider
     public $translator;
 
     /**
-     * @param TranslatorInterface $translator
+     * @var Registry
      */
-    public function __construct(TranslatorInterface $translator)
+    public $registry;
+
+    /**
+     * @param TranslatorInterface $translator
+     * @param Registry $registry
+     */
+    public function __construct(TranslatorInterface $translator, Registry $registry)
     {
         $this->translator = $translator;
+        $this->registry = $registry;
     }
 
     /**
@@ -42,7 +53,25 @@ class VisibilityChoicesProvider
      */
     public function getChoices($sourceClass, $target)
     {
-        return call_user_func([$sourceClass, 'getVisibilityList'], $target);
+        $choices = call_user_func([$sourceClass, 'getVisibilityList'], $target);
+
+        if ($target instanceof Product && !$this->getProductCategory($target)) {
+            unset($choices[array_search(constant($sourceClass.'::CATEGORY'), $choices)]);
+            $choices = array_values($choices);
+        }
+
+        return $choices;
+    }
+
+    /**
+     * @param Product $product
+     * @return null|\OroB2B\Bundle\CatalogBundle\Entity\Category
+     */
+    protected function getProductCategory(Product $product)
+    {
+        return $this->registry->getManagerForClass('OroB2BCatalogBundle:Category')
+            ->getRepository('OroB2BCatalogBundle:Category')
+            ->findOneByProduct($product);
     }
 
     /**
