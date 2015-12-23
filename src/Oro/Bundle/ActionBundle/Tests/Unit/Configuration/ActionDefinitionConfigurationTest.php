@@ -107,7 +107,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                             ],
                             'data' => [
                                 'attribute' => 'attrValue'
-                            ]
+                            ],
                             'confirmation' => 'Confirmation message'
                         ],
                         'form_options' => [
@@ -186,7 +186,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         ],
                         'data' => [
                             'attribute' => 'attrValue'
-                        ]
+                        ],
                         'confirmation' => 'Confirmation message'
                     ],
                     'form_options' => [
