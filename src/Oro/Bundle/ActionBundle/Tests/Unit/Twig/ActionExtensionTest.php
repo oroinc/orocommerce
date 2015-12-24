@@ -57,7 +57,7 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-        unset($this->extension, $this->actionManager, $this->doctrineHelper, $this->requestStack);
+        unset($this->extension, $this->actionManager, $this->appsHelper, $this->doctrineHelper, $this->requestStack);
     }
 
     public function testGetName()
@@ -198,7 +198,6 @@ class ActionExtensionTest extends \PHPUnit_Framework_TestCase
     protected function getEntity($id = null)
     {
         $entity = new \stdClass();
-
         $entity->id = $id;
 
         return $entity;
