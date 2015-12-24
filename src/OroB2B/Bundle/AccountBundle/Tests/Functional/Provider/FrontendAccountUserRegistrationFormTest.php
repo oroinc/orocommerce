@@ -38,7 +38,7 @@ class FrontendAccountUserRegistrationFormTest extends WebTestCase
         $actual = $this->dataProvider->getData($this->context);
 
         $this->assertInstanceOf('\Oro\Bundle\LayoutBundle\Layout\Form\FormAccessorInterface', $actual);
-        $this->assertEquals($this->dataProvider->getForm(), $actual->getForm());
+        $this->assertSame($this->dataProvider->getForm(), $actual->getForm());
         $this->assertEquals(FrontendAccountUserRegistrationType::NAME, $actual->getForm()->getName());
         $this->assertNotEmpty('orob2b_account_frontend_account_user_register', $actual->getAction()->getRouteName());
     }

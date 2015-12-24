@@ -78,24 +78,21 @@ class FrontendAccountUserRegistrationForm implements DataProviderInterface
      */
     public function getData(ContextInterface $context)
     {
-        if ($this->data) {
-            return $this->data;
+        if (!$this->data) {
+            $this->data = new FormAccessor(
+                $this->getForm(),
+                FormAction::createByRoute('orob2b_account_frontend_account_user_register')
+            );
         }
-
-        $this->data = new FormAccessor(
-            $this->getForm(),
-            FormAction::createByRoute('orob2b_account_frontend_account_user_register')
-        );
         return $this->data;
     }
 
     public function getForm()
     {
-        if ($this->form) {
-            return $this->form;
+        if (!$this->form) {
+            $this->form = $this->formFactory
+                ->create(FrontendAccountUserRegistrationType::NAME, $this->getAccountUser());
         }
-
-        $this->form = $this->formFactory->create(FrontendAccountUserRegistrationType::NAME, $this->getAccountUser());
         return $this->form;
     }
 
