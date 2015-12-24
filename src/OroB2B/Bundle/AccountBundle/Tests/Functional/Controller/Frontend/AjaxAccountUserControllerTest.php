@@ -31,38 +31,6 @@ class AjaxAccountUserControllerTest extends WebTestCase
         );
     }
 
-    public function testEnableAndDisable()
-    {
-        /** @var AccountUser $user */
-        $user = $this->getUserRepository()->findOneBy(['email' => 'account.user2@test.com']);
-        $id = $user->getId();
-
-        $this->assertNotNull($user);
-        $this->assertTrue($user->isEnabled());
-
-        $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_account_frontend_account_user_disable', ['id' => $id])
-        );
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
-
-        $this->getObjectManager()->clear();
-
-        $user = $this->getUserRepository()->find($id);
-        $this->assertFalse($user->isEnabled());
-
-        $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_account_frontend_account_user_enable', ['id' => $id])
-        );
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
-
-        $this->getObjectManager()->clear();
-
-        $user = $this->getUserRepository()->find($id);
-        $this->assertTrue($user->isEnabled());
-    }
-
     public function testGetAccountIdAction()
     {
         /** @var AccountUser $user */
