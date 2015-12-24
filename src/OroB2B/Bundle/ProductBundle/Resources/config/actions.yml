@@ -4,6 +4,8 @@ actions:
         applications: [backend]
         routes:
             - orob2b_product_view
+        datagrids:
+            - products-grid
         acl_resource: orob2b_product_create
         order: 10
         frontend_options:

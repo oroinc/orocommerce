@@ -108,6 +108,36 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(15, $resultingItem->getQuantity());
     }
 
+    public function testAddLineItemDuplicateAndConcatNotes()
+    {
+        $shoppingList = new ShoppingList();
+        $reflectionClass = new \ReflectionClass(get_class($shoppingList));
+        $reflectionProperty = $reflectionClass->getProperty('id');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($shoppingList, 1);
+
+        $lineItem = (new LineItem())
+            ->setUnit(
+                (new ProductUnit())
+                    ->setCode('test')
+                    ->setDefaultPrecision(1)
+            )
+            ->setNotes('Notes');
+
+        $this->manager->addLineItem($lineItem, $shoppingList);
+
+        $lineItemDuplicate = clone $lineItem;
+        $lineItemDuplicate->setNotes('Duplicated Notes');
+
+        $this->manager->addLineItem($lineItemDuplicate, $shoppingList, true, true);
+
+        $this->assertEquals(1, $shoppingList->getLineItems()->count());
+
+        /** @var LineItem $resultingItem */
+        $resultingItem = array_shift($this->lineItems);
+        $this->assertSame('Notes Duplicated Notes', $resultingItem->getNotes());
+    }
+
     public function testGetForCurrentUser()
     {
         $shoppingList = $this->manager->getForCurrentUser();

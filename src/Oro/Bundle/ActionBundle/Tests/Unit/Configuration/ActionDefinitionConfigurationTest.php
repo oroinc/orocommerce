@@ -68,6 +68,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                     'applications' => [],
                     'entities' => [],
                     'routes' => [],
+                    'datagrids' => [],
                     'order' => 0,
                     'enabled' => true,
                     'prefunctions' => [],
@@ -91,6 +92,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'applications' => ['app1', 'app2', 'app3'],
                         'entities' => ['Entity1', 'Entity2'],
                         'routes' => ['route_1', 'route_2'],
+                        'datagrids' => ['datagrid_1', 'datagrid_2'],
                         'order' => 15,
                         'enabled' => false,
                         'frontend_options' => [
@@ -107,7 +109,8 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                             ],
                             'data' => [
                                 'attribute' => 'attrValue'
-                            ]
+                            ],
+                            'confirmation' => 'Confirmation message'
                         ],
                         'form_options' => [
                             'attribute_fields' => [
@@ -148,6 +151,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                     'applications' => ['app1', 'app2', 'app3'],
                     'entities' => ['Entity1', 'Entity2'],
                     'routes' => ['route_1', 'route_2'],
+                    'datagrids' => ['datagrid_1', 'datagrid_2'],
                     'order' => 15,
                     'enabled' => false,
                     'prefunctions' => [
@@ -185,7 +189,8 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         ],
                         'data' => [
                             'attribute' => 'attrValue'
-                        ]
+                        ],
+                        'confirmation' => 'Confirmation message'
                     ],
                     'form_options' => [
                         'attribute_fields' => [

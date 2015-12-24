@@ -4,6 +4,8 @@ actions:
         applications: [backend]
         routes:
             - orob2b_rfp_request_view
+        datagrids:
+            - rfp-requests-grid
         order: 10
         attributes:
             request_status:

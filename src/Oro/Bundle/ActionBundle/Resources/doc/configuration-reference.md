@@ -26,7 +26,7 @@ Overview
 Configuration of Action declares all aspects related to specific action:
 
 * basic properties of action like name, label, order, acl resource, etc
-* entities or routes that is related to action
+* entities or routes or datagrids that is related to action
 * conditions and functions
 * attributes involved in action
 * frontend configuration
@@ -108,6 +108,9 @@ Single action configuration has next properties:
 * **routes**
     *array*
     Action button will be shown on pages which route is in list.
+* **datagrids**
+    *array*
+    Action icon will be shown as an datagrid-action in listed datagrids.
 * **order**
     *integer*
     Parameter that specifies the display order of actions buttons.
@@ -141,8 +144,10 @@ actions:                                             # root elements
         enabled: false                               # action is disabled, means not used in application
         entities:                                    # on view/edit pages of this entities action button will be shown
             - Acme\Bundle\DemoBundle\Entity\MyEntity # entity class name
-        routes:                                      # on pages with this action names action button will be shown
+        routes:                                      # on pages with these routes action button will be shown
             - acme_demo_action_view                  # route name
+        datagrids                                    # in listed datagrids action icon will be shown
+            - acme-demo-grid                         # datagrid name
         order: 10                                    # display order of action button
         acl_resource: acme_demo_action_view          # ACL resource name that will be checked on pre conditions step
         frontend_options:                            # configuration for Frontend Options
@@ -204,6 +209,10 @@ Frontend Options configuration has next options:
     *array*
     Parameters related to widget component. Can be specified next options: *allowMaximize*, *allowMinimize*, *dblclick*,
     *maximizedHeightDecreaseBy*, *width*, etc.
+* **confirmation**
+    *string*
+    You can show confirmation message before start action`s execution. Translate constant should be available
+    for JS - placed in jsmessages.*.yml
 
 Example
 -------
@@ -222,6 +231,7 @@ actions:
             page_component_options:
                 component_name: '[name$="[component]"]'
                 component_additional: '[name$="[additional]"]'
+            confirmation: aсme.demo.actions.action_perform_confirm
             dialog_template: OroActionBundle:Widget:widget/form.html.twig
             dialog_title: aсme.demo.actions.dialog.title
             dialog_options:

@@ -4,6 +4,8 @@ actions:
         applications: [backend]
         routes:
             - orob2b_account_account_user_view
+        datagrids:
+            - account-account-user-grid
         order: 10
         frontend_options:
             icon: icon-remove
@@ -27,6 +29,8 @@ actions:
         applications: [backend]
         routes:
             - orob2b_account_account_user_view
+        datagrids:
+            - account-account-user-grid
         order: 10
         frontend_options:
             icon: icon-ok
@@ -48,6 +52,8 @@ actions:
         applications: [frontend]
         routes:
             - orob2b_account_frontend_account_user_view
+        datagrids:
+            - frontend-account-account-user-grid
         order: 10
         frontend_options:
             icon: icon-remove
@@ -73,6 +79,8 @@ actions:
         applications: [frontend]
         routes:
             - orob2b_account_frontend_account_user_view
+        datagrids:
+            - frontend-account-account-user-grid
         order: 10
         frontend_options:
             icon: icon-ok

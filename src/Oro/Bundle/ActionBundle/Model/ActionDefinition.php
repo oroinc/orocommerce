@@ -24,6 +24,9 @@ class ActionDefinition
     private $entities = [];
 
     /** @var array */
+    private $datagrids = [];
+
+    /** @var array */
     private $routes = [];
 
     /** @var array */
@@ -157,6 +160,25 @@ class ActionDefinition
     public function setEntities(array $entities)
     {
         $this->entities = $entities;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDatagrids()
+    {
+        return $this->datagrids;
+    }
+
+    /**
+     * @param array $datagrids
+     * @return $this
+     */
+    public function setDatagrids(array $datagrids)
+    {
+        $this->datagrids = $datagrids;
 
         return $this;
     }
