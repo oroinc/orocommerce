@@ -98,6 +98,15 @@ class TaxCodeGridListener
     {
         $from = $configuration->offsetGetByPath('[source][query][from]');
 
+        if (!$from) {
+            throw new \InvalidArgumentException(
+                sprintf(
+                    '[source][query][from] is missing for grid "%s"',
+                    $configuration->getName()
+                )
+            );
+        }
+
         return (string)$from[0]['alias'];
     }
 
