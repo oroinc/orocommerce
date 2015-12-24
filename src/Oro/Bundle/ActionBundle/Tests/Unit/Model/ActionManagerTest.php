@@ -361,6 +361,9 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
         $actionDefinition->expects($this->once())
             ->method('getEntities')
             ->willReturn(['stdClass']);
+        $actionDefinition->expects($this->once())
+            ->method('getDatagrids')
+            ->willReturn(['datagrid1']);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|Action $action */
         $action = $this->getMockBuilder('Oro\Bundle\ActionBundle\Model\Action')
@@ -475,7 +478,8 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
             [
                 'route' => 'route1',
                 'entityClass' => 'stdClass',
-                'entityId' => 1
+                'entityId' => 1,
+                'datagrid' => 'datagrid_name',
             ],
             0,
             1
@@ -494,7 +498,7 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
             ->method('getContext')
             ->willReturnCallback(function ($context) {
                 return array_merge(
-                    ['route' => null, 'entityId' => null, 'entityClass' => null],
+                    ['route' => null, 'entityId' => null, 'entityClass' => null, 'datagrid' => null],
                     $context
                 );
             });
@@ -520,7 +524,8 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
                     [
                         'route' => null,
                         'entityId' => null,
-                        'entityClass' => null
+                        'entityClass' => null,
+                        'datagrid' => null,
                     ],
                     $context
                 )
