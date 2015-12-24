@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\EventListener;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -78,10 +79,7 @@ class DefaultVisibilityListenerTest extends WebTestCase
     {
         $entityManager = $this->getManager($entityClass);
 
-        $properties = [];
-        foreach ($parameters as $parameter) {
-            $properties[$parameter] = $this->$parameter;
-        }
+        $properties = $this->getProperties($parameters);
 
         // persisted with custom visibility
         /** @var VisibilityInterface $entity */
@@ -105,6 +103,10 @@ class DefaultVisibilityListenerTest extends WebTestCase
         $entity->setVisibility($entity::getDefault($entity->getTargetEntity()));
         $entityManager->flush();
         $this->assertNull($this->findOneBy($entityClass, $properties));
+
+        $entityManager->clear();
+
+        $properties = $this->getProperties($parameters);
 
         // persisted with default visibility
         $entity = $this->getEntity($entityClass, $properties);
@@ -145,6 +147,26 @@ class DefaultVisibilityListenerTest extends WebTestCase
                 'parameters' => ['website', 'product', 'accountGroup'],
             ],
         ];
+    }
+
+    /**
+     * @param array $parameters
+     * @return array
+     */
+    protected function getProperties(array $parameters)
+    {
+        $registry = $this->getContainer()->get('doctrine');
+
+        $properties = [];
+        foreach ($parameters as $parameter) {
+            $fixtureValue = $this->$parameter;
+            $entityClass = ClassUtils::getClass($fixtureValue);
+            $entityManager = $registry->getManagerForClass($entityClass);
+            $identifier = $entityManager->getClassMetadata($entityClass)->getIdentifierValues($fixtureValue);
+            $properties[$parameter] = $entityManager->getRepository($entityClass)->find($identifier);
+        }
+
+        return $properties;
     }
 
     /**
