@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\AccountBundle\Tests\Unit\Visibility\Resolver;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
@@ -22,6 +23,21 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
     protected $registry;
 
     /**
+     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $configManager;
+
+    /**
+     * @var array
+     */
+    protected $visibleCategoryIds = [1, 2, 3];
+
+    /**
+     * @var array
+     */
+    protected $hiddenCategoryIds = [1, 2, 3];
+
+    /**
      * @var CategoryVisibilityResolver
      */
     protected $resolver;
@@ -32,7 +48,16 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->resolver = new CategoryVisibilityResolver($this->registry);
+        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->with('oro_b2b_account.category_visibility')
+            ->willReturn(BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE);
+
+        $this->resolver = new CategoryVisibilityResolver($this->registry, $this->configManager);
     }
 
     public function testIsCategoryVisible()
@@ -51,7 +76,8 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $categoryVisibilityResolvedRepository->expects($this->once())
             ->method('isCategoryVisible')
-            ->with($category);
+            ->with($category, BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE)
+            ->willReturn(true);
 
         $em->expects($this->once())
             ->method('getRepository')
@@ -62,7 +88,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->willReturn($em);
 
-        $this->resolver->isCategoryVisible($category);
+        $this->assertTrue($this->resolver->isCategoryVisible($category));
     }
 
     public function testGetVisibleCategoryIds()
@@ -78,7 +104,11 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $categoryVisibilityResolvedRepository->expects($this->once())
             ->method('getCategoryIdsByVisibility')
-            ->with(BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE);
+            ->with(
+                BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE
+            )
+            ->willReturn($this->visibleCategoryIds);
 
         $em->expects($this->once())
             ->method('getRepository')
@@ -89,7 +119,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->willReturn($em);
 
-        $this->resolver->getVisibleCategoryIds();
+        $this->assertEquals($this->visibleCategoryIds, $this->resolver->getVisibleCategoryIds());
     }
 
     public function testGetHiddenCategoryIds()
@@ -105,7 +135,11 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $categoryVisibilityResolvedRepository->expects($this->once())
             ->method('getCategoryIdsByVisibility')
-            ->with(BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN);
+            ->with(
+                BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE
+            )
+            ->willReturn($this->hiddenCategoryIds);
 
         $em->expects($this->once())
             ->method('getRepository')
@@ -116,7 +150,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->willReturn($em);
 
-        $this->resolver->getHiddenCategoryIds();
+        $this->assertEquals($this->hiddenCategoryIds, $this->resolver->getHiddenCategoryIds());
     }
 
     public function testIsCategoryVisibleForAccountGroup()
@@ -140,7 +174,8 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $categoryVisibilityResolvedRepository->expects($this->once())
             ->method('isCategoryVisible')
-            ->with($category, $accountGroup);
+            ->with($category, $accountGroup, BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE)
+            ->willReturn(false);
 
         $em->expects($this->once())
             ->method('getRepository')
@@ -151,7 +186,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->willReturn($em);
 
-        $this->resolver->isCategoryVisibleForAccountGroup($category, $accountGroup);
+        $this->assertFalse($this->resolver->isCategoryVisibleForAccountGroup($category, $accountGroup));
     }
 
     public function testGetVisibleCategoryIdsForAccountGroup()
@@ -172,7 +207,12 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $categoryVisibilityResolvedRepository->expects($this->once())
             ->method('getCategoryIdsByVisibility')
-            ->with(BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE, $accountGroup);
+            ->with(
+                BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                $accountGroup,
+                BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE
+            )
+            ->willReturn($this->visibleCategoryIds);
 
         $em->expects($this->once())
             ->method('getRepository')
@@ -183,7 +223,10 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->willReturn($em);
 
-        $this->resolver->getVisibleCategoryIdsForAccountGroup($accountGroup);
+        $this->assertEquals(
+            $this->visibleCategoryIds,
+            $this->resolver->getVisibleCategoryIdsForAccountGroup($accountGroup)
+        );
     }
 
     public function testGetHiddenCategoryIdsForAccountGroup()
@@ -204,7 +247,12 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $categoryVisibilityResolvedRepository->expects($this->once())
             ->method('getCategoryIdsByVisibility')
-            ->with(BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN, $accountGroup);
+            ->with(
+                BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                $accountGroup,
+                BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE
+            )
+            ->willReturn($this->hiddenCategoryIds);
 
         $em->expects($this->once())
             ->method('getRepository')
@@ -215,7 +263,10 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->willReturn($em);
 
-        $this->resolver->getHiddenCategoryIdsForAccountGroup($accountGroup);
+        $this->assertEquals(
+            $this->hiddenCategoryIds,
+            $this->resolver->getHiddenCategoryIdsForAccountGroup($accountGroup)
+        );
     }
 
     public function testIsCategoryVisibleForAccount()
@@ -239,7 +290,8 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $categoryVisibilityResolvedRepository->expects($this->once())
             ->method('isCategoryVisible')
-            ->with($category, $account);
+            ->with($category, $account, BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE)
+            ->willReturn(true);
 
         $em->expects($this->once())
             ->method('getRepository')
@@ -250,7 +302,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->willReturn($em);
 
-        $this->resolver->isCategoryVisibleForAccount($category, $account);
+        $this->assertTrue($this->resolver->isCategoryVisibleForAccount($category, $account));
     }
 
     public function testGetVisibleCategoryIdsForAccount()
@@ -271,7 +323,12 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $categoryVisibilityResolvedRepository->expects($this->once())
             ->method('getCategoryIdsByVisibility')
-            ->with(BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE, $account);
+            ->with(
+                BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                $account,
+                BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE
+            )
+            ->willReturn($this->visibleCategoryIds);
 
         $em->expects($this->once())
             ->method('getRepository')
@@ -282,7 +339,10 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->willReturn($em);
 
-        $this->resolver->getVisibleCategoryIdsForAccount($account);
+        $this->assertEquals(
+            $this->visibleCategoryIds,
+            $this->resolver->getVisibleCategoryIdsForAccount($account)
+        );
     }
 
     public function testGetHiddenCategoryIdsForAccount()
@@ -303,7 +363,12 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $categoryVisibilityResolvedRepository->expects($this->once())
             ->method('getCategoryIdsByVisibility')
-            ->with(BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN, $account);
+            ->with(
+                BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                $account,
+                BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE
+            )
+            ->willReturn($this->hiddenCategoryIds);
 
         $em->expects($this->once())
             ->method('getRepository')
@@ -314,6 +379,9 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->willReturn($em);
 
-        $this->resolver->getHiddenCategoryIdsForAccount($account);
+        $this->assertEquals(
+            $this->hiddenCategoryIds,
+            $this->resolver->getHiddenCategoryIdsForAccount($account)
+        );
     }
 }
