@@ -80,6 +80,14 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
     protected $precision;
 
     /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
      * Set product
      *
      * @param Product $product
@@ -178,5 +186,13 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
     public function getProductUnitCode()
     {
         return $this->getUnit()->getCode();
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->getUnit()->getCode() . ' ' . $this->getPrecision();
     }
 }

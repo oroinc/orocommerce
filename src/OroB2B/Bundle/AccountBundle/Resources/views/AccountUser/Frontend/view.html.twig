@@ -42,47 +42,6 @@
                 'path' : path('orob2b_account_frontend_account_user_update', { 'id': entity.id }),
                 'entity_label': 'orob2b.account.accountuser.entity_label'|trans
             }) }}
-            <div class="btn-group" data-page-component-module="orob2baccount/js/app/components/account-user-management-component">
-                {% if entity.id != app.user.id %}
-                    {% if entity.enabled %}
-                        {{ UI.button({
-                            'aCss':  'no-hash',
-                            'iCss':  'icon-remove',
-                            'label': 'orob2b.account.action.account_user.disable'|trans,
-                            'path':  path('orob2b_account_frontend_account_user_disable', {'id': entity.id}),
-                            'title': 'orob2b.account.action.account_user.disable'|trans
-                        }) }}
-                    {% else %}
-                        {{ UI.button({
-                            'aCss':  'no-hash',
-                            'iCss':  'icon-ok',
-                            'label': 'orob2b.account.action.account_user.enable'|trans,
-                            'path':  path('orob2b_account_frontend_account_user_enable', {'id': entity.id}),
-                            'title': 'orob2b.account.action.account_user.enable'|trans
-                        }) }}
-                    {% endif %}
-                {% endif %}
-            </div>
-            {% if not entity.confirmed %}
-                <div class="btn-group" data-page-component-module="orob2baccount/js/app/components/account-user-management-component">
-                    {{ UI.button({
-                        'aCss':  'no-hash',
-                        'iCss':  'icon-ok',
-                        'label': 'orob2b.account.action.account_user.confirm'|trans,
-                        'path':  path('orob2b_account_frontend_account_user_confirm', {'id': entity.id}),
-                        'title': 'orob2b.account.action.account_user.confirm'|trans
-                    }) }}
-                </div>
-                <div class="btn-group" data-page-component-module="orob2baccount/js/app/components/account-user-management-component">
-                    {{ UI.button({
-                        'aCss':  'no-hash',
-                        'iCss':  'icon-envelope-alt',
-                        'label': 'orob2b.account.action.account_user.send_confirmation'|trans,
-                        'path':  path('orob2b_account_frontend_account_user_send_confirmation', {'id': entity.id}),
-                        'title': 'orob2b.account.action.account_user.send_confirmation'|trans
-                    }) }}
-                </div>
-            {% endif %}
         {% endif %}
     {% endif %}
     {% if entity.id != app.user.id and resource_granted('DELETE', entity) %}
@@ -137,6 +96,4 @@
     {% set data = {'dataBlocks': dataBlocks} %}
 
     {{ UI.scrollData(id, data) }}
-    {% block pageActions %}
-    {% endblock %}
 {% endblock content_data %}

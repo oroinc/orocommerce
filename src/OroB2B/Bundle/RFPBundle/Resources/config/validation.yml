@@ -15,14 +15,13 @@ OroB2B\Bundle\RFPBundle\Entity\Request:
                 max: 255
         phone:
             - NotBlank: ~
-        body:
+        note:
             - NotBlank: ~
         company:
             - NotBlank: ~
             - Length:
                 max: 255
         role:
-            - NotBlank: ~
             - Length:
                 max: 255
         poNumber:

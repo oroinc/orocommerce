@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectRepository;
 
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -107,8 +108,9 @@ class ShoppingListManager
      * @param LineItem          $lineItem
      * @param ShoppingList|null $shoppingList
      * @param bool|true         $flush
+     * @param bool|false        $concatNotes
      */
-    public function addLineItem(LineItem $lineItem, ShoppingList $shoppingList, $flush = true)
+    public function addLineItem(LineItem $lineItem, ShoppingList $shoppingList, $flush = true, $concatNotes = false)
     {
         $em = $this->managerRegistry->getManagerForClass('OroB2BShoppingListBundle:LineItem');
         $lineItem->setShoppingList($shoppingList);
@@ -122,6 +124,11 @@ class ShoppingListManager
                 $duplicate->getProduct()
             );
             $duplicate->setQuantity($quantity);
+
+            if ($concatNotes) {
+                $notes = trim(implode(' ', [$duplicate->getNotes(), $lineItem->getNotes()]));
+                $duplicate->setNotes($notes);
+            }
         } else {
             $shoppingList->addLineItem($lineItem);
             $em->persist($lineItem);
@@ -169,6 +176,31 @@ class ShoppingListManager
         }
 
         return $shoppingList;
+    }
+
+    /**
+     * @return array
+     */
+    public function getShoppingLists()
+    {
+        $accountUser = $this->getAccountUser();
+
+        /* @var $repository ShoppingListRepository */
+        $repository = $this->getRepository('OroB2BShoppingListBundle:ShoppingList');
+
+        return [
+            'shoppingLists' => $repository->findAllExceptCurrentForAccountUser($accountUser),
+            'currentShoppingList' => $repository->findCurrentForAccountUser($accountUser)
+        ];
+    }
+
+    /**
+     * @param string $class
+     * @return ObjectRepository
+     */
+    protected function getRepository($class)
+    {
+        return $this->managerRegistry->getManagerForClass($class)->getRepository($class);
     }
 
     /**
