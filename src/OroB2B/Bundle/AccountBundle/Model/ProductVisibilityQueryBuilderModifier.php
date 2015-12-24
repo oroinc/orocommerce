@@ -39,6 +39,11 @@ class ProductVisibilityQueryBuilderModifier
     protected $websiteManager;
 
     /**
+     * @var integer
+     */
+    protected $configValue;
+
+    /**
      * @param ConfigManager $configManager
      * @param TokenStorageInterface $tokenStorage
      * @param WebsiteManager $websiteManager
@@ -168,11 +173,11 @@ class ProductVisibilityQueryBuilderModifier
 
         $term = <<<TERM
 CASE WHEN account_product_visibility_resolved.visibility = %s
-    THEN (product_visibility_resolved.visibility * 100)
+    THEN (COALESCE(product_visibility_resolved.visibility, %s) * 100)
 ELSE (COALESCE(account_product_visibility_resolved.visibility, 0) * 100)
 END
 TERM;
-        return sprintf($term, AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL);
+        return sprintf($term, AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL, $this->getConfigValue());
     }
 
     /**
@@ -180,6 +185,9 @@ TERM;
      */
     protected function getConfigValue()
     {
+        if ($this->configValue) {
+            return $this->configValue;
+        }
         if (!$this->visibilitySystemConfigurationPath) {
             throw new \LogicException(
                 sprintf('%s::visibilitySystemConfigurationPath not configured', get_class($this))
@@ -187,7 +195,8 @@ TERM;
         }
 
         $configVisibility = $this->configManager->get($this->visibilitySystemConfigurationPath);
-        return ($configVisibility === ProductVisibility::VISIBLE) ? 1 : -1;
+        $this->configValue = ($configVisibility === ProductVisibility::VISIBLE) ? 1 : -1;
+        return $this->configValue;
     }
 
     /**
