@@ -5,12 +5,22 @@ namespace OroB2B\Bundle\AccountBundle\Visibility\Cache;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-abstract class AbstractComposeCacheBuilder implements CacheBuilderInterface
+class CompositeCacheBuilder implements CacheBuilderInterface
 {
     /**
      * @var CacheBuilderInterface[]
      */
     protected $builders = [];
+
+    /**
+     * @param CacheBuilderInterface $cacheBuilder
+     */
+    public function addBuilder(CacheBuilderInterface $cacheBuilder)
+    {
+        if (!in_array($cacheBuilder, $this->builders, true)) {
+            $this->builders[] = $cacheBuilder;
+        }
+    }
 
     /**
      * {@inheritdoc}
