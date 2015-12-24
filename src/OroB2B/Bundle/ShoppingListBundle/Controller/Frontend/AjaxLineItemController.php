@@ -165,32 +165,6 @@ class AjaxLineItemController extends Controller
      */
     public function productsAddBtnWidgetAction()
     {
-        return $this->getTemplateParameters();
-    }
-
-    /**
-     * @return Response
-     * @Template("OroB2BShoppingListBundle:ShoppingList/Frontend:quickAdd.html.twig")
-     */
-    public function getQuickAddBtnAction()
-    {
-        return $this->getTemplateParameters();
-    }
-
-    /**
-     * @return Response
-     */
-    protected function getTemplateParameters()
-    {
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->getUser();
-        $repository = $this->getDoctrine()->getRepository('OroB2B\Bundle\ShoppingListBundle\Entity\ShoppingList');
-        $shoppingLists = $repository->findAllExceptCurrentForAccountUser($accountUser);
-        $currentShoppingList = $repository->findCurrentForAccountUser($accountUser);
-
-        return [
-            'shoppingLists' => $shoppingLists,
-            'currentShoppingList' => $currentShoppingList
-        ];
+        return $this->get('orob2b_shopping_list.shopping_list.manager')->getShoppingLists();
     }
 }

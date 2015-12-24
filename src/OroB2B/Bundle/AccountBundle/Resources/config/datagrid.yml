@@ -938,3 +938,56 @@ datagrid:
                 icon:          trash
                 acl_resource:  orob2b_account_frontend_account_user_delete
         action_configuration: [@orob2b_account.datagrid.action_permission_provider, "getUserPermissions"]
+
+    audit-grid:
+        source:
+            query:
+                select:
+                    author: |
+                        CASE WHEN u.email IS NOT NULL THEN CONCAT(u.firstName, ' ', u.lastName, ' - ', u.email)
+                        ELSE CONCAT(b2b_u.firstName, ' ', b2b_u.lastName, ' - ', b2b_u.email) END as author
+                join:
+                    left:
+                        b2b_audit:
+                            join: OroB2BAccountBundle:Audit
+                            alias: b2b_a
+                            conditionType: WITH
+                            condition: b2b_a.id = a.id
+                        b2b_user:
+                            join: b2b_a.accountUser
+                            alias: b2b_u
+
+    audit-history-grid:
+        source:
+            query:
+                select:
+                    author: |
+                        CASE WHEN u.email IS NOT NULL THEN CONCAT(u.firstName, ' ', u.lastName, ' - ', u.email)
+                        ELSE CONCAT(b2b_u.firstName, ' ', b2b_u.lastName, ' - ', b2b_u.email) END as author
+                join:
+                    left:
+                        b2b_audit:
+                            join: OroB2BAccountBundle:Audit
+                            alias: b2b_a
+                            conditionType: WITH
+                            condition: b2b_a.id = a.id
+                        b2b_user:
+                            join: b2b_a.accountUser
+                            alias: b2b_u
+
+    frontend-audit-history-grid:
+        extends: audit-history-grid
+        source:
+            acl_resource: orob2b_account_dataaudit_history
+            query:
+                select:
+                    author: |
+                        CASE WHEN u.email IS NULL THEN CONCAT(b2b_u.firstName, ' ', b2b_u.lastName, ' - ', b2b_u.email)
+                        ELSE '' END as author
+        columns:
+            author:
+                label: oro.dataaudit.datagrid.author
+                type: twig
+                template: OroB2BAccountBundle:DataAudit:author.html.twig
+                frontend_type: html
+                data_name: author

@@ -3,6 +3,7 @@
 namespace OroB2B\Bundle\ShoppingListBundle\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectRepository;
 
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -175,6 +176,31 @@ class ShoppingListManager
         }
 
         return $shoppingList;
+    }
+
+    /**
+     * @return array
+     */
+    public function getShoppingLists()
+    {
+        $accountUser = $this->getAccountUser();
+
+        /* @var $repository ShoppingListRepository */
+        $repository = $this->getRepository('OroB2BShoppingListBundle:ShoppingList');
+
+        return [
+            'shoppingLists' => $repository->findAllExceptCurrentForAccountUser($accountUser),
+            'currentShoppingList' => $repository->findCurrentForAccountUser($accountUser)
+        ];
+    }
+
+    /**
+     * @param string $class
+     * @return ObjectRepository
+     */
+    protected function getRepository($class)
+    {
+        return $this->managerRegistry->getManagerForClass($class)->getRepository($class);
     }
 
     /**

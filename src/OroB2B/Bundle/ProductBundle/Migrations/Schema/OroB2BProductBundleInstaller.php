@@ -269,6 +269,7 @@ class OroB2BProductBundleInstaller implements
             false,
             [
                 'importexport' => ['order' => '25'],
+                'dataaudit' => ['auditable' => true],
             ]
         );
     }

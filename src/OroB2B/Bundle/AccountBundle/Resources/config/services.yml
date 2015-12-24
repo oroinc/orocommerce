@@ -8,7 +8,6 @@ parameters:
     orob2b_account.entity.account_user_address.class: OroB2B\Bundle\AccountBundle\Entity\AccountUserAddress
     orob2b_account.entity.account_user_role.class: OroB2B\Bundle\AccountBundle\Entity\AccountUserRole
     orob2b_account.entity.audit.class: OroB2B\Bundle\AccountBundle\Entity\Audit
-    orob2b_account.entity.audit_field.class: OroB2B\Bundle\AccountBundle\Entity\AuditField
     orob2b_account.entity.navigation_item.class: OroB2B\Bundle\AccountBundle\Entity\NavigationItem
     orob2b_account.entity.navigation_history_item.class: OroB2B\Bundle\AccountBundle\Entity\NavigationHistoryItem
     orob2b_account.entity.pinbar_tab.class: OroB2B\Bundle\AccountBundle\Entity\PinbarTab
@@ -96,6 +95,8 @@ parameters:
     orob2b.account.catalog.visibility.change_set.validatior.class: OroB2B\Bundle\AccountBundle\Validator\Constraints\VisibilityChangeSetValidator
 
     orob2b_account.provider.visibility_choices.class: OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider
+
+    orob2b_account.audit.discriminator_map_listener.class: OroB2B\Bundle\AccountBundle\Audit\DiscriminatorMapListener
 
     orob2b_account.helper.account_user_role_privileges.class: OroB2B\Bundle\AccountBundle\Helper\AccountUserRolePrivilegesHelper
 
@@ -607,6 +608,13 @@ services:
             - @translator
             - @doctrine
 
+    orob2b_account.audit.discriminator_map_listener:
+        class: %orob2b_account.audit.discriminator_map_listener.class%
+        calls:
+            - [ addClass, [ orob2b_audit, %orob2b_account.entity.audit.class% ] ]
+        tags:
+            - { name: doctrine.event_listener, event: loadClassMetadata }
+
     orob2b_account.helper.account_user_role_privileges:
         class: %orob2b_account.helper.account_user_role_privileges.class%
         arguments:
@@ -648,6 +656,13 @@ services:
             - @orob2b_account.visibility.resolver.category_visibility_resolver
         tags:
             - {name: kernel.event_listener, event: orob2b_catalog.category.tree.create_after, method: onCreateAfter }
+
+    orob2b_account.event_listener.frontend_dataaudit_history_grid_listener:
+        class:  %oro_dataaudit.event_listener.dataaudit_history_grid_listener.class%
+        arguments:
+            - [objectClass, objectId]
+        tags:
+          - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-audit-history-grid, method: onBuildAfter }
 
     orob2b_account.model.product_visibility_query_builder_modifier:
         class: %orob2b_account.model.product_visibility_query_builder_modifier.class%

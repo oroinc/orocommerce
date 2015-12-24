@@ -38,44 +38,18 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         $this->shoppingListOne = $this->getEntity(1, true);
         $this->shoppingListTwo = $this->getEntity(2, false);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $securityToken */
-        $securityToken = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
-        $securityToken->expects($this->any())
-            ->method('getUser')
-            ->willReturn(
-                (new AccountUser())
-                    ->setFirstName('skip')
-                    ->setAccount(new Account())
-            );
+        $tokenStorage = $this->getTokenStorage(
+            (new AccountUser())
+                ->setFirstName('skip')
+                ->setAccount(new Account())
+        );
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TokenStorageInterface $tokenStorage */
-        $tokenStorage = $this
-            ->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
-        $tokenStorage->expects($this->any())
-            ->method('getToken')
-            ->willReturn($securityToken);
-
-        $entityManager = $this->getManagerRegistry();
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface $translator */
-        $translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|QuantityRoundingService $roundingService */
-        $roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $roundingService->expects($this->any())
-            ->method('roundQuantity')
-            ->will(
-                $this->returnCallback(
-                    function ($value, $unit, $product) {
-                        return round($value, 0, PHP_ROUND_HALF_UP);
-                    }
-                )
-            );
-
-        $this->manager = new ShoppingListManager($entityManager, $tokenStorage, $translator, $roundingService);
+        $this->manager = new ShoppingListManager(
+            $this->getManagerRegistry(),
+            $tokenStorage,
+            $this->getTranslator(),
+            $this->getRoundingService()
+        );
     }
 
     public function testCreateCurrent()
@@ -180,6 +154,111 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
 
         $this->manager->bulkAddLineItems($lineItems, $shoppingList, 10);
         $this->assertEquals(10, $shoppingList->getLineItems()->count());
+    }
+
+    public function testGetShoppingLists()
+    {
+        $user = new AccountUser();
+
+        $shoppingList1 = $this->getEntity(10, false);
+        $shoppingList2 = $this->getEntity(20, false);
+        $shoppingList3 = $this->getEntity(30, true);
+
+        /* @var $repository ShoppingListRepository|\PHPUnit_Framework_MockObject_MockObject */
+        $repository = $this->getMockBuilder('OroB2B\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $repository->expects($this->once())
+            ->method('findAllExceptCurrentForAccountUser')
+            ->with($user)
+            ->willReturn([$shoppingList1, $shoppingList2]);
+        $repository->expects($this->once())
+            ->method('findCurrentForAccountUser')
+            ->with($user)
+            ->willReturn($shoppingList3);
+
+        /* @var $entityManager EntityManager|\PHPUnit_Framework_MockObject_MockObject */
+        $entityManager = $this->getMockBuilder('Doctrine\ORM\EntityManager')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $entityManager->expects($this->any())
+            ->method('getRepository')
+            ->willReturn($repository);
+
+        /* @var $registry ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
+        $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->willReturn($entityManager);
+
+        $manager = new ShoppingListManager(
+            $registry,
+            $this->getTokenStorage($user),
+            $this->getTranslator(),
+            $this->getRoundingService()
+        );
+
+        $this->assertEquals(
+            [
+                'currentShoppingList' => $shoppingList3,
+                'shoppingLists' => [$shoppingList1, $shoppingList2],
+            ],
+            $manager->getShoppingLists()
+        );
+    }
+
+    /**
+     * @param AccountUser $accountUser
+     * @return \PHPUnit_Framework_MockObject_MockObject|TokenStorageInterface
+     */
+    protected function getTokenStorage(AccountUser $accountUser)
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $securityToken */
+        $securityToken = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $securityToken->expects($this->any())
+            ->method('getUser')
+            ->willReturn($accountUser);
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|TokenStorageInterface $tokenStorage */
+        $tokenStorage = $this
+            ->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
+        $tokenStorage->expects($this->any())
+            ->method('getToken')
+            ->willReturn($securityToken);
+
+        return $tokenStorage;
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
+     */
+    protected function getTranslator()
+    {
+        return $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|QuantityRoundingService
+     */
+    protected function getRoundingService()
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|QuantityRoundingService $roundingService */
+        $roundingService = $this->getMockBuilder('OroB2B\Bundle\ProductBundle\Rounding\QuantityRoundingService')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $roundingService->expects($this->any())
+            ->method('roundQuantity')
+            ->will(
+                $this->returnCallback(
+                    function ($value, $unit, $product) {
+                        return round($value, 0, PHP_ROUND_HALF_UP);
+                    }
+                )
+            );
+
+        return $roundingService;
     }
 
     /**

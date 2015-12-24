@@ -168,13 +168,22 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
                 ->scalarNode('class')->end()
                 ->scalarNode('group')->end()
                 ->scalarNode('template')->end()
-                ->scalarNode('datagrid_confirm')->end()
+                ->scalarNode('confirmation')->end()
                 ->scalarNode('dialog_title')->end()
                 ->arrayNode('dialog_options')
                     ->prototype('variable')
                     ->end()
                 ->end()
                 ->scalarNode('dialog_template')->end()
+                ->scalarNode('page_component_module')->end()
+                ->arrayNode('page_component_options')
+                    ->prototype('variable')
+                    ->end()
+                ->end()
+                ->arrayNode('data')
+                    ->prototype('variable')
+                    ->end()
+                ->end()
             ->end();
 
         return $node;
