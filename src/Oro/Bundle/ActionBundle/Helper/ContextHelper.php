@@ -14,6 +14,7 @@ class ContextHelper
     const ROUTE_PARAM = 'route';
     const ENTITY_ID_PARAM = 'entityId';
     const ENTITY_CLASS_PARAM = 'entityClass';
+    const DATAGRID_PARAM = 'datagrid';
 
     /** @var DoctrineHelper */
     protected $doctrineHelper;
@@ -48,6 +49,7 @@ class ContextHelper
                 self::ROUTE_PARAM => $this->getRequestParameter(self::ROUTE_PARAM),
                 self::ENTITY_ID_PARAM => $this->getRequestParameter(self::ENTITY_ID_PARAM),
                 self::ENTITY_CLASS_PARAM => $this->getRequestParameter(self::ENTITY_CLASS_PARAM),
+                self::DATAGRID_PARAM => $this->getRequestParameter(self::DATAGRID_PARAM),
             ];
         }
 
@@ -74,7 +76,7 @@ class ContextHelper
                 );
             }
 
-            $this->actionDatas[$hash] = new ActionData($entity ? ['data' => $entity] : []);
+            $this->actionDatas[$hash] = new ActionData(['data' => $entity]);
         }
 
         return $this->actionDatas[$hash];
@@ -103,6 +105,7 @@ class ContextHelper
                 self::ROUTE_PARAM => null,
                 self::ENTITY_ID_PARAM => null,
                 self::ENTITY_CLASS_PARAM => null,
+                self::DATAGRID_PARAM => null,
             ],
             $context
         );
@@ -139,8 +142,9 @@ class ContextHelper
         foreach ($properties as $property) {
             $array[$property] = $this->getPropertyAccessor()->getValue($context, sprintf('[%s]', $property));
         }
+        array_multisort($array);
 
-        return md5(json_encode(array_multisort($array), JSON_NUMERIC_CHECK));
+        return md5(json_encode($array, JSON_NUMERIC_CHECK));
     }
 
     /**
