@@ -108,8 +108,9 @@ class ShoppingListManager
      * @param LineItem          $lineItem
      * @param ShoppingList|null $shoppingList
      * @param bool|true         $flush
+     * @param bool|false        $concatNotes
      */
-    public function addLineItem(LineItem $lineItem, ShoppingList $shoppingList, $flush = true)
+    public function addLineItem(LineItem $lineItem, ShoppingList $shoppingList, $flush = true, $concatNotes = false)
     {
         $em = $this->managerRegistry->getManagerForClass('OroB2BShoppingListBundle:LineItem');
         $lineItem->setShoppingList($shoppingList);
@@ -123,6 +124,11 @@ class ShoppingListManager
                 $duplicate->getProduct()
             );
             $duplicate->setQuantity($quantity);
+
+            if ($concatNotes) {
+                $notes = trim(implode(' ', [$duplicate->getNotes(), $lineItem->getNotes()]));
+                $duplicate->setNotes($notes);
+            }
         } else {
             $shoppingList->addLineItem($lineItem);
             $em->persist($lineItem);
