@@ -484,3 +484,42 @@ datagrid:
         extends: tax-jurisdiction-grid
         properties: { id: ~ }
         actions: ~
+
+    tax-account-group-grid:
+        extends: account-groups-grid
+        source:
+            query:
+                join:
+                    left:
+                        - { join: %orob2b_tax.entity.account_group_tax_code.class%, alias: account_group_tax_code, conditionType: 'WITH', condition: 'account_group MEMBER OF account_group_tax_code.accountGroups' }
+                where:
+                    and:
+                        - account_group_tax_code.id = :account_group_tax_code_id
+            bind_parameters:
+                - account_group_tax_code_id
+
+    tax-account-grid:
+        extends: account-accounts-grid
+        source:
+            query:
+                join:
+                    left:
+                        - { join: %orob2b_tax.entity.account_tax_code.class%, alias: account_tax_code, conditionType: 'WITH', condition: 'account MEMBER OF account_tax_code.accounts' }
+                where:
+                    and:
+                        - account_tax_code.id = :account_tax_code_id
+            bind_parameters:
+                - account_tax_code_id
+
+    tax-product-grid:
+        extends: products-grid
+        source:
+            query:
+                join:
+                    left:
+                        - { join: %orob2b_tax.entity.product_tax_code.class%, alias: product_tax_code, conditionType: 'WITH', condition: 'product MEMBER OF product_tax_code.products' }
+                where:
+                    and:
+                        - product_tax_code.id = :product_tax_code_id
+            bind_parameters:
+                - product_tax_code_id
