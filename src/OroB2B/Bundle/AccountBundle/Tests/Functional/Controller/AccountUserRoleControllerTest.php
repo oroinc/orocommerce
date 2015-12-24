@@ -16,6 +16,9 @@ class AccountUserRoleControllerTest extends WebTestCase
     const TEST_ROLE = 'Test account user role';
     const UPDATED_TEST_ROLE = 'Updated test account user role';
 
+    /**
+     * @var array
+     */
     protected $privileges = [
         'action' => [
             0 => [

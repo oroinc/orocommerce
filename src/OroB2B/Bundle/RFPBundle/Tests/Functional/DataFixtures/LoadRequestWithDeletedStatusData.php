@@ -21,7 +21,7 @@ class LoadRequestWithDeletedStatusData extends AbstractFixture implements Depend
             'phone'      => '2-(999)507-4625',
             'company'    => 'Google',
             'role'       => 'CEO',
-            'body'       => 'Hey, you!'
+            'note'       => 'Hey, you!'
         ]
     ];
 
@@ -57,7 +57,7 @@ class LoadRequestWithDeletedStatusData extends AbstractFixture implements Depend
                 ->setPhone($rawRequest['phone'])
                 ->setCompany($rawRequest['company'])
                 ->setRole($rawRequest['role'])
-                ->setBody($rawRequest['body'])
+                ->setNote($rawRequest['note'])
                 ->setStatus($deletedRequestStatus)
             ;
 

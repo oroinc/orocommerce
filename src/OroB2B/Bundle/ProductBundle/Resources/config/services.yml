@@ -14,7 +14,7 @@ parameters:
     orob2b_product.service.duplicator.class: OroB2B\Bundle\ProductBundle\Duplicator\ProductDuplicator
     orob2b_product.service.sku_incrementor.class: OroB2B\Bundle\ProductBundle\Duplicator\SkuIncrementor
     orob2b_product.service.product_update_handler.class: OroB2B\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler
-    orob2b_product.service.product_data_storage.class: OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage
+    orob2b_product.storage.product_data_storage.class: OroB2B\Bundle\ProductBundle\Storage\ProductDataStorage
     orob2b_product.validator.product_by_sku.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductBySkuValidator
     orob2b_product.provider.custom_field_provider.class: OroB2B\Bundle\ProductBundle\Provider\CustomFieldProvider
     orob2b_product.provider.product_status_provider.class: OroB2B\Bundle\ProductBundle\Provider\ProductStatusProvider
@@ -25,6 +25,7 @@ parameters:
     orob2b_product.event_listener.restrict_disabled_products.class: OroB2B\Bundle\ProductBundle\EventListener\RestrictDisabledProductsEventListener
 
     orob2b_product.validator.unique_variant_links.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator
+    orob2b_product.validator.product_variant_field.class: OroB2B\Bundle\ProductBundle\Validator\Constraints\ProductVariantFieldValidator
 
     orob2b_product.component_processor.filter.class: OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorFilter
     orob2b_product.component_processor.registry.class: OroB2B\Bundle\ProductBundle\ComponentProcessor\ComponentProcessorRegistry
@@ -51,7 +52,6 @@ services:
     orob2b_product.service.abstract_rounding:
         class: %orob2b_product.service.abstract_rounding.class%
         abstract: true
-        public: false
         arguments:
             - @oro_config.manager
 
@@ -114,13 +114,26 @@ services:
         parent: oro_form.model.update_handler
         scope: request
         calls:
-            - [setUrlGenerator, [@router]]
+            - [setActionManager, [@oro_action.manager]]
             - [setTranslator, [@translator]]
 
-    orob2b_product.service.product_data_storage:
-        class: %orob2b_product.service.product_data_storage.class%
+    orob2b_product.storage.product_data_bag:
+        class: %session.attribute_bag.class%
+        public: false
+        arguments:
+            - '_product_data_bag'
+        calls:
+            - [setName, ['product_data_bag']]
+
+    orob2b_product.storage.session_data_storage:
+        class: %orob2b_product.storage.product_data_storage.class%
+        abstract: true
         arguments:
             - @session
+
+    orob2b_product.storage.product_data_storage:
+        class: %orob2b_product.storage.product_data_storage.class%
+        parent: orob2b_product.storage.session_data_storage
 
     orob2b_product.validator.product_by_sku:
             class: %orob2b_product.validator.product_by_sku.class%
@@ -144,7 +157,7 @@ services:
         class: %orob2b_product.component_processor.data_storage_aware.processor.class%
         arguments:
             - @router
-            - @orob2b_product.service.product_data_storage
+            - @orob2b_product.storage.product_data_storage
             - @oro_security.security_facade
             - @session
             - @translator
@@ -202,6 +215,13 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: orob2b_product_unique_variant_links }
 
+    orob2b_product.validator.product_variant_field:
+        class: %orob2b_product.validator.product_variant_field.class%
+        arguments:
+            - @orob2b_product.provider.custom_field_provider
+        tags:
+            - { name: validator.constraint_validator, alias: orob2b_product_variant_field }
+
     orob2b_product.event_listener.restricted_products_datagrid:
         class: %orob2b_product.event_listener.restricted_products_datagrid.class%
         arguments:
@@ -253,7 +273,6 @@ services:
             - @oro_config.global
             - @orob2b_product.model.product_visibility_query_builder_modifier
             - @orob2b_frontend.request.frontend_helper
-            - @request_stack
 
     orob2b_product.event_listener.product_select_db_query:
         class: %orob2b_product.event_listener.product_select_db_query.class%

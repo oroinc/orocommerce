@@ -281,7 +281,6 @@ class ProductTest extends \PHPUnit_Framework_TestCase
     public function getDefaultDescriptionExceptionDataProvider()
     {
         return [
-            'no default description' => [[]],
             'several default descriptions' => [[new LocalizedFallbackValue(), new LocalizedFallbackValue()]],
         ];
     }

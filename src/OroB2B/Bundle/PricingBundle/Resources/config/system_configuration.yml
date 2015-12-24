@@ -1,10 +1,23 @@
 oro_system_configuration:
     groups:
+        price_list_settings:
+            title: orob2b.pricing.system_configuration.price_lists
+            icon: 'icon-briefcase'
+        default_price_lists:
+            title: orob2b.pricing.system_configuration.default_price_lists
+            icon: 'icon-briefcase'
+            
         product_price_settings:
             title: orob2b.pricing.system_configuration.groups.product_price_settings.title
 
     fields:
-        orob2b_pricing.rounding_type:
+        oro_b2b_pricing.default_price_lists:
+            data_type: array
+            type: orob2b_pricing_price_list_system_config
+            options:
+                label: orob2b.pricing.system_configuration.price_lists
+                resettable: false
+        oro_b2b_pricing.rounding_type:
             data_type: string
             type: choice
             priority: 10
@@ -25,12 +38,16 @@ oro_system_configuration:
         system_configuration:
             platform:
                 children:
-                    general_setup:
+                    catalog:
                         children:
-                            product:
-                                priority: 220
+                            product_settings:
                                 children:
                                     product_price_settings:
+                                        children:
+                                            - oro_b2b_pricing.rounding_type
+                            price_list_settings:
+                                children:
+                                    default_price_lists:
                                         priority: 100
                                         children:
-                                            - orob2b_pricing.rounding_type
+                                            - oro_b2b_pricing.default_price_lists

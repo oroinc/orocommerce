@@ -19,6 +19,13 @@ class ProductVariantLink
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
      */
     protected $id;
 
@@ -26,6 +33,13 @@ class ProductVariantLink
      * @var Product
      * @ORM\ManyToOne(targetEntity="Product", inversedBy="variantLinks")
      * @ORM\JoinColumn(name="parent_product_id", referencedColumnName="id", onDelete="CASCADE", nullable=false))
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
      */
     protected $parentProduct;
 
@@ -36,8 +50,8 @@ class ProductVariantLink
      * @ConfigField(
      *      defaultValues={
      *          "importexport"={
-     *              "identity"=true,
-     *              "full"=false
+     *              "order"=10,
+     *              "identity"=true
      *          }
      *      }
      * )
@@ -47,6 +61,13 @@ class ProductVariantLink
     /**
      * @var bool
      * @ORM\Column(name="visible", type="boolean", nullable=false, options={"default"=true})
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "order"=20
+     *          }
+     *      }
+     * )
      */
     protected $visible = true;
 
@@ -58,6 +79,14 @@ class ProductVariantLink
     {
         $this->parentProduct = $parentProduct;
         $this->product = $product;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->product;
     }
 
     /**
