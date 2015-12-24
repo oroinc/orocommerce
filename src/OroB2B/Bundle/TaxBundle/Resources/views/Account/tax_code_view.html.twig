@@ -6,6 +6,13 @@
         {% if isGranted %}<a href="{{ path('orob2b_tax_account_tax_code_view', {'id': entity.id}) }}">{% endif %}
         {{ entity.code }}
         {% if isGranted %}</a>{% endif %}
+    {% elseif accountGroupTaxCode %}
+        {% set isGranted = resource_granted('VIEW', accountGroupTaxCode) %}
+        {{ 'orob2b.tax.accountgrouptaxcode.account.view.label'|trans }} (
+        {% if isGranted %}<a href="{{ path('orob2b_tax_account_group_tax_code_view', {'id': accountGroupTaxCode.id}) }}">{% endif %}
+         {{ accountGroupTaxCode.code }}
+        {% if isGranted %}</a>{% endif %}
+        )
     {% endif %}
 {% endset %}
 

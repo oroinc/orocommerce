@@ -37,6 +37,7 @@ orob2b.tax:
         id.label: 'ID'
         code.label: 'Code'
         description.label: 'Description'
+        account.view.label: 'Defined for the group'
 
     taxrule:
         entity_label: 'Tax Rule'

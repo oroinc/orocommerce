@@ -7,6 +7,8 @@ use Symfony\Component\Form\FormView;
 use Doctrine\ORM\EntityRepository;
 
 use OroB2B\Bundle\TaxBundle\EventListener\AccountFormViewListener;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\TaxBundle\Entity\AccountGroupTaxCode;
 use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 
@@ -26,7 +28,8 @@ class AccountFormViewListenerTest extends AbstractFormViewListenerTest
             $this->doctrineHelper,
             $this->requestStack,
             'OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode',
-            'OroB2B\Bundle\AccountBundle\Entity\Account'
+            'OroB2B\Bundle\AccountBundle\Entity\Account',
+            'OroB2B\Bundle\TaxBundle\Entity\AccountGroupTaxCode'
         );
     }
 
@@ -89,7 +92,130 @@ class AccountFormViewListenerTest extends AbstractFormViewListenerTest
             ->getMock();
         $env->expects($this->once())
             ->method('render')
-            ->with('OroB2BTaxBundle:Account:tax_code_view.html.twig', ['entity' => $taxCode])
+            ->with('OroB2BTaxBundle:Account:tax_code_view.html.twig', [
+                'entity' => $taxCode,
+                'accountGroupTaxCode' => null
+            ])
+            ->willReturn('');
+
+        $event = $this->getBeforeListRenderEvent();
+        $event->expects($this->once())
+            ->method('getEnvironment')
+            ->willReturn($env);
+
+        $this->getListener()->onView($event);
+    }
+
+    public function testOnAccountViewWithAccountGroupTaxCode()
+    {
+        $this->request
+            ->expects($this->any())
+            ->method('get')
+            ->with('id')
+            ->willReturn(1);
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|EntityRepository $repository */
+        $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->setMethods(['findOneByAccount'])
+            ->getMock();
+
+        $repository
+            ->expects($this->once())
+            ->method('findOneByAccount')
+            ->willReturn(null);
+
+        $accountGroupTaxCodeRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->setMethods(['findOneByAccountGroup'])
+            ->getMock();
+
+        $accountGroupTaxCode = new AccountGroupTaxCode();
+
+        $accountGroupTaxCodeRepository
+            ->expects($this->once())
+            ->method('findOneByAccountGroup')
+            ->willReturn($accountGroupTaxCode);
+
+        $this->doctrineHelper
+            ->expects($this->once())
+            ->method('getEntityReference')
+            ->willReturn((new Account())->setGroup(new AccountGroup()));
+
+        $this->doctrineHelper
+            ->expects($this->exactly(2))
+            ->method('getEntityRepository')
+            ->willReturnOnConsecutiveCalls($repository, $accountGroupTaxCodeRepository);
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
+        $env = $this->getMockBuilder('\Twig_Environment')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $env->expects($this->once())
+            ->method('render')
+            ->with('OroB2BTaxBundle:Account:tax_code_view.html.twig', [
+                'entity' => null,
+                'accountGroupTaxCode' => $accountGroupTaxCode
+            ])
+            ->willReturn('');
+
+        $event = $this->getBeforeListRenderEvent();
+        $event->expects($this->once())
+            ->method('getEnvironment')
+            ->willReturn($env);
+
+        $this->getListener()->onView($event);
+    }
+
+    public function testOnAccountViewAllEmpty()
+    {
+        $this->request
+            ->expects($this->any())
+            ->method('get')
+            ->with('id')
+            ->willReturn(1);
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|EntityRepository $repository */
+        $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->setMethods(['findOneByAccount'])
+            ->getMock();
+
+        $repository
+            ->expects($this->once())
+            ->method('findOneByAccount')
+            ->willReturn(null);
+
+        $accountGroupTaxCodeRepository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+            ->disableOriginalConstructor()
+            ->setMethods(['findOneByAccountGroup'])
+            ->getMock();
+
+        $accountGroupTaxCodeRepository
+            ->expects($this->once())
+            ->method('findOneByAccountGroup')
+            ->willReturn(null);
+
+        $this->doctrineHelper
+            ->expects($this->once())
+            ->method('getEntityReference')
+            ->willReturn((new Account())->setGroup(new AccountGroup()));
+
+        $this->doctrineHelper
+            ->expects($this->exactly(2))
+            ->method('getEntityRepository')
+            ->willReturnOnConsecutiveCalls($repository, $accountGroupTaxCodeRepository);
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
+        $env = $this->getMockBuilder('\Twig_Environment')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $env->expects($this->once())
+            ->method('render')
+            ->with('OroB2BTaxBundle:Account:tax_code_view.html.twig', [
+                'entity' => null,
+                'accountGroupTaxCode' => null
+            ])
             ->willReturn('');
 
         $event = $this->getBeforeListRenderEvent();
