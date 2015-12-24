@@ -89,7 +89,7 @@ class ProductRepositoryTest extends WebTestCase
         $this->repository->insertFromBaseTable($this->getInsertFromSelectExecutor());
         $actual = $this->getActualArray();
 
-        $this->assertCount(4, $actual);
+        $this->assertCount(3, $actual);
         $this->assertInsertedFromBaseTable($actual);
     }
 
@@ -109,7 +109,7 @@ class ProductRepositoryTest extends WebTestCase
 
         $actual = $this->getActualArray();
 
-        $this->assertCount(20, $actual);
+        $this->assertCount(19, $actual);
         $this->assertInsertedByCategory($actual);
     }
 
@@ -119,7 +119,7 @@ class ProductRepositoryTest extends WebTestCase
         $actual = $this->repository->findBy(['website' => $this->website]);
 
         $this->assertEmpty($actual);
-        $this->assertSame(7, $deleted);
+        $this->assertSame(6, $deleted);
     }
 
     /**
@@ -130,7 +130,7 @@ class ProductRepositoryTest extends WebTestCase
         $this->repository->insertFromBaseTable($this->getInsertFromSelectExecutor(), $this->website);
         $actual = $this->getActualArray();
 
-        $this->assertCount(17, $actual);
+        $this->assertCount(16, $actual);
         $this->assertInsertedFromBaseTable($actual);
     }
 
@@ -152,7 +152,7 @@ class ProductRepositoryTest extends WebTestCase
         );
 
         $actual = $this->getActualArray();
-        $this->assertCount(20, $actual);
+        $this->assertCount(19, $actual);
         $this->assertInsertedByCategory($actual, $this->website);
     }
 

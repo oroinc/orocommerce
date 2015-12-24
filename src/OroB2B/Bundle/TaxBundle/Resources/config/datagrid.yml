@@ -7,12 +7,29 @@ datagrid:
                     - tax_code.id
                     - tax_code.code
                     - tax_code.description
+                    - tax_code.createdAt
+                    - tax_code.updatedAt
+        columns:
+            code:
+                label: ~
+            description:
+                label: ~
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
         sorters:
             columns:
                 code:
                     data_name: tax_code.code
                 description:
                     data_name: tax_code.description
+                createdAt:
+                    data_name: tax_code.createdAt
+                updatedAt:
+                    data_name: tax_code.updatedAt
             default:
                 id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
         filters:
@@ -23,12 +40,14 @@ datagrid:
                 description:
                     type:      string
                     data_name: tax_code.description
+                createdAt:
+                    type:      datetime
+                    data_name: tax_code.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: tax_code.updatedAt
         properties:
             id: ~
-
-    tax-base-grid-tax-codes-grid:
-        extends: tax-base-tax-codes-grid
-        properties:
             view_link:
                 type:   url
                 params: [ id ]
@@ -57,7 +76,7 @@ datagrid:
                 icon:          trash
 
     tax-product-tax-codes-grid:
-        extends: tax-base-grid-tax-codes-grid
+        extends: tax-base-tax-codes-grid
         options:
             entityHint: product tax code
         source:
@@ -86,7 +105,7 @@ datagrid:
                 acl_resource:  orob2b_tax_product_tax_code_delete
 
     tax-account-tax-codes-grid:
-        extends: tax-base-grid-tax-codes-grid
+        extends: tax-base-tax-codes-grid
         options:
             entityHint: account tax code
         source:
@@ -115,36 +134,16 @@ datagrid:
                 acl_resource:  orob2b_tax_account_tax_code_delete
 
     products-tax-code-select-grid:
-        extends: tax-base-tax-codes-grid
-        options:
-            entityHint: product tax code
-        source:
-            acl_resource: orob2b_tax_product_tax_code_view
-            query:
-                from:
-                    - { table: %orob2b_tax.entity.product_tax_code.class%, alias: tax_code }
-        columns:
-            code:
-                label: orob2b.tax.accounttaxcode.code.label
-            description:
-                label: orob2b.tax.accounttaxcode.description.label
+        extends: tax-product-tax-codes-grid
+        properties: { id: ~ }
+        actions: ~
 
     accounts-tax-code-select-grid:
-        extends: tax-base-tax-codes-grid
-        options:
-            entityHint: account tax code
-        source:
-            acl_resource: orob2b_tax_account_tax_code_view
-            query:
-                from:
-                    - { table: %orob2b_tax.entity.account_tax_code.class%, alias: tax_code }
-        columns:
-            code:
-                label: orob2b.tax.accounttaxcode.code.label
-            description:
-                label: orob2b.tax.accounttaxcode.description.label
+        extends: tax-account-tax-codes-grid
+        properties: { id: ~ }
+        actions: ~
 
-    tax-taxes-grid-base:
+    tax-taxes-grid:
         options:
             entityHint: tax
         source:
@@ -156,6 +155,8 @@ datagrid:
                     - tax.code
                     - tax.description
                     - tax.rate
+                    - tax.createdAt
+                    - tax.updatedAt
                 from:
                     - { table: %orob2b_tax.entity.tax.class%, alias: tax }
         columns:
@@ -166,6 +167,12 @@ datagrid:
             rate:
                 label: orob2b.tax.rate.label
                 frontend_type: percent
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
         sorters:
             columns:
                 code:
@@ -174,6 +181,10 @@ datagrid:
                     data_name: tax.description
                 rate:
                     data_name: tax.rate
+                createdAt:
+                    data_name: tax.createdAt
+                updatedAt:
+                    data_name: tax.updatedAt
             default:
                 id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
         filters:
@@ -187,12 +198,14 @@ datagrid:
                 rate:
                     type:      string
                     data_name: tax.rate
+                createdAt:
+                    type:      datetime
+                    data_name: tax.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: tax.updatedAt
         properties:
             id: ~
-
-    tax-taxes-grid:
-        extends: tax-taxes-grid-base
-        properties:
             view_link:
                 type:  url
                 route: orob2b_tax_view
@@ -227,7 +240,9 @@ datagrid:
                 acl_resource:  orob2b_tax_delete
 
     tax-taxes-select-grid:
-        extends: tax-taxes-grid-base
+        extends: tax-taxes-grid
+        properties: { id: ~ }
+        actions: ~
 
     tax-taxe-rules-grid:
         options:
@@ -243,6 +258,8 @@ datagrid:
                     - product_tax_code.code as product_tax_code_code
                     - tax.code as tax_code
                     - tax_jutisdiction.code as tax_jurisdiction_code
+                    - tax_rule.createdAt
+                    - tax_rule.updatedAt
                 from:
                     - { table: %orob2b_tax.entity.tax_rule.class%, alias: tax_rule }
                 join:
@@ -262,6 +279,12 @@ datagrid:
                 label: orob2b.tax.taxrule.tax.label
             description:
                 label: orob2b.tax.taxrule.description.label
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
         sorters:
             columns:
                 description:
@@ -274,6 +297,10 @@ datagrid:
                     data_name: tax_code
                 tax_jurisdiction_code:
                     data_name: tax_jurisdiction_code
+                createdAt:
+                    data_name: tax_rule.createdAt
+                updatedAt:
+                    data_name: tax_rule.updatedAt
             default:
                 id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
         filters:
@@ -282,37 +309,23 @@ datagrid:
                     type:      string
                     data_name: tax_rule.description
                 account_tax_code_code:
-                    type:      entity
-                    data_name: account_tax_code.id
-                    options:
-                       field_type: entity
-                       field_options:
-                           class:    %orob2b_tax.entity.account_tax_code.class%
-                           property: code
+                    type:      string
+                    data_name: account_tax_code.code
                 product_tax_code_code:
-                    type:      entity
-                    data_name: product_tax_code.id
-                    options:
-                       field_type: entity
-                       field_options:
-                           class:    %orob2b_tax.entity.product_tax_code.class%
-                           property: code
+                    type:      string
+                    data_name: product_tax_code.code
                 tax_code:
-                    type:      entity
-                    data_name: tax.id
-                    options:
-                       field_type: entity
-                       field_options:
-                           class:    %orob2b_tax.entity.tax.class%
-                           property: code
+                    type:      string
+                    data_name: tax.code
                 tax_jurisdiction_code:
-                    type:      entity
-                    data_name: tax_jurisdiction.id
-                    options:
-                       field_type: entity
-                       field_options:
-                           class:    %orob2b_tax.entity.tax_jurisdiction.class%
-                           property: code
+                    type:      string
+                    data_name: tax_jurisdiction.code
+                createdAt:
+                    type:      datetime
+                    data_name: tax_code.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: tax_code.updatedAt
         properties:
             id: ~
             view_link:
@@ -348,7 +361,7 @@ datagrid:
                 icon:          trash
                 acl_resource:  orob2b_tax_rule_delete
 
-    tax-jurisdiction-base-grid:
+    tax-jurisdiction-grid:
         source:
             acl_resource: orob2b_tax_jurisdiction_view
             type: orm
@@ -357,6 +370,8 @@ datagrid:
                     - jurisdiction.id
                     - jurisdiction.code
                     - jurisdiction.description
+                    - jurisdiction.createdAt
+                    - jurisdiction.updatedAt
                 from:
                     - { table: %orob2b_tax.entity.tax_jurisdiction.class%, alias: jurisdiction }
         columns:
@@ -364,22 +379,24 @@ datagrid:
                 label: orob2b.tax.taxjurisdiction.code.label
             description:
                 label: orob2b.tax.taxjurisdiction.description.label
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+            updatedAt:
+                label:         oro.ui.updated_at
+                frontend_type: datetime
         sorters:
             columns:
                 code:
                     data_name: jurisdiction.code
                 description:
                     data_name: jurisdiction.description
+                createdAt:
+                    data_name: tax_code.createdAt
+                updatedAt:
+                    data_name: tax_code.updatedAt
             default:
                 id: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
-        properties:
-            id: ~
-
-    tax-jurisdiction-select-grid:
-        extends: tax-jurisdiction-base-grid
-
-    tax-jurisdiction-grid:
-        extends: tax-jurisdiction-base-grid
         filters:
             columns:
                 code:
@@ -388,7 +405,14 @@ datagrid:
                 description:
                     type:      string
                     data_name: jurisdiction.description
+                createdAt:
+                    type:      datetime
+                    data_name: tax_code.createdAt
+                updatedAt:
+                    type:      datetime
+                    data_name: tax_code.updatedAt
         properties:
+            id: ~
             view_link:
                 type:   url
                 route: orob2b_tax_jurisdiction_view
@@ -421,3 +445,8 @@ datagrid:
                 link:          delete_link
                 icon:          trash
                 acl_resource:  orob2b_tax_jurisdiction_delete
+
+    tax-jurisdiction-select-grid:
+        extends: tax-jurisdiction-grid
+        properties: { id: ~ }
+        actions: ~

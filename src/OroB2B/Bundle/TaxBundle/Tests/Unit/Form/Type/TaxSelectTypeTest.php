@@ -2,7 +2,10 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
+
 use OroB2B\Bundle\TaxBundle\Form\Type\TaxSelectType;
 
 class TaxSelectTypeTest extends \PHPUnit_Framework_TestCase
@@ -29,27 +32,20 @@ class TaxSelectTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testConfigureOptions()
     {
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
-        $resolver->expects($this->once())
-            ->method('setDefaults')
-            ->with(
-                $this->callback(
-                    function (array $options) {
-                        $this->assertArrayHasKey('autocomplete_alias', $options);
-                        $this->assertArrayHasKey('create_form_route', $options);
-                        $this->assertArrayHasKey('configs', $options);
-                        $this->assertEquals('orob2b_tax_autocomplete', $options['autocomplete_alias']);
-                        $this->assertEquals('orob2b_tax_create', $options['create_form_route']);
-                        $this->assertEquals(
-                            ['placeholder' => 'orob2b.tax.form.choose'],
-                            $options['configs']
-                        );
-
-                        return true;
-                    }
-                )
-            );
+        $resolver = new OptionsResolver();
 
         $this->type->configureOptions($resolver);
+        $options = $resolver->resolve([]);
+
+
+        $this->assertArrayHasKey('autocomplete_alias', $options);
+        $this->assertArrayHasKey('create_form_route', $options);
+        $this->assertArrayHasKey('configs', $options);
+        $this->assertEquals('orob2b_tax_autocomplete', $options['autocomplete_alias']);
+        $this->assertEquals('orob2b_tax_create', $options['create_form_route']);
+        $this->assertEquals(
+            ['placeholder' => 'orob2b.tax.form.choose'],
+            $options['configs']
+        );
     }
 }
