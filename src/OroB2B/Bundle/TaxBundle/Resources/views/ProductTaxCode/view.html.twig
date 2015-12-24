@@ -1,7 +1,7 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
 {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 
-{% oro_title_set({params : {"%code%": entity.code } }) %}
+{% oro_title_set({params : {"%taxCode%": entity.code } }) %}
 
 {% block pageHeader %}
     {% set breadcrumbs = {

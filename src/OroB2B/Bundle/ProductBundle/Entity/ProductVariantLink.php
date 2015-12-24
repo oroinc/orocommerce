@@ -82,6 +82,14 @@ class ProductVariantLink
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->product;
+    }
+
+    /**
      * @return int
      */
     public function getId()

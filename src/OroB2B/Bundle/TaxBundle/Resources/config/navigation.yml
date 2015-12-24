@@ -69,18 +69,18 @@ oro_menu_config:
 
 oro_titles:
     orob2b_tax_product_tax_code_index: ~
-    orob2b_tax_product_tax_code_view:   '%%code%% - oro.ui.view'
-    orob2b_tax_product_tax_code_update: '%%code%% - oro.ui.edit'
+    orob2b_tax_product_tax_code_view:   '%%taxCode%% - oro.ui.view'
+    orob2b_tax_product_tax_code_update: '%%taxCode%% - oro.ui.edit'
     orob2b_tax_product_tax_code_create: 'oro.ui.create_entity'
 
     orob2b_tax_account_tax_code_index: ~
-    orob2b_tax_account_tax_code_view:   '%%code%% - oro.ui.view'
-    orob2b_tax_account_tax_code_update: '%%code%% - oro.ui.edit'
+    orob2b_tax_account_tax_code_view:   '%%taxCode%% - oro.ui.view'
+    orob2b_tax_account_tax_code_update: '%%taxCode%% - oro.ui.edit'
     orob2b_tax_account_tax_code_create: 'oro.ui.create_entity'
 
     orob2b_tax_account_group_tax_code_index: ~
-    orob2b_tax_account_group_tax_code_view:   '%%code%% - oro.ui.view'
-    orob2b_tax_account_group_tax_code_update: '%%code%% - oro.ui.edit'
+    orob2b_tax_account_group_tax_code_view:   '%%taxCode%% - oro.ui.view'
+    orob2b_tax_account_group_tax_code_update: '%%taxCode%% - oro.ui.edit'
     orob2b_tax_account_group_tax_code_create: 'oro.ui.create_entity'
     
     orob2b_tax_index: ~
@@ -94,6 +94,6 @@ oro_titles:
     orob2b_tax_rule_create: 'oro.ui.create_entity'
 
     orob2b_tax_jurisdiction_index: ~
-    orob2b_tax_jurisdiction_view:   '%%code%% - oro.ui.view'
-    orob2b_tax_jurisdiction_update: '%%code%% - oro.ui.edit'
+    orob2b_tax_jurisdiction_view:   '%%taxCode%% - oro.ui.view'
+    orob2b_tax_jurisdiction_update: '%%taxCode%% - oro.ui.edit'
     orob2b_tax_jurisdiction_create: 'oro.ui.create_entity'
