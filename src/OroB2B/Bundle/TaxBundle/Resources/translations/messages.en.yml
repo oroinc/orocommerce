@@ -33,7 +33,7 @@ orob2b.tax:
         entity_label: 'Account Group Tax Code'
         entity_plural_label: 'Account Group Tax Codes'
         description: 'List of Account Group Tax Codes'
-        accounts.label: 'Account Groups'
+        account_groups.label: 'Account Groups'
         id.label: 'ID'
         code.label: 'Code'
         description.label: 'Description'
