@@ -6,8 +6,15 @@ use Symfony\Component\Validator\Constraint;
 
 class ZipCodeFields extends Constraint
 {
-    public $onlyOneTypeMessage = 'Zip code has to have only code or range';
-    public $rangeShouldHaveBothFieldMessage = 'Zip code range has to have start and end';
+    /**
+     * @var string
+     */
+    public $onlyOneTypeMessage = 'orob2b.tax.validator.constraints.single_or_range';
+
+    /**
+     * @var string
+     */
+    public $rangeShouldHaveBothFieldMessage = 'orob2b.tax.validator.constraints.range_start_and_end_required';
 
     /**
      * {@inheritdoc}

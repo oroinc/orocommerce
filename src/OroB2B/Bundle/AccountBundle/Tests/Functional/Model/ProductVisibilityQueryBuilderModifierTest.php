@@ -114,7 +114,6 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                 'user' => AccountLoadAccountUserData::EMAIL,
                 'expectedData' => [
                     'product.1',
-                    'product.5',
                     'product.6',
                 ]
             ],
@@ -135,7 +134,6 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                 'expectedData' => [
                     'product.2',
                     'product.3',
-                    'product.5',
                     'product.6',
                 ]
             ],
@@ -157,6 +155,16 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product.3',
                     'product.4',
                     'product.5',
+                    'product.6',
+                ]
+            ],
+            'account without group and config hidden' => [
+                'configValue' => ProductVisibility::HIDDEN,
+                'user' => AccountLoadAccountUserData::ORPHAN_EMAIL,
+                'expectedData' => [
+                    'product.2',
+                    'product.3',
+                    'product.4',
                     'product.6',
                 ]
             ],

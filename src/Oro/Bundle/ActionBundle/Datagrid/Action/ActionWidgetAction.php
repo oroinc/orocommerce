@@ -1,12 +1,12 @@
 <?php
 
-namespace OroB2B\Bundle\RFPBundle\Datagrid\Action;
+namespace Oro\Bundle\ActionBundle\Datagrid\Action;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\DataGridBundle\Extension\Action\Actions\AbstractAction;
 
-class RequestChangeStatusDialogAction extends AbstractAction
+class ActionWidgetAction extends AbstractAction
 {
     /**
      * @var TranslatorInterface
@@ -49,10 +49,10 @@ class RequestChangeStatusDialogAction extends AbstractAction
         $options = parent::getOptions();
         $finalOptions = array_replace_recursive($this->defaultOptions, $options->toArray());
 
-        if (isset($finalOptions['widgetOptions']['options']['dialogOptions']['title'])) {
-            $title = $this->translator->trans($finalOptions['widgetOptions']['options']['dialogOptions']['title']);
+        if (isset($finalOptions['options']['dialogOptions']['title'])) {
+            $title = $this->translator->trans($finalOptions['options']['dialogOptions']['title']);
 
-            $finalOptions['widgetOptions']['options']['dialogOptions']['title'] = $title;
+            $finalOptions['options']['dialogOptions']['title'] = $title;
         }
 
         $options->merge($finalOptions);

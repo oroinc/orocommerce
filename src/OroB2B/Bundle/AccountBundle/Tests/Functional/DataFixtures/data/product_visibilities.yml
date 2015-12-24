@@ -50,7 +50,7 @@ product.4:
 product.5:
     website: Default
     all:
-        visibility: visible
+        visibility: config
         reference: product.5.visibility.all
     groups:
         account_group.group1:

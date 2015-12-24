@@ -17,6 +17,7 @@ use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
 use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
+use OroB2B\Bundle\TaxBundle\Migrations\ZipCodeRangeHelper;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -75,6 +76,17 @@ class LoadTaxDemoData extends AbstractFixture implements
     protected $scheduledTaxRules = [];
 
     /**
+     * @var ZipCodeRangeHelper
+     */
+    protected $helper;
+
+    /** {@inheritdoc} */
+    public function __construct()
+    {
+        $this->helper = new ZipCodeRangeHelper();
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function setContainer(ContainerInterface $container = null)
@@ -89,7 +101,7 @@ class LoadTaxDemoData extends AbstractFixture implements
     {
         return [
             'OroB2B\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData',
-            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData'
+            'OroB2B\Bundle\AccountBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
         ];
     }
 
@@ -195,10 +207,10 @@ class LoadTaxDemoData extends AbstractFixture implements
      */
     protected function handle($row)
     {
-        $taxId = $this->createTax($row['TaxRegionCode'], $row['CombinedRate']);
         $jurisdictionId = $this->createTaxJurisdiction($row);
-        $this->scheduleAddZipCode($jurisdictionId, $row['ZipCode']);
-        $this->scheduleTaxRule($row, $taxId, $jurisdictionId);
+        if (false !== $jurisdictionId) {
+            $this->scheduleAddZipCode($jurisdictionId, $row['ZipCode']);
+        }
     }
 
     /**
@@ -209,13 +221,16 @@ class LoadTaxDemoData extends AbstractFixture implements
     protected function createTax($code, $rate)
     {
         if (!array_key_exists($code, $this->taxes)) {
-            $this->connection->insert('orob2b_tax', [
-                'code' => $code,
-                'description' => sprintf('Tax with rate %f', $rate),
-                'rate' => $rate,
-                'created_at' => $this->getCurrentTime(),
-                'updated_at' => $this->getCurrentTime(),
-            ]);
+            $this->connection->insert(
+                'orob2b_tax',
+                [
+                    'code' => $code,
+                    'description' => sprintf('%s tax with rate %s%%', $code, $rate * 100),
+                    'rate' => $rate,
+                    'created_at' => $this->getCurrentTime(),
+                    'updated_at' => $this->getCurrentTime(),
+                ]
+            );
 
             $this->taxes[$code] = $this->connection->lastInsertId('orob2b_tax_id_seq');
         }
@@ -225,22 +240,33 @@ class LoadTaxDemoData extends AbstractFixture implements
 
     /**
      * @param $row
-     * @return string
+     * @return string|bool false if wasn't created
      */
     protected function createTaxJurisdiction($row)
     {
+        $rate = $row['CombinedRate'];
+        if ($rate == 0) {
+            return false;
+        }
+
         $code = $row['TaxRegionCode'];
         if (!array_key_exists($code, $this->jurisdictions)) {
-            $this->connection->insert('orob2b_tax_jurisdiction', [
+            $this->connection->insert(
+                'orob2b_tax_jurisdiction',
+                [
                     'code' => $code,
-                    'description' => '',
+                    'description' => sprintf('%s %s %s Jurisdiction', self::DEFAULT_COUNTRY, $row['State'], $code),
                     'country_code' => self::DEFAULT_COUNTRY,
                     'region_code' => sprintf('%s-%s', self::DEFAULT_COUNTRY, $row['State']),
                     'created_at' => $this->getCurrentTime(),
                     'updated_at' => $this->getCurrentTime(),
-            ]);
+                ]
+            );
 
             $this->jurisdictions[$code] = $this->connection->lastInsertId('orob2b_tax_jurisdiction_id_seq');
+
+            $taxId = $this->createTax($row['TaxRegionCode'], $rate);
+            $this->scheduleTaxRule($row, $taxId, $this->jurisdictions[$code]);
         }
 
         return $this->jurisdictions[$code];
@@ -261,14 +287,8 @@ class LoadTaxDemoData extends AbstractFixture implements
         $time = $this->getCurrentTime();
 
         foreach ($this->scheduledZipCodes as $jurisdictionId => $zipCodes) {
-            foreach ($zipCodes as $zipCode) {
-                $data[] = [
-                    $jurisdictionId,
-                    $zipCode,
-                    $time,
-                    $time,
-                ];
-            }
+            $this->helper->extractZipCodeRanges($data, $zipCodes, $jurisdictionId, $time);
+
 
             if (count($data) > self::BATCH_SIZE) {
                 $this->insertZipCodes($data);
@@ -286,12 +306,18 @@ class LoadTaxDemoData extends AbstractFixture implements
      */
     protected function insertZipCodes($data)
     {
-        return $this->batchInsert('orob2b_tax_zip_code', [
-            'tax_jurisdiction_id',
-            'zip_code',
-            'created_at',
-            'updated_at'
-        ], $data);
+        return $this->batchInsert(
+            'orob2b_tax_zip_code',
+            [
+                'tax_jurisdiction_id',
+                'zip_code',
+                'zip_range_start',
+                'zip_range_end',
+                'created_at',
+                'updated_at',
+            ],
+            $data
+        );
     }
 
     /**
@@ -313,7 +339,7 @@ class LoadTaxDemoData extends AbstractFixture implements
             'account_tax_code_id' => $accountTaxCodeId,
             'tax_id' => $taxId,
             'tax_jurisdiction_id' => $jurisdictionId,
-            'description' => sprintf('Tax rule for %s with rate %f%%', $regionCode, $normalizedRate),
+            'description' => sprintf('Tax rule for %s with rate %s%%', $regionCode, $normalizedRate),
             'created_at' => $this->getCurrentTime(),
             'updated_at' => $this->getCurrentTime(),
         ];
@@ -341,15 +367,19 @@ class LoadTaxDemoData extends AbstractFixture implements
      */
     protected function insertTaxRules($data)
     {
-        return $this->batchInsert('orob2b_tax_rule', [
-            'product_tax_code_id',
-            'account_tax_code_id',
-            'tax_id',
-            'tax_jurisdiction_id',
-            'description',
-            'created_at',
-            'updated_at'
-        ], $data);
+        return $this->batchInsert(
+            'orob2b_tax_rule',
+            [
+                'product_tax_code_id',
+                'account_tax_code_id',
+                'tax_id',
+                'tax_jurisdiction_id',
+                'description',
+                'created_at',
+                'updated_at',
+            ],
+            $data
+        );
     }
 
     /**
@@ -361,12 +391,15 @@ class LoadTaxDemoData extends AbstractFixture implements
     {
         $key = $regionCode;
         if (!array_key_exists($key, $this->productTaxCodes)) {
-            $this->connection->insert('orob2b_tax_product_tax_code', [
-                'code' => sprintf('%s%s', $regionCode, $taxRate),
-                'description' => sprintf('Product tax code for %s with rate %f%%', $regionCode, $taxRate),
-                'created_at' => $this->getCurrentTime(),
-                'updated_at' => $this->getCurrentTime()
-            ]);
+            $this->connection->insert(
+                'orob2b_tax_product_tax_code',
+                [
+                    'code' => $regionCode,
+                    'description' => sprintf('Product tax code for %s with rate %u%%', $regionCode, $taxRate),
+                    'created_at' => $this->getCurrentTime(),
+                    'updated_at' => $this->getCurrentTime(),
+                ]
+            );
 
             $this->productTaxCodes[$key] = $this->connection->lastInsertId('orob2b_tax_product_tax_code_id_seq');
         }
@@ -383,12 +416,15 @@ class LoadTaxDemoData extends AbstractFixture implements
     {
         $key = $regionCode;
         if (!array_key_exists($key, $this->accountTaxCodes)) {
-            $this->connection->insert('orob2b_tax_account_tax_code', [
-                'code' => sprintf('%s%s', $regionCode, $taxRate),
-                'description' => sprintf('Account tax code for %s with rate %f%%', $regionCode, $taxRate),
-                'created_at' => $this->getCurrentTime(),
-                'updated_at' => $this->getCurrentTime()
-            ]);
+            $this->connection->insert(
+                'orob2b_tax_account_tax_code',
+                [
+                    'code' => $regionCode,
+                    'description' => sprintf('Account tax code for %s with rate %s%%', $regionCode, $taxRate),
+                    'created_at' => $this->getCurrentTime(),
+                    'updated_at' => $this->getCurrentTime(),
+                ]
+            );
 
             $this->accountTaxCodes[$key] = $this->connection->lastInsertId('orob2b_tax_account_tax_code_id_seq');
         }
