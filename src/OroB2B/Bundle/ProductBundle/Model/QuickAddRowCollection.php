@@ -17,7 +17,7 @@ class QuickAddRowCollection extends ArrayCollection
     }
 
     /**
-     * @return QuickAddRow[]
+     * @return bool
      */
     public function hasCompleteRows()
     {
