@@ -55,16 +55,11 @@ services:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_account_tax_code }
         lazy: true
 
-    orob2b_tax.event_listener.abstract_form_view:
-        abstract: true
+    orob2b_tax.event_listener.account_form_view:
+        class: %orob2b_tax.event_listener.account_form_view.class%
         arguments:
             - @oro_entity.doctrine_helper
             - @request_stack
-
-    orob2b_tax.event_listener.account_form_view:
-        class: %orob2b_tax.event_listener.account_form_view.class%
-        parent: orob2b_tax.event_listener.abstract_form_view
-        arguments:
             - %orob2b_tax.entity.account_tax_code.class%
             - %orob2b_account.entity.account.class%
         tags:
@@ -73,8 +68,9 @@ services:
 
     orob2b_tax.event_listener.product_form_view:
         class: %orob2b_tax.event_listener.product_form_view.class%
-        parent: orob2b_tax.event_listener.abstract_form_view
         arguments:
+            - @oro_entity.doctrine_helper
+            - @request_stack
             - %orob2b_tax.entity.product_tax_code.class%
             - %orob2b_product.product.class%
         tags:
