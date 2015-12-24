@@ -7,6 +7,7 @@ Table of Contents
  - [Configuration File](#configuration-file)
  - [Configuration Loading](#configuration-loading)
  - [Configuration Merging](#configuration-merging)
+ - [Configuration Replacing](#configuration-replacing)
  - [Defining an Action](#defining-an-action)
    - [Example](#example)
  - [Frontend Options Configuration](#frontend-options-configuration)
@@ -74,14 +75,20 @@ configuration.
 Merging uses simple rules:
  * if node value is scalar - value will be replaced
  * if node value is array - this array will be complemented by values from the second configuration
- * if array node `replace` is exist on the same level and it contain original node name - value will be replaced
 
 After first step application knows about all actions and have only one configuration for each action.
 
 **Extending**
 On this step application collects configurations for all actions which contain `extends`. Then main action 
 configuration, which specified in `extends`, copied and merged with configuration of original action. Merging use same 
-way, which use `overriding` step (first and second rules).
+way, which use `overriding` step (rules).
+
+Configuration Replacing
+=======================
+
+In merge process we can replace any node on any level of our configuration. If node `replace` is exist and it contains
+some nodes which located on the same level of node `replace` - value of this nodes will be replaced by values from
+_last_ configuration from queue.
 
 Defining an Action
 ==================
