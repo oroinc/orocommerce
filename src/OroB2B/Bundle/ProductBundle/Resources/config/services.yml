@@ -52,7 +52,6 @@ services:
     orob2b_product.service.abstract_rounding:
         class: %orob2b_product.service.abstract_rounding.class%
         abstract: true
-        public: false
         arguments:
             - @oro_config.manager
 
