@@ -63,6 +63,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
                 'expected' => [
+                    'replace' => [],
                     'label' => 'Test Label 1',
                     'applications' => [],
                     'entities' => [],
@@ -85,6 +86,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
             'full valid configuration' => [
                 'input' => [
                     'action' => [
+                        'replace' => 'test_replace',
                         'label' => 'Test Label 2',
                         'applications' => ['app1', 'app2', 'app3'],
                         'entities' => ['Entity1', 'Entity2'],
@@ -141,6 +143,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
                 'expected' => [
+                    'replace' => ['test_replace'],
                     'label' => 'Test Label 2',
                     'applications' => ['app1', 'app2', 'app3'],
                     'entities' => ['Entity1', 'Entity2'],
