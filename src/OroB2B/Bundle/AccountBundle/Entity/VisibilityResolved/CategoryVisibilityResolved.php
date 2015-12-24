@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\CategoryRepository")
  * @ORM\Table(name="orob2b_ctgr_vsb_resolv")
  */
 class CategoryVisibilityResolved extends BaseCategoryVisibilityResolved
