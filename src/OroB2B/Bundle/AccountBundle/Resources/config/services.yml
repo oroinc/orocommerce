@@ -96,6 +96,7 @@ parameters:
 
     orob2b_account.provider.visibility_choices.class: OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider
     orob2b_account.provider.sign_in.class: OroB2B\Bundle\AccountBundle\Provider\SignInDataProvider
+    orob2b_account.provider.frontend_account_user_registration_form.class: OroB2B\Bundle\AccountBundle\Provider\FrontendAccountUserRegistrationForm
 
     orob2b_account.audit.discriminator_map_listener.class: OroB2B\Bundle\AccountBundle\Audit\DiscriminatorMapListener
 
@@ -847,31 +848,17 @@ services:
             - { name: doctrine.event_listener, event: onFlush }
             - { name: doctrine.event_listener, event: postFlush }
             - { name: doctrine.event_listener, event: postRemove }
-    orob2b_account.form.frontend_account_registration:
-        class: OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType
-        factory_method: create
-        factory_service: form.factory
-        arguments: ["orob2b_account_frontend_account_user_register"]
 
-    orob2b_account.layout.data_provider.new_account_user:
-        class: OroB2B\Bundle\AccountBundle\Provider\NewAccountUserDataProvider
+    orob2b_account.provider.frontend_account_user_registration_form:
+        class: %orob2b_account.provider.frontend_account_user_registration_form.class%
         arguments:
+            - @form.factory
             - @doctrine
             - @oro_config.manager
             - @orob2b_website.manager
             - @oro_user.manager
         tags:
-            - { name: layout.data_provider, alias: orob2b_account_new_account_user }
-
-    orob2b_account.layout.context_configurator.form.frontend_account_registration:
-        class: Oro\Bundle\LayoutBundle\Layout\Extension\DependencyInjectionFormContextConfigurator
-        arguments:
-            - @service_container
-        calls:
-            - [ setContextOptionName, [ "frontend_account_registration_form" ] ]
-            - [ setFormServiceId, [ "orob2b_account.form.frontend_account_registration" ] ]
-        tags:
-            - { name: layout.context_configurator }
+            - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_register }
 
     orob2b_account.provider.sign_in:
         class: %orob2b_account.provider.sign_in.class%

@@ -4,8 +4,13 @@ namespace OroB2B\Bundle\AccountBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
+
 use Oro\Component\Layout\ContextInterface;
 use Oro\Component\Layout\DataProviderInterface;
+use Oro\Bundle\LayoutBundle\Layout\Form\FormAccessor;
+use Oro\Bundle\LayoutBundle\Layout\Form\FormAction;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -13,12 +18,19 @@ use Oro\Bundle\UserBundle\Entity\UserManager;
 use Oro\Bundle\UserBundle\Entity\User;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountUser;
+use OroB2B\Bundle\AccountBundle\Form\Type\FrontendAccountUserRegistrationType;
 use OroB2B\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
-class NewAccountUserDataProvider implements DataProviderInterface
+class FrontendAccountUserRegistrationForm implements DataProviderInterface
 {
-    /** @var AccountUser */
+    /** @var FormAccessor */
     protected $data;
+
+    /** @var FormInterface */
+    protected $form;
+
+    /** @var ManagerRegistry */
+    protected $formFactory;
 
     /** @var ManagerRegistry */
     protected $managerRegistry;
@@ -33,17 +45,20 @@ class NewAccountUserDataProvider implements DataProviderInterface
     private $userManager;
 
     /**
+     * @param FormFactoryInterface $formFactory
      * @param ManagerRegistry $managerRegistry
      * @param ConfigManager $configManager
      * @param WebsiteManager $websiteManager
      * @param UserManager $userManager
      */
     public function __construct(
+        FormFactoryInterface $formFactory,
         ManagerRegistry $managerRegistry,
         ConfigManager $configManager,
         WebsiteManager $websiteManager,
         UserManager $userManager
     ) {
+        $this->formFactory = $formFactory;
         $this->managerRegistry = $managerRegistry;
         $this->configManager = $configManager;
         $this->websiteManager = $websiteManager;
@@ -55,7 +70,7 @@ class NewAccountUserDataProvider implements DataProviderInterface
      */
     public function getIdentifier()
     {
-        return 'orob2b_account_new_account_user';
+        return 'orob2b_account_frontend_account_user_register';
     }
 
     /**
@@ -64,10 +79,21 @@ class NewAccountUserDataProvider implements DataProviderInterface
     public function getData(ContextInterface $context)
     {
         if (!$this->data) {
-            $this->data = $this->getAccountUser();
+            $this->data = new FormAccessor(
+                $this->getForm(),
+                FormAction::createByRoute('orob2b_account_frontend_account_user_register')
+            );
         }
-
         return $this->data;
+    }
+
+    public function getForm()
+    {
+        if (!$this->form) {
+            $this->form = $this->formFactory
+                ->create(FrontendAccountUserRegistrationType::NAME, $this->getAccountUser());
+        }
+        return $this->form;
     }
 
     /**
