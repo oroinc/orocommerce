@@ -1,86 +1,101 @@
-{% block _product_widget %}
+{% block _product_container_widget %}
     <!-- START Product -->
     {% set attr = attr|merge({
-    class: attr.class|default('') ~ " product clearfix not-implemented"
+    class: attr.class|default('') ~ " product clearfix"
     }) %}
-    <h1 class="product-title product-title_mobile">Medical Scrubs</h1>
     <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+    <!-- END Product -->
+{% endblock %}
+
+{% block _product_title_mobile_widget %}
+    <h1 class="product-title product-title_mobile">{{ text }}</h1>
+{% endblock %}
+
+{% block _product_image_widget %}
+    {% if product.image %}
         <!-- START Product Gallery -->
         <div class="product-gallery-widget product-gallery-widget_vertical product-gallery-widget_l_floated">
             <div class="product-gallery product-gallery_vertical">
                 <div class="product-gallery__image-holder">
                     <div class="product-gallery__image-holder__carousel" data-product-gallery>
-                        <a href="#"><img src="http://placehold.it/378x378" alt="Product image 1-1"/></a>
+                        <a href="#">
+                            <img src="{{ resized_image_url(product.image, 378, 378) }}" alt="{{ product.defaultName }}"
+                            width="378" height="378">
+                        </a>
+                        {#todo update image preview filter#}
                     </div>
                 </div>
             </div>
         </div>
         <!-- END Product Gallery -->
+    {% endif %}
+{% endblock %}
 
-        <!-- START Product Description -->
-        <div class="product__description-container product__description-container_md product__description-container_l_floated">
-            <div class="product__title-container">
-                <h1 class="product-title">Medical Scrubs</h1>
-                <div class="product-review-widget product-review-widget__bmargin">
-                    <span class="product-review__rating" data-rating></span>
-                    <span class="product-review__count">(2)</span>
-                    <a href="#" class="product-review__add-link">Add Your Review</a>
-                </div>
-            </div>
-            <div class="product__specification-container product__specification-container_l_floated">
-                <div class="product__specification">
-                    <table class="table borderless paddingless">
-                        <tr>
-                            <td>Item #:</td>
-                            <td><span class="red">13656</span></td>
-                        </tr>
-                        <tr>
-                            <td>MFG Model #:</td>
-                            <td><span class="red">1ABC13656</span></td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="product__qnty">
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th style="width: 40%" class="text-center text-uppercase">qty</th>
-                            <th style="width: 60%" class="text-center">Unit Price</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td class="text-center">1</td>
-                            <td class="text-center">$15.98</td>
-                        </tr>
-                        <tr>
-                            <td class="text-center">5</td>
-                            <td class="text-center">$15.49</td>
-                        </tr>
-                        <tr>
-                            <td class="text-center">10</td>
-                            <td class="text-center">$14.38</td>
-                        </tr>
-                        <tr>
-                            <td class="text-center">20</td>
-                            <td class="text-center">$13.58</td>
-                        </tr>
-                        <tr>
-                            <td class="text-center">50</td>
-                            <td class="text-center">$12.78</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="product__matrix">
-                    <a href="#" class="product__matrix__link">
-                        <i class="icon-list"></i>
-                        <span>Order With Matrix Grid</span>
-                        <i class="icon-right-open-mini"></i>
-                    </a>
-                </div>
-                <div class="product__colors">
-                    <label>Select Colors</label>
+{% block _product_description_container_widget %}
+    <!-- START Product Description -->
+    <div class="product__description-container product__description-container_md product__description-container_l_floated">
+        {{ block_widget(block) }}
+    </div>
+    <!-- END Product Description -->
+{% endblock %}
+
+{% block _product_title_container_widget %}
+    {% set attr = attr|merge({
+    class: attr.class|default('') ~ " product__title-container"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _product_title_widget %}
+    <h1 class="product-title">{{ text }}</h1>
+{% endblock %}
+
+{% block _product_rating_widget %}
+    <div class="product-review-widget product-review-widget__bmargin not-implemented">
+        <span class="product-review__rating" data-rating></span>
+        <span class="product-review__count">(2)</span>
+        <a href="#" class="product-review__add-link">Add Your Review</a>
+    </div>
+{% endblock %}
+
+{% block _product_specification_container_widget %}
+    <div class="product__specification-container product__specification-container_l_floated">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _product_specification_widget %}
+    <div class="product__specification">
+        <table class="table borderless paddingless">
+            <tr>
+                <td>Item #:</td>
+                <td><span class="red">{{ product.sku }}</span></td>
+            </tr>
+            <tr class="not-implemented">
+                <td>MFG Model #:</td>
+                <td><span class="red">1ABC13656</span></td>
+            </tr>
+        </table>
+    </div>
+{% endblock %}
+
+{% block _order_with_matrix_widget %}
+    <div class="product__matrix not-implemented">
+        <a href="#" class="product__matrix__link">
+            <i class="icon-list"></i>
+            <span>Order With Matrix Grid</span>
+            <i class="icon-right-open-mini"></i>
+        </a>
+    </div>
+{% endblock %}
+
+{% block _product_variants_widget %}
+    <div class="product__colors not-implemented">
+        <label>Select Colors</label>
                       <span class="badge badge_sm product__colors__item color-item_red">
                         <input type="checkbox" name="product_red"/>
                       </span>
@@ -99,68 +114,60 @@
                       <span class="badge badge_sm product__colors__item color-item_gray">
                         <input type="checkbox" name="product_gray"/>
                       </span>
-                </div>
-                <div class="product__qty-input">
-                    <label for="product_qty" class="wsnr">Enter a QTY</label>
-                    <input type="text" value="" name="product_qty" id="product_qty" placeholder="QTY #"
-                           class="input input_inline"/>
-                </div>
-
-                <div class="btn btn-block btn_orange btn_has-dropdown btn_has-dropdown_lg">
-                    <a href="#" class="direct-link">Add To List</a>
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
-                       aria-expanded="true"><i class="material-icons">arrow_drop_down</i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#">Option 1</a></li>
-                        <li><a href="#">Option 2</a></li>
-                        <li><a href="#">Option 3</a></li>
-                    </ul>
-                </div>
-
-            </div>
-            <div class="product__description-content product__description-content_l_floated">
-                <div class="product__description">
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus in tristique neque.
-                        Suspendisse tortor dui, commodo vel nunc sed, viverra posuere erat. Vivamus rutrum non dolor sit
-                        amet mattis. Proin malesuada pellentesque metus ac volutpat. Etiam sit amet leo id tortor
-                        porttitor tempor. Aliquam hendrerit consectetur nisl quis porta. </p>
-                    <p>Vivamus elit risus, auctor ut mauris vitae, commodo imperdiet est. Sed euismod magna id lectus
-                        sollicitudin semper.</p>
-
-                    <ul class="product__features-list">
-                        <li>Nam in imperdiet est, ac iaculis turpis.</li>
-                    </ul>
-
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. <a href="#">Phasellus in tristique
-                            neque. Suspendisse tortor dui, commodo vel nunc sed, viverra posuere erat.</a> Vivamus
-                        rutrum non dolor sit amet mattis.</p>
-
-                    <ul class="product__docs">
-                        <li>
-                            <a href="#">
-                                <i class="material-icons">description</i>
-                                Item Manual
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <i class="material-icons">description</i>
-                                Item Warranty Information
-                            </a>
-                        </li>
-                    </ul>
-                    <p>
-                        <a href="#">
-                            <i class="icon-share"></i>
-                            Share This product
-                        </a>
-                    </p>
-                </div>
-            </div>
-        </div>
-        <!-- END Product Description -->
     </div>
-    <!-- END Product -->
+{% endblock %}
+
+{% block _quick_order_form_widget %}
+    <div class="product__qty-input not-implemented">
+        <label for="product_qty" class="wsnr">Enter a QTY</label>
+        <input type="text" value="" name="product_qty" id="product_qty" placeholder="QTY #"
+               class="input input_inline"/>
+    </div>
+
+    <div class="btn btn-block btn_orange btn_has-dropdown btn_has-dropdown_lg not-implemented">
+        <a href="#" class="direct-link">Add To List</a>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true"
+           aria-expanded="true"><i class="material-icons">arrow_drop_down</i></a>
+        <ul class="dropdown-menu">
+            <li><a href="#">Option 1</a></li>
+            <li><a href="#">Option 2</a></li>
+            <li><a href="#">Option 3</a></li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block _product_description_content_widget %}
+    <div class="product__description-content product__description-content_l_floated">
+        <div class="product__description">
+            {{ block_widget(block) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block _attachments_widget %}
+    <ul class="product__docs not-implemented">
+        <li>
+            <a href="#">
+                <i class="material-icons">description</i>
+                Item Manual
+            </a>
+        </li>
+        <li>
+            <a href="#">
+                <i class="material-icons">description</i>
+                Item Warranty Information
+            </a>
+        </li>
+    </ul>
+{% endblock %}
+
+{% block _share_widget %}
+    <p class="not-implemented">
+        <a href="#">
+            <i class="icon-share"></i>
+            Share This product
+        </a>
+    </p>
 {% endblock %}
 
 {% block _product_tabs_widget %}
