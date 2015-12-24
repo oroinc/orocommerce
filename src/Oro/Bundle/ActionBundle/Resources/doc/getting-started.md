@@ -144,11 +144,6 @@ field 'expired' to `true`.
 If `form_options` are specified after click on button will be shown form dialog with attributes fields. And functions
 will run only on form submit.
 
-Action Diagram
---------------
-
-Following diagram shows action processes logic in graphical representation: ![Action Diagram](images/getting-started_action-diagram.png)
-
 Configuration Validation
 ------------------------
 

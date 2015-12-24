@@ -424,3 +424,8 @@ actions:
                     name: $name
                     group: $group
 ```
+
+Action Diagram
+--------------
+
+Following diagram shows action processes logic in graphical representation: ![Action Diagram](images/getting-started_action-diagram.png)
