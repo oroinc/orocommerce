@@ -14,7 +14,7 @@ class AccountGroupTaxCodeRepository extends EntityRepository
      *
      * @return AccountGroupTaxCode|null
      */
-    public function findOneByProduct(AccountGroup $accountGroup)
+    public function findOneByAccountGroup(AccountGroup $accountGroup)
     {
         if (!$accountGroup->getId()) {
             return null;

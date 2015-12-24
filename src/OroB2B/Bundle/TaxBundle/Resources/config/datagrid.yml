@@ -134,7 +134,7 @@ datagrid:
                 acl_resource:  orob2b_tax_account_tax_code_delete
 
     tax-account-group-tax-codes-grid:
-        extends: tax-base-grid-tax-codes-grid
+        extends: tax-base-tax-codes-grid
         options:
             entityHint: account group tax code
         source:
@@ -169,6 +169,11 @@ datagrid:
 
     accounts-tax-code-select-grid:
         extends: tax-account-tax-codes-grid
+        properties: { id: ~ }
+        actions: ~
+
+    account-groups-tax-code-select-grid:
+        extends: tax-account-group-tax-codes-grid
         properties: { id: ~ }
         actions: ~
 
