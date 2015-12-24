@@ -90,10 +90,16 @@ orob2b.pricing:
                 label: Pricing Rounding Type
                 tooltip: Select the rounding type that can be used for product prices.
                 choices:
-                    half_up.label: Half Up
-                    half_down.label: Half Down
                     ceil.label: Ceil
                     floor.label: Floor
+                    down.label: Down
+                    up.label: Up
+                    half_even.label: Half Even
+                    half_down.label: Half Down
+                    half_up.label: Half Up
+
+    lineitem:
+        subtotal.label: 'Line items subtotal'
 
 oro:
     importexport:

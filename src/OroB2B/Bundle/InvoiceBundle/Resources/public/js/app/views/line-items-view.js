@@ -77,6 +77,8 @@ define(function(require) {
                 i++
             })
         }
+
+
     });
 
     return LineItemsView;

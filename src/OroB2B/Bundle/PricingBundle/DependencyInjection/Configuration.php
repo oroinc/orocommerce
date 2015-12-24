@@ -26,7 +26,7 @@ class Configuration implements ConfigurationInterface
             $rootNode,
             [
                 self::DEFAULT_PRICE_LISTS => [ 'type' => 'array', 'value' => []],
-                'rounding_type' => ['value' => PriceRoundingService::HALF_UP],
+                'rounding_type' => ['value' => PriceRoundingService::ROUND_HALF_UP],
                 'precision' => ['value' => PriceRoundingService::FALLBACK_PRECISION],
             ]
         );

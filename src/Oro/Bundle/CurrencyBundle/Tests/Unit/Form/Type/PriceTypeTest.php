@@ -24,8 +24,8 @@ class PriceTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->formType = new PriceType();
-        $this->formType->setDataClass('Oro\Bundle\CurrencyBundle\Model\Price');
+        $this->formType = PriceTypeGenerator::createPriceType();
+
         parent::setUp();
     }
 

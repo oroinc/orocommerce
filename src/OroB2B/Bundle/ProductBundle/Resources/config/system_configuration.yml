@@ -25,10 +25,10 @@ oro_system_configuration:
                     - NotBlank: ~
                 choice_translation_domain: messages
                 choices:
-                    half_up: orob2b.product.rounding.type.half_up.label
-                    half_down: orob2b.product.rounding.type.half_down.label
-                    ceil: orob2b.product.rounding.type.ceil.label
-                    floor: orob2b.product.rounding.type.floor.label
+                    0: orob2b.product.rounding.type.ceil.label
+                    1: orob2b.product.rounding.type.floor.label
+                    5: orob2b.product.rounding.type.half_down.label
+                    6: orob2b.product.rounding.type.half_up.label
 
         orob2b_product.general_frontend_product_visibility:
             data_type: array

@@ -52,13 +52,6 @@ services:
         calls:
             - [setDataClass, [%orob2b_pricing.entity.product_price.class%]]
 
-    orob2b_pricing.form.type.product_price_value:
-        class: %orob2b_pricing.form.type.product_price_value.class%
-        arguments:
-            - @orob2b_pricing.rounding.price_rounding_service
-        tags:
-            - { name: form.type, alias: orob2b_pricing_product_price_value }
-
     orob2b_pricing.form.type.price_type_selector:
         class: %orob2b_pricing.form.type.price_type_selector.class%
         tags:

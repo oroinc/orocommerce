@@ -8,6 +8,8 @@ define(function(require) {
     var ProductPricesComponent = require('orob2bpricing/js/app/components/product-prices-component');
     var ProductUnitComponent = require('orob2bproduct/js/app/components/product-unit-component');
     var SubtotalsListener = require('orob2bpricing/js/app/listener/subtotals-listener');
+    var NumberFormatter = require('orolocale/js/formatter/number');
+    var mediator = require('oroui/js/mediator');
 
     /**
      * @export orob2binvoice/js/app/views/line-item-view
@@ -15,6 +17,11 @@ define(function(require) {
      * @class orob2invoice.app.views.LineItemView
      */
     LineItemView = BaseView.extend({
+        priceTypes: {
+            'BUNDLE': 20,
+            'UNIT': 10
+        },
+
         /**
          * @inheritDoc
          */
@@ -35,6 +42,17 @@ define(function(require) {
             this.delegate('click', '.removeLineItem', this.removeRow);
         },
 
+        setTotalPrice: function () {
+            var totalPrice;
+
+            totalPrice = +this.fieldsByName.priceValue.val();
+            if (+this.fieldsByName.priceType.val() === this.priceTypes.UNIT) {
+                totalPrice *= +this.fieldsByName.quantity.val()
+            }
+
+            this.$el.find('.invoice-line-item-total-price').text(NumberFormatter.formatCurrency(totalPrice, 'USD'));
+        },
+
         /**
          * @inheritDoc
          */
@@ -52,13 +70,14 @@ define(function(require) {
             this.initTypeSwitcher();
             this.initPrices();
             this.initProduct();
+            this.setTotalPrice();
         },
 
         initSubtotalListener: function() {
             this.fieldsByName.currency = this.$form
                 .find(':input[data-ftid="' + this.$form.attr('name') + '_currency"]');
 
-            SubtotalsListener.listen('invoice:changing'[
+            SubtotalsListener.listen('invoice:changing', [
                 this.fieldsByName.product,
                 this.fieldsByName.quantity,
                 this.fieldsByName.productUnit,
@@ -145,6 +164,7 @@ define(function(require) {
             }
             return name;
         },
+
         resetData: function() {
             if (this.fieldsByName.hasOwnProperty('quantity')) {
                 this.fieldsByName.quantity.val(1);

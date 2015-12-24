@@ -11,13 +11,13 @@ class PriceRoundingService extends AbstractRoundingService
     const FALLBACK_PRECISION = MoneyType::TYPE_SCALE;
 
     /** {@inheritdoc} */
-    protected function getRoundType()
+    public function getRoundType()
     {
-        return $this->configManager->get('oro_b2b_pricing.rounding_type', self::HALF_UP);
+        return $this->configManager->get('oro_b2b_pricing.rounding_type', self::ROUND_HALF_UP);
     }
 
     /** {@inheritdoc} */
-    protected function getFallbackPrecision()
+    public function getPrecision()
     {
         return self::FALLBACK_PRECISION;
     }

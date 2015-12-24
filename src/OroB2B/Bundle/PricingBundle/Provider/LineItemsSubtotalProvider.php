@@ -9,6 +9,7 @@ use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\CurrencyBundle\Model\PriceAwareInterface;
 
 use OroB2B\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
+use OroB2B\Bundle\PricingBundle\Entity\QuantityAwareInterface;
 use OroB2B\Bundle\PricingBundle\Model\LineItemsAwareInterface;
 use OroB2B\Bundle\PricingBundle\Model\LineItemsSubtotal;
 use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
@@ -46,45 +47,60 @@ class LineItemsSubtotalProvider
     {
         $subtotalAmount = 0.0;
         $subtotal = new LineItemsSubtotal();
-        $subtotal->setLabel($this->translator->trans('Line items subtotal'));//todo translate
+        $subtotal->setLabel($this->translator->trans('orob2b.pricing.lineitem.subtotal.label'));
 
-        /**
-         * TODO: Need to define currency exchange logic. BB-124
-         */
-        if (!$entity instanceof CurrencyAwareInterface) {
-            $baseCurrency = 'USD';
-        } else {
-            $baseCurrency = $entity->getCurrency();
-        }
-
+        $baseCurrency = $this->getBaseCurrency($entity);
         foreach ($entity->getLineItems() as $lineItem) {
             if (!$lineItem instanceof PriceAwareInterface || !$lineItem->getPrice() instanceof Price) {
                 continue;
             }
-            $rowTotal = $lineItem->getPrice()->getValue();
-            if ($lineItem instanceof PriceTypeAwareInterface &&
-                $lineItem->getPriceType() === PriceTypeAwareInterface::PRICE_TYPE_UNIT
-            ) {
-                $rowTotal *= $lineItem->getQuantity();
-            }
-            if ($baseCurrency !== $lineItem->getPrice()->getCurrency()) {
-                $rowTotal *= $this->getExchangeRate($lineItem->getPrice()->getCurrency(), $baseCurrency);
-            }
-            $subtotalAmount += $rowTotal;
+
+            $subtotalAmount += $this->handleRowTotal($lineItem, $baseCurrency);
         }
 
         $subtotal->setAmount(
             $this->rounding->round($subtotalAmount)
         );
-
-        $subtotal->setCurrency($entity->getCurrency());
+        $subtotal->setCurrency($baseCurrency);
 
         return $subtotal;
     }
 
-    public function getLineItemSubtotal()
+    /**
+     * @param PriceAwareInterface $lineItem
+     * @param string $baseCurrency
+     * @return float|int
+     */
+    protected function handleRowTotal(PriceAwareInterface $lineItem, $baseCurrency)
     {
+        $rowTotal = $lineItem->getPrice()->getValue();
+        $rowCurrency = $lineItem->getPrice()->getCurrency();
 
+        if ($lineItem instanceof PriceTypeAwareInterface &&
+            $lineItem instanceof QuantityAwareInterface &&
+            (int)$lineItem->getPriceType() === PriceTypeAwareInterface::PRICE_TYPE_UNIT
+        ) {
+            $rowTotal *= $lineItem->getQuantity();
+        }
+
+        if ($baseCurrency !== $rowCurrency) {
+            $rowTotal *= $this->getExchangeRate($rowCurrency, $baseCurrency);
+        }
+
+        return $rowTotal;
+    }
+
+    /**
+     * @param $entity
+     * @return string
+     */
+    protected function getBaseCurrency($entity)
+    {
+        if (!$entity instanceof CurrencyAwareInterface) {
+            return 'USD';
+        } else {
+            return $entity->getCurrency();
+        }
     }
 
     /**
@@ -94,6 +110,9 @@ class LineItemsSubtotalProvider
      */
     protected function getExchangeRate($fromCurrency, $toCurrency)
     {
+        /**
+         * TODO: Need to define currency exchange logic. BB-124
+         */
         return 1.0;
     }
 }

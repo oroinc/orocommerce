@@ -8,12 +8,13 @@ use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\CurrencyBundle\Model\PriceAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 
-use OroB2B\Bundle\InvoiceBundle\Model\ExtendInvoiceLineItem;
 use OroB2B\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
+use OroB2B\Bundle\PricingBundle\Entity\QuantityAwareInterface;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Entity\ProductUnit;
 use OroB2B\Bundle\ProductBundle\Model\ProductHolderInterface;
 use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
+use OroB2B\Bundle\InvoiceBundle\Model\ExtendInvoiceLineItem;
 
 /**
  * @ORM\Table(
@@ -39,7 +40,8 @@ class InvoiceLineItem extends ExtendInvoiceLineItem implements
     ProductUnitHolderInterface,
     ProductHolderInterface,
     PriceAwareInterface,
-    PriceTypeAwareInterface
+    PriceTypeAwareInterface,
+    QuantityAwareInterface
 {
     /**
      * @var integer

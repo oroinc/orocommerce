@@ -51,10 +51,11 @@
                     <thead>
                     <tr>
                         <th><span>#</span></th>
-                        <th><span>{{ 'orob2b.product.sku.label'|trans }}</span></th>
+                        <th><span>{{ 'orob2b.invoice.invoicelineitem.code.label'|trans }}</span></th>
                         <th><span>{{ 'orob2b.product.entity_label'|trans }}</span></th>
                         <th><span>{{ 'orob2b.invoice.invoicelineitem.quantity.label'|trans }}</span></th>
                         <th><span>{{ 'orob2b.invoice.invoicelineitem.price.label'|trans }}</span></th>
+                        <th><span>{{ 'orob2b.invoice.invoicelineitem.price_total.label'|trans }}</span></th>
                         {% if form.vars.allow_delete %}
                             <th class="invoice-line-item-actions"></th>
                         {% endif %}
@@ -120,4 +121,5 @@
         {{ form_errors(form.price) }}
         {{ form_errors(form.priceType) }}
     </td>
+    <td class="invoice-line-item-total-price"></td>
 {% endblock %}

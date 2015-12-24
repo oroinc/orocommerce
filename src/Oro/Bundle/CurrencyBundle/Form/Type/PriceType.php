@@ -8,7 +8,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Oro\Bundle\CurrencyBundle\Form\DataTransformer\PriceTransformer;
+use OroB2B\Bundle\ProductBundle\Rounding\RoundingServiceInterface;
 
 class PriceType extends AbstractType
 {
@@ -18,6 +18,19 @@ class PriceType extends AbstractType
      * @var string
      */
     protected $dataClass;
+
+    /**
+     * @var RoundingServiceInterface
+     */
+    protected $roundingService;
+
+    /**
+     * @param RoundingServiceInterface $roundingService
+     */
+    public function __construct(RoundingServiceInterface $roundingService)
+    {
+        $this->roundingService = $roundingService;
+    }
 
     /**
      * @param string $dataClass
@@ -51,10 +64,12 @@ class PriceType extends AbstractType
         }
 
         $builder
-            ->add('value', 'number', ['required' => true])
+            ->add('value', 'number', [
+//                'required' => true,
+                'scale' => $this->roundingService->getPrecision(),
+                'rounding_mode' => $this->roundingService->getRoundType(),
+            ])
             ->add('currency', $currencyType, $currencyOptions);
-
-        $builder->addViewTransformer(new PriceTransformer());
     }
 
     /**
