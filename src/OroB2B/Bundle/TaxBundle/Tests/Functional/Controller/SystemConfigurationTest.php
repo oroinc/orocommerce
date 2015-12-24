@@ -73,7 +73,7 @@ class SystemConfigurationTest extends WebTestCase
         $this->assertEquals(BuiltInTaxProvider::NAME, $this->configManager->get('orob2b_tax.tax_provider'));
     }
 
-    public function testBuildInProvider()
+    public function testBuiltInProvider()
     {
         $providers = $this->getContainer()->get('orob2b_tax.provider.tax_provider_registry')->getProviders();
 

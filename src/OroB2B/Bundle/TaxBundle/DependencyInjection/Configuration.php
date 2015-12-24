@@ -9,8 +9,6 @@ use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 
 class Configuration implements ConfigurationInterface
 {
-    const DEFAULT_PRICE_LISTS = 'default_price_lists';
-
     /**
      * {@inheritDoc}
      */
