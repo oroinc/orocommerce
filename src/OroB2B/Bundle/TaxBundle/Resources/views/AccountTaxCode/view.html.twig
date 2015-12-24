@@ -1,0 +1,80 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
+{% oro_title_set({params : {"%taxCode%": entity.code } }) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('orob2b_tax_account_tax_code_index'),
+        'indexLabel': 'orob2b.tax.accounttaxcode.entity_plural_label'|trans,
+        'entityTitle': entity.code|default('N/A'|trans)
+    } %}
+
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block navButtons %}
+    {% if resource_granted('EDIT', entity) %}
+        {{ UI.editButton({
+            'path' : path('orob2b_tax_account_tax_code_update', { 'id': entity.id }),
+            'entity_label': 'orob2b.tax.accounttaxcode.entity_label'|trans
+        }) }}
+    {% endif %}
+    {% if resource_granted('DELETE', entity) %}
+        {{ UI.deleteButton({
+            'dataUrl': path('orob2b_api_tax_delete_accounttaxcode', {'id': entity.id}),
+            'dataRedirect': path('orob2b_tax_account_tax_code_index'),
+            'aCss': 'no-hash remove-button',
+            'dataId': entity.id,
+            'id': 'btn-remove-attribute',
+            'entity_label': 'orob2b.tax.accounttaxcode.entity_label'|trans,
+        }) }}
+    {% endif %}
+{% endblock navButtons %}
+
+{% block content_data %}
+    {% set accountTaxCodeInfo %}
+        {{ UI.renderProperty('orob2b.tax.accounttaxcode.code.label'|trans, entity.code) }}
+        {{ UI.renderProperty('orob2b.tax.accounttaxcode.description.label'|trans, entity.description) }}
+    {% endset %}
+
+    {% set dataBlocks = [{
+        'title': 'orob2b.tax.sections.general'|trans,
+        'class': 'active',
+        'subblocks': [
+            {'data' : [accountTaxCodeInfo]},
+        ]
+    }] %}
+
+    {% set accountGrid %}
+        {{ dataGrid.renderGrid('tax-account-grid', { account_tax_code_id: entity.id }, { cssClass: 'inner-grid' }) }}
+    {% endset %}
+
+    {% set accountGroupGrid %}
+        {{ dataGrid.renderGrid('tax-account-group-grid', { account_tax_code_id: entity.id }, { cssClass: 'inner-grid' }) }}
+    {% endset %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+            'title': 'orob2b.tax.accounttaxcode.accounts.label'|trans,
+            'subblocks': [{
+                'title': '',
+                'useSpan': false,
+                'data' : [accountGrid]
+            }]
+    }] ) %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'orob2b.tax.accounttaxcode.account_groups.label'|trans,
+        'subblocks': [{
+        'title': '',
+        'useSpan': false,
+        'data' : [accountGroupGrid]
+        }]
+    }] ) %}
+
+    {% set id = 'tax-account-tax-code-view' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ parent() }}
+{% endblock content_data %}
