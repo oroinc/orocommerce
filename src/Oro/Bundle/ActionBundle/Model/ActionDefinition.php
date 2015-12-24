@@ -36,6 +36,9 @@ class ActionDefinition
     private $order = 0;
 
     /** @var array */
+    private $buttonOptions = [];
+
+    /** @var array */
     private $frontendOptions = [];
 
     /** @var string */
@@ -217,6 +220,25 @@ class ActionDefinition
     public function setRoutes(array $routes)
     {
         $this->routes = $routes;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getButtonOptions()
+    {
+        return $this->buttonOptions;
+    }
+
+    /**
+     * @param array $buttonOptions
+     * @return $this
+     */
+    public function setButtonOptions(array $buttonOptions)
+    {
+        $this->buttonOptions = $buttonOptions;
 
         return $this;
     }

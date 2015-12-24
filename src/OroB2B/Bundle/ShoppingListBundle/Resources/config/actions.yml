@@ -8,7 +8,7 @@ actions:
             - orob2b_shopping_list_view
         acl_resource: orob2b_order_create
         order: 10
-        frontend_options:
+        button_options:
             icon: icon-briefcase
         postfunctions:
             - @call_service_method:
@@ -29,7 +29,7 @@ actions:
             - orob2b_shopping_list_frontend_view
         acl_resource: orob2b_order_frontend_create
         order: 10
-        frontend_options:
+        button_options:
             icon: icon-briefcase
         postfunctions:
             - @call_service_method:
@@ -48,7 +48,7 @@ actions:
             - orob2b_product_frontend_quick_add
         acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
         order: 30
-        frontend_options:
+        button_options:
             template: OroB2BShoppingListBundle:Action:quickAdd.html.twig
         prefunctions:
             - @call_service_method:
@@ -71,7 +71,7 @@ actions:
             - orob2b_shopping_list_frontend_view
         acl_resource: orob2b_rfp_frontend_request_create
         order: 20
-        frontend_options:
+        button_options:
             icon: icon-briefcase
         postfunctions:
             - @call_service_method:
@@ -86,9 +86,9 @@ actions:
     orob2b_shoppinglist_lineitem_base:
         label: ' '
         frontend_options:
-            dialog_template: OroB2BShoppingListBundle:Action:lineItem.html.twig
-            dialog_title: orob2b.shoppinglist.lineitem.add_line_item
-            dialog_options:
+            template: OroB2BShoppingListBundle:Action:lineItem.html.twig
+            title: orob2b.shoppinglist.lineitem.add_line_item
+            options:
                 width: 460
         attributes:
             lineItem:
@@ -112,9 +112,10 @@ actions:
         routes:
             - orob2b_shopping_list_view
         acl_resource: [CREATE, entity:OroB2B\Bundle\ShoppingListBundle\Entity\LineItem]
-        frontend_options:
+        button_options:
             icon: icon-plus
-            dialog_options:
+        frontend_options:
+            options:
                 modal: false
                 stateEnabled: false
                 incrementalPosition: false
@@ -142,9 +143,10 @@ actions:
     orob2b_shoppinglist_updatelineitem_base:
         extends: orob2b_shoppinglist_lineitem_base
         label: orob2b.shoppinglist.lineitem.edit_line_item
-        frontend_options:
+        button_options:
             icon: icon-edit
-            dialog_options:
+        frontend_options:
+            options:
                 modal: true
         initfunctions:
             - @assign_value: [$.lineItem, $.data]

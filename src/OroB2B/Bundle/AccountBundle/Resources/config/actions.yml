@@ -9,7 +9,7 @@ actions:
         datagrids:
             - account-account-user-grid
         order: 10
-        frontend_options:
+        button_options:
             icon: icon-remove
         acl_resource: [EDIT,$.data]
         prefunctions:
@@ -36,7 +36,7 @@ actions:
         datagrids:
             - account-account-user-grid
         order: 10
-        frontend_options:
+        button_options:
             icon: icon-ok
         acl_resource: [EDIT,$.data]
         preconditions:
@@ -61,7 +61,7 @@ actions:
         datagrids:
             - frontend-account-account-user-grid
         order: 10
-        frontend_options:
+        button_options:
             icon: icon-remove
         acl_resource: [EDIT,$.data]
         prefunctions:
@@ -90,7 +90,7 @@ actions:
         datagrids:
             - frontend-account-account-user-grid
         order: 10
-        frontend_options:
+        button_options:
             icon: icon-ok
         acl_resource: [EDIT,$.data]
         prefunctions:
@@ -118,7 +118,7 @@ actions:
             - orob2b_account_account_user_view
             - orob2b_account_frontend_account_user_view
         order: 20
-        frontend_options:
+        button_options:
             class: back no-hash icons-holder-text
             icon: icon-ok
         acl_resource: [EDIT,$.data]
@@ -144,7 +144,7 @@ actions:
             - orob2b_account_account_user_view
             - orob2b_account_frontend_account_user_view
         order: 30
-        frontend_options:
+        button_options:
             class: back no-hash icons-holder-text
             icon: icon-envelope-alt
         acl_resource: [EDIT,$.data]

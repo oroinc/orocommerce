@@ -71,6 +71,7 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
                     ->defaultTrue()
                 ->end()
                 ->append($this->getAttributesNode())
+                ->append($this->getButtonOptionsNode())
                 ->append($this->getFrontendOptionsNode())
                 ->append($this->getFormOptionsNode())
             ->end();
@@ -157,10 +158,10 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
     /**
      * @return NodeDefinition
      */
-    protected function getFrontendOptionsNode()
+    protected function getButtonOptionsNode()
     {
         $builder = new TreeBuilder();
-        $node = $builder->root('frontend_options');
+        $node = $builder->root('button_options');
         $node
             ->addDefaultsIfNotSet()
             ->children()
@@ -169,12 +170,6 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
                 ->scalarNode('group')->end()
                 ->scalarNode('template')->end()
                 ->scalarNode('confirmation')->end()
-                ->scalarNode('dialog_title')->end()
-                ->arrayNode('dialog_options')
-                    ->prototype('variable')
-                    ->end()
-                ->end()
-                ->scalarNode('dialog_template')->end()
                 ->scalarNode('page_component_module')->end()
                 ->arrayNode('page_component_options')
                     ->prototype('variable')
@@ -184,6 +179,28 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
                     ->prototype('variable')
                     ->end()
                 ->end()
+            ->end();
+
+        return $node;
+    }
+
+    /**
+     * @return NodeDefinition
+     */
+    protected function getFrontendOptionsNode()
+    {
+        $builder = new TreeBuilder();
+        $node = $builder->root('frontend_options');
+        $node
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->arrayNode('options')
+                    ->prototype('variable')
+                    ->end()
+                ->end()
+                ->scalarNode('template')->end()
+                ->scalarNode('title')->end()
+                ->scalarNode('show_dialog')->end()
             ->end();
 
         return $node;

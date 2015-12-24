@@ -466,12 +466,12 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider getDialogTemplateDataProvider
+     * @dataProvider getFrontendTemplateDataProvider
      *
      * @param string $actionName
      * @param string $expected
      */
-    public function testGetDialogTemplate($actionName, $expected)
+    public function testGetFrontendTemplate($actionName, $expected)
     {
         $this->assertApplicationsHelperCalled();
         $this->assertContextHelperCalled(
@@ -485,7 +485,7 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
             1
         );
 
-        $this->assertEquals($expected, $this->manager->getDialogTemplate($actionName));
+        $this->assertEquals($expected, $this->manager->getFrontendTemplate($actionName));
     }
 
     /**
@@ -647,7 +647,7 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function getDialogTemplateDataProvider()
+    public function getFrontendTemplateDataProvider()
     {
         return [
             [

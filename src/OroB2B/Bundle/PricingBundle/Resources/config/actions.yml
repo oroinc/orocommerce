@@ -7,10 +7,12 @@ actions:
         order: 10
         acl_resource: ['CREATE', 'entity:OroB2B\Bundle\PricingBundle\Entity\ProductPrice']
 
-        frontend_options:
+        button_options:
             icon: icon-plus
-            dialog_template: OroB2BPricingBundle:Action:addProductPrice.html.twig
-            dialog_options:
+
+        frontend_options:
+            template: OroB2BPricingBundle:Action:addProductPrice.html.twig
+            options:
                 allowMaximize: true
                 allowMinimize: true
                 dblclick: maximize

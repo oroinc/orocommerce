@@ -1,0 +1,44 @@
+{% extends 'OroUIBundle:actions:update.html.twig' %}
+{% form_theme form with ['OroFormBundle:Form:fields.html.twig'] %}
+
+{% set formAction = app.request.uri  %}
+
+{% block pageHeader %}
+    {% set title = action.definition.label|trans %}
+    {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
+{% endblock pageHeader %}
+
+{% block navButtons %}
+    {{ UI.cancelButton(fromUrl) }}
+    {% set html = UI.saveAndCloseButton() %}
+    {{ UI.dropdownSaveButton({'html': html}) }}
+{% endblock navButtons %}
+
+{% block content_data %}
+    <div class="action-form">
+        {{ form_start(form, {
+            'method': 'POST',
+                'action': app.request.uri,
+            'attr': {
+                'class': 'form-dialog',
+                'data-nohash': 'true',
+                'data-disable-autofocus': 'true',
+                'id': form.vars.id,
+            },
+        }) }}
+        {% block form_inner %}
+            {% block form_widget %}
+                {{ form_widget(form) }}
+            {% endblock %}
+
+            {% block form_actions %}
+                <div class="widget-actions form-actions">
+                    {% block form_actions_inner %}
+
+                    {% endblock %}
+                </div>
+            {% endblock %}
+        {% endblock %}
+        {{ form_end(form) }}
+    </div>
+{% endblock content_data %}

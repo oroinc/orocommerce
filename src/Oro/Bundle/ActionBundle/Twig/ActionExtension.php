@@ -73,6 +73,7 @@ class ActionExtension extends \Twig_Extension
     public function getWidgetParameters(array $context)
     {
         $params = ['route' => $this->requestStack->getMasterRequest()->get('_route')];
+        $params['fromUrl'] = $this->requestStack->getMasterRequest()->getRequestUri();
 
         if (array_key_exists('entity', $context) && is_object($context['entity']) &&
             !$this->doctrineHelper->isNewEntity($context['entity'])

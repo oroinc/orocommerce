@@ -166,7 +166,7 @@ class ActionManager
      * @param array|null $context
      * @return string
      */
-    public function getDialogTemplate($actionName, array $context = null)
+    public function getFrontendTemplate($actionName, array $context = null)
     {
         $template = self::DEFAULT_DIALOG_TEMPLATE;
         $action = $this->getAction($actionName, $this->contextHelper->getActionData($context));
@@ -174,8 +174,8 @@ class ActionManager
         if ($action) {
             $frontendOptions = $action->getDefinition()->getFrontendOptions();
 
-            if (array_key_exists('dialog_template', $frontendOptions)) {
-                $template = $frontendOptions['dialog_template'];
+            if (array_key_exists('template', $frontendOptions)) {
+                $template = $frontendOptions['template'];
             }
         }
 

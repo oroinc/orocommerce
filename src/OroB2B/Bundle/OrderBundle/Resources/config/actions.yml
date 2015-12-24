@@ -8,7 +8,7 @@ actions:
             - orob2b_product_frontend_quick_add
         acl_resource: [CREATE, entity:commerce@OroB2B\Bundle\OrderBundle\Entity\Order]
         order: 20
-        frontend_options:
+        button_options:
             icon: icon-briefcase
             data:
                 component_name: orob2b_order_quick_add_processor
