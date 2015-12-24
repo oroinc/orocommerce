@@ -18,6 +18,8 @@ use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
 use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
 use OroB2B\Bundle\TaxBundle\Migrations\ZipCodeRangeHelper;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\TaxBundle\Entity\AccountGroupTaxCode;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -59,6 +61,11 @@ class LoadTaxDemoData extends AbstractFixture implements
      * @var string[]
      */
     protected $accountTaxCodes = [];
+
+    /**
+     * @var string[]
+     */
+    protected $accountGroupTaxCodes = [];
 
     /**
      * @var string
@@ -121,27 +128,9 @@ class LoadTaxDemoData extends AbstractFixture implements
 
         $this->connection->commit();
 
-        // Add tax codes to products
-        $products = $this->getProducts($manager);
-        foreach ($products as $product) {
-            $id = $this->productTaxCodes[array_rand($this->productTaxCodes)];
-            /* @var ProductTaxCode $productTaxCode */
-            $productTaxCode = $manager
-                ->getReference('OroB2BTaxBundle:ProductTaxCode', $id);
-
-            $productTaxCode->addProduct($product);
-        }
-
-        // Add tax codes to accounts
-        $accounts = $this->getAccounts($manager);
-        foreach ($accounts as $account) {
-            $id = $this->accountTaxCodes[array_rand($this->accountTaxCodes)];
-            /* @var AccountTaxCode $accountTaxCode */
-            $accountTaxCode = $manager
-                ->getReference('OroB2BTaxBundle:AccountTaxCode', $id);
-
-            $accountTaxCode->addAccount($account);
-        }
+        $this->fillProducts($manager);
+        $this->fillAccounts($manager);
+        $this->fillAccountGroups($manager);
 
         $manager->flush();
         $manager->clear();
@@ -173,18 +162,46 @@ class LoadTaxDemoData extends AbstractFixture implements
     }
 
     /**
+     * @param EntityManager $manager
+     */
+    protected function fillProducts(EntityManager $manager)
+    {
+        $products = $this->getProducts($manager);
+        foreach ($products as $product) {
+            $id = $this->productTaxCodes[array_rand($this->productTaxCodes)];
+            /* @var ProductTaxCode $productTaxCode */
+            $productTaxCode = $manager
+                ->getReference('OroB2BTaxBundle:ProductTaxCode', $id);
+
+            $productTaxCode->addProduct($product);
+        }
+    }
+
+    /**
      * @param ObjectManager $manager
      * @return Collection|Product[]
      */
     protected function getProducts(ObjectManager $manager)
     {
-        $products = $manager->getRepository('OroB2BProductBundle:Product')->findBy([], null, 10);
-
-        if (!count($products)) {
-            throw new \LogicException('There are no products in system');
-        }
+        $products = $manager->getRepository('OroB2BProductBundle:Product')->findBy([]);
 
         return $products;
+    }
+
+    /**
+     * @param EntityManager $manager
+     */
+    private function fillAccounts(EntityManager $manager)
+    {
+        $accounts = $this->getAccounts($manager);
+        foreach ($accounts as $account) {
+            $id = $this->accountTaxCodes[array_rand($this->accountTaxCodes)];
+            /* @var AccountTaxCode $accountTaxCode */
+            $accountTaxCode = $manager
+                ->getReference('OroB2BTaxBundle:AccountTaxCode', $id);
+
+            $accountTaxCode->addAccount($account);
+        }
     }
 
     /**
@@ -193,13 +210,37 @@ class LoadTaxDemoData extends AbstractFixture implements
      */
     protected function getAccounts(ObjectManager $manager)
     {
-        $accounts = $manager->getRepository('OroB2BAccountBundle:Account')->findBy([], null, 10);
-
-        if (!count($accounts)) {
-            throw new \LogicException('There are no accounts in system');
-        }
+        $accounts = $manager->getRepository('OroB2BAccountBundle:Account')->findBy([]);
 
         return $accounts;
+    }
+
+
+    /**
+     * @param EntityManager $manager
+     */
+    private function fillAccountGroups(EntityManager $manager)
+    {
+        $accountGroups = $this->getAccountGroups($manager);
+        foreach ($accountGroups as $accountGroup) {
+            $id = $this->accountGroupTaxCodes[array_rand($this->accountGroupTaxCodes)];
+            /* @var AccountGroupTaxCode $accountTaxCode */
+            $accountTaxCode = $manager
+                ->getReference('OroB2BTaxBundle:AccountTaxCode', $id);
+
+            $accountTaxCode->addAccountGroup($accountGroup);
+        }
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @return Collection|AccountGroup[]
+     */
+    protected function getAccountGroups(ObjectManager $manager)
+    {
+        $accountGroups = $manager->getRepository('OroB2BAccountBundle:AccountGroup')->findBy([]);
+
+        return $accountGroups;
     }
 
     /**
@@ -333,10 +374,12 @@ class LoadTaxDemoData extends AbstractFixture implements
 
         $productTaxCodeId = $this->createProductTaxCode($regionCode, $normalizedRate);
         $accountTaxCodeId = $this->createAccountTaxCode($regionCode, $normalizedRate);
+        $accountGroupTaxCodeId = $this->createAccountGroupTaxCode($regionCode, $normalizedRate);
 
         $this->scheduledTaxRules[] = [
             'product_tax_code_id' => $productTaxCodeId,
             'account_tax_code_id' => $accountTaxCodeId,
+            'account_group_tax_code_id' => $accountGroupTaxCodeId,
             'tax_id' => $taxId,
             'tax_jurisdiction_id' => $jurisdictionId,
             'description' => sprintf('Tax rule for %s with rate %s%%', $regionCode, $normalizedRate),
@@ -372,6 +415,7 @@ class LoadTaxDemoData extends AbstractFixture implements
             [
                 'product_tax_code_id',
                 'account_tax_code_id',
+                'account_group_tax_code_id',
                 'tax_id',
                 'tax_jurisdiction_id',
                 'description',
@@ -430,6 +474,32 @@ class LoadTaxDemoData extends AbstractFixture implements
         }
 
         return $this->accountTaxCodes[$key];
+    }
+
+
+    /**
+     * @param string $regionCode
+     * @param float $taxRate
+     * @return string
+     */
+    protected function createAccountGroupTaxCode($regionCode, $taxRate)
+    {
+        $key = $regionCode;
+        if (!array_key_exists($key, $this->accountGroupTaxCodes)) {
+            $this->connection->insert(
+                'orob2b_tax_acc_group_tax_code',
+                [
+                    'code' => $regionCode,
+                    'description' => sprintf('Account group tax code for %s with rate %s%%', $regionCode, $taxRate),
+                    'created_at' => $this->getCurrentTime(),
+                    'updated_at' => $this->getCurrentTime(),
+                ]
+            );
+
+            $this->accountGroupTaxCodes[$key] = $this->connection->lastInsertId('orob2b_tax_acc_group_tax_code_id_seq');
+        }
+
+        return $this->accountGroupTaxCodes[$key];
     }
 
     /**
