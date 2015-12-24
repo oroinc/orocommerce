@@ -78,7 +78,7 @@ class ProductVisibilityTest extends WebTestCase
                     LoadProductData::PRODUCT_2 => 200,
                     LoadProductData::PRODUCT_3 => 200,
                     LoadProductData::PRODUCT_4 => 403,
-                    LoadProductData::PRODUCT_5 => 200,
+                    LoadProductData::PRODUCT_5 => 403,
                 ]
             ],
         ];
