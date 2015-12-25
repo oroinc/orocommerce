@@ -2,7 +2,6 @@ parameters:
     orob2b_tax.entity.abstract_tax_code.class: OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode
     orob2b_tax.entity.product_tax_code.class: OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode
     orob2b_tax.entity.account_tax_code.class: OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode
-    orob2b_tax.entity.account_group_tax_code.class: OroB2B\Bundle\TaxBundle\Entity\AccountGroupTaxCode
     orob2b_tax.entity.tax_jurisdiction.class: OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction
     orob2b_tax.entity.tax.class: OroB2B\Bundle\TaxBundle\Entity\Tax
     orob2b_tax.entity.tax_rule.class: OroB2B\Bundle\TaxBundle\Entity\TaxRule
@@ -31,13 +30,6 @@ services:
             - %orob2b_tax.entity.account_tax_code.class%
             - @doctrine.orm.entity_manager
 
-    orob2b_tax.manager.account_group_tax_code.api:
-        class: %orob2b_tax.manager.api.attribute.class%
-        parent: oro_soap.manager.entity_manager.abstract
-        arguments:
-            - %orob2b_tax.entity.account_group_tax_code.class%
-            - @doctrine.orm.entity_manager
-
     orob2b_tax.form.autocomplete.product_tax_code.search_handler:
         parent: oro_form.autocomplete.search_handler
         arguments:
@@ -56,15 +48,6 @@ services:
             - { name: oro_form.autocomplete.search_handler, alias: orob2b_account_tax_code }
         lazy: true
 
-    orob2b_tax.form.autocomplete.account_group_tax_code.search_handler:
-        parent: oro_form.autocomplete.search_handler
-        arguments:
-            - %orob2b_tax.entity.account_group_tax_code.class%
-            - ["code"]
-        tags:
-            - { name: oro_form.autocomplete.search_handler, alias: orob2b_account_group_tax_code }
-        lazy: true
-
     orob2b_tax.event_listener.abstract_form_view:
         abstract: true
         arguments:
@@ -73,8 +56,9 @@ services:
 
     orob2b_tax.event_listener.account_form_view:
         class: %orob2b_tax.event_listener.account_form_view.class%
-        parent: orob2b_tax.event_listener.abstract_form_view
         arguments:
+            - @oro_entity.doctrine_helper
+            - @request_stack
             - %orob2b_tax.entity.account_tax_code.class%
             - %orob2b_account.entity.account.class%
             - %orob2b_tax.entity.account_group_tax_code.class%
@@ -83,19 +67,21 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-edit, method: onEdit }
 
     orob2b_tax.event_listener.account_group_form_view:
-            class: %orob2b_tax.event_listener.account_group_form_view.class%
-            parent: orob2b_tax.event_listener.abstract_form_view
-            arguments:
-                - %orob2b_tax.entity.account_group_tax_code.class%
-                - %orob2b_account.entity.account_group.class%
-            tags:
-                - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-view, method: onView }
-                - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-edit, method: onEdit }
+        class: %orob2b_tax.event_listener.account_group_form_view.class%
+        arguments:
+            - @oro_entity.doctrine_helper
+            - @request_stack
+            - %orob2b_tax.entity.account_tax_code.class%
+            - %orob2b_account.entity.account_group.class%
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-view, method: onView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-edit, method: onEdit }
 
     orob2b_tax.event_listener.product_form_view:
         class: %orob2b_tax.event_listener.product_form_view.class%
-        parent: orob2b_tax.event_listener.abstract_form_view
         arguments:
+            - @oro_entity.doctrine_helper
+            - @request_stack
             - %orob2b_tax.entity.product_tax_code.class%
             - %orob2b_product.product.class%
         tags:
@@ -110,11 +96,11 @@ services:
             - @doctrine.orm.entity_manager
 
     orob2b_tax.manager.tax_rule.api:
-            class: %orob2b_tax.manager.api.attribute.class%
-            parent: oro_soap.manager.entity_manager.abstract
-            arguments:
-                - %orob2b_tax.entity.tax_rule.class%
-                - @doctrine.orm.entity_manager
+        class: %orob2b_tax.manager.api.attribute.class%
+        parent: oro_soap.manager.entity_manager.abstract
+        arguments:
+            - %orob2b_tax.entity.tax_rule.class%
+            - @doctrine.orm.entity_manager
 
     orob2b_tax.manager.tax_jurisdiction.api:
         class: %orob2b_tax.manager.api.attribute.class%

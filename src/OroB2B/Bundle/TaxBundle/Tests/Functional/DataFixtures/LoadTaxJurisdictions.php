@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManager;
 
 use OroB2B\Bundle\TaxBundle\Entity\TaxJurisdiction;
 
@@ -43,9 +44,9 @@ class LoadTaxJurisdictions extends AbstractFixture implements DependentFixtureIn
     }
 
     /**
-     * @param ObjectManager $manager
-     * @param string        $code
-     * @param string        $description
+     * @param ObjectManager|EntityManager $manager
+     * @param string $code
+     * @param string $description
      * @return TaxJurisdiction
      */
     protected function createTaxJurisdiction(ObjectManager $manager, $code, $description)

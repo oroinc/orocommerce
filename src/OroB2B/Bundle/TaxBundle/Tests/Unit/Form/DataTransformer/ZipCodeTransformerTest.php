@@ -2,9 +2,6 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\DataTransformer;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-
 use OroB2B\Bundle\TaxBundle\Entity\ZipCode;
 use OroB2B\Bundle\TaxBundle\Form\DataTransformer\ZipCodeTransformer;
 use OroB2B\Bundle\TaxBundle\Tests\Component\ZipCodeTestHelper;
