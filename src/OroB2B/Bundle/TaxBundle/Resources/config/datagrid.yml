@@ -450,3 +450,81 @@ datagrid:
         extends: tax-jurisdiction-grid
         properties: { id: ~ }
         actions: ~
+
+    tax-account-group-grid:
+        extends: account-groups-select-grid
+        source:
+            query:
+                join:
+                    left:
+                        - { join: %orob2b_tax.entity.account_tax_code.class%, alias: account_tax_code, conditionType: 'WITH', condition: 'account_group MEMBER OF account_tax_code.accountGroups' }
+                where:
+                    and:
+                        - account_tax_code.id = :account_tax_code_id
+            bind_parameters:
+                - account_tax_code_id
+        properties:
+            view_link:
+                type:   url
+                route: orob2b_account_group_view
+                params: [ id ]
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  orob2b_account_group_view
+                rowAction:     true
+
+    tax-account-grid:
+        extends: account-accounts-select-grid
+        source:
+            query:
+                join:
+                    left:
+                        - { join: %orob2b_tax.entity.account_tax_code.class%, alias: account_tax_code, conditionType: 'WITH', condition: 'account MEMBER OF account_tax_code.accounts' }
+                where:
+                    and:
+                        - account_tax_code.id = :account_tax_code_id
+            bind_parameters:
+                - account_tax_code_id
+        properties:
+            view_link:
+                type:   url
+                route: orob2b_account_view
+                params: [ id ]
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  orob2b_account_view
+                rowAction:     true
+
+    tax-product-grid:
+        extends: products-select-grid-base
+        source:
+            query:
+                join:
+                    left:
+                        - { join: %orob2b_tax.entity.product_tax_code.class%, alias: product_tax_code, conditionType: 'WITH', condition: 'product MEMBER OF product_tax_code.products' }
+                where:
+                    and:
+                        - product_tax_code.id = :product_tax_code_id
+            bind_parameters:
+                - product_tax_code_id
+        properties:
+            view_link:
+                type:   url
+                route: orob2b_product_view
+                params: [ id ]
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye-open
+                acl_resource:  orob2b_product_view
+                rowAction:     true
