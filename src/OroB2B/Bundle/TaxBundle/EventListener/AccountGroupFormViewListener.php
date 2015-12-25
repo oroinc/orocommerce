@@ -5,7 +5,7 @@ namespace OroB2B\Bundle\TaxBundle\EventListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\TaxBundle\Entity\Repository\AccountGroupTaxCodeRepository;
+use OroB2B\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository;
 
 class AccountGroupFormViewListener extends AbstractFormViewListener
 {
@@ -20,7 +20,7 @@ class AccountGroupFormViewListener extends AbstractFormViewListener
             return;
         }
 
-        /** @var AccountGroupTaxCodeRepository $repository */
+        /** @var AccountTaxCodeRepository $repository */
         $repository = $this->doctrineHelper->getEntityRepository($this->taxCodeClass);
         $entity = $repository->findOneByAccountGroup($accountGroup);
 
