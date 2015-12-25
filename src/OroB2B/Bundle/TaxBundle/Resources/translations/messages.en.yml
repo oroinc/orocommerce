@@ -25,6 +25,7 @@ orob2b.tax:
         entity_plural_label: 'Account Tax Codes'
         description: 'List of Account Tax Codes'
         accounts.label: 'Accounts'
+        account_groups.label: 'Account Groups'
         id.label: 'ID'
         code.label: 'Code'
         description.label: 'Description'
@@ -70,8 +71,6 @@ orob2b.tax:
     controller:
         account_tax_code:
             saved.message: 'Account Tax Code has been saved'
-        account_group_tax_code:
-            saved.message: 'Account Group Tax Code has been saved'
         product_tax_code:
             saved.message: 'Product Tax Code has been saved'
         tax:

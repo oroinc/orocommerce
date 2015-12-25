@@ -1,7 +1,6 @@
 parameters:
     orob2b_tax.form.type.product_tax_code.class: OroB2B\Bundle\TaxBundle\Form\Type\ProductTaxCodeType
     orob2b_tax.form.type.account_tax_code.class: OroB2B\Bundle\TaxBundle\Form\Type\AccountTaxCodeType
-    orob2b_tax.form.type.account_group_tax_code.class: OroB2B\Bundle\TaxBundle\Form\Type\AccountGroupTaxCodeType
     orob2b_tax.form.type.tax.class: OroB2B\Bundle\TaxBundle\Form\Type\TaxType
     orob2b_tax.form.type.tax_rule.class: OroB2B\Bundle\TaxBundle\Form\Type\TaxRuleType
     orob2b_tax.form.type.tax_select.class: OroB2B\Bundle\TaxBundle\Form\Type\TaxSelectType
@@ -12,7 +11,6 @@ parameters:
 
     orob2b_tax.form.type.product_tax_code_autocomplete.class: OroB2B\Bundle\TaxBundle\Form\Type\ProductTaxCodeAutocompleteType
     orob2b_tax.form.type.account_tax_code_autocomplete.class: OroB2B\Bundle\TaxBundle\Form\Type\AccountTaxCodeAutocompleteType
-    orob2b_tax.form.type.account_group_tax_code_autocomplete.class: OroB2B\Bundle\TaxBundle\Form\Type\AccountGroupTaxCodeAutocompleteType
 
     orob2b_tax.form.extension.product_tax.class: OroB2B\Bundle\TaxBundle\Form\Extension\ProductTaxExtension
     orob2b_tax.form.extension.account_tax.class: OroB2B\Bundle\TaxBundle\Form\Extension\AccountTaxExtension
