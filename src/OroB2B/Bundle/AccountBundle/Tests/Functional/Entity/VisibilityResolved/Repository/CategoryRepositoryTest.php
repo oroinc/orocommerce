@@ -99,9 +99,9 @@ class CategoryRepositoryTest extends WebTestCase
                 'expected' => [
                     'category_1',
                     'category_1_2',
-                    'category_1_5',
                     'category_1_2_3',
                     'category_1_2_3_4',
+                    'category_1_5',
                 ]
             ],
             [
