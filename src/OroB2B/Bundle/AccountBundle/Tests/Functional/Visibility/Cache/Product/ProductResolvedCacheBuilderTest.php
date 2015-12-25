@@ -101,7 +101,7 @@ class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
     {
         return [
             'without_website' => [
-                'expectedStaticCount' => 4,
+                'expectedStaticCount' => 3,
                 'expectedCategoryCount' => 16,
                 'websiteReference' => null,
             ],

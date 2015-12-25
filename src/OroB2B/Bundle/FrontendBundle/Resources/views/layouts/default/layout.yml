@@ -2,20 +2,59 @@ layout:
     actions:
         - @setBlockTheme:
             themes: 'OroB2BFrontendBundle:layouts:default/layout.html.twig'
+        - @setFormTheme:
+            themes: 'OroB2BFrontendBundle:layouts:default/form_theme.html.twig'
         - @addTree:
             items:
                 head:
-                    blockType:   head
+                    blockType: head
                     options:
-                        title:   Hello World!
+                        title: OroCommerce
+                meta_charset:
+                    blockType: meta
+                    options:
+                        charset: 'UTF-8'
+                meta_viewport:
+                    blockType: meta
+                    options:
+                        name: viewport
+                        content: 'width=device-width, initial-scale=1'
+                styles:
+                    blockType: style
+                    options:
+                        src: { @value: $data.theme.data.assets.styles.output }
                 body:
                     blockType: body
+                wrapper:
+                    blockType: container
+                header:
+                    blockType: container
+                notification:
+                    blockType: block
+                main:
+                    blockType: container
                 content:
-                    blockType: text
+                    blockType: container
+                footer:
+                    blockType: container
+                scripts:
+                    blockType: script
                     options:
-                        text: { @value: 'Hello World!' }
+                        content: 'require(["orob2bfrontend/default/js/main.min"])'
+                requirejs:
+                    blockType: block
             tree:
                 root:
-                    head: ~
+                    head:
+                        meta_charset: ~
+                        meta_viewport: ~
+                        styles: ~
+                        requirejs: ~
                     body:
-                        content: ~
+                        wrapper:
+                            header: ~
+                            notification: ~
+                            main:
+                                content: ~
+                            footer: ~
+                        scripts: ~

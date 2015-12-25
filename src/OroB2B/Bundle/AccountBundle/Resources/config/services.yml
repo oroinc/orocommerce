@@ -95,6 +95,8 @@ parameters:
     orob2b.account.catalog.visibility.change_set.validatior.class: OroB2B\Bundle\AccountBundle\Validator\Constraints\VisibilityChangeSetValidator
 
     orob2b_account.provider.visibility_choices.class: OroB2B\Bundle\AccountBundle\Provider\VisibilityChoicesProvider
+    orob2b_account.provider.sign_in.class: OroB2B\Bundle\AccountBundle\Provider\SignInDataProvider
+    orob2b_account.provider.frontend_account_user_registration_form.class: OroB2B\Bundle\AccountBundle\Provider\FrontendAccountUserRegistrationForm
 
     orob2b_account.audit.discriminator_map_listener.class: OroB2B\Bundle\AccountBundle\Audit\DiscriminatorMapListener
 
@@ -846,3 +848,23 @@ services:
             - { name: doctrine.event_listener, event: onFlush }
             - { name: doctrine.event_listener, event: postFlush }
             - { name: doctrine.event_listener, event: postRemove }
+
+    orob2b_account.provider.frontend_account_user_registration_form:
+        class: %orob2b_account.provider.frontend_account_user_registration_form.class%
+        arguments:
+            - @form.factory
+            - @doctrine
+            - @oro_config.manager
+            - @orob2b_website.manager
+            - @oro_user.manager
+        tags:
+            - { name: layout.data_provider, alias: orob2b_account_frontend_account_user_register }
+
+    orob2b_account.provider.sign_in:
+        class: %orob2b_account.provider.sign_in.class%
+        arguments:
+            - @request_stack
+            - @oro_security.security_facade
+            - @security.csrf.token_manager
+        tags:
+            - { name: layout.data_provider, alias: orob2b_account_sign_in }
