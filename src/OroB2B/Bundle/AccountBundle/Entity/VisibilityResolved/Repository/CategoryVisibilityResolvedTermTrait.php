@@ -53,9 +53,10 @@ trait CategoryVisibilityResolvedTermTrait
     /**
      * @param QueryBuilder $qb
      * @param Account $account
+     * @param int $configValue
      * @return string
      */
-    protected function getAccountCategoryVisibilityResolvedTerm(QueryBuilder $qb, Account $account)
+    protected function getAccountCategoryVisibilityResolvedTerm(QueryBuilder $qb, Account $account, $configValue)
     {
         $qb->leftJoin(
             'OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved',
@@ -71,11 +72,11 @@ trait CategoryVisibilityResolvedTermTrait
 
         $term = <<<TERM
 CASE WHEN acvr.visibility = %s
-    THEN (cvr.visibility * 100)
+    THEN (COALESCE(cvr.visibility, %s) * 100)
 ELSE (COALESCE(acvr.visibility, 0) * 100)
 END
 TERM;
-        return sprintf($term, AccountCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL);
+        return sprintf($term, AccountCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL, $configValue);
     }
 
     /**

@@ -26,18 +26,24 @@ class AccountCategoryRepository extends EntityRepository
      */
     public function isCategoryVisible(Category $category, Account $account, $configValue)
     {
+        $accountGroup = $account->getGroup();
+
         $qb = $this->_em->createQueryBuilder();
-        $qb
-            ->select(
-                'COALESCE(acvr.visibility, COALESCE(agcvr.visibility, COALESCE(cvr.visibility, '
-                . $qb->expr()->literal($configValue).')))'
-            )
-            ->from('OroB2BCatalogBundle:Category', 'category')
+
+        $qb->select('COALESCE(acvr.visibility, COALESCE(cvr.visibility, '. $qb->expr()->literal($configValue).'))');
+
+        $qb->from('OroB2BCatalogBundle:Category', 'category')
             ->leftJoin(
                 'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
                 'cvr',
                 Join::WITH,
                 $qb->expr()->eq('cvr.category', 'category')
+            );
+
+        if ($accountGroup) {
+            $qb->select(
+                'COALESCE(acvr.visibility, COALESCE(agcvr.visibility, COALESCE(cvr.visibility, '
+                . $qb->expr()->literal($configValue).')))'
             )
             ->leftJoin(
                 'OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
@@ -48,6 +54,10 @@ class AccountCategoryRepository extends EntityRepository
                     $qb->expr()->eq('agcvr.accountGroup', ':accountGroup')
                 )
             )
+            ->setParameter('accountGroup', $account->getGroup());
+        }
+
+        $qb
             ->leftJoin(
                 'OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved',
                 'acvr',
@@ -58,11 +68,8 @@ class AccountCategoryRepository extends EntityRepository
                 )
             )
             ->where($qb->expr()->eq('category', ':category'))
-            ->setParameters([
-                'category' => $category,
-                'accountGroup' => $account->getGroup(),
-                'account' => $account
-            ]);
+            ->setParameter('category', $category)
+            ->setParameter('account', $account);
 
         $visibility = $qb->getQuery()->getSingleScalarResult();
 
@@ -86,7 +93,7 @@ class AccountCategoryRepository extends EntityRepository
         if ($account->getGroup()) {
             $terms[] = $this->getAccountGroupCategoryVisibilityResolvedTerm($qb, $account->getGroup());
         }
-        $terms[] = $this->getAccountCategoryVisibilityResolvedTerm($qb, $account);
+        $terms[] = $this->getAccountCategoryVisibilityResolvedTerm($qb, $account, $configValue);
 
         if ($visibility === BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE) {
             $qb->andWhere($qb->expr()->gt(implode(' + ', $terms), 0));
