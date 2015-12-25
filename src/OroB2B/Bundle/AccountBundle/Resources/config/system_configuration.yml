@@ -83,9 +83,6 @@ oro_system_configuration:
                                             - oro_b2b_account.registration_allowed
                                             - oro_b2b_account.confirmation_required
                                             - oro_b2b_account.send_password_in_welcome_email
-                    catalog:
-                        priority: 900
-                        children:
                             visibility:
                                 priority: 200
                                 children:

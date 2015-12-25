@@ -4,12 +4,12 @@ oro_system_configuration:
             data_type: array
             type: orob2b_product_inventory_status_select
             options:
-                label: orob2b.order.system_configuration.fiels.backend_product_visibility.title
+                label: orob2b.order.system_configuration.fields.backend_product_visibility.title
         oro_b2b_order.frontend_product_visibility:
             data_type: array
             type: orob2b_product_inventory_status_select
             options:
-                label: orob2b.order.system_configuration.fiels.frontend_product_visibility.title
+                label: orob2b.order.system_configuration.fields.frontend_product_visibility.title
 
     tree:
         system_configuration:
