@@ -51,6 +51,10 @@
         {{ dataGrid.renderGrid('tax-account-grid', { account_tax_code_id: entity.id }, { cssClass: 'inner-grid' }) }}
     {% endset %}
 
+    {% set accountGroupGrid %}
+        {{ dataGrid.renderGrid('tax-account-group-grid', { account_tax_code_id: entity.id }, { cssClass: 'inner-grid' }) }}
+    {% endset %}
+
     {% set dataBlocks = dataBlocks|merge([{
             'title': 'orob2b.tax.accounttaxcode.accounts.label'|trans,
             'subblocks': [{
@@ -58,6 +62,15 @@
                 'useSpan': false,
                 'data' : [accountGrid]
             }]
+    }] ) %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'orob2b.tax.accounttaxcode.account_groups.label'|trans,
+        'subblocks': [{
+        'title': '',
+        'useSpan': false,
+        'data' : [accountGroupGrid]
+        }]
     }] ) %}
 
     {% set id = 'tax-account-tax-code-view' %}
