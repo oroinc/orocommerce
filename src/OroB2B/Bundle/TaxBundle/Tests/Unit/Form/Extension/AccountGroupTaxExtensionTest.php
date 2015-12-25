@@ -8,16 +8,16 @@ use Symfony\Component\Form\FormInterface;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountGroupType;
-use OroB2B\Bundle\TaxBundle\Entity\AccountGroupTaxCode;
-use OroB2B\Bundle\TaxBundle\Entity\Repository\AccountGroupTaxCodeRepository;
+use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
+use OroB2B\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository;
 use OroB2B\Bundle\TaxBundle\Form\Extension\AccountGroupTaxExtension;
-use OroB2B\Bundle\TaxBundle\Form\Type\AccountGroupTaxCodeAutocompleteType;
+use OroB2B\Bundle\TaxBundle\Form\Type\AccountTaxCodeAutocompleteType;
 use OroB2B\Bundle\TaxBundle\Form\Extension\AccountTaxExtension;
 
 class AccountGroupTaxExtensionTest extends AbstractTaxExtensionText
 {
     /**
-     * @var AccountGroupTaxCodeRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var AccountTaxCodeRepository|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $entityRepository;
 
@@ -26,7 +26,7 @@ class AccountGroupTaxExtensionTest extends AbstractTaxExtensionText
      */
     protected function getExtension()
     {
-        return new AccountGroupTaxExtension($this->doctrineHelper, 'OroB2BTaxBundle:AccountGroupTaxCode');
+        return new AccountGroupTaxExtension($this->doctrineHelper, 'OroB2BTaxBundle:AccountTaxCode');
     }
 
     public function testGetExtendedType()
@@ -41,13 +41,13 @@ class AccountGroupTaxExtensionTest extends AbstractTaxExtensionText
     protected function prepareDoctrineHelper($expectsManager = false, $expectsRepository = false)
     {
         $this->entityRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\TaxBundle\Entity\Repository\AccountGroupTaxCodeRepository')
+            ->getMockBuilder('OroB2B\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
         $this->doctrineHelper->expects($expectsRepository ? $this->once() : $this->never())
             ->method('getEntityRepository')
-            ->with('OroB2BTaxBundle:AccountGroupTaxCode')
+            ->with('OroB2BTaxBundle:AccountTaxCode')
             ->willReturn($this->entityRepository);
     }
 
@@ -61,7 +61,7 @@ class AccountGroupTaxExtensionTest extends AbstractTaxExtensionText
             ->method('add')
             ->with(
                 'taxCode',
-                AccountGroupTaxCodeAutocompleteType::NAME,
+                AccountTaxCodeAutocompleteType::NAME,
                 [
                     'required' => false,
                     'mapped' => false,
@@ -157,10 +157,10 @@ class AccountGroupTaxExtensionTest extends AbstractTaxExtensionText
     /**
      * @param int|null $id
      *
-     * @return AccountGroupTaxCode
+     * @return AccountTaxCode
      */
     protected function createTaxCode($id = null)
     {
-        return $this->getEntity('OroB2B\Bundle\TaxBundle\Entity\AccountGroupTaxCode', ['id' => $id]);
+        return $this->getEntity('OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode', ['id' => $id]);
     }
 }
