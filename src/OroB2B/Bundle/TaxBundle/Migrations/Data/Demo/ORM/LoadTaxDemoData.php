@@ -261,7 +261,7 @@ class LoadTaxDemoData extends AbstractFixture implements
                 'orob2b_tax',
                 [
                     'code' => $code,
-                    'description' => sprintf('%s', $regionName),
+                    'description' => sprintf('Tax for %s', $regionName),
                     'rate' => $rate,
                     'created_at' => $this->getCurrentTime(),
                     'updated_at' => $this->getCurrentTime(),
@@ -475,7 +475,7 @@ class LoadTaxDemoData extends AbstractFixture implements
     protected function getCurrentTime()
     {
         if (null === $this->currentTime) {
-            $this->currentTime = date("Y-m-d H:i:s");
+            $this->currentTime = date('Y-m-d H:i:s');
         }
 
         return $this->currentTime;
