@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\ProductBundle\Form\Type;
 
-use OroB2B\Bundle\ProductBundle\Model\QuickAddCopyPaste;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -10,6 +9,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Regex;
 
 use OroB2B\Bundle\ProductBundle\Form\DataTransformer\TextareaToRowCollectionTransformer;
+use OroB2B\Bundle\ProductBundle\Model\QuickAddCopyPaste;
 use OroB2B\Bundle\ProductBundle\Validator\Constraints\QuickAddRowCollection;
 
 class QuickAddCopyPasteType extends AbstractType

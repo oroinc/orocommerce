@@ -11,6 +11,9 @@ class QuickAddOrderType extends AbstractType
 {
     const NAME = 'orob2b_product_quick_add_order';
 
+    /**
+     * {@inheritdoc}
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -21,6 +24,9 @@ class QuickAddOrderType extends AbstractType
         $builder->addModelTransformer(new QuickAddRowCollectionToQuickAddOrderTransformer());
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getName()
     {
         return self::NAME;

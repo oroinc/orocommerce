@@ -41,8 +41,8 @@
     </style>
 
     {% set totalRowsCount = result.count() %}
-    {% set validRowsCount = result.getValidRows().count() %}
-    {% set invalidRowsCount = result.getInvalidRows().count() %}
+    {% set validRowsCount = result.validRows|length %}
+    {% set invalidRowsCount = result.invalidRows|length %}
 
     <div class="validation-info">
         <strong>
@@ -102,14 +102,14 @@
     {% if invalidRowsCount > 0 %}
         <div class="import-errors">
             <ol>
-                {% for invalidRow in result.getInvalidRows() %}
+                {% for invalidRow in result.invalidRows %}
                     <li>
                         {% if not invalidRow.isComplete %}
                             {{ 'orob2b.product.frontend.quick_add.import_validation.validator.invalid_format'
-                                |trans({'%id%' : invalidRow.getId()}) }}
+                                |trans({'%id%' : invalidRow.id}) }}
                         {% else %}
                             {{ 'orob2b.product.frontend.quick_add.import_validation.validator.not_found'
-                                |trans({'%sku%' : invalidRow.getSku()}) }}
+                                |trans({'%sku%' : invalidRow.sku}) }}
                         {% endif %}
                     </li>
                 {% endfor %}

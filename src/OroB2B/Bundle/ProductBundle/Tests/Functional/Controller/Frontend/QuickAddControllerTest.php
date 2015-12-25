@@ -15,19 +15,12 @@ use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 class QuickAddControllerTest extends WebTestCase
 {
     const VALIDATION_TOTAL_ROWS = 'Total number of records';
-
     const VALIDATION_VALID_ROWS = 'Valid items';
-
     const VALIDATION_ERROR_ROWS = 'Records with errors';
-
     const VALIDATION_ERRORS = 'Errors';
-
     const VALIDATION_RESULT_SELECTOR = 'div.validation-info table tbody tr';
-
     const VALIDATION_ERRORS_SELECTOR = 'div.import-errors ol li';
-
     const VALIDATION_ERROR_NOT_FOUND = 'Item number %s does not found.';
-
     const VALIDATION_ERROR_MALFORMED = 'Row #%d has invalid format.';
 
     protected function setUp()
@@ -51,7 +44,7 @@ class QuickAddControllerTest extends WebTestCase
      *
      * @dataProvider validationResultProvider
      */
-    public function testCopyPasteAction($processorName, $routerName, $routerParams, $expectedMessage)
+    public function testCopyPasteAction($processorName, $routerName, array $routerParams, $expectedMessage)
     {
         $example = [
             LoadProductData::PRODUCT_1 . ", 1",
@@ -112,7 +105,7 @@ class QuickAddControllerTest extends WebTestCase
      *
      * @dataProvider importFromFileProvider
      */
-    public function testImportFromFileAction($file, $expectedValidationResult, $formErrorMessage = null)
+    public function testImportFromFileAction($file, array $expectedValidationResult, $formErrorMessage = null)
     {
         $this->client->request('GET', $this->getUrl('orob2b_product_frontend_quick_add'));
         $response = $this->client->getResponse();
