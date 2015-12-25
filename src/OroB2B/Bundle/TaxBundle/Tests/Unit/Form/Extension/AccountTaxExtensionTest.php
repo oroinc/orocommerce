@@ -40,6 +40,28 @@ class AccountTaxExtensionTest extends AbstractAccountTaxExtensionTest
         $this->assertEquals([$account], $taxCode->getAccounts()->toArray());
     }
 
+    public function testOnPostSubmitExistingAccountGroup()
+    {
+        $this->prepareDoctrineHelper(true, true);
+
+        $account = $this->createTaxCodeTarget();
+        $event = $this->createEvent($account);
+
+        $newTaxCode = $this->createTaxCode(1);
+        $taxCodeWithAccountGroup = $this->createTaxCode(2);
+        $taxCodeWithAccountGroup->addAccount($account);
+
+        $this->assertTaxCodeAdd($event, $newTaxCode);
+        $this->entityRepository->expects($this->once())
+            ->method('findOneByAccount')
+            ->will($this->returnValue($taxCodeWithAccountGroup));
+
+        $this->getExtension()->onPostSubmit($event);
+
+        $this->assertEquals([$account], $newTaxCode->getAccounts()->toArray());
+        $this->assertEquals([], $taxCodeWithAccountGroup->getAccounts()->toArray());
+    }
+
     /**
      * @param int|null $id
      *
