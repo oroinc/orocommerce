@@ -3,6 +3,13 @@
 namespace OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
+
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+
+use OroB2B\Bundle\CatalogBundle\Entity\Category;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 
 /**
  * Composite primary key fields order:
@@ -36,7 +43,7 @@ class CategoryRepository extends EntityRepository
 
         $visibility = $qb->getQuery()->getSingleScalarResult();
 
-        return (int)$visibility === BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE;
+        return (int)$visibility === CategoryVisibilityResolved::VISIBILITY_VISIBLE;
     }
 
     /**
@@ -53,7 +60,7 @@ class CategoryRepository extends EntityRepository
 
         $terms = [$this->getCategoryVisibilityResolvedTerm($qb, $configValue)];
 
-        if ($visibility === BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE) {
+        if ($visibility === CategoryVisibilityResolved::VISIBILITY_VISIBLE) {
             $qb->andWhere($qb->expr()->gt(implode(' + ', $terms), 0));
         } else {
             $qb->andWhere($qb->expr()->lte(implode(' + ', $terms), 0));
