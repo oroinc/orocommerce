@@ -20,14 +20,16 @@
         <div class="placeholder">
             <div class="scrollable-container">
                 <div class="left-panel scrollable-container">
-                    <div class="page b2b-tree">
+                    <div class="page">
                         {% set treeOptions = {
                             'key' : 'b2b-page',
                             'data' : orob2b_page_list(),
-                            'updateAllowed' : resource_granted('orob2b_cms_page_update')
+                            'updateAllowed' : resource_granted('orob2b_cms_page_update'),
+                            'onSelectRoute' : 'orob2b_cms_page_view',
+                            'onMoveRoute' : 'orob2b_cms_page_move'
                         } %}
                         <div
-                            data-page-component-module="orob2bcms/js/app/components/tree-manage-component"
+                            data-page-component-module="oroui/js/app/components/tree-manage-component"
                             data-page-component-options="{{ treeOptions|json_encode }}"
                         ></div>
                     </div>
