@@ -6,82 +6,94 @@ use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\ActionBundle\Configuration\ActionConfigurationProvider;
 use Oro\Bundle\ActionBundle\Exception\ActionNotFoundException;
-
+use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
+use Oro\Bundle\ActionBundle\Helper\ContextHelper;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 class ActionManager
 {
     const DEFAULT_DIALOG_TEMPLATE = 'OroActionBundle:Widget:widget/form.html.twig';
 
-    /**
-     * @var DoctrineHelper
-     */
+    /** @var DoctrineHelper */
     protected $doctrineHelper;
 
-    /**
-     * @var ContextHelper
-     */
+    /** @var ContextHelper */
     protected $contextHelper;
 
-    /**
-     * @var ActionConfigurationProvider
-     */
+    /** @var ActionConfigurationProvider */
     protected $configurationProvider;
 
-    /**
-     * @var ActionAssembler
-     */
+    /** @var ActionAssembler */
     protected $assembler;
 
-    /**
-     * @var array
-     */
-    private $routes;
+    /** @var ApplicationsHelper */
+    protected $applicationsHelper;
 
-    /**
-     * @var array
-     */
-    private $entities;
+    /** @var array */
+    private $routes = [];
+
+    /** @var array] */
+    private $entities = [];
+
+    /** @var array */
+    private $datagrids = [];
+
+    /** @var array|Action[] */
+    private $actions = [];
+
+    /** @var bool */
+    private $initialized = false;
 
     /**
      * @param DoctrineHelper $doctrineHelper
      * @param ContextHelper $contextHelper
      * @param ActionConfigurationProvider $configurationProvider
      * @param ActionAssembler $assembler
+     * @param ApplicationsHelper $applicationsHelper
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ContextHelper $contextHelper,
         ActionConfigurationProvider $configurationProvider,
-        ActionAssembler $assembler
+        ActionAssembler $assembler,
+        ApplicationsHelper $applicationsHelper
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->contextHelper = $contextHelper;
         $this->configurationProvider = $configurationProvider;
         $this->assembler = $assembler;
+        $this->applicationsHelper = $applicationsHelper;
     }
 
     /**
      * @param string $actionName
-     * @param ActionContext $actionContext
-     * @param Collection $errors
-     * @param ActionContext $actionContext
-     * @return ActionContext
+     * @param array|null $context
+     * @param Collection|null $errors
+     * @return ActionData
+     */
+    public function executeByContext($actionName, array $context = null, Collection $errors = null)
+    {
+        $actionData = $this->contextHelper->getActionData($context);
+
+        $this->execute($actionName, $actionData, $errors);
+
+        return $actionData;
+    }
+
+    /**
+     * @param string $actionName
+     * @param ActionData $actionData
+     * @param Collection|null $errors
+     * @return ActionData
      * @throws \Exception
      */
-    public function execute($actionName, ActionContext $actionContext = null, Collection $errors = null)
+    public function execute($actionName, ActionData $actionData, Collection $errors = null)
     {
-        $action = $this->getAction($actionName);
-        if (!$action) {
-            throw new ActionNotFoundException($actionName);
-        }
+        $action = $this->getAction($actionName, $actionData);
 
-        if (!$actionContext) {
-            $actionContext = $this->contextHelper->getActionContext();
-        }
-        $action->execute($actionContext, $errors);
+        $action->execute($actionData, $errors);
 
-        $entity = $actionContext->getEntity();
+        $entity = $actionData->getEntity();
         if ($entity) {
             $manager = $this->doctrineHelper->getEntityManager($entity);
             $manager->beginTransaction();
@@ -95,7 +107,7 @@ class ActionManager
             }
         }
 
-        return $actionContext;
+        return $actionData;
     }
 
     /**
@@ -109,35 +121,55 @@ class ActionManager
 
     /**
      * @param array|null $context
+     * @param bool $onlyAvailable
      * @return Action[]
      */
-    public function getActions(array $context = null)
+    public function getActions(array $context = null, $onlyAvailable = true)
     {
         $this->loadActions();
 
-        return $this->findActions($context === null ? $this->contextHelper->getContext() : $context);
+        $actions = $this->findActions($this->contextHelper->getContext($context));
+        $actionData = $this->contextHelper->getActionData($context);
+        if ($onlyAvailable) {
+            $actions = array_filter($actions, function (Action $action) use ($actionData) {
+                return $action->isAvailable($actionData);
+            });
+        }
+
+        uasort($actions, function (Action $action1, Action $action2) {
+            return $action1->getDefinition()->getOrder() - $action2->getDefinition()->getOrder();
+        });
+
+        return $actions;
+    }
+
+    /**
+     * @param string $actionName
+     * @param ActionData $actionData
+     * @return Action
+     * @throws ActionNotFoundException
+     */
+    public function getAction($actionName, ActionData $actionData)
+    {
+        $this->loadActions();
+
+        $action = array_key_exists($actionName, $this->actions) ? $this->actions[$actionName] : null;
+        if (!$action instanceof Action || !$action->isAvailable($actionData)) {
+            throw new ActionNotFoundException($actionName);
+        }
+
+        return $action;
     }
 
     /**
      * @param string $actionName
      * @param array|null $context
-     * @return null|Action
-     */
-    public function getAction($actionName, array $context = null)
-    {
-        $actions = $this->getActions($context);
-
-        return array_key_exists($actionName, $actions) ? $actions[$actionName] : null;
-    }
-
-    /**
-     * @param string $actionName
      * @return string
      */
-    public function getDialogTemplate($actionName)
+    public function getDialogTemplate($actionName, array $context = null)
     {
         $template = self::DEFAULT_DIALOG_TEMPLATE;
-        $action = $this->getAction($actionName);
+        $action = $this->getAction($actionName, $this->contextHelper->getActionData($context));
 
         if ($action) {
             $frontendOptions = $action->getDefinition()->getFrontendOptions();
@@ -151,55 +183,61 @@ class ActionManager
     }
 
     /**
-     * @param array|null $context
+     * @param array $context
      * @return Action[]
      */
-    protected function findActions(array $context = null)
+    protected function findActions(array $context)
     {
         /** @var $actions Action[] */
         $actions = [];
 
-        $context = array_merge($this->contextHelper->getContext(), $context);
-        $actionContext = $this->contextHelper->getActionContext($context);
-
-        if ($context['route'] && array_key_exists($context['route'], $this->routes)) {
-            $actions = $this->routes[$context['route']];
-        }
-
-        if ($context['entityClass'] &&
-            $context['entityId'] &&
-            array_key_exists($context['entityClass'], $this->entities)
+        if ($context[ContextHelper::ROUTE_PARAM] &&
+            array_key_exists($context[ContextHelper::ROUTE_PARAM], $this->routes)
         ) {
-            $actions = array_merge($actions, $this->entities[$context['entityClass']]);
+            $actions = array_merge($actions, $this->routes[$context[ContextHelper::ROUTE_PARAM]]);
         }
 
-        $actions = array_filter($actions, function (Action $action) use ($actionContext) {
-            return $action->isEnabled() && $action->isAvailable($actionContext);
-        });
+        if ($context[ContextHelper::DATAGRID_PARAM] &&
+            array_key_exists($context[ContextHelper::DATAGRID_PARAM], $this->datagrids)
+        ) {
+            $actions = $actions = array_merge($actions, $this->datagrids[$context[ContextHelper::DATAGRID_PARAM]]);
+        }
 
-        uasort($actions, function (Action $action1, Action $action2) {
-            return $action1->getDefinition()->getOrder() - $action2->getDefinition()->getOrder();
-        });
+        if ($context[ContextHelper::ENTITY_CLASS_PARAM] &&
+            $context[ContextHelper::ENTITY_ID_PARAM] &&
+            array_key_exists($context[ContextHelper::ENTITY_CLASS_PARAM], $this->entities)
+        ) {
+            $actions = array_merge($actions, $this->entities[$context[ContextHelper::ENTITY_CLASS_PARAM]]);
+        }
 
         return $actions;
     }
 
     protected function loadActions()
     {
-        if ($this->entities !== null || $this->routes !== null) {
+        if ($this->initialized) {
             return;
         }
-
-        $this->routes = [];
-        $this->entities = [];
 
         $configuration = $this->configurationProvider->getActionConfiguration();
         $actions = $this->assembler->assemble($configuration);
 
         foreach ($actions as $action) {
+            if (!$action->isEnabled()) {
+                continue;
+            }
+
+            if (!$this->applicationsHelper->isApplicationsValid($action)) {
+                continue;
+            }
+
             $this->mapActionRoutes($action);
             $this->mapActionEntities($action);
+            $this->mapActionDatagrids($action);
+            $this->actions[$action->getName()] = $action;
         }
+
+        $this->initialized = true;
     }
 
     /**
@@ -222,6 +260,16 @@ class ActionManager
                 continue;
             }
             $this->entities[$className][$action->getName()] = $action;
+        }
+    }
+
+    /**
+     * @param Action $action
+     */
+    protected function mapActionDatagrids(Action $action)
+    {
+        foreach ($action->getDefinition()->getDatagrids() as $datagridName) {
+            $this->datagrids[$datagridName][$action->getName()] = $action;
         }
     }
 

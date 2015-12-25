@@ -13,8 +13,18 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 /**
- * @ORM\Entity
- * @ORM\Table(name="orob2b_acc_product_visibility")
+ * @ORM\Entity(
+ *      repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository\AccountProductVisibilityRepository"
+ * )
+ * @ORM\Table(
+ *      name="orob2b_acc_product_visibility",
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(
+ *              name="orob2b_acc_prod_vis_uidx",
+ *              columns={"website_id", "product_id", "account_id"}
+ *          )
+ *      }
+ * )
  * @Config
  */
 class AccountProductVisibility implements VisibilityInterface, AccountAwareInterface, WebsiteAwareInterface
@@ -22,8 +32,6 @@ class AccountProductVisibility implements VisibilityInterface, AccountAwareInter
     const ACCOUNT_GROUP = 'account_group';
     const CURRENT_PRODUCT = 'current_product';
     const CATEGORY = 'category';
-    const HIDDEN = 'hidden';
-    const VISIBLE = 'visible';
 
     /**
      * @var integer
@@ -64,6 +72,11 @@ class AccountProductVisibility implements VisibilityInterface, AccountAwareInter
      * @ORM\Column(name="visibility", type="string", length=255, nullable=true)
      */
     protected $visibility;
+
+    public function __clone()
+    {
+        $this->id = null;
+    }
 
     /**
      * @return int
