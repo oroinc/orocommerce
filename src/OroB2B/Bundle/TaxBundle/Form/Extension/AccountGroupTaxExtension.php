@@ -44,11 +44,8 @@ class AccountGroupTaxExtension extends AbstractTaxExtension
      * @param AccountTaxCode|AbstractTaxCode $taxCode
      * @param AccountTaxCode|AbstractTaxCode $taxCodeNew
      */
-    protected function handleTaxCode(
-        $accountGroup,
-        AbstractTaxCode $taxCode = null,
-        AbstractTaxCode $taxCodeNew = null
-    ) {
+    protected function handleTaxCode($accountGroup, AbstractTaxCode $taxCode = null, AbstractTaxCode $taxCodeNew = null)
+    {
         if ($taxCode) {
             $taxCode->removeAccountGroup($accountGroup);
         }
