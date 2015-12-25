@@ -1345,8 +1345,26 @@
           }
         }
       }
+
+      .launcher-item {
+        a.action{
+          padding-left: 18px;
+          position: relative;
+
+          [class^='icon-'].hide-text{
+            position: absolute;
+            top: 0;
+            left: 0;
+
+            &:after,
+            &:before {
+              color: @base-link-color;
+            }
+          }
+        }
+
+      }
     }
   }
 }
-
 
