@@ -100,10 +100,10 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
                     'The cache is updated successfully',
                 ],
                 'expectedCounts' => [
-                    'categoryVisibility' => 0,
+                    'categoryVisibility' => 8,
                     'accountGroupCategoryVisibility' => 0,
                     'accountCategoryVisibility' => 0,
-                    'productVisibility' => 20,
+                    'productVisibility' => 19,
                     'accountGroupProductVisibility' => 8,
                     'accountProductVisibility' => 5,
                 ]
@@ -116,10 +116,10 @@ class VisibilityCacheBuildCommandTest extends WebTestCase
                     'The cache is updated successfully',
                 ],
                 'expectedCounts' => [
-                    'categoryVisibility' => 0,
+                    'categoryVisibility' => 8,
                     'accountGroupCategoryVisibility' => 0,
                     'accountCategoryVisibility' => 0,
-                    'productVisibility' => 7,
+                    'productVisibility' => 6,
                     'accountGroupProductVisibility' => 6,
                     'accountProductVisibility' => 4,
                 ]
