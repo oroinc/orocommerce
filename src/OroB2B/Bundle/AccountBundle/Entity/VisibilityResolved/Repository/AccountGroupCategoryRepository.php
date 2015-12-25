@@ -69,7 +69,7 @@ class AccountGroupCategoryRepository extends EntityRepository
             ->from('OroB2BCatalogBundle:Category', 'category')
             ->orderBy('category.id');
 
-        $terms =  [
+        $terms = [
             $this->getCategoryVisibilityResolvedTerm($qb, $configValue),
             $this->getAccountGroupCategoryVisibilityResolvedTerm($qb, $accountGroup)
         ];

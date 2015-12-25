@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
@@ -30,9 +31,15 @@ class AccountCategoryRepository extends EntityRepository
 
         $qb = $this->_em->createQueryBuilder();
 
-        $qb->select('COALESCE(acvr.visibility, COALESCE(cvr.visibility, '. $qb->expr()->literal($configValue).'))');
+        $configValue = $qb->expr()->literal($configValue);
+        $accountCondition = sprintf(
+            'CASE WHEN acvr.visibility = %s THEN COALESCE(cvr.visibility, %s) ELSE acvr.visibility END',
+            AccountCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL,
+            $configValue
+        );
 
-        $qb->from('OroB2BCatalogBundle:Category', 'category')
+        $qb->select('COALESCE(' . $accountCondition . ', cvr.visibility, ' . $configValue . ')')
+            ->from('OroB2BCatalogBundle:Category', 'category')
             ->leftJoin(
                 'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
                 'cvr',
@@ -41,20 +48,17 @@ class AccountCategoryRepository extends EntityRepository
             );
 
         if ($accountGroup) {
-            $qb->select(
-                'COALESCE(acvr.visibility, COALESCE(agcvr.visibility, COALESCE(cvr.visibility, '
-                . $qb->expr()->literal($configValue).')))'
-            )
-            ->leftJoin(
-                'OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
-                'agcvr',
-                Join::WITH,
-                $qb->expr()->andX(
-                    $qb->expr()->eq('agcvr.category', 'category'),
-                    $qb->expr()->eq('agcvr.accountGroup', ':accountGroup')
+            $qb->select('COALESCE(' . $accountCondition . ', agcvr.visibility, cvr.visibility, ' . $configValue . ')')
+                ->leftJoin(
+                    'OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
+                    'agcvr',
+                    Join::WITH,
+                    $qb->expr()->andX(
+                        $qb->expr()->eq('agcvr.category', 'category'),
+                        $qb->expr()->eq('agcvr.accountGroup', ':accountGroup')
+                    )
                 )
-            )
-            ->setParameter('accountGroup', $account->getGroup());
+                ->setParameter('accountGroup', $accountGroup);
         }
 
         $qb
@@ -89,7 +93,7 @@ class AccountCategoryRepository extends EntityRepository
             ->from('OroB2BCatalogBundle:Category', 'category')
             ->orderBy('category.id');
 
-        $terms =  [$this->getCategoryVisibilityResolvedTerm($qb, $configValue)];
+        $terms = [$this->getCategoryVisibilityResolvedTerm($qb, $configValue)];
         if ($account->getGroup()) {
             $terms[] = $this->getAccountGroupCategoryVisibilityResolvedTerm($qb, $account->getGroup());
         }

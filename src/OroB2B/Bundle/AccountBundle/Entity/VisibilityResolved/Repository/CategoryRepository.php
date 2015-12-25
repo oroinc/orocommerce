@@ -48,7 +48,7 @@ class CategoryRepository extends EntityRepository
             ->from('OroB2BCatalogBundle:Category', 'category')
             ->orderBy('category.id');
 
-        $terms =  [$this->getCategoryVisibilityResolvedTerm($qb, $configValue)];
+        $terms = [$this->getCategoryVisibilityResolvedTerm($qb, $configValue)];
 
         if ($visibility === BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE) {
             $qb->andWhere($qb->expr()->gt(implode(' + ', $terms), 0));
