@@ -113,10 +113,6 @@ datagrid:
                 type: url
                 route: orob2b_product_update
                 params: [ id ]
-            duplicate_link:
-                type: url
-                route: orob2b_product_duplicate
-                params: [ id ]
             delete_link:
                 type: url
                 route: orob2b_api_delete_product
@@ -135,12 +131,6 @@ datagrid:
                 link:          update_link
                 icon:          edit
                 acl_resource:  orob2b_product_update
-            duplicate:
-                type:          navigate
-                label:         orob2b.product.grid.action.duplicate
-                link:          duplicate_link
-                icon:          copy
-                acl_resource:  orob2b_product_create
             delete:
                 type:          delete
                 label:         oro.grid.action.delete

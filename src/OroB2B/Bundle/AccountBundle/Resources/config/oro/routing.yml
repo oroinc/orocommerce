@@ -139,3 +139,9 @@ orob2b_account_frontend_entity_pagination_last:
     defaults: { _controller: OroEntityPaginationBundle:EntityPagination:last }
     options:
         frontend: true
+
+orob2b_account_audit:
+    resource:     "@OroB2BAccountBundle/Controller/AuditController.php"
+    type:         annotation
+    options:
+        frontend: true

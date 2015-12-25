@@ -11,8 +11,18 @@ use OroB2B\Bundle\AccountBundle\Entity\AccountAwareInterface;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 /**
- * @ORM\Entity
- * @ORM\Table(name="orob2b_acc_category_visibility")
+ * @ORM\Entity(
+ *     repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository\AccountCategoryVisibilityRepository"
+ * )
+ * @ORM\Table(
+ *      name="orob2b_acc_category_visibility",
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(
+ *              name="orob2b_acc_ctgr_vis_uidx",
+ *              columns={"category_id", "account_id"}
+ *          )
+ *      }
+ * )
  * @Config
  */
 class AccountCategoryVisibility implements VisibilityInterface, AccountAwareInterface
@@ -20,8 +30,6 @@ class AccountCategoryVisibility implements VisibilityInterface, AccountAwareInte
     const PARENT_CATEGORY = 'parent_category';
     const CATEGORY = 'category';
     const ACCOUNT_GROUP = 'account_group';
-    const VISIBLE = 'visible';
-    const HIDDEN = 'hidden';
 
     /**
      * @var integer

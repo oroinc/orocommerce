@@ -55,15 +55,8 @@ class AccountUserProfileController extends Controller
      */
     protected function handleForm(Request $request)
     {
-        $context = new LayoutContext();
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->get('orob2b_account.layout.data_provider.new_account_user')->getData($context);
-        /** @var AccountUserManager $userManager  */
+        $form = $this->get('orob2b_account.provider.frontend_account_user_registration_form')->getForm();
         $userManager = $this->get('orob2b_account_user.manager');
-
-        /** @var FormInterface $form */
-        $form = $this->get('orob2b_account.form.frontend_account_registration');
-        $form->setData($accountUser);
         $handler = new FrontendAccountUserHandler($form, $request, $userManager);
 
         if ($userManager->isConfirmationRequired()) {
@@ -72,7 +65,7 @@ class AccountUserProfileController extends Controller
             $registrationMessage = 'orob2b.account.controller.accountuser.registered.message';
         }
         $response = $this->get('oro_form.model.update_handler')->handleUpdate(
-            $accountUser,
+            $form->getData(),
             $form,
             ['route' => 'orob2b_account_account_user_security_login'],
             ['route' => 'orob2b_account_account_user_security_login'],
@@ -82,7 +75,7 @@ class AccountUserProfileController extends Controller
         if ($response instanceof Response) {
             return $response;
         }
-        return $context;
+        return [];
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Form\Extension;
 
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
@@ -139,19 +138,17 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         $this->assertStorageCalled($data);
         $this->assertProductRepositoryCalled($product);
 
-        $quote = new Quote();
+        $this->entity = new Quote();
 
-        /* @var $builder FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
-        $this->extension->buildForm($builder, ['data' => $quote]);
+        $this->extension->buildForm($this->getBuilderMock(true), []);
 
-        $this->assertEquals($account, $quote->getAccount());
-        $this->assertEquals($accountUser, $quote->getAccountUser());
+        $this->assertEquals($account, $this->entity->getAccount());
+        $this->assertEquals($accountUser, $this->entity->getAccountUser());
 
-        $this->assertCount(1, $quote->getQuoteProducts());
+        $this->assertCount(1, $this->entity->getQuoteProducts());
 
         /* @var $quoteProduct QuoteProduct */
-        $quoteProduct = $quote->getQuoteProducts()->first();
+        $quoteProduct = $this->entity->getQuoteProducts()->first();
 
         $this->assertEquals($product, $quoteProduct->getProduct());
         $this->assertEquals($product->getSku(), $quoteProduct->getProductSku());

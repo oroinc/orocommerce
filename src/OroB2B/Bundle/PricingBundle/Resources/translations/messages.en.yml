@@ -50,6 +50,7 @@ orob2b.pricing:
         action:
             save: Save
             cancel: Cancel
+        save.success: Product Price has been added
 
     menu:
         price_lists_tab.label: Price lists management

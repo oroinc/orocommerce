@@ -33,11 +33,6 @@ class ProductSelectDBQueryEventListener
     protected $frontendSystemConfigurationPath = null;
 
     /**
-     * @var RequestStack
-     */
-    protected $requestStack;
-
-    /**
      * @var FrontendHelper
      */
     protected $frontendHelper;
@@ -51,18 +46,15 @@ class ProductSelectDBQueryEventListener
      * @param ConfigManager $configManager
      * @param ProductVisibilityQueryBuilderModifier $modifier
      * @param FrontendHelper $helper
-     * @param RequestStack $requestStack
      */
     public function __construct(
         ConfigManager $configManager,
         ProductVisibilityQueryBuilderModifier $modifier,
-        FrontendHelper $helper,
-        RequestStack $requestStack
+        FrontendHelper $helper
     ) {
         $this->configManager = $configManager;
         $this->modifier = $modifier;
         $this->frontendHelper = $helper;
-        $this->requestStack = $requestStack;
     }
 
     /**
@@ -126,6 +118,6 @@ class ProductSelectDBQueryEventListener
      */
     protected function isFrontendRequest()
     {
-        return $this->frontendHelper->isFrontendRequest($this->requestStack->getCurrentRequest());
+        return $this->frontendHelper->isFrontendRequest();
     }
 }

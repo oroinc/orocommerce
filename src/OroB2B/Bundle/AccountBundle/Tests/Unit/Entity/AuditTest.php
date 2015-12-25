@@ -49,11 +49,11 @@ class AuditTest extends EntityTestCase
 
         $audit->getFields()->map(
             function ($field) {
-                $this->assertInstanceOf('OroB2B\Bundle\AccountBundle\Entity\AuditField', $field);
+                $this->assertInstanceOf('Oro\Bundle\DataAuditBundle\Entity\AuditField', $field);
             }
         );
 
-        $this->assertInstanceOf('OroB2B\Bundle\AccountBundle\Entity\AuditField', $audit->getField('field1'));
+        $this->assertInstanceOf('Oro\Bundle\DataAuditBundle\Entity\AuditField', $audit->getField('field1'));
         $this->assertFalse($audit->getField('field2'));
 
         $audit->createField('field1', 'string', 'a2', 'b2');

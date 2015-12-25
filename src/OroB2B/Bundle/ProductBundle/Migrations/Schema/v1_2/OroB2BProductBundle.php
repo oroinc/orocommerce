@@ -46,5 +46,9 @@ class OroB2BProductBundle implements Migration
                 10
             )
         );
+
+        $queries->addQuery(
+            new UpdateEntityConfigFieldValueQuery($productClass, 'inventory_status', 'dataaudit', 'auditable', true)
+        );
     }
 }

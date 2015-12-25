@@ -64,7 +64,14 @@ class LoadProductVisibilityDemoData extends AbstractFixture implements
             $visibility = $row['visibility'];
 
             if ($row['all']) {
-                $productVisibility = new ProductVisibility();
+                $productVisibility = $this->findVisibilityEntity(
+                    $manager,
+                    'OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility',
+                    ['website' => $website, 'product' => $product]
+                );
+                if (!$productVisibility) {
+                    $productVisibility = new ProductVisibility();
+                }
                 $this->saveVisibility($manager, $website, $productVisibility, $product, $visibility);
             }
 
@@ -123,6 +130,17 @@ class LoadProductVisibilityDemoData extends AbstractFixture implements
     protected function getAccountGroup(ObjectManager $manager, $name)
     {
         return $manager->getRepository('OroB2BAccountBundle:AccountGroup')->findOneBy(['name' => $name]);
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @param string $class
+     * @param array $criteria
+     * @return object
+     */
+    protected function findVisibilityEntity(ObjectManager $manager, $class, array $criteria)
+    {
+        return $manager->getRepository($class)->findOneBy($criteria);
     }
 
     /**
