@@ -652,7 +652,7 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 'actionName' => 'action2',
-                'expected' => ActionManager::DEFAULT_DIALOG_TEMPLATE
+                'expected' => ActionManager::DEFAULT_TEMPLATE
             ],
             [
                 'actionName' => 'action4',
@@ -700,7 +700,7 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
                     'Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity2',
                 ],
                 'frontend_options' => [
-                    'dialog_template' => 'test.html.twig'
+                    'template' => 'test.html.twig'
                 ],
                 'order' => 20,
             ],

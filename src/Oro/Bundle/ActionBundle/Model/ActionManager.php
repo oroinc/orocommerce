@@ -12,7 +12,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 class ActionManager
 {
-    const DEFAULT_DIALOG_TEMPLATE = 'OroActionBundle:Widget:widget/form.html.twig';
+    const DEFAULT_TEMPLATE = 'OroActionBundle:Widget:widget/form.html.twig';
 
     /** @var DoctrineHelper */
     protected $doctrineHelper;
@@ -168,7 +168,7 @@ class ActionManager
      */
     public function getFrontendTemplate($actionName, array $context = null)
     {
-        $template = self::DEFAULT_DIALOG_TEMPLATE;
+        $template = self::DEFAULT_TEMPLATE;
         $action = $this->getAction($actionName, $this->contextHelper->getActionData($context));
 
         if ($action) {

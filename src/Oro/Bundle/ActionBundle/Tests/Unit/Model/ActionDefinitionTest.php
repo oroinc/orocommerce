@@ -103,6 +103,7 @@ class ActionDefinitionTest extends \PHPUnit_Framework_TestCase
                 ['applications', ['application1', 'application2']],
                 ['order', 77],
                 ['frontendOptions', ['config1', 'config2']],
+                ['buttonOptions', ['config1', 'config2']],
                 ['formOptions', ['config1', 'config2']],
                 ['formType', 'test_form_type'],
                 ['attributes', ['config1', 'config2']],

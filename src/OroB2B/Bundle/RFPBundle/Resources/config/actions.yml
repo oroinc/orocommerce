@@ -30,8 +30,7 @@ actions:
         button_options:
             icon: icon-edit
         frontend_options:
-            icon: icon-edit
-            dialog_template: OroB2BRFPBundle:Action:changeStatusForm.html.twig
+            template: OroB2BRFPBundle:Action:changeStatusForm.html.twig
             title: orob2b.rfp.widget.change_status_title
             options:
                 width: 550

@@ -169,7 +169,6 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
                 ->scalarNode('class')->end()
                 ->scalarNode('group')->end()
                 ->scalarNode('template')->end()
-                ->scalarNode('confirmation')->end()
                 ->scalarNode('page_component_module')->end()
                 ->arrayNode('page_component_options')
                     ->prototype('variable')
@@ -194,13 +193,14 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
         $node
             ->addDefaultsIfNotSet()
             ->children()
+                ->scalarNode('confirmation')->end()
                 ->arrayNode('options')
                     ->prototype('variable')
                     ->end()
                 ->end()
                 ->scalarNode('template')->end()
                 ->scalarNode('title')->end()
-                ->scalarNode('show_dialog')->end()
+                ->booleanNode('show_dialog')->end()
             ->end();
 
         return $node;
