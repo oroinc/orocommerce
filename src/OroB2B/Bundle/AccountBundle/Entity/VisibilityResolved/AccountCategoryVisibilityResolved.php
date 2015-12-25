@@ -9,7 +9,9 @@ use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(
+ *    repositoryClass="OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository"
+ * )
  * @ORM\Table(name="orob2b_acc_ctgr_vsb_resolv")
  */
 class AccountCategoryVisibilityResolved extends BaseCategoryVisibilityResolved
