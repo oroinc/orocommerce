@@ -118,7 +118,7 @@ parameters:
     orob2b_account.model.action.change_category_position.class: OroB2B\Bundle\AccountBundle\Model\Action\ChangeCategoryPosition
     orob2b_account.model.action.resolve_product_visibility.class: OroB2B\Bundle\AccountBundle\Model\Action\ResolveProductVisibility
     orob2b_account.model.action.category_visibility_cache_clear.class: OroB2B\Bundle\AccountBundle\Model\Action\CategoryVisibilityCacheClearAction
-    orob2b_account.model.action.resolve_visibility_by_product.class: OroB2B\Bundle\AccountBundle\Model\Action\ResolveVisibilityByProduct
+    orob2b_account.model.action.change_product_category.class: OroB2B\Bundle\AccountBundle\Model\Action\ChangeProductCategory
     orob2b_account.model.action.build_website_cache.class: OroB2B\Bundle\AccountBundle\Model\Action\BuildWebsiteCacheAction
 
     # Visibility cache
@@ -801,7 +801,7 @@ services:
         class: %orob2b_account.model.action.change_category_position.class%
         parent: orob2b_account.model.action.abstract_visibility_registry_aware_action
         calls:
-            - [setCacheBuilder, [@orob2b_account.visibility.cache.product.category.product_resolved_cache_builder]]
+            - [setCacheBuilder, [@orob2b_account.visibility.cache.product.category.cache_builder]]
         tags:
             - { name: oro_workflow.action, alias: change_category_position }
 
@@ -813,13 +813,13 @@ services:
         tags:
             - { name: oro_workflow.action, alias: resolve_product_visibility }
 
-    orob2b_account.model.action.resolve_visibility_by_product:
+    orob2b_account.model.action.change_product_category:
         parent: orob2b_account.model.action.abstract_visibility_registry_aware_action
-        class: %orob2b_account.model.action.resolve_visibility_by_product.class%
+        class: %orob2b_account.model.action.change_product_category.class%
         calls:
             - [setCacheBuilder, [@orob2b_account.visibility.cache.product.cache_builder]]
         tags:
-            - { name: oro_workflow.action, alias: resolve_visibility_by_product }
+            - { name: oro_workflow.action, alias: change_product_category }
 
     orob2b_account.model.action.build_website_cache:
         parent: orob2b_account.model.action.abstract_visibility_registry_aware_action

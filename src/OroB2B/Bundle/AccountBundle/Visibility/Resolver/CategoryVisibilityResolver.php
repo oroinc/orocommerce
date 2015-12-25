@@ -125,10 +125,10 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
 
     /**
      * @param Category $category
-     * @param Account|null $account
+     * @param Account $account
      * @return bool
      */
-    public function isCategoryVisibleForAccount(Category $category, Account $account = null)
+    public function isCategoryVisibleForAccount(Category $category, Account $account)
     {
         return $this->registry
             ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
