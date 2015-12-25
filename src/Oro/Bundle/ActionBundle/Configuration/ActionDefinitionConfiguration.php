@@ -200,7 +200,9 @@ class ActionDefinitionConfiguration implements ConfigurationInterface
                 ->end()
                 ->scalarNode('template')->end()
                 ->scalarNode('title')->end()
-                ->booleanNode('show_dialog')->end()
+                ->booleanNode('show_dialog')
+                    ->defaultTrue()
+                ->end()
             ->end();
 
         return $node;

@@ -1,44 +1,63 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
-{% form_theme form with ['OroFormBundle:Form:fields.html.twig'] %}
 
 {% set formAction = app.request.uri  %}
+{% set entity = context.data %}
+
+{% if entity %}
+    {% set className = oro_class_name(context.data) %}
+    {% set entityLabel = oro_entity_config_value(className, 'label')|trans %}
+
+    {% oro_title_set({
+        titleTemplate : "%entity% - %actionName% - %label% - %pluralLabel%",
+        params : {
+            "%entity%": entity.__toString,
+            "%actionName%": action.definition.label|trans,
+            "%label%": entityLabel,
+            "%pluralLabel%": oro_entity_config_value(className, 'plural_label')|trans
+        }
+    }) %}
+{% else %}
+    {% oro_title_set({titleTemplate : action.definition.label|trans}) %}
+{% endif %}
 
 {% block pageHeader %}
-    {% set title = action.definition.label|trans %}
-    {% include 'OroUIBundle::page_title_block.html.twig' with { title: title } %}
+    {% if entity %}
+        {% set breadcrumbs = {
+            'entity':      entity,
+            'indexPath':   fromUrl,
+            'indexLabel':  entityLabel,
+            'entityTitle': entity|default('N/A'|trans)
+        } %}
+
+        {{ parent() }}
+    {% else %}
+        {% include 'OroUIBundle::page_title_block.html.twig' with { title: action.definition.label|trans } %}
+    {% endif %}
 {% endblock pageHeader %}
 
 {% block navButtons %}
     {{ UI.cancelButton(fromUrl) }}
-    {% set html = UI.saveAndCloseButton() %}
-    {{ UI.dropdownSaveButton({'html': html}) }}
+
+    {{ UI.dropdownSaveButton({'html': UI.saveAndStayButton('Submit')}) }}
 {% endblock navButtons %}
 
 {% block content_data %}
-    <div class="action-form">
-        {{ form_start(form, {
-            'method': 'POST',
-                'action': app.request.uri,
-            'attr': {
-                'class': 'form-dialog',
-                'data-nohash': 'true',
-                'data-disable-autofocus': 'true',
-                'id': form.vars.id,
-            },
-        }) }}
-        {% block form_inner %}
-            {% block form_widget %}
-                {{ form_widget(form) }}
-            {% endblock %}
+    {% set id = 'action-page-' ~ action.name %}
 
-            {% block form_actions %}
-                <div class="widget-actions form-actions">
-                    {% block form_actions_inner %}
+    {% set dataBlocks = [{
+        'title': action.definition.label|trans,
+        'class': 'active',
+        'subblocks': [{
+            'data': [
+                form_widget(form)
+            ]
+        }]
+    }] %}
 
-                    {% endblock %}
-                </div>
-            {% endblock %}
-        {% endblock %}
-        {{ form_end(form) }}
-    </div>
+    {% set data = {
+        'formErrors': form_errors(form),
+        'dataBlocks': dataBlocks
+    }%}
+
+    {{ parent() }}
 {% endblock content_data %}

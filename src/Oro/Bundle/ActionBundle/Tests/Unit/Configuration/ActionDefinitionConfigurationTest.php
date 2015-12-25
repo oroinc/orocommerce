@@ -77,7 +77,8 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                     'postfunctions' => [],
                     'attributes' => [],
                     'frontend_options' => [
-                        'options' => []
+                        'options' => [],
+                        'show_dialog' => true
                     ],
                     'button_options' => [
                         'page_component_options' => [],
@@ -100,7 +101,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                             'title' => 'dialog title',
                             'options' => ['width' => 400],
                             'confirmation' => 'Confirmation message',
-                            'show_dialog' => true
+                            'show_dialog' => false
                         ],
                         'button_options' => [
                             'icon' => 'icon',
@@ -182,7 +183,7 @@ class ActionDefinitionConfigurationTest extends \PHPUnit_Framework_TestCase
                         'title' => 'dialog title',
                         'options' => ['width' => 400],
                         'confirmation' => 'Confirmation message',
-                        'show_dialog' => true
+                        'show_dialog' => false
                     ],
                     'button_options' => [
                         'icon' => 'icon',
