@@ -33,14 +33,14 @@ class AccountTaxExtensionTest extends AbstractAccountTaxExtensionTest
 
         $this->assertTaxCodeAdd($event, $taxCode);
         $this->entityRepository->expects($this->once())
-            ->method('findOneByAccount');
+            ->method($this->getRepositoryFindMethod());
 
         $this->getExtension()->onPostSubmit($event);
 
         $this->assertEquals([$account], $taxCode->getAccounts()->toArray());
     }
 
-    public function testOnPostSubmitExistingAccountGroup()
+    public function testOnPostSubmitExistingAccount()
     {
         $this->prepareDoctrineHelper(true, true);
 
@@ -48,18 +48,18 @@ class AccountTaxExtensionTest extends AbstractAccountTaxExtensionTest
         $event = $this->createEvent($account);
 
         $newTaxCode = $this->createTaxCode(1);
-        $taxCodeWithAccountGroup = $this->createTaxCode(2);
-        $taxCodeWithAccountGroup->addAccount($account);
+        $taxCodeWithAccount = $this->createTaxCode(2);
+        $taxCodeWithAccount->addAccount($account);
 
         $this->assertTaxCodeAdd($event, $newTaxCode);
         $this->entityRepository->expects($this->once())
-            ->method('findOneByAccount')
-            ->will($this->returnValue($taxCodeWithAccountGroup));
+            ->method($this->getRepositoryFindMethod())
+            ->will($this->returnValue($taxCodeWithAccount));
 
         $this->getExtension()->onPostSubmit($event);
 
         $this->assertEquals([$account], $newTaxCode->getAccounts()->toArray());
-        $this->assertEquals([], $taxCodeWithAccountGroup->getAccounts()->toArray());
+        $this->assertEquals([], $taxCodeWithAccount->getAccounts()->toArray());
     }
 
     /**
