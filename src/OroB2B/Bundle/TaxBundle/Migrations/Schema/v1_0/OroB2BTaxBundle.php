@@ -18,23 +18,23 @@ class OroB2BTaxBundle implements Migration
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOrob2BTaxTable($schema);
-        $this->createOrob2BTaxAccGrpTcAccGrpTable($schema);
-        $this->createOrob2BTaxAccTaxCodeAccTable($schema);
-        $this->createOrob2BTaxAccountTaxCodeTable($schema);
-        $this->createOrob2BTaxJurisdictionTable($schema);
-        $this->createOrob2BTaxProdTaxCodeProdTable($schema);
-        $this->createOrob2BTaxProductTaxCodeTable($schema);
-        $this->createOrob2BTaxRuleTable($schema);
-        $this->createOrob2BTaxZipCodeTable($schema);
+        $this->createOroB2BTaxTable($schema);
+        $this->createOroB2BTaxAccGrpTcAccGrpTable($schema);
+        $this->createOroB2BTaxAccTaxCodeAccTable($schema);
+        $this->createOroB2BTaxAccountTaxCodeTable($schema);
+        $this->createOroB2BTaxJurisdictionTable($schema);
+        $this->createOroB2BTaxProdTaxCodeProdTable($schema);
+        $this->createOroB2BTaxProductTaxCodeTable($schema);
+        $this->createOroB2BTaxRuleTable($schema);
+        $this->createOroB2BTaxZipCodeTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOrob2BTaxAccGrpTcAccGrpForeignKeys($schema);
-        $this->addOrob2BTaxAccTaxCodeAccForeignKeys($schema);
-        $this->addOrob2BTaxJurisdictionForeignKeys($schema);
-        $this->addOrob2BTaxProdTaxCodeProdForeignKeys($schema);
-        $this->addOrob2BTaxRuleForeignKeys($schema);
-        $this->addOrob2BTaxZipCodeForeignKeys($schema);
+        $this->addOroB2BTaxAccGrpTcAccGrpForeignKeys($schema);
+        $this->addOroB2BTaxAccTaxCodeAccForeignKeys($schema);
+        $this->addOroB2BTaxJurisdictionForeignKeys($schema);
+        $this->addOroB2BTaxProdTaxCodeProdForeignKeys($schema);
+        $this->addOroB2BTaxRuleForeignKeys($schema);
+        $this->addOroB2BTaxZipCodeForeignKeys($schema);
     }
 
     /**
@@ -42,7 +42,7 @@ class OroB2BTaxBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOrob2BTaxTable(Schema $schema)
+    protected function createOroB2BTaxTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_tax');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -60,7 +60,7 @@ class OroB2BTaxBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOrob2BTaxAccGrpTcAccGrpTable(Schema $schema)
+    protected function createOroB2BTaxAccGrpTcAccGrpTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_tax_acc_grp_tc_acc_grp');
         $table->addColumn('account_group_tax_code_id', 'integer', []);
@@ -74,7 +74,7 @@ class OroB2BTaxBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOrob2BTaxAccTaxCodeAccTable(Schema $schema)
+    protected function createOroB2BTaxAccTaxCodeAccTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_tax_acc_tax_code_acc');
         $table->addColumn('account_tax_code_id', 'integer', []);
@@ -88,7 +88,7 @@ class OroB2BTaxBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOrob2BTaxAccountTaxCodeTable(Schema $schema)
+    protected function createOroB2BTaxAccountTaxCodeTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_tax_account_tax_code');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -105,7 +105,7 @@ class OroB2BTaxBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOrob2BTaxJurisdictionTable(Schema $schema)
+    protected function createOroB2BTaxJurisdictionTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_tax_jurisdiction');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -125,7 +125,7 @@ class OroB2BTaxBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOrob2BTaxProdTaxCodeProdTable(Schema $schema)
+    protected function createOroB2BTaxProdTaxCodeProdTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_tax_prod_tax_code_prod');
         $table->addColumn('product_tax_code_id', 'integer', []);
@@ -139,7 +139,7 @@ class OroB2BTaxBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOrob2BTaxProductTaxCodeTable(Schema $schema)
+    protected function createOroB2BTaxProductTaxCodeTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_tax_product_tax_code');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -156,7 +156,7 @@ class OroB2BTaxBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOrob2BTaxRuleTable(Schema $schema)
+    protected function createOroB2BTaxRuleTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_tax_rule');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -175,7 +175,7 @@ class OroB2BTaxBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOrob2BTaxZipCodeTable(Schema $schema)
+    protected function createOroB2BTaxZipCodeTable(Schema $schema)
     {
         $table = $schema->createTable('orob2b_tax_zip_code');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -193,7 +193,7 @@ class OroB2BTaxBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function addOrob2BTaxAccGrpTcAccGrpForeignKeys(Schema $schema)
+    protected function addOroB2BTaxAccGrpTcAccGrpForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_tax_acc_grp_tc_acc_grp');
         $table->addForeignKeyConstraint(
@@ -215,7 +215,7 @@ class OroB2BTaxBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function addOrob2BTaxAccTaxCodeAccForeignKeys(Schema $schema)
+    protected function addOroB2BTaxAccTaxCodeAccForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_tax_acc_tax_code_acc');
         $table->addForeignKeyConstraint(
@@ -237,7 +237,7 @@ class OroB2BTaxBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function addOrob2BTaxJurisdictionForeignKeys(Schema $schema)
+    protected function addOroB2BTaxJurisdictionForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_tax_jurisdiction');
         $table->addForeignKeyConstraint(
@@ -259,7 +259,7 @@ class OroB2BTaxBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function addOrob2BTaxProdTaxCodeProdForeignKeys(Schema $schema)
+    protected function addOroB2BTaxProdTaxCodeProdForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_tax_prod_tax_code_prod');
         $table->addForeignKeyConstraint(
@@ -281,7 +281,7 @@ class OroB2BTaxBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function addOrob2BTaxRuleForeignKeys(Schema $schema)
+    protected function addOroB2BTaxRuleForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_tax_rule');
         $table->addForeignKeyConstraint(
@@ -315,7 +315,7 @@ class OroB2BTaxBundle implements Migration
      *
      * @param Schema $schema
      */
-    protected function addOrob2BTaxZipCodeForeignKeys(Schema $schema)
+    protected function addOroB2BTaxZipCodeForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('orob2b_tax_zip_code');
         $table->addForeignKeyConstraint(
