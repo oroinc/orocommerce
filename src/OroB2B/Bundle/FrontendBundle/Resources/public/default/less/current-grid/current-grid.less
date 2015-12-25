@@ -1275,4 +1275,78 @@
   position: relative;
 }
 
+//Table
+.oro-datagrid {
+  .other-scroll-container {
+    border-radius: 0;
+    margin: 0;
+    border: 0;
+
+    .container-fluid {
+      padding: 0;
+    }
+  }
+
+  .grid-container {
+
+    .table-bordered {
+      th, td {
+        border-left: 0;
+        border-right: 0;
+      }
+    }
+
+    .grid {
+
+      thead {
+        tr {
+          th {
+            border-radius: 0;
+            padding: 1rem 1.2rem;
+            background: #f7f7f7;
+            vertical-align: middle;
+            border-bottom: 0;
+
+            span.caret {
+              margin-left: 1rem;
+            }
+
+            &.ascending {
+              span.caret {
+                border-bottom-color: @base-font-color-lighter;
+              }
+            }
+
+            &.descending {
+              span.caret {
+                border-top-color: @base-font-color-lighter;
+              }
+            }
+
+            > a {
+              text-transform: none;
+              font-size: 1.4rem;
+              line-height: 1.4rem;
+              font-weight: 400;
+
+              &:hover, &:focus, &:active {
+                text-decoration: none;
+              }
+            }
+          }
+        }
+      }
+
+      tbody {
+        tr {
+          td {
+            padding: 1.5rem 1.2rem;
+            vertical-align: middle;
+          }
+        }
+      }
+    }
+  }
+}
+
 
