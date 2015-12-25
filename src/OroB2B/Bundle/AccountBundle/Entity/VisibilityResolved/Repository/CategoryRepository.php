@@ -74,7 +74,7 @@ class CategoryRepository extends EntityRepository
     public function clearTable()
     {
         // TRUNCATE can't be used because it can't be rolled back in case of DB error
-        $this->createQueryBuilder('pvr')
+        $this->createQueryBuilder('cvr')
             ->delete()
             ->getQuery()
             ->execute();
