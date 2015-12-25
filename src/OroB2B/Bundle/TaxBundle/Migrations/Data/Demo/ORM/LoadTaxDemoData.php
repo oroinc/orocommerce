@@ -19,7 +19,6 @@ use OroB2B\Bundle\TaxBundle\Entity\ProductTaxCode;
 use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
 use OroB2B\Bundle\TaxBundle\Migrations\ZipCodeRangeHelper;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\TaxBundle\Entity\AccountGroupTaxCode;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -61,11 +60,6 @@ class LoadTaxDemoData extends AbstractFixture implements
      * @var string[]
      */
     protected $accountTaxCodes = [];
-
-    /**
-     * @var string[]
-     */
-    protected $accountGroupTaxCodes = [];
 
     /**
      * @var string
@@ -215,7 +209,6 @@ class LoadTaxDemoData extends AbstractFixture implements
         return $accounts;
     }
 
-
     /**
      * @param EntityManager $manager
      */
@@ -223,8 +216,8 @@ class LoadTaxDemoData extends AbstractFixture implements
     {
         $accountGroups = $this->getAccountGroups($manager);
         foreach ($accountGroups as $accountGroup) {
-            $id = $this->accountGroupTaxCodes[array_rand($this->accountGroupTaxCodes)];
-            /* @var AccountGroupTaxCode $accountTaxCode */
+            $id = $this->accountTaxCodes[array_rand($this->accountTaxCodes)];
+            /* @var AccountTaxCode $accountTaxCode */
             $accountTaxCode = $manager
                 ->getReference('OroB2BTaxBundle:AccountTaxCode', $id);
 
@@ -374,12 +367,10 @@ class LoadTaxDemoData extends AbstractFixture implements
 
         $productTaxCodeId = $this->createProductTaxCode($regionCode, $normalizedRate);
         $accountTaxCodeId = $this->createAccountTaxCode($regionCode, $normalizedRate);
-        $accountGroupTaxCodeId = $this->createAccountGroupTaxCode($regionCode, $normalizedRate);
 
         $this->scheduledTaxRules[] = [
             'product_tax_code_id' => $productTaxCodeId,
             'account_tax_code_id' => $accountTaxCodeId,
-            'account_group_tax_code_id' => $accountGroupTaxCodeId,
             'tax_id' => $taxId,
             'tax_jurisdiction_id' => $jurisdictionId,
             'description' => sprintf('Tax rule for %s with rate %s%%', $regionCode, $normalizedRate),
@@ -415,7 +406,6 @@ class LoadTaxDemoData extends AbstractFixture implements
             [
                 'product_tax_code_id',
                 'account_tax_code_id',
-                'account_group_tax_code_id',
                 'tax_id',
                 'tax_jurisdiction_id',
                 'description',
@@ -474,32 +464,6 @@ class LoadTaxDemoData extends AbstractFixture implements
         }
 
         return $this->accountTaxCodes[$key];
-    }
-
-
-    /**
-     * @param string $regionCode
-     * @param float $taxRate
-     * @return string
-     */
-    protected function createAccountGroupTaxCode($regionCode, $taxRate)
-    {
-        $key = $regionCode;
-        if (!array_key_exists($key, $this->accountGroupTaxCodes)) {
-            $this->connection->insert(
-                'orob2b_tax_acc_group_tax_code',
-                [
-                    'code' => $regionCode,
-                    'description' => sprintf('Account group tax code for %s with rate %s%%', $regionCode, $taxRate),
-                    'created_at' => $this->getCurrentTime(),
-                    'updated_at' => $this->getCurrentTime(),
-                ]
-            );
-
-            $this->accountGroupTaxCodes[$key] = $this->connection->lastInsertId('orob2b_tax_acc_group_tax_code_id_seq');
-        }
-
-        return $this->accountGroupTaxCodes[$key];
     }
 
     /**
