@@ -80,12 +80,14 @@ orob2b.tax:
             saved.message: 'Tax Jurisdiction has been saved'
 
     system_configuration:
-        taxation_title: 'Taxation'
-        tax_calculation_title: 'Tax Calculation'
-        tax_provider_title: 'Tax Provider'
-        tax_provider_label: 'Provider'
-        tax_enable_title: 'Enable Taxation'
-        tax_enable_label: 'Enable'
+        groups:
+            taxation.title: 'Taxation'
+            tax_calculation.title: 'Tax Calculation'
+            tax_provider.title: 'Tax Provider'
+            tax_enable.title: 'Enable Taxation'
+        fields:
+            tax_provider.label: 'Provider'
+            tax_enable.label: 'Enabled'
 
     providers:
         built_in.label: Built-In Table Rates

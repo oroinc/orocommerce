@@ -1,41 +1,40 @@
 oro_system_configuration:
     groups:
         taxation:
-            title: orob2b.tax.system_configuration.taxation_title
+            title: orob2b.tax.system_configuration.groups.taxation.title
         tax_calculation:
-            title: orob2b.tax.system_configuration.tax_calculation_title
+            title: orob2b.tax.system_configuration.groups.tax_calculation.title
             icon: icon-money
         tax_enable:
-            title: orob2b.tax.system_configuration.tax_enable_title
+            title: orob2b.tax.system_configuration.groups.tax_enable.title
         tax_provider:
-            title: orob2b.tax.system_configuration.tax_provider_title
+            title: orob2b.tax.system_configuration.groups.tax_provider.title
 
     fields:
-        oro_b2b_tax.tax_enable:
-            ui_only: true
+        orob2b_tax.tax_enable:
             data_type: boolean
             type: oro_config_checkbox
             options:
-                label: orob2b.tax.system_configuration.tax_enable_label
+                label: orob2b.tax.system_configuration.fields.tax_enable.label
 
-        oro_b2b_tax.tax_provider:
-            ui_only: true
+        orob2b_tax.tax_provider:
             data_type: string
             type: orob2b_tax_provider_type
             options:
-                label: orob2b.tax.system_configuration.tax_provider_label
+                label: orob2b.tax.system_configuration.fields.tax_provider.label
 
     tree:
         system_configuration:
-            platform:
+            commerce:
                 children:
                     taxation:
+                        priority: 500
                         children:
                             tax_calculation:
                                 children:
                                     tax_enable:
                                         children:
-                                            - oro_b2b_tax.tax_enable
+                                            - orob2b_tax.tax_enable
                                     tax_provider:
                                         children:
-                                            - oro_b2b_tax.tax_provider
+                                            - orob2b_tax.tax_provider

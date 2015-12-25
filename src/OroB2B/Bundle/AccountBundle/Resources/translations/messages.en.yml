@@ -278,14 +278,12 @@ orob2b.account:
         visibility:
             label: Default Visibility to Accounts
             form_label: Visibility
-            product_configuration_label: Product Catalog
             catalog_configuration_label: Categories
             visible.label: Visible
             hidden.label: Hidden
     product:
         visibility:
             label: Manage Visibility
-            product_configuration_label: Products
 
     menu:
         customers_tab.label: 'Customers'
@@ -342,6 +340,11 @@ orob2b.account:
         groups:
             account.title: 'Account'
             account_users.title: 'Account Users'
+            account_users_registration.title: 'Account Users Registration'
+            visibility:
+                title: 'Visibility'
+                product.title: 'Product Visibility to Accounts'
+                category.title: 'Category Visibility to Accounts'
         fields:
             default_account_owner.label: 'Default Account Owner'
             registration_allowed.label: 'Registration Allowed'
