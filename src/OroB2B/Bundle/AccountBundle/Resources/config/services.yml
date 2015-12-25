@@ -643,7 +643,8 @@ services:
     orob2b_account.visibility.resolver.category_visibility_resolver:
         class: %orob2b_account.visibility.resolver.category_visibility_resolver.class%
         arguments:
-            - @orob2b_account.storage.category_visibility_storage
+            - @doctrine
+            - @oro_config.manager
 
     orob2b_account.storage.category_visibility_storage:
         class: %orob2b_account.storage.category_visibility_storage.class%
