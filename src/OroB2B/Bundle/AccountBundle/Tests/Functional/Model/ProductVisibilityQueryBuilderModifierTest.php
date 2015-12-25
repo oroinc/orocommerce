@@ -38,6 +38,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
      */
     protected function setUp()
     {
+        $this->markTestSkipped('will be done in BB-1650 scope');
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(AccountLoadAccountUserData::EMAIL, AccountLoadAccountUserData::PASSWORD)
