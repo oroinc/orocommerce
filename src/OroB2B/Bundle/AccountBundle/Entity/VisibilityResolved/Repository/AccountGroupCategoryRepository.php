@@ -5,7 +5,11 @@ namespace OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
@@ -28,7 +32,7 @@ class AccountGroupCategoryRepository extends EntityRepository
     public function isCategoryVisible(Category $category, AccountGroup $accountGroup, $configValue)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
-        $qb->select('COALESCE(agcvr.visibility, COALESCE(cvr.visibility, '. $qb->expr()->literal($configValue).'))')
+        $qb->select('COALESCE(agcvr.visibility, COALESCE(cvr.visibility, ' . $qb->expr()->literal($configValue) . '))')
             ->from('OroB2BCatalogBundle:Category', 'category')
             ->leftJoin(
                 'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
@@ -83,5 +87,45 @@ class AccountGroupCategoryRepository extends EntityRepository
         $categoryVisibilityResolved = $qb->getQuery()->getArrayResult();
 
         return array_map('current', $categoryVisibilityResolved);
+    }
+
+    public function clearTable()
+    {
+        // TRUNCATE can't be used because it can't be rolled back in case of DB error
+        $this->createQueryBuilder('agcvr')
+            ->delete()
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     * @param InsertFromSelectQueryExecutor $insertExecutor
+     */
+    public function insertStaticValues(InsertFromSelectQueryExecutor $insertExecutor)
+    {
+        $visibilityCondition = sprintf(
+            "CASE WHEN agcv.visibility = '%s' THEN %s ELSE %s END",
+            AccountGroupCategoryVisibility::VISIBLE,
+            AccountGroupCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+            AccountGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN
+        );
+
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder()
+            ->select(
+                'agcv.id',
+                'IDENTITY(agcv.category)',
+                'IDENTITY(agcv.accountGroup)',
+                $visibilityCondition,
+                (string)AccountGroupCategoryVisibilityResolved::SOURCE_STATIC
+            )
+            ->from('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility', 'agcv')
+            ->where('agcv.visibility != :parentCategory')
+            ->setParameter('parentCategory', AccountGroupCategoryVisibility::PARENT_CATEGORY);
+
+        $insertExecutor->execute(
+            $this->getClassName(),
+            ['sourceCategoryVisibility', 'category', 'accountGroup', 'visibility', 'source'],
+            $queryBuilder
+        );
     }
 }

@@ -144,4 +144,26 @@ class CategoryRepository extends EntityRepository
             );
         }
     }
+
+    /**
+     * @return array [['category_id' => <int>, 'parent_category_id' => <int>, 'resolved_visibility' => <int|null>], ...]
+     */
+    public function getCategoriesWithResolvedVisibilities()
+    {
+        return $this->getEntityManager()->createQueryBuilder()
+            ->select(
+                'c.id as category_id',
+                'IDENTITY(c.parentCategory) as parent_category_id',
+                'cvr.visibility as resolved_visibility'
+            )
+            ->from('OroB2BCatalogBundle:Category', 'c')
+            ->leftJoin(
+                'OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved',
+                'cvr',
+                'WITH',
+                'cvr.category = c'
+            )
+            ->getQuery()
+            ->getScalarResult();
+    }
 }

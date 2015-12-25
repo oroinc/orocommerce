@@ -3,7 +3,10 @@
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository\AccountGroupCategoryVisibilityRepository;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository;
+use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\CategoryRepository;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeGroupSubtreeCacheBuilder;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
@@ -46,6 +49,29 @@ class AccountGroupProductResolvedCacheBuilder extends AbstractResolvedCacheBuild
      */
     public function buildCache(Website $website = null)
     {
-        // TODO: Implement in scope of BB-1650
+        /** @var CategoryRepository $repository */
+        $categoryRepository = $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
+            ->getRepository('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved');
+        /** @var AccountGroupCategoryVisibilityRepository $repository */
+        $repository = $this->registry
+            ->getManagerForClass('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility')
+            ->getRepository('OroB2BAccountBundle:Visibility\AccountGroupCategoryVisibility');
+        /** @var AccountGroupCategoryRepository $resolvedRepository */
+        $resolvedRepository = $this->registry->getManagerForClass($this->cacheClass)
+            ->getRepository($this->cacheClass);
+
+        // clear table
+        $resolvedRepository->clearTable();
+
+        // resolve static values
+        $resolvedRepository->insertStaticValues($this->insertFromSelectQueryExecutor);
+
+        // resolve parent category values
+        $categoryVisibilities = $this->indexVisibilities($categoryRepository->getCategoriesWithResolvedVisibilities());
+        $groupVisibilities = $repository->getParentCategoryVisibilities();
+        var_dump($groupVisibilities);
+
     }
+
 }

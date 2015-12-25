@@ -103,23 +103,6 @@ class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implement
     }
 
     /**
-     * Use category ID as array index
-     *
-     * @param array $visibilities
-     * @return array
-     */
-    protected function indexVisibilities(array $visibilities)
-    {
-        $indexedVisibilities = [];
-        foreach ($visibilities as $visibility) {
-            $categoryId = $visibility['category_id'];
-            $indexedVisibilities[$categoryId] = $visibility;
-        }
-
-        return $indexedVisibilities;
-    }
-
-    /**
      * @param array $categoryVisibilities
      * @param array $currentCategory
      * @return int

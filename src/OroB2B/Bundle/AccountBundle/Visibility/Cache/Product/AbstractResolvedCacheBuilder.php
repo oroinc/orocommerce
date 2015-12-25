@@ -177,4 +177,21 @@ abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
 
         return $entity;
     }
+
+    /**
+     * Use category ID as array index
+     *
+     * @param array $visibilities
+     * @return array
+     */
+    protected function indexVisibilities(array $visibilities)
+    {
+        $indexedVisibilities = [];
+        foreach ($visibilities as $visibility) {
+            $categoryId = $visibility['category_id'];
+            $indexedVisibilities[$categoryId] = $visibility;
+        }
+
+        return $indexedVisibilities;
+    }
 }
