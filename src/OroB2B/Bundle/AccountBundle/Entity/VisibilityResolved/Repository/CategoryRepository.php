@@ -29,7 +29,7 @@ class CategoryRepository extends EntityRepository
      */
     public function isCategoryVisible(Category $category, $configValue)
     {
-        $qb = $this->_em->createQueryBuilder();
+        $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('COALESCE(cvr.visibility, '. $qb->expr()->literal($configValue).')')
             ->from('OroB2BCatalogBundle:Category', 'category')
             ->leftJoin(
@@ -53,7 +53,7 @@ class CategoryRepository extends EntityRepository
      */
     public function getCategoryIdsByVisibility($visibility, $configValue)
     {
-        $qb = $this->_em->createQueryBuilder();
+        $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('category.id')
             ->from('OroB2BCatalogBundle:Category', 'category')
             ->orderBy('category.id');

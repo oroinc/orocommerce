@@ -27,7 +27,7 @@ class AccountGroupCategoryRepository extends EntityRepository
      */
     public function isCategoryVisible(Category $category, AccountGroup $accountGroup, $configValue)
     {
-        $qb = $this->_em->createQueryBuilder();
+        $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('COALESCE(agcvr.visibility, COALESCE(cvr.visibility, '. $qb->expr()->literal($configValue).'))')
             ->from('OroB2BCatalogBundle:Category', 'category')
             ->leftJoin(
@@ -64,7 +64,7 @@ class AccountGroupCategoryRepository extends EntityRepository
      */
     public function getCategoryIdsByVisibility($visibility, AccountGroup $accountGroup, $configValue)
     {
-        $qb = $this->_em->createQueryBuilder();
+        $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('category.id')
             ->from('OroB2BCatalogBundle:Category', 'category')
             ->orderBy('category.id');

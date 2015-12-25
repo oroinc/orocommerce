@@ -29,7 +29,7 @@ class AccountCategoryRepository extends EntityRepository
     {
         $accountGroup = $account->getGroup();
 
-        $qb = $this->_em->createQueryBuilder();
+        $qb = $this->getEntityManager()->createQueryBuilder();
 
         $configValue = $qb->expr()->literal($configValue);
         $accountCondition = sprintf(
@@ -88,7 +88,7 @@ class AccountCategoryRepository extends EntityRepository
      */
     public function getCategoryIdsByVisibility($visibility, Account $account, $configValue)
     {
-        $qb = $this->_em->createQueryBuilder();
+        $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('category.id')
             ->from('OroB2BCatalogBundle:Category', 'category')
             ->orderBy('category.id');
