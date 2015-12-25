@@ -46,7 +46,7 @@ layout:
                 scripts:
                     blockType: script
                     options:
-                        content: 'require(["orob2bfrontend/default/js/main.min"])'
+                        content: 'require(["orob2bfrontend/default/js/main"])'
                 scripts_before:
                     blockType: block
                 require_js:

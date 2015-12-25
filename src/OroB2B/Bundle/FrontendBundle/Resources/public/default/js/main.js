@@ -1,11 +1,12 @@
 require(['jquery', 'orob2bfrontend/default/js/app'], function(jQuery) {
-    require(['lodash', 'chosen', 'slick', 'bootstrapDatepicker', 'raty', 'perfectScrollbar'], function(
+    require(['lodash', 'chosen', 'slick', 'bootstrapDatepicker', 'raty', 'perfectScrollbar', 'fastclick'], function(
         _,
         chosen,
         slick,
         datepicker,
         raty,
-        perfectScrollbar
+        perfectScrollbar,
+        FastClick
     ) {
 
         (function($) {
@@ -59,6 +60,9 @@ require(['jquery', 'orob2bfrontend/default/js/app'], function(jQuery) {
 
                     //On page load init list view catalog
                     catalogViewTemplatingInit(catalogViews.list);
+
+                    //fast click for mobile devices
+                    FastClick.attach(document.body);
                 };
 
                 function sidebarToggleBinding() {
@@ -217,17 +221,35 @@ require(['jquery', 'orob2bfrontend/default/js/app'], function(jQuery) {
                     var btn = '[data-trigger-mobile-navigation]',
                         container = '[data-mobile-navigation-dropdown]';
 
-                    $(document).on('touchstart', btn, function(event) {
-                        $(btn).removeClass('active');
-                        $(container).removeClass('active');
+                    $(document).on('click', btn, function(event) {
+                        //Switch on current target button and container
+                        if ($(this).attr('data-open') === 'true') {
+                            $(this).attr('data-open', false);
+                            $(this).removeClass('active');
+                            $(this).find(container).removeClass('active');
 
+                            //Show browser native srcollbar
+                            $('body.hidden-scrollbar').removeClass('hidden-scrollbar').css('overflow-y', 'auto');
+                        } else {
+                            //Switch off all other navigation buttons, and containers
+                            $(btn).attr('data-open', false);
+                            $(btn).removeClass('active');
+                            $(container).removeClass('active');
+
+                            $(this).attr('data-open', true);
+                            $(this).addClass('active');
+                            $(this).find(container).addClass('active');
+
+                            //Hide browser native srcollbar
+                            $('body').addClass('hidden-scrollbar').css('overflow-y', 'hidden');
+                        }
+
+                        //Resize drwopdown according to window height
                         mobileNavigitionDropdownToWindowSize('[data-mobile-navigation-dropdown]');
-                        $('body').addClass('hidden-scrollbar').css('overflow-y', 'hidden');
-                        $(this).addClass('active');
-                        $(this).find(container).addClass('active');
 
+                        event.preventDefault();
                         event.stopPropagation();
-                        event.cancelBubble = true;
+                        window.event.cancelBubble = true;
                     });
                 }
 
@@ -235,11 +257,15 @@ require(['jquery', 'orob2bfrontend/default/js/app'], function(jQuery) {
                     var $btn = $('[data-trigger-mobile-navigation]'),
                         $container = $('[data-mobile-navigation-dropdown]');
 
-                    $(document).on('touchend', function(event) {
+                    $(document).on('click', function(event) {
                         if (!$container.is(event.target) && $container.has(event.target).length === 0 && !$btn.is(event.target) && !$btn.has(event.target).length) {
+                            //Mobile navigation item
                             $('body.hidden-scrollbar').removeClass('hidden-scrollbar').css('overflow-y', 'auto');
+                            $btn.attr('data-open', false);
                             $btn.removeClass('active');
                             $container.removeClass('active');
+
+                            //Sales mode mobile navigation item
                             $container.css('max-height', 'auto');
                             $container.css('transform', 'translateX(0)');
                             $('[data-sales-m-navigation-level]').removeClass('active');
@@ -267,7 +293,7 @@ require(['jquery', 'orob2bfrontend/default/js/app'], function(jQuery) {
                     var trigger = '[data-trigger-nested-list]',
                         $list = $('[data-nested-list]');
 
-                    $(document).on('touchstart', trigger, function(event) {
+                    $(document).on('click', trigger, function(event) {
                         $(trigger).toggleClass('expanded');
                         $list.toggleClass('expanded');
 
@@ -739,7 +765,7 @@ require(['jquery', 'orob2bfrontend/default/js/app'], function(jQuery) {
                     var btn = '[data-sales-mobile-navigation-trigger]',
                         back = '[data-sales-m-back]';
 
-                    $(document).on('touchstart', btn, function(event) {
+                    $(document).on('click', btn, function(event) {
                         var type = $(this).data('sales-mobile-navigation-trigger'),
                             level = $(this).closest('[data-sales-m-navigation-level]').data('level');
 
@@ -750,16 +776,18 @@ require(['jquery', 'orob2bfrontend/default/js/app'], function(jQuery) {
                         $('[data-sales-m-navigation-level="' + type + '"]').addClass('active');
 
                         event.preventDefault();
+                        event.stopPropagation();
                         window.event.cancelBubble = true;
                     });
 
-                    $(document).on('touchstart', back, function(event) {
+                    $(document).on('click', back, function(event) {
                         var type = $(this).data('sales-m-back');
 
                         $('[data-sales-m-navigation-level="' + type + '"]').removeAttr('style');
                         $(this).closest('[data-sales-m-navigation-level]').removeClass('active');
 
                         event.preventDefault();
+                        event.stopPropagation();
                         window.event.cancelBubble = true;
                     });
                 }
@@ -781,6 +809,10 @@ require(['jquery', 'orob2bfrontend/default/js/app'], function(jQuery) {
 
                 function avoidDropdwonMenuHideInit() {
                     $(document).on('click', '.dropdown-menu', function(event) {
+                        event.stopPropagation();
+                    });
+
+                    $(document).on('click', '.navigation_mobile__dropdown-container', function(event) {
                         event.stopPropagation();
                     });
 
