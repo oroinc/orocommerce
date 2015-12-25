@@ -3,7 +3,6 @@
 namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
@@ -15,11 +14,11 @@ use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\BasicOperationRepositoryTrait;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\CacheBuilderInterface;
 use OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolver;
 use OroB2B\Bundle\AccountBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
-use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 
-abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderInterface
+abstract class AbstractResolvedCacheBuilder implements CacheBuilderInterface
 {
     /**
      * @var ManagerRegistry
@@ -45,6 +44,11 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
      * @var string
      */
     protected $cacheClass;
+
+    /**
+     * @var int
+     */
+    protected $visibilityFromConfig;
 
     /**
      * @param ManagerRegistry $registry
@@ -131,9 +135,13 @@ abstract class AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderIn
      */
     protected function getVisibilityFromConfig()
     {
-        $visibilityFromConfig = $this->configManager->get('oro_b2b_account.product_visibility');
+        if (!$this->visibilityFromConfig) {
+            $visibilityFromConfig = $this->configManager->get('oro_b2b_account.product_visibility');
+            $this->visibilityFromConfig
+                = $this->convertVisibility($visibilityFromConfig === VisibilityInterface::VISIBLE);
+        }
 
-        return $this->convertVisibility($visibilityFromConfig === VisibilityInterface::VISIBLE);
+        return $this->visibilityFromConfig;
     }
 
     /**

@@ -17,6 +17,9 @@ parameters:
     orob2b_account.entity.category_visibility.class: OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility
     orob2b_account.entity.account_category_visibility.class: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility
     orob2b_account.entity.account_group_category_visibility.class: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupCategoryVisibility
+    orob2b_account.entity.category_visibility_resolved.class: OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\CategoryVisibilityResolved
+    orob2b_account.entity.account_category_visibility_resolved.class: OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved
+    orob2b_account.entity.account_group_category_visibility_resolved.class: OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved
     orob2b_account.entity.product_visibility.class: OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility
     orob2b_account.entity.account_product_visibility.class: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility
     orob2b_account.entity.account_group_product_visibility.class: OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility
@@ -122,11 +125,12 @@ parameters:
     orob2b_account.model.action.build_website_cache.class: OroB2B\Bundle\AccountBundle\Model\Action\BuildWebsiteCacheAction
 
     # Visibility cache
+    orob2b_account.visibility.cache.product.cache_builder.abstract.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder
+
     orob2b_account.visibility.cache.product.account_group_product_resolved_cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\AccountGroupProductResolvedCacheBuilder
     orob2b_account.visibility.cache.product.account_product_resolved_cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\AccountProductResolvedCacheBuilder
     orob2b_account.visibility.cache.product.product_resolved_cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\ProductResolvedCacheBuilder
 
-    orob2b_account.visibility.cache.product.category.abstract_resolved_cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\AbstractResolvedCacheBuilder
     orob2b_account.visibility.cache.product.category.account_group_product_resolved_cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\AccountGroupProductResolvedCacheBuilder
     orob2b_account.visibility.cache.product.category.account_product_resolved_cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\AccountProductResolvedCacheBuilder
     orob2b_account.visibility.cache.product.category.product_resolved_cache_builder.class: OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\ProductResolvedCacheBuilder
@@ -674,6 +678,7 @@ services:
             - [setVisibilitySystemConfigurationPath, ['oro_b2b_account.product_visibility']]
 
     orob2b_account.visibility.cache.product.cache_builder.abstract:
+        class: %orob2b_account.visibility.cache.product.cache_builder.abstract.class%
         abstract: true
         arguments:
             - @doctrine
@@ -706,29 +711,25 @@ services:
             - [addBuilder, [@orob2b_account.visibility.cache.product.account_group_product_resolved_cache_builder]]
             - [addBuilder, [@orob2b_account.visibility.cache.product.account_product_resolved_cache_builder]]
 
-    orob2b_account.visibility.cache.product.category.abstract_resolved_cache_builder:
-        class: %orob2b_account.visibility.cache.product.category.abstract_resolved_cache_builder.class%
-        abstract: true
-        arguments:
-            - @doctrine
-            - @orob2b_account.visibility.resolver.category_visibility_resolver
-
     orob2b_account.visibility.cache.product.category.account_group_product_resolved_cache_builder:
         class: %orob2b_account.visibility.cache.product.category.account_group_product_resolved_cache_builder.class%
-        parent: orob2b_account.visibility.cache.product.category.abstract_resolved_cache_builder
+        parent: orob2b_account.visibility.cache.product.cache_builder.abstract
         calls:
+            - [setCacheClass, [%orob2b_account.entity.account_group_category_visibility_resolved.class%]]
             - [setVisibilityChangeAccountSubtreeCacheBuilder, [@orob2b_account.visibility.cache.product.category.subtree.visibility_change_group_subtree_cache_builder]]
 
     orob2b_account.visibility.cache.product.category.account_product_resolved_cache_builder:
         class: %orob2b_account.visibility.cache.product.category.account_product_resolved_cache_builder.class%
-        parent: orob2b_account.visibility.cache.product.category.abstract_resolved_cache_builder
+        parent: orob2b_account.visibility.cache.product.cache_builder.abstract
         calls:
+            - [setCacheClass, [%orob2b_account.entity.account_category_visibility_resolved.class%]]
             - [setVisibilityChangeAccountSubtreeCacheBuilder, [@orob2b_account.visibility.cache.product.category.subtree.visibility_change_account_subtree_cache_builder]]
 
     orob2b_account.visibility.cache.product.category.product_resolved_cache_builder:
         class: %orob2b_account.visibility.cache.product.category.product_resolved_cache_builder.class%
-        parent: orob2b_account.visibility.cache.product.category.abstract_resolved_cache_builder
+        parent: orob2b_account.visibility.cache.product.cache_builder.abstract
         calls:
+            - [setCacheClass, [%orob2b_account.entity.category_visibility_resolved.class%]]
             - [setVisibilityChangeCategorySubtreeCacheBuilder, [@orob2b_account.visibility.cache.product.category.subtree.visibility_change_category_subtree_cache_builder]]
             - [setPositionChangeCategorySubtreeCacheBuilder, [@orob2b_account.visibility.cache.product.category.subtree.position_change_category_subtree_cache_builder]]
 

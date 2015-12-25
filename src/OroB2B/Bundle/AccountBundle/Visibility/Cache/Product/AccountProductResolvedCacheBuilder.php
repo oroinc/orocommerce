@@ -9,10 +9,12 @@ use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountProductRepository;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
+class AccountProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implements
+    ProductCaseCacheBuilderInterface
 {
     /**
      * @param VisibilityInterface|AccountProductVisibility $visibilitySettings
