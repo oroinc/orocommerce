@@ -12,8 +12,8 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 
 class ActionManager
 {
-    const DEFAULT_FORM_TEMPLATE = 'OroActionBundle:Widget:widget/form.html.twig';
-    const DEFAULT_PAGE_TEMPLATE = 'OroActionBundle:Page:page.html.twig';
+    const DEFAULT_FORM_TEMPLATE = 'OroActionBundle:Action:form.html.twig';
+    const DEFAULT_PAGE_TEMPLATE = 'OroActionBundle:Action:page.html.twig';
 
     /** @var DoctrineHelper */
     protected $doctrineHelper;

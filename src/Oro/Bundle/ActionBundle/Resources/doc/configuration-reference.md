@@ -230,7 +230,7 @@ Frontend Options configuration has next options:
 * **template**
     *string*
     You can set custom action dialog template.
-    Should be extended from `OroActionBundle:Widget:widget/form.html.twig`
+    Should be extended from `OroActionBundle:Action:form.html.twig`
 * **title**
     *string*
     Custom title of action dialog window.
@@ -255,7 +255,7 @@ actions:
         # ...
         frontend_options:
             confirmation: aсme.demo.actions.action_perform_confirm
-            template: OroActionBundle:Widget:widget/form.html.twig
+            template: OroActionBundle:Action:form.html.twig
             title: aсme.demo.actions.dialog.title
             options:
                 allowMaximize: true
