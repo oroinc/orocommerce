@@ -8,6 +8,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\CategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
@@ -172,6 +173,8 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
      */
     protected function getCategoryVisibilityConfigValue()
     {
-        return $this->configManager->get('oro_b2b_account.category_visibility');
+        return ($this->configManager->get('oro_b2b_account.category_visibility') == CategoryVisibility::HIDDEN)
+            ? BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN
+            : BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE;
     }
 }

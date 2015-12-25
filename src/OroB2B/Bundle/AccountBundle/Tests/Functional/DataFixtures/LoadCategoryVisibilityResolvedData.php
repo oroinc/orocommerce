@@ -26,6 +26,7 @@ class LoadCategoryVisibilityResolvedData extends AbstractFixture implements Depe
      */
     public function load(ObjectManager $manager)
     {
+        //@TODO: Remove this fixture in BB-1650 implementation
         $this->em = $manager;
         
         $categories = $this->getCategoryVisibilityResolvedData();
