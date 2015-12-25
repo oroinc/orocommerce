@@ -34,7 +34,7 @@ class AccountGroupTaxExtensionTest extends AbstractAccountTaxExtensionTest
 
         $this->assertTaxCodeAdd($event, $taxCode);
         $this->entityRepository->expects($this->once())
-            ->method('findOneByAccountGroup');
+            ->method($this->getRepositoryFindMethod());
 
         $this->getExtension()->onPostSubmit($event);
 
@@ -54,7 +54,7 @@ class AccountGroupTaxExtensionTest extends AbstractAccountTaxExtensionTest
 
         $this->assertTaxCodeAdd($event, $newTaxCode);
         $this->entityRepository->expects($this->once())
-            ->method('findOneByAccountGroup')
+            ->method($this->getRepositoryFindMethod())
             ->will($this->returnValue($taxCodeWithAccountGroup));
 
         $this->getExtension()->onPostSubmit($event);
