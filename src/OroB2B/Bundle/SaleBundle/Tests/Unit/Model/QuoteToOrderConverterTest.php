@@ -3,6 +3,8 @@
 namespace OroB2B\Bundle\SaleBundle\Tests\Unit\Model;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\CurrencyBundle\Model\Price;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -22,6 +24,9 @@ use OroB2B\Bundle\SaleBundle\Entity\QuoteProduct;
 use OroB2B\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use OroB2B\Bundle\SaleBundle\Model\QuoteToOrderConverter;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
 {
     const CURRENCY = 'USD';
@@ -35,6 +40,9 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|SubtotalsProvider */
     protected $subtotalsProvider;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry */
+    protected $registry;
 
     /** @var QuoteToOrderConverter */
     protected $converter;
@@ -56,12 +64,18 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->converter = new QuoteToOrderConverter($this->orderCurrencyHandler, $this->subtotalsProvider);
+        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+
+        $this->converter = new QuoteToOrderConverter(
+            $this->orderCurrencyHandler,
+            $this->subtotalsProvider,
+            $this->registry
+        );
     }
 
     protected function tearDown()
     {
-        unset($this->orderCurrencyHandler, $this->subtotalsProvider, $this->converter);
+        unset($this->orderCurrencyHandler, $this->subtotalsProvider, $this->registry, $this->converter);
     }
 
     public function testConvertFromQuote()
@@ -166,7 +180,12 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($order, $this->converter->convert($quote, $accountUser));
     }
 
-    public function testConvertFromSelectedOffers()
+    /**
+     * @dataProvider convertWithFlushDataProvider
+     *
+     * @param bool $needFlush
+     */
+    public function testConvertFromSelectedOffers($needFlush)
     {
         $sku = 'sku1';
         $unit = 'kg';
@@ -199,7 +218,26 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
         $this->createQuoteProduct($sku, true)->addQuoteProductOffer($offer);
 
         $this->assertCalculateSubtotalsCalled($subtotalAmount);
-        $this->assertEquals($order, $this->converter->convert($quote, null, [['offer' => $offer, 'quantity' => $qty]]));
+
+        if ($needFlush) {
+            $this->assertDoctrineCalled();
+        }
+
+        $this->assertEquals(
+            $order,
+            $this->converter->convert($quote, null, [['offer' => $offer, 'quantity' => $qty]], $needFlush)
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function convertWithFlushDataProvider()
+    {
+        return [
+            [false],
+            [true]
+        ];
     }
 
     /**
@@ -324,5 +362,22 @@ class QuoteToOrderConverterTest extends \PHPUnit_Framework_TestCase
         $account->setName($accountName)->addUser($accountUser);
 
         return $accountUser;
+    }
+
+    protected function assertDoctrineCalled()
+    {
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager $manager */
+        $manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $manager->expects($this->once())
+            ->method('persist')
+            ->with($this->isInstanceOf('OroB2B\Bundle\OrderBundle\Entity\Order'));
+        $manager->expects($this->once())
+            ->method('flush')
+            ->with($this->isInstanceOf('OroB2B\Bundle\OrderBundle\Entity\Order'));
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with('OroB2BOrderBundle:Order')
+            ->willReturn($manager);
     }
 }

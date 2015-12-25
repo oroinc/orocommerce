@@ -89,21 +89,8 @@ actions:
             - @call_service_method:
                 service: orob2b_sale.service.quote_to_order_converter
                 method: convert
-                method_parameters: [$.data, $.user]
+                method_parameters: [$.data, $.user, null, true]
                 attribute: $.order
-            - @call_service_method:
-                service: doctrine
-                method: getManagerForClass
-                method_parameters: [%orob2b_order.entity.order.class%]
-                attribute: $.em
-            - @call_method:
-                object: $.em
-                method: persist
-                method_parameters: [$.order]
-            - @call_method:
-                object: $.em
-                method: flush
-                method_parameters: [$.order]
             - @flash_message:
                 message: orob2b.frontend.sale.message.quote.create_order.success
                 type: 'success'
@@ -154,21 +141,8 @@ actions:
             - @call_service_method:
                 service: orob2b_sale.service.quote_to_order_converter
                 method: convert
-                method_parameters: [$.data, $.user, $.quote_to_order]
+                method_parameters: [$.data, $.user, $.quote_to_order, true]
                 attribute: $.order
-            - @call_service_method:
-                service: doctrine
-                method: getManagerForClass
-                method_parameters: [%orob2b_order.entity.order.class%]
-                attribute: $.em
-            - @call_method:
-                object: $.em
-                method: persist
-                method_parameters: [$.order]
-            - @call_method:
-                object: $.em
-                method: flush
-                method_parameters: [$.order]
             - @flash_message:
                 message: orob2b.frontend.sale.message.quote.create_order.success
                 type: 'success'
