@@ -8,11 +8,6 @@ orob2b_tax_account_tax_code:
     type:         annotation
     prefix:       /tax/account
 
-orob2b_tax_account_group_tax_code:
-    resource:     "@OroB2BTaxBundle/Controller/AccountGroupTaxCodeController.php"
-    type:         annotation
-    prefix:       /tax/account/group
-
 orob2b_tax:
     resource:     "@OroB2BTaxBundle/Controller/TaxController.php"
     type:         annotation

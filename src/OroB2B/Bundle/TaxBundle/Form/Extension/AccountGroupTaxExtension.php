@@ -6,9 +6,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 use OroB2B\Bundle\TaxBundle\Entity\AbstractTaxCode;
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\TaxBundle\Entity\AccountGroupTaxCode;
-use OroB2B\Bundle\TaxBundle\Entity\Repository\AccountGroupTaxCodeRepository;
-use OroB2B\Bundle\TaxBundle\Form\Type\AccountGroupTaxCodeAutocompleteType;
+use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
+use OroB2B\Bundle\TaxBundle\Entity\Repository\AccountTaxCodeRepository;
+use OroB2B\Bundle\TaxBundle\Form\Type\AccountTaxCodeAutocompleteType;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountGroupType;
 
 class AccountGroupTaxExtension extends AbstractTaxExtension
@@ -29,7 +29,7 @@ class AccountGroupTaxExtension extends AbstractTaxExtension
         $builder
             ->add(
                 'taxCode',
-                AccountGroupTaxCodeAutocompleteType::NAME,
+                AccountTaxCodeAutocompleteType::NAME,
                 [
                     'required' => false,
                     'mapped' => false,
@@ -41,14 +41,11 @@ class AccountGroupTaxExtension extends AbstractTaxExtension
 
     /**
      * @param AccountGroup $accountGroup
-     * @param AccountGroupTaxCode|AbstractTaxCode $taxCode
-     * @param AccountGroupTaxCode|AbstractTaxCode $taxCodeNew
+     * @param AccountTaxCode|AbstractTaxCode $taxCode
+     * @param AccountTaxCode|AbstractTaxCode $taxCodeNew
      */
-    protected function handleTaxCode(
-        $accountGroup,
-        AbstractTaxCode $taxCode = null,
-        AbstractTaxCode $taxCodeNew = null
-    ) {
+    protected function handleTaxCode($accountGroup, AbstractTaxCode $taxCode = null, AbstractTaxCode $taxCodeNew = null)
+    {
         if ($taxCode) {
             $taxCode->removeAccountGroup($accountGroup);
         }
@@ -60,11 +57,11 @@ class AccountGroupTaxExtension extends AbstractTaxExtension
 
     /**
      * @param AccountGroup $object
-     * @return AccountGroupTaxCode
+     * @return AccountTaxCode
      */
     protected function getTaxCode($object)
     {
-        /** @var AccountGroupTaxCodeRepository $repository */
+        /** @var AccountTaxCodeRepository $repository */
         $repository = $this->getRepository();
 
         return $repository->findOneByAccountGroup($object);

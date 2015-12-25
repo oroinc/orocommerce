@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Entity;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 use OroB2B\Bundle\AccountBundle\Entity\Account;
+use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
 
 class AccountTaxCodeTest extends \PHPUnit_Framework_TestCase
@@ -31,6 +32,7 @@ class AccountTaxCodeTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertPropertyCollections($this->createAccountTaxCode(), [
             ['accounts', new Account()],
+            ['accountGroups', new AccountGroup()],
         ]);
     }
 
