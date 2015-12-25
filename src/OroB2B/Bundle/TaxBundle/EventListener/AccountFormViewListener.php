@@ -24,9 +24,14 @@ class AccountFormViewListener extends AbstractFormViewListener
         $repository = $this->doctrineHelper->getEntityRepository($this->taxCodeClass);
         $entity = $repository->findOneByAccount($account);
 
+        $groupAccountTaxCode = null;
+        if (!$entity && $account->getGroup()) {
+            $groupAccountTaxCode = $repository->findOneByAccountGroup($account->getGroup());
+        }
+
         $template = $event->getEnvironment()->render(
             'OroB2BTaxBundle:Account:tax_code_view.html.twig',
-            ['entity' => $entity]
+            ['entity' => $entity, 'groupAccountTaxCode' => $groupAccountTaxCode]
         );
         $event->getScrollData()->addSubBlockData(0, 0, $template);
     }
