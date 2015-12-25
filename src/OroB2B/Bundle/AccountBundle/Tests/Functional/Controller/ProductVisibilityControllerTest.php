@@ -2,8 +2,6 @@
 
 namespace OroB2B\Bundle\AccountBundle\Tests\Functional\Controller;
 
-use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
-use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
@@ -11,6 +9,7 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Component\Testing\WebTestCase;
 
+use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountGroupProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountProductVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
@@ -20,6 +19,7 @@ use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadGroups;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use OroB2B\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use OroB2B\Bundle\WebsiteBundle\Form\Type\WebsiteScopedDataType;
 use OroB2B\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
 use OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData as TestFixturesLoadWebsiteData;
@@ -83,6 +83,7 @@ class ProductVisibilityControllerTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures(
             [
+                'OroB2B\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
                 'OroB2B\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData',
                 'OroB2B\Bundle\AccountBundle\Tests\Functional\DataFixtures\LoadAccounts',
                 'OroB2B\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
@@ -107,6 +108,12 @@ class ProductVisibilityControllerTest extends WebTestCase
         $this->visibilityToAccountGroupNotDefaultWebsite = json_encode(
             [$this->group->getId() => [self::VISIBILITY_KEY => self::HIDDEN]]
         );
+    }
+
+    public function tearDown()
+    {
+        $this->client->getContainer()->get('doctrine')->getManager()->clear();
+        parent::tearDown();
     }
 
     public function testUpdate()
@@ -152,14 +159,23 @@ class ProductVisibilityControllerTest extends WebTestCase
      */
     public function testDuplicateProduct()
     {
+        $this->initClient([], $this->generateWsseAuthHeader());
+
         $this->client->followRedirects(true);
         $this->client->request(
             'GET',
-            $this->getUrl('orob2b_product_duplicate', ['id' => $this->product->getId()])
+            $this->getUrl(
+                'oro_api_action_execute_actions',
+                [
+                    'actionName' => 'orob2b_product_duplicate_action',
+                    'route' => 'orob2b_product_view',
+                    'entityId' => $this->product->getId(),
+                    'entityClass' => 'OroB2B\Bundle\ProductBundle\Entity\Product'
+                ]
+            )
         );
-
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertJsonResponseStatusCodeEquals($result, 200);
         /** @var EntityManager $em */
         $em = $this->client->getContainer()->get('doctrine')->getManager();
         $duplicatedProduct = $em->getRepository('OroB2BProductBundle:Product')
@@ -183,7 +199,7 @@ class ProductVisibilityControllerTest extends WebTestCase
      */
     public function testDeleteVisibilityOnSetDefault()
     {
-        $this->assertCountVisibilities(4);
+        $this->assertCountVisibilities(2, $this->product);
 
         $this->visibilityToAllDefaultWebsite = ProductVisibility::getDefault($this->product);
         $this->visibilityToAccountDefaultWebsite = json_encode(
@@ -196,22 +212,21 @@ class ProductVisibilityControllerTest extends WebTestCase
                 ],
             ]
         );
-
         $this->submitForm();
-
-        $this->assertCountVisibilities(3);
+        $this->assertCountVisibilities(1, $this->product);
     }
 
     /**
      * @param integer $count
+     * @param Product $product
      */
-    protected function assertCountVisibilities($count)
+    protected function assertCountVisibilities($count, Product $product)
     {
         /** @var EntityManager $em */
         $em = $this->client->getContainer()->get('doctrine')->getManager();
 
         foreach ($this->visibilityClassNames as $className) {
-            $this->assertCount($count, $em->getRepository($className)->findAll());
+            $this->assertCount($count, $em->getRepository($className)->findBy(['product' => $product]));
         }
     }
 

@@ -3,7 +3,7 @@ oro_action_widget:
     type:         annotation
     prefix:       /actionwidget
 
-orob2b_action_bundle_api:
+oro_action_bundle_api:
     resource:     '@OroActionBundle/Resources/config/oro/routing_api.yml'
     prefix:       api/rest/{version}/
     requirements:

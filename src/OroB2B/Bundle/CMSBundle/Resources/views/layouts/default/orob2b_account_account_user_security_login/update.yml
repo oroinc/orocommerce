@@ -21,18 +21,20 @@ layout:
         - @add:
             id: login_page_top
             parentId: login_page
-            blockType: html
+            blockType: text
             options:
                 visible: { @not_empty: $data.orob2b_cms_login_page.topContent }
                 text: { @value: $data.orob2b_cms_login_page.topContent }
+                escape: false
             siblingId: login_page_logo
         - @add:
             id: login_page_bottom
             parentId: login_page
-            blockType: html
+            blockType: text
             options:
                 visible: { @not_empty: $data.orob2b_cms_login_page.bottomContent }
                 text: { @value: $data.orob2b_cms_login_page.bottomContent }
+                escape: false
         - @setOption:
             id: login_page
             optionName: vars.loginPage

@@ -10,7 +10,3 @@ placeholders:
 items:
     line_item_templates:
         template: OroB2BOrderBundle:Js:line_item_templates.js.twig
-
-    order_quick_add:
-        template: OroB2BOrderBundle:Product:Frontend/quickAdd.html.twig
-        applicable: @orob2b_order.processor.quick_add->isAllowed()

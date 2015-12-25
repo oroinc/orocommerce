@@ -36,3 +36,6 @@ orob2b_frontend_windows_api:
         version: latest
     options:
         frontend: true
+
+orob2b_frontend_action:
+    resource: @OroB2BFrontendBundle/Resources/config/oro/routing_action.yml

@@ -1,6 +1,5 @@
 "category","all","account","accountGroup","visibility"
 "Healthcare","true","","","hidden"
 "Healthcare","","Company A","","visible"
-"Healthcare","","","All Customers","category"
 "Healthcare","","","Partners","visible"
 "Healthcare","","","Wholesale Accounts","visible"

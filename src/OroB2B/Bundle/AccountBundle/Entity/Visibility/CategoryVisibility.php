@@ -9,16 +9,22 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 
 /**
- * @ORM\Entity(repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Repository\CategoryVisibilityRepository")
- * @ORM\Table(name="orob2b_category_visibility")
+ * @ORM\Entity(repositoryClass="OroB2B\Bundle\AccountBundle\Entity\Visibility\Repository\CategoryVisibilityRepository")
+ * @ORM\Table(
+ *      name="orob2b_category_visibility",
+ *      uniqueConstraints={
+ *          @ORM\UniqueConstraint(
+ *              name="orob2b_ctgr_vis_uidx",
+ *              columns={"category_id"}
+ *          )
+ *      }
+ * )
  * @Config
  */
 class CategoryVisibility implements VisibilityInterface
 {
     const PARENT_CATEGORY = 'parent_category';
     const CONFIG = 'config';
-    const VISIBLE = 'visible';
-    const HIDDEN = 'hidden';
 
     /**
      * @var integer

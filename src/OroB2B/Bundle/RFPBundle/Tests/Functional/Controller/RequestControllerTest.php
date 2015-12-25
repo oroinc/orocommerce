@@ -3,10 +3,7 @@
 namespace OroB2B\Bundle\RFPBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\ActivityListBundle\Entity\ActivityList;
-use Oro\Bundle\ActivityListBundle\Entity\Manager\ActivityListManager;
 
-use OroB2B\Bundle\RFPBundle\Entity\Request;
 use OroB2B\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
 /**
@@ -117,61 +114,6 @@ class RequestControllerTest extends WebTestCase
      * @depends testView
      * @param integer $id
      */
-    public function testChangeStatus($id)
-    {
-        /** @var \OroB2B\Bundle\RFPBundle\Entity\RequestStatus $status */
-        $status = $this->getContainer()->get('doctrine')->getRepository('OroB2BRFPBundle:RequestStatus')->findOneBy(
-            ['deleted' => false],
-            ['id' => 'DESC']
-        );
-
-        $this->assertNotNull($status);
-
-        /** @var \OroB2B\Bundle\RFPBundle\Entity\Request $entity */
-        $entity = $this->getContainer()->get('doctrine')->getRepository('OroB2BRFPBundle:Request')->find($id);
-
-        $this->assertNotEquals($status->getId(), $entity->getStatus()->getId());
-        $this->assertCount(0, $this->getNotesForRequest($entity));
-
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl('orob2b_rfp_request_change_status', ['id' => $id]),
-            ['_widgetContainer' => 'dialog']
-        );
-
-        $noteSubject = 'Test Request Note';
-
-        $form = $crawler->selectButton('Update Request')->form();
-        $form['orob2b_rfp_request_change_status[status]'] = $status->getId();
-        $form['orob2b_rfp_request_change_status[note]'] = $noteSubject;
-
-        $params = $form->getPhpValues();
-        $params['_widgetContainer'] = 'dialog';
-
-        $this->client->request($form->getMethod(), $form->getUri(), $params);
-
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('RFQ Status was successfully changed', $result->getContent());
-
-        /* @var $entity Request */
-        $entity = $this->getContainer()->get('doctrine')->getRepository('OroB2BRFPBundle:Request')->find($id);
-
-        $this->assertNotNull($entity);
-        $this->assertNotNull($entity->getStatus());
-        $this->assertEquals($status->getId(), $entity->getStatus()->getId());
-
-        $notes = $this->getNotesForRequest($entity);
-        $this->assertCount(1, $notes);
-
-        $note = array_shift($notes);
-        $this->assertTrue(strpos($note['subject'], $noteSubject) > 0);
-    }
-
-    /**
-     * @depends testView
-     * @param integer $id
-     */
     public function testUpdate($id)
     {
         $updatedFirstName = LoadRequestData::FIRST_NAME . '_update';
@@ -207,29 +149,6 @@ class RequestControllerTest extends WebTestCase
     }
 
     /**
-     * @param Request $entity
-     * @return ActivityList[]
-     */
-    private function getNotesForRequest(Request $entity)
-    {
-        /* @var $activityManager ActivityListManager */
-        $activityManager = $this->getContainer()->get('oro_activity_list.manager');
-
-        return $activityManager->getList(
-            get_class($entity),
-            $entity->getId(),
-            [
-                'activityType' => [
-                    'value' => [
-                        'Oro\Bundle\NoteBundle\Entity\Note'
-                    ]
-                ]
-            ],
-            1
-        );
-    }
-
-    /**
      * @param string $firstName
      * @param string $lastName
      * @param string $email
@@ -252,7 +171,7 @@ class RequestControllerTest extends WebTestCase
      */
     private function getFormatDate($format)
     {
-        $dateObj = new \DateTime();
+        $dateObj = new \DateTime('now', new \DateTimeZone('UTC'));
         $date = $dateObj->format($format);
 
         return $date;

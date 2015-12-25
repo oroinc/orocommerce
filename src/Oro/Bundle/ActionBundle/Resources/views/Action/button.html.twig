@@ -1,18 +1,29 @@
 {% set linkTitle = params.title|default(params.label)|trans %}
 {% set linkLabel = params.label %}
-{% set dialogOptions = {'title': linkTitle } %}
+{% set dialogOptions = {
+    'title': params.dialog_title is defined ? params.dialog_title|trans : linkTitle,
+    'dialogOptions': params.dialog_options|default({}),
+} %}
 
 {% block button %}
     {% if onlyLink is not defined %}<div class="pull-left btn-group icons-holder">{% endif %}
         {% block link %}
             <a {% if (params.id is defined) %}id="{{ params.id }}"{% endif %}
-                href="{{ params.path is defined ? params.path : 'javascript:void(0);' }}"
-                class="{{ params.class|default('back icons-holder-text action-button') }} {{ params.aCss is defined ? params.aCss : '' }}"
+                href="{{ params.path|default('javascript:void(0);') }}"
+                class="{{ params.class|default('back icons-holder-text action-button') }} {{ params.aCss|default('') }}"
                 title="{{ linkTitle }}"
                 data-dialog-url="{{ params.dialogUrl }}"
                 data-dialog-options="{{ dialogOptions|json_encode }}"
+                data-confirmation="{{ params.confirmation|default('') }}"
+                {% if params.page_component_module is defined %}data-page-component-module={{ params.page_component_module }}{% endif %}
+                {% if params.page_component_options is defined %}data-page-component-options={{ params.page_component_options|json_encode }}{% endif %}
+                {% if params.data is defined %}
+                    {% for dataName,dataValue in params.data %}
+                        data-{{ dataName }}="{{ dataValue|e('html_attr')|raw }}" {{ dataName }}
+                    {% endfor %}
+                {% endif %}
             >
-                <i class="{{ params.icon is defined ? params.icon : '' }} {{ params.iCss is defined ? params.iCss : '' }} hide-text">{{ linkLabel }}</i>
+                <i class="{{ params.icon|default('') }} {{ params.iCss|default('') }} hide-text">{{ linkLabel }}</i>
                 {{ linkLabel|trim }}
             </a>
         {% endblock %}

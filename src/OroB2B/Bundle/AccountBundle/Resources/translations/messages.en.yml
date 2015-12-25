@@ -374,3 +374,7 @@ orob2b.account:
 
     account_typed_address_with_default_type:
         choice.default_text: 'Default %type_name%'
+
+    dataaudit:
+        administrator: Administrator
+        module_label: Audig history for Account User
