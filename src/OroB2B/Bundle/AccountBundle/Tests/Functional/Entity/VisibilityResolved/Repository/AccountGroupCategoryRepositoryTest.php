@@ -27,9 +27,10 @@ class AccountGroupCategoryRepositoryTest extends WebTestCase
      * @dataProvider isCategoryVisibleDataProvider
      * @param string $categoryName
      * @param string $accountGroupName
+     * @param int $configValue
      * @param bool $expectedVisibility
      */
-    public function testIsCategoryVisible($categoryName, $accountGroupName, $expectedVisibility)
+    public function testIsCategoryVisible($categoryName, $accountGroupName, $configValue, $expectedVisibility)
     {
         /** @var Category $category */
         $category = $this->getReference($categoryName);
@@ -37,7 +38,7 @@ class AccountGroupCategoryRepositoryTest extends WebTestCase
         /** @var AccountGroup $accountGroup */
         $accountGroup = $this->getReference($accountGroupName);
 
-        $actualVisibility = $this->getRepository()->isCategoryVisible($category, $accountGroup);
+        $actualVisibility = $this->getRepository()->isCategoryVisible($category, $accountGroup, $configValue);
 
         $this->assertEquals($expectedVisibility, $actualVisibility);
     }
@@ -51,31 +52,37 @@ class AccountGroupCategoryRepositoryTest extends WebTestCase
             [
                 'categoryName' => 'category_1',
                 'accountGroupName' => 'account_group.group1',
+                'configValue' => 1,
                 'expectedVisibility' => true,
             ],
             [
                 'categoryName' => 'category_1',
                 'accountGroupName' => 'account_group.group3',
+                'configValue' => 1,
                 'expectedVisibility' => true,
             ],
             [
                 'categoryName' => 'category_1_2',
                 'accountGroupName' => 'account_group.group1',
-                'expectedVisibility' => false,
+                'configValue' => 1,
+                'expectedVisibility' => true,
             ],
             [
                 'categoryName' => 'category_1_2',
                 'accountGroupName' => 'account_group.group3',
-                'expectedVisibility' => false,
+                'configValue' => 1,
+                'expectedVisibility' => true,
             ],
             [
                 'categoryName' => 'category_1_2_3',
                 'accountGroupName' => 'account_group.group1',
+                'configValue' => 1,
                 'expectedVisibility' => true,
             ],
             [
                 'categoryName' => 'category_1_2_3',
                 'accountGroupName' => 'account_group.group3',
+                'configValue' => 1,
                 'expectedVisibility' => false,
             ],
         ];
@@ -85,20 +92,26 @@ class AccountGroupCategoryRepositoryTest extends WebTestCase
      * @dataProvider getCategoryIdsByVisibilityDataProvider
      * @param int $visibility
      * @param string $accountGroupName
+     * @param int $configValue
      * @param array $expected
      */
-    public function testGetCategoryIdsByVisibility($visibility, $accountGroupName, array $expected)
+    public function testGetCategoryIdsByVisibility($visibility, $accountGroupName, $configValue, array $expected)
     {
         /** @var AccountGroup $accountGroup */
         $accountGroup = $this->getReference($accountGroupName);
 
-        $categoryIds = $this->getRepository()->getCategoryIdsByVisibility($visibility, $accountGroup);
+        $categoryIds = $this->getRepository()->getCategoryIdsByVisibility($visibility, $accountGroup, $configValue);
 
         $expectedCategoryIds = [];
         foreach ($expected as $categoryName) {
             /** @var Category $category */
             $category = $this->getReference($categoryName);
             $expectedCategoryIds[] = $category->getId();
+        }
+
+        if ($visibility == BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE) {
+            $masterCatalogId = $this->getMasterCatalog()->getId();
+            array_unshift($expectedCategoryIds, $masterCatalogId);
         }
 
         $this->assertEquals($expectedCategoryIds, $categoryIds);
@@ -113,31 +126,63 @@ class AccountGroupCategoryRepositoryTest extends WebTestCase
             [
                 'visibility' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 'accountGroupName' => 'account_group.group1',
+                'configValue' => 1,
                 'expected' => [
                     'category_1',
+                    'category_1_2',
+                    'category_1_5',
                     'category_1_2_3',
+                    'category_1_2_3_4',
+                    'category_1_5_6',
+                    'category_1_5_6_7',
                 ]
             ],
             [
                 'visibility' => BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN,
                 'accountGroupName' => 'account_group.group1',
+                'configValue' => 1,
+                'expected' => []
+            ],
+            [
+                'visibility' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                'accountGroupName' => 'account_group.group2',
+                'configValue' => 1,
                 'expected' => [
+                    'category_1',
                     'category_1_2',
+                    'category_1_5',
+                    'category_1_2_3',
+                    'category_1_2_3_4',
+                    'category_1_5_6',
+                ]
+            ],
+            [
+                'visibility' => BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                'accountGroupName' => 'account_group.group2',
+                'configValue' => 1,
+                'expected' => [
+                    'category_1_5_6_7',
                 ]
             ],
             [
                 'visibility' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 'accountGroupName' => 'account_group.group3',
+                'configValue' => 1,
                 'expected' => [
                     'category_1',
+                    'category_1_2',
                 ]
             ],
             [
                 'visibility' => BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN,
                 'accountGroupName' => 'account_group.group3',
+                'configValue' => 1,
                 'expected' => [
-                    'category_1_2',
+                    'category_1_5',
                     'category_1_2_3',
+                    'category_1_2_3_4',
+                    'category_1_5_6',
+                    'category_1_5_6_7',
                 ]
             ],
         ];
@@ -151,5 +196,15 @@ class AccountGroupCategoryRepositoryTest extends WebTestCase
         return $this->getContainer()->get('doctrine')
             ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
             ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved');
+    }
+
+    /**
+     * @return Category
+     */
+    protected function getMasterCatalog()
+    {
+        return $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BCatalogBundle:Category')
+            ->getRepository('OroB2BCatalogBundle:Category')
+            ->getMasterCatalogRoot();
     }
 }

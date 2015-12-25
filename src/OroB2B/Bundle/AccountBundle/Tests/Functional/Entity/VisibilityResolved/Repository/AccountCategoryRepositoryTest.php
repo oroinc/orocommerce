@@ -27,9 +27,10 @@ class AccountCategoryRepositoryTest extends WebTestCase
      * @dataProvider isCategoryVisibleDataProvider
      * @param string $categoryName
      * @param string $accountName
+     * @param int $configValue
      * @param bool $expectedVisibility
      */
-    public function testIsCategoryVisible($categoryName, $accountName, $expectedVisibility)
+    public function testIsCategoryVisible($categoryName, $accountName, $configValue, $expectedVisibility)
     {
         /** @var Category $category */
         $category = $this->getReference($categoryName);
@@ -37,7 +38,7 @@ class AccountCategoryRepositoryTest extends WebTestCase
         /** @var Account $account */
         $account = $this->getReference($accountName);
 
-        $actualVisibility = $this->getRepository()->isCategoryVisible($category, $account);
+        $actualVisibility = $this->getRepository()->isCategoryVisible($category, $account, $configValue);
 
         $this->assertEquals($expectedVisibility, $actualVisibility);
     }
@@ -51,41 +52,49 @@ class AccountCategoryRepositoryTest extends WebTestCase
             [
                 'categoryName' => 'category_1',
                 'accountName' => 'account.level_1',
+                'configValue' => 1,
                 'expectedVisibility' => true,
             ],
             [
                 'categoryName' => 'category_1',
                 'accountName' => 'account.level_1.1',
-                'expectedVisibility' => true,
+                'configValue' => 1,
+                'expectedVisibility' => false,
             ],
             [
                 'categoryName' => 'category_1',
                 'accountName' => 'account.level_1.2',
+                'configValue' => 1,
                 'expectedVisibility' => true,
             ],
             [
                 'categoryName' => 'category_1_2',
                 'accountName' => 'account.level_1',
-                'expectedVisibility' => false,
+                'configValue' => 1,
+                'expectedVisibility' => true,
             ],
             [
                 'categoryName' => 'category_1_2',
                 'accountName' => 'account.level_1.1',
+                'configValue' => 1,
                 'expectedVisibility' => false,
             ],
             [
                 'categoryName' => 'category_1_2_3',
                 'accountName' => 'account.level_1',
+                'configValue' => 1,
                 'expectedVisibility' => true,
             ],
             [
                 'categoryName' => 'category_1_2_3',
                 'accountName' => 'account.level_1.1',
+                'configValue' => 1,
                 'expectedVisibility' => false,
             ],
             [
                 'categoryName' => 'category_1_2_3',
                 'accountName' => 'account.level_1.2',
+                'configValue' => 1,
                 'expectedVisibility' => true,
             ]
         ];
@@ -95,20 +104,26 @@ class AccountCategoryRepositoryTest extends WebTestCase
      * @dataProvider getCategoryIdsByVisibilityDataProvider
      * @param int $visibility
      * @param string $accountName
+     * @param int $configValue
      * @param array $expected
      */
-    public function testGetCategoryIdsByVisibility($visibility, $accountName, array $expected)
+    public function testGetCategoryIdsByVisibility($visibility, $accountName, $configValue, array $expected)
     {
         /** @var Account $account */
         $account = $this->getReference($accountName);
 
-        $categoryIds = $this->getRepository()->getCategoryIdsByVisibility($visibility, $account);
+        $categoryIds = $this->getRepository()->getCategoryIdsByVisibility($visibility, $account, $configValue);
 
         $expectedCategoryIds = [];
         foreach ($expected as $categoryName) {
             /** @var Category $category */
             $category = $this->getReference($categoryName);
             $expectedCategoryIds[] = $category->getId();
+        }
+
+        if ($visibility == BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE) {
+            $masterCatalogId = $this->getMasterCatalog()->getId();
+            array_unshift($expectedCategoryIds, $masterCatalogId);
         }
 
         $this->assertEquals($expectedCategoryIds, $categoryIds);
@@ -123,61 +138,85 @@ class AccountCategoryRepositoryTest extends WebTestCase
             [
                 'visibility' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 'accountName' => 'account.level_1',
+                'configValue' => 1,
                 'expected' => [
                     'category_1',
+                    'category_1_2',
+                    'category_1_5',
                     'category_1_2_3',
+                    'category_1_2_3_4',
                 ]
             ],
             [
                 'visibility' => BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN,
                 'accountName' => 'account.level_1',
+                'configValue' => 1,
                 'expected' => [
-                    'category_1_2',
+                    'category_1_5_6',
+                    'category_1_5_6_7',
                 ]
             ],
             [
                 'visibility' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 'accountName' => 'account.level_1.1',
-                'expected' => [
-                    'category_1',
-                ]
+                'configValue' => 1,
+                'expected' => []
             ],
             [
                 'visibility' => BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN,
                 'accountName' => 'account.level_1.1',
+                'configValue' => 1,
                 'expected' => [
+                    'category_1',
                     'category_1_2',
+                    'category_1_5',
                     'category_1_2_3',
+                    'category_1_2_3_4',
+                    'category_1_5_6',
+                    'category_1_5_6_7',
                 ]
             ],
             [
                 'visibility' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 'accountName' => 'account.level_1.2',
+                'configValue' => 1,
                 'expected' => [
                     'category_1',
+                    'category_1_2',
+                    'category_1_5',
                     'category_1_2_3',
+                    'category_1_2_3_4',
+                    'category_1_5_6',
                 ]
             ],
             [
                 'visibility' => BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN,
                 'accountName' => 'account.level_1.2',
+                'configValue' => 1,
                 'expected' => [
-                    'category_1_2',
+                    'category_1_5_6_7',
                 ]
             ],
             [
                 'visibility' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
                 'accountName' => 'account.level_1.2.1',
+                'configValue' => 1,
                 'expected' => [
                     'category_1',
+                    'category_1_2',
+                    'category_1_5',
+                    'category_1_2_3',
+                    'category_1_2_3_4',
+                    'category_1_5_6',
+
                 ]
             ],
             [
                 'visibility' => BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN,
                 'accountName' => 'account.level_1.2.1',
+                'configValue' => 1,
                 'expected' => [
-                    'category_1_2',
-                    'category_1_2_3',
+                    'category_1_5_6_7'
                 ]
             ],
         ];
@@ -191,5 +230,15 @@ class AccountCategoryRepositoryTest extends WebTestCase
         return $this->getContainer()->get('doctrine')
             ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
             ->getRepository('OroB2BAccountBundle:VisibilityResolved\AccountCategoryVisibilityResolved');
+    }
+
+    /**
+     * @return Category
+     */
+    protected function getMasterCatalog()
+    {
+        return $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BCatalogBundle:Category')
+            ->getRepository('OroB2BCatalogBundle:Category')
+            ->getMasterCatalogRoot();
     }
 }

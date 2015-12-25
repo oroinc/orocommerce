@@ -25,14 +25,15 @@ class CategoryRepositoryTest extends WebTestCase
     /**
      * @dataProvider isCategoryVisibleDataProvider
      * @param string $categoryName
+     * @param int $configValue
      * @param bool $expectedVisibility
      */
-    public function testIsCategoryVisible($categoryName, $expectedVisibility)
+    public function testIsCategoryVisible($categoryName, $configValue, $expectedVisibility)
     {
         /** @var Category $category */
         $category = $this->getReference($categoryName);
 
-        $actualVisibility = $this->getRepository()->isCategoryVisible($category);
+        $actualVisibility = $this->getRepository()->isCategoryVisible($category, $configValue);
 
         $this->assertEquals($expectedVisibility, $actualVisibility);
     }
@@ -45,14 +46,17 @@ class CategoryRepositoryTest extends WebTestCase
         return [
             [
                 'categoryName' => 'category_1',
+                'configValue' => 1,
                 'expectedVisibility' => true,
             ],
             [
                 'categoryName' => 'category_1_2',
-                'expectedVisibility' => false,
+                'configValue' => 1,
+                'expectedVisibility' => true,
             ],
             [
                 'categoryName' => 'category_1_2_3',
+                'configValue' => 1,
                 'expectedVisibility' => true,
             ],
         ];
@@ -61,17 +65,23 @@ class CategoryRepositoryTest extends WebTestCase
     /**
      * @dataProvider getCategoryIdsByVisibilityDataProvider
      * @param int $visibility
+     * @param int $configValue
      * @param array $expected
      */
-    public function testGetCategoryIdsByVisibility($visibility, array $expected)
+    public function testGetCategoryIdsByVisibility($visibility, $configValue, array $expected)
     {
-        $categoryIds = $this->getRepository()->getCategoryIdsByVisibility($visibility);
+        $categoryIds = $this->getRepository()->getCategoryIdsByVisibility($visibility, $configValue);
 
         $expectedCategoryIds = [];
         foreach ($expected as $categoryName) {
             /** @var Category $category */
             $category = $this->getReference($categoryName);
             $expectedCategoryIds[] = $category->getId();
+        }
+
+        if ($visibility == BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE) {
+            $masterCatalogId = $this->getMasterCatalog()->getId();
+            array_unshift($expectedCategoryIds, $masterCatalogId);
         }
 
         $this->assertEquals($expectedCategoryIds, $categoryIds);
@@ -85,15 +95,21 @@ class CategoryRepositoryTest extends WebTestCase
         return [
             [
                 'visibility' => BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE,
+                'configValue' => 1,
                 'expected' => [
                     'category_1',
+                    'category_1_2',
+                    'category_1_5',
                     'category_1_2_3',
+                    'category_1_2_3_4',
                 ]
             ],
             [
                 'visibility' => BaseCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                'configValue' => 1,
                 'expected' => [
-                    'category_1_2',
+                    'category_1_5_6',
+                    'category_1_5_6_7',
                 ]
             ],
         ];
@@ -107,5 +123,15 @@ class CategoryRepositoryTest extends WebTestCase
         return $this->getContainer()->get('doctrine')
             ->getManagerForClass('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved')
             ->getRepository('OroB2BAccountBundle:VisibilityResolved\CategoryVisibilityResolved');
+    }
+
+    /**
+     * @return Category
+     */
+    protected function getMasterCatalog()
+    {
+        return $this->getContainer()->get('doctrine')->getManagerForClass('OroB2BCatalogBundle:Category')
+            ->getRepository('OroB2BCatalogBundle:Category')
+            ->getMasterCatalogRoot();
     }
 }

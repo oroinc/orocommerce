@@ -83,9 +83,9 @@ class AccountCategoryRepository extends EntityRepository
 
         $terms =  [$this->getCategoryVisibilityResolvedTerm($qb, $configValue)];
         if ($account->getGroup()) {
-            $visibilities[] = $this->getAccountGroupCategoryVisibilityResolvedTerm($qb, $account->getGroup());
+            $terms[] = $this->getAccountGroupCategoryVisibilityResolvedTerm($qb, $account->getGroup());
         }
-        $visibilities[] = $this->getAccountCategoryVisibilityResolvedTerm($qb, $account);
+        $terms[] = $this->getAccountCategoryVisibilityResolvedTerm($qb, $account);
 
         if ($visibility === BaseCategoryVisibilityResolved::VISIBILITY_VISIBLE) {
             $qb->andWhere($qb->expr()->gt(implode(' + ', $terms), 0));
