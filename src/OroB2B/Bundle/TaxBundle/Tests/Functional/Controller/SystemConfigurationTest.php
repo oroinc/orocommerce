@@ -33,8 +33,8 @@ class SystemConfigurationTest extends WebTestCase
 
     public function testConfig()
     {
-        $this->assertEmpty($this->configManager->get('orob2b_tax.tax_enable'));
-        $this->assertEmpty($this->configManager->get('orob2b_tax.tax_provider'));
+        $this->assertTrue($this->configManager->get('orob2b_tax.tax_enable'));
+        $this->assertEquals(BuiltInTaxProvider::NAME, $this->configManager->get('orob2b_tax.tax_provider'));
 
         $crawler = $this->client->request(
             'GET',
@@ -52,7 +52,7 @@ class SystemConfigurationTest extends WebTestCase
             'tax_calculation' => [
                 'orob2b_tax___tax_enable' => [
                     'use_parent_scope_value' => false,
-                    'value' => true,
+                    'value' => false,
                 ],
                 'orob2b_tax___tax_provider' => [
                     'use_parent_scope_value' => false,
@@ -69,7 +69,7 @@ class SystemConfigurationTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $this->configManager->reload();
-        $this->assertTrue($this->configManager->get('orob2b_tax.tax_enable'));
+        $this->assertFalse($this->configManager->get('orob2b_tax.tax_enable'));
         $this->assertEquals(BuiltInTaxProvider::NAME, $this->configManager->get('orob2b_tax.tax_provider'));
     }
 

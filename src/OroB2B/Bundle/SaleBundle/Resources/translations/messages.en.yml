@@ -64,7 +64,8 @@ orob2b:
                 quote.expire.success: 'Quote #%id% was successfully expired'
 
         system_configuration:
-            backend_product_visibility: 'Can Be Added to Quotes'
+            fields:
+                backend_product_visibility.title: 'Can Be Added to Quotes'
 
         quoteproduct:
             entity_label: 'Quote Product'

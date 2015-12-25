@@ -1,7 +1,9 @@
 oro_system_configuration:
     groups:
-        frontend:
-            title: orob2b_frontend.system_configuration.groups.frontend.title
+        design:
+            title: orob2b_frontend.system_configuration.groups.design.title
+        theme:
+            title: orob2b_frontend.system_configuration.groups.theme.title
             icon: 'icon-picture'
         theme_settings:
             title: orob2b_frontend.system_configuration.groups.theme_settings.title
@@ -21,12 +23,11 @@ oro_system_configuration:
         system_configuration:
             commerce:
                 children:
-                    frontend_application:
+                    design:
+                        priority: 800
                         children:
-                            frontend:
-                                priority: 200
+                            theme:
                                 children:
                                     theme_settings:
-                                        priority: 200
                                         children:
                                             - oro_b2b_frontend.frontend_theme

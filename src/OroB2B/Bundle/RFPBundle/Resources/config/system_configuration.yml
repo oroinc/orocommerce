@@ -1,52 +1,57 @@
 oro_system_configuration:
     groups:
-        frontend_application:
-            title: orob2b.frontendadmin.system_configuration.frontend_application_group_title
-        rfp_settings:
-            title: orob2b.rfp.system_configuration.group_title
+        sales:
+            title: orob2b.rfp.system_configuration.groups.sales.title
+            icon: icon-file
+        rfq:
+            title: orob2b.rfp.system_configuration.groups.rfq.title
             icon: icon-file
         rfp_requeststatus_settings:
-            title: orob2b.rfp.system_configuration.requeststatus_group_title
-
+            title: orob2b.rfp.system_configuration.groups.requeststatus.title
+        notifications:
+            title: orob2b.rfp.system_configuration.groups.notifications.title
     fields:
         oro_b2b_rfp.default_request_status:
             ui_only: true
             data_type: string
             type: orob2b_rfp_default_request_status
             options:
-                label: orob2b.rfp.system_configuration.requeststatus_default_label
+                label: orob2b.rfp.system_configuration.fields.requeststatus_default.title
         oro_b2b_rfp.default_user_for_notifications:
             ui_only: true
             data_type: string
             type: oro_user_select
             options:
-                label: orob2b.rfp.system_configuration.default_user_for_notifications
+                label: orob2b.rfp.system_configuration.fields.default_user_for_notifications.title
         oro_b2b_rfp.backend_product_visibility:
             data_type: array
             type: orob2b_product_inventory_status_select
             options:
-                label: orob2b.rfp.system_configuration.backend_product_visibility
+                label: orob2b.rfp.system_configuration.fiels.backend_product_visibility.title
         oro_b2b_rfp.frontend_product_visibility:
             data_type: array
             type: orob2b_product_inventory_status_select
             options:
-                label: orob2b.rfp.system_configuration.frontend_product_visibility
+                label: orob2b.rfp.system_configuration.fields.frontend_product_visibility.title
 
     tree:
         system_configuration:
             commerce:
                 children:
-                    frontend_application:
+                    sales:
+                        priority: 600
                         children:
-                            rfp_settings:
+                            rfq:
                                 children:
                                     rfp_requeststatus_settings:
                                         children:
                                             - oro_b2b_rfp.default_request_status
+                                    notifications:
+                                        children:
                                             - oro_b2b_rfp.default_user_for_notifications
-                    catalog:
+                    product:
                         children:
-                            product_settings:
+                            product_inventory:
                                 children:
                                     frontend_inventory_statuses_visibility:
                                         children:

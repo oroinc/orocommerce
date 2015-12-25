@@ -1,0 +1,4 @@
+oro_system_configuration:
+    groups:
+        catalog:
+            title: orob2b.catalog.system_configuration.groups.catalog.title

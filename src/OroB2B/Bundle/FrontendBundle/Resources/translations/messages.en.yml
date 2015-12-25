@@ -10,7 +10,8 @@ orob2b_frontend:
         demo.title: 'OroPlatform theme'
     system_configuration:
         groups:
-            frontend.title: 'Frontend'
+            design.title: 'Design'
+            theme.title: 'Theme'
             theme_settings.title: 'Theme Settings'
             commerce.title: 'Commerce'
         fields:

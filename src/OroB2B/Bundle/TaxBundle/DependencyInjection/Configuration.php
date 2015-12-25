@@ -7,6 +7,8 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 
+use OroB2B\Bundle\TaxBundle\Provider\BuiltInTaxProvider;
+
 class Configuration implements ConfigurationInterface
 {
     /**
@@ -21,8 +23,8 @@ class Configuration implements ConfigurationInterface
         SettingsBuilder::append(
             $rootNode,
             [
-                'tax_enable' => ['value' => null],
-                'tax_provider' => ['value' => null],
+                'tax_enable' => ['value' => true],
+                'tax_provider' => ['value' => BuiltInTaxProvider::NAME],
             ]
         );
 
