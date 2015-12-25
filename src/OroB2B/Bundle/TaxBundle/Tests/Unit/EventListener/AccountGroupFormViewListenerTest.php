@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\FormView;
 
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\TaxBundle\Entity\AccountGroupTaxCode;
+use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
 use OroB2B\Bundle\TaxBundle\EventListener\AccountGroupFormViewListener;
 
 class AccountGroupFormViewListenerTest extends AbstractFormViewListenerTest
@@ -25,7 +25,7 @@ class AccountGroupFormViewListenerTest extends AbstractFormViewListenerTest
         return new AccountGroupFormViewListener(
             $this->doctrineHelper,
             $this->requestStack,
-            'OroB2B\Bundle\TaxBundle\Entity\AccountGroupTaxCode',
+            'OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode',
             'OroB2B\Bundle\AccountBundle\Entity\AccountGroup'
         );
     }
@@ -64,7 +64,7 @@ class AccountGroupFormViewListenerTest extends AbstractFormViewListenerTest
             ->disableOriginalConstructor()
             ->setMethods(['findOneByAccountGroup'])
             ->getMock();
-        $taxCode = new AccountGroupTaxCode();
+        $taxCode = new AccountTaxCode();
         $repository
             ->expects($this->once())
             ->method('findOneByAccountGroup')

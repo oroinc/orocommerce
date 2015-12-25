@@ -33,13 +33,6 @@ services:
         tags:
             - { name: form.type, alias: orob2b_tax_account_tax_code_type }
 
-    orob2b_tax.form.type.account_group_tax_code:
-            class: %orob2b_tax.form.type.account_group_tax_code.class%
-            calls:
-                - [setDataClass, [%orob2b_tax.entity.account_group_tax_code.class%]]
-            tags:
-                - { name: form.type, alias: orob2b_tax_account_group_tax_code_type }
-
     orob2b_tax.form.type.product_tax_code_autocomplete:
         class: %orob2b_tax.form.type.product_tax_code_autocomplete.class%
         tags:
@@ -49,11 +42,6 @@ services:
         class: %orob2b_tax.form.type.account_tax_code_autocomplete.class%
         tags:
             - { name: form.type, alias: orob2b_account_tax_code_autocomplete }
-
-    orob2b_tax.form.type.account_group_tax_code_autocomplete:
-        class: %orob2b_tax.form.type.account_group_tax_code_autocomplete.class%
-        tags:
-            - { name: form.type, alias: orob2b_account_group_tax_code_autocomplete }
 
     orob2b_tax.form.extension.product_tax:
         class: %orob2b_tax.form.extension.product_tax.class%
@@ -75,7 +63,7 @@ services:
         class: %orob2b_tax.form.extension.account_group_tax.class%
         arguments:
             - @oro_entity.doctrine_helper
-            - %orob2b_tax.entity.account_group_tax_code.class%
+            - %orob2b_tax.entity.account_tax_code.class%
         tags:
             - { name: form.type_extension, alias: orob2b_account_group_type }
 

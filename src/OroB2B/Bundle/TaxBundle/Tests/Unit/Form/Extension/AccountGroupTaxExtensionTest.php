@@ -2,106 +2,25 @@
 
 namespace OroB2B\Bundle\TaxBundle\Tests\Unit\Form\Extension;
 
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormInterface;
-
 use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountGroupType;
-use OroB2B\Bundle\TaxBundle\Entity\AccountGroupTaxCode;
-use OroB2B\Bundle\TaxBundle\Entity\Repository\AccountGroupTaxCodeRepository;
+use OroB2B\Bundle\TaxBundle\Entity\AccountTaxCode;
 use OroB2B\Bundle\TaxBundle\Form\Extension\AccountGroupTaxExtension;
-use OroB2B\Bundle\TaxBundle\Form\Type\AccountGroupTaxCodeAutocompleteType;
 use OroB2B\Bundle\TaxBundle\Form\Extension\AccountTaxExtension;
 
-class AccountGroupTaxExtensionTest extends AbstractTaxExtensionText
+class AccountGroupTaxExtensionTest extends AbstractAccountTaxExtensionTest
 {
-    /**
-     * @var AccountGroupTaxCodeRepository|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $entityRepository;
-
     /**
      * @return AccountTaxExtension
      */
     protected function getExtension()
     {
-        return new AccountGroupTaxExtension($this->doctrineHelper, 'OroB2BTaxBundle:AccountGroupTaxCode');
+        return new AccountGroupTaxExtension($this->doctrineHelper, 'OroB2BTaxBundle:AccountTaxCode');
     }
 
     public function testGetExtendedType()
     {
         $this->assertEquals(AccountGroupType::NAME, $this->getExtension()->getExtendedType());
-    }
-
-    /**
-     * @param bool $expectsManager
-     * @param bool $expectsRepository
-     */
-    protected function prepareDoctrineHelper($expectsManager = false, $expectsRepository = false)
-    {
-        $this->entityRepository = $this
-            ->getMockBuilder('OroB2B\Bundle\TaxBundle\Entity\Repository\AccountGroupTaxCodeRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->doctrineHelper->expects($expectsRepository ? $this->once() : $this->never())
-            ->method('getEntityRepository')
-            ->with('OroB2BTaxBundle:AccountGroupTaxCode')
-            ->willReturn($this->entityRepository);
-    }
-
-    public function testBuildForm()
-    {
-        $accountTaxExtension = $this->getExtension();
-
-        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
-        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
-        $builder->expects($this->once())
-            ->method('add')
-            ->with(
-                'taxCode',
-                AccountGroupTaxCodeAutocompleteType::NAME,
-                [
-                    'required' => false,
-                    'mapped' => false,
-                    'label' => 'orob2b.tax.taxcode.form.extension.label',
-                    'create_form_route' => null,
-                ]
-            );
-        $builder->expects($this->exactly(2))
-            ->method('addEventListener');
-        $builder->expects($this->at(1))
-            ->method('addEventListener')
-            ->with(FormEvents::POST_SET_DATA, [$accountTaxExtension, 'onPostSetData']);
-        $builder->expects($this->at(2))
-            ->method('addEventListener')
-            ->with(FormEvents::POST_SUBMIT, [$accountTaxExtension, 'onPostSubmit'], 10);
-
-        $accountTaxExtension->buildForm($builder, []);
-    }
-
-    public function testOnPostSetDataExistingAccountGroup()
-    {
-        $this->prepareDoctrineHelper(false, true);
-
-        $account = $this->createTaxCodeTarget(1);
-        $event = $this->createEvent($account);
-
-        $taxCode = $this->createTaxCode();
-
-        $this->entityRepository->expects($this->once())
-            ->method('findOneByAccountGroup')
-            ->with($account)
-            ->willReturn($taxCode);
-
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $taxCodeForm */
-        $taxCodeForm = $event->getForm()->get('taxCode');
-        $taxCodeForm->expects($this->once())
-            ->method('setData')
-            ->with($taxCode);
-
-        $this->getExtension()->onPostSetData($event);
     }
 
     public function testOnPostSubmitNewAccountGroup()
@@ -122,7 +41,7 @@ class AccountGroupTaxExtensionTest extends AbstractTaxExtensionText
         $this->assertEquals([$account], $taxCode->getAccountGroups()->toArray());
     }
 
-    public function testOnPostSubmitExistingAccount()
+    public function testOnPostSubmitExistingAccountGroup()
     {
         $this->prepareDoctrineHelper(true, true);
 
@@ -146,7 +65,6 @@ class AccountGroupTaxExtensionTest extends AbstractTaxExtensionText
 
     /**
      * @param int|null $id
-     *
      * @return AccountGroup
      */
     protected function createTaxCodeTarget($id = null)
@@ -155,12 +73,18 @@ class AccountGroupTaxExtensionTest extends AbstractTaxExtensionText
     }
 
     /**
-     * @param int|null $id
-     *
-     * @return AccountGroupTaxCode
+     * {@inheritdoc}
      */
-    protected function createTaxCode($id = null)
+    protected function getRepositoryFindMethod()
     {
-        return $this->getEntity('OroB2B\Bundle\TaxBundle\Entity\AccountGroupTaxCode', ['id' => $id]);
+        return 'findOneByAccountGroup';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getTestableCollection(AccountTaxCode $accountTaxCode)
+    {
+        return $accountTaxCode->getAccountGroups();
     }
 }

@@ -29,15 +29,6 @@ orob2b.tax:
         code.label: 'Code'
         description.label: 'Description'
 
-    accountgrouptaxcode:
-        entity_label: 'Account Group Tax Code'
-        entity_plural_label: 'Account Group Tax Codes'
-        description: 'List of Account Group Tax Codes'
-        account_groups.label: 'Account Groups'
-        id.label: 'ID'
-        code.label: 'Code'
-        description.label: 'Description'
-
     taxrule:
         entity_label: 'Tax Rule'
         entity_plural_label: 'Tax Rules'
