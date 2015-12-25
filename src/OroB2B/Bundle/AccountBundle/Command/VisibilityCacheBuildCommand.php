@@ -10,9 +10,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\CacheBuilder;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
-class ProductVisibilityCacheBuildCommand extends ContainerAwareCommand
+class VisibilityCacheBuildCommand extends ContainerAwareCommand
 {
-    const NAME = 'orob2b:account:product_visibility:cache:build';
+    const NAME = 'orob2b:account:visibility:cache:build';
 
     /**
      * {@inheritdoc}
@@ -36,7 +36,7 @@ class ProductVisibilityCacheBuildCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         /** @var CacheBuilder $cacheBuilder */
-        $cacheBuilder = $this->getContainer()->get('orob2b_account.visibility.cache.product.cache_builder');
+        $cacheBuilder = $this->getContainer()->get('orob2b_account.visibility.cache.cache_builder');
 
         /** @var Website|null $website */
         $website = null;

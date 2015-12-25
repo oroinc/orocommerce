@@ -37,6 +37,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
      */
     public function testCheckCalculatedCategories(array $visibleCategories, array $invisibleCategories)
     {
+        $this->markTestSkipped('will be done in BB-1650 scope');
         $this->assertTreeCategories($visibleCategories, $invisibleCategories);
     }
 
@@ -74,6 +75,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
         array $visibleCategories,
         array $invisibleCategories
     ) {
+        $this->markTestSkipped('will be done in BB-1650 scope');
         /** @var Category $category */
         $category = $this->getReference($categoryToHide);
         $this->createAccountGroupCategoryVisibility($category, AccountGroupCategoryVisibility::HIDDEN);

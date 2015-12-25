@@ -55,10 +55,15 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
      */
     public function testClearTable($expectedRows)
     {
-        $this->assertCount($expectedRows, $this->getRepository()->findAll());
+        $countQuery = $this->getRepository()
+            ->createQueryBuilder('entity')
+            ->select('COUNT(entity.visibility)')
+            ->getQuery();
+
+        $this->assertEquals($expectedRows, $countQuery->getSingleScalarResult());
         $deletedCount = $this->getRepository()->clearTable();
 
-        $this->assertCount(0, $this->getRepository()->findAll());
+        $this->assertEquals(0, $countQuery->getSingleScalarResult());
         $this->assertEquals($expectedRows, $deletedCount);
     }
 

@@ -11,7 +11,7 @@ use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @ORM\Entity(
- * repositoryClass="OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountProductRepository"
+ *    repositoryClass="OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\AccountProductRepository"
  * )
  * @ORM\Table(name="orob2b_acc_prod_vsb_resolv")
  */
