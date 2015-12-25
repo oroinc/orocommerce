@@ -1,0 +1,189 @@
+category_1:
+    all:
+        visibility: visible
+        reference: category_1.visibility.all
+    groups:
+        account_group.group1:
+            visibility: hidden
+            reference: category_1.visibility.account_group.group1
+        account_group.group3:
+            visibility: parent_category
+            reference: category_1.visibility.account_group.group3
+    accounts:
+        account.level_1:
+            visibility: parent_category
+            reference: category_1.visibility.account.level_1
+        account.level_1.1:
+            visibility: hidden
+            reference: category_1.visibility.account.level_1.1
+        account.level_1.2:
+            visibility: parent_category
+            reference: category_1.visibility.account.level_1.2
+        account.level_1.2.1:
+            visibility: category
+            reference: category_1.visibility.account.level_1.2.1
+        account.level_1.3.1.1:
+            visibility: category
+            reference: category_1.visibility.account.level_1.3.1.1
+        account.level_1.4:
+            visibility: visible
+            reference: category_1.visibility.account.level_1.4
+category_1_2:
+    all:
+        visibility: null
+        reference: category_1_2.visibility.all
+    groups:
+        account_group.group1:
+            visibility: parent_category
+            reference: category_1_2.visibility.account_group.group1
+        account_group.group2:
+            visibility: parent_category
+            reference: category_1_2.visibility.account_group.group2
+    accounts:
+        account.level_1.1:
+            visibility: parent_category
+            reference: category_1_2.visibility.account.level_1.1
+        account.level_1.2:
+            visibility: parent_category
+            reference: category_1_2.visibility.account.level_1.2
+        account.level_1.2.1:
+            visibility: parent_category
+            reference: category_1_2.visibility.account.level_1.2.1
+        account.level_1.3.1:
+            visibility: category
+            reference: category_1_2.visibility.account.level_1.3.1
+        account.level_1.3.1.1:
+            visibility: hidden
+            reference: category_1_2.visibility.account.level_1.3.1.1
+        account.level_1.4:
+            visibility: category
+            reference: category_1_2.visibility.account.level_1.4
+category_1_2_3:
+    all:
+        visibility: visible
+        reference: category_1_2_3.visibility.all
+    groups:
+        account_group.group1:
+            visibility: parent_category
+            reference: category_1_2_3.visibility.account_group.group1
+        account_group.group3:
+            visibility: hidden
+            reference: category_1_2_3.visibility.account_group.group3
+    accounts:
+        account.level_1.1:
+            visibility: parent_category
+            reference: category_1_2_3.visibility.account.level_1.1
+        account.level_1.2.1:
+            visibility: parent_category
+            reference: category_1_2_3.visibility.account.level_1.2.1
+        account.level_1.3.1.1:
+            visibility: parent_category
+            reference: category_1_2_3.visibility.account.level_1.3.1.1
+category_1_2_3_4:
+    all:
+        visibility: null
+        reference: category_1_2_3_4.visibility.all
+    groups:
+        account_group.group1:
+            visibility: parent_category
+            reference: category_1_2_3_4.visibility.account_group.group1
+        account_group.group3:
+            visibility: parent_category
+            reference: category_1_2_3_4.visibility.account_group.group3
+    accounts:
+        account.level_1.1:
+            visibility: parent_category
+            reference: category_1_2_3_4.visibility.account.level_1.1
+        account.level_1.2.1:
+            visibility: parent_category
+            reference: category_1_2_3_4.visibility.account.level_1.2.1
+        account.level_1.3.1.1:
+            visibility: parent_category
+            reference: category_1_2_3_4.visibility.account.level_1.3.1.1
+        account.level_1.4:
+            visibility: category
+            reference: category_1_2_3_4.visibility.account.level_1.4
+category_1_5:
+    all:
+       visibility: null
+       reference: category_1_5.visibility.all
+    groups:
+        account_group.group3:
+            visibility: parent_category
+            reference: category_1_5.visibility.account_group.group3
+    accounts:
+        account.level_1.1:
+            visibility: category
+            reference: category_1_5.visibility.account.level_1.1
+        account.level_1.2:
+            visibility: visible
+            reference: category_1_5.visibility.account.level_1.2
+        account.level_1.2.1.1:
+            visibility: parent_category
+            reference: category_1_5.visibility.account.level_1.2.1.1
+        account.level_1.3.1.1:
+            visibility: parent_category
+            reference: category_1_5.visibility.account.level_1.3.1.1
+        account.level_1.4:
+            visibility: category
+            reference: category_1_5.visibility.account.level_1.4
+category_1_5_6:
+    all:
+        visibility: hidden
+        reference: category_1_5_6.visibility.all
+    groups:
+        account_group.group1:
+            visibility: parent_category
+            reference: category_1_5_6.visibility.account_group.group1
+        account_group.group2:
+            visibility: visible
+            reference: category_1_5_6.visibility.account_group.group2
+        account_group.group3:
+            visibility: parent_category
+            reference: category_1_5_6.visibility.account_group.group3
+    accounts:
+        account.level_1:
+            visibility: category
+            reference: category_1_5_6.visibility.account.level_1
+        account.level_1.1:
+            visibility: category
+            reference: category_1_5_6.visibility.account.level_1.1
+        account.level_1.2.1.1:
+            visibility: parent_category
+            reference: category_1_5_6.visibility.account.level_1.2.1.1
+        account.level_1.3.1:
+            visibility: category
+            reference: category_1_5_6.visibility.account.level_1.3.1
+        account.level_1.3.1.1:
+            visibility: parent_category
+            reference: category_1_5_6.visibility.account.level_1.3.1.1
+category_1_5_6_7:
+    all:
+        visibility: null
+        reference: category_1_5_6_7.visibility.all
+    groups:
+        account_group.group1:
+            visibility: parent_category
+            reference: category_1_5_6_7.visibility.account_group.group1
+        account_group.group3:
+            visibility: parent_category
+            reference: category_1_5_6_7.visibility.account_group.group3
+    accounts:
+        account.level_1:
+            visibility: hidden
+            reference: category_1_5_6_7.visibility.account.level_1
+        account.level_1.1:
+            visibility: category
+            reference: category_1_5_6_7.visibility.account.level_1.1
+        account.level_1.2.1:
+            visibility: hidden
+            reference: category_1_5_6_7.visibility.account.level_1.2.1
+        account.level_1.2.1.1:
+            visibility: parent_category
+            reference: category_1_5_6_7.visibility.account.level_1.2.1.1
+        account.level_1.3.1:
+            visibility: category
+            reference: category_1_5_6_7.visibility.account.level_1.3.1
+        account.level_1.4:
+            visibility: visible
+            reference: category_1_5_6_7.visibility.account.level_1.4

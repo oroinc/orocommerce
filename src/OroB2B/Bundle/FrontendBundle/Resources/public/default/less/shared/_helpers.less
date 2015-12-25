@@ -105,6 +105,10 @@
   width: 50% !important;
 }
 
+.w30_p {
+  width: 30% !important;
+}
+
 //Margins
 .mt3 {
 	margin-top: 3rem !important;
@@ -114,7 +118,7 @@
   .generate-margin-helpers((@i - 1), @param, @position, @size);
 
   .m@{param}@{i}-@{size} {
-    /*margin-@{position}: unit(@i, rem) !important;*/
+    margin-@{position}: unit(@i, rem) !important;
   }
 }
 
@@ -137,7 +141,7 @@
   .generate-micro-margin-helpers((@i - 0.1), (@n - 1), @param, @position, @size);
 
   .mm@{param}@{n}-@{size} {
-    /*margin-@{position}: unit(@i, rem) !important;*/
+    margin-@{position}: unit(@i, rem) !important;
   }
 }
 
@@ -160,7 +164,7 @@
   .generate-negative-micro-margin-helpers((@i - 0.1), (@n - 1), @param, @position, @size);
 
   .nmm@{param}@{n}-@{size} {
-    /*margin-@{position}: unit(-@i, rem) !important;*/
+    margin-@{position}: unit(-@i, rem) !important;
   }
 }
 

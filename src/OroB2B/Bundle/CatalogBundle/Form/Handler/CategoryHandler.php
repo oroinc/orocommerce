@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 
@@ -21,7 +22,7 @@ class CategoryHandler
     /** @var Request */
     protected $request;
 
-    /** @var ObjectManager */
+    /** @var EntityManager */
     protected $manager;
 
     /** @var  EventDispatcherInterface */
@@ -99,10 +100,14 @@ class CategoryHandler
 
             if ($productCategory instanceof Category) {
                 $productCategory->removeProduct($product);
-                $this->manager->flush($productCategory);
             }
 
             $category->addProduct($product);
+
+            if ($productCategory instanceof Category) {
+                // both categories must be updated in the same flush
+                $this->manager->flush([$productCategory, $category]);
+            }
         }
     }
 

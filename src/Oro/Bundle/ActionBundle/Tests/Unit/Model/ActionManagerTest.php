@@ -5,13 +5,14 @@ namespace Oro\Bundle\ActionBundle\Tests\Unit\Model;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\ActionBundle\Configuration\ActionConfigurationProvider;
+use Oro\Bundle\ActionBundle\Helper\ApplicationsHelper;
+use Oro\Bundle\ActionBundle\Helper\ContextHelper;
 use Oro\Bundle\ActionBundle\Model\Action;
 use Oro\Bundle\ActionBundle\Model\ActionAssembler;
-use Oro\Bundle\ActionBundle\Model\ActionContext;
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionDefinition;
 use Oro\Bundle\ActionBundle\Model\ActionManager;
 use Oro\Bundle\ActionBundle\Model\AttributeAssembler;
-use Oro\Bundle\ActionBundle\Model\ContextHelper;
 use Oro\Bundle\ActionBundle\Model\FormOptionsAssembler;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\WorkflowBundle\Model\Action\ActionFactory as FunctionFactory;
@@ -47,6 +48,9 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
     /** @var ActionAssembler */
     protected $assembler;
 
+    /** @var ApplicationsHelper|\PHPUnit_Framework_MockObject_MockObject */
+    protected $applicationsHelper;
+
     /** @var ActionManager */
     protected $manager;
 
@@ -67,7 +71,7 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
             ->method('isManageableEntity')
             ->willReturn(true);
 
-        $this->contextHelper = $this->getMockBuilder('Oro\Bundle\ActionBundle\Model\ContextHelper')
+        $this->contextHelper = $this->getMockBuilder('Oro\Bundle\ActionBundle\Helper\ContextHelper')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -103,11 +107,16 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
             $this->formOptionsAssembler
         );
 
+        $this->applicationsHelper = $this->getMockBuilder('Oro\Bundle\ActionBundle\Helper\ApplicationsHelper')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->manager = new ActionManager(
             $this->doctrineHelper,
             $this->contextHelper,
             $this->configurationProvider,
-            $this->assembler
+            $this->assembler,
+            $this->applicationsHelper
         );
     }
 
@@ -119,6 +128,7 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testHasActions(array $context, array $expectedData)
     {
+        $this->assertApplicationsHelperCalled();
         $this->assertContextHelperCalled($context);
         $this->assertEquals($expectedData['hasActions'], $this->manager->hasActions($context));
     }
@@ -131,6 +141,7 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetActions(array $context, array $expectedData)
     {
+        $this->assertApplicationsHelperCalled();
         $this->assertContextHelperCalled($context);
 
         if (isset($context['entityClass'])) {
@@ -156,26 +167,25 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider getActionDataProvider
      *
-     * @param array $context
      * @param string $actionName
      * @param mixed $expected
      */
-    public function testGetAction(array $context, $actionName, $expected)
+    public function testGetAction($actionName, $expected)
     {
-        $this->assertContextHelperCalled($context);
+        if (!$expected) {
+            $this->setExpectedException(
+                '\Oro\Bundle\ActionBundle\Exception\ActionNotFoundException',
+                sprintf('Action with name "%s" not found', $actionName)
+            );
+        }
 
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityReference')
-            ->willReturnCallback(function ($className, $id) {
-                $obj = new \stdClass();
-                $obj->id = $id;
+        $this->assertApplicationsHelperCalled();
 
-                return $obj;
-            });
+        $action = $this->manager->getAction($actionName, new ActionData());
 
-        $action = $this->manager->getAction($actionName, $context);
-
-        $this->assertEquals($expected, $action ? $action->getName() : $action);
+        if ($expected) {
+            $this->assertEquals($expected, $action->getName());
+        }
     }
 
     /**
@@ -185,20 +195,10 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'invalid action name' => [
-                'context' => [
-                    'route' => 'route1',
-                    'entityClass' => 'Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity1',
-                    'entityId' => 1,
-                ],
                 'actionName' => 'test',
                 'expected' => null
             ],
             'valid action name' => [
-                'context' => [
-                    'route' => 'route1',
-                    'entityClass' => 'Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity1',
-                    'entityId' => 1,
-                ],
                 'actionName' => 'action2',
                 'expected' => 'action2'
             ],
@@ -213,7 +213,7 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetActionsAndMultipleCalls(array $inputData, array $expectedData)
     {
-        $this->assertContextHelperCalled([], 3, 3);
+        $this->assertApplicationsHelperCalled();
 
         $this->assertGetActions($expectedData['actions1'], $inputData['context1']);
         $this->assertGetActions($expectedData['actions2'], $inputData['context2']);
@@ -221,18 +221,21 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider executeDataProvider
+     * @dataProvider executeByContextDataProvider
      *
      * @param array $context
-     * @param ActionContext $actionContext
+     * @param ActionData $actionData
      */
-    public function testExecute(array $context, ActionContext $actionContext = null)
+    public function testExecuteByContext(array $context, ActionData $actionData)
     {
-        $this->assertContextHelperCalled($context, 2, $actionContext ? 1 : 2);
-
-        if ($actionContext && $actionContext->getEntity()) {
+        $this->assertApplicationsHelperCalled();
+        if ($actionData->getEntity()) {
             $this->assertEntityManagerCalled('stdClass');
         }
+
+        $this->contextHelper->expects($this->once())
+            ->method('getActionData')
+            ->willReturn($actionData);
 
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityReference')
@@ -257,15 +260,59 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
             $this->doctrineHelper,
             $this->contextHelper,
             $this->configurationProvider,
-            $assembler
+            $assembler,
+            $this->applicationsHelper
         );
 
         $errors = new ArrayCollection();
 
-        $this->assertInstanceOf(
-            'Oro\Bundle\ActionBundle\Model\ActionContext',
-            $this->manager->execute('test_action', $actionContext, $errors)
+        $this->manager->executeByContext('test_action', $context, $errors);
+
+        $this->assertEmpty($errors->toArray());
+    }
+
+    /**
+     * @dataProvider executeByActionDataDataProvider
+     *
+     * @param ActionData $actionData
+     */
+    public function testExecute(ActionData $actionData)
+    {
+        if ($actionData->getEntity()) {
+            $this->assertEntityManagerCalled(get_class($actionData->getEntity()));
+        }
+
+        $this->assertApplicationsHelperCalled();
+        $action = $this->createActionMock();
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject|ActionAssembler $assembler */
+        $assembler = $this->getMockBuilder('Oro\Bundle\ActionBundle\Model\ActionAssembler')
+            ->disableOriginalConstructor()
+            ->getMock();
+        $assembler->expects($this->once())
+            ->method('assemble')
+            ->willReturn(['test_action' => $action]);
+
+        $this->doctrineHelper->expects($this->any())
+            ->method('getEntityReference')
+            ->willReturnCallback(function ($className, $id) {
+                $obj = new $className();
+                $obj->id = $id;
+
+                return $obj;
+            });
+
+        $this->manager = new ActionManager(
+            $this->doctrineHelper,
+            $this->contextHelper,
+            $this->configurationProvider,
+            $assembler,
+            $this->applicationsHelper
         );
+
+        $errors = new ArrayCollection();
+
+        $this->manager->execute('test_action', $actionData, $errors);
 
         $this->assertEmpty($errors->toArray());
     }
@@ -314,6 +361,9 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
         $actionDefinition->expects($this->once())
             ->method('getEntities')
             ->willReturn(['stdClass']);
+        $actionDefinition->expects($this->once())
+            ->method('getDatagrids')
+            ->willReturn(['datagrid1']);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|Action $action */
         $action = $this->getMockBuilder('Oro\Bundle\ActionBundle\Model\Action')
@@ -341,55 +391,65 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function executeDataProvider()
+    public function executeByContextDataProvider()
     {
         return [
             'route1' => [
                 'context' => [
                     'route' => 'route1'
-                ]
+                ],
+                'actionData' => new ActionData(),
             ],
             'route1 without entity id' => [
                 'context' => [
                     'route' => 'route1',
                     'entityClass' => 'stdClass'
-                ]
+                ],
+                'actionData' => new ActionData(),
             ],
             'entity' => [
                 'context' => [
                     'entityClass' => 'stdClass',
                     'entityId' => 1
-                ]
+                ],
+                'actionData' => new ActionData(),
             ],
             'route1 and entity' => [
                 'context' => [
                     'route' => 'route1',
                     'entityClass' => 'stdClass',
                     'entityId' => 1
-                ]
+                ],
+                'actionData' => new ActionData(),
             ],
-            'route1 and entity and exception' => [
-                'context' => [
-                    'route' => 'route1',
-                    'entityClass' => 'stdClass',
-                    'entityId' => 1
-                ]
-            ],
-            'route1 and entity and exception with action context' => [
+            'route1 and entity with action data and entity' => [
                 'context' => [
                     'route' => 'route1',
                     'entityClass' => 'stdClass',
                     'entityId' => 1
                 ],
-                'actionContext' => new ActionContext()
+                'actionData' => new ActionData(['data' => new \stdClass]),
             ],
-            'route1 and entity and exception with action context and entity' => [
-                'context' => [
-                    'route' => 'route1',
-                    'entityClass' => 'stdClass',
-                    'entityId' => 1
-                ],
-                'actionContext' => new ActionContext(['data' => new \stdClass])
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function executeByActionDataDataProvider()
+    {
+        return [
+            'empty context' => [
+                'actionData' => new ActionData(),
+                'exceptionMessage' => null,
+            ],
+            'entity' => [
+                'actionData' => new ActionData(['data' => new \stdClass]),
+                'exceptionMessage' => null,
+            ],
+            'exception' => [
+                'actionData' => new ActionData(['data' => new \stdClass]),
+                'exceptionMessage' => 'Action with name "test_action" not found',
             ],
         ];
     }
@@ -398,11 +458,11 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
      * @expectedException \Oro\Bundle\ActionBundle\Exception\ActionNotFoundException
      * @expectedExceptionMessage Action with name "test_action" not found
      */
-    public function testExecuteException()
+    public function testExecuteByContextException()
     {
-        $this->assertContextHelperCalled([], 2);
+        $this->assertContextHelperCalled([], 0, 1);
 
-        $this->manager->execute('test_action');
+        $this->manager->executeByContext('test_action');
     }
 
     /**
@@ -413,13 +473,16 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetDialogTemplate($actionName, $expected)
     {
+        $this->assertApplicationsHelperCalled();
         $this->assertContextHelperCalled(
             [
                 'route' => 'route1',
                 'entityClass' => 'stdClass',
-                'entityId' => 1
+                'entityId' => 1,
+                'datagrid' => 'datagrid_name',
             ],
-            2
+            0,
+            1
         );
 
         $this->assertEquals($expected, $this->manager->getDialogTemplate($actionName));
@@ -431,15 +494,28 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
      */
     protected function assertGetActions(array $expectedActions, array $inputContext)
     {
+        $this->contextHelper->expects($this->any())
+            ->method('getContext')
+            ->willReturnCallback(function ($context) {
+                return array_merge(
+                    ['route' => null, 'entityId' => null, 'entityClass' => null, 'datagrid' => null],
+                    $context
+                );
+            });
+
+        $this->contextHelper->expects($this->any())
+            ->method('getActionData')
+            ->willReturn(new ActionData());
+
         $this->assertEquals($expectedActions, array_keys($this->manager->getActions($inputContext)));
     }
 
     /**
      * @param array $context
      * @param int $getContextCalls
-     * @param int $getActionContextCalls
+     * @param int $getActionDataCalls
      */
-    protected function assertContextHelperCalled(array $context = [], $getContextCalls = 1, $getActionContextCalls = 1)
+    protected function assertContextHelperCalled(array $context = [], $getContextCalls = 1, $getActionDataCalls = 1)
     {
         $this->contextHelper->expects($this->exactly($getContextCalls))
             ->method('getContext')
@@ -448,15 +524,16 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
                     [
                         'route' => null,
                         'entityId' => null,
-                        'entityClass' => null
+                        'entityClass' => null,
+                        'datagrid' => null,
                     ],
                     $context
                 )
             );
 
-        $this->contextHelper->expects($this->exactly($getActionContextCalls))
-            ->method('getActionContext')
-            ->willReturn(new ActionContext());
+        $this->contextHelper->expects($this->exactly($getActionDataCalls))
+            ->method('getActionData')
+            ->willReturn(new ActionData());
     }
 
     /**
@@ -511,6 +588,7 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
                     'actions' => [
                         'action4',
                         'action3',
+                        'action6'
                     ],
                     'hasActions' => true,
                 ],
@@ -526,6 +604,7 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
                         'action4',
                         'action3',
                         'action2',
+                        'action6'
                     ],
                     'hasActions' => true,
                 ],
@@ -571,10 +650,6 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
     public function getDialogTemplateDataProvider()
     {
         return [
-            [
-                'actionName' => 'unknown_action',
-                'expected' => ActionManager::DEFAULT_DIALOG_TEMPLATE
-            ],
             [
                 'actionName' => 'action2',
                 'expected' => ActionManager::DEFAULT_DIALOG_TEMPLATE
@@ -643,6 +718,45 @@ class ActionManagerTest extends \PHPUnit_Framework_TestCase
                 'order' => 10,
                 'enabled' => false,
             ],
+            'action6' => [
+                'label' => 'Label6',
+                'applications' => ['backend'],
+                'routes' => [],
+                'entities' => ['Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity1'],
+                'order' => 50,
+                'enabled' => true,
+            ],
+            'action7' => [
+                'label' => 'Label7',
+                'applications' => ['frontend'],
+                'routes' => [
+                    'route1',
+                    'route2',
+                    'route3',
+                ],
+                'entities' => [
+                    'Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity1',
+                    'Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity2',
+                    'Oro\Bundle\ActionBundle\Tests\Unit\Stub\TestEntity3',
+                ],
+                'order' => 50,
+                'enabled' => true,
+            ],
         ];
+    }
+
+    protected function assertApplicationsHelperCalled()
+    {
+        $this->applicationsHelper->expects($this->any())
+            ->method('isApplicationsValid')
+            ->willReturnCallback(
+                function (Action $action) {
+                    if (count($action->getDefinition()->getApplications()) === 0) {
+                        return true;
+                    }
+
+                    return in_array('backend', $action->getDefinition()->getApplications(), true);
+                }
+            );
     }
 }

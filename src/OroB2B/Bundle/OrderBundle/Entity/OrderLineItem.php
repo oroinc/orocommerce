@@ -29,6 +29,7 @@ use OroB2B\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
  *      }
  * )
  * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class OrderLineItem extends ExtendOrderLineItem implements ProductUnitHolderInterface, ProductHolderInterface
 {
@@ -147,6 +148,14 @@ class OrderLineItem extends ExtendOrderLineItem implements ProductUnitHolderInte
      * @var bool
      */
     protected $requirePriceRecalculation = false;
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->productSku;
+    }
 
     /**
      * Get id

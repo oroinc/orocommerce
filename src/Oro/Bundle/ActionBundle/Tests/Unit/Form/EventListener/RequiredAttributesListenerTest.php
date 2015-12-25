@@ -6,7 +6,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
 use Oro\Bundle\ActionBundle\Form\EventListener\RequiredAttributesListener;
-use Oro\Bundle\ActionBundle\Model\ActionContext;
+use Oro\Bundle\ActionBundle\Model\ActionData;
 
 class RequiredAttributesListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -39,46 +39,46 @@ class RequiredAttributesListenerTest extends \PHPUnit_Framework_TestCase
         $attributeNames = ['test'];
         $values = ['test' => 'value'];
 
-        $context = $this->createActionContext();
-        $context->expects($this->once())->method('getValues')->with($attributeNames)->willReturn($values);
+        $data = $this->createActionData();
+        $data->expects($this->once())->method('getValues')->with($attributeNames)->willReturn($values);
 
         $event = $this->createFormEvent();
-        $event->expects($this->once())->method('getData')->willReturn($context);
+        $event->expects($this->once())->method('getData')->willReturn($data);
         $event->expects($this->once())
             ->method('setData')
-            ->with($this->isInstanceOf('Oro\Bundle\ActionBundle\Model\ActionContext'));
+            ->with($this->isInstanceOf('Oro\Bundle\ActionBundle\Model\ActionData'));
 
         $this->listener->initialize($attributeNames);
         $this->listener->onPreSetData($event);
 
         // Test submit data
-        $formData = $this->createActionContext();
+        $formData = $this->createActionData();
         $formData->expects($this->once())->method('getValues')->willReturn($values);
 
-        $context->expects($this->once())->method('__set')->with('test', 'value');
+        $data->expects($this->once())->method('__set')->with('test', 'value');
 
         $submitEvent = $this->createFormEvent();
         $submitEvent->expects($this->once())->method('getData')->willReturn($formData);
         $submitEvent->expects($this->once())
             ->method('setData')
-            ->with($this->isInstanceOf('Oro\Bundle\ActionBundle\Model\ActionContext'));
+            ->with($this->isInstanceOf('Oro\Bundle\ActionBundle\Model\ActionData'));
 
         $this->listener->onSubmit($submitEvent);
     }
 
-    public function testOnSubmitNoActionContext()
+    public function testOnSubmitNoActionData()
     {
-        $context = $this->createActionContext();
-        $context->expects($this->never())->method($this->anything());
+        $data = $this->createActionData();
+        $data->expects($this->never())->method($this->anything());
 
         $event = $this->createFormEvent();
-        $event->expects($this->once())->method('getData')->willReturn($context);
+        $event->expects($this->once())->method('getData')->willReturn($data);
         $event->expects($this->never())->method('setData');
 
         $this->listener->onSubmit($event);
     }
 
-    public function testOnPreSetDataNoActionContext()
+    public function testOnPreSetDataNoActionData()
     {
         $event = $this->createFormEvent();
         $event->expects($this->once())->method('getData')->will($this->returnValue(new \stdClass()));
@@ -88,11 +88,11 @@ class RequiredAttributesListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|ActionContext
+     * @return \PHPUnit_Framework_MockObject_MockObject|ActionData
      */
-    protected function createActionContext()
+    protected function createActionData()
     {
-        return $this->getMockBuilder('Oro\Bundle\ActionBundle\Model\ActionContext')
+        return $this->getMockBuilder('Oro\Bundle\ActionBundle\Model\ActionData')
             ->disableOriginalConstructor()
             ->getMock();
     }
