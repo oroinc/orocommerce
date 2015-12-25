@@ -31,10 +31,19 @@ class CategoryVisibilityRepositoryTest extends CategoryVisibilityTestCase
     public function testGetCategoriesVisibilitiesQueryBuilder(array $expectedData)
     {
         /** @var array $actualData */
-        $actualData = $this->repository->getCategoriesVisibilitiesQueryBuilder()->addOrderBy('c.left')
+        $actualData = $this->repository->getCategoriesVisibilitiesQueryBuilder()
             ->getQuery()->execute();
 
         $this->assertVisibilities($expectedData, $actualData);
+    }
+
+    /**
+     * @dataProvider getCategoriesVisibilitiesQueryBuilderDataProvider
+     * @param array $expectedData
+     */
+    public function testGetCategoriesVisibilities(array $expectedData)
+    {
+        $this->assertVisibilities($expectedData, $this->repository->getCategoriesVisibilities());
     }
 
     /**

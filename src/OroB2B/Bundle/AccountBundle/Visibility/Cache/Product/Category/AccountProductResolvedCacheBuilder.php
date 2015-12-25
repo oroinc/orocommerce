@@ -4,6 +4,7 @@ namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category;
 
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\AccountCategoryVisibility;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\VisibilityInterface;
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder;
 use OroB2B\Bundle\AccountBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeAccountSubtreeCacheBuilder;
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 

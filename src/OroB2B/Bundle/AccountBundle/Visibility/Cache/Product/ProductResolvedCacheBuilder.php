@@ -5,6 +5,7 @@ namespace OroB2B\Bundle\AccountBundle\Visibility\Cache\Product;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 
+use OroB2B\Bundle\AccountBundle\Visibility\Cache\ProductCaseCacheBuilderInterface;
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
 use OroB2B\Bundle\ProductBundle\Entity\Product;
 use OroB2B\Bundle\AccountBundle\Entity\Visibility\ProductVisibility;
@@ -14,7 +15,7 @@ use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\ProductVisibilityResol
 use OroB2B\Bundle\WebsiteBundle\Entity\Website;
 use OroB2B\Bundle\AccountBundle\Entity\VisibilityResolved\Repository\ProductRepository;
 
-class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder
+class ProductResolvedCacheBuilder extends AbstractResolvedCacheBuilder implements ProductCaseCacheBuilderInterface
 {
     /**
      * @param VisibilityInterface|ProductVisibility $visibilitySettings
