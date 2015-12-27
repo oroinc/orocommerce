@@ -2,57 +2,30 @@
 
 namespace OroB2B\Bundle\PricingBundle\Form\Extension;
 
-use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\FormBuilderInterface;
 
 use OroB2B\Bundle\AccountBundle\Form\Type\AccountGroupType;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\PricingBundle\Entity\PriceList;
+use OroB2B\Bundle\PricingBundle\Form\Type\AccountGroupWebsiteScopedPriceListsType;
 
-class AccountGroupFormExtension extends AbstractPriceListExtension
+class AccountGroupFormExtension extends AbstractTypeExtension
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function onPostSetData(FormEvent $event)
-    {
-        /** @var AccountGroup|null $accountGroup */
-        $accountGroup = $event->getData();
-        if (!$accountGroup || !$accountGroup->getId()) {
-            return;
-        }
-
-        $priceList = $this->getPriceListRepository()->getPriceListByAccountGroup($accountGroup);
-
-        $event->getForm()->get('priceList')->setData($priceList);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function onPostSubmit(FormEvent $event)
-    {
-        /** @var AccountGroup|null $accountGroup */
-        $accountGroup = $event->getData();
-        if (!$accountGroup || !$accountGroup->getId()) {
-            return;
-        }
-
-        $form = $event->getForm();
-        if (!$form->isValid()) {
-            return;
-        }
-
-        /** @var PriceList|null $priceList */
-        $priceList = $form->get('priceList')->getData();
-
-        $this->getPriceListRepository()->setPriceListToAccountGroup($accountGroup, $priceList);
-    }
-
     /**
      * {@inheritdoc}
      */
     public function getExtendedType()
     {
         return AccountGroupType::NAME;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $builder->add(
+            'priceListsByWebsites',
+            AccountGroupWebsiteScopedPriceListsType::NAME
+        );
     }
 }

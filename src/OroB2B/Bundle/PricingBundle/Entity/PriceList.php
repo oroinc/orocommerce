@@ -10,10 +10,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
-use OroB2B\Bundle\AccountBundle\Entity\Account;
-use OroB2B\Bundle\AccountBundle\Entity\AccountGroup;
-use OroB2B\Bundle\WebsiteBundle\Entity\Website;
-
 /**
  * @ORM\Table(name="orob2b_price_list")
  * @ORM\Entity(repositoryClass="OroB2B\Bundle\PricingBundle\Entity\Repository\PriceListRepository")
@@ -79,54 +75,6 @@ class PriceList
     protected $currencies;
 
     /**
-     * @var Account[]|Collection
-     *
-     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\Account")
-     * @ORM\JoinTable(
-     *      name="orob2b_price_list_to_account",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
-     */
-    protected $accounts;
-
-    /**
-     * @var AccountGroup[]|Collection
-     *
-     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\AccountBundle\Entity\AccountGroup")
-     * @ORM\JoinTable(
-     *      name="orob2b_price_list_to_c_group",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="account_group_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
-     */
-    protected $accountGroups;
-
-    /**
-     * @var Website[]|Collection
-     *
-     * @ORM\ManyToMany(targetEntity="OroB2B\Bundle\WebsiteBundle\Entity\Website")
-     * @ORM\JoinTable(
-     *      name="orob2b_price_list_to_website",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="price_list_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="website_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
-     */
-    protected $websites;
-    
-    /**
      * @var \DateTime $createdAt
      *
      * @ORM\Column(name="created_at", type="datetime")
@@ -176,9 +124,6 @@ class PriceList
     public function __construct()
     {
         $this->currencies = new ArrayCollection();
-        $this->accounts = new ArrayCollection();
-        $this->accountGroups = new ArrayCollection();
-        $this->websites = new ArrayCollection();
         $this->prices = new ArrayCollection();
     }
 
@@ -330,120 +275,6 @@ class PriceList
             ->where(Criteria::expr()->eq('currency', $currency));
 
         return $this->currencies->matching($criteria)->first();
-    }
-
-    /**
-     * @param Account $account
-     *
-     * @return PriceList
-     */
-    public function addAccount(Account $account)
-    {
-        if (!$this->accounts->contains($account)) {
-            $this->accounts->add($account);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param Account $account
-     *
-     * @return PriceList
-     */
-    public function removeAccount(Account $account)
-    {
-        if ($this->accounts->contains($account)) {
-            $this->accounts->removeElement($account);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Get accounts
-     *
-     * @return Collection|Account[]
-     */
-    public function getAccounts()
-    {
-        return $this->accounts;
-    }
-
-    /**
-     * @param AccountGroup $accountGroup
-     *
-     * @return PriceList
-     */
-    public function addAccountGroup(AccountGroup $accountGroup)
-    {
-        if (!$this->accountGroups->contains($accountGroup)) {
-            $this->accountGroups->add($accountGroup);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param AccountGroup $accountGroup
-     *
-     * @return PriceList
-     */
-    public function removeAccountGroup(AccountGroup $accountGroup)
-    {
-        if ($this->accountGroups->contains($accountGroup)) {
-            $this->accountGroups->removeElement($accountGroup);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Get account groups
-     *
-     * @return Collection|AccountGroup[]
-     */
-    public function getAccountGroups()
-    {
-        return $this->accountGroups;
-    }
-
-    /**
-     * @param Website $website
-     *
-     * @return PriceList
-     */
-    public function addWebsite(Website $website)
-    {
-        if (!$this->websites->contains($website)) {
-            $this->websites->add($website);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param Website $website
-     *
-     * @return PriceList
-     */
-    public function removeWebsite(Website $website)
-    {
-        if ($this->websites->contains($website)) {
-            $this->websites->removeElement($website);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Get websites
-     *
-     * @return Collection|Website[]
-     */
-    public function getWebsites()
-    {
-        return $this->websites;
     }
 
     /**

@@ -2,20 +2,20 @@
 
 namespace OroB2B\Bundle\ProductBundle\ImportExport\DataConverter;
 
-use Oro\Bundle\DataGridBundle\Event\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use OroB2B\Bundle\FallbackBundle\ImportExport\DataConverter\LocalizedFallbackValueAwareDataConverter;
 use OroB2B\Bundle\ProductBundle\ImportExport\Event\ProductDataConverterEvent;
 
 class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter
 {
-    /** @var EventDispatcher */
+    /** @var EventDispatcherInterface */
     protected $eventDispatcher;
 
     /**
-     * @param EventDispatcher $eventDispatcher
+     * @param EventDispatcherInterface $eventDispatcher
      */
-    public function setEventDispatcher($eventDispatcher)
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
     }

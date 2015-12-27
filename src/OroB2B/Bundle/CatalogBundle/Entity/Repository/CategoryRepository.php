@@ -3,6 +3,8 @@
 namespace OroB2B\Bundle\CatalogBundle\Entity\Repository;
 
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
+
 use Gedmo\Tree\Entity\Repository\NestedTreeRepository;
 
 use OroB2B\Bundle\CatalogBundle\Entity\Category;
@@ -25,6 +27,25 @@ class CategoryRepository extends NestedTreeRepository
             ->setMaxResults(1)
             ->getQuery()
             ->getSingleResult();
+    }
+
+    /**
+     * @param object|null $node
+     * @param bool $direct
+     * @param string|null $sortByField
+     * @param string $direction
+     * @param bool $includeNode
+     * @return QueryBuilder
+     */
+    public function getChildrenQueryBuilderPartial(
+        $node = null,
+        $direct = false,
+        $sortByField = null,
+        $direction = 'ASC',
+        $includeNode = false
+    ) {
+        return $this->getChildrenQueryBuilder($node, $direct, $sortByField, $direction, $includeNode)
+            ->select('partial node.{id, parentCategory, left, level, right, root}');
     }
 
     /**
@@ -69,10 +90,13 @@ class CategoryRepository extends NestedTreeRepository
      */
     public function findOneByDefaultTitle($title)
     {
-        return $this->createQueryBuilder('category')
-            ->innerJoin('category.titles', 'title')
-            ->andWhere('title.string = :title')->setParameter('title', $title)
-            ->andWhere('title.locale IS NULL')
+        $qb = $this->createQueryBuilder('category');
+
+        return $qb
+            ->select('partial category.{id}')
+            ->innerJoin('category.titles', 'title', Join::WITH, $qb->expr()->isNull('title.locale'))
+            ->andWhere('title.string = :title')
+            ->setParameter('title', $title)
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
@@ -95,17 +119,36 @@ class CategoryRepository extends NestedTreeRepository
     /**
      * @param string $productSku
      *
-     * @return Category|null
+     * @param bool $includeTitles
+     * @return null|Category
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function findOneByProductSku($productSku)
+    public function findOneByProductSku($productSku, $includeTitles = false)
     {
         $qb = $this->createQueryBuilder('category');
 
+        if ($includeTitles) {
+            $qb->addSelect('title.string');
+            $qb->leftJoin('category.titles', 'title', Join::WITH, $qb->expr()->isNull('title.locale'));
+        }
+
         return $qb
+            ->select('partial category.{id}')
             ->innerJoin('category.products', 'p', Join::WITH, $qb->expr()->eq('p.sku', ':sku'))
             ->setParameter('sku', $productSku)
+            ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    /**
+     * @param Category $category
+     * @return Category[]
+     */
+    public function getAllChildCategories(Category $category)
+    {
+         return $this->getChildrenQueryBuilderPartial($category)
+            ->getQuery()
+            ->getResult();
     }
 }

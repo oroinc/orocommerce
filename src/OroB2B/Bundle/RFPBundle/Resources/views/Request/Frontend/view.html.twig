@@ -1,4 +1,4 @@
-{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% extends 'OroB2BFrontendBundle:actions:view.html.twig' %}
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 
 {% oro_title_set({params : {"%title%": entity.__toString()}}) %}
@@ -93,13 +93,13 @@
     {% set requestContent %}
         <div class="row-fluid form-horizontal">
             <div class="responsive-block">
-                {{ entity.body|nl2br }}
+                {{ entity.note|nl2br }}
             </div>
         </div>
     {% endset %}
 
     {% set dataBlocks = dataBlocks|merge([{
-        'title': 'orob2b.rfp.sections.body'|trans,
+        'title': 'orob2b.rfp.sections.note'|trans,
         'class': 'active',
         'subblocks': [{'data' : [requestContent]}]
     }]) %}

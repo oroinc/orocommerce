@@ -107,6 +107,13 @@ class Page
      * @ORM\JoinColumns({
      *     @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
      * })
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $organization;
 
@@ -116,6 +123,13 @@ class Page
      * @Gedmo\TreeParent
      * @ORM\ManyToOne(targetEntity="Page", inversedBy="childPages")
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $parentPage;
 
@@ -124,6 +138,13 @@ class Page
      *
      * @ORM\OneToMany(targetEntity="Page", mappedBy="parentPage", cascade={"persist"})
      * @ORM\OrderBy({"left" = "ASC"})
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          }
+     *      }
+     * )
      */
     protected $childPages;
 
